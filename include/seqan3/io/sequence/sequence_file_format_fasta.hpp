@@ -6,18 +6,18 @@
 namespace seqan3
 {
 
-class seq_file_in_format_fasta
+class sequence_file_format_fasta
 {
 public:
-    seq_file_in_format_fasta() :
+    sequence_file_format_fasta() :
     {}
 
     // rule of six constructors deleted
-    seq_file_in_format_fasta() = delete;
-    seq_file_in_format_fasta(seq_file_in const &) = delete;
-    seq_file_in_format_fasta & operator=(seq_file_in const &) = delete;
-    seq_file_in_format_fasta(seq_file_in &&) = delete;
-    seq_file_in_format_fasta & operator=(seq_file_in &&) = delete;
+    sequence_file_format_fasta() = delete;
+    sequence_file_format_fasta(sequence_file_in const &) = delete;
+    sequence_file_format_fasta & operator=(sequence_file_in const &) = delete;
+    sequence_file_format_fasta(sequence_file_in &&) = delete;
+    sequence_file_format_fasta & operator=(sequence_file_in &&) = delete;
 
     static std::vector<std::string> file_extensions
     {
@@ -27,15 +27,15 @@ public:
     };
 
     //TODO make the requirements stricter
-    template <typename seq_type,
+    template <typename sequence_type,
               typename id_type,
               typename qual_type,
               typename stream_type,
               typename options_type>
-        requires container_concept<seq_type> &&
+        requires container_concept<sequence_type> &&
                  container_concept<id_type> &&
                  container_concept<qual_type>
-    void read(seq_type && seq,
+    void read(sequence_type && seq,
               id_type && id,
               qual_type && qual,
               stream_type & stream,
