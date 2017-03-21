@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../alphabet.hpp"
-#include "../alphabet_container.hpp"
+#include "../alphabet_sequence.hpp"
 #include "dna4.hpp"
 
 // ------------------------------------------------------------------

@@ -5,7 +5,6 @@
 namespace seqan3
 {
 
-
 struct dna4
 {
     // strictly typed enum, unfortunately with scope
