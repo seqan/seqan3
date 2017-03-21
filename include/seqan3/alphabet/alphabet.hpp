@@ -89,7 +89,7 @@ constexpr alphabet_type from_char(alphabet_type & c, char const in)
 
 template <typename alphabet_type, typename input_type>
     requires detail::internal_alphabet_concept<alphabet_type> &&
-             std::is_integral_t<input_type>
+             std::is_integral<input_type>::value
 constexpr alphabet_type from_integral(alphabet_type & c, input_type const in)
 {
     return c.from_integral(in);
