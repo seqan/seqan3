@@ -69,7 +69,25 @@ concept bool internal_alphabet_concept = requires (t t1)
     { t1.from_char('a')   } -> t;
     { t1.from_integral(0) } -> t;
 };
-}
+} // namespace seqan3::detail
+
+template <typename alphabet_type>
+    requires detail::internal_alphabet_concept<alphabet_type>
+struct alphabet_char
+{
+    using type = typename alphabet_type::char_type;
+};
+template <typename alphabet_type>
+using alphabet_char_t = typename alphabet_char<alphabet_type>::type;
+
+template <typename alphabet_type>
+    requires detail::internal_alphabet_concept<alphabet_type>
+struct alphabet_integral
+{
+    using type = typename alphabet_type::integral_type;
+};
+template <typename alphabet_type>
+using alphabet_integral_t = typename alphabet_integral<alphabet_type>::type;
 
 template <typename alphabet_type>
      requires detail::internal_alphabet_concept<alphabet_type>
@@ -80,14 +98,14 @@ constexpr auto value_size(alphabet_type const &)
 
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-constexpr char to_char(alphabet_type const & c)
+constexpr alphabet_char_t<alphabet_type> to_char(alphabet_type const & c)
 {
     return c.to_char();
 }
 
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-constexpr auto to_integral(alphabet_type const & c)
+constexpr alphabet_integral_t<alphabet_type> to_integral(alphabet_type const & c)
 {
     return c.to_integral();
 }
@@ -106,28 +124,6 @@ constexpr alphabet_type from_integral(alphabet_type & c, input_type const in)
 {
     return c.from_integral(in);
 }
-
-template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-struct alphabet_char
-{
-    using type = typename alphabet_type::char_type;
-};
-
-template <typename alphabet_type>
-//     requires detail::internal_alphabet_concept<alphabet_type>
-using alphabet_char_t = typename alphabet_char<alphabet_type>::type;
-
-template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-struct alphabet_integral
-{
-    using type = typename alphabet_type::integral_type;
-};
-
-template <typename alphabet_type>
-//     requires detail::internal_alphabet_concept<alphabet_type>
-using alphabet_integral_t = typename alphabet_integral<alphabet_type>::type;
 
 // ------------------------------------------------------------------
 // alphabet concept

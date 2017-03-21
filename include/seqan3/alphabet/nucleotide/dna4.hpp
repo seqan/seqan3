@@ -78,24 +78,24 @@ struct dna4
         return value;
     }
 
-    // explicit compatibility to char
-    explicit constexpr operator char() const
+    // explicit compatibility to char_type
+    explicit constexpr operator char_type() const
     {
         return to_char();
     }
-    constexpr char to_char() const
+    constexpr char_type to_char() const
     {
         return value_to_char[static_cast<integral_type>(value)];
     }
 
-    constexpr dna4 from_char(char const c)
+    constexpr dna4 from_char(char_type const c)
     {
         value = char_to_value[c];
         return *this;
     }
 
     // explicit compatibility to integral
-    constexpr char to_integral() const
+    constexpr integral_type to_integral() const
     {
         return static_cast<integral_type>(value);
     }
@@ -109,7 +109,7 @@ struct dna4
     // conversion tables
     static constexpr uint8_t value_size{4};
 
-    static constexpr char value_to_char[value_size]
+    static constexpr char_type value_to_char[value_size]
     {
         'A',
         'C',
@@ -167,7 +167,7 @@ static_assert(alphabet_concept<dna4>);
 static_assert(dna4{dna4::A} == dna4{});
 static_assert(dna4{dna4::A} == dna4::A);
 // static_assert(dna4{'A'} == 'A');
-static_assert(static_cast<char>(dna4{dna4::C}) == 'C');
+static_assert(static_cast<dna4::char_type>(dna4{dna4::C}) == 'C');
 static_assert(dna4{dna4::A} < dna4{dna4::C});
 
 }
