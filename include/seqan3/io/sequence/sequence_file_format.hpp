@@ -4,7 +4,7 @@ namespace seqan3
 {
 
 template <typename t>
-concept bool seq_file_in_format_concept = requires (t v)
+concept bool sequence_file_format_concept = requires (t v)
 {
     t::file_extensions;
 
@@ -12,7 +12,7 @@ concept bool seq_file_in_format_concept = requires (t v)
     // TODO constructor
 
     //TODO how do you specifiy a function template?
-    v.read(seq_type & seq, id_type & id, qual_type & qual);
+    v.read(sequence_type & seq, id_type & id, qual_type & qual);
 
 };
 
