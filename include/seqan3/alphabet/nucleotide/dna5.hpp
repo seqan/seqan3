@@ -4,8 +4,6 @@
 
 namespace seqan3
 {
-    
-    
     struct dna5
     {
         // strictly typed enum, unfortunately with scope
@@ -101,7 +99,7 @@ namespace seqan3
             // X,         Y,            Z,
             c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //5
             //          , a,            b,            c,            d,            e,            f,            g,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::C,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,
+            c_type::UNKNOWN, c_type::A, c_type::UNKNOWN, c_type::C,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,
             // h,         i,            j,            k,            l,            m,            n,            o,
             c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::N, c_type::UNKNOWN, //6
             // P,         Q,            R,            S,            T,            U,            V,            W,

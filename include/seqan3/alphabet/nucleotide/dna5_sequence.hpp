@@ -35,7 +35,7 @@ namespace seqan3::literal
         
         std::transform(s, s + n, r.begin(), [] (const char & c)
                        {
-                           return dna5{dna5::char_to_value[c]};
+                           return dna5{}.from_char(c);
                        });
         
         return r;
@@ -48,7 +48,7 @@ namespace seqan3::literal
         
         std::transform(s, s + n, r.begin(), [] (const char & c)
                        {
-                           return dna5{dna5::char_to_value[c]};
+                           return dna5{}.from_char(c);
                        });
         
         return r;
