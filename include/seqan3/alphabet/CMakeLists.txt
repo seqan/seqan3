@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.0)
-project (seqan3 CXX)
+project (seqan3_alphabet CXX)
 
 include_directories("../gaps")
 include_directories("../nucleotide")
@@ -9,4 +9,4 @@ add_executable(test_phred test_phred.cpp)
 
 #add_dependencies(align_config_test gtest)
 target_link_libraries(test_phred ${SEQAN3_LIBRARIES})
-#add_test(NAME test_align_config_test COMMAND align_config_test)
+add_test(NAME test_phred COMMAND test_phred)

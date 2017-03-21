@@ -1,12 +1,14 @@
 #include "quality.hpp"
 #include "quality/phred.hpp"
 
-// phred alphabet requires alphabet concept
-void test_concept(){
+#include <gtest/gtest.h>
 
+#include "quality/phred.hpp"
 
-}
+using namespace seqan3;
 
-int main(){
-    return 0;
+TEST( phred_test, default_ctr)
+{
+    illumina18 phred;
+//    EXPECT_EQ();
 }
