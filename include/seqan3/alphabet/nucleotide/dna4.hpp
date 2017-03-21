@@ -7,8 +7,11 @@ namespace seqan3
 
 struct dna4
 {
+    using char_type = char;
+    using integral_type = uint8_t;
+
     // strictly typed enum, unfortunately with scope
-    enum struct c_type : uint8_t
+    enum struct c_type : integral_type
     {
         A,
         C,
@@ -46,7 +49,7 @@ struct dna4
     }
     constexpr char to_char() const
     {
-        return value_to_char[static_cast<uint8_t>(value)];
+        return value_to_char[static_cast<integral_type>(value)];
     }
 
     constexpr dna4 from_char(char const c)
@@ -58,10 +61,10 @@ struct dna4
     // explicit compatibility to integral
     constexpr char to_integral() const
     {
-        return static_cast<std::underlying_type_t<c_type>>(value);
+        return static_cast<integral_type>(value);
     }
 
-    constexpr dna4 from_integral(std::underlying_type_t<c_type> const c)
+    constexpr dna4 from_integral(integral_type const c)
     {
         value = static_cast<c_type>(c);
         return *this;
