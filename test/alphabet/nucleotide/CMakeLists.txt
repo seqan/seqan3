@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.2)
 project(nucleotide_test CXX)
 
 add_executable(dna5_test dna5_test.cpp)
