@@ -1,8 +1,6 @@
-#include "../../../include/seqan3/alphabet/quality.hpp"
-#include "../../../include/seqan3/alphabet/quality/phred.hpp"
-
 #include <gtest/gtest.h>
 
+#include "../../../include/seqan3/alphabet/quality.hpp"
 #include "../../../include/seqan3/alphabet/quality/phred.hpp"
 
 using namespace seqan3;
@@ -41,6 +39,9 @@ TEST(illumina18_op_tochar, op_tochar)
     illu = 0;
     char c = illu.to_char();
     EXPECT_EQ(c, '!');
+    illu = 41;
+    c = illu.to_char();
+    EXPECT_EQ(c, 'J');
 }
 
 

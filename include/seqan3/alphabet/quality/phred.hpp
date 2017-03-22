@@ -37,30 +37,64 @@
 #pragma once
 
 #include "../alphabet.hpp"
+#include "../quality.hpp"
 
 #include <tuple>
 
-// assume sequential mapping w.r.t. ascii alphabet, only (char_start, val_start) and (char_end, val_end) differ
+// assume sequential mapping w.r.t. ascii alphabet, only (char_start, phred_start) machine-dependent
 namespace seqan3
 {
-    // integer score in [0 .. 41], char score in  ['!' .. 'J']
+
+using phred_type = int8_t;
+
     struct illumina18
     {
         using char_type = char;
         using integral_type = uint8_t;
-        using phred_type = int8_t;
 
-        // todo: make this offsets concept
-        static constexpr char_type offset_char{'!'};
-        static constexpr integral_type offset_phred{0};
 
         // the value
         integral_type value;
+        // phred score intervals as int [0 .. 41], as char ['!' .. 'J']
+        static constexpr char_type offset_char{'!'};
+        static constexpr phred_type offset_phred{0};
 
         // implicit compatibility to inner_type
         constexpr illumina18 & operator =(integral_type const c)
         {
             value = c;
+        }
+
+        // comparison ops
+        // bool MyClass::operator==(const MyClass &other) const {
+        constexpr bool operator ==(const illumina18 &rhs)
+        {
+            return this->value == rhs.value;
+        }
+
+        constexpr bool operator !=(const illumina18 &rhs)
+        {
+            return this->value != rhs.value;
+        }
+
+        constexpr bool operator <(const illumina18 &rhs)
+        {
+            return this->value < rhs.value;
+        }
+
+        constexpr bool operator >(const illumina18 &rhs)
+        {
+            return this->value > rhs.value;
+        }
+
+        constexpr bool operator <=(const illumina18 &rhs)
+        {
+            return this->value <= rhs.value;
+        }
+
+        constexpr bool operator >=(const illumina18 &rhs)
+        {
+            return this->value >= rhs.value;
         }
 
         // explicit compatibility to char
@@ -98,14 +132,25 @@ namespace seqan3
             return *this;
         }
 
-        constexpr phred_type to_phred(uint8_t const p)
+        constexpr phred_type to_phred() const
         {
             return value + offset_phred;
         }
 
-        //
         static constexpr uint8_t value_size{42};
 
     };
 
-}
+    constexpr phred_type to_phred(illumina18 illu)
+    {
+        return illu.to_phred();
+    }
+
+    constexpr illumina18 from_phred(illumina18 illu, int8_t const p)
+    {
+        return illu.from_phred(p);
+    }
+
+    static_assert(quality_concept<illumina18>);
+
+}  // namespace seqan3
