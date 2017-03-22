@@ -32,4 +32,35 @@ concept bool align_file_traits_concept = requires (t v)
     t::sbj_gaps_type;
 };
 
+// ==================================================================
+// align_record
+// ==================================================================
+
+
+enum struct align_record_fields : uint8_t
+{
+    RAW_SCORE,
+    BIT_SCORE,
+    EDIT_DISTANCE,
+    PERCENT_IDENTITY,
+    ...
+};
+
+char align_record_fields_sam_bam_tags[2][]
+{
+    "AS",
+    "BS",
+    "NM",
+    ...
+};
+
+std::string align_record_field_labels[] // required for blast, nice for sam
+{
+    "raw score"
+    "bit score",
+    "edit distance",
+    ...
+};
+
+
 }
