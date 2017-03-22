@@ -40,133 +40,159 @@
 
 namespace seqan3
 {
-    struct dna5
+struct dna5
+{
+    using char_type = char;
+    using integral_type = uint8_t;
+
+    // strictly typed enum, unfortunately with scope
+    enum struct c_type : integral_type
     {
-        // strictly typed enum, unfortunately with scope
-        enum struct c_type : uint8_t
-        {
-            A,
-            C,
-            G,
-            T,
-            N,
-            U = T,
-            UNKNOWN = N
-        };
-        
-        // import into local scope
-        static constexpr c_type A{c_type::A};
-        static constexpr c_type C{c_type::C};
-        static constexpr c_type G{c_type::G};
-        static constexpr c_type T{c_type::T};
-        static constexpr c_type N{c_type::N};
-        static constexpr c_type U{c_type::U};
-        static constexpr c_type UNKNOWN{c_type::UNKNOWN};
-        
-        // the value
-        c_type value;
-        
-        // implicit compatibility to inner_type
-        constexpr dna5 & operator =(c_type const c)
-        {
-            value = c;
-        }
-        constexpr operator c_type() const
-        {
-            return value;
-        }
-        
-        // explicit compatibility to char
-        explicit constexpr operator char() const
-        {
-            return to_char();
-        }
-        constexpr char to_char() const
-        {
-            return value_to_char[static_cast<uint8_t>(value)];
-        }
-        
-        constexpr dna5 from_char(char const c)
-        {
-            value = char_to_value[c];
-            return *this;
-        }
-        
-        // explicit compatibility to integral
-        constexpr char to_integral() const
-        {
-            return static_cast<std::underlying_type_t<c_type>>(value);
-        }
-        
-        constexpr dna5 from_integral(std::underlying_type_t<c_type> const c)
-        {
-            value = static_cast<c_type>(c);
-            return *this;
-        }
-        
-        // conversion tables
-        static constexpr uint8_t value_size{5};
-        
-        static constexpr char value_to_char[value_size]
-        {
-            'A',
-            'C',
-            'G',
-            'T',
-            'N'
-        };
-        
-        static constexpr c_type char_to_value[256]
-        {
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //0
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //1
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //2
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //3
-            //          , A,            B,            C,            D,            E,            F,            G,
-            c_type::UNKNOWN, c_type::A,       c_type::UNKNOWN, c_type::C,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,
-            // H,         I,            J,            K,            L,            M,            N,            O,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::N, c_type::UNKNOWN, //4
-            // P,         Q,            R,            S,            T,            U,            V,            W,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN,
-            // X,         Y,            Z,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //5
-            //          , a,            b,            c,            d,            e,            f,            g,
-            c_type::UNKNOWN, c_type::A, c_type::UNKNOWN, c_type::C,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,
-            // h,         i,            j,            k,            l,            m,            n,            o,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::N, c_type::UNKNOWN, //6
-            // P,         Q,            R,            S,            T,            U,            V,            W,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //7
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //8
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //9
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //10
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //11
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //12
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //13
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //14
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-            c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN  //15
-        };
-        
+        A,
+        C,
+        G,
+        T,
+        N,
+        U = T,
+        UNKNOWN = N
     };
-    
-    // shall fulfill Alphabet concept
-    static_assert(alphabet_concept<dna5>);
-    static_assert(dna5{dna5::A} == dna5{});
-    static_assert(dna5{dna5::A} == dna5::A);
-    // static_assert(dna5{'A'} == 'A');
-    static_assert(static_cast<char>(dna5{dna5::C}) == 'C');
-    static_assert(dna5{dna5::A} < dna5{dna5::C});
-    
+
+    // import into local scope
+    static constexpr c_type A{c_type::A};
+    static constexpr c_type C{c_type::C};
+    static constexpr c_type G{c_type::G};
+    static constexpr c_type T{c_type::T};
+    static constexpr c_type N{c_type::N};
+    static constexpr c_type U{c_type::U};
+    static constexpr c_type UNKNOWN{c_type::UNKNOWN};
+
+    // the value
+    c_type value;
+
+    // implicit compatibility to inner_type
+    constexpr dna5 & operator =(c_type const c)
+    {
+        value = c;
+    }
+    constexpr operator c_type() const
+    {
+        return value;
+    }
+
+    // explicit compatibility to char
+    explicit constexpr operator char_type() const
+    {
+        return to_char();
+    }
+    constexpr char_type to_char() const
+    {
+        return value_to_char[static_cast<integral_type>(value)];
+    }
+
+    constexpr dna5 from_char(char_type const c)
+    {
+        value = char_to_value[c];
+        return *this;
+    }
+
+    // explicit compatibility to integral
+    constexpr integral_type to_integral() const
+    {
+        return static_cast<integral_type>(value);
+    }
+
+    constexpr dna5 from_integral(integral_type const c)
+    {
+        value = static_cast<c_type>(c);
+        return *this;
+    }
+
+    // conversion tables
+    static constexpr integral_type value_size{5};
+
+    static constexpr char_type value_to_char[value_size]
+    {
+        'A',
+        'C',
+        'G',
+        'T',
+        'N'
+    };
+
+    static constexpr c_type char_to_value[256]
+    {
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//0
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//25
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//50
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        //A,             B,               C,               D,               E,
+        c_type::A,       c_type::UNKNOWN, c_type::C,       c_type::UNKNOWN, c_type::UNKNOWN,
+        //F,             G,               H,               I,               J,
+        c_type::UNKNOWN, c_type::G,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        //K,             L,               M,               N,               O,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::N,       c_type::UNKNOWN,//75
+        // P,            Q,               R,               S,               T,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,
+        //U,             V,               W,               X,               Y,
+        c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        //Z
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        //                                a,               b,               c,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::A,       c_type::UNKNOWN, c_type::C,
+        //d,             e,               f,               g,               h,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,       c_type::UNKNOWN,//100
+        //i,             j,               k,               l,               m,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        //n,             o,               p,               q,               r,
+        c_type::N,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        //s,             t,               u,               v,               w,
+        c_type::UNKNOWN, c_type::T,       c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN,
+        //x,             y,               z
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//125
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//150
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//175
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//200
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//225
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,//250
+        c_type::UNKNOWN
+    };
+};
+
+// shall fulfill Alphabet concept
+static_assert(alphabet_concept<dna5>);
+static_assert(dna5{dna5::A} == dna5{});
+static_assert(dna5{dna5::A} == dna5::A);
+// static_assert(dna5{'A'} == 'A');
+static_assert(static_cast<dna5::char_type>(dna5{dna5::C}) == 'C');
+static_assert(dna5{dna5::A} < dna5{dna5::C});
 }
