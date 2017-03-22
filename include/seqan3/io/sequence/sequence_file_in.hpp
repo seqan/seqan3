@@ -16,8 +16,7 @@ concept bool seq_file_in_traits_concept = requires (t v)
 {
     t::stream_type;
     t::valid_formats;
-    //TODO valid_formats shall be variant and all of variants types
-    // must meet format_concept
+    requires detail::meets_concept_sequence_file_format<0, typename t::valid_formats>();
 
     t::valid_compression_formats;
 };
