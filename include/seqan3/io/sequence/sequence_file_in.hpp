@@ -4,6 +4,8 @@
 #include <variant>
 #include <vector>
 
+#include "sequence_file_format.hpp"
+
 namespace seqan3
 {
 
@@ -14,11 +16,16 @@ namespace seqan3
 template <typename t>
 concept bool sequence_file_in_traits_concept = requires (t v)
 {
-    t::stream_type;
-    t::valid_formats;
-    requires detail::meets_concept_sequence_file_format<0, typename t::valid_formats>();
+    typename t::stream_type;
+    typename t::valid_formats;
 
-    t::valid_compression_formats;
+    requires detail::meets_sequence_file_format_concept<typename t::valid_formats>(
+        std::make_index_sequence<
+            std::variant_size_v<typename t::valid_formats>
+        >{}
+    );
+
+    // t::valid_compression_formats;
 };
 
 struct sequence_file_in_default_traits
