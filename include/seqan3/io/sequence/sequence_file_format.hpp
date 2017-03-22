@@ -1,5 +1,7 @@
 #pragma once
 
+#include "sequence_file_format_fasta.hpp"
+
 namespace seqan3
 {
 
@@ -12,8 +14,7 @@ concept bool sequence_file_format_concept = requires (t v)
     // TODO constructor
 
     //TODO how do you specifiy a function template?
-    v.read(sequence_type & seq, id_type & id, qual_type & qual);
-
+    // v.read(sequence_type & seq, id_type & id, qual_type & qual);
 };
 
 } // namespace seqan3
