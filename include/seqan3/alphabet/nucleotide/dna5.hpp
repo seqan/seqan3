@@ -189,4 +189,8 @@ struct dna5
         c_type::UNKNOWN
     };
 };
+
+// shall fulfill Alphabet concept
+static_assert(alphabet_concept<dna5>);
+
 } // namespace seqan3
