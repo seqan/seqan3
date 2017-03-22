@@ -59,6 +59,7 @@ concept bool sequence_file_in_traits_concept = requires (t v)
     typename t::valid_formats;
     // //TODO valid_formats shall be variant and all of variants types
     // // must meet format_concept
+    requires detail::meets_concept_sequence_file_format<0, typename t::valid_formats>();
 
     t::valid_compression_formats;
 };
@@ -231,4 +232,5 @@ void sequence_file_in<sequence_file_in_traits>::select_format(std::string const 
     else
         select_format<index+1>(format, ext);
 }
+
 } // namespace seqan
