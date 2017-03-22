@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,9 +30,11 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
+// ==========================================================================
+// Author: David Heller <david.heller@fu-berlin.de>
+// ==========================================================================
+// Implementation of the sequence containers for dna5.
+// ==========================================================================
 
 #pragma once
 
@@ -42,7 +44,7 @@
 
 #include "../alphabet.hpp"
 #include "../alphabet_sequence.hpp"
-#include "dna4.hpp"
+#include "dna5.hpp"
 
 // ------------------------------------------------------------------
 // containers
@@ -51,9 +53,9 @@
 namespace seqan3
 {
 
-using dna4_vector = std::vector<dna4>;
+using dna5_vector = std::vector<dna5>;
 
-using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
+using dna5_string = std::basic_string<dna5, std::char_traits<dna5>>;
 
 } // namespace seqan3
 
@@ -64,31 +66,30 @@ using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
 namespace seqan3::literal
 {
 
-inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
+inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
 {
-    dna4_vector r;
+    dna5_vector r;
     r.resize(n);
 
     std::transform(s, s + n, r.begin(), [] (const char & c)
     {
-        return dna4{dna4::char_to_value[c]};
+        return dna5{}.from_char(c);
     });
 
     return r;
 }
 
-inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
+inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
 {
-    dna4_string r;
+    dna5_string r;
     r.resize(n);
 
     std::transform(s, s + n, r.begin(), [] (const char & c)
     {
-        return dna4{dna4::char_to_value[c]};
+        return dna5{}.from_char(c);
     });
 
     return r;
 }
 
 } // namespace seqan3::literal
-
