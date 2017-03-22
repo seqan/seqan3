@@ -50,7 +50,7 @@ TEST(dna5_test, test_dna5_vector_operator)
     v.resize(5, dna5{dna5::A});
     EXPECT_EQ(v, "AAAAA"_dna5);
 
-    std::vector<dna5> w { dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G}, dna5{dna5::T}, dna5{dna5::N} };
+    std::vector<dna5> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G}, dna5{dna5::T}, dna5{dna5::N}};
     EXPECT_EQ(w, "ACGTN"_dna5);
 }
 
@@ -60,7 +60,7 @@ TEST(dna5_test, test_dna5_string_operator)
     v.resize(5, dna5{dna5::A});
     EXPECT_EQ(v, "AAAAA"_dna5s);
 
-    std::basic_string<dna5, std::char_traits<dna5>> w { dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G},
-                                                       dna5{dna5::T}, dna5{dna5::N} };
+    std::basic_string<dna5, std::char_traits<dna5>> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G},
+                                                       dna5{dna5::T}, dna5{dna5::N}};
     EXPECT_EQ(w, "ACGTN"_dna5s);
 }
