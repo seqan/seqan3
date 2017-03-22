@@ -27,6 +27,6 @@ add_dependencies(gtest gtest_main)
 set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/lib/libgtest.a")
 
 include_directories("${GOOGLETEST_PATH}/include/")
-include_directories("${CMAKE_SOURCE_DIR}/include/")
+include_directories("${CMAKE_SOURCE_DIR}/../include/")
 
 add_subdirectory(alphabet)
