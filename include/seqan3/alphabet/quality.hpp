@@ -47,20 +47,30 @@ namespace seqan3
 namespace detail
 {
 
+/*!
+ * Internal conversion functions of a quality alphabet. 
+ * A quality has three representations: 
+ *    a) internal unsigned integer, simply called "value"
+ *    b) an integer representing the phred score, calibration is machine-dependent
+ *    c) a single-letter encoding corresponding to a phred score
+ */
 template <typename q>
 concept bool internal_quality_concept = requires (q quality)
 {
+    //! fulfills the internal requirements for general alphabets
     requires internal_alphabet_concept<q>;
+    //! offers additionally a phred score data type which may not be zero based
     typename q::phred_type;
-
+    //! converts the internal integral value (not phred score) representation to a valid phred score
     { quality.to_phred() } -> typename q::phred_type;
-
+    //! internal value setter function receiving a phred score
     { quality.from_phred(0) } -> q;
 
 };
 
 } // namespace seqan3::detail
 
+//! internal phred
 template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
 struct underlying_phred
@@ -68,9 +78,11 @@ struct underlying_phred
     using type = typename alphabet_type::phred_type;
 };
 
+//! internal phred type
 template <typename alphabet_type>
 using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
 
+//! public setter function receiving char encoding of phred score
 template <typename alphabet_type>
 requires detail::internal_quality_concept<alphabet_type>
 constexpr alphabet_type from_phred(alphabet_type & c, char const in)
@@ -78,6 +90,7 @@ constexpr alphabet_type from_phred(alphabet_type & c, char const in)
     return c.from_phred(in);
 }
 
+//! public getter function for integral presentation of phred score
 template <typename alphabet_type>
 requires detail::internal_quality_concept<alphabet_type>
 constexpr alphabet_char_t<alphabet_type> to_phred(alphabet_type const & c)
@@ -89,13 +102,14 @@ constexpr alphabet_char_t<alphabet_type> to_phred(alphabet_type const & c)
 // concept
 // ------------------------------------------------------------------
 
+//!
 template<typename q>
 concept bool quality_concept = requires(q quality)
 {
-    // requires fulfillment of alphabet concept
+    //! requires fulfillment of alphabet concept
     requires alphabet_concept<q>;
 
-    // conversion functions from t -> c and vice versa
+    //! requires additionally public getter and setter for integral phred score representation
     { from_phred(quality, typename q::integral_type{}) } -> q;
     { to_phred(quality) } -> const typename q::phred_type;
     typename underlying_phred<q>::type;
