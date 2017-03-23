@@ -62,7 +62,7 @@ concept bool internal_quality_concept = requires (q quality)
 } // namespace seqan3::detail
 
 template <typename alphabet_type>
-requires detail::internal_quality_concept<alphabet_type>
+    requires detail::internal_quality_concept<alphabet_type>
 struct underlying_phred
 {
     using type = typename alphabet_type::phred_type;

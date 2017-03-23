@@ -36,16 +36,12 @@
 
 #pragma once
 
-#include <tuple>
-
 #include "../alphabet.hpp"
 #include "../quality.hpp"
 
 // assume sequential mapping w.r.t. ascii alphabet, only (char_start, phred_start) machine-dependent
 namespace seqan3
 {
-
-
 
 struct illumina18
 {
@@ -63,35 +59,36 @@ struct illumina18
     constexpr illumina18 & operator =(integral_type const c)
     {
         value = c;
+        return *this;
     }
 
     // comparison ops
-    constexpr bool operator ==(const illumina18 & rhs)
+    constexpr bool operator==(const illumina18 & rhs) const
     {
         return this->value == rhs.value;
     }
 
-    constexpr bool operator !=(const illumina18 & rhs)
+    constexpr bool operator!=(const illumina18 & rhs) const
     {
         return this->value != rhs.value;
     }
 
-    constexpr bool operator <(const illumina18 & rhs)
+    constexpr bool operator<(const illumina18 & rhs) const
     {
         return this->value < rhs.value;
     }
 
-    constexpr bool operator >(const illumina18 & rhs)
+    constexpr bool operator>(const illumina18 & rhs) const
     {
         return this->value > rhs.value;
     }
 
-    constexpr bool operator <=(const illumina18 & rhs)
+    constexpr bool operator<=(const illumina18 & rhs) const
     {
         return this->value <= rhs.value;
     }
 
-    constexpr bool operator >=(const illumina18 & rhs)
+    constexpr bool operator>=(const illumina18 & rhs) const
     {
         return this->value >= rhs.value;
     }
@@ -139,7 +136,7 @@ struct illumina18
     static constexpr integral_type value_size{42};
 };
 
-    static_assert(quality_concept<illumina18>);
-    static_assert(detail::internal_quality_concept<illumina18>);
+static_assert(quality_concept<illumina18>);
+static_assert(detail::internal_quality_concept<illumina18>);
 
 }  // namespace seqan3
