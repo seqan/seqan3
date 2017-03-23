@@ -31,56 +31,30 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Joerg Winkler <j.winkler AT fu-berlin.de>
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
-#pragma once
+#include <gtest/gtest.h>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/aminoacid/aa27_sequence.hpp>
 
-#include <seqan3/alphabet/nucleotide/dna4_sequence.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
-#include <string>
-#include <fstream>
+using namespace seqan3;
 
-namespace seqan3
+TEST(alphabet_aminoacid_aa27_sequence_test, vector)
 {
+    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
 
-template <typename t>
-concept bool sequence_file_format_concept = requires (t v)
-{
-    t::file_extensions;
-
-    {
-        v.read(dna4_string{},     // sequence
-               std::string{},     // meta
-               std::string{},     // quality
-               std::ifstream{},   // stream
-               options_type{})    // options
-    };
-
-    {
-        v.write(dna4_string{},    // sequence
-                std::string{},    // meta
-                std::string{},    // quality
-                std::ofstream{},  // stream
-                options_type{})   // options
-    };
-
-};
-
-namespace detail
-{
-
-template <size_t index, typename variant_type>
-constexpr bool meets_concept_sequence_file_format()
-{
-    if constexpr (index == variant_size_v<variant_type>)
-        return true;
-    else if constexpr (!sequence_file_format_concept<variant_alternative_t<index, variant_type>>)
-        return false;
-    else
-        return meets_concept_sequence_file_format<index+1, variant_type>();
+    EXPECT_EQ(v[0], aa27::A);
+    EXPECT_EQ(v[1], aa27::C);
+    EXPECT_EQ(v[2], aa27::G);
+    EXPECT_EQ(v[3], aa27::T);
 }
 
-} // namespace detail
-
-} // namespace seqan3
+TEST(alphabet_aminoacid_aa27_sequence_test, string)
+{
+    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
+    EXPECT_EQ(s[0], aa27::A);
+    EXPECT_EQ(s[1], aa27::C);
+    EXPECT_EQ(s[2], aa27::G);
+    EXPECT_EQ(s[3], aa27::T);
+}

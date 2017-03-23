@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,57 +30,37 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
-// Author: Joerg Winkler <j.winkler AT fu-berlin.de>
-// ============================================================================
+// ==========================================================================
+// Author: David Heller <david.heller@fu-berlin.de>
+// ==========================================================================
+// Test cases for the biological dna5 alphabet.
+// ==========================================================================
 
-#pragma once
+#include <seqan3/alphabet/nucleotide/dna5_sequence.hpp>
+#include <gtest/gtest.h>
+#include <sstream>
+#include <vector>
 
-#include <seqan3/alphabet/nucleotide/dna4_sequence.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
-#include <string>
-#include <fstream>
+using namespace seqan3;
+using namespace seqan3::literal;
 
-namespace seqan3
+TEST(dna5_test, test_dna5_vector_operator)
 {
+    dna5_vector v;
+    v.resize(5, dna5{dna5::A});
+    EXPECT_EQ(v, "AAAAA"_dna5);
 
-template <typename t>
-concept bool sequence_file_format_concept = requires (t v)
-{
-    t::file_extensions;
-
-    {
-        v.read(dna4_string{},     // sequence
-               std::string{},     // meta
-               std::string{},     // quality
-               std::ifstream{},   // stream
-               options_type{})    // options
-    };
-
-    {
-        v.write(dna4_string{},    // sequence
-                std::string{},    // meta
-                std::string{},    // quality
-                std::ofstream{},  // stream
-                options_type{})   // options
-    };
-
-};
-
-namespace detail
-{
-
-template <size_t index, typename variant_type>
-constexpr bool meets_concept_sequence_file_format()
-{
-    if constexpr (index == variant_size_v<variant_type>)
-        return true;
-    else if constexpr (!sequence_file_format_concept<variant_alternative_t<index, variant_type>>)
-        return false;
-    else
-        return meets_concept_sequence_file_format<index+1, variant_type>();
+    std::vector<dna5> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G}, dna5{dna5::T}, dna5{dna5::N}};
+    EXPECT_EQ(w, "ACGTN"_dna5);
 }
 
-} // namespace detail
+TEST(dna5_test, test_dna5_string_operator)
+{
+    dna5_string v;
+    v.resize(5, dna5{dna5::A});
+    EXPECT_EQ(v, "AAAAA"_dna5s);
 
-} // namespace seqan3
+    std::basic_string<dna5, std::char_traits<dna5>> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G},
+                                                       dna5{dna5::T}, dna5{dna5::N}};
+    EXPECT_EQ(w, "ACGTN"_dna5s);
+}

@@ -31,56 +31,64 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Joerg Winkler <j.winkler AT fu-berlin.de>
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4_sequence.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
+#include <iostream>
 #include <string>
-#include <fstream>
+#include <vector>
+
+#include "../alphabet.hpp"
+#include "../alphabet_sequence.hpp"
+#include "aa27.hpp"
+
+// ------------------------------------------------------------------
+// containers
+// -----------------------------------------------------------------
 
 namespace seqan3
 {
 
-template <typename t>
-concept bool sequence_file_format_concept = requires (t v)
-{
-    t::file_extensions;
+using aa27_vector = std::vector<aa27>;
 
-    {
-        v.read(dna4_string{},     // sequence
-               std::string{},     // meta
-               std::string{},     // quality
-               std::ifstream{},   // stream
-               options_type{})    // options
-    };
-
-    {
-        v.write(dna4_string{},    // sequence
-                std::string{},    // meta
-                std::string{},    // quality
-                std::ofstream{},  // stream
-                options_type{})   // options
-    };
-
-};
-
-namespace detail
-{
-
-template <size_t index, typename variant_type>
-constexpr bool meets_concept_sequence_file_format()
-{
-    if constexpr (index == variant_size_v<variant_type>)
-        return true;
-    else if constexpr (!sequence_file_format_concept<variant_alternative_t<index, variant_type>>)
-        return false;
-    else
-        return meets_concept_sequence_file_format<index+1, variant_type>();
-}
-
-} // namespace detail
+using aa27_string = std::basic_string<aa27, std::char_traits<aa27>>;
 
 } // namespace seqan3
+
+// ------------------------------------------------------------------
+// literals
+// -----------------------------------------------------------------
+
+namespace seqan3::literal
+{
+
+inline aa27_vector operator "" _aa27(const char * s, std::size_t n)
+{
+    aa27_vector r;
+    r.resize(n);
+
+    std::transform(s, s + n, r.begin(), [] (const char & c)
+    {
+        return aa27{}.from_char(c);
+    });
+
+    return r;
+}
+
+inline aa27_string operator "" _aa27s(const char * s, std::size_t n)
+{
+    aa27_string r;
+    r.resize(n);
+
+    std::transform(s, s + n, r.begin(), [] (const char & c)
+    {
+        return aa27{}.from_char(c);
+    });
+
+    return r;
+}
+
+} // namespace seqan3::literal
+

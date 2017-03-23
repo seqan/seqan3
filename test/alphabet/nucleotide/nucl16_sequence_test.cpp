@@ -31,56 +31,32 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Joerg Winkler <j.winkler AT fu-berlin.de>
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
-#pragma once
+#include <array>
 
-#include <seqan3/alphabet/nucleotide/dna4_sequence.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
-#include <string>
-#include <fstream>
+#include <gtest/gtest.h>
+#include <seqan3/alphabet/nucleotide/nucl16.hpp>
+#include <seqan3/alphabet/nucleotide/nucl16_sequence.hpp>
 
-namespace seqan3
+using namespace seqan3;
+
+TEST(alphabet_nucleotides_nucl16_sequence_test, vector)
 {
+    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
 
-template <typename t>
-concept bool sequence_file_format_concept = requires (t v)
-{
-    t::file_extensions;
-
-    {
-        v.read(dna4_string{},     // sequence
-               std::string{},     // meta
-               std::string{},     // quality
-               std::ifstream{},   // stream
-               options_type{})    // options
-    };
-
-    {
-        v.write(dna4_string{},    // sequence
-                std::string{},    // meta
-                std::string{},    // quality
-                std::ofstream{},  // stream
-                options_type{})   // options
-    };
-
-};
-
-namespace detail
-{
-
-template <size_t index, typename variant_type>
-constexpr bool meets_concept_sequence_file_format()
-{
-    if constexpr (index == variant_size_v<variant_type>)
-        return true;
-    else if constexpr (!sequence_file_format_concept<variant_alternative_t<index, variant_type>>)
-        return false;
-    else
-        return meets_concept_sequence_file_format<index+1, variant_type>();
+    EXPECT_EQ(v[0], nucl16::A);
+    EXPECT_EQ(v[1], nucl16::C);
+    EXPECT_EQ(v[2], nucl16::G);
+    EXPECT_EQ(v[3], nucl16::T);
 }
 
-} // namespace detail
-
-} // namespace seqan3
+TEST(alphabet_nucleotides_nucl16_sequence_test, string)
+{
+    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
+    EXPECT_EQ(s[0], nucl16::A);
+    EXPECT_EQ(s[1], nucl16::C);
+    EXPECT_EQ(s[2], nucl16::G);
+    EXPECT_EQ(s[3], nucl16::T);
+}
