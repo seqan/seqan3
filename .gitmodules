@@ -1,0 +1,6 @@
+[submodule "sdsl-lite"]
+	path = sdsl-lite
+	url = https://github.com/xxsds/sdsl-lite
+[submodule "range-v3"]
+	path = range-v3
+	url = https://github.com/ericniebler/range-v3

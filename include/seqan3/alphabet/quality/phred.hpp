@@ -36,24 +36,22 @@
 
 #pragma once
 
+#include <tuple>
+
 #include "../alphabet.hpp"
 #include "../quality.hpp"
-
-#include <tuple>
 
 // assume sequential mapping w.r.t. ascii alphabet, only (char_start, phred_start) machine-dependent
 namespace seqan3
 {
 
 using phred_type = int8_t;
+using integral_type = uint8_t;
+using char_type = char;
 
     struct illumina18
     {
-        using char_type = char;
-        using integral_type = uint8_t;
-
-
-        // the value
+        // internal integral value representation
         integral_type value;
         // phred score intervals as int [0 .. 41], as char ['!' .. 'J']
         static constexpr char_type offset_char{'!'};
@@ -66,33 +64,32 @@ using phred_type = int8_t;
         }
 
         // comparison ops
-        // bool MyClass::operator==(const MyClass &other) const {
-        constexpr bool operator ==(const illumina18 &rhs)
+        constexpr bool operator ==(const illumina18 & rhs)
         {
             return this->value == rhs.value;
         }
 
-        constexpr bool operator !=(const illumina18 &rhs)
+        constexpr bool operator !=(const illumina18 & rhs)
         {
             return this->value != rhs.value;
         }
 
-        constexpr bool operator <(const illumina18 &rhs)
+        constexpr bool operator <(const illumina18 & rhs)
         {
             return this->value < rhs.value;
         }
 
-        constexpr bool operator >(const illumina18 &rhs)
+        constexpr bool operator >(const illumina18 & rhs)
         {
             return this->value > rhs.value;
         }
 
-        constexpr bool operator <=(const illumina18 &rhs)
+        constexpr bool operator <=(const illumina18 & rhs)
         {
             return this->value <= rhs.value;
         }
 
-        constexpr bool operator >=(const illumina18 &rhs)
+        constexpr bool operator >=(const illumina18 & rhs)
         {
             return this->value >= rhs.value;
         }
@@ -120,13 +117,13 @@ using phred_type = int8_t;
             return value;
         }
 
-        constexpr illumina18 from_integral(uint8_t const c)
+        constexpr illumina18 from_integral(integral_type const c)
         {
             value = c;
             return *this;
         }
 
-        constexpr illumina18 from_phred(int8_t const p)
+        constexpr illumina18 from_phred(phred_type const p)
         {
             value = p - offset_phred;
             return *this;
@@ -137,19 +134,8 @@ using phred_type = int8_t;
             return value + offset_phred;
         }
 
-        static constexpr uint8_t value_size{42};
-
+        static constexpr integral_type value_size{42};
     };
-
-    constexpr phred_type to_phred(illumina18 illu)
-    {
-        return illu.to_phred();
-    }
-
-    constexpr illumina18 from_phred(illumina18 illu, int8_t const p)
-    {
-        return illu.from_phred(p);
-    }
 
     static_assert(quality_concept<illumina18>);
 

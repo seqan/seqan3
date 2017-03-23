@@ -5,7 +5,7 @@
 
 using namespace seqan3;
 
-TEST( illumina18_constructor, default_ctr)
+TEST(illumina18_constructor, default_ctr)
 {
     illumina18 illu;
     EXPECT_EQ(illumina18::value_size, 42);
@@ -13,7 +13,7 @@ TEST( illumina18_constructor, default_ctr)
 }
 
 
-TEST( illumina18_implicit_assign, implicit_assign)
+TEST(illumina18_implicit_assign, implicit_assign)
 {
     illumina18 illu;
     illu = 19;
@@ -24,7 +24,7 @@ TEST( illumina18_implicit_assign, implicit_assign)
 }
 
 
-TEST( illumina18_op_char, op_char)
+TEST(illumina18_op_char, op_char)
 {
     illumina18 illu;
     illu = 0;
@@ -66,7 +66,7 @@ TEST(illumina18_from_integral, from_integral)
 {
     illumina18 illu;
     illu = 0;
-illumina18 illu2 = illu.from_integral(1);
+    illumina18 illu2 = illu.from_integral(1);
     EXPECT_EQ(1, illu2.value);
 }
 
