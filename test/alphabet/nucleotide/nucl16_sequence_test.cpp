@@ -31,64 +31,32 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
-#pragma once
+#include <array>
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include <gtest/gtest.h>
+#include <seqan3/alphabet/nucleotide/nucl16.hpp>
+#include <seqan3/alphabet/nucleotide/nucl16_sequence.hpp>
 
-#include "../alphabet.hpp"
-#include "../alphabet_sequence.hpp"
-#include "dna4.hpp"
+using namespace seqan3;
 
-// ------------------------------------------------------------------
-// containers
-// -----------------------------------------------------------------
-
-namespace seqan3
+TEST(alphabet_nucleotides_nucl16_sequence_test, vector)
 {
+    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
 
-using dna4_vector = std::vector<dna4>;
-
-using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
-
-} // namespace seqan3
-
-// ------------------------------------------------------------------
-// literals
-// -----------------------------------------------------------------
-
-namespace seqan3::literal
-{
-
-inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
-{
-    dna4_vector r;
-    r.resize(n);
-
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return dna4{dna4::char_to_value[c]};
-    });
-
-    return r;
+    EXPECT_EQ(v[0], nucl16::A);
+    EXPECT_EQ(v[1], nucl16::C);
+    EXPECT_EQ(v[2], nucl16::G);
+    EXPECT_EQ(v[3], nucl16::T);
 }
 
-inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
+TEST(alphabet_nucleotides_nucl16_sequence_test, string)
 {
-    dna4_string r;
-    r.resize(n);
-
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return dna4{dna4::char_to_value[c]};
-    });
-
-    return r;
+    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
+    EXPECT_EQ(s[0], nucl16::A);
+    EXPECT_EQ(s[1], nucl16::C);
+    EXPECT_EQ(s[2], nucl16::G);
+    EXPECT_EQ(s[3], nucl16::T);
 }
-
-} // namespace seqan3::literal
-

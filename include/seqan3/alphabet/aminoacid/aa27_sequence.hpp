@@ -31,7 +31,7 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
 #pragma once
@@ -42,7 +42,7 @@
 
 #include "../alphabet.hpp"
 #include "../alphabet_sequence.hpp"
-#include "dna4.hpp"
+#include "aa27.hpp"
 
 // ------------------------------------------------------------------
 // containers
@@ -51,9 +51,9 @@
 namespace seqan3
 {
 
-using dna4_vector = std::vector<dna4>;
+using aa27_vector = std::vector<aa27>;
 
-using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
+using aa27_string = std::basic_string<aa27, std::char_traits<aa27>>;
 
 } // namespace seqan3
 
@@ -64,27 +64,27 @@ using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
 namespace seqan3::literal
 {
 
-inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
+inline aa27_vector operator "" _aa27(const char * s, std::size_t n)
 {
-    dna4_vector r;
+    aa27_vector r;
     r.resize(n);
 
     std::transform(s, s + n, r.begin(), [] (const char & c)
     {
-        return dna4{dna4::char_to_value[c]};
+        return aa27{}.from_char(c);
     });
 
     return r;
 }
 
-inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
+inline aa27_string operator "" _aa27s(const char * s, std::size_t n)
 {
-    dna4_string r;
+    aa27_string r;
     r.resize(n);
 
     std::transform(s, s + n, r.begin(), [] (const char & c)
     {
-        return dna4{dna4::char_to_value[c]};
+        return aa27{}.from_char(c);
     });
 
     return r;
