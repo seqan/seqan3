@@ -45,98 +45,101 @@
 namespace seqan3
 {
 
-using phred_type = int8_t;
-using integral_type = uint8_t;
-using char_type = char;
 
-    struct illumina18
+
+struct illumina18
+{
+    using phred_type = int8_t;
+    using integral_type = uint8_t;
+    using char_type = char;
+
+    // internal integral value representation
+    integral_type value;
+    // phred score intervals as int [0 .. 41], as char ['!' .. 'J']
+    static constexpr char_type offset_char{'!'};
+    static constexpr phred_type offset_phred{0};
+
+    // implicit compatibility to inner_type
+    constexpr illumina18 & operator =(integral_type const c)
     {
-        // internal integral value representation
-        integral_type value;
-        // phred score intervals as int [0 .. 41], as char ['!' .. 'J']
-        static constexpr char_type offset_char{'!'};
-        static constexpr phred_type offset_phred{0};
+        value = c;
+    }
 
-        // implicit compatibility to inner_type
-        constexpr illumina18 & operator =(integral_type const c)
-        {
-            value = c;
-        }
+    // comparison ops
+    constexpr bool operator ==(const illumina18 & rhs)
+    {
+        return this->value == rhs.value;
+    }
 
-        // comparison ops
-        constexpr bool operator ==(const illumina18 & rhs)
-        {
-            return this->value == rhs.value;
-        }
+    constexpr bool operator !=(const illumina18 & rhs)
+    {
+        return this->value != rhs.value;
+    }
 
-        constexpr bool operator !=(const illumina18 & rhs)
-        {
-            return this->value != rhs.value;
-        }
+    constexpr bool operator <(const illumina18 & rhs)
+    {
+        return this->value < rhs.value;
+    }
 
-        constexpr bool operator <(const illumina18 & rhs)
-        {
-            return this->value < rhs.value;
-        }
+    constexpr bool operator >(const illumina18 & rhs)
+    {
+        return this->value > rhs.value;
+    }
 
-        constexpr bool operator >(const illumina18 & rhs)
-        {
-            return this->value > rhs.value;
-        }
+    constexpr bool operator <=(const illumina18 & rhs)
+    {
+        return this->value <= rhs.value;
+    }
 
-        constexpr bool operator <=(const illumina18 & rhs)
-        {
-            return this->value <= rhs.value;
-        }
+    constexpr bool operator >=(const illumina18 & rhs)
+    {
+        return this->value >= rhs.value;
+    }
 
-        constexpr bool operator >=(const illumina18 & rhs)
-        {
-            return this->value >= rhs.value;
-        }
+    // explicit compatibility to char
+    explicit constexpr operator char() const
+    {
+        return to_char();
+    }
 
-        // explicit compatibility to char
-        explicit constexpr operator char() const
-        {
-            return to_char();
-        }
+    constexpr char_type to_char() const
+    {
+        return value + offset_char;
+    }
 
-        constexpr char_type to_char() const
-        {
-            return value + offset_char;
-        }
+    constexpr illumina18 from_char(char_type const c)
+    {
+        value = c - '!';
+        return *this;
+    }
 
-        constexpr illumina18 from_char(char_type const c)
-        {
-            value = c - '!';
-            return *this;
-        }
+    // explicit compatibility to integral
+    constexpr integral_type to_integral() const
+    {
+        return value;
+    }
 
-        // explicit compatibility to integral
-        constexpr integral_type to_integral() const
-        {
-            return value;
-        }
+    constexpr illumina18 from_integral(integral_type const c)
+    {
+        value = c;
+        return *this;
+    }
 
-        constexpr illumina18 from_integral(integral_type const c)
-        {
-            value = c;
-            return *this;
-        }
+    constexpr illumina18 from_phred(phred_type const p)
+    {
+        value = p - offset_phred;
+        return *this;
+    }
 
-        constexpr illumina18 from_phred(phred_type const p)
-        {
-            value = p - offset_phred;
-            return *this;
-        }
+    constexpr phred_type to_phred() const
+    {
+        return value + offset_phred;
+    }
 
-        constexpr phred_type to_phred() const
-        {
-            return value + offset_phred;
-        }
-
-        static constexpr integral_type value_size{42};
-    };
+    static constexpr integral_type value_size{42};
+};
 
     static_assert(quality_concept<illumina18>);
+    static_assert(detail::internal_quality_concept<illumina18>);
 
 }  // namespace seqan3
