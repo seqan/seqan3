@@ -36,7 +36,7 @@
 // Test cases for the biological dna5 alphabet.
 // ==========================================================================
 
-#include <seqan3/alphabet/nucleotide/dna5_sequence.hpp>
+#include <seqan3/alphabet/nucleotide/dna5_container.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
 #include <vector>

@@ -36,7 +36,7 @@
 
 #include <gtest/gtest.h>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/aa27_sequence.hpp>
+#include <seqan3/alphabet/aminoacid/aa27_container.hpp>
 
 using namespace seqan3;
 

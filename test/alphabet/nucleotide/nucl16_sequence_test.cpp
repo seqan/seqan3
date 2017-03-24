@@ -38,7 +38,7 @@
 
 #include <gtest/gtest.h>
 #include <seqan3/alphabet/nucleotide/nucl16.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16_sequence.hpp>
+#include <seqan3/alphabet/nucleotide/nucl16_container.hpp>
 
 using namespace seqan3;
 
