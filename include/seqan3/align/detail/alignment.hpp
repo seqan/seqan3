@@ -40,6 +40,8 @@
 #include <type_traits>
 #include <iostream>
 #include <utility>
+#include <cstdio>
+#include "../../alphabet/nucleotide/dna4_container.hpp"
 
 namespace seqan3
 {
@@ -61,7 +63,8 @@ public:
     std::size_t const depth = sizeof...(remaining_ts) + 1ul;
 
     //! Constructor that allows to pass sequences directly.
-    constexpr alignment(first_t && v1, remaining_ts && ...v2) : std::tuple<first_t, remaining_ts...>(v1, std::forward<remaining_ts>(v2)...){};
+    constexpr alignment(first_t && v1, remaining_ts && ...v2)
+        : std::tuple<first_t, remaining_ts...>(v1, std::forward<remaining_ts>(v2)...){};
 };
 
 //! Alignment class template deduction as for tuple.
@@ -74,8 +77,43 @@ namespace detail
 template <typename stream_t, typename tuple_t, size_t ...idx>
 void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_sequence<idx...> const & /**/)
 {
-    auto stream_f = [&stream] (auto const & aligned_sequence) { stream << aligned_sequence << '\n'; };
-    (stream_f(std::get<idx>(tuple)), ...);
+    std::size_t const alignment_length = std::get<0>(tuple).size();
+    char buf[9];
+
+    // split alignment into blocks of length 50 and loop over parts
+    for (std::size_t used_length = 0; used_length < alignment_length; used_length += 50)
+    {
+        // write header
+        std::snprintf(buf, 9, "%7lu ", used_length);
+        stream << std::endl << buf;
+        for (std::size_t col = 1; col <= 50 && col + used_length <= alignment_length; ++col)
+        {
+            if (col % 10 == 0)     stream << ':';
+            else if (col % 5 == 0) stream << '.';
+            else                   stream << ' ';
+        }
+
+        // write sequences
+        const char * indent = "        ";
+        stream << std::endl << indent << std::get<0>(tuple).substr(used_length, 50);
+        auto stream_f = [&]
+            (auto const & previous_sequence, auto const & aligned_sequence)
+        {
+            stream << std::endl << indent;
+            auto seq1 = previous_sequence.begin() + used_length;
+            auto seq2 = aligned_sequence.begin() + used_length;
+            for (auto it1 = seq1, it2 = seq2;
+                 it1 < previous_sequence.end() && it1 < seq1 + 50 &&
+                 it2 < aligned_sequence.end()  && it2 < seq2 + 50;
+                 ++it1, ++it2)
+            {
+                stream << (*it1 == *it2 ? '|' : ' ');
+            }
+            stream << std::endl << indent << aligned_sequence.substr(used_length, 50);
+        };
+        (stream_f(std::get<idx>(tuple), std::get<idx + 1>(tuple)), ...);
+        stream << std::endl;
+    }
 }
 
 } // namespace detail
@@ -84,7 +122,8 @@ void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_seque
 template <typename stream_type, typename ...ts>
 stream_type & operator<<(stream_type & outstream, alignment<ts...> const & align)
 {
-    detail::stream_alignment(outstream, align, std::make_index_sequence<sizeof...(ts)>{});
+    static_assert(sizeof...(ts) >= 2);
+    detail::stream_alignment(outstream, align, std::make_index_sequence<sizeof...(ts) - 1>{});
     return outstream;
 }
 
