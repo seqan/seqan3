@@ -43,6 +43,9 @@
 namespace seqan3
 {
 
+//! A Concept that a sequence_file_in_format object must satisfy
+/*! When you want to add your own file format it must satisfy this concept.
+ */
 template <typename t>
 concept bool sequence_file_format_concept = requires (t v,
                                                       std::istream istr,

@@ -45,18 +45,36 @@ namespace seqan3::detail
 // file_base
 // ==================================================================
 
+//! The base file format
+/*! This class is used to suplly all file formats with basic functionality
+ * like opening the stream and inferring the compression or file format.
+ */
 template <typename file_base_traits>
 class file_base
 {
 public:
     /* types */
-    using stream_type = typename file_base_traits::stream_type;
-    using valid_format_types = typename file_base_traits::valid_format_types;
+    using stream_type = typename file_base_traits::stream_type; //!< The stream type to write or read from
+    using valid_format_types = typename file_base_traits::valid_format_types; //!< The valid format types to choose from
 
 protected:
 
-    /* constructors */
-    // constructor with arg
+    //! constructor with file name argument
+    /*!
+     * Passing a file name (path) as an argument to the constructor will open
+     * the stream using this name.
+     *
+     * Note: The sequence file format will automatically be deduced by
+     * the extension file name extension:
+     *
+     *    -# Check whether a valid compression format was used. Is so, strip the
+     *        strip the file name and continue, if not continue with the original
+     *        file name
+     *
+     *    -# Check every valid file format in `valid_format_types` for their
+     *        extension identifiers in `file_extensions` and choose the according
+     *        format. this function will __throw__ when the format cannot be inferred.
+     */
     file_base(std::experimental::filesystem::path _file_name)
     {
         stream.open(_file_name, std::ios::binary); // open stream
@@ -71,17 +89,36 @@ protected:
     file_base & operator=(file_base const &) = delete;
 
     // move construction and assignment are defaulted
-    file_base(file_base &&) = default;
-    file_base & operator=(file_base &&) = default;
-
-    ~file_base() = default;
+    file_base(file_base &&) = default; //!< default move constructor
+    file_base & operator=(file_base &&) = default; //!< default assignment move constructor
+    ~file_base() = default; //!< default deconstructor
 
     /* member variables */
-    stream_type stream;
-    valid_format_types format;
+    stream_type stream; //!< the stream object to read from or write to.
+    valid_format_types format; //!< the format object to use for tag dispatching
 
     /* member functions */
+    //! Helper function to select the compression format
+    /*!
+     * This function goes through the valid_compression_formats of the traits
+     * object (see e.g. `sequence_file_in_default_traits`) and compares the
+     * extension identifier to infer the compression format.
+     * If a compression format is found by a matching extension the file_name
+     * is stripped of the extension otherwise it is return directly.
+     * \param file_name the file name (path).
+     * \return file_name (stripped from valid compression format extension).
+     */
     std::experimental::filesystem::path select_compression_format(std::experimental::filesystem::path & file_name);
+    //! Helper function to select the file format
+    /*!
+     * This function iterates over the valid_format_types (std::variant) using the template
+     * parameter index.
+     * For each type the `file_extensions` list is scanned for the
+     * file name extension `ext`. If ext is matched to a format, an instantiation
+     * of the type is assigned to the `format` member variable of the file object.
+     * If no format can be inferred the function __throws__ an error.
+     * \param ext the file name extension (e.g. ".fa").
+     */
     template <size_t index>
     void select_format(std::experimental::filesystem::path const & ext);
 };

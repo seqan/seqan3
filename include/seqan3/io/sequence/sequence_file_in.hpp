@@ -55,6 +55,10 @@ namespace seqan3
 // sequence_file_in_traits
 // ==================================================================
 
+//! A Concept that a sequence_file_in_traits object must satisfy
+/*! When you want to instantiate a `sequence_file_in` object with
+ * your own traits specification they must satisfy this concept.
+ */
 template <typename t>
 concept bool sequence_file_in_traits_concept = requires (t v)
 {
@@ -68,15 +72,43 @@ concept bool sequence_file_in_traits_concept = requires (t v)
     t::valid_compression_formats;
 };
 
+//! The default configuration of seqan3::sequence_file_in
+/*!
+ * This implies the equivalence of
+ * `seqan3::sequence_file_in{"myfile.fa"}` and
+ * `seqan3::sequence_file_in<seqan3::sequence_file_in_default_traits>{"myfile.fa"}`.
+ */
 struct sequence_file_in_default_traits
 {
-    using stream_type = std::ifstream;
+    using stream_type = std::ifstream; //!< The default stream type is std::ifstream
+    //! The default format types of the sequence file
+    /*!
+     * The valid types are stored as an `std::variant` of formats where each format
+     * satisfies the sequence_file_format_concept.
+     * Valid sequence formats by default are:
+     * [fasta](https://www.genomatix.de/online_help/help/sequence_formats.html#FASTA),
+     * [fastq](https://www.genomatix.de/online_help/help/sequence_formats.html#FASTQ),
+     * [embl](https://www.genomatix.de/online_help/help/sequence_formats.html#EMBL),
+     * [genebank](https://www.genomatix.de/online_help/help/sequence_formats.html#GB),
+     * and
+     * [raw](https://www.genomatix.de/online_help/help/sequence_formats.html#plain).
+     */
     using valid_format_types = std::variant<sequence_file_format_fasta/*,
                                        sequence_file_format_fastq,
                                        sequence_file_format_embl,
                                        sequence_file_format_genbank,
                                        sequence_file_format_raw*/>;
+    //! The default compression types that are supported
+    /*!
+      The compression types are stored as an `std::variant` of formats, which by
+      default depend on the availability of external libraries like ZLIB.
+    */
     using valid_compressions = std::variant<decltype(std::ignore)>;
+    //! static member variable that stores valid compression formats
+    /*!
+      The valid_compression_formats stores pair of a compression format and its
+      corresponding file extension as an identifier. Example: {".gz", compression_format_zlib}.
+    */
     static inline std::vector<std::pair<std::string, valid_compressions>> valid_compression_formats{};
 };
 
@@ -84,37 +116,104 @@ struct sequence_file_in_default_traits
 // sequence_file_in
 // ==================================================================
 
+//! A class that features reading sequence files from a stream
+/*!
+ * Use an instantiation of this class to read from a stream. You can specialize
+ * the `sequence_file_in` object by specifying a `sequence_file_in_traits` as an
+ * template argument otherwise the class is defaulted with `sequence_file_in_default_traits`.
+ *
+ * Example:
+ *  \code{.cpp}
+ *
+ * int main()
+ * {
+ *     dna4_string seq;
+ *     std::string id;
+ *
+ *     seqan3::sequence_file_in file_in{"input.fasta"};
+ *
+ *     file_in.read(seq, id);
+ * }
+ * \endcode
+ *
+ * \sa sequence_file_in_default_traits
+ */
 template <typename sequence_file_in_traits = sequence_file_in_default_traits>
     requires sequence_file_in_traits_concept<sequence_file_in_traits>
 class sequence_file_in : protected detail::file_base<sequence_file_in_traits>
 {
 public:
-    /* types */
-    using detail::file_base<sequence_file_in_traits>::stream_type;
-    using detail::file_base<sequence_file_in_traits>::valid_format_types;
 
     /* constructors */
+    //! constructor with file name argument
+    /*!
+     * Passing a file name (path) as an argument to the constructor will open
+     * the stream using this name.
+     *
+     * Note: The sequence file format will automatically be deduced by
+     * the extension file name extension:
+     *
+     *    -# Check whether a valid compression format was used. Is so, strip the
+     *        strip the file name and continue, if not continue with the original
+     *        file name
+     *
+     *    -# Check every valid file format in `valid_format_types` for their
+     *        extension identifiers in `file_extensions` and choose the according
+     *        format. this function will __throw__ when the format cannot be inferred.
+     */
     explicit sequence_file_in(std::experimental::filesystem::path _file_name) :
         detail::file_base<sequence_file_in_traits>(std::move(_file_name)) {};
     sequence_file_in() = delete;
     sequence_file_in(sequence_file_in const &) = delete;
     sequence_file_in & operator=(sequence_file_in const &) = delete;
-    sequence_file_in(sequence_file_in &&) = default;
-    sequence_file_in & operator=(sequence_file_in &&) = default;
-    ~sequence_file_in() = default;
+    sequence_file_in(sequence_file_in &&) = default; //!< default move constructor
+    sequence_file_in & operator=(sequence_file_in &&) = default; //!< default move assignment constructor
+    ~sequence_file_in() = default; //!< default deconstructor
 
-    /* options */
+    //! A struct holding additional features for the sequence_file_in object
+    /*!
+     * The options_type struct stores three std::functions that can alter the
+     * sequence information directly while reading. The default functions do not
+     * change the input but you can assign different function that crop, replace
+     * or append to the sequence information (sequence_filter), the meta
+     * information (meta_filter) or the quality information (qual_filter).
+     *
+     * For example this code snippet will only extract the first 5 characters
+     * of the sequence identifier (meta information):
+     *
+     * Example:
+     *
+     * \code{.cpp}
+     * int main()
+     * {
+     *      dna4_string seq;
+     *      std::string id;
+     *
+     *      seqan3::sequence_file_in file_in{"input.fasta"};
+     *
+     *      // crop the meta information
+     *      file_in.options.meta_filter = [](std::string & in){return in.substr(0, 5);};
+     *
+     *      file_in.read(seq, id);
+     * }
+     * \endcode
+     */
     struct options_type
     {
         // post-processing filters that operate on buffer before assignment to out-value
-        std::function<void(std::string &)> sequence_filter = [] (std::string & seq) {};
-        std::function<void(std::string &)> meta_filter = [] (std::string & meta) {};
-        std::function<void(std::string &)> qual_filter = [] (std::string & qual) {};
+        std::function<void(std::string &)> sequence_filter = [] (std::string & seq) {}; //!< alters the raw sequence
+        std::function<void(std::string &)> meta_filter = [] (std::string & meta) {}; //!< alters meta information
+        std::function<void(std::string &)> qual_filter = [] (std::string & qual) {}; //!< alters the quality sequence
     };
-    options_type options;
+    options_type options; //!< holds the filter functions
 
-    /* member functions */
     // TODO make the requirements stricter
+    //! reads a single record from the stream and into the given arguments
+    /*!
+     * \param seq the raw sequence information.
+     * \param meta the meta information (e.g. the sequence identifier/name).
+     * \param qual the quality information.
+     */
     template <typename sequence_type, typename meta_type, typename qual_type>
         requires sequence_concept<std::decay_t<sequence_type>> &&
                  sequence_concept<std::decay_t<meta_type>> &&
@@ -123,6 +222,14 @@ public:
               meta_type && meta = std::string{},
               qual_type && qual = std::string{});
 
+    // TODO make the requirements stricter
+    //! reads many or all information from the stream appending it to the given arguments
+    /*!
+     * \param seqs a container of sequences to append to.
+     * \param metas a container of meta information to append to.
+     * \param quals a container of quality information.
+     * \param max_records limit the number of records to read to max_records.
+     */
     template <typename seqs_type, typename metas_type, typename quals_type>
         requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
                  sequence_of_sequence_concept<std::decay_t<metas_type>> &&

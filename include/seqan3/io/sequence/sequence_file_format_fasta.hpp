@@ -42,13 +42,31 @@
 
 namespace seqan3
 {
-
+//! The fasta Format
+/*! This struct satisfies the `sequence_file_format_concept` and implements
+ * read and write function for the
+ * [fasta](https://www.genomatix.de/online_help/help/sequence_formats.html#FASTA) format.
+ */
 struct sequence_file_format_fasta
 {
 public:
+    //! static member variable storing the file extensions
+    /*!
+     * The file extensions identify the format and are used for automated
+     * format deduction when instantiating a `sequence_file_in` object.
+     * Note: The extensions must be passed with a dot in front (e.g. ".fa")
+     */
     static inline std::vector<std::string> file_extensions {{".fasta"},{".fa"}};
 
     //TODO make the requirements stricter
+    //! reads a single record from the stream and into the given arguments
+    /*!
+     * \param seq the raw sequence information.
+     * \param meta the meta information (e.g. the sequence identifier/name).
+     * \param qual the quality information.
+     * \param stream a stream to read from (e.g. std::ifstream).
+     * \param options a struct containing additional options. See `seq_file_in::options_type`.
+     */
     template <typename sequence_type,
               typename meta_type,
               typename qual_type,
@@ -63,6 +81,15 @@ public:
               stream_type & stream,
               options_type const & options);
 
+    //! reads many or all information from the stream appending it to the given arguments
+    /*!
+     * \param seqs a container of sequences to append to.
+     * \param metas a container of meta information to append to.
+     * \param quals a container of quality information.
+     * \param stream a stream to read from (e.g. std::ifstream).
+     * \param options a struct containing additional options. See `seq_file_in::options_type`.
+     * \param max_records limit the number of records to read to max_records.
+     */
     template <typename seqs_type,
               typename metas_type,
               typename quals_type,
@@ -78,6 +105,14 @@ public:
               options_type const & options,
               size_t max_records = 0);
 
+   //! writes a single record to the stream
+   /*!
+    * \param seq a container of sequences to append to.
+    * \param meta a container of meta information to append to.
+    * \param qual a container of quality information.
+    * \param stream a stream to write to (e.g. std::ofstream).
+    * \param options a struct containing additional options. See `seq_file_out::options_type`.
+    */
     template <typename sequence_type,
               typename meta_type,
               typename qual_type,
@@ -92,6 +127,15 @@ public:
                stream_type & stream,
                options_type const & options);
 
+   //! writes a many or all single record to the stream
+   /*!
+    * \param seqs a container of sequences to append to.
+    * \param metas a container of meta information to append to.
+    * \param quals a container of quality information.
+    * \param stream a stream to write to (e.g. std::ofstream).
+    * \param options a struct containing additional options. See `seq_file_out::options_type`.
+    * \param max_records the number of records to write to the stream.
+    */
     template <typename seqs_type,
               typename metas_type,
               typename quals_type,
