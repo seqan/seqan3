@@ -31,59 +31,55 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell@fu-berlin.de>
-// Author: Marcel Ehrhardt <marcel.ehrhardt@fu-berlin.de>
 // Author: David Heller <david.heller@fu-berlin.de>
 // ==========================================================================
 
-#pragma once
+#include <seqan3/alphabet/gap/gap.hpp>
+#include <gtest/gtest.h>
+#include <sstream>
 
-#include <optional>
+using namespace seqan3;
 
-#include "../alphabet.hpp"
-
-namespace seqan3
+TEST(gap_test, test_alphabet_concept)
 {
+    EXPECT_TRUE(alphabet_concept<gap>);
+}
 
-struct gap
+TEST(gap_test, test_default_initialization)
 {
-    /* types */
-    using char_type = char;
-    using integral_type = bool;
-    using c_type = bool;
+    EXPECT_EQ(gap{}.to_char(), '-');
+}
 
-    /* member */
-    static constexpr c_type value = 0;
+TEST(gap_test, test_implicit_inner_type_compatibility)
+{
+    EXPECT_EQ(gap{}, false);
+}
 
-    static constexpr integral_type value_size{1};
+TEST(gap_test, test_relations)
+{
+    EXPECT_EQ(gap{}, gap{});
+}
 
-    /* public member functions */
-    constexpr operator c_type() const
-    {
-        return value;
-    }
+TEST(gap_test, test_stream_operator)
+{
+    std::stringstream ss;
+    ss << gap{} << gap{} << gap{};
+    EXPECT_EQ(ss.str(), "---");
+}
 
-    constexpr char_type to_char() const
-    {
-        return '-';
-    }
+TEST( gap_test, test_from_char)
+{
+    EXPECT_EQ(gap{}.from_char('-'), gap{});
+    EXPECT_EQ(gap{}.from_char('x'), gap{});
+}
 
-    constexpr integral_type to_integral() const
-    {
-        return static_cast<integral_type>(value);
-    }
+TEST(gap_test, test_to_integral)
+{
+    EXPECT_EQ(gap{}.to_integral(), 0);
+}
 
-    constexpr gap from_char(char_type const in)
-    {
-        return *this;
-    }
-
-    constexpr gap from_integral(integral_type const in)
-    {
-        return *this;
-    }
-};
-
-static_assert(alphabet_concept<gap>);
-
+TEST(gap_test, test_from_integral)
+{
+    EXPECT_EQ(gap{}.from_integral(0), gap{});
+    EXPECT_EQ(gap{}.from_integral(13), gap{});
 }
