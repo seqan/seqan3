@@ -44,6 +44,7 @@
 #include <functional>
 
 #include "../../container/concepts.hpp"
+#include "../detail/file_base.hpp"
 #include "sequence_file_format.hpp"
 #include "sequence_file_format_fasta.hpp"
 
@@ -58,9 +59,9 @@ template <typename t>
 concept bool sequence_file_in_traits_concept = requires (t v)
 {
     typename t::stream_type;
-    typename t::valid_formats;
-    requires detail::meets_sequence_file_format_concept<typename t::valid_formats>(
-        std::make_index_sequence<std::variant_size_v<typename t::valid_formats>>{}
+    typename t::valid_format_types;
+    requires detail::meets_sequence_file_format_concept<typename t::valid_format_types>(
+        std::make_index_sequence<std::variant_size_v<typename t::valid_format_types>>{}
     );
     t::valid_compression_formats;
 };
@@ -68,7 +69,7 @@ concept bool sequence_file_in_traits_concept = requires (t v)
 struct sequence_file_in_default_traits
 {
     using stream_type = std::ifstream;
-    using valid_formats = std::variant<sequence_file_format_fasta/*,
+    using valid_format_types = std::variant<sequence_file_format_fasta/*,
                                        sequence_file_format_fastq,
                                        sequence_file_format_embl,
                                        sequence_file_format_genbank,
@@ -83,36 +84,35 @@ struct sequence_file_in_default_traits
 
 template <typename sequence_file_in_traits = sequence_file_in_default_traits>
     requires sequence_file_in_traits_concept<sequence_file_in_traits>
-class sequence_file_in
+class sequence_file_in : public detail::file_base<sequence_file_in_traits>
 {
 public:
-    using stream_type = typename sequence_file_in_traits::stream_type;
-    using valid_formats = typename sequence_file_in_traits::valid_formats;
+    /* types */
+    using stream_type = typename detail::file_base<sequence_file_in_traits>::stream_type;
+    using valid_format_types = typename detail::file_base<sequence_file_in_traits>::valid_format_types;
 
-    // constructor with arg
-    sequence_file_in(std::string const & _file_name)
-    {
-        file_name = _file_name;
-        // open stream
-        stream.open(_file_name, std::ios::binary);
-
-        // initialize format handler
-        std::string ext = get_file_extension(select_compression_format(_file_name));
-        select_format<0>(ext);
-    }
-
-    // copy construction and assignment are deleted
-    // implicitly because we don't want multiple access to file
+    /* constructors */
+    sequence_file_in(std::experimental::filesystem::path _file_name) :
+        detail::file_base<sequence_file_in_traits>(_file_name) {};
     sequence_file_in() = delete;
     sequence_file_in(sequence_file_in const &) = delete;
     sequence_file_in & operator=(sequence_file_in const &) = delete;
-
-    // move construction, assignment and destructor are defaulted
     sequence_file_in(sequence_file_in &&) = default;
     sequence_file_in & operator=(sequence_file_in &&) = default;
     ~sequence_file_in() = default;
 
-    //TODO make the requirements stricter
+    /* options */
+    struct options_type
+    {
+        // post-processing filters that operate on buffer before assignment to out-value
+        std::function<void(std::string &)> sequence_filter = [] (std::string & seq) {};
+        std::function<void(std::string &)> meta_filter = [] (std::string & meta) {};
+        std::function<void(std::string &)> qual_filter = [] (std::string & qual) {};
+    };
+    options_type options;
+
+    /* member functions */
+    // TODO make the requirements stricter
     template <typename sequence_type, typename meta_type, typename qual_type>
         requires sequence_concept<std::decay_t<sequence_type>> &&
                  sequence_concept<std::decay_t<meta_type>> &&
@@ -130,28 +130,10 @@ public:
                      quals_type && quals = std::vector<std::string>{},
                      size_t max_records = 0);
 
-    /* options */
-    struct options_type
-    {
-        // post-processing filters that operate on buffer before assignment to out-value
-        std::function<void(std::string &)> sequence_filter = [] (std::string & seq) {};
-        std::function<void(std::string &)> meta_filter = [] (std::string & meta) {};
-        std::function<void(std::string &)> qual_filter = [] (std::string & qual) {};
-    };
-    options_type options;
-
 protected:
-    /* file format */
-    std::string file_name;
-    stream_type stream;
-    valid_formats format;
-
-    /* private functions */
-    std::string select_compression_format(std::string const & filename);
-    template <size_t index>
-    void select_format(std::string const & ext);
-
-    /* buffers */
+    /* member variables */
+    using detail::file_base<sequence_file_in_traits>::format;
+    using detail::file_base<sequence_file_in_traits>::stream;
 };
 
 // ------------------------------------------------------------------
@@ -193,45 +175,6 @@ inline void sequence_file_in<sequence_file_in_traits>::read(seqs_type && seqs,
     {
         f.read(seqs, metas, quals, stream, options, max_records);
     }, format);
-}
-
-// ------------------------------------------------------------------
-// private functions
-// ------------------------------------------------------------------
-
-template <typename sequence_file_in_traits>
-std::string sequence_file_in<sequence_file_in_traits>::select_compression_format(std::string const & filename)
-{
-    for (auto const & pair : sequence_file_in_traits::valid_compression_formats)
-    {
-        if (get_file_extension(filename) == std::get<0>(pair))
-        {
-            //TODO:: std::visit([&] (auto & compressor) { stream.push(compressor); }, std::get<1>(pair));
-            return filename.substr(0, filename.rfind(".")); // return truncated file name
-        }
-    }
-    return filename; // return original file name if no compression format was found
-}
-
-template <typename sequence_file_in_traits>
-template <size_t index>
-inline void sequence_file_in<sequence_file_in_traits>::select_format(std::string const & ext)
-{
-    if constexpr (index == std::variant_size_v<valid_formats>)
-    {
-        throw std::runtime_error("No valid format found for this extension");
-    }
-    else
-    {
-        auto & file_exts = std::variant_alternative_t<index, valid_formats>::file_extensions;
-
-        if (std::find(file_exts.begin(), file_exts.end(), ext) != file_exts.end())
-        {
-            format = std::variant_alternative_t<index, valid_formats>{};
-        }
-        else
-            select_format<index+1>(ext);
-    }
 }
 
 } // namespace seqan

@@ -46,7 +46,7 @@ namespace seqan3
 struct sequence_file_format_fasta
 {
 public:
-    static inline std::vector<std::string> file_extensions {{"fasta"},{"fa"}};
+    static inline std::vector<std::string> file_extensions {{".fasta"},{".fa"}};
 
     //TODO make the requirements stricter
     template <typename sequence_type,
