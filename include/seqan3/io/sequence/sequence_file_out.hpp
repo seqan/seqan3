@@ -3,6 +3,13 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <functional>
+#include <experimental/filesystem>
+#include <io/detail/file_base.hpp>
+#include <io/container/concepts.hpp>
+#include <sequence_file_format.hpp>
+#include <sequence_file_format_fasta.hpp>
+#include <sequence_file_format_fastq.hpp>
 
 namespace seqan3
 {
@@ -15,22 +22,26 @@ namespace seqan3
 template <typename t>
 concept bool sequence_file_out_traits_concept = requires (t v)
 {
-    t::stream_type;
-    t::valid_formats;
-    requires detail::meets_sequence_file_format_concept<0, typename t::valid_formats>();
+    typename t::stream_type;
+    typename t::valid_format_types;
+    requires detail::meets_sequence_file_format_concept<typename t::valid_format_types> (
+      std::make_index_sequence<std::variant_size_v<typename t::valid_format_types>>
+      {}
+    );
     
-    t::valid_compression_formats;
+    typename t::valid_compression_formats;
 };
 
 
 struct sequence_file_out_default_traits
 {
     using stream_type = std::ofstream;
-    using valid_formats = std::variant<sequence_file_format_fasta<stream_type>,
-                                       sequence_file_format_fastq<stream_type>,
-                                       sequence_file_format_embl<stream_type>,
-                                       sequence_file_format_genbank<stream_type>,
-                                       sequence_file_format_raw<stream_type>>;
+    using valid_format_types = std::variant<sequence_file_format_fasta,
+											sequence_file_format_fastq,
+											sequence_file_format_raw
+                                     //  	sequence_file_format_embl,
+                                     //  	sequence_file_format_genbank>;
+	using valid_compressions = std::variant<decltype(std::ignore)>;								 
     static constexpr std::vector<std::pair<std::string, void>> valid_compression_formats{};
 };
 
@@ -42,73 +53,109 @@ struct sequence_file_out_default_traits
 
 template <typename sequence_file_out_traits = sequence_file_out_default_traits>
     requires sequence_file_traits_concept<sequence_file_out_traits>
-class sequence_file_out : protected sequence_file_base<sequence_file_out_traits>
+class sequence_file_out : protected detail::file_base<sequence_file_out_traits>
 {
 public:
-    /* types */
+	/* types */
+	using detail::file_base<sequence_file_out_traits>::stream_type;
+	using detail::file_base<sequence_file_out_traits>::valid_format_types;
     
-    /* constructors */
-    
-    // constructor with arg
-    sequence_file_out(std::string const & _file_name) :
-      sequence_file_base{_file_name}
-    {} 
+	/* constructors */
+     
+	// constructor with arg
+	explicit sequence_file_out(std::experimental::filesystem::path & _file_name) :
+		detail::file_base<sequence_file_out_traits>(_file_name) {};  
 
-    // copy construction and assignment are deleted
-    // implicitly because we don't want multiple access to file
-    sequence_file_out = delete;
-    sequence_file_out(sequence_file_out const &) = delete;
-    sequence_file_out & operator=(sequence_file_out const &) = delete;
+ 
+	// copy construction and assignment are deleted
+	// implicitly because we don't want multiple access to file
+	sequence_file_out() = delete;
+	sequence_file_out(sequence_file_out const &) = delete;
+	sequence_file_out & operator=(sequence_file_out const &) = delete;
 
-    // move construction and assignment are defaulted
-    sequence_file_out(sequence_file_out &&) = default;
-    sequence_file_out & operator=(sequence_file_out &&) = default;
+	// move construction and assignment are defaulted
+	sequence_file_out(sequence_file_out &&) = default;
+	sequence_file_out & operator=(sequence_file_out &&) = default;
+  
+	/* options */
+	struct options_type
+	{
+		// post-processing filters that operate on buffer before assignment to out-value
+		std::function<void(std::string &)>  sequence_filter = [] (std::string & seq)  {};
+		std::function<void(std::string &)>   meta_filter = [] (std::string & meta)   {};
+		std::function<void(std::string &)> qual_filter = [] (std::string & qual) {};
+	};
+	options_type options;
+  
+	/* member functions */
+	//TODO make the requirements stricter
+	template <typename sequence_file_out_traits>
+	template <typename sequence_type, typename meta_type, typename qual_type>
+        requires sequence_concept<std::decay_t<sequence_type>> &&
+                 sequence_concept<std::decay_t<meta_type>> &&
+                 sequence_concept<std::decay_t<qual_type>>
+    void write(sequence_type && seq, 
+			   meta_type && id = std::string{}, 
+			   qual_type && qual = std::string{});
 
-    //TODO make the requirements stricter
-    template <typename seq_type, typename id_type, typename qual_type>
-        requires container_concept<seq_type> &&
-                 container_concept<id_type> &&
-                 container_concept<qual_type>
-    void write(seq_type && seq, id_type && id, qual_type && qual);
-
-    template <typename seqs_type, typename ids_type, typename quals_type, size_t max_records = 0>
-        requires container_concept<typename seqs_type::value> &&
-                 container_concept<typename ids_type::value> &&
-                 container_concept<typename quals_type::value>
-    void write(seqs_type && seqs, ids_type && ids, quals_type && quals);
+	template <typename sequence_file_out_traits>
+    template <typename sequence_type, typename meta_type, typename qual_type>
+        requires sequence_of_sequence_concept<std::decay_t<sequence_type>> &&
+                 sequence_of_sequence_concept<std::decay_t<meta_type>> &&
+                 sequence_of_sequence_concept<std::decay_t<qual_type>>
+    void write(sequence_type && seqs, 
+			   meta_type && ids = std::vector<std::string>{},
+			   quals_type && quals = std::vector<std::string>{},
+			   size_t max_records = 0);
 
 
 protected:
     ~sequence_file_out() = default;
+	
+	/* member variables */
+	using detail::file_base<sequence_file_out_traits>::format;
+	using detail::file_base<sequence_file_out_traits>::stream;
 
 
 };
 
 
-
-template <typename seq_type, typename id_type, typename qual_type>
-    requires container_concept<seq_type> &&
-             container_concept<id_type> &&
-             container_concept<qual_type>
-inline void sequence_file_out::write(seq_type && seq, id_type && id = std::string{}, qual_type && qual = std::string{})
+template <typename sequence_file_out_traits>
+template <typename sequence_type, typename meta_type, typename qual_type>
+	requires sequence_concept<std::decay_t<sequence_type>> &&
+			 sequence_concept<std::decay_t<meta_type>> &&
+             sequence_concept<std::decay_t<qual_type>>
+inline void sequence_file_out<sequence_file_out_traits>::write(sequence_type && seq, 
+															   meta_type && id, 
+															   qual_type && qual)
 {
-    assert(!format.valueless_by_exception);
-    std::visit([&] (sequence_file_out_format_concept & f) { f->write(seq, id, qual, stream, options); }, format);
+	if ( format.valueless_by_exception() )
+        throw ParseError("format not specified!");
+	
+    std::visit([&] (sequence_file_format_concept & f) 
+	{ 
+		f.write(seq, id, qual, stream, options); 
+		
+	}, format);
+	
 }
 
-template <typename seqs_type, typename ids_type, typename quals_type, size_t num_records = 0>
-    requires container_concept<typename seqs_type::value> &&
-             container_concept<typename ids_type::value> &&
-             container_concept<typename quals_type::value>
-inline void sequence_file_out::write(seqs_type  && seqs,
-                              ids_type   && ids   = std::vector<std::string>{},
-                              quals_type && quals = std::vector<std::string>{})
+
+template <typename sequence_file_out_traits>
+template <typename sequence_type, typename meta_type, typename qual_type>
+        requires sequence_of_sequence_concept<std::decay_t<sequence_type>> &&
+                 sequence_of_sequence_concept<std::decay_t<meta_type>> &&
+                 sequence_of_sequence_concept<std::decay_t<qual_type>>
+inline void sequence_file_out<sequence_file_out_traits>::write(sequence_type && seqs, 
+															   meta_type && ids,
+															   qual_type && quals,
+															   size_t max_records)
 {
-    assert(!format.valueless_by_exception);
-    std::visit([&] (sequence_file_out_format_concept & f)
+	std::visit([&] (sequence_file_format_concept & f)
     {
-        f->write<num_records>(seqs, ids, quals, stream, options);
+        f.write(seqs, ids, quals, stream, options, max_records);
     }, format);
+	
 }
 
 
