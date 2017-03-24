@@ -31,8 +31,8 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Authors: Svenja Mehringer, Temesgen H. Dadi, Jongkyu Kim
-//          <svenja.mehringer@fu-berlin.de> <temesgen.dadi@fu-berlin.de>
+// Author: Svenja Mehringer <svenja.mehringer@fu-berlin.de>
+// Author: Temesgen H. Dadi <temesgen.dadi@fu-berlin.de>
 // ==========================================================================
 
 #pragma once
@@ -55,8 +55,8 @@ public:
               typename stream_type,
               typename options_type>
         requires sequence_concept<std::decay_t<sequence_type>> &&
-               sequence_concept<std::decay_t<meta_type>> &&
-               sequence_concept<std::decay_t<qual_type>>
+                 sequence_concept<std::decay_t<meta_type>> &&
+                 sequence_concept<std::decay_t<qual_type>>
     void read(sequence_type && seq,
               meta_type && meta,
               qual_type && qual,
@@ -87,19 +87,19 @@ public:
                  sequence_concept<std::decay_t<meta_type>> &&
                  sequence_concept<std::decay_t<qual_type>>
     void write(sequence_type && seq,
-              meta_type && meta,
-              qual_type && qual,
-              stream_type & stream,
-              options_type const & options);
+               meta_type && meta,
+               qual_type && qual,
+               stream_type & stream,
+               options_type const & options);
 
     template <typename seqs_type,
               typename metas_type,
               typename quals_type,
               typename stream_type,
               typename options_type>
-              requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
-                       sequence_of_sequence_concept<std::decay_t<metas_type>> &&
-                       sequence_of_sequence_concept<std::decay_t<quals_type>>
+        requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
+                 sequence_of_sequence_concept<std::decay_t<metas_type>> &&
+                 sequence_of_sequence_concept<std::decay_t<quals_type>>
     void write(seqs_type && seqs,
                metas_type && metas,
                quals_type && quals,
@@ -116,11 +116,12 @@ template <typename sequence_type,
      requires sequence_concept<std::decay_t<sequence_type>> &&
               sequence_concept<std::decay_t<meta_type>> &&
               sequence_concept<std::decay_t<qual_type>>
-void sequence_file_format_fasta::read(sequence_type && seq,
-                                      meta_type && meta,
-                                      qual_type && qual,
-                                      stream_type & stream,
-                                      options_type const & options)
+inline void
+sequence_file_format_fasta::read(sequence_type && seq,
+                                 meta_type && meta,
+                                 qual_type && qual,
+                                 stream_type & stream,
+                                 options_type const & options)
 {
     // TODO:: tokenization
 }
@@ -133,12 +134,13 @@ template <typename seqs_type,
     requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
              sequence_of_sequence_concept<std::decay_t<metas_type>> &&
              sequence_of_sequence_concept<std::decay_t<quals_type>>
-void sequence_file_format_fasta::read(seqs_type && seqs,
-                                      metas_type && metas,
-                                      quals_type && quals,
-                                      stream_type & stream,
-                                      options_type const & options,
-                                      size_t max_records)
+inline void
+sequence_file_format_fasta::read(seqs_type && seqs,
+                                 metas_type && metas,
+                                 quals_type && quals,
+                                 stream_type & stream,
+                                 options_type const & options,
+                                 size_t max_records)
 {
     // TODO:: fill containers using read()
 }

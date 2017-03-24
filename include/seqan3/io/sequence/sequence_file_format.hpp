@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4_container.hpp>
 #include <string>
 #include <fstream>
+#include "../../alphabet/nucleotide/dna4_container.hpp"
 
 namespace seqan3
 {
@@ -65,7 +65,7 @@ concept bool sequence_file_format_concept = requires (t v,
                 std::string{},    // meta
                 std::string{},    // quality
                 ostr,             // stream
-                int{})            // options (options_type is not defined
+                int{})            // options (options_type is not defined)
     };
 };
 
@@ -75,7 +75,6 @@ namespace detail
 template <typename variant_type, std::size_t ...idx>
 constexpr bool meets_sequence_file_format_concept(std::index_sequence<idx...>)
 {
-    static_assert((sequence_file_format_concept<std::variant_alternative_t<idx, variant_type>> && ...)) ;
     return (sequence_file_format_concept<std::variant_alternative_t<idx, variant_type>> && ...);
 }
 
