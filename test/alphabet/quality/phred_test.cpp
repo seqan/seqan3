@@ -155,7 +155,7 @@ TEST(illumina18_from_phred, from_phred)
     EXPECT_EQ(9, to_integral(illu));
 }
 
-TEST(illumina18_to_phred, from_phred)
+TEST(illumina18_to_phred, to_phred)
 {
     illumina18 illu;
     EXPECT_EQ(0, to_phred(illu));
