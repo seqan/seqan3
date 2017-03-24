@@ -36,10 +36,13 @@
 
 #pragma once
 
-#include "concepts/stl.hpp"
-#include "concepts/ranges.hpp"
+#include <container/concepts.hpp>
 
-/*!\file concepts.hpp
- * \brief Concepts of ranges and containers
- * \ingroup container
+/*!\defgroup container
+ *
+ * The container module contains adaptations and concepts for ranges and containers, as well
+ * as implementations of novel containers.
+ *
+ * TODO more details.
  */
+
