@@ -71,41 +71,48 @@ concept bool internal_alphabet_concept = requires (t t1)
 };
 } // namespace seqan3::detail
 
+/* type metafunctions */
+
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-struct alphabet_char
+struct underlying_char
 {
     using type = typename alphabet_type::char_type;
 };
 template <typename alphabet_type>
-using alphabet_char_t = typename alphabet_char<alphabet_type>::type;
+using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-struct alphabet_integral
+struct underlying_integral
 {
     using type = typename alphabet_type::integral_type;
 };
 template <typename alphabet_type>
-using alphabet_integral_t = typename alphabet_integral<alphabet_type>::type;
+using underlying_integral_t = typename underlying_integral<alphabet_type>::type;
 
-template <typename alphabet_type>
-     requires detail::internal_alphabet_concept<alphabet_type>
-constexpr auto value_size(alphabet_type const &)
-{
-    return alphabet_type::value_size;
-}
+/* value metafunctions */
 
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_char_t<alphabet_type> to_char(alphabet_type const & c)
+struct alphabet_size
+{
+    static constexpr underlying_integral_t<alphabet_type> value = alphabet_type::value_size;
+};
+template <typename alphabet_type>
+constexpr underlying_integral_t<alphabet_type> alphabet_size_v = alphabet_size<alphabet_type>::value;
+
+/* free functions */
+template <typename alphabet_type>
+    requires detail::internal_alphabet_concept<alphabet_type>
+constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const & c)
 {
     return c.to_char();
 }
 
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_integral_t<alphabet_type> to_integral(alphabet_type const & c)
+constexpr underlying_integral_t<alphabet_type> to_integral(alphabet_type const & c)
 {
     return c.to_integral();
 }
@@ -137,11 +144,11 @@ concept bool alphabet_concept = requires (t t1, t t2)
     requires std::is_swappable_v<t> == true;
 
     // static data members
-    { value_size(t1) };
+    alphabet_size<t>::value;
 
     // conversion from/to char
-    { to_char(t1)     } -> alphabet_char_t<t>;
-    { to_integral(t1) } -> alphabet_integral_t<t>;
+    { to_char(t1)     } -> underlying_char_t<t>;
+    { to_integral(t1) } -> underlying_integral_t<t>;
 
     { from_char(t1, 0)     } -> t;
     { from_integral(t1, 0) } -> t;
