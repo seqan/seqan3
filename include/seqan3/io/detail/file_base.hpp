@@ -46,7 +46,7 @@ namespace seqan3::detail
 // ==================================================================
 
 //! The base file format
-/*! This class is used to suplly all file formats with basic functionality
+/*! This class is used to supply all file formats with basic functionality
  * like opening the stream and inferring the compression or file format.
  */
 template <typename file_base_traits>
@@ -54,7 +54,7 @@ class file_base
 {
 public:
     /* types */
-    using stream_type = typename file_base_traits::stream_type; //!< The stream type to write or read from
+    using stream_type        = typename file_base_traits::stream_type;        //!< The stream type to write or read from
     using valid_format_types = typename file_base_traits::valid_format_types; //!< The valid format types to choose from
 
 protected:
@@ -75,7 +75,7 @@ protected:
      *        extension identifiers in `file_extensions` and choose the according
      *        format. this function will __throw__ when the format cannot be inferred.
      */
-    file_base(std::experimental::filesystem::path _file_name)
+    explicit file_base(std::experimental::filesystem::path _file_name)
     {
         stream.open(_file_name, std::ios::binary); // open stream
         select_format<0>((select_compression_format(_file_name)).extension());
@@ -123,8 +123,12 @@ protected:
     void select_format(std::experimental::filesystem::path const & ext);
 };
 
-// ------------------------------------------------------------------
+// ==================================================================
 // protected functions
+// ==================================================================
+
+// ------------------------------------------------------------------
+// function select_compression_format
 // ------------------------------------------------------------------
 
 template <typename file_base_traits>
@@ -141,6 +145,10 @@ std::experimental::filesystem::path file_base<file_base_traits>::select_compress
     return file_name; // return original file name if no compression format was found
 }
 
+// ------------------------------------------------------------------
+// function select format
+// -----------------------------------------------------------------
+
 template <typename file_base_traits>
 template <size_t index>
 inline void file_base<file_base_traits>::select_format(std::experimental::filesystem::path const & ext)
@@ -153,7 +161,7 @@ inline void file_base<file_base_traits>::select_format(std::experimental::filesy
     {
         auto & file_exts = std::variant_alternative_t<index, valid_format_types>::file_extensions;
 
-        if (std::find(file_exts.begin(), file_exts.end(), ext) != file_exts.end())
+        if (std::find(std::begin(file_exts), std::end(file_exts), ext) != std::end(file_exts))
             format = std::variant_alternative_t<index, valid_format_types>{};
         else
             select_format<index+1>(ext);

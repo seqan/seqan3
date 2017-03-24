@@ -38,10 +38,15 @@
 
 #include <string>
 #include <fstream>
+
 #include "../../alphabet/nucleotide/dna4_container.hpp"
 
 namespace seqan3
 {
+
+// ==================================================================
+// sequence_file_format_concept
+// ==================================================================
 
 //! A Concept that a sequence_file_in_format object must satisfy
 /*! When you want to add your own file format it must satisfy this concept.
@@ -74,6 +79,10 @@ concept bool sequence_file_format_concept = requires (t v,
 
 namespace detail
 {
+
+// ------------------------------------------------------------------
+// function meets_sequence_file_format_concept
+// -----------------------------------------------------------------
 
 template <typename variant_type, std::size_t ...idx>
 constexpr bool meets_sequence_file_format_concept(std::index_sequence<idx...>)

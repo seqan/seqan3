@@ -51,9 +51,24 @@
 namespace seqan3
 {
 
+namespace detail
+{
+
 // ==================================================================
 // sequence_file_in_traits
 // ==================================================================
+
+template <typename type>
+constexpr bool is_valid_compression_type(type const &)
+{
+    return false;
+}
+
+template <typename type>
+constexpr bool is_valid_compression_type(std::vector<std::pair<std::string, type>> const &)
+{
+    return true;
+}
 
 //! A Concept that a sequence_file_in_traits object must satisfy
 /*! When you want to instantiate a `sequence_file_in` object with
@@ -70,7 +85,14 @@ concept bool sequence_file_in_traits_concept = requires (t v)
     );
 
     t::valid_compression_formats;
+    requires is_valid_compression_type(t::valid_compression_formats);
 };
+
+} // namespace detail
+
+// ==================================================================
+// sequence_file_in_default_traits
+// ==================================================================
 
 //! The default configuration of seqan3::sequence_file_in
 /*!
@@ -139,11 +161,12 @@ struct sequence_file_in_default_traits
  * \sa sequence_file_in_default_traits
  */
 template <typename sequence_file_in_traits = sequence_file_in_default_traits>
-    requires sequence_file_in_traits_concept<sequence_file_in_traits>
+    requires detail::sequence_file_in_traits_concept<sequence_file_in_traits>
 class sequence_file_in : protected detail::file_base<sequence_file_in_traits>
 {
 public:
-
+    using detail::file_base<sequence_file_in_traits>::stream_type;
+    using detail::file_base<sequence_file_in_traits>::valid_format_types;
     /* constructors */
     //! constructor with file name argument
     /*!
@@ -246,7 +269,7 @@ protected:
 };
 
 // ------------------------------------------------------------------
-// public API
+// public functions
 // ------------------------------------------------------------------
 
 template <typename sequence_file_in_traits>

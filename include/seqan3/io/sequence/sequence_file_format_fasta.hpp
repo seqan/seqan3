@@ -42,6 +42,11 @@
 
 namespace seqan3
 {
+
+// ==================================================================
+// sequence_file_format_fasta
+// ==================================================================
+
 //! The fasta Format
 /*! This struct satisfies the `sequence_file_format_concept` and implements
  * read and write function for the
@@ -56,7 +61,7 @@ public:
      * format deduction when instantiating a `sequence_file_in` object.
      * Note: The extensions must be passed with a dot in front (e.g. ".fa")
      */
-    static inline std::vector<std::string> file_extensions {{".fasta"},{".fa"}};
+    static inline std::vector<std::string> file_extensions {{".fasta"}, {".fa"}};
 
     //TODO make the requirements stricter
     //! reads a single record from the stream and into the given arguments
@@ -151,6 +156,14 @@ public:
                options_type const & options,
                size_t max_records = 0);
 };
+
+// ==================================================================
+// public functions
+// ==================================================================
+
+// ------------------------------------------------------------------
+// function read
+// ------------------------------------------------------------------
 
 template <typename sequence_type,
           typename meta_type,
