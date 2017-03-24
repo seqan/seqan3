@@ -43,6 +43,7 @@
 #include <variant>
 #include <utility>
 #include <optional>
+#include <cassert>
 #include "nucleotide/dna5.hpp"
 
 namespace seqan3
@@ -141,7 +142,7 @@ public:
         return value;
     }
 
-    constexpr union_alphabet<first_alphabet_type, alphabet_types...> from_char(char_type const c)
+    constexpr union_alphabet & from_char(char_type const c)
     {
         auto sizes_it = sizes.begin();
         auto sizes_it_end = sizes.end();
@@ -171,7 +172,7 @@ public:
         return *this;
     }
 
-    constexpr union_alphabet<first_alphabet_type, alphabet_types...> from_integral(integral_type const i)
+    constexpr union_alphabet & from_integral(integral_type const i)
     {
         assert(i < value_size);
         value = i;
