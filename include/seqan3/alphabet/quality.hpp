@@ -93,7 +93,7 @@ constexpr alphabet_type from_phred(alphabet_type & c, char const in)
 //! public getter function for integral presentation of phred score
 template <typename alphabet_type>
 requires detail::internal_quality_concept<alphabet_type>
-constexpr alphabet_char_t<alphabet_type> to_phred(alphabet_type const & c)
+constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & c)
 {
     return c.to_phred();
 }
@@ -102,7 +102,7 @@ constexpr alphabet_char_t<alphabet_type> to_phred(alphabet_type const & c)
 // concept
 // ------------------------------------------------------------------
 
-//!
+//! concept of a quality alphabet
 template<typename q>
 concept bool quality_concept = requires(q quality)
 {

@@ -39,7 +39,6 @@
 #include "../alphabet.hpp"
 #include "../quality.hpp"
 
-
 namespace seqan3
 {
 

@@ -41,16 +41,53 @@
 
 using namespace seqan3;
 
-TEST(illumina18_constructor, const_offset)
+// constructor
+TEST(illumina18_ctr, ctr)
+{
+    illumina18 illu;
+}
+
+// default copy constructor
+TEST(illumina18_cp_ctr, cp_ctr)
+{
+    illumina18 illu;
+    illumina18 illu2(illu);
+}
+
+// default destructor
+TEST(illumina18_des, des)
+{
+    illumina18* illu_ptr;
+    delete illu_ptr;
+}
+
+// cp by assignment
+TEST(illumina18_cp_ass, cp_ass)
+{
+    illumina18 illu;
+    illumina18 illu2 = illu;
+}
+
+// phred score offset
+TEST(illumina18_int_offset, int_offset)
+{
+    EXPECT_EQ(illumina18::offset_phred, 0);
+}
+
+// char offset
+TEST(illumina18_char_offset, const_offset)
 {
     EXPECT_EQ(illumina18::offset_char, '!');
 }
 
+// global and static quality alphabet size
 TEST(illumina18_alphabet_size, const_value_size)
 {
     EXPECT_EQ(illumina18::value_size, 42);
+    EXPECT_EQ(alphabet_size_v<illumina18>, 42);
 }
 
+// implicit value assignment
 TEST(illumina18_implicit_assign, implicit_assign)
 {
     illumina18 illu;
@@ -61,6 +98,7 @@ TEST(illumina18_implicit_assign, implicit_assign)
     EXPECT_EQ(illu.value, 19);
 }
 
+// char operator
 TEST(illumina18_op_char, op_char)
 {
     illumina18 illu;
@@ -69,38 +107,43 @@ TEST(illumina18_op_char, op_char)
     EXPECT_EQ(c, '!');
 }
 
-TEST(illumina18_from_char, from_char)
-{
-    illumina18 illu;
-    illu = from_char(illu, '!');
-    EXPECT_EQ(0, illu.value);
-}
-
-TEST(illumina18_op_tochar, op_to_char)
-{
-    illumina18 illu;
-    illu = 0;
-    char c = to_char(illu);
-    EXPECT_EQ(c, '!');
-    illu = 41;
-    c = to_char(illu);
-    EXPECT_EQ(c, 'J');
-}
-
 TEST(illumina18_from_integral, from_integral)
 {
     illumina18 illu;
-    illu = 0;
     illumina18 illu2 = from_integral(illu, 1);
-    EXPECT_EQ(1, illu2.value);
+    EXPECT_EQ(1, to_integral(illu2));
+    
+    illu2 = illu.from_integral(2);
+    EXPECT_EQ(2, to_integral(illu2));
 }
 
 TEST(illumina18_to_integral, to_integral)
 {
     illumina18 illu;
-    illu = 0;
-    illu = to_integral(illu);
-    EXPECT_EQ(0, illu.value);
+    illu = 19;
+    EXPECT_EQ(19, to_integral(illu));
+    EXPECT_EQ(19, illu.to_integral());
+}
+
+// global from_char operator
+TEST(illumina18_from_char, from_char)
+{
+    illumina18 illu;
+    illu = from_char(illu, '!');
+    EXPECT_EQ(0, to_integral(illu));
+}
+
+// global and internal to_char
+TEST(illumina18_op_tochar, op_to_char)
+{
+    illumina18 illu;
+    illu = 2;
+    EXPECT_EQ(to_char(illu), '#');
+    EXPECT_EQ(illu.to_char(), '#');
+    // change internal value
+    illu = 41;
+    EXPECT_EQ(to_char(illu), 'J');
+    EXPECT_EQ(illu.to_char(), 'J');
 }
 
 TEST(illumina18_from_phred, from_phred)
@@ -109,7 +152,7 @@ TEST(illumina18_from_phred, from_phred)
     illu = 7;
     illu = from_phred(illu, 9);
     seqan3::illumina18::integral_type val = illu.value;
-    EXPECT_EQ(9, illu.value);
+    EXPECT_EQ(9, to_integral(illu));
 }
 
 TEST(illumina18_to_phred, from_phred)
@@ -117,6 +160,5 @@ TEST(illumina18_to_phred, from_phred)
     illumina18 illu;
     EXPECT_EQ(0, to_phred(illu));
     illu = 39;
-    EXPECT_EQ(39, illu.value);
-
+    EXPECT_EQ(39, to_integral(illu));
 }
