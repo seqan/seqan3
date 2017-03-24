@@ -40,32 +40,100 @@
 
 #include "alphabet.hpp"
 #include <tuple>
+#include <variant>
+#include <utility>
+#include <optional>
 #include "nucleotide/dna5.hpp"
 
 namespace seqan3
 {
+
+namespace detail
+{
+template <typename tuple_t, size_t ...I>
+constexpr auto alphabet_objects(std::index_sequence<I...>)
+{
+    using variant_t = std::variant<std::tuple_element_t<I, tuple_t>...>;
+    using list_t = std::initializer_list<variant_t>;
+    return list_t{
+        variant_t{
+            std::in_place_index_t<I>{},
+            std::tuple_element_t<I, tuple_t>{}
+        }...
+    };
+}
+
+template <typename tuple_t, size_t ...I>
+constexpr auto alphabet_sizes(std::index_sequence<I...>)
+{
+    using integral_t = uint8_t;
+    using list_t = std::initializer_list<integral_t>;
+    return list_t{std::tuple_element_t<I, tuple_t>::value_size...};
+}
+
+template <size_t size>
+constexpr auto at_least_type() {
+    if constexpr(size <= 1) {
+        return bool{};
+    } else if constexpr(size <= 255u){
+        return uint8_t{};
+    } else if constexpr(size <= 65535u){
+        return uint16_t{};
+    } else if constexpr(size <= 4294967295u){
+        return uint32_t{};
+    } else {
+        return uint64_t{};
+    }
+}
+} // namespace seqan::detail
 
 template <typename first_alphabet_type, typename ...alphabet_types>
     requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
 struct union_alphabet
 {
     /* types */
+    static constexpr size_t value_size = (alphabet_types::value_size + ... + first_alphabet_type::value_size);
     using char_type = typename first_alphabet_type::char_type;
-    using integral_type = typename first_alphabet_type::integral_type;
+    using integral_type = decltype(detail::at_least_type<value_size>());
 
-    using tuple_type = std::tuple<first_alphabet_type, alphabet_types...>;
+protected:
+    using tuple_t = std::tuple<first_alphabet_type, alphabet_types...>;
+    using index_sequence_t = decltype(std::make_index_sequence<std::tuple_size_v<tuple_t>>{});
+    static constexpr auto sizes = detail::alphabet_sizes<tuple_t>(index_sequence_t{});
+    static constexpr auto alphabets = detail::alphabet_objects<tuple_t>(index_sequence_t{});
 
-    template <size_t ...I>
-    constexpr const integral_type* get_sizes(std::index_sequence<I...>) {
-        constexpr integral_type sizes[] = {std::get<I>(tuple_type)::value_size...};
-        return sizes;
-    };
-
+public:
     integral_type value;
+
+    constexpr operator integral_type() const
+    {
+        return value;
+    }
 
     constexpr char_type to_char() const
     {
-        //TODO
+        auto sizes_it = sizes.begin();
+        auto sizes_it_end = sizes.end();
+        auto alphabets_it = alphabets.begin();
+        auto size_start = 0;
+        auto size_end = 0;
+
+        std::optional<char_type> result;
+
+        while(sizes_it != sizes_it_end && !result.has_value()) {
+            size_end += *sizes_it;
+            std::visit([&](auto alphabet){
+                if(value < size_end) {
+                    result = alphabet.from_integral(value - size_start).to_char();
+                }
+            }, *alphabets_it);
+
+            size_start = size_end;
+            sizes_it++;
+            alphabets_it++;
+        }
+
+        return result.value_or(static_cast<char_type>(0));
     }
 
     constexpr integral_type to_integral() const
@@ -75,25 +143,43 @@ struct union_alphabet
 
     constexpr union_alphabet<first_alphabet_type, alphabet_types...> from_char(char_type const c)
     {
-        //TODO
+        auto sizes_it = sizes.begin();
+        auto sizes_it_end = sizes.end();
+        auto alphabets_it = alphabets.begin();
+        auto size_start = 0;
+
+        bool found = false;
+
+        while(sizes_it != sizes_it_end && !found) {
+            std::visit([&](auto alphabet){
+                alphabet.from_char(c);
+                if(alphabet.to_char() == c) {
+                    value = size_start + alphabet.to_integral();
+                    found = true;
+                }
+            }, *alphabets_it);
+
+            size_start += *sizes_it;
+            sizes_it++;
+            alphabets_it++;
+        }
+
+        if(!found) {
+            value = 0;
+        }
+
+        return *this;
     }
 
     constexpr union_alphabet<first_alphabet_type, alphabet_types...> from_integral(integral_type const i)
     {
+        assert(i < value_size);
         value = i;
         return *this;
     }
-
-    // todo autodetect type
-    static constexpr integral_type value_size = first_alphabet_type::value_size + (alphabet_types::value_size + ...);
 };
 
-using alp_t = union_alphabet<dna5, dna5>;
-
-constexpr auto alp = std::make_tuple(dna5::A, dna5::C);
-
-static_assert(detail::internal_alphabet_concept<alp_t>);
-//static_assert(alphabet_concept<alp_t>);
-static_assert(all_types_are_pod(alp));
+static_assert(detail::internal_alphabet_concept<union_alphabet<dna5, dna5>>);
+static_assert(alphabet_concept<union_alphabet<dna5, dna5>>);
 
 } // namespace seqan3
