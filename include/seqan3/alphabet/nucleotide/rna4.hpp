@@ -132,7 +132,7 @@ struct rna4
         // H,         I,            J,            K,            L,            M,            N,            O,
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //4
         // P,         Q,            R,            S,            T,            U,            V,            W,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::U,       c_type::UNKNOWN, c_type::UNKNOWN,
         // X,         Y,            Z,
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //5
         //          , a,            b,            c,            d,            e,            f,            g,
@@ -140,7 +140,7 @@ struct rna4
         // h,         i,            j,            k,            l,            m,            n,            o,
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //6
         // P,         Q,            R,            S,            T,            U,            V,            W,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN,
+        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::U,       c_type::UNKNOWN, c_type::UNKNOWN,
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //7
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //8
@@ -159,7 +159,36 @@ struct rna4
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
         c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN  //15
     };
+    
+    constexpr bool operator==(rna4 const & rhs) const
+    {
+        return value == rhs.value;
+    }
 
+    constexpr bool operator!=(rna4 const & rhs) const
+    {
+        return value != rhs.value;
+    }
+
+    constexpr bool operator<(rna4 const & rhs) const
+    {
+        return value < rhs.value;
+    }
+
+    constexpr bool operator>(rna4 const & rhs) const
+    {
+        return value > rhs.value;
+    }
+
+    constexpr bool operator<=(rna4 const & rhs) const
+    {
+        return value <= rhs.value;
+    }
+
+    constexpr bool operator>=(rna4 const & rhs) const
+    {
+        return value >= rhs.value;
+    } 
 };
 
 // shall fulfill Alphabet concept

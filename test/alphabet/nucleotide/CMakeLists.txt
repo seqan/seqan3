@@ -16,3 +16,12 @@ target_link_libraries(alphabet_nucleotide_nucl16_test ${SEQAN3_LIBRARIES})
 add_executable(alphabet_nucleotide_nucl16_sequence_test nucl16_sequence_test.cpp)
 add_test(NAME test_alphabet_nucleotide_nucl16_sequence_test COMMAND alphabet_nucleotide_nucl16_sequence_test)
 target_link_libraries(alphabet_nucleotide_nucl16_sequence_test ${SEQAN3_LIBRARIES})
+
+add_executable(rna4_test rna4_test.cpp)
+add_test(NAME test_rna4_test COMMAND rna4_test)
+target_link_libraries(rna4_test ${SEQAN3_LIBRARIES})
+
+add_executable(rna4_container_test rna4_container_test.cpp)
+add_test(NAME test_rna4_container_test COMMAND rna4_container_test)
+target_link_libraries(rna4_container_test ${SEQAN3_LIBRARIES})
+
