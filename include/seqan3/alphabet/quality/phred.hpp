@@ -116,6 +116,7 @@ struct illumina18
     //! set internal value given 1-letter code
     constexpr illumina18 from_char(char_type const c)
     {
+        assert(c >= '!' && c <= 'J');
         value = c - '!';
         return *this;
     }
