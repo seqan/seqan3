@@ -50,14 +50,16 @@ TEST(gap_test, test_default_initialization)
     EXPECT_EQ(gap{}.to_char(), '-');
 }
 
-TEST(gap_test, test_implicit_inner_type_compatibility)
+TEST(gap_test, test_static_cast)
 {
-    EXPECT_EQ(gap{}, false);
+    EXPECT_EQ(static_cast<char>(gap{}), '-');
 }
 
 TEST(gap_test, test_relations)
 {
     EXPECT_EQ(gap{}, gap{});
+    EXPECT_LE(gap{}, gap{});
+    EXPECT_GE(gap{}, gap{});
 }
 
 TEST(gap_test, test_stream_operator)

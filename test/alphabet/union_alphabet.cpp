@@ -38,9 +38,9 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/gap/gap.hpp>
-#include <seqan3/alphabet/union_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/union_alphabet.hpp>
 
 using namespace seqan3;
 
@@ -50,7 +50,23 @@ TEST(union_alphabet_test, default_ctr)
     alphabet_t{};
 }
 
-// TODO: othe constructurs
+TEST(union_alphabet_test, copy_constructor)
+{
+    using alphabet_t = union_alphabet<dna4, gap>;
+    alphabet_t letter1{};
+    alphabet_t letter2{letter1};
+
+    EXPECT_EQ(letter1, letter2);
+}
+
+TEST(union_alphabet_test, move_constructor)
+{
+    using alphabet_t = union_alphabet<dna4, gap>;
+    alphabet_t letter1{};
+    alphabet_t letter2{std::move(letter1)};
+
+    EXPECT_EQ(letter1, letter2);
+}
 
 TEST(union_alphabet_test, assignment_union_base_types)
 {
@@ -82,8 +98,6 @@ TEST(union_alphabet_test, integral_type)
     constexpr auto expect3 = std::is_same_v<alphabet3_t::integral_type, bool>;
     EXPECT_TRUE(expect3);
 }
-
-// todo: constructors
 
 TEST(union_alphabet_test, from_and_to_integral)
 {
