@@ -41,6 +41,7 @@
 #include <iostream>
 #include <utility>
 #include <cstdio>
+
 #include "../../alphabet/nucleotide/dna4_container.hpp"
 
 namespace seqan3
@@ -51,7 +52,7 @@ concept bool aligned_sequence_concept = true;
 
 //! Alignment class.
 /*!
-    An alignment is a tuple of aligned sequences.
+    An alignment is a tuple of at least two aligned sequences.
 */
 template <typename first_t, typename ...remaining_ts>
     requires aligned_sequence_concept<first_t> &&
@@ -73,7 +74,7 @@ alignment(ts...) -> alignment<ts...>;
 
 namespace detail
 {
-// Helper for output stream operator.
+//! Create the formatted alignment output and add it to a stream.
 template <typename stream_t, typename tuple_t, size_t ...idx>
 void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_sequence<idx...> const & /**/)
 {
@@ -88,9 +89,12 @@ void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_seque
         stream << std::endl << buf;
         for (std::size_t col = 1; col <= 50 && col + used_length <= alignment_length; ++col)
         {
-            if (col % 10 == 0)     stream << ':';
-            else if (col % 5 == 0) stream << '.';
-            else                   stream << ' ';
+            if (col % 10 == 0)
+                stream << ':';
+            else if (col % 5 == 0)
+                stream << '.';
+            else
+                stream << ' ';
         }
 
         // write sequences
@@ -122,7 +126,7 @@ void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_seque
 template <typename stream_type, typename ...ts>
 stream_type & operator<<(stream_type & outstream, alignment<ts...> const & align)
 {
-    static_assert(sizeof...(ts) >= 2);
+    static_assert(sizeof...(ts) >= 2, "An alignment needs at least two sequences.");
     detail::stream_alignment(outstream, align, std::make_index_sequence<sizeof...(ts) - 1>{});
     return outstream;
 }

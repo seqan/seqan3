@@ -36,20 +36,21 @@
 
 #include <gtest/gtest.h>
 #include <sstream>
-#include <seqan3/alphabet/nucleotide/dna4_container.hpp>
-#include <seqan3/align/detail/alignment.hpp>
+
+#include "../../include/seqan3/alphabet/nucleotide/dna4_container.hpp"
+#include "../../include/seqan3/align/detail/alignment.hpp"
 
 using namespace seqan3;
 using namespace seqan3::literal;
 
 TEST(alignment_class_test, constructor_and_ostream)
 {
-    seqan3::alignment align("GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCCTTCACTACGAGGGCAGGGCC"
-                                "GTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTACGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4s,
-                            "CTACGGCAGAAGAAGACATCCGAAAAAGCTGACACCTCTCGCCTACAAGCAGTTCATACCTAATGTCGCG"
-                                "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4s,
-                            "CTACGGCAGAAGAAGACATCCCAAGAAGCTGACACCTCTCGCCTACAAGCAGTTTATACCTAATGTCGCG"
-                                "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4s);
+    alignment align("GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCCTTCACTACGAGGGCAGGGCC"
+                    "GTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTACGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4s,
+                    "CTACGGCAGAAGAAGACATCCGAAAAAGCTGACACCTCTCGCCTACAAGCAGTTCATACCTAATGTCGCG"
+                    "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4s,
+                    "CTACGGCAGAAGAAGACATCCCAAGAAGCTGACACCTCTCGCCTACAAGCAGTTTATACCTAATGTCGCG"
+                    "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4s);
     std::stringstream stream;
     stream << align;
 
@@ -77,4 +78,3 @@ TEST(alignment_class_test, constructor_and_ostream)
 
     EXPECT_EQ(expected, stream.str());
 }
-
