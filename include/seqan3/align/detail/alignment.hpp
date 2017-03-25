@@ -54,28 +54,30 @@ concept bool aligned_sequence_concept = true;
 /*!
     An alignment is a tuple of at least two aligned sequences.
 */
-template <typename first_t, typename ...remaining_ts>
-    requires aligned_sequence_concept<first_t> &&
-             (aligned_sequence_concept<remaining_ts> && ...)
-class alignment : public std::tuple<first_t, remaining_ts...>
+template <typename ...sequence_ts>
+    requires (aligned_sequence_concept<sequence_ts> && ...)
+class alignment : public std::tuple<sequence_ts...>
 {
 public:
     //! The alignment depth is the number of sequences contained.
-    std::size_t const depth = sizeof...(remaining_ts) + 1ul;
+    std::size_t const depth = sizeof...(sequence_ts);
 
     //! Constructor that allows to pass sequences directly.
-    constexpr alignment(first_t && v1, remaining_ts && ...v2)
-        : std::tuple<first_t, remaining_ts...>(v1, std::forward<remaining_ts>(v2)...){};
+    constexpr alignment(sequence_ts && ...sequences)
+        : std::tuple<sequence_ts...>(std::forward<sequence_ts>(sequences)...)
+    {
+        static_assert(sizeof...(sequence_ts) > 1, "An alignment requires at least two sequences.");
+    };
 };
 
 //! Alignment class template deduction as for tuple.
-template <typename ...ts>
-alignment(ts...) -> alignment<ts...>;
+template <typename ...sequence_ts>
+alignment(sequence_ts...) -> alignment<sequence_ts...>;
 
 namespace detail
 {
 //! Create the formatted alignment output and add it to a stream.
-template <typename stream_t, typename tuple_t, size_t ...idx>
+template <typename stream_t, typename tuple_t, std::size_t ...idx>
 void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_sequence<idx...> const & /**/)
 {
     std::size_t const alignment_length = std::get<0>(tuple).size();
@@ -123,11 +125,11 @@ void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_seque
 } // namespace detail
 
 //! Formatted output stream of an alignment.
-template <typename stream_type, typename ...ts>
-stream_type & operator<<(stream_type & outstream, alignment<ts...> const & align)
+template <typename stream_type, typename ...sequence_ts>
+stream_type & operator<<(stream_type & outstream, alignment<sequence_ts...> const & align)
 {
-    static_assert(sizeof...(ts) >= 2, "An alignment needs at least two sequences.");
-    detail::stream_alignment(outstream, align, std::make_index_sequence<sizeof...(ts) - 1>{});
+    static_assert(sizeof...(sequence_ts) >= 2, "An alignment requires at least two sequences.");
+    detail::stream_alignment(outstream, align, std::make_index_sequence<sizeof...(sequence_ts) - 1>{});
     return outstream;
 }
 
