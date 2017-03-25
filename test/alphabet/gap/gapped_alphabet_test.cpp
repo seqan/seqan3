@@ -34,10 +34,12 @@
 // Author: David Heller <david.heller@fu-berlin.de>
 // ==========================================================================
 
+#include <sstream>
+
+#include <gtest/gtest.h>
+
 #include <seqan3/alphabet/gap/gapped_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <gtest/gtest.h>
-#include <sstream>
 
 using namespace seqan3;
 

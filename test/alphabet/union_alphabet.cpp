@@ -68,15 +68,6 @@ TEST(union_alphabet_test, move_constructor)
     EXPECT_EQ(letter1, letter2);
 }
 
-TEST(union_alphabet_test, assignment_union_base_types)
-{
-    // TODO:
-    // using alphabet_t = union_alphabet<dna4, dna5, gap>;
-    // alphabet_t letter1 = dna4{};
-    // alphabet_t letter2 = dna5{};
-    // alphabet_t letter3 = gap{};
-}
-
 TEST(union_alphabet_test, single_union)
 {
     using alphabet_t = union_alphabet<dna4>;

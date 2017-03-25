@@ -82,6 +82,9 @@ struct gapped_alphabet : public union_alphabet<underlying_t, gap>
     }
 };
 
+#ifndef NDEBUG
 static_assert(alphabet_concept<gapped_alphabet<dna4>>);
+static_assert(detail::internal_alphabet_concept<gapped_alphabet<dna4>>);
+#endif
 
 }

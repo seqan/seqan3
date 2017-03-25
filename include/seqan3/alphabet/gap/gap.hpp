@@ -39,6 +39,7 @@
 #pragma once
 
 #include <optional>
+#include <cassert>
 
 #include "../alphabet.hpp"
 
@@ -67,11 +68,10 @@ struct gap
     using char_type = char;
     //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
     using integral_type = bool;
-    using c_type = bool;
 
     /* member */
     //! internal value
-    static constexpr c_type value = 0;
+    static constexpr integral_type value = 0;
 
     //! The size of the alphabet, i.e. the number of different values it can take.
     static constexpr integral_type value_size{1};
@@ -92,7 +92,7 @@ struct gap
     //! return the gap's numeric value.
     constexpr integral_type to_integral() const
     {
-        return static_cast<integral_type>(value);
+        return value;
     }
 
     //! assign from a character does not do anything.
@@ -104,6 +104,7 @@ struct gap
     //! assign from a numeric value does not do anything.
     constexpr gap & from_integral(integral_type const in)
     {
+        assert(value == 0);
         return *this;
     }
 
@@ -141,6 +142,9 @@ struct gap
     //!@}
 };
 
+#ifndef NDEBUG
 static_assert(alphabet_concept<gap>);
+static_assert(detail::internal_alphabet_concept<gap>);
+#endif
 
 }

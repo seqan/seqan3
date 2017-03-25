@@ -34,9 +34,11 @@
 // Author: David Heller <david.heller@fu-berlin.de>
 // ==========================================================================
 
-#include <seqan3/alphabet/gap/gap.hpp>
-#include <gtest/gtest.h>
 #include <sstream>
+
+#include <gtest/gtest.h>
+
+#include <seqan3/alphabet/gap/gap.hpp>
 
 using namespace seqan3;
 

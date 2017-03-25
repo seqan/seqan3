@@ -158,10 +158,13 @@ public:
 
         std::optional<char_type> result;
 
-        while(sizes_it != sizes_it_end && !result.has_value()) {
+        while (sizes_it != sizes_it_end && !result.has_value())
+        {
             size_end += *sizes_it;
-            std::visit([&](auto alphabet){
-                if(value < size_end) {
+            std::visit([&](auto alphabet)
+            {
+                if (value < size_end)
+                {
                     result = alphabet.from_integral(value - size_start).to_char();
                 }
             }, *alphabets_it);
@@ -190,10 +193,13 @@ public:
 
         bool found = false;
 
-        while(sizes_it != sizes_it_end && !found) {
-            std::visit([&](auto alphabet){
+        while(sizes_it != sizes_it_end && !found)
+        {
+            std::visit([&](auto alphabet)
+            {
                 alphabet.from_char(c);
-                if(alphabet.to_char() == c) {
+                if (alphabet.to_char() == c)
+                {
                     value = size_start + alphabet.to_integral();
                     found = true;
                 }
@@ -204,7 +210,8 @@ public:
             alphabets_it++;
         }
 
-        if(!found) {
+        if (!found)
+        {
             value = 0;
         }
 
@@ -253,7 +260,9 @@ public:
     //!@}
 };
 
-static_assert(detail::internal_alphabet_concept<union_alphabet<dna5, dna5>>);
+#ifndef NDEBUG
 static_assert(alphabet_concept<union_alphabet<dna5, dna5>>);
+static_assert(detail::internal_alphabet_concept<union_alphabet<dna5, dna5>>);
+#endif
 
 } // namespace seqan3
