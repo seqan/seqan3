@@ -80,20 +80,20 @@ struct underlying_phred
 
 //! internal phred type
 template <typename alphabet_type>
-using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
+    using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
 
 //! public setter function receiving char encoding of phred score
 template <typename alphabet_type>
-requires detail::internal_quality_concept<alphabet_type>
-constexpr alphabet_type from_phred(alphabet_type & c, char const in)
+    requires detail::internal_quality_concept<alphabet_type>
+    constexpr alphabet_type from_phred(alphabet_type & c, char const in)
 {
     return c.from_phred(in);
 }
 
 //! public getter function for integral presentation of phred score
 template <typename alphabet_type>
-requires detail::internal_quality_concept<alphabet_type>
-constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & c)
+    requires detail::internal_quality_concept<alphabet_type>
+    constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & c)
 {
     return c.to_phred();
 }
