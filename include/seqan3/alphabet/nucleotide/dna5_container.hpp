@@ -78,6 +78,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to dna5_vector:
  *
+ *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
  *     // dna5_vector foo{"ACGTTA"};
  *     // dna5_vector bar = "ACGTTA";
@@ -86,6 +87,7 @@ namespace seqan3::literal
  *     dna5_vector foo{"ACGTTA"_dna5};
  *     dna5_vector bar = "ACGTTA"_dna5;
  *     auto bax = "ACGTTA"_dna5;
+ *~~~~~~~~~~~~~~~
  */
 
 inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
@@ -105,6 +107,7 @@ inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
  *
  * You can use this string literal to easily assign to dna5_vector:
  *
+ *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
  *     // dna5_string foo{"ACGTTA"};
  *     // dna5_string bar = "ACGTTA";
@@ -113,6 +116,7 @@ inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
  *     dna5_string foo{"ACGTTA"_dna5s};
  *     dna5_string bar = "ACGTTA"_dna5s;
  *     auto bax = "ACGTTA"_dna5s;
+ *~~~~~~~~~~~~~~~
  *
  * Please note the limitations of @link dna5_string @endlink and consider using the `_dna5' literal instead.
  */

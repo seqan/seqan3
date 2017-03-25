@@ -80,6 +80,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to dna4_vector:
  *
+ *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
  *     // dna4_vector foo{"ACGTTA"};
  *     // dna4_vector bar = "ACGTTA";
@@ -88,6 +89,7 @@ namespace seqan3::literal
  *     dna4_vector foo{"ACGTTA"_dna4};
  *     dna4_vector bar = "ACGTTA"_dna4;
  *     auto bax = "ACGTTA"_dna4;
+ *~~~~~~~~~~~~~~~
  */
 
 inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
@@ -105,6 +107,7 @@ inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
  *
  * You can use this string literal to easily assign to dna4_vector:
  *
+ *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
  *     // dna4_string foo{"ACGTTA"};
  *     // dna4_string bar = "ACGTTA";
@@ -113,6 +116,7 @@ inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
  *     dna4_string foo{"ACGTTA"_dna4s};
  *     dna4_string bar = "ACGTTA"_dna4s;
  *     auto bax = "ACGTTA"_dna4s;
+ *~~~~~~~~~~~~~~~
  *
  * Please note the limitations of @link dna4_string @endlink and consider using the `_dna4' literal instead.
  */
@@ -129,4 +133,3 @@ inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
 }
 
 } // namespace seqan3::literal
-
