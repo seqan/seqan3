@@ -44,6 +44,9 @@
 #include "../alphabet_container.hpp"
 #include "nucl16.hpp"
 
+/*! Containers of @link nucl16 @endlink
+ */
+
 // ------------------------------------------------------------------
 // containers
 // -----------------------------------------------------------------
@@ -53,6 +56,13 @@ namespace seqan3
 
 using nucl16_vector = std::vector<nucl16>;
 
+/*! std::basic_string of nucl16
+ *
+ * **NOTE** that we recommend using @link nucl16_vector @endlink in almost all situations.
+ * While the C++ style operations on the string are well supported, you should not access the internal c-string
+ * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
+ * correct length of the string (while the `.size()` returns the correct value).
+ */
 using nucl16_string = std::basic_string<nucl16, std::char_traits<nucl16>>;
 
 } // namespace seqan3
@@ -64,31 +74,56 @@ using nucl16_string = std::basic_string<nucl16, std::char_traits<nucl16>>;
 namespace seqan3::literal
 {
 
+/*! nucl16 literal (returns @link nucl16_vector @endlink)
+ *
+ * You can use this string literal to easily assign to nucl16_vector:
+ *
+ *     // these don't work:
+ *     // nucl16_vector foo{"ACGTTA"};
+ *     // nucl16_vector bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     nucl16_vector foo{"ACGTTA"_nucl16};
+ *     nucl16_vector bar = "ACGTTA"_nucl16;
+ *     auto bax = "ACGTTA"_nucl16;
+ */
+
 inline nucl16_vector operator "" _nucl16(const char * s, std::size_t n)
 {
     nucl16_vector r;
     r.resize(n);
 
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return nucl16{}.from_char(c);
-    });
+    for (size_t i = 0; i < n; ++i)
+        r[i].from_char(s[i]);
 
     return r;
 }
+
+/*! nucl16 string literal (returns @link nucl16_string @endlink)
+ *
+ * You can use this string literal to easily assign to nucl16_vector:
+ *
+ *     // these don't work:
+ *     // nucl16_string foo{"ACGTTA"};
+ *     // nucl16_string bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     nucl16_string foo{"ACGTTA"_nucl16s};
+ *     nucl16_string bar = "ACGTTA"_nucl16s;
+ *     auto bax = "ACGTTA"_nucl16s;
+ *
+ * Please note the limitations of @link nucl16_string @endlink and consider using the `_nucl16' literal instead.
+ */
 
 inline nucl16_string operator "" _nucl16s(const char * s, std::size_t n)
 {
     nucl16_string r;
     r.resize(n);
 
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return nucl16{}.from_char(c);
-    });
+    for (size_t i = 0; i < n; ++i)
+        r[i].from_char(s[i]);
 
     return r;
 }
-
 } // namespace seqan3::literal
 

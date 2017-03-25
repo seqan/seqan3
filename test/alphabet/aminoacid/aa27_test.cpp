@@ -39,12 +39,15 @@
 
 using namespace seqan3;
 
+constexpr aa27 all_aa27[] = {aa27::A, aa27::B, aa27::C, aa27::D, aa27::E, aa27::F, aa27::G, aa27::H, aa27::I, aa27::J,
+                             aa27::K, aa27::L, aa27::M, aa27::N, aa27::O, aa27::P, aa27::Q, aa27::R, aa27::S, aa27::T,
+                             aa27::U, aa27::V, aa27::W, aa27::X, aa27::Y, aa27::Z};
+
 TEST(alphabet_aminoacid_aa27_test, default_ctr)
 {
     constexpr aa27 amino{};
 
     EXPECT_EQ(amino, aa27::A);
-    EXPECT_EQ(amino.value, aa27::c_type::A);
 }
 
 TEST(alphabet_aminoacid_aa27_test, copy_ctr)
@@ -53,7 +56,6 @@ TEST(alphabet_aminoacid_aa27_test, copy_ctr)
     constexpr aa27 amino2{amino1};
 
     EXPECT_EQ(amino2, aa27::B);
-    EXPECT_EQ(amino2.value, aa27::c_type::B);
 }
 
 TEST(alphabet_aminoacid_aa27_test, move_ctr)
@@ -62,7 +64,6 @@ TEST(alphabet_aminoacid_aa27_test, move_ctr)
     constexpr aa27 amino2{std::move(amino1)};
 
     EXPECT_EQ(amino2, aa27::C);
-    EXPECT_EQ(amino2.value, aa27::c_type::C);
 }
 
 TEST(alphabet_aminoacid_aa27_test, copy_asn)
@@ -73,7 +74,6 @@ TEST(alphabet_aminoacid_aa27_test, copy_asn)
     amino2 = amino1;
 
     EXPECT_EQ(amino2, aa27::D);
-    EXPECT_EQ(amino2.value, aa27::c_type::D);
 }
 
 TEST(alphabet_aminoacid_aa27_test, move_asn)
@@ -84,7 +84,6 @@ TEST(alphabet_aminoacid_aa27_test, move_asn)
     amino2 = std::move(amino1);
 
     EXPECT_EQ(amino2, aa27::F);
-    EXPECT_EQ(amino2.value, aa27::c_type::F);
 }
 
 TEST(alphabet_aminoacid_aa27_test, operator_char)
@@ -105,7 +104,7 @@ TEST(alphabet_aminoacid_aa27_test, to_char)
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
         uint8_t integral = i - 'A';
-        aa27 amino{aa27::c_type{integral}};
+        aa27 amino{all_aa27[integral]};
         char c = amino.to_char();
         EXPECT_EQ(c, i);
     }
@@ -117,18 +116,17 @@ TEST(alphabet_aminoacid_aa27_test, from_char)
     amino = amino.from_char('*');
 
     EXPECT_EQ(amino, aa27::TERMINATOR);
-    EXPECT_EQ(amino.value, aa27::c_type::TERMINATOR);
 
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
         uint8_t integral = i - 'A';
-        EXPECT_EQ(aa27{}.from_char(i), aa27::c_type{integral});
+        EXPECT_EQ(aa27{}.from_char(i), all_aa27[integral]);
     }
 
     for (auto i = 'a'; i <= 'z'; ++i)
     {
         uint8_t integral = i - 'a';
-        EXPECT_EQ(aa27{}.from_char(i), aa27::c_type{integral});
+        EXPECT_EQ(aa27{}.from_char(i), all_aa27[integral]);
     }
 }
 
@@ -142,7 +140,7 @@ TEST(alphabet_aminoacid_aa27_test, to_integral)
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
         uint8_t integral = i - 'A';
-        aa27 amino{aa27::c_type{integral}};
+        aa27 amino{all_aa27[integral]};
         uint8_t integral_res = amino.to_integral();
         EXPECT_EQ(integral_res, integral);
     }
@@ -150,7 +148,7 @@ TEST(alphabet_aminoacid_aa27_test, to_integral)
     for (auto i = 'a'; i <= 'z'; ++i)
     {
         uint8_t integral = i - 'a';
-        aa27 amino{aa27::c_type{integral}};
+        aa27 amino{all_aa27[integral]};
         uint8_t integral_res = amino.to_integral();
         EXPECT_EQ(integral_res, integral);
     }
@@ -162,14 +160,13 @@ TEST(alphabet_aminoacid_aa27_test, from_integral)
     amino_term = amino_term.from_integral(26);
 
     EXPECT_EQ(amino_term, aa27::TERMINATOR);
-    EXPECT_EQ(amino_term.value, aa27::c_type::TERMINATOR);
 
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
         uint8_t integral = i - 'A';
         aa27 amino;
         amino = amino.from_integral(integral);
-        EXPECT_EQ(amino, aa27::c_type{integral});
+        EXPECT_EQ(amino, all_aa27[integral]);
     }
 }
 

@@ -67,7 +67,7 @@ struct dna4
 {
     //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
     using char_type = char;
-    //! the type of the alphabet when represented as a numberr (e.g. via @link to_integral @endlink)
+    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
     using integral_type = uint8_t;
 
     // strictly typed enum, unfortunately with scope
