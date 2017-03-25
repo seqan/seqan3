@@ -48,7 +48,7 @@ namespace seqan3
 // sequence_file_format_concept
 // ==================================================================
 
-//! A Concept that a sequence_file_in_format object must satisfy
+//! A Concept that a `sequence_file_format` object must satisfy
 /*! When you want to add your own file format it must satisfy this concept.
  */
 template <typename t>

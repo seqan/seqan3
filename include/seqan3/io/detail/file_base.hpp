@@ -45,35 +45,36 @@ namespace seqan3::detail
 // file_base
 // ==================================================================
 
-//! The base file format
-/*! This class is used to supply all file formats with basic functionality
- * like opening the stream and inferring the compression or file format.
+//! The basic file class for reading and writing formatted files, e.g. "*.fasta" or "*.bam" files.
+/*!
+ *This is an abstract class and need to be implemented by a concrete file class.
  */
 template <typename file_base_traits>
 class file_base
 {
-public:
+protected:
     /* types */
     using stream_type        = typename file_base_traits::stream_type;        //!< The stream type to write or read from
     using valid_format_types = typename file_base_traits::valid_format_types; //!< The valid format types to choose from
 
-protected:
-
-    //! constructor with file name argument
+    //
+    //! Constructor with a file name.
     /*!
-     * Passing a file name (path) as an argument to the constructor will open
-     * the stream using this name.
+     * Passing a file name (path) as an argument to the constructor opens
+     * the stream to this file.
      *
      * Note: The sequence file format will automatically be deduced by
-     * the extension file name extension:
+     * the file extension:
      *
-     *    -# Check whether a valid compression format was used. Is so, strip the
-     *        strip the file name and continue, if not continue with the original
-     *        file name
+     *    -# Checks for valid compression formats. If found, strips the
+     *        file name and continues, if not continue with the original file name.
      *
-     *    -# Check every valid file format in `valid_format_types` for their
+     *    -# Check for valid file format in `valid_format_types` for their
      *        extension identifiers in `file_extensions` and choose the according
-     *        format. this function will __throw__ when the format cannot be inferred.
+     *        format. This function will __throw__ when the format cannot be inferred.
+     *
+     * \throw std::runtime_error Throws if the file extension or the compression format is not supported or
+     * if the failbit of the stream is set during opening the stream.
      */
     explicit file_base(std::experimental::filesystem::path _file_name)
     {
@@ -98,26 +99,33 @@ protected:
     valid_format_types format; //!< the format object to use for tag dispatching
 
     /* member functions */
-    //! Helper function to select the compression format
+    //! Detects and sets the compression format from the file name extension.
     /*!
-     * This function goes through the valid_compression_formats of the traits
-     * object (see e.g. `sequence_file_in_default_traits`) and compares the
-     * extension identifier to infer the compression format.
+     * This function iterates over the `valid_compression_formats` of the traits
+     * object and compares the extension identifier with the extracted compression format.
      * If a compression format is found by a matching extension the file_name
-     * is stripped of the extension otherwise it is return directly.
-     * \param file_name the file name (path).
+     * is stripped off the extension otherwise it is returned directly.
+     *
+     * \param[in] file_name The file name (path).
+     *
      * \return file_name (stripped from valid compression format extension).
+     *
+     * \see select_compression_format
      */
     std::experimental::filesystem::path select_compression_format(std::experimental::filesystem::path & file_name);
-    //! Helper function to select the file format
+    //! Detects and sets the file format from the file name extension.
     /*!
-     * This function iterates over the valid_format_types (std::variant) using the template
-     * parameter index.
-     * For each type the `file_extensions` list is scanned for the
-     * file name extension `ext`. If ext is matched to a format, an instantiation
-     * of the type is assigned to the `format` member variable of the file object.
-     * If no format can be inferred the function __throws__ an error.
-     * \param ext the file name extension (e.g. ".fa").
+     * This function iterates over the `valid_format_types` and checks if one of them compares
+     * equal to the file extension `ext`. 
+     * If the comparison results to `true`, then the `format` member is 
+     * set accordinlgy.
+     * If no format can be matches the function __throws__ an error.
+     *
+     * \param[in] ext The file name extension (e.g. ".fa", ".sam").
+     *
+     * \see select_compression_format 
+     *
+     * \throw std::runtime_error Throws if the format does not matches any of the specified `valid_format_types`.
      */
     template <size_t index>
     void select_format(std::experimental::filesystem::path const & ext);

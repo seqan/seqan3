@@ -70,12 +70,12 @@ constexpr bool is_valid_compression_type(std::vector<std::pair<std::string, type
     return true;
 }
 
-//! A Concept that a sequence_file_in_traits object must satisfy
+//! A concept that a sequence_file_traits object must satisfy
 /*! When you want to instantiate a `sequence_file_in` object with
  * your own traits specification they must satisfy this concept.
  */
 template <typename t>
-concept bool sequence_file_in_traits_concept = requires (t v)
+concept bool sequence_file_traits_concept = requires (t v)
 {
     typename t::stream_type;
     typename t::valid_format_types;
@@ -94,16 +94,11 @@ concept bool sequence_file_in_traits_concept = requires (t v)
 // sequence_file_in_default_traits
 // ==================================================================
 
-//! The default configuration of seqan3::sequence_file_in
-/*!
- * This implies the equivalence of
- * `seqan3::sequence_file_in{"myfile.fa"}` and
- * `seqan3::sequence_file_in<seqan3::sequence_file_in_default_traits>{"myfile.fa"}`.
- */
+//! A default configuration of seqan3::sequence_file_in
 struct sequence_file_in_default_traits
 {
     using stream_type = std::ifstream; //!< The default stream type is std::ifstream
-    //! The default format types of the sequence file
+    //! The default format types of the sequence file.
     /*!
      * The valid types are stored as an `std::variant` of formats where each format
      * satisfies the sequence_file_format_concept.
@@ -120,7 +115,7 @@ struct sequence_file_in_default_traits
                                        sequence_file_format_embl,
                                        sequence_file_format_genbank,
                                        sequence_file_format_raw*/>;
-    //! The default compression types that are supported
+    //! The supported compression formats.
     /*!
       The compression types are stored as an `std::variant` of formats, which by
       default depend on the availability of external libraries like ZLIB.
@@ -128,7 +123,7 @@ struct sequence_file_in_default_traits
     using valid_compressions = std::variant<decltype(std::ignore)>;
     //! static member variable that stores valid compression formats
     /*!
-      The valid_compression_formats stores pair of a compression format and its
+      The `valid_compression_formats` stores pair of a compression format and its
       corresponding file extension as an identifier. Example: {".gz", compression_format_zlib}.
     */
     static inline std::vector<std::pair<std::string, valid_compressions>> valid_compression_formats{};
@@ -138,7 +133,7 @@ struct sequence_file_in_default_traits
 // sequence_file_in
 // ==================================================================
 
-//! A class that features reading sequence files from a stream
+//! Formatted file for reading sequence files.
 /*!
  * Use an instantiation of this class to read from a stream. You can specialize
  * the `sequence_file_in` object by specifying a `sequence_file_in_traits` as an
@@ -161,28 +156,16 @@ struct sequence_file_in_default_traits
  * \sa sequence_file_in_default_traits
  */
 template <typename sequence_file_in_traits = sequence_file_in_default_traits>
-    requires detail::sequence_file_in_traits_concept<sequence_file_in_traits>
+    requires detail::sequence_file_traits_concept<sequence_file_in_traits>
 class sequence_file_in : protected detail::file_base<sequence_file_in_traits>
 {
 public:
     using detail::file_base<sequence_file_in_traits>::stream_type;
     using detail::file_base<sequence_file_in_traits>::valid_format_types;
     /* constructors */
-    //! constructor with file name argument
+    //! Constructor with file name argument.
     /*!
-     * Passing a file name (path) as an argument to the constructor will open
-     * the stream using this name.
-     *
-     * Note: The sequence file format will automatically be deduced by
-     * the extension file name extension:
-     *
-     *    -# Check whether a valid compression format was used. Is so, strip the
-     *        strip the file name and continue, if not continue with the original
-     *        file name
-     *
-     *    -# Check every valid file format in `valid_format_types` for their
-     *        extension identifiers in `file_extensions` and choose the according
-     *        format. this function will __throw__ when the format cannot be inferred.
+     * \see seqan3::detail::file_base::file_base
      */
     explicit sequence_file_in(std::experimental::filesystem::path _file_name) :
         detail::file_base<sequence_file_in_traits>(std::move(_file_name)) {};
@@ -193,9 +176,9 @@ public:
     sequence_file_in & operator=(sequence_file_in &&) = default; //!< default move assignment constructor
     ~sequence_file_in() = default; //!< default deconstructor
 
-    //! A struct holding additional features for the sequence_file_in object
+    //! An aggregate type providing filters that can be applied before reading the sequence records.
     /*!
-     * The options_type struct stores three std::functions that can alter the
+     * The options_type struct stores three callables that can alter the
      * sequence information directly while reading. The default functions do not
      * change the input but you can assign different function that crop, replace
      * or append to the sequence information (sequence_filter), the meta
@@ -231,11 +214,13 @@ public:
     options_type options; //!< holds the filter functions
 
     // TODO make the requirements stricter
-    //! reads a single record from the stream and into the given arguments
+    //! Reads a single record from the stream.
     /*!
-     * \param seq the raw sequence information.
-     * \param meta the meta information (e.g. the sequence identifier/name).
-     * \param qual the quality information.
+     * \param[in,out] seq  The sequence.
+     * \param[in,out] meta The meta information (e.g. the sequence identifier/name).
+     * \param[in,out] qual The qualities for each base of the sequence.
+     *
+     * \throw std::runtime_error Throws if there is a parse error during reading.
      */
     template <typename sequence_type, typename meta_type, typename qual_type>
         requires sequence_concept<std::decay_t<sequence_type>> &&
@@ -246,12 +231,13 @@ public:
               qual_type && qual = std::string{});
 
     // TODO make the requirements stricter
-    //! reads many or all information from the stream appending it to the given arguments
+    //! Reads a chunk or all sequence records from the stream appending it to the given record containers.
     /*!
-     * \param seqs a container of sequences to append to.
-     * \param metas a container of meta information to append to.
-     * \param quals a container of quality information.
-     * \param max_records limit the number of records to read to max_records.
+     * \param[in,out] seqs A container of sequences.
+     * \param[in,out] metas A container of meta information.
+     * \param[in,out] quals A container of qualities.
+     * \param[in]     max_records Limit the number of records to read to max_records.
+     *                            The value `0` indicates reading all records. Defaults to `0`.
      */
     template <typename seqs_type, typename metas_type, typename quals_type>
         requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
