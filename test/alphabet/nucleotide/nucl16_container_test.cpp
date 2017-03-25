@@ -34,27 +34,28 @@
 // Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
+#include <array>
+
 #include <gtest/gtest.h>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/aa27_sequence.hpp>
+#include <seqan3/alphabet/nucleotide/nucl16_container.hpp>
 
 using namespace seqan3;
 
-TEST(alphabet_aminoacid_aa27_sequence_test, vector)
+TEST(alphabet_nucleotides_nucl16_container_test, vector)
 {
-    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
+    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
 
-    EXPECT_EQ(v[0], aa27::A);
-    EXPECT_EQ(v[1], aa27::C);
-    EXPECT_EQ(v[2], aa27::G);
-    EXPECT_EQ(v[3], aa27::T);
+    EXPECT_EQ(v[0], nucl16::A);
+    EXPECT_EQ(v[1], nucl16::C);
+    EXPECT_EQ(v[2], nucl16::G);
+    EXPECT_EQ(v[3], nucl16::T);
 }
 
-TEST(alphabet_aminoacid_aa27_sequence_test, string)
+TEST(alphabet_nucleotides_nucl16_container_test, string)
 {
-    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-    EXPECT_EQ(s[0], aa27::A);
-    EXPECT_EQ(s[1], aa27::C);
-    EXPECT_EQ(s[2], aa27::G);
-    EXPECT_EQ(s[3], aa27::T);
+    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
+    EXPECT_EQ(s[0], nucl16::A);
+    EXPECT_EQ(s[1], nucl16::C);
+    EXPECT_EQ(s[2], nucl16::G);
+    EXPECT_EQ(s[3], nucl16::T);
 }

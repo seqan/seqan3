@@ -1,8 +1,8 @@
-// ==========================================================================
+// ============================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
+// ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,37 +30,30 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ==========================================================================
-// Author: David Heller <david.heller@fu-berlin.de>
-// ==========================================================================
-// Test cases for the biological dna5 alphabet.
-// ==========================================================================
+// ============================================================================
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
+// ============================================================================
 
-#include <seqan3/alphabet/nucleotide/dna5_sequence.hpp>
 #include <gtest/gtest.h>
-#include <sstream>
-#include <vector>
+#include <seqan3/alphabet/aminoacid/aa27_container.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
-TEST(dna5_test, test_dna5_vector_operator)
+TEST(alphabet_aminoacid_aa27_container_test, vector)
 {
-    dna5_vector v;
-    v.resize(5, dna5{dna5::A});
-    EXPECT_EQ(v, "AAAAA"_dna5);
+    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
 
-    std::vector<dna5> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G}, dna5{dna5::T}, dna5{dna5::N}};
-    EXPECT_EQ(w, "ACGTN"_dna5);
+    EXPECT_EQ(v[0], aa27::A);
+    EXPECT_EQ(v[1], aa27::C);
+    EXPECT_EQ(v[2], aa27::G);
+    EXPECT_EQ(v[3], aa27::T);
 }
 
-TEST(dna5_test, test_dna5_string_operator)
+TEST(alphabet_aminoacid_aa27_container_test, string)
 {
-    dna5_string v;
-    v.resize(5, dna5{dna5::A});
-    EXPECT_EQ(v, "AAAAA"_dna5s);
-
-    std::basic_string<dna5, std::char_traits<dna5>> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G},
-                                                       dna5{dna5::T}, dna5{dna5::N}};
-    EXPECT_EQ(w, "ACGTN"_dna5s);
+    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
+    EXPECT_EQ(s[0], aa27::A);
+    EXPECT_EQ(s[1], aa27::C);
+    EXPECT_EQ(s[2], aa27::G);
+    EXPECT_EQ(s[3], aa27::T);
 }
