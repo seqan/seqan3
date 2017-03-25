@@ -33,12 +33,11 @@
 // ==========================================================================
 // Author: David Heller <david.heller@fu-berlin.de>
 // ==========================================================================
-// Test cases for the biological dna5 alphabet.
-// ==========================================================================
 
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
+
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 using namespace seqan3;
 
