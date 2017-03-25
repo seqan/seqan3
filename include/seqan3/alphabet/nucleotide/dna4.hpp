@@ -36,18 +36,45 @@
 
 #pragma once
 
+#include <cassert>
+
 #include "../alphabet.hpp"
+
+/*! The four letter DNA alphabet
+ * \ingroup alphabet
+ */
 
 namespace seqan3
 {
 
+/*! The four letter DNA alphabet of A,C,G,T
+ *
+ * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
+ * regular characters, but additional functions for this are available.
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     dna4 my_letter{dna4::A};
+ *     // doesn't work:
+ *     // dna4 my_letter{'A'};
+ *
+ *     my_letter.from_char('C'); // <- this does!
+ *
+ *     my_letter.from_char('F'); // converted to A internally
+ *     if (my_letter.to_char() == 'A')
+ *        std::cout << "yeah\n"; // "yeah";
+ *~~~~~~~~~~~~~~~
+ */
+
 struct dna4
 {
+    //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
     using char_type = char;
+    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
     using integral_type = uint8_t;
 
     // strictly typed enum, unfortunately with scope
-    enum struct c_type : integral_type
+    //! \privatesection
+    enum struct internal_type : integral_type
     {
         A,
         C,
@@ -56,59 +83,95 @@ struct dna4
         U = T,
         UNKNOWN = A
     };
+    internal_type value;
+    //! \publicsection
 
-    // import into local scope
-    static constexpr c_type A{c_type::A};
-    static constexpr c_type C{c_type::C};
-    static constexpr c_type G{c_type::G};
-    static constexpr c_type T{c_type::T};
-    static constexpr c_type U{c_type::U};
-    static constexpr c_type UNKNOWN{c_type::UNKNOWN};
+    // import internal_types values into local scope:
 
-    // the value
-    c_type value;
+    /*! @name letter values
+     * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
+     * *Don't worry about the `internal_type`.*
+     */
+    //!@{
+    static const dna4 A;
+    static const dna4 C;
+    static const dna4 G;
+    static const dna4 T;
+    static const dna4 U;
+    static const dna4 UNKNOWN;
+    //!@}
 
-    // implicit compatibility to inner_type
-    constexpr dna4 & operator =(c_type const c)
-    {
-        value = c;
-    }
-    constexpr operator c_type() const
-    {
-        return value;
-    }
-
-    // explicit compatibility to char_type
+    //! ability to cast to @link char_type @endlink **explicitly**.
     explicit constexpr operator char_type() const
     {
         return to_char();
     }
+
+    //! return the letter as a character of @link char_type @endlink.
     constexpr char_type to_char() const
     {
         return value_to_char[static_cast<integral_type>(value)];
     }
 
+    //! assign from a character
     constexpr dna4 from_char(char_type const c)
     {
         value = char_to_value[c];
         return *this;
     }
 
-    // explicit compatibility to integral
+    //! return the letter's numeric value or rank in the alphabet
     constexpr integral_type to_integral() const
     {
         return static_cast<integral_type>(value);
     }
 
+    //! assign from a numeric value
     constexpr dna4 from_integral(integral_type const c)
     {
-        value = static_cast<c_type>(c);
+        assert(c < value_size);
+        value = static_cast<internal_type>(c);
         return *this;
     }
 
-    // conversion tables
-    static constexpr uint8_t value_size{4};
+    //! The size of the alphabet, i.e. the number of different values it can take.
+    static constexpr integral_type value_size{4};
 
+    //! @name comparison operators
+    //!@{
+    constexpr bool operator==(dna4 const & rhs) const
+    {
+        return value == rhs.value;
+    }
+
+    constexpr bool operator!=(dna4 const & rhs) const
+    {
+        return value != rhs.value;
+    }
+
+    constexpr bool operator<(dna4 const & rhs) const
+    {
+        return value < rhs.value;
+    }
+
+    constexpr bool operator>(dna4 const & rhs) const
+    {
+        return value > rhs.value;
+    }
+
+    constexpr bool operator<=(dna4 const & rhs) const
+    {
+        return value <= rhs.value;
+    }
+
+    constexpr bool operator>=(dna4 const & rhs) const
+    {
+        return value >= rhs.value;
+    }
+    //!@}
+
+    //! \privatesection
+    // conversion tables
     static constexpr char_type value_to_char[value_size]
     {
         'A',
@@ -117,57 +180,98 @@ struct dna4
         'T'
     };
 
-    static constexpr c_type char_to_value[256]
+    static constexpr internal_type char_to_value[256]
     {
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //0
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //1
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //2
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //3
-        //          , A,            B,            C,            D,            E,            F,            G,
-        c_type::UNKNOWN, c_type::A,       c_type::UNKNOWN, c_type::C,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,
-        // H,         I,            J,            K,            L,            M,            N,            O,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //4
-        // P,         Q,            R,            S,            T,            U,            V,            W,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN,
-        // X,         Y,            Z,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //5
-        //          , a,            b,            c,            d,            e,            f,            g,
-        c_type::UNKNOWN, c_type::A,       c_type::UNKNOWN, c_type::C,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,
-        // h,         i,            j,            k,            l,            m,            n,            o,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //6
-        // P,         Q,            R,            S,            T,            U,            V,            W,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::T,       c_type::T,       c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //7
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //8
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //9
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //10
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //11
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //12
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //13
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, //14
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN  //15
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //15
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //31
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //47
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //63
+        //              ,                      A,                      B,                      C,
+        internal_type::UNKNOWN, internal_type::A,       internal_type::UNKNOWN, internal_type::C,
+        //             D,                      E,                      F,                      G,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::G,
+        //             H,                      I,                      J,                      K,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        //             L,                      M,                      N,                      O,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //79
+        //             P,                      Q,                      R,                      S,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        //             T,                      U,                      V,                      W,
+        internal_type::T,       internal_type::T,       internal_type::UNKNOWN, internal_type::UNKNOWN,
+        //             X,                      Y,                      Z,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //95
+        //              ,                      a,                      b,                      c,
+        internal_type::UNKNOWN, internal_type::A,       internal_type::UNKNOWN, internal_type::C,
+        //             d,                      e,                      f,                      g,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::G,
+        //             h,                      i,                      j,                      k,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        //             l,                      m,                      n,                      o,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //111
+        //             p,                      q,                      r,                      s,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        //             t,                      u,                      v,                      w,
+        internal_type::T,       internal_type::T,       internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //127
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //143
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //159
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //175
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //191
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //207
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //223
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, //239
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
+        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN  //255
     };
-
 };
 
-// shall fulfill Alphabet concept
-static_assert(alphabet_concept<dna4>);
-static_assert(dna4{dna4::A} == dna4{});
-static_assert(dna4{dna4::A} == dna4::A);
-// static_assert(dna4{'A'} == 'A');
-static_assert(static_cast<dna4::char_type>(dna4{dna4::C}) == 'C');
-static_assert(dna4{dna4::A} < dna4{dna4::C});
+constexpr dna4 dna4::A{internal_type::A};
+constexpr dna4 dna4::C{internal_type::C};
+constexpr dna4 dna4::G{internal_type::G};
+constexpr dna4 dna4::T{internal_type::T};
+constexpr dna4 dna4::U{dna4::T};
+constexpr dna4 dna4::UNKNOWN{dna4::A};
 
-}
+#ifndef NDEBUG
+static_assert(alphabet_concept<dna4>);
+static_assert(detail::internal_alphabet_concept<dna4>);
+#endif
+
+} // namespace seqan3

@@ -31,7 +31,7 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Chenxu Pan <chenxu.pan@fu-berlin.de>
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
 #pragma once
@@ -42,10 +42,9 @@
 
 #include "../alphabet.hpp"
 #include "../alphabet_container.hpp"
-#include "rna4.hpp"
+#include "nucl16.hpp"
 
-
-/*! Containers of @link rna4 @endlink
+/*! Containers of @link nucl16 @endlink
  */
 
 // ------------------------------------------------------------------
@@ -55,17 +54,16 @@
 namespace seqan3
 {
 
-using rna4_vector = std::vector<rna4>;
+using nucl16_vector = std::vector<nucl16>;
 
-
-/*! std::basic_string of rna4
+/*! std::basic_string of nucl16
  *
- * **NOTE** that we recommend using @link rna4_vector @endlink in almost all situations.
+ * **NOTE** that we recommend using @link nucl16_vector @endlink in almost all situations.
  * While the C++ style operations on the string are well supported, you should not access the internal c-string
  * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
  * correct length of the string (while the `.size()` returns the correct value).
  */
-using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
+using nucl16_string = std::basic_string<nucl16, std::char_traits<nucl16>>;
 
 } // namespace seqan3
 
@@ -76,25 +74,23 @@ using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
 namespace seqan3::literal
 {
 
-/*! rna4 literal (returns @link rna4_vector @endlink)
+/*! nucl16 literal (returns @link nucl16_vector @endlink)
  *
- * You can use this string literal to easily assign to rna4_vector:
+ * You can use this string literal to easily assign to nucl16_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // rna4_vector foo{"ACGUUA"};
- *     // rna4_vector bar = "ACGUUA";
+ *     // nucl16_vector foo{"ACGTTA"};
+ *     // nucl16_vector bar = "ACGTTA";
  *
  *     // but these do:
- *     rna4_vector foo{"ACGUUA"_rna4};
- *     rna4_vector bar = "ACGUUA"_rna4;
- *     auto bax = "ACGUUA"_rna4;
- *~~~~~~~~~~~~~~~
+ *     nucl16_vector foo{"ACGTTA"_nucl16};
+ *     nucl16_vector bar = "ACGTTA"_nucl16;
+ *     auto bax = "ACGTTA"_nucl16;
  */
 
-inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
+inline nucl16_vector operator "" _nucl16(const char * s, std::size_t n)
 {
-    rna4_vector r;
+    nucl16_vector r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
@@ -103,27 +99,25 @@ inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
     return r;
 }
 
-/*! rna4 string literal (returns @link rna4_string @endlink)
+/*! nucl16 string literal (returns @link nucl16_string @endlink)
  *
- * You can use this string literal to easily assign to rna4_vector:
+ * You can use this string literal to easily assign to nucl16_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // rna4_string foo{"ACGUUA"};
- *     // rna4_string bar = "ACGUUA";
+ *     // nucl16_string foo{"ACGTTA"};
+ *     // nucl16_string bar = "ACGTTA";
  *
  *     // but these do:
- *     rna4_string foo{"ACGUUA"_rna4s};
- *     rna4_string bar = "ACGUUA"_rna4s;
- *     auto bax = "ACGUUA"_rna4s;
- *~~~~~~~~~~~~~~~
+ *     nucl16_string foo{"ACGTTA"_nucl16s};
+ *     nucl16_string bar = "ACGTTA"_nucl16s;
+ *     auto bax = "ACGTTA"_nucl16s;
  *
- * Please note the limitations of @link rna4_string @endlink and consider using the `_rna4' literal instead.
+ * Please note the limitations of @link nucl16_string @endlink and consider using the `_nucl16' literal instead.
  */
 
-inline rna4_string operator "" _rna4s(const char * s, std::size_t n)
+inline nucl16_string operator "" _nucl16s(const char * s, std::size_t n)
 {
-    rna4_string r;
+    nucl16_string r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
@@ -131,5 +125,5 @@ inline rna4_string operator "" _rna4s(const char * s, std::size_t n)
 
     return r;
 }
-
 } // namespace seqan3::literal
+

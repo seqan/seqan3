@@ -31,30 +31,18 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
+// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
 // ============================================================================
 
-#include <gtest/gtest.h>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/aa27_sequence.hpp>
+#pragma once
 
-using namespace seqan3;
+#include <container/concepts.hpp>
 
-TEST(alphabet_aminoacid_aa27_sequence_test, vector)
-{
-    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
+/*!\defgroup container
+ *
+ * The container module contains adaptations and concepts for ranges and containers, as well
+ * as implementations of novel containers.
+ *
+ * TODO more details.
+ */
 
-    EXPECT_EQ(v[0], aa27::A);
-    EXPECT_EQ(v[1], aa27::C);
-    EXPECT_EQ(v[2], aa27::G);
-    EXPECT_EQ(v[3], aa27::T);
-}
-
-TEST(alphabet_aminoacid_aa27_sequence_test, string)
-{
-    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-    EXPECT_EQ(s[0], aa27::A);
-    EXPECT_EQ(s[1], aa27::C);
-    EXPECT_EQ(s[2], aa27::G);
-    EXPECT_EQ(s[3], aa27::T);
-}

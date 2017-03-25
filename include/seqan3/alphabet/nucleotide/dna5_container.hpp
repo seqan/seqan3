@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,9 +30,9 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
-// Author: Chenxu Pan <chenxu.pan@fu-berlin.de>
-// ============================================================================
+// ==========================================================================
+// Author: David Heller <david.heller@fu-berlin.de>
+// ==========================================================================
 
 #pragma once
 
@@ -42,10 +42,9 @@
 
 #include "../alphabet.hpp"
 #include "../alphabet_container.hpp"
-#include "rna4.hpp"
+#include "dna5.hpp"
 
-
-/*! Containers of @link rna4 @endlink
+/*! Containers of @link dna5 @endlink
  */
 
 // ------------------------------------------------------------------
@@ -55,17 +54,16 @@
 namespace seqan3
 {
 
-using rna4_vector = std::vector<rna4>;
+using dna5_vector = std::vector<dna5>;
 
-
-/*! std::basic_string of rna4
+/*! std::basic_string of dna5
  *
- * **NOTE** that we recommend using @link rna4_vector @endlink in almost all situations.
+ * **NOTE** that we recommend using @link dna5_vector @endlink in almost all situations.
  * While the C++ style operations on the string are well supported, you should not access the internal c-string
  * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
  * correct length of the string (while the `.size()` returns the correct value).
  */
-using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
+using dna5_string = std::basic_string<dna5, std::char_traits<dna5>>;
 
 } // namespace seqan3
 
@@ -76,58 +74,62 @@ using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
 namespace seqan3::literal
 {
 
-/*! rna4 literal (returns @link rna4_vector @endlink)
+/*! dna5 literal (returns @link dna5_vector @endlink)
  *
- * You can use this string literal to easily assign to rna4_vector:
+ * You can use this string literal to easily assign to dna5_vector:
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // rna4_vector foo{"ACGUUA"};
- *     // rna4_vector bar = "ACGUUA";
+ *     // dna5_vector foo{"ACGTTA"};
+ *     // dna5_vector bar = "ACGTTA";
  *
  *     // but these do:
- *     rna4_vector foo{"ACGUUA"_rna4};
- *     rna4_vector bar = "ACGUUA"_rna4;
- *     auto bax = "ACGUUA"_rna4;
+ *     dna5_vector foo{"ACGTTA"_dna5};
+ *     dna5_vector bar = "ACGTTA"_dna5;
+ *     auto bax = "ACGTTA"_dna5;
  *~~~~~~~~~~~~~~~
  */
 
-inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
+inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
 {
-    rna4_vector r;
+    dna5_vector r;
     r.resize(n);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+    std::transform(s, s + n, r.begin(), [] (const char & c)
+    {
+        return dna5{}.from_char(c);
+    });
 
     return r;
 }
 
-/*! rna4 string literal (returns @link rna4_string @endlink)
+/*! dna5 string literal (returns @link dna5_string @endlink)
  *
- * You can use this string literal to easily assign to rna4_vector:
+ * You can use this string literal to easily assign to dna5_vector:
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // rna4_string foo{"ACGUUA"};
- *     // rna4_string bar = "ACGUUA";
+ *     // dna5_string foo{"ACGTTA"};
+ *     // dna5_string bar = "ACGTTA";
  *
  *     // but these do:
- *     rna4_string foo{"ACGUUA"_rna4s};
- *     rna4_string bar = "ACGUUA"_rna4s;
- *     auto bax = "ACGUUA"_rna4s;
+ *     dna5_string foo{"ACGTTA"_dna5s};
+ *     dna5_string bar = "ACGTTA"_dna5s;
+ *     auto bax = "ACGTTA"_dna5s;
  *~~~~~~~~~~~~~~~
  *
- * Please note the limitations of @link rna4_string @endlink and consider using the `_rna4' literal instead.
+ * Please note the limitations of @link dna5_string @endlink and consider using the `_dna5' literal instead.
  */
 
-inline rna4_string operator "" _rna4s(const char * s, std::size_t n)
+inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
 {
-    rna4_string r;
+    dna5_string r;
     r.resize(n);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+    std::transform(s, s + n, r.begin(), [] (const char & c)
+    {
+        return dna5{}.from_char(c);
+    });
 
     return r;
 }

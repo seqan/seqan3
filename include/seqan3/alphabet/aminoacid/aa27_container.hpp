@@ -41,8 +41,11 @@
 #include <vector>
 
 #include "../alphabet.hpp"
-#include "../alphabet_sequence.hpp"
+#include "../alphabet_container.hpp"
 #include "aa27.hpp"
+
+/*! Containers of @link aa27 @endlink
+ */
 
 // ------------------------------------------------------------------
 // containers
@@ -53,6 +56,13 @@ namespace seqan3
 
 using aa27_vector = std::vector<aa27>;
 
+/*! std::basic_string of aa27
+ *
+ * **NOTE** that we recommend using @link aa27_vector @endlink in almost all situations.
+ * While the C++ style operations on the string are well supported, you should not access the internal c-string
+ * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
+ * correct length of the string (while the `.size()` returns the correct value).
+ */
 using aa27_string = std::basic_string<aa27, std::char_traits<aa27>>;
 
 } // namespace seqan3
@@ -64,28 +74,54 @@ using aa27_string = std::basic_string<aa27, std::char_traits<aa27>>;
 namespace seqan3::literal
 {
 
+/*! aa27 literal (returns @link aa27_vector @endlink)
+ *
+ * You can use this string literal to easily assign to aa27_vector:
+ *
+ *     // these don't work:
+ *     // aa27_vector foo{"ABFUYR"};
+ *     // aa27_vector bar = "ABFUYR";
+ *
+ *     // but these do:
+ *     aa27_vector foo{"ABFUYR"_aa27};
+ *     aa27_vector bar = "ABFUYR"_aa27;
+ *     auto bax = "ABFUYR"_aa27;
+ */
+
 inline aa27_vector operator "" _aa27(const char * s, std::size_t n)
 {
     aa27_vector r;
     r.resize(n);
 
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return aa27{}.from_char(c);
-    });
+    for (size_t i = 0; i < n; ++i)
+        r[i].from_char(s[i]);
 
     return r;
 }
+
+/*! aa27 string literal (returns @link aa27_string @endlink)
+ *
+ * You can use this string literal to easily assign to aa27_vector:
+ *
+ *     // these don't work:
+ *     // aa27_string foo{"ABFUYR"};
+ *     // aa27_string bar = "ABFUYR";
+ *
+ *     // but these do:
+ *     aa27_string foo{"ABFUYR"_aa27s};
+ *     aa27_string bar = "ABFUYR"_aa27s;
+ *     auto bax = "ABFUYR"_aa27s;
+ *
+ * Please note the limitations of @link aa27_string @endlink and consider using the `_aa27' literal instead.
+ */
 
 inline aa27_string operator "" _aa27s(const char * s, std::size_t n)
 {
     aa27_string r;
     r.resize(n);
 
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return aa27{}.from_char(c);
-    });
+    for (size_t i = 0; i < n; ++i)
+        r[i].from_char(s[i]);
 
     return r;
 }

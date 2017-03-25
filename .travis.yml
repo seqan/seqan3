@@ -1,0 +1,35 @@
+sudo: false
+dist: trusty
+language: cpp
+
+git:
+  submodules: true
+
+env:
+  global:
+    - SH=bash
+    - GCC_VERSION="20170319"
+
+before_install:
+  - export GCC_PATH=/home/travis/gcc-7-$GCC_VERSION
+  - export PATH=$GCC_PATH/bin/:$PATH
+  - export LD_LIBRARY_PATH=$GCC_PATH/lib64/:$LD_LIBRARY_PATH
+  - echo $GCC_VERSION
+  - echo $GCC_PATH
+  - echo $PATH
+  - echo $LD_LIBRARY_PATH
+  - wget http://ftp.seqan.de/contribs/g++-7_"${GCC_VERSION}"_amd64.deb
+
+install:
+  - dpkg -x ./g++-7_"${GCC_VERSION}"_amd64.deb $HOME
+  - mv $HOME/home/travis/* $HOME
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ../test
+  - make googletest -j
+
+script:
+  - make -k
+  - ctest . --output-on-failure

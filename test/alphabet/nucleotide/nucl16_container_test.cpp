@@ -1,8 +1,8 @@
-// ==========================================================================
+// ============================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
+// ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,66 +30,33 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ==========================================================================
-// Author: David Heller <david.heller@fu-berlin.de>
-// ==========================================================================
-// Implementation of the sequence containers for dna5.
-// ==========================================================================
+// ============================================================================
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
+// ============================================================================
 
-#pragma once
+#include <array>
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include <gtest/gtest.h>
+#include <seqan3/alphabet/nucleotide/nucl16.hpp>
+#include <seqan3/alphabet/nucleotide/nucl16_container.hpp>
 
-#include "../alphabet.hpp"
-#include "../alphabet_sequence.hpp"
-#include "dna5.hpp"
+using namespace seqan3;
 
-// ------------------------------------------------------------------
-// containers
-// -----------------------------------------------------------------
-
-namespace seqan3
+TEST(alphabet_nucleotides_nucl16_container_test, vector)
 {
+    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
 
-using dna5_vector = std::vector<dna5>;
-
-using dna5_string = std::basic_string<dna5, std::char_traits<dna5>>;
-
-} // namespace seqan3
-
-// ------------------------------------------------------------------
-// literals
-// -----------------------------------------------------------------
-
-namespace seqan3::literal
-{
-
-inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
-{
-    dna5_vector r;
-    r.resize(n);
-
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return dna5{}.from_char(c);
-    });
-
-    return r;
+    EXPECT_EQ(v[0], nucl16::A);
+    EXPECT_EQ(v[1], nucl16::C);
+    EXPECT_EQ(v[2], nucl16::G);
+    EXPECT_EQ(v[3], nucl16::T);
 }
 
-inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
+TEST(alphabet_nucleotides_nucl16_container_test, string)
 {
-    dna5_string r;
-    r.resize(n);
-
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return dna5{}.from_char(c);
-    });
-
-    return r;
+    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
+    EXPECT_EQ(s[0], nucl16::A);
+    EXPECT_EQ(s[1], nucl16::C);
+    EXPECT_EQ(s[2], nucl16::G);
+    EXPECT_EQ(s[3], nucl16::T);
 }
-
-} // namespace seqan3::literal

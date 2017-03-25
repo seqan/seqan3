@@ -31,32 +31,15 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
+// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
 // ============================================================================
 
-#include <array>
+#pragma once
 
-#include <gtest/gtest.h>
-#include <seqan3/alphabet/nucleotide/nucl16.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16_sequence.hpp>
+#include "concepts/stl.hpp"
+#include "concepts/ranges.hpp"
 
-using namespace seqan3;
-
-TEST(alphabet_nucleotides_nucl16_sequence_test, vector)
-{
-    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
-
-    EXPECT_EQ(v[0], nucl16::A);
-    EXPECT_EQ(v[1], nucl16::C);
-    EXPECT_EQ(v[2], nucl16::G);
-    EXPECT_EQ(v[3], nucl16::T);
-}
-
-TEST(alphabet_nucleotides_nucl16_sequence_test, string)
-{
-    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
-    EXPECT_EQ(s[0], nucl16::A);
-    EXPECT_EQ(s[1], nucl16::C);
-    EXPECT_EQ(s[2], nucl16::G);
-    EXPECT_EQ(s[3], nucl16::T);
-}
+/*!\file concepts.hpp
+ * \brief Concepts of ranges and containers
+ * \ingroup container
+ */

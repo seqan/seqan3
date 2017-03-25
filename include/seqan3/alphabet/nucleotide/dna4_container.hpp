@@ -31,7 +31,7 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Chenxu Pan <chenxu.pan@fu-berlin.de>
+// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
 // ============================================================================
 
 #pragma once
@@ -42,10 +42,10 @@
 
 #include "../alphabet.hpp"
 #include "../alphabet_container.hpp"
-#include "rna4.hpp"
+#include "dna4.hpp"
 
 
-/*! Containers of @link rna4 @endlink
+/*! Containers of @link dna4 @endlink
  */
 
 // ------------------------------------------------------------------
@@ -55,17 +55,17 @@
 namespace seqan3
 {
 
-using rna4_vector = std::vector<rna4>;
+using dna4_vector = std::vector<dna4>;
 
 
-/*! std::basic_string of rna4
+/*! std::basic_string of dna4
  *
- * **NOTE** that we recommend using @link rna4_vector @endlink in almost all situations.
+ * **NOTE** that we recommend using @link dna4_vector @endlink in almost all situations.
  * While the C++ style operations on the string are well supported, you should not access the internal c-string
  * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
  * correct length of the string (while the `.size()` returns the correct value).
  */
-using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
+using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
 
 } // namespace seqan3
 
@@ -76,25 +76,25 @@ using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
 namespace seqan3::literal
 {
 
-/*! rna4 literal (returns @link rna4_vector @endlink)
+/*! dna4 literal (returns @link dna4_vector @endlink)
  *
- * You can use this string literal to easily assign to rna4_vector:
+ * You can use this string literal to easily assign to dna4_vector:
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // rna4_vector foo{"ACGUUA"};
- *     // rna4_vector bar = "ACGUUA";
+ *     // dna4_vector foo{"ACGTTA"};
+ *     // dna4_vector bar = "ACGTTA";
  *
  *     // but these do:
- *     rna4_vector foo{"ACGUUA"_rna4};
- *     rna4_vector bar = "ACGUUA"_rna4;
- *     auto bax = "ACGUUA"_rna4;
+ *     dna4_vector foo{"ACGTTA"_dna4};
+ *     dna4_vector bar = "ACGTTA"_dna4;
+ *     auto bax = "ACGTTA"_dna4;
  *~~~~~~~~~~~~~~~
  */
 
-inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
+inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
 {
-    rna4_vector r;
+    dna4_vector r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
@@ -103,27 +103,27 @@ inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
     return r;
 }
 
-/*! rna4 string literal (returns @link rna4_string @endlink)
+/*! dna4 string literal (returns @link dna4_string @endlink)
  *
- * You can use this string literal to easily assign to rna4_vector:
+ * You can use this string literal to easily assign to dna4_vector:
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // rna4_string foo{"ACGUUA"};
- *     // rna4_string bar = "ACGUUA";
+ *     // dna4_string foo{"ACGTTA"};
+ *     // dna4_string bar = "ACGTTA";
  *
  *     // but these do:
- *     rna4_string foo{"ACGUUA"_rna4s};
- *     rna4_string bar = "ACGUUA"_rna4s;
- *     auto bax = "ACGUUA"_rna4s;
+ *     dna4_string foo{"ACGTTA"_dna4s};
+ *     dna4_string bar = "ACGTTA"_dna4s;
+ *     auto bax = "ACGTTA"_dna4s;
  *~~~~~~~~~~~~~~~
  *
- * Please note the limitations of @link rna4_string @endlink and consider using the `_rna4' literal instead.
+ * Please note the limitations of @link dna4_string @endlink and consider using the `_dna4' literal instead.
  */
 
-inline rna4_string operator "" _rna4s(const char * s, std::size_t n)
+inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
 {
-    rna4_string r;
+    dna4_string r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)

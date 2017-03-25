@@ -34,61 +34,27 @@
 // Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
-#pragma once
+#include <gtest/gtest.h>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/aminoacid/aa27_container.hpp>
 
-#include <iostream>
-#include <string>
-#include <vector>
+using namespace seqan3;
 
-#include "../alphabet.hpp"
-#include "../alphabet_sequence.hpp"
-#include "nucl16.hpp"
-
-// ------------------------------------------------------------------
-// containers
-// -----------------------------------------------------------------
-
-namespace seqan3
+TEST(alphabet_aminoacid_aa27_container_test, vector)
 {
+    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
 
-using nucl16_vector = std::vector<nucl16>;
-
-using nucl16_string = std::basic_string<nucl16, std::char_traits<nucl16>>;
-
-} // namespace seqan3
-
-// ------------------------------------------------------------------
-// literals
-// -----------------------------------------------------------------
-
-namespace seqan3::literal
-{
-
-inline nucl16_vector operator "" _nucl16(const char * s, std::size_t n)
-{
-    nucl16_vector r;
-    r.resize(n);
-
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return nucl16{}.from_char(c);
-    });
-
-    return r;
+    EXPECT_EQ(v[0], aa27::A);
+    EXPECT_EQ(v[1], aa27::C);
+    EXPECT_EQ(v[2], aa27::G);
+    EXPECT_EQ(v[3], aa27::T);
 }
 
-inline nucl16_string operator "" _nucl16s(const char * s, std::size_t n)
+TEST(alphabet_aminoacid_aa27_container_test, string)
 {
-    nucl16_string r;
-    r.resize(n);
-
-    std::transform(s, s + n, r.begin(), [] (const char & c)
-    {
-        return nucl16{}.from_char(c);
-    });
-
-    return r;
+    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
+    EXPECT_EQ(s[0], aa27::A);
+    EXPECT_EQ(s[1], aa27::C);
+    EXPECT_EQ(s[2], aa27::G);
+    EXPECT_EQ(s[3], aa27::T);
 }
-
-} // namespace seqan3::literal
-

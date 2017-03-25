@@ -31,36 +31,60 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: Chenxu Pan <chenxu.pan@fu-berlin.de>
+// Author: Hannes Hauswedell <hannes.hauswedell@fu-berlin.de>
+// Author: Marcel Ehrhardt <marcel.ehrhardt@fu-berlin.de>
+// Author: David Heller <david.heller@fu-berlin.de>
 // ==========================================================================
-// Test cases for the biological rna4 alphabet.
-// ==========================================================================
 
-#include <seqan3/alphabet/nucleotide/rna4_container.hpp>
-#include <gtest/gtest.h>
-#include <sstream>
-#include <vector>
+#pragma once
 
-using namespace seqan3;
-using namespace seqan3::literal;
+#include "gap.hpp"
+#include "../union_alphabet.hpp"
+#include "../nucleotide/dna4.hpp"
 
-TEST(rna4_test, test_rna4_vector_operator)
+namespace seqan3
 {
-    rna4_vector v;
-    v.resize(4, rna4{rna4::A});
-    EXPECT_EQ(v, "AAAA"_rna4);
 
-    std::vector<rna4> w {rna4{rna4::A}, rna4{rna4::C}, rna4{rna4::G}, rna4{rna4::U}};
-    EXPECT_EQ(w, "ACGU"_rna4);
-}
-
-TEST(rna4_test, test_rna4_string_operator)
+template <typename underlying_t>
+    requires alphabet_concept<underlying_t>
+struct gapped_alphabet : public union_alphabet<underlying_t, gap>
 {
-    rna4_string v;
-    v.resize(4, rna4{rna4::A});
-    EXPECT_EQ(v, "AAAA"_rna4s);
+    using union_alphabet<underlying_t, gap>::value;
+    using union_alphabet<underlying_t, gap>::value_size;
+    using union_alphabet<underlying_t, gap>::integral_type;
+    using union_alphabet<underlying_t, gap>::char_type;
 
-    std::basic_string<rna4, std::char_traits<rna4>> w {rna4{rna4::A}, rna4{rna4::C}, rna4{rna4::G},
-                                                       rna4{rna4::U}};
-    EXPECT_EQ(w, "ACGU"_rna4s);
+    using union_alphabet<underlying_t, gap>::to_char;
+    using union_alphabet<underlying_t, gap>::to_integral;
+
+    /* public member functions */
+    constexpr bool is_gap() const
+    {
+        return value == value_size - 1;
+    }
+
+    constexpr gapped_alphabet set_gap()
+    {
+        value = value_size - 1;
+        return *this;
+    }
+
+    constexpr gapped_alphabet & from_integral(typename union_alphabet<underlying_t, gap>::integral_type const i)
+    {
+        union_alphabet<underlying_t, gap>::from_integral(i);
+        return *this;
+    }
+
+    constexpr gapped_alphabet & from_char(typename union_alphabet<underlying_t, gap>::char_type const c)
+    {
+        union_alphabet<underlying_t, gap>::from_char(c);
+        return *this;
+    }
+};
+
+#ifndef NDEBUG
+static_assert(alphabet_concept<gapped_alphabet<dna4>>);
+static_assert(detail::internal_alphabet_concept<gapped_alphabet<dna4>>);
+#endif
+
 }
