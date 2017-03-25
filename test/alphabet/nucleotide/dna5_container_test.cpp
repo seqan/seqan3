@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,33 +30,37 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
+// ==========================================================================
+// Author: David Heller <david.heller@fu-berlin.de>
+// ==========================================================================
+// Test cases for the biological dna5 alphabet.
+// ==========================================================================
 
-#include <array>
-
+#include <seqan3/alphabet/nucleotide/dna5_container.hpp>
 #include <gtest/gtest.h>
-#include <seqan3/alphabet/nucleotide/nucl16.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16_sequence.hpp>
+#include <sstream>
+#include <vector>
 
 using namespace seqan3;
+using namespace seqan3::literal;
 
-TEST(alphabet_nucleotides_nucl16_sequence_test, vector)
+TEST(dna5_test, test_dna5_vector_operator)
 {
-    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
+    dna5_vector v;
+    v.resize(5, dna5{dna5::A});
+    EXPECT_EQ(v, "AAAAA"_dna5);
 
-    EXPECT_EQ(v[0], nucl16::A);
-    EXPECT_EQ(v[1], nucl16::C);
-    EXPECT_EQ(v[2], nucl16::G);
-    EXPECT_EQ(v[3], nucl16::T);
+    std::vector<dna5> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G}, dna5{dna5::T}, dna5{dna5::N}};
+    EXPECT_EQ(w, "ACGTN"_dna5);
 }
 
-TEST(alphabet_nucleotides_nucl16_sequence_test, string)
+TEST(dna5_test, test_dna5_string_operator)
 {
-    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
-    EXPECT_EQ(s[0], nucl16::A);
-    EXPECT_EQ(s[1], nucl16::C);
-    EXPECT_EQ(s[2], nucl16::G);
-    EXPECT_EQ(s[3], nucl16::T);
+    dna5_string v;
+    v.resize(5, dna5{dna5::A});
+    EXPECT_EQ(v, "AAAAA"_dna5s);
+
+    std::basic_string<dna5, std::char_traits<dna5>> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G},
+                                                       dna5{dna5::T}, dna5{dna5::N}};
+    EXPECT_EQ(w, "ACGTN"_dna5s);
 }
