@@ -40,7 +40,7 @@
 
 using namespace seqan3;
 
-TEST(alphabet_aminoacid_aa27_sequence_test, vector)
+TEST(alphabet_aminoacid_aa27_container_test, vector)
 {
     aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
 
@@ -50,7 +50,7 @@ TEST(alphabet_aminoacid_aa27_sequence_test, vector)
     EXPECT_EQ(v[3], aa27::T);
 }
 
-TEST(alphabet_aminoacid_aa27_sequence_test, string)
+TEST(alphabet_aminoacid_aa27_container_test, string)
 {
     aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
     EXPECT_EQ(s[0], aa27::A);

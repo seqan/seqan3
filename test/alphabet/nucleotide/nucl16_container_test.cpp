@@ -31,91 +31,32 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
 // ============================================================================
 
-#pragma once
-
-#include <algorithm>
-#include <iostream>
-#include <vector>
 #include <array>
-#include <list>
-#include <forward_list>
-#include <deque>
-#include <string>
 
-#include "alphabet.hpp"
+#include <gtest/gtest.h>
+#include <seqan3/alphabet/nucleotide/nucl16.hpp>
+#include <seqan3/alphabet/nucleotide/nucl16_container.hpp>
 
-namespace seqan3
+using namespace seqan3;
+
+TEST(alphabet_nucleotides_nucl16_container_test, vector)
 {
+    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
 
-/*! \file alphabet_container.hpp
- * \ingroup alphabet
- * Free function overloads for containers over alphabets
- */
-
-// ------------------------------------------------------------------
-// ostream operator
-// ------------------------------------------------------------------
-
-//!\publicsection
-//!@name outstream operator specializations for containers of our alphabets
-//!@{
-template <typename alphabet_type, size_t n>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::array<alphabet_type, n> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
+    EXPECT_EQ(v[0], nucl16::A);
+    EXPECT_EQ(v[1], nucl16::C);
+    EXPECT_EQ(v[2], nucl16::G);
+    EXPECT_EQ(v[3], nucl16::T);
 }
 
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::forward_list<alphabet_type> const & str)
+TEST(alphabet_nucleotides_nucl16_container_test, string)
 {
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::list<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::deque<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::vector<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::basic_string<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-//!@}
-//TODO serialization
-
+    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
+    EXPECT_EQ(s[0], nucl16::A);
+    EXPECT_EQ(s[1], nucl16::C);
+    EXPECT_EQ(s[2], nucl16::G);
+    EXPECT_EQ(s[3], nucl16::T);
 }

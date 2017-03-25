@@ -36,86 +36,13 @@
 
 #pragma once
 
-#include <algorithm>
-#include <iostream>
-#include <vector>
-#include <array>
-#include <list>
-#include <forward_list>
-#include <deque>
-#include <string>
+#include <container/concepts.hpp>
 
-#include "alphabet.hpp"
-
-namespace seqan3
-{
-
-/*! \file alphabet_container.hpp
- * \ingroup alphabet
- * Free function overloads for containers over alphabets
+/*!\defgroup container
+ *
+ * The container module contains adaptations and concepts for ranges and containers, as well
+ * as implementations of novel containers.
+ *
+ * TODO more details.
  */
 
-// ------------------------------------------------------------------
-// ostream operator
-// ------------------------------------------------------------------
-
-//!\publicsection
-//!@name outstream operator specializations for containers of our alphabets
-//!@{
-template <typename alphabet_type, size_t n>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::array<alphabet_type, n> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::forward_list<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::list<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::deque<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::vector<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-
-template <typename alphabet_type>
-    requires alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, std::basic_string<alphabet_type> const & str)
-{
-    for (auto c : str)
-        os << c;
-    return os;
-}
-//!@}
-//TODO serialization
-
-}

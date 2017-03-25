@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,33 +30,60 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
+// ==========================================================================
+// Author: David Heller <david.heller@fu-berlin.de>
+// ==========================================================================
 
-#include <array>
+#include <sstream>
 
 #include <gtest/gtest.h>
-#include <seqan3/alphabet/nucleotide/nucl16.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16_container.hpp>
+
+#include <seqan3/alphabet/gap/gap.hpp>
 
 using namespace seqan3;
 
-TEST(alphabet_nucleotides_nucl16_sequence_test, vector)
+TEST(gap_test, test_alphabet_concept)
 {
-    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
-
-    EXPECT_EQ(v[0], nucl16::A);
-    EXPECT_EQ(v[1], nucl16::C);
-    EXPECT_EQ(v[2], nucl16::G);
-    EXPECT_EQ(v[3], nucl16::T);
+    EXPECT_TRUE(alphabet_concept<gap>);
 }
 
-TEST(alphabet_nucleotides_nucl16_sequence_test, string)
+TEST(gap_test, test_default_initialization)
 {
-    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
-    EXPECT_EQ(s[0], nucl16::A);
-    EXPECT_EQ(s[1], nucl16::C);
-    EXPECT_EQ(s[2], nucl16::G);
-    EXPECT_EQ(s[3], nucl16::T);
+    EXPECT_EQ(gap{}.to_char(), '-');
+}
+
+TEST(gap_test, test_static_cast)
+{
+    EXPECT_EQ(static_cast<char>(gap{}), '-');
+}
+
+TEST(gap_test, test_relations)
+{
+    EXPECT_EQ(gap{}, gap{});
+    EXPECT_LE(gap{}, gap{});
+    EXPECT_GE(gap{}, gap{});
+}
+
+TEST(gap_test, test_stream_operator)
+{
+    std::stringstream ss;
+    ss << gap{} << gap{} << gap{};
+    EXPECT_EQ(ss.str(), "---");
+}
+
+TEST( gap_test, test_from_char)
+{
+    EXPECT_EQ(gap{}.from_char('-'), gap{});
+    EXPECT_EQ(gap{}.from_char('x'), gap{});
+}
+
+TEST(gap_test, test_to_integral)
+{
+    EXPECT_EQ(gap{}.to_integral(), 0);
+}
+
+TEST(gap_test, test_from_integral)
+{
+    EXPECT_EQ(gap{}.from_integral(0), gap{});
+    EXPECT_EQ(gap{}.from_integral(13), gap{});
 }
