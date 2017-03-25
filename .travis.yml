@@ -7,8 +7,12 @@ git:
 
 env:
   global:
-    - SH=bash
     - GCC_VERSION="20170319"
+
+cache:
+  ccache: true
+  directories:
+    - $HOME/debs
 
 before_install:
   - export GCC_PATH=/home/travis/gcc-7-$GCC_VERSION
@@ -18,10 +22,10 @@ before_install:
   - echo $GCC_PATH
   - echo $PATH
   - echo $LD_LIBRARY_PATH
-  - wget http://ftp.seqan.de/contribs/g++-7_"${GCC_VERSION}"_amd64.deb
+  - wget -nc -P $HOME/debs http://ftp.seqan.de/contribs/g++-7_"${GCC_VERSION}"_amd64.deb
 
 install:
-  - dpkg -x ./g++-7_"${GCC_VERSION}"_amd64.deb $HOME
+  - dpkg -x $HOME/debs/g++-7_"${GCC_VERSION}"_amd64.deb $HOME
   - mv $HOME/home/travis/* $HOME
 
 before_script:
@@ -33,3 +37,6 @@ before_script:
 script:
   - make -k
   - ctest . --output-on-failure
+
+after_script:
+  - ccache -s
