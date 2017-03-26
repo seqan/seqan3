@@ -44,34 +44,154 @@
 
 using namespace seqan3;
 
-TEST(union_alphabet_test, default_ctr)
+TEST(union_alphabet_test, default_constructor)
 {
     using alphabet_t = union_alphabet<dna4, gap>;
-    alphabet_t{};
+    constexpr alphabet_t letter1{};
+
+    EXPECT_EQ(letter1.value, 0);
+}
+
+TEST(union_alphabet_test, base_alphabet_constructor)
+{
+    using alphabet_t = union_alphabet<dna4, dna5, gap>;
+
+    constexpr alphabet_t letter0{dna4::A};
+    constexpr alphabet_t letter1{dna4::C};
+    constexpr alphabet_t letter2{dna4::G};
+    constexpr alphabet_t letter3{dna4::T};
+    constexpr alphabet_t letter4{dna5::A};
+    constexpr alphabet_t letter5{dna5::C};
+    constexpr alphabet_t letter6{dna5::G};
+    constexpr alphabet_t letter7{dna5::T};
+    constexpr alphabet_t letter8{dna5::N};
+    constexpr alphabet_t letter9{gap::GAP};
+
+    EXPECT_EQ(letter0.value, 0);
+    EXPECT_EQ(letter1.value, 1);
+    EXPECT_EQ(letter2.value, 2);
+    EXPECT_EQ(letter3.value, 3);
+    EXPECT_EQ(letter4.value, 4);
+    EXPECT_EQ(letter5.value, 5);
+    EXPECT_EQ(letter6.value, 6);
+    EXPECT_EQ(letter7.value, 7);
+    EXPECT_EQ(letter8.value, 8);
+    EXPECT_EQ(letter9.value, 9);
+}
+
+TEST(union_alphabet_test, same_base_alphabet_constructor)
+{
+    using alphabet_t = union_alphabet<dna4, dna4>;
+    using variant_t = alphabet_t::variant_type;
+
+    constexpr alphabet_t letter0{variant_t{std::in_place_index_t<0>{}, dna4::A}};
+    constexpr alphabet_t letter1{variant_t{std::in_place_index_t<0>{}, dna4::C}};
+    constexpr alphabet_t letter2{variant_t{std::in_place_index_t<0>{}, dna4::G}};
+    constexpr alphabet_t letter3{variant_t{std::in_place_index_t<0>{}, dna4::T}};
+    constexpr alphabet_t letter4{variant_t{std::in_place_index_t<1>{}, dna4::A}};
+    constexpr alphabet_t letter5{variant_t{std::in_place_index_t<1>{}, dna4::C}};
+    constexpr alphabet_t letter6{variant_t{std::in_place_index_t<1>{}, dna4::G}};
+    constexpr alphabet_t letter7{variant_t{std::in_place_index_t<1>{}, dna4::T}};
+
+    EXPECT_EQ(letter0.value, 0);
+    EXPECT_EQ(letter1.value, 1);
+    EXPECT_EQ(letter2.value, 2);
+    EXPECT_EQ(letter3.value, 3);
+    EXPECT_EQ(letter4.value, 4);
+    EXPECT_EQ(letter5.value, 5);
+    EXPECT_EQ(letter6.value, 6);
+    EXPECT_EQ(letter7.value, 7);
 }
 
 TEST(union_alphabet_test, copy_constructor)
 {
     using alphabet_t = union_alphabet<dna4, gap>;
-    alphabet_t letter1{};
+    constexpr alphabet_t letter1{3};
     alphabet_t letter2{letter1};
 
-    EXPECT_EQ(letter1, letter2);
+    EXPECT_EQ(letter1.value, 3);
+    EXPECT_EQ(letter2.value, 3);
 }
 
 TEST(union_alphabet_test, move_constructor)
 {
     using alphabet_t = union_alphabet<dna4, gap>;
-    alphabet_t letter1{};
+    alphabet_t letter1{2};
     alphabet_t letter2{std::move(letter1)};
 
-    EXPECT_EQ(letter1, letter2);
+    EXPECT_EQ(letter2.value, 2);
+}
+
+TEST(union_alphabet_test, base_alphabet_assignment)
+{
+    using alphabet_t = union_alphabet<dna4, dna5, gap>;
+    alphabet_t letter{};
+
+    letter = dna4::A;
+    EXPECT_EQ(letter.value, 0);
+
+    letter = dna4::C;
+    EXPECT_EQ(letter.value, 1);
+
+    letter = dna4::G;
+    EXPECT_EQ(letter.value, 2);
+
+    letter = dna4::T;
+    EXPECT_EQ(letter.value, 3);
+
+    letter = dna5::A;
+    EXPECT_EQ(letter.value, 4);
+
+    letter = dna5::C;
+    EXPECT_EQ(letter.value, 5);
+
+    letter = dna5::G;
+    EXPECT_EQ(letter.value, 6);
+
+    letter = dna5::T;
+    EXPECT_EQ(letter.value, 7);
+
+    letter = dna5::N;
+    EXPECT_EQ(letter.value, 8);
+
+    letter = gap::GAP;
+    EXPECT_EQ(letter.value, 9);
+}
+
+TEST(union_alphabet_test, copy_assignment)
+{
+    using alphabet_t = union_alphabet<dna4, gap>;
+    constexpr alphabet_t letter1{alphabet_t{3}};
+    alphabet_t letter2{letter1};
+
+    EXPECT_EQ(letter1.value, 3);
+    EXPECT_EQ(letter2.value, 3);
+}
+
+TEST(union_alphabet_test, move_assignment)
+{
+    using alphabet_t = union_alphabet<dna4, gap>;
+    alphabet_t letter1{alphabet_t{2}};
+    alphabet_t letter2{std::move(letter1)};
+
+    EXPECT_EQ(letter2.value, 2);
 }
 
 TEST(union_alphabet_test, single_union)
 {
     using alphabet_t = union_alphabet<dna4>;
-    alphabet_t{};
+    constexpr alphabet_t letter1{};
+
+    EXPECT_EQ(letter1.value, 0);
+}
+
+TEST(union_alphabet_test, fulfills_concepts)
+{
+    static_assert(std::is_pod_v<union_alphabet<dna5, dna5>>);
+    static_assert(std::is_trivial_v<union_alphabet<dna5, dna5>>);
+    static_assert(std::is_trivially_copyable_v<union_alphabet<dna5, dna5>>);
+    static_assert(std::is_standard_layout_v<union_alphabet<dna5, dna5>>);
+    static_assert(alphabet_concept<union_alphabet<dna5, dna5>>);
 }
 
 TEST(union_alphabet_test, rank_type)
@@ -81,12 +201,11 @@ TEST(union_alphabet_test, rank_type)
     using alphabet3_t = union_alphabet<gap>;
 
     constexpr auto expect1 = std::is_same_v<alphabet1_t::rank_type, uint8_t>;
-    EXPECT_TRUE(expect1);
-
     constexpr auto expect2 = std::is_same_v<alphabet2_t::rank_type, uint8_t>;
-    EXPECT_TRUE(expect2);
-
     constexpr auto expect3 = std::is_same_v<alphabet3_t::rank_type, bool>;
+
+    EXPECT_TRUE(expect1);
+    EXPECT_TRUE(expect2);
     EXPECT_TRUE(expect3);
 }
 

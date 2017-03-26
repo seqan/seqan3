@@ -54,11 +54,13 @@ namespace seqan3
  *
  * The alphabet always has the same value ('-').
  *
- *     gap my_gap{};
+ * ```cpp
+ *     gap my_gap = gap::GAP;
  *     gap another_gap{}.assign_char('A'); // setting this does not change anything
  *
  *     if (my_gap.to_char() == another_gap.to_char())
  *        std::cout << "Both gaps are the same!";
+ * ```
  */
 
 struct gap
@@ -72,6 +74,14 @@ struct gap
     /* member */
     //! internal value
     static constexpr rank_type value = 0;
+
+    /*! @name letter values
+     * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
+     */
+    //!@{
+    static const gap GAP;
+    static const gap UNKNOWN;
+    //!@}
 
     //! The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{1};
@@ -141,6 +151,9 @@ struct gap
     }
     //!@}
 };
+
+constexpr gap gap::GAP{};
+constexpr gap gap::UNKNOWN{gap::GAP};
 
 #ifndef NDEBUG
 static_assert(alphabet_concept<gap>);

@@ -49,7 +49,7 @@ TEST(gap_test, test_alphabet_concept)
 
 TEST(gap_test, test_default_initialization)
 {
-    EXPECT_EQ(gap{}.to_char(), '-');
+    EXPECT_EQ(gap::GAP.to_char(), '-');
 }
 
 TEST(gap_test, test_static_cast)
