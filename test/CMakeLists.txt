@@ -10,6 +10,12 @@ set(CMAKE_CXX_FLAGS "-std=c++1z -fconcepts")
 set(GOOGLETEST_PATH "${CMAKE_SOURCE_DIR}/../vendor/googletest/googletest")
 set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main")
 
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+endif(CCACHE_PROGRAM)
+
 include(ExternalProject)
 ExternalProject_Add(
     googletest
