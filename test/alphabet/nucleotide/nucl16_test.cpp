@@ -43,13 +43,15 @@ using namespace seqan3;
 
 constexpr char capital_char[] = {'A', 'B', 'C', 'D', 'G', 'H', 'K', 'M', 'N', 'R', 'S', 'T', 'U', 'V', 'W', 'Y'};
 constexpr char lower_char[] = {'a', 'b', 'c', 'd', 'g', 'h', 'k', 'm', 'n', 'r', 's', 't', 'u', 'v', 'w', 'y'};
+constexpr nucl16 all_nucl16[] = {nucl16::A, nucl16::B, nucl16::C, nucl16::D, nucl16::G, nucl16::H, nucl16::K,
+                                 nucl16::M, nucl16::N, nucl16::R, nucl16::S, nucl16::T, nucl16::U, nucl16::V,
+                                 nucl16::W, nucl16::Y};
 
 TEST(alphabet_nucleotides_nucl16_test, default_ctr)
 {
     constexpr nucl16 nucleotide{};
 
     EXPECT_EQ(nucleotide, nucl16::A);
-    EXPECT_EQ(nucleotide.value, nucl16::c_type::A);
 }
 
 TEST(alphabet_nucleotides_nucl16_test, copy_ctr)
@@ -58,7 +60,6 @@ TEST(alphabet_nucleotides_nucl16_test, copy_ctr)
     constexpr nucl16 nucleotide2{nucleotide1};
 
     EXPECT_EQ(nucleotide2, nucl16::B);
-    EXPECT_EQ(nucleotide2.value, nucl16::c_type::B);
 }
 
 TEST(alphabet_nucleotides_nucl16_test, move_ctr)
@@ -67,7 +68,6 @@ TEST(alphabet_nucleotides_nucl16_test, move_ctr)
     constexpr nucl16 nucleotide2{std::move(nucleotide1)};
 
     EXPECT_EQ(nucleotide2, nucl16::C);
-    EXPECT_EQ(nucleotide2.value, nucl16::c_type::C);
 }
 
 TEST(alphabet_nucleotides_nucl16_test, copy_asn)
@@ -78,7 +78,6 @@ TEST(alphabet_nucleotides_nucl16_test, copy_asn)
     nucleotide2 = nucleotide1;
 
     EXPECT_EQ(nucleotide2, nucl16::D);
-    EXPECT_EQ(nucleotide2.value, nucl16::c_type::D);
 }
 
 TEST(alphabet_nucleotides_nucl16_test, move_asn)
@@ -89,7 +88,6 @@ TEST(alphabet_nucleotides_nucl16_test, move_asn)
     nucleotide2 = std::move(nucleotide1);
 
     EXPECT_EQ(nucleotide2, nucl16::K);
-    EXPECT_EQ(nucleotide2.value, nucl16::c_type::K);
 }
 
 TEST(alphabet_nucleotides_nucl16_test, operator_char)
@@ -105,8 +103,7 @@ TEST(alphabet_nucleotides_nucl16_test, to_char)
     uint8_t rank = 0;
     for (auto i : capital_char)
     {
-        uint8_t integral = rank++;
-        nucl16 nucleotide{nucl16::c_type{integral}};
+        nucl16 nucleotide{all_nucl16[rank++]};
         char c = nucleotide.to_char();
         EXPECT_EQ(c, i);
     }
@@ -117,15 +114,15 @@ TEST(alphabet_nucleotides_nucl16_test, from_char)
     uint8_t rank = 0;
     for (auto i : capital_char)
     {
-        uint8_t integral = rank++;
-        EXPECT_EQ(nucl16{}.from_char(i), nucl16::c_type{integral});
+        nucl16 nucleotide{all_nucl16[rank++]};
+        EXPECT_EQ(nucl16{}.from_char(i), nucleotide);
     }
 
     rank = 0;
     for (auto i : lower_char)
     {
-        uint8_t integral = rank++;
-        EXPECT_EQ(nucl16{}.from_char(i), nucl16::c_type{integral});
+        nucl16 nucleotide{all_nucl16[rank++]};
+        EXPECT_EQ(nucl16{}.from_char(i), nucleotide);
     }
 }
 
@@ -135,7 +132,7 @@ TEST(alphabet_nucleotides_nucl16_test, to_integral)
     for (auto i : capital_char)
     {
         uint8_t integral = rank++;
-        nucl16 nucleotide{nucl16::c_type{integral}};
+        nucl16 nucleotide{all_nucl16[integral]};
         uint8_t integral_res = nucleotide.to_integral();
         EXPECT_EQ(integral_res, integral);
     }
@@ -144,7 +141,7 @@ TEST(alphabet_nucleotides_nucl16_test, to_integral)
     for (auto i : lower_char)
     {
         uint8_t integral = rank++;
-        nucl16 nucleotide{nucl16::c_type{integral}};
+        nucl16 nucleotide{all_nucl16[integral]};
         uint8_t integral_res = nucleotide.to_integral();
         EXPECT_EQ(integral_res, integral);
     }
@@ -158,7 +155,7 @@ TEST(alphabet_nucleotides_nucl16_test, from_integral)
         uint8_t integral = rank++;
         nucl16 nucleotide;
         nucleotide = nucleotide.from_integral(integral);
-        EXPECT_EQ(nucleotide, nucl16::c_type{integral});
+        EXPECT_EQ(nucleotide, all_nucl16[integral]);
     }
 }
 

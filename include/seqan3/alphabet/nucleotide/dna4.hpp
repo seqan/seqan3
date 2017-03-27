@@ -52,6 +52,7 @@ namespace seqan3
  * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
  * regular characters, but additional functions for this are available.
  *
+ *~~~~~~~~~~~~~~~{.cpp}
  *     dna4 my_letter{dna4::A};
  *     // doesn't work:
  *     // dna4 my_letter{'A'};
@@ -61,13 +62,14 @@ namespace seqan3
  *     my_letter.from_char('F'); // converted to A internally
  *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
+ *~~~~~~~~~~~~~~~
  */
 
 struct dna4
 {
     //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
     using char_type = char;
-    //! the type of the alphabet when represented as a numberr (e.g. via @link to_integral @endlink)
+    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
     using integral_type = uint8_t;
 
     // strictly typed enum, unfortunately with scope
@@ -272,4 +274,4 @@ static_assert(alphabet_concept<dna4>);
 static_assert(detail::internal_alphabet_concept<dna4>);
 #endif
 
-}
+} // namespace seqan3
