@@ -98,7 +98,7 @@ concept bool container_concept = requires (type val, type val2)
  * `std::array` does not satisfy this concept.
  * \privatesection
  */
-
+/*
 template <typename type>
 concept bool sequence_light_concept = requires (type val, type val2)
 {
@@ -117,7 +117,7 @@ concept bool sequence_light_concept = requires (type val, type val2)
 
     { val.front() } -> typename type::value_type &;
 };
-
+*/
 /*!
  * \publicsection
  * \var concept bool sequence_concept
@@ -131,32 +131,32 @@ concept bool sequence_light_concept = requires (type val, type val2)
  * `std::array` and `std::forward_list` do not satisfy this concept.
  * \privatesection
  */
-
-template <typename type>
-concept bool sequence_concept = requires (type val, type val2)
-{
-    requires sequence_light_concept<type>;
-
-    // modify container
-//TODO: how do you model this?
-//     { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
-    { val.insert(val.begin(), val2.front())                                            } -> typename type::iterator;
-    { val.insert(val.begin(), typename type::value_type{})                             } -> typename type::iterator;
-    { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
-    { val.insert(val.cbegin(), val2.begin(), val2.end())                               } -> typename type::iterator;
-//TODO this fails on std::string, although it should work
-//     { val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{})    } -> typename type::iterator;
-    { val.erase(val.cbegin())                                                          } -> typename type::iterator;
-    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
-    { val.push_back(val.front())                                                       } -> void;
-    { val.push_back(typename type::value_type{})                                       } -> void;
-    { val.pop_back()                                                                   } -> void;
-    { val.clear()                                                                      } -> void;
-
-    // access container
-    { val.size() } -> typename type::size_type;
-    { val.back() } -> typename type::value_type &;
-};
+//
+// template <typename type>
+// concept bool sequence_concept = requires (type val, type val2)
+// {
+//     requires sequence_light_concept<type>;
+//
+//     // modify container
+// //TODO: how do you model this?
+// //     { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
+//     { val.insert(val.begin(), val2.front())                                            } -> typename type::iterator;
+//     { val.insert(val.begin(), typename type::value_type{})                             } -> typename type::iterator;
+//     { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
+//     { val.insert(val.cbegin(), val2.begin(), val2.end())                               } -> typename type::iterator;
+// //TODO this fails on std::string, although it should work
+// //     { val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{})    } -> typename type::iterator;
+//     { val.erase(val.cbegin())                                                          } -> typename type::iterator;
+//     { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
+//     { val.push_back(val.front())                                                       } -> void;
+//     { val.push_back(typename type::value_type{})                                       } -> void;
+//     { val.pop_back()                                                                   } -> void;
+//     { val.clear()                                                                      } -> void;
+//
+//     // access container
+//     { val.size() } -> typename type::size_type;
+//     { val.back() } -> typename type::value_type &;
+// };
 
 /*!
  * \publicsection
@@ -171,19 +171,19 @@ concept bool sequence_concept = requires (type val, type val2)
  * \privatesection
  */
 
-template <typename type>
-concept bool random_access_sequence_concept = requires (type val)
-{
-    requires sequence_concept<type>;
-
-    // access container
-    { val[0]    } -> typename type::value_type &;
-    { val.at(0) } -> typename type::value_type &;
-
-    // modify container
-    { val.resize(0)                              } -> void;
-    { val.resize(0, typename type::value_type{}) } -> void;
-};
+// template <typename type>
+// concept bool random_access_sequence_concept = requires (type val)
+// {
+//     requires sequence_concept<type>;
+//
+//     // access container
+//     { val[0]    } -> typename type::value_type &;
+//     { val.at(0) } -> typename type::value_type &;
+//
+//     // modify container
+//     { val.resize(0)                              } -> void;
+//     { val.resize(0, typename type::value_type{}) } -> void;
+// };
 
 /*!
  * \publicsection
@@ -194,12 +194,12 @@ concept bool random_access_sequence_concept = requires (type val)
  * \privatesection
  */
 
-template <typename type>
-concept bool container_of_container_concept = requires (type val)
-{
-    requires container_concept<type>;
-    requires container_concept<typename type::value_type>;
-};
+// template <typename type>
+// concept bool container_of_container_concept = requires (type val)
+// {
+//     requires container_concept<type>;
+//     requires container_concept<typename type::value_type>;
+// };
 
 /*!
  * \publicsection
@@ -210,12 +210,12 @@ concept bool container_of_container_concept = requires (type val)
  * \privatesection
  */
 
-template <typename type>
-concept bool sequence_of_sequence_concept = requires (type val)
-{
-    requires sequence_concept<type>;
-    requires sequence_concept<typename type::value_type>;
-};
+// template <typename type>
+// concept bool sequence_of_sequence_concept = requires (type val)
+// {
+//     requires sequence_concept<type>;
+//     requires sequence_concept<typename type::value_type>;
+// };
 
 /*!
  * \publicsection
@@ -226,35 +226,35 @@ concept bool sequence_of_sequence_concept = requires (type val)
  * \privatesection
  */
 
-template <typename type>
-concept bool ra_sequence_of_ra_sequence_concept = requires (type val)
-{
-    requires random_access_sequence_concept<type>;
-    requires random_access_sequence_concept<typename type::value_type>;
-};
+// template <typename type>
+// concept bool ra_sequence_of_ra_sequence_concept = requires (type val)
+// {
+//     requires random_access_sequence_concept<type>;
+//     requires random_access_sequence_concept<typename type::value_type>;
+// };
 
 } // namespace seqan3
 
 #ifndef NDEBUG
 /* Check the STL containers */
 
-#include <vector>
-#include <array>
-#include <list>
-#include <forward_list>
-#include <deque>
-#include <string>
-
-static_assert(seqan3::container_concept<std::array<char, 2>>);
-static_assert(seqan3::sequence_light_concept<std::forward_list<char>>);
-static_assert(seqan3::sequence_concept<std::list<char>>);
-static_assert(seqan3::random_access_sequence_concept<std::vector<char>>);
-static_assert(seqan3::random_access_sequence_concept<std::deque<char>>);
-static_assert(seqan3::random_access_sequence_concept<std::string>);
-
-static_assert(seqan3::container_of_container_concept<std::array<std::array<char, 2>, 2>>);
-static_assert(seqan3::sequence_of_sequence_concept<std::list<std::list<char>>>);
-static_assert(seqan3::ra_sequence_of_ra_sequence_concept<std::vector<std::vector<char>>>);
+// #include <vector>
+// #include <array>
+// #include <list>
+// #include <forward_list>
+// #include <deque>
+// #include <string>
+//
+// static_assert(seqan3::container_concept<std::array<char, 2>>);
+// static_assert(seqan3::sequence_light_concept<std::forward_list<char>>);
+// static_assert(seqan3::sequence_concept<std::list<char>>);
+// static_assert(seqan3::random_access_sequence_concept<std::vector<char>>);
+// static_assert(seqan3::random_access_sequence_concept<std::deque<char>>);
+// static_assert(seqan3::random_access_sequence_concept<std::string>);
+//
+// static_assert(seqan3::container_of_container_concept<std::array<std::array<char, 2>, 2>>);
+// static_assert(seqan3::sequence_of_sequence_concept<std::list<std::list<char>>>);
+// static_assert(seqan3::ra_sequence_of_ra_sequence_concept<std::vector<std::vector<char>>>);
 
 /* Check the SDSL containers */
 //TODO

@@ -37,6 +37,8 @@
 
 #pragma once
 
+#include <seqan3/container/concepts.hpp>
+
 namespace seqan3::detail
 {
 
@@ -75,74 +77,98 @@ template <typename container_type>
     requires container_concept<container_type> //requires random_access_range_concept<container_type>
 struct ra_iterator
 {
+
+private:
+    container_type & host;
+    typename container_type::size_type pos;
+public:
+    typedef typename container_type::size_type size_type;
     typedef typename container_type::difference_type difference_type;
     typedef typename container_type::value_type value_type;
     typedef typename container_type::reference reference;
+    typedef typename container_type::const_reference const_reference;
     typedef typename container_type::pointer pointer;
-    typedef typename container_type::iterator iterator; //std::random_access_iterator_tag iterator_category;
+    typedef typename container_type::iterator iterator;
+    typedef typename container_type::const_iterator const_iterator;
 
+    //! default constructor
+    ra_iterator() : host(*(container_type*)0) {};
     //! initialize with pointer of container structure
-    ra_iterator(container_type & _host) : host{_host}, pos{0} {}
-    constexpr ra_iterator(ra_iterator const &) = default;
-    constexpr ra_iterator(ra_iterator &&) = default;
-    constexpr ra_iterator& operator=(ra_iterator const &) = default
-    constexpr ra_iterator& operator=(ra_iterator const &) = default;
-    constexpr ~ra_iterator() = default;
+    ra_iterator(container_type & _host) : host{_host}, pos{0} {};
+    //! copy constructors
+    ra_iterator(ra_iterator const &) = default;
+    ra_iterator(ra_iterator &&) = default;
+    ra_iterator& operator=(ra_iterator const &) = default;
+    ~ra_iterator() = default;
+
+    //! return element currently pointed at
+    reference operator*() const
+    {
+        return host[pos];
+    }
 
     //! comparison operators evaluate container values currently pointed at
     bool operator==(ra_iterator const & rhs) const
     {
-        return *this == *rhs;
+        return (*this) == rhs;
     }
 
     bool operator!=(ra_iterator const & rhs) const
     {
-        return *this != *rhs;
+        return (*this) != rhs;
     }
 
     bool operator<(ra_iterator const & rhs) const
     {
-        return *this < *rhs;
+        return (*this) < rhs;
     }
 
     bool operator>(ra_iterator const & rhs) const
     {
-        return *this > *rhs;
+        return (*this) > rhs;
     }
 
     bool operator<=(ra_iterator const & rhs) const
     {
-        return *this <= *rhs;
+        return (*this) <= rhs;
     }
 
     bool operator>=(ra_iterator const & rhs) const
     {
-        return *this >= *rhs;
+        return (*this) >= rhs;
     }
 
+    //! prefix increment
     ra_iterator& operator++()
     {
         ++pos;
-        return *this;
+        return (*this);
     }
 
-    ra_iterator operator++(int const i)
+    //! postfix increment
+    ra_iterator operator++(int)
     {
-        ra_iterator ret{*this);
+        ra_iterator ret{*this};
         ++(*this);
         return ret;
     }
 
+    //! prefix decrement
     ra_iterator& operator--()
     {
         --pos;
         return *this;
     }
 
+    //! postfix decrement
+    ra_iterator operator--(int)
+    {
+        ra_iterator ret{*this};
+        --(*this);
+        return ret;
+    }
+
     /*
-    ra_iterator operator--(int); //optional
-    ra_iterator& operator--(); //optional
-    ra_iterator operator--(int); //optional
     ra_iterator& operator+=(size_type); //optional
     ra_iterator operator+(size_type) const; //optional
     friend ra_iterator operator+(size_type, const ra_iterator&); //optional
@@ -151,63 +177,134 @@ struct ra_iterator
     difference_type operator-(ra_iterator) const; //optional
     */
 
-    reference operator*() const
-    {
-        return host[pos];
-    }
-
     pointer operator->() const
     {
         return &(*this);
     }
 
+    // TODO: behaviour: with or without offset? range check here or delegation to container?
     reference operator[](size_type const n) const
     {
         return host[pos + n];
     }
 
-private:
-    container_type & host;
-    container_type::size_type pos;
 };
 
 template <typename container_type>
-    requires random_access_range_concept<container_type>
+    requires container_concept<container_type> //random_access_range_concept<container_type>
 struct ra_const_iterator
 {
+private:
+    container_type const & host;
+    typename container_type::size_type pos;
+public:
+    typedef typename container_type::size_type size_type;
     typedef typename container_type::difference_type difference_type;
     typedef typename container_type::value_type value_type;
-    typedef typename container_type::reference const_reference;
-    typedef typename container_type::pointer const_pointer;
-    typedef std::random_access_iterator_tag iterator_category; //or another tag
+    typedef typename container_type::reference reference;
+    typedef typename container_type::const_reference const_reference;
+    typedef typename container_type::pointer pointer;
+    typedef typename container_type::iterator iterator;
+    typedef typename container_type::const_iterator const_iterator;
 
-    ra_const_iterator ();
-    ra_const_iterator (const ra_const_iterator&);
-    ra_const_iterator (const iterator&);
-    ~ra_const_iterator();
+    //! default constructor
+    ra_const_iterator() : host(*(container_type*)0) {};
+    //! initialize with pointer of container structure
+    ra_const_iterator(container_type & _host) : host{_host}, pos{0} {};
+    //! copy constructors
+    ra_const_iterator(ra_const_iterator const &) = default;
+    ra_const_iterator(ra_const_iterator &&) = default;
 
-    ra_const_iterator& operator=(const ra_const_iterator&);
-    bool operator==(const ra_const_iterator&) const;
-    bool operator!=(const ra_const_iterator&) const;
-    bool operator<(const ra_const_iterator&) const; //optional
-    bool operator>(const ra_const_iterator&) const; //optional
-    bool operator<=(const ra_const_iterator&) const; //optional
-    bool operator>=(const ra_const_iterator&) const; //optional
+    ra_const_iterator& operator=(ra_const_iterator const &) = default;
+    ~ra_const_iterator() = default;
 
-    ra_const_iterator& operator++();
-    ra_const_iterator operator++(int); //optional
-    ra_const_iterator& operator--(); //optional
-    ra_const_iterator operator--(int); //optional
+    //! dereference operator
+    // TODO: spec, range check?
+    reference operator*() const
+    {
+        return host[pos];
+    }
+
+    bool operator==(ra_const_iterator const & rhs) const
+    {
+        return (*this) == rhs;
+    }
+
+    bool operator!=(ra_const_iterator const & rhs) const
+    {
+        return (*this) != rhs;
+    }
+
+    bool operator<(ra_const_iterator const & rhs) const
+    {
+        return (*this) < rhs;
+    }
+
+    bool operator>(ra_const_iterator const & rhs) const
+    {
+        return (*this) > rhs;
+    }
+
+    bool operator<=(ra_const_iterator const & rhs) const
+    {
+        return (*this) <= rhs;
+    }
+
+    bool operator>=(ra_const_iterator const & rhs) const
+    {
+        return (*this) >= rhs;
+    }
+
+    //! prefix increment
+    ra_const_iterator& operator++()
+    {
+        ++pos;
+        return (*this);
+    }
+
+    //! postfix increment
+    ra_const_iterator operator++(int)
+    {
+        ra_iterator ret{*this};
+        ++(*this);
+        return ret;
+    }
+
+    //! prefix decrement
+    ra_const_iterator& operator--()
+    {
+        --pos;
+        return (*this);
+    }
+
+    //! postfix decrement
+    ra_const_iterator operator--(int)
+    {
+        ra_iterator ret{*this};
+        --(*this);
+        return ret;
+    }
+
+    /*
     ra_const_iterator& operator+=(size_type); //optional
     ra_const_iterator operator+(size_type) const; //optional
     friend ra_const_iterator operator+(size_type, const ra_const_iterator&); //optional
     ra_const_iterator& operator-=(size_type); //optional
     ra_const_iterator operator-(size_type) const; //optional
     difference_type operator-(ra_const_iterator) const; //optional
+    */
 
-    const_reference operator*() const;
-    const_pointer operator->() const;
-    const_reference operator[](size_type) const; //optional
+    pointer operator->() const
+    {
+        return &(*this);
+    }
+
+    // TODO: behaviour: with or without offset? range check here or delegation to container?
+    reference operator[](size_type const n) const
+    {
+        return host[pos + n];
+    }
+
 };
 
 } // namespace seqan3::detail

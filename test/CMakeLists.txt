@@ -5,7 +5,7 @@ project(seqan3 CXX)
 enable_testing()
 
 set(CMAKE_BUILD_TYPE "Release")
-set(CMAKE_CXX_FLAGS "-std=c++1z -fconcepts")
+set(CMAKE_CXX_FLAGS "-std=c++1z -fconcepts -I../range-v3/include -I../sdsl-lite/include")
 
 set(GOOGLETEST_PATH "${CMAKE_SOURCE_DIR}/../vendor/googletest/googletest")
 set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main")
