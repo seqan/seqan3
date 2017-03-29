@@ -51,10 +51,7 @@
  * \ingroup alphabet
  */
 
-namespace seqan3
-{
-
-namespace detail
+namespace seqan3::detail
 {
 
 template <size_t size>
@@ -90,13 +87,15 @@ constexpr auto alphabet_prefix_sum_sizes()
     using array_t = std::array<rank_t, N>;
 
     array_t prefix_sum{0, alphabet_types::value_size...};
-    for(auto i = 1u; i < N; ++i)
+    for (auto i = 1u; i < N; ++i)
         prefix_sum[i] += prefix_sum[i-1];
 
     return prefix_sum;
 }
 
-namespace union_alphabet
+} // namespace seqan3::detail
+
+namespace seqan3::detail::union_alphabet
 {
 
 template <size_t max_value_size, typename char_t, typename alphabet_t>
@@ -105,7 +104,7 @@ constexpr auto value_to_char_table_I(alphabet_t alphabet)
     using array_t = std::array<char_t, max_value_size>;
     array_t value_to_char_{};
 
-    for(auto i = 0; i < alphabet_t::value_size; ++i)
+    for (auto i = 0; i < alphabet_t::value_size; ++i)
         value_to_char_[i] = alphabet.assign_rank(i).to_char();
 
     return value_to_char_;
@@ -116,7 +115,8 @@ constexpr auto value_to_char_table()
 {
     constexpr auto table_size = (alphabet_types::value_size + ... + 0);
     constexpr auto value_sizes = std::array<size_t, table_size>{alphabet_types::value_size...};
-    constexpr auto max_value_size = std::max({(size_t)0, (size_t)alphabet_types::value_size...});
+    constexpr auto max_value_size
+        = std::max({static_cast<size_t>(0), static_cast<size_t>(alphabet_types::value_size)...});
 
     using array_t = std::array<char_t, table_size>;
     using array_inner_t = std::array<char_t, max_value_size>;
@@ -128,8 +128,8 @@ constexpr auto value_to_char_table()
     };
 
     array_t value_to_char{};
-    for(auto i = 0u, value = 0u; i < table_size; ++i)
-        for(auto k = 0u; k < value_sizes[i]; ++k, ++value)
+    for (auto i = 0u, value = 0u; i < table_size; ++i)
+        for (auto k = 0u; k < value_sizes[i]; ++k, ++value)
             value_to_char[value] = array_array[i][k];
 
     return value_to_char;
@@ -147,19 +147,20 @@ constexpr auto char_to_value_table()
     using array_t = std::array<rank_t, table_size>;
 
     array_t char_to_value{};
-    for(auto i=0u; i < value_to_char.size(); ++i)
+    for (auto i = 0u; i < value_to_char.size(); ++i)
     {
         auto & old_entry = char_to_value[value_to_char[i]];
         auto is_new_entry = value_to_char[0] != value_to_char[i] && old_entry == 0;
-        if(is_new_entry)
+        if (is_new_entry)
             old_entry = static_cast<rank_t>(i);
     }
     return char_to_value;
 }
 
-} // namespace seqan::detail::union_alphabet
+} // namespace seqan3::detail::union_alphabet
 
-} // namespace seqan::detail
+namespace seqan3
+{
 
 /*! The union alphabet
  *
@@ -186,10 +187,10 @@ constexpr auto char_to_value_table()
 
 template <typename first_alphabet_type, typename ...alphabet_types>
     requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
-struct union_alphabet
+class union_alphabet
 {
-    /* types */
 public:
+    /* types */
     //! The size of the alphabet, i.e. the number of different values it can take.
     static constexpr size_t value_size = (alphabet_types::value_size + ... + first_alphabet_type::value_size);
     //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
@@ -206,16 +207,20 @@ public:
     //! @name default constructors
     //!@{
     constexpr union_alphabet() = default;
-    constexpr union_alphabet(const union_alphabet &) = default;
+    constexpr union_alphabet(union_alphabet const &) = default;
     constexpr union_alphabet(union_alphabet &&) = default;
-    constexpr union_alphabet(const rank_type & value) : value{value}{}
+    constexpr union_alphabet(rank_type const & value)
+        : value{value}
+    {}
     //!@}
 
     //! @name default assignment operators
     //!@{
-    constexpr union_alphabet & operator= (const union_alphabet &) = default;
+    constexpr union_alphabet & operator= (union_alphabet const &) = default;
     constexpr union_alphabet & operator= (union_alphabet &&) = default;
-    constexpr union_alphabet(rank_type && value) : value{value}{}
+    constexpr union_alphabet(rank_type && value)
+        : value{value}
+    {}
     //!@}
 
     /*! allow construction via a value of the base alphabets
@@ -224,7 +229,9 @@ public:
      *     union_alphabet<dna4, gap> letter2 = gap::GAP;
      * ```
      */
-    constexpr union_alphabet(const variant_type & alphabet) : value(from_base_(alphabet)){}
+    constexpr union_alphabet(variant_type const & alphabet)
+        : value(from_base_(alphabet))
+    {}
 
     /*! allow assignment via a value of the base alphabets
      * ```cpp
@@ -232,13 +239,12 @@ public:
      *     letter1 = gap::GAP;
      * ```
      */
-    constexpr union_alphabet & operator= (const variant_type & alphabet)
+    constexpr union_alphabet & operator= (variant_type const & alphabet)
     {
         value = from_base_(alphabet);
         return *this;
     }
 
-public:
     //! internal value
     rank_type value;
 
@@ -312,7 +318,8 @@ protected:
     //! \privatesection
     // conversion tables
 
-    constexpr auto from_base_(const variant_type & alphabet_v) const {
+    static constexpr auto from_base_(variant_type const & alphabet_v)
+    {
         return std::visit([&](auto && alphabet)
         {
             return prefix_sum_sizes[alphabet_v.index()] + alphabet.to_rank();

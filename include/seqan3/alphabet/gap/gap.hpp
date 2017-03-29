@@ -80,7 +80,6 @@ struct gap
      */
     //!@{
     static const gap GAP;
-    static const gap UNKNOWN;
     //!@}
 
     //! The size of the alphabet, i.e. the number of different values it can take.
@@ -153,7 +152,6 @@ struct gap
 };
 
 constexpr gap gap::GAP{};
-constexpr gap gap::UNKNOWN{gap::GAP};
 
 #ifndef NDEBUG
 static_assert(alphabet_concept<gap>);
