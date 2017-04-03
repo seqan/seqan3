@@ -269,6 +269,13 @@ TEST_F(random_access_iterator_test_fixture, difference)
     seqan3::detail::ra_iterator<std::vector<uint8_t>> it_v(*v_auvwx);
     it_v += 4;
     seqan3::detail::ra_iterator<std::vector<uint8_t>> it_w(*w);
-    it_w += 2;
-    EXPECT_TRUE(2 == (it_v - it_w));
+    it_w += 1;
+    EXPECT_TRUE(3 == (it_v - it_w));
+}
+
+// test const iterator
+TEST(const_random_access_iterator_test, constructors)
+{
+    const std::vector<uint8_t> v{1,2,3,4};
+    seqan3::detail::ra_iterator<const std::vector<uint8_t>, true> it(v);
 }
