@@ -170,7 +170,7 @@ namespace seqan3
  *
  * ```cpp
  *     union_alphabet<dna4, gap> my_letter{};
- *     union_alphabet<dna4, gap> converted_letter = dna4::C;
+ *     union_alphabet<dna4, gap> converted_letter{dna4::C};
  *     // doesn't work:
  *     // union_alphabet<dna4, gap> my_letter{'A'};
  *
@@ -184,7 +184,6 @@ namespace seqan3
  *        std::cout << "yeah\n"; // "yeah";
  * ```
  */
-
 template <typename first_alphabet_type, typename ...alphabet_types>
     requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
 class union_alphabet
@@ -210,7 +209,7 @@ public:
     constexpr union_alphabet(union_alphabet const &) = default;
     constexpr union_alphabet(union_alphabet &&) = default;
     constexpr union_alphabet(rank_type const & value)
-        : value{value}
+        : _value{value}
     {}
     //!@}
 
@@ -219,7 +218,7 @@ public:
     constexpr union_alphabet & operator= (union_alphabet const &) = default;
     constexpr union_alphabet & operator= (union_alphabet &&) = default;
     constexpr union_alphabet(rank_type && value)
-        : value{value}
+        : _value{value}
     {}
     //!@}
 
@@ -230,7 +229,7 @@ public:
      * ```
      */
     constexpr union_alphabet(variant_type const & alphabet)
-        : value(from_base_(alphabet))
+        : _value{from_base_(alphabet)}
     {}
 
     /*! allow assignment via a value of the base alphabets
@@ -241,12 +240,12 @@ public:
      */
     constexpr union_alphabet & operator= (variant_type const & alphabet)
     {
-        value = from_base_(alphabet);
+        _value = from_base_(alphabet);
         return *this;
     }
 
     //! internal value
-    rank_type value;
+    rank_type _value;
 
     //! ability to cast to @link char_type @endlink **explicitly**.
     explicit constexpr operator char_type() const
@@ -257,19 +256,19 @@ public:
     //! return the letter as a character of @link char_type @endlink.
     constexpr char_type to_char() const
     {
-        return value_to_char[value];
+        return value_to_char[_value];
     }
 
     //! return the letter's numeric value or rank in the alphabet
     constexpr rank_type to_rank() const
     {
-        return value;
+        return _value;
     }
 
     //! assign from a character
     constexpr union_alphabet & assign_char(char_type const c)
     {
-        value = char_to_value[c];
+        _value = char_to_value[c];
         return *this;
     }
 
@@ -277,7 +276,7 @@ public:
     constexpr union_alphabet & assign_rank(rank_type const i)
     {
         assert(i < value_size);
-        value = i;
+        _value = i;
         return *this;
     }
 
@@ -285,32 +284,32 @@ public:
     //!@{
     constexpr bool operator==(union_alphabet const & rhs) const
     {
-        return value == rhs.value;
+        return _value == rhs._value;
     }
 
     constexpr bool operator!=(union_alphabet const & rhs) const
     {
-        return value != rhs.value;
+        return _value != rhs._value;
     }
 
     constexpr bool operator<(union_alphabet const & rhs) const
     {
-        return value < rhs.value;
+        return _value < rhs._value;
     }
 
     constexpr bool operator>(union_alphabet const & rhs) const
     {
-        return value > rhs.value;
+        return _value > rhs._value;
     }
 
     constexpr bool operator<=(union_alphabet const & rhs) const
     {
-        return value <= rhs.value;
+        return _value <= rhs._value;
     }
 
     constexpr bool operator>=(union_alphabet const & rhs) const
     {
-        return value >= rhs.value;
+        return _value >= rhs._value;
     }
     //!@}
 
@@ -318,11 +317,11 @@ protected:
     //! \privatesection
     // conversion tables
 
-    static constexpr auto from_base_(variant_type const & alphabet_v)
+    static constexpr rank_type from_base_(variant_type const & alphabet_v)
     {
-        return std::visit([&](auto && alphabet)
+        return std::visit([&](auto && alphabet) -> rank_type
         {
-            return prefix_sum_sizes[alphabet_v.index()] + alphabet.to_rank();
+            return prefix_sum_sizes[alphabet_v.index()] + static_cast<rank_type>(alphabet.to_rank());
         }, alphabet_v);
     }
 

@@ -49,7 +49,7 @@ template <typename underlying_t>
     requires alphabet_concept<underlying_t>
 struct gapped_alphabet : public union_alphabet<underlying_t, gap>
 {
-    using union_alphabet<underlying_t, gap>::value;
+    using union_alphabet<underlying_t, gap>::_value;
     using union_alphabet<underlying_t, gap>::value_size;
     using union_alphabet<underlying_t, gap>::rank_type;
     using union_alphabet<underlying_t, gap>::char_type;
@@ -60,12 +60,12 @@ struct gapped_alphabet : public union_alphabet<underlying_t, gap>
     /* public member functions */
     constexpr bool is_gap() const
     {
-        return value == value_size - 1;
+        return _value == value_size - 1;
     }
 
     constexpr gapped_alphabet set_gap()
     {
-        value = value_size - 1;
+        _value = value_size - 1;
         return *this;
     }
 
