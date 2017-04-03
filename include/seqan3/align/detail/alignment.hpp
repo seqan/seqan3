@@ -41,6 +41,7 @@
 #include <iostream>
 #include <utility>
 #include <cstdio>
+#include <range/v3/view.hpp>
 
 #include "../../alphabet/nucleotide/dna4_container.hpp"
 
@@ -52,15 +53,16 @@ concept bool aligned_sequence_concept = true;
 
 //! Alignment class.
 /*!
-    An alignment is a tuple of at least two aligned sequences.
-*/
+ * An alignment is a tuple of at least two aligned sequences.
+ * \tparam sequence_ts sequence types of the alignment
+ */
 template <typename ...sequence_ts>
     requires (aligned_sequence_concept<sequence_ts> && ...)
 class alignment : public std::tuple<sequence_ts...>
 {
 public:
     //! The alignment depth is the number of sequences contained.
-    std::size_t const depth = sizeof...(sequence_ts);
+    static std::size_t const depth = sizeof...(sequence_ts);
 
     //! Constructor that allows to pass sequences directly.
     constexpr alignment(sequence_ts && ...sequences)
@@ -70,17 +72,41 @@ public:
     };
 };
 
-//! Alignment class template deduction as for tuple.
+/*!
+ * Column-wise iteration over a sequence alignment.
+ * \tparam sequence_ts sequence types of the alignment
+ * \param align the underlying alignment for the iterator
+ * \return a ranges::v3::zip_view for the given alignment
+ */
+template <typename ...sequence_ts>
+auto column_iterator(alignment<sequence_ts...> const & align)
+{
+    return std::apply([](auto && ...args) { return ranges::v3::zip_view(ranges::v3::view::all(args)...); },
+                      align);
+}
+
+/*!
+ * Alignment class template deduction.
+ * \tparam sequence_ts sequence types of the alignment
+ * \sa http://en.cppreference.com/w/cpp/language/class_template_deduction
+ */
 template <typename ...sequence_ts>
 alignment(sequence_ts...) -> alignment<sequence_ts...>;
 
 namespace detail
 {
-//! Create the formatted alignment output and add it to a stream.
-template <typename stream_t, typename tuple_t, std::size_t ...idx>
-void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_sequence<idx...> const & /**/)
+/*!
+ * Create the formatted alignment output and add it to a stream.
+ * \tparam stream_t output stream type
+ * \tparam alignment_t alignment type
+ * \tparam idx index sequence
+ * \param stream output stream that receives the formatted alignment
+ * \param align the alignment that shall be streamed
+ */
+template <typename stream_t, typename alignment_t, std::size_t ...idx>
+void stream_alignment(stream_t & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
-    std::size_t const alignment_length = std::get<0>(tuple).size();
+    std::size_t const alignment_length = std::get<0>(align).size();
     char buf[9];
 
     // split alignment into blocks of length 50 and loop over parts
@@ -101,7 +127,7 @@ void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_seque
 
         // write sequences
         const char * indent = "        ";
-        stream << std::endl << indent << std::get<0>(tuple).substr(used_length, 50);
+        stream << std::endl << indent << std::get<0>(align).substr(used_length, 50);
         auto stream_f = [&]
             (auto const & previous_sequence, auto const & aligned_sequence)
         {
@@ -117,14 +143,21 @@ void stream_alignment(stream_t & stream, tuple_t const & tuple, std::index_seque
             }
             stream << std::endl << indent << aligned_sequence.substr(used_length, 50);
         };
-        (stream_f(std::get<idx>(tuple), std::get<idx + 1>(tuple)), ...);
+        (stream_f(std::get<idx>(align), std::get<idx + 1>(align)), ...);
         stream << std::endl;
     }
 }
 
 } // namespace detail
 
-//! Formatted output stream of an alignment.
+/*!
+ * Formatted output stream of an alignment.
+ * \tparam stream_type output stream type
+ * \tparam sequence_ts sequence types of the alignment
+ * \param outstream output stream that receives the formatted alignment
+ * \param align the alignment that shall be streamed
+ * \return output stream that contains the formatted alignment
+ */
 template <typename stream_type, typename ...sequence_ts>
 stream_type & operator<<(stream_type & outstream, alignment<sequence_ts...> const & align)
 {
@@ -134,3 +167,15 @@ stream_type & operator<<(stream_type & outstream, alignment<sequence_ts...> cons
 }
 
 } // namespace seqan3
+
+namespace std
+{
+
+/*!
+ * tuple_size overload for alignment class (to enable functions like std::apply).
+ * \tparam sequence_ts sequence types of the alignment
+ */
+template <typename ...sequence_ts>
+struct tuple_size<seqan3::alignment<sequence_ts...>> : tuple_size<tuple<sequence_ts...>> { };
+
+} // namespace std
