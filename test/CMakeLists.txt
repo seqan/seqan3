@@ -8,7 +8,7 @@ set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "-std=c++1z -fconcepts -I ${CMAKE_SOURCE_DIR}/../range-v3/include -I ${CMAKE_SOURCE_DIR}/../sdsl-lite/include")
 
 set(GOOGLETEST_PATH "${CMAKE_SOURCE_DIR}/../vendor/googletest/googletest")
-set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main" "${CMAKE_SOURCE_DIR}/../range-v3/include")
+set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main")
 MESSAGE(WARNING "cmake_src_dir = " ${CMAKE_SOURCE_DIR})
 
 find_program(CCACHE_PROGRAM ccache)
