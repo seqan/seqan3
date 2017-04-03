@@ -35,10 +35,11 @@
 // ============================================================================
 
 #include <gtest/gtest.h>
+
 #include <sstream>
 
-#include "../../include/seqan3/alphabet/nucleotide/dna4_container.hpp"
-#include "../../include/seqan3/align/detail/alignment.hpp"
+#include <seqan3/alphabet/nucleotide/dna4_container.hpp>
+#include <seqan3/align/detail/alignment.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -77,4 +78,32 @@ TEST(alignment_class_test, constructor_and_ostream)
         "        GAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC\n";
 
     EXPECT_EQ(expected, stream.str());
+}
+
+TEST(alignment_class_test, column_iterator)
+{
+    alignment align("GCGG"_dna4s, "CTAC"_dna4s, "CTAC"_dna4s);
+    column_iterator_type<dna4_string, dna4_string, dna4_string> iter = column_iterator(align);
+    auto column = iter.begin();
+    // 1st alignment column
+    EXPECT_EQ(std::get<0>(*column), dna4{dna4::G});
+    EXPECT_EQ(std::get<1>(*column), dna4{dna4::C});
+    EXPECT_EQ(std::get<2>(*column), dna4{dna4::C});
+    ++column; // 2nd column
+    EXPECT_TRUE(column > iter.begin());
+    EXPECT_EQ(std::get<1>(*column), dna4{dna4::T});
+    column += 2; // 4th column
+    EXPECT_EQ(std::get<1>(*column), dna4{dna4::C});
+    --column; // 3rd column
+    EXPECT_EQ(std::get<1>(*column), dna4{dna4::A});
+    ++column;
+    column++; // end
+    EXPECT_TRUE(column == iter.end());
+
+    std::stringstream stream;
+    std::for_each(iter.begin(), iter.end(), [&stream] (auto const & col)
+    {
+        stream << std::get<0>(col) << std::get<1>(col) << std::get<2>(col) << ' ';
+    });
+    EXPECT_EQ("GCC CTT GAA GCC ", stream.str());
 }

@@ -40,10 +40,13 @@
 #include <type_traits>
 #include <iostream>
 #include <utility>
-#include <cstdio>
-#include <range/v3/view.hpp>
+#include <iomanip>
 
-#include "../../alphabet/nucleotide/dna4_container.hpp"
+#include <range/v3/view/all.hpp>
+#include <range/v3/view/zip.hpp>
+#include <range/v3/iterator_range.hpp>
+
+#include <seqan3/alphabet/nucleotide/dna4_container.hpp>
 
 namespace seqan3
 {
@@ -73,25 +76,30 @@ public:
 };
 
 /*!
- * Column-wise iteration over a sequence alignment.
- * \tparam sequence_ts sequence types of the alignment
- * \param align the underlying alignment for the iterator
- * \return a ranges::v3::zip_view for the given alignment
- */
-template <typename ...sequence_ts>
-auto column_iterator(alignment<sequence_ts...> const & align)
-{
-    return std::apply([](auto && ...args) { return ranges::v3::zip_view(ranges::v3::view::all(args)...); },
-                      align);
-}
-
-/*!
  * Alignment class template deduction.
  * \tparam sequence_ts sequence types of the alignment
  * \sa http://en.cppreference.com/w/cpp/language/class_template_deduction
  */
 template <typename ...sequence_ts>
 alignment(sequence_ts...) -> alignment<sequence_ts...>;
+
+//! Type for column_iterator.
+template <typename ...sequence_ts>
+using column_iterator_type = ranges::v3::zip_view<ranges::v3::iterator_range<typename sequence_ts::const_iterator,
+                                                                             typename sequence_ts::const_iterator>...>;
+/*!
+ * Column-wise iteration over a sequence alignment.
+ * \tparam sequence_ts sequence types of the alignment
+ * \param align the underlying alignment for the iterator
+ * \return a column iterator for the given alignment
+ */
+template <typename ...sequence_ts>
+    requires (aligned_sequence_concept<sequence_ts> && ...)
+column_iterator_type<sequence_ts...> column_iterator(alignment<sequence_ts...> const & align)
+{
+    return std::apply([] (auto && ...args) { return ranges::v3::zip_view(ranges::v3::view::all(args)...); },
+                      align);
+}
 
 namespace detail
 {
@@ -107,14 +115,12 @@ template <typename stream_t, typename alignment_t, std::size_t ...idx>
 void stream_alignment(stream_t & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
     std::size_t const alignment_length = std::get<0>(align).size();
-    char buf[9];
 
     // split alignment into blocks of length 50 and loop over parts
     for (std::size_t used_length = 0; used_length < alignment_length; used_length += 50)
     {
         // write header
-        std::snprintf(buf, 9, "%7lu ", used_length);
-        stream << std::endl << buf;
+        stream << std::endl << std::setw(7) << used_length << ' ';
         for (std::size_t col = 1; col <= 50 && col + used_length <= alignment_length; ++col)
         {
             if (col % 10 == 0)
@@ -162,7 +168,7 @@ template <typename stream_type, typename ...sequence_ts>
 stream_type & operator<<(stream_type & outstream, alignment<sequence_ts...> const & align)
 {
     static_assert(sizeof...(sequence_ts) >= 2, "An alignment requires at least two sequences.");
-    detail::stream_alignment(outstream, align, std::make_index_sequence<sizeof...(sequence_ts) - 1>{});
+    detail::stream_alignment(outstream, align, std::make_index_sequence<sizeof...(sequence_ts) - 1> {});
     return outstream;
 }
 
@@ -176,6 +182,6 @@ namespace std
  * \tparam sequence_ts sequence types of the alignment
  */
 template <typename ...sequence_ts>
-struct tuple_size<seqan3::alignment<sequence_ts...>> : tuple_size<tuple<sequence_ts...>> { };
+struct tuple_size<seqan3::alignment<sequence_ts...>> : tuple_size<tuple<sequence_ts...>> {};
 
 } // namespace std
