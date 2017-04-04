@@ -41,6 +41,7 @@
 /*!\file core/concepts/ranges.hpp
  * \brief Adaptations of concepts from the Ranges TS
  * \ingroup core
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 namespace seqan3

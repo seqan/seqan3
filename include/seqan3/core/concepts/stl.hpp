@@ -41,6 +41,7 @@
 /*! \file core/concepts/stl.hpp
  * \brief Adaptations of concepts from the standard library
  * \ingroup core
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 namespace seqan3

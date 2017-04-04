@@ -36,8 +36,6 @@
 
 #pragma once
 
-#include <seqan3/container/concepts.hpp>
-
 /*!\defgroup container
  *
  * The container module contains adaptations and concepts for ranges and containers, as well

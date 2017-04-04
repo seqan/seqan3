@@ -44,6 +44,7 @@
 /*!\file core/concepts/iterator.hpp
  * \brief Adaptions of Iterator concepts from the Ranges TS.
  * \ingroup core
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 namespace seqan3
@@ -52,37 +53,32 @@ namespace seqan3
 //!\name Iterator Concepts
 //!\{
 
-//!\brief Resolves to `ranges::Readable<type>()`
-/*!
+/*!\brief Resolves to `ranges::Readable<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Readable
  */
 template <typename t>
 concept bool readable_concept =                 static_cast<bool>(ranges::Readable<t>());
 
-//!\brief Resolves to `ranges::Writable<out_type, type>()`
-/*!
+/*!\brief Resolves to `ranges::Writable<out_type, type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Writable
  */
 template <typename out, typename t>
 concept bool writable_concept =                 static_cast<bool>(ranges::Writable<out, t>());
 
-//!\brief Resolves to `ranges::WeaklyIncrementable<type>()`
-/*!
+/*!\brief Resolves to `ranges::WeaklyIncrementable<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/WeaklyIncrementable
  */
 template<typename i>
 concept bool weakly_incrementable_concept =     semi_regular_concept<i> &&
                                                 static_cast<bool>(ranges::WeaklyIncrementable<i>());
-//!\brief Resolves to `ranges::Incrementable<type>()`
-/*!
+/*!\brief Resolves to `ranges::Incrementable<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Incrementable
  */
 template<typename i>
 concept bool incrementable_concept =            regular_concept<i> &&
                                                 weakly_incrementable_concept<i> &&
                                                 static_cast<bool>(ranges::Incrementable<i>());
-//!\brief Resolves to `ranges::Iterator<iterator_type>()`
-/*!
+/*!\brief Resolves to `ranges::Iterator<iterator_type>()`
  * \sa http://en.cppreference.com/w/cpp/concept/Iterator
  */
 template<typename i>
@@ -90,8 +86,7 @@ concept bool iterator_concept =                 weakly_incrementable_concept<i> 
                                                 copyable_concept<i> &&
                                                 static_cast<bool>(ranges::Iterator<i>());
 
-//!\brief Resolves to `ranges::Sentinel<sentinel_type, iterator_type>()`
-/*!
+/*!\brief Resolves to `ranges::Sentinel<sentinel_type, iterator_type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Sentinel
  */
 template<typename s, typename i>
@@ -99,16 +94,14 @@ concept bool sentinel_concept =                 semi_regular_concept<s> &&
                                                 iterator_concept<i> &&
                                                 static_cast<bool>(ranges::Sentinel<s, i>());
 
-//!\brief Resolves to `ranges::SizedSentinel<sentinel_type, iterator_type>()`
-/*!
+/*!\brief Resolves to `ranges::SizedSentinel<sentinel_type, iterator_type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/SizedSentinel
  */
 template<typename s, typename i>
 concept bool sized_sentinel_concept =           sentinel_concept<s, i> &&
                                                 static_cast<bool>(ranges::SizedSentinel<s, i>());
 
-//!\brief Resolves to `ranges::OutputIterator<iterator_type, type>()`
-/*!
+/*!\brief Resolves to `ranges::OutputIterator<iterator_type, type>()`
  * \sa http://en.cppreference.com/w/cpp/concept/OutputIterator
  */
 template<typename out, typename t>
@@ -116,8 +109,7 @@ concept bool output_iterator_concept =          iterator_concept<out> &&
                                                 writable_concept<out, t> &&
                                                 static_cast<bool>(ranges::OutputIterator<out, t>());
 
-//!\brief Resolves to `ranges::InputIterator<iterator_type>()`
-/*!
+/*!\brief Resolves to `ranges::InputIterator<iterator_type>()`
  * \sa http://en.cppreference.com/w/cpp/concept/InputIterator
  */
 template<typename i>
@@ -125,8 +117,7 @@ concept bool input_iterator_concept =           iterator_concept<i> &&
                                                 readable_concept<i> &&
                                                 static_cast<bool>(ranges::InputIterator<i>());
 
-//!\brief Resolves to `ranges::ForwardIterator<iterator_type>()`
-/*!
+/*!\brief Resolves to `ranges::ForwardIterator<iterator_type>()`
  * \sa http://en.cppreference.com/w/cpp/concept/ForwardIterator
  */
 template<typename i>
@@ -135,16 +126,14 @@ concept bool forward_iterator_concept =         input_iterator_concept<i> &&
                                                 sentinel_concept<i, i> &&
                                                 static_cast<bool>(ranges::ForwardIterator<i>());
 
-//!\brief Resolves to `ranges::BidirectionalIterator<iterator_type>()`
-/*!
+/*!\brief Resolves to `ranges::BidirectionalIterator<iterator_type>()`
  * \sa http://en.cppreference.com/w/cpp/concept/BidirectionalIterator
  */
 template<typename i>
 concept bool bidirectional_iterator_concept =   forward_iterator_concept<i> &&
                                                 static_cast<bool>(ranges::BidirectionalIterator<i>());
 
-//!\brief Resolves to `ranges::RandomAccessIterator<iterator_type>()`
-/*!
+/*!\brief Resolves to `ranges::RandomAccessIterator<iterator_type>()`
  * \sa http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
  */
 template<typename i>

@@ -41,7 +41,8 @@
 
 /*!\file core/concepts/core.hpp
  * \brief Adaptions of core concepts from the Ranges TS.
- * \ingroup core
+ * \ingroup core 
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 namespace seqan3
@@ -49,16 +50,14 @@ namespace seqan3
 
 //!\name Core Language Concepts
 //!\{
-//!\brief Resolves to `ranges::Same<types...>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Same
+/*!\brief Resolves to `ranges::Same<types...>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Same
  */
 template <typename ...ts>
 concept bool same_concept =                         static_cast<bool>(ranges::Same<ts...>());
 
-//!\brief Resolves to `ranges::DerivedFrom<type1, type2>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/DerivedFrom
+/*!\brief Resolves to `ranges::DerivedFrom<type1, type2>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/DerivedFrom
  */
 template <typename t, typename u>
 concept bool derived_from_conept =                  static_cast<bool>(ranges::DerivedFrom<t, u>());
@@ -71,61 +70,53 @@ concept bool implicitly_convertible_to_concept =    static_cast<bool>(ranges::Im
 template <typename t, typename u>
 concept bool explicitly_convertible_to_concept =    static_cast<bool>(ranges::ExplicitlyConvertibleTo<t, u>());
 
-//!\brief Resolves to `ranges::ConvertibleTo<type1, type2>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/ConvertibleTo
+/*!\brief Resolves to `ranges::ConvertibleTo<type1, type2>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/ConvertibleTo
  */
 template <typename t, typename u>
 concept bool convertible_to_concept =               implicitly_convertible_to_concept<t, u> &&
                                                     explicitly_convertible_to_concept<t, u>;
 
-//!\brief Resolves to `ranges::CommonReference<type1, type2, rest...>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/CommonReference
+/*!\brief Resolves to `ranges::CommonReference<type1, type2, rest...>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/CommonReference
  */
 template <typename t, typename u, typename ...rest>
 concept bool common_reference_concept =             static_cast<bool>(ranges::CommonReference<t, u, rest...>());
 
-//!\brief Resolves to `ranges::Common<type1, type2, rest...>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Common
+/*!\brief Resolves to `ranges::Common<type1, type2, rest...>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Common
  */
 template <typename t, typename u, typename ...rest>
 concept bool common_concept =                       static_cast<bool>(ranges::Common<t, u, rest...>());
 
-//!\brief Resolves to `ranges::Integral<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Integral
+/*!\brief Resolves to `ranges::Integral<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Integral
  */
 template <typename t>
 concept bool integral_concept =                     static_cast<bool>(ranges::Integral<t>());
 
-//!\brief Resolves to `ranges::SignedIntegral<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/SignedIntegral
+/*!\brief Resolves to `ranges::SignedIntegral<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/SignedIntegral
  */
 template <typename t>
 concept bool signed_integral_concept =              integral_concept<t> &&
                                                     static_cast<bool>(ranges::SignedIntegral<t>());
 
-//!\brief Resolves to `ranges::UnsignedIntegral<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/UnsignedIntegral
+/*!\brief Resolves to `ranges::UnsignedIntegral<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/UnsignedIntegral
  */
 template <typename t>
 concept bool unsigned_integral_concept =            integral_concept<t> &&
                                                     static_cast<bool>(ranges::UnsignedIntegral<t>());
 
-//!\brief Resolves to `ranges::Assignable<type1, type2>()`
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Assignable
+/*!\brief Resolves to `ranges::Assignable<type1, type2>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Assignable
  */
 template <typename t, typename u>
 concept bool assignable_concept =                   static_cast<bool>(ranges::Assignable<t, u>());
 
-//!\brief Resolves to `ranges::Swappable<type1, type2>()`
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Swappable
+/*!\brief Resolves to `ranges::Swappable<type1, type2>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Swappable
  */
 template <typename t, typename u = t>
 concept bool swappable_concept =                    static_cast<bool>(ranges::Swappable<t, u>());
@@ -135,30 +126,26 @@ concept bool swappable_concept =                    static_cast<bool>(ranges::Sw
 //!\name Comparison concepts.
 //!\{
 
-//!\brief Resolves to `ranges::WeaklyEqualityComparable<type1, type2>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/WeaklyEqualityComparable
+/*!\brief Resolves to `ranges::WeaklyEqualityComparable<type1, type2>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/WeaklyEqualityComparable
  */
 template <typename t, typename u>
 concept bool weakly_equality_comparable_concept =   static_cast<bool>(ranges::WeaklyEqualityComparable<t, u>());
 
-//!\brief Resolves to `ranges::EqualityComparable<type1, type2>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/EqualityComparable
+/*!\brief Resolves to `ranges::EqualityComparable<type1, type2>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/EqualityComparable
  */
 template <typename t, typename u = t>
 concept bool equality_comparable_concept =          static_cast<bool>(ranges::EqualityComparable<t, u>());
 
-//!\brief Resolves to `ranges::WeaklyOrdered<type1, type2>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/WeaklyOrdered
+/*!\brief Resolves to `ranges::WeaklyOrdered<type1, type2>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/WeaklyOrdered
  */
 template <typename t, typename u = t>
 concept bool weakly_ordered_concept =               static_cast<bool>(ranges::WeaklyOrdered<t>());
 
-//!\brief Resolves to `ranges::TotallyOrdered<type1, type2>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/TotallyOrdered
+/*!\brief Resolves to `ranges::TotallyOrdered<type1, type2>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/TotallyOrdered
  */
 template <typename t, typename u = t>
 concept bool totally_ordered_concept =              equality_comparable_concept<t, u> &&
@@ -169,72 +156,63 @@ concept bool totally_ordered_concept =              equality_comparable_concept<
 //!\name Object Concepts.
 //!\{
 
-//!\brief Resolves to `ranges::Destructible<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Destructible
+/*!\brief Resolves to `ranges::Destructible<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Destructible
  */
 template <typename t>
 concept bool destructible_concept =                 static_cast<bool>(ranges::Destructible<t>());
 
-//!\brief Resolves to `ranges::Constructible<type, args...>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Constructible
+/*!\brief Resolves to `ranges::Constructible<type, args...>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Constructible
  */
 template <typename t, typename ...args>
 concept bool constructible_concept =                destructible_concept<t> &&
                                                     static_cast<bool>(ranges::Constructible<t, args...>());
 
-//!\brief Resolves to `ranges::DefaultConstructible<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/DefaultConstructible
+/*!\brief Resolves to `ranges::DefaultConstructible<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/DefaultConstructible
  */
 template <typename t>
 concept bool default_constructible_concept =        constructible_concept<t> &&
                                                     static_cast<bool>(ranges::DefaultConstructible<t>());
 
-//!\brief Resolves to `ranges::MoveConstructible<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/MoveConstructible
+/*!\brief Resolves to `ranges::MoveConstructible<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/MoveConstructible
  */
 template <typename t>
 concept bool move_constructible_concept =           static_cast<bool>(ranges::MoveConstructible<t>());
 
-//!\brief Resolves to `ranges::CopyConstructible<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/CopyConstructible
+/*!\brief Resolves to `ranges::CopyConstructible<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/CopyConstructible
  */
 template <typename t>
 concept bool copy_constructible_concept =           move_constructible_concept<t> &&
                                                     static_cast<bool>(ranges::CopyConstructible<t>());
 
-//!\brief Resolves to `ranges::Movable<types...>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Movable
+/*!\brief Resolves to `ranges::Movable<types...>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Movable
  */
 template <typename t>
 concept bool movable_concept =                      move_constructible_concept<t> &&
                                                     static_cast<bool>(ranges::Movable<t>());
 
-//!\brief Resolves to `ranges::Copyable<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Copyable
+/*!\brief Resolves to `ranges::Copyable<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Copyable
  */
 template <typename t>
 concept bool copyable_concept =                     movable_concept<t> &&
                                                     copy_constructible_concept<t> &&
                                                     static_cast<bool>(ranges::Copyable<t>());
 
-//!\brief Resolves to `ranges::SemiRegular<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/SemiRegular
+/*!\brief Resolves to `ranges::SemiRegular<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/SemiRegular
  */
 template <typename t>
 concept bool semi_regular_concept =                 copyable_concept<t> &&
                                                     default_constructible_concept<t>;
 
-//!\brief Resolves to `ranges::Regular<type>()` 
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Regular
+/*!\brief Resolves to `ranges::Regular<type>()` 
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Regular
  */
 template <typename t>
 concept bool regular_concept =                      semi_regular_concept<t> &&
@@ -244,32 +222,28 @@ concept bool regular_concept =                      semi_regular_concept<t> &&
 //!\name Callable Concepts.
 //!\{
 
-//!\brief Resolves to `ranges::Invocable<func, ...args>()`
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Invocable
+/*!\brief Resolves to `ranges::Invocable<func, ...args>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Invocable
  */
 template <typename f, typename ...args>
 concept bool invocable_concept =                    static_cast<bool>(ranges::Invocable<f, args...>());
 
-//!\brief Resolves to `ranges::RegularInvocable<func, ...args>()`
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/RegularInvocable
+/*!\brief Resolves to `ranges::RegularInvocable<func, ...args>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/RegularInvocable
  */
 template <typename f, typename ...args>
 concept bool regular_invocable_concept =            invocable_concept<f, args...> &&
                                                     static_cast<bool>(ranges::RegularInvocable<f, args...>());
 
-//!\brief Resolves to `ranges::Predicate<func, ...args>()`
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Predicate
+/*!\brief Resolves to `ranges::Predicate<func, ...args>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Predicate
  */
 template <typename f, typename ...args>
 concept bool predicate_concept =                    regular_invocable_concept<f, args...> &&
                                                     static_cast<bool>(ranges::Predicate<f, args...>());
 
-//!\brief Resolves to `ranges::Relation<func, type1, type2>()`
-/*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Relation
+/*!\brief Resolves to `ranges::Relation<func, type1, type2>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Relation
  */
 template <typename f, typename t, typename u>
 concept bool relation_concept =                     static_cast<bool>(ranges::Relation<f, t, u>());

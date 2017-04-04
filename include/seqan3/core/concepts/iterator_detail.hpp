@@ -207,23 +207,31 @@ static_assert(seqan3::sentinel_concept<seqan3::detail::test_sentinel<char>,
 static_assert(seqan3::sentinel_concept<seqan3::detail::test_sentinel<char>,
                                        seqan3::detail::check_concept_for_random_access_iterator_const>);
 
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_input_iterator>,
-                                       seqan3::detail::check_concept_for_input_iterator>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_input_iterator>,
+                seqan3::detail::check_concept_for_input_iterator>);
 static_assert(std::is_same_v<char, seqan3::detail::value_type_t<ranges::ostream_iterator<char>>>);
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_output_iterator>,
-                                       seqan3::detail::check_concept_for_output_iterator>);
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator>,
-                                       seqan3::detail::check_concept_for_forward_iterator>);
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator_const>,
-                                       seqan3::detail::check_concept_for_forward_iterator_const>);
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator>,
-                                       seqan3::detail::check_concept_for_bidirectional_iterator>);
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator_const>,
-                                       seqan3::detail::check_concept_for_bidirectional_iterator_const>);
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator>,
-                                       seqan3::detail::check_concept_for_random_access_iterator>);
-static_assert(seqan3::sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator_const>,
-                                       seqan3::detail::check_concept_for_random_access_iterator_const>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_output_iterator>,
+                seqan3::detail::check_concept_for_output_iterator>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator>,
+                seqan3::detail::check_concept_for_forward_iterator>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator_const>,
+                seqan3::detail::check_concept_for_forward_iterator_const>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator>,
+                seqan3::detail::check_concept_for_bidirectional_iterator>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator_const>,
+                seqan3::detail::check_concept_for_bidirectional_iterator_const>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator>,
+                seqan3::detail::check_concept_for_random_access_iterator>);
+static_assert(seqan3::sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator_const>,
+                seqan3::detail::check_concept_for_random_access_iterator_const>);
 
 // Check sized_sentinel_concept
 static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sentinel<char>,
@@ -243,22 +251,30 @@ static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sentinel<char
 static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sentinel<char>,
                                               seqan3::detail::check_concept_for_random_access_iterator_const>);
 
-static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_input_iterator>,
-                                             seqan3::detail::check_concept_for_input_iterator>);
-static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_output_iterator>,
-                                             seqan3::detail::check_concept_for_output_iterator>);
-static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator>,
-                                             seqan3::detail::check_concept_for_forward_iterator>);
-static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator_const>,
-                                             seqan3::detail::check_concept_for_forward_iterator_const>);
-static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator>,
-                                             seqan3::detail::check_concept_for_bidirectional_iterator>);
-static_assert(!seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator_const>,
-                                             seqan3::detail::check_concept_for_bidirectional_iterator_const>);
-static_assert(seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator>,
-                                             seqan3::detail::check_concept_for_random_access_iterator>);
-static_assert(seqan3::sized_sentinel_concept<seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator_const>,
-                                             seqan3::detail::check_concept_for_random_access_iterator_const>);
+static_assert(!seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_input_iterator>,
+                seqan3::detail::check_concept_for_input_iterator>);
+static_assert(!seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_output_iterator>,
+                seqan3::detail::check_concept_for_output_iterator>);
+static_assert(!seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator>,
+                seqan3::detail::check_concept_for_forward_iterator>);
+static_assert(!seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_forward_iterator_const>,
+                seqan3::detail::check_concept_for_forward_iterator_const>);
+static_assert(!seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator>,
+                seqan3::detail::check_concept_for_bidirectional_iterator>);
+static_assert(!seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_bidirectional_iterator_const>,
+                seqan3::detail::check_concept_for_bidirectional_iterator_const>);
+static_assert(seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator>,
+                seqan3::detail::check_concept_for_random_access_iterator>);
+static_assert(seqan3::sized_sentinel_concept<
+                seqan3::detail::test_sized_sentinel<seqan3::detail::check_concept_for_random_access_iterator_const>,
+                seqan3::detail::check_concept_for_random_access_iterator_const>);
 
 // Check output_iterator_concept
 static_assert(!seqan3::output_iterator_concept<seqan3::detail::check_concept_for_input_iterator, char>);
