@@ -43,7 +43,7 @@
 #include <forward_list>
 #include <vector>
 
-#include <seqan3/core/iterator_concepts.hpp>
+#include <seqan3/core/concepts/iterator.hpp>
 
 /* Checks the iterator concepts */
 

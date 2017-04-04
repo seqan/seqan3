@@ -38,9 +38,9 @@
 
 #include <range/v3/range_concepts.hpp>
 
-/*!\file ranges.hpp
+/*!\file core/concepts/ranges.hpp
  * \brief Adaptations of concepts from the Ranges TS
- * \ingroup container
+ * \ingroup core
  */
 
 namespace seqan3

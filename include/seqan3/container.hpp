@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <container/concepts.hpp>
+#include <seqan3/container/concepts.hpp>
 
 /*!\defgroup container
  *

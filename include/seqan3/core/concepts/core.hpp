@@ -39,15 +39,15 @@
 #include <range/v3/range_concepts.hpp>
 #include <range/v3/utility/functional.hpp>
 
-/*!\file core_concepts.hpp
- * \brief Adaptions of core concepts from the range library.
+/*!\file core/concepts/core.hpp
+ * \brief Adaptions of core concepts from the Ranges TS.
  * \ingroup core
  */
 
 namespace seqan3
 {
 
-//!name Core Language Concepts
+//!\name Core Language Concepts
 //!\{
 //!\brief Resolves to `ranges::Same<types...>()` 
 /*!
@@ -134,6 +134,7 @@ concept bool swappable_concept =                    static_cast<bool>(ranges::Sw
 
 //!\name Comparison concepts.
 //!\{
+
 //!\brief Resolves to `ranges::WeaklyEqualityComparable<type1, type2>()` 
 /*!
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/WeaklyEqualityComparable
@@ -167,6 +168,7 @@ concept bool totally_ordered_concept =              equality_comparable_concept<
 
 //!\name Object Concepts.
 //!\{
+
 //!\brief Resolves to `ranges::Destructible<type>()` 
 /*!
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Destructible
@@ -241,6 +243,7 @@ concept bool regular_concept =                      semi_regular_concept<t> &&
 
 //!\name Callable Concepts.
 //!\{
+
 //!\brief Resolves to `ranges::Invocable<func, ...args>()`
 /*!
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Invocable
@@ -277,6 +280,6 @@ concept bool relation_concept =                     static_cast<bool>(ranges::Re
 
 #ifndef NDEBUG
 
-#include <seqan3/core/core_concepts_detail.hpp>
+#include <seqan3/core/concepts/core_detail.hpp>
 
 #endif // NDEBUG

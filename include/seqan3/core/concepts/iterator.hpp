@@ -39,18 +39,19 @@
 #include <range/v3/range_concepts.hpp>
 #include <range/v3/utility/iterator.hpp>
 
-#include <seqan3/core/core_concepts.hpp>
+#include <seqan3/core/concepts/core.hpp>
 
-/*!\file iterator_concepts.hpp
- * \brief Adaptions of Iterator concepts from the range library.
+/*!\file core/concepts/iterator.hpp
+ * \brief Adaptions of Iterator concepts from the Ranges TS.
  * \ingroup core
  */
 
 namespace seqan3
 {
 
-//!name Iterator Concepts
+//!\name Iterator Concepts
 //!\{
+
 //!\brief Resolves to `ranges::Readable<type>()`
 /*!
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Readable
@@ -82,7 +83,7 @@ concept bool incrementable_concept =            regular_concept<i> &&
                                                 static_cast<bool>(ranges::Incrementable<i>());
 //!\brief Resolves to `ranges::Iterator<iterator_type>()`
 /*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Incrementable
+ * \sa http://en.cppreference.com/w/cpp/concept/Iterator
  */
 template<typename i>
 concept bool iterator_concept =                 weakly_incrementable_concept<i> &&
@@ -108,7 +109,7 @@ concept bool sized_sentinel_concept =           sentinel_concept<s, i> &&
 
 //!\brief Resolves to `ranges::OutputIterator<iterator_type, type>()`
 /*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/OutputIterator
+ * \sa http://en.cppreference.com/w/cpp/concept/OutputIterator
  */
 template<typename out, typename t>
 concept bool output_iterator_concept =          iterator_concept<out> &&
@@ -117,7 +118,7 @@ concept bool output_iterator_concept =          iterator_concept<out> &&
 
 //!\brief Resolves to `ranges::InputIterator<iterator_type>()`
 /*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/InputIterator
+ * \sa http://en.cppreference.com/w/cpp/concept/InputIterator
  */
 template<typename i>
 concept bool input_iterator_concept =           iterator_concept<i> &&
@@ -126,7 +127,7 @@ concept bool input_iterator_concept =           iterator_concept<i> &&
 
 //!\brief Resolves to `ranges::ForwardIterator<iterator_type>()`
 /*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/ForwardIterator
+ * \sa http://en.cppreference.com/w/cpp/concept/ForwardIterator
  */
 template<typename i>
 concept bool forward_iterator_concept =         input_iterator_concept<i> &&
@@ -136,7 +137,7 @@ concept bool forward_iterator_concept =         input_iterator_concept<i> &&
 
 //!\brief Resolves to `ranges::BidirectionalIterator<iterator_type>()`
 /*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/BidirectionalIterator
+ * \sa http://en.cppreference.com/w/cpp/concept/BidirectionalIterator
  */
 template<typename i>
 concept bool bidirectional_iterator_concept =   forward_iterator_concept<i> &&
@@ -144,7 +145,7 @@ concept bool bidirectional_iterator_concept =   forward_iterator_concept<i> &&
 
 //!\brief Resolves to `ranges::RandomAccessIterator<iterator_type>()`
 /*!
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/RandomAccessIterator
+ * \sa http://en.cppreference.com/w/cpp/concept/RandomAccessIterator
  */
 template<typename i>
 concept bool random_access_iterator_concept =   bidirectional_iterator_concept<i> &&
@@ -157,6 +158,6 @@ concept bool random_access_iterator_concept =   bidirectional_iterator_concept<i
 #ifndef NDEBUG
 /* Check the iterator concepts */
 
-#include <seqan3/core/iterator_concepts_detail.hpp>
+#include <seqan3/core/concepts/iterator_detail.hpp>
 
 #endif // NDEBUG

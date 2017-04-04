@@ -36,8 +36,8 @@
 
 #pragma once
 
-#include "concepts/stl.hpp"
-#include "concepts/ranges.hpp"
+#include <seqan3/core/concepts/stl.hpp>
+#include <seqan3/core/concepts/ranges.hpp>
 
 /*!\file concepts.hpp
  * \brief Concepts of ranges and containers

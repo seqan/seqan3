@@ -38,9 +38,9 @@
 
 #include <initializer_list>
 
-/*! \file stl.hpp
+/*! \file core/concepts/stl.hpp
  * \brief Adaptations of concepts from the standard library
- * \ingroup container
+ * \ingroup core
  */
 
 namespace seqan3

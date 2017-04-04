@@ -40,7 +40,7 @@
 
 #include <random>
 
-#include <seqan3/core/core_concepts.hpp>
+#include <seqan3/core/concepts/core.hpp>
 
 namespace seqan3::detail
 {
