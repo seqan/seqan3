@@ -66,7 +66,7 @@
 
 // SeqAn
 #if !__has_include(<seqan3/version.hpp>)
-#   error You have included a SeqAn header, but not not properly included the include directory.
+#   error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
 // Ranges
@@ -82,11 +82,12 @@
 #       error Your range-v3 library is too old.
 #       pragma message(MSG)
 #   elif RANGE_V3_VERSION > RANGE_V3_MAXVERSION
-#       pragma GCC warning "Your range-v3 library is possibly to new."
+#       pragma GCC warning "Your range-v3 library is possibly tot new. Some features might not work correctly."
 #       pragma message(MSG)
 #   endif
+#   undef MSG
 #else
-#   error You have not properly included the range-v3 library in your include path.
+#   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
 // SDSL
