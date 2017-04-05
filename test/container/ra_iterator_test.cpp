@@ -47,9 +47,7 @@ class random_access_iterator_test_fixture: public ::testing::Test {
 protected:
     std::vector<uint8_t> *v, *v_au, *v_atz, *v_auvwx, *w, *w_bv;
 
-   random_access_iterator_test_fixture( ) {
-       // initialization code here
-   }
+   random_access_iterator_test_fixture() {}
 
    virtual void SetUp( ) {
        // code here will execute just before the test ensues
@@ -62,15 +60,10 @@ protected:
    }
 
    virtual void TearDown( ) {
-       // code here will be called just after the test completes
-       // ok to through exceptions from here if need be
        delete v, v_au, v_atz, v_auvwx, w, w_bv;
    }
 
-   ~random_access_iterator_test_fixture( )  {
-       // cleanup any pending stuff, but no exceptions allowed
-   }
-   // put in any custom data members that you need
+   ~random_access_iterator_test_fixture(){}
 
 };
 
