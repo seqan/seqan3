@@ -5,7 +5,7 @@ project(seqan3 CXX)
 enable_testing()
 
 set(CMAKE_BUILD_TYPE "Release")
-set(CMAKE_CXX_FLAGS "-std=c++1z -fconcepts -I ${CMAKE_SOURCE_DIR}/../range-v3/include -I ${CMAKE_SOURCE_DIR}/../sdsl-lite/include")
+set(CMAKE_CXX_FLAGS "-std=c++1z -fconcepts")
 
 set(GOOGLETEST_PATH "${CMAKE_SOURCE_DIR}/../vendor/googletest/googletest")
 set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main")
@@ -36,7 +36,8 @@ set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/
 
 include_directories("${GOOGLETEST_PATH}/include/")
 include_directories("${CMAKE_SOURCE_DIR}/../include/")
-
+include_directories("${CMAKE_SOURCE_DIR}/../range-v3/include")
+include_directories("${CMAKE_SOURCE_DIR}/../sdsl-lite/include")
 
 add_subdirectory(alphabet)
 #add_subdirectory(alignment)
