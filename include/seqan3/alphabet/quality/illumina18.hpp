@@ -150,14 +150,13 @@ struct illumina18
     static constexpr integral_type value_size{42};
 };
 
+} // namespace seqan3
 
 #ifndef NDEBUG
 #include <seqan3/alphabet/alphabet.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
-static_assert(alpahbet_concept<illumina18>);
-static_assert(detail::internal_alphabet_concept<illumina18>);
-static_assert(quality_concept<illumina18>);
-static_assert(detail::internal_quality_concept<illumina18>);
+static_assert(seqan3::alphabet_concept<seqan3::illumina18>);
+static_assert(seqan3::detail::internal_alphabet_concept<seqan3::illumina18>);
+static_assert(seqan3::quality_concept<seqan3::illumina18>);
+static_assert(seqan3::detail::internal_quality_concept<seqan3::illumina18>);
 #endif
-
-}  // namespace seqan3

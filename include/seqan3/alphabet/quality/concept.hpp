@@ -39,7 +39,7 @@
 #include <iostream>
 #include <string>
 
-#include "alphabet.hpp"
+#include <seqan3/alphabet/alphabet.hpp>
 
 namespace seqan3
 {
@@ -48,8 +48,8 @@ namespace detail
 {
 
 /*!
- * Internal conversion functions of a quality alphabet. 
- * A quality has three representations: 
+ * Internal conversion functions of a quality alphabet.
+ * A quality has three representations:
  *    a) internal unsigned integer, simply called "value"
  *    b) an integer representing the phred score, calibration is machine-dependent
  *    c) a single-letter encoding corresponding to a phred score
