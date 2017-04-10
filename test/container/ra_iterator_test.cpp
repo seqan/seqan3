@@ -67,10 +67,10 @@ protected:
 
 };
 
-// default constructor, expect error when calling
+// default constructor
 TEST(random_access_iterator_test, default_constructor)
 {
-    //ASSERT//seqan3::detail::ra_iterator<std::vector<uint8_t>> it;
+    seqan3::detail::ra_iterator<std::vector<uint8_t>> it;
 }
 
 // constructor with empty container reference

@@ -49,28 +49,28 @@ namespace seqan3::detail
 {
 
 template <typename container_type, bool is_const=false>
-    requires random_access_range_concept<container_type>
+    requires random_access_range_concept<container_type> && sized_range_concept<container_type>
 class ra_iterator
 {
 
 private:
-    // Note: an iterator can only be initialized with container (host) reference
-    container_type & host; //{*(container_type*)0};
-    // set to numeric_limits::max to indicate that iterator exceeds container size
-    typename container_type::size_type pos; //{0};
+    // by default iterator is end iterator
+    container_type & host{*(container_type*)0};
+    uint8_t pos{std::numeric_limits<uint8_t>::max()};
 public:
-    typedef typename container_type::size_type size_type;
-    typedef typename container_type::difference_type difference_type;
-    typedef typename container_type::value_type value_type;
+    using difference_type = int8_t;
+    using value_type = typename container_type::value_type;
     using reference = std::conditional_t<is_const, value_type const &, value_type &>;
-    typedef typename container_type::const_reference const_reference;
+    using const_reference = typename container_type::const_reference;
     using pointer = std::conditional_t<is_const, value_type const *, value_type *>;
+    using category_type = std::random_access_iterator_tag;
 
-    // Explicitly not possible: ra_iterator() : host(*(container_type*)0) {};
+    ra_iterator() {}
+
     ra_iterator(container_type & host, bool const _at_end = false) : host{host}, pos{0}
     {
         if (_at_end)
-            pos = std::numeric_limits<size_type>::max();
+            pos = std::numeric_limits<difference_type>::max();
     }
 
     // copy constructor
@@ -79,9 +79,6 @@ public:
     // copy via assignment
     ra_iterator& operator=(ra_iterator const & rhs)
     {
-        //assert(host == rhs.host);
-        // TODO: remove above assert, because with assert: this is not possible:
-        // it = it + 2, but we allow it += 2; Hence, we would expect same behaviour.
         pos = rhs.pos;
         return *this;
     }
@@ -138,7 +135,7 @@ public:
         ra_iterator cpy{*this};
         ++pos;
         if (pos >= ranges::size(host))
-            pos = std::numeric_limits<size_type>::max();
+            pos = std::numeric_limits<difference_type>::max();
         return cpy;
     }
 
@@ -158,40 +155,40 @@ public:
     }
 
     // forward iterator and assignment
-    ra_iterator& operator+=(size_type skip)
+    ra_iterator& operator+=(difference_type skip)
     {
         pos += skip;
         if (pos >= ranges::size(host))
-            pos = std::numeric_limits<size_type>::max();
+            pos = std::numeric_limits<difference_type>::max();
         return *this;
     }
 
-    // forward iterator    ra_iterator operator+(size_type) const; //optional
-    ra_iterator operator+(size_type skip) const
+    // forward iterator
+    ra_iterator operator+(difference_type skip) const
     {
         ra_iterator cpy{*this};
         cpy.pos = cpy.pos + skip;
         if (cpy.pos >= ranges::size(host))
-            cpy.pos = std::numeric_limits<size_type>::max();
+            cpy.pos = std::numeric_limits<difference_type>::max();
         return cpy;
     }
 
-    friend ra_iterator operator+(size_type skip , const ra_iterator& _it)
+    friend ra_iterator operator+(difference_type skip , const ra_iterator& _it)
     {
         ra_iterator cpy{_it};
         cpy.pos = cpy.pos + skip;
         if (cpy.pos >= ranges::size(_it.host))
-            cpy.pos = std::numeric_limits<size_type>::max();
+            cpy.pos = std::numeric_limits<difference_type>::max();
         return cpy;
     }
 
-    ra_iterator& operator-=(size_type skip)
+    ra_iterator& operator-=(difference_type skip)
     {
         pos -= skip;
         return *this;
     }
 
-    ra_iterator operator-(size_type skip) const
+    ra_iterator operator-(difference_type skip) const
     {
         ra_iterator cpy{*this};
         cpy.pos -= skip;
@@ -208,7 +205,7 @@ public:
         return &(*this);
     }
 
-    reference operator[](size_type const n) const
+    reference operator[](value_type const n) const
     {
         return host[pos + n];
     }
