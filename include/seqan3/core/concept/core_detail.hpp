@@ -31,8 +31,14 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Rene Rahn <rene.rahn AT fu-berlin.de>
-// ============================================================================
+
+//! \cond DEV
+
+/*!\file core/concept/core_detail.hpp
+ * \brief Testing the core library concepts.
+ * \ingroup core
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
 #pragma once
 
@@ -40,14 +46,15 @@
 
 #include <random>
 
-#include <seqan3/core/concepts/core.hpp>
+#include <seqan3/core/concept/core.hpp>
 
 namespace seqan3::detail::test_core_concepts
 {
-
+//! \brief Helper struct for testing core concepts.
 struct type_a
 {};
 
+//! \brief Helper struct for testing core concepts.
 struct type_b : type_a
 {
     type_b(type_b const &) = delete;
@@ -60,6 +67,7 @@ struct type_b : type_a
     bool operator()(args &&...);
 };
 
+//! \brief Helper struct for testing core concepts.
 struct type_c
 {
     type_c() = default;
@@ -72,6 +80,7 @@ struct type_c
     void operator()(args &&... );
 };
 
+//! \brief Helper struct for testing core concepts.
 struct type_d: type_b
 {
     type_d() = delete;
@@ -90,6 +99,7 @@ struct type_d: type_b
     bool operator()(t &&, t &&);
 };
 
+// Operator overloads for testing core concepts.
 bool operator==(type_a const & , type_b const &);
 bool operator==(type_b const & , type_a const &);
 bool operator==(type_b const & , type_b const &);
@@ -301,5 +311,6 @@ static_assert(seqan3::predicate_concept<seqan3::detail::test_core_concepts::type
 static_assert(!seqan3::relation_concept<seqan3::detail::test_core_concepts::type_d, int, double>);
 static_assert(seqan3::relation_concept<seqan3::detail::test_core_concepts::type_d, int, int>);
 
-
 #endif // NDEBUG
+
+//! \endcond

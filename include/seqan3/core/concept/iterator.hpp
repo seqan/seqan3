@@ -31,8 +31,12 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Rene Rahn <rene.rahn AT fu-berlin.de>
-// ============================================================================
+
+/*!\file core/concept/iterator.hpp
+ * \brief Adaptions of Iterator concepts from the Ranges TS.
+ * \ingroup core
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
 #pragma once
 
@@ -40,12 +44,6 @@
 #include <range/v3/utility/iterator.hpp>
 
 #include <seqan3/core/concepts/core.hpp>
-
-/*!\file core/concepts/iterator.hpp
- * \brief Adaptions of Iterator concepts from the Ranges TS.
- * \ingroup core
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- */
 
 namespace seqan3
 {

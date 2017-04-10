@@ -31,14 +31,12 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
 
 #pragma once
 
 #include <range/v3/range_concepts.hpp>
 
-/*!\file core/concepts/ranges.hpp
+/*!\file core/concept/range.hpp
  * \brief Adaptations of concepts from the Ranges TS
  * \ingroup core
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>

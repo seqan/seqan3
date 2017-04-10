@@ -31,19 +31,17 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Rene Rahn <rene.rahn AT fu-berlin.de>
-// ============================================================================
+
+/*!\file core/concept/core.hpp
+ * \brief Adaptions of core concepts from the Ranges TS.
+ * \ingroup core
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
 #pragma once
 
 #include <range/v3/range_concepts.hpp>
 #include <range/v3/utility/functional.hpp>
-
-/*!\file core/concepts/core.hpp
- * \brief Adaptions of core concepts from the Ranges TS.
- * \ingroup core 
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- */
 
 namespace seqan3
 {

@@ -31,8 +31,21 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Rene Rahn <rene.rahn AT fu-berlin.de>
-// ============================================================================
+
+/*!\file core.hpp
+ * \defgroup core
+ *
+ * The core module contains the definition of external concepts, as well as
+ * various utilities that are mostly hidden from the user.
+ *
+ * Place core utilities here that are needed across many modules, but it should
+ * be kept to a minimum.
+ *
+ * TODO more details.
+ *
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
 #pragma once
 
@@ -40,19 +53,8 @@
 // External concept implementations
 // ============================================================================
 
-#include <seqan3/core/concepts/core.hpp>
-#include <seqan3/core/concepts/iterator.hpp>
-#include <seqan3/core/concepts/stl.hpp>
-#include <seqan3/core/concepts/ranges.hpp>
-
-/*!\defgroup core
- *
- * The core module contains the definition of external concepts, as well as 
- * various utilities that are mostly hidden from the user.
- * 
- * Place core utilities here that are needed across many modules, but it should 
- * be kept to a minimum.
- *
- * TODO more details.
- */
+#include <seqan3/core/concept/core.hpp>
+#include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/core/concept/stl_container.hpp>
+#include <seqan3/core/concept/range.hpp>
 

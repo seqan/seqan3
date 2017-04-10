@@ -31,14 +31,12 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
 
 #pragma once
 
 #include <initializer_list>
 
-/*! \file core/concepts/stl.hpp
+/*! \file core/concept/stl_container.hpp
  * \brief Adaptations of concepts from the standard library
  * \ingroup core
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
