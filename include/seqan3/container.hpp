@@ -36,8 +36,6 @@
 
 #pragma once
 
-#include <container/concepts.hpp>
-
 /*!\defgroup container
  *
  * The container module contains adaptations and concepts for ranges and containers, as well

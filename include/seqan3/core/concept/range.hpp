@@ -31,16 +31,15 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
 
 #pragma once
 
 #include <range/v3/range_concepts.hpp>
 
-/*!\file ranges.hpp
+/*!\file core/concept/range.hpp
  * \brief Adaptations of concepts from the Ranges TS
- * \ingroup container
+ * \ingroup core
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 namespace seqan3
