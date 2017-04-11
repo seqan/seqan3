@@ -128,6 +128,9 @@ TEST(pod_tuple_get_i, get_i)
 {
     pod_tuple<int, long, float> t0{4, 7l, 3.0f};
 
+    static_assert(std::is_same_v<decltype(std::get<0>(t0)), int &>);
+    static_assert(std::is_same_v<decltype(std::get<1>(t0)), long &>);
+    static_assert(std::is_same_v<decltype(std::get<2>(t0)), float &>);
     EXPECT_EQ(std::get<0>(t0), 4);
     EXPECT_EQ(std::get<1>(t0), 7l);
     EXPECT_EQ(std::get<2>(t0), 3.0f);

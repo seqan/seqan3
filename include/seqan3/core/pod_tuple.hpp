@@ -205,7 +205,7 @@ constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
     if constexpr (i == 0)
         return std::move(t._head);
     else
-        return std::move(seqan3::get<i-1>(t._tail));
+        return seqan3::get<i-1>(std::move(t._tail));
 }
 
 //!\relates seqan3::pod_tuple
@@ -216,7 +216,7 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
     if constexpr (i == 0)
         return std::move(t._head);
     else
-        return std::move(seqan3::get<i-1>(t._tail));
+        return seqan3::get<i-1>(std::move(t._tail));
 }
 //!\}
 
@@ -260,6 +260,15 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 template <std::size_t i, typename ...types >
     requires i < sizeof...(types)
 struct tuple_element<i, seqan3::pod_tuple<types...>>
+{
+    using type = meta::at_c<meta::list<types...>, i>;
+};
+
+// also for derived classes:
+template <std::size_t i, template <typename...> typename t, typename ...types >
+    requires i < sizeof...(types) &&
+            std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
+struct tuple_element<i, t<types...>>
 {
     using type = meta::at_c<meta::list<types...>, i>;
 };

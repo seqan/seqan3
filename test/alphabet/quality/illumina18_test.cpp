@@ -163,3 +163,18 @@ TEST(illumina18_to_phred, to_phred)
     illu = 39;
     EXPECT_EQ(39, to_integral(illu));
 }
+
+TEST(illumina18_cmp, cmp)
+{
+    illumina18 illu1{7};
+    illumina18 illu2{11};
+    illumina18 illu3{30};
+
+    EXPECT_LT(illu1, illu2);
+    EXPECT_LE(illu1, illu2);
+    EXPECT_LE(illu2, illu2);
+    EXPECT_EQ(illu2, illu2);
+    EXPECT_GE(illu2, illu2);
+    EXPECT_GE(illu3, illu2);
+    EXPECT_GT(illu3, illu2);
+}
