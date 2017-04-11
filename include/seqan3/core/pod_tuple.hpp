@@ -77,7 +77,7 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~
  *
- * \todo implement type-based std::get, make_pod_tuple
+ * \todo implement type-based std::get
  */
 template <typename type0, typename ...types>
 struct pod_tuple
@@ -162,30 +162,27 @@ struct pod_tuple<type0>
     }
 };
 
+#undef SEQAN_NOT_POD
+
 //!\brief User defined deduction guide enables easy use.
 template <typename ...types>
 pod_tuple(types && ...) -> pod_tuple<types...>;
 
-#undef SEQAN_NOT_POD
-
-} // namespace seqan3
-
-namespace std
-{
-
 /*!\name Access an element of a pod_tuple
  * \{
- * \brief The same as std::get on an std::tuple
+ * \brief The same as std::get on an std::tuple.
+ *
+ * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
  */
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
-constexpr auto & get(seqan3::pod_tuple<types...> & t)
+constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
     requires i < sizeof...(types)
 {
     if constexpr (i == 0)
         return t._head;
     else
-        return std::get<i-1>(t._tail);
+        return seqan3::get<i-1>(t._tail);
 }
 
 //!\relates seqan3::pod_tuple
@@ -196,19 +193,19 @@ constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
     if constexpr (i == 0)
         return t._head;
     else
-        return std::get<i-1>(t._tail);
+        return seqan3::get<i-1>(t._tail);
 }
 
 // extra overloads for temporaries required, because members of temporaries may only be returned as temporaries
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
-constexpr auto && get(seqan3::pod_tuple<types...> && t)
+constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
     requires i < sizeof...(types)
 {
     if constexpr (i == 0)
         return std::move(t._head);
     else
-        return std::move(std::get<i-1>(t._tail));
+        return std::move(seqan3::get<i-1>(t._tail));
 }
 
 //!\relates seqan3::pod_tuple
@@ -219,9 +216,44 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
     if constexpr (i == 0)
         return std::move(t._head);
     else
-        return std::move(std::get<i-1>(t._tail));
+        return std::move(seqan3::get<i-1>(t._tail));
 }
 //!\}
+
+} // namespace seqan3
+
+namespace std
+{
+
+//!\cond
+template <std::size_t i, typename ...types>
+constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
+    requires i < sizeof...(types)
+{
+    return seqan3::get<i>(t);
+}
+
+template <std::size_t i, typename ...types>
+constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
+    requires i < sizeof...(types)
+{
+    return seqan3::get<i>(t);
+}
+
+template <std::size_t i, typename ...types>
+constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
+    requires i < sizeof...(types)
+{
+    return seqan3::get<i>(std::move(t));
+}
+
+template <std::size_t i, typename ...types>
+constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
+    requires i < sizeof...(types)
+{
+    return seqan3::get<i>(std::move(t));
+}
+//!\endcond
 
 //!\brief Obtains the type of the specified element.
 //!\relates seqan3::pod_tuple
