@@ -34,13 +34,43 @@
 
 #pragma once
 
-#include <seqan3/alphabet/quality/aliases.hpp>
+#include <iostream>
+#include <string>
+#include <utility>
+
+#include <seqan3/alphabet/alphabet.hpp>
 #include <seqan3/alphabet/quality/composition.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 
-/*!\file alphabet/quality.hpp
+/*!\file alphabet/quality/aliases.hpp
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header that includes all headers from alphabet/quality/
+ * \brief Contains aliases for quality_composition.
  */
+
+namespace seqan3
+{
+
+//!\brief An alphabet that stores a dna4 letter and an illumina18 letter at each position.
+using dna4q = quality_composition<dna4, illumina18>;
+
+//!\brief An alphabet that stores a dna5 letter and an illumina18 letter at each position.
+using dna5q = quality_composition<dna5, illumina18>;
+
+// using rna4q = quality_composition<rna4, illumina18>;
+// using rna5q = quality_composition<rna5, illumina18>;
+
+} // namespace seqan3
+
+#ifndef NDEBUG
+static_assert(seqan3::alphabet_concept<seqan3::dna4q>);
+static_assert(seqan3::detail::internal_alphabet_concept<seqan3::dna4q>);
+static_assert(seqan3::quality_concept<seqan3::dna4q>);
+static_assert(seqan3::detail::internal_quality_concept<seqan3::dna4q>);
+static_assert(sizeof(seqan3::dna4q) == 2);
+#endif
+
+

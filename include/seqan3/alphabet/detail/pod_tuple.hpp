@@ -36,77 +36,97 @@
 
 #pragma once
 
+#include <tuple>
 #include <type_traits>
+
+/*!\cond DEV
+ * \file alphabet/detail/pod_tuple.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains pod_tuple
+ */
 
 namespace seqan3::detail
 {
 
-/* A tuple class that is an aggregate POD type.
- * It serves as the basis of alphabet_composition.
- */
+#define SEQAN_NOT_POD "If you are not going to insert a POD type, use std::tuple instead."
 
-template <typename ...types>
+/*!\brief Behaves like std::tuple but std::is_pod and std::is_aggregate.
+ * \ingroup alphabet
+ */
+template <typename type0, typename ...types>
 struct pod_tuple
 {
-    static_assert(sizeof...(types) > 0, "Need at least one element in pod_tuple.");
-    static_assert(sizeof...(types) < 6, "Only up to 5 elements currently supported by pod_tuple.");
-};
+    static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
+    type0 _head;
+    pod_tuple<types...> _tail;
 
-#define SEQAN_NOT_POD "If you are not going to insert a POD type, use std::tuple instead."
+    constexpr bool operator==(pod_tuple const & rhs) const
+    {
+        return std::tie(_head, _tail) == std::tie(rhs._head, rhs._tail);
+    }
+
+    constexpr bool operator!=(pod_tuple const & rhs) const
+    {
+        return std::tie(_head, _tail) != std::tie(rhs._head, rhs._tail);
+    }
+
+    constexpr bool operator<(pod_tuple const & rhs) const
+    {
+        return std::tie(_head, _tail) < std::tie(rhs._head, rhs._tail);
+    }
+
+    constexpr bool operator>(pod_tuple const & rhs) const
+    {
+        return std::tie(_head, _tail) > std::tie(rhs._head, rhs._tail);
+    }
+
+    constexpr bool operator<=(pod_tuple const & rhs) const
+    {
+        return std::tie(_head, _tail) <= std::tie(rhs._head, rhs._tail);
+    }
+
+    constexpr bool operator>=(pod_tuple const & rhs) const
+    {
+        return std::tie(_head, _tail) >= std::tie(rhs._head, rhs._tail);
+    }
+};
 
 template <typename type0>
 struct pod_tuple<type0>
 {
     static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
-    type0 _val0;
-};
+    type0 _head;
 
-template <typename type0, typename type1>
-struct pod_tuple<type0, type1>
-{
-    static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type1>, SEQAN_NOT_POD);
-    type0 _val0;
-    type1 _val1;
-};
+    constexpr bool operator==(pod_tuple const & rhs) const
+    {
+        return _head == rhs._head;
+    }
 
-template <typename type0, typename type1, typename type2>
-struct pod_tuple<type0, type1, type2>
-{
-    static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type1>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type2>, SEQAN_NOT_POD);
-    type0 _val0;
-    type1 _val1;
-    type2 _val2;
-};
+    constexpr bool operator!=(pod_tuple const & rhs) const
+    {
+        return _head != rhs._head;
+    }
 
-template <typename type0, typename type1, typename type2, typename type3>
-struct pod_tuple<type0, type1, type2, type3>
-{
-    static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type1>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type2>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type3>, SEQAN_NOT_POD);
-    type0 _val0;
-    type1 _val1;
-    type2 _val2;
-    type3 _val3;
-};
+    constexpr bool operator<(pod_tuple const & rhs) const
+    {
+        return _head < rhs._head;
+    }
 
-template <typename type0, typename type1, typename type2, typename type3, typename type4>
-struct pod_tuple<type0, type1, type2, type3, type4>
-{
-    static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type1>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type2>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type3>, SEQAN_NOT_POD);
-    static_assert(std::is_pod_v<type4>, SEQAN_NOT_POD);
-    type0 _val0;
-    type1 _val1;
-    type2 _val2;
-    type3 _val3;
-    type4 _val4;
+    constexpr bool operator>(pod_tuple const & rhs) const
+    {
+        return _head > rhs._head;
+    }
+
+    constexpr bool operator<=(pod_tuple const & rhs) const
+    {
+        return _head <= rhs._head;
+    }
+
+    constexpr bool operator>=(pod_tuple const & rhs) const
+    {
+        return _head >= rhs._head;
+    }
 };
 
 #undef SEQAN_NOT_POD
@@ -139,15 +159,9 @@ template <std::size_t i, typename ...types>
 constexpr auto & get(seqan3::detail::pod_tuple<types...> & t)
 {
     if constexpr (i == 0)
-        return t._val0;
-    else if constexpr (i == 1)
-        return t._val1;
-    else if constexpr (i == 2)
-        return t._val2;
-    else if constexpr (i == 3)
-        return t._val3;
+        return t._head;
     else
-        return t._val4;
+        return std::get<i-1>(t._tail);
 }
 
 template <std::size_t i, typename ...types>
@@ -155,15 +169,9 @@ template <std::size_t i, typename ...types>
 constexpr auto const & get(seqan3::detail::pod_tuple<types...> const & t) noexcept
 {
     if constexpr (i == 0)
-        return t._val0;
-    else if constexpr (i == 1)
-        return t._val1;
-    else if constexpr (i == 2)
-        return t._val2;
-    else if constexpr (i == 3)
-        return t._val3;
+        return t._head;
     else
-        return t._val4;
+        return std::get<i-1>(t._tail);
 }
 
 // extra overloads for temporaries required, because members of temporaries may only be returned as temporaries
@@ -173,15 +181,9 @@ template <std::size_t i, typename ...types>
 constexpr auto && get(seqan3::detail::pod_tuple<types...> && t)
 {
     if constexpr (i == 0)
-        return std::move(t._val0);
-    else if constexpr (i == 1)
-        return std::move(t._val1);
-    else if constexpr (i == 2)
-        return std::move(t._val2);
-    else if constexpr (i == 3)
-        return std::move(t._val3);
+        return std::move(t._head);
     else
-        return std::move(t._val4);
+        return std::move(std::get<i-1>(t._tail));
 }
 
 template <std::size_t i, typename ...types>
@@ -189,15 +191,9 @@ template <std::size_t i, typename ...types>
 constexpr auto const && get(seqan3::detail::pod_tuple<types...> const && t) noexcept
 {
     if constexpr (i == 0)
-        return std::move(t._val0);
-    else if constexpr (i == 1)
-        return std::move(t._val1);
-    else if constexpr (i == 2)
-        return std::move(t._val2);
-    else if constexpr (i == 3)
-        return std::move(t._val3);
+        return std::move(t._head);
     else
-        return std::move(t._val4);
+        return std::move(std::get<i-1>(t._tail));
 }
 
 //TODO type based std::get
@@ -210,3 +206,5 @@ struct tuple_element<i, seqan3::detail::pod_tuple<types...>>
 };
 
 } // namespace std
+
+//!\endcond DEV

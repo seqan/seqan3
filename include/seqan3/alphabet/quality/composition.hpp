@@ -31,8 +31,6 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
 
 #pragma once
 
@@ -40,12 +38,7 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/alphabet/alphabet.hpp>
 #include <seqan3/alphabet/composition.hpp>
-#include <seqan3/alphabet/quality/concept.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 /*!\file alphabet/quality/composition.hpp
  * \ingroup alphabet
@@ -56,7 +49,7 @@
 namespace seqan3
 {
 
-/*!\brief An alphabet_composition that joins a regular alphabet with a sequence alphabet.
+/*!\brief An alphabet_composition that joins a regular alphabet with a quality alphabet.
  * \ingroup alphabet
  * \tparam sequence_alphabet_type Type of the first letter, e.g. dna4; must satisfy alphabet_concept.
  * \tparam quality_alphabet_type Types of further letters (up to 4); must satisfy quality_concept.
@@ -66,12 +59,35 @@ namespace seqan3
  * are taken from the sequence alphabet and the phred values are taken from the quality
  * alphabet.
  *
- * As with all alphabet_composition|s you ma access the individual alphabet letters in
+ * As with all alphabet_composition s you may access the individual alphabet letters in
  * regular c++ tuple notation, i.e. `std::get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
- * TODO example
+ * ~~~~~~~~~~~~~~~{.cpp}
  *
+ * quality_composition<dna4, illumina18> l{dna4::A, 7};
+ * std::cout << int(to_integral(l)) << ' '
+ *           << int(to_integral(std::get<0>(l))) << ' '
+ *           << int(to_integral(std::get<1>(l))) << '\n';
+ * // 148 0 7
+ *
+ * std::cout << to_char(l) << ' '
+ *           << to_char(std::get<0>(l)) << ' '
+ *           << to_char(std::get<1>(l)) << '\n';
+ * // A A (
+ *
+ * std::cout << int(to_phred(l)) << ' '
+ * //           << int(to_phred(std::get<0>(l))) << ' ' // dna4 doesn't have a phred
+ *           << int(to_phred(std::get<1>(l))) << '\n';
+ * // 7 7
+ *
+ * // modify via structured bindings and references:
+ * auto & [ seq_l, qual_l ] = l;
+ * seq_l = dna4::G;
+ * std::cout << to_char(l) << '\n';
+ * // G
+ *
+ * ~~~~~~~~~~~~~~~
  *
  * This alphabet_composition itself fulfills both the alphabet_concept and the quality_concept.
  */
@@ -79,139 +95,44 @@ namespace seqan3
 template <typename sequence_alphabet_type, typename quality_alphabet_type>
       requires alphabet_concept<sequence_alphabet_type> &&
                quality_concept<quality_alphabet_type>
-struct quality_composition : public alphabet_composition<sequence_alphabet_type, quality_alphabet_type>
+struct quality_composition :
+    public alphabet_composition<quality_composition<sequence_alphabet_type, quality_alphabet_type>, sequence_alphabet_type, quality_alphabet_type>
 {
-//     using char_type = underlying_char_t<sequence_alphabet_type>;
-//     using phred_type = underlying_phred_t<quality_alphabet_type>;
-//
-//     //!
-//     // TODO why no constexpr?
-// //     quality_composition & from_integral(integral_type const i)
-// //     {
-// // //         alphabet_composition<sequence_alphabet_type, quality_alphabet_type>::from_integral(i);
-// //         return *this;
-// //     }
-//
-//     constexpr quality_composition & from_char(char_type const c)
-//     {
-//         seqan3::from_char(std::get<0>(*this), c);
-//         return *this;
-//     }
-//
-//     constexpr quality_composition & from_phred(phred_type const c)
-//     {
-//         seqan3::from_phred(std::get<1>(*this), c);
-//         return *this;
-//     }
-//
-//     constexpr phred_type to_phred() const
-//     {
-//         return seqan3::to_phred(std::get<1>(*this));
-//     }
-//
-//     constexpr char_type to_char() const
-//     {
-//         return seqan3::to_char(std::get<0>(*this));
-//     }
+    //!\brief Equals the char_type of sequence_alphabet_type.
+    using char_type = underlying_char_t<sequence_alphabet_type>;
+    //!\brief Equals the phred_type of the quality_alphabet_type.
+    using phred_type = underlying_phred_t<quality_alphabet_type>;
+
+    //!\brief Assign from a character. This modifies the internal sequence letter.
+    constexpr quality_composition & from_char(char_type const c)
+    {
+        seqan3::from_char(std::get<0>(*this), c);
+        return *this;
+    }
+
+    //!\brief Assign from a phred value. This modifies the internal quality letter.
+    constexpr quality_composition & from_phred(phred_type const c)
+    {
+        seqan3::from_phred(std::get<1>(*this), c);
+        return *this;
+    }
+
+    //!\brief Return the phred value. This reads the internal quality letter.
+    constexpr phred_type to_phred() const noexcept
+    {
+        return seqan3::to_phred(std::get<1>(*this));
+    }
+
+    //!\brief Return a character. This reads the internal sequence letter.
+    constexpr char_type to_char() const noexcept
+    {
+        return seqan3::to_char(std::get<0>(*this));
+    }
 };
-
-
-//!\brief The type of value_size and `alphabet_size_v<alphabet_composition<...>>`
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-struct underlying_char<quality_composition<sequence_alphabet_type, quality_alphabet_type>>
-{
-    using type = underlying_char_t<sequence_alphabet_type>;
-};
-
-//!\brief The type of value_size and `alphabet_size_v<alphabet_composition<...>>`
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-struct underlying_phred<quality_composition<sequence_alphabet_type, quality_alphabet_type>>
-{
-    using type = underlying_phred_t<quality_alphabet_type>;
-};
-
-//!\brief TODO
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-constexpr quality_composition<sequence_alphabet_type, quality_alphabet_type> &
-from_integral(quality_composition<sequence_alphabet_type, quality_alphabet_type> & c,
-              underlying_integral_t<quality_composition<sequence_alphabet_type, quality_alphabet_type>> const i)
-{
-    from_integral(static_cast<alphabet_composition<sequence_alphabet_type, quality_alphabet_type>>(c), i);
-    return c;
-}
-
-//!\brief TODO
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-constexpr quality_composition<sequence_alphabet_type, quality_alphabet_type> &
-from_char(quality_composition<sequence_alphabet_type, quality_alphabet_type> & c,
-          underlying_char_t<quality_composition<sequence_alphabet_type, quality_alphabet_type>> const i)
-{
-    from_char(std::get<0>(c), i);
-    return c;
-}
-
-//!\brief TODO
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-constexpr quality_composition<sequence_alphabet_type, quality_alphabet_type> &
-from_phred(quality_composition<sequence_alphabet_type, quality_alphabet_type> & c,
-           underlying_phred_t<quality_composition<sequence_alphabet_type, quality_alphabet_type>> const i)
-{
-    from_phred(std::get<1>(c), i);
-    return c;
-}
-
-//!\brief TODO
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-constexpr underlying_integral_t<quality_composition<sequence_alphabet_type, quality_alphabet_type>>
-to_integral(quality_composition<sequence_alphabet_type, quality_alphabet_type> const & c)
-{
-    to_integral(static_cast<alphabet_composition<sequence_alphabet_type, quality_alphabet_type> const &>(c));
-    return c;
-}
-
-
-//!\brief TODO
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-constexpr underlying_char_t<quality_composition<sequence_alphabet_type, quality_alphabet_type>>
-to_char(quality_composition<sequence_alphabet_type, quality_alphabet_type> const & c)
-{
-    to_char(std::get<0>(c));
-}
-
-//!\brief TODO
-//!\memberof quality_composition
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-constexpr underlying_phred_t<quality_composition<sequence_alphabet_type, quality_alphabet_type>>
-to_phred(quality_composition<sequence_alphabet_type, quality_alphabet_type> const & c)
-{
-    to_phred(std::get<1>(c));
-}
-
-
-
-//! An alphabet that stores a dna4 letter and an illumina18 letter at each position.
-using dna4q = quality_composition<dna4, illumina18>;
-
-//! An alphabet that stores a dna5 letter and an illumina18 letter at each position.
-using dna5q = quality_composition<dna5, illumina18>;
-
-// using rna4q = quality_composition<rna4, illumina18>;
-// using rna5q = quality_composition<rna5, illumina18>;
 
 } // namespace seqan3
 
 #ifndef NDEBUG
-// static_assert(seqan3::alphabet_concept<seqan3::dna4q>);
-// static_assert(seqan3::detail::internal_alphabet_concept<seqan3::dna4q>);
-// static_assert(seqan3::quality_concept<seqan3::dna4q>);
-// static_assert(seqan3::detail::internal_quality_concept<seqan3::dna4q>);
+// contains alphabet tests for this class:
+#include <seqan3/alphabet/quality/aliases.hpp>
 #endif
-
-
