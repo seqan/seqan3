@@ -39,57 +39,90 @@
 #include <tuple>
 #include <type_traits>
 
-/*!\cond DEV
- * \file alphabet/detail/pod_tuple.hpp
- * \ingroup alphabet
+#include <meta/meta.hpp>
+
+/*!\file core/pod_tuple.hpp
+ * \ingroup core
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains pod_tuple
+ * \brief Contains seqan3::pod_tuple
  */
 
-namespace seqan3::detail
+namespace seqan3
 {
 
+//!\cond
 #define SEQAN_NOT_POD "If you are not going to insert a POD type, use std::tuple instead."
+//!\endcond
 
 /*!\brief Behaves like std::tuple but std::is_pod and std::is_aggregate.
- * \ingroup alphabet
+ * \ingroup core
+ * \tparam type0 The first value's type (every tuple must contain at least one type).
+ * \tparam ...types 0-n further types (the types of the other values).
+ *
+ * This class behaves like std::tuple, but it is itself a POD type which std::tuple is not, even
+ * if all contained types are POD. Since the only benefit of this class is that it stays POD it
+ * actually enforces this on all types in the tuple (if you want to add non POD types, just use
+ * std::tuple instead).
+ *
+ * It (only) supports aggregate initialization, i.e. you must use brace-initializiers and cannot
+ * use paranthesis.
+ *
+ * ~~~~~~~~~~~~~~~{.cpp}
+ *
+ * pod_tuple<int, float> t{3, 4.7};
+ * static_assert(std::is_pod_v<pod_tuple<int, float>>);
+ *
+ * // template parameters are automatically deduced:
+ * pod_tuple t2{17, 3.7f, 19l};
+ *
+ * ~~~~~~~~~~~~~~~
+ *
+ * \todo implement type-based std::get, make_pod_tuple
  */
 template <typename type0, typename ...types>
 struct pod_tuple
 {
     static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
+    //!\cond DEV
+    //!\brief The first element as member.
     type0 _head;
+    //!\brief The rest of the elements defined as a "recursive member".
     pod_tuple<types...> _tail;
+    //!\endcond
 
-    constexpr bool operator==(pod_tuple const & rhs) const
+    //!\name comparison operators
+    //!\{
+    //!\brief Lexicographically compares the values in the tuple.
+    constexpr bool operator==(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) == std::tie(rhs._head, rhs._tail);
     }
 
-    constexpr bool operator!=(pod_tuple const & rhs) const
+    constexpr bool operator!=(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) != std::tie(rhs._head, rhs._tail);
     }
 
-    constexpr bool operator<(pod_tuple const & rhs) const
+    constexpr bool operator<(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) < std::tie(rhs._head, rhs._tail);
     }
 
-    constexpr bool operator>(pod_tuple const & rhs) const
+    constexpr bool operator>(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) > std::tie(rhs._head, rhs._tail);
     }
 
-    constexpr bool operator<=(pod_tuple const & rhs) const
+    constexpr bool operator<=(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) <= std::tie(rhs._head, rhs._tail);
     }
 
-    constexpr bool operator>=(pod_tuple const & rhs) const
+    constexpr bool operator>=(pod_tuple const & rhs) const noexcept
     {
         return std::tie(_head, _tail) >= std::tie(rhs._head, rhs._tail);
     }
+    //!\}
 };
 
 template <typename type0>
@@ -98,65 +131,56 @@ struct pod_tuple<type0>
     static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
     type0 _head;
 
-    constexpr bool operator==(pod_tuple const & rhs) const
+    constexpr bool operator==(pod_tuple const & rhs) const noexcept
     {
         return _head == rhs._head;
     }
 
-    constexpr bool operator!=(pod_tuple const & rhs) const
+    constexpr bool operator!=(pod_tuple const & rhs) const noexcept
     {
         return _head != rhs._head;
     }
 
-    constexpr bool operator<(pod_tuple const & rhs) const
+    constexpr bool operator<(pod_tuple const & rhs) const noexcept
     {
         return _head < rhs._head;
     }
 
-    constexpr bool operator>(pod_tuple const & rhs) const
+    constexpr bool operator>(pod_tuple const & rhs) const noexcept
     {
         return _head > rhs._head;
     }
 
-    constexpr bool operator<=(pod_tuple const & rhs) const
+    constexpr bool operator<=(pod_tuple const & rhs) const noexcept
     {
         return _head <= rhs._head;
     }
 
-    constexpr bool operator>=(pod_tuple const & rhs) const
+    constexpr bool operator>=(pod_tuple const & rhs) const noexcept
     {
         return _head >= rhs._head;
     }
 };
 
+//!\brief User defined deduction guide enables easy use.
+template <typename ...types>
+pod_tuple(types && ...) -> pod_tuple<types...>;
+
 #undef SEQAN_NOT_POD
 
-// TODO move this somewhere in core
-template <std::size_t i, typename head_t, typename ...tail_types >
-struct get_ith_type :
-    get_ith_type<i - 1, tail_types...>
-{
-//TODO fix this
-//     static_assert(i > sizeof...(tail_types), "Trying to access a type behind end of pack.");
-};
-
-template <typename head_t, typename ...tail_types >
-struct get_ith_type<0, head_t, tail_types...>
-{
-   using type = head_t;
-};
-
-template <std::size_t i, typename ...types>
-using get_ith_type_t = typename get_ith_type<i, types...>::type;
-
-} // namespace seqan3::detail
+} // namespace seqan3
 
 namespace std
 {
 
+/*!\name Access an element of a pod_tuple
+ * \{
+ * \brief The same as std::get on an std::tuple
+ */
+//!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
+constexpr auto & get(seqan3::pod_tuple<types...> & t)
     requires i < sizeof...(types)
-constexpr auto & get(seqan3::detail::pod_tuple<types...> & t)
 {
     if constexpr (i == 0)
         return t._head;
@@ -164,9 +188,10 @@ constexpr auto & get(seqan3::detail::pod_tuple<types...> & t)
         return std::get<i-1>(t._tail);
 }
 
+//!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
+constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
     requires i < sizeof...(types)
-constexpr auto const & get(seqan3::detail::pod_tuple<types...> const & t) noexcept
 {
     if constexpr (i == 0)
         return t._head;
@@ -175,10 +200,10 @@ constexpr auto const & get(seqan3::detail::pod_tuple<types...> const & t) noexce
 }
 
 // extra overloads for temporaries required, because members of temporaries may only be returned as temporaries
-
+//!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
+constexpr auto && get(seqan3::pod_tuple<types...> && t)
     requires i < sizeof...(types)
-constexpr auto && get(seqan3::detail::pod_tuple<types...> && t)
 {
     if constexpr (i == 0)
         return std::move(t._head);
@@ -186,25 +211,32 @@ constexpr auto && get(seqan3::detail::pod_tuple<types...> && t)
         return std::move(std::get<i-1>(t._tail));
 }
 
+//!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
+constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
     requires i < sizeof...(types)
-constexpr auto const && get(seqan3::detail::pod_tuple<types...> const && t) noexcept
 {
     if constexpr (i == 0)
         return std::move(t._head);
     else
         return std::move(std::get<i-1>(t._tail));
 }
+//!\}
 
-//TODO type based std::get
-
-// element type access
+//!\brief Obtains the type of the specified element.
+//!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types >
-struct tuple_element<i, seqan3::detail::pod_tuple<types...>>
+    requires i < sizeof...(types)
+struct tuple_element<i, seqan3::pod_tuple<types...>>
 {
-    using type = seqan3::detail::get_ith_type_t<i, types...>;
+    using type = meta::at_c<meta::list<types...>, i>;
 };
 
-} // namespace std
+//!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
+//!\relates seqan3::pod_tuple
+template <typename ...types>
+struct tuple_size<seqan3::pod_tuple<types...>> :
+    public std::integral_constant<std::size_t, sizeof...(types)>
+{};
 
-//!\endcond DEV
+} // namespace std

@@ -37,17 +37,15 @@
 #pragma once
 
 #include <cassert>
-#include <iostream>
-#include <string>
 #include <utility>
 
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/alphabet.hpp>
-#include <seqan3/alphabet/detail/pod_tuple.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
+#include <seqan3/core/pod_tuple.hpp>
 
-/*!\file alphabet/alphabet_composition.hpp
+/*!\file alphabet/composition.hpp
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
 
@@ -107,12 +105,12 @@ from_integral_impl(seqan3::alphabet_composition<derived_type, alphabet_types...>
     if constexpr (j == 0)
     {
         from_integral(std::get<j>(comp),
-                      i % alphabet_size_v<get_ith_type_t<j, alphabet_types...>>);
+                      i % alphabet_size_v<meta::at_c<meta::list<alphabet_types...>, j>>);
     } else
     {
         from_integral(std::get<j>(comp),
                       (i / seqan3::alphabet_composition<derived_type, alphabet_types...>::_cummulative_alph_sizes[j-1])
-                       % alphabet_size_v<get_ith_type_t<j, alphabet_types...>>);
+                       % alphabet_size_v<meta::at_c<meta::list<alphabet_types...>, j>>);
     }
 
     if constexpr (j + 1 < sizeof...(alphabet_types))
@@ -147,7 +145,7 @@ template <typename derived_type,
           typename ...alphabet_types>
       requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
 struct alphabet_composition :
-    public detail::pod_tuple<first_alphabet_type, alphabet_types...>
+    public pod_tuple<first_alphabet_type, alphabet_types...>
 {
 private:
     //!\brief declare private to prevent direct use of the CRTP base

@@ -51,8 +51,8 @@ namespace seqan3
 
 /*!\brief An alphabet_composition that joins a regular alphabet with a quality alphabet.
  * \ingroup alphabet
- * \tparam sequence_alphabet_type Type of the first letter, e.g. dna4; must satisfy alphabet_concept.
- * \tparam quality_alphabet_type Types of further letters (up to 4); must satisfy quality_concept.
+ * \tparam sequence_alphabet_type Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
+ * \tparam quality_alphabet_type Types of further letters (up to 4); must satisfy seqan3::quality_concept.
  *
  * This composition pairs a regular alphabet with a quality alphabet. The integral values
  * correpsond to numeric values in the size of the composition, while the character values
