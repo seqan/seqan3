@@ -51,8 +51,8 @@ namespace seqan3
 
 /*!\brief An alphabet_composition that joins a regular alphabet with a quality alphabet.
  * \ingroup alphabet
- * \tparam sequence_alphabet_type Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
- * \tparam quality_alphabet_type Types of further letters (up to 4); must satisfy seqan3::quality_concept.
+ * \tparam sequence_alphabet_t Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
+ * \tparam quality_alphabet_t Types of further letters (up to 4); must satisfy seqan3::quality_concept.
  *
  * This composition pairs a regular alphabet with a quality alphabet. The integral values
  * correpsond to numeric values in the size of the composition, while the character values
@@ -89,19 +89,41 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~
  *
- * This alphabet_composition itself fulfills both the alphabet_concept and the quality_concept.
+ * This alphabet_composition itself fulfills both seqan3::alphabet_concept and seqan3::quality_concept .
  */
 
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-      requires alphabet_concept<sequence_alphabet_type> &&
-               quality_concept<quality_alphabet_type>
+template <typename sequence_alphabet_t, typename quality_alphabet_t>
+      requires alphabet_concept<sequence_alphabet_t> &&
+               quality_concept<quality_alphabet_t>
 struct quality_composition :
-    public alphabet_composition<quality_composition<sequence_alphabet_type, quality_alphabet_type>, sequence_alphabet_type, quality_alphabet_type>
+    public alphabet_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>, sequence_alphabet_t, quality_alphabet_t>
 {
+    //!\brief First template parameter as member type.
+    using sequence_alphabet_type = sequence_alphabet_t;
+    //!\brief Second template parameter as member type.
+    using quality_alphabet_type = quality_alphabet_t;
+
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
     //!\brief Equals the phred_type of the quality_alphabet_type.
     using phred_type = underlying_phred_t<quality_alphabet_type>;
+
+    /*!\name Write functions
+     * \{
+     */
+    //!\brief Directly assign the sequence letter.
+    constexpr quality_composition & operator=(sequence_alphabet_type const l)
+    {
+        std::get<0>(*this) = l;
+        return *this;
+    }
+
+    //!\brief Directly assign the quality letter.
+    constexpr quality_composition & operator=(quality_alphabet_type const l)
+    {
+        std::get<1>(*this) = l;
+        return *this;
+    }
 
     //!\brief Assign from a character. This modifies the internal sequence letter.
     constexpr quality_composition & from_char(char_type const c)
@@ -116,7 +138,11 @@ struct quality_composition :
         seqan3::from_phred(std::get<1>(*this), c);
         return *this;
     }
+    //!\}
 
+    /*!\name Read functions
+     * \{
+     */
     //!\brief Return the phred value. This reads the internal quality letter.
     constexpr phred_type to_phred() const noexcept
     {
@@ -128,7 +154,14 @@ struct quality_composition :
     {
         return seqan3::to_char(std::get<0>(*this));
     }
+    //!\}
 };
+
+//!\brief Type deduction guide enables usage of quality_composition without specifying template args.
+//!\relates quality_composition
+template <typename sequence_alphabet_type, typename quality_alphabet_type>
+quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
+    -> quality_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
 
 } // namespace seqan3
 

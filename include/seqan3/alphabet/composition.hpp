@@ -44,6 +44,7 @@
 #include <seqan3/alphabet/alphabet.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/core/detail/int_types.hpp>
 
 /*!\file alphabet/composition.hpp
  * \ingroup alphabet
@@ -51,73 +52,6 @@
 
  * \brief Contains alphabet_composition.
  */
-
-namespace seqan3
-{
-
-template <typename derived_type,
-          typename first_alphabet_type,
-          typename ...alphabet_types>
-      requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
-struct alphabet_composition;
-
-} // namespace seqan3
-
-namespace seqan3::detail
-{
-
-// TODO this needs to go to core somewhere
-template <uint64_t value>
-using min_viable_uint_t = std::conditional_t<value < 255ull,        uint8_t,
-                          std::conditional_t<value < 65535ull,      uint16_t,
-                          std::conditional_t<value < 4294967295ull, uint32_t, uint64_t>>>;
-
-} // namespace seqan3::detail
-
-namespace seqan3::detail::alphabet_composition
-{
-
-template <std::size_t ...idx,
-          typename derived_type,
-          typename ...alphabet_types>
-constexpr typename alphabet_composition<derived_type, alphabet_types...>::integral_type
-to_integral_impl(std::index_sequence<idx...> const &,
-                 seqan3::alphabet_composition<derived_type, alphabet_types...> const & comp)
-{
-    if constexpr (sizeof...(idx) > 0)
-    {
-        return to_integral(std::get<0>(comp)) +
-               ((to_integral(std::get<idx + 1>(comp)) * seqan3::alphabet_composition<derived_type, alphabet_types...>::_cummulative_alph_sizes[idx]) + ...);
-    }
-    else
-    {
-        return to_integral(std::get<0>(comp));
-    }
-}
-
-template <std::size_t j,
-          typename derived_type,
-          typename ...alphabet_types>
-constexpr void
-from_integral_impl(seqan3::alphabet_composition<derived_type, alphabet_types...> & comp,
-                   typename seqan3::alphabet_composition<derived_type, alphabet_types...>::integral_type const i)
-{
-    if constexpr (j == 0)
-    {
-        from_integral(std::get<j>(comp),
-                      i % alphabet_size_v<meta::at_c<meta::list<alphabet_types...>, j>>);
-    } else
-    {
-        from_integral(std::get<j>(comp),
-                      (i / seqan3::alphabet_composition<derived_type, alphabet_types...>::_cummulative_alph_sizes[j-1])
-                       % alphabet_size_v<meta::at_c<meta::list<alphabet_types...>, j>>);
-    }
-
-    if constexpr (j + 1 < sizeof...(alphabet_types))
-        from_integral_impl<j+1>(comp, i);
-}
-
-} // namespace seqan3::detail::alphabet_composition
 
 namespace seqan3
 {
@@ -147,24 +81,6 @@ template <typename derived_type,
 struct alphabet_composition :
     public pod_tuple<first_alphabet_type, alphabet_types...>
 {
-private:
-    //!\brief declare private to prevent direct use of the CRTP base
-    alphabet_composition() = default;
-    //!\brief declare private to prevent direct use of the CRTP base
-    constexpr alphabet_composition(alphabet_composition const &) = default;
-    //!\brief declare private to prevent direct use of the CRTP base
-    constexpr alphabet_composition(alphabet_composition &&) = default;
-    //!\brief declare private to prevent direct use of the CRTP base
-    constexpr alphabet_composition & operator =(alphabet_composition const &) = default;
-    //!\brief declare private to prevent direct use of the CRTP base
-    constexpr alphabet_composition & operator =(alphabet_composition &&) = default;
-    //!\brief declare private to prevent direct use of the CRTP base
-    ~alphabet_composition() = default;
-
-    //!\brief befriend the derived type so that it can instantiate
-    //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
-    friend derived_type;
-
 public:
     //!\brief The type of value_size and `alphabet_size_v<alphabet_composition<...>>`
     using integral_type = detail::min_viable_uint_t<alphabet_size_v<first_alphabet_type> *
@@ -191,39 +107,104 @@ public:
             return std::move(ret);
         }()
     };
-// this is more elegant, but harder to explain: 8-)
-//     static constexpr std::array<integral_type, sizeof...(alphabet_types)+1> _cummulative_alph_sizes = meta::for_each(
-//         meta::list<first_alphabet_type, alphabet_types...>{},
-//         [ count = 0, ret = std::array<integral_type, sizeof...(alphabet_types)+1>{} ] (auto && alph) mutable constexpr
-//     {
-//         if constexpr(std::is_same_v<std::decay_t<decltype(alph)>, std::false_type>)
-//         {
-//             return std::move(ret);
-//         }
-//         else
-//         {
-//             ret[count] = alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1);
-//             ++count;
-//             return;
-//         }
-//     })(std::false_type{});
 
     //!\brief An index sequence up to the number of contained letters.
     static constexpr auto _positions = std::make_index_sequence<sizeof...(alphabet_types)>{};
     //!\endcond
 
-    //! \brief Return the letter combinations numeric value or rank in the alphabet composition.
+
+    /*!\name Read functions
+     * \{
+     */
+    /*!\brief Return the letter combinations numeric value or rank in the alphabet composition.
+     * \par Complexity
+     * Linear in the number of alpahabets.
+     */
     constexpr integral_type to_integral() const
     {
-        return detail::alphabet_composition::to_integral_impl(_positions, *this);
+        return to_integral_impl(_positions);
     }
+    //!\}
 
-    //! \brief Assign from a numeric value.
+    /*!\name Write functions
+     * \{
+     */
+    /*!\brief Assign from a numeric value.
+     * \par Complexity
+     * Linear in the number of alpahabets.
+     * \par Exceptions
+     * Asserts that the parameter is smaller than value_size [only in debug mode].
+     */
     constexpr derived_type & from_integral(integral_type const i)
     {
         assert(i < value_size);
-        detail::alphabet_composition::from_integral_impl<0>(*this, i);
+        from_integral_impl<0>(i);
         return static_cast<derived_type &>(*this);
+    }
+    //!\}
+
+    //\brief Assign to the first letter that matches in the composition.
+    //TODO this is not passed on to descendents, why?
+//     template <typename type>
+//     constexpr derived_type & operator=(type && val)
+//         requires meta::in<meta::list<first_alphabet_type, alphabet_types...>, type>::value
+//     {
+//         std::get<type>(*this) = std::forward<type>(val);
+//         return static_cast<derived_type &>(*this);
+//     }
+
+
+private:
+    //!\brief declared private to prevent direct use of the CRTP base
+    alphabet_composition() = default;
+    //!\brief declared private to prevent direct use of the CRTP base
+    constexpr alphabet_composition(alphabet_composition const &) = default;
+    //!\brief declared private to prevent direct use of the CRTP base
+    constexpr alphabet_composition(alphabet_composition &&) = default;
+    //!\brief declared private to prevent direct use of the CRTP base
+    constexpr alphabet_composition & operator =(alphabet_composition const &) = default;
+    //!\brief declared private to prevent direct use of the CRTP base
+    constexpr alphabet_composition & operator =(alphabet_composition &&) = default;
+    //!\brief declared private to prevent direct use of the CRTP base
+    ~alphabet_composition() = default;
+
+    //!\brief befriend the derived type so that it can instantiate
+    //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
+    friend derived_type;
+
+    //!\brief Implementation of to_integral().
+    template <std::size_t ...idx>
+    constexpr integral_type to_integral_impl(std::index_sequence<idx...> const &) const
+    {
+        if constexpr (sizeof...(idx) > 0)
+        {
+            return seqan3::to_integral(std::get<0>(*this)) +
+                   ((seqan3::to_integral(std::get<idx + 1>(*this)) * _cummulative_alph_sizes[idx]) + ...);
+        }
+        else
+        {
+            return seqan3::to_integral(std::get<0>(*this));
+        }
+    }
+
+    //!\brief Implementation of from_integral().
+    template <std::size_t j>
+    constexpr void
+    from_integral_impl(integral_type const i)
+    {
+        if constexpr (j == 0)
+        {
+            seqan3::from_integral(std::get<j>(*this),
+                                i % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+        } else
+        {
+            seqan3::from_integral(std::get<j>(*this),
+                          (i / _cummulative_alph_sizes[j-1])
+                          % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+        }
+
+        if constexpr (j < sizeof...(alphabet_types))
+            from_integral_impl<j+1>(i);
     }
 };
 

@@ -123,8 +123,21 @@ TEST(pod_tuple_swap, swap)
     EXPECT_EQ(t1, t3);
 }
 
-// std::get<1>
+// get<1>
 TEST(pod_tuple_get_i, get_i)
+{
+    pod_tuple<int, long, float> t0{4, 7l, 3.0f};
+
+    static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), int &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), long &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<2>(t0)), float &>);
+    EXPECT_EQ(seqan3::get<0>(t0), 4);
+    EXPECT_EQ(seqan3::get<1>(t0), 7l);
+    EXPECT_EQ(seqan3::get<2>(t0), 3.0f);
+}
+
+// std::get<1>
+TEST(pod_tuple, stdget_i)
 {
     pod_tuple<int, long, float> t0{4, 7l, 3.0f};
 
@@ -147,15 +160,87 @@ TEST(pod_tuple_struct_binding, struct_binding)
     EXPECT_EQ(f, 3.0f);
 }
 
-// std::get<type> NOT IMPLEMENTED YET
-// TEST(pod_tuple_get_type, get_type)
-// {
-//     pod_tuple<int, long, float> t0{4, 7l, 3.0f};
-//
-//     EXPECT_EQ(std::get<int>(t0), 4);
-//     EXPECT_EQ(std::get<long>(t0), 7l);
-//     EXPECT_EQ(std::get<float>(t0), 3.0f);
-// }
+// get<type>
+TEST(pod_tuple_get_type, get_type)
+{
+    using pt = pod_tuple<int, long, float>;
+    using ptc = pt const;
+    pt t0{4, 7l, 3.0f};
+    ptc t1{4, 7l, 3.0f};
+
+    static_assert(std::is_same_v<decltype(seqan3::get<int>(t0)), int &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<long>(t0)), long &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<float>(t0)), float &>);
+
+    static_assert(std::is_same_v<decltype(seqan3::get<int>(t1)), int const &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<long>(t1)), long const &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<float>(t1)), float const &>);
+
+    static_assert(std::is_same_v<decltype(seqan3::get<int>(pt{4, 7l, 3.0f})), int &&>);
+    static_assert(std::is_same_v<decltype(seqan3::get<long>(pt{4, 7l, 3.0f})), long &&>);
+    static_assert(std::is_same_v<decltype(seqan3::get<float>(pt{4, 7l, 3.0f})), float &&>);
+
+    static_assert(std::is_same_v<decltype(seqan3::get<int>(ptc{4, 7l, 3.0f})), int const &&>);
+    static_assert(std::is_same_v<decltype(seqan3::get<long>(ptc{4, 7l, 3.0f})), long const &&>);
+    static_assert(std::is_same_v<decltype(seqan3::get<float>(ptc{4, 7l, 3.0f})), float const &&>);
+
+    EXPECT_EQ(seqan3::get<int>(t0), 4);
+    EXPECT_EQ(seqan3::get<long>(t0), 7l);
+    EXPECT_EQ(seqan3::get<float>(t0), 3.0f);
+
+    EXPECT_EQ(seqan3::get<int>(t1), 4);
+    EXPECT_EQ(seqan3::get<long>(t1), 7l);
+    EXPECT_EQ(seqan3::get<float>(t1), 3.0f);
+
+    EXPECT_EQ(seqan3::get<int>(pt{4, 7l, 3.0f}), 4);
+    EXPECT_EQ(seqan3::get<long>(pt{4, 7l, 3.0f}), 7l);
+    EXPECT_EQ(seqan3::get<float>(pt{4, 7l, 3.0f}), 3.0f);
+
+    EXPECT_EQ(seqan3::get<int>(ptc{4, 7l, 3.0f}), 4);
+    EXPECT_EQ(seqan3::get<long>(ptc{4, 7l, 3.0f}), 7l);
+    EXPECT_EQ(seqan3::get<float>(ptc{4, 7l, 3.0f}), 3.0f);
+}
+
+// std::get<type>
+TEST(pod_tuple_get_type, stdget_type)
+{
+    using pt = pod_tuple<int, long, float>;
+    using ptc = pt const;
+    pt t0{4, 7l, 3.0f};
+    ptc t1{4, 7l, 3.0f};
+
+    static_assert(std::is_same_v<decltype(std::get<int>(t0)), int &>);
+    static_assert(std::is_same_v<decltype(std::get<long>(t0)), long &>);
+    static_assert(std::is_same_v<decltype(std::get<float>(t0)), float &>);
+
+    static_assert(std::is_same_v<decltype(std::get<int>(t1)), int const &>);
+    static_assert(std::is_same_v<decltype(std::get<long>(t1)), long const &>);
+    static_assert(std::is_same_v<decltype(std::get<float>(t1)), float const &>);
+
+    static_assert(std::is_same_v<decltype(std::get<int>(pt{4, 7l, 3.0f})), int &&>);
+    static_assert(std::is_same_v<decltype(std::get<long>(pt{4, 7l, 3.0f})), long &&>);
+    static_assert(std::is_same_v<decltype(std::get<float>(pt{4, 7l, 3.0f})), float &&>);
+
+    static_assert(std::is_same_v<decltype(std::get<int>(ptc{4, 7l, 3.0f})), int const &&>);
+    static_assert(std::is_same_v<decltype(std::get<long>(ptc{4, 7l, 3.0f})), long const &&>);
+    static_assert(std::is_same_v<decltype(std::get<float>(ptc{4, 7l, 3.0f})), float const &&>);
+
+    EXPECT_EQ(std::get<int>(t0), 4);
+    EXPECT_EQ(std::get<long>(t0), 7l);
+    EXPECT_EQ(std::get<float>(t0), 3.0f);
+
+    EXPECT_EQ(std::get<int>(t1), 4);
+    EXPECT_EQ(std::get<long>(t1), 7l);
+    EXPECT_EQ(std::get<float>(t1), 3.0f);
+
+    EXPECT_EQ(std::get<int>(pt{4, 7l, 3.0f}), 4);
+    EXPECT_EQ(std::get<long>(pt{4, 7l, 3.0f}), 7l);
+    EXPECT_EQ(std::get<float>(pt{4, 7l, 3.0f}), 3.0f);
+
+    EXPECT_EQ(std::get<int>(ptc{4, 7l, 3.0f}), 4);
+    EXPECT_EQ(std::get<long>(ptc{4, 7l, 3.0f}), 7l);
+    EXPECT_EQ(std::get<float>(ptc{4, 7l, 3.0f}), 3.0f);
+}
 
 // std::tuple_element
 TEST(pod_tuple_tuple_element, tuple_element)

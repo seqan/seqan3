@@ -64,8 +64,11 @@ namespace seqan3
  * actually enforces this on all types in the tuple (if you want to add non POD types, just use
  * std::tuple instead).
  *
- * It (only) supports aggregate initialization, i.e. you must use brace-initializiers and cannot
- * use paranthesis.
+ * It (only) supports [aggregate initialization](http://en.cppreference.com/w/cpp/language/aggregate_initialization),
+ * i.e. you must use brace-initializiers and cannot
+ * use paranthesis. You can use seqan3::get or std::get and also
+ * [structured bindings](http://en.cppreference.com/w/cpp/language/declarations#Structured_binding_declaration)
+ * to access the elements in the tuple.
  *
  * ~~~~~~~~~~~~~~~{.cpp}
  *
@@ -75,9 +78,12 @@ namespace seqan3
  * // template parameters are automatically deduced:
  * pod_tuple t2{17, 3.7f, 19l};
  *
+ * std::cout << std::get<0>(t2) << '\n'; // 17
+ *
+ * auto [ i, f, l ] = t2; // creates an int i with value 17, float f...
+ *
  * ~~~~~~~~~~~~~~~
  *
- * \todo implement type-based std::get
  */
 template <typename type0, typename ...types>
 struct pod_tuple
@@ -90,7 +96,7 @@ struct pod_tuple
     pod_tuple<types...> _tail;
     //!\endcond
 
-    //!\name comparison operators
+    //!\name Comparison operators
     //!\{
     //!\brief Lexicographically compares the values in the tuple.
     constexpr bool operator==(pod_tuple const & rhs) const noexcept
@@ -168,9 +174,9 @@ struct pod_tuple<type0>
 template <typename ...types>
 pod_tuple(types && ...) -> pod_tuple<types...>;
 
-/*!\name Access an element of a pod_tuple
+/*!\name Access an element of a pod_tuple by index
  * \{
- * \brief The same as std::get on an std::tuple.
+ * \brief The same as [std::get](http://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
  *
  * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
  */
@@ -220,6 +226,56 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 }
 //!\}
 
+/*!\name Access an element of a pod_tuple by type
+ * \brief The same as [std::get](http://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+ *
+ * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
+ * As is the case with std::tuple, this function is only defined if the type appears once
+ * in the tuple, i.e. `std::get<int>(std::tuple<int, int>{1,2})` is not defined.
+ * \{
+ */
+
+//!\relates seqan3::pod_tuple
+template <typename type, typename ...types>
+constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(t);
+}
+
+//!\relates seqan3::pod_tuple
+template <typename type, typename ...types>
+constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(t);
+}
+
+//!\relates seqan3::pod_tuple
+template <typename type, typename ...types>
+constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(std::move(t));
+}
+
+//!\relates seqan3::pod_tuple
+template <typename type, typename ...types>
+constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<meta::find_index<meta::list<types...>, type>::value>(std::move(t));
+}
+//!\}
+
 } // namespace seqan3
 
 namespace std
@@ -253,18 +309,46 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 {
     return seqan3::get<i>(std::move(t));
 }
+
+template <typename type, typename ...types>
+constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<type>(t);
+}
+
+template <typename type, typename ...types>
+constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<type>(t);
+}
+
+template <typename type, typename ...types>
+constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<type>(std::move(t));
+}
+
+template <typename type, typename ...types>
+constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
+    requires meta::in<meta::list<types...>, type>::value &&
+             (meta::find_index<meta::list<types...>, type>::value ==
+              meta::reverse_find_index<meta::list<types...>, type>::value)
+{
+    return seqan3::get<type>(std::move(t));
+}
 //!\endcond
 
 //!\brief Obtains the type of the specified element.
 //!\relates seqan3::pod_tuple
-template <std::size_t i, typename ...types >
-    requires i < sizeof...(types)
-struct tuple_element<i, seqan3::pod_tuple<types...>>
-{
-    using type = meta::at_c<meta::list<types...>, i>;
-};
-
-// also for derived classes:
 template <std::size_t i, template <typename...> typename t, typename ...types >
     requires i < sizeof...(types) &&
             std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
@@ -275,8 +359,9 @@ struct tuple_element<i, t<types...>>
 
 //!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
 //!\relates seqan3::pod_tuple
-template <typename ...types>
-struct tuple_size<seqan3::pod_tuple<types...>> :
+template <template <typename...> typename t, typename ...types >
+    requires std::is_base_of_v<seqan3::pod_tuple<types...>, t<types...>>
+struct tuple_size<t<types...>> :
     public std::integral_constant<std::size_t, sizeof...(types)>
 {};
 
