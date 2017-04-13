@@ -37,9 +37,6 @@ set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/
 include_directories("${GOOGLETEST_PATH}/include/")
 include_directories("${CMAKE_SOURCE_DIR}/../include/")
 
-#add_subdirectory(alignment)
-#add_subdirectory(container)
-
 include_directories("${CMAKE_SOURCE_DIR}/../range-v3/include/")
 include_directories("${CMAKE_SOURCE_DIR}/../sdsl-lite/include/")
 
