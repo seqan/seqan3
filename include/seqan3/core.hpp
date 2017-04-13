@@ -31,30 +31,30 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
+
+/*!\file core.hpp
+ * \defgroup core
+ *
+ * The core module contains the definition of external concepts, as well as
+ * various utilities that are mostly hidden from the user.
+ *
+ * Place core utilities here that are needed across many modules, but it should
+ * be kept to a minimum.
+ *
+ * TODO more details.
+ *
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
+
+#pragma once
+
+// ============================================================================
+// External concept implementations
 // ============================================================================
 
-#include <gtest/gtest.h>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/aa27_container.hpp>
+#include <seqan3/core/concept/core.hpp>
+#include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/core/concept/stl_container.hpp>
+#include <seqan3/core/concept/range.hpp>
 
-using namespace seqan3;
-
-TEST(alphabet_aminoacid_aa27_container_test, vector)
-{
-    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-
-    EXPECT_EQ(v[0], aa27::A);
-    EXPECT_EQ(v[1], aa27::C);
-    EXPECT_EQ(v[2], aa27::G);
-    EXPECT_EQ(v[3], aa27::T);
-}
-
-TEST(alphabet_aminoacid_aa27_container_test, string)
-{
-    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-    EXPECT_EQ(s[0], aa27::A);
-    EXPECT_EQ(s[1], aa27::C);
-    EXPECT_EQ(s[2], aa27::G);
-    EXPECT_EQ(s[3], aa27::T);
-}

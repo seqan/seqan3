@@ -31,30 +31,16 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
 
-#include <gtest/gtest.h>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/aa27_container.hpp>
+#pragma once
 
-using namespace seqan3;
+#include <seqan3/alphabet/quality/aliases.hpp>
+#include <seqan3/alphabet/quality/composition.hpp>
+#include <seqan3/alphabet/quality/concept.hpp>
+#include <seqan3/alphabet/quality/illumina18.hpp>
 
-TEST(alphabet_aminoacid_aa27_container_test, vector)
-{
-    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-
-    EXPECT_EQ(v[0], aa27::A);
-    EXPECT_EQ(v[1], aa27::C);
-    EXPECT_EQ(v[2], aa27::G);
-    EXPECT_EQ(v[3], aa27::T);
-}
-
-TEST(alphabet_aminoacid_aa27_container_test, string)
-{
-    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-    EXPECT_EQ(s[0], aa27::A);
-    EXPECT_EQ(s[1], aa27::C);
-    EXPECT_EQ(s[2], aa27::G);
-    EXPECT_EQ(s[3], aa27::T);
-}
+/*!\file alphabet/quality.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header that includes all headers from alphabet/quality/
+ */

@@ -31,30 +31,28 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
 
-#include <gtest/gtest.h>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/aa27_container.hpp>
+#pragma once
 
-using namespace seqan3;
+#include <type_traits>
 
-TEST(alphabet_aminoacid_aa27_container_test, vector)
+#include <seqan3/core/platform.hpp>
+
+/*!\file core/detail/int_types.hpp
+ * \brief Contains metaprogramming utilities for integer types.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \ingroup core
+ */
+
+namespace seqan3::detail
 {
-    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
 
-    EXPECT_EQ(v[0], aa27::A);
-    EXPECT_EQ(v[1], aa27::C);
-    EXPECT_EQ(v[2], aa27::G);
-    EXPECT_EQ(v[3], aa27::T);
-}
+//!\cond DEV
+//!\brief Given a value, return the smallest unsigned integer that can hold it.
+template <uint64_t value>
+using min_viable_uint_t = std::conditional_t<value < 255ull,        uint8_t,
+                          std::conditional_t<value < 65535ull,      uint16_t,
+                          std::conditional_t<value < 4294967295ull, uint32_t, uint64_t>>>;
+//!\endcond
 
-TEST(alphabet_aminoacid_aa27_container_test, string)
-{
-    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-    EXPECT_EQ(s[0], aa27::A);
-    EXPECT_EQ(s[1], aa27::C);
-    EXPECT_EQ(s[2], aa27::G);
-    EXPECT_EQ(s[3], aa27::T);
-}
+} // namespace seqan3::detail
