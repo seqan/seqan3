@@ -36,16 +36,13 @@
 
 #pragma once
 
-#include "../alphabet.hpp"
-#include "../quality.hpp"
-
 #include <cassert>
 
 namespace seqan3
 {
 
 /*!
- * Implementation of the Illumina 1.8 standard fulfilling the quality concept. 
+ * Implementation of the Illumina 1.8 standard fulfilling the quality concept.
  * The permitted phred score range is [0 .. 41], mapped to ascii-ordered range ['!' .. 'J'].
  * For this standard internal and integral phred representation are both zero-based.
  */
@@ -58,7 +55,7 @@ struct illumina18
 
     //! internal integral value representation
     integral_type value;
-    
+
     //! projection offsets of char and integral quality score
     static constexpr char_type offset_char{'!'};
     static constexpr phred_type offset_phred{0};
@@ -153,10 +150,13 @@ struct illumina18
     static constexpr integral_type value_size{42};
 };
 
-//! assert when (internal) quality concept requirements are not met
-#ifndef NDEBUG
-    static_assert(quality_concept<illumina18>);
-    static_assert(detail::internal_quality_concept<illumina18>);
-#endif
+} // namespace seqan3
 
-}  // namespace seqan3
+#ifndef NDEBUG
+#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/quality/concept.hpp>
+static_assert(seqan3::alphabet_concept<seqan3::illumina18>);
+static_assert(seqan3::detail::internal_alphabet_concept<seqan3::illumina18>);
+static_assert(seqan3::quality_concept<seqan3::illumina18>);
+static_assert(seqan3::detail::internal_quality_concept<seqan3::illumina18>);
+#endif
