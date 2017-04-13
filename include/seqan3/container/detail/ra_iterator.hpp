@@ -56,7 +56,8 @@ class ra_iterator
 private:
     // by default iterator is end iterator
     container_type & host{*(container_type*)0};
-    uint8_t pos{std::numeric_limits<uint8_t>::max()};
+    using position_type = uint8_t;
+    position_type pos{std::numeric_limits<uint8_t>::max()};
 public:
     using difference_type = int8_t;
     using value_type = typename container_type::value_type;
@@ -197,7 +198,7 @@ public:
 
     difference_type operator-(ra_iterator lhs) const
     {
-        return pos - lhs.pos;
+        return (difference_type)pos - (difference_type)lhs.pos;
     }
 
     pointer operator->() const

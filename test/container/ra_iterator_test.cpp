@@ -264,6 +264,7 @@ TEST_F(random_access_iterator_test_fixture, difference)
     seqan3::detail::ra_iterator<std::vector<uint8_t>> it_w(*w);
     it_w += 1;
     EXPECT_TRUE(3 == (it_v - it_w));
+    EXPECT_TRUE(-3 == (it_w - it_v));
 }
 
 // test const iterator
