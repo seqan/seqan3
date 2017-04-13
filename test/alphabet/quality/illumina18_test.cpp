@@ -36,8 +36,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality.hpp>
-#include <seqan3/alphabet/quality/phred.hpp>
+#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/quality/concept.hpp>
+#include <seqan3/alphabet/quality/illumina18.hpp>
 
 using namespace seqan3;
 
@@ -112,7 +113,7 @@ TEST(illumina18_from_integral, from_integral)
     illumina18 illu;
     illumina18 illu2 = from_integral(illu, 1);
     EXPECT_EQ(1, to_integral(illu2));
-    
+
     illu2 = illu.from_integral(2);
     EXPECT_EQ(2, to_integral(illu2));
 }
@@ -161,4 +162,19 @@ TEST(illumina18_to_phred, to_phred)
     EXPECT_EQ(0, to_phred(illu));
     illu = 39;
     EXPECT_EQ(39, to_integral(illu));
+}
+
+TEST(illumina18_cmp, cmp)
+{
+    illumina18 illu1{7};
+    illumina18 illu2{11};
+    illumina18 illu3{30};
+
+    EXPECT_LT(illu1, illu2);
+    EXPECT_LE(illu1, illu2);
+    EXPECT_LE(illu2, illu2);
+    EXPECT_EQ(illu2, illu2);
+    EXPECT_GE(illu2, illu2);
+    EXPECT_GE(illu3, illu2);
+    EXPECT_GT(illu3, illu2);
 }

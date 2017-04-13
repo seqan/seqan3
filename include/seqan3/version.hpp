@@ -31,15 +31,41 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
 
 #pragma once
 
-#include "concepts/stl.hpp"
-#include "concepts/ranges.hpp"
+#include <string>
 
-/*!\file concepts.hpp
- * \brief Concepts of ranges and containers
- * \ingroup container
+/*!\file version.hpp
+ * \brief Contains SeqAn version macros and global variables.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
+
+//!\brief The major version as MACRO.
+#define SEQAN_VERSION_MAJOR 3
+//!\brief The minor version as MACRO.
+#define SEQAN_VERSION_MINOR 0
+//!\brief The patch version as MACRO.
+#define SEQAN_VERSION_PATCH 0
+
+//!\brief The full version as MACRO (number).
+#define SEQAN_VERSION (SEQAN_VERSION_MAJOR * 10000 \
+                     + SEQAN_VERSION_MINOR * 100 \
+                     + SEQAN_VERSION_PATCH)
+
+namespace seqan3
+{
+
+//!\brief The major version.
+constexpr uint8_t seqan_version_major = SEQAN_VERSION_MAJOR;
+//!\brief The minor version.
+constexpr uint8_t seqan_version_minor = SEQAN_VERSION_MINOR;
+//!\brief The patch version.
+constexpr uint8_t seqan_version_patch = SEQAN_VERSION_PATCH;
+
+//!\brief The full version as `std::string`.
+std::string const seqan_version = std::to_string(seqan_version_major) + "." +
+                                  std::to_string(seqan_version_minor) + "." +
+                                  std::to_string(seqan_version_patch);
+
+} // namespace seqan3

@@ -31,16 +31,30 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
+
+/*!\file core.hpp
+ * \defgroup core
+ *
+ * The core module contains the definition of external concepts, as well as
+ * various utilities that are mostly hidden from the user.
+ *
+ * Place core utilities here that are needed across many modules, but it should
+ * be kept to a minimum.
+ *
+ * TODO more details.
+ *
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
 #pragma once
 
-/*!\defgroup container
- *
- * The container module contains adaptations and concepts for ranges and containers, as well
- * as implementations of novel containers.
- *
- * TODO more details.
- */
+// ============================================================================
+// External concept implementations
+// ============================================================================
+
+#include <seqan3/core/concept/core.hpp>
+#include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/core/concept/stl_container.hpp>
+#include <seqan3/core/concept/range.hpp>
 

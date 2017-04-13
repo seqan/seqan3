@@ -31,16 +31,67 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
 
 #pragma once
 
-/*!\defgroup container
- *
- * The container module contains adaptations and concepts for ranges and containers, as well
- * as implementations of novel containers.
- *
- * TODO more details.
+#include <cinttypes>
+#include <ciso646> // makes _LIBCPP_VERSION available
+#include <cstddef> // makes __GLIBCXX__ available
+
+/*!\file platform.hpp
+ * \brief Contains platform and dependency checks.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \ingroup core
  */
 
+// macro cruft
+//!\cond
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+//!\endcond
+
+// C++ standard
+#ifdef __cplusplus
+    static_assert(__cplusplus >= 201703, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
+#else
+#   error "This is not a C++ compiler."
+#endif
+
+// Concepts TS
+#ifdef __cpp_concepts
+    static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
+#else
+#   error "SeqAn3 requires the Concepts TS, make sure that you have set -fconcepts (not all compilers support this)."
+#endif
+
+// SeqAn
+#if !__has_include(<seqan3/version.hpp>)
+#   error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
+#endif
+
+// Ranges
+#if __has_include(<range/v3/version.hpp>)
+#   define RANGE_V3_MINVERSION 200
+#   define RANGE_V3_MAXVERSION 299
+// TODO the following doesn't actually show the current version, only its formula. How'd you do it?
+#   define MSG "Your version: " STR(RANGE_V3_VERSION) \
+                "; minimum version: " STR(RANGE_V3_MINVERSION) \
+                "; expected maximum version: " STR(RANGE_V3_MAXVERSION)
+#   include <range/v3/version.hpp>
+#   if RANGE_V3_VERSION < RANGE_V3_MINVERSION
+#       error Your range-v3 library is too old.
+#       pragma message(MSG)
+#   elif RANGE_V3_VERSION > RANGE_V3_MAXVERSION
+#       pragma GCC warning "Your range-v3 library is possibly tot new. Some features might not work correctly."
+#       pragma message(MSG)
+#   endif
+#   undef MSG
+#else
+#   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
+#endif
+
+// SDSL
+// TODO (doesn't have a version.hpp, yet)
+
+#undef STR
+#undef STR_HELPER

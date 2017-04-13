@@ -31,16 +31,28 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
 
 #pragma once
 
-/*!\defgroup container
- *
- * The container module contains adaptations and concepts for ranges and containers, as well
- * as implementations of novel containers.
- *
- * TODO more details.
+#include <type_traits>
+
+#include <seqan3/core/platform.hpp>
+
+/*!\file core/detail/int_types.hpp
+ * \brief Contains metaprogramming utilities for integer types.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \ingroup core
  */
 
+namespace seqan3::detail
+{
+
+//!\cond DEV
+//!\brief Given a value, return the smallest unsigned integer that can hold it.
+template <uint64_t value>
+using min_viable_uint_t = std::conditional_t<value < 255ull,        uint8_t,
+                          std::conditional_t<value < 65535ull,      uint16_t,
+                          std::conditional_t<value < 4294967295ull, uint32_t, uint64_t>>>;
+//!\endcond
+
+} // namespace seqan3::detail
