@@ -32,6 +32,12 @@
 //
 // ============================================================================
 
+/*!\file alphabet/quality/composition.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains quality alphabet compositions.
+ */
+
 #pragma once
 
 #include <iostream>
@@ -39,12 +45,6 @@
 #include <utility>
 
 #include <seqan3/alphabet/composition.hpp>
-
-/*!\file alphabet/quality/composition.hpp
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains quality alphabet compositions.
- */
 
 namespace seqan3
 {
@@ -59,26 +59,26 @@ namespace seqan3
  * are taken from the sequence alphabet and the phred values are taken from the quality
  * alphabet.
  *
- * As with all alphabet_composition s you may access the individual alphabet letters in
- * regular c++ tuple notation, i.e. `std::get<0>(t)` and objects can be brace-initialized
+ * As with all `alphabet_composition` s you may access the individual alphabet letters in
+ * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
  * ~~~~~~~~~~~~~~~{.cpp}
  *
  * quality_composition<dna4, illumina18> l{dna4::A, 7};
  * std::cout << int(to_integral(l)) << ' '
- *           << int(to_integral(std::get<0>(l))) << ' '
- *           << int(to_integral(std::get<1>(l))) << '\n';
+ *           << int(to_integral(get<0>(l))) << ' '
+ *           << int(to_integral(get<1>(l))) << '\n';
  * // 148 0 7
  *
  * std::cout << to_char(l) << ' '
- *           << to_char(std::get<0>(l)) << ' '
- *           << to_char(std::get<1>(l)) << '\n';
+ *           << to_char(get<0>(l)) << ' '
+ *           << to_char(get<1>(l)) << '\n';
  * // A A (
  *
  * std::cout << int(to_phred(l)) << ' '
- * //           << int(to_phred(std::get<0>(l))) << ' ' // dna4 doesn't have a phred
- *           << int(to_phred(std::get<1>(l))) << '\n';
+ * //           << int(to_phred(get<0>(l))) << ' ' // dna4 doesn't have a phred
+ *           << int(to_phred(get<1>(l))) << '\n';
  * // 7 7
  *
  * // modify via structured bindings and references:
@@ -96,7 +96,8 @@ template <typename sequence_alphabet_t, typename quality_alphabet_t>
       requires alphabet_concept<sequence_alphabet_t> &&
                quality_concept<quality_alphabet_t>
 struct quality_composition :
-    public alphabet_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>, sequence_alphabet_t, quality_alphabet_t>
+    public alphabet_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>,
+                                sequence_alphabet_t, quality_alphabet_t>
 {
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
@@ -112,30 +113,30 @@ struct quality_composition :
      * \{
      */
     //!\brief Directly assign the sequence letter.
-    constexpr quality_composition & operator=(sequence_alphabet_type const l)
+    constexpr quality_composition & operator=(sequence_alphabet_type const l) noexcept
     {
-        std::get<0>(*this) = l;
+        get<0>(*this) = l;
         return *this;
     }
 
     //!\brief Directly assign the quality letter.
-    constexpr quality_composition & operator=(quality_alphabet_type const l)
+    constexpr quality_composition & operator=(quality_alphabet_type const l) noexcept
     {
-        std::get<1>(*this) = l;
+        get<1>(*this) = l;
         return *this;
     }
 
     //!\brief Assign from a character. This modifies the internal sequence letter.
     constexpr quality_composition & from_char(char_type const c)
     {
-        seqan3::from_char(std::get<0>(*this), c);
+        seqan3::from_char(get<0>(*this), c);
         return *this;
     }
 
     //!\brief Assign from a phred value. This modifies the internal quality letter.
     constexpr quality_composition & from_phred(phred_type const c)
     {
-        seqan3::from_phred(std::get<1>(*this), c);
+        seqan3::from_phred(get<1>(*this), c);
         return *this;
     }
     //!\}
@@ -146,13 +147,13 @@ struct quality_composition :
     //!\brief Return the phred value. This reads the internal quality letter.
     constexpr phred_type to_phred() const noexcept
     {
-        return seqan3::to_phred(std::get<1>(*this));
+        return seqan3::to_phred(get<1>(*this));
     }
 
     //!\brief Return a character. This reads the internal sequence letter.
     constexpr char_type to_char() const noexcept
     {
-        return seqan3::to_char(std::get<0>(*this));
+        return seqan3::to_char(get<0>(*this));
     }
     //!\}
 };

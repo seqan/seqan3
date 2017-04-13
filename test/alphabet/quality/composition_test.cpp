@@ -202,6 +202,20 @@ TEST(quality_composition, type_deduce)
     static_assert(std::tuple_size_v<pt> == 2);
 }
 
+// explicit cast to element
+TEST(quality_composition, cast_to_element)
+{
+    quality_composition<dna4, illumina18> t0{dna4::C, 7};
+
+    auto d = static_cast<dna4>(t0);
+    auto q = static_cast<illumina18>(t0);
+    static_assert(std::is_same_v<decltype(d), dna4>);
+    static_assert(std::is_same_v<decltype(q), illumina18>);
+
+    EXPECT_EQ(d, dna4::C);
+    EXPECT_EQ(q, illumina18{7});
+}
+
 // comparison operators illumina18 comparison broken?
 TEST(quality_composition, cmp)
 {

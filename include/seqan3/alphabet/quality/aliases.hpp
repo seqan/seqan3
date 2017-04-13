@@ -32,6 +32,12 @@
 //
 // ============================================================================
 
+/*!\file alphabet/quality/aliases.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains aliases for quality_composition.
+ */
+
 #pragma once
 
 #include <iostream>
@@ -44,12 +50,6 @@
 #include <seqan3/alphabet/quality/illumina18.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-
-/*!\file alphabet/quality/aliases.hpp
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains aliases for quality_composition.
- */
 
 namespace seqan3
 {
@@ -72,5 +72,3 @@ static_assert(seqan3::quality_concept<seqan3::dna4q>);
 static_assert(seqan3::detail::internal_quality_concept<seqan3::dna4q>);
 static_assert(sizeof(seqan3::dna4q) == 2);
 #endif
-
-

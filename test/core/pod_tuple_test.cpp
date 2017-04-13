@@ -36,7 +36,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality/composition.hpp>
+#include <seqan3/core/pod_tuple.hpp>
 
 using namespace seqan3;
 

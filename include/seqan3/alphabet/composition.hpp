@@ -31,8 +31,12 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
+
+/*!\file alphabet/composition.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains alphabet_composition.
+ */
 
 #pragma once
 
@@ -46,13 +50,6 @@
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 
-/*!\file alphabet/composition.hpp
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-
- * \brief Contains alphabet_composition.
- */
-
 namespace seqan3
 {
 
@@ -61,14 +58,21 @@ namespace seqan3
  * \tparam first_alphabet_type Type of the first letter; must satisfy alphabet_concept.
  * \tparam alphabet_types Types of further letters (up to 4); must satisfy alphabet_concept.
  *
- * This data structure is CRTP base clasee for combined alphabets, where the different
+ * This data structure is CRTP base class for combined alphabets, where the different
  * alphabet letters exist independently, similar to a tuple. In fact this class
- * provides a tuple-like interface with `std::get<0>(t)` and objects can be brace-initialized
+ * provides a tuple-like interface with `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
  * \attention
- * This a "pure base class", you cannot instantiate it, you can only inherit from it.
+ * This is a "pure base class", you cannot instantiate it, you can only inherit from it.
  * Most likely you are interested in using one of it's descendents like quality_composition.
+ * \cond DEV
+ * To make a derived class "complete", you should add at least the following:
+ *   * .to_char() member
+ *   * .from_char() member
+ *   * .operator=() members for all element types
+ *   * a type deduction guide
+ * \endcond
  *
  * \sa quality_composition
  * \sa mask_composition
@@ -83,46 +87,36 @@ struct alphabet_composition :
 {
 public:
     //!\brief The type of value_size and `alphabet_size_v<alphabet_composition<...>>`
-    using integral_type = detail::min_viable_uint_t<alphabet_size_v<first_alphabet_type> *
-                                                    (alphabet_size_v<alphabet_types> * ...)>;
+    using integral_type = detail::min_viable_uint_t<(alphabet_size_v<first_alphabet_type> * ... *
+                                                     alphabet_size_v<alphabet_types>)>;
 
     //!\brief The product of the sizes of the individual alphabets.
-    static constexpr integral_type value_size{alphabet_size_v<first_alphabet_type> *
-                                              (alphabet_size_v<alphabet_types> * ...)};
-
-    //!\cond DEV
-    //!\brief the cummulative alphabet size products (first, first*second, first*second*third...) are cached
-    static constexpr std::array<integral_type, sizeof...(alphabet_types)+1> _cummulative_alph_sizes
-    {
-        [] () constexpr
-        {
-            std::array<integral_type, sizeof...(alphabet_types)+1> ret{};
-            size_t count = 0;
-            meta::for_each(meta::list<first_alphabet_type, alphabet_types...>{}, [&] (auto && alph) constexpr
-            {
-                ret[count] = alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1);
-                ++count;
-            });
-
-            return std::move(ret);
-        }()
-    };
-
-    //!\brief An index sequence up to the number of contained letters.
-    static constexpr auto _positions = std::make_index_sequence<sizeof...(alphabet_types)>{};
-    //!\endcond
-
+    static constexpr integral_type value_size{(alphabet_size_v<first_alphabet_type> * ... *
+                                               alphabet_size_v<alphabet_types>)};
 
     /*!\name Read functions
      * \{
      */
-    /*!\brief Return the letter combinations numeric value or rank in the alphabet composition.
+    /*!\brief Return the letter combination's numeric value (or "rank") in the alphabet composition.
      * \par Complexity
-     * Linear in the number of alpahabets.
+     * Linear in the number of alphabets.
      */
     constexpr integral_type to_integral() const
     {
-        return to_integral_impl(_positions);
+        return to_integral_impl(positions);
+    }
+
+    /*!\brief Explicit cast to a single letter. Works only if the type is unique in the type list.
+     * \par Complexity
+     * Linear in the number of alphabets.
+     */
+    template <typename type>
+    constexpr explicit operator type() const
+        requires meta::in<meta::list<first_alphabet_type, alphabet_types...>, type>::value &&
+                 (meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value ==
+                  meta::reverse_find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value)
+    {
+        return get<type>(*this);
     }
     //!\}
 
@@ -143,17 +137,6 @@ public:
     }
     //!\}
 
-    //\brief Assign to the first letter that matches in the composition.
-    //TODO this is not passed on to descendents, why?
-//     template <typename type>
-//     constexpr derived_type & operator=(type && val)
-//         requires meta::in<meta::list<first_alphabet_type, alphabet_types...>, type>::value
-//     {
-//         std::get<type>(*this) = std::forward<type>(val);
-//         return static_cast<derived_type &>(*this);
-//     }
-
-
 private:
     //!\brief declared private to prevent direct use of the CRTP base
     alphabet_composition() = default;
@@ -172,18 +155,39 @@ private:
     //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
     friend derived_type;
 
+    //!\brief the cummulative alphabet size products (first, first*second, first*second*third...) are cached
+    static constexpr std::array<integral_type, sizeof...(alphabet_types) + 1> cummulative_alph_sizes
+    {
+        [] () constexpr
+        {
+            std::array<integral_type, sizeof...(alphabet_types) + 1> ret{};
+            size_t count = 0;
+            meta::for_each(meta::list<first_alphabet_type, alphabet_types...>{}, [&] (auto && alph) constexpr
+            {
+                ret[count] = alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1);
+                ++count;
+            });
+
+            return std::move(ret);
+        }()
+    };
+
+    //!\brief An index sequence up to the number of contained letters.
+    static constexpr auto positions = std::make_index_sequence<sizeof...(alphabet_types)>{};
+
     //!\brief Implementation of to_integral().
     template <std::size_t ...idx>
     constexpr integral_type to_integral_impl(std::index_sequence<idx...> const &) const
     {
+        using seqan3::to_integral;
         if constexpr (sizeof...(idx) > 0)
         {
-            return seqan3::to_integral(std::get<0>(*this)) +
-                   ((seqan3::to_integral(std::get<idx + 1>(*this)) * _cummulative_alph_sizes[idx]) + ...);
+            return to_integral(get<0>(*this)) +
+                   ((to_integral(get<idx + 1>(*this)) * cummulative_alph_sizes[idx]) + ...);
         }
         else
         {
-            return seqan3::to_integral(std::get<0>(*this));
+            return to_integral(get<0>(*this));
         }
     }
 
@@ -192,19 +196,20 @@ private:
     constexpr void
     from_integral_impl(integral_type const i)
     {
+        using seqan3::from_integral;
         if constexpr (j == 0)
         {
-            seqan3::from_integral(std::get<j>(*this),
-                                i % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+            from_integral(get<j>(*this),
+                          i % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
         } else
         {
-            seqan3::from_integral(std::get<j>(*this),
-                          (i / _cummulative_alph_sizes[j-1])
-                          % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+            from_integral(get<j>(*this),
+                          (i / cummulative_alph_sizes[j - 1]) %
+                          alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
         }
 
         if constexpr (j < sizeof...(alphabet_types))
-            from_integral_impl<j+1>(i);
+            from_integral_impl<j + 1>(i);
     }
 };
 

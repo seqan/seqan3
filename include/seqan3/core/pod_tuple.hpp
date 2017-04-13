@@ -31,8 +31,12 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
+
+/*!\file core/pod_tuple.hpp
+ * \ingroup core
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains seqan3::pod_tuple
+ */
 
 #pragma once
 
@@ -41,12 +45,6 @@
 
 #include <meta/meta.hpp>
 
-/*!\file core/pod_tuple.hpp
- * \ingroup core
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains seqan3::pod_tuple
- */
-
 namespace seqan3
 {
 
@@ -54,13 +52,13 @@ namespace seqan3
 #define SEQAN_NOT_POD "If you are not going to insert a POD type, use std::tuple instead."
 //!\endcond
 
-/*!\brief Behaves like std::tuple but std::is_pod and std::is_aggregate.
+/*!\brief Behaves like std::tuple but is an aggregate [PODType](http://en.cppreference.com/w/cpp/concept/PODType).
  * \ingroup core
  * \tparam type0 The first value's type (every tuple must contain at least one type).
  * \tparam ...types 0-n further types (the types of the other values).
  *
- * This class behaves like std::tuple, but it is itself a POD type which std::tuple is not, even
- * if all contained types are POD. Since the only benefit of this class is that it stays POD it
+ * This class behaves like std::tuple, but it is itself a POD type while std::tuple is not (even
+ * if all contained types are POD). Since the only benefit of this class is that it stays POD it
  * actually enforces this on all types in the tuple (if you want to add non POD types, just use
  * std::tuple instead).
  *
@@ -171,6 +169,7 @@ struct pod_tuple<type0>
 #undef SEQAN_NOT_POD
 
 //!\brief User defined deduction guide enables easy use.
+//!\relates pod_tuple
 template <typename ...types>
 pod_tuple(types && ...) -> pod_tuple<types...>;
 
