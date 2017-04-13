@@ -42,7 +42,7 @@
 namespace seqan3
 {
 
-/*!\file alphabet.hpp
+/*!\file concept.hpp
  * \ingroup alphabet
  * Alphabet header with concept defintions and some general purpose free functions.
  */

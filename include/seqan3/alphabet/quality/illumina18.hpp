@@ -153,7 +153,7 @@ struct illumina18
 } // namespace seqan3
 
 #ifndef NDEBUG
-#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 static_assert(seqan3::alphabet_concept<seqan3::illumina18>);
 static_assert(seqan3::detail::internal_alphabet_concept<seqan3::illumina18>);

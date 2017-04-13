@@ -38,7 +38,7 @@
 
 #include <cassert>
 
-#include "../alphabet.hpp"
+#include <seqan3/alphabet/concept.hpp>
 
 /*! The four letter DNA alphabet
  * \ingroup alphabet

@@ -34,7 +34,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
 #include <seqan3/alphabet/quality/composition.hpp>

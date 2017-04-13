@@ -36,7 +36,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
 
