@@ -32,22 +32,52 @@
 //
 // ============================================================================
 
-/*!\file alphabet.hpp
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the alphabet module.
- *
- * \defgroup alphabet
- *
- * The alphabet module contains different biological alphabets and related functionality.
- *
- * TODO more details.
- */
+#include <gtest/gtest.h>
 
-#pragma once
+#include <sstream>
 
-#include <seqan3/alphabet/composition.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna4_container.hpp>
 #include <seqan3/alphabet/quality.hpp>
-#include <seqan3/alphabet/range.hpp>
 #include <seqan3/alphabet/view_convert.hpp>
+
+using namespace seqan3;
+using namespace seqan3::literal;
+
+TEST(convert, to_char)
+{
+    dna4_vector vec = "ACTTTGATA"_dna4;
+
+    auto v = vec | view::convert<char>;
+    EXPECT_EQ(std::string{v}, "ACTTTGATA");
+
+    std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
+    auto v2 = qvec | view::convert<char>;
+    EXPECT_EQ(std::string{v2}, "!(&$(%?18");
+}
+
+TEST(convert, to_integral)
+{
+    dna4_vector vec = "ACTTTGATA"_dna4;
+
+    std::vector<unsigned> v = vec | view::convert<unsigned>;
+    std::vector<unsigned> const out{0,1,3,3,3,2,0,3,0};
+
+    EXPECT_EQ(v, out);
+
+    std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
+    std::vector<unsigned> v2 = qvec | view::convert<unsigned>;
+    std::vector<unsigned> const out2{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
+    EXPECT_EQ(v2, out2);
+}
+
+TEST(convert, default_impl)
+{
+    std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4},
+                             {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
+
+    auto v6 = qcvec | view::convert<dna4> | view::convert<char>;
+    EXPECT_EQ(std::string{v6}, "CAGTGACTA");
+    auto v8 = qcvec | view::convert<illumina18> | view::convert<char>;
+    EXPECT_EQ(std::string{v8}, "!(&$(%?18");
+}
