@@ -58,7 +58,7 @@ TEST(illumina18_cp_ctr, cp_ctr)
 // default destructor
 TEST(illumina18_des, des)
 {
-    illumina18* illu_ptr;
+    illumina18* illu_ptr = new illumina18{};
     delete illu_ptr;
 }
 
@@ -158,7 +158,7 @@ TEST(illumina18_from_phred, from_phred)
 
 TEST(illumina18_to_phred, to_phred)
 {
-    illumina18 illu;
+    illumina18 illu{};
     EXPECT_EQ(0, to_phred(illu));
     illu = 39;
     EXPECT_EQ(39, to_integral(illu));
