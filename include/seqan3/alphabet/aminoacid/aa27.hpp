@@ -161,7 +161,7 @@ struct aa27
     }
 
     //! assign from a character
-    constexpr aa27 from_char(char_type const c)
+    constexpr aa27 & from_char(char_type const c)
     {
         value = char_to_value[c];
         return *this;
@@ -174,7 +174,7 @@ struct aa27
     }
 
     //! assign from a numeric value
-    constexpr aa27 from_integral(integral_type const c)
+    constexpr aa27 & from_integral(integral_type const c)
     {
         assert(c < value_size);
         value = static_cast<internal_type>(c);

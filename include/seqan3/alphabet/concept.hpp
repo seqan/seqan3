@@ -147,7 +147,7 @@ constexpr underlying_integral_t<alphabet_type> to_integral(alphabet_type const &
 //! Free function that calls `.from_char(in)` on the first argument
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_type from_char(alphabet_type & c, char const in)
+constexpr alphabet_type & from_char(alphabet_type & c, char const in)
 {
     return c.from_char(in);
 }
@@ -155,7 +155,7 @@ constexpr alphabet_type from_char(alphabet_type & c, char const in)
 //! Free function that calls `.from_integral(in)` on the first argument
 template <typename alphabet_type>
     requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_type from_integral(alphabet_type & c, underlying_integral_t<alphabet_type> const in)
+constexpr alphabet_type & from_integral(alphabet_type & c, underlying_integral_t<alphabet_type> const in)
 {
     return c.from_integral(in);
 }

@@ -111,7 +111,7 @@ struct illumina18
     }
 
     //! set internal value given 1-letter code
-    constexpr illumina18 from_char(char_type const c)
+    constexpr illumina18 & from_char(char_type const c)
     {
         assert(c >= '!' && c <= 'J');
         value = c - '!';
@@ -125,7 +125,7 @@ struct illumina18
     }
 
     //! set internal value given zero-based integer c
-    constexpr illumina18 from_integral(integral_type const c)
+    constexpr illumina18 & from_integral(integral_type const c)
     {
         assert(c >= 0 && c < value_size);
         value = c;
@@ -133,7 +133,7 @@ struct illumina18
     }
 
     //! set internal value given Illumina 1.8 integer code p
-    constexpr illumina18 from_phred(phred_type const p)
+    constexpr illumina18 & from_phred(phred_type const p)
     {
         assert(p >= offset_phred && p < offset_phred + value_size);
         value = p - offset_phred;
