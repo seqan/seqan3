@@ -45,16 +45,17 @@
 #include <utility>
 
 #include <seqan3/alphabet/composition.hpp>
+#include <seqan3/alphabet/nucleotide/concept.hpp>
 
 namespace seqan3
 {
 
-/*!\brief An alphabet_composition that joins a regular alphabet with a quality alphabet.
+/*!\brief An alphabet_composition that joins a nucleotide alphabet with a quality alphabet.
  * \ingroup alphabet
- * \tparam sequence_alphabet_t Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
+ * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
  * \tparam quality_alphabet_t Types of further letters (up to 4); must satisfy seqan3::quality_concept.
  *
- * This composition pairs a regular alphabet with a quality alphabet. The integral values
+ * This composition pairs a nucleotide alphabet with a quality alphabet. The integral values
  * correpsond to numeric values in the size of the composition, while the character values
  * are taken from the sequence alphabet and the phred values are taken from the quality
  * alphabet.
@@ -93,7 +94,7 @@ namespace seqan3
  */
 
 template <typename sequence_alphabet_t, typename quality_alphabet_t>
-      requires alphabet_concept<sequence_alphabet_t> &&
+      requires nucleotide_concept<sequence_alphabet_t> &&
                quality_concept<quality_alphabet_t>
 struct quality_composition :
     public alphabet_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>,
@@ -166,7 +167,19 @@ quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
 
 } // namespace seqan3
 
+namespace seqan3::detail
+{
+
+//!\brief Since seqan3::quality_composition wraps a nucleotide alphabet it is also one.
+template <typename sequence_alphabet_type, typename quality_alphabet_type>
+struct is_nucleotide<quality_composition<sequence_alphabet_type, quality_alphabet_type>> : public std::true_type
+{};
+
+} // namespace seqan3::detail
+
 #ifndef NDEBUG
-// contains alphabet tests for this class:
-#include <seqan3/alphabet/quality/aliases.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/quality/illumina18.hpp>
+static_assert(seqan3::nucleotide_concept<seqan3::quality_composition<seqan3::dna4, seqan3::illumina18>>);
+static_assert(seqan3::quality_concept<seqan3::quality_composition<seqan3::dna4, seqan3::illumina18>>);
 #endif
