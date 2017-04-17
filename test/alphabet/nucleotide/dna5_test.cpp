@@ -31,8 +31,6 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: David Heller <david.heller@fu-berlin.de>
-// ==========================================================================
 
 #include <gtest/gtest.h>
 #include <sstream>
@@ -40,81 +38,307 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 using namespace seqan3;
+using namespace seqan3::literal;
 
-TEST(dna5_test, test_alphabet_concept)
+// default/zero construction
+TEST(dna5, ctr)
 {
-    EXPECT_TRUE(alphabet_concept<dna5>);
+    dna5 t1;
 }
 
-TEST(dna5_test, test_default_initialization)
+// zero initialization
+TEST(dna5, zro)
 {
-    EXPECT_EQ(dna5{dna5::A}, dna5{});
+    dna5 t0{};
+    EXPECT_EQ(t0, dna5::A);
 }
 
-TEST(dna5_test, test_implicit_inner_type_compatibility)
+// copy construction
+TEST(dna5, cp_ctr)
 {
-    EXPECT_EQ(dna5{dna5::A}, dna5::A);
+    dna5 t1{dna5::C};
+    dna5 t2{t1};
+    dna5 t3(t1);
+    EXPECT_EQ(t1, t2);
+    EXPECT_EQ(t2, t3);
 }
 
-TEST(dna5_test, test_relations)
+// move construction
+TEST(dna5, mv_ctr)
 {
-    EXPECT_LT(dna5{dna5::A}, dna5{dna5::C});
+    dna5 t0{dna5::C};
+    dna5 t1{dna5::C};
+    dna5 t2{std::move(t1)};
+    EXPECT_EQ(t2, t0);
+    dna5 t3(std::move(t2));
+    EXPECT_EQ(t3, t0);
 }
 
-TEST(dna5_test, test_static_cast)
+// copy assignment
+TEST(dna5, cp_assgn)
 {
-    EXPECT_EQ(static_cast<dna5::char_type>(dna5{dna5::C}), 'C');
+    dna5 t1{dna5::C};
+    dna5 t2;
+    dna5 t3;
+
+    t2 = t1;
+    t3 = t1;
+    EXPECT_EQ(t1, t2);
+    EXPECT_EQ(t2, t3);
 }
 
-TEST(dna5_test, test_stream_operator)
+// move assignment
+TEST(dna5, mv_assgn)
+{
+    dna5 t0{dna5::C};
+    dna5 t1{dna5::C};
+    dna5 t2;
+    dna5 t3;
+    t2 = std::move(t1);
+    EXPECT_EQ(t2, t0);
+    t3 = std::move(t2);
+    EXPECT_EQ(t3, t0);
+}
+
+// swap
+TEST(dna5, swap)
+{
+    dna5 t0{dna5::C};
+    dna5 t1{dna5::C};
+    dna5 t2{};
+    dna5 t3{};
+
+    std::swap(t1, t2);
+    EXPECT_EQ(t2, t0);
+    EXPECT_EQ(t1, t3);
+}
+
+// comparison
+TEST(dna5, cmp)
+{
+    dna5 t0{dna5::A};
+    dna5 t1{dna5::C};
+    dna5 t2{dna5::G};
+
+    EXPECT_LT(t0, t1);
+    EXPECT_LE(t0, t1);
+    EXPECT_LE(t1, t1);
+    EXPECT_EQ(t1, t1);
+    EXPECT_GE(t1, t1);
+    EXPECT_GE(t2, t1);
+    EXPECT_GT(t2, t1);
+}
+
+TEST(dna5, to_char_member)
+{
+    EXPECT_EQ(dna5::A.to_char(), 'A');
+    EXPECT_EQ(dna5::C.to_char(), 'C');
+    EXPECT_EQ(dna5::G.to_char(), 'G');
+    EXPECT_EQ(dna5::T.to_char(), 'T');
+    EXPECT_EQ(dna5::U.to_char(), 'T');
+    EXPECT_EQ(dna5::N.to_char(), 'N');
+    EXPECT_EQ(dna5::UNKNOWN.to_char(), 'N');
+}
+
+TEST(dna5, to_char_free)
+{
+    EXPECT_EQ(to_char(dna5::A), 'A');
+    EXPECT_EQ(to_char(dna5::C), 'C');
+    EXPECT_EQ(to_char(dna5::G), 'G');
+    EXPECT_EQ(to_char(dna5::T), 'T');
+    EXPECT_EQ(to_char(dna5::U), 'T');
+    EXPECT_EQ(to_char(dna5::N), 'N');
+    EXPECT_EQ(to_char(dna5::UNKNOWN), 'N');
+}
+
+TEST(dna5, to_integral_member)
+{
+    EXPECT_EQ(dna5::A.to_integral(), 0);
+    EXPECT_EQ(dna5::C.to_integral(), 1);
+    EXPECT_EQ(dna5::G.to_integral(), 2);
+    EXPECT_EQ(dna5::T.to_integral(), 3);
+    EXPECT_EQ(dna5::U.to_integral(), 3);
+    EXPECT_EQ(dna5::N.to_integral(), 4);
+    EXPECT_EQ(dna5::UNKNOWN.to_integral(), 4);
+}
+
+TEST(dna5, to_integral_free)
+{
+    EXPECT_EQ(to_integral(dna5::A), 0);
+    EXPECT_EQ(to_integral(dna5::C), 1);
+    EXPECT_EQ(to_integral(dna5::G), 2);
+    EXPECT_EQ(to_integral(dna5::T), 3);
+    EXPECT_EQ(to_integral(dna5::U), 3);
+    EXPECT_EQ(to_integral(dna5::N), 4);
+    EXPECT_EQ(to_integral(dna5::UNKNOWN), 4);
+}
+
+TEST(dna5, stream_operator)
 {
     std::stringstream ss;
-    ss << dna5{dna5::A} << dna5{dna5::C} << dna5{dna5::G} << dna5{dna5::T} << dna5{dna5::N};
-    EXPECT_EQ(ss.str(), "ACGTN");
+    ss << dna5::A << dna5::C << dna5::G << dna5::T << dna5::U << dna5::N << dna5::UNKNOWN;
+    EXPECT_EQ(ss.str(), "ACGTTNN");
 }
 
-TEST(dna5_test, test_to_char)
+TEST(dna5, from_char_member)
 {
-    EXPECT_EQ(dna5{dna5::A}.to_char(), 'A');
-    EXPECT_EQ(dna5{dna5::C}.to_char(), 'C');
-    EXPECT_EQ(dna5{dna5::G}.to_char(), 'G');
-    EXPECT_EQ(dna5{dna5::T}.to_char(), 'T');
-    EXPECT_EQ(dna5{dna5::N}.to_char(), 'N');
+    dna5 t0;
+    t0.from_char('A');
+    EXPECT_EQ(t0, dna5::A);
+    t0.from_char('C');
+    EXPECT_EQ(t0, dna5::C);
+    t0.from_char('G');
+    EXPECT_EQ(t0, dna5::G);
+    t0.from_char('T');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    t0.from_char('U');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    t0.from_char('N');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+
+    t0.from_char('a');
+    EXPECT_EQ(t0, dna5::A);
+    t0.from_char('c');
+    EXPECT_EQ(t0, dna5::C);
+    t0.from_char('g');
+    EXPECT_EQ(t0, dna5::G);
+    t0.from_char('t');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    t0.from_char('u');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    t0.from_char('n');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+
+    t0.from_char('z');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+    t0.from_char('H');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+    t0.from_char('*');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+
+    static_assert(std::is_same_v<decltype(t0.from_char('C')), dna5 &>);
+    EXPECT_EQ(t0.from_char('C'), dna5::C);
 }
 
-TEST( dna5_test, test_from_char)
+TEST(dna5, from_char_free)
 {
-    EXPECT_EQ(dna5{}.from_char('A'), dna5{dna5::A});
-    EXPECT_EQ(dna5{}.from_char('C'), dna5{dna5::C});
-    EXPECT_EQ(dna5{}.from_char('G'), dna5{dna5::G});
-    EXPECT_EQ(dna5{}.from_char('T'), dna5{dna5::T});
-    EXPECT_EQ(dna5{}.from_char('N'), dna5{dna5::N});
+    dna5 t0;
+    from_char(t0, 'A');
+    EXPECT_EQ(t0, dna5::A);
+    from_char(t0, 'C');
+    EXPECT_EQ(t0, dna5::C);
+    from_char(t0, 'G');
+    EXPECT_EQ(t0, dna5::G);
+    from_char(t0, 'T');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    from_char(t0, 'U');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    from_char(t0, 'N');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
 
-    EXPECT_EQ(dna5{}.from_char('a'), dna5{dna5::A});
-    EXPECT_EQ(dna5{}.from_char('c'), dna5{dna5::C});
-    EXPECT_EQ(dna5{}.from_char('g'), dna5{dna5::G});
-    EXPECT_EQ(dna5{}.from_char('t'), dna5{dna5::T});
-    EXPECT_EQ(dna5{}.from_char('n'), dna5{dna5::N});
+    from_char(t0, 'a');
+    EXPECT_EQ(t0, dna5::A);
+    from_char(t0, 'c');
+    EXPECT_EQ(t0, dna5::C);
+    from_char(t0, 'g');
+    EXPECT_EQ(t0, dna5::G);
+    from_char(t0, 't');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    from_char(t0, 'u');
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    from_char(t0, 'n');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
 
-    EXPECT_EQ(dna5{}.from_char('R'), dna5{dna5::N});
-    EXPECT_EQ(dna5{}.from_char('x'), dna5{dna5::N});
-    EXPECT_EQ(dna5{}.from_char('8'), dna5{dna5::N});
+    from_char(t0, 'z');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+    from_char(t0, 'H');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+    from_char(t0, '*');
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+
+    static_assert(std::is_same_v<decltype(from_char(t0, 'C')), dna5 &>);
+    EXPECT_EQ(from_char(t0, 'C'), dna5::C);
 }
 
-TEST(dna5_test, test_to_integral)
+TEST(dna5, from_integral_member)
 {
-    EXPECT_EQ(dna5{dna5::A}.to_integral(), 0);
-    EXPECT_EQ(dna5{dna5::C}.to_integral(), 1);
-    EXPECT_EQ(dna5{dna5::G}.to_integral(), 2);
-    EXPECT_EQ(dna5{dna5::T}.to_integral(), 3);
-    EXPECT_EQ(dna5{dna5::N}.to_integral(), 4);
+    dna5 t0;
+    t0.from_integral(0);
+    EXPECT_EQ(t0, dna5::A);
+    t0.from_integral(1);
+    EXPECT_EQ(t0, dna5::C);
+    t0.from_integral(2);
+    EXPECT_EQ(t0, dna5::G);
+    t0.from_integral(3);
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    t0.from_integral(4);
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+
+    static_assert(std::is_same_v<decltype(t0.from_integral(2)), dna5 &>);
+    EXPECT_EQ(t0.from_integral(1), dna5::C);
 }
 
-TEST(dna5_test, test_from_integral)
+TEST(dna5, from_integral_free)
 {
-    EXPECT_EQ(dna5{}.from_integral(0), dna5{dna5::A});
-    EXPECT_EQ(dna5{}.from_integral(1), dna5{dna5::C});
-    EXPECT_EQ(dna5{}.from_integral(2), dna5{dna5::G});
-    EXPECT_EQ(dna5{}.from_integral(3), dna5{dna5::T});
-    EXPECT_EQ(dna5{}.from_integral(4), dna5{dna5::N});
+    dna5 t0;
+    from_integral(t0, 0);
+    EXPECT_EQ(t0, dna5::A);
+    from_integral(t0, 1);
+    EXPECT_EQ(t0, dna5::C);
+    from_integral(t0, 2);
+    EXPECT_EQ(t0, dna5::G);
+    from_integral(t0, 3);
+    EXPECT_EQ(t0, dna5::T);
+    EXPECT_EQ(t0, dna5::U);
+    from_integral(t0, 4);
+    EXPECT_EQ(t0, dna5::N);
+    EXPECT_EQ(t0, dna5::UNKNOWN);
+
+    static_assert(std::is_same_v<decltype(from_integral(t0, 2)), dna5 &>);
+    EXPECT_EQ(from_integral(t0, 1), dna5::C);
+}
+
+// ------------------------------------------------------------------
+// literals
+// ------------------------------------------------------------------
+
+TEST(dna5_literals, vector)
+{
+    dna5_vector v;
+    v.resize(5, dna5::A);
+    EXPECT_EQ(v, "AAAAA"_dna5);
+
+    std::vector<dna5> w{dna5::A, dna5::C, dna5::G, dna5::T, dna5::U, dna5::N, dna5::UNKNOWN};
+    EXPECT_EQ(w, "ACGTTNN"_dna5);
+}
+
+TEST(dna5_literals, basic_string)
+{
+    dna5_string v;
+    v.resize(5, dna5::A);
+    EXPECT_EQ(v, "AAAAA"_dna5s);
+
+    std::basic_string<dna5, std::char_traits<dna5>> w{dna5::A, dna5::C, dna5::G, dna5::T, dna5::U, dna5::N,
+                                                      dna5::UNKNOWN};
+    EXPECT_EQ(w, "ACGTTNN"_dna5s);
 }
