@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "../alphabet.hpp"
+#include <seqan3/alphabet/concept.hpp>
 
 /*! The five letter DNA alphabet
  * \ingroup alphabet

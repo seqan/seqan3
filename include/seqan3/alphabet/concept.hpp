@@ -31,8 +31,12 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
+
+/*!\file alphabet/concept.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Core alphabet concept.
+ */
 
 #pragma once
 
@@ -41,18 +45,6 @@
 
 namespace seqan3
 {
-
-/*!\file alphabet.hpp
- * \ingroup alphabet
- * Alphabet header with concept defintions and some general purpose free functions.
- */
-
-/*!\defgroup alphabet
- *
- * The alphabet module contains different biological alphabets and related functionality.
- *
- * TODO more details.
- */
 
 // ------------------------------------------------------------------
 // free functions to member function wrapper

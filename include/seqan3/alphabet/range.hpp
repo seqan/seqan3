@@ -45,12 +45,12 @@
 #include <deque>
 #include <string>
 
-#include "alphabet.hpp"
+#include <seqan3/alphabet/concept.hpp>
 
 namespace seqan3
 {
 
-/*! \file alphabet_container.hpp
+/*! \file range.hpp
  * \ingroup alphabet
  * Free function overloads for containers over alphabets
  */

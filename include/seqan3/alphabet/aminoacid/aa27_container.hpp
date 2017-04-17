@@ -40,8 +40,8 @@
 #include <string>
 #include <vector>
 
-#include "../alphabet.hpp"
-#include "../alphabet_container.hpp"
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/range.hpp>
 #include "aa27.hpp"
 
 /*! Containers of @link aa27 @endlink

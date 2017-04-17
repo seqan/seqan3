@@ -39,7 +39,7 @@
 #include <iostream>
 #include <string>
 
-#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 namespace seqan3
 {
