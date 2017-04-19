@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(seqan3 CXX)
+project(seqan3_tests CXX)
 
 ### set googletest
 enable_testing()
@@ -33,10 +33,18 @@ add_library (gtest STATIC IMPORTED)
 add_dependencies(gtest gtest_main)
 set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/lib/libgtest.a")
 
+# http://stackoverflow.com/a/36341753 - add gtest as dependency to all tests
+macro(add_executable _target)
+    _add_executable(${_target} ${ARGN})
+    add_dependencies(${_target} gtest)
+endmacro()
+
+# define all include folders
 include_directories("${GOOGLETEST_PATH}/include/")
 include_directories("${CMAKE_SOURCE_DIR}/../include/")
 include_directories("${CMAKE_SOURCE_DIR}/../range-v3/include/")
 include_directories("${CMAKE_SOURCE_DIR}/../sdsl-lite/include/")
 
+# add all test cases
 add_subdirectory(alphabet)
 add_subdirectory(core)

@@ -1,12 +1,7 @@
-cmake_minimum_required(VERSION 3.2)
-project(alphabet_aminoacid_test CXX)
+add_executable(aa27_test aa27_test.cpp)
+target_link_libraries(aa27_test ${SEQAN3_LIBRARIES})
+add_test(NAME alphabet_aminoacid_aa27 COMMAND aa27_test)
 
-add_executable(alphabet_aminoacid_aa27_test aa27_test.cpp)
-add_dependencies(alphabet_aminoacid_aa27_test gtest)
-target_link_libraries(alphabet_aminoacid_aa27_test ${SEQAN3_LIBRARIES})
-add_test(NAME test_alphabet_aminoacid_aa27_test COMMAND alphabet_aminoacid_aa27_test)
-
-add_executable(alphabet_aminoacid_aa27_container_test aa27_container_test.cpp)
-add_dependencies(alphabet_aminoacid_aa27_container_test gtest)
-target_link_libraries(alphabet_aminoacid_aa27_container_test ${SEQAN3_LIBRARIES})
-add_test(NAME test_alphabet_aminoacid_aa27_container_test COMMAND alphabet_aminoacid_aa27_container_test)
+add_executable(aa27_container_test aa27_container_test.cpp)
+target_link_libraries(aa27_container_test ${SEQAN3_LIBRARIES})
+add_test(NAME alphabet_aminoacid_aa27_container COMMAND aa27_container_test)
