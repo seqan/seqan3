@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts")
 
 # CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
 set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
-set(GOOGLETEST_ROOT "${SEQAN3_ROOT}/vendor/googletest")
+set(GOOGLETEST_ROOT "${PROJECT_BINARY_DIR}/vendor/googletest")
 set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main")
 
 find_program(CCACHE_PROGRAM ccache)
