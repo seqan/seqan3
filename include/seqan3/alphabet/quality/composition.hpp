@@ -55,7 +55,7 @@ namespace seqan3
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
  * \tparam quality_alphabet_t Types of further letters (up to 4); must satisfy seqan3::quality_concept.
  *
- * This composition pairs a nucleotide alphabet with a quality alphabet. The integral values
+ * This composition pairs a nucleotide alphabet with a quality alphabet. The rank values
  * correpsond to numeric values in the size of the composition, while the character values
  * are taken from the sequence alphabet and the phred values are taken from the quality
  * alphabet.
@@ -67,9 +67,9 @@ namespace seqan3
  * ~~~~~~~~~~~~~~~{.cpp}
  *
  * quality_composition<dna4, illumina18> l{dna4::A, 7};
- * std::cout << int(to_integral(l)) << ' '
- *           << int(to_integral(get<0>(l))) << ' '
- *           << int(to_integral(get<1>(l))) << '\n';
+ * std::cout << int(to_rank(l)) << ' '
+ *           << int(to_rank(get<0>(l))) << ' '
+ *           << int(to_rank(get<1>(l))) << '\n';
  * // 148 0 7
  *
  * std::cout << to_char(l) << ' '
@@ -128,16 +128,16 @@ struct quality_composition :
     }
 
     //!\brief Assign from a character. This modifies the internal sequence letter.
-    constexpr quality_composition & from_char(char_type const c)
+    constexpr quality_composition & assign_char(char_type const c)
     {
-        seqan3::from_char(get<0>(*this), c);
+        seqan3::assign_char(get<0>(*this), c);
         return *this;
     }
 
     //!\brief Assign from a phred value. This modifies the internal quality letter.
-    constexpr quality_composition & from_phred(phred_type const c)
+    constexpr quality_composition & assign_phred(phred_type const c)
     {
-        seqan3::from_phred(get<1>(*this), c);
+        seqan3::assign_phred(get<1>(*this), c);
         return *this;
     }
     //!\}

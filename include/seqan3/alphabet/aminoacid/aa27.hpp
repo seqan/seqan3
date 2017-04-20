@@ -57,9 +57,9 @@ namespace seqan3
  *     // doesn't work:
  *     // aa27 my_letter{'A'};
  *
- *     my_letter.from_char('C'); // <- this does!
+ *     my_letter.assign_char('C'); // <- this does!
  *
- *     my_letter.from_char('?'); // converted to X internally
+ *     my_letter.assign_char('?'); // converted to X internally
  *     if (my_letter.to_char() == 'X')
  *        std::cout << "yeah\n"; // "yeah";
  * ~~~~~~~~~~~~~~~
@@ -70,12 +70,12 @@ struct aa27
     //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
     using char_type = char;
 
-    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
-    using integral_type = uint8_t;
+    //! the type of the alphabet when represented as a number (e.g. via @link to_rank @endlink)
+    using rank_type = uint8_t;
 
     // strictly typed enum, unfortunately with scope
     //! \privatesection
-    enum struct internal_type : integral_type
+    enum struct internal_type : rank_type
     {
         A,
         B,
@@ -157,24 +157,24 @@ struct aa27
     //! return the letter as a character of @link char_type @endlink.
     constexpr char_type to_char() const
     {
-        return value_to_char[static_cast<integral_type>(value)];
+        return value_to_char[static_cast<rank_type>(value)];
     }
 
     //! assign from a character
-    constexpr aa27 & from_char(char_type const c)
+    constexpr aa27 & assign_char(char_type const c)
     {
         value = char_to_value[c];
         return *this;
     }
 
     //! return the letter's numeric value or rank in the alphabet
-    constexpr integral_type to_integral() const
+    constexpr rank_type to_rank() const
     {
-        return static_cast<integral_type>(value);
+        return static_cast<rank_type>(value);
     }
 
     //! assign from a numeric value
-    constexpr aa27 & from_integral(integral_type const c)
+    constexpr aa27 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
         value = static_cast<internal_type>(c);
@@ -182,7 +182,7 @@ struct aa27
     }
 
     //! The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr integral_type value_size{27};
+    static constexpr rank_type value_size{27};
 
     //! @name comparison operators
     //!@{
@@ -366,7 +366,6 @@ constexpr aa27 aa27::UNKNOWN{aa27::X};
 
 #ifndef NDEBUG
 static_assert(alphabet_concept<aa27>);
-static_assert(detail::internal_alphabet_concept<aa27>);
 #endif
 
 }

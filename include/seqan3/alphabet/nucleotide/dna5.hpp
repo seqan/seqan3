@@ -67,9 +67,9 @@ namespace seqan3
  *     // doesn't work:
  *     // dna5 my_letter{'A'};
  *
- *     my_letter.from_char('C'); // <- this does!
+ *     my_letter.assign_char('C'); // <- this does!
  *
- *     my_letter.from_char('F'); // converted to N internally
+ *     my_letter.assign_char('F'); // converted to N internally
  *     if (my_letter.to_char() == 'N')
  *        std::cout << "yeah\n"; // "yeah";
  *~~~~~~~~~~~~~~~
@@ -79,8 +79,8 @@ struct dna5
 {
     //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_integral()).
-    using integral_type = uint8_t;
+    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+    using rank_type = uint8_t;
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
@@ -102,13 +102,13 @@ struct dna5
     //!\brief Return the letter as a character of char_type.
     constexpr char_type to_char() const noexcept
     {
-        return value_to_char[static_cast<integral_type>(_value)];
+        return value_to_char[static_cast<rank_type>(_value)];
     }
 
     //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr integral_type to_integral() const noexcept
+    constexpr rank_type to_rank() const noexcept
     {
-        return static_cast<integral_type>(_value);
+        return static_cast<rank_type>(_value);
     }
     //!\}
 
@@ -116,14 +116,14 @@ struct dna5
      * \{
      */
     //!\brief Assign from a character.
-    constexpr dna5 & from_char(char_type const c) noexcept
+    constexpr dna5 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
     //!\brief Assign from a numeric value.
-    constexpr dna5 & from_integral(integral_type const c)
+    constexpr dna5 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
         _value = static_cast<internal_type>(c);
@@ -132,7 +132,7 @@ struct dna5
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr integral_type value_size{5};
+    static constexpr rank_type value_size{5};
 
     //!\name Comparison operators
     //!\{
@@ -175,7 +175,7 @@ protected:
      * It is has the drawback that it also introduces a scope which in turn makes
      * the static "letter values " members necessary.
      */
-    enum struct internal_type : integral_type
+    enum struct internal_type : rank_type
     {
         A,
         C,
@@ -307,7 +307,6 @@ struct is_nucleotide<dna5> : public std::true_type
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::dna5>);
-static_assert(seqan3::detail::internal_alphabet_concept<seqan3::dna5>);
 static_assert(seqan3::nucleotide_concept<seqan3::dna5>);
 #endif
 
@@ -371,7 +370,7 @@ inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }
@@ -406,7 +405,7 @@ inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }

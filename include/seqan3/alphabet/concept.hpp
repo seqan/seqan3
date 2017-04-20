@@ -47,42 +47,12 @@ namespace seqan3
 {
 
 // ------------------------------------------------------------------
-// free functions to member function wrapper
-// ------------------------------------------------------------------
-// move to alphabet_detail.hpp?
-
-
-/* The public alphabet concept requires only free function access
- * for type that have member functions we create a wrapper here
- * so you don't have to repeat it.
- */
-//! \privatesection
-namespace detail
-{
-
-template <typename t>
-concept bool internal_alphabet_concept = requires (t t1)
-{
-    typename t::char_type;
-    typename t::integral_type;
-    t::value_size;
-
-    { t1.to_char() } -> typename t::char_type;
-    { t1.to_integral() } -> typename t::integral_type;
-
-    { t1.from_char('a')   } -> t;
-    { t1.from_integral(0) } -> t;
-};
-} // namespace seqan3::detail
-//! \publicsection
-
-// ------------------------------------------------------------------
 // type metafunctions operator
 // ------------------------------------------------------------------
 
 //! Type metafunction that returns the `char_type` defined inside an alphabet type.
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
+    requires requires (alphabet_type c) { typename alphabet_type::char_type; }
 struct underlying_char
 {
     using type = typename alphabet_type::char_type;
@@ -92,17 +62,17 @@ struct underlying_char
 template <typename alphabet_type>
 using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
-//! Type metafunction that returns the `integral_type` defined inside an alphabet type.
+//! Type metafunction that returns the `rank_type` defined inside an alphabet type.
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-struct underlying_integral
+    requires requires (alphabet_type c) { typename alphabet_type::rank_type; }
+struct underlying_rank
 {
-    using type = typename alphabet_type::integral_type;
+    using type = typename alphabet_type::rank_type;
 };
 
-//! Shortcut for @link underlying_integral @endlink
+//! Shortcut for @link underlying_rank @endlink
 template <typename alphabet_type>
-using underlying_integral_t = typename underlying_integral<alphabet_type>::type;
+using underlying_rank_t = typename underlying_rank<alphabet_type>::type;
 
 // ------------------------------------------------------------------
 // value metafunctions
@@ -110,15 +80,15 @@ using underlying_integral_t = typename underlying_integral<alphabet_type>::type;
 
 //! Value metafunction that returns the `value_size` defined inside an alphabet type.
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
+    requires requires (alphabet_type c) { alphabet_type::value_size; }
 struct alphabet_size
 {
-    static constexpr underlying_integral_t<alphabet_type> value = alphabet_type::value_size;
+    static constexpr underlying_rank_t<alphabet_type> value = alphabet_type::value_size;
 };
 
 //! Shortcut for @link alphabet_size @endlink
 template <typename alphabet_type>
-constexpr underlying_integral_t<alphabet_type> alphabet_size_v = alphabet_size<alphabet_type>::value;
+constexpr underlying_rank_t<alphabet_type> alphabet_size_v = alphabet_size<alphabet_type>::value;
 
 // ------------------------------------------------------------------
 // free functions
@@ -130,40 +100,40 @@ constexpr underlying_integral_t<alphabet_type> alphabet_size_v = alphabet_size<a
 
 //! Free function that calls `.to_char()` on the argument
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
 constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const & c)
+    requires requires (alphabet_type c) { { c.to_char() } -> underlying_char_t<alphabet_type>; }
 {
     return c.to_char();
 }
 
-//! Free function that calls `.to_integral()` on the argument
+//! Free function that calls `.to_rank()` on the argument
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-constexpr underlying_integral_t<alphabet_type> to_integral(alphabet_type const & c)
+constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const & c)
+    requires requires (alphabet_type c) { { c.to_rank() } -> underlying_rank_t<alphabet_type>; }
 {
-    return c.to_integral();
+    return c.to_rank();
 }
 
-//! Free function that calls `.from_char(in)` on the first argument
+//! Free function that calls `.assign_char(in)` on the first argument
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_type & from_char(alphabet_type & c, char const in)
+constexpr alphabet_type & assign_char(alphabet_type & c, char const in)
+    requires requires (alphabet_type c) { { c.assign_char(char{0}) } -> alphabet_type &; }
 {
-    return c.from_char(in);
+    return c.assign_char(in);
 }
 
-//! Free function that calls `.from_integral(in)` on the first argument
+//! Free function that calls `.assign_rank(in)` on the first argument
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_type & from_integral(alphabet_type & c, underlying_integral_t<alphabet_type> const in)
+constexpr alphabet_type & assign_rank(alphabet_type & c, underlying_rank_t<alphabet_type> const in)
+    requires requires (alphabet_type c) { { c.assign_rank(uint8_t{0}) } -> alphabet_type &; }
 {
-    return c.from_integral(in);
+    return c.assign_rank(in);
 }
 
 //! Free ostream operator that delegates to `c.to_char()`
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
 std::ostream& operator<<(std::ostream & os, alphabet_type const & c)
+    requires requires (alphabet_type c) { { c.to_char() } -> underlying_char_t<alphabet_type>; }
 {
     os << c.to_char();
     return os;
@@ -191,10 +161,10 @@ concept bool alphabet_concept = requires (t t1, t t2)
 
     // conversion from/to char
     { to_char(t1)     } -> underlying_char_t<t>;
-    { to_integral(t1) } -> underlying_integral_t<t>;
+    { to_rank(t1) } -> underlying_rank_t<t>;
 
-    { from_char(t1, 0)     } -> t;
-    { from_integral(t1, 0) } -> t;
+    { assign_char(t1, 0)     } -> t;
+    { assign_rank(t1, 0) } -> t;
 
     { std::cout << t1 };
 

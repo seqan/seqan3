@@ -67,9 +67,9 @@ namespace seqan3
  *     // doesn't work:
  *     // rna5 my_letter{'A'};
  *
- *     my_letter.from_char('C'); // <- this does!
+ *     my_letter.assign_char('C'); // <- this does!
  *
- *     my_letter.from_char('F'); // converted to A internally
+ *     my_letter.assign_char('F'); // converted to A internally
  *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
  *~~~~~~~~~~~~~~~
@@ -97,7 +97,7 @@ struct rna5 : public dna5
     //!\brief Return the letter as a character of char_type.
     constexpr char_type to_char() const noexcept
     {
-        return value_to_char[static_cast<integral_type>(_value)];
+        return value_to_char[static_cast<rank_type>(_value)];
     }
     //!\}
 
@@ -105,14 +105,14 @@ struct rna5 : public dna5
      * \{
      */
     //!\brief Assign from a character.
-    constexpr rna5 & from_char(char_type const c) noexcept
+    constexpr rna5 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
     //!\brief Assign from a numeric value.
-    constexpr rna5 & from_integral(integral_type const c)
+    constexpr rna5 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
         _value = static_cast<internal_type>(c);
@@ -161,7 +161,6 @@ struct is_nucleotide<rna5> : public std::true_type
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::rna5>);
-static_assert(seqan3::detail::internal_alphabet_concept<seqan3::rna5>);
 static_assert(seqan3::nucleotide_concept<seqan3::rna5>);
 #endif
 
@@ -225,7 +224,7 @@ inline rna5_vector operator "" _rna5(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }
@@ -260,7 +259,7 @@ inline rna5_string operator "" _rna5s(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }

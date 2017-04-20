@@ -71,19 +71,19 @@ TEST(gap_test, test_stream_operator)
     EXPECT_EQ(ss.str(), "---");
 }
 
-TEST( gap_test, test_from_char)
+TEST( gap_test, test_assign_char)
 {
-    EXPECT_EQ(gap{}.from_char('-'), gap{});
-    EXPECT_EQ(gap{}.from_char('x'), gap{});
+    EXPECT_EQ(gap{}.assign_char('-'), gap{});
+    EXPECT_EQ(gap{}.assign_char('x'), gap{});
 }
 
-TEST(gap_test, test_to_integral)
+TEST(gap_test, test_to_rank)
 {
-    EXPECT_EQ(gap{}.to_integral(), 0);
+    EXPECT_EQ(gap{}.to_rank(), 0);
 }
 
-TEST(gap_test, test_from_integral)
+TEST(gap_test, test_assign_rank)
 {
-    EXPECT_EQ(gap{}.from_integral(0), gap{});
-    EXPECT_EQ(gap{}.from_integral(13), gap{});
+    EXPECT_EQ(gap{}.assign_rank(0), gap{});
+    EXPECT_EQ(gap{}.assign_rank(13), gap{});
 }

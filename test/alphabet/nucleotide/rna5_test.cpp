@@ -151,26 +151,26 @@ TEST(rna5, to_char_free)
     EXPECT_EQ(to_char(rna5::UNKNOWN), 'N');
 }
 
-TEST(rna5, to_integral_member)
+TEST(rna5, to_rank_member)
 {
-    EXPECT_EQ(rna5::A.to_integral(), 0);
-    EXPECT_EQ(rna5::C.to_integral(), 1);
-    EXPECT_EQ(rna5::G.to_integral(), 2);
-    EXPECT_EQ(rna5::T.to_integral(), 3);
-    EXPECT_EQ(rna5::U.to_integral(), 3);
-    EXPECT_EQ(rna5::N.to_integral(), 4);
-    EXPECT_EQ(rna5::UNKNOWN.to_integral(), 4);
+    EXPECT_EQ(rna5::A.to_rank(), 0);
+    EXPECT_EQ(rna5::C.to_rank(), 1);
+    EXPECT_EQ(rna5::G.to_rank(), 2);
+    EXPECT_EQ(rna5::T.to_rank(), 3);
+    EXPECT_EQ(rna5::U.to_rank(), 3);
+    EXPECT_EQ(rna5::N.to_rank(), 4);
+    EXPECT_EQ(rna5::UNKNOWN.to_rank(), 4);
 }
 
-TEST(rna5, to_integral_free)
+TEST(rna5, to_rank_free)
 {
-    EXPECT_EQ(to_integral(rna5::A), 0);
-    EXPECT_EQ(to_integral(rna5::C), 1);
-    EXPECT_EQ(to_integral(rna5::G), 2);
-    EXPECT_EQ(to_integral(rna5::T), 3);
-    EXPECT_EQ(to_integral(rna5::U), 3);
-    EXPECT_EQ(to_integral(rna5::N), 4);
-    EXPECT_EQ(to_integral(rna5::UNKNOWN), 4);
+    EXPECT_EQ(to_rank(rna5::A), 0);
+    EXPECT_EQ(to_rank(rna5::C), 1);
+    EXPECT_EQ(to_rank(rna5::G), 2);
+    EXPECT_EQ(to_rank(rna5::T), 3);
+    EXPECT_EQ(to_rank(rna5::U), 3);
+    EXPECT_EQ(to_rank(rna5::N), 4);
+    EXPECT_EQ(to_rank(rna5::UNKNOWN), 4);
 }
 
 TEST(rna5, stream_operator)
@@ -180,142 +180,142 @@ TEST(rna5, stream_operator)
     EXPECT_EQ(ss.str(), "ACGUUNN");
 }
 
-TEST(rna5, from_char_member)
+TEST(rna5, assign_char_member)
 {
     rna5 t0;
-    t0.from_char('A');
+    t0.assign_char('A');
     EXPECT_EQ(t0, rna5::A);
-    t0.from_char('C');
+    t0.assign_char('C');
     EXPECT_EQ(t0, rna5::C);
-    t0.from_char('G');
+    t0.assign_char('G');
     EXPECT_EQ(t0, rna5::G);
-    t0.from_char('T');
+    t0.assign_char('T');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    t0.from_char('U');
+    t0.assign_char('U');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    t0.from_char('N');
+    t0.assign_char('N');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    t0.from_char('a');
+    t0.assign_char('a');
     EXPECT_EQ(t0, rna5::A);
-    t0.from_char('c');
+    t0.assign_char('c');
     EXPECT_EQ(t0, rna5::C);
-    t0.from_char('g');
+    t0.assign_char('g');
     EXPECT_EQ(t0, rna5::G);
-    t0.from_char('t');
+    t0.assign_char('t');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    t0.from_char('u');
+    t0.assign_char('u');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    t0.from_char('n');
+    t0.assign_char('n');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    t0.from_char('z');
+    t0.assign_char('z');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
-    t0.from_char('H');
+    t0.assign_char('H');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
-    t0.from_char('*');
+    t0.assign_char('*');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(t0.from_char('C')), rna5 &>);
-    EXPECT_EQ(t0.from_char('C'), rna5::C);
+    static_assert(std::is_same_v<decltype(t0.assign_char('C')), rna5 &>);
+    EXPECT_EQ(t0.assign_char('C'), rna5::C);
 }
 
-TEST(rna5, from_char_free)
+TEST(rna5, assign_char_free)
 {
     rna5 t0;
-    from_char(t0, 'A');
+    assign_char(t0, 'A');
     EXPECT_EQ(t0, rna5::A);
-    from_char(t0, 'C');
+    assign_char(t0, 'C');
     EXPECT_EQ(t0, rna5::C);
-    from_char(t0, 'G');
+    assign_char(t0, 'G');
     EXPECT_EQ(t0, rna5::G);
-    from_char(t0, 'T');
+    assign_char(t0, 'T');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    from_char(t0, 'U');
+    assign_char(t0, 'U');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    from_char(t0, 'N');
+    assign_char(t0, 'N');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    from_char(t0, 'a');
+    assign_char(t0, 'a');
     EXPECT_EQ(t0, rna5::A);
-    from_char(t0, 'c');
+    assign_char(t0, 'c');
     EXPECT_EQ(t0, rna5::C);
-    from_char(t0, 'g');
+    assign_char(t0, 'g');
     EXPECT_EQ(t0, rna5::G);
-    from_char(t0, 't');
+    assign_char(t0, 't');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    from_char(t0, 'u');
+    assign_char(t0, 'u');
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    from_char(t0, 'n');
+    assign_char(t0, 'n');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    from_char(t0, 'z');
+    assign_char(t0, 'z');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
-    from_char(t0, 'H');
+    assign_char(t0, 'H');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
-    from_char(t0, '*');
+    assign_char(t0, '*');
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(from_char(t0, 'C')), rna5 &>);
-    EXPECT_EQ(from_char(t0, 'C'), rna5::C);
+    static_assert(std::is_same_v<decltype(assign_char(t0, 'C')), rna5 &>);
+    EXPECT_EQ(assign_char(t0, 'C'), rna5::C);
 }
 
-TEST(rna5, from_integral_member)
+TEST(rna5, assign_rank_member)
 {
     rna5 t0;
-    t0.from_integral(0);
+    t0.assign_rank(0);
     EXPECT_EQ(t0, rna5::A);
-    t0.from_integral(1);
+    t0.assign_rank(1);
     EXPECT_EQ(t0, rna5::C);
-    t0.from_integral(2);
+    t0.assign_rank(2);
     EXPECT_EQ(t0, rna5::G);
-    t0.from_integral(3);
+    t0.assign_rank(3);
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    t0.from_integral(4);
+    t0.assign_rank(4);
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(t0.from_integral(2)), rna5 &>);
-    EXPECT_EQ(t0.from_integral(1), rna5::C);
+    static_assert(std::is_same_v<decltype(t0.assign_rank(2)), rna5 &>);
+    EXPECT_EQ(t0.assign_rank(1), rna5::C);
 }
 
-TEST(rna5, from_integral_free)
+TEST(rna5, assign_rank_free)
 {
     rna5 t0;
-    from_integral(t0, 0);
+    assign_rank(t0, 0);
     EXPECT_EQ(t0, rna5::A);
-    from_integral(t0, 1);
+    assign_rank(t0, 1);
     EXPECT_EQ(t0, rna5::C);
-    from_integral(t0, 2);
+    assign_rank(t0, 2);
     EXPECT_EQ(t0, rna5::G);
-    from_integral(t0, 3);
+    assign_rank(t0, 3);
     EXPECT_EQ(t0, rna5::T);
     EXPECT_EQ(t0, rna5::U);
-    from_integral(t0, 4);
+    assign_rank(t0, 4);
     EXPECT_EQ(t0, rna5::N);
     EXPECT_EQ(t0, rna5::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(from_integral(t0, 2)), rna5 &>);
-    EXPECT_EQ(from_integral(t0, 1), rna5::C);
+    static_assert(std::is_same_v<decltype(assign_rank(t0, 2)), rna5 &>);
+    EXPECT_EQ(assign_rank(t0, 1), rna5::C);
 }
 
 // ------------------------------------------------------------------

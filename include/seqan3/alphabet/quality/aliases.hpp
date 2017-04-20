@@ -76,6 +76,5 @@ using nucl16q = quality_composition<nucl16, illumina18>;
 
 #ifndef NDEBUG
 static_assert(seqan3::nucleotide_concept<seqan3::dna4q>);
-static_assert(seqan3::detail::internal_alphabet_concept<seqan3::dna4q>);
 static_assert(sizeof(seqan3::dna4q) == sizeof(seqan3::dna4) + sizeof(seqan3::illumina18));
 #endif

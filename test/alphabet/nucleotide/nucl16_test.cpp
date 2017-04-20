@@ -147,16 +147,16 @@ TEST(nucl16, to_char_free)
         EXPECT_EQ(to_char(all_nucl16[i]), capital_char[i]);
 }
 
-TEST(nucl16, to_integral_member)
+TEST(nucl16, to_rank_member)
 {
     for (size_t i = 0; i < 16; ++i)
-        EXPECT_EQ(all_nucl16[i].to_integral(), i);
+        EXPECT_EQ(all_nucl16[i].to_rank(), i);
 }
 
-TEST(nucl16, to_integral_free)
+TEST(nucl16, to_rank_free)
 {
     for (size_t i = 0; i < 16; ++i)
-        EXPECT_EQ(all_nucl16[i].to_integral(), i);
+        EXPECT_EQ(all_nucl16[i].to_rank(), i);
 }
 
 TEST(nucl16, stream_operator)
@@ -166,74 +166,74 @@ TEST(nucl16, stream_operator)
     EXPECT_EQ(ss.str(), "ACGTUNN");
 }
 
-TEST(nucl16, from_char_member)
+TEST(nucl16, assign_char_member)
 {
     nucl16 t0;
     for (size_t i = 0; i < 16; ++i)
     {
-        t0.from_char(lower_char[i]);
+        t0.assign_char(lower_char[i]);
         EXPECT_EQ(t0, all_nucl16[i]);
-        t0.from_char(capital_char[i]);
+        t0.assign_char(capital_char[i]);
         EXPECT_EQ(t0, all_nucl16[i]);
     }
 
-    t0.from_char('z');
+    t0.assign_char('z');
     EXPECT_EQ(t0, nucl16::N);
     EXPECT_EQ(t0, nucl16::UNKNOWN);
-    t0.from_char('*');
+    t0.assign_char('*');
     EXPECT_EQ(t0, nucl16::N);
     EXPECT_EQ(t0, nucl16::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(t0.from_char('C')), nucl16 &>);
-    EXPECT_EQ(t0.from_char('C'), nucl16::C);
+    static_assert(std::is_same_v<decltype(t0.assign_char('C')), nucl16 &>);
+    EXPECT_EQ(t0.assign_char('C'), nucl16::C);
 }
 
-TEST(nucl16, from_char_free)
+TEST(nucl16, assign_char_free)
 {
     nucl16 t0;
     for (size_t i = 0; i < 16; ++i)
     {
-        from_char(t0, lower_char[i]);
+        assign_char(t0, lower_char[i]);
         EXPECT_EQ(t0, all_nucl16[i]);
-        from_char(t0, capital_char[i]);
+        assign_char(t0, capital_char[i]);
         EXPECT_EQ(t0, all_nucl16[i]);
     }
 
-    from_char(t0, 'z');
+    assign_char(t0, 'z');
     EXPECT_EQ(t0, nucl16::N);
     EXPECT_EQ(t0, nucl16::UNKNOWN);
-    from_char(t0, '*');
+    assign_char(t0, '*');
     EXPECT_EQ(t0, nucl16::N);
     EXPECT_EQ(t0, nucl16::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(from_char(t0, 'C')), nucl16 &>);
-    EXPECT_EQ(from_char(t0, 'C'), nucl16::C);
+    static_assert(std::is_same_v<decltype(assign_char(t0, 'C')), nucl16 &>);
+    EXPECT_EQ(assign_char(t0, 'C'), nucl16::C);
 }
 
-TEST(nucl16, from_integral_member)
+TEST(nucl16, assign_rank_member)
 {
     nucl16 t0;
     for (size_t i = 0; i < 16; ++i)
     {
-        t0.from_integral(i);
+        t0.assign_rank(i);
         EXPECT_EQ(t0, all_nucl16[i]);
     }
 
-    static_assert(std::is_same_v<decltype(t0.from_integral(2)), nucl16 &>);
-    EXPECT_EQ(t0.from_integral(2), nucl16::C);
+    static_assert(std::is_same_v<decltype(t0.assign_rank(2)), nucl16 &>);
+    EXPECT_EQ(t0.assign_rank(2), nucl16::C);
 }
 
-TEST(nucl16, from_integral_free)
+TEST(nucl16, assign_rank_free)
 {
     nucl16 t0;
     for (size_t i = 0; i < 16; ++i)
     {
-        from_integral(t0, i);
+        assign_rank(t0, i);
         EXPECT_EQ(t0, all_nucl16[i]);
     }
 
-    static_assert(std::is_same_v<decltype(from_integral(t0, 2)), nucl16 &>);
-    EXPECT_EQ(from_integral(t0, 2), nucl16::C);
+    static_assert(std::is_same_v<decltype(assign_rank(t0, 2)), nucl16 &>);
+    EXPECT_EQ(assign_rank(t0, 2), nucl16::C);
 }
 
 // ------------------------------------------------------------------

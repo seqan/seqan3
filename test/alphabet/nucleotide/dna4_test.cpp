@@ -149,24 +149,24 @@ TEST(dna4, to_char_free)
     EXPECT_EQ(to_char(dna4::UNKNOWN), 'A');
 }
 
-TEST(dna4, to_integral_member)
+TEST(dna4, to_rank_member)
 {
-    EXPECT_EQ(dna4::A.to_integral(), 0);
-    EXPECT_EQ(dna4::C.to_integral(), 1);
-    EXPECT_EQ(dna4::G.to_integral(), 2);
-    EXPECT_EQ(dna4::T.to_integral(), 3);
-    EXPECT_EQ(dna4::U.to_integral(), 3);
-    EXPECT_EQ(dna4::UNKNOWN.to_integral(), 0);
+    EXPECT_EQ(dna4::A.to_rank(), 0);
+    EXPECT_EQ(dna4::C.to_rank(), 1);
+    EXPECT_EQ(dna4::G.to_rank(), 2);
+    EXPECT_EQ(dna4::T.to_rank(), 3);
+    EXPECT_EQ(dna4::U.to_rank(), 3);
+    EXPECT_EQ(dna4::UNKNOWN.to_rank(), 0);
 }
 
-TEST(dna4, to_integral_free)
+TEST(dna4, to_rank_free)
 {
-    EXPECT_EQ(to_integral(dna4::A), 0);
-    EXPECT_EQ(to_integral(dna4::C), 1);
-    EXPECT_EQ(to_integral(dna4::G), 2);
-    EXPECT_EQ(to_integral(dna4::T), 3);
-    EXPECT_EQ(to_integral(dna4::U), 3);
-    EXPECT_EQ(to_integral(dna4::UNKNOWN), 0);
+    EXPECT_EQ(to_rank(dna4::A), 0);
+    EXPECT_EQ(to_rank(dna4::C), 1);
+    EXPECT_EQ(to_rank(dna4::G), 2);
+    EXPECT_EQ(to_rank(dna4::T), 3);
+    EXPECT_EQ(to_rank(dna4::U), 3);
+    EXPECT_EQ(to_rank(dna4::UNKNOWN), 0);
 }
 
 TEST(dna4, stream_operator)
@@ -176,130 +176,130 @@ TEST(dna4, stream_operator)
     EXPECT_EQ(ss.str(), "ACGTTA");
 }
 
-TEST(dna4, from_char_member)
+TEST(dna4, assign_char_member)
 {
     dna4 t0;
-    t0.from_char('A');
+    t0.assign_char('A');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    t0.from_char('C');
+    t0.assign_char('C');
     EXPECT_EQ(t0, dna4::C);
-    t0.from_char('G');
+    t0.assign_char('G');
     EXPECT_EQ(t0, dna4::G);
-    t0.from_char('T');
+    t0.assign_char('T');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
-    t0.from_char('U');
+    t0.assign_char('U');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
 
-    t0.from_char('a');
+    t0.assign_char('a');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    t0.from_char('c');
+    t0.assign_char('c');
     EXPECT_EQ(t0, dna4::C);
-    t0.from_char('g');
+    t0.assign_char('g');
     EXPECT_EQ(t0, dna4::G);
-    t0.from_char('t');
+    t0.assign_char('t');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
-    t0.from_char('u');
+    t0.assign_char('u');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
 
-    t0.from_char('z');
+    t0.assign_char('z');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    t0.from_char('H');
+    t0.assign_char('H');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    t0.from_char('*');
+    t0.assign_char('*');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(t0.from_char('C')), dna4 &>);
-    EXPECT_EQ(t0.from_char('C'), dna4::C);
+    static_assert(std::is_same_v<decltype(t0.assign_char('C')), dna4 &>);
+    EXPECT_EQ(t0.assign_char('C'), dna4::C);
 }
 
-TEST(dna4, from_char_free)
+TEST(dna4, assign_char_free)
 {
     dna4 t0;
-    from_char(t0, 'A');
+    assign_char(t0, 'A');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    from_char(t0, 'C');
+    assign_char(t0, 'C');
     EXPECT_EQ(t0, dna4::C);
-    from_char(t0, 'G');
+    assign_char(t0, 'G');
     EXPECT_EQ(t0, dna4::G);
-    from_char(t0, 'T');
+    assign_char(t0, 'T');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
-    from_char(t0, 'U');
+    assign_char(t0, 'U');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
 
-    from_char(t0, 'a');
+    assign_char(t0, 'a');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    from_char(t0, 'c');
+    assign_char(t0, 'c');
     EXPECT_EQ(t0, dna4::C);
-    from_char(t0, 'g');
+    assign_char(t0, 'g');
     EXPECT_EQ(t0, dna4::G);
-    from_char(t0, 't');
+    assign_char(t0, 't');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
-    from_char(t0, 'u');
+    assign_char(t0, 'u');
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
 
-    from_char(t0, 'z');
+    assign_char(t0, 'z');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    from_char(t0, 'H');
+    assign_char(t0, 'H');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    from_char(t0, '*');
+    assign_char(t0, '*');
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
 
-    static_assert(std::is_same_v<decltype(from_char(t0, 'C')), dna4 &>);
-    EXPECT_EQ(from_char(t0, 'C'), dna4::C);
+    static_assert(std::is_same_v<decltype(assign_char(t0, 'C')), dna4 &>);
+    EXPECT_EQ(assign_char(t0, 'C'), dna4::C);
 }
 
-TEST(dna4, from_integral_member)
+TEST(dna4, assign_rank_member)
 {
     dna4 t0;
-    t0.from_integral(0);
+    t0.assign_rank(0);
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    t0.from_integral(1);
+    t0.assign_rank(1);
     EXPECT_EQ(t0, dna4::C);
-    t0.from_integral(2);
+    t0.assign_rank(2);
     EXPECT_EQ(t0, dna4::G);
-    t0.from_integral(3);
+    t0.assign_rank(3);
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
 
-    static_assert(std::is_same_v<decltype(t0.from_integral(2)), dna4 &>);
-    EXPECT_EQ(t0.from_integral(1), dna4::C);
+    static_assert(std::is_same_v<decltype(t0.assign_rank(2)), dna4 &>);
+    EXPECT_EQ(t0.assign_rank(1), dna4::C);
 }
 
-TEST(dna4, from_integral_free)
+TEST(dna4, assign_rank_free)
 {
     dna4 t0;
-    from_integral(t0, 0);
+    assign_rank(t0, 0);
     EXPECT_EQ(t0, dna4::A);
     EXPECT_EQ(t0, dna4::UNKNOWN);
-    from_integral(t0, 1);
+    assign_rank(t0, 1);
     EXPECT_EQ(t0, dna4::C);
-    from_integral(t0, 2);
+    assign_rank(t0, 2);
     EXPECT_EQ(t0, dna4::G);
-    from_integral(t0, 3);
+    assign_rank(t0, 3);
     EXPECT_EQ(t0, dna4::T);
     EXPECT_EQ(t0, dna4::U);
 
-    static_assert(std::is_same_v<decltype(from_integral(t0, 2)), dna4 &>);
-    EXPECT_EQ(from_integral(t0, 1), dna4::C);
+    static_assert(std::is_same_v<decltype(assign_rank(t0, 2)), dna4 &>);
+    EXPECT_EQ(assign_rank(t0, 1), dna4::C);
 }
 
 // ------------------------------------------------------------------

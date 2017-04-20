@@ -66,9 +66,9 @@ namespace seqan3
  *     // doesn't work:
  *     // nucl16 my_letter{'A'};
  *
- *     my_letter.from_char('C'); // <- this does!
+ *     my_letter.assign_char('C'); // <- this does!
  *
- *     my_letter.from_char('F'); // converted to N internally
+ *     my_letter.assign_char('F'); // converted to N internally
  *     if (my_letter.to_char() == 'N')
  *        std::cout << "yeah\n"; // "yeah";
  *~~~~~~~~~~~~~~~
@@ -78,8 +78,8 @@ struct nucl16
 {
     //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_integral()).
-    using integral_type = uint8_t;
+    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+    using rank_type = uint8_t;
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
@@ -111,13 +111,13 @@ struct nucl16
     //!\brief Return the letter as a character of char_type.
     constexpr char_type to_char() const noexcept
     {
-        return value_to_char[static_cast<integral_type>(_value)];
+        return value_to_char[static_cast<rank_type>(_value)];
     }
 
     //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr integral_type to_integral() const noexcept
+    constexpr rank_type to_rank() const noexcept
     {
-        return static_cast<integral_type>(_value);
+        return static_cast<rank_type>(_value);
     }
     //!\}
 
@@ -125,14 +125,14 @@ struct nucl16
      * \{
      */
     //!\brief Assign from a character.
-    constexpr nucl16 & from_char(char_type const c) noexcept
+    constexpr nucl16 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
     //!\brief Assign from a numeric value.
-    constexpr nucl16 & from_integral(integral_type const c)
+    constexpr nucl16 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
         _value = static_cast<internal_type>(c);
@@ -141,7 +141,7 @@ struct nucl16
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr integral_type value_size{16};
+    static constexpr rank_type value_size{16};
 
     //!\name Comparison operators
     //!\{
@@ -184,7 +184,7 @@ protected:
      * It is has the drawback that it also introduces a scope which in turn makes
      * the static "letter values " members necessary.
      */
-    enum struct internal_type : integral_type
+    enum struct internal_type : rank_type
     {
         A,
         B,
@@ -347,7 +347,6 @@ struct is_nucleotide<nucl16> : public std::true_type
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::nucl16>);
-static_assert(seqan3::detail::internal_alphabet_concept<seqan3::nucl16>);
 static_assert(seqan3::nucleotide_concept<seqan3::nucl16>);
 #endif
 
@@ -431,7 +430,7 @@ inline nucl16_vector operator "" _nucl16(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }
@@ -466,7 +465,7 @@ inline nucl16_string operator "" _nucl16s(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }
