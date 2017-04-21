@@ -46,6 +46,7 @@
 #include <algorithm>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/detail/int_types.hpp>
 
 /*! The union alphabet
  * \ingroup alphabet
@@ -54,34 +55,11 @@
 namespace seqan3::detail
 {
 
-template <size_t size>
-constexpr auto at_least_type() {
-    if constexpr(size <= 1)
-    {
-        return bool{};
-    } else if constexpr(size <= 255u)
-    {
-        return uint8_t{};
-    } else if constexpr(size <= 65535u)
-    {
-        return uint16_t{};
-    } else if constexpr(size <= 4294967295u)
-    {
-        return uint32_t{};
-    } else
-    {
-        return uint64_t{};
-    }
-}
-
-template <size_t size>
-using at_least_type_t = decltype(detail::at_least_type<size>());
-
 template <typename ...alphabet_types>
 constexpr auto alphabet_prefix_sum_sizes()
 {
     constexpr size_t value_size = ((size_t)alphabet_types::value_size + ... + 0);
-    using rank_t = at_least_type_t<value_size>;
+    using rank_t = min_viable_uint_t<value_size>;
 
     constexpr size_t N = sizeof...(alphabet_types) + 1;
     using array_t = std::array<rank_t, N>;
@@ -139,7 +117,7 @@ template <typename char_t, typename ...alphabet_types>
 constexpr auto char_to_value_table()
 {
     constexpr size_t value_size = ((size_t)alphabet_types::value_size + ... + 0);
-    using rank_t = at_least_type_t<value_size>;
+    using rank_t = min_viable_uint_t<value_size>;
 
     constexpr auto table_size = 1 << (sizeof(char_t) * 8);
     constexpr auto value_to_char = value_to_char_table<char_t, alphabet_types...>();
@@ -195,7 +173,7 @@ public:
     //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
     using char_type = typename first_alphabet_type::char_type;
     //! the type of the alphabet when represented as a number (e.g. via @link to_rank @endlink)
-    using rank_type = detail::at_least_type_t<value_size>;
+    using rank_type = detail::min_viable_uint_t<value_size>;
     /*! the type used to assign a value from one of the base alphabets during
      * copy construction or copy assignment. (i.e. via
      * @link union_alphabet(const variant_type & alphabet) @endlink or
