@@ -32,28 +32,32 @@
 //
 // ============================================================================
 
-#pragma once
+#include <gtest/gtest.h>
+#include <seqan3/core/detail/int_types.hpp>
 
-#include <type_traits>
+using namespace seqan3;
 
-#include <seqan3/core/platform.hpp>
-
-/*!\file core/detail/int_types.hpp
- * \brief Contains metaprogramming utilities for integer types.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
- */
-
-namespace seqan3::detail
+TEST(int_types_test, min_viable_uint_t)
 {
+    using bool_1_t = detail::min_viable_uint_t<0ull>;
+    using bool_2_t = detail::min_viable_uint_t<1ull>;
+    using uint8_1_t = detail::min_viable_uint_t<2ull>;
+    using uint8_2_t = detail::min_viable_uint_t<0xFFull>;
+    using uint16_1_t = detail::min_viable_uint_t<0x100ull>;
+    using uint16_2_t = detail::min_viable_uint_t<0xFFFFull>;
+    using uint32_1_t = detail::min_viable_uint_t<0x10000ull>;
+    using uint32_2_t = detail::min_viable_uint_t<0xFFFFFFFFull>;
+    using uint64_1_t = detail::min_viable_uint_t<0x100000000ull>;
+    using uint64_2_t = detail::min_viable_uint_t<0xFFFFFFFFFFFFFFFFull>;
 
-//!\cond DEV
-//!\brief Given a value, return the smallest unsigned integer that can hold it.
-template <uint64_t value>
-using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
-                          std::conditional_t<value <= 255ull,        uint8_t,
-                          std::conditional_t<value <= 65535ull,      uint16_t,
-                          std::conditional_t<value <= 4294967295ull, uint32_t, uint64_t>>>>;
-//!\endcond
-
-} // namespace seqan3::detail
+    EXPECT_TRUE((std::is_same_v<bool_1_t, bool>));
+    EXPECT_TRUE((std::is_same_v<bool_2_t, bool>));
+    EXPECT_TRUE((std::is_same_v<uint8_1_t, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<uint8_2_t, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<uint16_1_t, uint16_t>));
+    EXPECT_TRUE((std::is_same_v<uint16_2_t, uint16_t>));
+    EXPECT_TRUE((std::is_same_v<uint32_1_t, uint32_t>));
+    EXPECT_TRUE((std::is_same_v<uint32_2_t, uint32_t>));
+    EXPECT_TRUE((std::is_same_v<uint64_1_t, uint64_t>));
+    EXPECT_TRUE((std::is_same_v<uint64_2_t, uint64_t>));
+}
