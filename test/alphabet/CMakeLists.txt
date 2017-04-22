@@ -9,3 +9,7 @@ add_subdirectory(gap)
 add_executable(alphabet_union_alphabet_test union_alphabet.cpp)
 add_test(NAME test_alphabet_union_alphabet_test COMMAND alphabet_union_alphabet_test)
 target_link_libraries(alphabet_union_alphabet_test ${SEQAN3_LIBRARIES})
+
+add_executable(view_convert_test view_convert.cpp)
+add_test(NAME test_convert_test COMMAND view_convert_test)
+target_link_libraries(view_convert_test ${SEQAN3_LIBRARIES})
