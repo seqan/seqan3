@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file alphabet/nucleotide/rna5.hpp
- * \ingroup alphabet
+ * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains seqan3::rna5, container aliases and string literals.
  */
@@ -55,7 +55,7 @@ namespace seqan3
 {
 
 /*!\brief The five letter RNA alphabet of A,C,G,U and the unknown character N.
- * \ingroup alphabet
+ * \ingroup nucleotide
  *
  * \details
  * This alphabet inherits from seqan3::dna5 and is guaranteed to have the same internal representation of
@@ -153,6 +153,7 @@ namespace seqan3::detail
 {
 
 //!\brief seqan3::rna5 is defined as being a nucleotide alphabet.
+//!\ingroup nucleotide
 template <>
 struct is_nucleotide<rna5> : public std::true_type
 {};

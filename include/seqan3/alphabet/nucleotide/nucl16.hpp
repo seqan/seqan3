@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file alphabet/nucleotide/nucl16.hpp
- * \ingroup alphabet
+ * \ingroup nucleotide
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Contains seqan3::nucl16, container aliases and string literals.
  */
@@ -55,7 +55,7 @@ namespace seqan3
 {
 
 /*!\brief The 16 letter DNA alphabet, containing all IUPAC smybols.
- * \ingroup alphabet
+ * \ingroup nucleotide
  *
  * \details
  * Note that in contrast to seqan3::dna4, seqan3::rna4, seqan3::dna5 and seqan3::rna5
@@ -339,6 +339,7 @@ namespace seqan3::detail
 {
 
 //!\brief seqan3::nucl16 is defined as being a nucleotide alphabet.
+//!\ingroup nucleotide
 template <>
 struct is_nucleotide<nucl16> : public std::true_type
 {};
