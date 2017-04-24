@@ -32,49 +32,15 @@
 //
 // ============================================================================
 
-/*!\file alphabet/quality/aliases.hpp
+/*!\file alphabet/nucleotide.hpp
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains aliases for quality_composition.
+ * \brief Meta-header for the nucleotide submodule; includes all headers from alphabet/nucleotide/.
  */
 
-#pragma once
-
-#include <iostream>
-#include <string>
-#include <utility>
-
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality/composition.hpp>
-#include <seqan3/alphabet/quality/concept.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/nucl16.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16.hpp>
-
-namespace seqan3
-{
-
-//!\brief An alphabet that stores a seqan3::dna4 letter and an seqan3::illumina18 letter at each position.
-using dna4q = quality_composition<dna4, illumina18>;
-
-//!\brief An alphabet that stores a seqan3::dna5 letter and an seqan3::illumina18 letter at each position.
-using dna5q = quality_composition<dna5, illumina18>;
-
-//!\brief An alphabet that stores a seqan3::rna4 letter and an seqan3::illumina18 letter at each position.
-using rna4q = quality_composition<rna4, illumina18>;
-
-//!\brief An alphabet that stores a seqan3::rna5 letter and an seqan3::illumina18 letter at each position.
-using rna5q = quality_composition<rna5, illumina18>;
-
-//!\brief An alphabet that stores a seqan3::nucl16 letter and an seqan3::illumina18 letter at each position.
-using nucl16q = quality_composition<nucl16, illumina18>;
-
-} // namespace seqan3
-
-#ifndef NDEBUG
-static_assert(seqan3::nucleotide_concept<seqan3::dna4q>);
-static_assert(sizeof(seqan3::dna4q) == sizeof(seqan3::dna4) + sizeof(seqan3::illumina18));
-#endif

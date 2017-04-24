@@ -35,7 +35,7 @@
 /*!\file alphabet/concept.hpp
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Core alphabet concept.
+ * \brief Core alphabet concept and free function/metafunction wrappers.
  */
 
 #pragma once
@@ -43,142 +43,200 @@
 #include <iostream>
 #include <string>
 
+#include <seqan3/core/platform.hpp>
+
 namespace seqan3
 {
 
-// ------------------------------------------------------------------
-// free functions to member function wrapper
-// ------------------------------------------------------------------
-// move to alphabet_detail.hpp?
+// ============================================================================
+// Free/Global interface wrappers
+// ============================================================================
 
-
-/* The public alphabet concept requires only free function access
- * for type that have member functions we create a wrapper here
- * so you don't have to repeat it.
- */
-//! \privatesection
-namespace detail
-{
-
-template <typename t>
-concept bool internal_alphabet_concept = requires (t t1)
-{
-    typename t::char_type;
-    typename t::integral_type;
-    t::value_size;
-
-    { t1.to_char() } -> typename t::char_type;
-    { t1.to_integral() } -> typename t::integral_type;
-
-    { t1.from_char('a')   } -> t;
-    { t1.from_integral(0) } -> t;
-};
-} // namespace seqan3::detail
-//! \publicsection
+//!\addtogroup alphabet
+//!\{
 
 // ------------------------------------------------------------------
-// type metafunctions operator
+// type metafunctions
 // ------------------------------------------------------------------
 
-//! Type metafunction that returns the `char_type` defined inside an alphabet type.
+//!\brief Type metafunction that returns the `char_type` defined inside an alphabet type.
+//!\tparam alphabet_type Must provide a `char_type` member type.
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
+//!\cond
+    requires requires (alphabet_type c) { typename alphabet_type::char_type; }
+//!\endcond
 struct underlying_char
 {
+    //!\brief The alphabet's char_type.
     using type = typename alphabet_type::char_type;
 };
 
-//! Shortcut for @link underlying_char @endlink
+//!\brief Shortcut for seqan3::underlying_char
 template <typename alphabet_type>
+//!\relates seqan3::underlying_char
 using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
-//! Type metafunction that returns the `integral_type` defined inside an alphabet type.
+//!\brief Type metafunction that returns the `rank_type` defined inside an alphabet type.
+//!\tparam alphabet_type Must provide a `rank_type` member type.
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-struct underlying_integral
+//!\cond
+    requires requires (alphabet_type c) { typename alphabet_type::rank_type; }
+//!\endcond
+struct underlying_rank
 {
-    using type = typename alphabet_type::integral_type;
+    //!\brief The alphabet's rank_type.
+    using type = typename alphabet_type::rank_type;
 };
 
-//! Shortcut for @link underlying_integral @endlink
+//!\brief Shortcut for seqan3::underlying_rank
+//!\relates seqan3::underlying_rank
 template <typename alphabet_type>
-using underlying_integral_t = typename underlying_integral<alphabet_type>::type;
+using underlying_rank_t = typename underlying_rank<alphabet_type>::type;
 
 // ------------------------------------------------------------------
 // value metafunctions
 // ------------------------------------------------------------------
 
-//! Value metafunction that returns the `value_size` defined inside an alphabet type.
+//!\brief Value metafunction that returns the `value_size` defined inside an alphabet type.
+//!\tparam alphabet_type Must provide a `value_size` static member.
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
+//!\cond
+    requires requires (alphabet_type c) { alphabet_type::value_size; }
+//!\endcond
 struct alphabet_size
 {
-    static constexpr underlying_integral_t<alphabet_type> value = alphabet_type::value_size;
+    //!\brief The alphabet's size.
+    static constexpr underlying_rank_t<alphabet_type> value = alphabet_type::value_size;
 };
 
-//! Shortcut for @link alphabet_size @endlink
+//!\brief Shortcut for seqan3::alphabet_size
+//!\relates seqan3::alphabet_size
 template <typename alphabet_type>
-constexpr underlying_integral_t<alphabet_type> alphabet_size_v = alphabet_size<alphabet_type>::value;
+constexpr underlying_rank_t<alphabet_type> alphabet_size_v = alphabet_size<alphabet_type>::value;
 
 // ------------------------------------------------------------------
 // free functions
 // ------------------------------------------------------------------
 
-//!\publicsection
-//!@name Wrapper functions to make alphabet members "globally" visible
-//!@{
-
-//! Free function that calls `.to_char()` on the argument
+/*!\name Free function wrappers for alphabet member functions
+ * \brief For alphabets that implement needed functions as members, make them "globally" available.
+ * \{
+ */
+/*!\brief Free function wrapper that calls `.to_char()` on the argument.
+ * \tparam alphabet_type Must provide a `.to_char()` member function.
+ * \param c The alphabet letter that you wish to convert to char.
+ * \returns The letter's value in the alphabet's rank type (usually `char`).
+ */
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const & c)
+constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const c)
+    requires requires (alphabet_type c) { { c.to_char() } -> underlying_char_t<alphabet_type>; }
 {
     return c.to_char();
 }
 
-//! Free function that calls `.to_integral()` on the argument
+/*!\brief Ostream operator that delegates to `c.to_char()`.
+ * \tparam alphabet_type Must provide a `.to_char()` member function.
+ * \param os The output stream you are printing to.
+ * \param c The alphabet letter that you wish to convert to char.
+ * \returns A reference to the output stream.
+ */
 template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-constexpr underlying_integral_t<alphabet_type> to_integral(alphabet_type const & c)
-{
-    return c.to_integral();
-}
-
-//! Free function that calls `.from_char(in)` on the first argument
-template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_type from_char(alphabet_type & c, char const in)
-{
-    return c.from_char(in);
-}
-
-//! Free function that calls `.from_integral(in)` on the first argument
-template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-constexpr alphabet_type from_integral(alphabet_type & c, underlying_integral_t<alphabet_type> const in)
-{
-    return c.from_integral(in);
-}
-
-//! Free ostream operator that delegates to `c.to_char()`
-template <typename alphabet_type>
-    requires detail::internal_alphabet_concept<alphabet_type>
-std::ostream& operator<<(std::ostream & os, alphabet_type const & c)
+std::ostream & operator<<(std::ostream & os, alphabet_type const c)
+//!\cond
+    requires requires (alphabet_type c) { { c.to_char() } -> underlying_char_t<alphabet_type>; }
+//!\endcond
 {
     os << c.to_char();
     return os;
 }
 
-//!@}
-// ------------------------------------------------------------------
-// alphabet concept
-// ------------------------------------------------------------------
-
-/*!\var concept bool alphabet_concept
- * \brief A concept for container and string alphabets
- * \privatesection
+/*!\brief Free function wrapper that calls `.to_rank()` on the argument.
+ * \tparam alphabet_type Must provide a `.to_rank()` member function.
+ * \param c The alphabet letter that you wish to convert to rank.
+ * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
+template <typename alphabet_type>
+constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const c)
+    requires requires (alphabet_type c) { { c.to_rank() } -> underlying_rank_t<alphabet_type>; }
+{
+    return c.to_rank();
+}
 
+/*!\brief Free function wrapper that calls `.assign_char(in)` on the first argument.
+ * \tparam alphabet_type Must provide an `.assign_char()` member function.
+ * \param c The alphabet letter that you wish to assign to.
+ * \param in The `char` value you wish to assign.
+ * \returns A reference to the alphabet letter you passed in.
+ */
+template <typename alphabet_type>
+constexpr alphabet_type & assign_char(alphabet_type & c, underlying_char_t<alphabet_type> const in)
+    requires requires (alphabet_type c) { { c.assign_char(char{0}) } -> alphabet_type &; }
+{
+    return c.assign_char(in);
+}
+
+/*!\brief Free function wrapper that calls `.assign_char(in)` on the first argument.
+ * \tparam alphabet_type Must provide an `.assign_char()` member function.
+ * \param c An alphabet letter temporary.
+ * \param in The `char` value you wish to assign.
+ * \returns The assignment result as a temporary.
+ * \details
+ * Use this e.g. to newly create alphabet letters from char:
+ * ~~~{.cpp}
+ * auto l = assign_char(dna5{}, 'G');  // l is of type dna5
+ * ~~~
+ */
+template <typename alphabet_type>
+constexpr alphabet_type && assign_char(alphabet_type && c, underlying_char_t<alphabet_type> const in)
+    requires requires (alphabet_type c) { { c.assign_char(char{0}) } -> alphabet_type &; }
+{
+    return std::move(c.assign_char(in));
+}
+
+/*!\brief Free function wrapper that calls `.assign_rank(in)` on the first argument.
+ * \tparam alphabet_type Must provide an `.assign_rank()` member function.
+ * \param c The alphabet letter that you wish to assign to.
+ * \param in The `rank` value you wish to assign.
+ * \returns A reference to the alphabet letter you passed in.
+ */
+template <typename alphabet_type>
+constexpr alphabet_type & assign_rank(alphabet_type & c, underlying_rank_t<alphabet_type> const in)
+    requires requires (alphabet_type c) { { c.assign_rank(uint8_t{0}) } -> alphabet_type &; }
+{
+    return c.assign_rank(in);
+}
+
+/*!\brief Free function wrapper that calls `.assign_rank(in)` on the first argument.
+ * \tparam alphabet_type Must provide an `.assign_rank()` member function.
+ * \param c An alphabet letter temporary.
+ * \param in The `rank` value you wish to assign.
+ * \returns The assignment result as a temporary.
+ * \details
+ * Use this e.g. to newly create alphabet letters from rank:
+ * ~~~{.cpp}
+ * auto l = assign_rank(dna5{}, 1);  // l is of type dna5 and == dna5::C
+ * ~~~
+ */
+template <typename alphabet_type>
+constexpr alphabet_type && assign_rank(alphabet_type && c, underlying_rank_t<alphabet_type> const in)
+    requires requires (alphabet_type c) { { c.assign_rank(uint8_t{0}) } -> alphabet_type &; }
+{
+    return std::move(c.assign_rank(in));
+}
+//!\}
+//!\}
+
+// ============================================================================
+// alphabet concept
+// ============================================================================
+
+/*!\brief The generic alphabet concept that covers most data types used in ranges.
+ * \ingroup alphabet
+ *
+ * \details
+ *
+ * TODO
+ */
 template <typename t>
 concept bool alphabet_concept = requires (t t1, t t2)
 {
@@ -189,14 +247,16 @@ concept bool alphabet_concept = requires (t t1, t t2)
     // static data members
     alphabet_size<t>::value;
 
-    // conversion from/to char
-    { to_char(t1)     } -> underlying_char_t<t>;
-    { to_integral(t1) } -> underlying_integral_t<t>;
-
-    { from_char(t1, 0)     } -> t;
-    { from_integral(t1, 0) } -> t;
-
+    // conversion to char and rank
+    { to_char(t1) } -> underlying_char_t<t>;
+    { to_rank(t1) } -> underlying_rank_t<t>;
     { std::cout << t1 };
+
+    // assignment from char and rank
+    { assign_char(t1,  0) } -> t &;
+    { assign_rank(t1,  0) } -> t &;
+    { assign_char(t{}, 0) } -> t &&;
+    { assign_rank(t{}, 0) } -> t &&;
 
     // required comparison operators
     { t1 == t2 } -> bool;
@@ -206,7 +266,5 @@ concept bool alphabet_concept = requires (t t1, t t2)
     { t1 <= t2 } -> bool;
     { t1 >= t2 } -> bool;
 };
-
-//TODO serialization
 
 } // namespace seqan3

@@ -31,35 +31,44 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
-// ============================================================================
+
+/*!\file alphabet/nucleotide/dna4.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains seqan3::dna4, container aliases and string literals.
+ */
 
 #pragma once
 
 #include <cassert>
 
-#include <seqan3/alphabet/concept.hpp>
+#include <string>
+#include <vector>
 
-/*! The four letter DNA alphabet
- * \ingroup alphabet
- */
+#include <seqan3/alphabet/nucleotide/concept.hpp>
+
+// ------------------------------------------------------------------
+// dna4
+// ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-/*! The four letter DNA alphabet of A,C,G,T
+/*!\brief The four letter DNA alphabet of A,C,G,T.
+ * \ingroup alphabet
  *
- * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
- * regular characters, but additional functions for this are available.
+ * \details
+ * Note that you can assign 'U' as a character to dna4 and it will silently
+ * be converted to 'T'.
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     dna4 my_letter{dna4::A};
  *     // doesn't work:
  *     // dna4 my_letter{'A'};
  *
- *     my_letter.from_char('C'); // <- this does!
+ *     my_letter.assign_char('C'); // <- this does!
  *
- *     my_letter.from_char('F'); // converted to A internally
+ *     my_letter.assign_char('F'); // converted to A internally
  *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
  *~~~~~~~~~~~~~~~
@@ -67,14 +76,104 @@ namespace seqan3
 
 struct dna4
 {
-    //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
+    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
-    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
-    using integral_type = uint8_t;
+    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+    using rank_type = uint8_t;
 
-    // strictly typed enum, unfortunately with scope
-    //! \privatesection
-    enum struct internal_type : integral_type
+    /*!\name Letter values
+     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
+     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
+     */
+    //!\{
+    static const dna4 A;
+    static const dna4 C;
+    static const dna4 G;
+    static const dna4 T;
+    static const dna4 U;
+    static const dna4 UNKNOWN;
+    //!\}
+
+    /*!\name Read functions
+     * \{
+     */
+    //!\brief Return the letter as a character of char_type.
+    constexpr char_type to_char() const noexcept
+    {
+        return value_to_char[static_cast<rank_type>(_value)];
+    }
+
+    //!\brief Return the letter's numeric value or rank in the alphabet.
+    constexpr rank_type to_rank() const noexcept
+    {
+        return static_cast<rank_type>(_value);
+    }
+    //!\}
+
+    /*!\name Write functions
+     * \{
+     */
+    //!\brief Assign from a character.
+    constexpr dna4 & assign_char(char_type const c) noexcept
+    {
+        _value = char_to_value[c];
+        return *this;
+    }
+
+    //!\brief Assign from a numeric value.
+    constexpr dna4 & assign_rank(rank_type const c)
+    {
+        assert(c < value_size);
+        _value = static_cast<internal_type>(c);
+        return *this;
+    }
+    //!\}
+
+    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    static constexpr rank_type value_size{4};
+
+    //!\name Comparison operators
+    //!\{
+    constexpr bool operator==(dna4 const & rhs) const noexcept
+    {
+        return _value == rhs._value;
+    }
+
+    constexpr bool operator!=(dna4 const & rhs) const noexcept
+    {
+        return _value != rhs._value;
+    }
+
+    constexpr bool operator<(dna4 const & rhs) const noexcept
+    {
+        return _value < rhs._value;
+    }
+
+    constexpr bool operator>(dna4 const & rhs) const noexcept
+    {
+        return _value > rhs._value;
+    }
+
+    constexpr bool operator<=(dna4 const & rhs) const noexcept
+    {
+        return _value <= rhs._value;
+    }
+
+    constexpr bool operator>=(dna4 const & rhs) const noexcept
+    {
+        return _value >= rhs._value;
+    }
+    //!\}
+
+protected:
+    //!\privatesection
+    /*!\brief The internal type is a strictly typed enum.
+     *
+     * This is done to prevent aggregate initialization from numbers and/or chars.
+     * It is has the drawback that it also introduces a scope which in turn makes
+     * the static "letter values " members necessary.
+     */
+    enum struct internal_type : rank_type
     {
         A,
         C,
@@ -83,95 +182,8 @@ struct dna4
         U = T,
         UNKNOWN = A
     };
-    internal_type value;
-    //! \publicsection
 
-    // import internal_types values into local scope:
-
-    /*! @name letter values
-     * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * *Don't worry about the `internal_type`.*
-     */
-    //!@{
-    static const dna4 A;
-    static const dna4 C;
-    static const dna4 G;
-    static const dna4 T;
-    static const dna4 U;
-    static const dna4 UNKNOWN;
-    //!@}
-
-    //! ability to cast to @link char_type @endlink **explicitly**.
-    explicit constexpr operator char_type() const
-    {
-        return to_char();
-    }
-
-    //! return the letter as a character of @link char_type @endlink.
-    constexpr char_type to_char() const
-    {
-        return value_to_char[static_cast<integral_type>(value)];
-    }
-
-    //! assign from a character
-    constexpr dna4 from_char(char_type const c)
-    {
-        value = char_to_value[c];
-        return *this;
-    }
-
-    //! return the letter's numeric value or rank in the alphabet
-    constexpr integral_type to_integral() const
-    {
-        return static_cast<integral_type>(value);
-    }
-
-    //! assign from a numeric value
-    constexpr dna4 from_integral(integral_type const c)
-    {
-        assert(c < value_size);
-        value = static_cast<internal_type>(c);
-        return *this;
-    }
-
-    //! The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr integral_type value_size{4};
-
-    //! @name comparison operators
-    //!@{
-    constexpr bool operator==(dna4 const & rhs) const
-    {
-        return value == rhs.value;
-    }
-
-    constexpr bool operator!=(dna4 const & rhs) const
-    {
-        return value != rhs.value;
-    }
-
-    constexpr bool operator<(dna4 const & rhs) const
-    {
-        return value < rhs.value;
-    }
-
-    constexpr bool operator>(dna4 const & rhs) const
-    {
-        return value > rhs.value;
-    }
-
-    constexpr bool operator<=(dna4 const & rhs) const
-    {
-        return value <= rhs.value;
-    }
-
-    constexpr bool operator>=(dna4 const & rhs) const
-    {
-        return value >= rhs.value;
-    }
-    //!@}
-
-    //! \privatesection
-    // conversion tables
+    //!\brief Value to char conversion table.
     static constexpr char_type value_to_char[value_size]
     {
         'A',
@@ -180,6 +192,7 @@ struct dna4
         'T'
     };
 
+    //!\brief Char to value conversion table.
     static constexpr internal_type char_to_value[256]
     {
         internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
@@ -260,6 +273,11 @@ struct dna4
         internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
         internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN  //255
     };
+public:
+    //!\privatesection
+    //!\brief The data member.
+    internal_type _value;
+    //!\publicsection
 };
 
 constexpr dna4 dna4::A{internal_type::A};
@@ -269,9 +287,122 @@ constexpr dna4 dna4::T{internal_type::T};
 constexpr dna4 dna4::U{dna4::T};
 constexpr dna4 dna4::UNKNOWN{dna4::A};
 
+} // namespace seqan3
+
+namespace seqan3::detail
+{
+
+//!\brief seqan3::dna4 is defined as being a nucleotide alphabet.
+template <>
+struct is_nucleotide<dna4> : public std::true_type
+{};
+
+} // namespace seqan3::detail
+
 #ifndef NDEBUG
-static_assert(alphabet_concept<dna4>);
-static_assert(detail::internal_alphabet_concept<dna4>);
+static_assert(seqan3::alphabet_concept<seqan3::dna4>);
+static_assert(seqan3::nucleotide_concept<seqan3::dna4>);
 #endif
 
+// ------------------------------------------------------------------
+// containers
+// ------------------------------------------------------------------
+
+namespace seqan3
+{
+
+//!\brief Alias for an std::vector of seqan3::dna4.
+//!\relates dna4
+using dna4_vector = std::vector<dna4>;
+
+
+/*!\brief Alias for an std::basic_string of seqan3::dna4.
+ * \relates dna4
+ *
+ * \attention
+ * Note that we recommend using seqan3::dna4_vector instead of dna4_string in almost all situations.
+ * While the C++ style operations on the string are well supported, you should not access the internal c-string
+ * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
+ * correct length of the string (while the `.size()` returns the correct value).
+ */
+using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
+
 } // namespace seqan3
+
+// ------------------------------------------------------------------
+// literals
+// ------------------------------------------------------------------
+
+namespace seqan3::literal
+{
+
+/*!\brief dna4 literal
+ * \relates seqan3::dna4
+ * \returns seqan3::dna4_vector
+ *
+ * You can use this string literal to easily assign to dna4_vector:
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     // these don't work:
+ *     // dna4_vector foo{"ACGTTA"};
+ *     // dna4_vector bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     dna4_vector foo{"ACGTTA"_dna4};
+ *     dna4_vector bar = "ACGTTA"_dna4;
+ *     auto bax = "ACGTTA"_dna4;
+ *~~~~~~~~~~~~~~~
+ *
+ * \attention
+ * All user-defined literals are in the namespace seqan3::literal!
+ */
+
+inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
+{
+    dna4_vector r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
+
+/*!\brief dna4 string literal
+ * \relates seqan3::dna4
+ * \returns seqan3::dna4_string
+ *
+ * You can use this string literal to easily assign to dna4_vector:
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     // these don't work:
+ *     // dna4_string foo{"ACGTTA"};
+ *     // dna4_string bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     dna4_string foo{"ACGTTA"_dna4s};
+ *     dna4_string bar = "ACGTTA"_dna4s;
+ *     auto bax = "ACGTTA"_dna4s;
+ *~~~~~~~~~~~~~~~
+ *
+ * Please note the limitations of seqan3::dna4_string and consider using the \link operator""_dna4 \endlink instead.
+ *
+ * \attention
+ * All seqan3 literals are in the namespace seqan3::literal!
+ */
+
+inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
+{
+    dna4_string r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
+
+} // namespace seqan3::literal
+

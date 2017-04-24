@@ -103,70 +103,70 @@ TEST(alphabet_aminoacid_aa27_test, to_char)
 
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
-        uint8_t integral = i - 'A';
-        aa27 amino{all_aa27[integral]};
+        uint8_t rank = i - 'A';
+        aa27 amino{all_aa27[rank]};
         char c = amino.to_char();
         EXPECT_EQ(c, i);
     }
 }
 
-TEST(alphabet_aminoacid_aa27_test, from_char)
+TEST(alphabet_aminoacid_aa27_test, assign_char)
 {
     aa27 amino;
-    amino = amino.from_char('*');
+    amino = amino.assign_char('*');
 
     EXPECT_EQ(amino, aa27::TERMINATOR);
 
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
-        uint8_t integral = i - 'A';
-        EXPECT_EQ(aa27{}.from_char(i), all_aa27[integral]);
+        uint8_t rank = i - 'A';
+        EXPECT_EQ(aa27{}.assign_char(i), all_aa27[rank]);
     }
 
     for (auto i = 'a'; i <= 'z'; ++i)
     {
-        uint8_t integral = i - 'a';
-        EXPECT_EQ(aa27{}.from_char(i), all_aa27[integral]);
+        uint8_t rank = i - 'a';
+        EXPECT_EQ(aa27{}.assign_char(i), all_aa27[rank]);
     }
 }
 
-TEST(alphabet_aminoacid_aa27_test, to_integral)
+TEST(alphabet_aminoacid_aa27_test, to_rank)
 {
     constexpr  aa27 amino_term{aa27::TERMINATOR};
-    constexpr  uint8_t integral_term = amino_term.to_integral();
+    constexpr  uint8_t rank_term = amino_term.to_rank();
 
-    EXPECT_EQ(integral_term, 26);
+    EXPECT_EQ(rank_term, 26);
 
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
-        uint8_t integral = i - 'A';
-        aa27 amino{all_aa27[integral]};
-        uint8_t integral_res = amino.to_integral();
-        EXPECT_EQ(integral_res, integral);
+        uint8_t rank = i - 'A';
+        aa27 amino{all_aa27[rank]};
+        uint8_t rank_res = amino.to_rank();
+        EXPECT_EQ(rank_res, rank);
     }
 
     for (auto i = 'a'; i <= 'z'; ++i)
     {
-        uint8_t integral = i - 'a';
-        aa27 amino{all_aa27[integral]};
-        uint8_t integral_res = amino.to_integral();
-        EXPECT_EQ(integral_res, integral);
+        uint8_t rank = i - 'a';
+        aa27 amino{all_aa27[rank]};
+        uint8_t rank_res = amino.to_rank();
+        EXPECT_EQ(rank_res, rank);
     }
 }
 
-TEST(alphabet_aminoacid_aa27_test, from_integral)
+TEST(alphabet_aminoacid_aa27_test, assign_rank)
 {
     aa27 amino_term;
-    amino_term = amino_term.from_integral(26);
+    amino_term = amino_term.assign_rank(26);
 
     EXPECT_EQ(amino_term, aa27::TERMINATOR);
 
     for (auto i = 'A'; i <= 'Z'; ++i)
     {
-        uint8_t integral = i - 'A';
+        uint8_t rank = i - 'A';
         aa27 amino;
-        amino = amino.from_integral(integral);
-        EXPECT_EQ(amino, all_aa27[integral]);
+        amino = amino.assign_rank(rank);
+        EXPECT_EQ(amino, all_aa27[rank]);
     }
 }
 

@@ -74,8 +74,8 @@ constexpr auto alphabet_objects(std::index_sequence<I...>)
 template <typename tuple_t, size_t ...I>
 constexpr auto alphabet_sizes(std::index_sequence<I...>)
 {
-    using integral_t = uint8_t;
-    using list_t = std::initializer_list<integral_t>;
+    using rank_t = uint8_t;
+    using list_t = std::initializer_list<rank_t>;
     return list_t{std::tuple_element_t<I, tuple_t>::value_size...};
 }
 
@@ -111,9 +111,9 @@ constexpr auto at_least_type() {
  *     // doesn't work:
  *     // union_alphabet<dna4, gap> my_letter{'A'};
  *
- *     union_alphabet<dna4, gap>.from_char('C'); // <- this does!
+ *     union_alphabet<dna4, gap>.assign_char('C'); // <- this does!
  *
- *     union_alphabet<dna4, gap>.from_char('-'); // gap character
+ *     union_alphabet<dna4, gap>.assign_char('-'); // gap character
  *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
  */
@@ -128,8 +128,8 @@ public:
     static constexpr size_t value_size = (alphabet_types::value_size + ... + first_alphabet_type::value_size);
     //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
     using char_type = typename first_alphabet_type::char_type;
-    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
-    using integral_type = decltype(detail::at_least_type<value_size>());
+    //! the type of the alphabet when represented as a number (e.g. via @link to_rank @endlink)
+    using rank_type = decltype(detail::at_least_type<value_size>());
 
 protected:
     using tuple_t = std::tuple<first_alphabet_type, alphabet_types...>;
@@ -139,7 +139,7 @@ protected:
 
 public:
     //! internal value
-    integral_type value;
+    rank_type value;
 
     //! ability to cast to @link char_type @endlink **explicitly**.
     explicit constexpr operator char_type() const
@@ -165,7 +165,7 @@ public:
             {
                 if (value < size_end)
                 {
-                    result = alphabet.from_integral(value - size_start).to_char();
+                    result = alphabet.assign_rank(value - size_start).to_char();
                 }
             }, *alphabets_it);
 
@@ -178,13 +178,13 @@ public:
     }
 
     //! return the letter's numeric value or rank in the alphabet
-    constexpr integral_type to_integral() const
+    constexpr rank_type to_rank() const
     {
         return value;
     }
 
     //! assign from a character
-    constexpr union_alphabet & from_char(char_type const c)
+    constexpr union_alphabet & assign_char(char_type const c)
     {
         auto sizes_it = sizes.begin();
         auto sizes_it_end = sizes.end();
@@ -197,10 +197,10 @@ public:
         {
             std::visit([&](auto alphabet)
             {
-                alphabet.from_char(c);
+                alphabet.assign_char(c);
                 if (alphabet.to_char() == c)
                 {
-                    value = size_start + alphabet.to_integral();
+                    value = size_start + alphabet.to_rank();
                     found = true;
                 }
             }, *alphabets_it);
@@ -219,7 +219,7 @@ public:
     }
 
     //! assign from a numeric value
-    constexpr union_alphabet & from_integral(integral_type const i)
+    constexpr union_alphabet & assign_rank(rank_type const i)
     {
         assert(i < value_size);
         value = i;
@@ -262,7 +262,6 @@ public:
 
 #ifndef NDEBUG
 static_assert(alphabet_concept<union_alphabet<dna5, dna5>>);
-static_assert(detail::internal_alphabet_concept<union_alphabet<dna5, dna5>>);
 #endif
 
 } // namespace seqan3

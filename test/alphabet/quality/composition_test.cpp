@@ -234,9 +234,9 @@ TEST(quality_composition, cmp)
 
 /************** ALPHABET and QUALITY concept **********************/
 
-TEST(quality_composition, integral_type)
+TEST(quality_composition, rank_type)
 {
-    EXPECT_TRUE((std::is_same_v<underlying_integral_t<quality_composition<dna4, illumina18>>,
+    EXPECT_TRUE((std::is_same_v<underlying_rank_t<quality_composition<dna4, illumina18>>,
                                uint8_t>));
 }
 
@@ -258,26 +258,26 @@ TEST(quality_composition, alphabet_size_v)
               (alphabet_size_v<dna4> * alphabet_size_v<illumina18>));
 }
 
-TEST(quality_composition, to_integral)
+TEST(quality_composition, to_rank)
 {
     quality_composition<dna4, illumina18> t0{dna4::C, 6};
-    EXPECT_EQ(to_integral(std::get<0>(t0)), 1);
-    EXPECT_EQ(to_integral(std::get<1>(t0)), 6);
-    EXPECT_EQ(to_integral(t0),
-              to_integral(std::get<0>(t0)) +
-              alphabet_size_v<dna4> * to_integral(std::get<1>(t0)));
+    EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
+    EXPECT_EQ(to_rank(std::get<1>(t0)), 6);
+    EXPECT_EQ(to_rank(t0),
+              to_rank(std::get<0>(t0)) +
+              alphabet_size_v<dna4> * to_rank(std::get<1>(t0)));
 }
 
-TEST(quality_composition, from_integral)
+TEST(quality_composition, assign_rank)
 {
     using type = quality_composition<dna4, illumina18>;
 
     type t0{};
 
-    for (underlying_integral_t<type> i = 0; i < alphabet_size_v<type>; ++i)
+    for (underlying_rank_t<type> i = 0; i < alphabet_size_v<type>; ++i)
     {
-        from_integral(t0, i);
-        EXPECT_EQ(to_integral(t0), i);
+        assign_rank(t0, i);
+        EXPECT_EQ(to_rank(t0), i);
     }
 }
 
@@ -289,26 +289,26 @@ TEST(quality_composition, to_char)
     EXPECT_EQ(to_char(t0), 'C');
 }
 
-TEST(quality_composition, from_char)
+TEST(quality_composition, assign_char)
 {
     using type = quality_composition<dna4, illumina18>;
 
     type t0{dna4::C, 17};
     char qchar = to_char(std::get<1>(t0));
 
-    from_char(t0, 'A');
+    assign_char(t0, 'A');
     EXPECT_EQ(to_char(t0), 'A');
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
-    from_char(t0, 'C');
+    assign_char(t0, 'C');
     EXPECT_EQ(to_char(t0), 'C');
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
-    from_char(t0, 'G');
+    assign_char(t0, 'G');
     EXPECT_EQ(to_char(t0), 'G');
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
-    from_char(t0, 'T');
+    assign_char(t0, 'T');
     EXPECT_EQ(to_char(t0), 'T');
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
-    from_char(t0, 'N');
+    assign_char(t0, 'N');
     EXPECT_EQ(to_char(t0), 'A');
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
 }
@@ -320,17 +320,17 @@ TEST(quality_composition, to_phred)
     EXPECT_EQ(to_phred(t0), 6);
 }
 
-TEST(quality_composition, from_phred)
+TEST(quality_composition, assign_phred)
 {
     using type = quality_composition<dna4, illumina18>;
 
     type t0{dna4::C, 17};
     char schar = to_char(t0);
 
-    from_phred(t0, 12);
+    assign_phred(t0, 12);
     EXPECT_EQ(to_phred(t0), 12);
     EXPECT_EQ(to_char(t0), schar);
-    from_phred(t0, 37);
+    assign_phred(t0, 37);
     EXPECT_EQ(to_phred(t0), 37);
     EXPECT_EQ(to_char(t0), schar);
 }

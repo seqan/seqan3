@@ -44,24 +44,24 @@ namespace seqan3
 /*!
  * Implementation of the Illumina 1.8 standard fulfilling the quality concept.
  * The permitted phred score range is [0 .. 41], mapped to ascii-ordered range ['!' .. 'J'].
- * For this standard internal and integral phred representation are both zero-based.
+ * For this standard internal and rank phred representation are both zero-based.
  */
 struct illumina18
 {
     //! the 3 representation types of a quality score
     using phred_type = int8_t;
-    using integral_type = uint8_t;
+    using rank_type = uint8_t;
     using char_type = char;
 
-    //! internal integral value representation
-    integral_type value;
+    //! internal rank value representation
+    rank_type value;
 
-    //! projection offsets of char and integral quality score
+    //! projection offsets of char and rank quality score
     static constexpr char_type offset_char{'!'};
     static constexpr phred_type offset_phred{0};
 
     //! implicit compatibility to inner_type
-    constexpr illumina18 & operator =(integral_type const c)
+    constexpr illumina18 & operator =(rank_type const c)
     {
         value = c;
         return *this;
@@ -111,21 +111,21 @@ struct illumina18
     }
 
     //! set internal value given 1-letter code
-    constexpr illumina18 from_char(char_type const c)
+    constexpr illumina18 & assign_char(char_type const c)
     {
         assert(c >= '!' && c <= 'J');
         value = c - '!';
         return *this;
     }
 
-    //! explicit compatibility to internal integral representation
-    constexpr integral_type to_integral() const
+    //! explicit compatibility to internal rank representation
+    constexpr rank_type to_rank() const
     {
         return value;
     }
 
     //! set internal value given zero-based integer c
-    constexpr illumina18 from_integral(integral_type const c)
+    constexpr illumina18 & assign_rank(rank_type const c)
     {
         assert(c >= 0 && c < value_size);
         value = c;
@@ -133,7 +133,7 @@ struct illumina18
     }
 
     //! set internal value given Illumina 1.8 integer code p
-    constexpr illumina18 from_phred(phred_type const p)
+    constexpr illumina18 & assign_phred(phred_type const p)
     {
         assert(p >= offset_phred && p < offset_phred + value_size);
         value = p - offset_phred;
@@ -147,7 +147,7 @@ struct illumina18
     }
 
     //! phred score range for Illumina 1.8 standard
-    static constexpr integral_type value_size{42};
+    static constexpr rank_type value_size{42};
 };
 
 } // namespace seqan3
@@ -156,7 +156,6 @@ struct illumina18
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 static_assert(seqan3::alphabet_concept<seqan3::illumina18>);
-static_assert(seqan3::detail::internal_alphabet_concept<seqan3::illumina18>);
 static_assert(seqan3::quality_concept<seqan3::illumina18>);
 static_assert(seqan3::detail::internal_quality_concept<seqan3::illumina18>);
 #endif

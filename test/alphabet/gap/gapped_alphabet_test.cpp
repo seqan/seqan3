@@ -50,7 +50,7 @@ TEST(gapped_alphabet_test, test_alphabet_concept)
 
 TEST(gapped_alphabet_test, test_implicit_inner_type_compatibility)
 {
-    EXPECT_EQ(gapped_alphabet<dna4>{0}, gapped_alphabet<dna4>{}.from_integral(0));
+    EXPECT_EQ(gapped_alphabet<dna4>{0}, gapped_alphabet<dna4>{}.assign_rank(0));
 }
 
 TEST(gapped_alphabet_test, test_default_initialization)
@@ -60,16 +60,16 @@ TEST(gapped_alphabet_test, test_default_initialization)
 
 TEST(gapped_alphabet_test, test_relations)
 {
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('A'), gapped_alphabet<dna4>{}.from_char('A'));
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('a'), gapped_alphabet<dna4>{}.from_char('A'));
-    EXPECT_NE(gapped_alphabet<dna4>{}.from_char('A'), gapped_alphabet<dna4>{}.from_char('C'));
-    EXPECT_NE(gapped_alphabet<dna4>{}.from_char('A'), gapped_alphabet<dna4>{}.from_char('-'));
-    EXPECT_LT(gapped_alphabet<dna4>{}.from_char('A'), gapped_alphabet<dna4>{}.from_char('C'));
-    EXPECT_LE(gapped_alphabet<dna4>{}.from_char('C'), gapped_alphabet<dna4>{}.from_char('C'));
-    EXPECT_LE(gapped_alphabet<dna4>{}.from_char('A'), gapped_alphabet<dna4>{}.from_char('C'));
-    EXPECT_GT(gapped_alphabet<dna4>{}.from_char('T'), gapped_alphabet<dna4>{}.from_char('A'));
-    EXPECT_GE(gapped_alphabet<dna4>{}.from_char('T'), gapped_alphabet<dna4>{}.from_char('T'));
-    EXPECT_GE(gapped_alphabet<dna4>{}.from_char('T'), gapped_alphabet<dna4>{}.from_char('C'));
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('A'), gapped_alphabet<dna4>{}.assign_char('A'));
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('a'), gapped_alphabet<dna4>{}.assign_char('A'));
+    EXPECT_NE(gapped_alphabet<dna4>{}.assign_char('A'), gapped_alphabet<dna4>{}.assign_char('C'));
+    EXPECT_NE(gapped_alphabet<dna4>{}.assign_char('A'), gapped_alphabet<dna4>{}.assign_char('-'));
+    EXPECT_LT(gapped_alphabet<dna4>{}.assign_char('A'), gapped_alphabet<dna4>{}.assign_char('C'));
+    EXPECT_LE(gapped_alphabet<dna4>{}.assign_char('C'), gapped_alphabet<dna4>{}.assign_char('C'));
+    EXPECT_LE(gapped_alphabet<dna4>{}.assign_char('A'), gapped_alphabet<dna4>{}.assign_char('C'));
+    EXPECT_GT(gapped_alphabet<dna4>{}.assign_char('T'), gapped_alphabet<dna4>{}.assign_char('A'));
+    EXPECT_GE(gapped_alphabet<dna4>{}.assign_char('T'), gapped_alphabet<dna4>{}.assign_char('T'));
+    EXPECT_GE(gapped_alphabet<dna4>{}.assign_char('T'), gapped_alphabet<dna4>{}.assign_char('C'));
 }
 
 TEST(gapped_alphabet_test, test_stream_operator)
@@ -88,29 +88,29 @@ TEST(gapped_alphabet_test, test_to_char)
     EXPECT_EQ(gapped_alphabet<dna4>{4}.to_char(), '-');
 }
 
-TEST( gapped_alphabet_test, test_from_char)
+TEST( gapped_alphabet_test, test_assign_char)
 {
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('A'), gapped_alphabet<dna4>{0});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('C'), gapped_alphabet<dna4>{1});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('G'), gapped_alphabet<dna4>{2});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('T'), gapped_alphabet<dna4>{3});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('-'), gapped_alphabet<dna4>{4});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('A'), gapped_alphabet<dna4>{0});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('C'), gapped_alphabet<dna4>{1});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('G'), gapped_alphabet<dna4>{2});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('T'), gapped_alphabet<dna4>{3});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('-'), gapped_alphabet<dna4>{4});
 }
 
-TEST(gapped_alphabet_test, test_to_integral)
+TEST(gapped_alphabet_test, test_to_rank)
 {
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('A').to_integral(), 0);
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('C').to_integral(), 1);
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('G').to_integral(), 2);
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('T').to_integral(), 3);
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_char('-').to_integral(), 4);
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('A').to_rank(), 0);
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('C').to_rank(), 1);
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('G').to_rank(), 2);
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('T').to_rank(), 3);
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_char('-').to_rank(), 4);
 }
 
-TEST(gapped_alphabet_test, test_from_integral)
+TEST(gapped_alphabet_test, test_assign_rank)
 {
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_integral(0), gapped_alphabet<dna4>{0});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_integral(1), gapped_alphabet<dna4>{1});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_integral(2), gapped_alphabet<dna4>{2});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_integral(3), gapped_alphabet<dna4>{3});
-    EXPECT_EQ(gapped_alphabet<dna4>{}.from_integral(4), gapped_alphabet<dna4>{4});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_rank(0), gapped_alphabet<dna4>{0});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_rank(1), gapped_alphabet<dna4>{1});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_rank(2), gapped_alphabet<dna4>{2});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_rank(3), gapped_alphabet<dna4>{3});
+    EXPECT_EQ(gapped_alphabet<dna4>{}.assign_rank(4), gapped_alphabet<dna4>{4});
 }

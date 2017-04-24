@@ -55,7 +55,7 @@ namespace seqan3
  * The alphabet always has the same value ('-').
  *
  *     gap my_gap{};
- *     gap another_gap{}.from_char('A'); // setting this does not change anything
+ *     gap another_gap{}.assign_char('A'); // setting this does not change anything
  *
  *     if (my_gap.to_char() == another_gap.to_char())
  *        std::cout << "Both gaps are the same!";
@@ -66,15 +66,15 @@ struct gap
     /* types */
     //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
     using char_type = char;
-    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
-    using integral_type = bool;
+    //! the type of the alphabet when represented as a number (e.g. via @link to_rank @endlink)
+    using rank_type = bool;
 
     /* member */
     //! internal value
-    static constexpr integral_type value = 0;
+    static constexpr rank_type value = 0;
 
     //! The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr integral_type value_size{1};
+    static constexpr rank_type value_size{1};
 
     /* public member functions */
     //! ability to cast to @link char_type @endlink **explicitly**.
@@ -90,19 +90,19 @@ struct gap
     }
 
     //! return the gap's numeric value.
-    constexpr integral_type to_integral() const
+    constexpr rank_type to_rank() const
     {
         return value;
     }
 
     //! assign from a character does not do anything.
-    constexpr gap & from_char(char_type const in)
+    constexpr gap & assign_char(char_type const in)
     {
         return *this;
     }
 
     //! assign from a numeric value does not do anything.
-    constexpr gap & from_integral(integral_type const in)
+    constexpr gap & assign_rank(rank_type const in)
     {
         assert(value == 0);
         return *this;
@@ -144,7 +144,6 @@ struct gap
 
 #ifndef NDEBUG
 static_assert(alphabet_concept<gap>);
-static_assert(detail::internal_alphabet_concept<gap>);
 #endif
 
 }

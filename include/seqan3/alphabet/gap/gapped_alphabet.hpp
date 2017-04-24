@@ -51,11 +51,11 @@ struct gapped_alphabet : public union_alphabet<underlying_t, gap>
 {
     using union_alphabet<underlying_t, gap>::value;
     using union_alphabet<underlying_t, gap>::value_size;
-    using union_alphabet<underlying_t, gap>::integral_type;
+    using union_alphabet<underlying_t, gap>::rank_type;
     using union_alphabet<underlying_t, gap>::char_type;
 
     using union_alphabet<underlying_t, gap>::to_char;
-    using union_alphabet<underlying_t, gap>::to_integral;
+    using union_alphabet<underlying_t, gap>::to_rank;
 
     /* public member functions */
     constexpr bool is_gap() const
@@ -69,22 +69,21 @@ struct gapped_alphabet : public union_alphabet<underlying_t, gap>
         return *this;
     }
 
-    constexpr gapped_alphabet & from_integral(typename union_alphabet<underlying_t, gap>::integral_type const i)
+    constexpr gapped_alphabet & assign_rank(typename union_alphabet<underlying_t, gap>::rank_type const i)
     {
-        union_alphabet<underlying_t, gap>::from_integral(i);
+        union_alphabet<underlying_t, gap>::assign_rank(i);
         return *this;
     }
 
-    constexpr gapped_alphabet & from_char(typename union_alphabet<underlying_t, gap>::char_type const c)
+    constexpr gapped_alphabet & assign_char(typename union_alphabet<underlying_t, gap>::char_type const c)
     {
-        union_alphabet<underlying_t, gap>::from_char(c);
+        union_alphabet<underlying_t, gap>::assign_char(c);
         return *this;
     }
 };
 
 #ifndef NDEBUG
 static_assert(alphabet_concept<gapped_alphabet<dna4>>);
-static_assert(detail::internal_alphabet_concept<gapped_alphabet<dna4>>);
 #endif
 
 }
