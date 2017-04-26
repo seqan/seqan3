@@ -38,5 +38,18 @@ include_directories("${CMAKE_SOURCE_DIR}/../include/")
 include_directories("${CMAKE_SOURCE_DIR}/../range-v3/include/")
 include_directories("${CMAKE_SOURCE_DIR}/../sdsl-lite/include/")
 
-add_subdirectory(alphabet)
-add_subdirectory(core)
+macro (add_all_subdirectories)
+    file (GLOB ENTRIES
+          RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+          ${CMAKE_CURRENT_SOURCE_DIR}/[!.]*)
+
+    foreach (ENTRY ${ENTRIES})
+        if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
+            if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
+                add_subdirectory(${ENTRY})
+            endif ()
+        endif ()
+    endforeach ()
+endmacro ()
+
+add_all_subdirectories()
