@@ -43,7 +43,7 @@
 #include <iostream>
 #include <string>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/alphabet/concept_fwd.hpp>
 
 namespace seqan3
 {
@@ -65,16 +65,11 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type c) { typename alphabet_type::char_type; }
 //!\endcond
-struct underlying_char
+struct underlying_char<alphabet_type>
 {
     //!\brief The alphabet's char_type.
     using type = typename alphabet_type::char_type;
 };
-
-//!\brief Shortcut for seqan3::underlying_char
-template <typename alphabet_type>
-//!\relates seqan3::underlying_char
-using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
 //!\brief Type metafunction that returns the `rank_type` defined inside an alphabet type.
 //!\tparam alphabet_type Must provide a `rank_type` member type.
@@ -82,16 +77,11 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type c) { typename alphabet_type::rank_type; }
 //!\endcond
-struct underlying_rank
+struct underlying_rank<alphabet_type>
 {
     //!\brief The alphabet's rank_type.
     using type = typename alphabet_type::rank_type;
 };
-
-//!\brief Shortcut for seqan3::underlying_rank
-//!\relates seqan3::underlying_rank
-template <typename alphabet_type>
-using underlying_rank_t = typename underlying_rank<alphabet_type>::type;
 
 // ------------------------------------------------------------------
 // value metafunctions
@@ -103,16 +93,11 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type c) { alphabet_type::value_size; }
 //!\endcond
-struct alphabet_size
+struct alphabet_size<alphabet_type>
 {
     //!\brief The alphabet's size.
     static constexpr underlying_rank_t<alphabet_type> value = alphabet_type::value_size;
 };
-
-//!\brief Shortcut for seqan3::alphabet_size
-//!\relates seqan3::alphabet_size
-template <typename alphabet_type>
-constexpr underlying_rank_t<alphabet_type> alphabet_size_v = alphabet_size<alphabet_type>::value;
 
 // ------------------------------------------------------------------
 // free functions
