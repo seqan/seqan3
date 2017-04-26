@@ -33,95 +33,75 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup adaptation
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Core alphabet concept and free function/metafunction wrappers.
+ * \brief Provides seqan3::char_adaptation_concept and seqan3::uint_adaptation_concept.
  */
 
 #pragma once
 
-#define SEQAN3_ALPHABET_CONCEPT_INCLUDED
-
-#include <iostream>
-#include <string>
-
-#include <seqan3/alphabet/concept_pre.hpp>
-#include <seqan3/alphabet/detail/member_exposure.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 namespace seqan3
 {
-
-/*!\interface seqan3::semi_alphabet_concept <>
- * \brief The basis for seqan3::alphabet_concept, but requires only rank interface (not char).
- * \ingroup alphabet
+/*!\interface seqan3::char_adaptation_concept <>
+ * \extends seqan3::alphabet_concept
+ * \brief A concept that covers char type adaptations for seqan3::alphabet_concept.
+ * \ingroup adaptation
  *
- * This concept represents "one half" of the seqan3::alphabet_concept, it requires no
- * `char` representation and corresponding interfaces. It is mostly used internally and
- * in the composition of alphabet types (see seqan3::cartesian_composition).
+ * \details
+ * This concept introduces no formal requirements beyond those of seqan3::alphabet_concept
+ * and type being one of the following types:
  *
- * Beyond the requirements stated below, the type needs to be a plain old datatype (`std::is_pod_v`)
- * and be swappable (`std::is_swappable_v`).
+ *   * `char`
+ *   * `char16_t`
+ *   * `char32_t`
  *
- * \todo add comparison operators
+ * \attention
+ *   * Note that `signed char` and `unsigned char` are absent from the list, because of
+ * their type ambiguity with `int8_t` and `uint8_t`.
+ *   * Note that `wchar_t` is absent from the list for its notorious brokenness (different sizes and signedness
+ * between platforms); use `char16_t` or `char32_t` instead.
+ *
+ * \attention
+ * Please be aware that this file needs be included **after** `alphabet/adaptation/char.hpp`.
  *
  * \par Concepts and doxygen
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond
-template <typename t>
-concept bool semi_alphabet_concept = requires (t t1, t t2)
-{
-    // STL concepts
-    requires std::is_pod_v<t> == true;
-    requires std::is_swappable_v<t> == true;
-
-    // static data members
-    alphabet_size<t>::value;
-    alphabet_size_v<t>;
-
-    // conversion to rank
-    { to_rank(t1) } -> underlying_rank_t<t>;
-
-    // assignment from rank
-    { assign_rank(t1,  0) } -> t &;
-    { assign_rank(t{}, 0) } -> t &&;
-
-    // required comparison operators
-    { t1 == t2 } -> bool;
-    { t1 != t2 } -> bool;
-    { t1 <  t2 } -> bool;
-    { t1 >  t2 } -> bool;
-    { t1 <= t2 } -> bool;
-    { t1 >= t2 } -> bool;
-};
+template <typename type>
+concept bool char_adaptation_concept = alphabet_concept<type> && detail::is_char_adaptation_v<type>;
 //!\endcond
 
-/*!\interface seqan3::alphabet_concept <>
- * \extends seqan3::semi_alphabet_concept
- * \brief The generic alphabet concept that covers most data types used in ranges.
- * \ingroup alphabet
+/*!\interface seqan3::uint_adaptation_concept <>
+ * \extends seqan3::alphabet_concept
+ * \brief A concept that covers uint type adaptations for seqan3::alphabet_concept.
+ * \ingroup adaptation
  *
- * \todo document
+ * \details
+ * This concept introduces no formal requirements beyond those of seqan3::alphabet_concept
+ * and type being one of the following types:
+ *
+ *   * `uint8_t`
+ *   * `uint16_t`
+ *   * `uint32_t`
+ *
+ * \attention
+ * Note that `uint64_t` is absent from the list, because there is no corresponding
+ * character type.
+ *
+ * \attention
+ * Please be aware that this file needs be included **after** `alphabet/adaptation/uint.hpp`.
  *
  * \par Concepts and doxygen
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond
-template <typename t>
-concept bool alphabet_concept = requires (t t1, t t2)
-{
-    requires semi_alphabet_concept<t>;
-
-    // conversion to char
-    { to_char(t1) } -> underlying_char_t<t>;
-    { std::cout << t1 };
-
-    // assignment from char
-    { assign_char(t1,  0) } -> t &;
-    { assign_char(t{}, 0) } -> t &&;
-};
+template <typename type>
+concept bool uint_adaptation_concept = alphabet_concept<type> && detail::is_uint_adaptation_v<type>;
 //!\endcond
 
 } // namespace seqan3

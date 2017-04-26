@@ -202,3 +202,36 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 //!\}
 
 } // namespace seqan3
+
+// ------------------------------------------------------------------
+// seqan3::char_adaption_concept
+// ------------------------------------------------------------------
+
+namespace seqan3::detail
+{
+
+//!\brief Metafunction that indicates whether a type is a char alphabet adaptation.
+template <typename type>
+struct is_char_adaptation :
+    std::false_type
+{};
+
+//!\brief Shortcut for seqan3::detail::is_char_adaptation.
+template <typename type>
+constexpr bool is_char_adaptation_v = is_char_adaptation<type>::value;
+
+// ------------------------------------------------------------------
+// seqan3::uint_adaption_concept
+// ------------------------------------------------------------------
+
+//!\brief Metafunction that indicates whether a type is a uint alphabet adaptation.
+template <typename type>
+struct is_uint_adaptation :
+    std::false_type
+{};
+
+//!\brief Shortcut for seqan3::detail::is_uint_adaptation.
+template <typename type>
+constexpr bool is_uint_adaptation_v = is_uint_adaptation<type>::value;
+
+} // namespace seqan3::detail
