@@ -32,22 +32,27 @@
 //
 // ============================================================================
 
-/*!\file alphabet.hpp
- * \ingroup alphabet
+/*!\file alphabet/adaptation.hpp
+ * \ingroup adaptation
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the alphabet module.
- *
- * \defgroup alphabet
- *
- * The alphabet module contains different biological alphabets and related functionality.
- *
- * TODO more details.
+ * \brief Meta-header for the adaptation submodule; includes all headers from alphabet/adaptation/.
  */
 
-#pragma once
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/adaptation/uint.hpp>
 
-#include <seqan3/alphabet/adpaptation.hpp>
-#include <seqan3/alphabet/composition.hpp>
+/*!\defgroup adaptation
+ * \brief Contains alphabet adaptions of some standard char and uint types.
+ * \ingroup alphabet
+ */
+
+#ifndef NDEBUG
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality.hpp>
-#include <seqan3/alphabet/range.hpp>
+static_assert(seqan3::alphabet_concept<char>);
+static_assert(seqan3::alphabet_concept<wchar_t>);
+static_assert(seqan3::alphabet_concept<char16_t>);
+static_assert(seqan3::alphabet_concept<char32_t>);
+static_assert(seqan3::alphabet_concept<uint8_t>);
+static_assert(seqan3::alphabet_concept<uint16_t>);
+static_assert(seqan3::alphabet_concept<uint32_t>);
+#endif
