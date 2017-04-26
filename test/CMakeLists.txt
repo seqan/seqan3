@@ -53,6 +53,18 @@ include_directories("${SEQAN3_ROOT}/include/")
 include_directories("${SEQAN3_ROOT}/range-v3/include/")
 include_directories("${SEQAN3_ROOT}/sdsl-lite/include/")
 
-# add all test cases
-add_subdirectory(alphabet)
-add_subdirectory(core)
+macro (add_subdirectories)
+    file (GLOB ENTRIES
+          RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+          ${CMAKE_CURRENT_SOURCE_DIR}/[!.]*)
+
+    foreach (ENTRY ${ENTRIES})
+        if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
+            if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
+                add_subdirectory(${ENTRY})
+            endif ()
+        endif ()
+    endforeach ()
+endmacro ()
+
+add_subdirectories()
