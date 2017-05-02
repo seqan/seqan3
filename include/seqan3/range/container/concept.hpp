@@ -32,26 +32,32 @@
 //
 // ============================================================================
 
-#pragma once
-
-#include <initializer_list>
-
 /*!\file range/container/concept.hpp
  * \brief Adaptations of concepts from the standard library.
  * \ingroup container
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
+#pragma once
+
+#include <initializer_list>
+
 namespace seqan3
 {
 
-/*! \var concept bool container_concept
- *  \brief The (most general) container concept
- *
- * The container concept is modelled exactly as in the [STL](http://en.cppreference.com/w/cpp/concept/Container).
- * \privatesection
+/*!\name Container concepts
+ * \brief Container concepts as defined by the standard library (or very close).
+ * \ingroup container
+ * \{
  */
-
+/*!\brief The (most general) container concept as defined by the standard library.
+ * \details
+ * The container concept is modelled exactly as in the [STL](http://en.cppreference.com/w/cpp/concept/Container).
+ *
+ * \attention
+ * Other than one might expect, `std::forward_list` does not satisfy this concept (because it does not provide
+ * `.size()`).
+ */
 template <typename type>
 concept bool container_concept = requires (type val, type val2)
 {
@@ -81,25 +87,23 @@ concept bool container_concept = requires (type val, type val2)
     { val.swap(val2)  } -> void;
     { swap(val, val2) } -> void;
 
+    { val.size()      } -> typename type::size_type;
     { val.max_size()  } -> typename type::size_type;
     { val.empty()     } -> bool;
 };
 
-/*!
- * \publicsection
- * \var concept bool sequence_light_concept
- * \brief A more refined container concept than @link container_concept @endlink
+/*!\brief A more refined container concept than seqan3::container_concept.
  *
- * Includes contraints on constructors, assign member and `.front()`. Models the subset of the
+ * Includes constraints on constructors, `assign()`, `.insert()`, `.erase()`, `.push_back()`, `.pop_back`, `.clear()`,
+ * `.size()`, `front()` and `.back()` member functions with corresponding signatures. Models the subset of the
  * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
- * by `std::forward_list`, `std::list`, `std::vector`, `std::deque`, `std::basic_string`.
+ * by `std::list`, `std::vector`, `std::deque`, `std::basic_string`.
  *
- * `std::array` does not satisfy this concept.
- * \privatesection
+ * \attention
+ * `std::array` and `std::forward_list` do not satisfy this concept.
  */
-
 template <typename type>
-concept bool sequence_light_concept = requires (type val, type val2)
+concept bool sequence_concept = requires (type val, type val2)
 {
     requires container_concept<type>;
 
@@ -113,28 +117,6 @@ concept bool sequence_light_concept = requires (type val, type val2)
     { val.assign(val2.begin(), val2.end())                                };
     { val.assign(std::initializer_list<typename type::value_type>{})      };
     { val.assign(typename type::size_type{}, typename type::value_type{}) };
-
-    { val.front() } -> typename type::value_type &;
-};
-
-/*!
- * \publicsection
- * \var concept bool sequence_concept
- * \brief A more refined container concept than @link sequence_light_concept @endlink
- *
- * Adds requirements for `.insert()`, `.erase()`, `.push_back()`, `.pop_back`, `.clear()`, `.size()` and `.back()`
- * member functions with corresponding signatures. Models the subset of the
- * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
- * by `std::list`, `std::vector`, `std::deque` and `std::basic_string`.
- *
- * `std::array` and `std::forward_list` do not satisfy this concept.
- * \privatesection
- */
-
-template <typename type>
-concept bool sequence_concept = requires (type val, type val2)
-{
-    requires sequence_light_concept<type>;
 
     // modify container
 //TODO: how do you model this?
@@ -153,23 +135,19 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.clear()                                                                      } -> void;
 
     // access container
-    { val.size() } -> typename type::size_type;
-    { val.back() } -> typename type::value_type &;
+    { val.front() } -> typename type::value_type &;
+    { val.back()  } -> typename type::value_type &;
 };
 
-/*!
- * \publicsection
- * \var concept bool random_access_sequence_concept
- * \brief A more refined container concept than @link sequence_concept @endlink
+/*!\brief A more refined container concept than seqan3::sequence_concept.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the
  * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
  * by `std::vector`, `std::deque` and `std::basic_string`.
  *
+ * \attention
  * `std::array`, `std::forward_list` and `std::list` do not satisfy this concept.
- * \privatesection
  */
-
 template <typename type>
 concept bool random_access_sequence_concept = requires (type val)
 {
@@ -183,16 +161,17 @@ concept bool random_access_sequence_concept = requires (type val)
     { val.resize(0)                              } -> void;
     { val.resize(0, typename type::value_type{}) } -> void;
 };
+//!\}
 
-/*!
- * \publicsection
- * \var concept bool container_of_container_concept
- * \brief A multi-dimensional @link container_concept @endlink.
- *
- * Requires that both the type and it's `value_type` fulfill @link container_concept @endlink.
- * \privatesection
+/*!\name Container-of-container concepts
+ * \brief Shortcuts for multi-dimensional container concepts.
+ * \ingroup container
+ * \{
  */
-
+/*!\brief A multi-dimensional seqan3::container_concept.
+ *
+ * Requires that both the type and it's `value_type` fulfill seqan3::container_concept.
+ */
 template <typename type>
 concept bool container_of_container_concept = requires (type val)
 {
@@ -200,15 +179,10 @@ concept bool container_of_container_concept = requires (type val)
     requires container_concept<typename type::value_type>;
 };
 
-/*!
- * \publicsection
- * \var concept bool sequence_of_sequence_concept
- * \brief A multi-dimensional @link sequence_concept @endlink.
+/*!\brief A multi-dimensional seqan3::sequence_concept.
  *
- * Requires that both the type and it's `value_type` fulfill @link sequence_concept @endlink.
- * \privatesection
+ * Requires that both the type and it's `value_type` fulfill seqan3::sequence_concept.
  */
-
 template <typename type>
 concept bool sequence_of_sequence_concept = requires (type val)
 {
@@ -216,13 +190,9 @@ concept bool sequence_of_sequence_concept = requires (type val)
     requires sequence_concept<typename type::value_type>;
 };
 
-/*!
- * \publicsection
- * \var concept bool ra_sequence_of_ra_sequence_concept
- * \brief A multi-dimensional @link random_access_sequence_concept @endlink
+/*!\brief A multi-dimensional seqan3::random_access_sequence_concept
  *
- * Requires that both the type and it's `value_type` fulfill @link random_access_sequence_concept @endlink.
- * \privatesection
+ * Requires that both the type and it's `value_type` fulfill seqan3::random_access_sequence_concept.
  */
 
 template <typename type>
@@ -231,6 +201,7 @@ concept bool ra_sequence_of_ra_sequence_concept = requires (type val)
     requires random_access_sequence_concept<type>;
     requires random_access_sequence_concept<typename type::value_type>;
 };
+//!\}
 
 } // namespace seqan3
 
@@ -245,7 +216,6 @@ concept bool ra_sequence_of_ra_sequence_concept = requires (type val)
 #include <string>
 
 static_assert(seqan3::container_concept<std::array<char, 2>>);
-static_assert(seqan3::sequence_light_concept<std::forward_list<char>>);
 static_assert(seqan3::sequence_concept<std::list<char>>);
 static_assert(seqan3::random_access_sequence_concept<std::vector<char>>);
 static_assert(seqan3::random_access_sequence_concept<std::deque<char>>);

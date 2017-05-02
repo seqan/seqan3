@@ -44,8 +44,13 @@
 
 namespace seqan3
 {
-
-/*! resolves to `ranges::Range<type>()`
+/*!\name Range concepts
+ * \brief Adapted from the Ranges TS.
+ * \ingroup range
+ * \{
+ */
+/*!\brief Defines the requirements of a type that allows iteration over its elements by providing a begin iterator
+ * and an end sentinel.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Range
  */
 template <typename type>
@@ -53,51 +58,56 @@ concept bool range_concept               = (bool)ranges::Range<type>();
 
 /* these are independent specializations of range_concept */
 
-/*! resolves to `ranges::SizedRange<type>()`
+/*!\brief Specifies the requirements of a Range type that knows its size in constant time with the size function.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/SizedRange
  */
 template <typename type>
 concept bool sized_range_concept         = range_concept<type> && (bool)ranges::SizedRange<type>();
 
-/*! resolves to `ranges::BoundedRange<type>()`
+/*!\brief Specifies requirements of a Range type for which `begin` and `end` return objects of the same type.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/BoundedRange
  */
 template <typename type>
 concept bool bounded_range_concept       = range_concept<type> && (bool)ranges::BoundedRange<type>();
 
-/*! resolves to `ranges::OutputRange<type>()`
+/*!\brief Specifies requirements of a Range type for which `begin` returns a type that satisfies
+ * seqan3::output_iterator_concept.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/OutputRange
  */
 template <typename type, typename out_type>
 concept bool output_range_concept        = range_concept<type> && (bool)ranges::OutputRange<type, out_type>();
 
-
 /* the following specialize incrementally */
 
-/*! resolves to `ranges::InputRange<type>()`
+/*!\brief Specifies requirements of an Range type for which `begin` returns a type that satisfies
+ * seqan3::input_iterator_concept.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/InputRange
  */
 template <typename type>
 concept bool input_range_concept         = range_concept<type> && (bool)ranges::InputRange<type>();
 
-/*! resolves to `ranges::ForwardRange<type>()`
+/*!\brief Specifies requirements of an Range type for which `begin` returns a type that satisfies
+ * seqan3::forward_iterator_concept.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/ForwardRange
  */
 template <typename type>
 concept bool forward_range_concept       = input_range_concept<type> && (bool)ranges::ForwardRange<type>();
 
-/*! resolves to `ranges::BidirectionalRange<type>()`
+/*!\brief Specifies requirements of an Range type for which `begin` returns a type that satisfies
+ * seqan3::bidirectional_iterator_concept.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/BidirectionalRange
  */
 template <typename type>
 concept bool bidirectional_range_concept = forward_range_concept<type> && (bool)ranges::BidirectionalRange<type>();
 
-/*! resolves to `ranges::RandomAccessRange<type>()`
+/*!\brief Specifies requirements of an Range type for which `begin` returns a type that satisfies
+ * seqan3::random_access_iterator_concept.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/RandomAccessRange
  */
 template <typename type>
 concept bool random_access_range_concept = bidirectional_range_concept<type> && (bool)ranges::RandomAccessRange<type>();
 
+//!\}
 } // namespace seqan3
 
 #ifndef NDEBUG
