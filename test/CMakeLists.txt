@@ -10,7 +10,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts")
 # CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
 set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
 set(GOOGLETEST_ROOT "${PROJECT_BINARY_DIR}/vendor/googletest")
-set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main")
 
 find_program(CCACHE_PROGRAM ccache)
 # TODO(marehr): Once we require cmake>=3.4 use CMAKE_CXX_COMPILER_LAUNCHER instead
@@ -40,11 +39,26 @@ add_library (gtest STATIC IMPORTED)
 add_dependencies(gtest gtest_main)
 set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/lib/libgtest.a")
 
-# TODO(marehr): Once we require cmake>=3.7 use BUILDSYSTEM_TARGETS instead
-# http://stackoverflow.com/a/36341753 - add gtest as dependency to all tests
-macro(add_executable _target)
-    _add_executable(${_target} ${ARGN})
-    add_dependencies(${_target} gtest)
+macro(seqan3_test target_cpp)
+    # $target_cpp = "pod_tuple_test.cpp"
+    #   * will register the global TARGET name "pod_tuple_test" and
+    #   * will register the test case name "core_pod_tuple" if
+    #     pod_tuple_test.cpp is in test/core/
+    #
+    # NOTE(marehr): ".+/test/" REGEX is greedy, that means
+    # /test/test/test/hello_test.cpp will result in an empty `test_path`
+    string(REGEX REPLACE "_test.cpp$" "" target_name ${target_cpp})
+    string(REGEX REPLACE ".+/test/" "" test_path ${CMAKE_CURRENT_LIST_DIR})
+    string(REGEX REPLACE "/" "_" test_path ${test_path})
+
+    # add_executable(pod_tuple_test pod_tuple_test.cpp)
+    # target_link_libraries(pod_tuple_test "pthread" "gtest" "gtest_main")
+    # add_test(NAME "core_pod_tuple" COMMAND ${target_name}_test)
+    # add_dependencies(pod_tuple_test gtest)
+    add_executable(${target_name}_test ${target_cpp})
+    target_link_libraries(${target_name}_test "pthread" "gtest" "gtest_main")
+    add_test(NAME "${test_path}_${target_name}" COMMAND ${target_name}_test)
+    add_dependencies(${target_name}_test gtest)
 endmacro()
 
 # define all include folders
