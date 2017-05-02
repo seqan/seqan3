@@ -72,8 +72,9 @@ struct gap
     using rank_type = bool;
 
     /* member */
-    //! internal value
+    //! \privatesection
     static constexpr rank_type value = 0;
+    //! \publicsection
 
     /*! @name letter values
      * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.

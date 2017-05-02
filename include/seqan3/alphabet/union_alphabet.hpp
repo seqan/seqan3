@@ -140,7 +140,10 @@ constexpr auto char_to_value_table()
 namespace seqan3
 {
 
-/*! The union alphabet
+/*!\brief An union_alphabet that merges different regular alphabets as a single alphabet.
+ * \ingroup alphabet
+ * \tparam first_alphabet_type Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
+ * \tparam alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept.
  *
  * The union alphabet represents the union of two or more alphabets (e.g. the four letter DNA alphabet +
  * the gap alphabet). The alphabet may be brace initialized from the static letter members (see above).
@@ -153,9 +156,7 @@ namespace seqan3
  *     // union_alphabet<dna4, gap> my_letter{'A'};
  *
  *     union_alphabet<dna4, gap>.assign_char('C'); // <- this does!
- *
  *     union_alphabet<dna4, gap>.assign_char('-'); // gap character
- *
  *     union_alphabet<dna4, gap>.assign_char('K'); // unknown characters map to the default/unknown
  *                                               // character of the first alphabet type (i.e. A of dna4)
  *     if (my_letter.to_char() == 'A')
@@ -168,39 +169,46 @@ class union_alphabet
 {
 public:
     /* types */
-    //! The size of the alphabet, i.e. the number of different values it can take.
+    //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr size_t value_size = (alphabet_types::value_size + ... + first_alphabet_type::value_size);
-    //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
+    //!\brief the type of the alphabet when converted to char (e.g. via \link to_char \endlink)
     using char_type = typename first_alphabet_type::char_type;
-    //! the type of the alphabet when represented as a number (e.g. via @link to_rank @endlink)
+    //!\brief the type of the alphabet when represented as a number (e.g. via \link to_rank \endlink)
     using rank_type = detail::min_viable_uint_t<value_size>;
-    /*! the type used to assign a value from one of the base alphabets during
-     * copy construction or copy assignment. (i.e. via
-     * @link union_alphabet(const variant_type & alphabet) @endlink or
-     * @link operator= (const variant_type & alphabet) @endlink )
+    /*!\brief the type used to assign a value from one of the base alphabets
+     * during copy construction or copy assignment.
+     *
+     * (i.e. via
+     * \link union_alphabet(const variant_type & alphabet) \endlink or
+     * \link operator=(const variant_type & alphabet) \endlink )
      */
     using variant_type = std::variant<first_alphabet_type, alphabet_types...>;
 
-    //! @name default constructors
-    //!@{
+    //!\name default constructors
+    //!\{
     constexpr union_alphabet() = default;
     constexpr union_alphabet(union_alphabet const &) = default;
     constexpr union_alphabet(union_alphabet &&) = default;
-    constexpr union_alphabet(rank_type const & value)
-        : _value{value}
-    {}
-    //!@}
+    //!\}
 
-    //! @name default assignment operators
-    //!@{
+    //!\name default assignment operators
+    //!\{
     constexpr union_alphabet & operator= (union_alphabet const &) = default;
     constexpr union_alphabet & operator= (union_alphabet &&) = default;
-    constexpr union_alphabet(rank_type && value)
+    //!\}
+
+    //!\name default assignment operators
+    //!\{
+    /*explicit*/ constexpr union_alphabet(rank_type && value)
         : _value{value}
     {}
-    //!@}
+    /*explicit*/ constexpr union_alphabet(rank_type const & value)
+        : _value{value}
+    {}
+    //!\}
 
-    /*! allow construction via a value of the base alphabets
+    /*!\brief allow construction via a value of the base alphabets
+     *
      * ```cpp
      *     union_alphabet<dna4, gap> letter1{dna4::C}; // or
      *     union_alphabet<dna4, gap> letter2 = gap::GAP;
@@ -210,7 +218,8 @@ public:
         : _value{from_base_(alphabet)}
     {}
 
-    /*! allow assignment via a value of the base alphabets
+    /*!\brief allow assignment via a value of the base alphabets
+     *
      * ```cpp
      *     union_alphabet<dna4, gap> letter1{};
      *     letter1 = gap::GAP;
@@ -225,13 +234,13 @@ public:
     //! internal value
     rank_type _value;
 
-    //! ability to cast to @link char_type @endlink **explicitly**.
+    //! ability to cast to \link char_type \endlink **explicitly**.
     explicit constexpr operator char_type() const
     {
         return to_char();
     }
 
-    //! return the letter as a character of @link char_type @endlink.
+    //! return the letter as a character of \link char_type \endlink.
     constexpr char_type to_char() const
     {
         return value_to_char[_value];
