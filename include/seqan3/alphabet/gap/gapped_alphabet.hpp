@@ -51,11 +51,12 @@ struct gapped_alphabet : public union_alphabet<underlying_t, gap>
 {
     using union_alphabet<underlying_t, gap>::_value;
     using union_alphabet<underlying_t, gap>::value_size;
-    using union_alphabet<underlying_t, gap>::rank_type;
-    using union_alphabet<underlying_t, gap>::char_type;
 
-    using union_alphabet<underlying_t, gap>::to_char;
-    using union_alphabet<underlying_t, gap>::to_rank;
+    using union_alphabet<underlying_t, gap>::union_alphabet;
+    using union_alphabet<underlying_t, gap>::operator=;
+
+    using typename union_alphabet<underlying_t, gap>::rank_type;
+    using typename union_alphabet<underlying_t, gap>::char_type;
 
     /* public member functions */
     constexpr bool is_gap() const
@@ -69,13 +70,13 @@ struct gapped_alphabet : public union_alphabet<underlying_t, gap>
         return *this;
     }
 
-    constexpr gapped_alphabet & assign_rank(typename union_alphabet<underlying_t, gap>::rank_type const i)
+    constexpr gapped_alphabet & assign_rank(rank_type const i)
     {
         union_alphabet<underlying_t, gap>::assign_rank(i);
         return *this;
     }
 
-    constexpr gapped_alphabet & assign_char(typename union_alphabet<underlying_t, gap>::char_type const c)
+    constexpr gapped_alphabet & assign_char(char_type const c)
     {
         union_alphabet<underlying_t, gap>::assign_char(c);
         return *this;

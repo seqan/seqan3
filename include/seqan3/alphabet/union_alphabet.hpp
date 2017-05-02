@@ -199,10 +199,10 @@ public:
 
     //!\name default assignment operators
     //!\{
-    /*explicit*/ constexpr union_alphabet(rank_type && value)
+    explicit constexpr union_alphabet(rank_type && value)
         : _value{value}
     {}
-    /*explicit*/ constexpr union_alphabet(rank_type const & value)
+    explicit constexpr union_alphabet(rank_type const & value)
         : _value{value}
     {}
     //!\}
