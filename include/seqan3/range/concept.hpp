@@ -32,15 +32,15 @@
 //
 // ============================================================================
 
+/*!\file range/concept.hpp
+ * \brief Adaptations of concepts from the Ranges TS
+ * \ingroup range
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
 #pragma once
 
 #include <range/v3/range_concepts.hpp>
-
-/*!\file core/concept/range.hpp
- * \brief Adaptations of concepts from the Ranges TS
- * \ingroup core
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
 
 namespace seqan3
 {
@@ -52,12 +52,6 @@ template <typename type>
 concept bool range_concept               = (bool)ranges::Range<type>();
 
 /* these are independent specializations of range_concept */
-
-/*! resolves to `ranges::View<type>()`
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
- */
-template <typename type>
-concept bool view_concept                = range_concept<type> && (bool)ranges::View<type>();
 
 /*! resolves to `ranges::SizedRange<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/SizedRange

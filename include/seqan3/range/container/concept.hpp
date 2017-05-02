@@ -36,9 +36,9 @@
 
 #include <initializer_list>
 
-/*! \file core/concept/stl_container.hpp
- * \brief Adaptations of concepts from the standard library
- * \ingroup core
+/*!\file range/container/concept.hpp
+ * \brief Adaptations of concepts from the standard library.
+ * \ingroup container
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
