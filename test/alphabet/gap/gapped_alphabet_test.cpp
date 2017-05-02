@@ -45,7 +45,9 @@ using namespace seqan3;
 
 TEST(gapped_alphabet_test, default_constructor)
 {
-    constexpr auto letter1 = gapped_alphabet<dna4>{};
+    using alphabet_t = gapped_alphabet<dna4>;
+
+    constexpr auto letter1 = alphabet_t{};
     EXPECT_EQ(letter1._value, 0);
 }
 
@@ -122,18 +124,21 @@ TEST(gapped_alphabet_test, move_assignment)
 
 TEST(gapped_alphabet_test, fulfills_concepts)
 {
-    static_assert(std::is_pod_v<gapped_alphabet<dna4>>);
-    EXPECT_TRUE(alphabet_concept<gapped_alphabet<dna4>>);
+    using alphabet_t = gapped_alphabet<dna4>;
+    static_assert(std::is_pod_v<alphabet_t>);
+    EXPECT_TRUE(alphabet_concept<alphabet_t>);
 }
 
 TEST( gapped_alphabet_test, assign_char)
 {
-    auto letter = gapped_alphabet<dna4>{};
-    auto letterA = gapped_alphabet<dna4>{dna4::A};
-    auto letterC = gapped_alphabet<dna4>{dna4::C};
-    auto letterG = gapped_alphabet<dna4>{dna4::G};
-    auto letterT = gapped_alphabet<dna4>{dna4::T};
-    auto letterD = gapped_alphabet<dna4>{gap::GAP};
+    using alphabet_t = gapped_alphabet<dna4>;
+
+    auto letter = alphabet_t{};
+    auto letterA = alphabet_t{dna4::A};
+    auto letterC = alphabet_t{dna4::C};
+    auto letterG = alphabet_t{dna4::G};
+    auto letterT = alphabet_t{dna4::T};
+    auto letterD = alphabet_t{gap::GAP};
 
     EXPECT_EQ(letter.assign_char('A'), letterA);
     EXPECT_EQ(letter.assign_char('C'), letterC);
@@ -144,11 +149,13 @@ TEST( gapped_alphabet_test, assign_char)
 
 TEST(gapped_alphabet_test, to_char)
 {
-    auto letterA = gapped_alphabet<dna4>{dna4::A};
-    auto letterC = gapped_alphabet<dna4>{dna4::C};
-    auto letterG = gapped_alphabet<dna4>{dna4::G};
-    auto letterT = gapped_alphabet<dna4>{dna4::T};
-    auto letterD = gapped_alphabet<dna4>{gap::GAP};
+    using alphabet_t = gapped_alphabet<dna4>;
+
+    auto letterA = alphabet_t{dna4::A};
+    auto letterC = alphabet_t{dna4::C};
+    auto letterG = alphabet_t{dna4::G};
+    auto letterT = alphabet_t{dna4::T};
+    auto letterD = alphabet_t{gap::GAP};
 
     EXPECT_EQ(letterA.to_char(), 'A');
     EXPECT_EQ(letterC.to_char(), 'C');
@@ -159,7 +166,8 @@ TEST(gapped_alphabet_test, to_char)
 
 TEST(gapped_alphabet_test, to_rank)
 {
-    auto letter = gapped_alphabet<dna4>{};
+    using alphabet_t = gapped_alphabet<dna4>;
+    auto letter = alphabet_t{};
 
     EXPECT_EQ(letter.assign_char('A').to_rank(), 0);
     EXPECT_EQ(letter.assign_char('C').to_rank(), 1);
@@ -170,12 +178,14 @@ TEST(gapped_alphabet_test, to_rank)
 
 TEST(gapped_alphabet_test, assign_rank)
 {
-    auto letter = gapped_alphabet<dna4>{};
-    auto letterA = gapped_alphabet<dna4>{dna4::A};
-    auto letterC = gapped_alphabet<dna4>{dna4::C};
-    auto letterG = gapped_alphabet<dna4>{dna4::G};
-    auto letterT = gapped_alphabet<dna4>{dna4::T};
-    auto letterD = gapped_alphabet<dna4>{gap::GAP};
+    using alphabet_t = gapped_alphabet<dna4>;
+
+    auto letter = alphabet_t{};
+    auto letterA = alphabet_t{dna4::A};
+    auto letterC = alphabet_t{dna4::C};
+    auto letterG = alphabet_t{dna4::G};
+    auto letterT = alphabet_t{dna4::T};
+    auto letterD = alphabet_t{gap::GAP};
 
     EXPECT_EQ(letter.assign_rank(0), letterA);
     EXPECT_EQ(letter.assign_rank(1), letterC);
@@ -186,8 +196,9 @@ TEST(gapped_alphabet_test, assign_rank)
 
 TEST(gapped_alphabet_test, relations)
 {
-    auto letter1 = gapped_alphabet<dna4>{};
-    auto letter2 = gapped_alphabet<dna4>{};
+    using alphabet_t = gapped_alphabet<dna4>;
+    auto letter1 = alphabet_t{};
+    auto letter2 = alphabet_t{};
 
     EXPECT_EQ(letter1.assign_char('A'), letter2.assign_char('A'));
     EXPECT_EQ(letter1.assign_char('a'), letter2.assign_char('A'));
@@ -203,11 +214,13 @@ TEST(gapped_alphabet_test, relations)
 
 TEST(gapped_alphabet_test, stream_operator)
 {
-    auto letterA = gapped_alphabet<dna4>{dna4::A};
-    auto letterC = gapped_alphabet<dna4>{dna4::C};
-    auto letterG = gapped_alphabet<dna4>{dna4::G};
-    auto letterT = gapped_alphabet<dna4>{dna4::T};
-    auto letterD = gapped_alphabet<dna4>{gap::GAP};
+    using alphabet_t = gapped_alphabet<dna4>;
+
+    auto letterA = alphabet_t{dna4::A};
+    auto letterC = alphabet_t{dna4::C};
+    auto letterG = alphabet_t{dna4::G};
+    auto letterT = alphabet_t{dna4::T};
+    auto letterD = alphabet_t{gap::GAP};
 
     std::stringstream ss;
     ss << letterA << letterT << letterG << letterD << letterC;
