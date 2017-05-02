@@ -1,7 +1,2 @@
-add_executable(illumina18_test illumina18_test.cpp)
-target_link_libraries(illumina18_test ${SEQAN3_LIBRARIES})
-add_test(NAME alphabet_quality_illumina18 COMMAND illumina18_test)
-
-add_executable(quality_composition_test quality_composition_test.cpp)
-target_link_libraries(quality_composition_test ${SEQAN3_LIBRARIES})
-add_test(NAME alphabet_quality_quality_composition COMMAND quality_composition_test)
+seqan3_test(illumina18_test.cpp)
+seqan3_test(quality_composition_test.cpp)
