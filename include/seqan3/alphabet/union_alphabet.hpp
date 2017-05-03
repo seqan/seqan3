@@ -195,11 +195,11 @@ public:
 
     //!\name default assignment operators
     //!\{
-    explicit constexpr union_alphabet(rank_type && value)
-        : _value{value}
+    explicit constexpr union_alphabet(rank_type && value) :
+        _value{value}
     {}
-    explicit constexpr union_alphabet(rank_type const & value)
-        : _value{value}
+    explicit constexpr union_alphabet(rank_type const & value) :
+        _value{value}
     {}
     //!\}
 
@@ -210,8 +210,8 @@ public:
      *     union_alphabet<dna4, gap> letter2 = gap::GAP;
      * ```
      */
-    constexpr union_alphabet(variant_type const & alphabet)
-        : _value{from_base_(alphabet)}
+    constexpr union_alphabet(variant_type const & alphabet) :
+        _value{from_base_(alphabet)}
     {}
 
     /*!\brief allow assignment via a value of the base alphabets
