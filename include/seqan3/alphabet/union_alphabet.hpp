@@ -275,8 +275,8 @@ public:
      * during copy construction or copy assignment.
      *
      * For example used by
-     * seqan3::union_alphabet::union_alphabet(const variant_type & alphabet) or
-     * seqan3::union_alphabet::operator=(const variant_type & alphabet)
+     * union_alphabet::union_alphabet(const variant_type & alphabet) or
+     * union_alphabet::operator=(const variant_type & alphabet)
      */
     using variant_type = std::variant<first_alphabet_type, alphabet_types...>;
 
