@@ -295,13 +295,6 @@ public:
 
     //!\name Conversion constructors
     //\{
-    explicit constexpr union_alphabet(rank_type && value) :
-        _value{value}
-    {}
-    explicit constexpr union_alphabet(rank_type const & value) :
-        _value{value}
-    {}
-
     /*!\brief Construction via a value of the base alphabets
      *
      * ```cpp
