@@ -62,34 +62,34 @@ namespace seqan3
 struct gap
 {
     /* types */
-    //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
+    //! the type of the alphabet when converted to char (e.g. via \link to_char \endlink)
     using char_type = char;
-    //! the type of the alphabet when represented as a number (e.g. via @link to_rank @endlink)
+    //! the type of the alphabet when represented as a number (e.g. via \link to_rank \endlink)
     using rank_type = bool;
 
     /* member */
-    //! \privatesection
+    //!\privatesection
     static constexpr rank_type value = 0;
-    //! \publicsection
+    //!\publicsection
 
-    /*! @name letter values
+    /*!\name letter values
      * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
      */
-    //!@{
+    //!\{
     static const gap GAP;
-    //!@}
+    //!\}
 
     //! The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{1};
 
     /* public member functions */
-    //! ability to cast to @link char_type @endlink **explicitly**.
+    //! ability to cast to \link char_type \endlink **explicitly**.
     explicit constexpr operator char_type() const
     {
         return to_char();
     }
 
-    //! return the letter as a character of @link char_type @endlink.
+    //! return the letter as a character of \link char_type \endlink.
     constexpr char_type to_char() const
     {
         return '-';
@@ -114,8 +114,8 @@ struct gap
         return *this;
     }
 
-    //! @name comparison operators
-    //!@{
+    //!\name comparison operators
+    //!\{
     constexpr bool operator==(gap const & rhs) const
     {
         return value == rhs.value;
@@ -145,7 +145,7 @@ struct gap
     {
         return value >= rhs.value;
     }
-    //!@}
+    //!\}
 };
 
 constexpr gap gap::GAP{};
