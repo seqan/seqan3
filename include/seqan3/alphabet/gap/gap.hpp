@@ -46,7 +46,7 @@
 namespace seqan3
 {
 
-/*! The gap alphabet of -
+/*!\brief The alphabet of a gap character '-'
  *
  * The alphabet always has the same value ('-').
  *
@@ -54,6 +54,7 @@ namespace seqan3
  *     gap my_gap = gap::GAP;
  *     gap another_gap{}.assign_char('A'); // setting this does not change anything
  *
+ *     std::cout << my_gap.to_char(); // outputs '-'
  *     if (my_gap.to_char() == another_gap.to_char())
  *        std::cout << "Both gaps are the same!";
  * ```
@@ -61,60 +62,61 @@ namespace seqan3
 
 struct gap
 {
-    /* types */
-    //! the type of the alphabet when converted to char (e.g. via \link to_char \endlink)
+    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
-    //! the type of the alphabet when represented as a number (e.g. via \link to_rank \endlink)
+    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = bool;
 
-    /* member */
-    //!\privatesection
-    static constexpr rank_type value = 0;
-    //!\publicsection
-
-    /*!\name letter values
-     * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
+    /*!\name Letter values
+     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
      */
     //!\{
     static const gap GAP;
     //!\}
 
-    //! The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{1};
-
-    /* public member functions */
     //! ability to cast to \link char_type \endlink **explicitly**.
     explicit constexpr operator char_type() const
     {
         return to_char();
     }
 
-    //! return the letter as a character of \link char_type \endlink.
+    /*!\name Read functions
+     * \{
+     */
+    //!\brief Return the letter as a character of char_type (returns always '-').
     constexpr char_type to_char() const
     {
         return '-';
     }
 
-    //! return the gap's numeric value.
+    //!\brief Return the letter's numeric value or rank in the alphabet. (returns always 0)
     constexpr rank_type to_rank() const
     {
         return value;
     }
+    //!\}
 
-    //! assign from a character does not do anything.
+    /*!\name Write functions
+     * \{
+     */
+    //!\brief Assign from a character (no-op, since gap has only one character).
     constexpr gap & assign_char(char_type const in)
     {
         return *this;
     }
 
-    //! assign from a numeric value does not do anything.
+    //!\brief Assign from a numeric value (no-op, since gap has only one character).
     constexpr gap & assign_rank(rank_type const in)
     {
         assert(value == 0);
         return *this;
     }
+    //!\}
 
-    //!\name comparison operators
+    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    static constexpr rank_type value_size{1};
+
+    //!\name Comparison operators
     //!\{
     constexpr bool operator==(gap const & rhs) const
     {
@@ -146,6 +148,11 @@ struct gap
         return value >= rhs.value;
     }
     //!\}
+
+    //!\privatesection
+    //!\brief The data member.
+    static constexpr rank_type value = 0;
+    //!\publicsection
 };
 
 constexpr gap gap::GAP{};
