@@ -322,9 +322,5 @@ protected:
 
 #ifndef NDEBUG
 #include "nucleotide/dna5.hpp"
-static_assert(std::is_pod_v<seqan3::union_alphabet<seqan3::dna5, seqan3::dna5>>);
-static_assert(std::is_trivial_v<seqan3::union_alphabet<seqan3::dna5, seqan3::dna5>>);
-static_assert(std::is_trivially_copyable_v<seqan3::union_alphabet<seqan3::dna5, seqan3::dna5>>);
-static_assert(std::is_standard_layout_v<seqan3::union_alphabet<seqan3::dna5, seqan3::dna5>>);
 static_assert(seqan3::alphabet_concept<seqan3::union_alphabet<seqan3::dna5, seqan3::dna5>>);
 #endif
