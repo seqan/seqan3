@@ -31,10 +31,6 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell@fu-berlin.de>
-// Author: Marcel Ehrhardt <marcel.ehrhardt@fu-berlin.de>
-// Author: David Heller <david.heller@fu-berlin.de>
-// ==========================================================================
 
 #pragma once
 
