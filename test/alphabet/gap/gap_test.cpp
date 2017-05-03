@@ -49,7 +49,16 @@ TEST(gap_test, test_alphabet_concept)
 
 TEST(gap_test, test_default_initialization)
 {
-    EXPECT_EQ(gap::GAP.to_char(), '-');
+    gap gap1;
+    gap gap2{};
+    gap gap3 = gap::GAP;
+
+    EXPECT_EQ(gap1.to_rank(), 0);
+    EXPECT_EQ(gap2.to_rank(), 0);
+    EXPECT_EQ(gap3.to_rank(), 0);
+    EXPECT_EQ(gap1.to_char(), '-');
+    EXPECT_EQ(gap2.to_char(), '-');
+    EXPECT_EQ(gap3.to_char(), '-');
 }
 
 TEST(gap_test, test_static_cast)
