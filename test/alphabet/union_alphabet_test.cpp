@@ -31,9 +31,6 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: David Heller <david.heller@fu-berlin.de>
-// Author: Marcel Ehrhardt <marcel.ehrhardt@fu-berlin.de>
-// ==========================================================================
 
 #include <gtest/gtest.h>
 
