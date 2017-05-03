@@ -308,14 +308,14 @@ protected:
         }, alphabet_v);
     }
 
-    static constexpr auto prefix_sum_sizes
-        = detail::alphabet_prefix_sum_sizes<first_alphabet_type, alphabet_types...>();
+    static constexpr auto prefix_sum_sizes =
+        detail::alphabet_prefix_sum_sizes<first_alphabet_type, alphabet_types...>();
 
-    static constexpr auto value_to_char
-        = detail::union_alphabet::value_to_char_table<char_type, first_alphabet_type, alphabet_types...>();
+    static constexpr auto value_to_char =
+        detail::union_alphabet::value_to_char_table<char_type, first_alphabet_type, alphabet_types...>();
 
-    static constexpr auto char_to_value
-        = detail::union_alphabet::char_to_value_table<char_type, first_alphabet_type, alphabet_types...>();
+    static constexpr auto char_to_value =
+        detail::union_alphabet::char_to_value_table<char_type, first_alphabet_type, alphabet_types...>();
 };
 
 } // namespace seqan3
