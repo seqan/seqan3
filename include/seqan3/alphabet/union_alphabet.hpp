@@ -92,7 +92,7 @@ namespace seqan3::detail::union_alphabet
 
 /*!\brief Returns an fixed sized map at compile time where the key is the rank
  * of alphabet_t and the value is the corresponding char of that rank.
- * \relates seqan3::detail::union_alphabet::value_to_char_table
+ * \sa value_to_char_table
  *
  * ```cpp
  * constexpr auto table1 = value_to_char_table_I<5, char>(dna4{});
