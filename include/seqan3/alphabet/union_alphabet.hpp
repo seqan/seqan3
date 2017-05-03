@@ -32,6 +32,13 @@
 //
 // ==========================================================================
 
+/*!\file
+ * \ingroup alphabet
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \author David Heller <david.heller AT fu-berlin.de>
+ * \brief Contains seqan3::union_alphabet.
+ */
+
 #pragma once
 
 #include <tuple>
@@ -43,10 +50,6 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-
-/*! The union alphabet
- * \ingroup alphabet
- */
 
 namespace seqan3::detail
 {

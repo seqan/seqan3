@@ -32,6 +32,13 @@
 //
 // ==========================================================================
 
+/*!\file
+ * \ingroup alphabet
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \author David Heller <david.heller AT fu-berlin.de>
+ * \brief Contains seqan3::gapped_alphabet.
+ */
+
 #pragma once
 
 #include "gap.hpp"

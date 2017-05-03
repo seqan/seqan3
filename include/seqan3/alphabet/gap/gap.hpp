@@ -32,16 +32,19 @@
 //
 // ==========================================================================
 
+/*!\file
+ * \ingroup alphabet
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \author David Heller <david.heller AT fu-berlin.de>
+ * \brief Contains seqan3::gap.
+ */
+
 #pragma once
 
 #include <optional>
 #include <cassert>
 
 #include <seqan3/alphabet/concept.hpp>
-
-/*! The gap alphabet
- * \ingroup alphabet
- */
 
 namespace seqan3
 {
