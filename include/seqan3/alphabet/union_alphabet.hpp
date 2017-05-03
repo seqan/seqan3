@@ -41,10 +41,8 @@
 
 #pragma once
 
-#include <tuple>
+#include <array>
 #include <variant>
-#include <utility>
-#include <optional>
 #include <cassert>
 #include <algorithm>
 
