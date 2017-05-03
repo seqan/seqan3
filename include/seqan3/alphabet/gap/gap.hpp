@@ -110,7 +110,7 @@ struct gap
     //!\brief Assign from a numeric value (no-op, since gap has only one character).
     constexpr gap & assign_rank(rank_type const in)
     {
-        assert(value == 0);
+        assert(in == 0);
         return *this;
     }
     //!\}
