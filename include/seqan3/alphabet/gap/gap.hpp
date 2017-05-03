@@ -74,7 +74,7 @@ struct gap
     static const gap GAP;
     //!\}
 
-    //! ability to cast to \link char_type \endlink **explicitly**.
+    //!\brief Ability to cast to \link char_type \endlink **explicitly**.
     explicit constexpr operator char_type() const
     {
         return to_char();
