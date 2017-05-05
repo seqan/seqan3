@@ -49,7 +49,7 @@ TEST(union_alphabet_test, default_constructor)
     EXPECT_EQ(letter1._value, 0);
 }
 
-TEST(union_alphabet_test, base_alphabet_copy_constructor)
+TEST(union_alphabet_test, initialize_from_component_alphabet)
 {
     using alphabet_t = union_alphabet<dna4, dna5, gap>;
     using variant_t = alphabet_t::variant_type;
@@ -93,7 +93,7 @@ TEST(union_alphabet_test, base_alphabet_copy_constructor)
     EXPECT_EQ(letter9.to_rank(), 9);
 }
 
-TEST(union_alphabet_test, same_base_alphabet_copy_constructor)
+TEST(union_alphabet_test, initialise_from_same_component_alphabet)
 {
     using alphabet_t = union_alphabet<dna4, dna4>;
     using variant_t = alphabet_t::variant_type;
@@ -136,7 +136,7 @@ TEST(union_alphabet_test, move_constructor)
     EXPECT_EQ(letter2._value, 2);
 }
 
-TEST(union_alphabet_test, base_alphabet_copy_assignment)
+TEST(union_alphabet_test, assign_from_component_alphabet)
 {
     using alphabet_t = union_alphabet<dna4, dna5, gap>;
     using variant_t = alphabet_t::variant_type;

@@ -49,7 +49,7 @@ TEST(gapped_alphabet_test, default_constructor)
     EXPECT_EQ(letter1._value, 0);
 }
 
-TEST(gapped_alphabet_test, base_alphabet_copy_constructor)
+TEST(gapped_alphabet_test, initialize_from_component_alphabet)
 {
     using alphabet_t = gapped_alphabet<dna4>;
     using variant_t = alphabet_t::variant_type;
@@ -77,6 +77,28 @@ TEST(gapped_alphabet_test, base_alphabet_copy_constructor)
     EXPECT_EQ(letter7.to_rank(), 3);
     EXPECT_EQ(letter8.to_rank(), 4);
     EXPECT_EQ(letter9.to_rank(), 4);
+}
+
+TEST(gapped_alphabet_test, assign_from_component_alphabet)
+{
+    using alphabet_t = gapped_alphabet<dna4>;
+    using variant_t = alphabet_t::variant_type;
+    alphabet_t letter{};
+
+    letter = dna4::A;
+    EXPECT_EQ(letter.to_rank(), 0);
+
+    letter = dna4::C; // letter = {dna4::C}; does not work
+    EXPECT_EQ(letter.to_rank(), 1);
+
+    letter = static_cast<variant_t>(dna4::G);
+    EXPECT_EQ(letter.to_rank(), 2);
+
+    letter = {static_cast<variant_t>(dna4::T)};
+    EXPECT_EQ(letter.to_rank(), 3);
+
+    letter = gap::GAP;
+    EXPECT_EQ(letter.to_rank(), 4);
 }
 
 TEST(gapped_alphabet_test, copy_constructor)
