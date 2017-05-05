@@ -252,6 +252,6 @@ concept bool relation_concept =                     static_cast<bool>(ranges::Re
 
 #ifndef NDEBUG
 
-#include <seqan3/core/concepts/core_detail.hpp>
+#include <seqan3/core/concept/core_detail.hpp>
 
 #endif // NDEBUG
