@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file alphabet/nucleotide.hpp
- * \ingroup alphabet
+ * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header for the nucleotide submodule; includes all headers from alphabet/nucleotide/.
  */
@@ -44,3 +44,49 @@
 #include <seqan3/alphabet/nucleotide/nucl16.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
+
+/*!\defgroup nucleotide
+ * \brief Contains the different DNA and RNA alphabet types.
+ * \ingroup alphabet
+ *
+ * \par Concept
+ *
+ * The nucleotide submodule defines seqan3::nucleotide_concept which encompasses all the alphabets defined in the
+ * submodule and refines seqan3::alphabet_concept.
+ *
+ * While it is not required by the concept, all alphabets declared in the module offer an `enum`-like interface
+ * to the individual letters so you can use them as values in assignments and comparisons:
+ *
+ * ~~~{.cpp}
+ * dna4 l{dna4::A};
+ *
+ * if (l == dna4::C}
+ *     // ...
+ * ~~~
+ *
+ * \par Alphabets
+ *
+ * The nucleotide module contains alphabet data types for nucleic acids. The types differ mainly
+ * in their size and how they treat the T and U bases:
+ *
+ * | Alphabet       | Aliases                | Size | 'T' | 'U' | `UNKNOWN` |
+ * |----------------|------------------------|------|-----|-----|-----------|
+ * |   seqan3::dna4 |                        |    4 |  ☑  |  ☐  |       'A' |
+ * |   seqan3::rna4 |                        |    4 |  ☐  |  ☑  |       'A' |
+ * |   seqan3::dna5 |                        |    5 |  ☑  |  ☐  |       'N' |
+ * |   seqan3::rna5 |                        |    5 |  ☐  |  ☑  |       'N' |
+ * | seqan3::nucl16 | dna16, rna16, dna, rna |   16 |  ☑  |  ☑  |       'N' |
+ *
+ * The default and recommended alphabet is seqan3::nucl16. It can contain all the IUPAC symbols for nucleic acid data.
+ * The other alphabets are smaller representations that are especially useful inside compressed containers (TODO link).
+ *
+ * In the smaller alphabets `T` and `U` are represented by the same rank and you cannot differentiate between them,
+ * they are, however, converted into each other and not to the `UNKNOWN` character. i.e. you can use seqan3::dna5 to
+ * represent RNA data, as well, the only difference is the output when calling to_char().
+ *
+ * \par Conversion
+ *
+ *   * seqan3::dna4 ↔ seqan3::rna4, as well as seqan3::dna5 ↔ seqan3::rna5 are directly assignable to each other.
+ *   * All nucleotide alphabets are convertible to each other via convert().
+ *   * All ranges of nucleotide alphabets are convertible to each other via seqan3::view::convert.
+ */

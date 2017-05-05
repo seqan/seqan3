@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file alphabet/nucleotide/dna5.hpp
- * \ingroup alphabet
+ * \ingroup nucleotide
  * \author David Heller <david.heller AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains seqan3::dna5, container aliases and string literals.
@@ -56,7 +56,7 @@ namespace seqan3
 {
 
 /*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
- * \ingroup alphabet
+ * \ingroup nucleotide
  *
  * \details
  * Note that you can assign 'U' as a character to dna5 and it will silently
@@ -299,6 +299,7 @@ namespace seqan3::detail
 {
 
 //!\brief seqan3::dna5 is defined as being a nucleotide alphabet.
+//!\ingroup nucleotide
 template <>
 struct is_nucleotide<dna5> : public std::true_type
 {};
