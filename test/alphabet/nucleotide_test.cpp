@@ -45,7 +45,8 @@ class nucleotide : public ::testing::Test
 {};
 
 // add all alphabets from the nucleotide sub module here
-using nucleotide_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16>;
+using nucleotide_types  = ::testing::Types<dna4, dna5, rna4, rna5, nucl16>;
+using nucleotide_types2 =       meta::list<dna4, dna5, rna4, rna5, nucl16>; // needed for some tests
 
 TYPED_TEST_CASE(nucleotide, nucleotide_types);
 
@@ -106,6 +107,38 @@ TYPED_TEST(nucleotide, stream_operator)
 TYPED_TEST(nucleotide, concept)
 {
     EXPECT_TRUE(nucleotide_concept<TypeParam>);
+}
+
+// ------------------------------------------------------------------
+// conversion
+// ------------------------------------------------------------------
+
+TYPED_TEST(nucleotide, assign_to_other_nucleotide)
+{
+    using complement_type = std::conditional_t<std::is_same_v<TypeParam, rna4>, dna4,
+                            std::conditional_t<std::is_same_v<TypeParam, dna4>, rna4,
+                            std::conditional_t<std::is_same_v<TypeParam, rna5>, dna5,
+                            std::conditional_t<std::is_same_v<TypeParam, dna5>, rna5, void>>>>;
+    if constexpr (!std::is_same_v<complement_type, void>)
+    {
+        // construct
+        EXPECT_EQ(complement_type{TypeParam::C}, complement_type::C);
+        // assign
+        complement_type l{};
+        l = TypeParam::C;
+        EXPECT_EQ(l, complement_type::C);
+    }
+}
+
+TYPED_TEST(nucleotide, convert_to_other_nucleotide)
+{
+    meta::for_each(nucleotide_types2{}, [&] (auto && nucl) constexpr
+    {
+        using out_type = std::decay_t<decltype(nucl)>;
+        EXPECT_EQ(convert<out_type>(TypeParam::A), out_type::A);
+        EXPECT_EQ(convert<out_type>(TypeParam::C), out_type::C);
+        EXPECT_EQ(convert<out_type>(TypeParam::G), out_type::G);
+    });
 }
 
 // ------------------------------------------------------------------
