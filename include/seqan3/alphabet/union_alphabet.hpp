@@ -42,9 +42,11 @@
 #pragma once
 
 #include <array>
-#include <variant>
+#include <utility>
 #include <cassert>
 #include <algorithm>
+
+#include <meta/meta.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
@@ -58,6 +60,8 @@ namespace seqan3::detail
  * \relates seqan3::union_alphabet
  *
  * ```cpp
+ * using namespace seqan3::detail;
+ *
  * constexpr auto prefix_sum = alphabet_prefix_sum_sizes<dna4, gap, dna5>();
  * assert(prefix_sum.size() == 4);
  * assert(prefix_sum[0] == 0);
@@ -95,6 +99,8 @@ namespace seqan3::detail::union_alphabet
  * \sa value_to_char_table
  *
  * ```cpp
+ * using namespace seqan3::detail::union_alphabet;
+ *
  * constexpr auto table1 = value_to_char_table_I<5, char>(dna4{});
  * assert(table1.size() == 5);
  * assert(table1[0] == 'A');
@@ -122,6 +128,8 @@ constexpr auto value_to_char_table_I(alphabet_t alphabet)
  * \relates seqan3::union_alphabet
  *
  * ```cpp
+ * using namespace seqan3::detail::union_alphabet;
+ *
  * constexpr auto value_to_char = value_to_char_table<char, dna4, gap, dna5>();
  * assert(value_to_char.size() == 10);
  * assert(value_to_char[0] == 'A');
@@ -165,6 +173,8 @@ constexpr auto value_to_char_table()
  * \relates seqan3::union_alphabet
  *
  * ```cpp
+ * using namespace seqan3::detail::union_alphabet;
+ *
  * constexpr auto char_to_value = char_to_value_table<char, dna4, gap, dna5>();
  * assert(char_to_value.size() == 256);
  * assert(char_to_value['A'] == 0);
@@ -217,51 +227,72 @@ namespace seqan3
  * four letter DNA alphabet + the gap alphabet). Note that you cannot assign
  * regular characters, but additional functions for this are available.
  *
+ * This class has a similar behavior as std::variant.
+ *
  * ```cpp
  *     union_alphabet<dna4, gap> my_letter{};
  *     union_alphabet<dna4, gap> converted_letter{dna4::C};
  *     // doesn't work:
  *     // union_alphabet<dna4, gap> my_letter{'A'};
  *
- *     union_alphabet<dna4, gap>.assign_char('C'); // <- this does!
- *     union_alphabet<dna4, gap>.assign_char('-'); // gap character
- *     union_alphabet<dna4, gap>.assign_char('K'); // unknown characters map to the default/unknown
- *                                               // character of the first alphabet type (i.e. A of dna4)
+ *     union_alphabet<dna4, gap>{}.assign_char('C'); // <- this does!
+ *     union_alphabet<dna4, gap>{}.assign_char('-'); // gap character
+ *     union_alphabet<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
+ *                                                   // character of the first alphabet type (i.e. A of dna4)
  *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
  * ```
  *
- * The union alphabet can also be assigned or constructed directly from one of
- * the base alphabets.
+ * The union alphabet can also be constructed directly from one of the base
+ * alphabets.
  *
  * ```cpp
  * using alphabet_t = union_alphabet<dna4, dna5, gap>;
- * using variant_t = alphabet_t::variant_type;
  *
  * constexpr alphabet_t letter0{dna4::A};
- * constexpr alphabet_t letter1 = {dna4::C};
- * constexpr alphabet_t letter2 = static_cast<variant_t>(dna4::G);
- * constexpr alphabet_t letter3{dna4::T}; // letter3 = dna4::T; does not work
+ * constexpr alphabet_t letter1 = dna4::C;
+ * constexpr alphabet_t letter2 = {dna4::G};
+ * constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
  *
  * assert(letter0.to_rank() == 0);
  * assert(letter1.to_rank() == 1);
  * assert(letter2.to_rank() == 2);
  * assert(letter3.to_rank() == 3);
+ * ```
  *
- * alphabet_t letter4{dna5::A}; // letter4 = dna5::A; does not work
- * alphabet_t letter5 = {dna5::C};
- * alphabet_t letter6 = static_cast<variant_t>(dna5::G);
+ * Or can be assigned by one of the base alphabets.
  *
- * assert(letter4.to_rank() == 4);
- * assert(letter5.to_rank() == 5);
- * assert(letter6.to_rank() == 6);
+ * ```cpp
+ * using alphabet_t = union_alphabet<dna4, dna5, gap>;
+ *
+ * alphabet_t letter;
+ *
+ * letter = dna5::A;
+ * assert(letter.to_rank() == 4);
+ *
+ * letter = {dna5::C};
+ * assert(letter.to_rank() == 5);
+ *
+ * letter = static_cast<alphabet_t>(dna5::G);
+ * assert(letter.to_rank() == 6);
  * ```
  */
 template <typename first_alphabet_type, typename ...alphabet_types>
+//!\cond
     requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
+//!\endcond
 class union_alphabet
 {
 public:
+    /*!\brief Returns true if alphabet_t is one of the given alphabet types.
+     * \tparam alphabet_t The type to check
+     */
+    template <typename alphabet_t>
+    static constexpr bool has_type()
+    {
+        return meta::in<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
+    }
+
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr size_t value_size = (alphabet_types::value_size + ... + first_alphabet_type::value_size);
 
@@ -271,54 +302,83 @@ public:
     //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink)
     using rank_type = detail::min_viable_uint_t<value_size>;
 
-    /*!\brief The type used to assign a value from one of the base alphabets
-     * during copy construction or copy assignment.
-     *
-     * For example used by
-     * union_alphabet::union_alphabet(const variant_type & alphabet) or
-     * union_alphabet::operator=(const variant_type & alphabet)
+    /*!\name Default constructors
+     * \{
      */
-    using variant_type = std::variant<first_alphabet_type, alphabet_types...>;
-
-    //!\name Default constructors
-    //!\{
     constexpr union_alphabet() = default;
     constexpr union_alphabet(union_alphabet const &) = default;
     constexpr union_alphabet(union_alphabet &&) = default;
     //!\}
 
-    //!\name Default assignment operators
-    //!\{
+    /*!\name Default assignment operators
+     * \{
+     */
     constexpr union_alphabet & operator= (union_alphabet const &) = default;
     constexpr union_alphabet & operator= (union_alphabet &&) = default;
     //!\}
 
-    //!\name Conversion constructors
-    //\{
+    /*!\name Conversion constructors
+     * \{
+     */
+
     /*!\brief Construction via a value of the base alphabets
+     * \tparam alphabet_t One of the base alphabet types
      *
      * ```cpp
      *     union_alphabet<dna4, gap> letter1{dna4::C}; // or
      *     union_alphabet<dna4, gap> letter2 = gap::GAP;
      * ```
      */
-    constexpr union_alphabet(variant_type const & alphabet) :
-        _value{from_base_(alphabet)}
+    template <typename alphabet_t>
+    //!\cond
+        requires has_type<alphabet_t>()
+    //!\endcond
+    constexpr union_alphabet(alphabet_t const & alphabet) :
+        _value{rank_by_type_(alphabet)}
+    {}
+
+    /*!\brief Construction via a value of reoccurring alphabets
+     * \tparam I The index of the i-th base alphabet
+     * \tparam alphabet_t The i-th given base alphabet type
+     *
+     * ```cpp
+     * using alphabet_t = union_alphabet<dna4, dna4>;
+     *
+     * constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
+     * constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
+     *
+     * EXPECT_EQ(letter0.to_rank(), 0);
+     * EXPECT_EQ(letter4.to_rank(), 4);
+     * ```
+     */
+    template <size_t I, typename alphabet_t>
+    //!\cond
+        requires has_type<alphabet_t>()
+    //!\endcond
+    constexpr union_alphabet(std::in_place_index_t<I>, alphabet_t const & alphabet) :
+        _value{rank_by_index_<I>(alphabet)}
     {}
     //!\}
 
-    //!\name Conversion assignment operators
-    //!\{
+    /*!\name Conversion assignment operators
+     * \{
+     */
+
     /*!\brief Assignment via a value of the base alphabets
+     * \tparam alphabet_t One of the base alphabet types
      *
      * ```cpp
      *     union_alphabet<dna4, gap> letter1{};
      *     letter1 = gap::GAP;
      * ```
      */
-    constexpr union_alphabet & operator= (variant_type const & alphabet)
+    template <typename alphabet_t>
+    //!\cond
+        requires has_type<alphabet_t>()
+    //!\endcond
+    constexpr union_alphabet & operator= (alphabet_t const & alphabet)
     {
-        _value = from_base_(alphabet);
+        _value = rank_by_type_(alphabet);
         return *this;
     }
     //!\}
@@ -399,13 +459,21 @@ public:
 protected:
     //!\privatesection
 
-    //!\brief Converts an object of one of the base alphabets into the internal representation
-    static constexpr rank_type from_base_(variant_type const & alphabet_v)
+    //!\brief Converts an object of one of the given alphabets into the internal representation
+    template <size_t index, typename alphabet_t>
+    static constexpr rank_type rank_by_index_(alphabet_t const & alphabet)
     {
-        return std::visit([&](auto && alphabet) -> rank_type
-        {
-            return prefix_sum_sizes[alphabet_v.index()] + static_cast<rank_type>(alphabet.to_rank());
-        }, alphabet_v);
+        return prefix_sum_sizes[index] +
+               static_cast<rank_type>(alphabet.to_rank());
+    }
+
+    //!\brief Converts an object of one of the given alphabets into the internal representation
+    //!\details Finds the index of alphabet_t in the given types.
+    template <typename alphabet_t>
+    static constexpr rank_type rank_by_type_(alphabet_t const & alphabet)
+    {
+        constexpr size_t index = meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
+        return rank_by_index_<index>(alphabet);
     }
 
     //!\brief Compile-time generated lookup table which contains the prefix sum up to the position of each alphabet

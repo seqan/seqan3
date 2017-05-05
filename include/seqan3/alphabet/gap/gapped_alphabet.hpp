@@ -63,10 +63,10 @@ namespace seqan3
  * // doesn't work:
  * // gapped_alphabet<dna4> my_letter{'A'};
  *
- * gapped_alphabet<dna4>.assign_char('C'); // <- this does!
- * gapped_alphabet<dna4>.assign_char('-'); // gap character
- * gapped_alphabet<dna4>.assign_char('K'); // unknown characters map to the default/unknown
- *                                         // character of the given alphabet type (i.e. A of dna4)
+ * gapped_alphabet<dna4>{}.assign_char('C'); // <- this does!
+ * gapped_alphabet<dna4>{}.assign_char('-'); // gap character
+ * gapped_alphabet<dna4>{}.assign_char('K'); // unknown characters map to the default/unknown
+ *                                           // character of the given alphabet type (i.e. A of dna4)
  * ```
  *
  * \sa For more details see union_alphabet, which is the base class and more general than the gapped_alphabet.
@@ -79,7 +79,6 @@ struct gapped_alphabet : public union_alphabet<alphabet_t, gap>
     using union_alphabet<alphabet_t, gap>::value_size;
 
     using union_alphabet<alphabet_t, gap>::union_alphabet;
-    using union_alphabet<alphabet_t, gap>::operator=;
 
     using typename union_alphabet<alphabet_t, gap>::rank_type;
     using typename union_alphabet<alphabet_t, gap>::char_type;
@@ -87,7 +86,7 @@ struct gapped_alphabet : public union_alphabet<alphabet_t, gap>
     /*!\brief Returns true if it is a gap
      * \details
      * ```cpp
-     * gapped_alphabet<dna4> letter = {dna4::T};
+     * gapped_alphabet<dna4> letter = dna4::T;
      *
      * if (!letter.is_gap())
      *     std::cout << "T is NOT a gap character";

@@ -52,17 +52,16 @@ TEST(gapped_alphabet_test, default_constructor)
 TEST(gapped_alphabet_test, initialize_from_component_alphabet)
 {
     using alphabet_t = gapped_alphabet<dna4>;
-    using variant_t = alphabet_t::variant_type;
 
     constexpr alphabet_t letter0{dna4::A};
-    constexpr alphabet_t letter1 = {dna4::C};
-    constexpr alphabet_t letter2 = static_cast<variant_t>(dna4::G);
-    constexpr alphabet_t letter3{dna4::T}; // letter3 = dna4::T; does not work
+    constexpr alphabet_t letter1 = dna4::C;
+    constexpr alphabet_t letter2 = {dna4::G};
+    constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
 
     alphabet_t letter4{dna4::A};
-    alphabet_t letter5 = {dna4::C};
-    alphabet_t letter6 = static_cast<variant_t>(dna4::G);
-    alphabet_t letter7{dna4::T}; // letter7 = dna4::T; does not work
+    alphabet_t letter5 = dna4::C;
+    alphabet_t letter6 = {dna4::G};
+    alphabet_t letter7 = static_cast<alphabet_t>(dna4::T);
 
     constexpr alphabet_t letter8{gap::GAP}; // letter3 = dna4::T; does not work
     alphabet_t letter9{gap::GAP};
@@ -82,19 +81,18 @@ TEST(gapped_alphabet_test, initialize_from_component_alphabet)
 TEST(gapped_alphabet_test, assign_from_component_alphabet)
 {
     using alphabet_t = gapped_alphabet<dna4>;
-    using variant_t = alphabet_t::variant_type;
     alphabet_t letter{};
 
     letter = dna4::A;
     EXPECT_EQ(letter.to_rank(), 0);
 
-    letter = dna4::C; // letter = {dna4::C}; does not work
+    letter = {dna4::C}; // letter = {dna4::C}; does not work
     EXPECT_EQ(letter.to_rank(), 1);
 
-    letter = static_cast<variant_t>(dna4::G);
+    letter = static_cast<alphabet_t>(dna4::G);
     EXPECT_EQ(letter.to_rank(), 2);
 
-    letter = {static_cast<variant_t>(dna4::T)};
+    letter = {static_cast<alphabet_t>(dna4::T)};
     EXPECT_EQ(letter.to_rank(), 3);
 
     letter = gap::GAP;
@@ -136,7 +134,7 @@ TEST(gapped_alphabet_test, copy_assignment)
 TEST(gapped_alphabet_test, move_assignment)
 {
     using alphabet_t = gapped_alphabet<dna4>;
-    alphabet_t letter1 = static_cast<alphabet_t::variant_type>(dna4::G);
+    alphabet_t letter1 = dna4::G;
     alphabet_t letter2{std::move(letter1)};
 
     EXPECT_EQ(letter2.to_rank(), 2);

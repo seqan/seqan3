@@ -34,6 +34,8 @@
 
 #include <gtest/gtest.h>
 
+#include <variant>
+
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -52,34 +54,37 @@ TEST(union_alphabet_test, default_constructor)
 TEST(union_alphabet_test, initialize_from_component_alphabet)
 {
     using alphabet_t = union_alphabet<dna4, dna5, gap>;
-    using variant_t = alphabet_t::variant_type;
+    using variant_t = std::variant<dna4, dna5, gap>;
 
     constexpr variant_t variant0{dna4::A};
     constexpr alphabet_t letter0{dna4::A};
 
-    constexpr variant_t variant1 = {dna4::C};
-    constexpr alphabet_t letter1 = {dna4::C};
+    constexpr variant_t variant1 = dna4::C;
+    constexpr alphabet_t letter1 = dna4::C;
 
-    constexpr variant_t variant2 = static_cast<variant_t>(dna4::G);
-    constexpr alphabet_t letter2 = static_cast<variant_t>(dna4::G);
+    constexpr variant_t variant2 = {dna4::G};
+    constexpr alphabet_t letter2 = {dna4::G};
 
-    constexpr variant_t variant3 = dna4::T;
-    constexpr alphabet_t letter3{dna4::T}; // letter3 = dna4::T; does not work
+    constexpr variant_t variant3 = static_cast<variant_t>(dna4::T);
+    constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
 
-    variant_t variant4{dna5::A};
-    alphabet_t letter4{dna5::A};
+    constexpr variant_t variant4 = {static_cast<variant_t>(dna5::A)};
+    constexpr alphabet_t letter4 = {static_cast<alphabet_t>(dna5::A)};
 
-    variant_t variant5 = {dna5::C};
-    alphabet_t letter5 = {dna5::C};
+    variant_t variant5{dna5::C};
+    alphabet_t letter5{dna5::C};
 
-    variant_t variant6 = static_cast<variant_t>(dna5::G);
-    alphabet_t letter6 = static_cast<variant_t>(dna5::G);
+    variant_t variant6 = dna5::G;
+    alphabet_t letter6 = dna5::G;
 
-    variant_t variant7 = dna5::T;
-    alphabet_t letter7{dna5::T}; // letter7 = dna5::T; does not work
+    variant_t variant7 = {dna5::T};
+    alphabet_t letter7 = {dna5::T};
 
-    constexpr alphabet_t letter8{dna5::N};
-    constexpr alphabet_t letter9{gap::GAP};
+    variant_t variant8 = static_cast<variant_t>(dna5::N);
+    alphabet_t letter8 = static_cast<alphabet_t>(dna5::N);
+
+    variant_t variant9 = {static_cast<variant_t>(gap::GAP)};
+    alphabet_t letter9 = {static_cast<alphabet_t>(gap::GAP)};
 
     EXPECT_EQ(letter0.to_rank(), 0);
     EXPECT_EQ(letter1.to_rank(), 1);
@@ -96,16 +101,15 @@ TEST(union_alphabet_test, initialize_from_component_alphabet)
 TEST(union_alphabet_test, initialise_from_same_component_alphabet)
 {
     using alphabet_t = union_alphabet<dna4, dna4>;
-    using variant_t = alphabet_t::variant_type;
 
-    constexpr alphabet_t letter0{variant_t{std::in_place_index_t<0>{}, dna4::A}};
-    constexpr alphabet_t letter1{variant_t{std::in_place_index_t<0>{}, dna4::C}};
-    constexpr alphabet_t letter2{variant_t{std::in_place_index_t<0>{}, dna4::G}};
-    constexpr alphabet_t letter3{variant_t{std::in_place_index_t<0>{}, dna4::T}};
-    constexpr alphabet_t letter4{variant_t{std::in_place_index_t<1>{}, dna4::A}};
-    constexpr alphabet_t letter5{variant_t{std::in_place_index_t<1>{}, dna4::C}};
-    constexpr alphabet_t letter6{variant_t{std::in_place_index_t<1>{}, dna4::G}};
-    constexpr alphabet_t letter7{variant_t{std::in_place_index_t<1>{}, dna4::T}};
+    constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
+    constexpr alphabet_t letter1{std::in_place_index_t<0>{}, dna4::C};
+    constexpr alphabet_t letter2{std::in_place_index_t<0>{}, dna4::G};
+    constexpr alphabet_t letter3{std::in_place_index_t<0>{}, dna4::T};
+    constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
+    constexpr alphabet_t letter5{std::in_place_index_t<1>{}, dna4::C};
+    constexpr alphabet_t letter6{std::in_place_index_t<1>{}, dna4::G};
+    constexpr alphabet_t letter7{std::in_place_index_t<1>{}, dna4::T};
 
     EXPECT_EQ(letter0.to_rank(), 0);
     EXPECT_EQ(letter1.to_rank(), 1);
@@ -139,7 +143,7 @@ TEST(union_alphabet_test, move_constructor)
 TEST(union_alphabet_test, assign_from_component_alphabet)
 {
     using alphabet_t = union_alphabet<dna4, dna5, gap>;
-    using variant_t = alphabet_t::variant_type;
+    using variant_t = std::variant<dna4, dna5, gap>;
     alphabet_t letter{};
     variant_t variant{};
 
@@ -149,17 +153,17 @@ TEST(union_alphabet_test, assign_from_component_alphabet)
     EXPECT_EQ(letter.to_rank(), 0);
 
     variant = {dna4::C};
-    letter = dna4::C; // letter = {dna4::C}; does not work
+    letter = {dna4::C};
     EXPECT_EQ(variant.index(), 0);
     EXPECT_EQ(letter.to_rank(), 1);
 
     variant = static_cast<variant_t>(dna4::G);
-    letter = static_cast<variant_t>(dna4::G);
+    letter = static_cast<alphabet_t>(dna4::G);
     EXPECT_EQ(variant.index(), 0);
     EXPECT_EQ(letter.to_rank(), 2);
 
     variant = {static_cast<variant_t>(dna4::T)};
-    letter = {static_cast<variant_t>(dna4::T)};
+    letter = {static_cast<alphabet_t>(dna4::T)};
     EXPECT_EQ(letter.to_rank(), 3);
 
     letter = dna5::A;
@@ -197,7 +201,7 @@ TEST(union_alphabet_test, copy_assignment)
 TEST(union_alphabet_test, move_assignment)
 {
     using alphabet_t = union_alphabet<dna4, gap>;
-    alphabet_t letter1 = static_cast<alphabet_t::variant_type>(dna4::G);
+    alphabet_t letter1 = dna4::G;
     alphabet_t letter2{std::move(letter1)};
 
     EXPECT_EQ(letter2.to_rank(), 2);
