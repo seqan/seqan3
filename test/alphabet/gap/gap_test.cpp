@@ -59,11 +59,6 @@ TEST(gap_test, test_default_initialization)
     EXPECT_EQ(gap3.to_char(), '-');
 }
 
-TEST(gap_test, test_static_cast)
-{
-    EXPECT_EQ(static_cast<char>(gap{}), '-');
-}
-
 TEST(gap_test, test_relations)
 {
     EXPECT_EQ(gap{}, gap{});

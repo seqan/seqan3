@@ -323,12 +323,6 @@ public:
     }
     //!\}
 
-    //!\brief Ability to cast to \link char_type \endlink **explicitly**.
-    explicit constexpr operator char_type() const
-    {
-        return to_char();
-    }
-
     /*!\name Read functions
      * \{
      */
