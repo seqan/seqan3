@@ -88,7 +88,7 @@ struct gap
     //!\brief Return the letter's numeric value or rank in the alphabet. (returns always 0)
     constexpr rank_type to_rank() const
     {
-        return value;
+        return 0;
     }
     //!\}
 
@@ -116,39 +116,34 @@ struct gap
     //!\{
     constexpr bool operator==(gap const & rhs) const
     {
-        return value == rhs.value;
+        return true;
     }
 
     constexpr bool operator!=(gap const & rhs) const
     {
-        return value != rhs.value;
+        return false;
     }
 
     constexpr bool operator<(gap const & rhs) const
     {
-        return value < rhs.value;
+        return false;
     }
 
     constexpr bool operator>(gap const & rhs) const
     {
-        return value > rhs.value;
+        return false;
     }
 
     constexpr bool operator<=(gap const & rhs) const
     {
-        return value <= rhs.value;
+        return true;
     }
 
     constexpr bool operator>=(gap const & rhs) const
     {
-        return value >= rhs.value;
+        return true;
     }
     //!\}
-
-    //!\privatesection
-    //!\brief The data member.
-    static constexpr rank_type value = 0;
-    //!\publicsection
 };
 
 constexpr gap gap::GAP{};
