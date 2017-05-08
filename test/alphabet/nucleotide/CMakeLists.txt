@@ -1,5 +1,0 @@
-seqan3_test(dna4_test.cpp)
-seqan3_test(rna4_test.cpp)
-seqan3_test(dna5_test.cpp)
-seqan3_test(rna5_test.cpp)
-seqan3_test(nucl16_test.cpp)
