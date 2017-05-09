@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,22 +30,33 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
+// ==========================================================================
 
-/*!\file alphabet.hpp
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the alphabet module.
- *
- * \defgroup alphabet
- *
- * The alphabet module contains different biological alphabets and related functionality.
- *
- * TODO more details.
- */
+#include <iostream>
 
-#pragma once
+#include <gtest/gtest.h>
 
-#include <seqan3/alphabet/composition.hpp>
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality.hpp>
+#include <range/v3/view/reverse.hpp>
+
+#include <seqan3/range/view/convert.hpp>
+
+using namespace seqan3;
+
+TEST(view_convert, basic)
+{
+    std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
+    std::vector<bool> cmp{1, 1, 0, 1, 0, 0, 1, 1, 1};
+
+    // pipe notation
+    std::vector<bool> v = vec | view::convert<bool>;
+    EXPECT_EQ(cmp, v);
+
+    // function notation
+    std::vector<bool> v2{view::convert<bool>(vec)};
+    EXPECT_EQ(cmp, v2);
+
+    // combinability
+    std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
+    std::vector<bool> v3 = vec | view::convert<bool> | ranges::view::reverse;
+    EXPECT_EQ(cmp2, v3);
+}

@@ -32,20 +32,20 @@
 //
 // ============================================================================
 
-/*!\file alphabet.hpp
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the alphabet module.
- *
- * \defgroup alphabet
- *
- * The alphabet module contains different biological alphabets and related functionality.
- *
- * TODO more details.
- */
+#include <type_traits>
 
-#pragma once
+#include <gtest/gtest.h>
 
-#include <seqan3/alphabet/composition.hpp>
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality.hpp>
+#include <seqan3/core/convert.hpp>
+
+using namespace seqan3;
+
+TEST(convert, basic)
+{
+    bool b = convert<bool>(7);
+    EXPECT_EQ(b, true);
+
+    auto i = convert<int>('A');
+    EXPECT_TRUE((std::is_same_v<decltype(i), int>));
+    EXPECT_EQ(i, 65);
+}

@@ -41,6 +41,7 @@
 #pragma once
 
 #include <seqan3/range/view/concept.hpp>
+#include <seqan3/range/view/convert.hpp>
 
 /*!\defgroup view View
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
