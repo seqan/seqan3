@@ -49,4 +49,3 @@
 #include <seqan3/alphabet/composition.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality.hpp>
-#include <seqan3/alphabet/range.hpp>
