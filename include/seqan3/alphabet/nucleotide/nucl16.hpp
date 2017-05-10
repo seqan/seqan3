@@ -227,87 +227,40 @@ protected:
     };
 
     //!\brief Char to value conversion table.
-    static constexpr internal_type char_to_value[256]
+    static constexpr std::array<internal_type, 256> char_to_value
     {
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //                      A,                      B,                      C,
-        internal_type::UNKNOWN, internal_type::A,       internal_type::B,       internal_type::C,
-        //D,                    E,                      F,                      G,
-        internal_type::D,       internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::G,
-        //H,                    I,                      J,                      K,
-        internal_type::H,       internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::K,
-        //L,                    M,                      N,                      O,
-        internal_type::UNKNOWN, internal_type::M,       internal_type::N,       internal_type::UNKNOWN,
-        //P,                    Q,                      R,                      S,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::R,       internal_type::S,
-        //T,                    U,                      V,                      W,
-        internal_type::T,       internal_type::U,       internal_type::V,       internal_type::W,
-        //X,                    Y,                      Z
-        internal_type::UNKNOWN, internal_type::Y,       internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //                      a,                      b,                      c,
-        internal_type::UNKNOWN, internal_type::A,       internal_type::B,       internal_type::C,
-        //d,                    e,                      f,                      g,
-        internal_type::D,       internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::G,
-        //h,                    i,                      j,                      k,
-        internal_type::H,       internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::K,
-        //l,                    m,                      n,                      o,
-        internal_type::UNKNOWN, internal_type::M,       internal_type::N,       internal_type::UNKNOWN,
-        //p,                    q,                      r,                      s,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::R,       internal_type::S,
-        //t,                    u,                      v,                      w,
-        internal_type::T,       internal_type::U,       internal_type::V,       internal_type::W,
-        //x,                    y,                      z
-        internal_type::UNKNOWN, internal_type::Y,       internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN
+        [] () constexpr
+        {
+            using in_t = internal_type;
+            std::array<in_t, 256> ret{};
+
+            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+            for (auto & c : ret)
+                c = in_t::UNKNOWN;
+
+            // canonical
+            ret['A'] = in_t::A; ret['a'] = in_t::A;
+            ret['C'] = in_t::C; ret['c'] = in_t::C;
+            ret['G'] = in_t::G; ret['g'] = in_t::G;
+            ret['T'] = in_t::T; ret['t'] = in_t::T;
+            ret['U'] = in_t::U; ret['u'] = in_t::U;
+
+            // iupac characters
+            ret['R'] = in_t::R; ret['r'] = in_t::R;
+            ret['Y'] = in_t::Y; ret['y'] = in_t::Y;
+            ret['S'] = in_t::S; ret['s'] = in_t::S;
+            ret['W'] = in_t::W; ret['w'] = in_t::W;
+            ret['K'] = in_t::K; ret['k'] = in_t::K;
+            ret['M'] = in_t::M; ret['m'] = in_t::M;
+            ret['B'] = in_t::B; ret['b'] = in_t::B;
+            ret['D'] = in_t::D; ret['d'] = in_t::D;
+            ret['H'] = in_t::H; ret['h'] = in_t::H;
+            ret['V'] = in_t::V; ret['v'] = in_t::V;
+            ret['N'] = in_t::N; ret['n'] = in_t::N;
+            return ret;
+        }()
     };
+
 public:
     //!\privatesection
     //!\brief The data member.
