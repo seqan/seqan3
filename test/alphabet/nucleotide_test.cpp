@@ -32,8 +32,11 @@
 //
 // ==========================================================================
 
-#include <gtest/gtest.h>
 #include <sstream>
+
+#include <gtest/gtest.h>
+
+#include <range/v3/view/zip.hpp>
 
 #include <seqan3/alphabet/nucleotide.hpp>
 
@@ -62,12 +65,51 @@ TYPED_TEST(nucleotide, static_members)
 
 TYPED_TEST(nucleotide, assign_char)
 {
-    EXPECT_EQ((assign_char(TypeParam{}, 'A')), TypeParam::A);
-    EXPECT_EQ((assign_char(TypeParam{}, 'C')), TypeParam::C);
-    EXPECT_EQ((assign_char(TypeParam{}, 'G')), TypeParam::G);
-    EXPECT_EQ((assign_char(TypeParam{}, 'T')), TypeParam::T);
-    EXPECT_EQ((assign_char(TypeParam{}, 'U')), TypeParam::U);
-    EXPECT_EQ((assign_char(TypeParam{}, '!')), TypeParam::UNKNOWN);
+    using t = TypeParam;
+    std::vector<char> input
+    {
+        'A', 'C', 'G', 'T', 'U', 'N',
+        'a', 'c', 'g', 't', 'u', 'n',
+        'R', 'Y', 'S', 'W', 'K', 'M', 'B', 'D', 'H', 'V',
+        'r', 'y', 's', 'w', 'k', 'm', 'b', 'd', 'h', 'v',
+        '!'
+    };
+
+    std::vector<TypeParam> cmp;
+    if constexpr (std::is_same_v<TypeParam, dna4> || std::is_same_v<TypeParam, rna4>)
+    {
+        cmp =
+        {
+            t::A, t::C, t::G, t::T, t::U, t::A,
+            t::A, t::C, t::G, t::T, t::U, t::A,
+            t::A, t::C, t::C, t::A, t::G, t::A, t::C, t::A, t::A, t::A,
+            t::A, t::C, t::C, t::A, t::G, t::A, t::C, t::A, t::A, t::A,
+            t::A
+        };
+    } else if constexpr (std::is_same_v<TypeParam, dna5> || std::is_same_v<TypeParam, rna5>)
+    {
+        cmp =
+        {
+            t::A, t::C, t::G, t::T, t::U, t::N,
+            t::A, t::C, t::G, t::T, t::U, t::N,
+            t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N,
+            t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N,
+            t::N
+        };
+    } else if constexpr (std::is_same_v<TypeParam, nucl16>)
+    {
+        cmp =
+        {
+            t::A, t::C, t::G, t::T, t::U, t::N,
+            t::A, t::C, t::G, t::T, t::U, t::N,
+            t::R, t::Y, t::S, t::W, t::K, t::M, t::B, t::D, t::H, t::V,
+            t::R, t::Y, t::S, t::W, t::K, t::M, t::B, t::D, t::H, t::V,
+            t::N
+        };
+    }
+
+    for (auto [ ch, cm ] : ranges::view::zip(input, cmp))
+        EXPECT_EQ((assign_char(TypeParam{}, ch)), cm);
 }
 
 TYPED_TEST(nucleotide, to_char)
@@ -89,6 +131,17 @@ TYPED_TEST(nucleotide, to_char)
     {
         EXPECT_EQ(to_char(TypeParam::U), 'U');
         EXPECT_EQ(to_char(TypeParam::T), 'T');
+
+        EXPECT_EQ(to_char(TypeParam::R), 'R');
+        EXPECT_EQ(to_char(TypeParam::Y), 'Y');
+        EXPECT_EQ(to_char(TypeParam::S), 'S');
+        EXPECT_EQ(to_char(TypeParam::W), 'W');
+        EXPECT_EQ(to_char(TypeParam::K), 'K');
+        EXPECT_EQ(to_char(TypeParam::M), 'M');
+        EXPECT_EQ(to_char(TypeParam::B), 'B');
+        EXPECT_EQ(to_char(TypeParam::D), 'D');
+        EXPECT_EQ(to_char(TypeParam::H), 'H');
+        EXPECT_EQ(to_char(TypeParam::V), 'V');
     }
 
     if constexpr (std::is_same_v<TypeParam, dna4> || std::is_same_v<TypeParam, rna4>)
