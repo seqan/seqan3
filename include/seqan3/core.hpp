@@ -33,16 +33,8 @@
 // ============================================================================
 
 /*!\file core.hpp
- * \defgroup core
- *
- * The core module contains the definition of external concepts, as well as
- * various utilities that are mostly hidden from the user.
- *
- * Place core utilities here that are needed across many modules, but it should
- * be kept to a minimum.
- *
- * TODO more details.
- *
+ * \ingroup core
+ * \brief Meta-header for the \link core core module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
@@ -55,6 +47,52 @@
 
 #include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/concept/iterator.hpp>
-#include <seqan3/core/concept/stl_container.hpp>
-#include <seqan3/core/concept/range.hpp>
+#include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/core/platform.hpp>
 
+/*!\defgroup core Core
+ * \brief Contains core functionality used by multiple modules.
+ *
+ * The core module contains concepts, functions and some classes that
+ * are used by multiple other modules, but that usually are not relevant
+ * to most users of the library.
+ */
+
+/*!\namespace seqan3
+ * \brief The main SeqAn3 namespace.
+ */
+
+/*!\namespace seqan3::literal
+ * \brief The SeqAn3 namespace for literals.
+ *
+ * SeqAn implements "user defined" literals in multiple places, e.g. `auto foo = "ACGTG"_dna4`. These
+ * make working with small examples and tests a lot easier, but the risk of having a name collision with
+ * another library is higher so follow the example of the standard library and define all our literals
+ * in the namespace `seqan3::literal`.
+ *
+ * \attention
+ * This means you cannot use them, unless you explicitly add `using namespace seqan3::literal;` (in addition
+ * to `using namespace seqan3;`).
+ */
+
+/*!\cond DEV
+ * \namespace seqan3::detail
+ * \brief The internal SeqAn3 namespace.
+ * \details
+ * The contents of this namespace are not visible to consumers of the library and the documentation is
+ * only generated for developers.
+ * \sa https://github.com/seqan/seqan3/wiki/Documentation
+ * \endcond
+ */
+
+/*!\mainpage SeqAn3 API documentation
+ *
+ * This is the API documentation for the SeqAn3 library.
+ *
+ * We recommend browsing the documentation via the "Modules" menu on the left.
+ *
+ * Installation instructions are available on [GitHub](https://github.com/seqan/seqan3).
+ *
+ * A manual will be added in the future.
+ */

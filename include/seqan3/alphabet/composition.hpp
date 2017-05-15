@@ -45,7 +45,7 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
@@ -69,7 +69,7 @@ namespace seqan3
  * \cond DEV
  * To make a derived class "complete", you should add at least the following:
  *   * .to_char() member
- *   * .from_char() member
+ *   * .assign_char() member
  *   * .operator=() members for all element types
  *   * a type deduction guide
  * \endcond
@@ -87,11 +87,11 @@ struct alphabet_composition :
 {
 public:
     //!\brief The type of value_size and `alphabet_size_v<alphabet_composition<...>>`
-    using integral_type = detail::min_viable_uint_t<(alphabet_size_v<first_alphabet_type> * ... *
+    using rank_type = detail::min_viable_uint_t<(alphabet_size_v<first_alphabet_type> * ... *
                                                      alphabet_size_v<alphabet_types>)>;
 
     //!\brief The product of the sizes of the individual alphabets.
-    static constexpr integral_type value_size{(alphabet_size_v<first_alphabet_type> * ... *
+    static constexpr rank_type value_size{(alphabet_size_v<first_alphabet_type> * ... *
                                                alphabet_size_v<alphabet_types>)};
 
     /*!\name Read functions
@@ -101,9 +101,9 @@ public:
      * \par Complexity
      * Linear in the number of alphabets.
      */
-    constexpr integral_type to_integral() const
+    constexpr rank_type to_rank() const
     {
-        return to_integral_impl(positions);
+        return to_rank_impl(positions);
     }
 
     /*!\brief Explicit cast to a single letter. Works only if the type is unique in the type list.
@@ -129,10 +129,10 @@ public:
      * \par Exceptions
      * Asserts that the parameter is smaller than value_size [only in debug mode].
      */
-    constexpr derived_type & from_integral(integral_type const i)
+    constexpr derived_type & assign_rank(rank_type const i)
     {
         assert(i < value_size);
-        from_integral_impl<0>(i);
+        assign_rank_impl<0>(i);
         return static_cast<derived_type &>(*this);
     }
     //!\}
@@ -156,11 +156,11 @@ private:
     friend derived_type;
 
     //!\brief the cummulative alphabet size products (first, first*second, first*second*third...) are cached
-    static constexpr std::array<integral_type, sizeof...(alphabet_types) + 1> cummulative_alph_sizes
+    static constexpr std::array<rank_type, sizeof...(alphabet_types) + 1> cummulative_alph_sizes
     {
         [] () constexpr
         {
-            std::array<integral_type, sizeof...(alphabet_types) + 1> ret{};
+            std::array<rank_type, sizeof...(alphabet_types) + 1> ret{};
             size_t count = 0;
             meta::for_each(meta::list<first_alphabet_type, alphabet_types...>{}, [&] (auto && alph) constexpr
             {
@@ -175,41 +175,41 @@ private:
     //!\brief An index sequence up to the number of contained letters.
     static constexpr auto positions = std::make_index_sequence<sizeof...(alphabet_types)>{};
 
-    //!\brief Implementation of to_integral().
+    //!\brief Implementation of to_rank().
     template <std::size_t ...idx>
-    constexpr integral_type to_integral_impl(std::index_sequence<idx...> const &) const
+    constexpr rank_type to_rank_impl(std::index_sequence<idx...> const &) const
     {
-        using seqan3::to_integral;
+        using seqan3::to_rank;
         if constexpr (sizeof...(idx) > 0)
         {
-            return to_integral(get<0>(*this)) +
-                   ((to_integral(get<idx + 1>(*this)) * cummulative_alph_sizes[idx]) + ...);
+            return to_rank(get<0>(*this)) +
+                   ((to_rank(get<idx + 1>(*this)) * cummulative_alph_sizes[idx]) + ...);
         }
         else
         {
-            return to_integral(get<0>(*this));
+            return to_rank(get<0>(*this));
         }
     }
 
-    //!\brief Implementation of from_integral().
+    //!\brief Implementation of assign_rank().
     template <std::size_t j>
     constexpr void
-    from_integral_impl(integral_type const i)
+    assign_rank_impl(rank_type const i)
     {
-        using seqan3::from_integral;
+        using seqan3::assign_rank;
         if constexpr (j == 0)
         {
-            from_integral(get<j>(*this),
+            assign_rank(get<j>(*this),
                           i % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
         } else
         {
-            from_integral(get<j>(*this),
+            assign_rank(get<j>(*this),
                           (i / cummulative_alph_sizes[j - 1]) %
                           alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
         }
 
         if constexpr (j < sizeof...(alphabet_types))
-            from_integral_impl<j + 1>(i);
+            assign_rank_impl<j + 1>(i);
     }
 };
 

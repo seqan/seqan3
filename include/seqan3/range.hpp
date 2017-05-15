@@ -32,28 +32,39 @@
 //
 // ============================================================================
 
-#pragma once
-
-#include <type_traits>
-
-#include <seqan3/core/platform.hpp>
-
-/*!\file core/detail/int_types.hpp
- * \brief Contains metaprogramming utilities for integer types.
+/*!\file range.hpp
+ * \ingroup range
+ * \brief Meta-header for the \link range range module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
  */
 
-namespace seqan3::detail
-{
+#pragma once
 
-//!\cond DEV
-//!\brief Given a value, return the smallest unsigned integer that can hold it.
-template <uint64_t value>
-using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
-                          std::conditional_t<value <= 255ull,        uint8_t,
-                          std::conditional_t<value <= 65535ull,      uint16_t,
-                          std::conditional_t<value <= 4294967295ull, uint32_t, uint64_t>>>>;
-//!\endcond
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/action.hpp>
+#include <seqan3/range/container.hpp>
+#include <seqan3/range/view.hpp>
 
-} // namespace seqan3::detail
+/*!\defgroup range Range
+ * \brief The range module contains containers, views and actions.
+ *
+ * *Ranges* are an abstraction of "a collection of items", or "something iterable". The most basic definition
+ * requires only the existence of begin() and end() on the range. See range/concept.hpp for the different range
+ * concepts.
+ *
+ * *Containers* are ranges that own their elements. SeqAn3 makes use of standard STL containers like std::vector,
+ * but also implements some custom containers. See range/container.hpp for more details.
+ *
+ * *Views* are "lazy range combinators" that provide operations on other ranges, e.g. containers, but do so on-demand,
+ * i.e. views don't own elements, but return (mutated) elements on request. This is similar to how iterators can
+ * provide different behaviours on the same underlying data structure (while not actually changing it). See
+ * range/view.hpp for more details.
+ *
+ * *Actions* on the other hand are "eager range combinators", i.e. they immediately change the underlying range
+ * they are applied to. See range/action.hpp for more details.
+ *
+ * Both views and actions can be chained via the pipe operator.
+ *
+ * \sa range.hpp
+ * \sa https://ericniebler.github.io/range-v3/index.html
+ */

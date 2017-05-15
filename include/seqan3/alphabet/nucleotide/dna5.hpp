@@ -1,8 +1,8 @@
-// ==========================================================================
+// ============================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
+// ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,34 +30,46 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ==========================================================================
-// Author: David Heller <david.heller@fu-berlin.de>
-// ==========================================================================
+// ============================================================================
+
+/*!\file alphabet/nucleotide/dna5.hpp
+ * \ingroup nucleotide
+ * \author David Heller <david.heller AT fu-berlin.de>
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains seqan3::dna5, container aliases and string literals.
+ */
 
 #pragma once
 
-#include "../alphabet.hpp"
+#include <cassert>
 
-/*! The five letter DNA alphabet
- * \ingroup alphabet
- */
+#include <string>
+#include <vector>
+
+#include <seqan3/alphabet/nucleotide/concept.hpp>
+
+// ------------------------------------------------------------------
+// dna5
+// ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-/*! The five letter DNA alphabet of A,C,G,T,N
+/*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
+ * \ingroup nucleotide
  *
- * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
- * regular characters, but additional functions for this are available.
+ * \details
+ * Note that you can assign 'U' as a character to dna5 and it will silently
+ * be converted to 'T'.
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     dna5 my_letter{dna5::A};
  *     // doesn't work:
  *     // dna5 my_letter{'A'};
  *
- *     my_letter.from_char('C'); // <- this does!
+ *     my_letter.assign_char('C'); // <- this does!
  *
- *     my_letter.from_char('F'); // converted to N internally
+ *     my_letter.assign_char('F'); // converted to N internally
  *     if (my_letter.to_char() == 'N')
  *        std::cout << "yeah\n"; // "yeah";
  *~~~~~~~~~~~~~~~
@@ -65,14 +77,105 @@ namespace seqan3
 
 struct dna5
 {
-    //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
+    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
-    //! the type of the alphabet when represented as a number (e.g. via @link to_integral @endlink)
-    using integral_type = uint8_t;
+    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+    using rank_type = uint8_t;
 
-    // strictly typed enum, unfortunately with scope
-    //! \privatesection
-    enum struct internal_type : integral_type
+    /*!\name Letter values
+     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
+     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
+     */
+    //!\{
+    static const dna5 A;
+    static const dna5 C;
+    static const dna5 G;
+    static const dna5 T;
+    static const dna5 N;
+    static const dna5 U;
+    static const dna5 UNKNOWN;
+    //!\}
+
+    /*!\name Read functions
+     * \{
+     */
+    //!\brief Return the letter as a character of char_type.
+    constexpr char_type to_char() const noexcept
+    {
+        return value_to_char[static_cast<rank_type>(_value)];
+    }
+
+    //!\brief Return the letter's numeric value or rank in the alphabet.
+    constexpr rank_type to_rank() const noexcept
+    {
+        return static_cast<rank_type>(_value);
+    }
+    //!\}
+
+    /*!\name Write functions
+     * \{
+     */
+    //!\brief Assign from a character.
+    constexpr dna5 & assign_char(char_type const c) noexcept
+    {
+        _value = char_to_value[c];
+        return *this;
+    }
+
+    //!\brief Assign from a numeric value.
+    constexpr dna5 & assign_rank(rank_type const c)
+    {
+        assert(c < value_size);
+        _value = static_cast<internal_type>(c);
+        return *this;
+    }
+    //!\}
+
+    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    static constexpr rank_type value_size{5};
+
+    //!\name Comparison operators
+    //!\{
+    constexpr bool operator==(dna5 const & rhs) const noexcept
+    {
+        return _value == rhs._value;
+    }
+
+    constexpr bool operator!=(dna5 const & rhs) const noexcept
+    {
+        return _value != rhs._value;
+    }
+
+    constexpr bool operator<(dna5 const & rhs) const noexcept
+    {
+        return _value < rhs._value;
+    }
+
+    constexpr bool operator>(dna5 const & rhs) const noexcept
+    {
+        return _value > rhs._value;
+    }
+
+    constexpr bool operator<=(dna5 const & rhs) const noexcept
+    {
+        return _value <= rhs._value;
+    }
+
+    constexpr bool operator>=(dna5 const & rhs) const noexcept
+    {
+        return _value >= rhs._value;
+    }
+    //!\}
+
+protected:
+    //!\privatesection
+    /*!\brief The internal type is a strictly typed enum.
+     *
+     * This is done to prevent aggregate initialization from numbers and/or chars.
+     * It is has the drawback that it also introduces a scope which in turn makes
+     * the static "letter values " members necessary.
+     */
+    enum struct internal_type : rank_type
     {
         A,
         C,
@@ -82,95 +185,8 @@ struct dna5
         U = T,
         UNKNOWN = N
     };
-    internal_type value;
-    //! \publicsection
 
-    // import internal_types values into local scope:
-
-    /*! @name letter values
-     * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * *Don't worry about the `internal_type`.*
-     */
-    //!@{
-    static const dna5 A;
-    static const dna5 C;
-    static const dna5 G;
-    static const dna5 T;
-    static const dna5 N;
-    static const dna5 U;
-    static const dna5 UNKNOWN;
-    //!@}
-
-    //! ability to cast to @link char_type @endlink **explicitly**.
-    explicit constexpr operator char_type() const
-    {
-        return to_char();
-    }
-
-    //! return the letter as a character of @link char_type @endlink.
-    constexpr char_type to_char() const
-    {
-        return value_to_char[static_cast<integral_type>(value)];
-    }
-
-    //! assign from a character
-    constexpr dna5 & from_char(char_type const c)
-    {
-        value = char_to_value[c];
-        return *this;
-    }
-
-    //! return the letter's numeric value or rank in the alphabet
-    constexpr integral_type to_integral() const
-    {
-        return static_cast<integral_type>(value);
-    }
-
-    //! assign from a numeric value
-    constexpr dna5 & from_integral(integral_type const c)
-    {
-        value = static_cast<internal_type>(c);
-        return *this;
-    }
-
-    //! The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr integral_type value_size{5};
-
-    //! @name comparison operators
-    //!@{
-    constexpr bool operator==(dna5 const & rhs) const
-    {
-        return value == rhs.value;
-    }
-
-    constexpr bool operator!=(dna5 const & rhs) const
-    {
-        return value != rhs.value;
-    }
-
-    constexpr bool operator<(dna5 const & rhs) const
-    {
-        return value < rhs.value;
-    }
-
-    constexpr bool operator>(dna5 const & rhs) const
-    {
-        return value > rhs.value;
-    }
-
-    constexpr bool operator<=(dna5 const & rhs) const
-    {
-        return value <= rhs.value;
-    }
-
-    constexpr bool operator>=(dna5 const & rhs) const
-    {
-        return value >= rhs.value;
-    }
-    //!@}
-
-    //! \privatesection
-    // conversion tables
+    //!\brief Value to char conversion table.
     static constexpr char_type value_to_char[value_size]
     {
         'A',
@@ -180,87 +196,35 @@ struct dna5
         'N'
     };
 
-    static constexpr internal_type char_to_value[256]
+    //!\brief Char to value conversion table.
+    static constexpr std::array<internal_type, 256> char_to_value
     {
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//3
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//23
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//43
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//63
-        //                      A,                      B,                      C
-        internal_type::UNKNOWN, internal_type::A,       internal_type::UNKNOWN, internal_type::C,
-        //D,                    E,                      F,                      G,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::G,
-        //H,                    I,                      J,                      K,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //L,                    M,                      N,                      O,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::N,       internal_type::UNKNOWN,
-        //P,                    Q,                      R,                      S,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//83
-        //T,                    U,                      V,                      W,
-        internal_type::T,       internal_type::T,       internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //X,                    Y,                      Z
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //                      a,                      b,                      c,
-        internal_type::UNKNOWN, internal_type::A,       internal_type::UNKNOWN, internal_type::C,
-        //d,                    e,                      f,                      g,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::G,//103
-        //h,                    i,                      j,                      k,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //l,                    m,                      n,                      o,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::N,       internal_type::UNKNOWN,
-        //p,                    q,                      r,                      s,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //t,                    u,                      v,                      w,
-        internal_type::T,       internal_type::T,       internal_type::UNKNOWN, internal_type::UNKNOWN,
-        //x,             y,               z
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//123
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//143
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//163
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//183
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//203
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//223
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,//243
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN
+        [] () constexpr
+        {
+            using in_t = internal_type;
+            std::array<in_t, 256> ret{};
+
+            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+            for (auto & c : ret)
+                c = in_t::UNKNOWN;
+
+            // canonical
+            ret['A'] = in_t::A; ret['a'] = in_t::A;
+            ret['C'] = in_t::C; ret['c'] = in_t::C;
+            ret['G'] = in_t::G; ret['g'] = in_t::G;
+            ret['T'] = in_t::T; ret['t'] = in_t::T;
+            ret['U'] = in_t::U; ret['u'] = in_t::U;
+
+            // iupac characters are implicitly "UNKNOWN"
+            return ret;
+        }()
     };
+
+public:
+    //!\privatesection
+    //!\brief The data member.
+    internal_type _value;
+    //!\publicsection
 };
 
 constexpr dna5 dna5::A{internal_type::A};
@@ -271,9 +235,123 @@ constexpr dna5 dna5::N{internal_type::N};
 constexpr dna5 dna5::U{dna5::T};
 constexpr dna5 dna5::UNKNOWN{dna5::N};
 
+} // namespace seqan3
+
+namespace seqan3::detail
+{
+
+//!\brief seqan3::dna5 is defined as being a nucleotide alphabet.
+//!\ingroup nucleotide
+template <>
+struct is_nucleotide<dna5> : public std::true_type
+{};
+
+} // namespace seqan3::detail
+
 #ifndef NDEBUG
-static_assert(alphabet_concept<dna5>);
-static_assert(detail::internal_alphabet_concept<dna5>);
+static_assert(seqan3::alphabet_concept<seqan3::dna5>);
+static_assert(seqan3::nucleotide_concept<seqan3::dna5>);
 #endif
 
+// ------------------------------------------------------------------
+// containers
+// ------------------------------------------------------------------
+
+namespace seqan3
+{
+
+//!\brief Alias for an std::vector of seqan3::dna5.
+//!\relates dna5
+using dna5_vector = std::vector<dna5>;
+
+
+/*!\brief Alias for an std::basic_string of seqan3::dna5.
+ * \relates dna5
+ *
+ * \attention
+ * Note that we recommend using seqan3::dna5_vector instead of dna5_string in almost all situations.
+ * While the C++ style operations on the string are well supported, you should not access the internal c-string
+ * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
+ * correct length of the string (while the `.size()` returns the correct value).
+ */
+using dna5_string = std::basic_string<dna5, std::char_traits<dna5>>;
+
 } // namespace seqan3
+
+// ------------------------------------------------------------------
+// literals
+// ------------------------------------------------------------------
+
+namespace seqan3::literal
+{
+
+/*!\brief dna5 literal
+ * \relates seqan3::dna5
+ * \returns seqan3::dna5_vector
+ *
+ * You can use this string literal to easily assign to dna5_vector:
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     // these don't work:
+ *     // dna5_vector foo{"ACGTTA"};
+ *     // dna5_vector bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     dna5_vector foo{"ACGTTA"_dna5};
+ *     dna5_vector bar = "ACGTTA"_dna5;
+ *     auto bax = "ACGTTA"_dna5;
+ *~~~~~~~~~~~~~~~
+ *
+ * \attention
+ * All seqan3 literals are in the namespace seqan3::literal!
+ */
+
+inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
+{
+    dna5_vector r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
+
+/*!\brief dna5 string literal
+ * \relates seqan3::dna5
+ * \returns seqan3::dna5_string
+ *
+ * You can use this string literal to easily assign to dna5_vector:
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     // these don't work:
+ *     // dna5_string foo{"ACGTTA"};
+ *     // dna5_string bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     dna5_string foo{"ACGTTA"_dna5s};
+ *     dna5_string bar = "ACGTTA"_dna5s;
+ *     auto bax = "ACGTTA"_dna5s;
+ *~~~~~~~~~~~~~~~
+ *
+ * Please note the limitations of seqan3::dna5_string and consider using the \link operator""_dna5 \endlink instead.
+ *
+ * \attention
+ * All seqan3 literals are in the namespace seqan3::literal!
+ */
+
+inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
+{
+    dna5_string r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
+
+} // namespace seqan3::literal
+

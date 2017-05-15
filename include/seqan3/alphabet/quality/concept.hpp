@@ -39,7 +39,7 @@
 #include <iostream>
 #include <string>
 
-#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 namespace seqan3
 {
@@ -58,13 +58,13 @@ template <typename q>
 concept bool internal_quality_concept = requires (q quality)
 {
     //! fulfills the internal requirements for general alphabets
-    requires internal_alphabet_concept<q>;
+    requires alphabet_concept<q>;
     //! offers additionally a phred score data type which may not be zero based
     typename q::phred_type;
-    //! converts the internal integral value (not phred score) representation to a valid phred score
+    //! converts the internal rank value (not phred score) representation to a valid phred score
     { quality.to_phred() } -> typename q::phred_type;
     //! internal value setter function receiving a phred score
-    { quality.from_phred(0) } -> q;
+    { quality.assign_phred(0) } -> q;
 
 };
 
@@ -85,12 +85,12 @@ template <typename alphabet_type>
 //! public setter function receiving char encoding of phred score
 template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
-    constexpr alphabet_type from_phred(alphabet_type & c, char const in)
+    constexpr alphabet_type assign_phred(alphabet_type & c, char const in)
 {
-    return c.from_phred(in);
+    return c.assign_phred(in);
 }
 
-//! public getter function for integral presentation of phred score
+//! public getter function for rank presentation of phred score
 template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
     constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & c)
@@ -109,8 +109,8 @@ concept bool quality_concept = requires(q quality)
     //! requires fulfillment of alphabet concept
     requires alphabet_concept<q>;
 
-    //! requires additionally public getter and setter for integral phred score representation
-    { from_phred(quality, typename q::integral_type{}) } -> q;
+    //! requires additionally public getter and setter for rank phred score representation
+    { assign_phred(quality, typename q::rank_type{}) } -> q;
     { to_phred(quality) } -> const typename q::phred_type;
     typename underlying_phred<q>::type;
 };

@@ -32,28 +32,19 @@
 //
 // ============================================================================
 
-#pragma once
-
-#include <type_traits>
-
-#include <seqan3/core/platform.hpp>
-
-/*!\file core/detail/int_types.hpp
- * \brief Contains metaprogramming utilities for integer types.
+/*!\file range/container.hpp
+ * \ingroup container
+ * \brief Meta-header for the \link container container submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
  */
 
-namespace seqan3::detail
-{
+#pragma once
 
-//!\cond DEV
-//!\brief Given a value, return the smallest unsigned integer that can hold it.
-template <uint64_t value>
-using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
-                          std::conditional_t<value <= 255ull,        uint8_t,
-                          std::conditional_t<value <= 65535ull,      uint16_t,
-                          std::conditional_t<value <= 4294967295ull, uint32_t, uint64_t>>>>;
-//!\endcond
+#include <seqan3/range/container/concept.hpp>
 
-} // namespace seqan3::detail
+/*!\defgroup container Container
+ * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
+ * \ingroup range
+ * \sa http://en.cppreference.com/w/cpp/container
+ * \sa range/container.hpp
+ */

@@ -27,6 +27,9 @@ before_install:
 install:
   - dpkg -x $HOME/debs/g++-7_"${GCC_VERSION}"_amd64.deb $HOME
   - mv $HOME/home/travis/* $HOME
+  - ccache --version
+  - g++ -v
+  - cmake --version
 
 before_script:
   - mkdir build

@@ -31,32 +31,21 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
 
-#include <array>
+/*!\file alphabet.hpp
+ * \ingroup alphabet
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for the alphabet module.
+ *
+ * \defgroup alphabet
+ *
+ * The alphabet module contains different biological alphabets and related functionality.
+ *
+ * TODO more details.
+ */
 
-#include <gtest/gtest.h>
-#include <seqan3/alphabet/nucleotide/nucl16.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16_container.hpp>
+#pragma once
 
-using namespace seqan3;
-
-TEST(alphabet_nucleotides_nucl16_container_test, vector)
-{
-    nucl16_vector v{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
-
-    EXPECT_EQ(v[0], nucl16::A);
-    EXPECT_EQ(v[1], nucl16::C);
-    EXPECT_EQ(v[2], nucl16::G);
-    EXPECT_EQ(v[3], nucl16::T);
-}
-
-TEST(alphabet_nucleotides_nucl16_container_test, string)
-{
-    nucl16_string s{{nucl16::A}, {nucl16::C}, {nucl16::G}, {nucl16::T}};
-    EXPECT_EQ(s[0], nucl16::A);
-    EXPECT_EQ(s[1], nucl16::C);
-    EXPECT_EQ(s[2], nucl16::G);
-    EXPECT_EQ(s[3], nucl16::T);
-}
+#include <seqan3/alphabet/composition.hpp>
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/quality.hpp>

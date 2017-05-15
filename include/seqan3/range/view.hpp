@@ -32,28 +32,53 @@
 //
 // ============================================================================
 
-#pragma once
-
-#include <type_traits>
-
-#include <seqan3/core/platform.hpp>
-
-/*!\file core/detail/int_types.hpp
- * \brief Contains metaprogramming utilities for integer types.
+/*!\file range/view.hpp
+ * \ingroup view
+ * \brief Meta-header for the \link view view submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
  */
 
-namespace seqan3::detail
-{
+#pragma once
 
-//!\cond DEV
-//!\brief Given a value, return the smallest unsigned integer that can hold it.
-template <uint64_t value>
-using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
-                          std::conditional_t<value <= 255ull,        uint8_t,
-                          std::conditional_t<value <= 65535ull,      uint16_t,
-                          std::conditional_t<value <= 4294967295ull, uint32_t, uint64_t>>>>;
-//!\endcond
+#include <seqan3/range/view/concept.hpp>
+#include <seqan3/range/view/convert.hpp>
 
-} // namespace seqan3::detail
+/*!\defgroup view View
+ * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
+ * \ingroup range
+ * \sa https://ericniebler.github.io/range-v3/index.html#range-views
+ * \sa range/view.hpp
+ *
+ * SeqAn3 makes heavy use of views as defined in the
+ * [Ranges Technical Specification](http://en.cppreference.com/w/cpp/experimental/ranges). Currently the
+ * implementation is based on the [range-v3 library](https://github.com/ericniebler/range-v3) and all those views
+ * are available in the namespace ranges::view, see
+ * [the overview](https://ericniebler.github.io/range-v3/index.html#range-views) for more details.
+ *
+ * This submodule provides additional views, specifically for operations on biological data and
+ * sequence analysis.
+ *
+ * \attention
+ * To prevent naming conflicts, all SeqAn views are inside the namespace seqan3::view.
+ *
+ * \par Example
+ *
+ * ```cpp
+ * dna4_vector vec{"ACGGTC"_dna4};
+ * auto vec_view  = vec | view::complement;                         // == "TGCCAG" (but doesn't own any data)
+ * auto vec_view2 = vec | ranges::view::reverse;                    // == "CTGGCA" (but doesn't own any data)
+ *
+ * // or in one line:
+ * auto vec_view3 = vec | view::complement | ranges::view::reverse; // == "GACCGT" (but doesn't own any data)
+ * ```
+ */
+
+/*!
+ * \namespace seqan3::view
+ * \brief The SeqAn3 namespace for views.
+ *
+ * Since views often have name clashes with regular functions and ranges they are implemented in the sub
+ * namespace `view`.
+ *
+ * See the \link view view submodule \endlink of the range module for more details.
+ */

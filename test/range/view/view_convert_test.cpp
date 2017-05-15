@@ -31,59 +31,32 @@
 // DAMAGE.
 //
 // ==========================================================================
-// Author: Hannes Hauswedell <hannes.hauswedell@fu-berlin.de>
-// Author: Marcel Ehrhardt <marcel.ehrhardt@fu-berlin.de>
-// Author: David Heller <david.heller@fu-berlin.de>
-// ==========================================================================
 
-#pragma once
+#include <iostream>
 
-#include "gap.hpp"
-#include "../union_alphabet.hpp"
-#include "../nucleotide/dna4.hpp"
+#include <gtest/gtest.h>
 
-namespace seqan3
+#include <range/v3/view/reverse.hpp>
+
+#include <seqan3/range/view/convert.hpp>
+
+using namespace seqan3;
+
+TEST(view_convert, basic)
 {
+    std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
+    std::vector<bool> cmp{1, 1, 0, 1, 0, 0, 1, 1, 1};
 
-template <typename underlying_t>
-    requires alphabet_concept<underlying_t>
-struct gapped_alphabet : public union_alphabet<underlying_t, gap>
-{
-    using union_alphabet<underlying_t, gap>::value;
-    using union_alphabet<underlying_t, gap>::value_size;
-    using union_alphabet<underlying_t, gap>::rank_type;
-    using union_alphabet<underlying_t, gap>::char_type;
+    // pipe notation
+    std::vector<bool> v = vec | view::convert<bool>;
+    EXPECT_EQ(cmp, v);
 
-    using union_alphabet<underlying_t, gap>::to_char;
-    using union_alphabet<underlying_t, gap>::to_rank;
+    // function notation
+    std::vector<bool> v2{view::convert<bool>(vec)};
+    EXPECT_EQ(cmp, v2);
 
-    /* public member functions */
-    constexpr bool is_gap() const
-    {
-        return value == value_size - 1;
-    }
-
-    constexpr gapped_alphabet set_gap()
-    {
-        value = value_size - 1;
-        return *this;
-    }
-
-    constexpr gapped_alphabet & assign_rank(typename union_alphabet<underlying_t, gap>::rank_type const i)
-    {
-        union_alphabet<underlying_t, gap>::assign_rank(i);
-        return *this;
-    }
-
-    constexpr gapped_alphabet & assign_char(typename union_alphabet<underlying_t, gap>::char_type const c)
-    {
-        union_alphabet<underlying_t, gap>::assign_char(c);
-        return *this;
-    }
-};
-
-#ifndef NDEBUG
-static_assert(alphabet_concept<gapped_alphabet<dna4>>);
-#endif
-
+    // combinability
+    std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
+    std::vector<bool> v3 = vec | view::convert<bool> | ranges::view::reverse;
+    EXPECT_EQ(cmp2, v3);
 }

@@ -1,8 +1,8 @@
-// ==========================================================================
+// ============================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
+// ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,37 +30,30 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ==========================================================================
-// Author: David Heller <david.heller@fu-berlin.de>
-// ==========================================================================
+// ============================================================================
 
-#include <sstream>
-#include <vector>
+/*!\file range/view/concept.hpp
+ * \brief Adaptation of the view concept from the Ranges TS.
+ * \ingroup view
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
 
-#include <gtest/gtest.h>
+#pragma once
 
-#include <seqan3/alphabet/nucleotide/dna5_container.hpp>
+#include <seqan3/range/concept.hpp>
 
-using namespace seqan3;
-using namespace seqan3::literal;
-
-TEST(dna5_test, test_dna5_vector_operator)
+namespace seqan3
 {
-    dna5_vector v;
-    v.resize(5, dna5{dna5::A});
-    EXPECT_EQ(v, "AAAAA"_dna5);
 
-    std::vector<dna5> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G}, dna5{dna5::T}, dna5{dna5::N}};
-    EXPECT_EQ(w, "ACGTN"_dna5);
-}
+/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
+ */
+template <typename type>
+concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
 
-TEST(dna5_test, test_dna5_string_operator)
-{
-    dna5_string v;
-    v.resize(5, dna5{dna5::A});
-    EXPECT_EQ(v, "AAAAA"_dna5s);
+} // namespace seqan3
 
-    std::basic_string<dna5, std::char_traits<dna5>> w {dna5{dna5::A}, dna5{dna5::C}, dna5{dna5::G},
-                                                       dna5{dna5::T}, dna5{dna5::N}};
-    EXPECT_EQ(w, "ACGTN"_dna5s);
-}
+#ifndef NDEBUG
+#include <range/v3/view/any_view.hpp>
+static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
+#endif

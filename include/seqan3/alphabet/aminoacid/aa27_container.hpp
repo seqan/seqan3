@@ -40,8 +40,7 @@
 #include <string>
 #include <vector>
 
-#include "../alphabet.hpp"
-#include "../alphabet_container.hpp"
+#include <seqan3/alphabet/concept.hpp>
 #include "aa27.hpp"
 
 /*! Containers of @link aa27 @endlink
@@ -94,7 +93,7 @@ inline aa27_vector operator "" _aa27(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }
@@ -121,7 +120,7 @@ inline aa27_string operator "" _aa27s(const char * s, std::size_t n)
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
-        r[i].from_char(s[i]);
+        r[i].assign_char(s[i]);
 
     return r;
 }

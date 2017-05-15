@@ -32,28 +32,20 @@
 //
 // ============================================================================
 
-#pragma once
-
 #include <type_traits>
 
-#include <seqan3/core/platform.hpp>
+#include <gtest/gtest.h>
 
-/*!\file core/detail/int_types.hpp
- * \brief Contains metaprogramming utilities for integer types.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
- */
+#include <seqan3/core/convert.hpp>
 
-namespace seqan3::detail
+using namespace seqan3;
+
+TEST(convert, basic)
 {
+    bool b = convert<bool>(7);
+    EXPECT_EQ(b, true);
 
-//!\cond DEV
-//!\brief Given a value, return the smallest unsigned integer that can hold it.
-template <uint64_t value>
-using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
-                          std::conditional_t<value <= 255ull,        uint8_t,
-                          std::conditional_t<value <= 65535ull,      uint16_t,
-                          std::conditional_t<value <= 4294967295ull, uint32_t, uint64_t>>>>;
-//!\endcond
-
-} // namespace seqan3::detail
+    auto i = convert<int>('A');
+    EXPECT_TRUE((std::is_same_v<decltype(i), int>));
+    EXPECT_EQ(i, 65);
+}

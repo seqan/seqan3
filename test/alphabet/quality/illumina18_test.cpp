@@ -36,7 +36,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/alphabet.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
 
@@ -58,7 +58,7 @@ TEST(illumina18_cp_ctr, cp_ctr)
 // default destructor
 TEST(illumina18_des, des)
 {
-    illumina18* illu_ptr;
+    illumina18* illu_ptr = new illumina18{};
     delete illu_ptr;
 }
 
@@ -108,30 +108,30 @@ TEST(illumina18_op_char, op_char)
     EXPECT_EQ(c, '!');
 }
 
-TEST(illumina18_from_integral, from_integral)
+TEST(illumina18_assign_rank, assign_rank)
 {
     illumina18 illu;
-    illumina18 illu2 = from_integral(illu, 1);
-    EXPECT_EQ(1, to_integral(illu2));
+    illumina18 illu2 = assign_rank(illu, 1);
+    EXPECT_EQ(1, to_rank(illu2));
 
-    illu2 = illu.from_integral(2);
-    EXPECT_EQ(2, to_integral(illu2));
+    illu2 = illu.assign_rank(2);
+    EXPECT_EQ(2, to_rank(illu2));
 }
 
-TEST(illumina18_to_integral, to_integral)
+TEST(illumina18_to_rank, to_rank)
 {
     illumina18 illu;
     illu = 19;
-    EXPECT_EQ(19, to_integral(illu));
-    EXPECT_EQ(19, illu.to_integral());
+    EXPECT_EQ(19, to_rank(illu));
+    EXPECT_EQ(19, illu.to_rank());
 }
 
-// global from_char operator
-TEST(illumina18_from_char, from_char)
+// global assign_char operator
+TEST(illumina18_assign_char, assign_char)
 {
     illumina18 illu;
-    illu = from_char(illu, '!');
-    EXPECT_EQ(0, to_integral(illu));
+    illu = assign_char(illu, '!');
+    EXPECT_EQ(0, to_rank(illu));
 }
 
 // global and internal to_char
@@ -147,21 +147,21 @@ TEST(illumina18_op_tochar, op_to_char)
     EXPECT_EQ(illu.to_char(), 'J');
 }
 
-TEST(illumina18_from_phred, from_phred)
+TEST(illumina18_assign_phred, assign_phred)
 {
     illumina18 illu;
     illu = 7;
-    illu = from_phred(illu, 9);
-    seqan3::illumina18::integral_type val = illu.value;
-    EXPECT_EQ(9, to_integral(illu));
+    illu = assign_phred(illu, 9);
+    seqan3::illumina18::rank_type val = illu.value;
+    EXPECT_EQ(9, to_rank(illu));
 }
 
 TEST(illumina18_to_phred, to_phred)
 {
-    illumina18 illu;
+    illumina18 illu{};
     EXPECT_EQ(0, to_phred(illu));
     illu = 39;
-    EXPECT_EQ(39, to_integral(illu));
+    EXPECT_EQ(39, to_rank(illu));
 }
 
 TEST(illumina18_cmp, cmp)
