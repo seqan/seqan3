@@ -214,3 +214,5 @@ public:
 };
 
 } // namespace seqan3::detail
+
+static_assert(seqan3::random_access_iterator_concept<seqan3::detail:ra_iterator>);
