@@ -166,7 +166,8 @@ TYPED_TEST(nucleotide, concept)
 // conversion
 // ------------------------------------------------------------------
 
-TYPED_TEST(nucleotide, assign_to_other_nucleotide)
+// conversion to rna/dna of same size
+TYPED_TEST(nucleotide, implicit_conversion)
 {
     using complement_type = std::conditional_t<std::is_same_v<TypeParam, rna4>, dna4,
                             std::conditional_t<std::is_same_v<TypeParam, dna4>, rna4,
@@ -183,14 +184,15 @@ TYPED_TEST(nucleotide, assign_to_other_nucleotide)
     }
 }
 
-TYPED_TEST(nucleotide, convert_to_other_nucleotide)
+// conversion to any other nucleotide type
+TYPED_TEST(nucleotide, explicit_conversion)
 {
     meta::for_each(nucleotide_types2{}, [&] (auto && nucl) constexpr
     {
         using out_type = std::decay_t<decltype(nucl)>;
-        EXPECT_EQ(convert<out_type>(TypeParam::A), out_type::A);
-        EXPECT_EQ(convert<out_type>(TypeParam::C), out_type::C);
-        EXPECT_EQ(convert<out_type>(TypeParam::G), out_type::G);
+        EXPECT_EQ(static_cast<out_type>(TypeParam::A), out_type::A);
+        EXPECT_EQ(static_cast<out_type>(TypeParam::C), out_type::C);
+        EXPECT_EQ(static_cast<out_type>(TypeParam::G), out_type::G);
     });
 }
 
