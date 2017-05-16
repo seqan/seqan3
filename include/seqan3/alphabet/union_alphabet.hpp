@@ -498,6 +498,6 @@ protected:
 } // namespace seqan3
 
 #ifndef NDEBUG
-#include "nucleotide/dna5.hpp"
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 static_assert(seqan3::alphabet_concept<seqan3::union_alphabet<seqan3::dna5, seqan3::dna5>>);
 #endif

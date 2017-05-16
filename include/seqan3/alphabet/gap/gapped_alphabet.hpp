@@ -41,8 +41,8 @@
 
 #pragma once
 
-#include "gap.hpp"
-#include "../union_alphabet.hpp"
+#include <seqan3/alphabet/gap/gap.hpp>
+#include <seqan3/alphabet/union_alphabet.hpp>
 
 namespace seqan3
 {
@@ -135,6 +135,6 @@ struct gapped_alphabet : public union_alphabet<alphabet_t, gap>
 } // namespace seqan3
 
 #ifndef NDEBUG
-#include "../nucleotide/dna4.hpp"
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 static_assert(seqan3::alphabet_concept<seqan3::gapped_alphabet<seqan3::dna4>>);
 #endif
