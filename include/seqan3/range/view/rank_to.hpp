@@ -34,55 +34,50 @@
 
 /*!\file
  * \ingroup view
- * \brief Meta-header for the \link view view submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Provides seqan3::view::rank_to.
  */
 
 #pragma once
 
-#include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/concept.hpp>
-#include <seqan3/range/view/convert.hpp>
-#include <seqan3/range/view/rank_to.hpp>
-#include <seqan3/range/view/to_char.hpp>
-#include <seqan3/range/view/to_rank.hpp>
+#include <range/v3/view/transform.hpp>
 
-/*!\defgroup view View
- * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
- * \ingroup range
- * \sa https://ericniebler.github.io/range-v3/index.html#range-views
- * \sa range/view.hpp
- *
- * SeqAn3 makes heavy use of views as defined in the
- * [Ranges Technical Specification](http://en.cppreference.com/w/cpp/experimental/ranges). Currently the
- * implementation is based on the [range-v3 library](https://github.com/ericniebler/range-v3) and all those views
- * are available in the namespace ranges::view, see
- * [the overview](https://ericniebler.github.io/range-v3/index.html#range-views) for more details.
- *
- * This submodule provides additional views, specifically for operations on biological data and
- * sequence analysis.
- *
- * \attention
- * To prevent naming conflicts, all SeqAn views are inside the namespace seqan3::view.
- *
+#include <seqan3/alphabet/concept.hpp>
+
+namespace seqan3::view
+{
+
+/*!\brief A view over an alphabet, given a range of ranks.
+ * \tparam alphabet_type The type of the desired alphabet, must satisfy seqan3::alphabet_concept.
+ * \param input_range The range you wish to convert, elements be must convertible to alphabet_type's
+ * seqan3::underlying_rank_t.
+ * \returns A view over alphabet_type, created from it's rank representation.
+ * \details
+ * \par View properties
+ * * view type: same input_range
+ * * value type: alphabet_type
+ * * `const` iterable: yes
+ * \par Complexity
+ * Linear in the size if the input range (\f$O(n)\f$).
+ * \par Exceptions
+ * Strong exception guarantee (does not modify data).
+ * \par Thread safety
+ * Does not modify data.
  * \par Example
- *
  * ```cpp
- * dna4_vector vec{"ACGGTC"_dna4};
- * auto vec_view  = vec | view::complement;                         // == "TGCCAG" (but doesn't own any data)
- * auto vec_view2 = vec | ranges::view::reverse;                    // == "CTGGCA" (but doesn't own any data)
- *
- * // or in one line:
- * auto vec_view3 = vec | view::complement | ranges::view::reverse; // == "GACCGT" (but doesn't own any data)
+ * std::vector<int> vec{0, 1, 3, 3, 3, 2, 0, 3, 0};
+ * auto v1 = vec | view::rank_to<dna4>; // == "ACTTTGATA"_dna4
+ * auto v2 = vec | view::rank_to<dna5>; // == "ACTTTGATA"_dna5
  * ```
+ * \hideinitializer
  */
+template <typename alphabet_type>
+//!\cond
+    requires alphabet_concept<alphabet_type>
+//!\endcond
+auto const rank_to = ranges::view::transform([] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
+{
+    return assign_rank(alphabet_type{}, in);
+});
 
-/*!
- * \namespace seqan3::view
- * \brief The SeqAn3 namespace for views.
- *
- * Since views often have name clashes with regular functions and ranges they are implemented in the sub
- * namespace `view`.
- *
- * See the \link view view submodule \endlink of the range module for more details.
- */
+} // namespace seqan3::view
