@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file range/concept.hpp
+/*!\file
  * \brief Adaptations of concepts from the Ranges TS
  * \ingroup range
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>

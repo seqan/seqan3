@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/nucleotide/rna5.hpp
+/*!\file
  * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains seqan3::rna5, container aliases and string literals.

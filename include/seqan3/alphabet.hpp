@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet.hpp
+/*!\file
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header for the alphabet module.

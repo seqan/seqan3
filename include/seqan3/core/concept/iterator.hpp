@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file core/concept/iterator.hpp
+/*!\file
  * \brief Adaptions of Iterator concepts from the Ranges TS.
  * \ingroup core
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>

@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file range/view/convert.hpp
+/*!\file
  * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::view::convert.

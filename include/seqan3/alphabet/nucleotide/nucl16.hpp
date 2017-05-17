@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/nucleotide/nucl16.hpp
+/*!\file
  * \ingroup nucleotide
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Contains seqan3::nucl16, container aliases and string literals.

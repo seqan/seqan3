@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/concept.hpp
+/*!\file
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Core alphabet concept and free function/metafunction wrappers.
