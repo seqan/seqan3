@@ -83,7 +83,7 @@ struct dna4
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
+     * \details Similar to an Enum interface. *Don't worry about the `internal_type`.*
      */
     //!\{
     static const dna4 A;
@@ -360,4 +360,3 @@ inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
 }
 
 } // namespace seqan3::literal
-
