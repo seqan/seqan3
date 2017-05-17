@@ -36,7 +36,7 @@
 
 #include <string>
 
-/*!\file version.hpp
+/*!\file
  * \brief Contains SeqAn version macros and global variables.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */

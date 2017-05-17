@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/nucleotide/concept.hpp
+/*!\file
  * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::nucleotide_concept.

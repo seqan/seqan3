@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/nucleotide/dna5.hpp
+/*!\file
  * \ingroup nucleotide
  * \author David Heller <david.heller AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>

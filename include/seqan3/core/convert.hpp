@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file core/convert.hpp
+/*!\file
  * \ingroup core
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::convert().

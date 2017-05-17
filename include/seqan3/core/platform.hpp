@@ -38,7 +38,7 @@
 #include <ciso646> // makes _LIBCPP_VERSION available
 #include <cstddef> // makes __GLIBCXX__ available
 
-/*!\file platform.hpp
+/*!\file
  * \brief Contains platform and dependency checks.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \ingroup core

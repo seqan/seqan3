@@ -34,7 +34,7 @@
 
 //! \cond DEV
 
-/*!\file core/concept/core_detail.hpp
+/*!\file
  * \brief Testing the core library concepts.
  * \ingroup core
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>

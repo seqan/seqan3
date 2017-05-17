@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file range/view.hpp
+/*!\file
  * \ingroup view
  * \brief Meta-header for the \link view view submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>

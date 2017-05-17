@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file range.hpp
+/*!\file
  * \ingroup range
  * \brief Meta-header for the \link range range module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
