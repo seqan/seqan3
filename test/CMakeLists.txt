@@ -7,9 +7,9 @@ enable_testing()
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts")
 
-set(GOOGLETEST_PATH "${CMAKE_SOURCE_DIR}/../vendor/googletest/googletest")
-set(SEQAN3_LIBRARIES "pthread" "gtest" "gtest_main")
-MESSAGE(WARNING "cmake_src_dir = " ${CMAKE_SOURCE_DIR})
+# CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
+set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
+set(GOOGLETEST_ROOT "${PROJECT_BINARY_DIR}/vendor/googletest")
 
 find_program(CCACHE_PROGRAM ccache)
 # TODO(marehr): Once we require cmake>=3.4 use CMAKE_CXX_COMPILER_LAUNCHER instead
@@ -39,13 +39,6 @@ add_library (gtest STATIC IMPORTED)
 add_dependencies(gtest gtest_main)
 set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/lib/libgtest.a")
 
-<<<<<<< HEAD
-include_directories("${GOOGLETEST_PATH}/include/")
-include_directories("${CMAKE_SOURCE_DIR}/../include/")
-
-include_directories("${CMAKE_SOURCE_DIR}/../range-v3/include/")
-include_directories("${CMAKE_SOURCE_DIR}/../sdsl-lite/include/")
-=======
 macro(seqan3_test target_cpp)
     # $target_cpp = "pod_tuple_test.cpp"
     #   * will register the global TARGET name "pod_tuple_test" and
@@ -57,7 +50,6 @@ macro(seqan3_test target_cpp)
     string(REGEX REPLACE "_test.cpp$" "" target_name ${target_cpp})
     string(REGEX REPLACE ".+/test/" "" test_path ${CMAKE_CURRENT_LIST_DIR})
     string(REGEX REPLACE "/" "_" test_path ${test_path})
->>>>>>> 045b8b0c26d811d12501bbe7dc2df9fdb44cfb7c
 
     # add_executable(pod_tuple_test pod_tuple_test.cpp)
     # target_link_libraries(pod_tuple_test "pthread" "gtest" "gtest_main")
@@ -88,5 +80,4 @@ macro (add_subdirectories)
         endif ()
     endforeach ()
 endmacro ()
-
 add_subdirectories()
