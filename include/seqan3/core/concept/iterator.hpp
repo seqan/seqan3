@@ -43,7 +43,7 @@
 #include <range/v3/range_concepts.hpp>
 #include <range/v3/utility/iterator.hpp>
 
-#include <seqan3/core/concepts/core.hpp>
+#include <seqan3/core/concept/core.hpp>
 
 namespace seqan3
 {
