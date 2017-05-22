@@ -47,6 +47,7 @@
 #include <range/v3/all.hpp>
 
 #include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/range/concept.hpp>
 
 namespace seqan3::detail
 {
@@ -58,49 +59,54 @@ class random_access_iterator
 {
 
 private:
-    //! by default iterator is end iterator
-    /*container_type should be a pointer type.
-You can use std::add_pointer to do it generically.
-Then initialise it with nullptr
-*/
 
-    std::add_pointer<container_type>::type host{nullptr};  //*(container_type*)0};
-    using position_type = uint8_t;
-    position_type pos{std::numeric_limits<uint8_t>::max()};
+    // TODO: query container's diff type with to be provided metafunctions
+    using difference_type_container = int8_t;
+    using size_type_container = uint8_t;
+
+    typename std::add_pointer<container_type>::type host{nullptr};
+
+    using position_type = size_type_container;
+    position_type pos{static_cast<position_type>(0)};
+
 public:
-    using difference_type = int8_t;
+    //! value type for distances between iterators
+    using difference_type = difference_type_container;
+    //! value type obtained by dereferencing the iterator
     using value_type = typename container_type::value_type;
+
     using reference = std::conditional_t<is_const, value_type const &, value_type &>;
-    //using reference = std::conditional_t<is_const(container_type), value_type const &, value_type &>;
     using const_reference = typename container_type::const_reference;
     using pointer = std::conditional_t<is_const, value_type const *, value_type *>;
-    using category_type = std::random_access_iterator_tag;
+    //using iterator_category = std::random_access_iterator_tag;
 
-    random_access_iterator() {}
+    constexpr random_access_iterator() = default;
 
-    random_access_iterator(container_type & host, bool const _at_end = false) : host{host}, pos{0}
-    {
-        if (_at_end)
-            pos = std::numeric_limits<difference_type>::max();
-    }
+    //! construct by host, default position pointer with 0
+    constexpr random_access_iterator(container_type & host) : host{&host} {}
+
+    //! construct by host and explicit position
+    constexpr random_access_iterator(container_type & host, position_type pos) : host{&host}, pos{pos} {}
 
     //! copy constructor
-    random_access_iterator(random_access_iterator const & _it) : host{_it.host}, pos{_it.pos} {}
+    constexpr random_access_iterator(random_access_iterator const &) = default;
 
     //! copy construction via assignment
-    random_access_iterator& operator=(random_access_iterator const & rhs)
-    {
-        pos = rhs.pos;
-        return *this;
-    }
+    constexpr random_access_iterator & operator=(random_access_iterator const &) = default;
+
+    //! move constructor
+    constexpr random_access_iterator (random_access_iterator &&) = default;
+
+    //! move assignment
+    constexpr random_access_iterator & operator=(random_access_iterator &&) = default;
 
     //! use default deconstructor
     ~random_access_iterator() = default;
 
     //! dereference operator returns element currently pointed at
-    reference operator*() const
+    value_type operator*() const
     {
-        return host[pos];
+        return (*host)[pos];
     }
 
     //! two iterators are equal if their absolute positions are the same
@@ -140,7 +146,7 @@ public:
     }
 
     //! pre-increment, return updated iterator
-    random_access_iterator& operator++()
+    random_access_iterator & operator++()
     {
         ++pos;
         return (*this);
@@ -151,8 +157,6 @@ public:
     {
         random_access_iterator cpy{*this};
         ++pos;
-        if (pos >= ranges::size(host))
-            pos = std::numeric_limits<difference_type>::max();
         return cpy;
     }
 
@@ -175,29 +179,19 @@ public:
     random_access_iterator& operator+=(difference_type skip)
     {
         pos += skip;
-        if (pos >= ranges::size(host))
-            pos = std::numeric_limits<difference_type>::max();
         return *this;
     }
 
     //! forward copy of this iterator
     random_access_iterator operator+(difference_type skip) const
     {
-        random_access_iterator cpy{*this};
-        cpy.pos = cpy.pos + skip;
-        if (cpy.pos >= ranges::size(host))
-            cpy.pos = std::numeric_limits<difference_type>::max();
-        return cpy;
+        return random_access_iterator{*this->host, static_cast<position_type>(pos + skip)};
     }
 
-    //! non-member operator+
-    friend random_access_iterator operator+(difference_type skip , const random_access_iterator& _it)
+    //! non-member operator+ delegates to non-friend operator+
+    friend random_access_iterator operator+(difference_type skip , const random_access_iterator& it)
     {
-        random_access_iterator cpy{_it};
-        cpy.pos = cpy.pos + skip;
-        if (cpy.pos >= ranges::size(_it.host))
-            cpy.pos = std::numeric_limits<difference_type>::max();
-        return cpy;
+        return it + skip;
     }
 
     //! decrement iterator by skip
@@ -210,31 +204,35 @@ public:
     //! return decremented copy of this iterator
     random_access_iterator operator-(difference_type skip) const
     {
-        random_access_iterator cpy{*this};
-        cpy.pos -= skip;
-        return cpy;
+        return random_access_iterator{*this->host, static_cast<position_type>(pos - skip)};
+    }
+
+    //! non-member operator- delegates to non-friend operator-
+    friend random_access_iterator operator-(difference_type skip , const random_access_iterator& it)
+    {
+        return it - skip;
     }
 
     //! return offset between this and remote iterator's position
     difference_type operator-(random_access_iterator lhs) const
     {
-        return (difference_type)pos - (difference_type)lhs.pos;
+        return static_cast<difference_type>(pos) - static_cast<difference_type>(lhs.pos);
     }
 
     //! return pointer to this iterator
     pointer operator->() const
     {
-        return &(*this);
+        return &this->host[pos]; //&(*this);
     }
 
     //! return underlying container value currently pointed at
-    reference operator[](value_type const n) const
+    reference operator[](position_type const n) const
     {
-        return host[pos + n];
+        return (*host)[pos + n];
     }
-
 };
 
 } // namespace seqan3::detail
 
-static_assert(seqan3::random_access_iterator_concept<seqan3::detail:random_access_iterator>);
+//static_assert(seqan3::random_access_iterator_concept<seqan3::detail:random_access_iterator>);
+//static_assert(seqan3::readable_concept<seqan3::detail:random_access_iterator<std::vector<int>>>);
