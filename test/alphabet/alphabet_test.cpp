@@ -45,7 +45,7 @@ class alphabet : public ::testing::Test
 
 // add all alphabets here
 using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
-                                        /*aa27,*/
+                                        aa27,
                                         /*gap, gapped<nucl16>, */
                                         illumina18, dna4q>;
 

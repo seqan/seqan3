@@ -31,28 +31,35 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
+
+/*!\file aa27.hpp
+ * \ingroup aminoacid
+ * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
+ * \brief Contains seqan3::aa27, container aliases and string literals.
+ */
 
 #pragma once
 
 #include <cassert>
 
-#include <seqan3/alphabet/concept.hpp>
+#include <string>
+#include <vector>
 
-/*! The twenty-seven letter amino acid alphabet
- * \ingroup alphabet
- */
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {
-/*! The twenty-seven letter amino acid alphabet A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
+/*!\brief The twenty-seven letter amino acid alphabet
+ * \ingroup aminoacid
+ *
+ * \details
+ * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
  * Y, Z, *
  *
  * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
  * regular characters, but additional functions for this are available.
  *
- * ~~~~~~~~~~~~~~~{.cpp}
+ *```cpp
  *     aa27 my_letter{aa27::A};
  *     // doesn't work:
  *     // aa27 my_letter{'A'};
@@ -62,19 +69,132 @@ namespace seqan3
  *     my_letter.assign_char('?'); // converted to X internally
  *     if (my_letter.to_char() == 'X')
  *        std::cout << "yeah\n"; // "yeah";
- * ~~~~~~~~~~~~~~~
+ *```
  */
 
 struct aa27
 {
-    //! the type of the alphabet when converted to char (e.g. via @link to_char @endlink)
+    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
 
-    //! the type of the alphabet when represented as a number (e.g. via @link to_rank @endlink)
+    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = uint8_t;
 
-    // strictly typed enum, unfortunately with scope
-    //! \privatesection
+
+    /*!\name Letter values
+     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
+     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
+     */
+    //!\{
+    static const aa27 A;
+    static const aa27 B;
+    static const aa27 C;
+    static const aa27 D;
+    static const aa27 E;
+    static const aa27 F;
+    static const aa27 G;
+    static const aa27 H;
+    static const aa27 I;
+    static const aa27 J;
+    static const aa27 K;
+    static const aa27 L;
+    static const aa27 M;
+    static const aa27 N;
+    static const aa27 O;
+    static const aa27 P;
+    static const aa27 Q;
+    static const aa27 R;
+    static const aa27 S;
+    static const aa27 T;
+    static const aa27 U;
+    static const aa27 V;
+    static const aa27 W;
+    static const aa27 X;
+    static const aa27 Y;
+    static const aa27 Z;
+    static const aa27 TERMINATOR;
+    static const aa27 UNKNOWN;
+    //!\}
+
+    /*!\name Read functions
+     * \{
+     */
+    //!\brief Return the letter as a character of char_type.
+    constexpr char_type to_char() const noexcept
+    {
+        return value_to_char[static_cast<rank_type>(_value)];
+    }
+
+    //!\brief Return the letter's numeric value or rank in the alphabet.
+    constexpr rank_type to_rank() const noexcept
+    {
+        return static_cast<rank_type>(_value);
+    }
+    //!\}
+
+    /*!\name Write functions
+     * \{
+     */
+    //!\brief Assign from a character.
+    constexpr aa27 & assign_char(char_type const c) noexcept
+    {
+        _value = char_to_value[c];
+        return *this;
+    }
+
+    //!\brief Assign from a numeric value.
+    constexpr aa27 & assign_rank(rank_type const c)
+    {
+        assert(c < value_size);
+        _value = static_cast<internal_type>(c);
+        return *this;
+    }
+    //!\}
+
+    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    static constexpr rank_type value_size{27};
+
+    //!\name Comparison operators
+    //!\{
+    constexpr bool operator==(aa27 const & rhs) const noexcept
+    {
+        return _value == rhs._value;
+    }
+
+    constexpr bool operator!=(aa27 const & rhs) const noexcept
+    {
+        return _value != rhs._value;
+    }
+
+    constexpr bool operator<(aa27 const & rhs) const noexcept
+    {
+        return _value < rhs._value;
+    }
+
+    constexpr bool operator>(aa27 const & rhs) const noexcept
+    {
+        return _value > rhs._value;
+    }
+
+    constexpr bool operator<=(aa27 const & rhs) const noexcept
+    {
+        return _value <= rhs._value;
+    }
+
+    constexpr bool operator>=(aa27 const & rhs) const noexcept
+    {
+        return _value >= rhs._value;
+    }
+    //!\}
+
+    protected:
+    //!\privatesection
+    /*!\brief The internal type is a strictly typed enum.
+     *
+     * This is done to prevent aggregate initialization from numbers and/or chars.
+     * It is has the drawback that it also introduces a scope which in turn makes
+     * the static "letter values " members necessary.
+     */
     enum struct internal_type : rank_type
     {
         A,
@@ -106,120 +226,9 @@ struct aa27
         TERMINATOR,
         UNKNOWN = X
     };
-    internal_type value;
-    //! \publicsection
 
-    // import internal_types values into local scope:
-
-    /*! @name letter values
-     * Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * *Don't worry about the `internal_type`.*
-     */
-    //!@{
-
-    // import into local scope
-    static const aa27 A;
-    static const aa27 B;
-    static const aa27 C;
-    static const aa27 D;
-    static const aa27 E;
-    static const aa27 F;
-    static const aa27 G;
-    static const aa27 H;
-    static const aa27 I;
-    static const aa27 J;
-    static const aa27 K;
-    static const aa27 L;
-    static const aa27 M;
-    static const aa27 N;
-    static const aa27 O;
-    static const aa27 P;
-    static const aa27 Q;
-    static const aa27 R;
-    static const aa27 S;
-    static const aa27 T;
-    static const aa27 U;
-    static const aa27 V;
-    static const aa27 W;
-    static const aa27 X;
-    static const aa27 Y;
-    static const aa27 Z;
-    static const aa27 TERMINATOR;
-    static const aa27 UNKNOWN;
-    //!@}
-
-    //! ability to cast to @link char_type @endlink **explicitly**.
-    explicit constexpr operator char_type() const
-    {
-        return to_char();
-    }
-
-    //! return the letter as a character of @link char_type @endlink.
-    constexpr char_type to_char() const
-    {
-        return value_to_char[static_cast<rank_type>(value)];
-    }
-
-    //! assign from a character
-    constexpr aa27 & assign_char(char_type const c)
-    {
-        value = char_to_value[c];
-        return *this;
-    }
-
-    //! return the letter's numeric value or rank in the alphabet
-    constexpr rank_type to_rank() const
-    {
-        return static_cast<rank_type>(value);
-    }
-
-    //! assign from a numeric value
-    constexpr aa27 & assign_rank(rank_type const c)
-    {
-        assert(c < value_size);
-        value = static_cast<internal_type>(c);
-        return *this;
-    }
-
-    //! The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{27};
-
-    //! @name comparison operators
-    //!@{
-    constexpr bool operator==(aa27 const & rhs) const
-    {
-        return value == rhs.value;
-    }
-
-    constexpr bool operator!=(aa27 const & rhs) const
-    {
-        return value != rhs.value;
-    }
-
-    constexpr bool operator<(aa27 const & rhs) const
-    {
-        return value < rhs.value;
-    }
-
-    constexpr bool operator>(aa27 const & rhs) const
-    {
-        return value > rhs.value;
-    }
-
-    constexpr bool operator<=(aa27 const & rhs) const
-    {
-        return value <= rhs.value;
-    }
-
-    constexpr bool operator>=(aa27 const & rhs) const
-    {
-        return value >= rhs.value;
-    }
-    //!@}
-
-    //! \privatesection
-    // conversion tables
-    static constexpr char value_to_char[value_size]
+    //!\brief Value to char conversion table.
+    static constexpr char_type value_to_char[value_size]
     {
         'A',
         'B',
@@ -250,89 +259,54 @@ struct aa27
         '*'
     };
 
-    static constexpr internal_type char_to_value[256]
+    //!\brief Char to value conversion table.
+    static constexpr std::array<internal_type, 256> char_to_value
     {
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        //                                              *,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::TERMINATOR, internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        //                      A,                      B,                         C,
-        internal_type::UNKNOWN, internal_type::A,       internal_type::B,          internal_type::C,
-        //D,                    E,                      F,                         G,
-        internal_type::D,       internal_type::E,       internal_type::F,          internal_type::G,
-        //H,                    I,                      J,                         K,
-        internal_type::H,       internal_type::I,       internal_type::J,          internal_type::K,
-        //L,                    M,                      N,                         O,
-        internal_type::L,       internal_type::M,       internal_type::N,          internal_type::O,
-        //P,                    Q,                      R,                         S,
-        internal_type::P,       internal_type::Q,       internal_type::R,          internal_type::S,
-        //T,                    U,                      V,                         W,
-        internal_type::T,       internal_type::U,       internal_type::V,          internal_type::W,
-        //X,                    Y,                      Z
-        internal_type::X,       internal_type::Y,       internal_type::Z,          internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        //                      a,                      b,                         c,
-        internal_type::UNKNOWN, internal_type::A,       internal_type::B,          internal_type::C,
-        //d,                    e,                      f,                         g,
-        internal_type::D,       internal_type::E,       internal_type::F,          internal_type::G,
-        //h,                    i,                      j,                         k,
-        internal_type::H,       internal_type::I,       internal_type::J,          internal_type::K,
-        //l,                    m,                      n,                         o,
-        internal_type::L,       internal_type::M,       internal_type::N,          internal_type::O,
-        //p,                    q,                      r,                         s,
-        internal_type::P,       internal_type::Q,       internal_type::R,          internal_type::S,
-        //t,                    u,                      v,                         w,
-        internal_type::T,       internal_type::U,       internal_type::V,          internal_type::W,
-        //x,                    y,                      z
-        internal_type::X,       internal_type::Y,       internal_type::Z,          internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN,
-        internal_type::UNKNOWN, internal_type::UNKNOWN, internal_type::UNKNOWN,    internal_type::UNKNOWN
+        [] () constexpr
+        {
+            using in_t = internal_type;
+            std::array<in_t, 256> ret{};
+
+            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+            for (auto & c : ret)
+                c = in_t::UNKNOWN;
+
+            ret['A'] = in_t::A; ret['a'] = in_t::A;
+            ret['B'] = in_t::B; ret['b'] = in_t::B;
+            ret['C'] = in_t::C; ret['c'] = in_t::C;
+            ret['D'] = in_t::D; ret['d'] = in_t::D;
+            ret['E'] = in_t::E; ret['e'] = in_t::E;
+            ret['F'] = in_t::F; ret['f'] = in_t::F;
+            ret['G'] = in_t::G; ret['g'] = in_t::G;
+            ret['H'] = in_t::H; ret['h'] = in_t::H;
+            ret['I'] = in_t::I; ret['i'] = in_t::I;
+            ret['J'] = in_t::J; ret['j'] = in_t::J;
+            ret['K'] = in_t::K; ret['k'] = in_t::K;
+            ret['L'] = in_t::L; ret['l'] = in_t::L;
+            ret['M'] = in_t::M; ret['m'] = in_t::M;
+            ret['N'] = in_t::N; ret['n'] = in_t::N;
+            ret['O'] = in_t::O; ret['o'] = in_t::O;
+            ret['P'] = in_t::P; ret['p'] = in_t::P;
+            ret['Q'] = in_t::Q; ret['q'] = in_t::Q;
+            ret['R'] = in_t::R; ret['r'] = in_t::R;
+            ret['S'] = in_t::S; ret['s'] = in_t::S;
+            ret['T'] = in_t::T; ret['t'] = in_t::T;
+            ret['U'] = in_t::U; ret['u'] = in_t::U;
+            ret['V'] = in_t::V; ret['v'] = in_t::V;
+            ret['W'] = in_t::W; ret['w'] = in_t::W;
+            ret['X'] = in_t::X; ret['x'] = in_t::X;
+            ret['Y'] = in_t::Y; ret['y'] = in_t::Y;
+            ret['Z'] = in_t::Z; ret['z'] = in_t::Z;
+            ret['*'] = in_t::TERMINATOR;
+            return ret;
+        }()
     };
 
+public:
+    //!\privatesection
+    //!\brief The data member.
+    internal_type _value;
+    //!\publicsection
 };
 
 constexpr aa27 aa27::A{internal_type::A};
@@ -364,8 +338,110 @@ constexpr aa27 aa27::Z{internal_type::Z};
 constexpr aa27 aa27::TERMINATOR{internal_type::TERMINATOR};
 constexpr aa27 aa27::UNKNOWN{aa27::X};
 
-#ifndef NDEBUG
+#ifndef NDEBUGs
+
+#include <seqan3/alphabet/concept.hpp>
+
 static_assert(alphabet_concept<aa27>);
 #endif
+} // namespace seqan3
 
+// ------------------------------------------------------------------
+// containers
+// ------------------------------------------------------------------
+
+namespace seqan3
+{
+//!\brief Alias for an std::vector of seqan3::aa27.
+//!\relates aa27
+using aa27_vector = std::vector<aa27>;
+
+/*!\brief Alias for an std::basic_string of seqan3::aa27.
+ * \relates aa27
+ *
+ * \attention
+ * Note that we recommend using seqan3::aa27_vector instead of aa27_string in almost all situations.
+ * While the C++ style operations on the string are well supported, you should not access the internal c-string
+ * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
+ * correct length of the string (while the `.size()` returns the correct value).
+ */
+using aa27_string = std::basic_string<aa27, std::char_traits<aa27>>;
+
+} // namespace seqan3
+
+// ------------------------------------------------------------------
+// literals
+// ------------------------------------------------------------------
+
+namespace seqan3::literal
+{
+
+/*!\brief aa27 literal
+ * \relates seqan3::aa27
+ * \returns seqan3::aa27_vector
+ *
+ * You can use this string literal to easily assign to aa27_vector:
+ *
+ *```cpp
+ *     // these don't work:
+ *     // aa27_vector foo{"ABFUYR"};
+ *     // aa27_vector bar = "ABFUYR";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     aa27_vector foo{"ABFUYR"_aa27};
+ *     aa27_vector bar = "ABFUYR"_aa27;
+ *     auto bax = "ABFUYR"_aa27;
+ *```
+ *
+ * \attention
+ * All seqan3 literals are in the namespace seqan3::literal!
+ */
+
+inline aa27_vector operator "" _aa27(const char * s, std::size_t n)
+{
+    aa27_vector r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
 }
+
+/*!\brief aa27 string literal
+ * \relates seqan3::aa27
+ * \returns seqan3::aa27_string
+ *
+ * You can use this string literal to easily assign to aa27_vector:
+ *
+ *```cpp
+ *     // these don't work:
+ *     // aa27_string foo{"ABFUYR"};
+ *     // aa27_string bar = "ABFUYR";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     aa27_string foo{"ABFUYR"_aa27s};
+ *     aa27_string bar = "ABFUYR"_aa27s;
+ *     auto bax = "ABFUYR"_aa27s;
+ *```
+ *
+ * Please note the limitations of seqan3::aa27_string and consider using the \link operator""_aa27 \endlink instead.
+ *
+ * \attention
+ * All seqan3 literals are in the namespace seqan3::literal!
+ */
+
+inline aa27_string operator "" _aa27s(const char * s, std::size_t n)
+{
+    aa27_string r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
+
+} // namespace seqan3::literal
