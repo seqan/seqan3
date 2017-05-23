@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.0)
+project(container_tests CXX)
+
+add_executable(random_access_iterator_test random_access_iterator_test.cpp)
+add_test(NAME test_random_access_iterator_test COMMAND random_access_iterator_test)
+target_link_libraries(random_access_iterator_test ${SEQAN3_LIBRARIES})
