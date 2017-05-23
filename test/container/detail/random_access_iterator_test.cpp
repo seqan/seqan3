@@ -43,12 +43,9 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include <vector>
-#include <cassert>
 
 class random_access_iterator_test_fixture: public ::testing::Test {
 protected:
-
-   //random_access_iterator_test_fixture() {}
 
    std::vector<uint8_t> v_empty;
    std::vector<uint8_t> *v, *v_au, *v_atz, *v_auvwx, *w, *w_bv;
@@ -106,9 +103,9 @@ TEST_F(random_access_iterator_test_fixture, constructor_ref3)
 TEST_F(random_access_iterator_test_fixture, cp_constructor1)
 {
     seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_base(v_empty);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_derivate(it_base);
-}
+    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_derivate(it_base); // TODO may invoke move constructor
 
+}
 
 // copy constructor with non-empty container reference
 TEST_F(random_access_iterator_test_fixture, cp_constructor2)
@@ -118,7 +115,6 @@ TEST_F(random_access_iterator_test_fixture, cp_constructor2)
     EXPECT_EQ('a', it_base[0]);
     EXPECT_EQ('a', it_derivate[0]);
 }
-
 
 // test assignment construction with empty container reference
 TEST_F(random_access_iterator_test_fixture, constructor_assign1)
@@ -136,12 +132,11 @@ TEST_F(random_access_iterator_test_fixture, constructor_assign2)
     EXPECT_EQ('t', it_derivate[1]);
 }
 
-// test move construction
-// TODO: does this really invokes the move constructor?
+// test move constructor
 TEST_F(random_access_iterator_test_fixture, constructor_move)
 {
     seqan3::detail::random_access_iterator<std::vector<uint8_t>> it1(*v);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it2(it1);
+    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it2(std::move(it1));
     EXPECT_EQ('a', it2[0]);
     EXPECT_EQ('t', it2[1]);
 }
@@ -149,11 +144,8 @@ TEST_F(random_access_iterator_test_fixture, constructor_move)
 // test move assignment
 TEST_F(random_access_iterator_test_fixture, move_assign)
 {
-    seqan3::detail::random_access_iterator<std::array<long int, 3>> it1(a);
-    seqan3::detail::random_access_iterator<std::array<long int, 3>> it2(b);
+    seqan3::detail::random_access_iterator<std::array<long int, 3>> it1, it2;
     it2 = std::move(it1);
-    EXPECT_EQ(11, it2[0]);
-    EXPECT_EQ(22, it2[1]);
 }
 
 // explicit desctructor call
@@ -279,6 +271,7 @@ TEST_F(random_access_iterator_test_fixture, friend_operator_plus)
 {
     seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(*v_auvwx);
     seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_w = 2 + it_v;
+
     EXPECT_TRUE(*it_w == 'v');
     it_v = 2 + it_v;
     EXPECT_TRUE(*it_v == 'v');

@@ -43,6 +43,7 @@
 #include <iomanip>
 #include <limits>
 #include <type_traits>
+#include <cassert>
 
 #include <range/v3/all.hpp>
 
@@ -52,7 +53,7 @@
 namespace seqan3::detail
 {
 
-// todo: replace is_const flag by container value function
+// TODO: replace is_const flag by container value function
 template <typename container_type, bool is_const=false>
     requires random_access_range_concept<container_type> && sized_range_concept<container_type>
 class random_access_iterator
@@ -70,89 +71,96 @@ private:
     position_type pos{static_cast<position_type>(0)};
 
 public:
-    //! value type for distances between iterators
+    //! \brief Value type for distances between iterators
     using difference_type = difference_type_container;
     //! value type obtained by dereferencing the iterator
+    // TODO: replace with meta function
     using value_type = typename container_type::value_type;
 
-    using reference = std::conditional_t<is_const, value_type const &, value_type &>;
+    using reference = std::conditional_t<is_const, value_type const &, typename container_type::reference>;
     using const_reference = typename container_type::const_reference;
     using pointer = std::conditional_t<is_const, value_type const *, value_type *>;
-    //using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::random_access_iterator_tag;
 
+    // \brief Default constructor
     constexpr random_access_iterator() = default;
 
-    //! construct by host, default position pointer with 0
+    //! \brief Construct by host, default position pointer with 0
     constexpr random_access_iterator(container_type & host) : host{&host} {}
 
-    //! construct by host and explicit position
+    //! \brief Construct by host and explicit position
     constexpr random_access_iterator(container_type & host, position_type pos) : host{&host}, pos{pos} {}
 
-    //! copy constructor
+    //! \brief Copy constructor
     constexpr random_access_iterator(random_access_iterator const &) = default;
 
-    //! copy construction via assignment
+    //! \brief Copy construction via assignment
     constexpr random_access_iterator & operator=(random_access_iterator const &) = default;
 
-    //! move constructor
+    //! \brief Move constructor
     constexpr random_access_iterator (random_access_iterator &&) = default;
 
-    //! move assignment
+    //! \brief Move assignment
     constexpr random_access_iterator & operator=(random_access_iterator &&) = default;
 
-    //! use default deconstructor
+    //! \brief Use default deconstructor
     ~random_access_iterator() = default;
 
-    //! dereference operator returns element currently pointed at
+    //! \brief Dereference operator returns element currently pointed at
     value_type operator*() const
     {
         return (*host)[pos];
     }
 
-    //! two iterators are equal if their absolute positions are the same
+    reference operator*()
+    {
+        return (*host)[pos];
+    }
+
+    //! \brief Two iterators are equal if their absolute positions are the same
     bool operator==(random_access_iterator const & rhs) const
     {
         return this->pos == rhs.pos;
     }
 
-    //! iterator inequality comparison refers to their positions
+    //! \brief Iterator inequality comparison refers to their positions
     bool operator!=(random_access_iterator const & rhs) const
     {
         return this->pos != rhs.pos;
     }
 
-    //! iterator comparison refers to their positions
+    //! \brief Iterator comparison refers to their positions
     bool operator<(random_access_iterator const & rhs) const
     {
         return this->pos < rhs.pos;
     }
 
-    //! iterator comparison refers to their positions
+    //! \brief Iterator comparison refers to their positions
     bool operator>(random_access_iterator const & rhs) const
     {
         return this->pos > rhs.pos;
     }
 
-    //! iterator comparison refers to their positions
+    //! \brief Iterator comparison refers to their positions
     bool operator<=(random_access_iterator const & rhs) const
     {
         return this->pos <= rhs.pos;
     }
 
-    //! iterator comparison refers to their positions
+    //! \brief Iterator comparison refers to their positions
     bool operator>=(random_access_iterator const & rhs) const
     {
         return this->pos >= rhs.pos;
     }
 
-    //! pre-increment, return updated iterator
+    //! \brief Pre-increment, return updated iterator
     random_access_iterator & operator++()
     {
         ++pos;
         return (*this);
     }
 
-    //! post-increment, return previous iterator state
+    //! \brief Post-increment, return previous iterator state
     random_access_iterator operator++(int)
     {
         random_access_iterator cpy{*this};
@@ -160,14 +168,14 @@ public:
         return cpy;
     }
 
-    //! pre-decrement, return updated iterator
+    //! \brief Pre-decrement, return updated iterator
     random_access_iterator& operator--()
     {
         --pos;
         return *this;
     }
 
-    //! post-decrement, return previous iterator state
+    //! \brief Post-decrement, return previous iterator state
     random_access_iterator operator--(int)
     {
         random_access_iterator cpy{*this};
@@ -175,57 +183,57 @@ public:
         return cpy;
     }
 
-    //! forward this iterator
+    //! \brief Forward this iterator
     random_access_iterator& operator+=(difference_type skip)
     {
         pos += skip;
         return *this;
     }
 
-    //! forward copy of this iterator
+    //! \brief Forward copy of this iterator
     random_access_iterator operator+(difference_type skip) const
     {
         return random_access_iterator{*this->host, static_cast<position_type>(pos + skip)};
     }
 
-    //! non-member operator+ delegates to non-friend operator+
+    //! \brief Non-member operator+ delegates to non-friend operator+
     friend random_access_iterator operator+(difference_type skip , const random_access_iterator& it)
     {
         return it + skip;
     }
 
-    //! decrement iterator by skip
+    //! \brief Decrement iterator by skip
     random_access_iterator& operator-=(difference_type skip)
     {
         pos -= skip;
         return *this;
     }
 
-    //! return decremented copy of this iterator
+    //! \brief Return decremented copy of this iterator
     random_access_iterator operator-(difference_type skip) const
     {
         return random_access_iterator{*this->host, static_cast<position_type>(pos - skip)};
     }
 
-    //! non-member operator- delegates to non-friend operator-
+    //! \brief Non-member operator- delegates to non-friend operator-
     friend random_access_iterator operator-(difference_type skip , const random_access_iterator& it)
     {
         return it - skip;
     }
 
-    //! return offset between this and remote iterator's position
+    //! \brief Return offset between this and remote iterator's position
     difference_type operator-(random_access_iterator lhs) const
     {
         return static_cast<difference_type>(pos) - static_cast<difference_type>(lhs.pos);
     }
 
-    //! return pointer to this iterator
+    //! \brief Return pointer to this iterator
     pointer operator->() const
     {
         return &this->host[pos]; //&(*this);
     }
 
-    //! return underlying container value currently pointed at
+    //! \brief Return underlying container value currently pointed at
     reference operator[](position_type const n) const
     {
         return (*host)[pos + n];
@@ -234,5 +242,4 @@ public:
 
 } // namespace seqan3::detail
 
-//static_assert(seqan3::random_access_iterator_concept<seqan3::detail:random_access_iterator>);
-//static_assert(seqan3::readable_concept<seqan3::detail:random_access_iterator<std::vector<int>>>);
+static_assert(seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int>>>);
