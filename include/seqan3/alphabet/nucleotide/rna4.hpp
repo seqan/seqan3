@@ -45,6 +45,8 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/alphabet/detail/convert.hpp>
+#include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 // ------------------------------------------------------------------
@@ -117,12 +119,31 @@ struct rna4 : public dna4
         _value = static_cast<internal_type>(c);
         return *this;
     }
+    //!\}
 
-    //!\brief Assign from seqan3::dna4.
-    constexpr rna4 & operator=(dna4 const in) noexcept
+    /*!\name Conversion operators
+     * \{
+     */
+    //!\brief Implicit conversion between dna* and rna* of the same size.
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
+    template <typename other_nucl_type>
+    //!\cond
+        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+    //!\endcond
+    constexpr operator other_nucl_type() const noexcept
     {
-        _value = in._value;
-        return *this;
+        return other_nucl_type{_value};
+    }
+
+    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
+    template <typename other_nucl_type>
+    //!\cond
+        requires nucleotide_concept<other_nucl_type>
+    //!\endcond
+    explicit constexpr operator other_nucl_type() const noexcept
+    {
+        return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
     }
     //!\}
 

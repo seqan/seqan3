@@ -38,46 +38,27 @@
 
 #include <range/v3/view/reverse.hpp>
 
-#include <seqan3/alphabet/nucleotide.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/range/view/to_rank.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
 
-TEST(view_convert, basic)
+TEST(view_to_rank, basic)
 {
-    std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
-    std::vector<bool> cmp{1, 1, 0, 1, 0, 0, 1, 1, 1};
+    dna5_vector vec{"ACTTTGATA"_dna5};
+    std::vector<unsigned> cmp{0,1,3,3,3,2,0,3,0};
 
     // pipe notation
-    std::vector<bool> v = vec | view::convert<bool>;
+    std::vector<unsigned> v = vec | view::to_rank;
     EXPECT_EQ(cmp, v);
 
     // function notation
-    std::vector<bool> v2(view::convert<bool>(vec));
+    std::vector<unsigned> v2(view::to_rank(vec));
     EXPECT_EQ(cmp, v2);
 
     // combinability
-    std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
-    std::vector<bool> v3 = vec | view::convert<bool> | ranges::view::reverse;
-    EXPECT_EQ(cmp2, v3);
-}
-
-TEST(view_convert, explicit_conversion)
-{
-    dna5_vector vec{"ACGNTNGGN"_dna5};
-    dna4_vector cmp{"ACGATAGGA"_dna4};
-
-    // pipe notation
-    dna4_vector v = vec | view::convert<dna4>;
-    EXPECT_EQ(cmp, v);
-
-    // function notation
-    dna4_vector v2(view::convert<dna4>(vec));
-    EXPECT_EQ(cmp, v2);
-
-    // combinability
-    dna4_vector cmp2{"AGGATAGCA"_dna4};
-    dna4_vector v3 = vec | view::convert<dna4> | ranges::view::reverse;
+    std::vector<unsigned> cmp2{0, 3, 0, 2, 3, 3, 3, 1, 0};
+    std::vector<unsigned> v3 = vec | view::to_rank | ranges::view::reverse;
     EXPECT_EQ(cmp2, v3);
 }

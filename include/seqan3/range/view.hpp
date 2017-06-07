@@ -40,8 +40,12 @@
 
 #pragma once
 
+#include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/view/rank_to.hpp>
+#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/to_rank.hpp>
 
 /*!\defgroup view View
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.

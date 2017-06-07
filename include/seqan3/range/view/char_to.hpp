@@ -35,26 +35,27 @@
 /*!\file
  * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::view::convert.
+ * \brief Provides seqan3::view::char_to.
  */
 
 #pragma once
 
 #include <range/v3/view/transform.hpp>
 
-#include <seqan3/core/concept/core.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 namespace seqan3::view
 {
 
-/*!\brief A view that converts each element in the input range (implicitly or via `static_cast`).
- * \tparam out_t The type to convert to (must be given).
- * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept.
- * \returns A view with the value_type being `out_t`
+/*!\brief A view over an alphabet, given a range of characters.
+ * \tparam alphabet_type The type of the desired alphabet, must satisfy seqan3::alphabet_concept.
+ * \param input_range The range you wish to convert, elements must be convertible to alphabet_type's
+ * seqan3::underlying_char_t.
+ * \returns A view over alphabet_type, created from it's character representation.
  * \details
  * \par View properties
  * * view type: same input_range
- * * value type: out_t
+ * * value type: alphabet_type
  * * `const` iterable: yes
  * \par Complexity
  * Linear in the size if the input range (\f$O(n)\f$).
@@ -63,36 +64,20 @@ namespace seqan3::view
  * \par Thread safety
  * Does not modify data.
  * \par Example
- *
- * Convert from `int` to `bool`:
  * ```cpp
- *   // convert from int to bool
- *   std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
- *
- *   // pipe notation
- *   auto v = vec | view::convert<bool>; // == [1, 1, 0, 1, 0, 0, 1, 1, 1];
- *
- *   // function notation and immediate conversion to vector again
- *   std::vector<bool> v2(view::convert<bool>(vec));
- *
- *   // combinability
- *   auto v3 = vec | view::convert<bool> | ranges::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
- * ```
- *
- * Convert from seqan3::nucl16 to seqan3::dna5:
- * ```cpp
- *   nucl16_vector vec2{"ACYGTN"_nucl16};
- *   auto v4 = vec2 | view::convert<dna5>; // == "ACNGTN"_dna5
+ * std::string s{"ACTTTGATAN"};
+ * auto v1 = s | view::char_to<dna4>; // == "ACTTTGATAA"_dna4
+ * auto v2 = s | view::char_to<dna5>; // == "ACTTTGATAN"_dna5
  * ```
  * \hideinitializer
  */
-template <typename out_t>
-auto const convert = ranges::view::transform([] (auto const & in) -> out_t
+template <typename alphabet_type>
+//!\cond
+    requires alphabet_concept<alphabet_type>
+//!\endcond
+auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type> const in) -> alphabet_type
 {
-    if constexpr (implicitly_convertible_to_concept<std::remove_reference_t<decltype(in)>, out_t>)
-        return in;
-    else
-        return static_cast<out_t>(in);
+    return assign_char(alphabet_type{}, in);
 });
 
 } // namespace seqan3::view

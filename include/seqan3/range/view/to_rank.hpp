@@ -35,26 +35,26 @@
 /*!\file
  * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::view::convert.
+ * \brief Provides seqan3::view::to_rank.
  */
 
 #pragma once
 
 #include <range/v3/view/transform.hpp>
 
-#include <seqan3/core/concept/core.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 namespace seqan3::view
 {
 
-/*!\brief A view that converts each element in the input range (implicitly or via `static_cast`).
- * \tparam out_t The type to convert to (must be given).
- * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept.
- * \returns A view with the value_type being `out_t`
+/*!\brief A view that calls seqan3::to_rank() on each element in the input range.
+ * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept and the value_type must
+ * satisfy seqan3::alphabet_concept.
+ * \returns A view with the value_type being seqan3::underlying_rank_t of the input alphabet.
  * \details
  * \par View properties
  * * view type: same input_range
- * * value type: out_t
+ * * value type: seqan3::underlying_rank_t of the input's value_type
  * * `const` iterable: yes
  * \par Complexity
  * Linear in the size if the input range (\f$O(n)\f$).
@@ -63,36 +63,23 @@ namespace seqan3::view
  * \par Thread safety
  * Does not modify data.
  * \par Example
- *
- * Convert from `int` to `bool`:
  * ```cpp
- *   // convert from int to bool
- *   std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
+ * dna4_vector vec = "ACTTTGATA"_dna4;
+ * auto v = vec | view::to_rank | view::convert<unsigned>;
+ * std::cout << v << '\n'; // [0,1,3,3,3,2,0,3,0]
  *
- *   // pipe notation
- *   auto v = vec | view::convert<bool>; // == [1, 1, 0, 1, 0, 0, 1, 1, 1];
+ * std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
+ * auto v3 = qvec | view::to_rank | view::convert<unsigned>;
+ * std::cout << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
  *
- *   // function notation and immediate conversion to vector again
- *   std::vector<bool> v2(view::convert<bool>(vec));
- *
- *   // combinability
- *   auto v3 = vec | view::convert<bool> | ranges::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
+ * std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4}, {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
+ * auto v4 = qcvec | view::to_rank | view::convert<unsigned>;
+ * std::cout << v4 << '\n'; // [1,28,22,15,30,16,121,67,92]
  * ```
- *
- * Convert from seqan3::nucl16 to seqan3::dna5:
- * ```cpp
- *   nucl16_vector vec2{"ACYGTN"_nucl16};
- *   auto v4 = vec2 | view::convert<dna5>; // == "ACNGTN"_dna5
- * ```
+ * We also convert to unsigned here, because the seqan3::underlying_rank_t is often `uint8_t` which is
+ * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-template <typename out_t>
-auto const convert = ranges::view::transform([] (auto const & in) -> out_t
-{
-    if constexpr (implicitly_convertible_to_concept<std::remove_reference_t<decltype(in)>, out_t>)
-        return in;
-    else
-        return static_cast<out_t>(in);
-});
+auto const to_rank = ranges::view::transform([] (alphabet_concept const in) { return seqan3::to_rank(in); });
 
 } // namespace seqan3::view

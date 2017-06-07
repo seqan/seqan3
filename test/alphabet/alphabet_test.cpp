@@ -204,46 +204,6 @@ TYPED_TEST(alphabet, concept)
     EXPECT_TRUE(alphabet_concept<TypeParam>);
 }
 
-TYPED_TEST(alphabet, convert_to_char)
-{
-    for (std::size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-    {
-        TypeParam letter;
-        assign_rank(letter, i);
-        EXPECT_EQ(convert<underlying_char_t<TypeParam>>(letter), to_char(letter));
-    }
-}
-
-TYPED_TEST(alphabet, convert_to_rank)
-{
-    for (std::size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-    {
-        TypeParam letter;
-        assign_rank(letter, i);
-        EXPECT_EQ(convert<underlying_rank_t<TypeParam>>(letter), i);
-    }
-}
-
-TYPED_TEST(alphabet, convert_from_char)
-{
-    for (std::size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-    {
-        TypeParam letter;
-        assign_rank(letter, i);
-        EXPECT_EQ(convert<TypeParam>(to_char(letter)), (assign_char(TypeParam{}, to_char(letter))));
-    }
-}
-
-TYPED_TEST(alphabet, convert_from_rank)
-{
-    for (std::size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-    {
-        TypeParam letter;
-        assign_rank(letter, i);
-        EXPECT_EQ(convert<TypeParam>(to_rank(letter)), letter);
-    }
-}
-
 // ------------------------------------------------------------------
 // constexpr tests
 // ------------------------------------------------------------------
@@ -380,35 +340,4 @@ TYPED_TEST(alphabet_constexpr, comparison_operators)
         EXPECT_TRUE(b6);
         EXPECT_TRUE(b7);
     }
-}
-
-TYPED_TEST(alphabet_constexpr, convert_to_char)
-{
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
-    constexpr TypeParam t{assign_rank(TypeParam{}, rank)};
-    constexpr auto l = convert<underlying_char_t<TypeParam>>(t);
-    EXPECT_EQ(l, to_char(t));
-}
-
-TYPED_TEST(alphabet_constexpr, convert_to_rank)
-{
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
-    constexpr TypeParam t{assign_rank(TypeParam{}, rank)};
-    constexpr auto l = convert<underlying_rank_t<TypeParam>>(t);
-    EXPECT_EQ(l, rank);
-}
-
-TYPED_TEST(alphabet_constexpr, convert_from_char)
-{
-    constexpr TypeParam t{assign_char(TypeParam{}, underlying_char_t<TypeParam>{'A'})};
-    constexpr TypeParam l{convert<TypeParam>(underlying_char_t<TypeParam>{'A'})};
-    EXPECT_EQ(l, t);
-}
-
-TYPED_TEST(alphabet_constexpr, convert_assign_rank)
-{
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
-    constexpr TypeParam t{assign_rank(TypeParam{}, rank)};
-    constexpr TypeParam l{convert<TypeParam>(underlying_rank_t<TypeParam>{rank})};
-    EXPECT_EQ(l, t);
 }
