@@ -154,8 +154,9 @@ TYPED_TEST(alphabet, swap)
 
 TYPED_TEST(alphabet, assign_char)
 {
+    using char_t = typename TypeParam::char_type;
     TypeParam t0;
-    for (char i = std::numeric_limits<char>::min(); i < std::numeric_limits<char>::max(); ++i)
+    for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
         assign_char(t0, i);
 
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(t0, 0)), TypeParam &>));
