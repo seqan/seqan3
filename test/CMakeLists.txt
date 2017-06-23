@@ -4,7 +4,7 @@ project(seqan3_tests CXX)
 ### set googletest
 enable_testing()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -Wall -Wextra")
 
 # CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
 set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
