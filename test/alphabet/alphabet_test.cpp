@@ -58,8 +58,8 @@ TYPED_TEST(alphabet, alphabet_size)
 
 TYPED_TEST(alphabet, default_value_constructor)
 {
-    TypeParam t1;
-    TypeParam t2{};
+    [[maybe_unused]] TypeParam t1;
+    [[maybe_unused]] TypeParam t2{};
 }
 
 TYPED_TEST(alphabet, assign_rank)
@@ -68,7 +68,7 @@ TYPED_TEST(alphabet, assign_rank)
     EXPECT_EQ((assign_rank(TypeParam{}, 0)), TypeParam{});
 
     TypeParam t0;
-    for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
+    for (typename TypeParam::rank_type i = 0; i < alphabet_size_v<TypeParam>; ++i)
         assign_rank(t0, i);
 
 // TODO(h-2): once we have a proper assert macro that throws instead of SIGABRTs:
@@ -84,7 +84,7 @@ TYPED_TEST(alphabet, to_rank)
     EXPECT_EQ(to_rank(TypeParam{}), 0);
 
     TypeParam t0;
-    for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
+    for (typename TypeParam::rank_type i = 0; i < alphabet_size_v<TypeParam>; ++i)
         EXPECT_EQ((to_rank(assign_rank(t0, i))), i);
 
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(t0)), underlying_rank_t<TypeParam>>));
@@ -222,7 +222,7 @@ TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 
 TYPED_TEST(alphabet_constexpr, default_value_constructor)
 {
-    constexpr TypeParam t0{};
+    [[maybe_unused]] constexpr TypeParam t0{};
 }
 
 TYPED_TEST(alphabet_constexpr, copy_constructor)
@@ -248,7 +248,7 @@ TYPED_TEST(alphabet_constexpr, move_constructor)
 TYPED_TEST(alphabet_constexpr, assign_rank)
 {
     constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
-    constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
+    [[maybe_unused]] constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
 }
 
 TYPED_TEST(alphabet_constexpr, to_rank)
@@ -293,13 +293,13 @@ TYPED_TEST(alphabet_constexpr, move_assignment)
 
 TYPED_TEST(alphabet_constexpr, assign_char)
 {
-    constexpr TypeParam t0{assign_char(TypeParam{}, 'A')};
+    [[maybe_unused]] constexpr TypeParam t0{assign_char(TypeParam{}, 'A')};
 }
 
 TYPED_TEST(alphabet_constexpr, to_char)
 {
     constexpr TypeParam t0{};
-    constexpr underlying_char_t<TypeParam> c = to_char(t0);
+    [[maybe_unused]] constexpr underlying_char_t<TypeParam> c = to_char(t0);
 }
 
 TYPED_TEST(alphabet_constexpr, comparison_operators)

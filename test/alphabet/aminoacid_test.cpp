@@ -65,9 +65,7 @@ TYPED_TEST(aminoacid, assign_char)
         '*', '!'
     };
 
-    std::vector<TypeParam> cmp;
-
-    cmp =
+    std::vector<TypeParam> cmp
     {
         t::A, t::B, t::C, t::D, t::E, t::F, t::G, t::H, t::I, t::J, t::K, t::L, t::M,
         t::A, t::B, t::C, t::D, t::E, t::F, t::G, t::H, t::I, t::J, t::K, t::L, t::M,

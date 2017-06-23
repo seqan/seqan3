@@ -43,7 +43,7 @@ using namespace seqan3;
 // default/zero construction
 TEST(pod_tuple_ctr, ctr)
 {
-    pod_tuple<int, long, float> t1;
+    [[maybe_unused]] pod_tuple<int, long, float> t1;
 }
 
 // aggregate initialization

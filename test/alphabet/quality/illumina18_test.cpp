@@ -45,13 +45,13 @@ using namespace seqan3;
 // constructor
 TEST(illumina18_ctr, ctr)
 {
-    illumina18 illu;
+    [[maybe_unused]] illumina18 illu;
 }
 
 // default copy constructor
 TEST(illumina18_cp_ctr, cp_ctr)
 {
-    illumina18 illu;
+    illumina18 illu{0};
     illumina18 illu2(illu);
 }
 
@@ -65,8 +65,8 @@ TEST(illumina18_des, des)
 // cp by assignment
 TEST(illumina18_cp_ass, cp_ass)
 {
-    illumina18 illu;
-    illumina18 illu2 = illu;
+    illumina18 illu{0};
+    [[maybe_unused]] illumina18 illu2 = illu;
 }
 
 // phred score offset
@@ -152,7 +152,7 @@ TEST(illumina18_assign_phred, assign_phred)
     illumina18 illu;
     illu = 7;
     illu = assign_phred(illu, 9);
-    seqan3::illumina18::rank_type val = illu.value;
+    [[maybe_unused]] seqan3::illumina18::rank_type val = illu.value;
     EXPECT_EQ(9, to_rank(illu));
 }
 
