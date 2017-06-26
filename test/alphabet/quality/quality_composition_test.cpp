@@ -46,7 +46,7 @@ using namespace seqan3;
 // default/zero construction
 TEST(quality_composition, ctr)
 {
-    quality_composition<dna4, illumina18> t1;
+    [[maybe_unused]] quality_composition<dna4, illumina18> t1;
 }
 
 // aggregate initialization

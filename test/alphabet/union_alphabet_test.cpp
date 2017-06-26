@@ -149,17 +149,17 @@ TEST(union_alphabet_test, assign_from_component_alphabet)
 
     variant = dna4::A;
     letter = dna4::A;
-    EXPECT_EQ(variant.index(), 0);
+    EXPECT_EQ(variant.index(), 0u);
     EXPECT_EQ(letter.to_rank(), 0);
 
     variant = {dna4::C};
     letter = {dna4::C};
-    EXPECT_EQ(variant.index(), 0);
+    EXPECT_EQ(variant.index(), 0u);
     EXPECT_EQ(letter.to_rank(), 1);
 
     variant = static_cast<variant_t>(dna4::G);
     letter = static_cast<alphabet_t>(dna4::G);
-    EXPECT_EQ(variant.index(), 0);
+    EXPECT_EQ(variant.index(), 0u);
     EXPECT_EQ(letter.to_rank(), 2);
 
     variant = {static_cast<variant_t>(dna4::T)};

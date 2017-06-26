@@ -81,7 +81,7 @@ constexpr auto alphabet_prefix_sum_sizes()
 
     array_t prefix_sum{0, alphabet_types::value_size...};
     for (auto i = 1u; i < N; ++i)
-        prefix_sum[i] += prefix_sum[i-1];
+        prefix_sum[i] = static_cast<rank_t>(prefix_sum[i] + prefix_sum[i-1]);
 
     return prefix_sum;
 }
@@ -116,7 +116,7 @@ constexpr auto value_to_char_table_I(alphabet_t alphabet)
     using array_t = std::array<char_t, max_value_size>;
     array_t value_to_char_{};
 
-    for (auto i = 0; i < alphabet_t::value_size; ++i)
+    for (char_t i = 0; i < alphabet_t::value_size; ++i)
         value_to_char_[i] = alphabet.assign_rank(i).to_char();
 
     return value_to_char_;
@@ -463,8 +463,7 @@ protected:
     template <size_t index, typename alphabet_t>
     static constexpr rank_type rank_by_index_(alphabet_t const & alphabet)
     {
-        return prefix_sum_sizes[index] +
-               static_cast<rank_type>(alphabet.to_rank());
+        return static_cast<rank_type>(prefix_sum_sizes[index] + alphabet.to_rank());
     }
 
     //!\brief Converts an object of one of the given alphabets into the internal representation

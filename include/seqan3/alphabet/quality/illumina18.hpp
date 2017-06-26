@@ -107,7 +107,7 @@ struct illumina18
     //! convert quality score to its 1-letter code
     constexpr char_type to_char() const
     {
-        return value + offset_char;
+        return static_cast<char_type>(value + offset_char);
     }
 
     //! set internal value given 1-letter code

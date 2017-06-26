@@ -53,16 +53,6 @@ using nucleotide_types2 =       meta::list<dna4, dna5, rna4, rna5, nucl16>; // n
 
 TYPED_TEST_CASE(nucleotide, nucleotide_types);
 
-TYPED_TEST(nucleotide, static_members)
-{
-    TypeParam::A;
-    TypeParam::C;
-    TypeParam::G;
-    TypeParam::T;
-    TypeParam::U;
-    TypeParam::UNKNOWN;
-}
-
 TYPED_TEST(nucleotide, assign_char)
 {
     using t = TypeParam;

@@ -96,7 +96,7 @@ struct gap
      * \{
      */
     //!\brief Assign from a character (no-op, since gap has only one character).
-    constexpr gap & assign_char(char_type const in)
+    constexpr gap & assign_char(char_type const)
     {
         return *this;
     }
@@ -114,32 +114,32 @@ struct gap
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(gap const & rhs) const
+    constexpr bool operator==(gap const &) const
     {
         return true;
     }
 
-    constexpr bool operator!=(gap const & rhs) const
+    constexpr bool operator!=(gap const &) const
     {
         return false;
     }
 
-    constexpr bool operator<(gap const & rhs) const
+    constexpr bool operator<(gap const &) const
     {
         return false;
     }
 
-    constexpr bool operator>(gap const & rhs) const
+    constexpr bool operator>(gap const &) const
     {
         return false;
     }
 
-    constexpr bool operator<=(gap const & rhs) const
+    constexpr bool operator<=(gap const &) const
     {
         return true;
     }
 
-    constexpr bool operator>=(gap const & rhs) const
+    constexpr bool operator>=(gap const &) const
     {
         return true;
     }
