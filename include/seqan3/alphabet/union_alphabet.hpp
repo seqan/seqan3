@@ -463,8 +463,7 @@ protected:
     template <size_t index, typename alphabet_t>
     static constexpr rank_type rank_by_index_(alphabet_t const & alphabet)
     {
-        return static_cast<rank_type>(prefix_sum_sizes[index] +
-               alphabet.to_rank());
+        return static_cast<rank_type>(prefix_sum_sizes[index] + alphabet.to_rank());
     }
 
     //!\brief Converts an object of one of the given alphabets into the internal representation

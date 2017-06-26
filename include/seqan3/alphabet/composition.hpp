@@ -164,7 +164,8 @@ private:
             size_t count = 0;
             meta::for_each(meta::list<first_alphabet_type, alphabet_types...>{}, [&] (auto && alph) constexpr
             {
-                ret[count] = static_cast<rank_type>( alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1));
+                ret[count] = static_cast<rank_type>(
+                    alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1));
                 ++count;
             });
 
@@ -182,8 +183,9 @@ private:
         using seqan3::to_rank;
         if constexpr (sizeof...(idx) > 0)
         {
-            return static_cast<rank_type>(to_rank(get<0>(*this)) +
-                   ((to_rank(get<idx + 1>(*this)) * cummulative_alph_sizes[idx]) + ...));
+            return static_cast<rank_type>(
+                to_rank(get<0>(*this)) +
+                ((to_rank(get<idx + 1>(*this)) * cummulative_alph_sizes[idx]) + ...));
         }
         else
         {
