@@ -107,14 +107,13 @@ struct illumina18
     //! convert quality score to its 1-letter code
     constexpr char_type to_char() const
     {
-        return value + offset_char;
+        return static_cast<char_type>(value + offset_char);
     }
 
     //! set internal value given 1-letter code
     constexpr illumina18 & assign_char(char_type const c)
     {
-        assert(c >= '!' && c <= 'J');
-        value = c - '!';
+        value = char_to_value[c];
         return *this;
     }
 
@@ -127,7 +126,7 @@ struct illumina18
     //! set internal value given zero-based integer c
     constexpr illumina18 & assign_rank(rank_type const c)
     {
-        assert(c >= 0 && c < value_size);
+        assert(c < value_size);
         value = c;
         return *this;
     }
@@ -148,6 +147,22 @@ struct illumina18
 
     //! phred score range for Illumina 1.8 standard
     static constexpr rank_type value_size{42};
+
+protected:
+
+    //!\brief Char to value conversion table.
+    static constexpr std::array<char_type, 256> char_to_value
+    {
+        [] () constexpr
+        {
+            std::array<char_type, 256> ret{};
+
+            for (char_type c = '!'; c <= 'J'; ++c)
+                ret[c] = c - '!';
+
+            return ret;
+        }()
+    };
 };
 
 } // namespace seqan3

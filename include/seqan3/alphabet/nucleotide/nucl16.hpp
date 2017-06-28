@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/nucleotide/nucl16.hpp
+/*!\file
  * \ingroup nucleotide
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Contains seqan3::nucl16, container aliases and string literals.
@@ -45,6 +45,7 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
 // ------------------------------------------------------------------
@@ -142,6 +143,21 @@ struct nucl16
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{16};
+
+    /*!\name Conversion operators
+     * \{
+     */
+    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
+    template <typename other_nucl_type>
+    //!\cond
+        requires nucleotide_concept<other_nucl_type>
+    //!\endcond
+    explicit constexpr operator other_nucl_type() const noexcept
+    {
+        return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
+    }
+    //!\}
 
     //!\name Comparison operators
     //!\{

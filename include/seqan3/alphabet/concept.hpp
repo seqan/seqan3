@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/concept.hpp
+/*!\file
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Core alphabet concept and free function/metafunction wrappers.
@@ -43,7 +43,7 @@
 #include <iostream>
 #include <string>
 
-#include <seqan3/core/convert.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {
@@ -268,71 +268,3 @@ concept bool alphabet_concept = requires (t t1, t t2)
 };
 
 } // namespace seqan3
-
-// ============================================================================
-// conversion to/from char/rank types
-// ============================================================================
-
-namespace seqan3::detail
-{
-
-//!\addtogroup alphabet
-//!\{
-/*!\brief Specialisation of seqan3::detail::convert with `out_t` == seqan3::underlying_char of the input.
- * \tparam in_t The type of the input, must satisfy seqan3::alphabet_concept.
- */
-template <typename in_t>
-    requires alphabet_concept<in_t>
-struct convert<underlying_char_t<in_t>, in_t>
-{
-    //!\brief Implementation of seqan3::detail::convert<underlying_char_t<in_t>, in_t>, calls seqan3::to_char() on the input.
-    static constexpr underlying_char_t<in_t> impl(in_t const & in) noexcept
-    {
-        return to_char(in);
-    }
-};
-
-/*!\brief Specialisation of seqan3::detail::convert with `out_t` == seqan3::underlying_rank of the input.
- * \tparam in_t The type of the input, must satisfy seqan3::alphabet_concept.
- */
-template <typename in_t>
-    requires alphabet_concept<in_t>
-struct convert<underlying_rank_t<in_t>, in_t>
-{
-    //!\brief Implementation of seqan3::detail::convert<underlying_rank_t<in_t>, in_t>, calls seqan3::to_rank() on the input.
-    static constexpr underlying_rank_t<in_t> impl(in_t const & in) noexcept
-    {
-        return to_rank(in);
-    }
-};
-
-/*!\brief Specialisation of seqan3::detail::convert with `in_t` == seqan3::underlying_char of the output.
- * \tparam out_t The type of the output, must satisfy seqan3::alphabet_concept.
- */
-template <typename out_t>
-    requires alphabet_concept<out_t>
-struct convert<out_t, underlying_char_t<out_t>>
-{
-    //!\brief Implementation of seqan3::detail::convert<out_t, underlying_char_t<out_t>>, calls seqan3::assign_char() on the input.
-    static constexpr out_t impl(underlying_char_t<out_t> const & in) noexcept
-    {
-        return assign_char(out_t{}, in);
-    }
-};
-
-/*!\brief Specialisation of seqan3::detail::convert with `in_t` == seqan3::underlying_rank of the output.
- * \tparam out_t The type of the output, must satisfy seqan3::alphabet_concept.
- */
-template <typename out_t>
-    requires alphabet_concept<out_t>
-struct convert<out_t, underlying_rank_t<out_t>>
-{
-    //!\brief Implementation of seqan3::detail::convert<out_t, underlying_rank_t<out_t>>, calls seqan3::assign_rank() on the input.
-    static constexpr out_t impl(underlying_rank_t<out_t> const & in) noexcept
-    {
-        return assign_rank(out_t{}, in);
-    }
-};
-//!\}
-
-} // namespace seqan3::detail

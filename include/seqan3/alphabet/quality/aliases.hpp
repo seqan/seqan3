@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/quality/aliases.hpp
+/*!\file
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains aliases for quality_composition.

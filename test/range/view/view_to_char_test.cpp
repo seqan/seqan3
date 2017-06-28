@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,30 +30,35 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
+// ==========================================================================
 
-/*!\file
- * \brief Adaptation of the view concept from the Ranges TS.
- * \ingroup view
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
+#include <iostream>
 
-#pragma once
+#include <gtest/gtest.h>
 
-#include <seqan3/range/concept.hpp>
+#include <range/v3/view/reverse.hpp>
 
-namespace seqan3
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/range/view/to_char.hpp>
+
+using namespace seqan3;
+using namespace seqan3::literal;
+
+TEST(view_to_char, basic)
 {
+    dna5_vector vec{"ACTTTGATA"_dna5};
+    std::string cmp{"ACTTTGATA"};
 
-/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
- */
-template <typename type>
-concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+    // pipe notation
+    std::string v = vec | view::to_char;
+    EXPECT_EQ(cmp, v);
 
-} // namespace seqan3
+    // function notation
+    std::string v2(view::to_char(vec));
+    EXPECT_EQ(cmp, v2);
 
-#ifndef NDEBUG
-#include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
-#endif
+    // combinability
+    std::string cmp2{"ATAGTTTCA"};
+    std::string v3 = vec | view::to_char | ranges::view::reverse;
+    EXPECT_EQ(cmp2, v3);
+}

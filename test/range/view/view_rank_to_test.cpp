@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,30 +30,35 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
+// ==========================================================================
 
-/*!\file
- * \brief Adaptation of the view concept from the Ranges TS.
- * \ingroup view
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
+#include <iostream>
 
-#pragma once
+#include <gtest/gtest.h>
 
-#include <seqan3/range/concept.hpp>
+#include <range/v3/view/reverse.hpp>
 
-namespace seqan3
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/range/view/rank_to.hpp>
+
+using namespace seqan3;
+using namespace seqan3::literal;
+
+TEST(view_rank_to, basic)
 {
+    std::vector<unsigned> vec{0,1,3,3,3,2,0,3,0};
+    dna5_vector cmp{"ACTTTGATA"_dna5};
 
-/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
- */
-template <typename type>
-concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+    // pipe notation
+    dna5_vector v = vec | view::rank_to<dna5>;
+    EXPECT_EQ(cmp, v);
 
-} // namespace seqan3
+    // function notation
+    dna5_vector v2(view::rank_to<dna5>(vec));
+    EXPECT_EQ(cmp, v2);
 
-#ifndef NDEBUG
-#include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
-#endif
+    // combinability
+    dna5_vector cmp2{"ATAGTTTCA"_dna5};
+    dna5_vector v3 = vec | view::rank_to<dna5> | ranges::view::reverse;
+    EXPECT_EQ(cmp2, v3);
+}

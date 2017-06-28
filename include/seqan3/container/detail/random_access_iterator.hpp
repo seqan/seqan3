@@ -53,33 +53,28 @@
 namespace seqan3::detail
 {
 
-// TODO: replace is_const flag by container value function
-template <typename container_type, bool is_const=false>
+template <typename container_type>
     requires random_access_range_concept<container_type> && sized_range_concept<container_type>
 class random_access_iterator
 {
 
 private:
-
-    // TODO: query container's diff type with to be provided metafunctions
-    using difference_type_container = int8_t;
-    using size_type_container = uint8_t;
-
-    typename std::add_pointer<container_type>::type host{nullptr};
-
-    using position_type = size_type_container;
+    //! \brief Iterator stores pointer to underlying container structure
+    typename std::add_pointer_t<container_type> host{nullptr};
+    using position_type =  ranges::v3::size_type_t<container_type>;
+    //! \brief Store position index for container
     position_type pos{static_cast<position_type>(0)};
 
 public:
-    //! \brief Value type for distances between iterators
-    using difference_type = difference_type_container;
-    //! value type obtained by dereferencing the iterator
-    // TODO: replace with meta function
-    using value_type = typename container_type::value_type;
-
-    using reference = std::conditional_t<is_const, value_type const &, typename container_type::reference>;
+    //! \brief Type for distances between iterators
+    using difference_type = ranges::v3::difference_type_t<container_type>;
+    //! \brief Value type of container elements
+    using value_type = ranges::v3::value_type_t<container_type>;
+    //! \brief Reference types defined by container
+    using reference = typename container_type::reference;
     using const_reference = typename container_type::const_reference;
-    using pointer = std::conditional_t<is_const, value_type const *, value_type *>;
+    //! \brief Pointer type is pointer of container element type
+    using pointer = value_type *;
     using iterator_category = std::random_access_iterator_tag;
 
     // \brief Default constructor
@@ -107,14 +102,9 @@ public:
     ~random_access_iterator() = default;
 
     //! \brief Dereference operator returns element currently pointed at
-    value_type operator*() const
-    {
-        return (*host)[pos];
-    }
-
     reference operator*()
     {
-        return (*host)[pos];
+        return (reference)(*host)[pos];
     }
 
     //! \brief Two iterators are equal if their absolute positions are the same
@@ -132,7 +122,7 @@ public:
     //! \brief Iterator comparison refers to their positions
     bool operator<(random_access_iterator const & rhs) const
     {
-        return this->pos < rhs.pos;
+        return static_cast<bool>(this->pos < rhs.pos);
     }
 
     //! \brief Iterator comparison refers to their positions
@@ -212,7 +202,7 @@ public:
     //! \brief Return decremented copy of this iterator
     random_access_iterator operator-(difference_type skip) const
     {
-        return random_access_iterator{*this->host, static_cast<position_type>(pos - skip)};
+        return random_access_iterator{*this->host, static_cast<position_type>(this->pos - skip)};
     }
 
     //! \brief Non-member operator- delegates to non-friend operator-
@@ -224,7 +214,7 @@ public:
     //! \brief Return offset between this and remote iterator's position
     difference_type operator-(random_access_iterator lhs) const
     {
-        return static_cast<difference_type>(pos) - static_cast<difference_type>(lhs.pos);
+        return static_cast<difference_type>(this->pos - lhs.pos);
     }
 
     //! \brief Return pointer to this iterator
@@ -236,10 +226,10 @@ public:
     //! \brief Return underlying container value currently pointed at
     reference operator[](position_type const n) const
     {
-        return (*host)[pos + n];
+        return (reference)(*host)[pos + n];
     }
 };
 
 } // namespace seqan3::detail
 
-static_assert(seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int>>>);
+static_assert(static_cast<bool>(ranges::concepts::models<ranges::concepts::RandomAccessIterator, seqan3::detail::random_access_iterator<std::vector<int>>>()));

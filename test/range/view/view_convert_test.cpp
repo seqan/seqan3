@@ -38,9 +38,11 @@
 
 #include <range/v3/view/reverse.hpp>
 
+#include <seqan3/alphabet/nucleotide.hpp>
 #include <seqan3/range/view/convert.hpp>
 
 using namespace seqan3;
+using namespace seqan3::literal;
 
 TEST(view_convert, basic)
 {
@@ -52,11 +54,30 @@ TEST(view_convert, basic)
     EXPECT_EQ(cmp, v);
 
     // function notation
-    std::vector<bool> v2{view::convert<bool>(vec)};
+    std::vector<bool> v2(view::convert<bool>(vec));
     EXPECT_EQ(cmp, v2);
 
     // combinability
     std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
     std::vector<bool> v3 = vec | view::convert<bool> | ranges::view::reverse;
+    EXPECT_EQ(cmp2, v3);
+}
+
+TEST(view_convert, explicit_conversion)
+{
+    dna5_vector vec{"ACGNTNGGN"_dna5};
+    dna4_vector cmp{"ACGATAGGA"_dna4};
+
+    // pipe notation
+    dna4_vector v = vec | view::convert<dna4>;
+    EXPECT_EQ(cmp, v);
+
+    // function notation
+    dna4_vector v2(view::convert<dna4>(vec));
+    EXPECT_EQ(cmp, v2);
+
+    // combinability
+    dna4_vector cmp2{"AGGATAGCA"_dna4};
+    dna4_vector v3 = vec | view::convert<dna4> | ranges::view::reverse;
     EXPECT_EQ(cmp2, v3);
 }

@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,22 +30,35 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
+// ==========================================================================
 
-#include <type_traits>
+#include <iostream>
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/convert.hpp>
+#include <range/v3/view/reverse.hpp>
+
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/range/view/to_rank.hpp>
 
 using namespace seqan3;
+using namespace seqan3::literal;
 
-TEST(convert, basic)
+TEST(view_to_rank, basic)
 {
-    bool b = convert<bool>(7);
-    EXPECT_EQ(b, true);
+    dna5_vector vec{"ACTTTGATA"_dna5};
+    std::vector<unsigned> cmp{0,1,3,3,3,2,0,3,0};
 
-    auto i = convert<int>('A');
-    EXPECT_TRUE((std::is_same_v<decltype(i), int>));
-    EXPECT_EQ(i, 65);
+    // pipe notation
+    std::vector<unsigned> v = vec | view::to_rank;
+    EXPECT_EQ(cmp, v);
+
+    // function notation
+    std::vector<unsigned> v2(view::to_rank(vec));
+    EXPECT_EQ(cmp, v2);
+
+    // combinability
+    std::vector<unsigned> cmp2{0, 3, 0, 2, 3, 3, 3, 1, 0};
+    std::vector<unsigned> v3 = vec | view::to_rank | ranges::view::reverse;
+    EXPECT_EQ(cmp2, v3);
 }

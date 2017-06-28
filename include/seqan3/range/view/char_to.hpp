@@ -33,27 +33,51 @@
 // ============================================================================
 
 /*!\file
- * \brief Adaptation of the view concept from the Ranges TS.
  * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Provides seqan3::view::char_to.
  */
 
 #pragma once
 
-#include <seqan3/range/concept.hpp>
+#include <range/v3/view/transform.hpp>
 
-namespace seqan3
+#include <seqan3/alphabet/concept.hpp>
+
+namespace seqan3::view
 {
 
-/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
+/*!\brief A view over an alphabet, given a range of characters.
+ * \tparam alphabet_type The type of the desired alphabet, must satisfy seqan3::alphabet_concept.
+ * \param input_range The range you wish to convert, elements must be convertible to alphabet_type's
+ * seqan3::underlying_char_t.
+ * \returns A view over alphabet_type, created from it's character representation.
+ * \details
+ * \par View properties
+ * * view type: same input_range
+ * * value type: alphabet_type
+ * * `const` iterable: yes
+ * \par Complexity
+ * Linear in the size if the input range (\f$O(n)\f$).
+ * \par Exceptions
+ * Strong exception guarantee (does not modify data).
+ * \par Thread safety
+ * Does not modify data.
+ * \par Example
+ * ```cpp
+ * std::string s{"ACTTTGATAN"};
+ * auto v1 = s | view::char_to<dna4>; // == "ACTTTGATAA"_dna4
+ * auto v2 = s | view::char_to<dna5>; // == "ACTTTGATAN"_dna5
+ * ```
+ * \hideinitializer
  */
-template <typename type>
-concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+template <typename alphabet_type>
+//!\cond
+    requires alphabet_concept<alphabet_type>
+//!\endcond
+auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type> const in) -> alphabet_type
+{
+    return assign_char(alphabet_type{}, in);
+});
 
-} // namespace seqan3
-
-#ifndef NDEBUG
-#include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
-#endif
+} // namespace seqan3::view

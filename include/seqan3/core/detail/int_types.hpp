@@ -38,7 +38,7 @@
 
 #include <seqan3/core/platform.hpp>
 
-/*!\file core/detail/int_types.hpp
+/*!\file
  * \brief Contains metaprogramming utilities for integer types.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \ingroup core

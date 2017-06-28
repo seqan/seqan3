@@ -31,30 +31,53 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
 
-#include <gtest/gtest.h>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/aa27_container.hpp>
+/*!\file
+ * \ingroup view
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Provides seqan3::view::rank_to.
+ */
 
-using namespace seqan3;
+#pragma once
 
-TEST(alphabet_aminoacid_aa27_container_test, vector)
+#include <range/v3/view/transform.hpp>
+
+#include <seqan3/alphabet/concept.hpp>
+
+namespace seqan3::view
 {
-    aa27_vector v{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
 
-    EXPECT_EQ(v[0], aa27::A);
-    EXPECT_EQ(v[1], aa27::C);
-    EXPECT_EQ(v[2], aa27::G);
-    EXPECT_EQ(v[3], aa27::T);
-}
-
-TEST(alphabet_aminoacid_aa27_container_test, string)
+/*!\brief A view over an alphabet, given a range of ranks.
+ * \tparam alphabet_type The type of the desired alphabet, must satisfy seqan3::alphabet_concept.
+ * \param input_range The range you wish to convert, elements be must convertible to alphabet_type's
+ * seqan3::underlying_rank_t.
+ * \returns A view over alphabet_type, created from it's rank representation.
+ * \details
+ * \par View properties
+ * * view type: same input_range
+ * * value type: alphabet_type
+ * * `const` iterable: yes
+ * \par Complexity
+ * Linear in the size if the input range (\f$O(n)\f$).
+ * \par Exceptions
+ * Strong exception guarantee (does not modify data).
+ * \par Thread safety
+ * Does not modify data.
+ * \par Example
+ * ```cpp
+ * std::vector<int> vec{0, 1, 3, 3, 3, 2, 0, 3, 0};
+ * auto v1 = vec | view::rank_to<dna4>; // == "ACTTTGATA"_dna4
+ * auto v2 = vec | view::rank_to<dna5>; // == "ACTTTGATA"_dna5
+ * ```
+ * \hideinitializer
+ */
+template <typename alphabet_type>
+//!\cond
+    requires alphabet_concept<alphabet_type>
+//!\endcond
+auto const rank_to = ranges::view::transform([] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
 {
-    aa27_string s{{aa27::A}, {aa27::C}, {aa27::G}, {aa27::T}};
-    EXPECT_EQ(s[0], aa27::A);
-    EXPECT_EQ(s[1], aa27::C);
-    EXPECT_EQ(s[2], aa27::G);
-    EXPECT_EQ(s[3], aa27::T);
-}
+    return assign_rank(alphabet_type{}, in);
+});
+
+} // namespace seqan3::view

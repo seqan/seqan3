@@ -33,27 +33,53 @@
 // ============================================================================
 
 /*!\file
- * \brief Adaptation of the view concept from the Ranges TS.
  * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Provides seqan3::view::to_rank.
  */
 
 #pragma once
 
-#include <seqan3/range/concept.hpp>
+#include <range/v3/view/transform.hpp>
 
-namespace seqan3
+#include <seqan3/alphabet/concept.hpp>
+
+namespace seqan3::view
 {
 
-/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
+/*!\brief A view that calls seqan3::to_rank() on each element in the input range.
+ * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept and the value_type must
+ * satisfy seqan3::alphabet_concept.
+ * \returns A view with the value_type being seqan3::underlying_rank_t of the input alphabet.
+ * \details
+ * \par View properties
+ * * view type: same input_range
+ * * value type: seqan3::underlying_rank_t of the input's value_type
+ * * `const` iterable: yes
+ * \par Complexity
+ * Linear in the size if the input range (\f$O(n)\f$).
+ * \par Exceptions
+ * Strong exception guarantee (does not modify data).
+ * \par Thread safety
+ * Does not modify data.
+ * \par Example
+ * ```cpp
+ * dna4_vector vec = "ACTTTGATA"_dna4;
+ * auto v = vec | view::to_rank | view::convert<unsigned>;
+ * std::cout << v << '\n'; // [0,1,3,3,3,2,0,3,0]
+ *
+ * std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
+ * auto v3 = qvec | view::to_rank | view::convert<unsigned>;
+ * std::cout << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
+ *
+ * std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4}, {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
+ * auto v4 = qcvec | view::to_rank | view::convert<unsigned>;
+ * std::cout << v4 << '\n'; // [1,28,22,15,30,16,121,67,92]
+ * ```
+ * We also convert to unsigned here, because the seqan3::underlying_rank_t is often `uint8_t` which is
+ * often implemented as `unsigned char` and thus will not be printed as a number by default.
+ * \hideinitializer
  */
-template <typename type>
-concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+auto const to_rank = ranges::view::transform([] (alphabet_concept const in) { return seqan3::to_rank(in); });
 
-} // namespace seqan3
-
-#ifndef NDEBUG
-#include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
-#endif
+} // namespace seqan3::view

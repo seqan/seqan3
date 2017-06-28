@@ -32,28 +32,47 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Adaptation of the view concept from the Ranges TS.
- * \ingroup view
+/*!\cond DEV
+ * \file
+ * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Provides seqan3::detail::convert_through_char_representation.
+ * \endcond
  */
 
 #pragma once
 
-#include <seqan3/range/concept.hpp>
+#include <iostream>
+#include <string>
 
-namespace seqan3
+#include <seqan3/alphabet/concept.hpp>
+
+// ============================================================================
+// conversion to/from char/rank types
+// ============================================================================
+
+namespace seqan3::detail
 {
 
-/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
+/*!\brief A precomputed conversion table for two alphabets based on their char representations.
+ * \ingroup alphabet
+ * \tparam out_t The type of the output, must satisfy seqan3::alphabet_concept.
+ * \tparam in_t The type of the input, must satisfy seqan3::alphabet_concept.
+ * \hideinitializer
  */
-template <typename type>
-concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+template <typename out_t, typename in_t>
+//!\cond
+    requires alphabet_concept<out_t> && alphabet_concept<in_t>
+//!\endcond
+constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_char_representation
+{
+    [] () constexpr
+    {
+        std::array<out_t, alphabet_size_v<in_t>> ret{};
+        for (typename in_t::rank_type i = 0; i < alphabet_size_v<in_t>; ++i)
+            assign_char(ret[i], to_char(assign_rank(in_t{}, i)));
+        return ret;
+    }()
+};
 
-} // namespace seqan3
-
-#ifndef NDEBUG
-#include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
-#endif
+} // namespace seqan3::detail

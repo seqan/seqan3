@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file range/view/convert.hpp
+/*!\file
  * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::view::convert.
@@ -42,12 +42,12 @@
 
 #include <range/v3/view/transform.hpp>
 
-#include <seqan3/core/convert.hpp>
+#include <seqan3/core/concept/core.hpp>
 
 namespace seqan3::view
 {
 
-/*!\brief Create a view that calls seqan3::convert() on each element in the input range.
+/*!\brief A view that converts each element in the input range (implicitly or via `static_cast`).
  * \tparam out_t The type to convert to (must be given).
  * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept.
  * \returns A view with the value_type being `out_t`
@@ -63,38 +63,36 @@ namespace seqan3::view
  * \par Thread safety
  * Does not modify data.
  * \par Example
+ *
+ * Convert from `int` to `bool`:
  * ```cpp
- * dna4_vector vec = "ACTTTGATA"_dna4;
- * auto v = vec | view::convert<char>;
- * std::cout << v << '\n'; // [A,C,T,T,T,G,A,T,A]
- * auto v2 = vec | view::convert<underlying_rank_t<dna4>> | view::convert<unsigned>;
- * std::cout << v2 << '\n'; // [0,1,3,3,3,2,0,3,0]
+ *   // convert from int to bool
+ *   std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
  *
- * std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
- * auto v3 = qvec | view::convert<char>;
- * std::cout << v3 << '\n'; // [!,(,&,$,(,%,?,1,8]
+ *   // pipe notation
+ *   auto v = vec | view::convert<bool>; // == [1, 1, 0, 1, 0, 0, 1, 1, 1];
  *
- * std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4}, {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
- * auto v4 = qcvec | view::convert<char>;
- * std::cout << v4 << '\n'; // [C,A,G,T,G,A,C,T,A]
- * auto v5 = qcvec | view::convert<underlying_rank_t<dna4q>> | view::convert<unsigned>;
- * std::cout << v5 << '\n'; // [1,28,22,15,30,16,121,67,92]
- * auto v6 = qcvec | view::convert<dna4> | view::convert<char>;
- * std::cout << v6 << '\n'; // [C,A,G,T,G,A,C,T,A]
- * auto v7 = qcvec | view::convert<dna4> | view::convert<underlying_rank_t<dna4>> | view::convert<unsigned>;
- * std::cout << v7 << '\n'; // [1,0,2,3,2,0,1,3,0]
- * auto v8 = qcvec | view::convert<illumina18> | view::convert<char>;
- * std::cout << v8 << '\n'; // [!,(,&,$,(,%,?,1,8]
- * auto v9 = qcvec | view::convert<illumina18> | view::convert<underlying_rank_t<illumina18>> | view::convert<unsigned>;
- * std::cout << v9 << '\n'; // [0,7,5,3,7,4,30,16,23]
+ *   // function notation and immediate conversion to vector again
+ *   std::vector<bool> v2(view::convert<bool>(vec));
+ *
+ *   // combinability
+ *   auto v3 = vec | view::convert<bool> | ranges::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
  * ```
+ *
+ * Convert from seqan3::nucl16 to seqan3::dna5:
+ * ```cpp
+ *   nucl16_vector vec2{"ACYGTN"_nucl16};
+ *   auto v4 = vec2 | view::convert<dna5>; // == "ACNGTN"_dna5
+ * ```
+ * \hideinitializer
  */
 template <typename out_t>
-auto const convert = ranges::view::transform([] (auto const & in) -> out_t { return seqan3::convert<out_t>(in); });
+auto const convert = ranges::view::transform([] (auto const & in) -> out_t
+{
+    if constexpr (implicitly_convertible_to_concept<std::remove_reference_t<decltype(in)>, out_t>)
+        return in;
+    else
+        return static_cast<out_t>(in);
+});
 
 } // namespace seqan3::view
-
-#ifndef NDEBUG
-#include #include <seqan3/range/view/concept.hpp>
-static_assert(seqan3::view_concept<seqan3::view::convert<char>);
-#endif

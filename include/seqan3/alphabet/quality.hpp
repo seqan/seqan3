@@ -39,7 +39,7 @@
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
 
-/*!\file alphabet/quality.hpp
+/*!\file
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header that includes all headers from alphabet/quality/

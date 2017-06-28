@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file alphabet/nucleotide/concept.hpp
+/*!\file
  * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::nucleotide_concept.
@@ -76,56 +76,3 @@ template <typename type>
 concept bool nucleotide_concept = alphabet_concept<type> && detail::is_nucleotide_v<type>;
 
 } // namespace seqan3
-
-// ============================================================================
-// conversion specialisations
-// ============================================================================
-
-namespace seqan3::detail
-{
-
-/*!\brief Specialisation of seqan3::detail::convert for converting between nucleotide types.
- * \ingroup nucleotide
- * \tparam out_t The type of the output, must satisfy seqan3::nucleotide_concept.
- * \tparam in_t The type of the input, must satisfy seqan3::nucleotide_concept.
- */
-template <typename out_t, typename in_t>
-    requires nucleotide_concept<out_t> && nucleotide_concept<in_t>
-struct convert<out_t, in_t>
-{
-    //!\brief Implementation of seqan3::convert(); casts the input if possible, otherwise looks in conversion table.
-    static constexpr out_t impl(in_t const & in) noexcept
-    {
-        if constexpr (implicitly_convertible_to_concept<in_t, out_t>)
-            return in;
-        else if constexpr (explicitly_convertible_to_concept<in_t, out_t>)
-            return static_cast<out_t>(in);
-        else
-            return conversion_table[to_rank(in)];
-    }
-private:
-    //!\brief Whether the type combination needs a conversion table (cannot be cast).
-    static constexpr bool can_be_cast = implicitly_convertible_to_concept<in_t, out_t> ||
-                                        explicitly_convertible_to_concept<in_t, out_t>;
-
-    //!\brief Construct a conversion table at compile time (converts through character representation).
-    static constexpr std::array<out_t, can_be_cast ? 1 : alphabet_size_v<in_t>> conversion_table
-    {
-        [] () constexpr
-        {
-            // no table needed if we can cast
-            if constexpr (can_be_cast)
-            {
-                return std::array<out_t, 1>{};
-            } else
-            {
-                std::array<out_t, alphabet_size_v<in_t>> ret{};
-                for (std::size_t i = 0; i < alphabet_size_v<in_t>; ++i)
-                    assign_char(ret[i], to_char(assign_rank(in_t{}, i)));
-                return ret;
-            }
-        }()
-    };
-};
-
-} // namespace seqan3::detail

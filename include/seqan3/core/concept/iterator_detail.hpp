@@ -34,7 +34,7 @@
 
 //! \cond DEV
 
-/*! \file core/concept/iterator_detail.hpp
+/*! \file
  *  \brief Testing the iterator concepts.
  *  \ingroup core
  *  \author Rene Rahn <rene.rahn AT fu-berlin.de>
