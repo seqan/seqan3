@@ -32,27 +32,22 @@
 //
 // ============================================================================
 
-/*!\file container/detail/random_access_iterator_test.hpp
- * \brief Random access iterator for const and non const containers.
- * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
- * \ingroup iterator test
- */
-
-#include <seqan3/container/detail/random_access_iterator.hpp>
+#include <seqan3/range/detail/random_access_iterator.hpp>
 
 #include <gtest/gtest.h>
 #include <sstream>
 #include <vector>
 
-class random_access_iterator_test_fixture: public ::testing::Test {
+class random_access_iterator_test_fixture: public ::testing::Test
+{
 protected:
 
-   std::vector<uint8_t> v_empty;
+   std::vector<uint8_t> v_empty{};
    const std::vector<uint8_t> v_const_empty{};
    std::vector<uint8_t> *v, *v2, *v3, *v4, *w, *w2;
    const std::vector<uint8_t> *v_const, *v2_const, *v3_const, *v4_const, *w_const, *w2_const;
    std::array<long int, 3> a, b;
-   const std::array<long int, 3> a_const[3] = {11, 22, 33}; //, b_const;
+   const std::array<long int, 3> a_const[3] = {11, 22, 33};
 
    virtual void SetUp( ) {
        // code here will execute just before the test ensues
@@ -69,7 +64,6 @@ protected:
        w2 = new std::vector<uint8_t>                {'b', 'v'};
        w2_const = new const std::vector<uint8_t>    {'b', 'v'};
        a = {11, 22, 33};
-       //a_const = {11, 22, 33};
    }
 
    virtual void TearDown( ) {
@@ -295,7 +289,6 @@ TEST_F(random_access_iterator_test_fixture, leq)
     EXPECT_FALSE(it_v2 <= it_w2);
 }
 
-
 TEST_F(random_access_iterator_test_fixture, geq)
 {
     // non-const
@@ -339,7 +332,6 @@ TEST_F(random_access_iterator_test_fixture, prefix_decrement)
     --++it_v2;
     EXPECT_TRUE(it_v2 == it_w2);
 }
-
 
 TEST_F(random_access_iterator_test_fixture, postfix_decrement)
 {
