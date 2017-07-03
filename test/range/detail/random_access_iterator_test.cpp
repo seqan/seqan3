@@ -43,32 +43,26 @@ class random_access_iterator_test_fixture: public ::testing::Test
 protected:
 
    std::vector<uint8_t> v_empty{};
-   const std::vector<uint8_t> v_const_empty{};
+   std::vector<uint8_t> const v_const_empty{};
    std::vector<uint8_t> *v, *v2, *v3, *v4, *w, *w2;
-   const std::vector<uint8_t> *v_const, *v2_const, *v3_const, *v4_const, *w_const, *w2_const;
+   std::vector<uint8_t> const *v_const = new const std::vector<uint8_t>{'a', 't'};
+   std::vector<uint8_t> const *v2_const = new const std::vector<uint8_t>{'a', 'u'};
+   std::vector<uint8_t> const *v3_const = new const std::vector<uint8_t>{'a', 't', 'z'};
+   std::vector<uint8_t> const *v4_const = new const std::vector<uint8_t>{'a', 'u', 'v', 'w', 'x'};
+   std::vector<uint8_t> const *w_const = new const std::vector<uint8_t>{'c', 't'};
+   std::vector<uint8_t> const *w2_const = new const std::vector<uint8_t>{'b', 'v'};;
    std::array<long int, 3> a, b;
-   const std::array<long int, 3> a_const[3] = {11, 22, 33};
+   std::array<long int, 3> const a_const[3] = {11, 22, 33};
 
    virtual void SetUp( ) {
        // code here will execute just before the test ensues
-       v = new std::vector<uint8_t>                 {'a', 't'};
-       v_const = new const std::vector<uint8_t>     {'a', 't'};
-       v2 = new std::vector<uint8_t>                {'a', 'u'};
-       v2_const = new const std::vector<uint8_t>    {'a', 'u'};
-       v3 = new std::vector<uint8_t>                {'a', 't', 'z'};
-       v3_const = new const std::vector<uint8_t>    {'a', 't', 'z'};
-       v4 = new std::vector<uint8_t>                {'a', 'u', 'v', 'w', 'x'};
-       v4_const = new const std::vector<uint8_t>    {'a', 'u', 'v', 'w', 'x'};
-       w = new std::vector<uint8_t>                 {'c', 't'};
-       w_const = new const std::vector<uint8_t>     {'c', 't'};
-       w2 = new std::vector<uint8_t>                {'b', 'v'};
-       w2_const = new const std::vector<uint8_t>    {'b', 'v'};
+       v = new std::vector<uint8_t>{'a', 't'};
+       v2 = new std::vector<uint8_t>{'a', 'u'};
+       v3 = new std::vector<uint8_t>{'a', 't', 'z'};
+       v4 = new std::vector<uint8_t>{'a', 'u', 'v', 'w', 'x'};
+       w = new std::vector<uint8_t>{'c', 't'};
+       w2 = new std::vector<uint8_t>{'b', 'v'};
        a = {11, 22, 33};
-   }
-
-   virtual void TearDown( ) {
-       delete v, delete v2, delete v3, delete v4, delete w, delete w2;
-       delete v_const, delete v2_const, delete v3_const, delete v4_const, delete w_const, delete w2_const;
    }
 
    ~random_access_iterator_test_fixture(){}
