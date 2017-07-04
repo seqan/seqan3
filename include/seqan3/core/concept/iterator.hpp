@@ -145,6 +145,6 @@ concept bool random_access_iterator_concept =   bidirectional_iterator_concept<i
 #ifndef NDEBUG
 /* Check the iterator concepts */
 
-#include <seqan3/core/concepts/iterator_detail.hpp>
+#include <seqan3/core/concept/iterator_detail.hpp>
 
 #endif // NDEBUG
