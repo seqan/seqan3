@@ -52,15 +52,17 @@ namespace seqan3::detail
 {
 
 /*!\brief Implementation of a random access iterator on an input container pointer.
- *  \details No iterator operation will modify the container. Arithmetic and boolean
- *  operations are applied to the iterator positions, not the corresponding values
- *  of their containers.
- *  \tparam container_type The Datastructure on which the iterator operates, e.g. std::vector<int>.
- *  The container_type must satisfy the seqan3::random_access_range_concept and
- *  the seqan3::sized_range_concept.
+ * \tparam container_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
+ *
+ * No iterator operation will modify the container. Arithmetic and boolean
+ * operations are applied to the iterator positions, not the corresponding values
+ * of their containers.
+ *
+ * The iterator makes certain assumptions on the `container_type`, but does not formally require
+ * it to satisfy the seqan3::random_access_range_concept, because the iterator itself is
+ * a requirement for this.
  */
 template <typename container_type>
-    requires random_access_range_concept<container_type> && sized_range_concept<container_type>
 class random_access_iterator
 {
 
@@ -72,13 +74,21 @@ private:
     //!\brief Store position index for container.
     position_type pos{static_cast<position_type>(0)};
 
+    //!\brief This friend declaration is required to allow non-const to const-construction.
+    template <typename t>
+        requires std::is_same_v<std::remove_const_t<container_type>, t> &&
+                 std::is_same_v<container_type, std::add_const_t<t>>
+    friend class random_access_iterator;
+
 public:
     //!\brief Type for distances between iterators.
     using difference_type = ranges::v3::difference_type_t<container_type>;
     //!\brief Value type of container elements.
     using value_type = ranges::v3::value_type_t<container_type>;
     //!\brief Use reference type defined by container.
-    using reference = typename container_type::reference;
+    using reference = std::conditional_t<std::is_const_v<container_type>,
+                                         typename container_type::const_reference,
+                                         typename container_type::reference>;
     //!\brief Use const reference type provided by container.
     using const_reference = typename container_type::const_reference;
     //!\brief Pointer type is pointer of container element type.
@@ -93,7 +103,7 @@ public:
     constexpr random_access_iterator() = default;
 
     //!\brief Construct by host, default position pointer with 0.
-    constexpr random_access_iterator(container_type & host) noexcept : host{&host} {}
+    explicit constexpr random_access_iterator(container_type & host) noexcept : host{&host} {}
 
     //!\brief Construct by host and explicit position.
     constexpr random_access_iterator(container_type & host, position_type const pos) noexcept : host{&host}, pos{pos} {}
@@ -112,6 +122,16 @@ public:
 
     //!\brief Use default deconstructor.
     ~random_access_iterator() = default;
+
+    //!\brief Constructor for const version from non-const version.
+    template <typename t>
+    //!\cond
+        requires std::is_same_v<std::remove_const_t<container_type>, t> &&
+                 std::is_same_v<container_type, std::add_const_t<t>>
+    //!\endcond
+    constexpr random_access_iterator(random_access_iterator<t> const & rhs) noexcept :
+        host{rhs.host}, pos{rhs.pos}
+    {}
     //!\}
 
     /*!\name Comparison operators
@@ -233,7 +253,7 @@ public:
     //!\brief Dereference operator returns element currently pointed at.
     constexpr reference operator*() noexcept(noexcept((*host)[pos]))
     {
-        return (reference)(*host)[pos];
+        return (*host)[pos];
     }
 
     //!\brief Return pointer to this iterator.
@@ -245,7 +265,7 @@ public:
     //!\brief Return underlying container value currently pointed at.
     constexpr reference operator[](position_type const n) const noexcept(noexcept((*host)[pos+n]))
     {
-        return (reference)(*host)[pos + n];
+        return (*host)[pos + n];
     }
     //!\}
 };
