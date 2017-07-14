@@ -121,8 +121,8 @@ concept bool sequence_concept = requires (type val, type val2)
     // modify container
 //TODO: how do you model this?
 //     { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
-    { val.insert(val.begin(), val2.front())                                            } -> typename type::iterator;
-    { val.insert(val.begin(), typename type::value_type{})                             } -> typename type::iterator;
+    { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
+    { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
     { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
     { val.insert(val.cbegin(), val2.begin(), val2.end())                               } -> typename type::iterator;
 //TODO this fails on std::string, although it should work
@@ -135,8 +135,8 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.clear()                                                                      } -> void;
 
     // access container
-    { val.front() } -> typename type::value_type &;
-    { val.back()  } -> typename type::value_type &;
+    { val.front() } -> typename type::reference;
+    { val.back()  } -> typename type::reference;
 };
 
 /*!\brief A more refined container concept than seqan3::sequence_concept.
@@ -154,12 +154,29 @@ concept bool random_access_sequence_concept = requires (type val)
     requires sequence_concept<type>;
 
     // access container
-    { val[0]    } -> typename type::value_type &;
-    { val.at(0) } -> typename type::value_type &;
+    { val[0]    } -> typename type::reference;
+    { val.at(0) } -> typename type::reference;
 
     // modify container
     { val.resize(0)                              } -> void;
     { val.resize(0, typename type::value_type{}) } -> void;
+};
+
+/*!\brief A more refined container concept than seqan3::random_access_sequence_concept.
+ *
+ * Adds requirements for `.reserve()`. Satisfied by `std::vector` and `std::basic_string`.
+ *
+ * \attention
+ * `std::array`, `std::forward_list`, `std::list` and `std::deque` do not satisfy this concept.
+ */
+template <typename type>
+concept bool reservable_sequence_concept = requires (type val)
+{
+    requires random_access_sequence_concept<type>;
+
+    { val.capacity()      } -> typename type::size_type;
+    { val.reserve(0)      } -> void;
+    { val.shrink_to_fit() } -> void;
 };
 //!\}
 
