@@ -4,3 +4,6 @@
 [submodule "range-v3"]
 	path = range-v3
 	url = https://github.com/ericniebler/range-v3
+[submodule "cereal"]
+	path = cereal
+	url = https://github.com/USCiLab/cereal
