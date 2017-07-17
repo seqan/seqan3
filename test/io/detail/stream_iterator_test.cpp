@@ -33,12 +33,19 @@
 // ==========================================================================
 
 // TODO(rrahn): Make typed test for different containers?
+#include <gtest/gtest.h>
+
 #include <cstring>
 #include <cassert>
 
+#include <sstream>
+#include <vector>
+#include <numeric>
 #include <algorithm>
 #include <array>
 #include <streambuf>
+
+#include <seqan3/io/detail/stream_iterator.hpp>
 
 namespace seqan3::detail::test_stream_iterator
 {
@@ -101,14 +108,6 @@ private:
 };
 
 }  // seqan3::detail::test_stream_iterator
-
-#include <gtest/gtest.h>
-
-#include <sstream>
-#include <vector>
-#include <numeric>
-
-#include <seqan3/io/detail/stream_iterator.hpp>
 
 using namespace seqan3;
 
