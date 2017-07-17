@@ -50,7 +50,7 @@
 namespace seqan3
 {
 
-/*!\brief An alphabet_composition that joins a nucleotide alphabet with a quality alphabet.
+/*!\brief An cartesian_composition that joins a nucleotide alphabet with a quality alphabet.
  * \ingroup alphabet
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
  * \tparam quality_alphabet_t Types of further letters (up to 4); must satisfy seqan3::quality_concept.
@@ -60,7 +60,7 @@ namespace seqan3
  * are taken from the sequence alphabet and the phred values are taken from the quality
  * alphabet.
  *
- * As with all `alphabet_composition` s you may access the individual alphabet letters in
+ * As with all `cartesian_composition` s you may access the individual alphabet letters in
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
@@ -90,14 +90,14 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~
  *
- * This alphabet_composition itself fulfills both seqan3::alphabet_concept and seqan3::quality_concept .
+ * This cartesian_composition itself fulfills both seqan3::alphabet_concept and seqan3::quality_concept .
  */
 
 template <typename sequence_alphabet_t, typename quality_alphabet_t>
       requires nucleotide_concept<sequence_alphabet_t> &&
                quality_concept<quality_alphabet_t>
 struct quality_composition :
-    public alphabet_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>,
+    public cartesian_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>,
                                 sequence_alphabet_t, quality_alphabet_t>
 {
     //!\brief First template parameter as member type.

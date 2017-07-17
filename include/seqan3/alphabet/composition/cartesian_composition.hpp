@@ -35,7 +35,7 @@
 /*!\file
  * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains alphabet_composition.
+ * \brief Contains cartesian_composition.
  */
 
 #pragma once
@@ -82,11 +82,11 @@ template <typename derived_type,
           typename first_alphabet_type,
           typename ...alphabet_types>
       requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
-struct alphabet_composition :
+struct cartesian_composition :
     public pod_tuple<first_alphabet_type, alphabet_types...>
 {
 public:
-    //!\brief The type of value_size and `alphabet_size_v<alphabet_composition<...>>`
+    //!\brief The type of value_size and `alphabet_size_v<cartesian_composition<...>>`
     using rank_type = detail::min_viable_uint_t<(alphabet_size_v<first_alphabet_type> * ... *
                                                      alphabet_size_v<alphabet_types>)>;
 
@@ -139,17 +139,17 @@ public:
 
 private:
     //!\brief declared private to prevent direct use of the CRTP base
-    alphabet_composition() = default;
+    cartesian_composition() = default;
     //!\brief declared private to prevent direct use of the CRTP base
-    constexpr alphabet_composition(alphabet_composition const &) = default;
+    constexpr cartesian_composition(cartesian_composition const &) = default;
     //!\brief declared private to prevent direct use of the CRTP base
-    constexpr alphabet_composition(alphabet_composition &&) = default;
+    constexpr cartesian_composition(cartesian_composition &&) = default;
     //!\brief declared private to prevent direct use of the CRTP base
-    constexpr alphabet_composition & operator =(alphabet_composition const &) = default;
+    constexpr cartesian_composition & operator =(cartesian_composition const &) = default;
     //!\brief declared private to prevent direct use of the CRTP base
-    constexpr alphabet_composition & operator =(alphabet_composition &&) = default;
+    constexpr cartesian_composition & operator =(cartesian_composition &&) = default;
     //!\brief declared private to prevent direct use of the CRTP base
-    ~alphabet_composition() = default;
+    ~cartesian_composition() = default;
 
     //!\brief befriend the derived type so that it can instantiate
     //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
