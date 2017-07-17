@@ -31,23 +31,176 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Sara Hetzel <sara.hetzel AT fu-berlin.de>
-// ============================================================================
+
+/*!\file
+ * \ingroup nucleotide
+ * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
+ * \brief Contains seqan3::nucl16, container aliases and string literals.
+ */
 
 #pragma once
 
-#include "../alphabet.hpp"
+#include <cassert>
+
+#include <string>
+#include <vector>
+
+#include <seqan3/alphabet/detail/convert.hpp>
+#include <seqan3/alphabet/nucleotide/concept.hpp>
+
+// ------------------------------------------------------------------
+// nucl16
+// ------------------------------------------------------------------
 
 namespace seqan3
 {
 
+/*!\brief The 16 letter DNA alphabet, containing all IUPAC smybols.
+ * \ingroup nucleotide
+ *
+ * \details
+ * Note that in contrast to seqan3::dna4, seqan3::rna4, seqan3::dna5 and seqan3::rna5
+ * the letters 'T' and 'U' are distinct values in this alphabet.
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     nucl16 my_letter{nucl16::A};
+ *     // doesn't work:
+ *     // nucl16 my_letter{'A'};
+ *
+ *     my_letter.assign_char('C'); // <- this does!
+ *
+ *     my_letter.assign_char('F'); // converted to N internally
+ *     if (my_letter.to_char() == 'N')
+ *        std::cout << "yeah\n"; // "yeah";
+ *~~~~~~~~~~~~~~~
+ */
+
 struct nucl16
 {
+    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
-    using integral_type = uint8_t;
+    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+    using rank_type = uint8_t;
 
-    // strictly typed enum, unfortunately with scope
-    enum struct c_type : integral_type
+    /*!\name Letter values
+     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
+     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
+     */
+    //!\{
+    static const nucl16 A;
+    static const nucl16 B;
+    static const nucl16 C;
+    static const nucl16 D;
+    static const nucl16 G;
+    static const nucl16 H;
+    static const nucl16 K;
+    static const nucl16 M;
+    static const nucl16 N;
+    static const nucl16 R;
+    static const nucl16 S;
+    static const nucl16 T;
+    static const nucl16 U;
+    static const nucl16 V;
+    static const nucl16 W;
+    static const nucl16 Y;
+    static const nucl16 UNKNOWN;
+    //!\}
+
+    /*!\name Read functions
+     * \{
+     */
+    //!\brief Return the letter as a character of char_type.
+    constexpr char_type to_char() const noexcept
+    {
+        return value_to_char[static_cast<rank_type>(_value)];
+    }
+
+    //!\brief Return the letter's numeric value or rank in the alphabet.
+    constexpr rank_type to_rank() const noexcept
+    {
+        return static_cast<rank_type>(_value);
+    }
+    //!\}
+
+    /*!\name Write functions
+     * \{
+     */
+    //!\brief Assign from a character.
+    constexpr nucl16 & assign_char(char_type const c) noexcept
+    {
+        _value = char_to_value[c];
+        return *this;
+    }
+
+    //!\brief Assign from a numeric value.
+    constexpr nucl16 & assign_rank(rank_type const c)
+    {
+        assert(c < value_size);
+        _value = static_cast<internal_type>(c);
+        return *this;
+    }
+    //!\}
+
+    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    static constexpr rank_type value_size{16};
+
+    /*!\name Conversion operators
+     * \{
+     */
+    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
+    template <typename other_nucl_type>
+    //!\cond
+        requires nucleotide_concept<other_nucl_type>
+    //!\endcond
+    explicit constexpr operator other_nucl_type() const noexcept
+    {
+        return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
+    }
+    //!\}
+
+    //!\name Comparison operators
+    //!\{
+    constexpr bool operator==(nucl16 const & rhs) const noexcept
+    {
+        return _value == rhs._value;
+    }
+
+    constexpr bool operator!=(nucl16 const & rhs) const noexcept
+    {
+        return _value != rhs._value;
+    }
+
+    constexpr bool operator<(nucl16 const & rhs) const noexcept
+    {
+        return _value < rhs._value;
+    }
+
+    constexpr bool operator>(nucl16 const & rhs) const noexcept
+    {
+        return _value > rhs._value;
+    }
+
+    constexpr bool operator<=(nucl16 const & rhs) const noexcept
+    {
+        return _value <= rhs._value;
+    }
+
+    constexpr bool operator>=(nucl16 const & rhs) const noexcept
+    {
+        return _value >= rhs._value;
+    }
+    //!\}
+
+protected:
+    //!\privatesection
+    /*!\brief The internal type is a strictly typed enum.
+     *
+     * This is done to prevent aggregate initialization from numbers and/or chars.
+     * It is has the drawback that it also introduces a scope which in turn makes
+     * the static "letter values " members necessary.
+     */
+    enum struct internal_type : rank_type
     {
         A,
         B,
@@ -68,69 +221,7 @@ struct nucl16
         UNKNOWN = N
     };
 
-    // import into local scope
-    static constexpr c_type A{c_type::A};
-    static constexpr c_type B{c_type::B};
-    static constexpr c_type C{c_type::C};
-    static constexpr c_type D{c_type::D};
-    static constexpr c_type G{c_type::G};
-    static constexpr c_type H{c_type::H};
-    static constexpr c_type K{c_type::K};
-    static constexpr c_type M{c_type::M};
-    static constexpr c_type N{c_type::N};
-    static constexpr c_type R{c_type::R};
-    static constexpr c_type S{c_type::S};
-    static constexpr c_type T{c_type::T};
-    static constexpr c_type U{c_type::U};
-    static constexpr c_type V{c_type::V};
-    static constexpr c_type W{c_type::W};
-    static constexpr c_type Y{c_type::Y};
-    static constexpr c_type UNKNOWN{c_type::UNKNOWN};
-
-    // the value
-    c_type value;
-
-    // implicit compatibility to inner_type
-    constexpr nucl16 & operator =(c_type const c)
-    {
-        value = c;
-    }
-    constexpr operator c_type() const
-    {
-        return value;
-    }
-
-    // explicit compatibility to char
-    explicit constexpr operator char_type() const
-    {
-        return to_char();
-    }
-    constexpr char_type to_char() const
-    {
-        return value_to_char[static_cast<integral_type>(value)];
-    }
-
-    constexpr nucl16 from_char(char_type const c)
-    {
-        value = char_to_value[c];
-        return *this;
-    }
-
-    // explicit compatibility to integral
-    constexpr char_type to_integral() const
-    {
-        return static_cast<integral_type>(value);
-    }
-
-    constexpr nucl16 from_integral(integral_type const c)
-    {
-        value = static_cast<c_type>(c);
-        return *this;
-    }
-
-    // conversion tables
-    static constexpr uint8_t value_size{16};
-
+    //!\brief Value to char conversion table.
     static constexpr char_type value_to_char[value_size]
     {
         'A',
@@ -151,72 +242,203 @@ struct nucl16
         'Y'
     };
 
-    static constexpr c_type char_to_value[256]
+    //!\brief Char to value conversion table.
+    static constexpr std::array<internal_type, 256> char_to_value
     {
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        //                                                                                   A,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::A,
-        // B,            C,               D,               E,               F,               G,
-        c_type::B,       c_type::C,       c_type::D,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::G,
-        // H,            I,               J,               K,               L,               M,
-        c_type::H,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::K,       c_type::UNKNOWN, c_type::M,
-        // N,            O,               P,               Q,               R,               S,
-        c_type::N,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::R,       c_type::S,
-        // T,            U,               V,               W,               X,               Y,
-        c_type::T,       c_type::U,       c_type::V,       c_type::W,       c_type::UNKNOWN, c_type::Y,
-        // Z,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        //               a,               b,               c,               d,               e,
-        c_type::UNKNOWN, c_type::A,       c_type::B,       c_type::C,       c_type::D,       c_type::UNKNOWN,
-        // f,            g,               h,               i,               j,               k,
-        c_type::UNKNOWN, c_type::G,       c_type::H,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::K,
-        // l,            m,               n,               o,               p,               q,
-        c_type::UNKNOWN, c_type::M,       c_type::N,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        // r,            s,               t,               u,               v,               w,
-        c_type::R,       c_type::S,       c_type::T,       c_type::U,       c_type::V,       c_type::W,
-        // x,            y,               z
-        c_type::UNKNOWN, c_type::Y,       c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN,
-        c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN, c_type::UNKNOWN
+        [] () constexpr
+        {
+            using in_t = internal_type;
+            std::array<in_t, 256> ret{};
+
+            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+            for (auto & c : ret)
+                c = in_t::UNKNOWN;
+
+            // canonical
+            ret['A'] = in_t::A; ret['a'] = in_t::A;
+            ret['C'] = in_t::C; ret['c'] = in_t::C;
+            ret['G'] = in_t::G; ret['g'] = in_t::G;
+            ret['T'] = in_t::T; ret['t'] = in_t::T;
+            ret['U'] = in_t::U; ret['u'] = in_t::U;
+
+            // iupac characters
+            ret['R'] = in_t::R; ret['r'] = in_t::R;
+            ret['Y'] = in_t::Y; ret['y'] = in_t::Y;
+            ret['S'] = in_t::S; ret['s'] = in_t::S;
+            ret['W'] = in_t::W; ret['w'] = in_t::W;
+            ret['K'] = in_t::K; ret['k'] = in_t::K;
+            ret['M'] = in_t::M; ret['m'] = in_t::M;
+            ret['B'] = in_t::B; ret['b'] = in_t::B;
+            ret['D'] = in_t::D; ret['d'] = in_t::D;
+            ret['H'] = in_t::H; ret['h'] = in_t::H;
+            ret['V'] = in_t::V; ret['v'] = in_t::V;
+            ret['N'] = in_t::N; ret['n'] = in_t::N;
+            return ret;
+        }()
     };
 
+public:
+    //!\privatesection
+    //!\brief The data member.
+    internal_type _value;
+    //!\publicsection
 };
 
-// shall fulfill Alphabet concept
-static_assert(alphabet_concept<nucl16>);
-static_assert(nucl16{nucl16::A} == nucl16{});
-static_assert(nucl16{nucl16::A} == nucl16::A);
-// static_assert(nucl16{'A'} == 'A');
-static_assert(static_cast<nucl16::char_type>(nucl16{nucl16::C}) == 'C');
-static_assert(nucl16{nucl16::A} < nucl16{nucl16::C});
+constexpr nucl16 nucl16::A{internal_type::A};
+constexpr nucl16 nucl16::B{internal_type::B};
+constexpr nucl16 nucl16::C{internal_type::C};
+constexpr nucl16 nucl16::D{internal_type::D};
+constexpr nucl16 nucl16::G{internal_type::G};
+constexpr nucl16 nucl16::H{internal_type::H};
+constexpr nucl16 nucl16::K{internal_type::K};
+constexpr nucl16 nucl16::M{internal_type::M};
+constexpr nucl16 nucl16::N{internal_type::N};
+constexpr nucl16 nucl16::R{internal_type::R};
+constexpr nucl16 nucl16::S{internal_type::S};
+constexpr nucl16 nucl16::T{internal_type::T};
+constexpr nucl16 nucl16::U{internal_type::U};
+constexpr nucl16 nucl16::V{internal_type::V};
+constexpr nucl16 nucl16::W{internal_type::W};
+constexpr nucl16 nucl16::Y{internal_type::Y};
+constexpr nucl16 nucl16::UNKNOWN{nucl16::N};
 
+} // namespace seqan3
+
+namespace seqan3::detail
+{
+
+//!\brief seqan3::nucl16 is defined as being a nucleotide alphabet.
+//!\ingroup nucleotide
+template <>
+struct is_nucleotide<nucl16> : public std::true_type
+{};
+
+} // namespace seqan3::detail
+
+#ifndef NDEBUG
+static_assert(seqan3::alphabet_concept<seqan3::nucl16>);
+static_assert(seqan3::nucleotide_concept<seqan3::nucl16>);
+#endif
+
+// ------------------------------------------------------------------
+// containers
+// ------------------------------------------------------------------
+
+namespace seqan3
+{
+    /*!\name Alphabet aliases
+     * \{
+     * \brief Other names (typedefs) for seqan3::nucl16
+     * \relates nucl16
+     */
+    using dna16 = nucl16;
+    using rna16 = nucl16;
+    using dna = nucl16;
+    using rna = nucl16;
+    //!\}
+
+} // namespace seqan3
+
+
+// ------------------------------------------------------------------
+// containers
+// ------------------------------------------------------------------
+
+namespace seqan3
+{
+
+//!\brief Alias for an std::vector of seqan3::nucl16.
+//!\relates nucl16
+using nucl16_vector = std::vector<nucl16>;
+
+
+/*!\brief Alias for an std::basic_string of seqan3::nucl16.
+ * \relates nucl16
+ *
+ * \attention
+ * Note that we recommend using seqan3::nucl16_vector instead of nucl16_string in almost all situations.
+ * While the C++ style operations on the string are well supported, you should not access the internal c-string
+ * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
+ * correct length of the string (while the `.size()` returns the correct value).
+ */
+using nucl16_string = std::basic_string<nucl16, std::char_traits<nucl16>>;
+
+} // namespace seqan3
+
+// ------------------------------------------------------------------
+// literals
+// ------------------------------------------------------------------
+
+namespace seqan3::literal
+{
+
+/*!\brief nucl16 literal
+ * \relates seqan3::nucl16
+ * \returns seqan3::nucl16_vector
+ *
+ * You can use this string literal to easily assign to nucl16_vector:
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     // these don't work:
+ *     // nucl16_vector foo{"ACGTTA"};
+ *     // nucl16_vector bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     nucl16_vector foo{"ACGTTA"_nucl16};
+ *     nucl16_vector bar = "ACGTTA"_nucl16;
+ *     auto bax = "ACGTTA"_nucl16;
+ *~~~~~~~~~~~~~~~
+ *
+ * \attention
+ * All seqan3 literals are in the namespace seqan3::literal!
+ */
+
+inline nucl16_vector operator "" _nucl16(const char * s, std::size_t n)
+{
+    nucl16_vector r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
 }
+
+/*!\brief nucl16 string literal
+ * \relates seqan3::nucl16
+ * \returns seqan3::nucl16_string
+ *
+ * You can use this string literal to easily assign to nucl16_vector:
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     // these don't work:
+ *     // nucl16_string foo{"ACGTTA"};
+ *     // nucl16_string bar = "ACGTTA";
+ *
+ *     // but these do:
+ *     using namespace seqan3::literal;
+ *     nucl16_string foo{"ACGTTA"_nucl16s};
+ *     nucl16_string bar = "ACGTTA"_nucl16s;
+ *     auto bax = "ACGTTA"_nucl16s;
+ *~~~~~~~~~~~~~~~
+ *
+ * Please note the limitations of seqan3::nucl16_string and consider using the \link operator""_nucl16 \endlink instead.
+ *
+ * \attention
+ * All seqan3 literals are in the namespace seqan3::literal!
+ */
+
+inline nucl16_string operator "" _nucl16s(const char * s, std::size_t n)
+{
+    nucl16_string r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
+
+} // namespace seqan3::literal
+
