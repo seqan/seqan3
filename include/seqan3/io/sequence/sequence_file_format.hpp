@@ -46,7 +46,14 @@
 //!\cond
 namespace seqan3
 {
-
+/*!\interface seqan3::sequence_file_format_concept <>
+ * \brief The generic concept for sequence file formats.
+ * \ingroup io
+ *
+ * The requirements for this concept are read and write functions and associated file extension(s).
+ * Types that satisfy this concept are shown as "implementing this interface".
+ */
+//!\cond
 template <typename t>
 concept bool sequence_file_format_concept = requires (t v)
 {
@@ -69,10 +76,17 @@ concept bool sequence_file_format_concept = requires (t v)
     };
 
 };
+//!\endcond
 
 namespace detail
 {
 
+/*!
+ * \brief Check whether all given files meet the sequence_file_format_concept.
+ * \tparam index Current file index.
+ * \tparam variant_type Type of data structure.
+ * \return False if at least one file does not meet the sequence file format concept, true otherwise.
+ */
 template <size_t index, typename variant_type>
 constexpr bool meets_concept_sequence_file_format()
 {
