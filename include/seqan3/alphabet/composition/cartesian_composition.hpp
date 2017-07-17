@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup composition
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains cartesian_composition.
  */
@@ -54,7 +54,7 @@ namespace seqan3
 {
 
 /*!\brief The CRTP base of alphabets that contain multiple (different) letters at one position.
- * \ingroup alphabet
+ * \ingroup composition
  * \tparam first_alphabet_type Type of the first letter; must satisfy alphabet_concept.
  * \tparam alphabet_types Types of further letters (up to 4); must satisfy alphabet_concept.
  *

@@ -33,7 +33,7 @@
 // ==========================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup composition
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
  * \brief Contains seqan3::union_composition.
@@ -219,7 +219,7 @@ namespace seqan3
 {
 
 /*!\brief An union_composition that merges different regular alphabets as a single alphabet.
- * \ingroup alphabet
+ * \ingroup composition
  * \tparam first_alphabet_type Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
  * \tparam alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept.
  *
