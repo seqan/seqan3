@@ -37,7 +37,7 @@
 
 #include <range/v3/utility/iterator.hpp>
 
-#include <seqan3/core/concept/stl_container.hpp>
+#include <seqan3/range/container/concept.hpp>
 #include <seqan3/core/meta/associated_types.hpp>
 #include <seqan3/io/detail/chunking.hpp>
 

@@ -155,6 +155,7 @@ TEST(tokenization_test, write_stream_to_stream)
 
         // ostream iterator does not implement the value_type metafunction -> evaluates to void?
         ranges::v3::ostream_iterator<char> o_it{out};
+
         write(i_it, 11, o_it);
         EXPECT_EQ(out.str(), in.str());
     }

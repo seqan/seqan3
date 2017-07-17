@@ -56,8 +56,8 @@
 
 #include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/concept/iterator.hpp>
-#include <seqan3/core/concept/range.hpp>
-#include <seqan3/core/concept/stl_container.hpp>
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/container/concept.hpp>
 #include <seqan3/core/meta/associated_types.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/io/detail/direction_iterator.hpp>
@@ -104,8 +104,8 @@ struct assert_functor
     bool operator() (value_t const & val)
     {
         if (/*SEQAN_UNLIKELY(*/!func(val))/*)*/
-            throw exception§_t(std::string("Unexpected character '") + escape_char(val) + "' found. " +
-                             get_exception_message(func, context_t()));
+            throw exception_t(std::string("Unexpected character '") + escape_char(val) + "' found. " +
+                              get_exception_message(func, context_t()));
         return RETURN_VALUE;
     }
 };
@@ -285,8 +285,8 @@ struct equals_dynamic_value
 {
     value_t val;
 
-    equalsD_dynamic_value(value_t const & val) :
-    val(val)
+    equals_dynamic_value(value_t const & val) :
+        val(val)
     {}
 
     template <typename value2_t>
@@ -298,7 +298,7 @@ struct equals_dynamic_value
 
 template <typename value_t, typename context_t>
 inline std::string const &
-get_exception_message(equalsD_dynamic_value<value_t> const & func, context_t const &)
+get_exception_message(equals_dynamic_value<value_t> const & func, context_t const &)
 {
     return std::string("Character '") + func.val + "' expected.";
 }
@@ -333,8 +333,6 @@ template <typename value_t, typename output_t>
 inline void
 put(value_t const & val,
     output_t && o_iter)
-    requires iterator_concept<output_t> &&
-             assignable_concept<value_type_t<std::remove_reference_t<output_t>>&, value_type_t<std::remove_reference_t<input_t>>>
 {
     *o_iter = val;
     ++o_iter;
@@ -350,10 +348,8 @@ write(input_t && i_iter,
       integral_t const n,
       output_t && o_iter)
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
-             assignable_concept<value_type_t<std::remove_reference_t<output_t>>&, value_type_t<std::remove_reference_t<input_t>>>
+             output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>>
 {
-    std::cout << "simple copy\n";
     std::copy_n(std::forward<input_t>(i_iter), n, std::forward<output_t>(o_iter));
 }
 
@@ -373,47 +369,45 @@ write(input_t && i_iter,
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
              output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
-             std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>> &&
-             assignable_concept<value_type_t<std::remove_reference_t<output_t>>&, value_type_t<std::remove_reference_t<input_t>>>
+             std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>>
 {
-   using target_size_type = size_type_t<output_t>;
+    using target_size_type = size_type_t<output_t>;
 
-   using std::size;
-   using std::begin;
+    using std::size;
+    using std::begin;
 
-   std::cout << "I am here baby!" << std::endl;
-   while (n != static_cast<integral_t>(0))
-   {
-       auto ichunk = i_iter.get_chunk();
-       auto ochunk = o_iter.get_chunk();
+    while (n != static_cast<integral_t>(0))
+    {
+        auto ichunk = i_iter.get_chunk();
+        auto ochunk = o_iter.get_chunk();
 
-       target_size_type min_chunk_size = std::min(static_cast<target_size_type>(size(ichunk)),
-                                                  static_cast<target_size_type>(size(ochunk)));
+        target_size_type min_chunk_size = std::min(static_cast<target_size_type>(size(ichunk)),
+                                                    static_cast<target_size_type>(size(ochunk)));
 
-       if (/*SEQAN_UNLIKELY*/(min_chunk_size == 0u))
-       {
-           i_iter.next_chunk(n);
-           o_iter.next_chunk(n);
-           ichunk = i_iter.get_chunk();
-           ochunk = o_iter.get_chunk();
-           min_chunk_size = std::min(static_cast<target_size_type>(size(ichunk)),
-                                     static_cast<target_size_type>(size(ochunk)));
-           if (/*SEQAN_UNLIKELY*/(min_chunk_size == 0u))
-           {
-               std::copy_n(std::forward<input_t>(i_iter), n, std::forward<output_t>(o_iter));  // fall back to no-chunking version.
-               return;
-           }
-       }
+        if (/*SEQAN_UNLIKELY*/(min_chunk_size == 0u))
+        {
+            i_iter.next_chunk(n);
+            o_iter.next_chunk(n);
+            ichunk = i_iter.get_chunk();
+            ochunk = o_iter.get_chunk();
+            min_chunk_size = std::min(static_cast<target_size_type>(size(ichunk)),
+            static_cast<target_size_type>(size(ochunk)));
+            if (/*SEQAN_UNLIKELY*/(min_chunk_size == 0u))
+            {
+                std::copy_n(std::forward<input_t>(i_iter), n, std::forward<output_t>(o_iter));  // fall back to no-chunking version.
+                return;
+            }
+        }
 
-       if (min_chunk_size > static_cast<target_size_type>(n))
-           min_chunk_size = static_cast<target_size_type>(n);
+        if (min_chunk_size > static_cast<target_size_type>(n))
+            min_chunk_size = static_cast<target_size_type>(n);
 
-       std::copy_n(begin(ichunk), min_chunk_size, begin(ochunk));
+        std::copy_n(begin(ichunk), min_chunk_size, begin(ochunk));
 
-       i_iter.advance_chunk(min_chunk_size);
-       o_iter.advance_chunk(min_chunk_size);
-       n -= min_chunk_size;
-   }
+        i_iter.advance_chunk(min_chunk_size);
+        o_iter.advance_chunk(min_chunk_size);
+        n -= min_chunk_size;
+    }
 }
 
 // chunked, target is pointer (e.g. read_raw_pod)
@@ -424,41 +418,40 @@ write(input_t && i_iter,
       output_t && o_ptr)
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
-             std::is_pointer_v<std::remove_reference_t<output_t>> &&
-             assignable_concept<value_type_t<std::remove_reference_t<output_t>>&, value_type_t<std::remove_reference_t<input_t>>>
+             std::is_pointer_v<std::remove_reference_t<output_t>>
 {
     // we need the size type of an iterator?
-   using source_size_t = size_type_t<input_t>;
+    using source_size_t = size_type_t<input_t>;
 
-   using std::size;
-   using std::begin;
+    using std::size;
+    using std::begin;
 
-   while (n != static_cast<integral_t>(0))
-   {
-       auto ichunk = i_iter.get_chunk();
-       source_size_t chunk_size = size(ichunk);
+    while (n != static_cast<integral_t>(0))
+    {
+        auto ichunk = i_iter.get_chunk();
+        source_size_t chunk_size = size(ichunk);
 
-       if (/*SEQAN_UNLIKELY*/(chunk_size == 0u))
-       {
-           next_chunk(i_iter, n);
-           ichunk = i_iter.get_chunk();
-           source_size_t chunk_size = size(ichunk);
-           if (/*SEQAN_UNLIKELY*/(chunk_size == 0u))
-           {
-               std::copy_n(std::forward<input_t>(i_iter), n, std::forward<output_t>(o_ptr));
-               return;
-           }
-       }
+        if (/*SEQAN_UNLIKELY*/(chunk_size == 0u))
+        {
+            next_chunk(i_iter, n);
+            ichunk = i_iter.get_chunk();
+            source_size_t chunk_size = size(ichunk);
+            if (/*SEQAN_UNLIKELY*/(chunk_size == 0u))
+            {
+                std::copy_n(std::forward<input_t>(i_iter), n, std::forward<output_t>(o_ptr));
+                return;
+            }
+        }
 
-       if (chunk_size > static_cast<source_size_t>(n))
-           chunk_size = static_cast<source_size_t>(n);
+        if (chunk_size > static_cast<source_size_t>(n))
+            chunk_size = static_cast<source_size_t>(n);
 
-           std::copy_n(begin(ichunk), chunk_size, std::forward<output_t>(o_ptr));
+        std::copy_n(begin(ichunk), chunk_size, std::forward<output_t>(o_ptr));
 
-           i_iter.advance_chunk(chunk_size);                          // advance input iterator
-           o_ptr += chunk_size;
-           n -= chunk_size;
-       }
+        i_iter.advance_chunk(chunk_size);                          // advance input iterator
+        o_ptr += chunk_size;
+        n -= chunk_size;
+    }
 }
 
 // chunked, source is pointer (e.g. readRawPod)
@@ -469,8 +462,7 @@ write(input_t && i_ptr,
       output_t && o_iter)
     requires std::is_pointer_v<std::remove_reference_t<input_t>> &&
              output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
-             std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>> &&
-             assignable_concept<value_type_t<std::remove_reference_t<output_t>>&, value_type_t<std::remove_reference_t<input_t>>>
+             std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>>
 {
     using output_size_t = size_type_t<output_t>;
 

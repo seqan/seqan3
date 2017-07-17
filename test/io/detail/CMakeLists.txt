@@ -1,14 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(detail_tokenization_test CXX)
 
-add_executable(tokenization_test tokenization_test.cpp)
-add_test(NAME test_tokenization_test COMMAND tokenization_test)
-target_link_libraries(tokenization_test ${SEQAN3_LIBRARIES})
-
-add_executable(direction_iterator_test direction_iterator_test.cpp)
-add_test(NAME test_direction_iterator_test COMMAND direction_iterator_test)
-target_link_libraries(direction_iterator_test ${SEQAN3_LIBRARIES})
-
-add_executable(stream_iterator_test stream_iterator_test.cpp)
-add_test(NAME test_stream_iterator_test COMMAND stream_iterator_test)
-target_link_libraries(stream_iterator_test ${SEQAN3_LIBRARIES})
+seqan3_test(tokenization_test.cpp)
+seqan3_test(direction_iterator_test.cpp)
+seqan3_test(stream_iterator_test.cpp)
