@@ -561,7 +561,8 @@ write(container_t const & input,
              assignable_concept<value_type_t<target_t>&, value_type_t<container_t>>
 {
     using std::size;
-    write(std::get<0>(input_iterator(input)), size(input), output);
+    auto rng = input_iterator(input);
+    write(begin(rng), size(input), output);
 }
 
 // ----------------------------------------------------------------------------
@@ -610,14 +611,17 @@ template <typename input_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-_get_until(input_t & i_iter,
-           input_t const & i_end,
-           output_t && output_it,
-           stop_predicate_t && stop_func,
-           ignore_predicate_t && ignore_func)
+_extract(input_t & i_range,
+         output_t && output_it,
+         stop_predicate_t && stop_func,
+         ignore_predicate_t && ignore_func)
+    requires input_range_concept<std::remove_reference_t<input_t>> &&
+             output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
+             predicate_concept<std::remove_reference_t<stop_predicate_t>> &&
+             predicate_concept<std::remove_reference_t<ignore_predicate_t>>
 {
     typename std::remove_const<typename input_t::value_type>::type val;
-    for (; i_iter != i_end; ++i_iter)
+    for (auto i_iter = begin(i_range); i_iter != end(i_range); ++i_iter)
     {
         if (/*SEQAN_UNLIKELY(*/stop_predicate_t(val = *i_iter))/*)*/
             return;
@@ -627,62 +631,60 @@ _get_until(input_t & i_iter,
 }
 
 // ----------------------------------------------------------------------------
-// Function _readUntil(); Chunked
+// Function _extract(); Chunked
 // ----------------------------------------------------------------------------
-/*
- template <typename TTarget, typename TFwdIterator, typename TStopFunctor, typename TIgnoreFunctor, typename TIValue, typename TOValue>
- inline void _readUntil(TTarget &target,
- TFwdIterator &iter,
- TStopFunctor &stopFunctor,
- TIgnoreFunctor &ignoreFunctor,
- Range<TIValue*> *,
- Range<TOValue*> *)
- requires output_iterator_concept<TTarget> &&
- input_iterator_concept<TFwdIterator>
- {
- //
- Range<TOValue*> ochunk(NULL, NULL);
- TOValue* SEQAN_RESTRICT optr = NULL;
 
- Range<TIValue*> ichunk;
- for (; !atEnd(iter); )
- {
- getChunk(ichunk, iter, Input());  // get from gptr to egptr
- const TIValue* SEQAN_RESTRICT iptr = ichunk.begin;
- SEQAN_ASSERT(iptr < ichunk.end);
-
- for (; iptr != ichunk.end; ++iptr)
- {
- if (SEQAN_UNLIKELY(stopFunctor(*iptr)))
- {
- iter += iptr - ichunk.begin;               // advance input iterator
- advanceChunk(target, optr - ochunk.begin); // extend target string size
- return;
- }
-
- if (SEQAN_UNLIKELY(ignoreFunctor(*iptr)))
- continue;
-
- // construct values in reserved memory
- if (SEQAN_UNLIKELY(optr == ochunk.end))  // in case chunk is full.
- {
- // do a pbump or for container do a reserve.
- advanceChunk(target, optr - ochunk.begin);  // pbump or set
- // reserve memory for the worst-case
- // TODO(weese):Document worst-case behavior
- reserveChunk(target, length(ichunk), Output());  // reserves, but does not create.
- getChunk(ochunk, target, Output());
- optr = ochunk.begin;
- SEQAN_ASSERT(optr < ochunk.end);
- }
- //
- from_char(*optr++, *iptr);
- }
- iter += iptr - ichunk.begin;                       // advance input iterator
- }
- advanceChunk(target, optr - ochunk.begin);
- }
-*/
+//  template <typename input_t, typename output_t, typename stop_predicate_t, typename ignore_predicate_t>
+//  inline void
+//  _extract(input_t & i_range,
+//           output_t &target,
+//           stop_predicate_t &stopFunctor,
+//           ignore_predicate_t &ignoreFunctor)
+//     requires input_range_concept<std::remove_reference_t<input_t>> &&
+//              std::is_base_of_v<chunk_decorator<std::remove_reference_t<decltype(begin(i_range))>>,
+//                                std::remove_reference_t<decltype(begin(i_range))>> &&
+//              output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
+//              std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>> &&
+//              predicate_concept<std::remove_reference_t<stop_predicate_t>> &&
+//              predicate_concept<std::remove_reference_t<ignore_predicate_t>>
+// {
+    // Range<TOValue*> ochunk(NULL, NULL);
+    // TOValue* SEQAN_RESTRICT optr = NULL;
+    // Range<TIValue*> ichunk;
+    // for (; !atEnd(iter); )
+    // {
+    //     getChunk(ichunk, iter, Input());  // get from gptr to egptr
+    //     const TIValue* SEQAN_RESTRICT iptr = ichunk.begin;
+    //     SEQAN_ASSERT(iptr < ichunk.end);
+    //     for (; iptr != ichunk.end; ++iptr)
+    //     {
+    //         if (SEQAN_UNLIKELY(stopFunctor(*iptr)))
+    //         {
+    //             iter += iptr - ichunk.begin;               // advance input iterator
+    //             advanceChunk(target, optr - ochunk.begin); // extend target string size
+    //             return;
+    //         }
+    //         if (SEQAN_UNLIKELY(ignoreFunctor(*iptr)))
+    //             continue;
+    //         // construct values in reserved memory
+    //         if (SEQAN_UNLIKELY(optr == ochunk.end))  // in case chunk is full.
+    //         {
+    //             // do a pbump or for container do a reserve.
+    //             advanceChunk(target, optr - ochunk.begin);  // pbump or set
+    //             // reserve memory for the worst-case
+    //             // TODO(weese):Document worst-case behavior
+    //             reserveChunk(target, length(ichunk), Output());  // reserves, but does not create.
+    //             getChunk(ochunk, target, Output());
+    //             optr = ochunk.begin;
+    //             SEQAN_ASSERT(optr < ochunk.end);
+    //         }
+    //     //
+    //         from_char(*optr++, *iptr);
+    //     }
+    //     iter += iptr - ichunk.begin;                       // advance input iterator
+    // }
+    // advanceChunk(target, optr - ochunk.begin);
+ // }
 
 // ----------------------------------------------------------------------------
 // Function readUntil()

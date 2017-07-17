@@ -60,7 +60,7 @@ TEST(tokenization_test, write_container_to_container)
     std::string out{};
     std::string in{"hello world"};
 
-    {  // standrd iterator + output_iterator
+    {  // standard iterator + output_iterator
         write(begin(in), size(in), output_iterator(out));
         EXPECT_EQ(out, in);
     }
@@ -73,7 +73,8 @@ TEST(tokenization_test, write_container_to_container)
 
     {  // input_iterator + output_iterator
         out.clear();
-        write(std::get<0>(input_iterator(in)), size(in), output_iterator(out));
+        auto r = input_iterator(in);
+        write(begin(r), size(in), output_iterator(out));
         EXPECT_EQ(out, in);
     }
 
@@ -110,7 +111,8 @@ TEST(tokenization_test, write_container_to_stream)
 
     {  // input_iterator interface + output_iterator.
         std::ostringstream out{};
-        write(std::get<0>(input_iterator(in)), size(in), output_iterator(out));
+        auto r = input_iterator(in);
+        write(begin(r), size(in), output_iterator(out));
         EXPECT_EQ(out.str(), in);
     }
 }
@@ -130,7 +132,8 @@ TEST(tokenization_test, write_stream_to_container)
     {  // input_iterator interface.
         std::istringstream in{"hello_world"};
         std::string out;
-        write(std::get<0>(input_iterator(in)), 11, out);
+        auto r = input_iterator(in);
+        write(begin(r), 11, out);
         EXPECT_EQ(out, in.str());
     }
 }
@@ -163,7 +166,8 @@ TEST(tokenization_test, write_stream_to_stream)
     {  // input_iterator interface.
         std::istringstream in{"hello_world"};
         std::ostringstream out;
-        write(std::get<0>(input_iterator(in)), 11, output_iterator(out));
+        auto r = input_iterator(in);
+        write(begin(r), 11, output_iterator(out));
         EXPECT_EQ(out.str(), in.str());
     }
 }

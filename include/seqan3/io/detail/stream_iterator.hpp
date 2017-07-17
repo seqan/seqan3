@@ -533,7 +533,7 @@ template <typename stream_t>
 inline auto
 input_iterator(stream_t & stream)
 {
-    return std::pair{chunk_istream_iterator<stream_t>{stream}, chunk_istream_iterator<stream_t>{}};
+    return ranges::v3::make_iterator_range(chunk_istream_iterator<stream_t>{stream}, chunk_istream_iterator<stream_t>{});
 }
 
 // Returns back_insert iterator for containers supporting *.push_back().

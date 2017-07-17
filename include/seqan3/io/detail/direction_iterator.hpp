@@ -277,7 +277,7 @@ template <typename container_t>
 inline auto
 input_iterator(container_t & c)
 {
-    return std::pair{chunk_input_iterator{c}, chunk_input_iterator{c, true}};
+    return ranges::v3::make_iterator_range(chunk_input_iterator{c}, chunk_input_iterator{c, true});
 }
 
 // What would be the output semantic? -> Appending to the container.

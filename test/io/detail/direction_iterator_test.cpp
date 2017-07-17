@@ -190,7 +190,7 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_next
 
     it.next_chunk(6);
 
-    EXPECT_EQ(out.size(), 12);
+    EXPECT_EQ(out.size(), 12u);
     EXPECT_EQ(out[6], 0);
 }
 
@@ -251,10 +251,10 @@ TEST(direction_iterator_test, test_direction_iterator_input_iterator_vector)
     using namespace seqan3::detail;
 
     std::vector<char> in{'a', 'c', 'g'};
-    auto [in_b, in_e] = input_iterator(in);
-    EXPECT_EQ(*in_b, 'a');
-    EXPECT_NE(in_b, in_e);
-    EXPECT_EQ(in_e, (chunk_input_iterator{in, true}));
+    auto r = input_iterator(in);
+    EXPECT_EQ(*begin(r), 'a');
+    EXPECT_NE(begin(r), end(r));
+    EXPECT_EQ(end(r), (chunk_input_iterator{in, true}));
 }
 
 TEST(direction_iterator_test, test_direction_iterator_output_iterator_vector)
@@ -265,5 +265,5 @@ TEST(direction_iterator_test, test_direction_iterator_output_iterator_vector)
 
     *output_iterator(out) = 't';
     EXPECT_EQ(out[3], 't');
-    EXPECT_EQ(out.size(), 4);
+    EXPECT_EQ(out.size(), 4u);
 }

@@ -385,9 +385,9 @@ TEST(stream_iterator, input_iterator_stream)
     using namespace seqan3::detail;
 
     std::stringstream in{"acg"};
-    auto [in_b, in_e] = input_iterator(in);
-    EXPECT_EQ(*in_b, 'a');
-    EXPECT_EQ(in_e, chunk_istream_iterator<std::stringstream>{});
+    auto r = input_iterator(in);
+    EXPECT_EQ(*begin(r), 'a');
+    EXPECT_EQ(end(r), chunk_istream_iterator<std::stringstream>{});
 }
 
 TEST(stream_iterator, output_iterator_stream)
@@ -399,5 +399,5 @@ TEST(stream_iterator, output_iterator_stream)
 
     *output_iterator(out) = 't';
     EXPECT_EQ(out.str()[3], 't');
-    EXPECT_EQ(out.str().size(), 4);
+    EXPECT_EQ(out.str().size(), 4u);
 }
