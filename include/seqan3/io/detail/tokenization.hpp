@@ -66,28 +66,22 @@
 namespace seqan3::detail
 {
 
-template <typename t>
-struct Value
-{
-    using Type = typename t::value_type;
-};
-
 // ----------------------------------------------------------------------------
-// Functor AssertFunctor
+// Functor assert_functor
 // ----------------------------------------------------------------------------
 
-template <typename TFunctor, typename TException, typename TContext = decltype(std::ignore), bool RETURN_VALUE = false>
-struct AssertFunctor
+template <typename functor_t, typename exception_t, typename context_t = decltype(std::ignore), bool RETURN_VALUE = false>
+struct assert_functor
 {
-    TFunctor func;
+    functor_t func;
 
-    AssertFunctor() {}
+    assert_functor() {}
 
-    AssertFunctor(TFunctor & func) :
+    assert_functor(functor_t & func) :
     func(func)
     {}
 
-    std::string escapeChar(unsigned char val)
+    std::string escape_char(unsigned char val)
     {
         if (val <= '\r')
         {
@@ -106,68 +100,68 @@ struct AssertFunctor
         }
     }
 
-    template <typename TValue>
-    bool operator() (TValue const & val)
+    template <typename value_t>
+    bool operator() (value_t const & val)
     {
         if (/*SEQAN_UNLIKELY(*/!func(val))/*)*/
-            throw TException(std::string("Unexpected character '") + escapeChar(val) + "' found. " +
-                             getExceptionMessage(func, TContext()));
+            throw exception§_t(std::string("Unexpected character '") + escape_char(val) + "' found. " +
+                             get_exception_message(func, context_t()));
         return RETURN_VALUE;
     }
 };
 
 // ----------------------------------------------------------------------------
-// Functor OrFunctor
+// Functor or_functor
 // ----------------------------------------------------------------------------
 
-template <typename TFunctor1, typename TFunctor2>
-struct OrFunctor
+template <typename functor1_t, typename functor2_t>
+struct or_functor
 {
-    TFunctor1 func1;
-    TFunctor2 func2;
+    functor1_t func1;
+    functor2_t func2;
 
-    OrFunctor()
+    or_functor()
     {}
 
-    OrFunctor(TFunctor1 const &func1, TFunctor2 const &func2) :
+    or_functor(functor1_t const & func1, functor2_t const & func2) :
         func1(func1), func2(func2)
     {}
 
-    template <typename TValue>
-    bool operator() (TValue const & val)
+    template <typename value_t>
+    bool operator() (value_t const & val)
     {
         return func1(val) || func2(val);
     }
 
-    template <typename TValue>
-    bool operator() (TValue const & val) const
+    template <typename value_t>
+    bool operator() (value_t const & val) const
     {
         return func1(val) || func2(val);
     }
 };
 
 // ----------------------------------------------------------------------------
-// Metafunction ExceptionMessage
+// Metafunction exception_message
 // ----------------------------------------------------------------------------
 
 template <typename T, typename TSpec = void>
-struct ExceptionMessage
+struct exception_message
 {
     static const std::string VALUE;
 };
 
 template <typename T, typename TSpec>
-const std::string ExceptionMessage<T, TSpec>::VALUE;
+const std::string exception_message<T, TSpec>::VALUE;
 
 // ----------------------------------------------------------------------------
-// Function getExceptionMessage()
+// Function get_exception_message()
 // ----------------------------------------------------------------------------
 
-template <typename TFunctor, typename TContext>
+template <typename functor_t, typename context_t>
 inline std::string const &
-getExceptionMessage(TFunctor const &, TContext const &)
+get_exception_message(functor_t const &, context_t const &)
 {
-    return ExceptionMessage<TFunctor, TContext>::VALUE;
+    return exception_message<functor_t, context_t>::VALUE;
 }
 
 // ----------------------------------------------------------------------------
@@ -178,8 +172,8 @@ using  runtime_error = std::runtime_error;
 
 struct parse_error : runtime_error
 {
-    template <typename TString>
-    parse_error(TString const & message) : runtime_error(message)
+    template <typename string_t>
+    parse_error(string_t const & message) : runtime_error(message)
     {}
 };
 
@@ -205,106 +199,106 @@ struct empty_field_error : parse_error
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// Functor IsInAlphabet
+// Functor is_in_alphabet
 // ----------------------------------------------------------------------------
 
-template <typename TValue>
-   requires alphabet_concept<TValue>
-struct IsInAlphabet
+template <typename value_t>
+   requires alphabet_concept<value_t>
+struct is_in_alphabet
 {
-    template <typename TInValue>
-    bool operator() (TInValue const & inVal) const
+    template <typename in_value_t>
+    bool operator() (in_value_t const & in_val) const
     {
-        TValue val{};
-        from_char(val, inVal);
-        return val == std::toupper(inVal);
+        value_t val{};
+        from_char(val, in_val);
+        return val == std::toupper(in_val);
     }
 
-    template <typename TInValue>
-        requires alphabet_concept<TInValue>
-    bool operator() (TInValue const & inVal) const
+    template <typename in_value_t>
+        requires alphabet_concept<in_value_t>
+    bool operator() (in_value_t const & in_val) const
     {
-        TValue val{};
-        from_integral(val, to_integral(inVal));
-        return val == inVal;
+        value_t val{};
+        from_integral(val, to_integral(in_val));
+        return val == in_val;
     }
 
-    bool operator() (TValue const &) const
+    bool operator() (value_t const &) const
     {
         return true;
     }
 };
 
 // ----------------------------------------------------------------------------
-// Functor IsInRange
+// Functor is_in_range
 // ----------------------------------------------------------------------------
 
 template <char FIRST_CHAR, char LAST_CHAR>
-struct IsInRange
+struct is_in_range
 {
-    template <typename TValue>
-    bool operator() (TValue const & val) const
+    template <typename value_t>
+    bool operator() (value_t const & val) const
     {
         return FIRST_CHAR <= val && val <= LAST_CHAR;
     }
 };
 
-template <char FIRST_CHAR, char LAST_CHAR, typename TContext>
-struct ExceptionMessage<IsInRange<FIRST_CHAR, LAST_CHAR>, TContext>
+template <char FIRST_CHAR, char LAST_CHAR, typename context_t>
+struct exception_message<is_in_range<FIRST_CHAR, LAST_CHAR>, context_t>
 {
     static const std::string VALUE;
 };
 
-template <char FIRST_CHAR, char LAST_CHAR, typename TContext>
-const std::string ExceptionMessage<IsInRange<FIRST_CHAR, LAST_CHAR>, TContext>::VALUE =
+template <char FIRST_CHAR, char LAST_CHAR, typename context_t>
+const std::string exception_message<is_in_range<FIRST_CHAR, LAST_CHAR>, context_t>::VALUE =
 std::string("Character in range'") + FIRST_CHAR + "' to '" + LAST_CHAR + "' expected.";
 
 // ----------------------------------------------------------------------------
-// Functor EqualsChar
+// Functor equals_char
 // ----------------------------------------------------------------------------
 
 template <char VALUE>
-struct EqualsChar
+struct equals_char
 {
-    template <typename TValue>
-    bool operator() (TValue const & val) const
+    template <typename value_t>
+    bool operator() (value_t const & val) const
     {
         return val == VALUE;
     }
 };
 
-template <char CHAR, typename TContext>
-struct ExceptionMessage<EqualsChar<CHAR>, TContext>
+template <char CHAR, typename context_t>
+struct exception_message<equals_char<CHAR>, context_t>
 {
     static const std::string VALUE;
 };
 
-template <char CHAR, typename TContext>
-const std::string ExceptionMessage<EqualsChar<CHAR>, TContext>::VALUE = std::string("Character '") + CHAR + "' expected.";
+template <char CHAR, typename context_t>
+const std::string exception_message<equals_char<CHAR>, context_t>::VALUE = std::string("Character '") + CHAR + "' expected.";
 
 // ----------------------------------------------------------------------------
 // Functor EqualsDynamicValue
 // ----------------------------------------------------------------------------
 
-template <typename TValue>
-struct EqualsDynamicValue
+template <typename value_t>
+struct equals_dynamic_value
 {
-    TValue val;
+    value_t val;
 
-    EqualsDynamicValue(TValue const & val) :
+    equalsD_dynamic_value(value_t const & val) :
     val(val)
     {}
 
-    template <typename TValue2>
-    bool operator() (TValue2 const & v) const
+    template <typename value2_t>
+    bool operator() (value2_t const & v) const
     {
         return v == val;
     }
 };
 
-template <typename TValue, typename TContext>
+template <typename value_t, typename context_t>
 inline std::string const &
-getExceptionMessage(EqualsDynamicValue<TValue> const & func, TContext const &)
+get_exception_message(equalsD_dynamic_value<value_t> const & func, context_t const &)
 {
     return std::string("Character '") + func.val + "' expected.";
 }
@@ -314,15 +308,15 @@ getExceptionMessage(EqualsDynamicValue<TValue> const & func, TContext const &)
 // ----------------------------------------------------------------------------
 // Don't use isblank() or isspace() as it they seem to be slower than our functors (due to inlining)
 
-typedef EqualsChar<'\t'>                                        IsTab;
-typedef EqualsChar<' '>                                         IsSpace;
-typedef OrFunctor<IsSpace, IsTab>                               IsBlank;
-typedef OrFunctor<EqualsChar<'\n'>, EqualsChar<'\r'> >          IsNewline;
-typedef OrFunctor<IsBlank, IsNewline>                           IsWhitespace;
-typedef IsInRange<'!', '~'>                                     IsGraph;
-typedef OrFunctor<IsInRange<'a', 'z'>, IsInRange<'A', 'Z'> >    IsAlpha;
-typedef IsInRange<'0', '9'>                                     IsDigit;
-typedef OrFunctor<IsAlpha, IsDigit>                             IsAlphaNum;
+typedef equals_char<'\t'>                                          is_tab;
+typedef equals_char<' '>                                           is_space;
+typedef or_functor<is_space, is_tab>                               is_blank;
+typedef or_functor<equals_char<'\n'>, equals_char<'\r'> >          is_newline;
+typedef or_functor<is_blank, is_newline>                           is_whitespace;
+typedef is_in_range<'!', '~'>                                      is_graph;
+typedef or_functor<is_in_range<'a', 'z'>, is_in_range<'A', 'Z'> >  is_alpha;
+typedef is_in_range<'0', '9'>                                      is_digit;
+typedef or_functor<is_alpha, is_digit>                             is_alpha_num;
 
 constexpr auto always_true = [](auto &&...){ return true; };
 constexpr auto always_false = [](auto &&...){ return false; };
@@ -332,13 +326,15 @@ constexpr auto always_false = [](auto &&...){ return false; };
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// Function put()                                                      [Iter]
+// Function put()                                                        [Iter]
 // ----------------------------------------------------------------------------
 
 template <typename value_t, typename output_t>
 inline void
 put(value_t const & val,
     output_t && o_iter)
+    requires iterator_concept<output_t> &&
+             assignable_concept<value_type_t<std::remove_reference_t<output_t>>&, value_type_t<std::remove_reference_t<input_t>>>
 {
     *o_iter = val;
     ++o_iter;
@@ -577,7 +573,7 @@ write(container_t const & input,
 }
 
 // ----------------------------------------------------------------------------
-// Function read()
+// Function get()
 // ----------------------------------------------------------------------------
 
 template <typename input_t,
@@ -595,7 +591,7 @@ get(input_t & curr_it,
     if (/*SEQAN_UNLIKELY*/(curr_it == end_it))
         throw unexpected_end_error();
 
-    AssertFunctor<predicate_t, parse_error> asserter(check_func);
+    assert_functor<predicate_t, parse_error> asserter(check_func);
 
     asserter(*curr_it);
     *output_it = *curr_it;
@@ -614,7 +610,7 @@ get(input_t & curr_it,
 }
 
 // ----------------------------------------------------------------------------
-// Function _readUntil(); Element-wise
+// Function _get_until(); Element-wise
 // ----------------------------------------------------------------------------
 
 template <typename input_t,
@@ -743,7 +739,7 @@ get_line(input_t & i_iter,
          input_t const & i_end,
          target_t && output_it)
 {
-    get_until(i_iter, i_end, std::forward<target_t>(output_it), IsNewline{});
+    get_until(i_iter, i_end, std::forward<target_t>(output_it), is_newline{});
 
     // consume "\r\n.", "\r[!\n]" or "\n."
 
@@ -797,7 +793,7 @@ read(input_t & i_iter,
 }
 
 // ----------------------------------------------------------------------------
-// Function readRawByte()
+// Function read_raw_pod()
 // ----------------------------------------------------------------------------
 
 template <typename input_t, typename value_t>
@@ -828,9 +824,9 @@ _skip_until(input_t & i_iter,
 // ----------------------------------------------------------------------------
 
 /*
-// TODO(rrahn): Replace Range<TValue*> * version
-template <typename TFwdIterator, typename TStopFunctor, typename TValue>
-inline void _skipUntil(TFwdIterator &iter, TStopFunctor &stopFunctor, Range<TValue*> *)
+// TODO(rrahn): Replace Range<value_t*> * version
+template <typename TFwdIterator, typename TStopFunctor, typename value_t>
+inline void _skipUntil(TFwdIterator &iter, TStopFunctor &stopFunctor, Range<value_t*> *)
 {
     // adapt the fwd_iterator interface.
     typedef typename Value<TFwdIterator>::Type TIValue;
@@ -897,7 +893,7 @@ skip(input_t & i_iter,
      input_t const & i_end,
      unexpected_predicate_t && unexpected_func)
 {
-    AssertFunctor<unexpected_predicate_t, parse_error> asserter{unexpected_func};
+    assert_functor<unexpected_predicate_t, parse_error> asserter{unexpected_func};
 
     if (/*SEQAN_UNLIKELY*/(i_iter == i_end))
         throw unexpected_end_error{};
@@ -923,7 +919,7 @@ inline void
 skip_line(input_t & i_iter,
           input_t const & i_end)
 {
-    skip_until(i_iter, i_end, IsNewline());
+    skip_until(i_iter, i_end, is_newline());
 
     // consume "\r\n.", "\r[!\n]" or "\n."
 
@@ -974,9 +970,9 @@ skip_line(input_t & i_iter,
 //// Function findFirst()
 //// ----------------------------------------------------------------------------
 //
-//template <typename TContainer, typename TFunctor>
+//template <typename TContainer, typename functor_t>
 //inline typename Position<TContainer>::Type
-//findFirst(TContainer const &cont, TFunctor const &func)
+//findFirst(TContainer const &cont, functor_t const &func)
 //{
 //    typename Iterator<TContainer const, Rooted>::Type iter = begin(cont, Rooted());
 //    skipUntil(iter, func);
@@ -995,9 +991,9 @@ skip_line(input_t & i_iter,
 //// Function findLast()
 //// ----------------------------------------------------------------------------
 //
-//template <typename TContainer, typename TFunctor>
+//template <typename TContainer, typename functor_t>
 //inline typename Position<TContainer>::Type
-//findLast(TContainer const &cont, TFunctor const &func)
+//findLast(TContainer const &cont, functor_t const &func)
 //{
 //    typedef ModifiedString<TContainer const, ModReverse> TRevContainer;
 //
@@ -1026,9 +1022,9 @@ skip_line(input_t & i_iter,
 //// Function cropAfterFirst(); crop after first occurrence (including it)
 //// ----------------------------------------------------------------------------
 //
-//template <typename TContainer, typename TFunctor>
+//template <typename TContainer, typename functor_t>
 //inline void
-//cropAfterFirst(TContainer &cont, TFunctor const &func)
+//cropAfterFirst(TContainer &cont, functor_t const &func)
 //{
 //    resize(cont, findFirst(cont, func));
 //}
@@ -1037,9 +1033,9 @@ skip_line(input_t & i_iter,
 //// Function cropAfterLast(); crop after last occurrence (excluding it)
 //// ----------------------------------------------------------------------------
 //
-//template <typename TContainer, typename TFunctor>
+//template <typename TContainer, typename functor_t>
 //inline void
-//cropAfterLast(TContainer &cont, TFunctor const &func)
+//cropAfterLast(TContainer &cont, functor_t const &func)
 //{
 //    resize(cont, findLast(cont, func) + 1);
 //}
@@ -1048,9 +1044,9 @@ skip_line(input_t & i_iter,
 //// Function cropBeforeFirst(); crop before first occurrence (excluding it)
 //// ----------------------------------------------------------------------------
 //
-//template <typename TContainer, typename TFunctor>
+//template <typename TContainer, typename functor_t>
 //inline void
-//cropBeforeFirst(TContainer &cont, TFunctor const &func)
+//cropBeforeFirst(TContainer &cont, functor_t const &func)
 //{
 //    erase(cont, 0, findFirst(cont, func));
 //}
@@ -1059,9 +1055,9 @@ skip_line(input_t & i_iter,
 //// Function cropBeforeLast(); crop before first occurrence (including it)
 //// ----------------------------------------------------------------------------
 //
-//template <typename TContainer, typename TFunctor>
+//template <typename TContainer, typename functor_t>
 //inline void
-//cropBeforeLast(TContainer &cont, TFunctor const &func)
+//cropBeforeLast(TContainer &cont, functor_t const &func)
 //{
 //    erase(cont, 0, findLast(cont, func) + 1);
 //}
@@ -1069,12 +1065,12 @@ skip_line(input_t & i_iter,
 //// Function cropOuter(); crop after last occurrence (excluding it)
 //// ----------------------------------------------------------------------------
 //
-//template <typename TContainer, typename TFunctor>
+//template <typename TContainer, typename functor_t>
 //inline void
-//cropOuter(TContainer &cont, TFunctor const &func)
+//cropOuter(TContainer &cont, functor_t const &func)
 //{
-//    cropAfterLast(cont, NotFunctor<TFunctor>(func));
-//    cropBeforeFirst(cont, NotFunctor<TFunctor>(func));
+//    cropAfterLast(cont, NotFunctor<functor_t>(func));
+//    cropBeforeFirst(cont, NotFunctor<functor_t>(func));
 //}
 
 // --------------------------------------------------------------------------
@@ -1095,13 +1091,13 @@ skip_line(input_t & i_iter,
  * @param[in]  maxSplit         The maximal number of split operations to do if given.
  */
 
-//template <typename sequence_t, typename TFunctor, typename TSize>
+//template <typename sequence_t, typename functor_t, typename TSize>
 //    requires forward_range_concept<sequence_t> &&
 //
 //inline auto
 //split_by(TResult & result,
 //         TSequence const & sequence,
-//         TFunctor const & sep,
+//         functor_t const & sep,
 //         bool const allowEmptyStrings,
 //         TSize maxSplit)
 //{
@@ -1149,18 +1145,18 @@ skip_line(input_t & i_iter,
 //        appendValue(result, static_cast<TResultValue>(infix(sequence, itFrom - itBeg, itEnd - itBeg)));
 //}
 //
-//template <typename TResult, typename TSequence, typename TFunctor>
+//template <typename TResult, typename TSequence, typename functor_t>
 //inline SEQAN_FUNC_ENABLE_IF(And<Is<ContainerConcept<TResult> >,
 //                            Is<ContainerConcept<typename Value<TResult>::Type > > >, void)
-//strSplit(TResult & result, TSequence const & sequence, TFunctor const & sep, bool const allowEmptyStrings)
+//strSplit(TResult & result, TSequence const & sequence, functor_t const & sep, bool const allowEmptyStrings)
 //{
 //    strSplit(result, sequence, sep, allowEmptyStrings, maxValue<typename Size<TSequence>::Type>());
 //}
 //
-//template <typename TResult, typename TSequence, typename TFunctor>
+//template <typename TResult, typename TSequence, typename functor_t>
 //inline SEQAN_FUNC_ENABLE_IF(And<Is<ContainerConcept<TResult> >,
 //                            Is<ContainerConcept<typename Value<TResult>::Type > > >, void)
-//strSplit(TResult & result, TSequence const & sequence, TFunctor const & sep)
+//strSplit(TResult & result, TSequence const & sequence, functor_t const & sep)
 //{
 //    strSplit(result, sequence, sep, true);
 //}
@@ -1170,6 +1166,6 @@ skip_line(input_t & i_iter,
 //                            Is<ContainerConcept<typename Value<TResult>::Type > > >, void)
 //strSplit(TResult & result, TSequence const & sequence)
 //{
-//    strSplit(result, sequence, EqualsChar<' '>(), false);
+//    strSplit(result, sequence, equals_char<' '>(), false);
 //}
 }  // namespace seqan3::detail
