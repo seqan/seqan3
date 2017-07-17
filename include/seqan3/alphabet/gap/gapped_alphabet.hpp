@@ -42,7 +42,7 @@
 #pragma once
 
 #include <seqan3/alphabet/gap/gap.hpp>
-#include <seqan3/alphabet/union_alphabet.hpp>
+#include <seqan3/alphabet/union_composition.hpp>
 
 namespace seqan3
 {
@@ -69,19 +69,19 @@ namespace seqan3
  *                                           // character of the given alphabet type (i.e. A of dna4)
  * ```
  *
- * \sa For more details see union_alphabet, which is the base class and more general than the gapped_alphabet.
+ * \sa For more details see union_composition, which is the base class and more general than the gapped_alphabet.
  */
 template <typename alphabet_t>
     requires alphabet_concept<alphabet_t>
-struct gapped_alphabet : public union_alphabet<alphabet_t, gap>
+struct gapped_alphabet : public union_composition<alphabet_t, gap>
 {
-    using union_alphabet<alphabet_t, gap>::_value;
-    using union_alphabet<alphabet_t, gap>::value_size;
+    using union_composition<alphabet_t, gap>::_value;
+    using union_composition<alphabet_t, gap>::value_size;
 
-    using union_alphabet<alphabet_t, gap>::union_alphabet;
+    using union_composition<alphabet_t, gap>::union_composition;
 
-    using typename union_alphabet<alphabet_t, gap>::rank_type;
-    using typename union_alphabet<alphabet_t, gap>::char_type;
+    using typename union_composition<alphabet_t, gap>::rank_type;
+    using typename union_composition<alphabet_t, gap>::char_type;
 
     /*!\brief Returns true if it is a gap
      * \details
@@ -117,17 +117,17 @@ struct gapped_alphabet : public union_alphabet<alphabet_t, gap>
         return *this;
     }
 
-    //!\copydoc union_alphabet::assign_rank
+    //!\copydoc union_composition::assign_rank
     constexpr gapped_alphabet & assign_rank(rank_type const i)
     {
-        union_alphabet<alphabet_t, gap>::assign_rank(i);
+        union_composition<alphabet_t, gap>::assign_rank(i);
         return *this;
     }
 
-    //!\copydoc union_alphabet::assign_char
+    //!\copydoc union_composition::assign_char
     constexpr gapped_alphabet & assign_char(char_type const c)
     {
-        union_alphabet<alphabet_t, gap>::assign_char(c);
+        union_composition<alphabet_t, gap>::assign_char(c);
         return *this;
     }
 };
