@@ -44,7 +44,7 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/alphabet/composition.hpp>
+#include <seqan3/alphabet/composition/cartesian_composition.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
 namespace seqan3

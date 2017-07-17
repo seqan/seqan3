@@ -36,10 +36,10 @@
 
 #include <variant>
 
+#include <seqan3/alphabet/composition/union_composition.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/union_composition.hpp>
 
 using namespace seqan3;
 
