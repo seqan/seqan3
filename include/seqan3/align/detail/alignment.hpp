@@ -43,10 +43,12 @@
 #include <iomanip>
 
 #include <range/v3/view/all.hpp>
+#include <range/v3/view/slice.hpp>
 #include <range/v3/view/zip.hpp>
 #include <range/v3/iterator_range.hpp>
 
-#include <seqan3/alphabet/nucleotide/dna4_container.hpp>
+#include <seqan3/alphabet.hpp>
+#include <seqan3/range/view/to_char.hpp>
 
 namespace seqan3
 {
@@ -133,7 +135,12 @@ void stream_alignment(stream_t & stream, alignment_t const & align, std::index_s
 
         // write sequences
         const char * indent = "        ";
-        stream << std::endl << indent << std::get<0>(align).substr(used_length, 50);
+        stream << std::endl << indent;
+        std::size_t const col_end = std::min(used_length + 50, alignment_length);
+        auto sequence = std::get<0>(align) | ranges::view::slice(used_length, col_end) | view::to_char;
+        for (auto c : sequence)
+            stream << c;
+
         auto stream_f = [&]
             (auto const & previous_sequence, auto const & aligned_sequence)
         {
@@ -147,7 +154,10 @@ void stream_alignment(stream_t & stream, alignment_t const & align, std::index_s
             {
                 stream << (*it1 == *it2 ? '|' : ' ');
             }
-            stream << std::endl << indent << aligned_sequence.substr(used_length, 50);
+            stream << std::endl << indent;
+            sequence = aligned_sequence | ranges::view::slice(used_length, col_end) | view::to_char;
+            for (auto c : sequence)
+                stream << c;
         };
         (stream_f(std::get<idx>(align), std::get<idx + 1>(align)), ...);
         stream << std::endl;
