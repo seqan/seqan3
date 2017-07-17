@@ -39,7 +39,7 @@
 #include <sstream>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/align/detail/alignment.hpp>
+#include <seqan3/align/alignment.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;

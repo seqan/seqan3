@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4_sequence.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <string>
 #include <fstream>

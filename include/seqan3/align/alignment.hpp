@@ -36,11 +36,11 @@
 
 #pragma once
 
+#include <iomanip>
+#include <iostream>
 #include <tuple>
 #include <type_traits>
-#include <iostream>
 #include <utility>
-#include <iomanip>
 
 #include <range/v3/view/all.hpp>
 #include <range/v3/view/slice.hpp>
