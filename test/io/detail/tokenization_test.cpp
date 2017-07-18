@@ -193,7 +193,7 @@ TEST(tokenization_test, write_array_to_array)
 
 }
 
-TEST(tokenization_test, extract)
+TEST(tokenization_test, do_get)
 {
     using namespace seqan3::detail;
 
@@ -203,9 +203,9 @@ TEST(tokenization_test, extract)
 
         std::istream_iterator<char> it{in};
         auto o_iter = output_iterator(out);
-        extract(it, std::istream_iterator<char>{}, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        do_get(it, std::istream_iterator<char>{}, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out.str(), "hell");
-        extract(it, std::istream_iterator<char>{}, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        do_get(it, std::istream_iterator<char>{}, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out.str(), "hell_word");
     }
 
@@ -214,14 +214,14 @@ TEST(tokenization_test, extract)
         std::ostringstream out;
         auto o_iter = output_iterator(out);
         auto it = std::begin(in);
-        extract(it, std::end(in), o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        do_get(it, std::end(in), o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out.str(), "hell");
-        extract(it, std::end(in), o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        do_get(it, std::end(in), o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out.str(), "hell_word");
     }
 }
 
-TEST(tokenization_test, extract_chunked)
+TEST(tokenization_test, do_get_chunked)
 {
     using namespace seqan3::detail;
 
@@ -232,9 +232,9 @@ TEST(tokenization_test, extract_chunked)
         auto [r_beg, r_end] = input_iterator(in);
         auto o_iter = output_iterator(out);
 
-        extract(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        do_get(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out, "hell");
-        extract(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        do_get(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out, "hell_word");
     }
 
@@ -243,9 +243,58 @@ TEST(tokenization_test, extract_chunked)
         std::string out;
         auto o_iter = output_iterator(out);
         auto [r_beg, r_end] = input_iterator(in);
-        extract(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        do_get(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out, "hell");
-        extract(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        do_get(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out, "hell_word");
+    }
+}
+
+TEST(tokenization_test, do_ignore)
+{
+    using namespace seqan3::detail;
+
+    {  // istream interface.
+        std::istringstream in{"hello_world"};
+
+        std::istream_iterator<char> it{in};
+        do_ignore(it, std::istream_iterator<char>{}, equals_char<'_'>{});
+        EXPECT_EQ(*it, '_');
+        do_ignore(it, std::istream_iterator<char>{}, equals_char<'d'>{});
+        EXPECT_EQ(*it, 'd');
+    }
+
+    {  // container interface.
+        std::string in{"hello_world"};
+        auto it = std::begin(in);
+        do_ignore(it, std::end(in), equals_char<'_'>{});
+        EXPECT_EQ(*it, '_');
+        do_ignore(it, std::end(in), equals_char<'d'>{});
+        EXPECT_EQ(*it, 'd');
+    }
+}
+
+TEST(tokenization_test, do_ignore_chunked)
+{
+    using namespace seqan3::detail;
+
+    {  // istream interface.
+        std::istringstream in{"hello_world"};
+
+        auto [r_beg, r_end] = input_iterator(in);
+        do_ignore(r_beg, r_end, equals_char<'_'>{});
+        EXPECT_EQ(*r_beg, '_');
+        do_ignore(r_beg, r_end, equals_char<'d'>{});
+        EXPECT_EQ(*r_beg, 'd');
+    }
+
+    {  // container interface.
+        std::string in{"hello_world"};
+
+        auto [r_beg, r_end] = input_iterator(in);
+        do_ignore(r_beg, r_end, equals_char<'_'>{});
+        EXPECT_EQ(*r_beg, '_');
+        do_ignore(r_beg, r_end, equals_char<'d'>{});
+        EXPECT_EQ(*r_beg, 'd');
     }
 }

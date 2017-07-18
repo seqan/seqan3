@@ -603,7 +603,7 @@ get(input_t & curr_it,
 }
 
 // ----------------------------------------------------------------------------
-// Function _get_until(); Element-wise
+// Function do_get(); Element-wise
 // ----------------------------------------------------------------------------
 
 template <typename input_t, typename in_sent_t,
@@ -611,11 +611,11 @@ template <typename input_t, typename in_sent_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-extract(input_t && i_iter,
-        in_sent_t && i_sentinel,
-        output_t && output_it,
-        stop_predicate_t && stop_func,
-        ignore_predicate_t && ignore_func)
+do_get(input_t && i_iter,
+       in_sent_t && i_sentinel,
+       output_t && output_it,
+       stop_predicate_t && stop_func,
+       ignore_predicate_t && ignore_func)
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
              output_iterator_concept<std::remove_reference_t<output_t>,
@@ -637,7 +637,7 @@ extract(input_t && i_iter,
 }
 
 // ----------------------------------------------------------------------------
-// Function _extract(); Chunked
+// Function do_get(); Chunked
 // ----------------------------------------------------------------------------
 
 template <typename input_t, typename in_sent_t,
@@ -645,11 +645,11 @@ template <typename input_t, typename in_sent_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-extract(input_t && i_iter,
-        in_sent_t && i_sentinel,
-        output_t && o_iter,
-        stop_predicate_t && stop_func,
-        ignore_predicate_t && ignore_func)
+do_get(input_t && i_iter,
+       in_sent_t && i_sentinel,
+       output_t && o_iter,
+       stop_predicate_t && stop_func,
+       ignore_predicate_t && ignore_func)
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
@@ -827,6 +827,63 @@ _skip_until(input_t & i_iter,
 {
     for (; (i_iter != i_end) && !stop_func(*i_iter); ++i_iter)
     {}
+}
+
+// ----------------------------------------------------------------------------
+// Function do_ignore(); Element-wise
+// ----------------------------------------------------------------------------
+
+template <typename input_t, typename in_sent_t,
+          typename stop_predicate_t>
+inline void
+do_ignore(input_t && i_iter,
+          in_sent_t && i_sentinel,
+          stop_predicate_t && stop_func)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+             predicate_concept<std::remove_reference_t<stop_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
+{
+    for (; i_iter != i_sentinel; ++i_iter)
+    {
+        if (/*SEQAN_UNLIKELY(*/stop_func(*i_iter))/*)*/
+            return;
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Function do_ignore(); Chunked
+// ----------------------------------------------------------------------------
+
+template <typename input_t, typename in_sent_t,
+          typename stop_predicate_t>
+inline void
+do_ignore(input_t && i_iter,
+          in_sent_t && i_sentinel,
+          stop_predicate_t && stop_func)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+             std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
+             predicate_concept<std::remove_reference_t<stop_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
+{
+    using ranges::v3::begin;
+    using ranges::v3::end;
+
+    for (; i_iter != i_sentinel;)
+    {
+        auto ichunk = i_iter.get_chunk();
+        auto iptr = begin(ichunk);
+        for (; iptr != end(ichunk); ++iptr)
+        {
+            if (/*SEQAN_UNLIKELY*/(stop_func(*iptr)))
+            {
+                i_iter.advance_chunk(iptr - begin(ichunk));   // advance input iterator
+                return;
+            }
+        }
+        i_iter.advance_chunk(iptr - begin(ichunk)); // advance input iterator
+    }
 }
 
 // ----------------------------------------------------------------------------
