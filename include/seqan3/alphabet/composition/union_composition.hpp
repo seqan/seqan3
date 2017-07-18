@@ -218,7 +218,7 @@ constexpr auto char_to_value_table()
 namespace seqan3
 {
 
-/*!\brief An union_composition that merges different regular alphabets as a single alphabet.
+/*!\brief A composition that merges different regular alphabets as a single alphabet.
  * \ingroup composition
  * \tparam first_alphabet_type Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
  * \tparam alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept.
