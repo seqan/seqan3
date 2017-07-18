@@ -33,21 +33,28 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the alphabet module.
- *
- * \defgroup alphabet
- *
- * The alphabet module contains different biological alphabets and related functionality.
- *
- * TODO more details.
+ * \ingroup composition
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \brief Meta-header for the composition submodule; includes all headers from alphabet/composition/.
+ * \group composition
  */
 
-#pragma once
+#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composition/union_composition.hpp>
 
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/nucleotide.hpp>
-#include <seqan3/alphabet/quality.hpp>
-#include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/alphabet/composition/all.hpp>
+/*!\defgroup composition
+ * \brief Provides data structures joining multiple alphabets into a single alphabet.
+ * \ingroup alphabet
+ *
+ * \par Introduction
+ *
+ * Composition alphabets are special alphabets that allow you to combine existing alphabets into new ones. For example,
+ * you can add new characters to existing alphabets by using seqan3::union_composition or combine alphabets with quality
+ * information by using seqan3::cartesian_composition.
+ *
+ * We have currently two major composition alphabets:
+ * * seqan3::cartesian_composition which roughly corresponds to the Cartesian product of the given types. It
+ *   behaves similar to std::tuple, but it is specialised for alphabets.
+ * * seqan3::union_composition which roughly corresponds to the Union of the given types. It behaves similar to
+ *   std::variant, but it is specialised for alphabets.
+ */
