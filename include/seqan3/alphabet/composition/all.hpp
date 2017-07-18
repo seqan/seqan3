@@ -32,66 +32,29 @@
 //
 // ============================================================================
 
-#pragma once
-
-#include <cinttypes>
-#include <ciso646> // makes _LIBCPP_VERSION available
-#include <cstddef> // makes __GLIBCXX__ available
-
 /*!\file
- * \brief Contains platform and dependency checks.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
+ * \ingroup composition
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \brief Meta-header for the composition submodule; includes all headers from alphabet/composition/.
+ * \group composition
  */
 
-// macro cruft
-//!\cond
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-//!\endcond
+#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composition/union_composition.hpp>
 
-// C++ standard
-#ifdef __cplusplus
-    static_assert(__cplusplus >= 201500, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
-#else
-#   error "This is not a C++ compiler."
-#endif
-
-// Concepts TS
-#ifdef __cpp_concepts
-    static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
-#else
-#   error "SeqAn3 requires the Concepts TS, make sure that you have set -fconcepts (not all compilers support this)."
-#endif
-
-// SeqAn
-#if !__has_include(<seqan3/version.hpp>)
-#   error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
-#endif
-
-// Ranges
-#if __has_include(<range/v3/version.hpp>)
-#   define RANGE_V3_MINVERSION 300
-#   define RANGE_V3_MAXVERSION 399
-// TODO the following doesn't actually show the current version, only its formula. How'd you do it?
-#   define MSG "Your version: " STR(RANGE_V3_VERSION) \
-                "; minimum version: " STR(RANGE_V3_MINVERSION) \
-                "; expected maximum version: " STR(RANGE_V3_MAXVERSION)
-#   include <range/v3/version.hpp>
-#   if RANGE_V3_VERSION < RANGE_V3_MINVERSION
-#       error Your range-v3 library is too old.
-#       pragma message(MSG)
-#   elif RANGE_V3_VERSION > RANGE_V3_MAXVERSION
-#       pragma GCC warning "Your range-v3 library is possibly tot new. Some features might not work correctly."
-#       pragma message(MSG)
-#   endif
-#   undef MSG
-#else
-#   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
-#endif
-
-// SDSL
-// TODO (doesn't have a version.hpp, yet)
-
-#undef STR
-#undef STR_HELPER
+/*!\defgroup composition
+ * \brief Provides data structures joining multiple alphabets into a single alphabet.
+ * \ingroup alphabet
+ *
+ * \par Introduction
+ *
+ * Composition alphabets are special alphabets that allow you to combine existing alphabets into new ones. For example,
+ * you can add new characters to existing alphabets by using seqan3::union_composition or combine alphabets with quality
+ * information by using seqan3::cartesian_composition.
+ *
+ * We have currently two major composition alphabets:
+ * * seqan3::cartesian_composition which roughly corresponds to the Cartesian product of the given types. It
+ *   behaves similar to std::tuple, but it is specialised for alphabets.
+ * * seqan3::union_composition which roughly corresponds to the Union of the given types. It behaves similar to
+ *   std::variant, but it is specialised for alphabets.
+ */

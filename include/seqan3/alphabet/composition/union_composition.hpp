@@ -33,10 +33,10 @@
 // ==========================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup composition
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
- * \brief Contains seqan3::union_alphabet.
+ * \brief Contains seqan3::union_composition.
  */
 
 #pragma once
@@ -57,7 +57,7 @@ namespace seqan3::detail
 //!\privatesection
 
 /*!\brief Returns an array which contains the prefix sum over all alphabet_types::value_size's.
- * \relates seqan3::union_alphabet
+ * \relates seqan3::union_composition
  *
  * ```cpp
  * using namespace seqan3::detail;
@@ -89,7 +89,7 @@ constexpr auto alphabet_prefix_sum_sizes()
 
 } // namespace seqan3::detail
 
-namespace seqan3::detail::union_alphabet
+namespace seqan3::detail::union_composition
 {
 
 //!\privatesection
@@ -99,7 +99,7 @@ namespace seqan3::detail::union_alphabet
  * \sa value_to_char_table
  *
  * ```cpp
- * using namespace seqan3::detail::union_alphabet;
+ * using namespace seqan3::detail::union_composition;
  *
  * constexpr auto table1 = value_to_char_table_I<5, char>(dna4{});
  * assert(table1.size() == 5);
@@ -111,7 +111,7 @@ namespace seqan3::detail::union_alphabet
  * ```
  */
 template <size_t max_value_size, typename char_t, typename alphabet_t>
-constexpr auto value_to_char_table_I(alphabet_t alphabet)
+constexpr auto value_to_char_table_I(alphabet_t alphabet) noexcept
 {
     using array_t = std::array<char_t, max_value_size>;
     array_t value_to_char_{};
@@ -125,10 +125,10 @@ constexpr auto value_to_char_table_I(alphabet_t alphabet)
 /*!\brief Returns an map at compile time where the key is the rank of the union
  * of all alphabets and the value is the corresponding char of that rank and
  * alphabet.
- * \relates seqan3::union_alphabet
+ * \relates seqan3::union_composition
  *
  * ```cpp
- * using namespace seqan3::detail::union_alphabet;
+ * using namespace seqan3::detail::union_composition;
  *
  * constexpr auto value_to_char = value_to_char_table<char, dna4, gap, dna5>();
  * assert(value_to_char.size() == 10);
@@ -143,7 +143,7 @@ constexpr auto value_to_char_table_I(alphabet_t alphabet)
  * ```
  */
 template <typename char_t, typename ...alphabet_types>
-constexpr auto value_to_char_table()
+constexpr auto value_to_char_table() noexcept
 {
     constexpr auto table_size = (alphabet_types::value_size + ... + 0);
     constexpr auto value_sizes = std::array<size_t, table_size>{alphabet_types::value_size...};
@@ -170,10 +170,10 @@ constexpr auto value_to_char_table()
 /*!\brief Returns an map at compile time where the key is the char of one of the
  * alphabets and the value is the corresponding rank over all alphabets (by
  * conflict will default to the first).
- * \relates seqan3::union_alphabet
+ * \relates seqan3::union_composition
  *
  * ```cpp
- * using namespace seqan3::detail::union_alphabet;
+ * using namespace seqan3::detail::union_composition;
  *
  * constexpr auto char_to_value = char_to_value_table<char, dna4, gap, dna5>();
  * assert(char_to_value.size() == 256);
@@ -191,7 +191,7 @@ constexpr auto value_to_char_table()
  * ```
  */
 template <typename char_t, typename ...alphabet_types>
-constexpr auto char_to_value_table()
+constexpr auto char_to_value_table() noexcept
 {
     constexpr size_t value_size = ((size_t)alphabet_types::value_size + ... + 0);
     using rank_t = min_viable_uint_t<value_size>;
@@ -213,13 +213,13 @@ constexpr auto char_to_value_table()
 }
 //!\publicsection
 
-} // namespace seqan3::detail::union_alphabet
+} // namespace seqan3::detail::union_composition
 
 namespace seqan3
 {
 
-/*!\brief An union_alphabet that merges different regular alphabets as a single alphabet.
- * \ingroup alphabet
+/*!\brief A composition that merges different regular alphabets as a single alphabet.
+ * \ingroup composition
  * \tparam first_alphabet_type Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
  * \tparam alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept.
  *
@@ -230,14 +230,14 @@ namespace seqan3
  * This class has a similar behavior as std::variant.
  *
  * ```cpp
- *     union_alphabet<dna4, gap> my_letter{};
- *     union_alphabet<dna4, gap> converted_letter{dna4::C};
+ *     union_composition<dna4, gap> my_letter{};
+ *     union_composition<dna4, gap> converted_letter{dna4::C};
  *     // doesn't work:
- *     // union_alphabet<dna4, gap> my_letter{'A'};
+ *     // union_composition<dna4, gap> my_letter{'A'};
  *
- *     union_alphabet<dna4, gap>{}.assign_char('C'); // <- this does!
- *     union_alphabet<dna4, gap>{}.assign_char('-'); // gap character
- *     union_alphabet<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
+ *     union_composition<dna4, gap>{}.assign_char('C'); // <- this does!
+ *     union_composition<dna4, gap>{}.assign_char('-'); // gap character
+ *     union_composition<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
  *                                                   // character of the first alphabet type (i.e. A of dna4)
  *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
@@ -247,7 +247,7 @@ namespace seqan3
  * alphabets.
  *
  * ```cpp
- * using alphabet_t = union_alphabet<dna4, dna5, gap>;
+ * using alphabet_t = union_composition<dna4, dna5, gap>;
  *
  * constexpr alphabet_t letter0{dna4::A};
  * constexpr alphabet_t letter1 = dna4::C;
@@ -263,7 +263,7 @@ namespace seqan3
  * Or can be assigned by one of the base alphabets.
  *
  * ```cpp
- * using alphabet_t = union_alphabet<dna4, dna5, gap>;
+ * using alphabet_t = union_composition<dna4, dna5, gap>;
  *
  * alphabet_t letter;
  *
@@ -281,14 +281,14 @@ template <typename first_alphabet_type, typename ...alphabet_types>
 //!\cond
     requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
 //!\endcond
-class union_alphabet
+class union_composition
 {
 public:
     /*!\brief Returns true if alphabet_t is one of the given alphabet types.
      * \tparam alphabet_t The type to check
      */
     template <typename alphabet_t>
-    static constexpr bool has_type()
+    static constexpr bool has_type() noexcept
     {
         return meta::in<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
     }
@@ -305,16 +305,16 @@ public:
     /*!\name Default constructors
      * \{
      */
-    constexpr union_alphabet() = default;
-    constexpr union_alphabet(union_alphabet const &) = default;
-    constexpr union_alphabet(union_alphabet &&) = default;
+    constexpr union_composition() = default;
+    constexpr union_composition(union_composition const &) = default;
+    constexpr union_composition(union_composition &&) = default;
     //!\}
 
     /*!\name Default assignment operators
      * \{
      */
-    constexpr union_alphabet & operator= (union_alphabet const &) = default;
-    constexpr union_alphabet & operator= (union_alphabet &&) = default;
+    constexpr union_composition & operator= (union_composition const &) = default;
+    constexpr union_composition & operator= (union_composition &&) = default;
     //!\}
 
     /*!\name Conversion constructors
@@ -325,15 +325,15 @@ public:
      * \tparam alphabet_t One of the base alphabet types
      *
      * ```cpp
-     *     union_alphabet<dna4, gap> letter1{dna4::C}; // or
-     *     union_alphabet<dna4, gap> letter2 = gap::GAP;
+     *     union_composition<dna4, gap> letter1{dna4::C}; // or
+     *     union_composition<dna4, gap> letter2 = gap::GAP;
      * ```
      */
     template <typename alphabet_t>
     //!\cond
         requires has_type<alphabet_t>()
     //!\endcond
-    constexpr union_alphabet(alphabet_t const & alphabet) :
+    constexpr union_composition(alphabet_t const & alphabet) noexcept :
         _value{rank_by_type_(alphabet)}
     {}
 
@@ -342,7 +342,7 @@ public:
      * \tparam alphabet_t The i-th given base alphabet type
      *
      * ```cpp
-     * using alphabet_t = union_alphabet<dna4, dna4>;
+     * using alphabet_t = union_composition<dna4, dna4>;
      *
      * constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
      * constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
@@ -355,7 +355,7 @@ public:
     //!\cond
         requires has_type<alphabet_t>()
     //!\endcond
-    constexpr union_alphabet(std::in_place_index_t<I>, alphabet_t const & alphabet) :
+    constexpr union_composition(std::in_place_index_t<I>, alphabet_t const & alphabet) noexcept :
         _value{rank_by_index_<I>(alphabet)}
     {}
     //!\}
@@ -368,7 +368,7 @@ public:
      * \tparam alphabet_t One of the base alphabet types
      *
      * ```cpp
-     *     union_alphabet<dna4, gap> letter1{};
+     *     union_composition<dna4, gap> letter1{};
      *     letter1 = gap::GAP;
      * ```
      */
@@ -376,7 +376,7 @@ public:
     //!\cond
         requires has_type<alphabet_t>()
     //!\endcond
-    constexpr union_alphabet & operator= (alphabet_t const & alphabet)
+    constexpr union_composition & operator= (alphabet_t const & alphabet) noexcept
     {
         _value = rank_by_type_(alphabet);
         return *this;
@@ -387,13 +387,13 @@ public:
      * \{
      */
     //!\brief Return the letter as a character of char_type.
-    constexpr char_type to_char() const
+    constexpr char_type to_char() const noexcept
     {
         return value_to_char[_value];
     }
 
     //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr rank_type to_rank() const
+    constexpr rank_type to_rank() const noexcept
     {
         return _value;
     }
@@ -403,15 +403,17 @@ public:
      * \{
      */
     //!\brief Assign from a character.
-    constexpr union_alphabet & assign_char(char_type const c)
+    constexpr union_composition & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
     //!\brief Assign from a numeric value.
-    constexpr union_alphabet & assign_rank(rank_type const i)
+    constexpr union_composition & assign_rank(rank_type const i) /*noexcept*/
     {
+        // TODO(marehr): mark function noexcept if assert is replaced
+        // https://github.com/seqan/seqan3/issues/85
         assert(i < value_size);
         _value = i;
         return *this;
@@ -420,32 +422,32 @@ public:
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(union_alphabet const & rhs) const
+    constexpr bool operator==(union_composition const & rhs) const noexcept
     {
         return _value == rhs._value;
     }
 
-    constexpr bool operator!=(union_alphabet const & rhs) const
+    constexpr bool operator!=(union_composition const & rhs) const noexcept
     {
         return _value != rhs._value;
     }
 
-    constexpr bool operator<(union_alphabet const & rhs) const
+    constexpr bool operator<(union_composition const & rhs) const noexcept
     {
         return _value < rhs._value;
     }
 
-    constexpr bool operator>(union_alphabet const & rhs) const
+    constexpr bool operator>(union_composition const & rhs) const noexcept
     {
         return _value > rhs._value;
     }
 
-    constexpr bool operator<=(union_alphabet const & rhs) const
+    constexpr bool operator<=(union_composition const & rhs) const noexcept
     {
         return _value <= rhs._value;
     }
 
-    constexpr bool operator>=(union_alphabet const & rhs) const
+    constexpr bool operator>=(union_composition const & rhs) const noexcept
     {
         return _value >= rhs._value;
     }
@@ -461,7 +463,7 @@ protected:
 
     //!\brief Converts an object of one of the given alphabets into the internal representation
     template <size_t index, typename alphabet_t>
-    static constexpr rank_type rank_by_index_(alphabet_t const & alphabet)
+    static constexpr rank_type rank_by_index_(alphabet_t const & alphabet) noexcept
     {
         return static_cast<rank_type>(prefix_sum_sizes[index] + alphabet.to_rank());
     }
@@ -469,7 +471,7 @@ protected:
     //!\brief Converts an object of one of the given alphabets into the internal representation
     //!\details Finds the index of alphabet_t in the given types.
     template <typename alphabet_t>
-    static constexpr rank_type rank_by_type_(alphabet_t const & alphabet)
+    static constexpr rank_type rank_by_type_(alphabet_t const & alphabet) noexcept
     {
         constexpr size_t index = meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
         return rank_by_index_<index>(alphabet);
@@ -485,18 +487,18 @@ protected:
     //!\hideinitializer
     //!\sa value_to_char_table
     static constexpr auto value_to_char =
-        detail::union_alphabet::value_to_char_table<char_type, first_alphabet_type, alphabet_types...>();
+        detail::union_composition::value_to_char_table<char_type, first_alphabet_type, alphabet_types...>();
 
     //!\brief Compile-time generated lookup table which maps the char to rank
     //!\hideinitializer
     //!\sa char_to_value_table
     static constexpr auto char_to_value =
-        detail::union_alphabet::char_to_value_table<char_type, first_alphabet_type, alphabet_types...>();
+        detail::union_composition::char_to_value_table<char_type, first_alphabet_type, alphabet_types...>();
 };
 
 } // namespace seqan3
 
 #ifndef NDEBUG
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-static_assert(seqan3::alphabet_concept<seqan3::union_alphabet<seqan3::dna5, seqan3::dna5>>);
+static_assert(seqan3::alphabet_concept<seqan3::union_composition<seqan3::dna5, seqan3::dna5>>);
 #endif
