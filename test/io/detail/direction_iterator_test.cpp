@@ -251,10 +251,10 @@ TEST(direction_iterator_test, test_direction_iterator_input_iterator_vector)
     using namespace seqan3::detail;
 
     std::vector<char> in{'a', 'c', 'g'};
-    auto r = input_iterator(in);
-    EXPECT_EQ(*begin(r), 'a');
-    EXPECT_NE(begin(r), end(r));
-    EXPECT_EQ(end(r), (chunk_input_iterator{in, true}));
+    auto [r_beg, r_end] = input_iterator(in);
+    EXPECT_EQ(*r_beg, 'a');
+    EXPECT_NE(r_beg, r_end);
+    EXPECT_EQ(r_end, (chunk_input_iterator{in, true}));
 }
 
 TEST(direction_iterator_test, test_direction_iterator_output_iterator_vector)

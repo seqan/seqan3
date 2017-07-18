@@ -361,6 +361,12 @@ private:
     {
         streambuf_ptr->advance_chunk(offset, input_direction{});
     }
+
+    inline void
+    trim_trailing_impl() noexcept
+    {
+        // no-op
+    }
 };
 
 template <typename stream_t>
@@ -507,6 +513,12 @@ private:
     {
         streambuf_ptr->advance_chunk(offset, output_direction{});
     }
+
+    inline void
+    trim_trailing_impl() noexcept
+    {
+        // no-op
+    }
 };
 
 // ============================================================================
@@ -533,7 +545,7 @@ template <typename stream_t>
 inline auto
 input_iterator(stream_t & stream)
 {
-    return ranges::v3::make_iterator_range(chunk_istream_iterator<stream_t>{stream}, chunk_istream_iterator<stream_t>{});
+    return std::tuple{chunk_istream_iterator<stream_t>{stream}, chunk_istream_iterator<stream_t>{}};
 }
 
 // Returns back_insert iterator for containers supporting *.push_back().

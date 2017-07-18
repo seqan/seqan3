@@ -105,6 +105,12 @@ protected:
         using std::advance;
         advance(chunk_c, offset);
     }
+
+    inline void
+    trim_trailing_impl() noexcept
+    {
+        // no-op
+    }
 };
 
 template <typename container_t>
@@ -269,6 +275,13 @@ private:
             this->chunk_e = std::end(*this->cont_ptr);
         }
     }
+
+    inline void
+    trim_trailing_impl() noexcept
+    {
+        this->cont_ptr->resize(this->chunk_c - this->chunk_b);
+        this->chunk_e = std::end(*this->cont_ptr);
+    }
 };
 
 // Returns input itertor pointing to begin of container.
@@ -277,7 +290,7 @@ template <typename container_t>
 inline auto
 input_iterator(container_t & c)
 {
-    return ranges::v3::make_iterator_range(chunk_input_iterator{c}, chunk_input_iterator{c, true});
+    return std::tuple{chunk_input_iterator{c}, chunk_input_iterator{c, true}};
 }
 
 // What would be the output semantic? -> Appending to the container.

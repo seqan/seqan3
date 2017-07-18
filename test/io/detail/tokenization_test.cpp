@@ -39,6 +39,7 @@
 #include <iterator>
 
 #include <range/v3/utility/iterator.hpp>
+#include <range/v3/istream_range.hpp>
 
 #include <seqan3/io/detail/tokenization.hpp>
 
@@ -73,8 +74,8 @@ TEST(tokenization_test, write_container_to_container)
 
     {  // input_iterator + output_iterator
         out.clear();
-        auto r = input_iterator(in);
-        write(begin(r), size(in), output_iterator(out));
+        auto rng = input_iterator(in);
+        write(std::get<0>(rng), size(in), output_iterator(out));
         EXPECT_EQ(out, in);
     }
 
@@ -111,8 +112,8 @@ TEST(tokenization_test, write_container_to_stream)
 
     {  // input_iterator interface + output_iterator.
         std::ostringstream out{};
-        auto r = input_iterator(in);
-        write(begin(r), size(in), output_iterator(out));
+        auto rng = input_iterator(in);
+        write(std::get<0>(rng), size(in), output_iterator(out));
         EXPECT_EQ(out.str(), in);
     }
 }
@@ -132,8 +133,8 @@ TEST(tokenization_test, write_stream_to_container)
     {  // input_iterator interface.
         std::istringstream in{"hello_world"};
         std::string out;
-        auto r = input_iterator(in);
-        write(begin(r), 11, out);
+        auto rng = input_iterator(in);
+        write(std::get<0>(rng), 11, out);
         EXPECT_EQ(out, in.str());
     }
 }
@@ -166,8 +167,8 @@ TEST(tokenization_test, write_stream_to_stream)
     {  // input_iterator interface.
         std::istringstream in{"hello_world"};
         std::ostringstream out;
-        auto r = input_iterator(in);
-        write(begin(r), 11, output_iterator(out));
+        auto rng = input_iterator(in);
+        write(std::get<0>(rng), 11, output_iterator(out));
         EXPECT_EQ(out.str(), in.str());
     }
 }
@@ -190,4 +191,61 @@ TEST(tokenization_test, write_stream_to_array)
 TEST(tokenization_test, write_array_to_array)
 {
 
+}
+
+TEST(tokenization_test, extract)
+{
+    using namespace seqan3::detail;
+
+    {  // istream interface.
+        std::istringstream in{"hello_world"};
+        std::ostringstream out;
+
+        std::istream_iterator<char> it{in};
+        auto o_iter = output_iterator(out);
+        extract(it, std::istream_iterator<char>{}, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        EXPECT_EQ(out.str(), "hell");
+        extract(it, std::istream_iterator<char>{}, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        EXPECT_EQ(out.str(), "hell_word");
+    }
+
+    {  // container interface.
+        std::string in{"hello_world"};
+        std::ostringstream out;
+        auto o_iter = output_iterator(out);
+        auto it = std::begin(in);
+        extract(it, std::end(in), o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        EXPECT_EQ(out.str(), "hell");
+        extract(it, std::end(in), o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        EXPECT_EQ(out.str(), "hell_word");
+    }
+}
+
+TEST(tokenization_test, extract_chunked)
+{
+    using namespace seqan3::detail;
+
+    {  // istream interface.
+        std::istringstream in{"hello_world"};
+        std::string out;
+
+        auto [r_beg, r_end] = input_iterator(in);
+        auto o_iter = output_iterator(out);
+
+        extract(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        EXPECT_EQ(out, "hell");
+        extract(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        EXPECT_EQ(out, "hell_word");
+    }
+
+    {  // container interface.
+        std::string in{"hello_world"};
+        std::string out;
+        auto o_iter = output_iterator(out);
+        auto [r_beg, r_end] = input_iterator(in);
+        extract(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        EXPECT_EQ(out, "hell");
+        extract(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        EXPECT_EQ(out, "hell_word");
+    }
 }

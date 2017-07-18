@@ -104,8 +104,13 @@ public:
     inline auto
     get_chunk() const noexcept
     {
-        return ranges::v3::iterator_range<decltype(derived().chunk_current()), decltype(derived().chunk_end())>
-                    {derived().chunk_current(), derived().chunk_end()};
+        return ranges::v3::make_iterator_range(derived().chunk_current(), derived().chunk_end());
+    }
+
+    inline void
+    trim_trailing() noexcept
+    {
+        derived().trim_trailing_impl();
     }
 };
 

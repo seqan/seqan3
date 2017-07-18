@@ -562,7 +562,7 @@ write(container_t const & input,
 {
     using std::size;
     auto rng = input_iterator(input);
-    write(begin(rng), size(input), output);
+    write(std::get<0>(rng), size(input), output);
 }
 
 // ----------------------------------------------------------------------------
@@ -606,27 +606,33 @@ get(input_t & curr_it,
 // Function _get_until(); Element-wise
 // ----------------------------------------------------------------------------
 
-template <typename input_t,
+template <typename input_t, typename in_sent_t,
           typename output_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-_extract(input_t & i_range,
-         output_t && output_it,
-         stop_predicate_t && stop_func,
-         ignore_predicate_t && ignore_func)
-    requires input_range_concept<std::remove_reference_t<input_t>> &&
-             output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
-             predicate_concept<std::remove_reference_t<stop_predicate_t>> &&
-             predicate_concept<std::remove_reference_t<ignore_predicate_t>>
+extract(input_t && i_iter,
+        in_sent_t && i_sentinel,
+        output_t && output_it,
+        stop_predicate_t && stop_func,
+        ignore_predicate_t && ignore_func)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+             output_iterator_concept<std::remove_reference_t<output_t>,
+                                     value_type_t<std::remove_reference_t<input_t>>> &&
+             predicate_concept<std::remove_reference_t<stop_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>> &&
+             predicate_concept<std::remove_reference_t<ignore_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
 {
-    typename std::remove_const<typename input_t::value_type>::type val;
-    for (auto i_iter = begin(i_range); i_iter != end(i_range); ++i_iter)
+    using value_type = value_type_t<std::remove_reference_t<input_t>>;
+    typename std::remove_const<value_type>::type val;
+    for (; i_iter != i_sentinel; ++i_iter)
     {
-        if (/*SEQAN_UNLIKELY(*/stop_predicate_t(val = *i_iter))/*)*/
+        if (/*SEQAN_UNLIKELY(*/stop_func(val = *i_iter))/*)*/
             return;
-        if (/*SEQAN_LIKELY(*/!ignoreFunctor(val))/*)*/
-            put(val, std::forward<output_it>(output_it));
+        if (/*SEQAN_LIKELY(*/!ignore_func(val))/*)*/
+            put(val, std::forward<output_t>(output_it));
     }
 }
 
@@ -634,57 +640,67 @@ _extract(input_t & i_range,
 // Function _extract(); Chunked
 // ----------------------------------------------------------------------------
 
-//  template <typename input_t, typename output_t, typename stop_predicate_t, typename ignore_predicate_t>
-//  inline void
-//  _extract(input_t & i_range,
-//           output_t &target,
-//           stop_predicate_t &stopFunctor,
-//           ignore_predicate_t &ignoreFunctor)
-//     requires input_range_concept<std::remove_reference_t<input_t>> &&
-//              std::is_base_of_v<chunk_decorator<std::remove_reference_t<decltype(begin(i_range))>>,
-//                                std::remove_reference_t<decltype(begin(i_range))>> &&
-//              output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
-//              std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>> &&
-//              predicate_concept<std::remove_reference_t<stop_predicate_t>> &&
-//              predicate_concept<std::remove_reference_t<ignore_predicate_t>>
-// {
-    // Range<TOValue*> ochunk(NULL, NULL);
-    // TOValue* SEQAN_RESTRICT optr = NULL;
-    // Range<TIValue*> ichunk;
-    // for (; !atEnd(iter); )
-    // {
-    //     getChunk(ichunk, iter, Input());  // get from gptr to egptr
-    //     const TIValue* SEQAN_RESTRICT iptr = ichunk.begin;
-    //     SEQAN_ASSERT(iptr < ichunk.end);
-    //     for (; iptr != ichunk.end; ++iptr)
-    //     {
-    //         if (SEQAN_UNLIKELY(stopFunctor(*iptr)))
-    //         {
-    //             iter += iptr - ichunk.begin;               // advance input iterator
-    //             advanceChunk(target, optr - ochunk.begin); // extend target string size
-    //             return;
-    //         }
-    //         if (SEQAN_UNLIKELY(ignoreFunctor(*iptr)))
-    //             continue;
-    //         // construct values in reserved memory
-    //         if (SEQAN_UNLIKELY(optr == ochunk.end))  // in case chunk is full.
-    //         {
-    //             // do a pbump or for container do a reserve.
-    //             advanceChunk(target, optr - ochunk.begin);  // pbump or set
-    //             // reserve memory for the worst-case
-    //             // TODO(weese):Document worst-case behavior
-    //             reserveChunk(target, length(ichunk), Output());  // reserves, but does not create.
-    //             getChunk(ochunk, target, Output());
-    //             optr = ochunk.begin;
-    //             SEQAN_ASSERT(optr < ochunk.end);
-    //         }
-    //     //
-    //         from_char(*optr++, *iptr);
-    //     }
-    //     iter += iptr - ichunk.begin;                       // advance input iterator
-    // }
-    // advanceChunk(target, optr - ochunk.begin);
- // }
+template <typename input_t, typename in_sent_t,
+          typename output_t,
+          typename stop_predicate_t,
+          typename ignore_predicate_t>
+inline void
+extract(input_t && i_iter,
+        in_sent_t && i_sentinel,
+        output_t && o_iter,
+        stop_predicate_t && stop_func,
+        ignore_predicate_t && ignore_func)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+             std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
+             output_iterator_concept<std::remove_reference_t<output_t>,
+                                     value_type_t<std::remove_reference_t<input_t>>> &&
+             std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>> &&
+             predicate_concept<std::remove_reference_t<stop_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>> &&
+             predicate_concept<std::remove_reference_t<ignore_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
+{
+    using ranges::v3::begin;
+    using ranges::v3::end;
+
+    auto ochunk = o_iter.get_chunk();
+    auto optr = begin(ochunk);
+
+    for (; i_iter != i_sentinel;)
+    {
+        auto ichunk = i_iter.get_chunk();
+        auto iptr = begin(ichunk);
+        for (; iptr != end(ichunk); ++iptr)
+        {
+            if (/*SEQAN_UNLIKELY*/(stop_func(*iptr)))
+            {
+                i_iter.advance_chunk(iptr - begin(ichunk));   // advance input iterator
+                o_iter.advance_chunk(optr - begin(ochunk));   // extend target string size
+                o_iter.trim_trailing();
+                return;
+            }
+            if (/*SEQAN_UNLIKELY*/(ignore_func(*iptr)))
+                continue;
+            // construct values in reserved memory
+            if (/*SEQAN_UNLIKELY*/(optr == end(ochunk)))  // in case chunk is full.
+            {
+                // do a pbump or for container do a reserve.
+                o_iter.advance_chunk(optr - begin(ochunk));  // pbump or set
+                o_iter.next_chunk(end(ichunk) - iptr);       // reserve vector or reload buffer.
+                // std::cout << "get_chunk: " << std::endl;
+                ochunk = o_iter.get_chunk();
+                optr = begin(ochunk);
+                // SEQAN_ASSERT(optr < ochunk.end);
+            }
+
+            put(*iptr, optr);
+        }
+        i_iter.advance_chunk(iptr - begin(ichunk)); // advance input iterator
+    }
+    o_iter.advance_chunk(optr - begin(ochunk));
+    o_iter.trim_trailing();
+}
 
 // ----------------------------------------------------------------------------
 // Function readUntil()
