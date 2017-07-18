@@ -43,6 +43,7 @@
 #include <range/v3/view/zip.hpp>
 
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
+#include <seqan3/alphabet/structure/wuss.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -52,7 +53,7 @@ class structure : public ::testing::Test
 {};
 
 // add all alphabets from the structure sub module here
-using structure_types  = ::testing::Types<db3>;
+using structure_types  = ::testing::Types<db3, wuss<>>;
 
 TYPED_TEST_CASE(structure, structure_types);
 
@@ -62,7 +63,7 @@ TYPED_TEST(structure, assign_char)
     std::vector<char> input
     {
         '.', '(', ')',
-        'a', 'c', 'g', 't', 'u', 'n'
+        ':', ',', '_', '~', '<', '>', '[', ']', '{', '}'
     };
 
     std::vector<TypeParam> cmp;
@@ -71,7 +72,15 @@ TYPED_TEST(structure, assign_char)
         cmp =
         {
         t::NP, t::BL, t::BR,
-        t::NA, t::NA, t::NA, t::NA, t::NA, t::NA
+        t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA
+        };
+    }
+    else if constexpr (std::is_same_v<TypeParam, wuss<>>)
+    {
+        cmp =
+        {
+        t::NP, t::BL1, t::BR1,
+        t::NP1, t::NP2, t::NP3, t::NP4, t::BL, t::BR, t::BL2, t::BR2,t::BL3, t::BR3
         };
     }
 
@@ -81,12 +90,28 @@ TYPED_TEST(structure, assign_char)
 
 TYPED_TEST(structure, to_char)
 {
-    if constexpr (std::is_same_v<TypeParam, db3> /* || std::is_same_v<TypeParam, wuss18> */ )
+    if constexpr (std::is_same_v<TypeParam, db3>)
     {
         EXPECT_EQ(to_char(TypeParam::NP), '.');
         EXPECT_EQ(to_char(TypeParam::BL), '(');
         EXPECT_EQ(to_char(TypeParam::BR), ')');
         EXPECT_EQ(to_char(TypeParam::NA), '.');
+    }
+    else if constexpr (std::is_same_v<TypeParam, wuss<>>)
+    {
+        EXPECT_EQ(to_char(TypeParam::NP), '.');
+        EXPECT_EQ(to_char(TypeParam::NP1), ':');
+        EXPECT_EQ(to_char(TypeParam::NP2), ',');
+        EXPECT_EQ(to_char(TypeParam::NP3), '_');
+        EXPECT_EQ(to_char(TypeParam::NP4), '~');
+        EXPECT_EQ(to_char(TypeParam::BL), '<');
+        EXPECT_EQ(to_char(TypeParam::BR), '>');
+        EXPECT_EQ(to_char(TypeParam::BL1), '(');
+        EXPECT_EQ(to_char(TypeParam::BR1), ')');
+        EXPECT_EQ(to_char(TypeParam::BL2), '[');
+        EXPECT_EQ(to_char(TypeParam::BR2), ']');
+        EXPECT_EQ(to_char(TypeParam::BL3), '{');
+        EXPECT_EQ(to_char(TypeParam::BR3), '}');
     }
 }
 
@@ -94,35 +119,20 @@ TYPED_TEST(structure, stream_operator)
 {
     std::stringstream ss;
     ss << TypeParam::BL << TypeParam::BR << TypeParam::NP;
-    EXPECT_EQ(ss.str(), "().");
+    if constexpr (std::is_same_v<TypeParam, db3>)
+    {
+        EXPECT_EQ(ss.str(), "().");
+    }
+    else if constexpr (std::is_same_v<TypeParam, wuss<>>)
+    {
+        EXPECT_EQ(ss.str(), "<>.");
+    }
 }
 
 TYPED_TEST(structure, concept)
 {
     EXPECT_TRUE(structure_concept<TypeParam>);
 }
-
-// ------------------------------------------------------------------
-// conversion
-// ------------------------------------------------------------------
-/*
-// conversion db3 - wuss18
-TYPED_TEST(structure, implicit_conversion)
-{
-    using complement_type = std::conditional_t<std::is_same_v<TypeParam, db3>, wuss18,
-                            std::conditional_t<std::is_same_v<TypeParam, wuss18>, db3,
-                            void>>;
-    if constexpr (!std::is_same_v<complement_type, void>)
-    {
-        // construct
-        EXPECT_EQ(complement_type{TypeParam::BL}, complement_type::BL);
-        // assign
-        complement_type l{};
-        l = TypeParam::BL;
-        EXPECT_EQ(l, complement_type::BL);
-    }
-}
-*/
 
 // ------------------------------------------------------------------
 // literals
@@ -146,4 +156,25 @@ TEST(db3_literals, basic_string)
 
     std::basic_string<db3, std::char_traits<db3>> w{db3::BL, db3::NP, db3::BR, db3::BL, db3::BR, db3::NA};
     EXPECT_EQ(w, "(.)()."_db3s);
+}
+
+TEST(wuss_literals, vector)
+{
+    wuss_vector v;
+    v.resize(5, wuss<>::BL);
+    EXPECT_EQ(v, "<<<<<"_wuss);
+
+    std::vector<wuss<>> w{wuss<>::NP, wuss<>::BL, wuss<>::BL, wuss<>::BR, wuss<>::BR, wuss<>::NP};
+    EXPECT_EQ(w, ".<<>>."_wuss);
+}
+
+TEST(wuss_literals, basic_string)
+{
+    wuss_string v;
+    v.resize(5, wuss<>::BR);
+    EXPECT_EQ(v, ">>>>>"_wusss);
+
+    std::basic_string<wuss<>, std::char_traits<wuss<>>> w{wuss<>::BL, wuss<>::NP, wuss<>::BR, wuss<>::BL, wuss<>::BR,
+                                                          wuss<>::NP};
+    EXPECT_EQ(w, "<.><>."_wusss);
 }

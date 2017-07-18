@@ -35,7 +35,7 @@
 /*!\file
  * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the dot bracket file format for RNA structure.
+ * \brief Contains the dot bracket format for RNA structure.
  */
 
 #pragma once
