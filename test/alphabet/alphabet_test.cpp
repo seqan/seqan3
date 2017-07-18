@@ -46,6 +46,9 @@ class alphabet : public ::testing::Test
 // add all alphabets here
 using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
                                         aa27,
+                                        union_composition<dna4>,
+                                        union_composition<dna4, gap>,
+                                        union_composition<dna4, dna5, gap>,
                                         /*gap, gapped<nucl16>, */
                                         illumina18, dna4q>;
 
@@ -194,6 +197,7 @@ TYPED_TEST(alphabet, comparison_operators)
         EXPECT_LE(t0, t1);
         EXPECT_LE(t1, t1);
         EXPECT_EQ(t1, t1);
+        EXPECT_NE(t0, t1);
         EXPECT_GE(t1, t1);
         EXPECT_GE(t1, t0);
         EXPECT_GT(t1, t0);
@@ -332,6 +336,7 @@ TYPED_TEST(alphabet_constexpr, comparison_operators)
         constexpr bool b5 = (t1 >= t1);
         constexpr bool b6 = (t1 >= t0);
         constexpr bool b7 = (t1 >  t0);
+        constexpr bool b8 = (t0 != t1);
 
         EXPECT_TRUE(b1);
         EXPECT_TRUE(b2);
@@ -340,5 +345,6 @@ TYPED_TEST(alphabet_constexpr, comparison_operators)
         EXPECT_TRUE(b5);
         EXPECT_TRUE(b6);
         EXPECT_TRUE(b7);
+        EXPECT_TRUE(b8);
     }
 }
