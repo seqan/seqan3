@@ -111,7 +111,7 @@ namespace seqan3::detail::union_composition
  * ```
  */
 template <size_t max_value_size, typename char_t, typename alphabet_t>
-constexpr auto value_to_char_table_I(alphabet_t alphabet)
+constexpr auto value_to_char_table_I(alphabet_t alphabet) noexcept
 {
     using array_t = std::array<char_t, max_value_size>;
     array_t value_to_char_{};
@@ -143,7 +143,7 @@ constexpr auto value_to_char_table_I(alphabet_t alphabet)
  * ```
  */
 template <typename char_t, typename ...alphabet_types>
-constexpr auto value_to_char_table()
+constexpr auto value_to_char_table() noexcept
 {
     constexpr auto table_size = (alphabet_types::value_size + ... + 0);
     constexpr auto value_sizes = std::array<size_t, table_size>{alphabet_types::value_size...};
@@ -191,7 +191,7 @@ constexpr auto value_to_char_table()
  * ```
  */
 template <typename char_t, typename ...alphabet_types>
-constexpr auto char_to_value_table()
+constexpr auto char_to_value_table() noexcept
 {
     constexpr size_t value_size = ((size_t)alphabet_types::value_size + ... + 0);
     using rank_t = min_viable_uint_t<value_size>;
@@ -288,7 +288,7 @@ public:
      * \tparam alphabet_t The type to check
      */
     template <typename alphabet_t>
-    static constexpr bool has_type()
+    static constexpr bool has_type() noexcept
     {
         return meta::in<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
     }
@@ -333,7 +333,7 @@ public:
     //!\cond
         requires has_type<alphabet_t>()
     //!\endcond
-    constexpr union_composition(alphabet_t const & alphabet) :
+    constexpr union_composition(alphabet_t const & alphabet) noexcept :
         _value{rank_by_type_(alphabet)}
     {}
 
@@ -355,7 +355,7 @@ public:
     //!\cond
         requires has_type<alphabet_t>()
     //!\endcond
-    constexpr union_composition(std::in_place_index_t<I>, alphabet_t const & alphabet) :
+    constexpr union_composition(std::in_place_index_t<I>, alphabet_t const & alphabet) noexcept :
         _value{rank_by_index_<I>(alphabet)}
     {}
     //!\}
@@ -376,7 +376,7 @@ public:
     //!\cond
         requires has_type<alphabet_t>()
     //!\endcond
-    constexpr union_composition & operator= (alphabet_t const & alphabet)
+    constexpr union_composition & operator= (alphabet_t const & alphabet) noexcept
     {
         _value = rank_by_type_(alphabet);
         return *this;
@@ -387,13 +387,13 @@ public:
      * \{
      */
     //!\brief Return the letter as a character of char_type.
-    constexpr char_type to_char() const
+    constexpr char_type to_char() const noexcept
     {
         return value_to_char[_value];
     }
 
     //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr rank_type to_rank() const
+    constexpr rank_type to_rank() const noexcept
     {
         return _value;
     }
@@ -403,15 +403,17 @@ public:
      * \{
      */
     //!\brief Assign from a character.
-    constexpr union_composition & assign_char(char_type const c)
+    constexpr union_composition & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
     //!\brief Assign from a numeric value.
-    constexpr union_composition & assign_rank(rank_type const i)
+    constexpr union_composition & assign_rank(rank_type const i) /*noexcept*/
     {
+        // TODO(marehr): mark function noexcept if assert is replaced
+        // https://github.com/seqan/seqan3/issues/85
         assert(i < value_size);
         _value = i;
         return *this;
@@ -420,32 +422,32 @@ public:
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(union_composition const & rhs) const
+    constexpr bool operator==(union_composition const & rhs) const noexcept
     {
         return _value == rhs._value;
     }
 
-    constexpr bool operator!=(union_composition const & rhs) const
+    constexpr bool operator!=(union_composition const & rhs) const noexcept
     {
         return _value != rhs._value;
     }
 
-    constexpr bool operator<(union_composition const & rhs) const
+    constexpr bool operator<(union_composition const & rhs) const noexcept
     {
         return _value < rhs._value;
     }
 
-    constexpr bool operator>(union_composition const & rhs) const
+    constexpr bool operator>(union_composition const & rhs) const noexcept
     {
         return _value > rhs._value;
     }
 
-    constexpr bool operator<=(union_composition const & rhs) const
+    constexpr bool operator<=(union_composition const & rhs) const noexcept
     {
         return _value <= rhs._value;
     }
 
-    constexpr bool operator>=(union_composition const & rhs) const
+    constexpr bool operator>=(union_composition const & rhs) const noexcept
     {
         return _value >= rhs._value;
     }
@@ -461,7 +463,7 @@ protected:
 
     //!\brief Converts an object of one of the given alphabets into the internal representation
     template <size_t index, typename alphabet_t>
-    static constexpr rank_type rank_by_index_(alphabet_t const & alphabet)
+    static constexpr rank_type rank_by_index_(alphabet_t const & alphabet) noexcept
     {
         return static_cast<rank_type>(prefix_sum_sizes[index] + alphabet.to_rank());
     }
@@ -469,7 +471,7 @@ protected:
     //!\brief Converts an object of one of the given alphabets into the internal representation
     //!\details Finds the index of alphabet_t in the given types.
     template <typename alphabet_t>
-    static constexpr rank_type rank_by_type_(alphabet_t const & alphabet)
+    static constexpr rank_type rank_by_type_(alphabet_t const & alphabet) noexcept
     {
         constexpr size_t index = meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
         return rank_by_index_<index>(alphabet);
