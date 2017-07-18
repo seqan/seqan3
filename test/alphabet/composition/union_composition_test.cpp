@@ -43,15 +43,11 @@
 
 using namespace seqan3;
 
-TEST(union_composition_test, default_constructor)
-{
-    using alphabet_t = union_composition<dna4, gap>;
-    constexpr alphabet_t letter1{};
+// These test case only test seqan3::union_composition specific functions/properties that are not offered by the general
+// `seqan3::alphabet_concept` interface. Those common interface function of `seqan3::union_composition` will be tested
+// in `alphabet/alphabet_test.hpp`.
 
-    EXPECT_EQ(letter1._value, 0);
-}
-
-TEST(union_composition_test, initialize_from_component_alphabet)
+TEST(union_composition_test, initialise_from_component_alphabet)
 {
     using alphabet_t = union_composition<dna4, dna5, gap>;
     using variant_t = std::variant<dna4, dna5, gap>;
@@ -121,25 +117,6 @@ TEST(union_composition_test, initialise_from_same_component_alphabet)
     EXPECT_EQ(letter7.to_rank(), 7);
 }
 
-TEST(union_composition_test, copy_constructor)
-{
-    using alphabet_t = union_composition<dna4, gap>;
-    constexpr alphabet_t letter1{dna4::T};
-    alphabet_t letter2{letter1};
-
-    EXPECT_EQ(letter1._value, 3);
-    EXPECT_EQ(letter2._value, 3);
-}
-
-TEST(union_composition_test, move_constructor)
-{
-    using alphabet_t = union_composition<dna4, gap>;
-    alphabet_t letter1{dna4::G};
-    alphabet_t letter2{std::move(letter1)};
-
-    EXPECT_EQ(letter2._value, 2);
-}
-
 TEST(union_composition_test, assign_from_component_alphabet)
 {
     using alphabet_t = union_composition<dna4, dna5, gap>;
@@ -185,43 +162,12 @@ TEST(union_composition_test, assign_from_component_alphabet)
     EXPECT_EQ(letter.to_rank(), 9);
 }
 
-TEST(union_composition_test, copy_assignment)
-{
-    using alphabet_t = union_composition<dna4, gap>;
-    constexpr alphabet_t letter1{dna4::T};
-    alphabet_t letter2, letter3;
-    letter2 = letter1;
-    letter3 = {letter1};
-
-    EXPECT_EQ(letter1.to_rank(), 3);
-    EXPECT_EQ(letter2.to_rank(), 3);
-    EXPECT_EQ(letter3.to_rank(), 3);
-}
-
-TEST(union_composition_test, move_assignment)
-{
-    using alphabet_t = union_composition<dna4, gap>;
-    alphabet_t letter1 = dna4::G;
-    alphabet_t letter2{std::move(letter1)};
-
-    EXPECT_EQ(letter2.to_rank(), 2);
-}
-
-TEST(union_composition_test, single_union)
-{
-    using alphabet_t = union_composition<dna4>;
-    constexpr alphabet_t letter1{};
-
-    EXPECT_EQ(letter1.to_rank(), 0);
-}
-
 TEST(union_composition_test, fulfills_concepts)
 {
-    static_assert(std::is_pod_v<union_composition<dna5, dna5>>);
-    static_assert(std::is_trivial_v<union_composition<dna5, dna5>>);
-    static_assert(std::is_trivially_copyable_v<union_composition<dna5, dna5>>);
-    static_assert(std::is_standard_layout_v<union_composition<dna5, dna5>>);
-    static_assert(alphabet_concept<union_composition<dna5, dna5>>);
+    EXPECT_TRUE((std::is_pod_v<union_composition<dna5, dna5>>));
+    EXPECT_TRUE((std::is_trivial_v<union_composition<dna5, dna5>>));
+    EXPECT_TRUE((std::is_trivially_copyable_v<union_composition<dna5, dna5>>));
+    EXPECT_TRUE((std::is_standard_layout_v<union_composition<dna5, dna5>>));
 }
 
 TEST(union_composition_test, rank_type)
@@ -237,57 +183,4 @@ TEST(union_composition_test, rank_type)
     EXPECT_TRUE(expect1);
     EXPECT_TRUE(expect2);
     EXPECT_TRUE(expect3);
-}
-
-TEST(union_composition_test, from_and_to_rank)
-{
-    using alphabet_t = union_composition<dna4, dna5, gap>;
-    alphabet_t letter{};
-
-    EXPECT_EQ(letter.assign_rank(0).to_rank(), 0);
-    EXPECT_EQ(letter.assign_rank(1).to_rank(), 1);
-    EXPECT_EQ(letter.assign_rank(2).to_rank(), 2);
-    EXPECT_EQ(letter.assign_rank(3).to_rank(), 3);
-    EXPECT_EQ(letter.assign_rank(4).to_rank(), 4);
-    EXPECT_EQ(letter.assign_rank(5).to_rank(), 5);
-    EXPECT_EQ(letter.assign_rank(6).to_rank(), 6);
-    EXPECT_EQ(letter.assign_rank(7).to_rank(), 7);
-    EXPECT_EQ(letter.assign_rank(8).to_rank(), 8);
-    EXPECT_EQ(letter.assign_rank(9).to_rank(), 9);
-}
-
-TEST(union_composition_test, to_char)
-{
-    using alphabet_t = union_composition<dna4, dna5, gap>;
-    alphabet_t letter{};
-
-    EXPECT_EQ(letter.assign_rank(0).to_char(), 'A');
-    EXPECT_EQ(letter.assign_rank(1).to_char(), 'C');
-    EXPECT_EQ(letter.assign_rank(2).to_char(), 'G');
-    EXPECT_EQ(letter.assign_rank(3).to_char(), 'T');
-    EXPECT_EQ(letter.assign_rank(4).to_char(), 'A');
-    EXPECT_EQ(letter.assign_rank(5).to_char(), 'C');
-    EXPECT_EQ(letter.assign_rank(6).to_char(), 'G');
-    EXPECT_EQ(letter.assign_rank(7).to_char(), 'T');
-    EXPECT_EQ(letter.assign_rank(8).to_char(), 'N');
-    EXPECT_EQ(letter.assign_rank(9).to_char(), '-');
-
-//     EXPECT_EQ(letter.assign_rank(10).to_char(), static_cast<char>(0));
-}
-
-TEST(union_composition_test, relations)
-{
-    using alphabet_t = union_composition<dna4, dna5, gap>;
-    alphabet_t letter1{};
-    alphabet_t letter2{};
-
-    EXPECT_EQ(letter1.assign_rank(0), letter2.assign_rank(0));
-    EXPECT_EQ(letter1.assign_rank(5), letter2.assign_rank(5));
-    EXPECT_NE(letter1.assign_rank(1), letter2.assign_rank(5));
-    EXPECT_GT(letter1.assign_rank(2), letter2.assign_rank(1));
-    EXPECT_GE(letter1.assign_rank(2), letter2.assign_rank(1));
-    EXPECT_GE(letter1.assign_rank(2), letter2.assign_rank(2));
-    EXPECT_LT(letter1.assign_rank(1), letter2.assign_rank(2));
-    EXPECT_LE(letter1.assign_rank(1), letter2.assign_rank(2));
-    EXPECT_LE(letter1.assign_rank(2), letter2.assign_rank(2));
 }

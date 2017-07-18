@@ -50,4 +50,5 @@
 #include <seqan3/alphabet/nucleotide.hpp>
 #include <seqan3/alphabet/quality.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/composition/all.hpp>
