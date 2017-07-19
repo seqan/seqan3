@@ -34,9 +34,8 @@
 
 /*!\file
  * \ingroup nucleotide
- * \author David Heller <david.heller AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains seqan3::dna5, container aliases and string literals.
+ * \brief Contains seqan3::rna4, container aliases and string literals.
  */
 
 #pragma once
@@ -48,53 +47,49 @@
 
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 // ------------------------------------------------------------------
-// dna5
+// rna4
 // ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-/*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
+/*!\brief The four letter RNA alphabet of A,C,G,U.
  * \ingroup nucleotide
  *
  * \details
- * Note that you can assign 'U' as a character to dna5 and it will silently
- * be converted to 'T'.
+ * This alphabet inherits from seqan3::dna4 and is guaranteed to have the same internal representation of
+ * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You assign
+ * between values of seqan3::dna4 and seqan3::rna4.
  *
  *~~~~~~~~~~~~~~~{.cpp}
- *     dna5 my_letter{dna5::A};
+ *     rna4 my_letter{rna4::A};
  *     // doesn't work:
- *     // dna5 my_letter{'A'};
+ *     // rna4 my_letter{'A'};
  *
  *     my_letter.assign_char('C'); // <- this does!
  *
- *     my_letter.assign_char('F'); // converted to N internally
- *     if (my_letter.to_char() == 'N')
+ *     my_letter.assign_char('F'); // converted to A internally
+ *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
  *~~~~~~~~~~~~~~~
  */
 
-struct dna5
+struct rna4 : public dna4
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = uint8_t;
-
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
      * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
      */
     //!\{
-    static const dna5 A;
-    static const dna5 C;
-    static const dna5 G;
-    static const dna5 T;
-    static const dna5 N;
-    static const dna5 U;
-    static const dna5 UNKNOWN;
+    static const rna4 A;
+    static const rna4 C;
+    static const rna4 G;
+    static const rna4 U;
+    static const rna4 T;
+    static const rna4 UNKNOWN;
     //!\}
 
     /*!\name Read functions
@@ -105,35 +100,26 @@ struct dna5
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
-
-    //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
     //!\}
 
     /*!\name Write functions
      * \{
      */
     //!\brief Assign from a character.
-    constexpr dna5 & assign_char(char_type const c) noexcept
+    constexpr rna4 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
     //!\brief Assign from a numeric value.
-    constexpr dna5 & assign_rank(rank_type const c)
+    constexpr rna4 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
         _value = static_cast<internal_type>(c);
         return *this;
     }
     //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{5};
 
     /*!\name Conversion operators
      * \{
@@ -161,123 +147,40 @@ struct dna5
     }
     //!\}
 
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(dna5 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
-
-    constexpr bool operator!=(dna5 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(dna5 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(dna5 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(dna5 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(dna5 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
-    //!\}
-
-protected:
-    //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        A,
-        C,
-        G,
-        T,
-        N,
-        U = T,
-        UNKNOWN = N
-    };
-
+private:
     //!\brief Value to char conversion table.
     static constexpr char_type value_to_char[value_size]
     {
         'A',
         'C',
         'G',
-        'T',
-        'N'
+        'U'
     };
-
-    //!\brief Char to value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            using in_t = internal_type;
-            std::array<in_t, 256> ret{};
-
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = in_t::UNKNOWN;
-
-            // canonical
-            ret['A'] = in_t::A; ret['a'] = in_t::A;
-            ret['C'] = in_t::C; ret['c'] = in_t::C;
-            ret['G'] = in_t::G; ret['g'] = in_t::G;
-            ret['T'] = in_t::T; ret['t'] = in_t::T;
-            ret['U'] = in_t::U; ret['u'] = in_t::U;
-
-            // iupac characters are implicitly "UNKNOWN"
-            return ret;
-        }()
-    };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
 };
 
-constexpr dna5 dna5::A{internal_type::A};
-constexpr dna5 dna5::C{internal_type::C};
-constexpr dna5 dna5::G{internal_type::G};
-constexpr dna5 dna5::T{internal_type::T};
-constexpr dna5 dna5::N{internal_type::N};
-constexpr dna5 dna5::U{dna5::T};
-constexpr dna5 dna5::UNKNOWN{dna5::N};
+constexpr rna4 rna4::A{internal_type::A};
+constexpr rna4 rna4::C{internal_type::C};
+constexpr rna4 rna4::G{internal_type::G};
+constexpr rna4 rna4::U{internal_type::U};
+constexpr rna4 rna4::T{rna4::U};
+constexpr rna4 rna4::UNKNOWN{rna4::A};
 
 } // namespace seqan3
 
 namespace seqan3::detail
 {
 
-//!\brief seqan3::dna5 is defined as being a nucleotide alphabet.
+//!\brief seqan3::rna4 is defined as being a nucleotide alphabet.
 //!\ingroup nucleotide
 template <>
-struct is_nucleotide<dna5> : public std::true_type
+struct is_nucleotide<rna4> : public std::true_type
 {};
 
 } // namespace seqan3::detail
 
 #ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::dna5>);
-static_assert(seqan3::nucleotide_concept<seqan3::dna5>);
+static_assert(seqan3::alphabet_concept<seqan3::rna4>);
+static_assert(seqan3::nucleotide_concept<seqan3::rna4>);
 #endif
 
 // ------------------------------------------------------------------
@@ -287,21 +190,21 @@ static_assert(seqan3::nucleotide_concept<seqan3::dna5>);
 namespace seqan3
 {
 
-//!\brief Alias for an std::vector of seqan3::dna5.
-//!\relates dna5
-using dna5_vector = std::vector<dna5>;
+//!\brief Alias for an std::vector of seqan3::rna4.
+//!\relates rna4
+using rna4_vector = std::vector<rna4>;
 
 
-/*!\brief Alias for an std::basic_string of seqan3::dna5.
- * \relates dna5
+/*!\brief Alias for an std::basic_string of seqan3::rna4.
+ * \relates rna4
  *
  * \attention
- * Note that we recommend using seqan3::dna5_vector instead of dna5_string in almost all situations.
+ * Note that we recommend using seqan3::rna4_vector instead of rna4_string in almost all situations.
  * While the C++ style operations on the string are well supported, you should not access the internal c-string
  * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
  * correct length of the string (while the `.size()` returns the correct value).
  */
-using dna5_string = std::basic_string<dna5, std::char_traits<dna5>>;
+using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
 
 } // namespace seqan3
 
@@ -312,31 +215,31 @@ using dna5_string = std::basic_string<dna5, std::char_traits<dna5>>;
 namespace seqan3::literal
 {
 
-/*!\brief dna5 literal
- * \relates seqan3::dna5
- * \returns seqan3::dna5_vector
+/*!\brief rna4 literal
+ * \relates seqan3::rna4
+ * \returns seqan3::rna4_vector
  *
- * You can use this string literal to easily assign to dna5_vector:
+ * You can use this string literal to easily assign to rna4_vector:
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // dna5_vector foo{"ACGTTA"};
- *     // dna5_vector bar = "ACGTTA";
+ *     // rna4_vector foo{"ACGTTA"};
+ *     // rna4_vector bar = "ACGTTA";
  *
  *     // but these do:
  *     using namespace seqan3::literal;
- *     dna5_vector foo{"ACGTTA"_dna5};
- *     dna5_vector bar = "ACGTTA"_dna5;
- *     auto bax = "ACGTTA"_dna5;
+ *     rna4_vector foo{"ACGTTA"_rna4};
+ *     rna4_vector bar = "ACGTTA"_rna4;
+ *     auto bax = "ACGTTA"_rna4;
  *~~~~~~~~~~~~~~~
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
+inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
 {
-    dna5_vector r;
+    rna4_vector r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
@@ -345,33 +248,33 @@ inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
     return r;
 }
 
-/*!\brief dna5 string literal
- * \relates seqan3::dna5
- * \returns seqan3::dna5_string
+/*!\brief rna4 string literal
+ * \relates seqan3::rna4
+ * \returns seqan3::rna4_string
  *
- * You can use this string literal to easily assign to dna5_vector:
+ * You can use this string literal to easily assign to rna4_vector:
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // dna5_string foo{"ACGTTA"};
- *     // dna5_string bar = "ACGTTA";
+ *     // rna4_string foo{"ACGTTA"};
+ *     // rna4_string bar = "ACGTTA";
  *
  *     // but these do:
  *     using namespace seqan3::literal;
- *     dna5_string foo{"ACGTTA"_dna5s};
- *     dna5_string bar = "ACGTTA"_dna5s;
- *     auto bax = "ACGTTA"_dna5s;
+ *     rna4_string foo{"ACGTTA"_rna4s};
+ *     rna4_string bar = "ACGTTA"_rna4s;
+ *     auto bax = "ACGTTA"_rna4s;
  *~~~~~~~~~~~~~~~
  *
- * Please note the limitations of seqan3::dna5_string and consider using the \link operator""_dna5 \endlink instead.
+ * Please note the limitations of seqan3::rna4_string and consider using the \link operator""_rna4 \endlink instead.
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
+inline rna4_string operator "" _rna4s(const char * s, std::size_t n)
 {
-    dna5_string r;
+    rna4_string r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
