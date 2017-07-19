@@ -62,7 +62,7 @@ TEST(tokenization_test, write_container_to_container)
     std::string in{"hello world"};
 
     {  // standard iterator + output_iterator
-        write(begin(in), size(in), output_iterator(out));
+        write(begin(in), size(in), make_preferred_output_iterator(out));
         EXPECT_EQ(out, in);
     }
 
@@ -74,8 +74,8 @@ TEST(tokenization_test, write_container_to_container)
 
     {  // input_iterator + output_iterator
         out.clear();
-        auto rng = input_iterator(in);
-        write(std::get<0>(rng), size(in), output_iterator(out));
+        auto rng = make_preferred_input_iterator_range(in);
+        write(std::get<0>(rng), size(in), make_preferred_output_iterator(out));
         EXPECT_EQ(out, in);
     }
 
@@ -106,14 +106,14 @@ TEST(tokenization_test, write_container_to_stream)
 
     {  // standard iterator interface + output_iterator.
         std::ostringstream out{};
-        write(begin(in), size(in), output_iterator(out));
+        write(begin(in), size(in), make_preferred_output_iterator(out));
         EXPECT_EQ(out.str(), in);
     }
 
     {  // input_iterator interface + output_iterator.
         std::ostringstream out{};
-        auto rng = input_iterator(in);
-        write(std::get<0>(rng), size(in), output_iterator(out));
+        auto rng = make_preferred_input_iterator_range(in);
+        write(std::get<0>(rng), size(in), make_preferred_output_iterator(out));
         EXPECT_EQ(out.str(), in);
     }
 }
@@ -133,7 +133,7 @@ TEST(tokenization_test, write_stream_to_container)
     {  // input_iterator interface.
         std::istringstream in{"hello_world"};
         std::string out;
-        auto rng = input_iterator(in);
+        auto rng = make_preferred_input_iterator_range(in);
         write(std::get<0>(rng), 11, out);
         EXPECT_EQ(out, in.str());
     }
@@ -167,8 +167,8 @@ TEST(tokenization_test, write_stream_to_stream)
     {  // input_iterator interface.
         std::istringstream in{"hello_world"};
         std::ostringstream out;
-        auto rng = input_iterator(in);
-        write(std::get<0>(rng), 11, output_iterator(out));
+        auto rng = make_preferred_input_iterator_range(in);
+        write(std::get<0>(rng), 11, make_preferred_output_iterator(out));
         EXPECT_EQ(out.str(), in.str());
     }
 }
@@ -202,7 +202,7 @@ TEST(tokenization_test, do_get)
         std::ostringstream out;
 
         std::istream_iterator<char> it{in};
-        auto o_iter = output_iterator(out);
+        auto o_iter = make_preferred_output_iterator(out);
         do_get(it, std::istream_iterator<char>{}, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out.str(), "hell");
         do_get(it, std::istream_iterator<char>{}, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
@@ -212,7 +212,7 @@ TEST(tokenization_test, do_get)
     {  // container interface.
         std::string in{"hello_world"};
         std::ostringstream out;
-        auto o_iter = output_iterator(out);
+        auto o_iter = make_preferred_output_iterator(out);
         auto it = std::begin(in);
         do_get(it, std::end(in), o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out.str(), "hell");
@@ -229,8 +229,8 @@ TEST(tokenization_test, do_get_chunked)
         std::istringstream in{"hello_world"};
         std::string out;
 
-        auto [r_beg, r_end] = input_iterator(in);
-        auto o_iter = output_iterator(out);
+        auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
+        auto o_iter = make_preferred_output_iterator(out);
 
         do_get(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out, "hell");
@@ -241,8 +241,8 @@ TEST(tokenization_test, do_get_chunked)
     {  // container interface.
         std::string in{"hello_world"};
         std::string out;
-        auto o_iter = output_iterator(out);
-        auto [r_beg, r_end] = input_iterator(in);
+        auto o_iter = make_preferred_output_iterator(out);
+        auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
         do_get(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out, "hell");
         do_get(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
@@ -281,7 +281,7 @@ TEST(tokenization_test, do_ignore_chunked)
     {  // istream interface.
         std::istringstream in{"hello_world"};
 
-        auto [r_beg, r_end] = input_iterator(in);
+        auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
         do_ignore(r_beg, r_end, equals_char<'_'>{});
         EXPECT_EQ(*r_beg, '_');
         do_ignore(r_beg, r_end, equals_char<'d'>{});
@@ -291,7 +291,7 @@ TEST(tokenization_test, do_ignore_chunked)
     {  // container interface.
         std::string in{"hello_world"};
 
-        auto [r_beg, r_end] = input_iterator(in);
+        auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
         do_ignore(r_beg, r_end, equals_char<'_'>{});
         EXPECT_EQ(*r_beg, '_');
         do_ignore(r_beg, r_end, equals_char<'d'>{});
@@ -329,7 +329,7 @@ TEST(tokenization_test, ignore_chunked)
     {  // istream interface.
         std::istringstream in{"hello_world\n\rHello Berlin & Hello Seqan"};
 
-        auto [r_beg, r_end] = input_iterator(in);
+        auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
         ignore(r_beg, r_end);                         //ignore just one char
         EXPECT_EQ(*r_beg, 'e');
         ignore(r_beg, r_end, equals_char<'_'>{});     //ignore until '_'
@@ -347,7 +347,7 @@ TEST(tokenization_test, ignore_chunked)
     {  // container interface.
         std::string in{"hello_world\n\rHello Berlin & Hello Seqan"};
 
-        auto [r_beg, r_end] = input_iterator(in);
+        auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
         ignore(r_beg, r_end);                         //ignore just one char
         EXPECT_EQ(*r_beg, 'e');
         ignore(r_beg, r_end, equals_char<'_'>{});     //ignore until '_'

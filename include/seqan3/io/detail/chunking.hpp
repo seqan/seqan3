@@ -30,36 +30,9 @@
 //
 // ==========================================================================
 
-#include <meta/meta.hpp>
-#include <range/v3/utility/nullptr_v.hpp>
-
 #include <range/v3/iterator_range.hpp>
 
-#include <seqan3/core/meta.hpp>
-
 #pragma once
-
-// namespace seqan3::detail
-// {
-//
-// template <typename t>
-// ranges::v3::iterator_range<t, t>
-// chunk_type_helper(t *);
-//
-// template <typename t>
-// using chunk_type_ = meta::_t<decltype(detail::chunk_type_helper(ranges::v3::_nullptr_v<t>()))>;
-// }  // namespace seqan3::detail
-
-// namespace seqan3
-// {
-// // Metafunction chunk_type
-// template <typename t>
-// struct chunk_type : meta::defer<detail::chunk_type_, std::remove_cv_t<t>>
-// {};
-//
-// template <typename t>
-// using chunk_type_t = typename chunk_type<t>::type;
-// }  // namespace seqan3
 
 namespace seqan3::detail
 {
@@ -114,41 +87,4 @@ public:
     }
 };
 
-template <typename t>
-using chunk_type_ = decltype(std::declval<t>().get_chunk());
-
 }  // namespace seqan3::detail
-
-namespace seqan3
-{
-
-// Metafunction chunk_type
-template <typename t>
-struct chunk_type : meta::defer<detail::chunk_type_, std::remove_cv_t<t>>
-{};
-
-template <typename t>
-using chunk_type_t = typename chunk_type<t>::type;
-
-// Global function wrappers.
-template <typename object_t>
-inline auto
-get_chunk(object_t const & obj)
-{
-    return obj.get_chunk();
-}
-
-template <typename object_t, typename off_t>
-inline void
-advance_chunk(object_t & obj, off_t const offset)
-{
-    obj.advance_chunk(offset);
-}
-
-template <typename object_t, typename integral_t>
-inline void
-next_chunk(object_t & obj, integral_t const offset)
-{
-    obj.next_chunk(offset);
-}
-}

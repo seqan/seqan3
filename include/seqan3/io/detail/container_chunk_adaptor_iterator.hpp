@@ -32,23 +32,26 @@
 //
 // ==========================================================================
 
+#pragma once
+
 #include <iterator>
 #include <type_traits>
 
 #include <range/v3/utility/iterator.hpp>
 
+#include <seqan3/core/concept/iterator.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/core/meta/associated_types.hpp>
+#include <seqan3/range/concept.hpp>
+
 #include <seqan3/io/detail/chunking.hpp>
 
 namespace seqan3::detail
 {
 
 template <typename container_t>
-class chunk_iterator_container_adaptor
+class chunk_adaptor_iterator_base
 {
 public:
-    // TODO(rrahn): make to global meta_function
     using difference_type   = typename container_t::difference_type; // -> global meta-functions.
     using value_type        = typename container_t::value_type; // -> global meta-function.
     using reference         = typename container_t::reference;  // -> global meta-function.
@@ -57,12 +60,14 @@ public:
 
 protected:
 
-    using iterator_t = iterator_type_t<container_t>;  // global meta-function.
+    using iterator_t = std::conditional_t<std::is_const_v<container_t>,
+                                          typename container_t::const_iterator,
+                                          typename container_t::iterator>;
 
-    chunk_iterator_container_adaptor() = default;
+    chunk_adaptor_iterator_base() = default;
 
     // custom constructor.
-    chunk_iterator_container_adaptor(container_t & c, bool _to_end = false) :
+    chunk_adaptor_iterator_base(container_t & c, bool _to_end = false) :
         chunk_b(begin(c)),
         chunk_c(begin(c)),
         chunk_e(end(c)),
@@ -72,13 +77,13 @@ protected:
             chunk_c = chunk_e;
     }
 
-    chunk_iterator_container_adaptor(chunk_iterator_container_adaptor const & /*other*/) = default;
-    chunk_iterator_container_adaptor(chunk_iterator_container_adaptor && /*other*/) = default;
+    chunk_adaptor_iterator_base(chunk_adaptor_iterator_base const & /*other*/) = default;
+    chunk_adaptor_iterator_base(chunk_adaptor_iterator_base && /*other*/) = default;
 
-    chunk_iterator_container_adaptor & operator=(chunk_iterator_container_adaptor const & /*other*/) = default;
-    chunk_iterator_container_adaptor & operator=(chunk_iterator_container_adaptor && /*other*/) = default;
+    chunk_adaptor_iterator_base & operator=(chunk_adaptor_iterator_base const & /*other*/) = default;
+    chunk_adaptor_iterator_base & operator=(chunk_adaptor_iterator_base && /*other*/) = default;
 
-    ~chunk_iterator_container_adaptor() = default;
+    ~chunk_adaptor_iterator_base() = default;
 
     iterator_t chunk_b{};
     iterator_t chunk_c{};
@@ -114,65 +119,64 @@ protected:
 };
 
 template <typename container_t>
-//   requires resizable_container_concept<container_t>
-class chunk_input_iterator : public chunk_iterator_container_adaptor<container_t>,
-                             public chunk_decorator<chunk_input_iterator<container_t>>
+    requires input_range_concept<container_t>
+class input_chunk_adaptor_iterator : public chunk_adaptor_iterator_base<container_t>,
+                             public chunk_decorator<input_chunk_adaptor_iterator<container_t>>
 {
-    friend class chunk_decorator<chunk_input_iterator<container_t>>;
+    friend class chunk_decorator<input_chunk_adaptor_iterator<container_t>>;
 
-    using base_iter_t = chunk_iterator_container_adaptor<container_t>;
-    using chunk_t     = chunk_decorator<chunk_input_iterator>;
+    using base_iter_t = chunk_adaptor_iterator_base<container_t>;
+    using chunk_t     = chunk_decorator<input_chunk_adaptor_iterator>;
 
 public:
 
-    // using base_iter_t::value_type;
-    // using base_iter_t::difference_type;
-    // using base_iter_t::reference;
-    // using base_iter_t::const_reference;
-    // using base_iter_t::pointer;
     using iterator_category = std::input_iterator_tag;
 
-    chunk_input_iterator() = default;
+    input_chunk_adaptor_iterator() = default;
 
     // custom iterator.
-    chunk_input_iterator(container_t & c, bool _to_end = false) :
+    input_chunk_adaptor_iterator(container_t & c, bool _to_end = false) :
         base_iter_t(c, _to_end)
     {}
 
-    chunk_input_iterator(chunk_input_iterator const & /*other*/) = default;
-    chunk_input_iterator(chunk_input_iterator && /*other*/) = default;
+    input_chunk_adaptor_iterator(input_chunk_adaptor_iterator const & /*other*/) = default;
+    input_chunk_adaptor_iterator(input_chunk_adaptor_iterator && /*other*/) = default;
 
-    chunk_input_iterator & operator=(chunk_input_iterator const & /*other*/) = default;
-    chunk_input_iterator & operator=(chunk_input_iterator && /*other*/) = default;
+    input_chunk_adaptor_iterator & operator=(input_chunk_adaptor_iterator const & /*other*/) = default;
+    input_chunk_adaptor_iterator & operator=(input_chunk_adaptor_iterator && /*other*/) = default;
 
-    ~chunk_input_iterator() = default;
+    ~input_chunk_adaptor_iterator() = default;
 
     typename base_iter_t::const_reference operator*() const
     {
         return *this->chunk_c;
     }
 
-    chunk_input_iterator & operator++(/*pre*/)
+    input_chunk_adaptor_iterator & operator++(/*pre*/)
     {
         ++this->chunk_c;
         return *this;
     }
 
-    chunk_input_iterator operator++(int /*post*/)
+    input_chunk_adaptor_iterator operator++(int /*post*/)
     {
         auto tmp{*this};
         ++(*this);
         return tmp;
     }
 
-    inline bool
-    _equal(chunk_input_iterator const & other) const
+    inline bool operator==(input_chunk_adaptor_iterator const & rhs) const
     {
-        return this->chunk_c == other.chunk_c;
+        return this->chunk_c == rhs.chunk_c;
+    }
+
+    inline bool operator!=(input_chunk_adaptor_iterator const & rhs) const
+    {
+        return !(*this == rhs) ;
     }
 
 private:
-    // strong exception guarantee
+
     template <typename integral_t>
     inline void
     next_chunk_impl(integral_t const /*chunk_size*/)
@@ -180,58 +184,36 @@ private:
 };
 
 template <typename container_t>
-inline bool
-operator==(chunk_input_iterator<container_t> const & lhs,
-           chunk_input_iterator<container_t> const & rhs)
+    requires random_access_sequence_concept<container_t>
+class output_chunk_adaptor_iterator : public chunk_adaptor_iterator_base<container_t>,
+                              public chunk_decorator<output_chunk_adaptor_iterator<container_t>>
 {
-    return lhs._equal(rhs);
-}
-
-template <typename container_t>
-inline bool
-operator!=(chunk_input_iterator<container_t> const & lhs,
-           chunk_input_iterator<container_t> const & rhs)
-{
-    return !lhs._equal(rhs);
-}
-
-template <typename container_t>
-//   requires resizable_container_concept<container_t>
-class chunk_output_iterator : public chunk_iterator_container_adaptor<container_t>,
-                              public chunk_decorator<chunk_output_iterator<container_t>>
-{
-    friend class chunk_decorator<chunk_output_iterator<container_t>>;
-    using base_iter_t = chunk_iterator_container_adaptor<container_t>;
-    using chunk_t = chunk_decorator<chunk_output_iterator>;
+    friend class chunk_decorator<output_chunk_adaptor_iterator<container_t>>;
+    using base_iter_t = chunk_adaptor_iterator_base<container_t>;
+    using chunk_t = chunk_decorator<output_chunk_adaptor_iterator>;
 
 public:
 
-    // using base_iter_t::value_type;
-    // using base_iter_t::difference_type;
-    // using base_iter_t::reference;
-    // using base_iter_t::const_reference;
-    // using base_iter_t::pointer;
     using iterator_category = std::output_iterator_tag;
 
-    chunk_output_iterator() = default;
+    output_chunk_adaptor_iterator() = default;
 
     // custom iterator.
-    explicit chunk_output_iterator(container_t & c) :
+    explicit output_chunk_adaptor_iterator(container_t & c) :
         base_iter_t(c, true)
     {}
 
-    chunk_output_iterator(chunk_output_iterator const & /*other*/) = default;
-    chunk_output_iterator(chunk_output_iterator && /*other*/) = default;
+    output_chunk_adaptor_iterator(output_chunk_adaptor_iterator const & /*other*/) = default;
+    output_chunk_adaptor_iterator(output_chunk_adaptor_iterator && /*other*/) = default;
 
-    chunk_output_iterator & operator=(chunk_output_iterator const & /*other*/) = default;
-    chunk_output_iterator & operator=(chunk_output_iterator && /*other*/) = default;
+    output_chunk_adaptor_iterator & operator=(output_chunk_adaptor_iterator const & /*other*/) = default;
+    output_chunk_adaptor_iterator & operator=(output_chunk_adaptor_iterator && /*other*/) = default;
 
-    ~chunk_output_iterator() = default;
+    ~output_chunk_adaptor_iterator() = default;
 
     // operator= implementation.
     template <typename value_t>
-//        requires std::is_convertible_to_concept<value_type, value_t>
-    chunk_output_iterator & operator=(value_t const & val)
+    output_chunk_adaptor_iterator & operator=(value_t const & val)
     {
         if (this->chunk_c == this->chunk_e)  // appends one value.
         {
@@ -243,23 +225,37 @@ public:
     }
 
     // operator implementation.
-    chunk_output_iterator & operator*()
+    output_chunk_adaptor_iterator & operator*()
     {
         return *this;
     }
 
-    chunk_output_iterator & operator++(/*pre*/)
+    output_chunk_adaptor_iterator & operator++(/*pre*/)
     {
         return *this;
     }
 
-    chunk_output_iterator operator++(int /*post*/)
+    output_chunk_adaptor_iterator operator++(int /*post*/)
     {
         return *this;
+    }
+
+    template <typename rhs_iterator>
+    inline bool operator==(rhs_iterator const & rhs)
+        requires sentinel_concept<rhs_iterator, output_chunk_adaptor_iterator>
+    {
+        return this->chunk_c == rhs.chunk_c;
+    }
+
+    template <typename rhs_iterator>
+    inline bool operator!=(rhs_iterator const & rhs)
+        requires sentinel_concept<rhs_iterator, output_chunk_adaptor_iterator>
+    {
+        return !(*this == rhs) ;
     }
 
 private:
-    // strong exception guarantee
+
     template <typename integral_t>
     inline void
     next_chunk_impl(integral_t const chunk_size)
@@ -277,49 +273,27 @@ private:
     }
 
     inline void
-    trim_trailing_impl() noexcept
+    trim_trailing_impl()
     {
         this->cont_ptr->resize(this->chunk_c - this->chunk_b);
         this->chunk_e = std::end(*this->cont_ptr);
     }
 };
 
-// Returns input itertor pointing to begin of container.
 template <typename container_t>
-//    requires container_concept<container_t>
 inline auto
-input_iterator(container_t & c)
+make_preferred_input_iterator_range(container_t & c)
+    requires input_range_concept<std::decay_t<container_t>>
 {
-    return std::tuple{chunk_input_iterator{c}, chunk_input_iterator{c, true}};
+    return std::tuple{input_chunk_adaptor_iterator{c}, input_chunk_adaptor_iterator{c, true}};
 }
 
-// What would be the output semantic? -> Appending to the container.
-// What if we have a source buffer *? -> Start at the beginning of that pointer.
-// Returns back_insert iterator for containers supporting *.push_back().
 template <typename container_t>
-//    requires sequence_concept<container_t>
 inline auto
-output_iterator(container_t & c)
+make_preferred_output_iterator(container_t & c)
+    requires random_access_sequence_concept<std::decay_t<container_t>>
 {
-    return chunk_output_iterator{c};
+    return output_chunk_adaptor_iterator{c};
 }
 
 } //namespace seqan3::detail
-
-namespace std
-{
-
-}
-
-#ifdef NDEBUG
-
-#include <string>
-
-namespace seqan3::detail
-{
-
-// static_assert(std::is_same_v<value_type_t<chunk_input_iterator<std::string>>, char>);
-
-}  // namespace seqan3::detail
-
-#endif

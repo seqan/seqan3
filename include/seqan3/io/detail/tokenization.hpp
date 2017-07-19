@@ -35,16 +35,6 @@
 // Author: Rene Rahn <rene.rahn AT fu-berlin.de>
 // ==========================================================================
 
-/*
-    Requirements
-    work on forward_iterator concept
-    direction_iterator over the stream_iterator
-    stream_iterator can redirect to underlying buffer
-    chunked i/o
-
-    read_until(fwd_iter, ignore_f, stop_f)
-*/
-
 #pragma once
 
 #include <cctype>
@@ -54,13 +44,14 @@
 #include <stdexcept>
 #include <algorithm>
 
+#include <range/v3/utility/iterator_traits.hpp>
+
 #include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/concept/iterator.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/core/meta/associated_types.hpp>
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/io/detail/direction_iterator.hpp>
+#include <seqan3/io/detail/container_chunk_adaptor_iterator.hpp>
 #include <seqan3/io/detail/stream_iterator.hpp>
 
 namespace seqan3::detail
@@ -377,7 +368,7 @@ write(input_t && i_iter,
       integral_t const n,
       output_t && o_iter)
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>>
+             output_iterator_concept<std::remove_reference_t<output_t>, ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     std::copy_n(std::forward<input_t>(i_iter), n, std::forward<output_t>(o_iter));
 }
@@ -397,10 +388,10 @@ write(input_t && i_iter,
       output_t && o_iter)
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
-             output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
+             output_iterator_concept<std::remove_reference_t<output_t>, ranges::value_type_t<std::remove_reference_t<input_t>>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>>
 {
-    using target_size_type = size_type_t<output_t>;
+    using target_size_type = ranges::size_type_t<output_t>;
 
     using std::size;
     using std::begin;
@@ -450,7 +441,7 @@ write(input_t && i_iter,
              std::is_pointer_v<std::remove_reference_t<output_t>>
 {
     // we need the size type of an iterator?
-    using source_size_t = size_type_t<input_t>;
+    using source_size_t = ranges::size_type_t<input_t>;
 
     using std::size;
     using std::begin;
@@ -490,10 +481,10 @@ write(input_t && i_ptr,
       integral_t n,
       output_t && o_iter)
     requires std::is_pointer_v<std::remove_reference_t<input_t>> &&
-             output_iterator_concept<std::remove_reference_t<output_t>, value_type_t<std::remove_reference_t<input_t>>> &&
+             output_iterator_concept<std::remove_reference_t<output_t>, ranges::value_type_t<std::remove_reference_t<input_t>>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>>
 {
-    using output_size_t = size_type_t<output_t>;
+    using output_size_t = ranges::size_type_t<output_t>;
 
     while (n != static_cast<integral_t>(0))
     {
@@ -573,9 +564,9 @@ write(input_t && input,
       target_t & output)
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              !iterator_concept<target_t> &&
-             assignable_concept<value_type_t<target_t> &, value_type_t<std::remove_reference_t<input_t>>>
+             assignable_concept<ranges::value_type_t<target_t> &, ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
-    write(std::forward<input_t>(input), n, output_iterator(output));
+    write(std::forward<input_t>(input), n, make_preferred_output_iterator(output));
 }
 
 // ----------------------------------------------------------------------------
@@ -587,10 +578,10 @@ inline void
 write(container_t const & input,
       target_t & output)
     requires sized_range_concept<container_t> &&
-             assignable_concept<value_type_t<target_t>&, value_type_t<container_t>>
+             assignable_concept<ranges::value_type_t<target_t>&, ranges::value_type_t<container_t>>
 {
     using std::size;
-    auto rng = input_iterator(input);
+    auto rng = make_preferred_input_iterator_range(input);
     write(std::get<0>(rng), size(input), output);
 }
 
@@ -610,13 +601,13 @@ do_get(input_t && i_iter,
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
              output_iterator_concept<std::remove_reference_t<output_t>,
-                                     value_type_t<std::remove_reference_t<input_t>>> &&
+                                     ranges::value_type_t<std::remove_reference_t<input_t>>> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>> &&
+                               ranges::value_type_t<std::remove_reference_t<input_t>>> &&
              predicate_concept<std::remove_reference_t<ignore_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
-    using value_type = value_type_t<std::remove_reference_t<input_t>>;
+    using value_type = ranges::value_type_t<std::remove_reference_t<input_t>>;
     typename std::remove_const<value_type>::type val;
     for (; i_iter != i_sentinel; ++i_iter)
     {
@@ -645,12 +636,12 @@ do_get(input_t && i_iter,
              sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
              output_iterator_concept<std::remove_reference_t<output_t>,
-                                     value_type_t<std::remove_reference_t<input_t>>> &&
+                                     ranges::value_type_t<std::remove_reference_t<input_t>>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>> &&
+                               ranges::value_type_t<std::remove_reference_t<input_t>>> &&
              predicate_concept<std::remove_reference_t<ignore_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     using ranges::v3::begin;
     using ranges::v3::end;
@@ -712,11 +703,11 @@ get(input_t && i_iter,
 requires input_iterator_concept<std::remove_reference_t<input_t>> &&
          sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
          output_iterator_concept<std::remove_reference_t<output_t>,
-                                 value_type_t<std::remove_reference_t<input_t>>> &&
+                                 ranges::value_type_t<std::remove_reference_t<input_t>>> &&
          predicate_concept<std::remove_reference_t<stop_predicate_t>,
-                           value_type_t<std::remove_reference_t<input_t>>> &&
+                           ranges::value_type_t<std::remove_reference_t<input_t>>> &&
          predicate_concept<std::remove_reference_t<ignore_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     do_get(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
 }
@@ -737,10 +728,10 @@ get_n(input_t && i_iter,
  requires input_iterator_concept<std::remove_reference_t<input_t>> &&
           sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
           output_iterator_concept<std::remove_reference_t<output_t>,
-                                  value_type_t<std::remove_reference_t<input_t>>> &&
+                                  ranges::value_type_t<std::remove_reference_t<input_t>>> &&
           integral_concept<integral_t> &&
           predicate_concept<std::remove_reference_t<ignore_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     auto stop_func = [n](auto const &) mutable {return n-- == 0; };
     get(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
@@ -763,11 +754,11 @@ get_line(input_t && i_iter,
 requires input_iterator_concept<std::remove_reference_t<input_t>> &&
          sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
          output_iterator_concept<std::remove_reference_t<output_t>,
-                                 value_type_t<std::remove_reference_t<input_t>>> &&
+                                 ranges::value_type_t<std::remove_reference_t<input_t>>> &&
          predicate_concept<std::remove_reference_t<stop_predicate_t>,
-                           value_type_t<std::remove_reference_t<input_t>>> &&
+                           ranges::value_type_t<std::remove_reference_t<input_t>>> &&
          predicate_concept<std::remove_reference_t<ignore_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     get(i_iter, i_sentinel, o_iter, is_newline(), ignore_func);
     ignore(i_iter, i_sentinel, not_functor<is_newline>());          // move on to the next line
@@ -785,7 +776,7 @@ get (input_t && i_iter,
  requires input_iterator_concept<std::remove_reference_t<input_t>> &&
           sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
           output_iterator_concept<std::remove_reference_t<output_t>,
-                                  value_type_t<std::remove_reference_t<input_t>>>
+                                  ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     get_n(i_iter, i_sentinel, o_iter);
 }
@@ -799,7 +790,6 @@ template <typename input_t, typename value_t>
 inline void
 read_raw_pod(input_t & i_iter, value_t && value)
 {
-    // TODO(rrahn): need a back_insert_iterator adaptor for c-style array.
     write(i_iter, static_cast<char*>(&value), sizeof(value_t));
 }
 
@@ -816,7 +806,7 @@ do_ignore(input_t && i_iter,
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     for (; i_iter != i_sentinel; ++i_iter)
     {
@@ -839,7 +829,7 @@ do_ignore(input_t && i_iter,
              sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
              std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     using ranges::v3::begin;
     using ranges::v3::end;
@@ -874,7 +864,7 @@ ignore(input_t && i_iter,
     requires input_iterator_concept<std::remove_reference_t<input_t>> &&
              sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
-                               value_type_t<std::remove_reference_t<input_t>>>
+                               ranges::value_type_t<std::remove_reference_t<input_t>>>
 {
     do_ignore(i_iter, i_sentinel, stop_func);
 }

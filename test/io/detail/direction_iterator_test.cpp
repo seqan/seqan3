@@ -40,46 +40,46 @@
 #include <vector>
 #include <numeric>
 
-#include <seqan3/io/detail/direction_iterator.hpp>
+#include <seqan3/io/detail/container_chunk_adaptor_iterator.hpp>
 
 using namespace seqan3;
 
 // What we actually want is a direction_iterator over stl containers and
 // And we want to make them applicable to streams
-TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_construction)
+TEST(direction_iterator_test, input_chunk_adaptor_iterator_construction)
 {
     using namespace seqan3::detail;
 
     std::vector<int> in{1, 2, 3, 4, 5, 6};
 
-    chunk_input_iterator it{in};
-    chunk_input_iterator it_2{in, true};
+    input_chunk_adaptor_iterator it{in};
+    input_chunk_adaptor_iterator it_2{in, true};
 
     EXPECT_EQ(*it, in[0]);
     EXPECT_NE(it, it_2);
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_dereference)
+TEST(direction_iterator_test, input_chunk_adaptor_iterator_dereference)
 {
     using namespace seqan3::detail;
 
     std::vector<int> in{1, 2, 3, 4, 5, 6};
 
-    chunk_input_iterator it{in};
-    chunk_input_iterator const it_c{it};
+    input_chunk_adaptor_iterator it{in};
+    input_chunk_adaptor_iterator const it_c{it};
 
     EXPECT_EQ(*it, 1);
     EXPECT_EQ(*it_c, 1);
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_increment)
+TEST(direction_iterator_test, input_chunk_adaptor_iterator_increment)
 {
     using namespace seqan3::detail;
 
     std::vector<int> in{1, 2, 3, 4, 5, 6};
 
-    chunk_input_iterator it{in};
-    chunk_input_iterator const it_c{it};
+    input_chunk_adaptor_iterator it{in};
+    input_chunk_adaptor_iterator const it_c{it};
 
     ++it;
     EXPECT_EQ(*it++, in[1]);
@@ -88,14 +88,14 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_incre
     EXPECT_EQ(*it_c, *it);
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_get_chunk)
+TEST(direction_iterator_test, input_chunk_adaptor_iterator_get_chunk)
 {
     using namespace seqan3::detail;
 
     std::vector<int> in{1, 2, 3, 4, 5, 6};
 
-    chunk_input_iterator it{in};
-    chunk_input_iterator const it_c{it};
+    input_chunk_adaptor_iterator it{in};
+    input_chunk_adaptor_iterator const it_c{it};
 
     auto rng = it.get_chunk();
     auto crng = it_c.get_chunk();
@@ -105,13 +105,13 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_get_c
     EXPECT_EQ(crng.end(), std::cend(in));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_next_chunk)
+TEST(direction_iterator_test, input_chunk_adaptor_iterator_next_chunk)
 {
     using namespace seqan3::detail;
 
     std::vector<int> in{1, 2, 3, 4, 5, 6};
 
-    chunk_input_iterator it{in};
+    input_chunk_adaptor_iterator it{in};
 
     it.next_chunk(6);
     auto rng = it.get_chunk();
@@ -120,13 +120,13 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_next_
     EXPECT_EQ(rng.end(), std::end(in));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_advance_chunk)
+TEST(direction_iterator_test, input_chunk_adaptor_iterator_advance_chunk)
 {
     using namespace seqan3::detail;
 
     std::vector<int> in{1, 2, 3, 4, 5, 6};
 
-    chunk_input_iterator it{in};
+    input_chunk_adaptor_iterator it{in};
 
     it.advance_chunk(3);
 
@@ -136,57 +136,57 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_input_iterator_advan
     EXPECT_EQ(rng.end(), std::end(in));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_construction)
+TEST(direction_iterator_test, output_chunk_adaptor_iterator_construction)
 {
     using namespace seqan3::detail;
 
     std::vector<int> out{1, 2, 3, 4, 5, 6};
 
-    EXPECT_NO_THROW(chunk_output_iterator{out});
+    EXPECT_NO_THROW(output_chunk_adaptor_iterator{out});
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_increment)
+TEST(direction_iterator_test, output_chunk_adaptor_iterator_increment)
 {
     using namespace seqan3::detail;
 
     std::vector<int> out{1, 2, 3, 4, 5, 6};
 
-    chunk_output_iterator it{out};
+    output_chunk_adaptor_iterator it{out};
 
-    EXPECT_TRUE((std::is_same_v<decltype(++it), chunk_output_iterator<std::vector<int>>&>));
-    EXPECT_TRUE((std::is_same_v<decltype(it++), chunk_output_iterator<std::vector<int>>>));
+    EXPECT_TRUE((std::is_same_v<decltype(++it), output_chunk_adaptor_iterator<std::vector<int>>&>));
+    EXPECT_TRUE((std::is_same_v<decltype(it++), output_chunk_adaptor_iterator<std::vector<int>>>));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_dereference)
+TEST(direction_iterator_test, output_chunk_adaptor_iterator_dereference)
 {
     using namespace seqan3::detail;
 
     std::vector<int> out{1, 2, 3, 4, 5, 6};
 
-    chunk_output_iterator it{out};
+    output_chunk_adaptor_iterator it{out};
 
-    EXPECT_TRUE((std::is_same_v<decltype(*it), chunk_output_iterator<std::vector<int>>&>));
+    EXPECT_TRUE((std::is_same_v<decltype(*it), output_chunk_adaptor_iterator<std::vector<int>>&>));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_assign)
+TEST(direction_iterator_test, output_chunk_adaptor_iterator_assign)
 {
     using namespace seqan3::detail;
 
     std::vector<int> out{1, 2, 3, 4, 5, 6};
 
-    chunk_output_iterator it{out};
+    output_chunk_adaptor_iterator it{out};
     *it = 7;
 
     EXPECT_EQ(out[6], 7);
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_next_chunk)
+TEST(direction_iterator_test, output_chunk_adaptor_iterator_next_chunk)
 {
     using namespace seqan3::detail;
 
     std::vector<int> out{1, 2, 3, 4, 5, 6};
 
-    chunk_output_iterator it{out};
+    output_chunk_adaptor_iterator it{out};
 
     it.next_chunk(6);
 
@@ -194,13 +194,13 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_next
     EXPECT_EQ(out[6], 0);
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_get_chunk)
+TEST(direction_iterator_test, output_chunk_adaptor_iterator_get_chunk)
 {
     using namespace seqan3::detail;
 
     std::vector<int> out{1, 2, 3, 4, 5, 6};
 
-    chunk_output_iterator it{out};
+    output_chunk_adaptor_iterator it{out};
 
     auto rng = it.get_chunk();
     EXPECT_EQ(rng.begin(), rng.end());
@@ -227,13 +227,13 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_get_
     EXPECT_EQ(rng.end(), std::end(out));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_advance_chunk)
+TEST(direction_iterator_test, output_chunk_adaptor_iterator_advance_chunk)
 {
     using namespace seqan3::detail;
 
     std::vector<int> out{1, 2, 3, 4, 5, 6};
 
-    chunk_output_iterator it{out};
+    output_chunk_adaptor_iterator it{out};
 
     it.next_chunk(6);
 
@@ -246,24 +246,24 @@ TEST(direction_iterator_test, test_direction_iterator_chunk_output_iterator_adva
     EXPECT_EQ(rng.end(), std::end(out));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_input_iterator_vector)
+TEST(direction_iterator_test, make_preferred_input_iterator_range_vector)
 {
     using namespace seqan3::detail;
 
     std::vector<char> in{'a', 'c', 'g'};
-    auto [r_beg, r_end] = input_iterator(in);
+    auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
     EXPECT_EQ(*r_beg, 'a');
     EXPECT_NE(r_beg, r_end);
-    EXPECT_EQ(r_end, (chunk_input_iterator{in, true}));
+    EXPECT_EQ(r_end, (input_chunk_adaptor_iterator{in, true}));
 }
 
-TEST(direction_iterator_test, test_direction_iterator_output_iterator_vector)
+TEST(direction_iterator_test, make_preferred_output_iterator_vector)
 {
     using namespace seqan3::detail;
 
     std::vector<char> out{'a', 'c', 'g'};
 
-    *output_iterator(out) = 't';
+    *make_preferred_output_iterator(out) = 't';
     EXPECT_EQ(out[3], 't');
     EXPECT_EQ(out.size(), 4u);
 }

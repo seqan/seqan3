@@ -113,35 +113,35 @@ using namespace seqan3;
 
 // What we actually want is a direction_iterator over stl containers and
 // And we want to make them applicable to streams
-TEST(stream_iterator, chunk_istream_iterator_construction)
+TEST(stream_iterator, istream_chunk_adaptor_iterator_construction)
 {
     using namespace seqan3::detail;
 
     std::stringstream in{"acg"};
 
-    EXPECT_NO_THROW(chunk_istream_iterator<std::stringstream>{in});
-    EXPECT_NO_THROW(chunk_istream_iterator<std::stringstream>{in.rdbuf()});
-    EXPECT_NO_THROW(chunk_istream_iterator<std::stringstream>{});
+    EXPECT_NO_THROW(istream_chunk_adaptor_iterator<std::stringstream>{in});
+    EXPECT_NO_THROW(istream_chunk_adaptor_iterator<std::stringstream>{in.rdbuf()});
+    EXPECT_NO_THROW(istream_chunk_adaptor_iterator<std::stringstream>{});
 }
 
-TEST(stream_iterator, chunk_istream_iterator_dereference)
+TEST(stream_iterator, istream_chunk_adaptor_iterator_dereference)
 {
     using namespace seqan3::detail;
 
     std::stringstream in{"acgtgatagctacgacgatcg"};
 
-    chunk_istream_iterator<std::stringstream> it{in};
+    istream_chunk_adaptor_iterator<std::stringstream> it{in};
 
     EXPECT_EQ(*it, 'a');
 }
 
-TEST(stream_iterator, chunk_istream_iterator_increment)
+TEST(stream_iterator, istream_chunk_adaptor_iterator_increment)
 {
     using namespace seqan3::detail;
 
     std::stringstream in{"acgtgatagctacgacgatcg"};
 
-    chunk_istream_iterator<std::stringstream> it{in};
+    istream_chunk_adaptor_iterator<std::stringstream> it{in};
 
     ++it;
     EXPECT_EQ(*it, 'c');
@@ -149,7 +149,7 @@ TEST(stream_iterator, chunk_istream_iterator_increment)
     EXPECT_EQ(*it, 'g');
 }
 
-TEST(stream_iterator, chunk_istream_iterator_get_chunk)
+TEST(stream_iterator, istream_chunk_adaptor_iterator_get_chunk)
 {
     using namespace seqan3::detail;
 
@@ -157,7 +157,7 @@ TEST(stream_iterator, chunk_istream_iterator_get_chunk)
         std::string in{"acgtgatagctacgacgatcg"};
         test_stream_iterator::small_stream_buffer buf(in.data(), in.data() + in.size());
 
-        chunk_istream_iterator<std::iostream> it{&buf};
+        istream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
         auto rng = it.get_chunk();
 
@@ -169,7 +169,7 @@ TEST(stream_iterator, chunk_istream_iterator_get_chunk)
     {  // empty stream
         std::stringstream in{""};
 
-        chunk_istream_iterator<std::stringstream> it{in};
+        istream_chunk_adaptor_iterator<std::stringstream> it{in};
 
         auto rng = it.get_chunk();
 
@@ -178,14 +178,14 @@ TEST(stream_iterator, chunk_istream_iterator_get_chunk)
     }
 }
 
-TEST(stream_iterator, chunk_istream_iterator_next_chunk)
+TEST(stream_iterator, istream_chunk_adaptor_iterator_next_chunk)
 {
     using namespace seqan3::detail;
 
     {  // empty stream
         std::stringstream in{""};
 
-        chunk_istream_iterator<std::stringstream> it{in};
+        istream_chunk_adaptor_iterator<std::stringstream> it{in};
 
         it.next_chunk();
         auto rng = it.get_chunk();
@@ -198,7 +198,7 @@ TEST(stream_iterator, chunk_istream_iterator_next_chunk)
         std::string in{"acgtgata"};
         test_stream_iterator::small_stream_buffer buf(in.data(), in.data() + in.size());
 
-        chunk_istream_iterator<std::iostream> it{&buf};
+        istream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
         // Is not doing anything, because we are not at the end of the stream.
         it.next_chunk();
@@ -224,7 +224,7 @@ TEST(stream_iterator, chunk_istream_iterator_next_chunk)
     }
 }
 
-TEST(stream_iterator, chunk_istream_iterator_advance_chunk)
+TEST(stream_iterator, istream_chunk_adaptor_iterator_advance_chunk)
 {
     using namespace seqan3::detail;
 
@@ -233,7 +233,7 @@ TEST(stream_iterator, chunk_istream_iterator_advance_chunk)
     std::string in{"acgtgata"};
     test_stream_iterator::small_stream_buffer buf(in.data(), in.data() + in.size());
 
-    chunk_istream_iterator<std::iostream> it{&buf};
+    istream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
     it.advance_chunk(2);
     auto rng = it.get_chunk();
@@ -250,54 +250,54 @@ TEST(stream_iterator, chunk_istream_iterator_advance_chunk)
     EXPECT_EQ(rng.end() - rng.begin(), 2);
 }
 
-TEST(stream_iterator, chunk_ostream_iterator_construction)
+TEST(stream_iterator, ostream_chunk_adaptor_iterator_construction)
 {
     using namespace seqan3::detail;
 
     std::ostringstream out{};
 
-    EXPECT_NO_THROW(chunk_ostream_iterator<std::ostringstream>{out});
-    EXPECT_NO_THROW(chunk_ostream_iterator<std::ostringstream>{out.rdbuf()});
-    EXPECT_NO_THROW(chunk_ostream_iterator<std::ostringstream>{});
+    EXPECT_NO_THROW(ostream_chunk_adaptor_iterator<std::ostringstream>{out});
+    EXPECT_NO_THROW(ostream_chunk_adaptor_iterator<std::ostringstream>{out.rdbuf()});
+    EXPECT_NO_THROW(ostream_chunk_adaptor_iterator<std::ostringstream>{});
 }
 
-TEST(stream_iterator, chunk_ostream_iterator_increment)
+TEST(stream_iterator, ostream_chunk_adaptor_iterator_increment)
 {
     using namespace seqan3::detail;
 
     std::ostringstream out{};
-    chunk_ostream_iterator<std::ostringstream> it{out};
+    ostream_chunk_adaptor_iterator<std::ostringstream> it{out};
     EXPECT_NO_THROW(it++);
     EXPECT_NO_THROW(++it);
     EXPECT_EQ(out.str(), "");
 }
 
-TEST(stream_iterator, chunk_ostream_iterator_dereference)
+TEST(stream_iterator, ostream_chunk_adaptor_iterator_dereference)
 {
     using namespace seqan3::detail;
 
     std::ostringstream out{};
-    chunk_ostream_iterator<std::ostringstream> it{out};
+    ostream_chunk_adaptor_iterator<std::ostringstream> it{out};
     EXPECT_NO_THROW(*it);
-    EXPECT_TRUE((std::is_same_v<decltype(*it), chunk_ostream_iterator<std::ostringstream>&>));
+    EXPECT_TRUE((std::is_same_v<decltype(*it), ostream_chunk_adaptor_iterator<std::ostringstream>&>));
 }
 
-TEST(stream_iterator, chunk_ostream_iterator_assign)
+TEST(stream_iterator, ostream_chunk_adaptor_iterator_assign)
 {
     using namespace seqan3::detail;
 
     std::ostringstream out{};
 
-    chunk_ostream_iterator<std::ostringstream> it{out};
+    ostream_chunk_adaptor_iterator<std::ostringstream> it{out};
 
     auto& ret = it = 'v';
 
-    EXPECT_TRUE((std::is_same_v<decltype(it = 'a'), chunk_ostream_iterator<std::ostringstream>&>));
+    EXPECT_TRUE((std::is_same_v<decltype(it = 'a'), ostream_chunk_adaptor_iterator<std::ostringstream>&>));
     ret = 'a';
     EXPECT_EQ(out.str(), "va");
 }
 
-TEST(stream_iterator, chunk_ostream_iterator_get_chunk)
+TEST(stream_iterator, ostream_chunk_adaptor_iterator_get_chunk)
 {
     using namespace seqan3::detail;
 
@@ -305,7 +305,7 @@ TEST(stream_iterator, chunk_ostream_iterator_get_chunk)
     out.resize(10);
     test_stream_iterator::small_stream_buffer buf(out.data(), out.data() + out.size());
 
-    chunk_ostream_iterator<std::iostream> it{&buf};
+    ostream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
     auto rng = it.get_chunk();
 
@@ -319,7 +319,7 @@ TEST(stream_iterator, chunk_ostream_iterator_get_chunk)
     EXPECT_EQ(rng.end() - rng.begin(), 3);
 }
 
-TEST(stream_iterator, chunk_ostream_iterator_next_chunk)
+TEST(stream_iterator, ostream_chunk_adaptor_iterator_next_chunk)
 {
     using namespace seqan3::detail;
 
@@ -327,7 +327,7 @@ TEST(stream_iterator, chunk_ostream_iterator_next_chunk)
     out.resize(10);
     test_stream_iterator::small_stream_buffer buf(out.data(), out.data() + out.size());
 
-    chunk_ostream_iterator<std::iostream> it{&buf};
+    ostream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
     it = 'a';
     it = 'b';
@@ -353,7 +353,7 @@ TEST(stream_iterator, chunk_ostream_iterator_next_chunk)
     EXPECT_EQ(rng.end(), out.data() + 6);
 }
 
-TEST(stream_iterator, chunk_ostream_iterator_advance_chunk)
+TEST(stream_iterator, ostream_chunk_adaptor_iterator_advance_chunk)
 {
     using namespace seqan3::detail;
 
@@ -361,7 +361,7 @@ TEST(stream_iterator, chunk_ostream_iterator_advance_chunk)
     out.resize(10);
     test_stream_iterator::small_stream_buffer buf(out.data(), out.data() + out.size());
 
-    chunk_ostream_iterator<std::iostream> it{&buf};
+    ostream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
     it.advance_chunk(2);
     it.next_chunk();
@@ -385,9 +385,9 @@ TEST(stream_iterator, input_iterator_stream)
     using namespace seqan3::detail;
 
     std::stringstream in{"acg"};
-    auto [r_beg, r_end] = input_iterator(in);
+    auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
     EXPECT_EQ(*r_beg, 'a');
-    EXPECT_EQ(r_end, chunk_istream_iterator<std::stringstream>{});
+    EXPECT_EQ(r_end, istream_chunk_adaptor_iterator<std::stringstream>{});
 }
 
 TEST(stream_iterator, output_iterator_stream)
@@ -397,7 +397,7 @@ TEST(stream_iterator, output_iterator_stream)
     std::stringstream out{};
     out << "acg";
 
-    *output_iterator(out) = 't';
+    *make_preferred_output_iterator(out) = 't';
     EXPECT_EQ(out.str()[3], 't');
     EXPECT_EQ(out.str().size(), 4u);
 }

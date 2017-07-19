@@ -232,11 +232,11 @@ void stream_buffer<char_t, traits_t>::advanve_impl(offset_t ofs, direction_t con
 
 template <typename stream_t>
 //    requires input_stream_concept<stream_t>
-class chunk_istream_iterator : public chunk_decorator<chunk_istream_iterator<stream_t>>
+class istream_chunk_adaptor_iterator : public chunk_decorator<istream_chunk_adaptor_iterator<stream_t>>
 {
-    friend class chunk_decorator<chunk_istream_iterator<stream_t>>;
+    friend class chunk_decorator<istream_chunk_adaptor_iterator<stream_t>>;
 
-    using chunk_base_type    = chunk_decorator<chunk_istream_iterator<stream_t>>;
+    using chunk_base_type    = chunk_decorator<istream_chunk_adaptor_iterator<stream_t>>;
     using basicbuf_type      = std::basic_streambuf<typename stream_t::char_type, typename stream_t::traits_type>;
 public:
 
@@ -266,26 +266,26 @@ public:
      *
      * Allows default construction, construction from stream, as well as from a @link StreamBuffer @endlink.
      */
-    constexpr chunk_istream_iterator() = default;
+    constexpr istream_chunk_adaptor_iterator() = default;
 
     // Requirements: the input stream_type must fulfil some expectations.
-    chunk_istream_iterator(istream_type & stream) :
+    istream_chunk_adaptor_iterator(istream_type & stream) :
                            streambuf_ptr(static_cast<streambuf_type *>(stream.rdbuf()))
     {
         stream.exceptions(std::ios_base::badbit);
     }
 
-    chunk_istream_iterator(basicbuf_type * buf) :
+    istream_chunk_adaptor_iterator(basicbuf_type * buf) :
                            streambuf_ptr(static_cast<streambuf_type *>(buf))
     {}
 
-    chunk_istream_iterator(chunk_istream_iterator const & /*other*/) = default;
-    chunk_istream_iterator(chunk_istream_iterator && /*other*/) = default;
+    istream_chunk_adaptor_iterator(istream_chunk_adaptor_iterator const & /*other*/) = default;
+    istream_chunk_adaptor_iterator(istream_chunk_adaptor_iterator && /*other*/) = default;
 
-    chunk_istream_iterator & operator=(chunk_istream_iterator const & /*other*/) = default;
-    chunk_istream_iterator & operator=(chunk_istream_iterator && /*other*/) = default;
+    istream_chunk_adaptor_iterator & operator=(istream_chunk_adaptor_iterator const & /*other*/) = default;
+    istream_chunk_adaptor_iterator & operator=(istream_chunk_adaptor_iterator && /*other*/) = default;
 
-    ~chunk_istream_iterator() = default;
+    ~istream_chunk_adaptor_iterator() = default;
 
     // operator implementation.
     reference
@@ -294,14 +294,14 @@ public:
         return streambuf_ptr->sgetc();
     }
 
-    chunk_istream_iterator &
+    istream_chunk_adaptor_iterator &
     operator++(/*pre*/)
     {
         streambuf_ptr->sbumpc();
         return *this;
     }
 
-    chunk_istream_iterator
+    istream_chunk_adaptor_iterator
     operator++(int /*post*/)
     {
         auto tmp{*this};
@@ -309,10 +309,16 @@ public:
         return tmp;
     }
 
-    bool
-    equal(chunk_istream_iterator const & other) const
+    inline bool
+    operator==(istream_chunk_adaptor_iterator const & rhs) const
     {
-        return at_eof() == other.at_eof();
+        return equal(rhs);
+    }
+
+    inline bool
+    operator!=(istream_chunk_adaptor_iterator const & rhs) const
+    {
+        return !equal(rhs);
     }
 
     template <typename intergral_t>
@@ -324,6 +330,12 @@ public:
 
 private:
     streambuf_type * streambuf_ptr{nullptr};
+
+    bool
+    equal(istream_chunk_adaptor_iterator const & other) const
+    {
+        return at_eof() == other.at_eof();
+    }
 
     bool
     at_eof() const
@@ -369,24 +381,8 @@ private:
     }
 };
 
-template <typename stream_t>
-inline bool
-operator==(chunk_istream_iterator<stream_t> const & lhs,
-           chunk_istream_iterator<stream_t> const & rhs)
-{
-    return lhs.equal(rhs);
-}
-
-template <typename stream_t>
-inline bool
-operator!=(chunk_istream_iterator<stream_t> const & lhs,
-           chunk_istream_iterator<stream_t> const & rhs)
-{
-    return !lhs.equal(rhs);
-}
-
 // ----------------------------------------------------------------------------
-// Class chunk_ostream_iterator
+// Class ostream_chunk_adaptor_iterator
 // ----------------------------------------------------------------------------
 
 /*!
@@ -401,12 +397,12 @@ operator!=(chunk_istream_iterator<stream_t> const & lhs,
  */
 template <typename stream_t>
 //    requires onput_stream_concept<stream_t>
-class chunk_ostream_iterator : public chunk_decorator<chunk_ostream_iterator<stream_t>>
+class ostream_chunk_adaptor_iterator : public chunk_decorator<ostream_chunk_adaptor_iterator<stream_t>>
 {
-    friend class chunk_decorator<chunk_ostream_iterator<stream_t>>;
+    friend class chunk_decorator<ostream_chunk_adaptor_iterator<stream_t>>;
 
     using basicbuf_type      = std::basic_streambuf<typename stream_t::char_type, typename stream_t::traits_type>;
-    using chunk_base_type    = chunk_decorator<chunk_istream_iterator<stream_t>>;
+    using chunk_base_type    = chunk_decorator<istream_chunk_adaptor_iterator<stream_t>>;
 
 public:
 
@@ -436,45 +432,45 @@ public:
      *
      * Allows default construction, construction from stream, as well as from a @link StreamBuffer @endlink.
      */
-    chunk_ostream_iterator() = default;
+    ostream_chunk_adaptor_iterator() = default;
 
-    chunk_ostream_iterator(ostream_type & stream) :
+    ostream_chunk_adaptor_iterator(ostream_type & stream) :
                            streambuf_ptr(static_cast<streambuf_type *>(stream.rdbuf()))
     {
         stream.exceptions(std::ios_base::badbit);
     }
 
-    chunk_ostream_iterator(basicbuf_type * buf) :
+    ostream_chunk_adaptor_iterator(basicbuf_type * buf) :
                            streambuf_ptr(static_cast<streambuf_type *>(buf))
     {}
 
-    chunk_ostream_iterator(chunk_ostream_iterator const & /*other*/) = default;
-    chunk_ostream_iterator(chunk_ostream_iterator && /*other*/) = default;
+    ostream_chunk_adaptor_iterator(ostream_chunk_adaptor_iterator const & /*other*/) = default;
+    ostream_chunk_adaptor_iterator(ostream_chunk_adaptor_iterator && /*other*/) = default;
 
-    chunk_ostream_iterator & operator=(chunk_ostream_iterator const & /*other*/) = default;
-    chunk_ostream_iterator & operator=(chunk_ostream_iterator && /*other*/) = default;
+    ostream_chunk_adaptor_iterator & operator=(ostream_chunk_adaptor_iterator const & /*other*/) = default;
+    ostream_chunk_adaptor_iterator & operator=(ostream_chunk_adaptor_iterator && /*other*/) = default;
 
-    ~chunk_ostream_iterator() = default;
+    ~ostream_chunk_adaptor_iterator() = default;
 
     template <typename value_t>
         requires convertible_to_concept<value_t, char_type>
-    chunk_ostream_iterator & operator=(value_t const & val)
+    ostream_chunk_adaptor_iterator & operator=(value_t const & val)
     {
         streambuf_ptr->sputc(val);
         return *this;
     }
 
-    chunk_ostream_iterator & operator*()
+    ostream_chunk_adaptor_iterator & operator*()
     {
         return *this;
     }
 
-    chunk_ostream_iterator & operator++()
+    ostream_chunk_adaptor_iterator & operator++()
     {
         return *this;
     }
 
-    chunk_ostream_iterator & operator++(int /*post*/)
+    ostream_chunk_adaptor_iterator & operator++(int /*post*/)
     {
         return *this;
     }
@@ -543,18 +539,19 @@ private:
 template <typename stream_t>
     requires input_stream_concept<std::decay_t<stream_t>>
 inline auto
-input_iterator(stream_t & stream)
+make_preferred_input_iterator_range(stream_t & stream)
+    requires input_stream_concept<std::decay_t<stream_t>>
 {
-    return std::tuple{chunk_istream_iterator<stream_t>{stream}, chunk_istream_iterator<stream_t>{}};
+    return std::tuple{istream_chunk_adaptor_iterator<stream_t>{stream}, istream_chunk_adaptor_iterator<stream_t>{}};
 }
 
 // Returns back_insert iterator for containers supporting *.push_back().
 template <typename stream_t>
     requires output_stream_concept<std::decay_t<stream_t>>
 inline auto
-output_iterator(stream_t & stream)
+make_preferred_output_iterator(stream_t & stream)
 {
-    return chunk_ostream_iterator<stream_t>{stream};
+    return ostream_chunk_adaptor_iterator<stream_t>{stream};
 }
 
 // ----------------------------------------------------------------------------
@@ -563,7 +560,7 @@ output_iterator(stream_t & stream)
 
 template <typename stream_t, typename offset_t>
 inline void
-advance(chunk_istream_iterator<stream_t> & iter,
+advance(istream_chunk_adaptor_iterator<stream_t> & iter,
         offset_t const ofs)
 {
     assert(ofs > 0);
@@ -572,7 +569,7 @@ advance(chunk_istream_iterator<stream_t> & iter,
 
 template <typename stream_t, typename offset_t>
 inline void
-advance(chunk_ostream_iterator<stream_t> & iter,
+advance(ostream_chunk_adaptor_iterator<stream_t> & iter,
         offset_t const ofs)
 {
     assert(ofs > 0);
@@ -615,27 +612,25 @@ advance(chunk_ostream_iterator<stream_t> & iter,
 namespace seqan3::detail
 {
 
-static_assert(input_iterator_concept<chunk_istream_iterator<std::stringstream>>);
-static_assert(!output_iterator_concept<chunk_istream_iterator<std::stringstream>, char>);
-static_assert(!forward_iterator_concept<chunk_istream_iterator<std::stringstream>>);
-static_assert(!bidirectional_iterator_concept<chunk_istream_iterator<std::stringstream>>);
-static_assert(!random_access_iterator_concept<chunk_istream_iterator<std::stringstream>>);
+static_assert(stream_concept<std::istream>);
+static_assert(input_stream_concept<std::istream>);
+static_assert(!output_stream_concept<std::istream>);
+static_assert(stream_concept<std::ostream>);
+static_assert(!input_stream_concept<std::ostream>);
+static_assert(output_stream_concept<std::ostream>);
 
-static_assert(!input_iterator_concept<chunk_ostream_iterator<std::stringstream>>);
-static_assert(output_iterator_concept<chunk_ostream_iterator<std::stringstream>, typename std::stringstream::char_type>);
-static_assert(!forward_iterator_concept<chunk_ostream_iterator<std::stringstream>>);
-static_assert(!bidirectional_iterator_concept<chunk_ostream_iterator<std::stringstream>>);
-static_assert(!random_access_iterator_concept<chunk_ostream_iterator<std::stringstream>>);
+static_assert(input_iterator_concept<istream_chunk_adaptor_iterator<std::stringstream>>);
+static_assert(!output_iterator_concept<istream_chunk_adaptor_iterator<std::stringstream>, char>);
+static_assert(!forward_iterator_concept<istream_chunk_adaptor_iterator<std::stringstream>>);
+static_assert(!bidirectional_iterator_concept<istream_chunk_adaptor_iterator<std::stringstream>>);
+static_assert(!random_access_iterator_concept<istream_chunk_adaptor_iterator<std::stringstream>>);
 
-}
+static_assert(!input_iterator_concept<ostream_chunk_adaptor_iterator<std::stringstream>>);
+static_assert(output_iterator_concept<ostream_chunk_adaptor_iterator<std::stringstream>, typename std::stringstream::char_type>);
+static_assert(!forward_iterator_concept<ostream_chunk_adaptor_iterator<std::stringstream>>);
+static_assert(!bidirectional_iterator_concept<ostream_chunk_adaptor_iterator<std::stringstream>>);
+static_assert(!random_access_iterator_concept<ostream_chunk_adaptor_iterator<std::stringstream>>);
+
+} // namespace seqan3::detail
 
 #endif // NDEBUG
-
-namespace seqan3
-{
-template <typename stream_t>
-struct value_type<detail::chunk_ostream_iterator<stream_t>>
-{
-    using type = typename detail::chunk_ostream_iterator<stream_t>::char_type;
-};
-}  // namespace seqan3
