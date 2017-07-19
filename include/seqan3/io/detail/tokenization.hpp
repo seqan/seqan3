@@ -111,6 +111,35 @@ struct assert_functor
 };
 
 // ----------------------------------------------------------------------------
+// Functor not_functor
+// ----------------------------------------------------------------------------
+
+template <typename functor_t >
+struct not_functor
+{
+    functor_t func;
+
+    not_functor()
+    {}
+
+    not_functor(functor_t const & func) :
+        func(func)
+    {}
+
+    template <typename value_t>
+    bool operator() (value_t const & val)
+    {
+        return !func(val);
+    }
+
+    template <typename value_t>
+    bool operator() (value_t const & val) const
+    {
+        return !func(val);
+    }
+};
+
+// ----------------------------------------------------------------------------
 // Functor or_functor
 // ----------------------------------------------------------------------------
 
@@ -566,46 +595,8 @@ write(container_t const & input,
 }
 
 // ----------------------------------------------------------------------------
-// Function get()
-// ----------------------------------------------------------------------------
-
-template <typename input_t,
-          typename output_t,
-          typename predicate_t>
-//    requires output_iterator_concept<std::decay_t<target_t>> &&
-//             input_range_concept<std::decay_t<input_t>> &&
-//             predicate_concept<std::decay_t<predicate_t>>
-inline void
-get(input_t & curr_it,
-    input_t const & end_it,
-    output_t && output_it,
-    predicate_t & check_func)
-{
-    if (/*SEQAN_UNLIKELY*/(curr_it == end_it))
-        throw unexpected_end_error();
-
-    assert_functor<predicate_t, parse_error> asserter(check_func);
-
-    asserter(*curr_it);
-    *output_it = *curr_it;
-    ++curr_it;
-}
-
-template <typename input_t, typename output_t>
-//    requires output_iterator_concept<std::decay_t<target_t>> &&
-//             input_range_concept<std::decay_t<input_t>>
-inline void
-get(input_t & curr_it,
-    input_t const & end_it,
-    output_t && output_it)
-{
-    get(curr_it, end_it, std::forward<output_t>(output_it), always_true);
-}
-
-// ----------------------------------------------------------------------------
 // Function do_get(); Element-wise
 // ----------------------------------------------------------------------------
-
 template <typename input_t, typename in_sent_t,
           typename output_t,
           typename stop_predicate_t,
@@ -702,105 +693,103 @@ do_get(input_t && i_iter,
     o_iter.trim_trailing();
 }
 
+
 // ----------------------------------------------------------------------------
-// Function readUntil()
+// Function get()
 // ----------------------------------------------------------------------------
 
 template <typename input_t,
-          typename target_t,
+          typename in_sent_t,
+          typename output_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-get_until(input_t & curr,
-          input_t const & end,
-          target_t && output_it,
-          stop_predicate_t && stop_func,
-          ignore_predicate_t && ignore_func)
+get(input_t && i_iter,
+    in_sent_t && i_sentinel,
+    output_t && o_iter,
+    stop_predicate_t && stop_func,
+    ignore_predicate_t && ignore_func = always_false)
+requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+         sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+         output_iterator_concept<std::remove_reference_t<output_t>,
+                                 value_type_t<std::remove_reference_t<input_t>>> &&
+         predicate_concept<std::remove_reference_t<stop_predicate_t>,
+                           value_type_t<std::remove_reference_t<input_t>>> &&
+         predicate_concept<std::remove_reference_t<ignore_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
 {
-    _read_until(curr, end, std::forward<target_t>(output_it),
-                std::forward<stop_predicate_t>(stop_func), std::forward<ignore_predicate_t>(ignore_func));
+    do_get(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
 }
-
 // ----------------------------------------------------------------------------
-// Function readUntil(); Not ignoring
-// ----------------------------------------------------------------------------
-
-template <typename input_t,
-          typename target_t,
-          typename stop_predicate_t>
-inline void
-get_until(input_t & curr,
-          input_t const & end,
-          target_t && output_it,
-          stop_predicate_t && stop_func)
-{
-    read_until(curr, end, std::forward<target_t>(output_it),
-               std::forward<stop_predicate_t>(stop_func), always_false);
-}
-
-// ----------------------------------------------------------------------------
-// Function read_line()
+// Function get_n()
 // ----------------------------------------------------------------------------
 
-template <typename input_t,
-          typename target_t>
-inline void
-get_line(input_t & i_iter,
-         input_t const & i_end,
-         target_t && output_it)
-{
-    get_until(i_iter, i_end, std::forward<target_t>(output_it), is_newline{});
-
-    // consume "\r\n.", "\r[!\n]" or "\n."
-
-    if (/*SEQAN_UNLIKELY(*/i_iter == i_end)/*)*/
-        return;
-
-    // If the current character is Line Feed ('\r') then this can be an ANSI or a Mac line ending.
-    if (*i_iter == '\r')
-    {
-        ++i_iter;     // consume the found newline
-        if (/*SEQAN_UNLIKELY(*/i_iter == i_end)/*)*/
-            return;
-    }
-
-    // Unix Carriage Return ('\n') is the simplest case.
-    if (*i_iter == '\n')
-        ++i_iter;     // consume the found newline
-}
-
-// ----------------------------------------------------------------------------
-// Function read()
-// ----------------------------------------------------------------------------
-
-template <typename input_t,
+template <typename input_t, typename in_sent_t,
           typename output_t,
           typename integral_t,
           typename ignore_predicate_t>
 inline void
-read(input_t & i_iter,
-     input_t const & i_end,
+get_n(input_t && i_iter,
+     in_sent_t && i_sentinel,
      output_t && o_iter,
-     integral_t const n,
-     ignore_predicate_t && ignore_func)
+     integral_t n = 1,
+     ignore_predicate_t && ignore_func = always_false)
+ requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+          sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+          output_iterator_concept<std::remove_reference_t<output_t>,
+                                  value_type_t<std::remove_reference_t<input_t>>> &&
+          integral_concept<integral_t> &&
+          predicate_concept<std::remove_reference_t<ignore_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
 {
-    // define counting stop_functor, which every time it's operator is called decrements n and checks if it is 0.
-    auto stopper = [n](auto const &) { return n-- == 0; };
-    get_until(i_iter, i_end, std::forward<output_t>(o_iter), stopper, std::forward<ignore_predicate_t>(ignore_func));
+    auto stop_func = [n](auto const &) mutable {return n-- == 0; };
+    get(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
 }
 
+// ----------------------------------------------------------------------------
+// Function get_line()
+// ----------------------------------------------------------------------------
 template <typename input_t,
+          typename in_sent_t,
           typename output_t,
-          typename integral_t>
+          typename stop_predicate_t,
+          typename ignore_predicate_t>
 inline void
-read(input_t & i_iter,
-     input_t const & i_end,
-     output_t && o_iter,
-     integral_t const n)
+get_line(input_t && i_iter,
+    in_sent_t && i_sentinel,
+    output_t && o_iter,
+    stop_predicate_t && stop_func,
+    ignore_predicate_t && ignore_func = always_false)
+requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+         sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+         output_iterator_concept<std::remove_reference_t<output_t>,
+                                 value_type_t<std::remove_reference_t<input_t>>> &&
+         predicate_concept<std::remove_reference_t<stop_predicate_t>,
+                           value_type_t<std::remove_reference_t<input_t>>> &&
+         predicate_concept<std::remove_reference_t<ignore_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
 {
-    // define counting stop_functor, which every time it's operator is called decrements n and checks if it is 0.
-    get(i_iter, i_end, std::forward<output_t>(o_iter), n, always_true);
+    get(i_iter, i_sentinel, o_iter, is_newline(), ignore_func);
+    ignore(i_iter, i_sentinel, not_functor<is_newline>());          // move on to the next line
 }
+
+// ----------------------------------------------------------------------------
+// Function get()       just one char
+// ----------------------------------------------------------------------------
+template <typename input_t, typename in_sent_t,
+          typename output_t>
+inline void
+get (input_t && i_iter,
+     in_sent_t && i_sentinel,
+     output_t && o_iter)
+ requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+          sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+          output_iterator_concept<std::remove_reference_t<output_t>,
+                                  value_type_t<std::remove_reference_t<input_t>>>
+{
+    get_n(i_iter, i_sentinel, o_iter);
+}
+
 
 // ----------------------------------------------------------------------------
 // Function read_raw_pod()
@@ -815,25 +804,10 @@ read_raw_pod(input_t & i_iter, value_t && value)
 }
 
 // ----------------------------------------------------------------------------
-// Function _skipUntil(); Element-wise
-// ----------------------------------------------------------------------------
-
-template <typename input_t,
-          typename stop_predicate_t>
-inline void
-_skip_until(input_t & i_iter,
-            input_t const & i_end,
-            stop_predicate_t && stop_func)
-{
-    for (; (i_iter != i_end) && !stop_func(*i_iter); ++i_iter)
-    {}
-}
-
-// ----------------------------------------------------------------------------
 // Function do_ignore(); Element-wise
 // ----------------------------------------------------------------------------
-
-template <typename input_t, typename in_sent_t,
+template <typename input_t,
+          typename in_sent_t,
           typename stop_predicate_t>
 inline void
 do_ignore(input_t && i_iter,
@@ -887,123 +861,89 @@ do_ignore(input_t && i_iter,
 }
 
 // ----------------------------------------------------------------------------
-// Function _skipUntil(); Chunked
-// ----------------------------------------------------------------------------
-
-/*
-// TODO(rrahn): Replace Range<value_t*> * version
-template <typename TFwdIterator, typename TStopFunctor, typename value_t>
-inline void _skipUntil(TFwdIterator &iter, TStopFunctor &stopFunctor, Range<value_t*> *)
-{
-    // adapt the fwd_iterator interface.
-    typedef typename Value<TFwdIterator>::Type TIValue;
-
-    for (; !atEnd(iter); )
-    {
-        // We operate on bare pointers.
-        // can we also have a view?
-        Range<TIValue const *> ichunk;
-        // TODO(rrahn): getChunk -> implements the chunking interface, what should returned here?
-
-        // this returns the chunk based on the iterator.
-        // This means the iter needs access to it's underlying container.
-
-        // We get the remaining characters from the buffer
-        // We can model this with diff betwenn pptr() and egptr()
-        getChunk(ichunk, iter, Input());
-
-        // The rest of the buffer.
-        // for vector<char> -> this is the remaining part from it to end of iterator.
-        // we need to model this through the iterator.
-
-        // Chunk on iterator gives back a
-        SEQAN_ASSERT(!empty(ichunk));
-
-        const TIValue* SEQAN_RESTRICT ptr = ichunk.begin;
-
-        for (; ptr != ichunk.end; ++ptr)
-        {
-            // Now we can run the pointer here.
-            if (SEQAN_UNLIKELY(stopFunctor(*ptr)))
-            {
-                iter += ptr - ichunk.begin;    // advance input iterator
-                return;
-            }
-        }
-
-        iter += ptr - ichunk.begin;            // advance input iterator
-    }
-}
-*/
-// ----------------------------------------------------------------------------
-// Function skipUntil()
+// Function ignore()
 // ----------------------------------------------------------------------------
 
 template <typename input_t,
+          typename in_sent_t,
           typename stop_predicate_t>
 inline void
-skip_until(input_t & i_iter,
-           input_t const & i_end,
-           stop_predicate_t && stop_func)
+ignore(input_t && i_iter,
+       in_sent_t && i_sentinel,
+       stop_predicate_t && stop_func)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+             predicate_concept<std::remove_reference_t<stop_predicate_t>,
+                               value_type_t<std::remove_reference_t<input_t>>>
 {
-    _skip_until(i_iter, i_end, std::forward<stop_predicate_t>(stop_func));
+    do_ignore(i_iter, i_sentinel, stop_func);
 }
 
 // ----------------------------------------------------------------------------
-// Function skip
+// Function ignore_n()
 // ----------------------------------------------------------------------------
 
 template <typename input_t,
-          typename unexpected_predicate_t>
+          typename in_sent_t,
+          typename integral_t>
 inline void
-skip(input_t & i_iter,
-     input_t const & i_end,
-     unexpected_predicate_t && unexpected_func)
+ignore_n(input_t && i_iter,
+         in_sent_t && i_sentinel,
+         integral_t n = 1)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+             integral_concept<integral_t>
 {
-    assert_functor<unexpected_predicate_t, parse_error> asserter{unexpected_func};
-
-    if (/*SEQAN_UNLIKELY*/(i_iter == i_end))
-        throw unexpected_end_error{};
-
-    asserter(*i_iter);
-    ++i_iter;
-}
-
-template <typename input_t>
-inline void
-skip(input_t & i_iter,
-     input_t const & i_end)
-{
-    skip(i_iter, i_end, always_true);
+    auto stop_func = [n](auto const &) mutable {return n-- == 0; };
+    ignore(i_iter, i_sentinel, stop_func);
 }
 
 // ----------------------------------------------------------------------------
-// Function skipLine()
+// Function ignore          alias to ignore_n() may be delete
+// ----------------------------------------------------------------------------
+template <typename input_t,
+          typename in_sent_t,
+          typename integral_t>
+inline void
+ignore(input_t && i_iter,
+         in_sent_t && i_sentinel,
+         integral_t n = 1)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+             integral_concept<integral_t>
+{
+    ignore_n(i_iter, i_sentinel, n);
+}
+
+
+// ----------------------------------------------------------------------------
+// Function ignore_line()
+// ----------------------------------------------------------------------------
+template <typename input_t,
+          typename in_sent_t>
+inline void
+ignore_line(input_t && i_iter,
+            in_sent_t && i_sentinel)
+        requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+                 sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>>
+{
+    ignore(i_iter, i_sentinel, is_newline());                // go until newline char
+    ignore(i_iter, i_sentinel, not_functor<is_newline>());      // move on to the next line
+}
+
+// ----------------------------------------------------------------------------
+// Function ignore()            just one char
 // ----------------------------------------------------------------------------
 
-template <typename input_t>
+template <typename input_t,
+          typename in_sent_t>
 inline void
-skip_line(input_t & i_iter,
-          input_t const & i_end)
+ignore(input_t && i_iter,
+       in_sent_t && i_sentinel)
+    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
+             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>>
 {
-    skip_until(i_iter, i_end, is_newline());
-
-    // consume "\r\n.", "\r[!\n]" or "\n."
-
-    if (/*SEQAN_UNLIKELY(*/i_iter == i_end)/*)*/
-        return;
-
-    // If the current character is Line Feed ('\r') then this can be an ANSI or a Mac line ending.
-    if (*i_iter == '\r')
-    {
-        ++i_iter;     // consume the found newline
-        if (/*SEQAN_UNLIKELY(*/i_iter == i_end)/*)*/
-            return;
-    }
-
-    // Unix Carriage Return ('\n') is the simplest case.
-    if (*i_iter == '\n')
-        ++i_iter;     // consume the found newline
+    ignore_n(i_iter, i_sentinel, 1);
 }
 
 // ----------------------------------------------------------------------------

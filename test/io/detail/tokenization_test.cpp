@@ -298,3 +298,67 @@ TEST(tokenization_test, do_ignore_chunked)
         EXPECT_EQ(*r_beg, 'd');
     }
 }
+
+TEST(tokenization_test, ignore)
+{
+    using namespace seqan3::detail;
+
+    {  // container interface.
+        std::string in{"hello_world\n\rHello Berlin & Hello Seqan"};
+
+        auto it = std::begin(in);
+        ignore(it, std::end(in));                         //ignore just one char
+        EXPECT_EQ(*it, 'e');
+        ignore(it, std::end(in), equals_char<'_'>{});     //ignore until '_'
+        EXPECT_EQ(*it, '_');
+        ignore(it, std::end(in), 3);                      //ignore the next 3  ---> 'l'
+        EXPECT_EQ(*it, 'r');
+        ignore_line(it, std::end(in));                    //ignore the curent line ---> 'H'
+        EXPECT_EQ(*it, 'H');
+        ignore_n(it, std::end(in), 6);                    //ignore_n the next 6  ---> 'B'
+        EXPECT_EQ(*it, 'B');
+        ignore(it, std::end(in), is_whitespace());        //ignore until the next whitespace  ---> ' '
+        EXPECT_EQ(*it, ' ');
+    }
+}
+
+TEST(tokenization_test, ignore_chunked)
+{
+    using namespace seqan3::detail;
+
+    {  // istream interface.
+        std::istringstream in{"hello_world\n\rHello Berlin & Hello Seqan"};
+
+        auto [r_beg, r_end] = input_iterator(in);
+        ignore(r_beg, r_end);                         //ignore just one char
+        EXPECT_EQ(*r_beg, 'e');
+        ignore(r_beg, r_end, equals_char<'_'>{});     //ignore until '_'
+        EXPECT_EQ(*r_beg, '_');
+        ignore(r_beg, r_end, 3);                      //ignore the next 3  ---> 'l'
+        EXPECT_EQ(*r_beg, 'r');
+        ignore_line(r_beg, r_end);                    //ignore the curent line ---> 'H'
+        EXPECT_EQ(*r_beg, 'H');
+        ignore_n(r_beg, r_end, 6);                    //ignore_n the next 6  ---> 'B'
+        EXPECT_EQ(*r_beg, 'B');
+        ignore(r_beg, r_end, is_whitespace());        //ignore until the next whitespace  ---> ' '
+        EXPECT_EQ(*r_beg, ' ');
+    }
+
+    {  // container interface.
+        std::string in{"hello_world\n\rHello Berlin & Hello Seqan"};
+
+        auto [r_beg, r_end] = input_iterator(in);
+        ignore(r_beg, r_end);                         //ignore just one char
+        EXPECT_EQ(*r_beg, 'e');
+        ignore(r_beg, r_end, equals_char<'_'>{});     //ignore until '_'
+        EXPECT_EQ(*r_beg, '_');
+        ignore(r_beg, r_end, 3);                      //ignore the next 3  ---> 'l'
+        EXPECT_EQ(*r_beg, 'r');
+        ignore_line(r_beg, r_end);                    //ignore the curent line ---> 'H'
+        EXPECT_EQ(*r_beg, 'H');
+        ignore_n(r_beg, r_end, 6);                    //ignore_n the next 6  ---> 'B'
+        EXPECT_EQ(*r_beg, 'B');
+        ignore(r_beg, r_end, is_whitespace());        //ignore until the next whitespace  ---> ' '
+        EXPECT_EQ(*r_beg, ' ');
+    }
+}
