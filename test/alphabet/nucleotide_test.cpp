@@ -38,7 +38,7 @@
 
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/alphabet/nucleotide.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;

@@ -33,38 +33,22 @@
 // ============================================================================
 
 /*!\file
- * \ingroup range
- * \brief Meta-header for the \link range range module \endlink.
+ * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for the alphabet module.
+ *
+ * \defgroup alphabet
+ *
+ * The alphabet module contains different biological alphabets and related functionality.
+ *
+ * TODO more details.
  */
 
 #pragma once
 
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/action.hpp>
-#include <seqan3/range/container.hpp>
-#include <seqan3/range/view.hpp>
-
-/*!\defgroup range Range
- * \brief The range module contains containers, views and actions.
- *
- * *Ranges* are an abstraction of "a collection of items", or "something iterable". The most basic definition
- * requires only the existence of begin() and end() on the range. See range/concept.hpp for the different range
- * concepts.
- *
- * *Containers* are ranges that own their elements. SeqAn3 makes use of standard STL containers like std::vector,
- * but also implements some custom containers. See range/container.hpp for more details.
- *
- * *Views* are "lazy range combinators" that provide operations on other ranges, e.g. containers, but do so on-demand,
- * i.e. views don't own elements, but return (mutated) elements on request. This is similar to how iterators can
- * provide different behaviours on the same underlying data structure (while not actually changing it). See
- * range/view.hpp for more details.
- *
- * *Actions* on the other hand are "eager range combinators", i.e. they immediately change the underlying range
- * they are applied to. See range/action.hpp for more details.
- *
- * Both views and actions can be chained via the pipe operator.
- *
- * \sa range.hpp
- * \sa https://ericniebler.github.io/range-v3/index.html
- */
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/gap/gap.hpp>
+#include <seqan3/alphabet/composition/all.hpp>

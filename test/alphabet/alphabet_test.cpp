@@ -35,7 +35,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-#include <seqan3/alphabet.hpp>
+#include <seqan3/alphabet/all.hpp>
 
 using namespace seqan3;
 
