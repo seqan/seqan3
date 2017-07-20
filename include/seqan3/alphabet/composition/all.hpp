@@ -32,46 +32,29 @@
 //
 // ============================================================================
 
-/*!\cond DEV
- * \file
- * \ingroup alphabet
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::detail::convert_through_char_representation.
- * \endcond
+/*!\file
+ * \ingroup composition
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \brief Meta-header for the composition submodule; includes all headers from alphabet/composition/.
+ * \group composition
  */
 
-#pragma once
+#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composition/union_composition.hpp>
 
-#include <array>
-
-#include <seqan3/alphabet/concept.hpp>
-
-// ============================================================================
-// conversion to/from char/rank types
-// ============================================================================
-
-namespace seqan3::detail
-{
-
-/*!\brief A precomputed conversion table for two alphabets based on their char representations.
+/*!\defgroup composition
+ * \brief Provides data structures joining multiple alphabets into a single alphabet.
  * \ingroup alphabet
- * \tparam out_t The type of the output, must satisfy seqan3::alphabet_concept.
- * \tparam in_t The type of the input, must satisfy seqan3::alphabet_concept.
- * \hideinitializer
+ *
+ * \par Introduction
+ *
+ * Composition alphabets are special alphabets that allow you to combine existing alphabets into new ones. For example,
+ * you can add new characters to existing alphabets by using seqan3::union_composition or combine alphabets with quality
+ * information by using seqan3::cartesian_composition.
+ *
+ * We have currently two major composition alphabets:
+ * * seqan3::cartesian_composition which roughly corresponds to the Cartesian product of the given types. It
+ *   behaves similar to std::tuple, but it is specialised for alphabets.
+ * * seqan3::union_composition which roughly corresponds to the Union of the given types. It behaves similar to
+ *   std::variant, but it is specialised for alphabets.
  */
-template <typename out_t, typename in_t>
-//!\cond
-    requires alphabet_concept<out_t> && alphabet_concept<in_t>
-//!\endcond
-constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_char_representation
-{
-    [] () constexpr
-    {
-        std::array<out_t, alphabet_size_v<in_t>> ret{};
-        for (typename in_t::rank_type i = 0; i < alphabet_size_v<in_t>; ++i)
-            assign_char(ret[i], to_char(assign_rank(in_t{}, i)));
-        return ret;
-    }()
-};
-
-} // namespace seqan3::detail
