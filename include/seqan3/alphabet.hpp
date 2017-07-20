@@ -47,7 +47,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/nucleotide.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
