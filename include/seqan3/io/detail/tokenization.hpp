@@ -66,6 +66,27 @@
 namespace seqan3::detail
 {
 
+template <typename input_t, typename in_sent_t>
+concept bool
+input_and_sentinel_iterator_concept = input_iterator_concept<std::remove_reference_t<input_t>> &&
+                                       sentinel_concept<std::remove_reference_t<in_sent_t>,
+                                                        std::remove_reference_t<input_t>>;
+template <typename input_t, typename in_sent_t>
+concept bool
+input_and_sentinel_chunked_iterator_concept = input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
+                                              std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>,
+                                                                std::remove_reference_t<input_t>>;
+
+template <typename output_t, typename input_t>
+concept bool
+compatable_output_iterator_concept = output_iterator_concept<std::remove_reference_t<output_t>,
+                                                             value_type_t<std::remove_reference_t<input_t>>>;
+template <typename output_t, typename input_t>
+concept bool
+compatable_output_chunked_iterator_concept = compatable_output_iterator_concept<output_t, input_t> &&
+                                             std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>,
+                                                               std::remove_reference_t<output_t>>;
+
 // ----------------------------------------------------------------------------
 // Functor assert_functor
 // ----------------------------------------------------------------------------
@@ -595,22 +616,20 @@ write(container_t const & input,
 }
 
 // ----------------------------------------------------------------------------
-// Function do_get(); Element-wise
+// Function read_impl(); Element-wise
 // ----------------------------------------------------------------------------
 template <typename input_t, typename in_sent_t,
           typename output_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-do_get(input_t && i_iter,
-       in_sent_t && i_sentinel,
-       output_t && output_it,
-       stop_predicate_t && stop_func,
-       ignore_predicate_t && ignore_func)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
-             output_iterator_concept<std::remove_reference_t<output_t>,
-                                     value_type_t<std::remove_reference_t<input_t>>> &&
+read_impl(input_t && i_iter,
+          in_sent_t && i_sentinel,
+          output_t && output_it,
+          stop_predicate_t && stop_func,
+          ignore_predicate_t && ignore_func)
+    requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
+             compatable_output_iterator_concept<output_t, input_t> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>> &&
              predicate_concept<std::remove_reference_t<ignore_predicate_t>,
@@ -628,7 +647,7 @@ do_get(input_t && i_iter,
 }
 
 // ----------------------------------------------------------------------------
-// Function do_get(); Chunked
+// Function read_impl(); Chunked
 // ----------------------------------------------------------------------------
 
 template <typename input_t, typename in_sent_t,
@@ -636,17 +655,13 @@ template <typename input_t, typename in_sent_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-do_get(input_t && i_iter,
+read_impl(input_t && i_iter,
        in_sent_t && i_sentinel,
        output_t && o_iter,
        stop_predicate_t && stop_func,
        ignore_predicate_t && ignore_func)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
-             std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
-             output_iterator_concept<std::remove_reference_t<output_t>,
-                                     value_type_t<std::remove_reference_t<input_t>>> &&
-             std::is_base_of_v<chunk_decorator<std::remove_reference_t<output_t>>, std::remove_reference_t<output_t>> &&
+    requires input_and_sentinel_chunked_iterator_concept<input_t, in_sent_t>  &&
+             compatable_output_chunked_iterator_concept<output_t, input_t> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>> &&
              predicate_concept<std::remove_reference_t<ignore_predicate_t>,
@@ -695,7 +710,7 @@ do_get(input_t && i_iter,
 
 
 // ----------------------------------------------------------------------------
-// Function get()
+// Function read()
 // ----------------------------------------------------------------------------
 
 template <typename input_t,
@@ -704,24 +719,22 @@ template <typename input_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-get(input_t && i_iter,
+read(input_t && i_iter,
     in_sent_t && i_sentinel,
     output_t && o_iter,
     stop_predicate_t && stop_func,
     ignore_predicate_t && ignore_func = always_false)
-requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-         sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
-         output_iterator_concept<std::remove_reference_t<output_t>,
-                                 value_type_t<std::remove_reference_t<input_t>>> &&
+requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
+         compatable_output_iterator_concept<output_t, input_t> &&
          predicate_concept<std::remove_reference_t<stop_predicate_t>,
                            value_type_t<std::remove_reference_t<input_t>>> &&
          predicate_concept<std::remove_reference_t<ignore_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>>
 {
-    do_get(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
+    read_impl(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
 }
 // ----------------------------------------------------------------------------
-// Function get_n()
+// Function read_n()
 // ----------------------------------------------------------------------------
 
 template <typename input_t, typename in_sent_t,
@@ -729,25 +742,26 @@ template <typename input_t, typename in_sent_t,
           typename integral_t,
           typename ignore_predicate_t>
 inline void
-get_n(input_t && i_iter,
-     in_sent_t && i_sentinel,
-     output_t && o_iter,
-     integral_t n = 1,
-     ignore_predicate_t && ignore_func = always_false)
- requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-          sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
-          output_iterator_concept<std::remove_reference_t<output_t>,
-                                  value_type_t<std::remove_reference_t<input_t>>> &&
+read_n(input_t && i_iter,
+       in_sent_t && i_sentinel,
+       output_t && o_iter,
+       integral_t n = 1,
+       ignore_predicate_t && ignore_func = always_false)
+ requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
+          compatable_output_iterator_concept<output_t, input_t> &&
           integral_concept<integral_t> &&
           predicate_concept<std::remove_reference_t<ignore_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>>
 {
     auto stop_func = [n](auto const &) mutable {return n-- == 0; };
-    get(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
+    if  constexpr (std::is_same_v<output_t, std::ignore>)
+        ignore_impl(i_iter, i_sentinel, stop_func);
+    else
+        read_impl(i_iter, i_sentinel, o_iter, stop_func, ignore_func);
 }
 
 // ----------------------------------------------------------------------------
-// Function get_line()
+// Function read_line()
 // ----------------------------------------------------------------------------
 template <typename input_t,
           typename in_sent_t,
@@ -755,39 +769,35 @@ template <typename input_t,
           typename stop_predicate_t,
           typename ignore_predicate_t>
 inline void
-get_line(input_t && i_iter,
+read_line(input_t && i_iter,
     in_sent_t && i_sentinel,
     output_t && o_iter,
     stop_predicate_t && stop_func,
     ignore_predicate_t && ignore_func = always_false)
-requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-         sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
-         output_iterator_concept<std::remove_reference_t<output_t>,
-                                 value_type_t<std::remove_reference_t<input_t>>> &&
+requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
+         compatable_output_iterator_concept<output_t, input_t> &&
          predicate_concept<std::remove_reference_t<stop_predicate_t>,
                            value_type_t<std::remove_reference_t<input_t>>> &&
          predicate_concept<std::remove_reference_t<ignore_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>>
 {
-    get(i_iter, i_sentinel, o_iter, is_newline(), ignore_func);
+    read(i_iter, i_sentinel, o_iter, is_newline(), ignore_func);
     ignore(i_iter, i_sentinel, not_functor<is_newline>());          // move on to the next line
 }
 
 // ----------------------------------------------------------------------------
-// Function get()       just one char
+// Function read()       just one char
 // ----------------------------------------------------------------------------
 template <typename input_t, typename in_sent_t,
           typename output_t>
 inline void
-get (input_t && i_iter,
+read (input_t && i_iter,
      in_sent_t && i_sentinel,
      output_t && o_iter)
- requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-          sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
-          output_iterator_concept<std::remove_reference_t<output_t>,
-                                  value_type_t<std::remove_reference_t<input_t>>>
+ requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
+          compatable_output_iterator_concept<output_t, input_t>
 {
-    get_n(i_iter, i_sentinel, o_iter);
+    read_n(i_iter, i_sentinel, o_iter);
 }
 
 
@@ -804,17 +814,16 @@ read_raw_pod(input_t & i_iter, value_t && value)
 }
 
 // ----------------------------------------------------------------------------
-// Function do_ignore(); Element-wise
+// Function ignore_impl(); Element-wise
 // ----------------------------------------------------------------------------
 template <typename input_t,
           typename in_sent_t,
           typename stop_predicate_t>
 inline void
-do_ignore(input_t && i_iter,
+ignore_impl(input_t && i_iter,
           in_sent_t && i_sentinel,
           stop_predicate_t && stop_func)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+    requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>>
 {
@@ -826,18 +835,16 @@ do_ignore(input_t && i_iter,
 }
 
 // ----------------------------------------------------------------------------
-// Function do_ignore(); Chunked
+// Function ignore_impl(); Chunked
 // ----------------------------------------------------------------------------
 
 template <typename input_t, typename in_sent_t,
           typename stop_predicate_t>
 inline void
-do_ignore(input_t && i_iter,
+ignore_impl(input_t && i_iter,
           in_sent_t && i_sentinel,
           stop_predicate_t && stop_func)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
-             std::is_base_of_v<chunk_decorator<std::remove_reference_t<input_t>>, std::remove_reference_t<input_t>> &&
+    requires input_and_sentinel_chunked_iterator_concept<input_t, in_sent_t> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>>
 {
@@ -871,18 +878,16 @@ inline void
 ignore(input_t && i_iter,
        in_sent_t && i_sentinel,
        stop_predicate_t && stop_func)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+    requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
              predicate_concept<std::remove_reference_t<stop_predicate_t>,
                                value_type_t<std::remove_reference_t<input_t>>>
 {
-    do_ignore(i_iter, i_sentinel, stop_func);
+    ignore_impl(i_iter, i_sentinel, stop_func);
 }
 
 // ----------------------------------------------------------------------------
 // Function ignore_n()
 // ----------------------------------------------------------------------------
-
 template <typename input_t,
           typename in_sent_t,
           typename integral_t>
@@ -890,8 +895,7 @@ inline void
 ignore_n(input_t && i_iter,
          in_sent_t && i_sentinel,
          integral_t n = 1)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+    requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
              integral_concept<integral_t>
 {
     auto stop_func = [n](auto const &) mutable {return n-- == 0; };
@@ -908,8 +912,7 @@ inline void
 ignore(input_t && i_iter,
          in_sent_t && i_sentinel,
          integral_t n = 1)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>> &&
+    requires input_and_sentinel_iterator_concept<input_t, in_sent_t> &&
              integral_concept<integral_t>
 {
     ignore_n(i_iter, i_sentinel, n);
@@ -924,8 +927,7 @@ template <typename input_t,
 inline void
 ignore_line(input_t && i_iter,
             in_sent_t && i_sentinel)
-        requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-                 sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>>
+        requires input_and_sentinel_iterator_concept<input_t, in_sent_t>
 {
     ignore(i_iter, i_sentinel, is_newline());                // go until newline char
     ignore(i_iter, i_sentinel, not_functor<is_newline>());      // move on to the next line
@@ -940,8 +942,7 @@ template <typename input_t,
 inline void
 ignore(input_t && i_iter,
        in_sent_t && i_sentinel)
-    requires input_iterator_concept<std::remove_reference_t<input_t>> &&
-             sentinel_concept<std::remove_reference_t<in_sent_t>, std::remove_reference_t<input_t>>
+    requires input_and_sentinel_iterator_concept<input_t, in_sent_t>
 {
     ignore_n(i_iter, i_sentinel, 1);
 }
