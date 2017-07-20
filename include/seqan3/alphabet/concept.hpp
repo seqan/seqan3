@@ -43,219 +43,46 @@
 #include <iostream>
 #include <string>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/alphabet/concept_pre.hpp>
+#include <seqan3/alphabet/detail/member_exposure.hpp>
 
 namespace seqan3
 {
 
-// ============================================================================
-// Free/Global interface wrappers
-// ============================================================================
-
-//!\addtogroup alphabet
-//!\{
-
-// ------------------------------------------------------------------
-// type metafunctions
-// ------------------------------------------------------------------
-
-//!\brief Type metafunction that returns the `char_type` defined inside an alphabet type.
-//!\tparam alphabet_type Must provide a `char_type` member type.
-template <typename alphabet_type>
-//!\cond
-    requires requires (alphabet_type c) { typename alphabet_type::char_type; }
-//!\endcond
-struct underlying_char
-{
-    //!\brief The alphabet's char_type.
-    using type = typename alphabet_type::char_type;
-};
-
-//!\brief Shortcut for seqan3::underlying_char
-template <typename alphabet_type>
-//!\relates seqan3::underlying_char
-using underlying_char_t = typename underlying_char<alphabet_type>::type;
-
-//!\brief Type metafunction that returns the `rank_type` defined inside an alphabet type.
-//!\tparam alphabet_type Must provide a `rank_type` member type.
-template <typename alphabet_type>
-//!\cond
-    requires requires (alphabet_type c) { typename alphabet_type::rank_type; }
-//!\endcond
-struct underlying_rank
-{
-    //!\brief The alphabet's rank_type.
-    using type = typename alphabet_type::rank_type;
-};
-
-//!\brief Shortcut for seqan3::underlying_rank
-//!\relates seqan3::underlying_rank
-template <typename alphabet_type>
-using underlying_rank_t = typename underlying_rank<alphabet_type>::type;
-
-// ------------------------------------------------------------------
-// value metafunctions
-// ------------------------------------------------------------------
-
-//!\brief Value metafunction that returns the `value_size` defined inside an alphabet type.
-//!\tparam alphabet_type Must provide a `value_size` static member.
-template <typename alphabet_type>
-//!\cond
-    requires requires (alphabet_type c) { alphabet_type::value_size; }
-//!\endcond
-struct alphabet_size
-{
-    //!\brief The alphabet's size.
-    static constexpr underlying_rank_t<alphabet_type> value = alphabet_type::value_size;
-};
-
-//!\brief Shortcut for seqan3::alphabet_size
-//!\relates seqan3::alphabet_size
-template <typename alphabet_type>
-constexpr underlying_rank_t<alphabet_type> alphabet_size_v = alphabet_size<alphabet_type>::value;
-
-// ------------------------------------------------------------------
-// free functions
-// ------------------------------------------------------------------
-
-/*!\name Free function wrappers for alphabet member functions
- * \brief For alphabets that implement needed functions as members, make them "globally" available.
- * \{
- */
-/*!\brief Free function wrapper that calls `.to_char()` on the argument.
- * \tparam alphabet_type Must provide a `.to_char()` member function.
- * \param c The alphabet letter that you wish to convert to char.
- * \returns The letter's value in the alphabet's rank type (usually `char`).
- */
-template <typename alphabet_type>
-constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const c)
-    requires requires (alphabet_type c) { { c.to_char() } -> underlying_char_t<alphabet_type>; }
-{
-    return c.to_char();
-}
-
-/*!\brief Ostream operator that delegates to `c.to_char()`.
- * \tparam alphabet_type Must provide a `.to_char()` member function.
- * \param os The output stream you are printing to.
- * \param c The alphabet letter that you wish to convert to char.
- * \returns A reference to the output stream.
- */
-template <typename alphabet_type>
-std::ostream & operator<<(std::ostream & os, alphabet_type const c)
-//!\cond
-    requires requires (alphabet_type c) { { c.to_char() } -> underlying_char_t<alphabet_type>; }
-//!\endcond
-{
-    os << c.to_char();
-    return os;
-}
-
-/*!\brief Free function wrapper that calls `.to_rank()` on the argument.
- * \tparam alphabet_type Must provide a `.to_rank()` member function.
- * \param c The alphabet letter that you wish to convert to rank.
- * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
- */
-template <typename alphabet_type>
-constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const c)
-    requires requires (alphabet_type c) { { c.to_rank() } -> underlying_rank_t<alphabet_type>; }
-{
-    return c.to_rank();
-}
-
-/*!\brief Free function wrapper that calls `.assign_char(in)` on the first argument.
- * \tparam alphabet_type Must provide an `.assign_char()` member function.
- * \param c The alphabet letter that you wish to assign to.
- * \param in The `char` value you wish to assign.
- * \returns A reference to the alphabet letter you passed in.
- */
-template <typename alphabet_type>
-constexpr alphabet_type & assign_char(alphabet_type & c, underlying_char_t<alphabet_type> const in)
-    requires requires (alphabet_type c) { { c.assign_char(char{0}) } -> alphabet_type &; }
-{
-    return c.assign_char(in);
-}
-
-/*!\brief Free function wrapper that calls `.assign_char(in)` on the first argument.
- * \tparam alphabet_type Must provide an `.assign_char()` member function.
- * \param c An alphabet letter temporary.
- * \param in The `char` value you wish to assign.
- * \returns The assignment result as a temporary.
- * \details
- * Use this e.g. to newly create alphabet letters from char:
- * ~~~{.cpp}
- * auto l = assign_char(dna5{}, 'G');  // l is of type dna5
- * ~~~
- */
-template <typename alphabet_type>
-constexpr alphabet_type && assign_char(alphabet_type && c, underlying_char_t<alphabet_type> const in)
-    requires requires (alphabet_type c) { { c.assign_char(char{0}) } -> alphabet_type &; }
-{
-    return std::move(c.assign_char(in));
-}
-
-/*!\brief Free function wrapper that calls `.assign_rank(in)` on the first argument.
- * \tparam alphabet_type Must provide an `.assign_rank()` member function.
- * \param c The alphabet letter that you wish to assign to.
- * \param in The `rank` value you wish to assign.
- * \returns A reference to the alphabet letter you passed in.
- */
-template <typename alphabet_type>
-constexpr alphabet_type & assign_rank(alphabet_type & c, underlying_rank_t<alphabet_type> const in)
-    requires requires (alphabet_type c) { { c.assign_rank(uint8_t{0}) } -> alphabet_type &; }
-{
-    return c.assign_rank(in);
-}
-
-/*!\brief Free function wrapper that calls `.assign_rank(in)` on the first argument.
- * \tparam alphabet_type Must provide an `.assign_rank()` member function.
- * \param c An alphabet letter temporary.
- * \param in The `rank` value you wish to assign.
- * \returns The assignment result as a temporary.
- * \details
- * Use this e.g. to newly create alphabet letters from rank:
- * ~~~{.cpp}
- * auto l = assign_rank(dna5{}, 1);  // l is of type dna5 and == dna5::C
- * ~~~
- */
-template <typename alphabet_type>
-constexpr alphabet_type && assign_rank(alphabet_type && c, underlying_rank_t<alphabet_type> const in)
-    requires requires (alphabet_type c) { { c.assign_rank(uint8_t{0}) } -> alphabet_type &; }
-{
-    return std::move(c.assign_rank(in));
-}
-//!\}
-//!\}
-
-// ============================================================================
-// alphabet concept
-// ============================================================================
-
-/*!\brief The generic alphabet concept that covers most data types used in ranges.
+/*!\interface seqan3::semi_alphabet_concept <>
+ * \brief The basis for seqan3::alphabet_concept, but requires only rank interface (not char).
  * \ingroup alphabet
  *
- * \details
+ * This concept represents "one half" of the seqan3::alphabet_concept, it requires no
+ * `char` representation and corresponding interfaces. It is mostly used internally and
+ * in the composition of alphabet types (see seqan3::cartesian_composition).
  *
- * TODO
+ * Beyond the requirements stated below, the type needs to be a plain old datatype (`std::is_pod_v`)
+ * and be swappable (`std::is_swappable_v`).
+ *
+ * \todo add comparison operators
+ *
+ * \par Concepts and doxygen
+ * The requirements for this concept are given as related functions and metafunctions.
+ * Types that satisfy this concept are shown as "implementing this interface".
  */
+//!\cond
 template <typename t>
-concept bool alphabet_concept = requires (t t1, t t2)
+concept bool semi_alphabet_concept = requires (t t1, t t2)
 {
-    // StL concepts
+    // STL concepts
     requires std::is_pod_v<t> == true;
     requires std::is_swappable_v<t> == true;
 
     // static data members
     alphabet_size<t>::value;
+    alphabet_size_v<t>;
 
-    // conversion to char and rank
-    { to_char(t1) } -> underlying_char_t<t>;
+    // conversion to rank
     { to_rank(t1) } -> underlying_rank_t<t>;
-    { std::cout << t1 };
 
-    // assignment from char and rank
-    { assign_char(t1,  0) } -> t &;
+    // assignment from rank
     { assign_rank(t1,  0) } -> t &;
-    { assign_char(t{}, 0) } -> t &&;
     { assign_rank(t{}, 0) } -> t &&;
 
     // required comparison operators
@@ -266,5 +93,33 @@ concept bool alphabet_concept = requires (t t1, t t2)
     { t1 <= t2 } -> bool;
     { t1 >= t2 } -> bool;
 };
+//!\endcond
+
+/*!\interface seqan3::alphabet_concept <>
+ * \extends seqan3::semi_alphabet_concept
+ * \brief The generic alphabet concept that covers most data types used in ranges.
+ * \ingroup alphabet
+ *
+ * \todo document
+ *
+ * \par Concepts and doxygen
+ * The requirements for this concept are given as related functions and metafunctions.
+ * Types that satisfy this concept are shown as "implementing this interface".
+ */
+//!\cond
+template <typename t>
+concept bool alphabet_concept = requires (t t1, t t2)
+{
+    requires semi_alphabet_concept<t>;
+
+    // conversion to char
+    { to_char(t1) } -> underlying_char_t<t>;
+    { std::cout << t1 };
+
+    // assignment from char
+    { assign_char(t1,  0) } -> t &;
+    { assign_char(t{}, 0) } -> t &&;
+};
+//!\endcond
 
 } // namespace seqan3
