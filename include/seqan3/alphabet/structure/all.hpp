@@ -42,5 +42,5 @@
 
 #include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
-#include <seqan3/alphabet/structure/wuss18.hpp>
-//#include <seqan3/alphabet/structure/dssp9.hpp>
+#include <seqan3/alphabet/structure/wuss.hpp>
+#include <seqan3/alphabet/structure/dssp9.hpp>

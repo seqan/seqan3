@@ -42,8 +42,7 @@
 
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/alphabet/structure/dot_bracket3.hpp>
-#include <seqan3/alphabet/structure/wuss.hpp>
+#include <seqan3/alphabet/structure/all.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -63,7 +62,8 @@ TYPED_TEST(structure, assign_char)
     std::vector<char> input
     {
         '.', '(', ')',
-        ':', ',', '_', '~', '<', '>', '[', ']', '{', '}'
+        ':', ',', '_', '~', '<', '>', '[', ']', '{', '}',
+        'H', 'B', 'E', 'G', 'I', 'T', 'S'
     };
 
     std::vector<TypeParam> cmp;
@@ -71,16 +71,33 @@ TYPED_TEST(structure, assign_char)
     {
         cmp =
         {
-        t::NP, t::BL, t::BR,
-        t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA
+            t::NP, t::BL, t::BR,
+            t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA,
+            t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA
         };
     }
     else if constexpr (std::is_same_v<TypeParam, wuss<>>)
     {
         cmp =
         {
-        t::NP, t::BL1, t::BR1,
-        t::NP1, t::NP2, t::NP3, t::NP4, t::BL, t::BR, t::BL2, t::BR2,t::BL3, t::BR3
+            t::NP, t::BL1, t::BR1,
+            t::NP1, t::NP2, t::NP3, t::NP4, t::BL, t::BR, t::BL2, t::BR2, t::BL3, t::BR3,
+            "H"_wuss.front(),
+            "B"_wuss.front(),
+            "E"_wuss.front(),
+            "G"_wuss.front(),
+            "I"_wuss.front(),
+            "T"_wuss.front(),
+            "S"_wuss.front()
+        };
+    }
+    else if constexpr (std::is_same_v<TypeParam, dssp9>)
+    {
+        cmp =
+        {
+            t::X, t::X, t::X,
+            t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X,
+            t::H, t::B, t::E, t::G, t::I, t::T, t::S
         };
     }
 
@@ -113,25 +130,44 @@ TYPED_TEST(structure, to_char)
         EXPECT_EQ(to_char(TypeParam::BL3), '{');
         EXPECT_EQ(to_char(TypeParam::BR3), '}');
     }
-}
-
-TYPED_TEST(structure, stream_operator)
-{
-    std::stringstream ss;
-    ss << TypeParam::BL << TypeParam::BR << TypeParam::NP;
-    if constexpr (std::is_same_v<TypeParam, db3>)
+    else if constexpr (std::is_same_v<TypeParam, dssp9>)
     {
-        EXPECT_EQ(ss.str(), "().");
-    }
-    else if constexpr (std::is_same_v<TypeParam, wuss<>>)
-    {
-        EXPECT_EQ(ss.str(), "<>.");
+        EXPECT_EQ(to_char(TypeParam::H), 'H');
+        EXPECT_EQ(to_char(TypeParam::B), 'B');
+        EXPECT_EQ(to_char(TypeParam::E), 'E');
+        EXPECT_EQ(to_char(TypeParam::G), 'G');
+        EXPECT_EQ(to_char(TypeParam::I), 'I');
+        EXPECT_EQ(to_char(TypeParam::T), 'T');
+        EXPECT_EQ(to_char(TypeParam::S), 'S');
+        EXPECT_EQ(to_char(TypeParam::C), 'C');
+        EXPECT_EQ(to_char(TypeParam::X), 'X');
     }
 }
 
 TYPED_TEST(structure, concept)
 {
     EXPECT_TRUE(structure_concept<TypeParam>);
+}
+
+TEST(structure_stream_operator, db3)
+{
+    std::stringstream ss;
+    ss << db3::BL << db3::BR << db3::NP;
+    EXPECT_EQ(ss.str(), "().");
+}
+
+TEST(structure_stream_operator, wuss)
+{
+    std::stringstream ss;
+    ss << wuss<>::BL << wuss<>::BR << wuss<>::NP;
+    EXPECT_EQ(ss.str(), "<>.");
+}
+
+TEST(structure_stream_operator, dssp9)
+{
+    std::stringstream ss;
+    ss << dssp9::E << dssp9::H << dssp9::C;
+    EXPECT_EQ(ss.str(), "EHC");
 }
 
 // ------------------------------------------------------------------
@@ -177,4 +213,24 @@ TEST(wuss_literals, basic_string)
     std::basic_string<wuss<>, std::char_traits<wuss<>>> w{wuss<>::BL, wuss<>::NP, wuss<>::BR, wuss<>::BL, wuss<>::BR,
                                                           wuss<>::NP};
     EXPECT_EQ(w, "<.><>."_wusss);
+}
+
+TEST(dssp9_literals, vector)
+{
+    dssp9_vector v;
+    v.resize(5, dssp9::H);
+    EXPECT_EQ(v, "HHHHH"_dssp9);
+
+    std::vector<dssp9> w{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
+    EXPECT_EQ(w, "EHHHTG"_dssp9);
+}
+
+TEST(dssp9_literals, basic_string)
+{
+    dssp9_string v;
+    v.resize(5, dssp9::B);
+    EXPECT_EQ(v, "BBBBB"_dssp9s);
+
+    std::basic_string<dssp9, std::char_traits<dssp9>> w{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
+    EXPECT_EQ(w, "EHHHTG"_dssp9s);
 }
