@@ -68,11 +68,17 @@ constexpr bool is_nucleotide_v = is_nucleotide<type>::value;
 
 namespace seqan3
 {
-
-//!\brief A concept that indicates whether an alphabet represents nucleotides.
-//!\ingroup nucleotide
-//!\details Refines the seqan3::alphabet_concept.
+/*!\interface seqan3::nucleotide_concept <>
+ * \extends seqan3::alphabet_concept
+ * \brief A concept that indicates whether an alphabet represents nucleotides.
+ * \ingroup nucleotide
+ *
+ * \par Concepts and doxygen
+ * The requirements for this concept are given as related functions and metafunctions.
+ * Types that satisfy this concept are shown as "implementing this interface".
+ */
+//!\cond
 template <typename type>
 concept bool nucleotide_concept = alphabet_concept<type> && detail::is_nucleotide_v<type>;
-
+//!\endcond
 } // namespace seqan3
