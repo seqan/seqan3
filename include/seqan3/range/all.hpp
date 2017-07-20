@@ -43,7 +43,7 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/action/all.hpp>
 #include <seqan3/range/container/all.hpp>
-#include <seqan3/range/view.hpp>
+#include <seqan3/range/view/all.hpp>
 
 /*!\defgroup range Range
  * \brief The range module contains containers, views and actions.
