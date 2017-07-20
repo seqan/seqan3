@@ -193,7 +193,7 @@ TEST(tokenization_test, write_array_to_array)
 
 }
 
-TEST(tokenization_test, do_get)
+TEST(tokenization_test, read_impl)
 {
     using namespace seqan3::detail;
 
@@ -203,9 +203,9 @@ TEST(tokenization_test, do_get)
 
         std::istream_iterator<char> it{in};
         auto o_iter = make_preferred_output_iterator(out);
-        do_get(it, std::istream_iterator<char>{}, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        read_impl(it, std::istream_iterator<char>{}, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out.str(), "hell");
-        do_get(it, std::istream_iterator<char>{}, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        read_impl(it, std::istream_iterator<char>{}, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out.str(), "hell_word");
     }
 
@@ -214,14 +214,14 @@ TEST(tokenization_test, do_get)
         std::ostringstream out;
         auto o_iter = make_preferred_output_iterator(out);
         auto it = std::begin(in);
-        do_get(it, std::end(in), o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        read_impl(it, std::end(in), o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out.str(), "hell");
-        do_get(it, std::end(in), o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        read_impl(it, std::end(in), o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out.str(), "hell_word");
     }
 }
 
-TEST(tokenization_test, do_get_chunked)
+TEST(tokenization_test, read_impl_chunked)
 {
     using namespace seqan3::detail;
 
@@ -232,9 +232,9 @@ TEST(tokenization_test, do_get_chunked)
         auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
         auto o_iter = make_preferred_output_iterator(out);
 
-        do_get(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        read_impl(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out, "hell");
-        do_get(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        read_impl(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out, "hell_word");
     }
 
@@ -243,14 +243,14 @@ TEST(tokenization_test, do_get_chunked)
         std::string out;
         auto o_iter = make_preferred_output_iterator(out);
         auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
-        do_get(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
+        read_impl(r_beg, r_end, o_iter, equals_char<'_'>{}, equals_char<'o'>{});
         EXPECT_EQ(out, "hell");
-        do_get(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
+        read_impl(r_beg, r_end, o_iter, equals_char<'\n'>{}, equals_char<'l'>{});
         EXPECT_EQ(out, "hell_word");
     }
 }
 
-TEST(tokenization_test, do_ignore)
+TEST(tokenization_test, ignore_impl)
 {
     using namespace seqan3::detail;
 
@@ -258,23 +258,23 @@ TEST(tokenization_test, do_ignore)
         std::istringstream in{"hello_world"};
 
         std::istream_iterator<char> it{in};
-        do_ignore(it, std::istream_iterator<char>{}, equals_char<'_'>{});
+        ignore_impl(it, std::istream_iterator<char>{}, equals_char<'_'>{});
         EXPECT_EQ(*it, '_');
-        do_ignore(it, std::istream_iterator<char>{}, equals_char<'d'>{});
+        ignore_impl(it, std::istream_iterator<char>{}, equals_char<'d'>{});
         EXPECT_EQ(*it, 'd');
     }
 
     {  // container interface.
         std::string in{"hello_world"};
         auto it = std::begin(in);
-        do_ignore(it, std::end(in), equals_char<'_'>{});
+        ignore_impl(it, std::end(in), equals_char<'_'>{});
         EXPECT_EQ(*it, '_');
-        do_ignore(it, std::end(in), equals_char<'d'>{});
+        ignore_impl(it, std::end(in), equals_char<'d'>{});
         EXPECT_EQ(*it, 'd');
     }
 }
 
-TEST(tokenization_test, do_ignore_chunked)
+TEST(tokenization_test, ignore_impl_chunked)
 {
     using namespace seqan3::detail;
 
@@ -282,9 +282,9 @@ TEST(tokenization_test, do_ignore_chunked)
         std::istringstream in{"hello_world"};
 
         auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
-        do_ignore(r_beg, r_end, equals_char<'_'>{});
+        ignore_impl(r_beg, r_end, equals_char<'_'>{});
         EXPECT_EQ(*r_beg, '_');
-        do_ignore(r_beg, r_end, equals_char<'d'>{});
+        ignore_impl(r_beg, r_end, equals_char<'d'>{});
         EXPECT_EQ(*r_beg, 'd');
     }
 
@@ -292,9 +292,9 @@ TEST(tokenization_test, do_ignore_chunked)
         std::string in{"hello_world"};
 
         auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
-        do_ignore(r_beg, r_end, equals_char<'_'>{});
+        ignore_impl(r_beg, r_end, equals_char<'_'>{});
         EXPECT_EQ(*r_beg, '_');
-        do_ignore(r_beg, r_end, equals_char<'d'>{});
+        ignore_impl(r_beg, r_end, equals_char<'d'>{});
         EXPECT_EQ(*r_beg, 'd');
     }
 }
