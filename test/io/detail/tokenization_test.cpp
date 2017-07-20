@@ -307,17 +307,17 @@ TEST(tokenization_test, ignore)
         std::string in{"hello_world\n\rHello Berlin & Hello Seqan"};
 
         auto it = std::begin(in);
-        ignore(it, std::end(in));                         //ignore just one char
+        read_one(it, std::end(in), std::ignore);                         //ignore just one char
         EXPECT_EQ(*it, 'e');
-        ignore(it, std::end(in), equals_char<'_'>{});     //ignore until '_'
+        read_until(it, std::end(in), std::ignore, equals_char<'_'>{});     //ignore until '_'
         EXPECT_EQ(*it, '_');
-        ignore(it, std::end(in), 3);                      //ignore the next 3  ---> 'l'
+        read_n(it, std::end(in), std::ignore, 3);                      //ignore the next 3  ---> 'l'
         EXPECT_EQ(*it, 'r');
-        ignore_line(it, std::end(in));                    //ignore the curent line ---> 'H'
+        read_line(it, std::end(in), std::ignore);                    //ignore the curent line ---> 'H'
         EXPECT_EQ(*it, 'H');
-        ignore_n(it, std::end(in), 6);                    //ignore_n the next 6  ---> 'B'
+        read_n(it, std::end(in), std::ignore, 6);                    //ignore_n the next 6  ---> 'B'
         EXPECT_EQ(*it, 'B');
-        ignore(it, std::end(in), is_whitespace());        //ignore until the next whitespace  ---> ' '
+        read_until(it, std::end(in), std::ignore, is_whitespace());        //ignore until the next whitespace  ---> ' '
         EXPECT_EQ(*it, ' ');
     }
 }
@@ -330,17 +330,17 @@ TEST(tokenization_test, ignore_chunked)
         std::istringstream in{"hello_world\n\rHello Berlin & Hello Seqan"};
 
         auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
-        ignore(r_beg, r_end);                         //ignore just one char
+        read_one(r_beg, r_end, std::ignore);                         //ignore just one char
         EXPECT_EQ(*r_beg, 'e');
-        ignore(r_beg, r_end, equals_char<'_'>{});     //ignore until '_'
+        read_until(r_beg, r_end, std::ignore, equals_char<'_'>{});     //ignore until '_'
         EXPECT_EQ(*r_beg, '_');
-        ignore(r_beg, r_end, 3);                      //ignore the next 3  ---> 'l'
+        read_n(r_beg, r_end, std::ignore, 3);                      //ignore the next 3  ---> 'l'
         EXPECT_EQ(*r_beg, 'r');
-        ignore_line(r_beg, r_end);                    //ignore the curent line ---> 'H'
+        read_line(r_beg, r_end, std::ignore);                    //ignore the curent line ---> 'H'
         EXPECT_EQ(*r_beg, 'H');
-        ignore_n(r_beg, r_end, 6);                    //ignore_n the next 6  ---> 'B'
+        read_n(r_beg, r_end, std::ignore, 6);                    //ignore_n the next 6  ---> 'B'
         EXPECT_EQ(*r_beg, 'B');
-        ignore(r_beg, r_end, is_whitespace());        //ignore until the next whitespace  ---> ' '
+        read_until(r_beg, r_end, std::ignore, is_whitespace());        //ignore until the next whitespace  ---> ' '
         EXPECT_EQ(*r_beg, ' ');
     }
 
@@ -348,17 +348,17 @@ TEST(tokenization_test, ignore_chunked)
         std::string in{"hello_world\n\rHello Berlin & Hello Seqan"};
 
         auto [r_beg, r_end] = make_preferred_input_iterator_range(in);
-        ignore(r_beg, r_end);                         //ignore just one char
+        read_one(r_beg, r_end, std::ignore);                         //ignore just one char
         EXPECT_EQ(*r_beg, 'e');
-        ignore(r_beg, r_end, equals_char<'_'>{});     //ignore until '_'
+        read_until(r_beg, r_end, std::ignore, equals_char<'_'>{});     //ignore until '_'
         EXPECT_EQ(*r_beg, '_');
-        ignore(r_beg, r_end, 3);                      //ignore the next 3  ---> 'l'
+        read_n(r_beg, r_end, std::ignore, 3);                      //ignore the next 3  ---> 'l'
         EXPECT_EQ(*r_beg, 'r');
-        ignore_line(r_beg, r_end);                    //ignore the curent line ---> 'H'
+        read_line(r_beg, r_end, std::ignore);                    //ignore the curent line ---> 'H'
         EXPECT_EQ(*r_beg, 'H');
-        ignore_n(r_beg, r_end, 6);                    //ignore_n the next 6  ---> 'B'
+        read_n(r_beg, r_end, std::ignore, 6);                    //ignore_n the next 6  ---> 'B'
         EXPECT_EQ(*r_beg, 'B');
-        ignore(r_beg, r_end, is_whitespace());        //ignore until the next whitespace  ---> ' '
+        read_until(r_beg, r_end, std::ignore, is_whitespace());        //ignore until the next whitespace  ---> ' '
         EXPECT_EQ(*r_beg, ' ');
     }
 }
