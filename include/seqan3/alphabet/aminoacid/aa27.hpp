@@ -338,13 +338,14 @@ constexpr aa27 aa27::Z{internal_type::Z};
 constexpr aa27 aa27::TERMINATOR{internal_type::TERMINATOR};
 constexpr aa27 aa27::UNKNOWN{aa27::X};
 
+} // namespace seqan3
+
 #ifndef NDEBUGs
 
 #include <seqan3/alphabet/concept.hpp>
 
-static_assert(alphabet_concept<aa27>);
+static_assert(seqan3::alphabet_concept<seqan3::aa27>);
 #endif
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // containers
