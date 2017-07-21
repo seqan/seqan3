@@ -33,7 +33,7 @@
 // ==========================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup gap
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
  * \brief Contains seqan3::gap.
@@ -49,6 +49,7 @@ namespace seqan3
 {
 
 /*!\brief The alphabet of a gap character '-'
+ * \ingroup gap
  *
  * The alphabet always has the same value ('-').
  *

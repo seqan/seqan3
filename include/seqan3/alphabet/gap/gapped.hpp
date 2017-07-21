@@ -33,7 +33,7 @@
 // ==========================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup gap
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
  * \brief Contains seqan3::gapped.
@@ -49,7 +49,7 @@ namespace seqan3
 
 
 /*!\brief A gapped that extends a given alphabet with a gap character.
- * \ingroup alphabet
+ * \ingroup gap
  * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
  *
  * The gapped represents the union of a given alphabet and the
