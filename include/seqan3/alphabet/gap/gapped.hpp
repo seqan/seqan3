@@ -36,7 +36,7 @@
  * \ingroup alphabet
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
- * \brief Contains seqan3::gapped_alphabet.
+ * \brief Contains seqan3::gapped.
  */
 
 #pragma once
@@ -48,32 +48,32 @@ namespace seqan3
 {
 
 
-/*!\brief A gapped_alphabet that extends a given alphabet with a gap character.
+/*!\brief A gapped that extends a given alphabet with a gap character.
  * \ingroup alphabet
  * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
  *
- * The gapped_alphabet represents the union of a given alphabet and the
+ * The gapped represents the union of a given alphabet and the
  * seqan3::gap alphabet (e.g. the four letter DNA alphabet + a gap character).
  * Note that you cannot assign regular characters, but additional functions for
  * this are available.
  *
  * ```cpp
- * gapped_alphabet<dna4> gapped_letter{};
- * gapped_alphabet<dna4> converted_letter{dna4::C};
+ * gapped<dna4> gapped_letter{};
+ * gapped<dna4> converted_letter{dna4::C};
  * // doesn't work:
- * // gapped_alphabet<dna4> my_letter{'A'};
+ * // gapped<dna4> my_letter{'A'};
  *
- * gapped_alphabet<dna4>{}.assign_char('C'); // <- this does!
- * gapped_alphabet<dna4>{}.assign_char('-'); // gap character
- * gapped_alphabet<dna4>{}.assign_char('K'); // unknown characters map to the default/unknown
+ * gapped<dna4>{}.assign_char('C'); // <- this does!
+ * gapped<dna4>{}.assign_char('-'); // gap character
+ * gapped<dna4>{}.assign_char('K'); // unknown characters map to the default/unknown
  *                                           // character of the given alphabet type (i.e. A of dna4)
  * ```
  *
- * \sa For more details see union_composition, which is the base class and more general than the gapped_alphabet.
+ * \sa For more details see union_composition, which is the base class and more general than the gapped.
  */
 template <typename alphabet_t>
     requires alphabet_concept<alphabet_t>
-struct gapped_alphabet : public union_composition<alphabet_t, gap>
+struct gapped : public union_composition<alphabet_t, gap>
 {
     using union_composition<alphabet_t, gap>::_value;
     using union_composition<alphabet_t, gap>::value_size;
@@ -86,7 +86,7 @@ struct gapped_alphabet : public union_composition<alphabet_t, gap>
     /*!\brief Returns true if it is a gap
      * \details
      * ```cpp
-     * gapped_alphabet<dna4> letter = dna4::T;
+     * gapped<dna4> letter = dna4::T;
      *
      * if (!letter.is_gap())
      *     std::cout << "T is NOT a gap character";
@@ -104,28 +104,28 @@ struct gapped_alphabet : public union_composition<alphabet_t, gap>
     /*!\brief Change it into a gap.
      * \details
      * ```cpp
-     * gapped_alphabet<dna4> letter;
+     * gapped<dna4> letter;
      * letter.set_gap();
      *
      * // the same as set_gap()
      * letter = gap::GAP;
      * ```
      */
-    constexpr gapped_alphabet set_gap()
+    constexpr gapped set_gap()
     {
         _value = value_size - 1;
         return *this;
     }
 
     //!\copydoc union_composition::assign_rank
-    constexpr gapped_alphabet & assign_rank(rank_type const i)
+    constexpr gapped & assign_rank(rank_type const i)
     {
         union_composition<alphabet_t, gap>::assign_rank(i);
         return *this;
     }
 
     //!\copydoc union_composition::assign_char
-    constexpr gapped_alphabet & assign_char(char_type const c)
+    constexpr gapped & assign_char(char_type const c)
     {
         union_composition<alphabet_t, gap>::assign_char(c);
         return *this;
@@ -136,5 +136,5 @@ struct gapped_alphabet : public union_composition<alphabet_t, gap>
 
 #ifndef NDEBUG
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-static_assert(seqan3::alphabet_concept<seqan3::gapped_alphabet<seqan3::dna4>>);
+static_assert(seqan3::alphabet_concept<seqan3::gapped<seqan3::dna4>>);
 #endif
