@@ -83,17 +83,19 @@ struct gapped : public union_composition<alphabet_t, gap>
     using typename union_composition<alphabet_t, gap>::rank_type;
     using typename union_composition<alphabet_t, gap>::char_type;
 
-    //!\copydoc union_composition::assign_rank
-    constexpr gapped & assign_rank(rank_type const i)
+    //!\copydoc union_composition::assign_char
+    constexpr gapped & assign_char(char_type const c) noexcept
     {
-        union_composition<alphabet_t, gap>::assign_rank(i);
+        union_composition<alphabet_t, gap>::assign_char(c);
         return *this;
     }
 
-    //!\copydoc union_composition::assign_char
-    constexpr gapped & assign_char(char_type const c)
+    //!\copydoc union_composition::assign_rank
+    constexpr gapped & assign_rank(rank_type const i) /*noexcept*/
     {
-        union_composition<alphabet_t, gap>::assign_char(c);
+        // TODO(marehr): mark function noexcept if assert (within union_composition) is replaced
+        // https://github.com/seqan/seqan3/issues/85
+        union_composition<alphabet_t, gap>::assign_rank(i);
         return *this;
     }
 };
