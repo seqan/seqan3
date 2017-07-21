@@ -83,40 +83,6 @@ struct gapped : public union_composition<alphabet_t, gap>
     using typename union_composition<alphabet_t, gap>::rank_type;
     using typename union_composition<alphabet_t, gap>::char_type;
 
-    /*!\brief Returns true if it is a gap
-     * \details
-     * ```cpp
-     * gapped<dna4> letter = dna4::T;
-     *
-     * if (!letter.is_gap())
-     *     std::cout << "T is NOT a gap character";
-     *
-     * letter.set_gap();
-     * if (letter.is_gap())
-     *     std::cout << "Now it is a gap character";
-     * ```
-     */
-    constexpr bool is_gap() const
-    {
-        return _value == value_size - 1;
-    }
-
-    /*!\brief Change it into a gap.
-     * \details
-     * ```cpp
-     * gapped<dna4> letter;
-     * letter.set_gap();
-     *
-     * // the same as set_gap()
-     * letter = gap::GAP;
-     * ```
-     */
-    constexpr gapped set_gap()
-    {
-        _value = value_size - 1;
-        return *this;
-    }
-
     //!\copydoc union_composition::assign_rank
     constexpr gapped & assign_rank(rank_type const i)
     {
