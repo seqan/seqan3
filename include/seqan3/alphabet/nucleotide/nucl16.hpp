@@ -57,6 +57,7 @@ namespace seqan3
 
 /*!\brief The 16 letter DNA alphabet, containing all IUPAC smybols.
  * \ingroup nucleotide
+ * \implements seqan3::nucleotide_concept
  *
  * \details
  * Note that in contrast to seqan3::dna4, seqan3::rna4, seqan3::dna5 and seqan3::rna5

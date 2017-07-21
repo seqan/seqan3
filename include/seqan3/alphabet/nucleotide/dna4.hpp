@@ -58,6 +58,7 @@ namespace seqan3
 
 /*!\brief The four letter DNA alphabet of A,C,G,T.
  * \ingroup nucleotide
+ * \implements seqan3::nucleotide_concept
  *
  * \details
  * Note that you can assign 'U' as a character to dna4 and it will silently
