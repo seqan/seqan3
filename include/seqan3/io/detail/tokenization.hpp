@@ -39,6 +39,7 @@
 
 #include <cctype>
 #include <cstring>
+#include <cassert>
 #include <string>
 #include <tuple>
 #include <stdexcept>
@@ -331,7 +332,7 @@ typedef or_functor<is_alpha, is_digit>                             is_alpha_num;
 struct always_true
 {
     template <typename ...args>
-    inline bool operator()(args...)
+    inline bool operator()(args &&...)
     {
         return true;
     }
@@ -340,7 +341,7 @@ struct always_true
 struct always_false
 {
     template <typename ...args>
-    inline bool operator()(args...)
+    inline bool operator()(args &&...)
     {
         return false;
     }
@@ -660,12 +661,10 @@ read_impl(input_t && i_iter,
                 // do a pbump or for container do a reserve.
                 o_iter.advance_chunk(optr - begin(ochunk));  // pbump or set
                 o_iter.next_chunk(end(ichunk) - iptr);       // reserve vector or reload buffer.
-                // std::cout << "get_chunk: " << std::endl;
                 ochunk = o_iter.get_chunk();
                 optr = begin(ochunk);
-                // SEQAN_ASSERT(optr < ochunk.end);
+                assert(optr < end(ochunk));
             }
-
             put(*iptr, optr);
         }
         i_iter.advance_chunk(iptr - begin(ichunk)); // advance input iterator

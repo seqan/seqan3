@@ -42,72 +42,10 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
-#include <array>
-#include <streambuf>
 
 #include <seqan3/io/detail/stream_iterator.hpp>
 
-namespace seqan3::detail::test_stream_iterator
-{
-
-class small_stream_buffer : public std::streambuf
-{
-public:
-
-    using traits_type = typename std::streambuf::traits_type;
-
-    small_stream_buffer(char * _begin, char * _end) : data_begin(_begin), data_end(_end)
-    {
-        assert(_end - _begin >= static_cast<std::ptrdiff_t>(BUFFER_SIZE));
-        setg(_begin, _begin, _begin + BUFFER_SIZE);
-        setp(_begin, _begin + BUFFER_SIZE);
-    }
-
-protected:
-
-    typename traits_type::int_type underflow()
-    {
-        using std::size;
-
-        // Valid position, return current char.
-        if (gptr() < egptr())
-            return traits_type::to_int_type(*gptr());
-
-        // Reached end of stream.
-        if (gptr() == data_end)
-            return traits_type::eof();
-
-        // Store data last chars in putback buffer.
-        std::memmove(&put_back_buffer[0], egptr() - size(put_back_buffer), size(put_back_buffer));
-
-        // Update buffer.
-        setg(gptr(), gptr(), gptr() + std::min(static_cast<std::ptrdiff_t>(BUFFER_SIZE), data_end - gptr()));
-        return traits_type::to_int_type(*gptr());
-    }
-
-    typename traits_type::int_type overflow(typename traits_type::int_type ch = traits_type::eof())
-    {
-        // reset the put area.
-        if (pptr() == epptr())
-            setp(pptr(), pptr() + std::min(static_cast<std::ptrdiff_t>(BUFFER_SIZE), data_end - pptr()));
-
-        if (pptr() == data_end || traits_type::eq_int_type(ch, traits_type::eof()))
-            return traits_type::eof();
-
-        *pptr() = ch;
-        return ch;
-    }
-private:
-
-    static const size_t BUFFER_SIZE = 3;
-
-    char * data_begin{nullptr};
-    char * data_end{nullptr};
-
-    std::array<char, 1>  put_back_buffer;
-};
-
-}  // seqan3::detail::test_stream_iterator
+#include "test_small_stream_buffer.hpp"
 
 using namespace seqan3;
 
@@ -155,7 +93,7 @@ TEST(stream_iterator, istream_chunk_adaptor_iterator_get_chunk)
 
     {
         std::string in{"acgtgatagctacgacgatcg"};
-        test_stream_iterator::small_stream_buffer buf(in.data(), in.data() + in.size());
+        io_test_small_stream_buffer buf(in.data(), in.data() + in.size());
 
         istream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
@@ -196,7 +134,7 @@ TEST(stream_iterator, istream_chunk_adaptor_iterator_next_chunk)
 
     {
         std::string in{"acgtgata"};
-        test_stream_iterator::small_stream_buffer buf(in.data(), in.data() + in.size());
+        io_test_small_stream_buffer buf(in.data(), in.data() + in.size());
 
         istream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
@@ -231,7 +169,7 @@ TEST(stream_iterator, istream_chunk_adaptor_iterator_advance_chunk)
     using std::advance;
 
     std::string in{"acgtgata"};
-    test_stream_iterator::small_stream_buffer buf(in.data(), in.data() + in.size());
+    io_test_small_stream_buffer buf(in.data(), in.data() + in.size());
 
     istream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
@@ -303,7 +241,7 @@ TEST(stream_iterator, ostream_chunk_adaptor_iterator_get_chunk)
 
     std::string out;
     out.resize(10);
-    test_stream_iterator::small_stream_buffer buf(out.data(), out.data() + out.size());
+    io_test_small_stream_buffer buf(out.data(), out.data() + out.size());
 
     ostream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
@@ -325,7 +263,7 @@ TEST(stream_iterator, ostream_chunk_adaptor_iterator_next_chunk)
 
     std::string out;
     out.resize(10);
-    test_stream_iterator::small_stream_buffer buf(out.data(), out.data() + out.size());
+    io_test_small_stream_buffer buf(out.data(), out.data() + out.size());
 
     ostream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
@@ -359,7 +297,7 @@ TEST(stream_iterator, ostream_chunk_adaptor_iterator_advance_chunk)
 
     std::string out;
     out.resize(10);
-    test_stream_iterator::small_stream_buffer buf(out.data(), out.data() + out.size());
+    io_test_small_stream_buffer buf(out.data(), out.data() + out.size());
 
     ostream_chunk_adaptor_iterator<std::iostream> it{&buf};
 
