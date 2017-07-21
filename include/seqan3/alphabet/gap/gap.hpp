@@ -97,15 +97,17 @@ struct gap
      * \{
      */
     //!\brief Assign from a character (no-op, since gap has only one character).
+    //!\param c not used, since gap has only one character
     constexpr gap & assign_char(char_type const)
     {
         return *this;
     }
 
     //!\brief Assign from a numeric value (no-op, since gap has only one character).
-    constexpr gap & assign_rank(rank_type const in)
+    //!\param i not used, since gap has only one character
+    constexpr gap & assign_rank(rank_type const i)
     {
-        assert(in == 0);
+        assert(i == 0);
         return *this;
     }
     //!\}
