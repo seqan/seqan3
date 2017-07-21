@@ -41,15 +41,11 @@
 
 using namespace seqan3;
 
-TEST(gapped_test, default_constructor)
-{
-    using alphabet_t = gapped<dna4>;
+// These test case only test seqan3::gapped specific functions/properties that are not offered by the general
+// `seqan3::alphabet_concept` interface. Those common interface function of `seqan3::gapped` will be tested
+// in `alphabet/alphabet_test.hpp`.
 
-    constexpr auto letter1 = alphabet_t{};
-    EXPECT_EQ(letter1._value, 0);
-}
-
-TEST(gapped_test, initialize_from_component_alphabet)
+TEST(gapped_test, initialise_from_component_alphabet)
 {
     using alphabet_t = gapped<dna4>;
 
@@ -99,135 +95,13 @@ TEST(gapped_test, assign_from_component_alphabet)
     EXPECT_EQ(letter.to_rank(), 4);
 }
 
-TEST(gapped_test, copy_constructor)
-{
-    using alphabet_t = gapped<dna4>;
-    constexpr alphabet_t letter1{dna4::T};
-    alphabet_t letter2{letter1};
-
-    EXPECT_EQ(letter1._value, 3);
-    EXPECT_EQ(letter2._value, 3);
-}
-
-TEST(gapped_test, move_constructor)
-{
-    using alphabet_t = gapped<dna4>;
-    alphabet_t letter1{dna4::G};
-    alphabet_t letter2{std::move(letter1)};
-
-    EXPECT_EQ(letter2._value, 2);
-}
-
-TEST(gapped_test, copy_assignment)
-{
-    using alphabet_t = gapped<dna4>;
-    constexpr alphabet_t letter1{dna4::T};
-    alphabet_t letter2, letter3;
-    letter2 = letter1;
-    letter3 = {letter1};
-
-    EXPECT_EQ(letter1.to_rank(), 3);
-    EXPECT_EQ(letter2.to_rank(), 3);
-    EXPECT_EQ(letter3.to_rank(), 3);
-}
-
-TEST(gapped_test, move_assignment)
-{
-    using alphabet_t = gapped<dna4>;
-    alphabet_t letter1 = dna4::G;
-    alphabet_t letter2{std::move(letter1)};
-
-    EXPECT_EQ(letter2.to_rank(), 2);
-}
-
 TEST(gapped_test, fulfills_concepts)
 {
     using alphabet_t = gapped<dna4>;
-    static_assert(std::is_pod_v<alphabet_t>);
-    EXPECT_TRUE(alphabet_concept<alphabet_t>);
-}
-
-TEST( gapped_test, assign_char)
-{
-    using alphabet_t = gapped<dna4>;
-
-    auto letter = alphabet_t{};
-    auto letterA = alphabet_t{dna4::A};
-    auto letterC = alphabet_t{dna4::C};
-    auto letterG = alphabet_t{dna4::G};
-    auto letterT = alphabet_t{dna4::T};
-    auto letterD = alphabet_t{gap::GAP};
-
-    EXPECT_EQ(letter.assign_char('A'), letterA);
-    EXPECT_EQ(letter.assign_char('C'), letterC);
-    EXPECT_EQ(letter.assign_char('G'), letterG);
-    EXPECT_EQ(letter.assign_char('T'), letterT);
-    EXPECT_EQ(letter.assign_char('-'), letterD);
-}
-
-TEST(gapped_test, to_char)
-{
-    using alphabet_t = gapped<dna4>;
-
-    auto letterA = alphabet_t{dna4::A};
-    auto letterC = alphabet_t{dna4::C};
-    auto letterG = alphabet_t{dna4::G};
-    auto letterT = alphabet_t{dna4::T};
-    auto letterD = alphabet_t{gap::GAP};
-
-    EXPECT_EQ(letterA.to_char(), 'A');
-    EXPECT_EQ(letterC.to_char(), 'C');
-    EXPECT_EQ(letterG.to_char(), 'G');
-    EXPECT_EQ(letterT.to_char(), 'T');
-    EXPECT_EQ(letterD.to_char(), '-');
-}
-
-TEST(gapped_test, to_rank)
-{
-    using alphabet_t = gapped<dna4>;
-    auto letter = alphabet_t{};
-
-    EXPECT_EQ(letter.assign_char('A').to_rank(), 0);
-    EXPECT_EQ(letter.assign_char('C').to_rank(), 1);
-    EXPECT_EQ(letter.assign_char('G').to_rank(), 2);
-    EXPECT_EQ(letter.assign_char('T').to_rank(), 3);
-    EXPECT_EQ(letter.assign_char('-').to_rank(), 4);
-}
-
-TEST(gapped_test, assign_rank)
-{
-    using alphabet_t = gapped<dna4>;
-
-    auto letter = alphabet_t{};
-    auto letterA = alphabet_t{dna4::A};
-    auto letterC = alphabet_t{dna4::C};
-    auto letterG = alphabet_t{dna4::G};
-    auto letterT = alphabet_t{dna4::T};
-    auto letterD = alphabet_t{gap::GAP};
-
-    EXPECT_EQ(letter.assign_rank(0), letterA);
-    EXPECT_EQ(letter.assign_rank(1), letterC);
-    EXPECT_EQ(letter.assign_rank(2), letterG);
-    EXPECT_EQ(letter.assign_rank(3), letterT);
-    EXPECT_EQ(letter.assign_rank(4), letterD);
-}
-
-TEST(gapped_test, relations)
-{
-    using alphabet_t = gapped<dna4>;
-    auto letter1 = alphabet_t{};
-    auto letter2 = alphabet_t{};
-
-    EXPECT_EQ(letter1.assign_char('A'), letter2.assign_char('A'));
-    EXPECT_EQ(letter1.assign_char('a'), letter2.assign_char('A'));
-    EXPECT_NE(letter1.assign_char('A'), letter2.assign_char('C'));
-    EXPECT_NE(letter1.assign_char('A'), letter2.assign_char('-'));
-    EXPECT_LT(letter1.assign_char('A'), letter2.assign_char('C'));
-    EXPECT_LE(letter1.assign_char('C'), letter2.assign_char('C'));
-    EXPECT_LE(letter1.assign_char('A'), letter2.assign_char('C'));
-    EXPECT_GT(letter1.assign_char('T'), letter2.assign_char('A'));
-    EXPECT_GE(letter1.assign_char('T'), letter2.assign_char('T'));
-    EXPECT_GE(letter1.assign_char('T'), letter2.assign_char('C'));
+    EXPECT_TRUE((std::is_pod_v<alphabet_t>));
+    EXPECT_TRUE((std::is_trivial_v<alphabet_t>));
+    EXPECT_TRUE((std::is_trivially_copyable_v<alphabet_t>));
+    EXPECT_TRUE((std::is_standard_layout_v<alphabet_t>));
 }
 
 TEST(gapped_test, stream_operator)
@@ -238,9 +112,9 @@ TEST(gapped_test, stream_operator)
     auto letterC = alphabet_t{dna4::C};
     auto letterG = alphabet_t{dna4::G};
     auto letterT = alphabet_t{dna4::T};
-    auto letterD = alphabet_t{gap::GAP};
+    auto letterGAP = alphabet_t{gap::GAP};
 
     std::stringstream ss;
-    ss << letterA << letterT << letterG << letterD << letterC;
+    ss << letterA << letterT << letterG << letterGAP << letterC;
     EXPECT_EQ(ss.str(), "ATG-C");
 }
