@@ -31,27 +31,53 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Joerg Winkler <j.winkler AT fu-berlin.de>
-// ============================================================================
+
+/*!\file seqan3/io/sequence/sequence_file_format.hpp
+ * \ingroup io
+ * \author Joerg Winkler <j.winkler AT fu-berlin.de>
+ * \brief Defines the concept of sequence file formats.
+ */
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <string>
 #include <fstream>
+
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/io/sequence/sequence_file_in.hpp>
 
 #if 0
 //TODO(rrahn): this is a prototype and needs more refinement, disabling for now
 //!\cond
 namespace seqan3
 {
-/*!\interface seqan3::sequence_file_format_concept <>
+/*!\interface seqan3::sequence_file_format_concept
  * \brief The generic concept for sequence file formats.
+ * \relates sequence_file_in_traits_concept
+ * \tparam t The sequence file format type.
  * \ingroup io
- *
- * The requirements for this concept are read and write functions and associated file extension(s).
+ * \details
+ * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
+ */
+/*!\fn void read(dna4_string sequence, std::string meta, std::string quality, std::ifstream stream, options_type opt)
+ * \brief The read function reads a sequence file from ifstream and writes the contents into three buffers.
+ * \param sequence This is the buffer for sequences. It should support any alphabet, requires at least dna4_string.
+ * \param meta This is the buffer for meta-information (e.g. fasta header).
+ * \param quality This is the buffer for quality values (e.g. from fastq files).
+ * \param stream This is the input file stream, i.e. the source of data.
+ * \param opt For passing some further options or data types to the function.
+ */
+/*!\fn void write(dna4_string sequence, std::string meta, std::string quality, std::ofstream stream, options_type opt)
+ * \brief The write function writes the contents of sequence, meta, and quality to a file via ofstream.
+ * \param sequence This is the sequence source. It should support any alphabet, requires at least dna4_string.
+ * \param meta This is the source for meta-information (e.g. fasta header).
+ * \param quality This is the source for quality values (e.g. from fastq files).
+ * \param stream This is the output file stream, i.e. the target file.
+ * \param opt For passing some further options or data types to the function.
+ */
+/*!\property t::file_extensions
+ * \brief The format type type is required to have a data field that contains all supported file extensions.
  */
 //!\cond
 template <typename t>
@@ -82,10 +108,18 @@ namespace detail
 {
 
 /*!
- * \brief Check whether all given files meet the sequence_file_format_concept.
- * \tparam index Current file index.
- * \tparam variant_type Type of data structure.
- * \return False if at least one file does not meet the sequence file format concept, true otherwise.
+ * \brief Check whether all given formats meet the sequence_file_format_concept.
+ * \tparam index Index for iterating over the valid sequence formats in a recursive manner (always start with 0).
+ * \tparam variant_type A std::variant type that contains the format types to be checked
+ * (e.g. [seqan3::sequence_file_format_fasta]).
+ * \relates sequence_file_format_concept
+ * \returns False if at least one format does not meet the sequence file format concept, true otherwise.
+ * \sa seqan3::sequence_file_in_traits_concept
+ *
+ * Usage example:
+ * ```cpp
+ * bool valid = detail::meets_concept_sequence_file_format<0, typename t::valid_formats>();
+ * ```
  */
 template <size_t index, typename variant_type>
 constexpr bool meets_concept_sequence_file_format()
