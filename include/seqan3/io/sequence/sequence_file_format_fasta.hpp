@@ -1,8 +1,8 @@
-// ==========================================================================
+// ============================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
+// ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,10 +30,14 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ==========================================================================
-// Authors: Svenja Mehringer, Temesgen H. Dadi, Jongkyu Kim
-//          <svenja.mehringer@fu-berlin.de> <temesgen.dadi@fu-berlin.de>
-// ==========================================================================
+// ============================================================================
+
+/*!\file
+ * \brief Contains sequence_file_in class and the tag dispatching of read function.
+ * \author Temesgen H. Dadi <temesgen.dadi@fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer@fu-berlin.de>
+ * \ingroup io/sequence
+ */
 
 #pragma once
 
