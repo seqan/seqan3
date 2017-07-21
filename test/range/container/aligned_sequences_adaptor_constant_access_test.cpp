@@ -32,12 +32,17 @@
 //
 // ============================================================================
 
+#include <sstream>
+#include <vector>
+
 #include <gtest/gtest.h>
-#include <seqan3/alignment/aligned_sequences_constant_access.hpp>
+
+#include <seqan3/alphabet.hpp>
+#include <seqan3/range/container/aligned_sequence_adaptor_constant_access.hpp>
 
 using namespace seqan3;
 
 TEST(aligned_sequences_test, constructor)
 {
-    aligned_sequence_adaptor_constant_access();
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> s;
 }
