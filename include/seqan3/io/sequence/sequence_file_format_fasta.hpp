@@ -40,69 +40,64 @@
 #include <vector>
 #include <string>
 
+#include <range/v3/utility/iterator.hpp>
+#include <range/v3/istream_range.hpp>
+
+#include <seqan3/io/detail/tokenization.hpp>
+#include <seqan3/io/sequence/sequence_file_format.hpp>
+#include <seqan3/range/container/concept.hpp>
+
 namespace seqan3
 {
 
 struct sequence_file_format_fasta
 {
 public:
-    static inline std::vector<std::string> file_extensions {{".fasta"},{".fa"}};
+    static inline std::vector<std::string> file_extensions {{".fasta"},{".fa"},{".fna"}};
 
     //TODO make the requirements stricter
     template <typename sequence_type,
               typename meta_type,
-              typename qual_type,
               typename stream_type,
               typename options_type>
         requires sequence_concept<std::decay_t<sequence_type>> &&
-               sequence_concept<std::decay_t<meta_type>> &&
-               sequence_concept<std::decay_t<qual_type>>
+               sequence_concept<std::decay_t<meta_type>>
     void read(sequence_type && seq,
               meta_type && meta,
-              qual_type && qual,
               stream_type & stream,
               options_type const & options);
 
     template <typename seqs_type,
               typename metas_type,
-              typename quals_type,
               typename stream_type,
               typename options_type>
         requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
-                 sequence_of_sequence_concept<std::decay_t<metas_type>> &&
-                 sequence_of_sequence_concept<std::decay_t<quals_type>>
+                 sequence_of_sequence_concept<std::decay_t<metas_type>>
     void read(seqs_type && seqs,
               metas_type && metas,
-              quals_type && quals,
               stream_type & stream,
               options_type const & options,
               size_t max_records = 0);
 
     template <typename sequence_type,
               typename meta_type,
-              typename qual_type,
               typename stream_type,
               typename options_type>
         requires sequence_concept<std::decay_t<sequence_type>> &&
-                 sequence_concept<std::decay_t<meta_type>> &&
-                 sequence_concept<std::decay_t<qual_type>>
+                 sequence_concept<std::decay_t<meta_type>>
     void write(sequence_type && seq,
               meta_type && meta,
-              qual_type && qual,
               stream_type & stream,
               options_type const & options);
 
     template <typename seqs_type,
               typename metas_type,
-              typename quals_type,
               typename stream_type,
               typename options_type>
               requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
-                       sequence_of_sequence_concept<std::decay_t<metas_type>> &&
-                       sequence_of_sequence_concept<std::decay_t<quals_type>>
+                       sequence_of_sequence_concept<std::decay_t<metas_type>>
     void write(seqs_type && seqs,
                metas_type && metas,
-               quals_type && quals,
                stream_type & stream,
                options_type const & options,
                size_t max_records = 0);
@@ -110,36 +105,66 @@ public:
 
 template <typename sequence_type,
           typename meta_type,
-          typename qual_type,
           typename stream_type,
           typename options_type>
      requires sequence_concept<std::decay_t<sequence_type>> &&
-              sequence_concept<std::decay_t<meta_type>> &&
-              sequence_concept<std::decay_t<qual_type>>
+              sequence_concept<std::decay_t<meta_type>>
 void sequence_file_format_fasta::read(sequence_type && seq,
                                       meta_type && meta,
-                                      qual_type && qual,
                                       stream_type & stream,
                                       options_type const & options)
 {
-    // TODO:: tokenization
+    using namespace seqan3::detail;
+    auto [stream_begin, stream_end] = make_preferred_input_iterator_range(stream);
+
+    // check if we are at > and consume it
+    assert(*stream_begin == '>');
+    read_one(stream_begin, stream_end, std::ignore);
+
+    // read sequence identifier
+    auto meta_iter = make_preferred_output_iterator(meta);
+    read_line(stream_begin, stream_end, meta_iter);
+
+    // read sequence
+    auto seq_iter = make_preferred_output_iterator(seq);
+    read_until(stream_begin, stream_end, seq_iter, is_whitespace());
+    read_line(stream_begin, stream_end, std::ignore);
 }
 
 template <typename seqs_type,
           typename metas_type,
-          typename quals_type,
           typename stream_type,
           typename options_type>
     requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
-             sequence_of_sequence_concept<std::decay_t<metas_type>> &&
-             sequence_of_sequence_concept<std::decay_t<quals_type>>
+             sequence_of_sequence_concept<std::decay_t<metas_type>>
 void sequence_file_format_fasta::read(seqs_type && seqs,
                                       metas_type && metas,
-                                      quals_type && quals,
                                       stream_type & stream,
                                       options_type const & options,
                                       size_t max_records)
 {
-    // TODO:: fill containers using read()
+    using namespace seqan3::detail;
+    auto [stream_begin, stream_end] = make_preferred_input_iterator_range(stream);
+
+    if (seqs.size() < max_records)
+        seqs.resize(max_records);
+    if (metas.size() < max_records)
+        metas.resize(max_records);
+
+    for (size_t i = 0; ( i < max_records && stream_begin != stream_end); ++i)
+    {
+        // check if we are at > and consume it
+        assert(*stream_begin == '>');
+        read_one(stream_begin, stream_end, std::ignore);
+
+        // read sequence identifier
+        auto meta_iter = make_preferred_output_iterator(metas[i]);
+        read_line(stream_begin, stream_end, meta_iter);
+
+        // read sequence
+        auto seq_iter = make_preferred_output_iterator(seqs[i]);
+        read_until(stream_begin, stream_end, seq_iter, is_whitespace());
+        read_line(stream_begin, stream_end, std::ignore);
+    }
 }
 } // namespace seqan3

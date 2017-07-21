@@ -31,54 +31,73 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Joerg Winkler <j.winkler AT fu-berlin.de>
-// ============================================================================
 
-#pragma once
+/*!\file
+ * \brief Contains test cases for sequence io (different formats).
+ * \author Temesgen H. Dadi <temesgen.dadi@fu-berlin.de>
+ * \ingroup test/io/sequence
+ */
 
-#include <string>
+#include <gtest/gtest.h>
 #include <fstream>
+#include <experimental/filesystem>
+#include <string>
+#include <vector>
+#include <iterator>
+namespace filesystem = std::experimental::filesystem;
+
+#include <range/v3/utility/iterator.hpp>
+#include <range/v3/istream_range.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/detail/file_base.hpp>
+#include <seqan3/io/sequence/sequence_file_in.hpp>
 
-namespace seqan3
+using namespace seqan3;
+
+std::string inline create_temp_file(std::string content, std::string ext = ".txt")
 {
-
-template <typename t>
-concept bool sequence_file_format_concept = requires (t v,
-                                                      std::istream istr,
-                                                      std::ostream ostr)
-{
-    // static member
-    t::file_extensions;
-
-    // member functions
-    {
-        v.read(dna4_string{},     // sequence
-               std::string{},     // meta
-               istr,              // stream
-               int{})             // options (options_type is not defined)
-    };
-
-    {
-        v.write(dna4_string{},    // sequence
-                std::string{},    // meta
-                ostr,             // stream
-                int{})            // options (options_type is not defined
-    };
-};
-
-namespace detail
-{
-
-template <typename variant_type, std::size_t ...idx>
-constexpr bool meets_sequence_file_format_concept(std::index_sequence<idx...>)
-{
-    static_assert((sequence_file_format_concept<std::variant_alternative_t<idx, variant_type>> && ...)) ;
-    return (sequence_file_format_concept<std::variant_alternative_t<idx, variant_type>> && ...);
+    std::string filename = filesystem::temp_directory_path();
+    filename += "temp_test_file";
+    filename += ext;
+    std::ofstream tmp_file(filename, tmp_file.binary);
+    if (!tmp_file.is_open())
+        throw ("[ERROR] failed to create a temporary test file!");
+    tmp_file << content;
+    tmp_file.close();
+    return filename;
 }
 
-} // namespace detail
+std::string fasta_text{">seq1\nCGATCGATAAT\n>seq2\nCCTCTCTCTCCCT\n>seq3\nCCCCCCCC\n"};
+std::vector<std::string> expected_ids{"seq1", "seq2", "seq3"};
+std::vector<std::string> expected_seqs{"CGATCGATAAT", "CCTCTCTCTCCCT", "CCCCCCCC"};
+std::string filename = create_temp_file(fasta_text, ".fa");
 
-} // namespace seqan3
+TEST(fasta_format_io_test, read_single)
+{
+    {
+        sequence_file_in fasta_file(filename);
+        std::vector<std::string> ids;
+        int i = 0;
+        while(!fasta_file.eof())
+        {
+            std::string id;
+            std::string seq;
+            fasta_file.read(seq, id);
+            EXPECT_EQ(id, expected_ids[i]);
+            EXPECT_EQ(seq, expected_seqs[i]);
+            i++;
+        }
+    }
+}
+
+TEST(fasta_format_io_test, read_batch)
+{
+    {
+        sequence_file_in fasta_file(filename);
+        std::vector<std::string> ids;
+        std::vector<std::string> seqs;
+        fasta_file.read(seqs, ids, 3);
+        EXPECT_EQ(ids, expected_ids);
+        EXPECT_EQ(seqs, expected_seqs);
+    }
+}

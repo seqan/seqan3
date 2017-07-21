@@ -331,7 +331,7 @@ typedef or_functor<is_alpha, is_digit>                             is_alpha_num;
 struct always_true
 {
     template <typename ...args>
-    inline bool operator()(args const &&...)
+    inline bool operator()(args...)
     {
         return true;
     }
@@ -340,7 +340,7 @@ struct always_true
 struct always_false
 {
     template <typename ...args>
-    inline bool operator()(args const &&...)
+    inline bool operator()(args...)
     {
         return false;
     }

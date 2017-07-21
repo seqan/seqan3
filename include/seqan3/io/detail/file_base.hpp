@@ -2,6 +2,8 @@
 #include <tuple>
 #include <variant>
 
+using namespace std::experimental::filesystem;
+
 namespace seqan3::detail
 {
 
@@ -21,7 +23,7 @@ protected:
 
     /* constructors */
     // constructor with arg
-    file_base(std::experimental::filesystem::path _file_name)
+    file_base(filesystem::path _file_name)
     {
         stream.open(_file_name, std::ios::binary); // open stream
         select_format<0>((select_compression_format(_file_name)).extension());
@@ -45,9 +47,9 @@ protected:
     valid_format_types format;
 
     /* member functions */
-    std::experimental::filesystem::path select_compression_format(std::experimental::filesystem::path & file_name);
+    filesystem::path select_compression_format(filesystem::path & file_name);
     template <size_t index>
-    void select_format(std::experimental::filesystem::path const & ext);
+    void select_format(filesystem::path const & ext);
 };
 
 // ------------------------------------------------------------------
@@ -55,7 +57,7 @@ protected:
 // ------------------------------------------------------------------
 
 template <typename file_base_traits>
-std::experimental::filesystem::path file_base<file_base_traits>::select_compression_format(std::experimental::filesystem::path & file_name)
+filesystem::path file_base<file_base_traits>::select_compression_format(filesystem::path & file_name)
 {
     for (auto const & pair : file_base_traits::valid_compression_formats)
     {
@@ -70,7 +72,7 @@ std::experimental::filesystem::path file_base<file_base_traits>::select_compress
 
 template <typename file_base_traits>
 template <size_t index>
-inline void file_base<file_base_traits>::select_format(std::experimental::filesystem::path const & ext)
+inline void file_base<file_base_traits>::select_format(filesystem::path const & ext)
 {
     if constexpr (index == std::variant_size_v<valid_format_types>)
     {

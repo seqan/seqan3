@@ -1,8 +1,8 @@
-// ==========================================================================
+// ============================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
+// ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
+// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,10 +30,14 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ==========================================================================
-// Authors: Svenja Mehringer, Temesgen H. Dadi, Jongkyu Kim
-//          <svenja.mehringer@fu-berlin.de> <temesgen.dadi@fu-berlin.de>
-// ==========================================================================
+// ============================================================================
+
+/*!\file
+ * \brief Contains sequence_file_in class and the tag dispatching of read function.
+ * \author Temesgen H. Dadi <temesgen.dadi@fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer@fu-berlin.de>
+ * \ingroup io/sequence
+ */
 
 #pragma once
 
@@ -43,10 +47,9 @@
 #include <fstream>
 #include <functional>
 
-#include "../../container/concepts.hpp"
-#include "../detail/file_base.hpp"
-#include "sequence_file_format.hpp"
-#include "sequence_file_format_fasta.hpp"
+
+#include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
+#include <seqan3/range/container/concept.hpp>
 
 namespace seqan3
 {
@@ -92,7 +95,7 @@ public:
     using valid_format_types = typename detail::file_base<sequence_file_in_traits>::valid_format_types;
 
     /* constructors */
-    sequence_file_in(std::experimental::filesystem::path _file_name) :
+    sequence_file_in(filesystem::path _file_name) :
         detail::file_base<sequence_file_in_traits>(_file_name) {};
     sequence_file_in() = delete;
     sequence_file_in(sequence_file_in const &) = delete;
@@ -101,35 +104,33 @@ public:
     sequence_file_in & operator=(sequence_file_in &&) = default;
     ~sequence_file_in() = default;
 
+    /* member functions */
+    // TODO make the requirements stricter
+    template <typename sequence_type, typename meta_type>
+        requires sequence_concept<std::decay_t<sequence_type>> &&
+                 sequence_concept<std::decay_t<meta_type>>
+    inline void read(sequence_type && seq,
+                     meta_type && meta = std::string{});
+
+    template <typename seqs_type, typename metas_type>
+        requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
+                 sequence_of_sequence_concept<std::decay_t<metas_type>>
+    inline void read(seqs_type && seqs,
+                     metas_type && metas = std::vector<std::string>{},
+                     size_t max_records = 0);
+    inline bool eof();
+
+    bool select_format(filesystem::path const & ext);
+
     /* options */
     struct options_type
     {
         // post-processing filters that operate on buffer before assignment to out-value
-        std::function<void(std::string &)> sequence_filter = [] (std::string & seq) {};
-        std::function<void(std::string &)> meta_filter = [] (std::string & meta) {};
-        std::function<void(std::string &)> qual_filter = [] (std::string & qual) {};
+        std::function<void(std::string &)> sequence_filter = [] (std::string & /*seq*/) {};
+        std::function<void(std::string &)> meta_filter = [] (std::string & /*meta*/) {};
+        std::function<void(std::string &)> qual_filter = [] (std::string & /*qual*/) {};
     };
     options_type options;
-
-    /* member functions */
-    // TODO make the requirements stricter
-    template <typename sequence_type, typename meta_type, typename qual_type>
-        requires sequence_concept<std::decay_t<sequence_type>> &&
-                 sequence_concept<std::decay_t<meta_type>> &&
-                 sequence_concept<std::decay_t<qual_type>>
-    inline void read(sequence_type && seq,
-                     meta_type && meta = std::string{},
-                     qual_type && qual = std::string{});
-
-    template <typename seqs_type, typename metas_type, typename quals_type>
-        requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
-                 sequence_of_sequence_concept<std::decay_t<metas_type>> &&
-                 sequence_of_sequence_concept<std::decay_t<quals_type>>
-    inline void read(seqs_type && seqs,
-                     metas_type && metas = std::vector<std::string>{},
-                     quals_type && quals = std::vector<std::string>{},
-                     size_t max_records = 0);
-
 protected:
     /* member variables */
     using detail::file_base<sequence_file_in_traits>::format;
@@ -141,31 +142,27 @@ protected:
 // ------------------------------------------------------------------
 
 template <typename sequence_file_in_traits>
-template <typename sequence_type, typename meta_type, typename qual_type>
+template <typename sequence_type, typename meta_type>
     requires sequence_concept<std::decay_t<sequence_type>> &&
-             sequence_concept<std::decay_t<meta_type>> &&
-             sequence_concept<std::decay_t<qual_type>>
+             sequence_concept<std::decay_t<meta_type>>
 inline void sequence_file_in<sequence_file_in_traits>::read(sequence_type && seq,
-                                                            meta_type && meta,
-                                                            qual_type && qual)
+                                                            meta_type && meta)
 {
     if (format.valueless_by_exception())
         throw "format not set!";
 
     std::visit([&] (sequence_file_format_concept & f)
     {
-        f.read(seq, meta, qual, stream, options);
+        f.read(seq, meta, stream, options);
     }, format);
 }
 
 template <typename sequence_file_in_traits>
-template <typename seqs_type, typename metas_type, typename quals_type>
+template <typename seqs_type, typename metas_type>
     requires sequence_of_sequence_concept<std::decay_t<seqs_type>> &&
-             sequence_of_sequence_concept<std::decay_t<metas_type>> &&
-             sequence_of_sequence_concept<std::decay_t<quals_type>>
+             sequence_of_sequence_concept<std::decay_t<metas_type>>
 inline void sequence_file_in<sequence_file_in_traits>::read(seqs_type && seqs,
                                                             metas_type && metas,
-                                                            quals_type && quals,
                                                             size_t max_records)
 {
     if (format.valueless_by_exception())
@@ -173,8 +170,16 @@ inline void sequence_file_in<sequence_file_in_traits>::read(seqs_type && seqs,
 
     std::visit([&] (sequence_file_format_concept & f)
     {
-        f.read(seqs, metas, quals, stream, options, max_records);
+        f.read(seqs, metas, stream, options, max_records);
     }, format);
+}
+
+template <typename sequence_file_in_traits>
+inline bool sequence_file_in<sequence_file_in_traits>::eof()
+{
+    using namespace seqan3::detail;
+    auto [stream_begin, stream_end] = make_preferred_input_iterator_range(stream);
+    return stream_begin == stream_end;
 }
 
 } // namespace seqan
