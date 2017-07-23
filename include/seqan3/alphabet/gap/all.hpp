@@ -47,11 +47,11 @@
  * \ingroup alphabet
  *
  * \par Introduction
- * The gap '-' symbol is used in alignments to show that there is at a certain position an insertion or deletion between
- * two or more input sequences. The seqan3::gap alphabet represents this (single) gap symbol and satisfies the
+ * The gap symbol (`-`) is used in alignments to represent an interruption in an alignment, usually the result of an
+ * insertion or deletion. The seqan3::gap alphabet represents this (single) gap symbol and satisfies the
  * seqan3::alphabet_concept.
  *
- * This enables us to combine any given alphabet with the seqan3::gap alphabet. This can be achieved by using the
- * seqan3::gapped class, there you can transform any arbitrary alphabet into a gapped alphabet with the same symbols,
- * but with the additional gap '-' symbol.
+ * The main purpose of seqan3::gap is to be combined with other alphabets. This can easily be achieved by using the
+ * seqan3::gapped<> template which transforms any other alphabet to be a composition of that alphabet + the gap
+ * character.
  */

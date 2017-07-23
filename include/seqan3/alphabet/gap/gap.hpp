@@ -105,7 +105,7 @@ struct gap
 
     //!\brief Assign from a numeric value (no-op, since gap has only one character).
     //!\param i not used, since gap has only one character
-    constexpr gap & assign_rank(rank_type const i) /*noexcept*/
+    constexpr gap & assign_rank([[maybe_unused]] rank_type const i) /*noexcept*/
     {
         // TODO(marehr): mark function noexcept if assert is replaced
         // https://github.com/seqan/seqan3/issues/85
