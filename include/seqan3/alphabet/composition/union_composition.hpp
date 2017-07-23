@@ -146,13 +146,13 @@ public:
      * ```cpp
      * using union_t = union_composition<dna4, gap>;
      *
-     * static_assert(union_t::has_type<dna4>(), "should be true");
-     * static_assert(union_t::has_type<gap>(), "should be true");
-     * static_assert(!union_t::has_type<dna5>(), "should be false");
+     * static_assert(union_t::has_alternative<dna4>(), "should be true");
+     * static_assert(union_t::has_alternative<gap>(), "should be true");
+     * static_assert(!union_t::has_alternative<dna5>(), "should be false");
      * ```
      */
     template <typename alphabet_t>
-    static constexpr bool has_type() noexcept
+    static constexpr bool has_alternative() noexcept
     {
         return meta::in<meta::list<alphabet_types...>, alphabet_t>::value;
     }
@@ -196,7 +196,7 @@ public:
      */
     template <typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     constexpr union_composition(alphabet_t const & alphabet) noexcept :
         _value{rank_by_type_(alphabet)}
@@ -219,7 +219,7 @@ public:
      */
     template <size_t I, typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     constexpr union_composition(std::in_place_index_t<I>, alphabet_t const & alphabet) noexcept :
         _value{rank_by_index_<I>(alphabet)}
@@ -241,7 +241,7 @@ public:
      */
     template <typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     constexpr union_composition & operator= (alphabet_t const & alphabet) noexcept
     {
@@ -504,7 +504,7 @@ protected:
     //!\param alphabet The value of a base alphabet that should be assigned.
     template <size_t index, typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     static constexpr rank_type rank_by_index_(alphabet_t const & alphabet) noexcept
     {
@@ -517,7 +517,7 @@ protected:
     //!\param alphabet The value of a base alphabet that should be assigned.
     template <typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     static constexpr rank_type rank_by_type_(alphabet_t const & alphabet) noexcept
     {
