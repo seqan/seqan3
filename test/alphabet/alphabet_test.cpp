@@ -49,7 +49,10 @@ using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
                                         union_composition<dna4>,
                                         union_composition<dna4, gap>,
                                         union_composition<dna4, dna5, gap>,
-                                        /*gap, gapped<nucl16>, */
+                                        /*gap, */
+                                        gapped<dna4>,
+                                        gapped<nucl16>,
+                                        gapped<illumina18>,
                                         illumina18, dna4q>;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);

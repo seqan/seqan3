@@ -33,7 +33,7 @@
 // ==========================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup gap
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
  * \brief Contains seqan3::gap.
@@ -49,6 +49,8 @@ namespace seqan3
 {
 
 /*!\brief The alphabet of a gap character '-'
+ * \ingroup gap
+ * \implements seqan3::alphabet_concept
  *
  * The alphabet always has the same value ('-').
  *
@@ -80,13 +82,13 @@ struct gap
      * \{
      */
     //!\brief Return the letter as a character of char_type (returns always '-').
-    constexpr char_type to_char() const
+    constexpr char_type to_char() const noexcept
     {
         return '-';
     }
 
     //!\brief Return the letter's numeric value or rank in the alphabet. (returns always 0)
-    constexpr rank_type to_rank() const
+    constexpr rank_type to_rank() const noexcept
     {
         return 0;
     }
@@ -96,15 +98,19 @@ struct gap
      * \{
      */
     //!\brief Assign from a character (no-op, since gap has only one character).
-    constexpr gap & assign_char(char_type const)
+    //!\param c not used, since gap has only one character
+    constexpr gap & assign_char(char_type const) noexcept
     {
         return *this;
     }
 
     //!\brief Assign from a numeric value (no-op, since gap has only one character).
-    constexpr gap & assign_rank(rank_type const in)
+    //!\param i not used, since gap has only one character
+    constexpr gap & assign_rank([[maybe_unused]] rank_type const i) /*noexcept*/
     {
-        assert(in == 0);
+        // TODO(marehr): mark function noexcept if assert is replaced
+        // https://github.com/seqan/seqan3/issues/85
+        assert(i == 0);
         return *this;
     }
     //!\}
@@ -114,32 +120,32 @@ struct gap
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(gap const &) const
+    constexpr bool operator==(gap const &) const noexcept
     {
         return true;
     }
 
-    constexpr bool operator!=(gap const &) const
+    constexpr bool operator!=(gap const &) const noexcept
     {
         return false;
     }
 
-    constexpr bool operator<(gap const &) const
+    constexpr bool operator<(gap const &) const noexcept
     {
         return false;
     }
 
-    constexpr bool operator>(gap const &) const
+    constexpr bool operator>(gap const &) const noexcept
     {
         return false;
     }
 
-    constexpr bool operator<=(gap const &) const
+    constexpr bool operator<=(gap const &) const noexcept
     {
         return true;
     }
 
-    constexpr bool operator>=(gap const &) const
+    constexpr bool operator>=(gap const &) const noexcept
     {
         return true;
     }
