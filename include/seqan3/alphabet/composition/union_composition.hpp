@@ -160,10 +160,10 @@ public:
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr size_t value_size = alphabet_sum_size_v<alphabet_types...>;
 
-    //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink)
+    //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink).
     using char_type = underlying_char_t<meta::front<meta::list<alphabet_types...>>>;
 
-    //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink)
+    //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink).
     using rank_type = detail::min_viable_uint_t<value_size>;
 
     /*!\name Default constructors
@@ -185,7 +185,7 @@ public:
      * \{
      */
 
-    /*!\brief Construction via a value of the base alphabets
+    /*!\brief Construction via a value of the base alphabets.
      * \tparam alphabet_t One of the base alphabet types
      * \param alphabet The value of a base alphabet that should be assigned.
      *
@@ -202,7 +202,7 @@ public:
         _value{rank_by_type_(alphabet)}
     {}
 
-    /*!\brief Construction via a value of reoccurring alphabets
+    /*!\brief Construction via a value of reoccurring alphabets.
      * \tparam I The index of the i-th base alphabet
      * \tparam alphabet_t The i-th given base alphabet type
      * \param alphabet The value of a base alphabet that should be assigned.
@@ -230,7 +230,7 @@ public:
      * \{
      */
 
-    /*!\brief Assignment via a value of the base alphabets
+    /*!\brief Assignment via a value of the base alphabets.
      * \tparam alphabet_t One of the base alphabet types
      * \param alphabet The value of a base alphabet that should be assigned.
      *
@@ -486,19 +486,19 @@ protected:
         return char_to_value;
     }
 
-    //!\brief Compile-time generated lookup table which contains the prefix sum up to the position of each alphabet
+    //!\brief Compile-time generated lookup table which contains the prefix sum up to the position of each alphabet.
     //!\sa alphabet_prefix_sum_sizes
     static constexpr auto prefix_sum_sizes = alphabet_prefix_sum_sizes<alphabet_types...>();
 
-    //!\brief Compile-time generated lookup table which maps the rank to char
+    //!\brief Compile-time generated lookup table which maps the rank to char.
     //!\sa value_to_char_table
     static constexpr auto value_to_char = value_to_char_table();
 
-    //!\brief Compile-time generated lookup table which maps the char to rank
+    //!\brief Compile-time generated lookup table which maps the char to rank.
     //!\sa char_to_value_table
     static constexpr auto char_to_value = char_to_value_table();
 
-    //!\brief Converts an object of one of the given alphabets into the internal representation
+    //!\brief Converts an object of one of the given alphabets into the internal representation.
     //!\tparam index The position of `alphabet_t` in the template pack `alphabet_types`
     //!\tparam alphabet_t One of the base alphabet types
     //!\param alphabet The value of a base alphabet that should be assigned.
@@ -511,7 +511,7 @@ protected:
         return static_cast<rank_type>(prefix_sum_sizes[index] + alphabet.to_rank());
     }
 
-    //!\brief Converts an object of one of the given alphabets into the internal representation
+    //!\brief Converts an object of one of the given alphabets into the internal representation.
     //!\details Finds the index of alphabet_t in the given types.
     //!\tparam alphabet_t One of the base alphabet types
     //!\param alphabet The value of a base alphabet that should be assigned.
