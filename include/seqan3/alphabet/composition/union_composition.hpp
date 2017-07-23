@@ -57,6 +57,7 @@ namespace seqan3
 /*!\brief A composition that merges different regular alphabets as a single alphabet.
  * \ingroup composition
  * \tparam ...alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept, e.g. dna4.
+ * \implements seqan3::alphabet_concept
  *
  * The union alphabet represents the union of two or more alphabets (e.g. the
  * four letter DNA alphabet + the gap alphabet). Note that you cannot assign
