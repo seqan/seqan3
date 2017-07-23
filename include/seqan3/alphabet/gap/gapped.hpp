@@ -51,6 +51,7 @@ namespace seqan3
 /*!\brief A gapped that extends a given alphabet with a gap character.
  * \ingroup gap
  * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
+ * \implements seqan3::alphabet_concept
  *
  * The gapped represents the union of a given alphabet and the
  * seqan3::gap alphabet (e.g. the four letter DNA alphabet + a gap character).
