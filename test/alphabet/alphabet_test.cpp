@@ -53,13 +53,15 @@ using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
                                         gapped<dna4>,
                                         gapped<nucl16>,
                                         gapped<illumina18>,
+                                        char, char16_t, // char32_t, too slow
+                                        uint8_t, uint16_t, // uint32_t, too slow
                                         illumina18, dna4q>;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);
 
 TYPED_TEST(alphabet, alphabet_size)
 {
-    EXPECT_GT(alphabet_size_v<TypeParam>, 0);
+    EXPECT_GT(alphabet_size_v<TypeParam>, 0u);
 }
 
 TYPED_TEST(alphabet, default_value_constructor)
@@ -74,7 +76,7 @@ TYPED_TEST(alphabet, assign_rank)
     EXPECT_EQ((assign_rank(TypeParam{}, 0)), TypeParam{});
 
     TypeParam t0;
-    for (typename TypeParam::rank_type i = 0; i < alphabet_size_v<TypeParam>; ++i)
+    for (uint64_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
         assign_rank(t0, i);
 
 // TODO(h-2): once we have a proper assert macro that throws instead of SIGABRTs:
@@ -87,10 +89,10 @@ TYPED_TEST(alphabet, assign_rank)
 TYPED_TEST(alphabet, to_rank)
 {
     // this double checks the value initialisation
-    EXPECT_EQ(to_rank(TypeParam{}), 0);
+    EXPECT_EQ(to_rank(TypeParam{}), 0u);
 
     TypeParam t0;
-    for (typename TypeParam::rank_type i = 0; i < alphabet_size_v<TypeParam>; ++i)
+    for (uint64_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
         EXPECT_EQ((to_rank(assign_rank(t0, i))), i);
 
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(t0)), underlying_rank_t<TypeParam>>));
@@ -160,7 +162,7 @@ TYPED_TEST(alphabet, swap)
 
 TYPED_TEST(alphabet, assign_char)
 {
-    using char_t = typename TypeParam::char_type;
+    using char_t = underlying_rank_t<TypeParam>;
     TypeParam t0;
     for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
         assign_char(t0, i);
@@ -223,6 +225,11 @@ class alphabet_constexpr : public ::testing::Test
 // add all alphabets here
 using alphabet_constexpr_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
                                                   /*aa27,*/
+                                                  union_composition<dna4>,
+                                                  union_composition<dna4, gap>,
+                                                  union_composition<dna4, dna5, gap>,
+                                                  char, char16_t, char32_t,
+                                                  uint8_t, uint16_t, uint32_t,
                                                   /*gap, gapped<nucl16>, */
                                                   illumina18, dna4q>;
 

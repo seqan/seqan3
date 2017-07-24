@@ -33,23 +33,26 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup adaptation
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the alphabet module.
- *
- * \defgroup alphabet
- *
- * The alphabet module contains different biological alphabets and related functionality.
- *
- * TODO more details.
+ * \brief Meta-header for the adaptation submodule; includes all headers from alphabet/adaptation/.
  */
 
-#pragma once
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/adaptation/uint.hpp>
+#include <seqan3/alphabet/adaptation/concept.hpp> // has to be after
 
-#include <seqan3/alphabet/adaptation/all.hpp>
+/*!\defgroup adaptation
+ * \brief Contains alphabet adaptions of some standard char and uint types.
+ * \ingroup alphabet
+ */
+
+#ifndef NDEBUG
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/alphabet/quality/all.hpp>
-#include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/alphabet/gap/all.hpp>
-#include <seqan3/alphabet/composition/all.hpp>
+static_assert(seqan3::char_adaptation_concept<char>);
+static_assert(seqan3::char_adaptation_concept<char16_t>);
+static_assert(seqan3::char_adaptation_concept<char32_t>);
+static_assert(seqan3::uint_adaptation_concept<uint8_t>);
+static_assert(seqan3::uint_adaptation_concept<uint16_t>);
+static_assert(seqan3::uint_adaptation_concept<uint32_t>);
+#endif
