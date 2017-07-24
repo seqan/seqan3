@@ -37,12 +37,113 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/aligned_sequence_adaptor_constant_access.hpp>
 
 using namespace seqan3;
 
-TEST(aligned_sequences_test, constructor)
+TEST(aligned_sequences_test, constructor_empty)
 {
     aligned_sequence_adaptor_constant_access<std::vector<dna4>> s;
+}
+
+TEST(aligned_sequences_test, constructor_sequence)
+{
+    std::vector<dna4> seq = {dna4::A};
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> s(seq);
+}
+
+// copy constructors
+TEST(aligned_sequences_test, constructor_cpy)
+{
+    // copy construction with empty sequence
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_base;
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived(as_base);
+    // copy construction with non-empty sequence
+    std::vector<dna4> seq = {dna4::A, dna4::C, dna4::G, dna4::T};
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_base2(seq);
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived2(as_base2);
+    // copy construction via assignment
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived3 = as_base2;
+}
+
+// move constructors
+TEST(aligned_sequences_test, constructor_move)
+{
+    // move construction with empty sequence
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_base;
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived(std::move(as_base));
+    // move construction with non-empty sequence
+    std::vector<dna4> seq = {dna4::A, dna4::C, dna4::G, dna4::T};
+    std::vector<dna4> seq2 = {dna4::T, dna4::A};
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_base2(seq);
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived2(std::move(as_base2));
+    auto it2 = as_derived2.begin();
+    EXPECT_EQ(dna4::A, *it2++);
+    EXPECT_EQ(dna4::C, *it2++);
+    EXPECT_EQ(dna4::G, *it2++);
+    EXPECT_EQ(dna4::T, *it2);
+    // move construction via assignment
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_base3(seq), as_derived3(seq2);
+    as_derived3 = std::move(as_base3);
+    auto it3 = as_derived3.begin();
+    EXPECT_EQ(dna4::A, *it3++);
+    EXPECT_EQ(dna4::C, *it3++);
+    EXPECT_EQ(dna4::G, *it3++);
+    EXPECT_EQ(dna4::T, *it3);
+}
+
+// Destructor
+TEST(aligned_sequences_test, destructor)
+{
+    std::vector<dna4> seq = {dna4::T, dna4::A};
+    using aligned_sequence_t = aligned_sequence_adaptor_constant_access<std::vector<dna4>>;
+    aligned_sequence_t s(seq);
+    aligned_sequence_t * s_ptr = &s;
+    s_ptr->aligned_sequence_t::~aligned_sequence_t();
+}
+
+// Container concept functions
+TEST(aligned_sequences_test, container_concepts)
+{
+    std::vector<dna4> seq = {dna4::T, dna4::A}, seq2 = {dna4::C};
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> s(seq);
+
+    // begin and end iterators
+    auto iterator = s.begin();
+    EXPECT_EQ(dna4::T, *iterator);
+    iterator = s.end();
+    EXPECT_EQ(dna4::A, *(--iterator));
+
+    // const begin and const end iterators
+    auto iterator_const = s.cbegin();
+    EXPECT_EQ(dna4::T, *iterator_const);
+    iterator_const = s.cend();
+    EXPECT_EQ(dna4::A, *(--iterator_const));
+
+    // boolean operators == and !=
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> t(seq);
+    EXPECT_TRUE(s == t);
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> u(seq2);
+    EXPECT_TRUE(t != u);
+
+    // swap, size, max_size, empty
+    t.swap(u);
+    iterator = t.begin();
+    EXPECT_EQ(dna4::C, *iterator);
+    iterator = u.begin();
+    EXPECT_EQ(dna4::T, *iterator++);
+    EXPECT_EQ(dna4::A, *iterator);
+    swap(t, u); // friend
+    iterator = t.begin();
+    EXPECT_EQ(dna4::T, *iterator++);
+    EXPECT_EQ(dna4::A, *iterator);
+    iterator = u.begin();
+    EXPECT_EQ(dna4::C, *iterator);
+
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>>::size_type max_size = s.max_size();
+
+    EXPECT_FALSE(s.empty());
+    aligned_sequence_adaptor_constant_access<std::vector<dna4>> s_empty;
+    EXPECT_TRUE(s_empty.empty());
 }

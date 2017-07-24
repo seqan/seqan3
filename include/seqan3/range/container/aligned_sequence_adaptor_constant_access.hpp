@@ -62,7 +62,10 @@ namespace seqan3 {
 /*!\brief Implementation of an aligned sequence structure with random access.
  *  \details No iterator operation will modify the container. Arithmetic and boolean
  *  operations are applied to the iterator positions, not the corresponding values
- *  of their containers.
+ *  of their containers. The aligned_sequence with constant access operator has to fulfill the
+ *  seqan3::aligned_sequence_adaptor_constant_access concept which includes the
+ *  seqan's container and sequence concepts. The ungapped sequence stored by the
+ *  aligned sequence struct requires only seqan's sequence concept for assignment and clearing operations.
  *  \tparam gapped_alphabet_type The composite alphabet type of the underlying sequence, e.g. dna4 and a gap symbol.
  *  The alphabet_type as part of the gapped_alphabet_t has to satisfy the seqan3::alphabet_concept.
  */
@@ -70,19 +73,19 @@ namespace seqan3 {
 
 // todo: require that container is const?
 template <typename container_t, char gap_symbol='_'>
-    requires container_concept<container_t> && alphabet_concept<ranges::v3::value_type_t<container_t>>
+    requires sequence_concept<container_t> && alphabet_concept<ranges::v3::value_type_t<container_t>>
 struct aligned_sequence_adaptor_constant_access
 {
 
 private:
     //! internal gap representation as bit vector, 0: non-gap, 1: gap
-    sdsl::bit_vector gap_vector; // includes support structures for rank/select
+    sdsl::bit_vector gap_vector{}; // includes support structures for rank/select
     //! support structure to compute select for projection into gap space
     sdsl::select_support_mcl<0> letter_select;
     //! support structure to rank for projection into underlying sequence space
     sdsl::rank_support_v5<1, 1> gap_rank;
-    //! TODO: store base sequence without gaps or with gaps?
-    container_t sequence;
+    //! TODO: store base sequence without gaps or with gaps? dynamic ptr or smart pointer instead? then default constructor ok
+    container_t sequence{};
 
     // Shortcuts
     using aligned_sequence = aligned_sequence_adaptor_constant_access;
@@ -104,14 +107,6 @@ public:
     //!\brief Use container's size_type as a position.
     using size_type = typename ranges::v3::size_type_t<container_t>;
 
-    //!\brief Use container's size_type as a position.
-    // using position_type =  ranges::v3::size_type_t<container_t>;
-
-    // RandomAccessIterator
-//    using iterator = detail::ra_iterator<underlying_sequence_type>;
-//    using const_iterator = const iterator;
-//    using difference_type = uint8_t;
-
     /*!\name Constructors/Destructors
      * \{
     */
@@ -119,7 +114,8 @@ public:
     constexpr aligned_sequence_adaptor_constant_access() = default;
 
     //!\brief Construct by sequence.
-    constexpr aligned_sequence_adaptor_constant_access(container_t & sequence) noexcept : sequence{&sequence} {}
+    // TODO: init helpers
+    constexpr aligned_sequence_adaptor_constant_access(container_t sequence) noexcept : sequence{sequence} {};
 
     //!\brief Copy constructor.
     constexpr aligned_sequence_adaptor_constant_access(aligned_sequence_adaptor_constant_access const &) = default;
@@ -134,7 +130,22 @@ public:
     constexpr aligned_sequence_adaptor_constant_access & operator=(aligned_sequence_adaptor_constant_access &&) = default;
 
     //!\brief Use default deconstructor.
-    ~aligned_sequence_adaptor_constant_access() = default;
+    ~aligned_sequence_adaptor_constant_access()
+    {
+            sequence.clear();
+            sequence.shrink_to_fit();
+            // TODO: clear other data structures
+    }; //= default;
+
+    //!\brief Constructor required by sequence concept.
+// { type{typename type::size_type{}, typename type::value_type{}} };
+    // TODO: behaviour? replicate input value size times?
+    constexpr aligned_sequence_adaptor_constant_access(size_type size, value_type value)
+    {
+        container_t sequence;
+    };
+
+
     //!\}
 /*
     //! default constructor leaves sequence and gap vector uninitialized
@@ -185,7 +196,7 @@ public:
     //!\brief Return const iterator pointing to first element of underlying sequence
     const_iterator cbegin() const
     {
-        return const_iterator(sequence, sequence.size());;
+        return const_iterator(sequence, 0);;
     }
 
     //!\brief Return const iterator pointing to past-the-end element of underlying sequence.
@@ -313,5 +324,5 @@ void swap (aligned_sequence_adaptor_constant_access<container_t> & lhs, aligned_
 } // namespace seqan3
 
 static_assert(seqan3::container_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
-static_assert(seqan3::sequence_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
+//static_assert(seqan3::sequence_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
 //static_assert(seqan3::random_access_sequence_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
