@@ -33,14 +33,25 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Meta-header that includes all headers from alphabet/structure/
+ * \brief Meta-header for the structure module. It includes all headers from alphabet/structure/.
+ *
+ * \defgroup structure Structure
+ * \ingroup alphabet
+ * \brief The structure module contains alphabets for RNA and protein structure.
+ * \details The following alphabets are currently supported in SeqAn. Please see a format's page for more details.
+ *
+ * Name                                     | Characters               | Description
+ * ---------------------------------------- | ------------------------ | -----------
+ * [Dot Bracket](@ref seqan3::dot_bracket3) | `().`                    | Simple annotation that defines base pairs. No pseudoknots allowed.
+ * [WUSS](@ref seqan3::wuss)                | `.<>:,-_~;()[]{}AaBb...` | Annotation that provides further markups and pseudoknots.
+ * [DSSP](@ref seqan3::dssp9)               | `HBEGITSCX`              | Structure encoding for proteins.
  */
 
 #pragma once
 
 #include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
-#include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>
+#include <seqan3/alphabet/structure/wuss.hpp>

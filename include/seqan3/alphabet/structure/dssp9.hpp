@@ -57,8 +57,12 @@ namespace seqan3
  * \ingroup structure
  *
  * \details
- * Format description regarding to the DSSP website (\link http://www.cmbi.ru.nl/dssp.html \endlink)
- * and the Stockholm format description (\link https://en.wikipedia.org/wiki/Stockholm_format \endlink)
+ * The DSSP annotation links structure elements to protein sequences.
+ * Originally created with 7 letters as a file format for the DSSP program (http://www.cmbi.ru.nl/dssp.html),
+ * it is also used in the stockholm file format for structure alignments, extended by the characters C and X
+ * (https://en.wikipedia.org/wiki/Stockholm_format).
+ *
+ * The letter abbreviations are as follows:
  *
  * H = alpha helix
  * B = beta bridge
@@ -69,6 +73,17 @@ namespace seqan3
  * S = bend
  * C = coil/loop
  * X = unknown
+ *
+ * \par Usage:
+ * The following code example creates a dssp9 vector, modifies it, and prints the result to stdout.
+ * ```cpp
+ *     // create vector
+ *     std::vector<dssp9> vec{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
+ *     // modify and print
+ *     vec[1] = dssp9::C;
+ *     for (dssp9 chr : vec)
+ *         std::cout << chr;  // ECHHTG
+ * ```
  */
 
 struct dssp9
@@ -96,14 +111,19 @@ struct dssp9
 
     /*!\name Read functions
      * \{
+     *
+     * \brief Get the letter as a character of char_type.
+     * \returns The character representation of this dssp9 letter.
      */
-    //!\brief Return the letter as a character of char_type.
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    //!\brief Return the letter's numeric value or rank in the alphabet.
+    /*!
+     * \brief Get the letter's numeric value or rank in the alphabet.
+     * \returns The numeric representation of this dssp9 letter.
+     */
     constexpr rank_type to_rank() const noexcept
     {
         return static_cast<rank_type>(_value);
@@ -112,19 +132,26 @@ struct dssp9
 
     /*!\name Write functions
      * \{
+     *
+     * \brief Assign from a character.
+     * \param chr The character that is assigned.
+     * \returns The resulting dssp9 character.
      */
-    //!\brief Assign from a character.
-    constexpr dssp9 & assign_char(char_type const c) noexcept
+    constexpr dssp9 & assign_char(char_type const chr) noexcept
     {
-        _value = char_to_value[c];
+        _value = char_to_value[chr];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
-    constexpr dssp9 & assign_rank(rank_type const c)
+    /*!
+     * \brief Assign from a numeric value.
+     * \param rnk The rank value that is assigned.
+     * \returns The resulting dssp9 character.
+     */
+    constexpr dssp9 & assign_rank(rank_type const rnk)
     {
-        assert(c < value_size);
-        _value = static_cast<internal_type>(c);
+        assert(rnk < value_size);
+        _value = static_cast<internal_type>(rnk);
         return *this;
     }
     //!\}
@@ -178,37 +205,36 @@ protected:
         H, B, E, G, I, T, S, C, X
     };
 
-    //!\brief Value to char conversion table.
+    //!\brief Value-to-char conversion table.
     static constexpr char_type value_to_char[value_size]
     {
         'H', 'B', 'E', 'G', 'I', 'T', 'S', 'C', 'X'
     };
 
-    //!\brief Char to value conversion table.
+    //!\brief Char-to-value conversion table.
     static constexpr std::array<internal_type, 256> char_to_value
     {
-    [] () constexpr
-    {
-        using in_t = internal_type;
-        std::array<in_t, 256> ret{};
+        [] () constexpr
+        {
+            std::array<internal_type, 256> rank_table{};
 
-        // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-        for (auto & c : ret)
-            c = in_t::X;
+            // initialize with X (std::array::fill unfortunately not constexpr)
+            for (internal_type & rnk : rank_table)
+                rnk = internal_type::X;
 
-        // canonical
-        ret['H'] = in_t::H;
-        ret['B'] = in_t::B;
-        ret['E'] = in_t::E;
-        ret['G'] = in_t::G;
-        ret['I'] = in_t::I;
-        ret['T'] = in_t::T;
-        ret['S'] = in_t::S;
-        ret['C'] = in_t::C;
-        ret['X'] = in_t::X;
+            // canonical
+            rank_table['H'] = internal_type::H;
+            rank_table['B'] = internal_type::B;
+            rank_table['E'] = internal_type::E;
+            rank_table['G'] = internal_type::G;
+            rank_table['I'] = internal_type::I;
+            rank_table['T'] = internal_type::T;
+            rank_table['S'] = internal_type::S;
+            rank_table['C'] = internal_type::C;
+            rank_table['X'] = internal_type::X;
 
-        return ret;
-    } ()
+            return rank_table;
+        } ()
     };
 
 public:
@@ -247,31 +273,6 @@ static_assert(seqan3::structure_concept<seqan3::dssp9>);
 #endif
 
 // ------------------------------------------------------------------
-// containers
-// ------------------------------------------------------------------
-
-namespace seqan3
-{
-
-//!\brief Alias for an std::vector of seqan3::dssp9.
-//!\relates dssp9
-using dssp9_vector = std::vector<dssp9>;
-
-
-/*!\brief Alias for an std::basic_string of seqan3::dssp9.
- * \relates dssp9
- *
- * \attention
- * Note that we recommend using seqan3::dssp9_vector instead of dssp9_string in almost all situations.
- * While the C++ style operations on the string are well supported, you should not access the internal c-string
- * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
- * correct length of the string (while the `.size()` returns the correct value).
- */
-using dssp9_string = std::basic_string<dssp9, std::char_traits<dssp9>>;
-
-} // namespace seqan3
-
-// ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
 
@@ -280,60 +281,57 @@ namespace seqan3::literal
 
 /*!\brief dssp9 literal
  * \relates seqan3::dssp9
- * \returns seqan3::dssp9_vector
+ * \returns std::vector<seqan3::dssp9>
  *
- * You can use this string literal to easily assign to dssp9_vector:
+ * You can use this string literal to easily assign to a vector of dssp9 characters:
  *
- *~~~~~~~~~~~~~~~{.cpp}
+ *```.cpp
  *     using namespace seqan3::literal;
- *     dssp9_vector foo{"EHHHHT"_dssp9};
- *     dssp9_vector bar = "EHHHHT"_dssp9;
+ *     std::vector<dssp9> foo{"EHHHHT"_dssp9};
+ *     std::vector<dssp9> bar = "EHHHHT"_dssp9;
  *     auto bax = "EHHHHT"_dssp9;
- *~~~~~~~~~~~~~~~
+ *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-
-inline dssp9_vector operator "" _dssp9(const char * s, std::size_t n)
+inline std::vector<dssp9> operator "" _dssp9(const char * str, std::size_t len)
 {
-    dssp9_vector r;
-    r.resize(n);
+    std::vector<dssp9> vec;
+    vec.resize(len);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t idx = 0u; idx < len; ++idx)
+        vec[idx].assign_char(str[idx]);
 
-    return r;
+    return vec;
 }
 
 /*!\brief dssp9 string literal
  * \relates seqan3::dssp9
- * \returns seqan3::dssp9_string
+ * \returns std::basic_string<seqan3::dssp9, std::char_traits<seqan3::dssp9>>
  *
- * You can use this string literal to easily assign to dssp9_vector:
+ * You can use this string literal to easily assign to a string of dssp9 characters:
  *
- *~~~~~~~~~~~~~~~{.cpp}
+ *```.cpp
  *     using namespace seqan3::literal;
- *     dssp9_string foo{"EHHHHT"_dssp9s};
- *     dssp9_string bar = "EHHHHT"_dssp9s;
+ *     using string_t = std::basic_string<dssp9, std::char_traits<dssp9>>;
+ *     string_t foo{"EHHHHT"_dssp9s};
+ *     string_t bar = "EHHHHT"_dssp9s;
  *     auto bax = "EHHHHT"_dssp9s;
- *~~~~~~~~~~~~~~~
- *
- * Please note the limitations of seqan3::dssp9_string and consider using the \link operator""_dssp9 \endlink instead.
+ *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-
-inline dssp9_string operator "" _dssp9s(const char * s, std::size_t n)
+inline std::basic_string<dssp9, std::char_traits<dssp9>> operator "" _dssp9s(const char * str, std::size_t len)
 {
-    dssp9_string r;
-    r.resize(n);
+    std::basic_string<dssp9, std::char_traits<dssp9>> dssp9str;
+    dssp9str.resize(len);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t idx = 0u; idx < len; ++idx)
+        dssp9str[idx].assign_char(str[idx]);
 
-    return r;
+    return dssp9str;
 }
 
 } // namespace seqan3::literal

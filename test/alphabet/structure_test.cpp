@@ -52,7 +52,7 @@ class structure : public ::testing::Test
 {};
 
 // add all alphabets from the structure sub module here
-using structure_types  = ::testing::Types<db3, wuss<>>;
+using structure_types  = ::testing::Types<dot_bracket3, wuss<>, dssp9>;
 
 TYPED_TEST_CASE(structure, structure_types);
 
@@ -62,26 +62,29 @@ TYPED_TEST(structure, assign_char)
     std::vector<char> input
     {
         '.', '(', ')',
-        ':', ',', '_', '~', '<', '>', '[', ']', '{', '}',
+        ':', ',', '-', '_', '~', ';',
+        '<', '>', '[', ']', '{', '}',
         'H', 'B', 'E', 'G', 'I', 'T', 'S'
     };
 
     std::vector<TypeParam> cmp;
-    if constexpr (std::is_same_v<TypeParam, db3>)
+    if constexpr (std::is_same_v<TypeParam, dot_bracket3>)
     {
         cmp =
         {
-            t::NP, t::BL, t::BR,
-            t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA,
-            t::NA, t::NA, t::NA, t::NA, t::NA, t::NA, t::NA
+            t::UNPAIRED, t::PAIR_OPEN, t::PAIR_CLOSE,
+            t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN,
+            t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN,
+            t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN
         };
     }
     else if constexpr (std::is_same_v<TypeParam, wuss<>>)
     {
         cmp =
         {
-            t::NP, t::BL1, t::BR1,
-            t::NP1, t::NP2, t::NP3, t::NP4, t::BL, t::BR, t::BL2, t::BR2, t::BL3, t::BR3,
+            t::UNPAIRED, t::PAIR_OPEN1, t::PAIR_CLOSE1,
+            t::UNPAIRED1, t::UNPAIRED2, t::UNPAIRED3, t::UNPAIRED4, t::UNPAIRED5, t::UNPAIRED6,
+            t::PAIR_OPEN, t::PAIR_CLOSE, t::PAIR_OPEN2, t::PAIR_CLOSE2, t::PAIR_OPEN3, t::PAIR_CLOSE3,
             "H"_wuss.front(),
             "B"_wuss.front(),
             "E"_wuss.front(),
@@ -96,39 +99,41 @@ TYPED_TEST(structure, assign_char)
         cmp =
         {
             t::X, t::X, t::X,
-            t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X,
+            t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X,
             t::H, t::B, t::E, t::G, t::I, t::T, t::S
         };
     }
 
     for (auto [ ch, cm ] : ranges::view::zip(input, cmp))
-    EXPECT_EQ((assign_char(TypeParam{}, ch)), cm);
+        EXPECT_EQ((assign_char(TypeParam{}, ch)), cm);
 }
 
 TYPED_TEST(structure, to_char)
 {
-    if constexpr (std::is_same_v<TypeParam, db3>)
+    if constexpr (std::is_same_v<TypeParam, dot_bracket3>)
     {
-        EXPECT_EQ(to_char(TypeParam::NP), '.');
-        EXPECT_EQ(to_char(TypeParam::BL), '(');
-        EXPECT_EQ(to_char(TypeParam::BR), ')');
-        EXPECT_EQ(to_char(TypeParam::NA), '.');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED), '.');
+        EXPECT_EQ(to_char(TypeParam::PAIR_OPEN), '(');
+        EXPECT_EQ(to_char(TypeParam::PAIR_CLOSE), ')');
+        EXPECT_EQ(to_char(TypeParam::UNKNOWN), '.');
     }
     else if constexpr (std::is_same_v<TypeParam, wuss<>>)
     {
-        EXPECT_EQ(to_char(TypeParam::NP), '.');
-        EXPECT_EQ(to_char(TypeParam::NP1), ':');
-        EXPECT_EQ(to_char(TypeParam::NP2), ',');
-        EXPECT_EQ(to_char(TypeParam::NP3), '_');
-        EXPECT_EQ(to_char(TypeParam::NP4), '~');
-        EXPECT_EQ(to_char(TypeParam::BL), '<');
-        EXPECT_EQ(to_char(TypeParam::BR), '>');
-        EXPECT_EQ(to_char(TypeParam::BL1), '(');
-        EXPECT_EQ(to_char(TypeParam::BR1), ')');
-        EXPECT_EQ(to_char(TypeParam::BL2), '[');
-        EXPECT_EQ(to_char(TypeParam::BR2), ']');
-        EXPECT_EQ(to_char(TypeParam::BL3), '{');
-        EXPECT_EQ(to_char(TypeParam::BR3), '}');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED), '.');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED1), ':');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED2), ',');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED3), '-');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED4), '_');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED5), '~');
+        EXPECT_EQ(to_char(TypeParam::UNPAIRED6), ';');
+        EXPECT_EQ(to_char(TypeParam::PAIR_OPEN), '<');
+        EXPECT_EQ(to_char(TypeParam::PAIR_CLOSE), '>');
+        EXPECT_EQ(to_char(TypeParam::PAIR_OPEN1), '(');
+        EXPECT_EQ(to_char(TypeParam::PAIR_CLOSE1), ')');
+        EXPECT_EQ(to_char(TypeParam::PAIR_OPEN2), '[');
+        EXPECT_EQ(to_char(TypeParam::PAIR_CLOSE2), ']');
+        EXPECT_EQ(to_char(TypeParam::PAIR_OPEN3), '{');
+        EXPECT_EQ(to_char(TypeParam::PAIR_CLOSE3), '}');
     }
     else if constexpr (std::is_same_v<TypeParam, dssp9>)
     {
@@ -149,17 +154,17 @@ TYPED_TEST(structure, concept)
     EXPECT_TRUE(structure_concept<TypeParam>);
 }
 
-TEST(structure_stream_operator, db3)
+TEST(structure_stream_operator, dot_bracket3)
 {
     std::stringstream ss;
-    ss << db3::BL << db3::BR << db3::NP;
+    ss << dot_bracket3::PAIR_OPEN << dot_bracket3::PAIR_CLOSE << dot_bracket3::UNPAIRED;
     EXPECT_EQ(ss.str(), "().");
 }
 
 TEST(structure_stream_operator, wuss)
 {
     std::stringstream ss;
-    ss << wuss<>::BL << wuss<>::BR << wuss<>::NP;
+    ss << wuss<>::PAIR_OPEN << wuss<>::PAIR_CLOSE << wuss<>::UNPAIRED;
     EXPECT_EQ(ss.str(), "<>.");
 }
 
@@ -174,63 +179,69 @@ TEST(structure_stream_operator, dssp9)
 // literals
 // ------------------------------------------------------------------
 
-TEST(db3_literals, vector)
+TEST(dot_bracket3_literals, vector)
 {
-    db3_vector v;
-    v.resize(5, db3::BL);
-    EXPECT_EQ(v, "((((("_db3);
+    std::vector<dot_bracket3> vec1;
+    vec1.resize(5, dot_bracket3::PAIR_OPEN);
+    EXPECT_EQ(vec1, "((((("_dot_bracket3);
 
-    std::vector<db3> w{db3::NP, db3::BL, db3::BL, db3::BR, db3::BR, db3::NA};
-    EXPECT_EQ(w, ".(())."_db3);
+    std::vector<dot_bracket3> vec2{dot_bracket3::UNPAIRED, dot_bracket3::PAIR_OPEN, dot_bracket3::PAIR_OPEN,
+                                   dot_bracket3::PAIR_CLOSE, dot_bracket3::PAIR_CLOSE, dot_bracket3::UNKNOWN};
+    EXPECT_EQ(vec2, ".(())."_dot_bracket3);
 }
 
-TEST(db3_literals, basic_string)
+TEST(dot_bracket3_literals, basic_string)
 {
-    db3_string v;
-    v.resize(5, db3::BR);
-    EXPECT_EQ(v, ")))))"_db3s);
+    using string_t = std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>>;
+    string_t str1;
+    str1.resize(5, dot_bracket3::PAIR_CLOSE);
+    EXPECT_EQ(str1, ")))))"_dot_bracket3s);
 
-    std::basic_string<db3, std::char_traits<db3>> w{db3::BL, db3::NP, db3::BR, db3::BL, db3::BR, db3::NA};
-    EXPECT_EQ(w, "(.)()."_db3s);
+    string_t str2{dot_bracket3::PAIR_OPEN, dot_bracket3::UNPAIRED, dot_bracket3::PAIR_CLOSE,
+                  dot_bracket3::PAIR_OPEN, dot_bracket3::PAIR_CLOSE, dot_bracket3::UNKNOWN};
+    EXPECT_EQ(str2, "(.)()."_dot_bracket3s);
 }
 
 TEST(wuss_literals, vector)
 {
-    wuss_vector v;
-    v.resize(5, wuss<>::BL);
-    EXPECT_EQ(v, "<<<<<"_wuss);
+    std::vector<wuss<>> vec1;
+    vec1.resize(5, wuss<>::PAIR_OPEN);
+    EXPECT_EQ(vec1, "<<<<<"_wuss);
 
-    std::vector<wuss<>> w{wuss<>::NP, wuss<>::BL, wuss<>::BL, wuss<>::BR, wuss<>::BR, wuss<>::NP};
-    EXPECT_EQ(w, ".<<>>."_wuss);
+    std::vector<wuss<>> vec2{wuss<>::UNPAIRED, wuss<>::PAIR_OPEN, wuss<>::PAIR_OPEN,
+                             wuss<>::PAIR_CLOSE, wuss<>::PAIR_CLOSE, wuss<>::UNPAIRED};
+    EXPECT_EQ(vec2, ".<<>>."_wuss);
 }
 
 TEST(wuss_literals, basic_string)
 {
-    wuss_string v;
-    v.resize(5, wuss<>::BR);
-    EXPECT_EQ(v, ">>>>>"_wusss);
+    using string_t = std::basic_string<wuss<>, std::char_traits<wuss<>>>;
+    string_t str1;
+    str1.resize(5, wuss<>::PAIR_CLOSE);
+    EXPECT_EQ(str1, ">>>>>"_wusss);
 
-    std::basic_string<wuss<>, std::char_traits<wuss<>>> w{wuss<>::BL, wuss<>::NP, wuss<>::BR, wuss<>::BL, wuss<>::BR,
-                                                          wuss<>::NP};
-    EXPECT_EQ(w, "<.><>."_wusss);
+    string_t str2{wuss<>::PAIR_OPEN, wuss<>::UNPAIRED, wuss<>::PAIR_CLOSE,
+                  wuss<>::PAIR_OPEN, wuss<>::PAIR_CLOSE, wuss<>::UNPAIRED};
+    EXPECT_EQ(str2, "<.><>."_wusss);
 }
 
 TEST(dssp9_literals, vector)
 {
-    dssp9_vector v;
-    v.resize(5, dssp9::H);
-    EXPECT_EQ(v, "HHHHH"_dssp9);
+    std::vector<dssp9> vec1;
+    vec1.resize(5, dssp9::H);
+    EXPECT_EQ(vec1, "HHHHH"_dssp9);
 
-    std::vector<dssp9> w{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
-    EXPECT_EQ(w, "EHHHTG"_dssp9);
+    std::vector<dssp9> vec2{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
+    EXPECT_EQ(vec2, "EHHHTG"_dssp9);
 }
 
 TEST(dssp9_literals, basic_string)
 {
-    dssp9_string v;
-    v.resize(5, dssp9::B);
-    EXPECT_EQ(v, "BBBBB"_dssp9s);
+    using string_t = std::basic_string<seqan3::dssp9, std::char_traits<seqan3::dssp9>>;
+    string_t str1;
+    str1.resize(5, dssp9::B);
+    EXPECT_EQ(str1, "BBBBB"_dssp9s);
 
-    std::basic_string<dssp9, std::char_traits<dssp9>> w{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
-    EXPECT_EQ(w, "EHHHTG"_dssp9s);
+    string_t str2{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
+    EXPECT_EQ(str2, "EHHHTG"_dssp9s);
 }

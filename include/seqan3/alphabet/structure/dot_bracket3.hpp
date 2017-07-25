@@ -47,7 +47,7 @@
 #include <seqan3/alphabet/structure/concept.hpp>
 
 // ------------------------------------------------------------------
-// db3
+// dot_bracket3
 // ------------------------------------------------------------------
 
 namespace seqan3
@@ -57,16 +57,27 @@ namespace seqan3
  * \ingroup structure
  *
  * \details
- * The brackets denote RNA base pair interactions. Every left bracket (BL) must have a corresponding right bracket (BR).
- * Pseudoknots cannot be expressed in this format. A dot (.) represents a character that is not paired (NP).
+ * The brackets denote RNA base pair interactions. Every left bracket must have a corresponding right bracket.
+ * Pseudoknots cannot be expressed in this format. A dot (.) represents a character that is not paired.
  *
- *~~~~~~~~~~~~~~~{.cpp}
- * GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA
- * (((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).
- *~~~~~~~~~~~~~~~
+ *```console
+ *     GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA
+ *     (((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).
+ *```
+ *
+ * \par Usage:
+ * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stdout.
+ * ```cpp
+ *     // create vector
+ *     std::vector<dot_bracket3> vec{dot_bracket3::UNPAIRED, dot_bracket3::PAIR_CLOSE, dot_bracket3::PAIR_CLOSE};
+ *     // modify and print
+ *     vec[1] = dot_bracket3::PAIR_OPEN;
+ *     for (dot_bracket3 chr : vec)
+ *         std::cout << chr;  // .()
+ * ```
  */
 
-struct db3
+struct dot_bracket3
 {
     //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
     using char_type = char;
@@ -78,22 +89,27 @@ struct db3
      * \details Similar to an Enum interface. *Don't worry about the `internal_type`.*
      */
     //!\{
-    static const db3 NP; // not paired
-    static const db3 BL; // bracket left
-    static const db3 BR; // bracket right
-    static const db3 NA; // not available
+    static const dot_bracket3 UNPAIRED;
+    static const dot_bracket3 PAIR_OPEN;
+    static const dot_bracket3 PAIR_CLOSE;
+    static const dot_bracket3 UNKNOWN;
     //!\}
 
     /*!\name Read functions
      * \{
+     *
+     * \brief Get the letter as a character of char_type.
+     * \returns The character representation of this dot_bracket3 letter.
      */
-    //!\brief Return the letter as a character of char_type.
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    //!\brief Return the letter's numeric value or rank in the alphabet.
+    /*!
+     * \brief Get the letter's numeric value or rank in the alphabet.
+     * \returns The numeric representation of this dot_bracket3 letter.
+     */
     constexpr rank_type to_rank() const noexcept
     {
         return static_cast<rank_type>(_value);
@@ -102,19 +118,26 @@ struct db3
 
     /*!\name Write functions
      * \{
+     *
+     * \brief Assign from a character.
+     * \param chr The character that is assigned.
+     * \returns The resulting dot_bracket3 character.
      */
-    //!\brief Assign from a character.
-    constexpr db3 & assign_char(char_type const c) noexcept
+    constexpr dot_bracket3 & assign_char(char_type const chr) noexcept
     {
-        _value = char_to_value[c];
+        _value = char_to_value[chr];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
-    constexpr db3 & assign_rank(rank_type const c)
+    /*!
+     * \brief Assign from a numeric value.
+     * \param rnk The rank value that is assigned.
+     * \returns The resulting dot_bracket3 character.
+     */
+    constexpr dot_bracket3 & assign_rank(rank_type const rnk)
     {
-        assert(c < value_size);
-        _value = static_cast<internal_type>(c);
+        assert(rnk < value_size);
+        _value = static_cast<internal_type>(rnk);
         return *this;
     }
     //!\}
@@ -124,32 +147,32 @@ struct db3
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(db3 const & rhs) const noexcept
+    constexpr bool operator==(dot_bracket3 const & rhs) const noexcept
     {
         return _value == rhs._value;
     }
 
-    constexpr bool operator!=(db3 const & rhs) const noexcept
+    constexpr bool operator!=(dot_bracket3 const & rhs) const noexcept
     {
         return _value != rhs._value;
     }
 
-    constexpr bool operator<(db3 const & rhs) const noexcept
+    constexpr bool operator<(dot_bracket3 const & rhs) const noexcept
     {
         return _value < rhs._value;
     }
 
-    constexpr bool operator>(db3 const & rhs) const noexcept
+    constexpr bool operator>(dot_bracket3 const & rhs) const noexcept
     {
         return _value > rhs._value;
     }
 
-    constexpr bool operator<=(db3 const & rhs) const noexcept
+    constexpr bool operator<=(dot_bracket3 const & rhs) const noexcept
     {
         return _value <= rhs._value;
     }
 
-    constexpr bool operator>=(db3 const & rhs) const noexcept
+    constexpr bool operator>=(dot_bracket3 const & rhs) const noexcept
     {
         return _value >= rhs._value;
     }
@@ -166,12 +189,12 @@ protected:
     enum struct internal_type : rank_type
     {
         UNPAIRED,
-        BRACKETL,
-        BRACKETR,
+        PAIR_OPEN,
+        PAIR_CLOSE,
         UNKNOWN = UNPAIRED
     };
 
-    //!\brief Value to char conversion table.
+    //!\brief Value-to-char conversion table.
     static constexpr char_type value_to_char[value_size]
     {
         '.',
@@ -179,25 +202,23 @@ protected:
         ')'
     };
 
-    //!\brief Char to value conversion table.
+    //!\brief Char-to-value conversion table.
     static constexpr std::array<internal_type, 256> char_to_value
     {
         [] () constexpr
         {
-            using in_t = internal_type;
-            std::array<in_t, 256> ret{};
+            std::array<internal_type, 256> rank_table{};
 
             // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = in_t::UNKNOWN;
+            for (internal_type & rnk : rank_table)
+                rnk = internal_type::UNKNOWN;
 
             // canonical
-            ret['.'] = in_t::UNPAIRED;
-            ret['('] = in_t::BRACKETL;
-            ret[')'] = in_t::BRACKETR;
+            rank_table['.'] = internal_type::UNPAIRED;
+            rank_table['('] = internal_type::PAIR_OPEN;
+            rank_table[')'] = internal_type::PAIR_CLOSE;
 
-            // iupac characters are implicitly "UNKNOWN"
-            return ret;
+            return rank_table;
         } ()
     };
 
@@ -208,53 +229,28 @@ public:
     //!\publicsection
 };
 
-constexpr db3 db3::NP{internal_type::UNPAIRED};
-constexpr db3 db3::BL{internal_type::BRACKETL};
-constexpr db3 db3::BR{internal_type::BRACKETR};
-constexpr db3 db3::NA{internal_type::UNKNOWN};
+constexpr dot_bracket3 dot_bracket3::UNPAIRED{internal_type::UNPAIRED};
+constexpr dot_bracket3 dot_bracket3::PAIR_OPEN{internal_type::PAIR_OPEN};
+constexpr dot_bracket3 dot_bracket3::PAIR_CLOSE{internal_type::PAIR_CLOSE};
+constexpr dot_bracket3 dot_bracket3::UNKNOWN{internal_type::UNKNOWN};
 
 } // namespace seqan3
 
 namespace seqan3::detail
 {
 
-//!\brief seqan3::db3 is defined as being a structure alphabet.
+//!\brief seqan3::dot_bracket3 is defined as being a structure alphabet.
 //!\ingroup structure
 template <>
-struct is_structure<db3> : public std::true_type
+struct is_structure<dot_bracket3> : public std::true_type
 {};
 
 } // namespace seqan3::detail
 
 #ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::db3>);
-static_assert(seqan3::structure_concept<seqan3::db3>);
+static_assert(seqan3::alphabet_concept<seqan3::dot_bracket3>);
+static_assert(seqan3::structure_concept<seqan3::dot_bracket3>);
 #endif
-
-// ------------------------------------------------------------------
-// containers
-// ------------------------------------------------------------------
-
-namespace seqan3
-{
-
-//!\brief Alias for an std::vector of seqan3::db3.
-//!\relates db3
-using db3_vector = std::vector<db3>;
-
-
-/*!\brief Alias for an std::basic_string of seqan3::db3.
- * \relates db3
- *
- * \attention
- * Note that we recommend using seqan3::db3_vector instead of db3_string in almost all situations.
- * While the C++ style operations on the string are well supported, you should not access the internal c-string
- * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
- * correct length of the string (while the `.size()` returns the correct value).
- */
-using db3_string = std::basic_string<db3, std::char_traits<db3>>;
-
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // literals
@@ -263,62 +259,60 @@ using db3_string = std::basic_string<db3, std::char_traits<db3>>;
 namespace seqan3::literal
 {
 
-/*!\brief db3 literal
- * \relates seqan3::db3
- * \returns seqan3::db3_vector
+/*!\brief dot_bracket3 literal
+ * \relates seqan3::dot_bracket3
+ * \returns std::vector<seqan3::dot_bracket3>
  *
- * You can use this string literal to easily assign to db3_vector:
+ * You can use this string literal to easily assign to a vector of dot_bracket3 characters:
  *
- *~~~~~~~~~~~~~~~{.cpp}
+ *```.cpp
  *     using namespace seqan3::literal;
- *     db3_vector foo{".(..)."_db3};
- *     db3_vector bar = ".(..)."_db3;
- *     auto bax = ".(..)."_db3;
- *~~~~~~~~~~~~~~~
+ *     std::vector<dot_bracket3> foo{".(..)."_dot_bracket3};
+ *     std::vector<dot_bracket3> bar = ".(..)."_dot_bracket3;
+ *     auto bax = ".(..)."_dot_bracket3;
+ *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-
-inline db3_vector operator "" _db3(const char * s, std::size_t n)
+inline std::vector<dot_bracket3> operator "" _dot_bracket3(const char * str, std::size_t len)
 {
-    db3_vector r;
-    r.resize(n);
+    std::vector<dot_bracket3> vec;
+    vec.resize(len);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t idx = 0u; idx < len; ++idx)
+        vec[idx].assign_char(str[idx]);
 
-    return r;
+    return vec;
 }
 
-/*!\brief db3 string literal
- * \relates seqan3::db3
- * \returns seqan3::db3_string
+/*!\brief dot_bracket3 string literal
+ * \relates seqan3::dot_bracket3
+ * \returns std::basic_string<seqan3::dot_bracket3, std::char_traits<seqan3::dot_bracket3>>
  *
- * You can use this string literal to easily assign to db3_vector:
+ * You can use this string literal to easily assign to a string of dot_bracket3 characters:
  *
- *~~~~~~~~~~~~~~~{.cpp}
+ *```.cpp
  *     using namespace seqan3::literal;
- *     db3_string foo{".(..)."_db3s};
- *     db3_string bar = ".(..)."_db3s;
- *     auto bax = ".(..)."_db3s;
- *~~~~~~~~~~~~~~~
- *
- * Please note the limitations of seqan3::db3_string and consider using the \link operator""_db3 \endlink instead.
+ *     using string_t = std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>>;
+ *     string_t foo{".(..)."_dot_bracket3s};
+ *     string_t bar = ".(..)."_dot_bracket3s;
+ *     auto bax = ".(..)."_dot_bracket3s;
+ *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-
-inline db3_string operator "" _db3s(const char * s, std::size_t n)
+inline std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> operator "" _dot_bracket3s(const char * str,
+                                                                                                  std::size_t len)
 {
-    db3_string r;
-    r.resize(n);
+    std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> db3str;
+    db3str.resize(len);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t idx = 0u; idx < len; ++idx)
+        db3str[idx].assign_char(str[idx]);
 
-    return r;
+    return db3str;
 }
 
 } // namespace seqan3::literal
