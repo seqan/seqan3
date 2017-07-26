@@ -42,11 +42,13 @@
 
 #pragma once
 
+#include <initializer_list>
 #include <iostream>
 #include <string>
 #include <iterator>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/gap/gapped_alphabet.hpp>
 
 //#include <seqan3/core/concept/core.hpp>
 //#include <seqan3/alphabet/alphabet_container.hpp>
@@ -65,15 +67,19 @@ namespace seqan3 {
  *  of their containers. The aligned_sequence with constant access operator has to fulfill the
  *  seqan3::aligned_sequence_adaptor_constant_access concept which includes the
  *  seqan's container and sequence concepts. The ungapped sequence stored by the
- *  aligned sequence struct requires only seqan's sequence concept for assignment and clearing operations.
+ *  aligned sequence struct requires the fulfillment of seqan's random access sequence
+ *  concept for allowing efficient write and read access.
  *  \tparam gapped_alphabet_type The composite alphabet type of the underlying sequence, e.g. dna4 and a gap symbol.
  *  The alphabet_type as part of the gapped_alphabet_t has to satisfy the seqan3::alphabet_concept.
+ *  gap_vector = 1110011000100 and sequence = ATATCGT, gapped sequence is ---AT--ATC-GT
+    Note container is define
  */
 
 
 // todo: require that container is const?
-template <typename container_t, char gap_symbol='_'>
-    requires sequence_concept<container_t> && alphabet_concept<ranges::v3::value_type_t<container_t>>
+
+template <typename container_t>
+    requires random_access_sequence_concept<container_t> && alphabet_concept<ranges::v3::value_type_t<container_t>>
 struct aligned_sequence_adaptor_constant_access
 {
 
@@ -82,29 +88,35 @@ private:
     sdsl::bit_vector gap_vector{}; // includes support structures for rank/select
     //! support structure to compute select for projection into gap space
     sdsl::select_support_mcl<0> letter_select;
-    //! support structure to rank for projection into underlying sequence space
-    sdsl::rank_support_v5<1, 1> gap_rank;
+    //! Rank support structure to compute number 1s in prefix 0..i-1.
+    sdsl::rank_support_v5<1, 1> rs(&gap_vector);
     //! TODO: store base sequence without gaps or with gaps? dynamic ptr or smart pointer instead? then default constructor ok
     container_t sequence{};
 
-    // Shortcuts
-    using aligned_sequence = aligned_sequence_adaptor_constant_access;
+    // specialication of random access iterator
+    using gapped_alphabet_t = ranges::v3::value_type_t<container_t>;
+    using aligned_sequence_t = aligned_sequence_adaptor_constant_access;
+    //detail::iterator_random_access<aligned_sequence> it;
+    detail::random_access_iterator<aligned_sequence_t> zero(nullptr, 0);
+    detail::random_access_iterator<const aligned_sequence_t> zero_const(nullptr, 0);
+
 
 public:
     // member types required by container_concept
     //!\brief Value type of container elements.
-    using value_type = typename ranges::v3::value_type_t<container_t>;
+    using value_type = typename gapped_alphabet_t;
     //!\brief Use reference type defined by container.
     using reference = typename container_t::reference;
     //!\brief Use const reference type provided by container.
     using const_reference = typename container_t::const_reference;
     //!\brief Use random access iterator on container as iterator type.
-    using iterator = detail::random_access_iterator<container_t>; //TODO must satisfy forward_iterator_concept and convertible to const_interator
+    // TODO ra iterator over composite data structure, overwrite [], and decrement increment operators
+    using iterator = detail::random_access_iterator<aligned_sequence_t>; //TODO must satisfy forward_iterator_concept and convertible to const_interator
     //!\brief Use const random access iterator on container as const iterator type.
-    using const_iterator = detail::random_access_iterator<const container_t>; //TODO must satisfy forward_iterator_concept
-    //!\brief Type for distances between iterators.
+    using const_iterator = detail::random_access_iterator<const aligned_sequence_t>; //TODO must satisfy forward_iterator_concept
+    //!\brief Type for distances between iterators is taken from alphabet container.
     using difference_type = typename ranges::v3::difference_type_t<container_t>;
-    //!\brief Use container's size_type as a position.
+    //!\brief Use alphabet container's size_type as a position.
     using size_type = typename ranges::v3::size_type_t<container_t>;
 
     /*!\name Constructors/Destructors
@@ -112,10 +124,6 @@ public:
     */
     // \brief Default constructor.
     constexpr aligned_sequence_adaptor_constant_access() = default;
-
-    //!\brief Construct by sequence.
-    // TODO: init helpers
-    constexpr aligned_sequence_adaptor_constant_access(container_t sequence) noexcept : sequence{sequence} {};
 
     //!\brief Copy constructor.
     constexpr aligned_sequence_adaptor_constant_access(aligned_sequence_adaptor_constant_access const &) = default;
@@ -137,16 +145,37 @@ public:
             // TODO: clear other data structures
     }; //= default;
 
-    //!\brief Constructor required by sequence concept.
-// { type{typename type::size_type{}, typename type::value_type{}} };
+    //!\brief Constructors required by sequence concept.
     // TODO: behaviour? replicate input value size times?
+    //!\brief Construct by single value repeated size times.
+    // TODO feels strange to template with alphabet_t, but construct with gapped_alphabet_t value,
+    // add 2nd constructor with alphabet_t as input value?
     constexpr aligned_sequence_adaptor_constant_access(size_type size, value_type value)
     {
-        container_t sequence;
+        assign(size, value);
     };
 
+    constexpr aligned_sequence_adaptor_constant_access(iterator it1, iterator it2)
+    {
+        assign(it1, it2);
+    };
+
+    //!\brief Construct by sequence.
+    //type{std::initializer_list<typename type::value_type>{}}
+    constexpr aligned_sequence_adaptor_constant_access(container_t sequence)
+    {
+        assign(sequence.begin(), sequence.end());
+    };
+
+    //{ val = std::initializer_list<typename type::value_type>{}      } -> type &;
+    //!\brief Construct by initializer_list for inner sequence container.
+    constexpr aligned_sequence_adaptor_constant_access(std::initializer_list<value_type> l)
+    {
+        assign(l);
+    };
 
     //!\}
+
 /*
     //! default constructor leaves sequence and gap vector uninitialized
     aligned_sequence_adaptor_constant_access() :
@@ -184,25 +213,28 @@ public:
     //!\brief Return iterator pointing to first element of underlying sequence.
     iterator begin()
     {
-        return iterator(sequence, 0); //std::begin(sequence);
+        // Wrong: would delegate [] to sequence container
+        //return iterator(sequence, 0);
+        return zero;
     }
 
-    //!\brief Return iterator pointing to past-the-end element of underlying sequence.
+    //!\brief Return iterator pointing to past-the-end element of gapped sequence.
     iterator end()
     {
-        return iterator(sequence, sequence.size());
+        // TODO: seq.size + rank as 2nd argument, w.r.t. sequence it is outside the alloc mem
+        return zero + gap_vector.size();
     }
 
     //!\brief Return const iterator pointing to first element of underlying sequence
     const_iterator cbegin() const
     {
-        return const_iterator(sequence, 0);;
+        return zero_const;
     }
 
     //!\brief Return const iterator pointing to past-the-end element of underlying sequence.
     const_iterator cend() const
     {
-        return const_iterator(sequence, sequence.size());
+        return zero_const + gap_vector.size();
     }
 
     //! two aligned sequences are the same if their literal sequences and gaps are the same
@@ -225,16 +257,16 @@ public:
         //gap_rank.swap(rhs.gap_rank);
     }
 
-    //!\brief Return ungapped sequence length.
+    //!\brief Return gapped sequence length.
     size_type size()
     {
-        return sequence.size();
+        return sequence.size() + rs.rank(gap_vector.size() - 1;
     }
 
     //!\brief Maximal aligned sequence size is the one of the ungapped sequence.
     size_type max_size()
     {
-        return sequence.max_size();
+        return sequence.max_size(); // plus gap_vector len?
     }
 
     //!\brief An aligned sequence is empty if the underlying ungapped sequence is empty.
@@ -243,6 +275,124 @@ public:
         return sequence.empty();
     }
     //!\}
+
+    /*!\name Assignment required by sequence concept. replacing its current contents,
+     * \{
+    */
+    //!\brief Assignment via iterators.
+    //val.assign(val2.begin(), val2.end())
+    void assign(iterator it1, iterator it2) // these are gapped_seq iterators!
+    {
+        difference_type m = it2 - it1
+        sequence.resize(0);
+        util::assign(gap_vector, bit_vector(m, 0));
+        for (difference_type i = 0; i < m; ++m)
+        {
+            if (it1[i] == seqan3::gap::gap)
+                gap_vector[i] = 1;
+            else
+                sequence.push_back(it1[i]);
+        }
+        rs.set_vector(&gap_vector);  // update rank support
+    }
+
+    //!\brief Assignment via initializer_list.
+    //{ val.assign(std::initializer_list<typename type::value_type>{})
+    void assign(std::initializer_list<value_type> l)
+    {
+        sequence.clear();
+        util::assign(gap_vector, bit_vector(l.size(), 0));
+        for (auto it = std::begin(l); it != std::end(l); ++it){
+            if ((*it) == seqan3::gap::GAP)
+                gap_vector[it-std::begin(l)] = 1;
+            else
+                sequence.push_back(*it);
+        }
+        rs.set_vector(&gap_vector); // update rank support
+    }
+
+    //!\brief Assignment via initializer_list.
+    //{ val.assign(typename type::size_type{}, typename type::value_type{}) };
+    void assign(size_type size, value_type value)
+    {
+        if (value == seqan3::gap::GAP)
+            util::assign(gap_vector, bit_vector(size, 1));
+        else {
+            util::assign(gap_vector, bit_vector(size, 0));
+            sequence.resize(size);
+            std::fill(sequence.begin(), sequence.end(), value);
+        }
+        rs.set_vector(&gap_vector); // update rank support
+    }
+
+    //!\brief Insert single value given by reference at given position. Elements right of insert position are shifted.
+    iterator insert(iterator pos, const value_type & value)
+    {
+        position_type j = pos - zero;
+        bit_vector gap_vector_new(gap_vector.size()+1, 0);
+        // copy prefix
+        for (position_type i = 0; i < j; ++i)
+            gap_vector_new[i] = gap_vector[i];
+
+        // insert gap or alphabet symbol
+        if (value == seqan3::gap::GAP)
+            gap_vector_new[j] = 1;
+        else
+        {
+            position_type j_ungapped = j - rs.rank(j);
+            sequence.insert(sequence.begin() + j_ungapped, value);
+        }
+        // copy suffix
+        for (position_type i = j; i < gap_vector.size(); ++i)
+            gap_vector_new[i+1] = gap_vector[i];
+        // update support structures
+        gap_vector.assign(gap_vector_new);
+        // TODO: delete gap_vector_new?
+        rs.set_vector(&gap_vector); // update rank support
+        return pos;
+    }
+
+    //{ val.insert(val.begin(), typename type::value_type{})
+    iterator insert(iterator pos, value_type && value)
+    {
+        const value_type value_(std::move(value));
+        return insert(pos, value_);
+    }
+
+    // { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
+    // Insert value multiple times at position indicated by iterator.
+    // TODO: more elegant way? Are there any bit shift operators provided by the sdsl?
+    iterator insert(const_iterator it1, size_type size, const value_type & value)
+    {
+        position_type j = pos - zero;
+        bit_vector gap_vector_new(gap_vector.size() + size, 0);
+        // copy prefix
+        position_type i;
+        for (i = 0; i < j; ++i)
+            gap_vector_new[i] = gap_vector[i];
+
+        // insert gap or alphabet symbols
+        if (value == seqan3::gap::GAP)
+        {
+            for (i = 0; i < size; ++i)
+                gap_vector_new[j+i] = 1;
+        }
+        else
+        {
+            position_type j_ungapped = j - rs.rank(j);
+            sequence.insert(sequence.begin() + j_ungapped + i, size, value);
+        }
+        // copy suffix
+        for (position_type i = j+size; i < gap_vector.size(); ++i)
+            gap_vector_new[i+1+size] = gap_vector[i];
+        // update support structures
+        gap_vector.assign(gap_vector_new);
+        rs.set_vector(&gap_vector); // update rank support
+        return pos;
+    }
+
+    //!\}
+
 
 /*
     //! return gap-free sequence
@@ -286,20 +436,17 @@ public:
     }
 */
 
-    // access container
-    //{ val[0]    } -> typename type::value_type &;
-    //{ val.at(0) } -> typename type::value_type &;
-
-/*
-
     //########### random_access_sequence_concept
     //! random access operators
     value_type operator [](size_type idx) const
     {
       // todo: check here for in range or leave it to container?
-        return this->sequence[idx];
+        if gap_vector[idx]
+            return seqan3::gap::GAP;
+        difference_type offset = rs.rank(idx);
+        return this->sequence[idx - offset];
     }
-
+/*
     //! random access operators
     value_type at(size_type idx) const
     {
