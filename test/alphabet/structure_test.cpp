@@ -42,6 +42,8 @@
 
 #include <range/v3/view/zip.hpp>
 
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
 
 using namespace seqan3;
@@ -244,4 +246,288 @@ TEST(dssp9_literals, basic_string)
 
     string_t str2{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
     EXPECT_EQ(str2, "EHHHTG"_dssp9s);
+}
+
+// ------------------------------------------------------------------
+// composition nucleotide x structure
+// ------------------------------------------------------------------
+
+// default/zero construction
+TEST(structure_composition, ctr)
+{
+    [[maybe_unused]] structure_composition<rna4, dot_bracket3> t1;
+}
+
+// aggregate initialization
+TEST(structure_composition, aggr)
+{
+    structure_composition<rna4, dot_bracket3> t1;
+    structure_composition<rna4, dot_bracket3> t2{rna4::C, dot_bracket3::PAIR_CLOSE};
+    EXPECT_NE(t1, t2);
+}
+
+// zero initialization
+TEST(structure_composition, zro)
+{
+    structure_composition<rna4, dot_bracket3> t1{rna4::A, dot_bracket3::UNKNOWN};
+    structure_composition<rna4, dot_bracket3> t2{};
+
+    EXPECT_EQ(t1, t2);
+}
+
+// copy construction
+TEST(structure_composition, cp_ctr)
+{
+    structure_composition<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_OPEN};
+    structure_composition<rna4, dot_bracket3> t2{t1};
+    structure_composition<rna4, dot_bracket3> t3(t1);
+    EXPECT_EQ(t1, t2);
+    EXPECT_EQ(t2, t3);
+}
+
+// move construction
+TEST(structure_composition, mv_ctr)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::UNPAIRED};
+    structure_composition<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::UNPAIRED};
+    structure_composition<rna4, dot_bracket3> t2{std::move(t1)};
+    EXPECT_EQ(t2, t0);
+    structure_composition<rna4, dot_bracket3> t3(std::move(t2));
+    EXPECT_EQ(t3, t0);
+}
+
+// copy assignment
+TEST(structure_composition, cp_assgn)
+{
+    structure_composition<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::UNPAIRED};
+    structure_composition<rna4, dot_bracket3> t2;
+    structure_composition<rna4, dot_bracket3> t3;
+
+    t2 = t1;
+    t3 = t1;
+    EXPECT_EQ(t1, t2);
+    EXPECT_EQ(t2, t3);
+}
+
+// move assignment
+TEST(structure_composition, mv_assgn)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::UNPAIRED};
+    structure_composition<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::UNPAIRED};
+    structure_composition<rna4, dot_bracket3> t2;
+    structure_composition<rna4, dot_bracket3> t3;
+    t2 = std::move(t1);
+    EXPECT_EQ(t2, t0);
+    t3 = std::move(t2);
+    EXPECT_EQ(t3, t0);
+}
+
+// swap
+TEST(structure_composition, swap)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
+    structure_composition<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_OPEN};
+    structure_composition<rna4, dot_bracket3> t2{};
+    structure_composition<rna4, dot_bracket3> t3{};
+
+    std::swap(t1, t2);
+    EXPECT_EQ(t2, t0);
+    EXPECT_EQ(t1, t3);
+}
+
+// get<1>
+TEST(structure_composition, get_i)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
+
+    static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), rna4 &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), dot_bracket3 &>);
+
+    EXPECT_EQ(seqan3::get<0>(t0), rna4::C);
+    EXPECT_EQ(seqan3::get<1>(t0), dot_bracket3{dot_bracket3::PAIR_OPEN});
+}
+
+// std::get<1>
+TEST(structure_composition, stdget_i)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::UNPAIRED};
+
+    static_assert(std::is_same_v<decltype(std::get<0>(t0)), rna4 &>);
+    static_assert(std::is_same_v<decltype(std::get<1>(t0)), dot_bracket3 &>);
+
+    EXPECT_EQ(std::get<0>(t0), rna4::C);
+    EXPECT_EQ(std::get<1>(t0), dot_bracket3{dot_bracket3::UNPAIRED});
+}
+
+// structured bindings
+TEST(structure_composition, struct_binding)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+    auto [ i, l ] = t0;
+
+    static_assert(std::is_same_v<decltype(i), rna4>);
+    static_assert(std::is_same_v<decltype(l), dot_bracket3>);
+
+    EXPECT_EQ(i, rna4::C);
+    EXPECT_EQ(l, dot_bracket3{dot_bracket3::PAIR_CLOSE});
+}
+
+// get<type>
+TEST(structure_composition, get_type)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+
+    EXPECT_EQ(seqan3::get<rna4>(t0), rna4::C);
+    EXPECT_EQ(seqan3::get<dot_bracket3>(t0), dot_bracket3{dot_bracket3::PAIR_CLOSE});
+}
+
+// std::get<type>
+TEST(structure_composition, stdget_type)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+
+    EXPECT_EQ(std::get<rna4>(t0), rna4::C);
+    EXPECT_EQ(std::get<dot_bracket3>(t0), dot_bracket3{dot_bracket3::PAIR_CLOSE});
+}
+
+// std::tuple_element
+TEST(structure_composition, tuple_element)
+{
+    using pt = structure_composition<rna4, dot_bracket3>;
+
+    static_assert(std::is_same_v<std::tuple_element_t<0, pt>, rna4>);
+    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, dot_bracket3>);
+    static_assert(std::tuple_size_v<pt> == 2);
+}
+
+// type deduction
+TEST(structure_composition, type_deduce)
+{
+    structure_composition t0{rna4::C, dot_bracket3{dot_bracket3::PAIR_CLOSE}};
+    using pt = decltype(t0);
+
+    static_assert(std::is_same_v<std::tuple_element_t<0, pt>, rna4>);
+    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, dot_bracket3>);
+    static_assert(std::tuple_size_v<pt> == 2);
+}
+
+// explicit cast to element
+TEST(structure_composition, cast_to_element)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+
+    auto d = static_cast<rna4>(t0);
+    auto q = static_cast<dot_bracket3>(t0);
+    static_assert(std::is_same_v<decltype(d), rna4>);
+    static_assert(std::is_same_v<decltype(q), dot_bracket3>);
+
+    EXPECT_EQ(d, rna4::C);
+    EXPECT_EQ(q, dot_bracket3{dot_bracket3::PAIR_CLOSE});
+}
+
+// comparison operators
+TEST(structure_composition, cmp)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
+    structure_composition<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_CLOSE};
+    structure_composition<rna4, dot_bracket3> t2{rna4::G, dot_bracket3::PAIR_CLOSE};
+
+    EXPECT_LT(t0, t1);
+    EXPECT_LE(t0, t1);
+    EXPECT_LE(t1, t1);
+    EXPECT_EQ(t1, t1);
+    EXPECT_GE(t1, t1);
+    EXPECT_GE(t2, t1);
+    EXPECT_GT(t2, t1);
+}
+
+// alphabet_concept: rank_type
+TEST(structure_composition, rank_type)
+{
+    EXPECT_TRUE((std::is_same_v<underlying_rank_t<structure_composition<rna4, dot_bracket3>>, uint8_t>));
+}
+
+// alphabet_concept: char_type
+TEST(structure_composition, char_type)
+{
+    EXPECT_TRUE((std::is_same_v<underlying_char_t<structure_composition<rna4, dot_bracket3>>,
+                                underlying_char_t<rna4>>));
+}
+
+// alphabet_concept: alphabet_size
+TEST(structure_composition, alphabet_size_v)
+{
+    EXPECT_EQ((alphabet_size_v<structure_composition<rna4, dot_bracket3>>),
+              (alphabet_size_v<rna4> * alphabet_size_v<dot_bracket3>));
+}
+
+// alphabet_concept: to_rank
+TEST(structure_composition, to_rank)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+    EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
+    EXPECT_EQ(to_rank(std::get<1>(t0)), 2);
+    EXPECT_EQ(to_rank(t0),
+              to_rank(std::get<0>(t0)) +
+              alphabet_size_v<rna4> * to_rank(std::get<1>(t0)));
+}
+
+// alphabet_concept: assign_rank
+TEST(structure_composition, assign_rank)
+{
+    using type = structure_composition<rna4, dot_bracket3>;
+
+    type t0{};
+
+    for (underlying_rank_t<type> i = 0; i < alphabet_size_v<type>; ++i)
+    {
+        assign_rank(t0, i);
+        EXPECT_EQ(to_rank(t0), i);
+    }
+}
+
+// alphabet_concept: to_char
+TEST(structure_composition, to_char)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+    EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
+    EXPECT_EQ(to_char(std::get<1>(t0)), ')');
+    EXPECT_EQ(to_char(t0), 'C');
+}
+
+// alphabet_concept: assign_char
+TEST(structure_composition, assign_char)
+{
+    using type = structure_composition<rna4, dot_bracket3>;
+
+    type t0{rna4::C, dot_bracket3::PAIR_OPEN};
+    char qchar = to_char(std::get<1>(t0));
+
+    assign_char(t0, 'A');
+    EXPECT_EQ(to_char(t0), 'A');
+    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    assign_char(t0, 'C');
+    EXPECT_EQ(to_char(t0), 'C');
+    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    assign_char(t0, 'G');
+    EXPECT_EQ(to_char(t0), 'G');
+    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    assign_char(t0, 'U');
+    EXPECT_EQ(to_char(t0), 'U');
+    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    assign_char(t0, 'N');
+    EXPECT_EQ(to_char(t0), 'A');
+    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+}
+
+// alphabet_concept: stream
+TEST(structure_composition, outstream)
+{
+    structure_composition<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
+    std::stringstream s;
+    s << t0;
+    t0 = rna4::A;
+    s << t0;
+
+    EXPECT_EQ(s.str(), "CA");
 }
