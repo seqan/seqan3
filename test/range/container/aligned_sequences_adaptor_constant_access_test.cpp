@@ -37,14 +37,17 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/gap/gapped_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/aligned_sequence_adaptor_constant_access.hpp>
 
 using namespace seqan3;
 
+//using gapped_alphabet = gapped_alphabet<dna4>;
+
 TEST(aligned_sequences_test, constructor_empty)
 {
-    aligned_sequence_adaptor_constant_access<std::vector<dna4>> s;
+    aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>> s;
 }
 
 /*

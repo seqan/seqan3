@@ -56,6 +56,8 @@
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
 #include <sdsl/bit_vector_il.hpp>
+//#include <sdsl/bit_vectors.hpp>
+
 #include "sdsl/rank_support_v5.hpp"
 #include "sdsl/select_support_mcl.hpp"
 #include "sdsl/util.hpp"
@@ -184,27 +186,6 @@ public:
         //gap_rank{&gap_vector}
     {
     };
-
-    //optional
-
-    //! init with basic sequence, gap vector remains empty
-    aligned_sequence(alphabet_container<underlying_sequence_type> sequence_in)
-    {
-        this->sequence = sequence_in;
-        this->gap_vector(sdsl::bit_vector(0, 0));
-        this->letter_select(&this->gap_vector);
-        this->gap_rank(&this->gap_vector);
-    };
-    //! init with basic sequence, gap vector remains empty
-    aligned_sequence(alphabet_container<underlying_sequence_type> sequence_in,
-        rank_support_v5<is_gap, t_pat_len> gap_vector_in) // or bit_vector (see doc of rank_support_v5)
-    {
-        this->sequence = sequence_in;
-        // todo: requirement for bit vector len, or could it be smaller/more basic type, interpretation: no more gaps
-        this->gap_vector = gap_vector_in;
-        this->letter_select(&this->gap_vector);
-        this->gap_rank(&gap_vector);
-    };
 */
 
     /*!\name Container concept requirements.
@@ -240,14 +221,7 @@ public:
     //! two aligned sequences are the same if their literal sequences and gaps are the same
     bool operator==(aligned_sequence_t const & rhs) const
     {
-        if (gap_vector.size() != rhs.gap_vector.size() || sequence != rhs.sequence)
-            return false;
-        // compare element-wise the gap vector, simplify this when == operator provided by sdsl to
-        // return sequence == rhs.sequence && gap_vector == rhs.gap_vector;
-        for (difference_type i = 0; i < gap_vector.size(); ++i)
-            if (gap_vector[i] != rhs.gap_vector[i])
-                return false;
-        return true;
+        return sequence == rhs.sequence && gap_vector == rhs.gap_vector;
     }
 
     bool operator!=(aligned_sequence_t const & rhs) const
@@ -255,15 +229,12 @@ public:
         return !(*this == rhs);
     }
 
+
     void swap(aligned_sequence_t & rhs)
     {
-        //sdsl::swap(gap_vector, rhs.gap_vector);
         sequence.swap(rhs.sequence);
-        gap_vector.swap(rhs.gap_vector);
-        rs.swap(rhs.rs);
-        // TODO: swap gap data structures
-        //letter_select.swap(rhs.letter_select);
-        //gap_rank.swap(rhs.gap_rank);
+        std::swap(gap_vector, rhs.gap_vector);
+        std::swap(rs, rhs.rs);
     }
 
     //!\brief Return gapped sequence length.
@@ -286,7 +257,6 @@ public:
     }
     //!\}
 
-
     /*!\name Assignment required by sequence concept. replacing its current contents,
      * \{
     */
@@ -295,9 +265,10 @@ public:
 
     void assign(iterator it1, iterator it2) // these are gapped_seq iterators!
     {
-        difference_type m = it2 - it1
+        difference_type m = it2 - it1;
         sequence.resize(0);
-        util::assign(gap_vector, sdsl::bit_vector(m, 0));
+        //sdsl::util::assign(gap_vector, sdsl::bit_vector(m, 0));
+        gap_vector = sdsl::bit_vector(m, 0);
         for (difference_type i = 0; i < m; ++m)
         {
             if (it1[i] == seqan3::gap::gap)
@@ -308,12 +279,14 @@ public:
         rs.set_vector(&gap_vector);  // update rank support
     }
 
+
     //!\brief Assignment via initializer_list.
     //{ val.assign(std::initializer_list<typename type::value_type>{})
     void assign(std::initializer_list<value_type> l)
     {
         sequence.clear();
-        util::assign(gap_vector, sdsl::bit_vector(l.size(), 0));
+        //sdsl::util::assign(gap_vector, sdsl::bit_vector(l.size(), 0));
+        gap_vector = sdsl::bit_vector(l.size(), 0);
         for (auto it = std::begin(l); it != std::end(l); ++it){
             if ((*it) == seqan3::gap::GAP)
                 gap_vector[it-std::begin(l)] = 1;
@@ -323,28 +296,31 @@ public:
         rs.set_vector(&gap_vector); // update rank support
     }
 
+
     //!\brief Assignment via initializer_list.
     //{ val.assign(typename type::size_type{}, typename type::value_type{}) };
     void assign(size_type size, value_type value)
     {
         if (value == seqan3::gap::GAP)
-            sdsl::util::assign(gap_vector, sdsl::bit_vector(size, 1));
+            //sdsl::util::assign(gap_vector, sdsl::bit_vector(size, 1));
+            gap_vector = sdsl::bit_vector(size, 1);
         else {
-            sdsl::util::assign(gap_vector, sdsl::bit_vector(size, 0));
+            //sdsl::util::assign(gap_vector, sdsl::bit_vector(size, 0));
+            gap_vector = sdsl::bit_vector(size, 0);
             sequence.resize(size);
             std::fill(sequence.begin(), sequence.end(), value);
         }
         rs.set_vector(&gap_vector); // update rank support
     }
 
-/*
+
     //!\brief Insert single value given by reference at given position. Elements right of insert position are shifted.
     iterator insert(iterator pos, const value_type & value)
     {
-        position_type j = pos - zero;
+        difference_type i, j = pos - zero;
         sdsl::bit_vector gap_vector_new(gap_vector.size()+1, 0);
         // copy prefix
-        for (position_type i = 0; i < j; ++i)
+        for (i = 0; i < j; ++i)
             gap_vector_new[i] = gap_vector[i];
 
         // insert gap or alphabet symbol
@@ -352,14 +328,14 @@ public:
             gap_vector_new[j] = 1;
         else
         {
-            position_type j_ungapped = j - rs.rank(j);
+            difference_type j_ungapped = j - rs.rank(j);
             sequence.insert(sequence.begin() + j_ungapped, value);
         }
         // copy suffix
-        for (position_type i = j; i < gap_vector.size(); ++i)
+        for (i = j; i < gap_vector.size(); ++i)
             gap_vector_new[i+1] = gap_vector[i];
         // update support structures
-        gap_vector.assign(gap_vector_new);
+        gap_vector = gap_vector_new;
         // TODO: delete gap_vector_new?
         rs.set_vector(&gap_vector); // update rank support
         return pos;
@@ -377,10 +353,9 @@ public:
     // TODO: more elegant way? Are there any bit shift operators provided by the sdsl?
     iterator insert(const_iterator pos, size_type size, const value_type & value)
     {
-        position_type j = pos - zero;
+        difference_type i, j = pos - zero;
         sdsl::bit_vector gap_vector_new(gap_vector.size() + size, 0);
         // copy prefix
-        position_type i;
         for (i = 0; i < j; ++i)
             gap_vector_new[i] = gap_vector[i];
 
@@ -392,21 +367,18 @@ public:
         }
         else
         {
-            position_type j_ungapped = j - rs.rank(j);
+            difference_type j_ungapped = j - rs.rank(j);
             sequence.insert(sequence.begin() + j_ungapped + i, size, value);
         }
         // copy suffix
-        for (position_type i = j+size; i < gap_vector.size(); ++i)
+        for (i = j+size; i < gap_vector.size(); ++i)
             gap_vector_new[i+1+size] = gap_vector[i];
         // update support structures
-        gap_vector.assign(gap_vector_new);
+        gap_vector = gap_vector_new;
         rs.set_vector(&gap_vector); // update rank support
         return pos;
     }
-
     //!\}
-
-*/
 
 /*
     //! return gap-free sequence
@@ -455,23 +427,30 @@ public:
     value_type operator [](size_type idx) const
     {
       // todo: check here for in range or leave it to container?
-        if gap_vector[idx]
+        if (gap_vector[idx])
             return seqan3::gap::GAP;
         difference_type offset = rs.rank(idx);
         return this->sequence[idx - offset];
     }
-/*
+
     //! random access operators
     value_type at(size_type idx) const
     {
-      // todo: check here for in range or leave it to container?
+      // TODO: check here for in range or leave it to container?
         return this->sequence[idx];
     }
 
     // modify container
-    void resize(size_type)                              } -> void;
-    { val.resize(0, typename type::value_type{}) } -> void;
-*/
+    //{ val.resize(0)                              } -> void;
+    void resize(size_type size)
+    {
+        // convert to ungapped sequence index
+        // reset all bits beyond position size
+        //for (difference_type)
+        //sequence.resize(size);
+    }
+    //{ val.resize(0, typename type::value_type{}) } -> void;
+
 };
 
 // global swap { swap(val, val2) } -> void;, TODO: lhs and rhs same container_t?
@@ -484,6 +463,6 @@ void swap (aligned_sequence_adaptor_constant_access<container_t> & lhs, aligned_
 
 } // namespace seqan3
 
-static_assert(seqan3::container_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
+//static_assert(seqan3::container_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::gapped_alphabet<seqan3::dna4>>>>);
 //static_assert(seqan3::sequence_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
 //static_assert(seqan3::random_access_sequence_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
