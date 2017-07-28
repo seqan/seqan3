@@ -47,11 +47,13 @@ TEST(aligned_sequences_test, constructor_empty)
     aligned_sequence_adaptor_constant_access<std::vector<dna4>> s;
 }
 
+/*
 TEST(aligned_sequences_test, constructor_sequence)
 {
     std::vector<dna4> seq = {dna4::A};
     aligned_sequence_adaptor_constant_access<std::vector<dna4>> s(seq);
 }
+
 
 // copy constructors
 TEST(aligned_sequences_test, constructor_cpy)
@@ -103,6 +105,7 @@ TEST(aligned_sequences_test, destructor)
     s_ptr->aligned_sequence_t::~aligned_sequence_t();
 }
 
+
 // Container concept functions
 TEST(aligned_sequences_test, container_concepts)
 {
@@ -147,3 +150,32 @@ TEST(aligned_sequences_test, container_concepts)
     aligned_sequence_adaptor_constant_access<std::vector<dna4>> s_empty;
     EXPECT_TRUE(s_empty.empty());
 }
+*/
+/*
+// Sequence concept functions
+TEST(aligned_sequences_test, sequence_concepts)
+{
+    using aligned_sequence = aligned_sequence_adaptor_constant_access<std::vector<dna4>>;
+    using size_type = aligned_sequence::size_type;
+    // construction by repeated value
+    size_type size = 1024;
+    aligned_sequence(size, dna4::A);
+    // construction by sequence given by two iterators
+    std::vector<dna4> source = {dna4::A, dna4::C, dna4::G, dna4::T, dna4::G};
+    using iterator = detail::random_access_iterator<std::vector<dna4>>;
+    iterator begin(source, 0), end(source, source.size());
+    aligned_sequence(begin, end);
+    // construction by initializer_list
+    aligned_sequence s{dna4::A, dna4::A, dna4::C, dna4::T};
+    // TODO: query inner sequence
+    // assignment via iterators
+    s.assign(iterator(source, 0), iterator(source, source.size()));
+    // assignment with initializer_list
+    s.assign({dna4::T, dna4::C, dna4::G, dna4::A});
+    // assignment with value inserted x times
+    s.assign(128, dna4::G);
+    // insert by value
+    aligned_sequence t{dna4::A};
+    t.insert(dna4::T);
+}
+*/
