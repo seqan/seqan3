@@ -111,6 +111,12 @@ struct dna4
     {
         return static_cast<rank_type>(_value);
     }
+
+    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    constexpr dna4 complement() const noexcept
+    {
+        return complement_table[to_rank()];
+    }
     //!\}
 
     /*!\name Write functions
@@ -256,6 +262,9 @@ protected:
         }()
     };
 
+    //!\brief The complement table.
+    static const std::array<dna4, value_size> complement_table;
+
 public:
     //!\privatesection
     //!\brief The data member.
@@ -270,18 +279,15 @@ constexpr dna4 dna4::T{internal_type::T};
 constexpr dna4 dna4::U{dna4::T};
 constexpr dna4 dna4::UNKNOWN{dna4::A};
 
-} // namespace seqan3
-
-namespace seqan3::detail
+constexpr std::array<dna4, dna4::value_size> dna4::complement_table
 {
+    dna4::T,    // complement of dna4::A
+    dna4::G,    // complement of dna4::C
+    dna4::C,    // complement of dna4::G
+    dna4::A     // complement of dna4::T
+};
 
-//!\brief seqan3::dna4 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<dna4> : public std::true_type
-{};
-
-} // namespace seqan3::detail
+} // namespace seqan3
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::dna4>);

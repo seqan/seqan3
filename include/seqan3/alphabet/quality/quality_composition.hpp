@@ -156,6 +156,16 @@ struct quality_composition :
     {
         return seqan3::to_char(get<0>(*this));
     }
+
+    /*!\brief Return a quality_composition where the quality is preserved, but the sequence letter is complemented.
+     * \sa seqan3::complement
+     * \sa seqan3::nucleotide_concept::complement
+     */
+    constexpr quality_composition complement() const noexcept
+    {
+        using seqan3::complement;
+        return quality_composition{complement(get<0>(*this)), get<1>(*this)};
+    }
     //!\}
 };
 
@@ -166,16 +176,6 @@ quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
     -> quality_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
 
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-//!\brief Since seqan3::quality_composition wraps a nucleotide alphabet it is also one.
-template <typename sequence_alphabet_type, typename quality_alphabet_type>
-struct is_nucleotide<quality_composition<sequence_alphabet_type, quality_alphabet_type>> : public std::true_type
-{};
-
-} // namespace seqan3::detail
 
 #ifndef NDEBUG
 #include <seqan3/alphabet/nucleotide/dna4.hpp>

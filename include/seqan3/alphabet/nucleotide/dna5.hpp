@@ -112,6 +112,12 @@ struct dna5
     {
         return static_cast<rank_type>(_value);
     }
+
+    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    constexpr dna5 complement() const noexcept
+    {
+        return complement_table[to_rank()];
+    }
     //!\}
 
     /*!\name Write functions
@@ -248,6 +254,8 @@ protected:
         }()
     };
 
+    //!\brief The complement table.
+    static const std::array<dna5, value_size> complement_table;
 public:
     //!\privatesection
     //!\brief The data member.
@@ -263,18 +271,16 @@ constexpr dna5 dna5::N{internal_type::N};
 constexpr dna5 dna5::U{dna5::T};
 constexpr dna5 dna5::UNKNOWN{dna5::N};
 
-} // namespace seqan3
-
-namespace seqan3::detail
+constexpr std::array<dna5, dna5::value_size> dna5::complement_table
 {
+    dna5::T,    // complement of dna5::A
+    dna5::G,    // complement of dna5::C
+    dna5::C,    // complement of dna5::G
+    dna5::A,    // complement of dna5::T
+    dna5::N     // complement of dna5::N
+};
 
-//!\brief seqan3::dna5 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<dna5> : public std::true_type
-{};
-
-} // namespace seqan3::detail
+} // namespace seqan3
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::dna5>);

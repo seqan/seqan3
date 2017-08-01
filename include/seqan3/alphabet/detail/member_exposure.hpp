@@ -228,4 +228,28 @@ constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<
 }
 //!\}
 
+// ------------------------------------------------------------------
+// seqan3::nucleotide_concept
+// ------------------------------------------------------------------
+
+/*!\name Helpers for seqan3::nucleotide_concept
+ * \brief These functions and metafunctions expose member variables and types so that they satisfy
+ * seqan3::nucleotide_concept.
+ * \ingroup nucleotide
+ * \{
+ */
+
+/*!\brief Implementation of seqan3::nucleotide_concept::complement() that delegates to a member function.
+ * \tparam nucleotide_type Must provide a `.complement()` member function.
+ * \param alph The alphabet letter for whom you wish to receive the complement.
+ * \returns The letter's complement, e.g. 'T' for 'A'.
+ */
+template <typename nucleotide_type>
+constexpr nucleotide_type complement(nucleotide_type const alph)
+    requires requires (nucleotide_type alph) { { alph.complement() } -> nucleotide_type; }
+{
+    return alph.complement();
+}
+//!\}
+
 } // namespace seqan3

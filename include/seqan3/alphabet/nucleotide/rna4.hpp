@@ -100,6 +100,12 @@ struct rna4 : public dna4
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
+
+    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    constexpr rna4 complement() const noexcept
+    {
+        return rna4{dna4::complement()};
+    }
     //!\}
 
     /*!\name Write functions
@@ -166,17 +172,6 @@ constexpr rna4 rna4::T{rna4::U};
 constexpr rna4 rna4::UNKNOWN{rna4::A};
 
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-//!\brief seqan3::rna4 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<rna4> : public std::true_type
-{};
-
-} // namespace seqan3::detail
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::rna4>);

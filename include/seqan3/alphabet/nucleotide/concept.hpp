@@ -43,35 +43,19 @@
 #include <seqan3/alphabet/concept.hpp>
 
 // ============================================================================
-// auxiliary metafunction
-// ============================================================================
-
-namespace seqan3::detail
-{
-
-//!\brief Metafunction that indicates whether an alphabet is a nucleotide alphabet.
-//!\ingroup nucleotide
-template <typename type>
-struct is_nucleotide : public std::false_type
-{};
-
-//!\brief Shortcut for seqan3::detail::is_nucleotide.
-//!\ingroup nucleotide
-template <typename type>
-constexpr bool is_nucleotide_v = is_nucleotide<type>::value;
-
-} // namespace seqan3::detail
-
-// ============================================================================
 // concept
 // ============================================================================
 
 namespace seqan3
 {
+
 /*!\interface seqan3::nucleotide_concept <>
  * \extends seqan3::alphabet_concept
  * \brief A concept that indicates whether an alphabet represents nucleotides.
  * \ingroup nucleotide
+ *
+ * In addition to the requirements for seqan3::alphabet_concept, the nucleotide_concept introduces
+ * a requirement for a complement function: seqan3::nucleotide_concept::complement.
  *
  * \par Concepts and doxygen
  * The requirements for this concept are given as related functions and metafunctions.
@@ -79,6 +63,27 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool nucleotide_concept = alphabet_concept<type> && detail::is_nucleotide_v<type>;
+concept bool nucleotide_concept = requires (type v)
+{
+    requires alphabet_concept<type>;
+
+    { complement(v) } -> type;
+};
 //!\endcond
+
+/*!\name Requirements for seqan3::nucleotide_concept
+ * \brief You can expect these functions on all types that implement seqan3::nucleotide_concept.
+ * \{
+ */
+/*!\fn nucleotide_type seqan3::complement(nucleotide_type const alph)
+ * \brief Returns the alphabet letter's complement value.
+ * \relates seqan3::nucleotide_concept
+ * \param alph The alphabet letter for whom you wish to receive the complement.
+ * \returns The letter's complement, e.g. 'T' for 'A'.
+ * \details
+ *
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
+ */
+//!\}
 } // namespace seqan3

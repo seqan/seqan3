@@ -101,6 +101,12 @@ struct rna5 : public dna5
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
+
+    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    constexpr rna5 complement() const noexcept
+    {
+        return rna5{dna5::complement()};
+    }
     //!\}
 
     /*!\name Write functions
@@ -169,17 +175,6 @@ constexpr rna5 rna5::T{rna5::U};
 constexpr rna5 rna5::UNKNOWN{rna5::N};
 
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-//!\brief seqan3::rna5 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<rna5> : public std::true_type
-{};
-
-} // namespace seqan3::detail
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::rna5>);

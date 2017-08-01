@@ -121,6 +121,12 @@ struct nucl16
     {
         return static_cast<rank_type>(_value);
     }
+
+    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    constexpr nucl16 complement() const noexcept
+    {
+        return complement_table[to_rank()];
+    }
     //!\}
 
     /*!\name Write functions
@@ -278,6 +284,9 @@ protected:
         }()
     };
 
+    //!\brief The complement table.
+    static const std::array<nucl16, value_size> complement_table;
+
 public:
     //!\privatesection
     //!\brief The data member.
@@ -303,18 +312,27 @@ constexpr nucl16 nucl16::W{internal_type::W};
 constexpr nucl16 nucl16::Y{internal_type::Y};
 constexpr nucl16 nucl16::UNKNOWN{nucl16::N};
 
-} // namespace seqan3
-
-namespace seqan3::detail
+constexpr std::array<nucl16, nucl16::value_size> nucl16::complement_table
 {
+    nucl16::T,    // complement of nucl16::A
+    nucl16::V,    // complement of nucl16::B
+    nucl16::G,    // complement of nucl16::C
+    nucl16::H,    // complement of nucl16::D
+    nucl16::C,    // complement of nucl16::G
+    nucl16::D,    // complement of nucl16::H
+    nucl16::M,    // complement of nucl16::K
+    nucl16::K,    // complement of nucl16::M
+    nucl16::N,    // complement of nucl16::N
+    nucl16::Y,    // complement of nucl16::R
+    nucl16::S,    // complement of nucl16::S
+    nucl16::A,    // complement of nucl16::T
+    nucl16::A,    // complement of nucl16::U
+    nucl16::B,    // complement of nucl16::V
+    nucl16::W,    // complement of nucl16::W
+    nucl16::R     // complement of nucl16::Y
+};
 
-//!\brief seqan3::nucl16 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<nucl16> : public std::true_type
-{};
-
-} // namespace seqan3::detail
+} // namespace seqan3
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::nucl16>);
