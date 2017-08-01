@@ -44,7 +44,7 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/alphabet/structure/concept.hpp>
+#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
 
 // ------------------------------------------------------------------
 // dot_bracket3
@@ -65,7 +65,7 @@ namespace seqan3
  *     (((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).
  *```
  *
- * \par Usage:
+ * \par Usage
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stdout.
  * ```cpp
  *     // create vector
@@ -106,8 +106,7 @@ struct dot_bracket3
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    /*!
-     * \brief Get the letter's numeric value or rank in the alphabet.
+    /*!\brief Get the letter's numeric value or rank in the alphabet.
      * \returns The numeric representation of this dot_bracket3 letter.
      */
     constexpr rank_type to_rank() const noexcept
@@ -129,8 +128,7 @@ struct dot_bracket3
         return *this;
     }
 
-    /*!
-     * \brief Assign from a numeric value.
+    /*!\brief Assign from a numeric value.
      * \param rnk The rank value that is assigned.
      * \returns The resulting dot_bracket3 character.
      */
@@ -176,6 +174,27 @@ struct dot_bracket3
     {
         return _value >= rhs._value;
     }
+    //!\}
+
+    //!\name RNA structure properties
+    //!\{
+    constexpr bool is_pair_open() const noexcept
+    {
+        return _value == internal_type::PAIR_OPEN;
+    }
+
+    constexpr bool is_pair_close() const noexcept
+    {
+        return _value == internal_type::PAIR_CLOSE;
+    }
+
+    constexpr bool is_unpaired() const noexcept
+    {
+        return _value == internal_type::UNPAIRED;
+    }
+
+    //!\brief The ability of the alphabet to represent pseudoknots, i.e. crossing interactions.
+    static constexpr bool pseudoknot_support{false};
     //!\}
 
 protected:
@@ -236,20 +255,9 @@ constexpr dot_bracket3 dot_bracket3::UNKNOWN{internal_type::UNKNOWN};
 
 } // namespace seqan3
 
-namespace seqan3::detail
-{
-
-//!\brief seqan3::dot_bracket3 is defined as being a structure alphabet.
-//!\ingroup structure
-template <>
-struct is_structure<dot_bracket3> : public std::true_type
-{};
-
-} // namespace seqan3::detail
-
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::dot_bracket3>);
-static_assert(seqan3::structure_concept<seqan3::dot_bracket3>);
+static_assert(seqan3::rna_structure_concept<seqan3::dot_bracket3>);
 #endif
 
 // ------------------------------------------------------------------

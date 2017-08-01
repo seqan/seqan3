@@ -44,7 +44,7 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/alphabet/structure/concept.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 // ------------------------------------------------------------------
 // wuss
@@ -69,14 +69,14 @@ namespace seqan3
  * <<<<_AAAA____>>>>aaaa
  *```
  *
- * \par Usage:
+ * \par Usage
  * The following code example creates a wuss vector, modifies it, and prints the result to stdout.
  * ```cpp
  *     // create vector
- *     std::vector<wuss<>> vec{wuss<>::UNPAIRED, wuss<>::PAIR_CLOSE, wuss<>::PAIR_CLOSE};
+ *     std::vector<wuss51> vec{wuss51::UNPAIRED, wuss51::PAIR_CLOSE, wuss51::PAIR_CLOSE};
  *     // modify and print
- *     vec[1] = wuss<>::PAIR_OPEN;
- *     for (wuss<> chr : vec)
+ *     vec[1] = wuss51::PAIR_OPEN;
+ *     for (wuss51 chr : vec)
  *         std::cout << chr;  // .<>
  * ```
  */
@@ -144,8 +144,7 @@ struct wuss
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    /*!
-     * \brief Get the letter's numeric value or rank in the alphabet.
+    /*!\brief Get the letter's numeric value or rank in the alphabet.
      * \returns The numeric representation of this wuss letter.
      */
     constexpr rank_type to_rank() const noexcept
@@ -167,8 +166,7 @@ struct wuss
         return *this;
     }
 
-    /*!
-     * \brief Assign from a numeric value.
+    /*!\brief Assign from a numeric value.
      * \param rnk The rank value that is assigned.
      * \returns The resulting wuss character.
      */
@@ -214,6 +212,41 @@ struct wuss
     {
         return _value >= rhs._value;
     }
+    //!\}
+
+    //!\name RNA structure properties
+    //!\{
+    constexpr bool is_pair_open() const noexcept
+    {
+        return _value == internal_type::PAIR_OPEN  ||
+               _value == internal_type::PAIR_OPEN1 ||
+               _value == internal_type::PAIR_OPEN2 ||
+               _value == internal_type::PAIR_OPEN3 ||
+               (to_char() >= 'A' && to_char() <= 'Z');
+    }
+
+    constexpr bool is_pair_close() const noexcept
+    {
+        return _value == internal_type::PAIR_CLOSE  ||
+               _value == internal_type::PAIR_CLOSE1 ||
+               _value == internal_type::PAIR_CLOSE2 ||
+               _value == internal_type::PAIR_CLOSE3 ||
+               (to_char() >= 'a' && to_char() <= 'z');
+    }
+
+    constexpr bool is_unpaired() const noexcept
+    {
+        return _value == internal_type::UNPAIRED  ||
+               _value == internal_type::UNPAIRED1 ||
+               _value == internal_type::UNPAIRED2 ||
+               _value == internal_type::UNPAIRED3 ||
+               _value == internal_type::UNPAIRED4 ||
+               _value == internal_type::UNPAIRED5 ||
+               _value == internal_type::UNPAIRED6;
+    }
+
+    //!\brief The ability of the alphabet to represent pseudoknots, i.e. crossing interactions.
+    static constexpr bool pseudoknot_support{true};
     //!\}
 
 protected:
@@ -335,22 +368,14 @@ constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{internal_type::PAIR_OPEN3};
 template <uint8_t SIZE>
 constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE3{internal_type::PAIR_CLOSE3};
 
+//!Alias for the default type wuss51.
+typedef wuss<51> wuss51;
+
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-//!\brief seqan3::wuss is defined as being a structure alphabet.
-//!\ingroup structure
-template <uint8_t SIZE>
-struct is_structure<wuss<SIZE>> : public std::true_type
-{};
-
-} // namespace seqan3::detail
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::wuss<>>);
-static_assert(seqan3::structure_concept<seqan3::wuss<>>);
+static_assert(seqan3::rna_structure_concept<seqan3::wuss<>>);
 #endif
 
 // ------------------------------------------------------------------
@@ -362,7 +387,7 @@ namespace seqan3::literal
 
 /*!\brief wuss literal
  * \relates seqan3::wuss
- * \returns std::vector<seqan3::wuss<>>
+ * \returns std::vector<seqan3::wuss51>
  *
  * You can use this string literal to easily assign to a vector of wuss characters:
  *
@@ -376,9 +401,9 @@ namespace seqan3::literal
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::vector<wuss<>> operator "" _wuss(const char * str, std::size_t len)
+inline std::vector<wuss51> operator "" _wuss(const char * str, std::size_t len)
 {
-    std::vector<wuss<>> vec;
+    std::vector<wuss51> vec;
     vec.resize(len);
 
     for (size_t idx = 0; idx < len; ++idx)
@@ -389,13 +414,13 @@ inline std::vector<wuss<>> operator "" _wuss(const char * str, std::size_t len)
 
 /*!\brief wuss string literal
  * \relates seqan3::wuss
- * \returns std::basic_string<seqan3::wuss<>, std::char_traits<seqan3::wuss<>>>
+ * \returns std::basic_string<seqan3::wuss51, std::char_traits<seqan3::wuss51>>
  *
  * You can use this string literal to easily assign to a string of wuss characters:
  *
  *```.cpp
  *     using namespace seqan3::literal;
- *     using string_t = std::basic_string<wuss<>, std::char_traits<wuss<>>>;
+ *     using string_t = std::basic_string<wuss51, std::char_traits<wuss51>>;
  *     string_t foo{".<..>."_wusss};
  *     string_t bar = ".<..>."_wusss;
  *     auto bax = ".<..>."_wusss;
@@ -404,9 +429,9 @@ inline std::vector<wuss<>> operator "" _wuss(const char * str, std::size_t len)
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::basic_string<wuss<>, std::char_traits<wuss<>>> operator "" _wusss(const char * str, std::size_t len)
+inline std::basic_string<wuss51, std::char_traits<wuss51>> operator "" _wusss(const char * str, std::size_t len)
 {
-    std::basic_string<wuss<>, std::char_traits<wuss<>>> wuss51str;
+    std::basic_string<wuss51, std::char_traits<wuss51>> wuss51str;
     wuss51str.resize(len);
 
     for (size_t idx = 0u; idx < len; ++idx)

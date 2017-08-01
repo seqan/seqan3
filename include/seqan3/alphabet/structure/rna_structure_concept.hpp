@@ -35,32 +35,12 @@
 /*!\file
  * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Provides seqan3::structure_concept.
+ * \brief Provides seqan3::rna_structure_concept.
  */
 
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-
-// ============================================================================
-// auxiliary metafunction
-// ============================================================================
-
-namespace seqan3::detail
-{
-
-//!\brief Metafunction that indicates whether an alphabet is a structure alphabet.
-//!\ingroup structure
-template <typename type>
-struct is_structure : public std::false_type
-{};
-
-//!\brief Shortcut for seqan3::detail::is_structure.
-//!\ingroup structure
-template <typename type>
-constexpr bool is_structure_v = is_structure<type>::value;
-
-} // namespace seqan3::detail
 
 // ============================================================================
 // concept
@@ -69,10 +49,22 @@ constexpr bool is_structure_v = is_structure<type>::value;
 namespace seqan3
 {
 
-//!\brief A concept that indicates whether an alphabet represents structure.
-//!\ingroup structure
-//!\details Refines the seqan3::structure_concept.
+/*!\brief A concept that indicates whether an alphabet represents RNA structure.
+ *!\ingroup structure
+ *!\details RNA structure alphabets are required to represent interactions among RNA nucleotides.
+ * Therefore, each structure letter can be categorised as unpaired, opening an interaction, or closing an interaction.
+ * Additionally, the ability of representing pseudoknots is a property of RNA structure types.
+ */
 template <typename type>
-concept bool structure_concept = alphabet_concept<type> && detail::is_structure_v<type>;
+concept bool rna_structure_concept = requires(type val)
+{
+    //! requires fulfillment of alphabet concept
+    requires alphabet_concept<type>;
+
+    { val.is_pair_open() };
+    { val.is_pair_close() };
+    { val.is_unpaired() };
+    type::pseudoknot_support;
+};
 
 } // namespace seqan3

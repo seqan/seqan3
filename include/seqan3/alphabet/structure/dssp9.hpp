@@ -44,7 +44,7 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/alphabet/structure/concept.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 // ------------------------------------------------------------------
 // dssp9
@@ -74,7 +74,7 @@ namespace seqan3
  * C = coil/loop
  * X = unknown
  *
- * \par Usage:
+ * \par Usage
  * The following code example creates a dssp9 vector, modifies it, and prints the result to stdout.
  * ```cpp
  *     // create vector
@@ -120,8 +120,7 @@ struct dssp9
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    /*!
-     * \brief Get the letter's numeric value or rank in the alphabet.
+    /*!\brief Get the letter's numeric value or rank in the alphabet.
      * \returns The numeric representation of this dssp9 letter.
      */
     constexpr rank_type to_rank() const noexcept
@@ -143,8 +142,7 @@ struct dssp9
         return *this;
     }
 
-    /*!
-     * \brief Assign from a numeric value.
+    /*!\brief Assign from a numeric value.
      * \param rnk The rank value that is assigned.
      * \returns The resulting dssp9 character.
      */
@@ -256,20 +254,8 @@ constexpr dssp9 dssp9::X{internal_type::X};
 
 } // namespace seqan3
 
-namespace seqan3::detail
-{
-
-//!\brief seqan3::dssp9 is defined as being a structure alphabet.
-//!\ingroup structure
-template <>
-struct is_structure<dssp9> : public std::true_type
-{};
-
-} // namespace seqan3::detail
-
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::dssp9>);
-static_assert(seqan3::structure_concept<seqan3::dssp9>);
 #endif
 
 // ------------------------------------------------------------------

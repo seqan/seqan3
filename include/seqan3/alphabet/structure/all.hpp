@@ -51,8 +51,9 @@
 
 #pragma once
 
-#include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>
-#include <seqan3/alphabet/structure/structure_composition.hpp>
+#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/structured_aa.hpp>
+#include <seqan3/alphabet/structure/structured_rna.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>

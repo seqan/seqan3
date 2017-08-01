@@ -33,9 +33,9 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
+ * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains structure alphabet compositions.
+ * \brief Contains the composition of nucleotide with structure alphabets.
  */
 
 #pragma once
@@ -46,15 +46,15 @@
 
 #include <seqan3/alphabet/composition/cartesian_composition.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/alphabet/structure/concept.hpp>
+#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
 
 namespace seqan3
 {
 
-/*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with a structure alphabet.
- * \ingroup alphabet
+/*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with an RNA structure alphabet.
+ * \ingroup structure
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
- * \tparam structure_alphabet_t Types of further letters (up to 4); must satisfy seqan3::structure_concept.
+ * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::rna_structure_concept.
  *
  * This composition pairs a nucleotide alphabet with a structure alphabet. The rank values
  * correpsond to numeric values in the size of the composition, while the character values
@@ -67,7 +67,7 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~{.cpp}
  *
- * structure_composition<rna4, dot_bracket3> l{rna4::G, dot_bracket3::PAIR_OPEN};
+ * structured_rna<rna4, dot_bracket3> l{rna4::G, dot_bracket3::PAIR_OPEN};
  * std::cout << int(to_rank(l)) << ' '
  *           << int(to_rank(get<0>(l))) << ' '
  *           << int(to_rank(get<1>(l))) << '\n';
@@ -86,14 +86,13 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~
  *
- * This seqan3::cartesian_composition itself fulfills both seqan3::alphabet_concept and seqan3::structure_concept .
+ * This seqan3::cartesian_composition itself fulfills both seqan3::nucleotide_concept and seqan3::rna_structure_concept.
  */
 
 template <typename sequence_alphabet_t, typename structure_alphabet_t>
-      requires nucleotide_concept<sequence_alphabet_t> &&
-               structure_concept<structure_alphabet_t>
-struct structure_composition :
-    public cartesian_composition<structure_composition<sequence_alphabet_t, structure_alphabet_t>,
+      requires nucleotide_concept<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t>
+struct structured_rna :
+    public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
 {
     //!\brief First template parameter as member type.
@@ -110,28 +109,28 @@ struct structure_composition :
      * \{
      */
     //!\brief Directly assign the sequence character.
-    constexpr structure_composition & operator=(sequence_alphabet_type const l) noexcept
+    constexpr structured_rna & operator=(sequence_alphabet_type const l) noexcept
     {
         get<0>(*this) = l;
         return *this;
     }
 
     //!\brief Directly assign the structure character.
-    constexpr structure_composition & operator=(structure_alphabet_type const l) noexcept
+    constexpr structured_rna & operator=(structure_alphabet_type const l) noexcept
     {
         get<1>(*this) = l;
         return *this;
     }
 
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
-    constexpr structure_composition & assign_char(char_type const c)
+    constexpr structured_rna & assign_char(char_type const c)
     {
         seqan3::assign_char(get<0>(*this), c);
         return *this;
     }
 
     //!\brief Assign from a structure character. This modifies the internal structure letter.
-    constexpr structure_composition & assign_structure(str_char_type const c)
+    constexpr structured_rna & assign_structure(str_char_type const c)
     {
         seqan3::assign_char(get<1>(*this), c);
         return *this;
@@ -153,34 +152,52 @@ struct structure_composition :
         return seqan3::to_char(get<0>(*this));
     }
     //!\}
+
+    /*!\name RNA structure properties
+     * \{
+     */
+    constexpr bool is_pair_open() const noexcept
+    {
+        return get<1>(*this).is_pair_open();
+    };
+
+    constexpr bool is_pair_close() const noexcept
+    {
+        return get<1>(*this).is_pair_close();
+    };
+
+    constexpr bool is_unpaired() const noexcept
+    {
+        return get<1>(*this).is_unpaired();
+    };
+
+    //!\brief The ability of the alphabet to represent pseudoknots, i.e. crossing interactions.
+    static constexpr bool pseudoknot_support{structure_alphabet_t::pseudoknot_support};
+    //!\}
 };
 
-//!\brief Type deduction guide enables usage of structure_composition without specifying template args.
-//!\relates structure_composition
+//!\brief Type deduction guide enables usage of structured_rna without specifying template args.
+//!\relates structured_rna
 template <typename sequence_alphabet_type, typename structure_alphabet_type>
-structure_composition(sequence_alphabet_type &&, structure_alphabet_type &&)
-    -> structure_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
+structured_rna(sequence_alphabet_type &&, structure_alphabet_type &&)
+    -> structured_rna<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
 
 } // namespace seqan3
 
 namespace seqan3::detail
 {
 
-//!\brief Since seqan3::structure_composition wraps a nucleotide alphabet it is also one.
+//!\brief Since seqan3::structured_rna wraps a nucleotide alphabet it is also one.
 template <typename sequence_alphabet_type, typename structure_alphabet_type>
-struct is_nucleotide<structure_composition<sequence_alphabet_type, structure_alphabet_type>> : public std::true_type
-{};
-
-//!\brief Since seqan3::structure_composition wraps a structure alphabet it is also one.
-template <typename sequence_alphabet_type, typename structure_alphabet_type>
-struct is_structure<structure_composition<sequence_alphabet_type, structure_alphabet_type>> : public std::true_type
+struct is_nucleotide<structured_rna<sequence_alphabet_type, structure_alphabet_type>> : public std::true_type
 {};
 
 } // namespace seqan3::detail
 
 #ifndef NDEBUG
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/alphabet/structure/dot_bracket3.hpp>
-static_assert(seqan3::nucleotide_concept<seqan3::structure_composition<seqan3::rna4, seqan3::dot_bracket3>>);
-static_assert(seqan3::structure_concept<seqan3::structure_composition<seqan3::rna4, seqan3::dot_bracket3>>);
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/alphabet/structure/wuss.hpp>
+static_assert(seqan3::alphabet_concept<seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>>);
+static_assert(seqan3::nucleotide_concept<seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>>);
+static_assert(seqan3::rna_structure_concept<seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>>);
 #endif
