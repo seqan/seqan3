@@ -130,6 +130,10 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  * \relates seqan3::semi_alphabet_concept
  * \param alph The alphabet letter that you wish to convert to rank.
  * \returns The letter's value in the alphabet's rank type (seqan3::underlying_rank).
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
  */
 // just implement the interface
 
@@ -139,6 +143,10 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  * \param alph The alphabet letter that you wish to assign to.
  * \param rank The rank you wish to assign.
  * \returns A reference to `alph` or a temporary if `alph` was a temporary.
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
  */
 // just implement the interface
 
@@ -178,6 +186,10 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * \relates seqan3::alphabet_concept
  * \param alph The alphabet letter that you wish to convert to char.
  * \returns The letter's value in the alphabet's char type (seqan3::underlying_char).
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
  */
 // just implement the interface
 
@@ -187,6 +199,10 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * \param alph The alphabet letter that you wish to assign to.
  * \param chr The `char` you wish to assign.
  * \returns A reference to `alph` or a temporary if `alph` was a temporary.
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
  */
 // just implement the interface
 
@@ -196,6 +212,10 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * \param os The output stream you are printing to.
  * \param alph The alphabet letter that you wish to convert to char.
  * \returns A reference to the output stream.
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
  */
 // just implement the interface
 

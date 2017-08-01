@@ -100,19 +100,60 @@ struct dna4
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the letter as a character of char_type.
+    /*!\brief Return the letter as a character of char_type.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    //!\brief Return the letter's numeric value or rank in the alphabet.
+    /*!\brief Return the letter's numeric value or rank in the alphabet.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::semi_alphabet_concept::to_rank() requirement via the seqan3::to_rank() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr rank_type to_rank() const noexcept
     {
         return static_cast<rank_type>(_value);
     }
 
-    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    /*!\brief Return the complement of the letter.
+     *
+     * \details
+     *
+     * See \ref nucleotide for the actual values.
+     *
+     * Satisfies the seqan3::nucleotide_concept::complement() requirement via the seqan3::complement() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr dna4 complement() const noexcept
     {
         return complement_table[to_rank()];
@@ -122,14 +163,40 @@ struct dna4
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character.
+    /*!\brief Assign from a character.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr dna4 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
+    /*!\brief Assign from a numeric value.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr dna4 & assign_rank(rank_type const c)
     {
         assert(c < value_size);

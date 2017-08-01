@@ -79,9 +79,9 @@ namespace seqan3
 
 struct dna5
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
+    //!\copydoc seqan3::dna4::char_type
     using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+    //!\copydoc seqan3::dna4::rank_type
     using rank_type = uint8_t;
 
     /*!\name Letter values
@@ -101,19 +101,19 @@ struct dna5
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the letter as a character of char_type.
+    //!\copydoc seqan3::dna4::to_char
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    //!\brief Return the letter's numeric value or rank in the alphabet.
+    //!\copydoc seqan3::dna4::to_rank
     constexpr rank_type to_rank() const noexcept
     {
         return static_cast<rank_type>(_value);
     }
 
-    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    //!\copydoc seqan3::dna4::complement
     constexpr dna5 complement() const noexcept
     {
         return complement_table[to_rank()];
@@ -123,14 +123,14 @@ struct dna5
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character.
+    //!\copydoc seqan3::dna4::assign_char
     constexpr dna5 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
+    //!\copydoc seqan3::dna4::assign_rank
     constexpr dna5 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
@@ -139,7 +139,7 @@ struct dna5
     }
     //!\}
 
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    //!\copydoc seqan3::dna4::value_size
     static constexpr rank_type value_size{5};
 
     /*!\name Conversion operators
@@ -203,12 +203,7 @@ struct dna5
 
 protected:
     //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
+    //!\copydoc seqan3::dna4::internal_type
     enum struct internal_type : rank_type
     {
         A,
@@ -220,7 +215,7 @@ protected:
         UNKNOWN = N
     };
 
-    //!\brief Value to char conversion table.
+    //!\copydoc seqan3::dna4::value_to_char
     static constexpr char_type value_to_char[value_size]
     {
         'A',
@@ -230,7 +225,7 @@ protected:
         'N'
     };
 
-    //!\brief Char to value conversion table.
+    //!\copydoc seqan3::dna4::char_to_value
     static constexpr std::array<internal_type, 256> char_to_value
     {
         [] () constexpr
@@ -254,7 +249,7 @@ protected:
         }()
     };
 
-    //!\brief The complement table.
+    //!\copydoc seqan3::dna4::complement_table
     static const std::array<dna5, value_size> complement_table;
 public:
     //!\privatesection

@@ -95,13 +95,13 @@ struct rna4 : public dna4
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the letter as a character of char_type.
+    //!\copydoc seqan3::dna4::to_char
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    //!\brief Return the complement of the letter. See \ref nucleotide for the actual values.
+    //!\copydoc seqan3::dna4::complement
     constexpr rna4 complement() const noexcept
     {
         return rna4{dna4::complement()};
@@ -111,14 +111,14 @@ struct rna4 : public dna4
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character.
+    //!\copydoc seqan3::dna4::assign_char
     constexpr rna4 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
+    //!\copydoc seqan3::dna4::assign_rank
     constexpr rna4 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
@@ -154,7 +154,7 @@ struct rna4 : public dna4
     //!\}
 
 private:
-    //!\brief Value to char conversion table.
+    //!\copydoc seqan3::dna4::value_to_char
     static constexpr char_type value_to_char[value_size]
     {
         'A',

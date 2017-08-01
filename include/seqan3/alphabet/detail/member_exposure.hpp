@@ -89,8 +89,7 @@ struct alphabet_size<alphabet_type_with_members>
         alphabet_type_with_members::value_size;
 };
 
-/*!\brief Implementation of \link rank_type seqan3::to_rank(semi_alphabet_concept const alph) \endlink
- * that delegates to a member function.
+/*!\brief Implementation of seqan3::semi_alphabet_concept::to_rank() that delegates to a member function.
  * \tparam alphabet_type Must provide a `.to_rank()` member function.
  * \param alph The alphabet letter that you wish to convert to rank.
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
@@ -102,9 +101,7 @@ constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph)
     return alph.to_rank();
 }
 
-/*!\brief Implementation of
- * \link semi_alphabet_concept && seqan3::assign_rank(semi_alphabet_concept && a, rank_type const rank) \endlink
- * that delegates to a member function.
+/*!\brief Implementation of seqan3::semi_alphabet_concept::assign_rank() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_rank()` member function.
  * \param alph The alphabet letter that you wish to assign to.
  * \param rank The `rank` value you wish to assign.
@@ -117,9 +114,7 @@ constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<al
     return alph.assign_rank(rank);
 }
 
-/*!\brief Implementation of
- * \link semi_alphabet_concept && seqan3::assign_rank(semi_alphabet_concept && a, rank_type const rank) \endlink
- * that delegates to a member function.
+/*!\brief Implementation of seqan3::semi_alphabet_concept::assign_rank() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_rank()` member function.
  * \param alph An alphabet letter temporary.
  * \param rank The `rank` value you wish to assign.
@@ -162,8 +157,7 @@ struct underlying_char<alphabet_type_with_members>
     using type = typename alphabet_type_with_members::char_type;
 };
 
-/*!\brief Implementation of \link char_type seqan3::to_char(alphabet_concept const alph) \endlink
- * that delegates to a member function.
+/*!\brief Implementation of seqan3::alphabet_concept::to_char() that delegates to a member function.
  * \tparam alphabet_type Must provide a `.to_char()` member function.
  * \param alph The alphabet letter that you wish to convert to char.
  * \returns The letter's value in the alphabet's rank type (usually `char`).
@@ -175,8 +169,7 @@ constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph)
     return alph.to_char();
 }
 
-/*!\brief Implementation of \link std::ostream & operator<<(std::ostream & os, alphabet_type const alph) \endlink
- * that delegates to `alph.to_char()`.
+/*!\brief Implementation of seqan3::alphabet_concept::operator<<() that delegates to `alph.to_char()`.
  * \tparam alphabet_type Must provide a `.to_char()` member function.
  * \param os The output stream you are printing to.
  * \param alph The alphabet letter that you wish to print.
@@ -192,9 +185,7 @@ std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
     return os;
 }
 
-/*!\brief Implementation of
- * \link alphabet_concept && seqan3::assign_char(alphabet_concept && a, char_type const chr)\endlink
- * that delegates to a member function.
+/*!\brief Implementation of seqan3::alphabet_concept::assign_char() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_char()` member function.
  * \param alph The alphabet letter that you wish to assign to.
  * \param chr The `char` value you wish to assign.
@@ -207,9 +198,7 @@ constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<al
     return alph.assign_char(chr);
 }
 
-/*!\brief Implementation of
- * \link alphabet_concept && seqan3::assign_char(alphabet_concept && a, char_type const chr)\endlink
- * that delegates to a member function.
+/*!\brief Implementation of seqan3::alphabet_concept::assign_char() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_char()` member function.
  * \param alph An alphabet letter temporary.
  * \param chr The `char` value you wish to assign.
