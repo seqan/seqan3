@@ -55,25 +55,25 @@
  * to represent them in a regular std::string, it makes sense to have specialised data structures in most cases.
  * This sub-module offers multiple nucleotide alphabets that can be used with regular container and ranges.
  *
- * | Letter   | Description     | seqan3::nucl16 | seqan3::dna5 | seqan3::dna4 | seqan3::rna5 | seqan3::rna4 |
- * |:--------:|-----------------|:--------------:|:------------:|:------------:|:------------:|:------------:|
- * |   A      | Adenine         |      ☑         |      ☑       |      ☑       |      ☑       |      ☑       |
- * |   C      | Cytosine        |      ☑         |      ☑       |      ☑       |      ☑       |      ☑       |
- * |   G      | Guanine         |      ☑         |      ☑       |      ☑       |      ☑       |      ☑       |
- * |   T      | Thymine (DNA)   |      ☑         |      ☑       |      ☑       |      ☐       |      ☐       |
- * |   U      | Uracil (RNA)    |      ☑         |      ☐       |      ☐       |      ☑       |      ☑       |
- * |   R      | A *or* G        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   Y      | C *or* T        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   S      | G *or* C        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   W      | A *or* T        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   K      | G *or* T        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   M      | A *or* C        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   B      | C *or* G *or* T |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   D      | A *or* G *or* T |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   H      | A *or* C *or* T |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   V      | A *or* C *or* G |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
- * |   N      | any base        |      ☑         |      ☑       |      ☐       |      ☑       |      ☐       |
- * | **Size** |                 |     16         |      5       |      4       |      5       |      4       |
+ * | Letter   | Description            | seqan3::nucl16 | seqan3::dna5 | seqan3::dna4 | seqan3::rna5 | seqan3::rna4 |
+ * |:--------:|------------------------|:--------------:|:------------:|:------------:|:------------:|:------------:|
+ * |   A      | Adenine                |      ☑         |      ☑       |      ☑       |      ☑       |      ☑       |
+ * |   C      | Cytosine               |      ☑         |      ☑       |      ☑       |      ☑       |      ☑       |
+ * |   G      | Guanine                |      ☑         |      ☑       |      ☑       |      ☑       |      ☑       |
+ * |   T      | Thymine (DNA)          |      ☑         |      ☑       |      ☑       |      ☐       |      ☐       |
+ * |   U      | Uracil (RNA)           |      ☑         |      ☐       |      ☐       |      ☑       |      ☑       |
+ * |   M      | A *or* C               |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   R      | A *or* G               |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   W      | A *or* T               |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   Y      | C *or* T               |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   S      | C *or* G               |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   K      | G *or* T               |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   V      | A *or* C *or* G        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   H      | A *or* C *or* T        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   D      | A *or* G *or* T        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   B      | C *or* G *or* T        |      ☑         |      ☐       |      ☐       |      ☐       |      ☐       |
+ * |   N      | A *or* C *or* G *or* T |      ☑         |      ☑       |      ☐       |      ☑       |      ☐       |
+ * | **Size** |                        |     16         |      5       |      4       |      5       |      4       |
  *
  * Keep in mind, that while we think of "the nucleotide alphabet" as consisting of four bases, there are indeed
  * more characters defined with different levels of ambiguity. Depending on your application it will make sense
@@ -156,4 +156,33 @@
  * bases (letters other than A, C, G, T, U) are converted to `'N'` to preserve ambiguity at that position, while
  * for seqan3::dna4 and seqan3::rna4 they are converted to the first of the possibilities they represent (because
  * there is no letter `'N'` to represent ambiguity).
+ *
+ * \par Complement
+ *
+ * | Letter   | Description            | Complement |
+ * |:--------:|------------------------|:----------:|
+ * |   A      | Adenine                |     T      |
+ * |   C      | Cytosine               |     G      |
+ * |   G      | Guanine                |     C      |
+ * |   T      | Thymine (DNA)          |     A      |
+ * |   U      | Uracil (RNA)           |     A      |
+ * |   M      | A *or* C               |     K      |
+ * |   R      | A *or* G               |     Y      |
+ * |   W      | A *or* T               |     W      |
+ * |   Y      | C *or* T               |     S      |
+ * |   S      | C *or* G               |     R      |
+ * |   K      | G *or* T               |     M      |
+ * |   V      | A *or* C *or* G        |     B      |
+ * |   H      | A *or* C *or* T        |     D      |
+ * |   D      | A *or* G *or* T        |     H      |
+ * |   B      | C *or* G *or* T        |     V      |
+ * |   N      | A *or* C *or* G *or* T |     N      |
+ *
+ * In the typical structure of DNA molecules (or double-stranded RNA), each nucleotide has a complement that it
+ * pairs with. To generate the complement value of a nucleotide letter, you can call an implementation of
+ * seqan3::nucleotide_concept::complement() on it.
+ *
+ * For the ambiguous letters, the complement is the (possibly also ambiguous) letter representing the union of the
+ * individual complements.
+ *
  */

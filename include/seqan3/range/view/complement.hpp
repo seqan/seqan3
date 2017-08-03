@@ -33,57 +33,57 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
+ * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::nucleotide_concept.
+ * \brief Provides seqan3::view::complement.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/concept.hpp>
+#include <range/v3/view/transform.hpp>
 
-// ============================================================================
-// concept
-// ============================================================================
+#include <seqan3/alphabet/nucleotide/concept.hpp>
 
-namespace seqan3
+namespace seqan3::view
 {
 
-/*!\interface seqan3::nucleotide_concept <>
- * \extends seqan3::alphabet_concept
- * \brief A concept that indicates whether an alphabet represents nucleotides.
- * \ingroup nucleotide
- *
- * In addition to the requirements for seqan3::alphabet_concept, the nucleotide_concept introduces
- * a requirement for a complement function: seqan3::nucleotide_concept::complement.
- *
- * \par Concepts and doxygen
- * The requirements for this concept are given as related functions and metafunctions.
- * Types that satisfy this concept are shown as "implementing this interface".
- */
-//!\cond
-template <typename type>
-concept bool nucleotide_concept = requires (type v)
-{
-    requires alphabet_concept<type>;
-
-    { complement(v) } -> type;
-};
-//!\endcond
-
-/*!\name Requirements for seqan3::nucleotide_concept
- * \brief You can expect these functions on all types that implement seqan3::nucleotide_concept.
- * \{
- */
-/*!\fn nucleotide_type seqan3::complement(nucleotide_type const alph)
- * \brief Returns the alphabet letter's complement value.
- * \relates seqan3::nucleotide_concept
- * \param alph The alphabet letter for whom you wish to receive the complement.
- * \returns The letter's complement, e.g. 'T' for 'A'.
+/*!\brief A view that converts a range of nucleotides to their complement.
+ * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept and the value_type
+ * must satisfy seqan3::nucleotide_concept.
+ * \ingroup view
  * \details
+ * \par View properties
+ * * view type: same as input_range
+ * * value type: remove_reference_t<value_type_t<input_range>>
+ * * `const` iterable: yes
+ * \par Complexity
+ * Linear in the size if the input range (\f$O(n)\f$).
+ * \par Exceptions
+ * Strong exception guarantee (does not modify data).
+ * \par Thread safety
+ * Does not modify data.
+ * \par Example
  *
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
+ * ```cpp
+ *  dna5_vector foo{"ACGTA"_dna5};
+ *
+ *  // pipe notation
+ *  auto v = foo | view::complement;                                  // == "TGCAT"
+ *
+ *  // function notation
+ *  dna5_vector v2(view::complement(foo));                            // == "TGCAT"
+ *
+ *  // generate the reverse complement:
+ *  dna5_vector v3 = foo | view::complement | ranges::view::reverse;  // == "TACGT"
+ * ```
+ * \hideinitializer
  */
-//!\}
-} // namespace seqan3
+
+//TODO enforce nucleotide_concept via c++2a and/or terse concept syntax
+auto const complement = ranges::view::transform([] (auto const & in)
+{
+    using seqan3::complement;
+    return complement(in);
+});
+
+} // namespace seqan3::view
