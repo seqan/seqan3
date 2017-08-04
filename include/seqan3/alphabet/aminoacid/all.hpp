@@ -39,6 +39,8 @@
  */
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/aminoacid/translation.hpp>
+#include <seqan3/alphabet/aminoacid/translation_details.hpp>
 
 /*!\defgroup aminoacid
  * \brief Contains the amino acid alphabets and functionality for translation from nucleotide.
