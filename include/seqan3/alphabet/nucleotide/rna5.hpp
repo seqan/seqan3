@@ -96,24 +96,30 @@ struct rna5 : public dna5
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the letter as a character of char_type.
+    //!\copydoc seqan3::dna4::to_char
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
+    }
+
+    //!\copydoc seqan3::dna4::complement
+    constexpr rna5 complement() const noexcept
+    {
+        return rna5{dna5::complement()};
     }
     //!\}
 
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character.
+    //!\copydoc seqan3::dna4::assign_char
     constexpr rna5 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
+    //!\copydoc seqan3::dna4::assign_rank
     constexpr rna5 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
@@ -149,7 +155,7 @@ struct rna5 : public dna5
     //!\}
 
 private:
-    //!\brief Value to char conversion table.
+    //!\copydoc seqan3::dna4::value_to_char
     static constexpr char_type value_to_char[value_size]
     {
         'A',
@@ -169,17 +175,6 @@ constexpr rna5 rna5::T{rna5::U};
 constexpr rna5 rna5::UNKNOWN{rna5::N};
 
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-//!\brief seqan3::rna5 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<rna5> : public std::true_type
-{};
-
-} // namespace seqan3::detail
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::rna5>);

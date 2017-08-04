@@ -39,45 +39,24 @@
 #include <range/v3/view/reverse.hpp>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/view/complement.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
 
 TEST(view_convert, basic)
 {
-    std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
-    std::vector<bool> cmp{1, 1, 0, 1, 0, 0, 1, 1, 1};
+    dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation
-    std::vector<bool> v = vec | view::convert<bool>;
-    EXPECT_EQ(cmp, v);
+    dna5_vector v = foo | view::complement;
+    EXPECT_EQ(v, "TGCAT"_dna5);
 
     // function notation
-    std::vector<bool> v2(view::convert<bool>(vec));
-    EXPECT_EQ(cmp, v2);
+    dna5_vector v2(view::complement(foo));
+    EXPECT_EQ(v2, "TGCAT"_dna5);
 
     // combinability
-    std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
-    std::vector<bool> v3 = vec | view::convert<bool> | ranges::view::reverse;
-    EXPECT_EQ(cmp2, v3);
-}
-
-TEST(view_convert, explicit_conversion)
-{
-    dna5_vector vec{"ACGNTNGGN"_dna5};
-    dna4_vector cmp{"ACGATAGGA"_dna4};
-
-    // pipe notation
-    dna4_vector v = vec | view::convert<dna4>;
-    EXPECT_EQ(cmp, v);
-
-    // function notation
-    dna4_vector v2(view::convert<dna4>(vec));
-    EXPECT_EQ(cmp, v2);
-
-    // combinability
-    dna4_vector cmp2{"AGGATAGCA"_dna4};
-    dna4_vector v3 = vec | view::convert<dna4> | ranges::view::reverse;
-    EXPECT_EQ(cmp2, v3);
+    dna5_vector v3 = foo | view::complement | ranges::view::reverse;
+    EXPECT_EQ(v3, "TACGT"_dna5);
 }

@@ -38,7 +38,7 @@
 
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/alphabet/nucleotide.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -138,6 +138,32 @@ TYPED_TEST(nucleotide, to_char)
         EXPECT_EQ(to_char(TypeParam::UNKNOWN), 'A');
     else
         EXPECT_EQ(to_char(TypeParam::UNKNOWN), 'N');
+}
+
+TYPED_TEST(nucleotide, complement)
+{
+    EXPECT_EQ(complement(TypeParam::A), TypeParam::T);
+    EXPECT_EQ(complement(TypeParam::C), TypeParam::G);
+    EXPECT_EQ(complement(TypeParam::G), TypeParam::C);
+    EXPECT_EQ(complement(TypeParam::T), TypeParam::A);
+
+    using vsize_t = std::decay_t<decltype(alphabet_size_v<TypeParam>)>;
+
+    for (vsize_t i = 0u; i < alphabet_size_v<TypeParam>; ++i)
+    {
+        TypeParam c = assign_rank(TypeParam{}, i);
+
+        if constexpr (std::is_same_v<TypeParam, nucl16>)
+        {
+            if (c == nucl16::U)
+                EXPECT_EQ(complement(complement(c)), nucl16::T);
+            else
+                EXPECT_EQ(complement(complement(c)), c);
+        } else
+        {
+            EXPECT_EQ(complement(complement(c)), c);
+        }
+    }
 }
 
 TYPED_TEST(nucleotide, stream_operator)

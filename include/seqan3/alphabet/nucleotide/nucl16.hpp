@@ -57,6 +57,7 @@ namespace seqan3
 
 /*!\brief The 16 letter DNA alphabet, containing all IUPAC smybols.
  * \ingroup nucleotide
+ * \implements seqan3::nucleotide_concept
  *
  * \details
  * Note that in contrast to seqan3::dna4, seqan3::rna4, seqan3::dna5 and seqan3::rna5
@@ -77,9 +78,9 @@ namespace seqan3
 
 struct nucl16
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
+    //!\copydoc seqan3::dna4::char_type
     using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+    //!\copydoc seqan3::dna4::rank_type
     using rank_type = uint8_t;
 
     /*!\name Letter values
@@ -109,30 +110,36 @@ struct nucl16
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the letter as a character of char_type.
+    //!\copydoc seqan3::dna4::to_char
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    //!\brief Return the letter's numeric value or rank in the alphabet.
+    //!\copydoc seqan3::dna4::to_rank
     constexpr rank_type to_rank() const noexcept
     {
         return static_cast<rank_type>(_value);
+    }
+
+    //!\copydoc seqan3::dna4::complement
+    constexpr nucl16 complement() const noexcept
+    {
+        return complement_table[to_rank()];
     }
     //!\}
 
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character.
+    //!\copydoc seqan3::dna4::assign_char
     constexpr nucl16 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
+    //!\copydoc seqan3::dna4::assign_rank
     constexpr nucl16 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
@@ -141,7 +148,7 @@ struct nucl16
     }
     //!\}
 
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    //!\copydoc seqan3::dna4::value_size
     static constexpr rank_type value_size{16};
 
     /*!\name Conversion operators
@@ -194,12 +201,7 @@ struct nucl16
 
 protected:
     //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
+    //!\copydoc seqan3::dna4::internal_type
     enum struct internal_type : rank_type
     {
         A,
@@ -221,7 +223,7 @@ protected:
         UNKNOWN = N
     };
 
-    //!\brief Value to char conversion table.
+    //!\copydoc seqan3::dna4::value_to_char
     static constexpr char_type value_to_char[value_size]
     {
         'A',
@@ -242,7 +244,7 @@ protected:
         'Y'
     };
 
-    //!\brief Char to value conversion table.
+    //!\copydoc seqan3::dna4::char_to_value
     static constexpr std::array<internal_type, 256> char_to_value
     {
         [] () constexpr
@@ -277,6 +279,9 @@ protected:
         }()
     };
 
+    //!\copydoc seqan3::dna4::complement_table
+    static const std::array<nucl16, value_size> complement_table;
+
 public:
     //!\privatesection
     //!\brief The data member.
@@ -302,18 +307,27 @@ constexpr nucl16 nucl16::W{internal_type::W};
 constexpr nucl16 nucl16::Y{internal_type::Y};
 constexpr nucl16 nucl16::UNKNOWN{nucl16::N};
 
-} // namespace seqan3
-
-namespace seqan3::detail
+constexpr std::array<nucl16, nucl16::value_size> nucl16::complement_table
 {
+    nucl16::T,    // complement of nucl16::A
+    nucl16::V,    // complement of nucl16::B
+    nucl16::G,    // complement of nucl16::C
+    nucl16::H,    // complement of nucl16::D
+    nucl16::C,    // complement of nucl16::G
+    nucl16::D,    // complement of nucl16::H
+    nucl16::M,    // complement of nucl16::K
+    nucl16::K,    // complement of nucl16::M
+    nucl16::N,    // complement of nucl16::N
+    nucl16::Y,    // complement of nucl16::R
+    nucl16::S,    // complement of nucl16::S
+    nucl16::A,    // complement of nucl16::T
+    nucl16::A,    // complement of nucl16::U
+    nucl16::B,    // complement of nucl16::V
+    nucl16::W,    // complement of nucl16::W
+    nucl16::R     // complement of nucl16::Y
+};
 
-//!\brief seqan3::nucl16 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<nucl16> : public std::true_type
-{};
-
-} // namespace seqan3::detail
+} // namespace seqan3
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::nucl16>);

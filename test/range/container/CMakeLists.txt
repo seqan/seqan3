@@ -1,1 +1,2 @@
 seqan3_test(aligned_sequences_adaptor_constant_access_test.cpp)
+seqan3_test(container_of_container_test.cpp)

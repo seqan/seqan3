@@ -41,10 +41,11 @@
 #pragma once
 
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/range/container/concatenated_sequences.hpp>
 
 /*!\defgroup container Container
  * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
  * \ingroup range
  * \sa http://en.cppreference.com/w/cpp/container
- * \sa range/container.hpp
+ * \sa range/container/all.hpp
  */

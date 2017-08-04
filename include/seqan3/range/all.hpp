@@ -33,57 +33,38 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
+ * \ingroup range
+ * \brief Meta-header for the \link range range module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::nucleotide_concept.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/action/all.hpp>
+#include <seqan3/range/container/all.hpp>
+#include <seqan3/range/view/all.hpp>
 
-// ============================================================================
-// concept
-// ============================================================================
-
-namespace seqan3
-{
-
-/*!\interface seqan3::nucleotide_concept <>
- * \extends seqan3::alphabet_concept
- * \brief A concept that indicates whether an alphabet represents nucleotides.
- * \ingroup nucleotide
+/*!\defgroup range Range
+ * \brief The range module contains containers, views and actions.
  *
- * In addition to the requirements for seqan3::alphabet_concept, the nucleotide_concept introduces
- * a requirement for a complement function: seqan3::nucleotide_concept::complement.
+ * *Ranges* are an abstraction of "a collection of items", or "something iterable". The most basic definition
+ * requires only the existence of begin() and end() on the range. See range/concept.hpp for the different range
+ * concepts.
  *
- * \par Concepts and doxygen
- * The requirements for this concept are given as related functions and metafunctions.
- * Types that satisfy this concept are shown as "implementing this interface".
- */
-//!\cond
-template <typename type>
-concept bool nucleotide_concept = requires (type v)
-{
-    requires alphabet_concept<type>;
-
-    { complement(v) } -> type;
-};
-//!\endcond
-
-/*!\name Requirements for seqan3::nucleotide_concept
- * \brief You can expect these functions on all types that implement seqan3::nucleotide_concept.
- * \{
- */
-/*!\fn nucleotide_type seqan3::complement(nucleotide_type const alph)
- * \brief Returns the alphabet letter's complement value.
- * \relates seqan3::nucleotide_concept
- * \param alph The alphabet letter for whom you wish to receive the complement.
- * \returns The letter's complement, e.g. 'T' for 'A'.
- * \details
+ * *Containers* are ranges that own their elements. SeqAn3 makes use of standard STL containers like std::vector,
+ * but also implements some custom containers. See range/container.hpp for more details.
  *
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
+ * *Views* are "lazy range combinators" that provide operations on other ranges, e.g. containers, but do so on-demand,
+ * i.e. views don't own elements, but return (mutated) elements on request. This is similar to how iterators can
+ * provide different behaviours on the same underlying data structure (while not actually changing it). See
+ * range/view.hpp for more details.
+ *
+ * *Actions* on the other hand are "eager range combinators", i.e. they immediately change the underlying range
+ * they are applied to. See range/action.hpp for more details.
+ *
+ * Both views and actions can be chained via the pipe operator.
+ *
+ * \sa range.hpp
+ * \sa https://ericniebler.github.io/range-v3/index.html
  */
-//!\}
-} // namespace seqan3

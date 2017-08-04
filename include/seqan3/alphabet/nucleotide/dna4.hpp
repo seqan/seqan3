@@ -58,6 +58,7 @@ namespace seqan3
 
 /*!\brief The four letter DNA alphabet of A,C,G,T.
  * \ingroup nucleotide
+ * \implements seqan3::nucleotide_concept
  *
  * \details
  * Note that you can assign 'U' as a character to dna4 and it will silently
@@ -99,30 +100,103 @@ struct dna4
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the letter as a character of char_type.
+    /*!\brief Return the letter as a character of char_type.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr char_type to_char() const noexcept
     {
         return value_to_char[static_cast<rank_type>(_value)];
     }
 
-    //!\brief Return the letter's numeric value or rank in the alphabet.
+    /*!\brief Return the letter's numeric value or rank in the alphabet.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::semi_alphabet_concept::to_rank() requirement via the seqan3::to_rank() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr rank_type to_rank() const noexcept
     {
         return static_cast<rank_type>(_value);
+    }
+
+    /*!\brief Return the complement of the letter.
+     *
+     * \details
+     *
+     * See \ref nucleotide for the actual values.
+     *
+     * Satisfies the seqan3::nucleotide_concept::complement() requirement via the seqan3::complement() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    constexpr dna4 complement() const noexcept
+    {
+        return complement_table[to_rank()];
     }
     //!\}
 
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character.
+    /*!\brief Assign from a character.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr dna4 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
-    //!\brief Assign from a numeric value.
+    /*!\brief Assign from a numeric value.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
     constexpr dna4 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
@@ -255,6 +329,9 @@ protected:
         }()
     };
 
+    //!\brief The complement table.
+    static const std::array<dna4, value_size> complement_table;
+
 public:
     //!\privatesection
     //!\brief The data member.
@@ -269,18 +346,15 @@ constexpr dna4 dna4::T{internal_type::T};
 constexpr dna4 dna4::U{dna4::T};
 constexpr dna4 dna4::UNKNOWN{dna4::A};
 
-} // namespace seqan3
-
-namespace seqan3::detail
+constexpr std::array<dna4, dna4::value_size> dna4::complement_table
 {
+    dna4::T,    // complement of dna4::A
+    dna4::G,    // complement of dna4::C
+    dna4::C,    // complement of dna4::G
+    dna4::A     // complement of dna4::T
+};
 
-//!\brief seqan3::dna4 is defined as being a nucleotide alphabet.
-//!\ingroup nucleotide
-template <>
-struct is_nucleotide<dna4> : public std::true_type
-{};
-
-} // namespace seqan3::detail
+} // namespace seqan3
 
 #ifndef NDEBUG
 static_assert(seqan3::alphabet_concept<seqan3::dna4>);

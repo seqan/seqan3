@@ -33,57 +33,57 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
+ * \ingroup view
+ * \brief Meta-header for the \link view view submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::nucleotide_concept.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/concept.hpp>
+#include <seqan3/range/view/complement.hpp>
+#include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/view/rank_to.hpp>
+#include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/to_rank.hpp>
 
-// ============================================================================
-// concept
-// ============================================================================
-
-namespace seqan3
-{
-
-/*!\interface seqan3::nucleotide_concept <>
- * \extends seqan3::alphabet_concept
- * \brief A concept that indicates whether an alphabet represents nucleotides.
- * \ingroup nucleotide
+/*!\defgroup view View
+ * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
+ * \ingroup range
+ * \sa https://ericniebler.github.io/range-v3/index.html#range-views
+ * \sa range/view.hpp
  *
- * In addition to the requirements for seqan3::alphabet_concept, the nucleotide_concept introduces
- * a requirement for a complement function: seqan3::nucleotide_concept::complement.
+ * SeqAn3 makes heavy use of views as defined in the
+ * [Ranges Technical Specification](http://en.cppreference.com/w/cpp/experimental/ranges). Currently the
+ * implementation is based on the [range-v3 library](https://github.com/ericniebler/range-v3) and all those views
+ * are available in the namespace ranges::view, see
+ * [the overview](https://ericniebler.github.io/range-v3/index.html#range-views) for more details.
  *
- * \par Concepts and doxygen
- * The requirements for this concept are given as related functions and metafunctions.
- * Types that satisfy this concept are shown as "implementing this interface".
- */
-//!\cond
-template <typename type>
-concept bool nucleotide_concept = requires (type v)
-{
-    requires alphabet_concept<type>;
-
-    { complement(v) } -> type;
-};
-//!\endcond
-
-/*!\name Requirements for seqan3::nucleotide_concept
- * \brief You can expect these functions on all types that implement seqan3::nucleotide_concept.
- * \{
- */
-/*!\fn nucleotide_type seqan3::complement(nucleotide_type const alph)
- * \brief Returns the alphabet letter's complement value.
- * \relates seqan3::nucleotide_concept
- * \param alph The alphabet letter for whom you wish to receive the complement.
- * \returns The letter's complement, e.g. 'T' for 'A'.
- * \details
+ * This submodule provides additional views, specifically for operations on biological data and
+ * sequence analysis.
  *
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
+ * \attention
+ * To prevent naming conflicts, all SeqAn views are inside the namespace seqan3::view.
+ *
+ * \par Example
+ *
+ * ```cpp
+ * dna4_vector vec{"ACGGTC"_dna4};
+ * auto vec_view  = vec | view::complement;                         // == "TGCCAG" (but doesn't own any data)
+ * auto vec_view2 = vec | ranges::view::reverse;                    // == "CTGGCA" (but doesn't own any data)
+ *
+ * // or in one line:
+ * auto vec_view3 = vec | view::complement | ranges::view::reverse; // == "GACCGT" (but doesn't own any data)
+ * ```
  */
-//!\}
-} // namespace seqan3
+
+/*!
+ * \namespace seqan3::view
+ * \brief The SeqAn3 namespace for views.
+ *
+ * Since views often have name clashes with regular functions and ranges they are implemented in the sub
+ * namespace `view`.
+ *
+ * See the \link view view submodule \endlink of the range module for more details.
+ */
