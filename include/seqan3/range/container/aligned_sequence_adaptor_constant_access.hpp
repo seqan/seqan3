@@ -79,9 +79,6 @@ namespace seqan3 {
     Note container is define
  */
 
-
-// todo: require that container is const?
-
 template <typename container_t>
     requires random_access_sequence_concept<container_t> && alphabet_concept<ranges::v3::value_type_t<container_t>>
 struct aligned_sequence_adaptor_constant_access
