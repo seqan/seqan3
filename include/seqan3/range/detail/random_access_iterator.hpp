@@ -60,7 +60,8 @@ namespace seqan3::detail
  *  the seqan3::sized_range_concept.
  */
 template <typename container_type>
-    requires random_access_range_concept<container_type> && sized_range_concept<container_type>
+    //requires random_access_range_concept<container_type> && sized_range_concept<container_type>
+    requires container_concept<container_type> && sized_range_concept<container_type>
 class random_access_iterator
 {
 

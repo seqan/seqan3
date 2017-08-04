@@ -45,33 +45,32 @@ using namespace seqan3;
 
 //using gapped_alphabet = gapped_alphabet<dna4>;
 
-TEST(aligned_sequences_test, constructor_empty)
+TEST(aligned_sequences_test, constructors)
 {
-    aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>> s;
+    using sequence_type = aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>>;
+    sequence_type o, p, q;
+    sequence_type r; // but not r()
+    sequence_type s(r);
+    sequence_type t = q;
+    sequence_type u(std::move(p));
+    sequence_type v = std::move(o);
+    sequence_type * seq_ptr = &p;
+    seq_ptr->sequence_type::~sequence_type();
+}
+
+// constructors and assignment
+TEST(aligned_sequences_test, constructor_sequence)
+{
+    // aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>> as2(1024, seqan3::gap::GAP);
+    //aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>> as3(1024, seqan3::dna4::T);
+    //std::vector<gapped_alphabet<dna4>> seq = {dna4::A, dna4::C, gap::GAP, dna4::G, dna4::T};
+    //aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>>(as3.begin(), as3.end());
+    //aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>> as(seq);
+    //aligned_sequence_adaptor_constant_access<std::vector<gapped_alphabet<dna4>>> a4({dna4::A, gap::GAP});
+
 }
 
 /*
-TEST(aligned_sequences_test, constructor_sequence)
-{
-    std::vector<dna4> seq = {dna4::A};
-    aligned_sequence_adaptor_constant_access<std::vector<dna4>> s(seq);
-}
-
-
-// copy constructors
-TEST(aligned_sequences_test, constructor_cpy)
-{
-    // copy construction with empty sequence
-    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_base;
-    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived(as_base);
-    // copy construction with non-empty sequence
-    std::vector<dna4> seq = {dna4::A, dna4::C, dna4::G, dna4::T};
-    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_base2(seq);
-    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived2(as_base2);
-    // copy construction via assignment
-    aligned_sequence_adaptor_constant_access<std::vector<dna4>> as_derived3 = as_base2;
-}
-
 // move constructors
 TEST(aligned_sequences_test, constructor_move)
 {

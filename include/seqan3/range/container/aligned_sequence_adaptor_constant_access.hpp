@@ -42,10 +42,11 @@
 
 #pragma once
 
-#include <initializer_list>
-#include <iostream>
-#include <string>
-#include <iterator>
+    #include <algorithm>
+    #include <initializer_list>
+    #include <iostream>
+    #include <string>
+    #include <iterator>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/gapped_alphabet.hpp>
@@ -55,7 +56,7 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
-#include <sdsl/bit_vector_il.hpp>
+#include <sdsl/bit_vectors.hpp>
 //#include <sdsl/bit_vectors.hpp>
 
 #include "sdsl/rank_support_v5.hpp"
@@ -89,19 +90,32 @@ struct aligned_sequence_adaptor_constant_access
 private:
     //! internal gap representation as bit vector, 0: non-gap, 1: gap
     // todo: benchmark whether letter-wise extension better than block-wise
-    sdsl::bit_vector gap_vector{}; // includes support structures for rank/select
+    uint32_t const num_bits = 64;
+    sdsl::bit_vector gap_vector = sdsl::bit_vector(num_bits, 0); // includes support structures for rank/select
     //! support structure to compute select for projection into gap space
     sdsl::select_support_mcl<0> letter_select;
     //! Rank support structure to compute number 1s in prefix 0..i-1.
-    sdsl::rank_support_v5<1, 1> rs();
+    sdsl::rank_support_v5<> rs = sdsl::rank_support_v5<>(&gap_vector);
+    // Exact sequence length
+    uint32_t seq_length;
     //! TODO: store base sequence without gaps or with gaps? dynamic ptr or smart pointer instead? then default constructor ok
     container_t sequence{};
 
     // specialication of random access iterator
     using aligned_sequence_t = aligned_sequence_adaptor_constant_access;
+    using gapped_alphabet_t = ranges::v3::value_type_t<container_t>;
     //detail::iterator_random_access<aligned_sequence> it;
-    detail::random_access_iterator<aligned_sequence_t> zero();
-    detail::random_access_iterator<const aligned_sequence_t> zero_const();
+    aligned_sequence_adaptor_constant_access<container_t>* trap = nullptr;
+    detail::random_access_iterator<aligned_sequence_t> zero = detail::random_access_iterator<aligned_sequence_t>(*trap);
+    detail::random_access_iterator<const aligned_sequence_t> zero_const = detail::random_access_iterator<aligned_sequence_t>(*trap);
+
+
+    // minimal length of sdsl::bit_vector is 64 bits. Size is adjusted dynamically
+    uint32_t update_num_bits(uint32_t new_size)
+    {
+        return (new_size < num_bits/2) ? std::max(64u, num_bits>>1) : num_bits<<1;
+    }
+
 
 public:
     // member types required by container_concept
@@ -113,13 +127,14 @@ public:
     using const_reference = typename container_t::const_reference;
     //!\brief Use random access iterator on container as iterator type.
     // TODO ra iterator over composite data structure, overwrite [], and decrement increment operators
-    using iterator = detail::random_access_iterator<aligned_sequence_t>; //TODO must satisfy forward_iterator_concept and convertible to const_interator
+    using iterator = detail::random_access_iterator<aligned_sequence_t>;
     //!\brief Use const random access iterator on container as const iterator type.
-    using const_iterator = detail::random_access_iterator<const aligned_sequence_t>; //TODO must satisfy forward_iterator_concept
+    using const_iterator = detail::random_access_iterator<const aligned_sequence_t>;
     //!\brief Type for distances between iterators is taken from alphabet container.
     using difference_type = typename ranges::v3::difference_type_t<container_t>;
     //!\brief Use alphabet container's size_type as a position.
     using size_type = typename ranges::v3::size_type_t<container_t>;
+
 
     /*!\name Constructors/Destructors
      * \{
@@ -164,9 +179,25 @@ public:
 
     //!\brief Construct by sequence.
     //type{std::initializer_list<typename type::value_type>{}}
-    constexpr aligned_sequence_adaptor_constant_access(container_t sequence)
+    constexpr aligned_sequence_adaptor_constant_access(container_t sequence_)
     {
-        assign(sequence.begin(), sequence.end());
+        //assign(sequence.begin(), sequence.end());
+        difference_type m = sequence_.size();
+        sequence.resize(0);
+        //sdsl::util::assign(gap_vector, sdsl::bit_vector(m, 0));
+        gap_vector = sdsl::bit_vector(m, 0);
+        for (difference_type i = 0; i < m; ++m)
+        {
+            if (sequence_[i].is_gap())
+                gap_vector[i] = 1;
+            else
+                sequence.push_back(sequence_[i]);
+        }
+        //sdsl::rank_support_v<> rs_new(&this->gap_vector);  // update rank support
+        //sdsl::rank_support_v<> rs(&gap_vector);
+        //sdsl::rank_support_v<1, 64> rs(&gap_vector);
+        rs = sdsl::rank_support_v5<>(&gap_vector);
+        seq_length = sequence_.size();
     };
 
     //{ val = std::initializer_list<typename type::value_type>{}      } -> type &;
@@ -203,7 +234,7 @@ public:
     iterator end()
     {
         // TODO: seq.size + rank as 2nd argument, w.r.t. sequence it is outside the alloc mem
-        return zero + gap_vector.size();
+        return zero + seq_length;
     }
 
     //!\brief Return const iterator pointing to first element of underlying sequence
@@ -215,7 +246,7 @@ public:
     //!\brief Return const iterator pointing to past-the-end element of underlying sequence.
     const_iterator cend() const
     {
-        return zero_const + gap_vector.size();
+        return zero_const + seq_length;
     }
 
     //! two aligned sequences are the same if their literal sequences and gaps are the same
@@ -235,12 +266,13 @@ public:
         sequence.swap(rhs.sequence);
         std::swap(gap_vector, rhs.gap_vector);
         std::swap(rs, rhs.rs);
+        std::swap(seq_length, rhs.seq_length);
     }
 
     //!\brief Return gapped sequence length.
     size_type size()
     {
-        return gap_vector.size();
+        return seq_length;
     }
 
     //!\brief Maximal aligned sequence size is the one of the ungapped sequence.
@@ -263,20 +295,20 @@ public:
     //!\brief Assignment via iterators.
     //val.assign(val2.begin(), val2.end())
 
-    void assign(iterator it1, iterator it2) // these are gapped_seq iterators!
+    void assign(iterator it1, iterator it2) // these are aligned_seq iterators!
     {
-        difference_type m = it2 - it1;
+        seq_length = it2 - it1;
         sequence.resize(0);
         //sdsl::util::assign(gap_vector, sdsl::bit_vector(m, 0));
-        gap_vector = sdsl::bit_vector(m, 0);
-        for (difference_type i = 0; i < m; ++m)
+        gap_vector = sdsl::bit_vector(update_num_bits(seq_length), 0);
+        for (difference_type i = 0; i < seq_length; ++seq_length)
         {
-            if (it1[i] == seqan3::gap::gap)
+            if (it1[i] == seqan3::gap::GAP)
                 gap_vector[i] = 1;
             else
                 sequence.push_back(it1[i]);
         }
-        rs.set_vector(&gap_vector);  // update rank support
+        rs = sdsl::rank_support_v5<>(&gap_vector);  // update rank support
     }
 
 
@@ -286,7 +318,7 @@ public:
     {
         sequence.clear();
         //sdsl::util::assign(gap_vector, sdsl::bit_vector(l.size(), 0));
-        gap_vector = sdsl::bit_vector(l.size(), 0);
+        gap_vector = sdsl::bit_vector(update_num_bits(l), 0);
         for (auto it = std::begin(l); it != std::end(l); ++it){
             if ((*it) == seqan3::gap::GAP)
                 gap_vector[it-std::begin(l)] = 1;
@@ -378,6 +410,78 @@ public:
         rs.set_vector(&gap_vector); // update rank support
         return pos;
     }
+    //{ val.erase(val.cbegin())                                                          } -> typename type::iterator;
+    iterator erase(iterator const pos)
+    {
+        difference_type pos_index = pos - zero;
+        for (difference_type i = pos_index; i < seq_length; ++i)
+            gap_vector[i] = gap_vector[i+1];
+        gap_vector[seq_length-1] = 0;
+        if (rs.rank(pos_index+1) != rs.rank(seq_length))
+            rs = sdsl::rank_support_v5(&gap_vector);
+        // TODO: resize
+        //sdsl::bit_vector gap_vector_new(gap_vector.size() - 1, 0);
+    }
+
+//    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
+    iterator erase(iterator const pos1, iterator const pos2)
+    {
+        difference_type i1 = pos1 - zero;
+        difference_type i2 = pos2 - pos1 + i1;
+        for (difference_type i = i2-1; i >= i1; --i){
+            if (!((*this)[i].is_gap())){
+                difference_type j = map_to_underlying_position(i);
+                sequence.erase(sequence.begin() + j);
+            }
+        }
+        if (rs.rank(i1) != rs.rank(seq_length-1)){
+            for (difference_type i = 0; i < i2-i1; ++i)
+                gap_vector[i1+i] = gap_vector[i2+i];
+            rs = sdsl::rank_support_v5(&gap_vector);
+        }
+    }
+
+//    { val.push_back(val.front())                                                       } -> void;
+    void push_back(gapped_alphabet_t symbol)
+    {
+        if (symbol.is_gap())
+            gap_vector[seq_length] = 1;
+        else
+            sequence.push_back(symbol);
+        ++seq_length;
+    }
+
+    // same as above?{ val.push_back(typename type::value_type{})                                       } -> void;
+    //{ val.pop_back()                                                                   } -> void;
+    void pop_back()
+    {
+        if (seq_length == 0) return;
+        --seq_length;
+        if ((*this)[seq_length].is_gap())
+            gap_vector[seq_length] = 0;
+        else
+            sequence.pop_back();
+    }
+
+    //{ val.clear()
+    void clear()
+    {
+        seq_length = 0;
+        sequence.resize(0);
+        gap_vector = sdsl::bit_vector(1024,0);
+    }
+
+    //{ val.front() } -> typename type::value_type &;
+    value_type front()
+    {
+        return (*this)[0];
+    }
+    //    { val.back()  } -> typename type::value_type &;
+    value_type back()
+    {
+        return (*this)[seq_length-1];
+    }
+
     //!\}
 
 /*
@@ -401,17 +505,18 @@ public:
     {
 
     }
-
+*/
     // rank computation to compute projection from gap to sequence space
     //! Given the underlying sequence position project into gap
     // space by adding the gap rank.
-    //
+    // '--TA-TA--' with position_base=5 returns 5-rnk(5)
     size_type map_to_aligned_position(size_type position_base)
     {
         //! return index after #position_base aligned letters
-        return letter_select(position_base);
+        return position_base - rs.rank(position_base);
     }
 
+/*
     //! Given the aligned sequence position (possibly including gaps) project
     // into gap-free alphabet space by removing the gap rank.
     //
@@ -428,16 +533,14 @@ public:
     {
       // todo: check here for in range or leave it to container?
         if (gap_vector[idx])
-            return seqan3::gap::GAP;
-        difference_type offset = rs.rank(idx);
-        return this->sequence[idx - offset];
+            return gapped_alphabet_t(seqan3::gap::GAP);
+        return gapped_alphabet_t(sequence[map_to_aligned_position(idx)]);
     }
 
     //! random access operators
     value_type at(size_type idx) const
     {
-      // TODO: check here for in range or leave it to container?
-        return this->sequence[idx];
+        return (value_type)(*this)[idx];
     }
 
     // modify container
@@ -454,11 +557,10 @@ public:
 };
 
 // global swap { swap(val, val2) } -> void;, TODO: lhs and rhs same container_t?
-template <typename container_t, char gap_sybmol = '_'>
+template <typename container_t, char gap_symbol = '_'>
 void swap (aligned_sequence_adaptor_constant_access<container_t> & lhs, aligned_sequence_adaptor_constant_access<container_t> & rhs)
 {
     lhs.swap(rhs);
-    // TODO: swap other relevant data structures
 }
 
 } // namespace seqan3
