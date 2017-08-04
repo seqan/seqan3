@@ -48,21 +48,23 @@ namespace seqan3::view
 {
 
 /*!\brief A view over an alphabet, given a range of ranks.
- * \tparam alphabet_type The type of the desired alphabet, must satisfy seqan3::alphabet_concept.
- * \param input_range The range you wish to convert, elements be must convertible to alphabet_type's
- * seqan3::underlying_rank_t.
- * \returns A view over alphabet_type, created from it's rank representation.
- * \details
+ * \tparam irng_t The type of the range being processed. See below for requirements. [template parameter is omitted in pipe notation]
+ * \tparam alphabet_t The alphabet to convert to; must satisfy seqan3::alphabet_concept.
+ * \param irange The range being processed. [parameter is omitted in pipe notation]
+ * \returns A range of converted elements. See below for the properties of the returned range.
+ * \ingroup view
+ *
  * \par View properties
- * * view type: same input_range
- * * value type: alphabet_type
- * * `const` iterable: yes
- * \par Complexity
- * Linear in the size if the input range (\f$O(n)\f$).
- * \par Exceptions
- * Strong exception guarantee (does not modify data).
- * \par Thread safety
- * Does not modify data.
+ *
+ * |                     | `irng_t` (range input type)           | `rrng_t` (range return type)                              |
+ * |---------------------|---------------------------------------|-----------------------------------------------------------|
+ * | range               | seqan3::input_range_concept           | seqan3::view_concept + all range concepts met by `irng_t` |
+ * | `range_reference_t` | seqan3::underlying_rank_t<alphabet_t> | `alphabet_t`                                              |
+ *
+ * * The input properties are **requirements** on the range input type.
+ * * The return properties are **guarantees** given on the range return type.
+ * * for more details, see \ref view.
+ *
  * \par Example
  * ```cpp
  * std::vector<int> vec{0, 1, 3, 3, 3, 2, 0, 3, 0};

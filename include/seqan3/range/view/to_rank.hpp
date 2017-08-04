@@ -48,20 +48,22 @@ namespace seqan3::view
 {
 
 /*!\brief A view that calls seqan3::to_rank() on each element in the input range.
- * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept and the value_type must
- * satisfy seqan3::alphabet_concept.
- * \returns A view with the value_type being seqan3::underlying_rank_t of the input alphabet.
- * \details
+ * \tparam irng_t The type of the range being processed. See below for requirements. [template parameter is omitted in pipe notation]
+ * \param irange The range being processed. [parameter is omitted in pipe notation]
+ * \returns A range of converted elements. See below for the properties of the returned range.
+ * \ingroup view
+ *
  * \par View properties
- * * view type: same input_range
- * * value type: seqan3::underlying_rank_t of the input's value_type
- * * `const` iterable: yes
- * \par Complexity
- * Linear in the size if the input range (\f$O(n)\f$).
- * \par Exceptions
- * Strong exception guarantee (does not modify data).
- * \par Thread safety
- * Does not modify data.
+ *
+ * |                     | `irng_t` (range input type)   | `rrng_t` (range return type)                              |
+ * |---------------------|-------------------------------|-----------------------------------------------------------|
+ * | range               | seqan3::input_range_concept   | seqan3::view_concept + all range concepts met by `irng_t` |
+ * | `range_reference_t` | seqan3::alphabet_concept      | seqan3::underlying_rank_t<range_value_type_t<irng_t>>     |
+ *
+ * * The input properties are **requirements** on the range input type.
+ * * The return properties are **guarantees** given on the range return type.
+ * * for more details, see \ref view.
+ *
  * \par Example
  * ```cpp
  * dna4_vector vec = "ACTTTGATA"_dna4;

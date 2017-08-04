@@ -48,20 +48,24 @@ namespace seqan3::view
 {
 
 /*!\brief A view that converts a range of nucleotides to their complement.
- * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept and the value_type
- * must satisfy seqan3::nucleotide_concept.
+ * \tparam irng_t The type of the range being processed. See below for requirements. [template parameter is omitted in pipe notation]
+ * \param irange The range being processed. [parameter is omitted in pipe notation]
+ * \returns A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
- * \details
+ *
+ * Calls seqan3::nucleotide_concept::complement() on every element of the input range.
+ *
  * \par View properties
- * * view type: same as input_range
- * * value type: remove_reference_t<value_type_t<input_range>>
- * * `const` iterable: yes
- * \par Complexity
- * Linear in the size if the input range (\f$O(n)\f$).
- * \par Exceptions
- * Strong exception guarantee (does not modify data).
- * \par Thread safety
- * Does not modify data.
+ *
+ * |                     | `irng_t` (range input type)   | `rrng_t` (range return type)                                                                     |
+ * |---------------------|-------------------------------|--------------------------------------------------------------------------------------------------|
+ * | range               | seqan3::input_range_concept   | seqan3::view_concept + all range concepts met by `irng_t`                                        |
+ * | `range_reference_t` | seqan3::nucleotide_concept    | `std::remove_reference_t<range_reference_t<irng_t>>`,  *usually* == `range_value_type_t<irng_t>` |
+ *
+ * * The input properties are **requirements** on the range input type.
+ * * The return properties are **guarantees** given on the range return type.
+ * * for more details, see \ref view.
+ *
  * \par Example
  *
  * ```cpp
