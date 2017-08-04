@@ -61,6 +61,7 @@ namespace seqan3
  * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::reservable_sequence_concept.
  * \tparam data_delimiters_type A container that stores the begin/end positions in the inner_type. Must be
  * seqan3::reservable_sequence_concept and have inner_type's size_type as value_type.
+ * \implements seqan3::reservable_sequence_concept
  *
  * This class may be used whenever you would usually use `std::vector<std::vector<some_alphabet>>` or
  * `std::vector<std::string>`, i.e. whenever you have a collection of sequences. It is the spiritual successor of
