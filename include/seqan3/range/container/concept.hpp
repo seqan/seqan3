@@ -180,46 +180,6 @@ concept bool reservable_sequence_concept = requires (type val)
 };
 //!\}
 
-/*!\name Container-of-container concepts
- * \brief Shortcuts for multi-dimensional container concepts.
- * \ingroup container
- * \{
- */
-/*!\brief A multi-dimensional seqan3::container_concept.
- *
- * Requires that both the type and it's `value_type` fulfill seqan3::container_concept.
- */
-template <typename type>
-concept bool container_of_container_concept = requires (type val)
-{
-    requires container_concept<type>;
-    requires container_concept<typename type::value_type>;
-};
-
-/*!\brief A multi-dimensional seqan3::sequence_concept.
- *
- * Requires that both the type and it's `value_type` fulfill seqan3::sequence_concept.
- */
-template <typename type>
-concept bool sequence_of_sequence_concept = requires (type val)
-{
-    requires sequence_concept<type>;
-    requires sequence_concept<typename type::value_type>;
-};
-
-/*!\brief A multi-dimensional seqan3::random_access_sequence_concept
- *
- * Requires that both the type and it's `value_type` fulfill seqan3::random_access_sequence_concept.
- */
-
-template <typename type>
-concept bool ra_sequence_of_ra_sequence_concept = requires (type val)
-{
-    requires random_access_sequence_concept<type>;
-    requires random_access_sequence_concept<typename type::value_type>;
-};
-//!\}
-
 } // namespace seqan3
 
 #ifndef NDEBUG

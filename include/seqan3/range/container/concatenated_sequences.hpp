@@ -1287,6 +1287,5 @@ public:
 
 #ifndef NDEBUG
 static_assert(seqan3::reservable_sequence_concept<seqan3::concatenated_sequences<std::string>>);
-static_assert(seqan3::ra_sequence_of_ra_sequence_concept<seqan3::concatenated_sequences<std::string>>);
 static_assert(seqan3::forward_range_concept<seqan3::concatenated_sequences<std::string>>);
 #endif
