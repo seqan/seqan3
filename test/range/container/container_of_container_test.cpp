@@ -35,6 +35,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
+#include <range/v3/range_traits.hpp>
+
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -54,7 +56,7 @@ TYPED_TEST_CASE(container_of_container, container_of_container_types);
 TYPED_TEST(container_of_container, concepts)
 {
     EXPECT_TRUE(container_concept<TypeParam>);
-    EXPECT_TRUE(container_of_container_concept<TypeParam>);
+    EXPECT_TRUE(container_concept<ranges::range_value_type_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)
