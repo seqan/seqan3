@@ -47,12 +47,13 @@
 #include <seqan3/range/view/rank_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
+#include <seqan3/range/view/trim.hpp>
 
 /*!\defgroup view View
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
  * \ingroup range
  * \sa https://ericniebler.github.io/range-v3/index.html#range-views
- * \sa range/view.hpp
+ * \sa range/view/all.hpp
  *
  * SeqAn3 makes heavy use of views as defined in the
  * [Ranges Technical Specification](http://en.cppreference.com/w/cpp/experimental/ranges). Currently the
