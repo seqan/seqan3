@@ -102,12 +102,11 @@ public:
     //!\brief Use reference type defined by container.
     using reference = value_type;
     //!\brief Use const reference type provided by container.
-    using const_reference = typename container_t::const_reference;
+    using const_reference = const reference;
     //!\brief Use random access iterator on container as iterator type.
-    // TODO ra iterator over composite data structure, overwrite [], and decrement increment operators
-    using iterator = detail::random_access_iterator<aligned_sequence_adaptor_constant_access>;
+    using iterator = detail::random_access_iterator<aligned_sequence_t>;
     //!\brief Use const random access iterator on container as const iterator type.
-    using const_iterator = detail::random_access_iterator<const aligned_sequence_adaptor_constant_access>;
+    using const_iterator = detail::random_access_iterator<aligned_sequence_t const>;
     //!\brief Type for distances between iterators is taken from alphabet container.
     using difference_type = typename ranges::v3::difference_type_t<container_t>;
     //!\brief Use alphabet container's size_type as a position.
@@ -184,13 +183,13 @@ public:
     */
 
     //!\brief Return iterator pointing to first element of underlying sequence.
-    iterator begin()
+    auto begin() noexcept
     {
         return iterator{*this, 0};
     }
 
     //!\brief Return iterator pointing to past-the-end element of gapped sequence.
-    iterator end() noexcept
+    auto end() noexcept
     {
         return iterator{*this, size()};
     }
@@ -224,25 +223,27 @@ public:
     {
         sequence.swap(rhs.sequence);
         std::swap(gap_vector, rhs.gap_vector);
-        std::swap(rs, rhs.rs);
-        //std::swap(gapped_sequence_size, rhs.gapped_sequence_size);
+//        std::swap(rs, rhs.rs);
+        // set pointer to gap_vector explicitly
+        rs.set_vector(&gap_vector);
+        rhs.rs.set_vector(&rhs.gap_vector);
     }
 
     //!\brief Return gapped sequence length.
-    size_type size()
+    size_type size() const
     {
         return gap_vector.size();
     }
 
     //!\brief Maximal aligned sequence size is the one of the ungapped sequence.
-    size_type max_size()
+    size_type max_size() const
     {
         // max_size equal to one of ungapped sequence
         return sequence.max_size(); // plus gap_vector len?
     }
 
     //!\brief An aligned sequence is empty if the underlying ungapped sequence is empty.
-    bool empty()
+    bool empty() const
     {
         return sequence.empty();
     }
@@ -259,8 +260,8 @@ public:
     {
         size_type n = it2 - it1;
         sequence.resize(0);
-        //recompute_bit_vector_size(n);
-        gap_vector.resize(n);// = get_new_bit_vector(n, 0);
+        gap_vector.resize(0);
+        gap_vector.resize(n);
         size_type i = 0;
         for (; it1 != it2; ++it1)
         {
@@ -268,7 +269,6 @@ public:
             if (*it1 == seqan3::gap::GAP)
                 gap_vector[i] = 1;
             else
-            //std::cout << dna4::A << std::endl;
                 sequence.push_back(*it1);
             ++i;
         }
@@ -283,7 +283,6 @@ public:
         sequence.resize(0);
         // TODO: faster way to init to zeros?
         gap_vector.resize(0);
-        // TODO: does resize init with 0s?
         gap_vector.resize(sequence_.size()); // = get_new_bit_vector(sequence_.size(), 0);
         for (difference_type i = 0; i < m; ++i)
         {
@@ -292,13 +291,7 @@ public:
             else
                 sequence.push_back(sequence_[i]);
         }
-        //update_rank_support();
         rs = sdsl::rank_support_v5<>(&gap_vector);
-        if (sequence_.size() > 0) {
-            std::cout << "rank_0 is " << rs(0) << std::endl;
-        }
-        std::cout << "assign: gap_vector.size = " << gap_vector.size() << ", sequence.size = " << sequence.size() << ", rs.size = " << rs.size() << std::endl;
-
     }
 
     //!\brief Assignment via initializer_list.
@@ -529,7 +522,6 @@ public:
             size_type const pos = map_to_aligned_position(n);
             return gapped_alphabet_t(sequence[pos]);
         }
-
         return gap_symbol;
     }
 
@@ -553,6 +545,7 @@ public:
 private:
     // TODO: if gap symbol for 2 instance can be different, then provide get_gap fct
     constexpr gapped_alphabet_t static const gap_symbol = gapped_alphabet_t(gap::GAP); // seqan3::gap::GAP
+    size_type gapped_sequence_size = 5;
     //!\brief gap_vector stores for each virtual gapped sequence position either a 0 (non-gap) or a 1 (gap).
     // its size corresponds therefore to the true gapped sequence size. Whereas sequence is the packed letter series.
     sdsl::bit_vector gap_vector;// = sdsl::bit_vector(bit_vector_size, 0); // includes support structures for rank/select
