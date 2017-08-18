@@ -236,7 +236,7 @@ TEST(aligned_sequences_test, container_concepts_swap)
 }
 
 // Sequence concept functions
-TEST(aligned_sequences_test, sequence_concepts)
+TEST(aligned_sequences_test, sequence_concepts_assign)
 {
     using aligned_sequence = aligned_sequence_adaptor_constant_access<std::vector<gapped<dna4>>>;
     std::vector<gapped<dna4>> seq1 = {dna4::A, gap::GAP, dna4::A, dna4::C, dna4::T};
@@ -290,9 +290,64 @@ TEST(aligned_sequences_test, sequence_concepts)
     it = s.begin();
     EXPECT_EQ(gapped<dna4>{gap::GAP}, *it);
     EXPECT_EQ(gapped<dna4>{gap::GAP}, *(it+63));
+}
 
-    // insert by value
-    //aligned_sequence t{dna4::A};
-    //t.insert(dna4::T);
+// TODO: test return values of insert ops
+TEST(aligned_sequences_test, sequence_concepts_insert)
+{
+    // insert by position iterator into empty sequence
+    sequence_type s{};
+    s.insert(s.begin(), dna4::C);
+    EXPECT_EQ(1u, s.size());
+    EXPECT_EQ(gapped<dna4>{dna4::C}, *s.begin());
+
+    // insert by position iterator into non-empty sequence
+    std::initializer_list<gapped<dna4>> l{gap::GAP, gap::GAP, dna4::T, dna4::A};
+    std::initializer_list<gapped<dna4>> l_post{dna4::C, gap::GAP, gap::GAP, dna4::T, dna4::A};
+    sequence_type t(l);
+    t.insert(t.begin(), dna4::C);
+    EXPECT_EQ(5u, t.size());
+    auto l_it = l_post.begin();
+    for (auto it = t.begin(); l_it != l.end(); ++l_it, ++ it)
+        EXPECT_EQ(*l_it, *it);
+
+    // insert after last element
+    sequence_type w(l);
+    w.insert(w.end(), dna4::G);
+    EXPECT_EQ(5u, w.size());
+
+    // insert by position iterator and moved element into empty sequence
+    sequence_type u{};
+    u.insert(u.begin(), std::move(dna4::C));
+    EXPECT_EQ(1u, u.size());
+    EXPECT_EQ(gapped<dna4>{dna4::C}, *s.begin());
+
+    // insert by position iterator and moved element into non-empty sequence
+    std::initializer_list<gapped<dna4>> l_post2{gap::GAP, dna4::C, gap::GAP, dna4::T, dna4::A};
+    sequence_type v(l);
+    v.insert(v.begin()+1, std::move(dna4::C));
+    EXPECT_EQ(5u, v.size());
+    auto l_it2 = l_post2.begin();
+    for (auto it = v.begin(); l_it2 != l_post2.end(); l_it2++, it++)
+        EXPECT_EQ(*l_it2, *it);
+
+    // bulk insert into empty sequence
+    sequence_type x{};
+    x.insert(x.begin(), 16, gap::GAP);
+    EXPECT_EQ(16u, x.size());
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *(x.begin()));
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *(x.end()-1));
+    // bulk insert into non-empty sequence
+    sequence_type y{l};
+    y.insert(y.begin()+2, 16, dna4::T);
+    EXPECT_EQ(20u, y.size());
+    auto it = y.begin();
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, y[0]);
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, y[1]);
+    EXPECT_EQ(gapped<dna4>{dna4::T}, y[2]);
+    EXPECT_EQ(gapped<dna4>{dna4::T}, y[17]);
+    EXPECT_EQ(gapped<dna4>{dna4::T}, y[18]);
+    EXPECT_EQ(gapped<dna4>{dna4::A}, y[19]);
+
 
 }

@@ -329,14 +329,17 @@ public:
         update_rank_support();
     }
 
-/*
-    //!\brief Insert single value given by reference at given position. Elements right of insert position are shifted.
+
+    //!\brief Insert single value given by reference at given position.
+    // Elements right of insert position are shifted.
     iterator insert(iterator pos, const value_type & value)
     {
-        difference_type i, j = pos - 0;
-        sdsl::bit_vector gap_vector_new(gap_vector.size()+1, 0);
+        size_type i, j = static_cast<size_type>(pos - detail::random_access_iterator<aligned_sequence_t>());
+        assert(j <= gap_vector.size());
+        // init new gap vector, set postfix to gap if pos is exceeding current size
+        sdsl::bit_vector gap_vector_new(std::max<size_type>(gap_vector.size()+1, j+1), 0);
         // copy prefix
-        for (i = 0; i < j; ++i)
+        for (i = 0; i < std::min<size_type>(gap_vector.size(), j); ++i)
             gap_vector_new[i] = gap_vector[i];
 
         // insert gap or alphabet symbol
@@ -344,15 +347,14 @@ public:
             gap_vector_new[j] = 1;
         else
         {
-            difference_type j_ungapped = j - rs.rank(j);
-            sequence.insert(sequence.begin() + j_ungapped, value);
+            gap_vector_new[j] = 0;
+            sequence.insert(sequence.begin() + map_to_aligned_position(j), value);
         }
-        // copy suffix
+        // copy suffix of gap vector shifted by one
         for (i = j; i < gap_vector.size(); ++i)
             gap_vector_new[i+1] = gap_vector[i];
         // update support structures
         gap_vector = gap_vector_new;
-        // TODO: delete gap_vector_new?
         rs.set_vector(&gap_vector); // update rank support
         return pos;
     }
@@ -360,21 +362,21 @@ public:
     //{ val.insert(val.begin(), typename type::value_type{})
     iterator insert(iterator pos, value_type && value)
     {
-        const value_type value_(std::move(value));
+        const value_type value_(value);
         return insert(pos, value_);
     }
+
 
     // { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
     // Insert value multiple times at position indicated by iterator.
     // TODO: more elegant way? Are there any bit shift operators provided by the sdsl?
-    iterator insert(const_iterator pos, size_type size, const value_type & value)
+    iterator insert(iterator pos, size_type size, const value_type & value)
     {
-        difference_type i, j = pos - 0;
+        size_type i, j = static_cast<size_type>(pos - detail::random_access_iterator<aligned_sequence_t>());
         sdsl::bit_vector gap_vector_new(gap_vector.size() + size, 0);
         // copy prefix
         for (i = 0; i < j; ++i)
             gap_vector_new[i] = gap_vector[i];
-
         // insert gap or alphabet symbols
         if (value == seqan3::gap::GAP)
         {
@@ -382,18 +384,17 @@ public:
                 gap_vector_new[j+i] = 1;
         }
         else
-        {
-            difference_type j_ungapped = j - rs.rank(j);
-            sequence.insert(sequence.begin() + j_ungapped + i, size, value);
-        }
+            sequence.insert(sequence.begin() + map_to_aligned_position(j), size, value);
         // copy suffix
-        for (i = j+size; i < gap_vector.size(); ++i)
-            gap_vector_new[i+1+size] = gap_vector[i];
+        for (i = j; i < gap_vector.size(); ++i)
+            gap_vector_new[i+size] = gap_vector[i];
         // update support structures
         gap_vector = gap_vector_new;
         rs.set_vector(&gap_vector); // update rank support
+        // TODO: behaviour? return ptr to firstly inserted element or last?
         return pos;
     }
+/*
     //{ val.erase(val.cbegin())                                                          } -> typename type::iterator;
     iterator erase(iterator const pos)
     {
@@ -406,6 +407,7 @@ public:
         // TODO: resize
         //sdsl::bit_vector gap_vector_new(gap_vector.size() - 1, 0);
     }
+
 
 //    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
     iterator erase(iterator const pos1, iterator const pos2)
@@ -494,7 +496,7 @@ public:
     // rank computation to compute projection from gap to sequence space
     //! Given the underlying sequence position project into gap
     // space by adding the gap rank.
-    // '--TA-TA--' with position_base=5 returns 5-rnk(5)
+    // '--TA-TA--' with position_base=5 returns 5-rnk(5) = 2
     size_type map_to_aligned_position(size_type const position_base) const
     {
         //! return index after #position_base aligned letters
