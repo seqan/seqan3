@@ -51,22 +51,21 @@
 namespace seqan3::detail
 {
 
-/*!\brief Implementation of a random access iterator on an input container pointer.
+/*!\brief A CRTP base template for creating random access iterators.
  * \tparam container_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
- *
- * No iterator operation will modify the container. Arithmetic and boolean
- * operations are applied to the iterator positions, not the corresponding values
- * of their containers.
+ * \tparam derived_type The derived type.
+ * \implements seqan3::random_access_iterator_concept
+ * \ingroup range
  *
  * The iterator makes certain assumptions on the `container_type`, but does not formally require
- * it to satisfy the seqan3::random_access_range_concept, because the iterator itself is
+ * it to satisfy the seqan3::random_access_range_concept, because the iterator itself may be
  * a requirement for this.
  */
-template <typename container_type>
-class random_access_iterator
+template <typename container_type, typename derived_type>
+class random_access_iterator_base
 {
-
-private:
+protected:
+    //!\privatesection
     //!\brief Iterator stores pointer to underlying container structure.
     typename std::add_pointer_t<container_type> host{nullptr};
     //!\brief Use container's size_type as a position.
@@ -75,10 +74,9 @@ private:
     position_type pos{static_cast<position_type>(0)};
 
     //!\brief This friend declaration is required to allow non-const to const-construction.
-    template <typename t>
-        requires std::is_same_v<std::remove_const_t<container_type>, t> &&
-                 std::is_same_v<container_type, std::add_const_t<t>>
-    friend class random_access_iterator;
+    template <typename t, typename derived2_type>
+        requires !std::is_const_v<t> && std::is_const_v<container_type>
+    friend class random_access_iterator_base;
 
 public:
     //!\brief Type for distances between iterators.
@@ -98,160 +96,161 @@ public:
 
     /*!\name Constructors/Destructors
      * \{
-    */
-    // \brief Default constructor.
-    constexpr random_access_iterator() = default;
+     */
+    //!\brief Default constructor.
+    constexpr random_access_iterator_base() = default;
+    //!\brief Copy constructor.
+    constexpr random_access_iterator_base(random_access_iterator_base const &) = default;
+    //!\brief Copy construction via assignment.
+    constexpr random_access_iterator_base & operator=(random_access_iterator_base const &) = default;
+    //!\brief Move constructor.
+    constexpr random_access_iterator_base (random_access_iterator_base &&) = default;
+    //!\brief Move assignment.
+    constexpr random_access_iterator_base & operator=(random_access_iterator_base &&) = default;
+    //!\brief Use default deconstructor.
+    ~random_access_iterator_base() = default;
 
     //!\brief Construct by host, default position pointer with 0.
-    explicit constexpr random_access_iterator(container_type & host) noexcept : host{&host} {}
-
+    explicit constexpr random_access_iterator_base(container_type & host) noexcept : host{&host} {}
     //!\brief Construct by host and explicit position.
-    constexpr random_access_iterator(container_type & host, position_type const pos) noexcept : host{&host}, pos{pos} {}
-
-    //!\brief Copy constructor.
-    constexpr random_access_iterator(random_access_iterator const &) = default;
-
-    //!\brief Copy construction via assignment.
-    constexpr random_access_iterator & operator=(random_access_iterator const &) = default;
-
-    //!\brief Move constructor.
-    constexpr random_access_iterator (random_access_iterator &&) = default;
-
-    //!\brief Move assignment.
-    constexpr random_access_iterator & operator=(random_access_iterator &&) = default;
-
-    //!\brief Use default deconstructor.
-    ~random_access_iterator() = default;
-
-    //!\brief Constructor for const version from non-const version.
-    template <typename t>
-    //!\cond
-        requires std::is_same_v<std::remove_const_t<container_type>, t> &&
-                 std::is_same_v<container_type, std::add_const_t<t>>
-    //!\endcond
-    constexpr random_access_iterator(random_access_iterator<t> const & rhs) noexcept :
-        host{rhs.host}, pos{rhs.pos}
+    constexpr random_access_iterator_base(container_type & host, position_type const pos) noexcept :
+        host{&host}, pos{pos}
     {}
+
+// TODO make this inheritable
+//     //!\brief Constructor for const version from non-const version.
+//     template <typename t>
+//     //!\cond
+//         requires std::is_same_v<t, typename iterator_on_const_container<derived_type>::type> &&
+//                  !std::is_same_v<std::remove_const_t<container_type>, container_type>
+//     //!\endcond
+//     constexpr random_access_iterator_base(t const & rhs) noexcept :
+//         host{rhs.host}, pos{rhs.pos}
+//     {}
     //!\}
 
     /*!\name Comparison operators
-     * \brief Compares only the absolute position of two iterators.
+     * \brief seqan3::detail::random_access_iterator_base operators are used unless specialised in derived type.
      * \{
      */
-    constexpr bool operator==(random_access_iterator const & rhs) const noexcept
+    constexpr bool operator==(derived_type const & rhs) const noexcept
     {
         return pos == rhs.pos;
     }
 
-    constexpr bool operator!=(random_access_iterator const & rhs) const noexcept
+    constexpr bool operator!=(derived_type const & rhs) const noexcept
     {
         return pos != rhs.pos;
     }
 
-    constexpr bool operator<(random_access_iterator const & rhs) const noexcept
+    constexpr bool operator<(derived_type const & rhs) const noexcept
     {
         return static_cast<bool>(pos < rhs.pos);
     }
 
-    constexpr bool operator>(random_access_iterator const & rhs) const noexcept
+    constexpr bool operator>(derived_type const & rhs) const noexcept
     {
         return pos > rhs.pos;
     }
 
-    constexpr bool operator<=(random_access_iterator const & rhs) const noexcept
+    constexpr bool operator<=(derived_type const & rhs) const noexcept
     {
         return pos <= rhs.pos;
     }
 
-    constexpr bool operator>=(random_access_iterator const & rhs) const noexcept
+    constexpr bool operator>=(derived_type const & rhs) const noexcept
     {
         return pos >= rhs.pos;
     }
     //!\}
 
     /*!\name Arithmetic operators
+     * \brief seqan3::detail::random_access_iterator_base operators are used unless specialised in derived type.
      * \{
     */
     //!\brief Pre-increment, return updated iterator.
-    constexpr random_access_iterator & operator++() noexcept
+    constexpr derived_type & operator++() noexcept
     {
         ++pos;
-        return (*this);
+        return *(static_cast<derived_type*>(this));
     }
 
     //!\brief Post-increment, return previous iterator state.
-    constexpr random_access_iterator operator++(int) noexcept
+    constexpr derived_type operator++(int) noexcept
     {
-        random_access_iterator cpy{*this};
+        derived_type cpy{*(static_cast<derived_type*>(this))};
         ++pos;
         return cpy;
     }
 
     //!\brief Pre-decrement, return updated iterator.
-    constexpr random_access_iterator & operator--() noexcept
+    constexpr derived_type & operator--() noexcept
     {
         --pos;
-        return *this;
+        return *(static_cast<derived_type*>(this));
     }
 
     //!\brief Post-decrement, return previous iterator state.
-    constexpr random_access_iterator operator--(int) noexcept
+    constexpr derived_type operator--(int) noexcept
     {
-        random_access_iterator cpy{*this};
+        derived_type cpy{*(static_cast<derived_type*>(this))};
         --pos;
         return cpy;
     }
 
     //!\brief Forward this iterator.
-    constexpr random_access_iterator & operator+=(difference_type const skip) noexcept
+    constexpr derived_type & operator+=(difference_type const skip) noexcept
     {
         pos += skip;
-        return *this;
+        return *(static_cast<derived_type*>(this));
     }
 
     //!\brief Forward copy of this iterator.
-    constexpr random_access_iterator operator+(difference_type const skip) const noexcept
+    constexpr derived_type operator+(difference_type const skip) const noexcept
     {
-        return random_access_iterator{*host, static_cast<position_type>(pos + skip)};
+        derived_type cpy{*(static_cast<derived_type const *>(this))};
+        return cpy += skip;
     }
 
     //!\brief Non-member operator+ delegates to non-friend operator+.
-    friend random_access_iterator operator+(difference_type const skip , random_access_iterator const & it) noexcept
+    constexpr friend derived_type operator+(difference_type const skip , derived_type const & it) noexcept
     {
         return it + skip;
     }
 
     //!\brief Decrement iterator by skip.
-    constexpr random_access_iterator & operator-=(difference_type const skip) noexcept
+    constexpr derived_type & operator-=(difference_type const skip) noexcept
     {
         pos -= skip;
-        return *this;
+        return *(static_cast<derived_type*>(this));
     }
 
     //!\brief Return decremented copy of this iterator.
-    constexpr random_access_iterator operator-(difference_type const skip) const noexcept
+    constexpr derived_type operator-(difference_type const skip) const noexcept
     {
-        return random_access_iterator{*host, static_cast<position_type>(pos - skip)};
+        derived_type cpy{*(static_cast<derived_type const *>(this))};
+        return cpy -= skip;
     }
 
     //!\brief Non-member operator- delegates to non-friend operator-.
-    constexpr friend random_access_iterator operator-(difference_type const skip, random_access_iterator const & it) noexcept
+    constexpr friend derived_type operator-(difference_type const skip, derived_type const & it) noexcept
     {
         return it - skip;
     }
 
     //!\brief Return offset between this and remote iterator's position.
-    constexpr difference_type operator-(random_access_iterator const lhs) const noexcept
+    constexpr difference_type operator-(derived_type const lhs) const noexcept
     {
         return static_cast<difference_type>(pos - lhs.pos);
     }
     //!\}
 
     /*!\name Reference/Dereference operators
+     * \brief seqan3::detail::random_access_iterator_base operators are used unless specialised in derived type.
      * \{
     */
     //!\brief Dereference operator returns element currently pointed at.
-    constexpr reference operator*() noexcept(noexcept((*host)[pos]))
+    constexpr reference operator*() const noexcept(noexcept((*host)[pos]))
     {
         return (*host)[pos];
     }
@@ -270,6 +269,57 @@ public:
     //!\}
 };
 
+/*!\brief A generic random access iterator that delegates most operations to the range.
+ * \tparam container_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
+ * \ingroup range
+ *
+ * The iterator makes certain assumptions on the `container_type`, but does not formally require
+ * it to satisfy the seqan3::random_access_range_concept, because the iterator itself may be
+ * a requirement for this.
+ */
+template <typename container_type>
+class random_access_iterator :
+    public random_access_iterator_base<container_type, random_access_iterator<container_type>>
+{
+private:
+    //!\brief Shortcut for the base class.
+    using base = random_access_iterator_base<container_type, random_access_iterator<container_type>>;
+    //!\brief Import from base class.
+    using typename base::position_type;
+
+public:
+    /*!\name Member types
+     * \brief Make the parent's member types visible.
+     * \{
+     */
+    using typename base::difference_type;
+    using typename base::value_type;
+    using typename base::reference;
+    using typename base::const_reference;
+    using typename base::pointer;
+    using typename base::iterator_category;
+    //!\}
+
+    //!\brief Import the parent's constructors.
+    using base::base;
+    //!\brief Befriend the parent.
+    friend base;
+
+    //!\brief This friend declaration is required to allow non-const to const-construction.
+    template <typename t>
+        requires std::is_const_v<t> && !std::is_const_v<container_type>
+    friend class random_access_iterator;
+
+    //!\brief Constructor for const version from non-const version.
+    template <typename t>
+    //!\cond
+        requires !std::is_const_v<t> && std::is_const_v<container_type>
+    //!\endcond
+    constexpr random_access_iterator(random_access_iterator<t> const & rhs) noexcept :
+        random_access_iterator{*rhs.host, rhs.pos}
+    {}
+};
+
 } // namespace seqan3::detail
 
-static_assert(static_cast<bool>(ranges::concepts::models<ranges::concepts::RandomAccessIterator, seqan3::detail::random_access_iterator<std::vector<int>>>()));
+static_assert(seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int>>>);
