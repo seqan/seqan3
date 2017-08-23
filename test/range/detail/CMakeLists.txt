@@ -1,1 +1,2 @@
+seqan3_test(any_sized_view_test.cpp)
 seqan3_test(random_access_iterator_test.cpp)
