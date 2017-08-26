@@ -93,6 +93,7 @@ private:
 void update_rank_support()
 {
     rs = sdsl::rank_support_v5<>(&gap_vector);
+    //rs.set_vector(&gap_vector);
 }
 
 public:
@@ -127,7 +128,7 @@ public:
 
     //!\brief Move constructor.
     constexpr aligned_sequence_adaptor_constant_access (aligned_sequence_adaptor_constant_access && rhs) :
-    gap_vector(std::move(rhs.gap_vector)), sequence(std::move(rhs.sequence))
+    gap_vector(std::move(rhs.gap_vector)), sequence(std::move(rhs.sequence)), gapped_sequence_size(rhs.gapped_sequence_size)
     {
         //rs = std::move(rhs.rs);
         rs.set_vector(&gap_vector);
@@ -140,6 +141,7 @@ public:
     {
         gap_vector = std::move(rhs.gap_vector);
         sequence = std::move(rhs.sequence);
+        gapped_sequence_size = std::move(rhs.gapped_sequence_size);
         rs.set_vector(&gap_vector);
         return *this;
     } //= default;
@@ -223,8 +225,10 @@ public:
     {
         sequence.swap(rhs.sequence);
         std::swap(gap_vector, rhs.gap_vector);
+        std::swap(gapped_sequence_size, rhs.gapped_sequence_size);
 //        std::swap(rs, rhs.rs);
-        // set pointer to gap_vector explicitly
+        // hand over new addresses of bit_vector to rank support structure explicitly
+        // more: https://github.com/xxsds/sdsl-lite/issues/15
         rs.set_vector(&gap_vector);
         rhs.rs.set_vector(&rhs.gap_vector);
     }
@@ -232,14 +236,14 @@ public:
     //!\brief Return gapped sequence length.
     size_type size() const
     {
-        return gap_vector.size();
+        return gapped_sequence_size;
     }
 
     //!\brief Maximal aligned sequence size is the one of the ungapped sequence.
     size_type max_size() const
     {
         // max_size equal to one of ungapped sequence
-        return sequence.max_size(); // plus gap_vector len?
+        return std::min<size_type>(sequence.max_size(), gap_vector.max_size()); // plus gap_vector len?
     }
 
     //!\brief An aligned sequence is empty if the underlying ungapped sequence is empty.
@@ -258,14 +262,13 @@ public:
 
     void assign(iterator it1, iterator it2) // these are aligned_seq iterators!
     {
-        size_type n = it2 - it1;
+        gapped_sequence_size = it2 - it1;
         sequence.resize(0);
-        gap_vector.resize(0);
-        gap_vector.resize(n);
+        gap_vector = sdsl::bit_vector(gapped_sequence_size, 0);
         size_type i = 0;
         for (; it1 != it2; ++it1)
         {
-            assert(i < n);
+            assert(i < gapped_sequence_size);
             if (*it1 == seqan3::gap::GAP)
                 gap_vector[i] = 1;
             else
@@ -279,29 +282,26 @@ public:
     // by the container concept.
     void assign(container_t sequence_)
     {
-        difference_type m = sequence_.size();
+        gapped_sequence_size = sequence_.size();
         sequence.resize(0);
-        // TODO: faster way to init to zeros?
-        gap_vector.resize(0);
-        gap_vector.resize(sequence_.size()); // = get_new_bit_vector(sequence_.size(), 0);
-        for (difference_type i = 0; i < m; ++i)
+        gap_vector = sdsl::bit_vector(gapped_sequence_size, 0);
+        for (size_type i = 0; i < gapped_sequence_size; ++i)
         {
             if (sequence_[i] == gap::GAP)
                 gap_vector[i] = 1;
             else
                 sequence.push_back(sequence_[i]);
         }
-        rs = sdsl::rank_support_v5<>(&gap_vector);
+        update_rank_support();
     }
 
     //!\brief Assignment via initializer_list.
     //{ val.assign(std::initializer_list<typename type::value_type>{})
     void assign(std::initializer_list<value_type> l)
     {
+        gapped_sequence_size = l.size();
         sequence.resize(0);
-        //sdsl::util::assign(gap_vector, sdsl::bit_vector(l.size(), 0));
-        gap_vector.resize(0);
-        gap_vector.resize(l.size());
+        gap_vector = sdsl::bit_vector(gapped_sequence_size, 0);
         for (auto it = std::begin(l); it != std::end(l); ++it){
             if ((*it) == seqan3::gap::GAP)
                 gap_vector[it-std::begin(l)] = 1;
@@ -315,13 +315,12 @@ public:
     //{ val.assign(typename type::size_type{}, typename type::value_type{}) };
     void assign(size_type size, value_type value)
     {
+        gapped_sequence_size = size;
         if (value == seqan3::gap::GAP){
-            //sdsl::util::assign(gap_vector, sdsl::bit_vector(size, 1));
             gap_vector = sdsl::bit_vector(size, 1);
             sequence.resize(0);
         }
         else {
-            //sdsl::util::assign(gap_vector, sdsl::bit_vector(size, 0));
             gap_vector = sdsl::bit_vector(size, 0);
             sequence.resize(size);
             std::fill(sequence.begin(), sequence.end(), value);
@@ -335,11 +334,11 @@ public:
     iterator insert(iterator pos, const value_type & value)
     {
         size_type i, j = static_cast<size_type>(pos - detail::random_access_iterator<aligned_sequence_t>());
-        assert(j <= gap_vector.size());
+        assert(j <= gapped_sequence_size);
         // init new gap vector, set postfix to gap if pos is exceeding current size
-        sdsl::bit_vector gap_vector_new(std::max<size_type>(gap_vector.size()+1, j+1), 0);
+        sdsl::bit_vector gap_vector_new(std::max<size_type>(size()+1, j+1), 0);
         // copy prefix
-        for (i = 0; i < std::min<size_type>(gap_vector.size(), j); ++i)
+        for (i = 0; i < std::min<size_type>(size(), j); ++i)
             gap_vector_new[i] = gap_vector[i];
 
         // insert gap or alphabet symbol
@@ -348,14 +347,16 @@ public:
         else
         {
             gap_vector_new[j] = 0;
-            sequence.insert(sequence.begin() + map_to_aligned_position(j), value);
+            sequence.insert(sequence.begin() + map_to_underlying_position(j), value);
         }
         // copy suffix of gap vector shifted by one
-        for (i = j; i < gap_vector.size(); ++i)
+        for (i = j; i < size(); ++i)
             gap_vector_new[i+1] = gap_vector[i];
         // update support structures
         gap_vector = gap_vector_new;
-        rs.set_vector(&gap_vector); // update rank support
+        update_rank_support();
+        ++gapped_sequence_size;
+        //rs.set_vector(&gap_vector); // update rank support
         return pos;
     }
 
@@ -372,61 +373,69 @@ public:
     // TODO: more elegant way? Are there any bit shift operators provided by the sdsl?
     iterator insert(iterator pos, size_type size, const value_type & value)
     {
-        size_type i, j = static_cast<size_type>(pos - detail::random_access_iterator<aligned_sequence_t>());
-        sdsl::bit_vector gap_vector_new(gap_vector.size() + size, 0);
-        // copy prefix
-        for (i = 0; i < j; ++i)
-            gap_vector_new[i] = gap_vector[i];
+        difference_type i, j = static_cast<difference_type>(pos - detail::random_access_iterator<aligned_sequence_t>());
+        gap_vector.resize(gapped_sequence_size + size);
+        // shift suffix, note we need i to be a signed integer
+        for (i = gapped_sequence_size-1; i >= j; --i)
+            gap_vector[i+size] = gap_vector[i];
         // insert gap or alphabet symbols
         if (value == seqan3::gap::GAP)
         {
-            for (i = 0; i < size; ++i)
-                gap_vector_new[j+i] = 1;
+            for (i = 0; i < static_cast<difference_type>(size); ++i)
+                gap_vector[j+i] = 1;
         }
-        else
-            sequence.insert(sequence.begin() + map_to_aligned_position(j), size, value);
-        // copy suffix
-        for (i = j; i < gap_vector.size(); ++i)
-            gap_vector_new[i+size] = gap_vector[i];
+        else{
+            for (i = 0; i < static_cast<difference_type>(size); ++i)
+                gap_vector[j+i] = 0;
+            sequence.insert(sequence.begin() + map_to_underlying_position(j), size, value);
+        }
         // update support structures
-        gap_vector = gap_vector_new;
-        rs.set_vector(&gap_vector); // update rank support
-        // TODO: behaviour? return ptr to firstly inserted element or last?
+        update_rank_support();
+        gapped_sequence_size += size;
         return pos;
     }
-/*
-    //{ val.erase(val.cbegin())                                                          } -> typename type::iterator;
+
+    // Erase element at the iterator's position and return an iterator pointing
+    // to the new location of the element that followed the last element erased.
+    //{ val.erase(val.cbegin())                   } -> typename type::iterator;
     iterator erase(iterator const pos)
     {
-        difference_type pos_index = pos - 0;
-        for (difference_type i = pos_index; i < size(); ++i)
+        size_type i, j = static_cast<size_type>(pos - iterator{});
+        assert(size() > j);
+        // erase from compressed sequence string
+        if (!gap_vector[j])
+            sequence.erase(sequence.begin() + map_to_underlying_position(j));
+        // shift suffix left
+        for (i = j; i < size()-1; ++i)
             gap_vector[i] = gap_vector[i+1];
-        gap_vector[size()-1] = 0;
-        if (rs.rank(pos_index+1) != rs.rank(size()))
-            rs = sdsl::rank_support_v5(&gap_vector);
-        // TODO: resize
-        //sdsl::bit_vector gap_vector_new(gap_vector.size() - 1, 0);
+        // update rank support only there are 1s after erased position
+        if (rs.rank(j+1) != rs.rank(size()))
+            rs.set_vector(&gap_vector);
+        gap_vector.resize(size()-1);
+        --gapped_sequence_size;
+        return pos;
     }
-
 
 //    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
     iterator erase(iterator const pos1, iterator const pos2)
     {
-        difference_type i1 = pos1 - 0;
-        difference_type i2 = pos2 - pos1 + i1;
-        for (difference_type i = i2-1; i >= i1; --i){
-            if (!((*this)[i].is_gap())){
-                difference_type j = map_to_underlying_position(i);
-                sequence.erase(sequence.begin() + j);
-            }
-        }
-        if (rs.rank(i1) != rs.rank(size()-1)){
-            for (difference_type i = 0; i < i2-i1; ++i)
-                gap_vector[i1+i] = gap_vector[i2+i];
-            rs = sdsl::rank_support_v5(&gap_vector);
-        }
+        size_type i1 = static_cast<size_type>(pos1 - iterator{});
+        size_type i2 = static_cast<size_type>(pos2 - iterator{});
+        assert(i1 < gapped_sequence_size && i2 <= gapped_sequence_size);
+
+        sequence.erase(sequence.begin() + map_to_underlying_position(i1),
+                        sequence.begin() + map_to_underlying_position(i2));
+        // copy gap bits if there are bits set beyond pos1
+        for (size_type i = i2; i < gapped_sequence_size; ++i)
+            gap_vector[i - i2 + i1] = gap_vector[i];
+
+        gapped_sequence_size -= i2-i1;
+        gap_vector.resize(gapped_sequence_size);
+        update_rank_support(); //rs.set_vector(&gap_vector);
+        return pos1;
     }
 
+/*
 //    { val.push_back(val.front())                                                       } -> void;
     void push_back(gapped_alphabet_t symbol)
     {
@@ -493,6 +502,7 @@ public:
     }
 */
 
+/*
     // rank computation to compute projection from gap to sequence space
     //! Given the underlying sequence position project into gap
     // space by adding the gap rank.
@@ -502,26 +512,27 @@ public:
         //! return index after #position_base aligned letters
         return position_base - rs.rank(position_base);
     }
+*/
 
-/*
     //! Given the aligned sequence position (possibly including gaps) project
     // into gap-free alphabet space by removing the gap rank.
-    //
-    size_type map_to_underlying_position(size_type position_gap)
+    // substract number of gaps in [0; position_gap]
+    size_type map_to_underlying_position(size_type const position_gapped) const
     {
-        // substract number of gaps in [0; position_gap]
-        return position_gap - gap_rank();
+        return position_gapped - rs.rank(position_gapped);
     }
-*/
+
 
 
     //########### random_access_sequence_concept
     //! random access operators
     // TODO: check here for in range or leave it to container?
+    // TODO: is this still a constexpr, there is a function call which may not be constexpr
     constexpr reference operator[](size_type const n) const // const noexcept(noexcept((*host)[pos+n]))
     {
+        assert(n < gapped_sequence_size);
         if (!gap_vector[n]){
-            size_type const pos = map_to_aligned_position(n);
+            size_type const pos = map_to_underlying_position(n);
             return gapped_alphabet_t(sequence[pos]);
         }
         return gap_symbol;
@@ -547,7 +558,7 @@ public:
 private:
     // TODO: if gap symbol for 2 instance can be different, then provide get_gap fct
     constexpr gapped_alphabet_t static const gap_symbol = gapped_alphabet_t(gap::GAP); // seqan3::gap::GAP
-    size_type gapped_sequence_size = 5;
+    size_type gapped_sequence_size{0};
     //!\brief gap_vector stores for each virtual gapped sequence position either a 0 (non-gap) or a 1 (gap).
     // its size corresponds therefore to the true gapped sequence size. Whereas sequence is the packed letter series.
     sdsl::bit_vector gap_vector;// = sdsl::bit_vector(bit_vector_size, 0); // includes support structures for rank/select

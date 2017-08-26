@@ -349,5 +349,86 @@ TEST(aligned_sequences_test, sequence_concepts_insert)
     EXPECT_EQ(gapped<dna4>{dna4::T}, y[18]);
     EXPECT_EQ(gapped<dna4>{dna4::A}, y[19]);
 
+}
 
+// TODO: test return values of erase ops
+TEST(aligned_sequences_test, sequence_concepts_erase_one)
+{
+    std::initializer_list<gapped<dna4>> l{gap::GAP, gap::GAP, dna4::T, dna4::A};
+    sequence_type s{l};
+    // erase 1st element
+    auto it = s.erase(s.begin());
+    EXPECT_EQ(it, s.begin());
+    EXPECT_EQ(3u, s.size());
+    auto it_l = l.begin()+1;
+    for (it = s.begin(); it_l != l.end(); ++it, ++it_l)
+        EXPECT_EQ(*it_l, *it);
+    // erase last element
+    it = s.erase(s.end()-1);
+    EXPECT_EQ(2u, s.size());
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *s.begin());
+    EXPECT_EQ(gapped<dna4>{dna4::T}, *(s.begin()+1));
+    // erase midth element
+    std::initializer_list<gapped<dna4>> l2{gap::GAP, dna4::T, dna4::A};
+    sequence_type t{l2};
+    it = t.erase(t.begin()+1);
+    EXPECT_EQ(2u, t.size());
+    EXPECT_EQ(it, t.begin()+1);
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *t.begin());
+    EXPECT_EQ(gapped<dna4>{dna4::A}, *(t.begin()+1));
+}
+
+// erase elements in range between two iterators
+TEST(aligned_sequences_test, sequence_concepts_erase_range)
+{
+    /*
+    // range length = 1
+    std::initializer_list<gapped<dna4>> l{gap::GAP, gap::GAP, dna4::T, dna4::A};
+    sequence_type s{l};
+    // erase 1st element
+    auto it = s.erase(s.begin(), s.begin() + 1);
+    EXPECT_EQ(it, s.begin());
+    EXPECT_EQ(3u, s.size());
+    auto it_l = l.begin()+1;
+    for (it = s.begin(); it_l != l.end(); ++it, ++it_l){
+        std::cout << (*it) << std::endl;
+        EXPECT_EQ(*it_l, *it);
+    }
+    // erase last element
+    it = s.erase(s.end()-1, s.end());
+    EXPECT_EQ(2u, s.size());
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *s.begin());
+    EXPECT_EQ(gapped<dna4>{dna4::T}, *(s.begin()+1));
+
+    // erase midth element
+    std::initializer_list<gapped<dna4>> l2{gap::GAP, dna4::T, dna4::A};
+    sequence_type t{l2};
+    it = t.erase(t.begin()+1, t.begin()+2);
+    EXPECT_EQ(2u, t.size());
+    EXPECT_EQ(it, t.begin()+1);
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *t.begin());
+    EXPECT_EQ(gapped<dna4>{dna4::A}, *(t.begin()+1));
+
+    // range length > 1 in the middle
+    sequence_type u{128, dna4::T};
+    u.erase(u.begin()+16, u.begin()+32);
+    EXPECT_EQ(112u, u.size());
+
+    // erase range mid to end
+    sequence_type v{dna4::A, dna4::C, dna4::G, dna4::T, dna4::A, gap::GAP, dna4::G};
+    it = v.erase(v.begin()+2, v.end());
+    EXPECT_EQ(it, v.end());
+    EXPECT_EQ(2u, v.size());
+    it = v.begin();
+    EXPECT_EQ(gapped<dna4>{dna4::A}, *it++);
+    EXPECT_EQ(gapped<dna4>{dna4::C}, *it);
+*/
+    // erase range begining to mid
+    sequence_type w{gap::GAP, dna4::A, dna4::C, gap::GAP, dna4::G, dna4::A};
+    auto it = w.erase(w.begin(), w.begin()+3);
+    EXPECT_EQ(it, w.begin());
+    EXPECT_EQ(3u, w.size());
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *it++);
+    EXPECT_EQ(gapped<dna4>{dna4::G}, *it++);
+    EXPECT_EQ(gapped<dna4>{dna4::A}, *it);
 }
