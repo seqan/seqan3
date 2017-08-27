@@ -435,35 +435,34 @@ public:
         return pos1;
     }
 
-/*
+
 //    { val.push_back(val.front())                                                       } -> void;
     void push_back(gapped_alphabet_t symbol)
     {
-        if (symbol.is_gap())
-            gap_vector[size()] = 1;
+        gap_vector.resize(++gapped_sequence_size);
+        if (symbol == gap::GAP)
+            gap_vector[gapped_sequence_size - 1] = 1;
         else
             sequence.push_back(symbol);
-        ++gapped_sequence_size;
     }
 
     // same as above?{ val.push_back(typename type::value_type{})                                       } -> void;
     //{ val.pop_back()                                                                   } -> void;
     void pop_back()
     {
-        if (size() == 0) return;
-        --gapped_sequence_size;
-        if ((*this)[size()].is_gap())
-            gap_vector[size()] = 0;
-        else
+        assert(gapped_sequence_size > 0);
+        if (!gap_vector[size() - 1])
             sequence.pop_back();
+        gap_vector[size() - 1] = 0;
+        --gapped_sequence_size;
     }
 
     //{ val.clear()
     void clear()
     {
         gapped_sequence_size = 0;
-        sequence.resize(0);
-        gap_vector = sdsl::bit_vector(1024,0);
+        sequence.clear();
+        gap_vector.resize(0);
     }
 
     //{ val.front() } -> typename type::value_type &;
@@ -471,7 +470,8 @@ public:
     {
         return (*this)[0];
     }
-    //    { val.back()  } -> typename type::value_type &;
+
+/*    //    { val.back()  } -> typename type::value_type &;
     value_type back()
     {
         return (*this)[size()-1];
