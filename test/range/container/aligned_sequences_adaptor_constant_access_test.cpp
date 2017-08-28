@@ -355,6 +355,7 @@ TEST(aligned_sequences_test, sequence_concepts_insert)
 }
 
 // TODO: test return values of erase ops
+// TODO: test size_type erase
 TEST(aligned_sequences_test, sequence_concepts_erase_one)
 {
     std::initializer_list<gapped<dna4>> l{gap::GAP, gap::GAP, dna4::T, dna4::A};
@@ -510,7 +511,7 @@ TEST(aligned_sequences_test, sequence_concepts_pop_back)
     // case 4: throw assertion when trying to pop_back on empty sequence
     sequence_t v{};
     // TODO: test assertion
-    ASSERT_EXIT(v.pop_back(), testing::ExitedWithCode(6), "");
+    //ASSERT_EXIT(v.pop_back(), testing::ExitedWithCode(6), "");
 }
 
 TEST(aligned_sequences_test, sequence_concepts_clear)
@@ -538,5 +539,57 @@ TEST(aligned_sequences_test, sequence_concepts_front)
     // case 3: front element is alphabet symbol
     sequence_t u{dna4::A, dna4::T};
     EXPECT_EQ(gapped<dna4>{dna4::A}, u.front());
+}
+
+TEST(aligned_sequences_test, sequence_concepts_back)
+{
+    sequence_t s{dna4::A};
+    EXPECT_EQ(gapped<dna4>{dna4::A}, s.back());
+    s.push_back(gap::GAP);
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, s.back());
+}
+
+TEST(aligned_sequences_test, get_underlying_sequence)
+{
+    sequence_t s{};
+    EXPECT_EQ(0u, s.get_underlying_sequence().size());
+    s.push_back(gap::GAP);
+    EXPECT_EQ(0u, s.get_underlying_sequence().size());
+    s.push_back(dna4::A);
+    EXPECT_EQ(1u, s.get_underlying_sequence().size());
+    EXPECT_EQ(gapped<dna4>{dna4::A}, s.get_underlying_sequence().at(0));
+}
+
+TEST(aligned_sequences_test, insert_gap)
+{
+    // case 1: into empty sequence
+    sequence_t s{};
+    s.insert_gap(0);
+    EXPECT_EQ(1u, s.size());
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *(s.begin()));
+
+    // case 2: insert into non-empty sequence
+    s.push_back(dna4::A);
+    EXPECT_EQ(2u, s.size());
+    s.insert_gap(2, 2);
+    EXPECT_EQ(4u, s.size());
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *(s.end()-1));
 
 }
+
+TEST(aligned_sequences_test, map_to_aligned_position)
+{
+    sequence_t s{gap::GAP, dna4::A, gap::GAP, dna4::T};
+    auto pos = s.map_to_aligned_position(1);
+    EXPECT_EQ(3u, pos);
+}
+
+/*
+TEST(aligned_sequences_test, map_to_underlying_position)
+{
+    sequence_t s{gap::GAP, dna4::A, gap::GAP, dna4::T};
+    EXPECT_EQ(0u, s.map_to_underlying_position(1));
+    EXPECT_EQ(1u, s.map_to_underlying_position(3));
+    // TODO: test assert death
+}
+*/
