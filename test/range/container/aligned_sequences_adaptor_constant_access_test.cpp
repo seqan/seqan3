@@ -385,10 +385,10 @@ TEST(aligned_sequences_test, sequence_concepts_erase_one)
 // erase elements in range between two iterators
 TEST(aligned_sequences_test, sequence_concepts_erase_range)
 {
-
     // range length = 1
     std::initializer_list<gapped<dna4>> l{gap::GAP, gap::GAP, dna4::T, dna4::A};
     sequence_t s{l};
+
     // erase 1st element
     auto it = s.erase(s.begin(), s.begin() + 1);
     EXPECT_EQ(it, s.begin());
@@ -398,6 +398,7 @@ TEST(aligned_sequences_test, sequence_concepts_erase_range)
         std::cout << (*it) << std::endl;
         EXPECT_EQ(*it_l, *it);
     }
+
     // erase last element
     it = s.erase(s.end()-1, s.end());
     EXPECT_EQ(2u, s.size());
@@ -580,16 +581,26 @@ TEST(aligned_sequences_test, insert_gap)
 TEST(aligned_sequences_test, map_to_aligned_position)
 {
     sequence_t s{gap::GAP, dna4::A, gap::GAP, dna4::T};
-    auto pos = s.map_to_aligned_position(1);
-    EXPECT_EQ(3u, pos);
+    EXPECT_EQ(1u, s.map_to_aligned_position(0));
+    EXPECT_EQ(3u, s.map_to_aligned_position(1));
 }
 
-/*
 TEST(aligned_sequences_test, map_to_underlying_position)
 {
-    sequence_t s{gap::GAP, dna4::A, gap::GAP, dna4::T};
-    EXPECT_EQ(0u, s.map_to_underlying_position(1));
-    EXPECT_EQ(1u, s.map_to_underlying_position(3));
-    // TODO: test assert death
+    sequence_t s{gap::GAP, dna4::A, gap::GAP, gap::GAP, dna4::T};
+    std::array<sequence_t::difference_type, 5> upos{ {-1, 0, 0, 0, 1} };
+    auto it = upos.begin();
+    for (sequence_t::size_type   i = 0; i < s.size(); ++i)
+        EXPECT_EQ(*(it++), s.map_to_underlying_position(i));
 }
-*/
+
+TEST(aligned_sequences_test, random_access_operators)
+{
+    // case 1: []-operator on gap postion
+    sequence_t s{gap::GAP, dna4::A, gap::GAP, gap::GAP, dna4::T};
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, s[0]);
+    EXPECT_EQ(gapped<dna4>{dna4::T}, s[4]);
+    // case 2: at()-operator
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, s.at(0));
+    EXPECT_EQ(gapped<dna4>{dna4::T}, s.at(4));
+}

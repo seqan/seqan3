@@ -131,10 +131,7 @@ public:
     constexpr aligned_sequence_adaptor_constant_access (aligned_sequence_adaptor_constant_access && rhs) :
     gap_vector(std::move(rhs.gap_vector)), sequence(std::move(rhs.sequence))
     {
-        //rs = std::move(rhs.rs);
         rs.set_vector(&gap_vector);
-        std::cout << "mv construct: gap_vector.size = " << gap_vector.size() << ", sequence.size = " << sequence.size() << ", rs.size = " << rs.size() << std::endl;
-        // TODO: delete rhs?
     } // why default implicitly deleted?
 
     //!\brief Move assignment.
@@ -360,7 +357,7 @@ public:
         // shift suffix, note we need i to be a signed integer
         for (i = size_old - 1; i >= j; --i)
             gap_vector[i+size] = gap_vector[i];
-            
+
         // insert gap or alphabet symbols
         if (value == seqan3::gap::GAP)
         {
@@ -412,13 +409,19 @@ public:
         size_type i1 = static_cast<size_type>(pos1 - iterator{});
         size_type i2 = static_cast<size_type>(pos2 - iterator{});
         assert(i1 < this->size() && i2 <= this->size());
-
-        sequence.erase(sequence.begin() + map_to_underlying_position(i1),
-                        sequence.begin() + map_to_underlying_position(i2));
+        if (rs.rank(i2) - rs.rank(i1) < i2 - i1){  // there is some compressed sequence to be erased, too
+            size_type i1_map = map_to_underlying_position(i1);
+            size_type i2_map = map_to_underlying_position(i2-1);
+            if (gap_vector[i1]){
+                sequence.erase(sequence.begin() + 1 + i1_map, sequence.begin() + 1 + i2_map);
+            }else{
+                sequence.erase(sequence.begin() + i1_map, sequence.begin() + 1 + i2_map);
+            }
+        }
         // copy gap bits if there are bits set beyond pos1
-        for (size_type i = i2; i < this->size(); ++i)
+        for (size_type i = i2; i < this->size(); ++i){
             gap_vector[i - i2 + i1] = gap_vector[i];
-
+        }
         gap_vector.resize(size() - i2 + i1);
         update_support_structures(); //rs.set_vector(&gap_vector);
         return pos1;
@@ -515,14 +518,13 @@ public:
     //! Given the aligned sequence position (possibly including gaps) project
     // into gap-free alphabet space by removing the gap rank.
     // substract number of gaps in [0; position_gap], if given position is a gap,
-    // e.g.           aligned sequence  | _ A _ T
-    //                 position_gapped  | 0 1 2 3
-    //      map_to_underlying_position  | 0 0 1 1
+    // e.g.           aligned sequence  | - A - - T
+    //                 position_gapped  | 0 1 2 3 4
+    //      map_to_underlying_position  |-1 0 0 0 1
     // Mapping gaps to the compressed sequence representation is ambiguous and therefore asserted
-    size_type map_to_underlying_position(size_type const position_gapped) const
+    difference_type map_to_underlying_position(size_type const position_gapped) const
     {
-        //assert(!gap_vector[position_gapped]);
-        return position_gapped - rs.rank(position_gapped);
+        return static_cast<difference_type>(position_gapped) - static_cast<difference_type>(rs.rank(std::min<size_type>(position_gapped+1, this->size())));
     }
     //!\}
 
