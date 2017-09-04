@@ -604,3 +604,50 @@ TEST(aligned_sequences_test, random_access_operators)
     EXPECT_EQ(gapped<dna4>{gap::GAP}, s.at(0));
     EXPECT_EQ(gapped<dna4>{dna4::T}, s.at(4));
 }
+
+TEST(aligned_sequences_test, resize)
+{
+    // case 1: resize empty sequence with gaps
+    sequence_t s{};
+    s.resize(5u);
+    EXPECT_EQ(5u, s.size());
+    auto it = s.begin();
+    for (; it != s.end();)
+        EXPECT_EQ(gapped<dna4>{gap::GAP}, *it++);
+
+    // case 2: resize empty sequence with dna4::A
+    sequence_t t{};
+    t.resize(5u, gapped<dna4>{dna4::A});
+    EXPECT_EQ(5u, t.size());
+    it = t.begin();
+    for (; it != t.end();)
+        EXPECT_EQ(gapped<dna4>{dna4::A}, *it++);
+
+    // case 3: enlarge non-empty sequence with gaps
+    std::initializer_list<gapped<dna4>> l{dna4::A, gap::GAP, dna4::T};
+    std::initializer_list<gapped<dna4>> l_post{dna4::A, gap::GAP, dna4::T, gap::GAP, gap::GAP};
+    sequence_t u{l};
+    u.resize(5u, gap::GAP);
+    EXPECT_EQ(5u, u.size());
+    it = u.begin();
+    auto it2 = l_post.begin();
+    for (; it != u.end();)
+        EXPECT_EQ(*it2++, *it++);
+
+    // case 4: enlarge non-empty sequence with non-gap symbol
+    std::initializer_list<gapped<dna4>> l_post2{dna4::A, gap::GAP, dna4::T, dna4::C, dna4::C};
+    sequence_t v{l};
+    v.resize(5u, dna4::C);
+    EXPECT_EQ(5u, v.size());
+    it = v.begin();
+    it2 = l_post2.begin();
+    for (; it != v.end();)
+        EXPECT_EQ(*it2++, *it++);
+
+    // case 4: decrease non-empty sequence
+    sequence_t w{l};
+    w.resize(2);
+    EXPECT_EQ(2u, w.size());
+    EXPECT_EQ(gapped<dna4>{dna4::A}, *(w.begin()));
+    EXPECT_EQ(gapped<dna4>{gap::GAP}, *(w.begin()+1));
+}
