@@ -44,8 +44,6 @@
 
 #include <algorithm>
 #include <initializer_list>
-#include <iostream>
-#include <string>
 #include <type_traits>
 #include <vector>
 
@@ -71,16 +69,18 @@ namespace seqan3 {
  * operators [] and at(). This way an aligned sequence can be initialized or
  * assigned to any sequence of alphabet and/or gap symbols.}
  *
- * An aligned sequence is internally represented by a bit_vector
+ * The gap information of an aligned sequence is internally stored in a bit_vector
  * set to one whenever an aligned position corresponds to a gap. The ungapped
- * sequence making up the 0s in the bit vector is stored sequentially in a vector.
- * We use a rank and a select function on the bit vector to map from the gapped
- * sequence space to the ungapped sequence space and vice versa.
+ * sequence making up the 0s in the bit vector is stored 'compressed' in a
+ * std::vector.
+ * We use rank and a select functions of the sdsl to map from the gapped
+ * sequence space to the ungapped space and vice versa.
  * \par Example
- * '---AT--ATC-GT' is stored as a bit vector '1110011000100' and a compressed
- * sequence 'ATATCGT'.
+ * '---AT--ATC-GT' is represensed by the bit vector '1110011000100' and the
+ * compressed sequence 'ATATCGT'.
  */
 
+//!\brief Random access operator concept.
  template <typename type>
  concept bool random_access_concept = requires (type val)
  {
@@ -274,7 +274,7 @@ public:
     }
 
     //!\brief Return gapped sequence length.
-    size_type size() const
+    size_type size() const noexcept
     {
         return gap_vector.size();
     }
@@ -289,10 +289,10 @@ public:
         return std::min<size_type>(sequence.max_size(), gap_vector.max_size());
     }
 
-    //!\brief An aligned sequence is empty if it contains no alphabet letters.
+    //!\brief An aligned sequence is empty if it contains no alphabet letters or gaps.
     bool empty() const
     {
-        return sequence.empty();
+        return sequence.empty() && gap_vector.size() == 0;
     }
     //!\}
 
@@ -318,7 +318,7 @@ public:
     }
 
     //!\brief Assignment via gapped alphabet sequence.
-    void assign(inner_type sequence_)
+    void assign(inner_type const sequence_)
     {
         sequence.resize(0);
         gap_vector = sdsl::bit_vector(sequence_.size(), 0);
@@ -347,7 +347,7 @@ public:
     }
 
     //!\brief Assign by value repeated 'size' times.
-    void assign(size_type size, value_type value)
+    void assign(size_type const size, value_type const value)
     {
         if (value == seqan3::gap::GAP){
             gap_vector = sdsl::bit_vector(size, 1);
@@ -370,7 +370,7 @@ public:
     * Elements right of the newly inserted elemented are shifted right. The
     * returned iterator points to the position of the insertion.
     */
-    iterator insert(iterator it, const value_type & value)
+    iterator insert(iterator it, value_type const & value)
     {
         return insert(it, 1, value);
     }
@@ -387,7 +387,7 @@ public:
     * The returned iterator points to the position of the left-most inserted
     * element.
     */
-    iterator insert(iterator it, size_type size, const value_type & value)
+    iterator insert(iterator it, size_type size, value_type const & value)
     {
         size_type pos = static_cast<size_type>(it - detail::random_access_iterator<aligned_sequence_t>());
         assert(insert(pos, size, value));
@@ -398,7 +398,7 @@ public:
     *
     * Return false if given position exceeds the current size by one.
     */
-    bool insert(size_type pos, size_type size, const value_type & value)
+    bool insert(size_type const pos, size_type const size, value_type const & value)
     {
         if (pos > this->size())
             return false;
@@ -478,7 +478,7 @@ public:
     }
 
     //!\brief Append an alphabet or gap symbol to the aligned sequence.
-    void push_back(value_type symbol)
+    void push_back(value_type const symbol)
     {
         assert(max_size() >= size() + 1);
         gap_vector.resize(size() + 1);
@@ -505,14 +505,14 @@ public:
     }
 
     //!\brief Return first symbol of aligned sequence.
-    value_type front()
+    value_type front() const
     {
         assert(size() > 0u);
         return (*this)[0];
     }
 
     //!\brief Return last symbol of aligned sequence.
-    value_type back()
+    value_type back() const
     {
         assert(size() > 0u);
         return (*this)[size()-1];
@@ -645,6 +645,7 @@ public:
 private:
     //!\privatesection
     //!\brief Where the gap symbol is stored.
+    //!\hideinitializer
     constexpr value_type static const gap_symbol = value_type(gap::GAP);
     /*!\brief Gap presentation of the aligned sequence (1: gap, 0: alphabet letter).
     *
@@ -658,11 +659,13 @@ private:
     * to the number of gaps in the aligned sequence. Rank queries are answered in
     * constant time.
     */
+    //!\hideinitializer
     sdsl::rank_support_v5<1,1> rs = sdsl::rank_support_v5<1,1>(&gap_vector);
     /*!\brief Select support structure for projection into gap space.
     *
     * Select i returns the gap vector position of the i-th zero in constant time.
     */
+    //!\hideinitializer
     sdsl::select_support_mcl<0,1> ss = sdsl::select_support_mcl<0,1>(&gap_vector);
     /*!\brief Where the ungapped sequence is stored.
     *
@@ -671,9 +674,9 @@ private:
     * gap symbol. The reason behind is to avoid plenty of castings when assigning
     * or querying for aligned sequence positions.
     */
+    // TODO: maybe std::string for storage more efficient?
     std::vector<value_type> sequence{};
 };
-
 
 // global swap { swap(val, val2) } -> void;, TODO: lhs and rhs same inner_type?
 template <typename inner_type, char gap_symbol = '_'>
@@ -682,9 +685,4 @@ void swap (aligned_sequence_adaptor_constant_access<inner_type> & lhs, aligned_s
     lhs.swap(rhs);
 }
 
-
 } // namespace seqan3
-
-//static_assert(seqan3::container_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::gapped_alphabet<seqan3::dna4>>>>);
-//static_assert(seqan3::sequence_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
-//static_assert(seqan3::random_access_sequence_concept<seqan3::aligned_sequence_adaptor_constant_access<std::vector<seqan3::dna4>>>);
