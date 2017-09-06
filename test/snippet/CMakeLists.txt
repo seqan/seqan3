@@ -74,3 +74,5 @@ foreach(snippet ${snippets})
 
     seqan3_snippet("${target_cpp}" "${snippet_full_path}")
 endforeach()
+
+target_compile_options(default_simd_max_length_snippet PRIVATE -msse4)
