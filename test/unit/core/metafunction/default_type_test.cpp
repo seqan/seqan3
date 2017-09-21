@@ -32,21 +32,36 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Provides various metafunctions.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
+#include <gtest/gtest.h>
 
-#pragma once
-
-#include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/default_type.hpp>
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
 
-/*!\defgroup metafunction Metafunction
- * \brief Provide various metafunctions.
- * \ingroup core
- */
+using namespace seqan3;
+
+struct A
+{
+    using type = int;
+};
+
+struct B;
+
+struct C
+{};
+
+struct D
+{
+    static constexpr int type = 6;
+};
+
+TEST(default_type, default_type)
+{
+    using a_type = detail::default_type_t<A, void>;
+    using b_default_type = detail::default_type_t<B, void>;
+    using c_default_type = detail::default_type_t<C, double>;
+    using d_default_type = detail::default_type<D, B>::type;
+
+    EXPECT_TRUE((std::is_same_v<a_type, int>));
+    EXPECT_TRUE((std::is_same_v<b_default_type, void>));
+    EXPECT_TRUE((std::is_same_v<c_default_type, double>));
+    EXPECT_TRUE((std::is_same_v<d_default_type, B>));
+}

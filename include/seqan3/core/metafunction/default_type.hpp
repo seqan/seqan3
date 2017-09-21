@@ -33,20 +33,47 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides various metafunctions.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \brief Provides seqan3::detail::default_type.
  */
 
 #pragma once
 
-#include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/default_type.hpp>
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <type_traits>
 
-/*!\defgroup metafunction Metafunction
- * \brief Provide various metafunctions.
- * \ingroup core
+#include <meta/meta.hpp>
+
+namespace seqan3::detail
+{
+
+/*!\brief This gives a fallback type if *type_t::type* is not defined.
+ * \ingroup metafunction
+ * \tparam type_t    The type to use if *type_t::type* is defined.
+ * \tparam default_t The type to use otherwise.
+ *
+ * \details
+ *
+ * Gives *type_t* back if *T::type* is a member type, otherwise *struct{using type = default_t}*.
+ *
+ * \include test/snippet/core/metafunction/default_type.cpp
+ *
+ * \attention This might get removed if one of our used libraries offers the same
+ * functionality.
+ *
+ * \par Helper types
+ *   seqan3::detail::default_type_t as a shorthand for *seqan3::detail::default_type::type*
  */
+template <typename type_t, typename default_t>
+using default_type = std::conditional_t<meta::is_trait<type_t>::value,  // check if type_t::type exists
+                                        type_t, // if yes, return type_t
+                                        // otherwise return struct{using type = default_t};
+                                        std::enable_if<true, default_t>>;
+
+/*!\brief Helper type of seqan3::detail::default_type
+ * \ingroup metafunction
+ * \relates default_type
+ */
+template <typename type_t, typename default_t>
+using default_type_t = typename default_type<type_t, default_t>::type;
+
+} // namespace seqan3::detail
