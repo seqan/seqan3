@@ -275,15 +275,15 @@ namespace seqan3::literal
  *
  *```.cpp
  *     using namespace seqan3::literal;
- *     std::vector<dot_bracket3> foo{".(..)."_dot_bracket3};
- *     std::vector<dot_bracket3> bar = ".(..)."_dot_bracket3;
- *     auto bax = ".(..)."_dot_bracket3;
+ *     std::vector<dot_bracket3> foo{".(..)."_db3};
+ *     std::vector<dot_bracket3> bar = ".(..)."_db3;
+ *     auto bax = ".(..)."_db3;
  *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::vector<dot_bracket3> operator "" _dot_bracket3(const char * str, std::size_t len)
+inline std::vector<dot_bracket3> operator "" _db3(const char * str, std::size_t len)
 {
     std::vector<dot_bracket3> vec;
     vec.resize(len);
@@ -303,15 +303,15 @@ inline std::vector<dot_bracket3> operator "" _dot_bracket3(const char * str, std
  *```.cpp
  *     using namespace seqan3::literal;
  *     using string_t = std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>>;
- *     string_t foo{".(..)."_dot_bracket3s};
- *     string_t bar = ".(..)."_dot_bracket3s;
- *     auto bax = ".(..)."_dot_bracket3s;
+ *     string_t foo{".(..)."_db3s};
+ *     string_t bar = ".(..)."_db3s;
+ *     auto bax = ".(..)."_db3s;
  *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> operator "" _dot_bracket3s(const char * str,
+inline std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> operator "" _db3s(const char * str,
                                                                                                   std::size_t len)
 {
     std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> db3str;

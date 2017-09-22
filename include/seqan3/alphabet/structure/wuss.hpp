@@ -98,37 +98,37 @@ struct wuss
      */
     //!\{
 
-    //! `.` not paired (insertion to known structure)
+    //!\brief `.` not paired (insertion to known structure)
     static const wuss UNPAIRED;
-    //! `<` bracket left (simple terminal stem)
+    //!\brief `<` bracket left (simple terminal stem)
     static const wuss PAIR_OPEN;
-    //! `>` bracket right (simple terminal stem)
+    //!\brief `>` bracket right (simple terminal stem)
     static const wuss PAIR_CLOSE;
 
-    //! `:` not paired (external residue outside structure)
+    //!\brief `:` not paired (external residue outside structure)
     static const wuss UNPAIRED1;
-    //! `,` not paired (multifurcation loop)
+    //!\brief `,` not paired (multifurcation loop)
     static const wuss UNPAIRED2;
-    //! `-` not paired (bulge, interior loop)
+    //!\brief `-` not paired (bulge, interior loop)
     static const wuss UNPAIRED3;
-    //! `_` not paired (hairpin loop)
+    //!\brief `_` not paired (hairpin loop)
     static const wuss UNPAIRED4;
-    //! `~` not paired (due to local alignment)
+    //!\brief `~` not paired (due to local alignment)
     static const wuss UNPAIRED5;
-    //! `;` not paired
+    //!\brief `;` not paired
     static const wuss UNPAIRED6;
 
-    //! `(` bracket left (internal helix enclosing `<>`)
+    //!\brief `(` bracket left (internal helix enclosing `<>`)
     static const wuss PAIR_OPEN1;
-    //! `)` bracket right (internal helix enclosing `<>`)
+    //!\brief `)` bracket right (internal helix enclosing `<>`)
     static const wuss PAIR_CLOSE1;
-    //! `[` bracket left (internal helix enclosing `()`)
+    //!\brief `[` bracket left (internal helix enclosing `()`)
     static const wuss PAIR_OPEN2;
-    //! `]` bracket right (internal helix enclosing `()`)
+    //!\brief `]` bracket right (internal helix enclosing `()`)
     static const wuss PAIR_CLOSE2;
-    //! `{` bracket left (internal helix enclosing `[]`)
+    //!\brief `{` bracket left (internal helix enclosing `[]`)
     static const wuss PAIR_OPEN3;
-    //! `}` bracket right (internal helix enclosing `[]`)
+    //!\brief `}` bracket right (internal helix enclosing `[]`)
     static const wuss PAIR_CLOSE3;
     // pseudoknots not accessible
     //!\}
@@ -368,7 +368,7 @@ constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{internal_type::PAIR_OPEN3};
 template <uint8_t SIZE>
 constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE3{internal_type::PAIR_CLOSE3};
 
-//!Alias for the default type wuss51.
+//!\brief Alias for the default type wuss51.
 typedef wuss<51> wuss51;
 
 } // namespace seqan3
@@ -393,15 +393,15 @@ namespace seqan3::literal
  *
  *```.cpp
  *     using namespace seqan3::literal;
- *     std::vector<wuss<>> foo{".<..>."_wuss};
- *     std::vector<wuss<>> bar = ".<..>."_wuss;
- *     auto bax = ".<..>."_wuss;
+ *     std::vector<wuss<>> foo{".<..>."_wuss51};
+ *     std::vector<wuss<>> bar = ".<..>."_wuss51;
+ *     auto bax = ".<..>."_wuss51;
  *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::vector<wuss51> operator "" _wuss(const char * str, std::size_t len)
+inline std::vector<wuss51> operator "" _wuss51(const char * str, std::size_t len)
 {
     std::vector<wuss51> vec;
     vec.resize(len);
@@ -421,15 +421,15 @@ inline std::vector<wuss51> operator "" _wuss(const char * str, std::size_t len)
  *```.cpp
  *     using namespace seqan3::literal;
  *     using string_t = std::basic_string<wuss51, std::char_traits<wuss51>>;
- *     string_t foo{".<..>."_wusss};
- *     string_t bar = ".<..>."_wusss;
- *     auto bax = ".<..>."_wusss;
+ *     string_t foo{".<..>."_wuss51s};
+ *     string_t bar = ".<..>."_wuss51s;
+ *     auto bax = ".<..>."_wuss51s;
  *```
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::basic_string<wuss51, std::char_traits<wuss51>> operator "" _wusss(const char * str, std::size_t len)
+inline std::basic_string<wuss51, std::char_traits<wuss51>> operator "" _wuss51s(const char * str, std::size_t len)
 {
     std::basic_string<wuss51, std::char_traits<wuss51>> wuss51str;
     wuss51str.resize(len);

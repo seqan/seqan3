@@ -88,13 +88,13 @@ TYPED_TEST(structure, assign_char)
             t::UNPAIRED, t::PAIR_OPEN1, t::PAIR_CLOSE1,
             t::UNPAIRED1, t::UNPAIRED2, t::UNPAIRED3, t::UNPAIRED4, t::UNPAIRED5, t::UNPAIRED6,
             t::PAIR_OPEN, t::PAIR_CLOSE, t::PAIR_OPEN2, t::PAIR_CLOSE2, t::PAIR_OPEN3, t::PAIR_CLOSE3,
-            "H"_wuss.front(),
-            "B"_wuss.front(),
-            "E"_wuss.front(),
-            "G"_wuss.front(),
-            "I"_wuss.front(),
-            "T"_wuss.front(),
-            "S"_wuss.front()
+            "H"_wuss51.front(),
+            "B"_wuss51.front(),
+            "E"_wuss51.front(),
+            "G"_wuss51.front(),
+            "I"_wuss51.front(),
+            "T"_wuss51.front(),
+            "S"_wuss51.front()
         };
     }
     else if constexpr (std::is_same_v<TypeParam, dssp9>)
@@ -203,11 +203,11 @@ TEST(dot_bracket3_literals, vector)
 {
     std::vector<dot_bracket3> vec1;
     vec1.resize(5, dot_bracket3::PAIR_OPEN);
-    EXPECT_EQ(vec1, "((((("_dot_bracket3);
+    EXPECT_EQ(vec1, "((((("_db3);
 
     std::vector<dot_bracket3> vec2{dot_bracket3::UNPAIRED, dot_bracket3::PAIR_OPEN, dot_bracket3::PAIR_OPEN,
                                    dot_bracket3::PAIR_CLOSE, dot_bracket3::PAIR_CLOSE, dot_bracket3::UNKNOWN};
-    EXPECT_EQ(vec2, ".(())."_dot_bracket3);
+    EXPECT_EQ(vec2, ".(())."_db3);
 }
 
 TEST(dot_bracket3_literals, basic_string)
@@ -215,22 +215,22 @@ TEST(dot_bracket3_literals, basic_string)
     using string_t = std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>>;
     string_t str1;
     str1.resize(5, dot_bracket3::PAIR_CLOSE);
-    EXPECT_EQ(str1, ")))))"_dot_bracket3s);
+    EXPECT_EQ(str1, ")))))"_db3s);
 
     string_t str2{dot_bracket3::PAIR_OPEN, dot_bracket3::UNPAIRED, dot_bracket3::PAIR_CLOSE,
                   dot_bracket3::PAIR_OPEN, dot_bracket3::PAIR_CLOSE, dot_bracket3::UNKNOWN};
-    EXPECT_EQ(str2, "(.)()."_dot_bracket3s);
+    EXPECT_EQ(str2, "(.)()."_db3s);
 }
 
 TEST(wuss_literals, vector)
 {
     std::vector<wuss51> vec1;
     vec1.resize(5, wuss51::PAIR_OPEN);
-    EXPECT_EQ(vec1, "<<<<<"_wuss);
+    EXPECT_EQ(vec1, "<<<<<"_wuss51);
 
     std::vector<wuss51> vec2{wuss51::UNPAIRED, wuss51::PAIR_OPEN, wuss51::PAIR_OPEN,
                              wuss51::PAIR_CLOSE, wuss51::PAIR_CLOSE, wuss51::UNPAIRED};
-    EXPECT_EQ(vec2, ".<<>>."_wuss);
+    EXPECT_EQ(vec2, ".<<>>."_wuss51);
 }
 
 TEST(wuss_literals, basic_string)
@@ -238,11 +238,11 @@ TEST(wuss_literals, basic_string)
     using string_t = std::basic_string<wuss51, std::char_traits<wuss51>>;
     string_t str1;
     str1.resize(5, wuss51::PAIR_CLOSE);
-    EXPECT_EQ(str1, ">>>>>"_wusss);
+    EXPECT_EQ(str1, ">>>>>"_wuss51s);
 
     string_t str2{wuss51::PAIR_OPEN, wuss51::UNPAIRED, wuss51::PAIR_CLOSE,
                   wuss51::PAIR_OPEN, wuss51::PAIR_CLOSE, wuss51::UNPAIRED};
-    EXPECT_EQ(str2, "<.><>."_wusss);
+    EXPECT_EQ(str2, "<.><>."_wuss51s);
 }
 
 TEST(dssp9_literals, vector)
@@ -282,7 +282,7 @@ TEST(rna_structure, dot_bracket3)
 TEST(rna_structure, wuss)
 {
     EXPECT_TRUE(wuss51::pseudoknot_support);
-    std::vector<wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss;
+    std::vector<wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss51;
     for (unsigned idx = 0; idx <= 6; ++idx)
     {
         EXPECT_TRUE(vec[idx].is_unpaired());
@@ -587,25 +587,6 @@ TEST(structured_rna, outstream)
     EXPECT_EQ(s.str(), "CA");
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ------------------------------------------------------------------
 // composition aminoacid x protein structure
 // ------------------------------------------------------------------
@@ -702,7 +683,7 @@ TEST(structured_aa, get_i)
     static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), dssp9 &>);
 
     EXPECT_EQ(seqan3::get<0>(t0), aa27::C);
-    EXPECT_EQ(seqan3::get<1>(t0), dssp9{dssp9::E});
+    EXPECT_EQ(seqan3::get<1>(t0), dssp9::E);
 }
 
 // std::get<1>
@@ -714,7 +695,7 @@ TEST(structured_aa, stdget_i)
     static_assert(std::is_same_v<decltype(std::get<1>(t0)), dssp9 &>);
 
     EXPECT_EQ(std::get<0>(t0), aa27::C);
-    EXPECT_EQ(std::get<1>(t0), dssp9{dssp9::G});
+    EXPECT_EQ(std::get<1>(t0), dssp9::G);
 }
 
 // structured_aa bindings
@@ -727,7 +708,7 @@ TEST(structured_aa, struct_binding)
     static_assert(std::is_same_v<decltype(l), dssp9>);
 
     EXPECT_EQ(i, aa27::C);
-    EXPECT_EQ(l, dssp9{dssp9::G});
+    EXPECT_EQ(l, dssp9::G);
 }
 
 // seqan3::get<type>
@@ -736,7 +717,7 @@ TEST(structured_aa, get_type)
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
 
     EXPECT_EQ(seqan3::get<aa27>(t0), aa27::C);
-    EXPECT_EQ(seqan3::get<dssp9>(t0), dssp9{dssp9::G});
+    EXPECT_EQ(seqan3::get<dssp9>(t0), dssp9::G);
 }
 
 // std::get<type>
@@ -745,7 +726,7 @@ TEST(structured_aa, stdget_type)
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
 
     EXPECT_EQ(std::get<aa27>(t0), aa27::C);
-    EXPECT_EQ(std::get<dssp9>(t0), dssp9{dssp9::G});
+    EXPECT_EQ(std::get<dssp9>(t0), dssp9::G);
 }
 
 // std::tuple_element
@@ -761,7 +742,7 @@ TEST(structured_aa, tuple_element)
 // type deduction
 TEST(structured_aa, type_deduce)
 {
-    structured_aa t0{aa27::C, dssp9{dssp9::G}};
+    structured_aa t0{aa27::C, dssp9::G};
     using pt = decltype(t0);
 
     static_assert(std::is_same_v<std::tuple_element_t<0, pt>, aa27>);
@@ -780,7 +761,7 @@ TEST(structured_aa, cast_to_element)
     static_assert(std::is_same_v<decltype(q), dssp9>);
 
     EXPECT_EQ(d, aa27::C);
-    EXPECT_EQ(q, dssp9{dssp9::G});
+    EXPECT_EQ(q, dssp9::G);
 }
 
 // comparison operators

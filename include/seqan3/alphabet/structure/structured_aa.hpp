@@ -91,7 +91,7 @@ namespace seqan3
  */
 
 template <typename sequence_alphabet_t = aa27, typename structure_alphabet_t = dssp9>
-requires alphabet_concept<sequence_alphabet_t> && alphabet_concept<structure_alphabet_t>
+    requires alphabet_concept<sequence_alphabet_t> && alphabet_concept<structure_alphabet_t>
 struct structured_aa :
     public cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
@@ -103,8 +103,6 @@ struct structured_aa :
 
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
-    //!\brief Equals the char_type of the structure_alphabet_type.
-    using str_char_type = underlying_char_t<structure_alphabet_type>;
 
     /*!\name Write functions
      * \{
@@ -129,24 +127,11 @@ struct structured_aa :
         seqan3::assign_char(get<0>(*this), c);
         return *this;
     }
-
-    //!\brief Assign from a structure character. This modifies the internal structure letter.
-    constexpr structured_aa & assign_structure(str_char_type const c)
-    {
-        seqan3::assign_char(get<1>(*this), c);
-        return *this;
-    }
     //!\}
 
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the structure character. This reads the internal structure letter.
-    constexpr str_char_type to_structure() const noexcept
-    {
-        return seqan3::to_char(get<1>(*this));
-    }
-
     //!\brief Return a character. This reads the internal sequence letter.
     constexpr char_type to_char() const noexcept
     {

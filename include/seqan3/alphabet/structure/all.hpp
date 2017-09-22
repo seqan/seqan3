@@ -40,7 +40,7 @@
  * \defgroup structure Structure
  * \ingroup alphabet
  * \brief The structure module contains alphabets for RNA and protein structure.
- * \details The following alphabets are currently supported in SeqAn. Please see a format's page for more details.
+ * \details The following alphabets are currently supported in SeqAn. Please see the format's page for more details.
  *
  * Name                                     | Characters               | Description
  * ---------------------------------------- | ------------------------ | -----------
