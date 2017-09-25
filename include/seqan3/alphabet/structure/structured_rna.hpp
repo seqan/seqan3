@@ -136,6 +136,24 @@ struct structured_rna :
     {
         return seqan3::to_char(get<0>(*this));
     }
+
+    /*!\brief Return a structured_rna where the sequence letter is converted to its complement.
+     * \details
+     * See \ref nucleotide for the actual values.
+     * Satisfies the seqan3::nucleotide_concept::complement() requirement via the seqan3::complement() wrapper.
+     * The structure letter is not modified.
+     * \par Complexity
+     * Constant.
+     * \par Exceptions
+     * Guaranteed not to throw.
+     */
+    constexpr structured_rna complement() const noexcept
+    {
+        //structured_rna res(*this); // copy construct new object
+        //res = get<0>(res).complement(); // assign the complement of sequence character
+        //return res;
+        return structured_rna{get<0>(*this).complement(), get<1>(*this)};
+    }
     //!\}
 
     /*!\name RNA structure properties
@@ -168,16 +186,6 @@ structured_rna(sequence_alphabet_type &&, structure_alphabet_type &&)
     -> structured_rna<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
 
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-//!\brief Since seqan3::structured_rna wraps a nucleotide alphabet it is also one.
-template <typename sequence_alphabet_type, typename structure_alphabet_type>
-struct is_nucleotide<structured_rna<sequence_alphabet_type, structure_alphabet_type>> : public std::true_type
-{};
-
-} // namespace seqan3::detail
 
 #ifndef NDEBUG
 #include <seqan3/alphabet/nucleotide/rna5.hpp>

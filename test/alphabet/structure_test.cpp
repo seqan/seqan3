@@ -587,6 +587,35 @@ TEST(structured_rna, outstream)
     EXPECT_EQ(s.str(), "CA");
 }
 
+// nucleotide concept: complement
+TEST(structured_rna, complement)
+{
+    using type = structured_rna<rna5, dot_bracket3>;
+    type tU{rna5::U, dot_bracket3::PAIR_OPEN};
+    type tG{rna5::G, dot_bracket3::PAIR_OPEN};
+    type tC{rna5::C, dot_bracket3::PAIR_OPEN};
+    type tA{rna5::A, dot_bracket3::PAIR_OPEN};
+    type tN{rna5::N, dot_bracket3::PAIR_OPEN};
+    type tt{rna5::A, dot_bracket3::PAIR_CLOSE};
+
+    // check whether characters are converted correctly
+    EXPECT_EQ(to_char(complement(tU)), 'A');
+    EXPECT_EQ(to_char(complement(tG)), 'C');
+    EXPECT_EQ(to_char(complement(tC)), 'G');
+    EXPECT_EQ(to_char(complement(tA)), 'U');
+    EXPECT_EQ(to_char(complement(tN)), 'N');
+
+    // check whether structure character is not modified
+    EXPECT_EQ(complement(tU), tA);
+    EXPECT_EQ(complement(tG), tC);
+    EXPECT_EQ(complement(tN), tN);
+    EXPECT_NE(complement(tU), tt);
+
+    // complement combinations
+    EXPECT_EQ(complement(complement(tU)), tU);
+    EXPECT_EQ(complement(tU), complement(tU));
+}
+
 // ------------------------------------------------------------------
 // composition aminoacid x protein structure
 // ------------------------------------------------------------------
