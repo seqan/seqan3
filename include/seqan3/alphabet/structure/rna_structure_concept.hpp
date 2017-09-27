@@ -58,13 +58,16 @@ namespace seqan3
 template <typename type>
 concept bool rna_structure_concept = requires(type val)
 {
-    //! requires fulfillment of alphabet concept
+    // requires fulfillment of alphabet concept
     requires alphabet_concept<type>;
 
-    { val.is_pair_open() };
-    { val.is_pair_close() };
-    { val.is_unpaired() };
-    type::pseudoknot_support;
+    // these are delegated to member functions, see file ../detail/member_exposure.hpp
+    { is_pair_open(val) } -> bool;
+    { is_pair_close(val) } -> bool;
+    { is_unpaired(val) } -> bool;
+
+    // this is delegated to a static class variable
+    { pseudoknot_support(val) } -> bool;
 };
 
 } // namespace seqan3
