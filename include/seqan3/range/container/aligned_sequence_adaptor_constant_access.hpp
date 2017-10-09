@@ -161,9 +161,9 @@ public:
     /*!\name Constructors of sequence concept.
     * \{
     */
-    //!\brief Construct by single value repeated 'size' times.
-    constexpr aligned_sequence_adaptor_constant_access(inner_type & sequence) : data{new data_t{&sequence}} {};
-//    constexpr random_access_iterator(container_type & host, position_type const pos) noexcept : host{&host}, pos{pos} {}
+    //!\brief Construct by single value repeated 'size' times
+    //shared_ptr<data_t>
+    constexpr aligned_sequence_adaptor_constant_access(inner_type & sequence): data{new data_t{sequence}} {};
 
     //!\}
 
@@ -189,15 +189,31 @@ public:
     /*!\brief Equality operator for aligned sequences.
     *
     * Two aligned sequences are the same if their literal sequences and gap
-    * positions are the same.
+    * positions are the same. Note there is no operator== in sdsl-lite and the one
+    * in the sdsl master branch compares only addresses, but we are interested in
+    * the content. This implementation has best case runtime O(1) and worst-case
+    * O(r+s+m) where r,s are the initialization costs of sdsl::rank_support_sd,
+    * and sdsl::select_support_sd, and m the number of 1 bits.
     */
-    bool operator==(aligned_sequence_t const & rhs) const
+    bool operator==(aligned_sequence_t & rhs)
     {
-        return data->sequence == rhs.data->sequence && data->gap_vector == rhs.data->gap_vector;
+        if (data->sequence != rhs.data->sequence || this->size() != rhs.size())
+            return false;
+        if (data->dirty)
+            update_support_structures();
+        if (rhs.data->dirty)
+            rhs.update_support_structures();
+        if (data->rank_support.rank(this->size()) != rhs.data->rank_support.rank(rhs.size()))
+            return false;
+        size_type m = data->rank_support.rank(this->size());
+        for (size_type i = 1; i < m; ++i)
+            if (data->select_support.select(i) != rhs.data->select_support.select(i))
+                return false;
+        return true;
     }
 
     //!\brief Unequality operator for aligned sequences.
-    bool operator!=(aligned_sequence_t const & rhs) const
+    bool operator!=(aligned_sequence_t & rhs)
     {
         return !(*this == rhs);
     }
@@ -263,21 +279,25 @@ public:
         if (pos > this->size())
             return false;
         difference_type i, j = static_cast<difference_type>(pos);
-        bit_vector_t gap_vector_new = bit_vector_t(sdsl::bit_vector(this->size() + size, 0));
+        if (data->dirty)
+            update_support_structures();
+        sdsl::sd_vector_builder builder = sdsl::sd_vector_builder(this->size() + size, data->rank_support.rank(this->size()) + size);
+        //bit_vector_t gap_vector_new = bit_vector_t(sdsl::bit_vector(this->size() + size, 0));
+
         // copy prefix
         for (i = 0; i < pos; ++i)
             if (data->gap_vector[i])
-                gap_vector_new.set(i);
+                builder.set(i);
 
         // insert gap
         for (i = pos; i < pos+size; ++i)
-            gap_vector_new.set(i);
+            builder.set(i);
         // shift suffix, note that we need i to be a signed integer for the case
         // that the aligned sequence was empty
         for (i = this->size() - size - 1; i >= j; --i)
             if (data->gap_vector[i])
-                gap_vector_new.set(i+size);
-        data->gap_vector = gap_vector_new;
+                builder.set(i+size);
+        data->gap_vector = sdsl::sd_vector(builder);
         // TODO: delete old one?
         data->dirty = true;
         return true;
@@ -302,16 +322,16 @@ public:
         if (pos >= size() || !data->gap_vector[pos])
             return false;
         // init with new size and number of 1 bits
-        sd_vector_builder sd_builder{this->size()-1, data->rank_support.rank(this->size()-1)};
+        sdsl::sd_vector_builder builder{this->size()-1, data->rank_support.rank(this->size()-1)};
         // copy prefix
         for (size_type i = 0; i < pos; ++i)
             if (data->gap_vector[i])
-                sd_builder.set(i);
+                builder.set(i);
         // shift suffix left by one and thereby erasing i-th bit
         for (size_type i = pos; i < size()-1; ++i)
             if (data->gap_vector[i+1])
-                sd_builder.set(i);
-        data->gap_vector = bit_vector_t{sd_builder};
+                builder.set(i);
+        data->gap_vector = bit_vector_t{builder};
         data->dirty = true;
         return true;
     }
@@ -324,18 +344,18 @@ public:
         if (data->dirty)
             update_support_structures();
         // number of deleted gaps
-        size_type offset = data->select_support.rank(pos2) - data->select_support.rank(pos1);
+        size_type offset = data->rank_support.rank(pos2) - data->rank_support.rank(pos1);
 
-        sd_vector_builder sd_builder{this->size() - offset, data->rank_support.rank(this->size()) - offset};
+        sdsl::sd_vector_builder builder{this->size() - offset, data->rank_support.rank(this->size()) - offset};
         // copy prefix
         for (size_type i = 0; i < pos1; ++i)
             if (data->gap_vector[i])
-                sd_builder.set(i);
+                builder.set(i);
         // shift suffix at it2 by the size_type offset it2-it1
         for (size_type i = pos1; i < this->size()-offset; ++i)
             if (data->gap_vector[i + offset])
-                sd_builder.set(i);
-        data->gap_vector = bit_vector_t{sd_builder};
+                builder.set(i);
+        data->gap_vector = bit_vector_t{builder};
         data->dirty = true;
         return true;
     }
@@ -352,11 +372,20 @@ public:
     }
 
     //!\brief Append gap symbol to the aligned sequence.
+    // Note: there is no resize for sd_vector, it has to be Re-initialized with
+    // sd_vector_builder.
     void push_back()
     {
         assert(max_size() >= size() + 1);
-        data->gap_vector.resize(size() + 1);
-        data->gap_vector[size() - 1] = 1;
+        //data->gap_vector.resize(this->size() + 1);
+        if (data->dirty)
+            update_support_structures();
+        size_type m = data->rank_support.rank(this->size());
+        sdsl::sd_vector_builder builder(this->size() + 1, m + 1);
+        for (size_type i = 1; i < m; ++i)
+            builder.set(data->select_support.select(i));
+        builder.set(this->size());  // set last bit to 1
+        data->gap_vector = bit_vector_t(builder);
         data->dirty = true;
     }
 
@@ -366,6 +395,7 @@ public:
         assert(this->size() > 0);
         if (!data->gap_vector[size() - 1])
             return false;
+        // TODO: use builder
         data->gap_vector.resize(this->size() - 1);
         return true;
     }
