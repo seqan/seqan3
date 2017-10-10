@@ -221,6 +221,42 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
 //!\}
 
+// ------------------------------------------------------------------
+// seqan3::rna_structure_concept
+// ------------------------------------------------------------------
+
+/*!\name Requirements for seqan3::rna_structure_concept
+ * \brief You can expect these functions on all types that implement seqan3::rna_structure_concept.
+ * \{
+ */
+/*!\brief Metafunction that indicates whether an alphabet can handle pseudoknots. [value metafunction base template]
+ * \tparam alphabet_type Must satisfy seqan3::rna_structure_concept.
+ * \relates seqan3::rna_structure_concept
+ *
+ * Instead of calling seqan3::pseudoknot_support<alphabet_type>::value, you may use
+ * seqan3::pseudoknot_support_v<alphabet_type>.
+ *
+ * This is the expression to retrieve the value:
+ * ```cpp
+ * bool has_pk_support = seqan3::pseudoknot_support<alphabet_type>::value;
+ * // or
+ * bool has_pk_support = seqan3::pseudoknot_support_v<alphabet_type>;
+ * ```
+ *
+ * \attention This is the base template, it needs to be specialised.
+ */
+template<typename alphabet_type>
+struct pseudoknot_support{};
+
+/*!\brief The pseudoknot ability of the alphabet. [alphabet_type metafunction shortcut]
+ * \relates seqan3::rna_structure_concept
+ *
+ * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
+ */
+template<typename alphabet_type>
+constexpr bool pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
+//!\}
+
 } // namespace seqan3
 
 // ------------------------------------------------------------------

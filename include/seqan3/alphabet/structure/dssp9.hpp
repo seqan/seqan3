@@ -109,10 +109,10 @@ struct dssp9
     static const dssp9 X;
     //!\}
 
-    /*!\name Read functions
-     * \{
-     *
-     * \brief Get the letter as a character of char_type.
+    //!\name Read functions
+    //!\{
+
+    /*!\brief Get the letter as a character of char_type.
      * \returns The character representation of this dssp9 letter.
      */
     constexpr char_type to_char() const noexcept
@@ -129,10 +129,10 @@ struct dssp9
     }
     //!\}
 
-    /*!\name Write functions
-     * \{
-     *
-     * \brief Assign from a character.
+    //!\name Write functions
+    //!\{
+
+    /*!\brief Assign from a character.
      * \param chr The character that is assigned.
      * \returns The resulting dssp9 character.
      */

@@ -54,6 +54,7 @@ namespace seqan3
 {
 
 /*!\brief The three letter RNA structure alphabet of the characters ".()".
+ * \implements seqan3::rna_structure_concept
  * \ingroup structure
  *
  * \details
@@ -95,10 +96,10 @@ struct dot_bracket3
     static const dot_bracket3 UNKNOWN;
     //!\}
 
-    /*!\name Read functions
-     * \{
-     *
-     * \brief Get the letter as a character of char_type.
+    //!\name Read functions
+    //!\{
+
+    /*!\brief Get the letter as a character of char_type.
      * \returns The character representation of this dot_bracket3 letter.
      */
     constexpr char_type to_char() const noexcept
@@ -115,10 +116,10 @@ struct dot_bracket3
     }
     //!\}
 
-    /*!\name Write functions
-     * \{
-     *
-     * \brief Assign from a character.
+    //!\name Write functions
+    //!\{
+
+    /*!\brief Assign from a character.
      * \param chr The character that is assigned.
      * \returns The resulting dot_bracket3 character.
      */
@@ -178,22 +179,32 @@ struct dot_bracket3
 
     //!\name RNA structure properties
     //!\{
+
+    /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
+     * \returns True if the letter represents a rightward interaction, False otherwise.
+     */
     constexpr bool is_pair_open() const noexcept
     {
         return _value == internal_type::PAIR_OPEN;
     }
 
+    /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
+     * \returns True if the letter represents a leftward interaction, False otherwise.
+     */
     constexpr bool is_pair_close() const noexcept
     {
         return _value == internal_type::PAIR_CLOSE;
     }
 
+    /*!\brief Check whether the character represents an unpaired position in an RNA structure.
+     * \returns True if the letter represents an unpaired site, False otherwise.
+     */
     constexpr bool is_unpaired() const noexcept
     {
         return _value == internal_type::UNPAIRED;
     }
 
-    //!\brief The ability of the alphabet to represent pseudoknots, i.e. crossing interactions.
+    //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: False.
     static constexpr bool pseudoknot_support{false};
     //!\}
 

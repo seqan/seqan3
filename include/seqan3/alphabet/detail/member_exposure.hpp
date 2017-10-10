@@ -248,57 +248,63 @@ constexpr nucleotide_type complement(nucleotide_type const alph)
 /*!\name Helpers for seqan3::rna_structure_concept
  * \brief These functions and metafunctions expose member variables and types so that they satisfy
  * seqan3::rna_structure_concept.
+ * \relates seqan3::rna_structure_concept
  * \ingroup structure
- * \{
  */
+//!\{
 
 /*!\brief Implementation of seqan3::rna_structure_concept::is_pair_open() that delegates to a member function.
+ * \relates seqan3::rna_structure_concept
  * \tparam structure_type Must provide a `.is_pair_open()` member function.
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents a rightward interaction, False otherwise.
  */
 template <typename structure_type>
 constexpr bool is_pair_open(structure_type const alph)
-requires requires (structure_type alph) { { alph.is_pair_open() } -> bool; }
+    requires requires (structure_type alph) { { alph.is_pair_open() } -> bool; }
 {
     return alph.is_pair_open();
 }
 
 /*!\brief Implementation of seqan3::rna_structure_concept::is_pair_close() that delegates to a member function.
+ * \relates seqan3::rna_structure_concept
  * \tparam structure_type Must provide a `.is_pair_close()` member function.
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents a leftward interaction, False otherwise.
  */
 template <typename structure_type>
 constexpr bool is_pair_close(structure_type const alph)
-requires requires (structure_type alph) { { alph.is_pair_close() } -> bool; }
+    requires requires (structure_type alph) { { alph.is_pair_close() } -> bool; }
 {
     return alph.is_pair_close();
 }
 
 /*!\brief Implementation of seqan3::rna_structure_concept::is_unpaired() that delegates to a member function.
+ * \relates seqan3::rna_structure_concept
  * \tparam structure_type Must provide a `.is_unpaired()` member function.
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents an unpaired site, False otherwise.
  */
 template <typename structure_type>
 constexpr bool is_unpaired(structure_type const alph)
-requires requires (structure_type alph) { { alph.is_unpaired() } -> bool; }
+    requires requires (structure_type alph) { { alph.is_unpaired() } -> bool; }
 {
     return alph.is_unpaired();
 }
 
-/*!\brief Implementation of seqan3::rna_structure_concept::pseudoknot_support() that returns a static member variable.
- * \tparam structure_type Must provide a `static bool pseudoknot_support` member variable.
- * \param alph Any alphabet letter whose type is checked for the pseudoknot property.
- * \returns True if the type can represent pseudoknots, False otherwise.
+/*!\brief Specialisation of seqan3::pseudoknot_support that delegates to structure_type::pseudoknot_support.
+ * \relates seqan3::rna_structure_concept
+ * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static bool pseudoknot_support` member variable.
  */
-template <typename structure_type>
-constexpr bool pseudoknot_support(structure_type)
-requires requires (structure_type) { { structure_type::pseudoknot_support } -> bool; }
+template <typename alphabet_type_with_pseudoknot_attribute>
+//!\cond
+    requires requires (alphabet_type_with_pseudoknot_attribute)
+    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> bool; }
+//!\endcond
+struct pseudoknot_support<alphabet_type_with_pseudoknot_attribute>
 {
-    return structure_type::pseudoknot_support;
-}
+    static constexpr bool value = alphabet_type_with_pseudoknot_attribute::pseudoknot_support;
+};
 //!\}
 
 } // namespace seqan3

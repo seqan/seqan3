@@ -103,9 +103,9 @@ struct structured_rna :
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
 
-    /*!\name Write functions
-     * \{
-     */
+    //!\name Write functions
+    //!\{
+
     //!\brief Directly assign the sequence character.
     constexpr structured_rna & operator=(sequence_alphabet_type const l) noexcept
     {
@@ -128,9 +128,9 @@ struct structured_rna :
     }
     //!\}
 
-    /*!\name Read functions
-     * \{
-     */
+    //!\name Read functions
+    //!\{
+
     //!\brief Return a character. This reads the internal sequence letter.
     constexpr char_type to_char() const noexcept
     {
@@ -149,32 +149,38 @@ struct structured_rna :
      */
     constexpr structured_rna complement() const noexcept
     {
-        //structured_rna res(*this); // copy construct new object
-        //res = get<0>(res).complement(); // assign the complement of sequence character
-        //return res;
         return structured_rna{get<0>(*this).complement(), get<1>(*this)};
     }
     //!\}
 
-    /*!\name RNA structure properties
-     * \{
+    //!\name RNA structure properties
+    //!\{
+
+    /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
+     * \returns True if the letter represents a rightward interaction, False otherwise.
      */
     constexpr bool is_pair_open() const noexcept
     {
         return get<1>(*this).is_pair_open();
     };
 
+    /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
+     * \returns True if the letter represents a leftward interaction, False otherwise.
+     */
     constexpr bool is_pair_close() const noexcept
     {
         return get<1>(*this).is_pair_close();
     };
 
+    /*!\brief Check whether the character represents an unpaired position in an RNA structure.
+     * \returns True if the letter represents an unpaired site, False otherwise.
+     */
     constexpr bool is_unpaired() const noexcept
     {
         return get<1>(*this).is_unpaired();
     };
 
-    //!\brief The ability of the alphabet to represent pseudoknots, i.e. crossing interactions.
+    //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions.
     static constexpr bool pseudoknot_support{structure_alphabet_t::pseudoknot_support};
     //!\}
 };

@@ -40,6 +40,7 @@
 
 #pragma once
 
+#include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/concept.hpp>
 
 // ============================================================================
@@ -49,17 +50,42 @@
 namespace seqan3
 {
 
-/*!\brief A concept that indicates whether an alphabet represents RNA structure.
- *!\ingroup structure
- *!\details RNA structure alphabets are required to represent interactions among RNA nucleotides.
- * Therefore, each structure letter can be categorised as unpaired, opening an interaction, or closing an interaction.
- * Additionally, the ability of representing pseudoknots is a property of RNA structure types.
+/*!\interface seqan3::rna_structure_concept
+ * \brief A concept that indicates whether an alphabet represents RNA structure.
+ * \implements alphabet_concept
+ * \tparam structure_type The structure alphabet type.
+ * \ingroup structure
+ * \details RNA structure alphabets are required to represent interactions among RNA nucleotides.
+   Therefore, each structure letter can be categorised as unpaired, opening an interaction, or closing an interaction.
+   Additionally, the ability of representing pseudoknots is a property of RNA structure types.
  */
-template <typename type>
-concept bool rna_structure_concept = requires(type val)
+/*!\fn bool is_pair_open(structure_type const alph)
+ * \brief Check whether the given character represents a rightward interaction in an RNA structure.
+ * \relates seqan3::rna_structure_concept
+ * \param alph The alphabet letter which is checked for the pairing property.
+ * \returns True if the letter represents a rightward interaction, False otherwise.
+ */
+/*!\fn bool is_pair_close(structure_type const alph)
+ * \brief Check whether the given character represents a leftward interaction in an RNA structure.
+ * \relates seqan3::rna_structure_concept
+ * \param alph The alphabet letter which is checked for the pairing property.
+ * \returns True if the letter represents a leftward interaction, False otherwise.
+ */
+/*!\fn bool is_unpaired(structure_type const alph)
+ * \brief Check whether the given character represents an unpaired position in an RNA structure.
+ * \relates seqan3::rna_structure_concept
+ * \param alph The alphabet letter which is checked for the pairing property.
+ * \returns True if the letter represents an unpaired site, False otherwise.
+ */
+/*!\struct pseudoknot_support<structure_type>
+ * \brief The pseudoknot ability of the structure_type.
+ */
+//!\cond
+template <typename structure_type>
+concept bool rna_structure_concept = requires(structure_type val)
 {
     // requires fulfillment of alphabet concept
-    requires alphabet_concept<type>;
+    requires alphabet_concept<structure_type>;
 
     // these are delegated to member functions, see file ../detail/member_exposure.hpp
     { is_pair_open(val) } -> bool;
@@ -67,7 +93,8 @@ concept bool rna_structure_concept = requires(type val)
     { is_unpaired(val) } -> bool;
 
     // this is delegated to a static class variable
-    { pseudoknot_support(val) } -> bool;
+    { pseudoknot_support_v<structure_type> } -> bool;
 };
+//!\endcond
 
 } // namespace seqan3

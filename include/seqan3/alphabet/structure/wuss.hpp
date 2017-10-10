@@ -56,6 +56,7 @@ namespace seqan3
 /*!\brief The WUSS structure alphabet of the characters `.<>:,-_~;()[]{}AaBbCcDd`...
  * \tparam SIZE The alphabet size defaults to 50 and must be an odd number in range 15..67.
  *              It determines the allowed pseudoknot depth by adding characters AaBb..Zz to the alphabet.
+ * \implements seqan3::rna_structure_concept
  * \ingroup structure
  *
  * \details
@@ -133,9 +134,10 @@ struct wuss
     // pseudoknots not accessible
     //!\}
 
-    /*!\name Read functions
-     * \{
-     *
+    //!\name Read functions
+    //!\{
+
+    /*!
      * \brief Get the letter as a character of char_type.
      * \returns The character representation of this wuss letter.
      */
@@ -153,9 +155,10 @@ struct wuss
     }
     //!\}
 
-    /*!\name Write functions
-     * \{
-     *
+    //!\name Write functions
+    //!\{
+
+    /*!
      * \brief Assign from a character.
      * \param chr The character that is assigned.
      * \returns The resulting wuss character.
@@ -216,6 +219,10 @@ struct wuss
 
     //!\name RNA structure properties
     //!\{
+
+    /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
+     * \returns True if the letter represents a rightward interaction, False otherwise.
+     */
     constexpr bool is_pair_open() const noexcept
     {
         return _value == internal_type::PAIR_OPEN  ||
@@ -225,6 +232,9 @@ struct wuss
                (to_char() >= 'A' && to_char() <= 'Z');
     }
 
+    /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
+     * \returns True if the letter represents a leftward interaction, False otherwise.
+     */
     constexpr bool is_pair_close() const noexcept
     {
         return _value == internal_type::PAIR_CLOSE  ||
@@ -234,6 +244,9 @@ struct wuss
                (to_char() >= 'a' && to_char() <= 'z');
     }
 
+    /*!\brief Check whether the character represents an unpaired position in an RNA structure.
+     * \returns True if the letter represents an unpaired site, False otherwise.
+     */
     constexpr bool is_unpaired() const noexcept
     {
         return _value == internal_type::UNPAIRED  ||
@@ -245,7 +258,7 @@ struct wuss
                _value == internal_type::UNPAIRED6;
     }
 
-    //!\brief The ability of the alphabet to represent pseudoknots, i.e. crossing interactions.
+    //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: True.
     static constexpr bool pseudoknot_support{true};
     //!\}
 
