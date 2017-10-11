@@ -45,11 +45,17 @@
 namespace seqan3
 {
 
-/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
+/*!\interface seqan3::view_concept <>
+ * \extends seqan3::range_concept
+ * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
+ * \ingroup view
+ * \sa \ref view
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
  */
+//!\cond
 template <typename type>
 concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+//!\endcond
 
 } // namespace seqan3
 

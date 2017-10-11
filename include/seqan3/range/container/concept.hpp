@@ -45,12 +45,14 @@
 namespace seqan3
 {
 
-/*!\name Container concepts
- * \brief Container concepts as defined by the standard library (or very close).
- * \ingroup container
+/*!\addtogroup container
  * \{
  */
-/*!\brief The (most general) container concept as defined by the standard library.
+/*!\interface seqan3::container_concept <>
+ * \extends seqan3::forward_range_concept
+ * \extends seqan3::sized_range_concept
+ * \extends seqan3::bounded_range_concept
+ * \brief The (most general) container concept as defined by the standard library.
  * \details
  * The container concept is modelled exactly as in the [STL](http://en.cppreference.com/w/cpp/concept/Container).
  *
@@ -58,6 +60,7 @@ namespace seqan3
  * Other than one might expect, `std::forward_list` does not satisfy this concept (because it does not provide
  * `.size()`).
  */
+//!\cond
 template <typename type>
 concept bool container_concept = requires (type val, type val2)
 {
@@ -91,8 +94,11 @@ concept bool container_concept = requires (type val, type val2)
     { val.max_size()  } -> typename type::size_type;
     { val.empty()     } -> bool;
 };
+//!\endcond
 
-/*!\brief A more refined container concept than seqan3::container_concept.
+/*!\interface seqan3::sequence_concept <>
+ * \extends seqan3::container_concept
+ * \brief A more refined container concept than seqan3::container_concept.
  *
  * Includes constraints on constructors, `assign()`, `.insert()`, `.erase()`, `.push_back()`, `.pop_back`, `.clear()`,
  * `.size()`, `front()` and `.back()` member functions with corresponding signatures. Models the subset of the
@@ -102,6 +108,7 @@ concept bool container_concept = requires (type val, type val2)
  * \attention
  * `std::array` and `std::forward_list` do not satisfy this concept.
  */
+//!\cond
 template <typename type>
 concept bool sequence_concept = requires (type val, type val2)
 {
@@ -138,8 +145,12 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.front() } -> typename type::reference;
     { val.back()  } -> typename type::reference;
 };
+//!\endcond
 
-/*!\brief A more refined container concept than seqan3::sequence_concept.
+/*!\interface seqan3::random_access_sequence_concept <>
+ * \extends seqan3::sequence_concept
+ * \extends seqan3::random_access_range_concept
+ * \brief A more refined container concept than seqan3::sequence_concept.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the
  * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
@@ -147,7 +158,10 @@ concept bool sequence_concept = requires (type val, type val2)
  *
  * \attention
  * `std::array`, `std::forward_list` and `std::list` do not satisfy this concept.
+ *
+ * \sa
  */
+//!\cond
 template <typename type>
 concept bool random_access_sequence_concept = requires (type val)
 {
@@ -161,14 +175,19 @@ concept bool random_access_sequence_concept = requires (type val)
     { val.resize(0)                              } -> void;
     { val.resize(0, typename type::value_type{}) } -> void;
 };
+//!\endcond
 
-/*!\brief A more refined container concept than seqan3::random_access_sequence_concept.
+/*!\interface seqan3::reservable_sequence_concept <>
+ * \extends seqan3::random_access_sequence_concept
+ * \brief A more refined container concept than seqan3::random_access_sequence_concept.
  *
- * Adds requirements for `.reserve()`. Satisfied by `std::vector` and `std::basic_string`.
+ * Adds requirements for `.reserve()`, `.capacity()` and `.shrink_to_fit()`.
+ * Satisfied by `std::vector` and `std::basic_string`.
  *
  * \attention
  * `std::array`, `std::forward_list`, `std::list` and `std::deque` do not satisfy this concept.
  */
+//!\cond
 template <typename type>
 concept bool reservable_sequence_concept = requires (type val)
 {
@@ -178,46 +197,8 @@ concept bool reservable_sequence_concept = requires (type val)
     { val.reserve(0)      } -> void;
     { val.shrink_to_fit() } -> void;
 };
-//!\}
+//!\endcond
 
-/*!\name Container-of-container concepts
- * \brief Shortcuts for multi-dimensional container concepts.
- * \ingroup container
- * \{
- */
-/*!\brief A multi-dimensional seqan3::container_concept.
- *
- * Requires that both the type and it's `value_type` fulfill seqan3::container_concept.
- */
-template <typename type>
-concept bool container_of_container_concept = requires (type val)
-{
-    requires container_concept<type>;
-    requires container_concept<typename type::value_type>;
-};
-
-/*!\brief A multi-dimensional seqan3::sequence_concept.
- *
- * Requires that both the type and it's `value_type` fulfill seqan3::sequence_concept.
- */
-template <typename type>
-concept bool sequence_of_sequence_concept = requires (type val)
-{
-    requires sequence_concept<type>;
-    requires sequence_concept<typename type::value_type>;
-};
-
-/*!\brief A multi-dimensional seqan3::random_access_sequence_concept
- *
- * Requires that both the type and it's `value_type` fulfill seqan3::random_access_sequence_concept.
- */
-
-template <typename type>
-concept bool ra_sequence_of_ra_sequence_concept = requires (type val)
-{
-    requires random_access_sequence_concept<type>;
-    requires random_access_sequence_concept<typename type::value_type>;
-};
 //!\}
 
 } // namespace seqan3
@@ -237,10 +218,6 @@ static_assert(seqan3::sequence_concept<std::list<char>>);
 static_assert(seqan3::random_access_sequence_concept<std::vector<char>>);
 static_assert(seqan3::random_access_sequence_concept<std::deque<char>>);
 static_assert(seqan3::random_access_sequence_concept<std::string>);
-
-static_assert(seqan3::container_of_container_concept<std::array<std::array<char, 2>, 2>>);
-static_assert(seqan3::sequence_of_sequence_concept<std::list<std::list<char>>>);
-static_assert(seqan3::ra_sequence_of_ra_sequence_concept<std::vector<std::vector<char>>>);
 
 /* Check the SDSL containers */
 //TODO
