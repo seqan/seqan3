@@ -101,11 +101,6 @@ struct wuss
 
     //!\brief `.` not paired (insertion to known structure)
     static const wuss UNPAIRED;
-    //!\brief `<` bracket left (simple terminal stem)
-    static const wuss PAIR_OPEN;
-    //!\brief `>` bracket right (simple terminal stem)
-    static const wuss PAIR_CLOSE;
-
     //!\brief `:` not paired (external residue outside structure)
     static const wuss UNPAIRED1;
     //!\brief `,` not paired (multifurcation loop)
@@ -119,16 +114,21 @@ struct wuss
     //!\brief `;` not paired
     static const wuss UNPAIRED6;
 
+    //!\brief `<` bracket left (simple terminal stem)
+    static const wuss PAIR_OPEN;
     //!\brief `(` bracket left (internal helix enclosing `<>`)
     static const wuss PAIR_OPEN1;
-    //!\brief `)` bracket right (internal helix enclosing `<>`)
-    static const wuss PAIR_CLOSE1;
     //!\brief `[` bracket left (internal helix enclosing `()`)
     static const wuss PAIR_OPEN2;
-    //!\brief `]` bracket right (internal helix enclosing `()`)
-    static const wuss PAIR_CLOSE2;
     //!\brief `{` bracket left (internal helix enclosing `[]`)
     static const wuss PAIR_OPEN3;
+
+    //!\brief `>` bracket right (simple terminal stem)
+    static const wuss PAIR_CLOSE;
+    //!\brief `)` bracket right (internal helix enclosing `<>`)
+    static const wuss PAIR_CLOSE1;
+    //!\brief `]` bracket right (internal helix enclosing `()`)
+    static const wuss PAIR_CLOSE2;
     //!\brief `}` bracket right (internal helix enclosing `[]`)
     static const wuss PAIR_CLOSE3;
     // pseudoknots not accessible
@@ -225,11 +225,7 @@ struct wuss
      */
     constexpr bool is_pair_open() const noexcept
     {
-        return _value == internal_type::PAIR_OPEN  ||
-               _value == internal_type::PAIR_OPEN1 ||
-               _value == internal_type::PAIR_OPEN2 ||
-               _value == internal_type::PAIR_OPEN3 ||
-               (to_char() >= 'A' && to_char() <= 'Z');
+        return interaction_tab[to_rank()] == 2;
     }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
@@ -237,11 +233,7 @@ struct wuss
      */
     constexpr bool is_pair_close() const noexcept
     {
-        return _value == internal_type::PAIR_CLOSE  ||
-               _value == internal_type::PAIR_CLOSE1 ||
-               _value == internal_type::PAIR_CLOSE2 ||
-               _value == internal_type::PAIR_CLOSE3 ||
-               (to_char() >= 'a' && to_char() <= 'z');
+        return interaction_tab[to_rank()] == 3;
     }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
@@ -249,13 +241,7 @@ struct wuss
      */
     constexpr bool is_unpaired() const noexcept
     {
-        return _value == internal_type::UNPAIRED  ||
-               _value == internal_type::UNPAIRED1 ||
-               _value == internal_type::UNPAIRED2 ||
-               _value == internal_type::UNPAIRED3 ||
-               _value == internal_type::UNPAIRED4 ||
-               _value == internal_type::UNPAIRED5 ||
-               _value == internal_type::UNPAIRED6;
+        return interaction_tab[to_rank()] == 1;
     }
 
     //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: True.
@@ -273,19 +259,19 @@ protected:
     enum struct internal_type : rank_type
     {
         UNPAIRED,    // not paired .
-        PAIR_OPEN,   // bracket left <
-        PAIR_CLOSE,  // bracket right >
         UNPAIRED1,   // not paired :
         UNPAIRED2,   // not paired ,
         UNPAIRED3,   // not paired -
         UNPAIRED4,   // not paired _
         UNPAIRED5,   // not paired ~
         UNPAIRED6,   // not paired ;
+        PAIR_OPEN,   // bracket left <
         PAIR_OPEN1,  // bracket left (
-        PAIR_CLOSE1, // bracket right )
         PAIR_OPEN2,  // bracket left [
-        PAIR_CLOSE2, // bracket right ]
         PAIR_OPEN3,  // bracket left {
+        PAIR_CLOSE,  // bracket right >
+        PAIR_CLOSE1, // bracket right )
+        PAIR_CLOSE2, // bracket right ]
         PAIR_CLOSE3  // bracket right }
     };
 
@@ -296,7 +282,7 @@ protected:
         {
             std::array<char_type , value_size> chars
             {
-                '.', '<', '>', ':', ',', '-', '_', '~', ';', '(', ')', '[', ']', '{', '}'
+                '.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')', ']', '}'
             };
 
             // pseudoknot letters
@@ -329,6 +315,32 @@ protected:
         } ()
     };
 
+    //!\brief Lookup table for interactions: unpaired (1), pair-open (2), pair-close (3).
+    static constexpr std::array<unsigned char, value_size> interaction_tab
+    {
+        [] () constexpr
+        {
+            std::array<unsigned char, value_size> interaction_table{};
+
+            for (rank_type rnk = UNPAIRED.to_rank(); rnk <= UNPAIRED6.to_rank(); ++rnk)
+                interaction_table[rnk] = 1;
+
+            for (rank_type rnk = PAIR_OPEN.to_rank(); rnk <= PAIR_OPEN3.to_rank(); ++rnk)
+                interaction_table[rnk] = 2;
+
+            for (rank_type rnk = PAIR_CLOSE.to_rank(); rnk <= PAIR_CLOSE3.to_rank(); ++rnk)
+                interaction_table[rnk] = 3;
+
+            for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u)
+            {
+                interaction_table[rnk] = 2;
+                interaction_table[rnk + 1] = 3;
+            }
+
+            return interaction_table;
+        } ()
+    };
+
 public:
     //!\privatesection
     //!\brief The data member.
@@ -338,12 +350,6 @@ public:
 
 template <uint8_t SIZE>
 constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED{internal_type::UNPAIRED};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN{internal_type::PAIR_OPEN};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE{internal_type::PAIR_CLOSE};
 
 template <uint8_t SIZE>
 constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED1{internal_type::UNPAIRED1};
@@ -364,19 +370,25 @@ template <uint8_t SIZE>
 constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED6{internal_type::UNPAIRED6};
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN1{internal_type::PAIR_OPEN1};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN{internal_type::PAIR_OPEN};
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE1{internal_type::PAIR_CLOSE1};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN1{internal_type::PAIR_OPEN1};
 
 template <uint8_t SIZE>
 constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN2{internal_type::PAIR_OPEN2};
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE2{internal_type::PAIR_CLOSE2};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{internal_type::PAIR_OPEN3};
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{internal_type::PAIR_OPEN3};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE{internal_type::PAIR_CLOSE};
+
+template <uint8_t SIZE>
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE1{internal_type::PAIR_CLOSE1};
+
+template <uint8_t SIZE>
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE2{internal_type::PAIR_CLOSE2};
 
 template <uint8_t SIZE>
 constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE3{internal_type::PAIR_CLOSE3};

@@ -230,7 +230,7 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * \{
  */
 /*!\brief Metafunction that indicates whether an alphabet can handle pseudoknots. [value metafunction base template]
- * \tparam alphabet_type Must satisfy seqan3::rna_structure_concept.
+ * \tparam alphabet_type The alphabet type whose pseudoknot ability is queried.
  * \relates seqan3::rna_structure_concept
  *
  * Instead of calling seqan3::pseudoknot_support<alphabet_type>::value, you may use
@@ -248,7 +248,7 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 template<typename alphabet_type>
 struct pseudoknot_support{};
 
-/*!\brief The pseudoknot ability of the alphabet. [alphabet_type metafunction shortcut]
+/*!\brief The pseudoknot ability of the alphabet. [value metafunction shortcut]
  * \relates seqan3::rna_structure_concept
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
