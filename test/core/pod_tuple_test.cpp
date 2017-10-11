@@ -49,9 +49,7 @@ TEST(pod_tuple_ctr, ctr)
 // aggregate initialization
 TEST(pod_tuple_aggr, aggr)
 {
-    pod_tuple<int, long, float> t1;
-    pod_tuple<int, long, float> t2{4, 7l, 3.0f};
-    EXPECT_NE(t1, t2);
+    [[maybe_unused]] pod_tuple<int, long, float> t1{4, 7l, 3.0f};
 }
 
 // zero initialization
