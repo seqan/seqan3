@@ -45,6 +45,7 @@
 #include <iostream>
 #include <string>
 
+#include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
 
@@ -123,5 +124,55 @@ concept bool alphabet_concept = requires (t t1, t t2)
     { assign_char(t{}, 0) } -> t &&;
 };
 //!\endcond
+
+/*!\cond DEV
+ * \name Generic serialisation functions for all seqan3::semi_alphabet_concept
+ * \brief All types that satisfy seqan3::semi_alphabet_concept can be serialised via Cereal.
+ *
+ * \{
+ */
+/*!
+ * \brief Save an alphabet letter to stream.
+ * \tparam archive_t Must satisfy seqan3::cereal_output_archive_concept.
+ * \tparam alphabet_t Type of l; must satisfy seqan3::semi_alphabet_concept.
+ * \param l The alphabet letter.
+ * \relates seqan3::semi_alphabet_concept
+ *
+ * \details
+ *
+ * Delegates to seqan3::semi_alphabet_concept::to_rank.
+ *
+ * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
+ */
+template <cereal_output_archive_concept archive_t, semi_alphabet_concept alphabet_t>
+underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &, alphabet_t const & l)
+{
+    return to_rank(l);
+}
+
+/*!\brief Restore an alphabet letter from a saved rank.
+ * \tparam archive_t Must satisfy seqan3::cereal_input_archive_concept.
+ * \tparam wrapped_alphabet_t A seqan3::semi_alphabet_concept after Cereal mangles it up.
+ * \param l The alphabet letter (cereal wrapped).
+ * \param r The assigned value.
+ * \relates seqan3::semi_alphabet_concept
+ *
+ * \details
+ *
+ * Delegates to seqan3::semi_alphabet_concept::assign_rank.
+ *
+ * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
+ */
+template <cereal_input_archive_concept archive_t, typename wrapped_alphabet_t>
+void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
+                                       wrapped_alphabet_t && l,
+                                       underlying_rank_t<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>> const & r)
+    requires semi_alphabet_concept<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
+{
+    assign_rank(static_cast<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>&&>(l), r);
+}
+/*!\}
+ * \endcond
+ */
 
 } // namespace seqan3
