@@ -36,6 +36,8 @@
 
 #include <gtest/gtest.h>
 
+#include <range/v3/view/concat.hpp>
+#include <range/v3/view/single.hpp>
 #include <range/v3/view/zip.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
@@ -141,4 +143,33 @@ TEST(aa27_literals, string)
     std::basic_string<aa27, std::char_traits<aa27>> w{aa27::A, aa27::Y, aa27::P, aa27::T, aa27::U,
                                                       aa27::N, aa27::X, aa27::UNKNOWN, aa27::TERMINATOR};
     EXPECT_EQ(w, "AYPTUNXX*"_aa27s);
+}
+
+// ------------------------------------------------------------------
+// translation
+// ------------------------------------------------------------------
+
+TEST(translation, translate_triplets)
+{
+    nucl16 n1{nucl16::C};
+    nucl16 n2{nucl16::T};
+    nucl16 n3{nucl16::A};
+    aa27 c{aa27::L};
+
+    // Nucleotide interface
+    aa27 t1{translate_triplet<genetic_code::CANONICAL, nucl16>(n1, n2, n3)};
+
+    EXPECT_EQ(t1, c);
+
+    // Range interface
+    auto range_triplet = ranges::view::concat(ranges::view::single(n1), ranges::view::single(n2), ranges::view::single(n3));
+    aa27 t2{translate_triplet(range_triplet)};
+
+    EXPECT_EQ(t2, c);
+
+    // Tuple interface
+    std::tuple tuple_triplet{n1, n2, n3};
+    aa27 t3{translate_triplet(tuple_triplet)};
+
+    EXPECT_EQ(t3, c);
 }
