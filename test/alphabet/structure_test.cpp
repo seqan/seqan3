@@ -44,6 +44,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
 
 using namespace seqan3;
@@ -316,9 +317,7 @@ TEST(structured_rna, ctr)
 // aggregate initialization
 TEST(structured_rna, aggr)
 {
-    structured_rna<rna4, dot_bracket3> t1;
-    structured_rna<rna4, dot_bracket3> t2{rna4::C, dot_bracket3::PAIR_CLOSE};
-    EXPECT_NE(t1, t2);
+    [[maybe_unused]]  structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_CLOSE};
 }
 
 // zero initialization
@@ -629,9 +628,7 @@ TEST(structured_aa, ctr)
 // aggregate initialization
 TEST(structured_aa, aggr)
 {
-    structured_aa<aa27, dssp9> t1;
-    structured_aa<aa27, dssp9> t2{aa27::C, dssp9::B};
-    EXPECT_NE(t1, t2);
+    [[maybe_unused]] structured_aa<aa27, dssp9> t1{aa27::C, dssp9::B};
 }
 
 // zero initialization
