@@ -42,6 +42,8 @@
 
 #include <tuple>
 
+#include <range/v3/view/any_view.hpp>
+
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/range/concept.hpp>
 
