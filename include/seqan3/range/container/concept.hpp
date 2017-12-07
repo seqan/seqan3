@@ -202,26 +202,3 @@ concept bool reservable_sequence_concept = requires (type val)
 //!\}
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-/* Check the STL containers */
-
-#include <vector>
-#include <array>
-#include <list>
-#include <forward_list>
-#include <deque>
-#include <string>
-
-static_assert(seqan3::container_concept<std::array<char, 2>>);
-static_assert(seqan3::sequence_concept<std::list<char>>);
-static_assert(seqan3::random_access_sequence_concept<std::vector<char>>);
-static_assert(seqan3::random_access_sequence_concept<std::deque<char>>);
-static_assert(seqan3::random_access_sequence_concept<std::string>);
-
-/* Check the SDSL containers */
-//TODO
-
-/* Check our containers */
-//TODO
-#endif
