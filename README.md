@@ -24,8 +24,8 @@ To include SeqAn3 in your app, you need the following:
 |**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                  |
 |**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      | succint datastructures                    |
 |                   | [Ranges-V3](https://github.com/ericniebler/range-v3) | == 0.3.0 | ranges and views                          |
-|                   | [Cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.2  | serialization                             |
-   
+|**optional libs**  | [Cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | serialisation                             |
+
 ### Developers of the library
 
 To build the tests and API documentation, you also need:
