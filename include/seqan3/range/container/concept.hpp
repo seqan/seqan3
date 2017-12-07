@@ -42,6 +42,87 @@
 
 #include <initializer_list>
 
+// remove if sequence_concept_modified_by_const_iterator_bug vanished from travis
+#include <string>
+
+// TODO:
+// * merge sequence_concept_modified_by_const_iterator back into
+//   sequence_concept
+// * remove is_basic_string
+// * fix test cases
+// * remove #include <string> in this file
+// once the ubuntu::ppa [1] of g++-7 has a newer update than
+// 7.2.0-1ubuntu1~16.04 (2017-08-20)
+//
+// [1] https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=xenial
+namespace seqan3::detail
+{
+//!\privatesection
+
+//!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
+//!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+template <typename basic_string_t>
+struct is_basic_string : std::false_type
+{};
+
+//!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
+//!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+template <typename value_t, typename traits_t, typename allocator_t>
+struct is_basic_string<std::basic_string<value_t, traits_t, allocator_t>> : std::true_type
+{};
+
+//!\brief Shorthand of seqan3::detail::is_basic_string
+//!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+template <typename basic_string_t>
+constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
+
+/*!\interface seqan3::detail::sequence_concept_modified_by_const_iterator <>
+ * \brief Checks whether insert and erase can be used with const_iterator
+ *
+ * \attention This will be merged back into sequence_concept once
+ * seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+ */
+//!\cond
+template <typename type>
+concept bool sequence_concept_modified_by_const_iterator = requires (type val, type val2)
+{
+    { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
+    { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
+    { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
+    { val.insert(val.cbegin(), val2.begin(), val2.end())                               } -> typename type::iterator;
+    requires is_basic_string_v<type> || requires(type val)
+    {
+        // TODO this function is not defined on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
+        { val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{}) } -> typename type::iterator;
+    };
+    { val.erase(val.cbegin())                                                          } -> typename type::iterator;
+    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
+
+    { val.insert(val.begin(), typename type::size_type{}, typename type::value_type{}) } -> typename type::iterator;
+    { val.insert(val.begin(), val2.begin(), val2.end())                                } -> typename type::iterator;
+};
+//!\endcond
+
+/*!\brief Workaround for a ubuntu/travis-ci exclusive bug with g++-7.2.
+ *
+ * seqan3::detail::sequence_concept_modified_by_const_iterator <std::string> is
+ * known to work, but ubuntu::ppa (<18.04)/travis-ci has a version of g++-7.2
+ * where a bug in the STL prevents this concept to be true.
+ *
+ * \attention This workaround can be removed if
+ * `/test/range/container/container_concept_test.cpp` is not failing on
+ * ubuntu::ppa (<18.04)/travis-ci anymore. \n
+ * Probably when the ppa version of gcc7 is newer than `7.2.0-1ubuntu1~16.04` (2017-08-20)
+ * \sa https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=xenial
+ */
+template<typename string_t = std::string>
+constexpr bool sequence_concept_modified_by_const_iterator_bug =
+    is_basic_string_v<string_t> && !sequence_concept_modified_by_const_iterator<string_t>;
+
+//!\publicsection
+
+} // seqan3::detail
+
 namespace seqan3
 {
 
@@ -127,15 +208,22 @@ concept bool sequence_concept = requires (type val, type val2)
 
     // modify container
 //TODO: how do you model this?
-//     { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
-    { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
-    { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
-    { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
-    { val.insert(val.cbegin(), val2.begin(), val2.end())                               } -> typename type::iterator;
-//TODO this fails on std::string, although it should work
-//     { val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{})    } -> typename type::iterator;
-    { val.erase(val.cbegin())                                                          } -> typename type::iterator;
-    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
+    // { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
+
+    { val.insert(val.begin(), val2.front())                                            } -> typename type::iterator;
+    { val.insert(val.begin(), typename type::value_type{})                             } -> typename type::iterator;
+    // because of a travis bug we can't assume typename type::iterator as return type
+    { val.insert(val.begin(), typename type::size_type{}, typename type::value_type{}) };
+    { val.insert(val.begin(), val2.begin(), val2.end())                                };
+    //TODO should return type::iterator on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
+    { val.insert(val.begin(), std::initializer_list<typename type::value_type>{})      };
+    { val.erase(val.begin())                                                           } -> typename type::iterator;
+    { val.erase(val.begin(), val.end())                                                } -> typename type::iterator;
+
+    // workaround a travis bug where insert/erase can't take a const iterator, e.g. cbegin()
+    requires detail::sequence_concept_modified_by_const_iterator_bug<type> ||
+             detail::sequence_concept_modified_by_const_iterator<type>;
+
     { val.push_back(val.front())                                                       } -> void;
     { val.push_back(typename type::value_type{})                                       } -> void;
     { val.pop_back()                                                                   } -> void;
