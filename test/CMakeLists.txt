@@ -4,7 +4,7 @@ project(seqan3_tests CXX)
 ### set googletest
 enable_testing()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -pedantic -Werror -Wall -Wextra")
 
 # CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
 set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
@@ -65,7 +65,16 @@ include_directories("${GOOGLETEST_ROOT}/googletest/include/")
 include_directories("${SEQAN3_ROOT}/include/")
 include_directories("${SEQAN3_ROOT}/range-v3/include/")
 include_directories("${SEQAN3_ROOT}/sdsl-lite/include/")
+include_directories("${SEQAN3_ROOT}/cereal/include/")
 
+## Optional dependency handling
+option (NO_CEREAL "Don't use cereal, even if present." OFF)
+
+if (NO_CEREAL)
+    add_definitions (-DSEQAN3_WITH_CEREAL=0)
+endif (NO_CEREAL)
+
+## Add the tests
 macro (add_subdirectories)
     file (GLOB ENTRIES
           RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

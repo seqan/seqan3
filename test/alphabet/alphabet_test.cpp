@@ -33,9 +33,19 @@
 // ==========================================================================
 
 #include <gtest/gtest.h>
-#include <sstream>
 
 #include <seqan3/alphabet/all.hpp>
+
+#if SEQAN3_WITH_CEREAL
+#include <cstdio>
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/portable_binary.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SEQAN3_WITH_CEREAL
 
 using namespace seqan3;
 
@@ -216,6 +226,55 @@ TYPED_TEST(alphabet, concept)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
 }
+
+#if SEQAN3_WITH_CEREAL
+template <typename in_archive_t, typename out_archive_t, typename TypeParam>
+void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
+{
+    // This makes sure the file is also deleted if an exception is thrown in one of the tests below
+    auto deleter = [] (char * path) { std::remove(path); };
+    std::unique_ptr<char, decltype(deleter)> filename{std::tmpnam(nullptr), deleter};
+
+    {
+        std::ofstream os{filename.get(), std::ios::binary};
+        out_archive_t oarchive{os};
+        oarchive(l);
+        oarchive(vec);
+    }
+
+    {
+        TypeParam in_l{};
+        std::vector<TypeParam> in_vec;
+
+        std::ifstream is{filename.get(), std::ios::binary};
+        in_archive_t iarchive{is};
+        iarchive(in_l);
+        iarchive(in_vec);
+        EXPECT_EQ(l, in_l);
+        EXPECT_EQ(vec, in_vec);
+    }
+}
+
+TYPED_TEST(alphabet, serialisation)
+{
+    TypeParam letter;
+    if constexpr (alphabet_size_v<TypeParam> > 1)
+        assign_rank(letter, 1);
+    else
+        assign_rank(letter, 0);
+
+    std::vector<TypeParam> vec;
+    vec.resize(10);
+    if constexpr (alphabet_size_v<TypeParam> > 1)
+        for (unsigned i = 0; i < 10; ++i)
+            assign_rank(vec[i], i % 2);
+
+    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>(letter, vec);
+    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(letter, vec);
+    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>(letter, vec);
+    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>(letter, vec);
+}
+#endif // SEQAN3_WITH_CEREAL
 
 // ------------------------------------------------------------------
 // constexpr tests

@@ -50,7 +50,7 @@ protected:
     std::vector<uint8_t> const v3_const{'a', 't', 'z'};
     std::vector<uint8_t> const v4_const{'a', 'u', 'v', 'w', 'x'};
     std::vector<uint8_t> const w_const{'c', 't'};
-    std::vector<uint8_t> const w2_const{'b', 'v'};;
+    std::vector<uint8_t> const w2_const{'b', 'v'};
     std::array<long int, 3> a;
     std::array<long int, 3> const a_const = {11, 22, 33};
 

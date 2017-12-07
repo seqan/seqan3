@@ -49,10 +49,15 @@
 #include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/slice.hpp>
 
+#include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/iterator.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/metafunction.hpp>
+
+#if SEQAN3_WITH_CEREAL
+#include <cereal/types/vector.hpp>
+#endif
 
 namespace seqan3
 {
@@ -62,6 +67,7 @@ namespace seqan3
  * \tparam data_delimiters_type A container that stores the begin/end positions in the inner_type. Must be
  * seqan3::reservable_sequence_concept and have inner_type's size_type as value_type.
  * \implements seqan3::reservable_sequence_concept
+ * \ingroup container
  *
  * This class may be used whenever you would usually use `std::vector<std::vector<some_alphabet>>` or
  * `std::vector<std::string>`, i.e. whenever you have a collection of sequences. It is the spiritual successor of
@@ -1282,6 +1288,20 @@ public:
         return data() >= rhs.data();
     }
     //!\}
+
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive_concept.
+     * \param archive The archive being serialised from/to.
+     *
+     * \attention These functions are never called directly, see \ref serialisation for more details.
+     */
+    template <cereal_archive_concept archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
+    {
+        archive(data_values, data_delimiters);
+    }
+    //!\endcond
 };
 
 } // namespace seqan3

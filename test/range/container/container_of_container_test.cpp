@@ -33,13 +33,23 @@
 // ==========================================================================
 
 #include <gtest/gtest.h>
-#include <sstream>
 
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/to_char.hpp>
+
+#if SEQAN3_WITH_CEREAL
+#include <cstdio>
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/portable_binary.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SEQAN3_WITH_CEREAL
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -345,3 +355,38 @@ TYPED_TEST(container_of_container, swap)
     EXPECT_TRUE((t0 == TypeParam{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4}));
     EXPECT_TRUE((t1 == TypeParam{}));
 }
+
+#if SEQAN3_WITH_CEREAL
+template <typename in_archive_t, typename out_archive_t, typename TypeParam>
+void do_serialisation(TypeParam const l)
+{
+    // This makes sure the file is also deleted if an exception is thrown in one of the tests below
+    auto deleter = [] (char * path) { std::remove(path); };
+    std::unique_ptr<char, decltype(deleter)> filename{std::tmpnam(nullptr), deleter};
+
+    {
+        std::ofstream os{filename.get(), std::ios::binary};
+        out_archive_t oarchive{os};
+        oarchive(l);
+    }
+
+    {
+        TypeParam in_l{};
+
+        std::ifstream is{filename.get(), std::ios::binary};
+        in_archive_t iarchive{is};
+        iarchive(in_l);
+        EXPECT_TRUE(l == in_l);
+    }
+}
+
+TYPED_TEST(container_of_container, serialisation)
+{
+    TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+
+    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (t1);
+    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(t1);
+    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (t1);
+    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (t1);
+}
+#endif // SEQAN3_WITH_CEREAL
