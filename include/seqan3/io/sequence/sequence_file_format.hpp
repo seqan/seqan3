@@ -36,49 +36,58 @@
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4_sequence.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <string>
 #include <fstream>
+
+#include "../../alphabet/nucleotide/dna4_container.hpp"
 
 namespace seqan3
 {
 
+// ==================================================================
+// sequence_file_format_concept
+// ==================================================================
+
+//! A Concept that a `sequence_file_format` object must satisfy
+/*! When you want to add your own file format it must satisfy this concept.
+ */
 template <typename t>
-concept bool sequence_file_format_concept = requires (t v)
+concept bool sequence_file_format_concept = requires (t v,
+                                                      std::istream istr,
+                                                      std::ostream ostr)
 {
+    // static member
     t::file_extensions;
 
+    // member functions
     {
         v.read(dna4_string{},     // sequence
                std::string{},     // meta
                std::string{},     // quality
-               std::ifstream{},   // stream
-               options_type{})    // options
+               istr,              // stream
+               int{})             // options (options_type is not defined)
     };
 
     {
         v.write(dna4_string{},    // sequence
                 std::string{},    // meta
                 std::string{},    // quality
-                std::ofstream{},  // stream
-                options_type{})   // options
+                ostr,             // stream
+                int{})            // options (options_type is not defined)
     };
-
 };
 
 namespace detail
 {
 
-template <size_t index, typename variant_type>
-constexpr bool meets_concept_sequence_file_format()
+// ------------------------------------------------------------------
+// function meets_sequence_file_format_concept
+// -----------------------------------------------------------------
+
+template <typename variant_type, std::size_t ...idx>
+constexpr bool meets_sequence_file_format_concept(std::index_sequence<idx...>)
 {
-    if constexpr (index == variant_size_v<variant_type>)
-        return true;
-    else if constexpr (!sequence_file_format_concept<variant_alternative_t<index, variant_type>>)
-        return false;
-    else
-        return meets_concept_sequence_file_format<index+1, variant_type>();
+    return (sequence_file_format_concept<std::variant_alternative_t<idx, variant_type>> && ...);
 }
 
 } // namespace detail
