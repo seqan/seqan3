@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.2)
 project(seqan3_tests CXX)
 
+### set bin directory to place the binaries.
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 ### set googletest
 enable_testing()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -pedantic -Werror -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fconcepts -pedantic -Werror -Wall -Wextra -pthread")
 
 # CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
 set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
