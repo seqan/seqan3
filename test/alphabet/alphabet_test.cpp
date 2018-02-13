@@ -37,7 +37,8 @@
 #include <seqan3/alphabet/all.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include <cstdio>
+#include "../test_utility/tmp_filename.hpp"
+
 #include <fstream>
 
 #include <cereal/archives/binary.hpp>
@@ -231,12 +232,10 @@ TYPED_TEST(alphabet, concept)
 template <typename in_archive_t, typename out_archive_t, typename TypeParam>
 void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
 {
-    // This makes sure the file is also deleted if an exception is thrown in one of the tests below
-    auto deleter = [] (char * path) { std::remove(path); };
-    std::unique_ptr<char, decltype(deleter)> filename{std::tmpnam(nullptr), deleter};
-
+    // Generate unique file name.
+    seqan3::test::tmp_file_name filename{"alphabet_cereal_test"};
     {
-        std::ofstream os{filename.get(), std::ios::binary};
+        std::ofstream os{filename.get_path(), std::ios::binary};
         out_archive_t oarchive{os};
         oarchive(l);
         oarchive(vec);
@@ -246,7 +245,7 @@ void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
         TypeParam in_l{};
         std::vector<TypeParam> in_vec;
 
-        std::ifstream is{filename.get(), std::ios::binary};
+        std::ifstream is{filename.get_path(), std::ios::binary};
         in_archive_t iarchive{is};
         iarchive(in_l);
         iarchive(in_vec);
