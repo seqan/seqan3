@@ -41,7 +41,7 @@
 #include <seqan3/range/view/to_char.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include "../../test_utility/tmp_filename.hpp"
+#include <seqan3_test/tmp_filename.hpp>
 
 #include <fstream>
 

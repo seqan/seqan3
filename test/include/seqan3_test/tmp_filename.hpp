@@ -108,6 +108,10 @@ public:
      */
     explicit tmp_file_name(const char * f_name)
     {
+        if (f_name == nullptr)
+            throw fs::filesystem_error("Empty file name!",
+                                        std::make_error_code(std::errc::invalid_argument));
+
         auto tmp_base_dir = fs::temp_directory_path();
         tmp_base_dir += fs::path{"seqan_test_XXXXXXXX"};
         // Sanity check, to test that the data stream of the tmp base name is in fact not const char *.
@@ -115,7 +119,6 @@ public:
         // We have to use mkdtemp, which is not deprecated. We place it into the dedicated tmp_dir
         // returned by temp_directory_path. Within this path we can safely create files, that would be
         // unique per test instance as the parent directory is.
-        // NOTE(rrahn): I did not read anywere specific that concurrent invocation is not thread safe.
         if (char * f = mkdtemp(tmp_base_dir.string().data()); f != nullptr)
         {
             file_path = f;
@@ -137,7 +140,9 @@ public:
     }
     //!\}
 
-    //!\brief Returns a reference to the path object.
+    /*!\brief Returns a reference to the path object.
+     * \returns std::filesystem::path containing the path of the file.
+     */
     auto & get_path() const
     {
         return file_path;

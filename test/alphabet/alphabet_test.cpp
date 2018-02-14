@@ -37,7 +37,7 @@
 #include <seqan3/alphabet/all.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include "../test_utility/tmp_filename.hpp"
+#include <seqan3_test/tmp_filename.hpp>
 
 #include <fstream>
 
