@@ -104,6 +104,10 @@
 #   else
 #       define SEQAN3_WITH_CEREAL 0
 #   endif
+#elif SEQAN3_WITH_CEREAL != 0
+#   if ! __has_include(<cereal/cereal.hpp>)
+#       error Cereal was marked as required, but not found!
+#   endif
 #endif
 
 #if !SEQAN3_WITH_CEREAL
