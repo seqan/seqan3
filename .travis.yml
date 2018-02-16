@@ -32,9 +32,9 @@ install:
   - cmake --version
 
 before_script:
-  - mkdir build
-  - cd build
-  - cmake ../test
+  - mkdir ../seqan3-build
+  - cd ../seqan3-build
+  - cmake ../seqan3/test
   - make googletest -j
 
 script:
