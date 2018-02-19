@@ -372,7 +372,6 @@ void do_serialisation(TypeParam const l)
 
     {
         TypeParam in_l{};
-
         std::ifstream is{filename.get_path(), std::ios::binary};
         in_archive_t iarchive{is};
         iarchive(in_l);

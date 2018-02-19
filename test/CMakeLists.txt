@@ -81,12 +81,6 @@ add_definitions (${SEQAN3_DEFINITIONS})
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra")
 
 # ----------------------------------------------------------------------------
-# Set binary output directory
-# ----------------------------------------------------------------------------
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-# ----------------------------------------------------------------------------
 # Use CCache if possible
 # ----------------------------------------------------------------------------
 

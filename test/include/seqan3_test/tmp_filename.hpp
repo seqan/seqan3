@@ -41,8 +41,6 @@
  * @author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#include <experimental/filesystem>
-
 // TODO(rrahn): At support for Windows platforms, when we support it.
 #if defined(__APPLE__)
 #include <unistd.h>
@@ -50,7 +48,13 @@
 #include <stdlib.h>
 #endif
 
+#if __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif // __has_include(experimental/filesystem)
 
 namespace seqan3
 {
@@ -113,13 +117,12 @@ public:
                                         std::make_error_code(std::errc::invalid_argument));
 
         auto tmp_base_dir = fs::temp_directory_path();
-        tmp_base_dir += fs::path{"seqan_test_XXXXXXXX"};
-        // Sanity check, to test that the data stream of the tmp base name is in fact not const char *.
-        static_assert(std::is_same_v<char*, decltype(tmp_base_dir.string().data())>);
+        tmp_base_dir /= fs::path{"seqan_test_XXXXXXXX"};
         // We have to use mkdtemp, which is not deprecated. We place it into the dedicated tmp_dir
         // returned by temp_directory_path. Within this path we can safely create files, that would be
         // unique per test instance as the parent directory is.
-        if (char * f = mkdtemp(tmp_base_dir.string().data()); f != nullptr)
+        auto path_str = tmp_base_dir.string();  // Copy the underlying path to get access to the raw char *.
+        if (char * f = mkdtemp(path_str.data()); f != nullptr)  // mkdtemp replaces XXXXXXXX in a safe and unique way.
         {
             file_path = f;
             file_path /= fs::path{f_name};
@@ -140,10 +143,10 @@ public:
     }
     //!\}
 
-    /*!\brief Returns a reference to the path object.
+    /*!\brief Returns a const reference to the path object.
      * \returns std::filesystem::path containing the path of the file.
      */
-    auto & get_path() const
+    fs::path const & get_path() const
     {
         return file_path;
     }
