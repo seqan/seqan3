@@ -69,6 +69,9 @@ include_directories (${CMAKE_INCLUDE_PATH})
 
 find_package (SeqAn3 REQUIRED)
 
+# add include dir of test directory for some global test utility functions.
+set (SEQAN3_INCLUDE_DIRS "${SEQAN3_INCLUDE_DIRS};${CMAKE_SOURCE_DIR}/include")
+
 # import package's information (libraries are added with targets below)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}")
 include_directories (${SEQAN3_INCLUDE_DIRS})
@@ -76,6 +79,12 @@ add_definitions (${SEQAN3_DEFINITIONS})
 
 # add warning levels
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra")
+
+# ----------------------------------------------------------------------------
+# Set binary output directory
+# ----------------------------------------------------------------------------
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # ----------------------------------------------------------------------------
 # Use CCache if possible
