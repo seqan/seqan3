@@ -371,7 +371,7 @@ protected:
 
         array_t partial_sum{0, alphabet_size_v<alphabets_t>...};
         for (size_t i = 1u; i < N; ++i)
-            partial_sum[i] = static_cast<rank_t>(partial_sum[i] + partial_sum[i-1]);
+            partial_sum[i] += partial_sum[i-1];
 
         return partial_sum;
     }
@@ -510,7 +510,7 @@ protected:
     //!\endcond
     static constexpr rank_type rank_by_index_(alphabet_t const & alphabet) noexcept
     {
-        return static_cast<rank_type>(partial_sum_sizes[index] + alphabet.to_rank());
+        return partial_sum_sizes[index] + static_cast<rank_type>(alphabet.to_rank());
     }
 
     //!\brief Converts an object of one of the given alphabets into the internal representation.
