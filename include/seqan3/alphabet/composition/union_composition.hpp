@@ -158,7 +158,7 @@ public:
     }
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr size_t value_size = sum_of_alphabet_sizes_v<alphabet_types...>;
+    static constexpr auto value_size = detail::min_viable_uint_v<sum_of_alphabet_sizes_v<alphabet_types...>>;
 
     //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink).
     using char_type = underlying_char_t<meta::front<meta::list<alphabet_types...>>>;

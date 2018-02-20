@@ -176,11 +176,22 @@ TEST(union_composition_test, rank_type)
     using alphabet2_t = union_composition<gap, dna5, dna4>;
     using alphabet3_t = union_composition<gap>;
 
-    constexpr auto expect1 = std::is_same_v<alphabet1_t::rank_type, uint8_t>;
-    constexpr auto expect2 = std::is_same_v<alphabet2_t::rank_type, uint8_t>;
-    constexpr auto expect3 = std::is_same_v<alphabet3_t::rank_type, bool>;
+    EXPECT_TRUE((std::is_same_v<alphabet1_t::rank_type, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<alphabet2_t::rank_type, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, bool>));
+}
 
-    EXPECT_TRUE(expect1);
-    EXPECT_TRUE(expect2);
-    EXPECT_TRUE(expect3);
+TEST(union_composition_test, value_size)
+{
+    using alphabet1_t = union_composition<dna4, dna5, gap>;
+    using alphabet2_t = union_composition<gap, dna5, dna4>;
+    using alphabet3_t = union_composition<gap>;
+
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::value_size), const uint8_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::value_size), const uint8_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::value_size), const bool>));
+
+    EXPECT_EQ(alphabet1_t::value_size, 10);
+    EXPECT_EQ(alphabet2_t::value_size, 10);
+    EXPECT_EQ(alphabet3_t::value_size, 1);
 }
