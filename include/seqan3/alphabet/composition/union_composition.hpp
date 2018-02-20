@@ -54,7 +54,7 @@
 namespace seqan3
 {
 
-/*!\brief A composition that merges different regular alphabets as a single alphabet.
+/*!\brief A composition that merges different regular alphabets into a single alphabet.
  * \ingroup composition
  * \tparam ...alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept, e.g. dna4.
  * \implements seqan3::alphabet_concept
@@ -141,7 +141,7 @@ protected:
     //!\publicsection
 public:
     /*!\brief Returns true if alphabet_t is one of the given alphabet types.
-     * \tparam alphabet_t The type to check
+     * \tparam alphabet_t The type to check.
      *
      * ```cpp
      * using union_t = union_composition<dna4, gap>;
@@ -186,7 +186,7 @@ public:
      */
 
     /*!\brief Construction via a value of the base alphabets.
-     * \tparam alphabet_t One of the base alphabet types
+     * \tparam alphabet_t One of the base alphabet types.
      * \param alphabet The value of a base alphabet that should be assigned.
      *
      * ```cpp
@@ -203,8 +203,8 @@ public:
     {}
 
     /*!\brief Construction via a value of reoccurring alphabets.
-     * \tparam I The index of the i-th base alphabet
-     * \tparam alphabet_t The i-th given base alphabet type
+     * \tparam I The index of the i-th base alphabet.
+     * \tparam alphabet_t The i-th given base alphabet type.
      * \param alphabet The value of a base alphabet that should be assigned.
      *
      * ```cpp
@@ -231,7 +231,7 @@ public:
      */
 
     /*!\brief Assignment via a value of the base alphabets.
-     * \tparam alphabet_t One of the base alphabet types
+     * \tparam alphabet_t One of the base alphabet types.
      * \param alphabet The value of a base alphabet that should be assigned.
      *
      * ```cpp
@@ -501,8 +501,8 @@ protected:
     static constexpr std::array char_to_value = char_to_value_table();
 
     //!\brief Converts an object of one of the given alphabets into the internal representation.
-    //!\tparam index The position of `alphabet_t` in the template pack `alphabet_types`
-    //!\tparam alphabet_t One of the base alphabet types
+    //!\tparam index The position of `alphabet_t` in the template pack `alphabet_types`.
+    //!\tparam alphabet_t One of the base alphabet types.
     //!\param alphabet The value of a base alphabet that should be assigned.
     template <size_t index, typename alphabet_t>
     //!\cond
@@ -515,7 +515,7 @@ protected:
 
     //!\brief Converts an object of one of the given alphabets into the internal representation.
     //!\details Finds the index of alphabet_t in the given types.
-    //!\tparam alphabet_t One of the base alphabet types
+    //!\tparam alphabet_t One of the base alphabet types.
     //!\param alphabet The value of a base alphabet that should be assigned.
     template <typename alphabet_t>
     //!\cond
