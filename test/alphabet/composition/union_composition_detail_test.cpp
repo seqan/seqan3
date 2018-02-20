@@ -59,11 +59,11 @@ TEST(union_composition_detail_test, sum_of_alphabet_sizes_v)
 {
     using detail = detail_union_composition<dna4>;
 
-    constexpr auto sum0 = detail::sum_of_alphabet_sizes_v<>;
-    constexpr auto sum1 = detail::sum_of_alphabet_sizes_v<dna4>;
-    constexpr auto sum2 = detail::sum_of_alphabet_sizes_v<dna4, gap>;
-    constexpr auto sum3 = detail::sum_of_alphabet_sizes_v<dna4, gap, dna5>;
-    constexpr auto sum4 = detail::sum_of_alphabet_sizes_v<dna5, gap, dna4>;
+    constexpr size_t sum0 = detail::sum_of_alphabet_sizes_v<>;
+    constexpr size_t sum1 = detail::sum_of_alphabet_sizes_v<dna4>;
+    constexpr size_t sum2 = detail::sum_of_alphabet_sizes_v<dna4, gap>;
+    constexpr size_t sum3 = detail::sum_of_alphabet_sizes_v<dna4, gap, dna5>;
+    constexpr size_t sum4 = detail::sum_of_alphabet_sizes_v<dna5, gap, dna4>;
 
     EXPECT_EQ(sum0, 0u);
     EXPECT_EQ(sum1, 4u);
@@ -76,11 +76,11 @@ TEST(union_composition_detail_test, max_of_alphabet_sizes_v)
 {
     using detail = detail_union_composition<dna4>;
 
-    constexpr auto max0 = detail::max_of_alphabet_sizes_v<>;
-    constexpr auto max1 = detail::max_of_alphabet_sizes_v<dna4>;
-    constexpr auto max2 = detail::max_of_alphabet_sizes_v<dna4, gap>;
-    constexpr auto max3 = detail::max_of_alphabet_sizes_v<dna4, gap, dna5>;
-    constexpr auto max4 = detail::max_of_alphabet_sizes_v<dna5, gap, dna4>;
+    constexpr size_t max0 = detail::max_of_alphabet_sizes_v<>;
+    constexpr size_t max1 = detail::max_of_alphabet_sizes_v<dna4>;
+    constexpr size_t max2 = detail::max_of_alphabet_sizes_v<dna4, gap>;
+    constexpr size_t max3 = detail::max_of_alphabet_sizes_v<dna4, gap, dna5>;
+    constexpr size_t max4 = detail::max_of_alphabet_sizes_v<dna5, gap, dna4>;
 
     EXPECT_EQ(max0, 0u);
     EXPECT_EQ(max1, 4u);
@@ -93,29 +93,29 @@ TEST(union_composition_detail_test, partial_sum_of_alphabet_sizes)
 {
     using detail = detail_union_composition<dna4>;
 
-    constexpr auto partial_sum0 = detail::partial_sum_of_alphabet_sizes<>();
+    constexpr std::array partial_sum0 = detail::partial_sum_of_alphabet_sizes<>();
     EXPECT_EQ(partial_sum0.size(), 1u);
     EXPECT_EQ(partial_sum0[0], 0);
 
-    constexpr auto partial_sum1 = detail::partial_sum_of_alphabet_sizes<dna4>();
+    constexpr std::array partial_sum1 = detail::partial_sum_of_alphabet_sizes<dna4>();
     EXPECT_EQ(partial_sum1.size(), 2u);
     EXPECT_EQ(partial_sum1[0], 0);
     EXPECT_EQ(partial_sum1[1], 4);
 
-    constexpr auto partial_sum2 = detail::partial_sum_of_alphabet_sizes<dna4, gap>();
+    constexpr std::array partial_sum2 = detail::partial_sum_of_alphabet_sizes<dna4, gap>();
     EXPECT_EQ(partial_sum2.size(), 3u);
     EXPECT_EQ(partial_sum2[0], 0);
     EXPECT_EQ(partial_sum2[1], 4);
     EXPECT_EQ(partial_sum2[2], 5);
 
-    constexpr auto partial_sum3 = detail::partial_sum_of_alphabet_sizes<dna4, gap, dna5>();
+    constexpr std::array partial_sum3 = detail::partial_sum_of_alphabet_sizes<dna4, gap, dna5>();
     EXPECT_EQ(partial_sum3.size(), 4u);
     EXPECT_EQ(partial_sum3[0], 0);
     EXPECT_EQ(partial_sum3[1], 4);
     EXPECT_EQ(partial_sum3[2], 5);
     EXPECT_EQ(partial_sum3[3], 10);
 
-    constexpr auto partial_sum4 = detail::partial_sum_of_alphabet_sizes<dna5, gap, dna4>();
+    constexpr std::array partial_sum4 = detail::partial_sum_of_alphabet_sizes<dna5, gap, dna4>();
     EXPECT_EQ(partial_sum4.size(), 4u);
     EXPECT_EQ(partial_sum4[0], 0);
     EXPECT_EQ(partial_sum4[1], 5);
@@ -128,7 +128,7 @@ TEST(union_composition_detail_test, union_composition_value_to_char_table_I)
     using detail = detail_union_composition<dna4>;
     EXPECT_TRUE((std::is_same_v<detail::char_type, char>));
 
-    constexpr auto table1 = detail::value_to_char_table_I<5>(dna4{});
+    constexpr std::array table1 = detail::value_to_char_table_I<5>(dna4{});
     EXPECT_EQ(table1.size(), 5u);
     EXPECT_EQ(table1[0], 'A');
     EXPECT_EQ(table1[1], 'C');
@@ -136,7 +136,7 @@ TEST(union_composition_detail_test, union_composition_value_to_char_table_I)
     EXPECT_EQ(table1[3], 'T');
     EXPECT_EQ(table1[4], '\0');
 
-    constexpr auto table2 = detail::value_to_char_table_I<5>(dna5{});
+    constexpr std::array table2 = detail::value_to_char_table_I<5>(dna5{});
     EXPECT_EQ(table2.size(), 5u);
     EXPECT_EQ(table2[0], 'A');
     EXPECT_EQ(table2[1], 'C');
@@ -144,7 +144,7 @@ TEST(union_composition_detail_test, union_composition_value_to_char_table_I)
     EXPECT_EQ(table2[3], 'T');
     EXPECT_EQ(table2[4], 'N');
 
-    constexpr auto table3 = detail::value_to_char_table_I<5>(gap{});
+    constexpr std::array table3 = detail::value_to_char_table_I<5>(gap{});
     EXPECT_EQ(table3.size(), 5u);
     EXPECT_EQ(table3[0], '-');
     EXPECT_EQ(table3[1], '\0');
@@ -155,14 +155,14 @@ TEST(union_composition_detail_test, union_composition_value_to_char_table_I)
 
 TEST(union_composition_detail_test, union_composition_value_to_char_table)
 {
-    constexpr auto value_to_char1 = detail_union_composition<dna4>::value_to_char_table();
+    constexpr std::array value_to_char1 = detail_union_composition<dna4>::value_to_char_table();
     EXPECT_EQ(value_to_char1.size(), 4u);
     EXPECT_EQ(value_to_char1[0], 'A');
     EXPECT_EQ(value_to_char1[1], 'C');
     EXPECT_EQ(value_to_char1[2], 'G');
     EXPECT_EQ(value_to_char1[3], 'T');
 
-    constexpr auto value_to_char2 = detail_union_composition<dna4, gap>::value_to_char_table();
+    constexpr std::array value_to_char2 = detail_union_composition<dna4, gap>::value_to_char_table();
     EXPECT_EQ(value_to_char2.size(), 5u);
     EXPECT_EQ(value_to_char2[0], 'A');
     EXPECT_EQ(value_to_char2[1], 'C');
@@ -170,7 +170,7 @@ TEST(union_composition_detail_test, union_composition_value_to_char_table)
     EXPECT_EQ(value_to_char2[3], 'T');
     EXPECT_EQ(value_to_char2[4], '-');
 
-    constexpr auto value_to_char3 = detail_union_composition<dna4, gap, dna5>::value_to_char_table();
+    constexpr std::array value_to_char3 = detail_union_composition<dna4, gap, dna5>::value_to_char_table();
     EXPECT_EQ(value_to_char3.size(), 10u);
     EXPECT_EQ(value_to_char3[0], 'A');
     EXPECT_EQ(value_to_char3[1], 'C');
@@ -183,7 +183,7 @@ TEST(union_composition_detail_test, union_composition_value_to_char_table)
     EXPECT_EQ(value_to_char3[8], 'T');
     EXPECT_EQ(value_to_char3[9], 'N');
 
-    constexpr auto value_to_char4 = detail_union_composition<dna5, gap, dna4>::value_to_char_table();
+    constexpr std::array value_to_char4 = detail_union_composition<dna5, gap, dna4>::value_to_char_table();
     EXPECT_EQ(value_to_char4.size(), 10u);
     EXPECT_EQ(value_to_char4[0], 'A');
     EXPECT_EQ(value_to_char4[1], 'C');
@@ -199,14 +199,14 @@ TEST(union_composition_detail_test, union_composition_value_to_char_table)
 
 TEST(union_composition_detail_test, union_composition_char_to_value_table)
 {
-    constexpr auto char_to_value1 = detail_union_composition<dna4>::char_to_value_table();
+    constexpr std::array char_to_value1 = detail_union_composition<dna4>::char_to_value_table();
     EXPECT_EQ(char_to_value1.size(), 256u);
     EXPECT_EQ(char_to_value1['A'], 0);
     EXPECT_EQ(char_to_value1['C'], 1);
     EXPECT_EQ(char_to_value1['G'], 2);
     EXPECT_EQ(char_to_value1['T'], 3);
 
-    constexpr auto char_to_value2 = detail_union_composition<dna4, gap>::char_to_value_table();
+    constexpr std::array char_to_value2 = detail_union_composition<dna4, gap>::char_to_value_table();
     EXPECT_EQ(char_to_value2.size(), 256u);
     EXPECT_EQ(char_to_value2['A'], 0);
     EXPECT_EQ(char_to_value2['C'], 1);
@@ -214,7 +214,7 @@ TEST(union_composition_detail_test, union_composition_char_to_value_table)
     EXPECT_EQ(char_to_value2['T'], 3);
     EXPECT_EQ(char_to_value2['-'], 4);
 
-    constexpr auto char_to_value3 = detail_union_composition<dna4, gap, dna5>::char_to_value_table();
+    constexpr std::array char_to_value3 = detail_union_composition<dna4, gap, dna5>::char_to_value_table();
     EXPECT_EQ(char_to_value3.size(), 256u);
     EXPECT_EQ(char_to_value3['A'], 0);
     EXPECT_EQ(char_to_value3['C'], 1);
@@ -227,7 +227,7 @@ TEST(union_composition_detail_test, union_composition_char_to_value_table)
     EXPECT_EQ(char_to_value3['T'], 3);
     EXPECT_EQ(char_to_value3['N'], 9);
 
-    constexpr auto char_to_value4 = detail_union_composition<dna5, gap, dna4>::char_to_value_table();
+    constexpr std::array char_to_value4 = detail_union_composition<dna5, gap, dna4>::char_to_value_table();
     EXPECT_EQ(char_to_value4.size(), 256u);
     EXPECT_EQ(char_to_value4['A'], 0);
     EXPECT_EQ(char_to_value4['C'], 1);
