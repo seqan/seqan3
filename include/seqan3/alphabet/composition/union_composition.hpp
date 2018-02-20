@@ -381,7 +381,7 @@ protected:
      * \sa value_to_char_table
      *
      * ```cpp
-     * constexpr std::array table1 = value_to_char_table_I<5, char>(dna4{});
+     * constexpr std::array table1 = make_value_to_char_table<5, char>(dna4{});
      * assert(table1.size() == 5);
      * assert(table1[0] == 'A');
      * assert(table1[1] == 'C');
@@ -390,19 +390,20 @@ protected:
      * assert(table1[4] == '\0');
      * ```
      */
-    template <size_t max_value_size, typename alphabet_t>
-    static constexpr auto value_to_char_table_I(alphabet_t alphabet) noexcept
+    template <size_t table_size, typename alphabet_t>
+        requires (alphabet_size_v<alphabet_t> <= table_size)
+    static constexpr auto make_value_to_char_table(alphabet_t alphabet) noexcept
     {
-        using array_t = std::array<char_type, max_value_size>;
-        array_t value_to_char_{};
+        using array_t = std::array<char_type, table_size>;
+        array_t value_to_char{};
 
-        for (char_type i = 0; i < alphabet_size_v<alphabet_t>; ++i)
-            value_to_char_[i] = alphabet.assign_rank(i).to_char();
+        for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i)
+            value_to_char[i] = alphabet.assign_rank(i).to_char();
 
-        return value_to_char_;
+        return value_to_char;
     }
 
-    /*!\brief Returns an map at compile time where the key is the rank of the union
+    /*!\brief Returns a map at compile time where the key is the rank of the union
      * of all alphabets and the value is the corresponding char of that rank and
      * alphabet.
      *
@@ -426,21 +427,22 @@ protected:
         {
             alphabet_size_v<alphabet_types>...
         };
-        constexpr size_t max_value_size = max_of_alphabet_sizes_v<alphabet_types...>;
 
-        using array_t = std::array<char_type, table_size>;
-        using array_inner_t = std::array<char_type, max_value_size>;
-        using array_array_t = std::array<array_inner_t, table_size>;
+        constexpr size_t fixed_size = max_of_alphabet_sizes_v<alphabet_types...>;
+        using padded_value_to_char_t = std::array<char_type, fixed_size>;
+        using value_to_char_tables_t = std::array<padded_value_to_char_t, table_size>;
 
-        constexpr std::array array_array = array_array_t
+        // store all `value_to_char` tables of each alphabet in one std::array
+        constexpr std::array value_to_char_tables = value_to_char_tables_t
         {
-            value_to_char_table_I<max_value_size>(alphabet_types{})...
+            make_value_to_char_table<fixed_size>(alphabet_types{})...
         };
 
-        array_t value_to_char{};
+        using value_to_char_t = std::array<char_type, table_size>;
+        value_to_char_t value_to_char{};
         for (size_t i = 0u, value = 0u; i < table_size; ++i)
             for (size_t k = 0u; k < value_sizes[i]; ++k, ++value)
-                value_to_char[value] = array_array[i][k];
+                value_to_char[value] = value_to_char_tables[i][k];
 
         return value_to_char;
     }
