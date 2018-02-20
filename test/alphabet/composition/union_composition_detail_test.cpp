@@ -47,23 +47,23 @@ template <typename ...alphabet_types>
 class detail_union_composition : public union_composition<alphabet_types...>
 {
 public:
-    using union_composition<alphabet_types...>::alphabet_sum_size_v;
-    using union_composition<alphabet_types...>::alphabet_max_size_v;
-    using union_composition<alphabet_types...>::alphabet_prefix_sum_sizes;
+    using union_composition<alphabet_types...>::sum_of_alphabet_sizes_v;
+    using union_composition<alphabet_types...>::max_of_alphabet_sizes_v;
+    using union_composition<alphabet_types...>::partial_sum_of_alphabet_sizes;
     using union_composition<alphabet_types...>::value_to_char_table_I;
     using union_composition<alphabet_types...>::value_to_char_table;
     using union_composition<alphabet_types...>::char_to_value_table;
 };
 
-TEST(union_composition_detail_test, alphabet_sum_size_v)
+TEST(union_composition_detail_test, sum_of_alphabet_sizes_v)
 {
     using detail = detail_union_composition<dna4>;
 
-    constexpr auto sum0 = detail::alphabet_sum_size_v<>;
-    constexpr auto sum1 = detail::alphabet_sum_size_v<dna4>;
-    constexpr auto sum2 = detail::alphabet_sum_size_v<dna4, gap>;
-    constexpr auto sum3 = detail::alphabet_sum_size_v<dna4, gap, dna5>;
-    constexpr auto sum4 = detail::alphabet_sum_size_v<dna5, gap, dna4>;
+    constexpr auto sum0 = detail::sum_of_alphabet_sizes_v<>;
+    constexpr auto sum1 = detail::sum_of_alphabet_sizes_v<dna4>;
+    constexpr auto sum2 = detail::sum_of_alphabet_sizes_v<dna4, gap>;
+    constexpr auto sum3 = detail::sum_of_alphabet_sizes_v<dna4, gap, dna5>;
+    constexpr auto sum4 = detail::sum_of_alphabet_sizes_v<dna5, gap, dna4>;
 
     EXPECT_EQ(sum0, 0u);
     EXPECT_EQ(sum1, 4u);
@@ -72,15 +72,15 @@ TEST(union_composition_detail_test, alphabet_sum_size_v)
     EXPECT_EQ(sum4, 10u);
 }
 
-TEST(union_composition_detail_test, alphabet_max_size_v)
+TEST(union_composition_detail_test, max_of_alphabet_sizes_v)
 {
     using detail = detail_union_composition<dna4>;
 
-    constexpr auto max0 = detail::alphabet_max_size_v<>;
-    constexpr auto max1 = detail::alphabet_max_size_v<dna4>;
-    constexpr auto max2 = detail::alphabet_max_size_v<dna4, gap>;
-    constexpr auto max3 = detail::alphabet_max_size_v<dna4, gap, dna5>;
-    constexpr auto max4 = detail::alphabet_max_size_v<dna5, gap, dna4>;
+    constexpr auto max0 = detail::max_of_alphabet_sizes_v<>;
+    constexpr auto max1 = detail::max_of_alphabet_sizes_v<dna4>;
+    constexpr auto max2 = detail::max_of_alphabet_sizes_v<dna4, gap>;
+    constexpr auto max3 = detail::max_of_alphabet_sizes_v<dna4, gap, dna5>;
+    constexpr auto max4 = detail::max_of_alphabet_sizes_v<dna5, gap, dna4>;
 
     EXPECT_EQ(max0, 0u);
     EXPECT_EQ(max1, 4u);
@@ -89,38 +89,38 @@ TEST(union_composition_detail_test, alphabet_max_size_v)
     EXPECT_EQ(max4, 5u);
 }
 
-TEST(union_composition_detail_test, alphabet_prefix_sum_sizes)
+TEST(union_composition_detail_test, partial_sum_of_alphabet_sizes)
 {
     using detail = detail_union_composition<dna4>;
 
-    constexpr auto sizes0 = detail::alphabet_prefix_sum_sizes<>();
-    EXPECT_EQ(sizes0.size(), 1u);
-    EXPECT_EQ(sizes0[0], 0);
+    constexpr auto partial_sum0 = detail::partial_sum_of_alphabet_sizes<>();
+    EXPECT_EQ(partial_sum0.size(), 1u);
+    EXPECT_EQ(partial_sum0[0], 0);
 
-    constexpr auto sizes1 = detail::alphabet_prefix_sum_sizes<dna4>();
-    EXPECT_EQ(sizes1.size(), 2u);
-    EXPECT_EQ(sizes1[0], 0);
-    EXPECT_EQ(sizes1[1], 4);
+    constexpr auto partial_sum1 = detail::partial_sum_of_alphabet_sizes<dna4>();
+    EXPECT_EQ(partial_sum1.size(), 2u);
+    EXPECT_EQ(partial_sum1[0], 0);
+    EXPECT_EQ(partial_sum1[1], 4);
 
-    constexpr auto sizes2 = detail::alphabet_prefix_sum_sizes<dna4, gap>();
-    EXPECT_EQ(sizes2.size(), 3u);
-    EXPECT_EQ(sizes2[0], 0);
-    EXPECT_EQ(sizes2[1], 4);
-    EXPECT_EQ(sizes2[2], 5);
+    constexpr auto partial_sum2 = detail::partial_sum_of_alphabet_sizes<dna4, gap>();
+    EXPECT_EQ(partial_sum2.size(), 3u);
+    EXPECT_EQ(partial_sum2[0], 0);
+    EXPECT_EQ(partial_sum2[1], 4);
+    EXPECT_EQ(partial_sum2[2], 5);
 
-    constexpr auto sizes3 = detail::alphabet_prefix_sum_sizes<dna4, gap, dna5>();
-    EXPECT_EQ(sizes3.size(), 4u);
-    EXPECT_EQ(sizes3[0], 0);
-    EXPECT_EQ(sizes3[1], 4);
-    EXPECT_EQ(sizes3[2], 5);
-    EXPECT_EQ(sizes3[3], 10);
+    constexpr auto partial_sum3 = detail::partial_sum_of_alphabet_sizes<dna4, gap, dna5>();
+    EXPECT_EQ(partial_sum3.size(), 4u);
+    EXPECT_EQ(partial_sum3[0], 0);
+    EXPECT_EQ(partial_sum3[1], 4);
+    EXPECT_EQ(partial_sum3[2], 5);
+    EXPECT_EQ(partial_sum3[3], 10);
 
-    constexpr auto sizes4 = detail::alphabet_prefix_sum_sizes<dna5, gap, dna4>();
-    EXPECT_EQ(sizes4.size(), 4u);
-    EXPECT_EQ(sizes4[0], 0);
-    EXPECT_EQ(sizes4[1], 5);
-    EXPECT_EQ(sizes4[2], 6);
-    EXPECT_EQ(sizes4[3], 10);
+    constexpr auto partial_sum4 = detail::partial_sum_of_alphabet_sizes<dna5, gap, dna4>();
+    EXPECT_EQ(partial_sum4.size(), 4u);
+    EXPECT_EQ(partial_sum4[0], 0);
+    EXPECT_EQ(partial_sum4[1], 5);
+    EXPECT_EQ(partial_sum4[2], 6);
+    EXPECT_EQ(partial_sum4[3], 10);
 }
 
 TEST(union_composition_detail_test, union_composition_value_to_char_table_I)
