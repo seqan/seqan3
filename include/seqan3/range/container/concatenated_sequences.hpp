@@ -211,8 +211,10 @@ public:
      */
     template <typename rng_of_rng_type>
     concatenated_sequences(rng_of_rng_type && rng_of_rng)
+    //!\cond
         requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
                  compatible_concept<rng_of_rng_type, concatenated_sequences>
+    //!\endcond
     {
         if constexpr (sized_range_concept<std::decay_t<rng_of_rng_type>>)
             data_delimiters.reserve(ranges::size(rng_of_rng) + 1);
@@ -240,9 +242,11 @@ public:
      */
     template <typename rng_type>
     concatenated_sequences(size_type const count, rng_type && value)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         // TODO SEQAN_UNLIKELY
         if (count == 0)
@@ -291,9 +295,11 @@ public:
      */
     template <typename rng_type = value_type>
     concatenated_sequences(std::initializer_list<rng_type> ilist)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
     }
@@ -312,9 +318,11 @@ public:
      */
     template <typename rng_type>
     concatenated_sequences & operator=(std::initializer_list<rng_type> ilist)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
         return *this;
@@ -335,8 +343,10 @@ public:
      */
     template <typename rng_of_rng_type>
     void assign(rng_of_rng_type && rng_of_rng)
+    //!\cond
         requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
                  compatible_concept<rng_of_rng_type, concatenated_sequences>
+    //!\endcond
     {
         concatenated_sequences rhs{std::forward<rng_of_rng_type>(rng_of_rng)};
         swap(rhs);
@@ -357,9 +367,11 @@ public:
      */
     template <typename rng_type>
     void assign(size_type const count, rng_type && value)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         concatenated_sequences rhs{count, value};
         swap(rhs);
@@ -406,9 +418,11 @@ public:
      */
     template <typename rng_type = value_type>
     void assign(std::initializer_list<rng_type> ilist)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
     }
