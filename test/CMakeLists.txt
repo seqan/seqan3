@@ -69,6 +69,9 @@ include_directories (${CMAKE_INCLUDE_PATH})
 
 find_package (SeqAn3 REQUIRED)
 
+# add include dir of test directory for some global test utility functions.
+set (SEQAN3_INCLUDE_DIRS "${SEQAN3_INCLUDE_DIRS};${CMAKE_SOURCE_DIR}/include")
+
 # import package's information (libraries are added with targets below)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}")
 include_directories (${SEQAN3_INCLUDE_DIRS})
@@ -104,6 +107,7 @@ ExternalProject_Add(
     googletest
     PREFIX googletest
     GIT_REPOSITORY "https://github.com/google/googletest.git"
+    GIT_TAG "15392f1a38fa0b8c3f13a9732e94b209069efa1c"
     SOURCE_DIR "${GOOGLETEST_ROOT}"
     CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR};-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER};-DBUILD_GTEST=1;-DBUILD_GMOCK=0"
     UPDATE_DISCONNECTED yes
