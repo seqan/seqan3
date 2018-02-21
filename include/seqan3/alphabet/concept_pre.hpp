@@ -71,22 +71,23 @@ namespace seqan3
 
 /*!\name Requirements for seqan3::semi_alphabet_concept
  * \brief You can expect these functions on all types that implement seqan3::semi_alphabet_concept.
+ * \relates seqan3::semi_alphabet_concept
  * \{
  */
 /*!\brief The `rank_type` of the semi_alphabet. [type metafunction base template]
  * \tparam semi_alphabet_type Must satisfy seqan3::semi_alphabet_concept.
- * \relates seqan3::semi_alphabet_concept
+ * \ingroup alphabet
  *
- * Instead of calling `typename seqan3::underlying_rank<semi_alphabet_type>::type` it is recommended
- * to just the shortcut: \link seqan3::underlying_rank_t<> \endlink
+ * \par Helper template alias
+ *   seqan3::underlying_rank_t as a shorthand for `typename seqan3::underlying_rank<semi_alphabet_type>::%type`
  *
- * \attention This is the base template, it needss to be specialised.
+ * \attention This is the base template, it needs to be specialised.
  */
 template <typename semi_alphabet_type>
 struct underlying_rank{};
 
 /*!\brief The `rank_type` of the semi_alphabet. [type metafunction shortcut]
- * \relates seqan3::semi_alphabet_concept
+ * \ingroup alphabet
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::underlying_rank.
  */
@@ -95,10 +96,7 @@ using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
 
 /*!\brief The size of the alphabet. [value metafunction base template]
  * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
- * \relates seqan3::semi_alphabet_concept
- *
- * Instead of calling seqan3::alphabet_size<alphabet_type>::value, you may use
- * seqan3::alphabet_size_v<alphabet_type>.
+ * \ingroup alphabet
  *
  * This is the expression to retrieve the value:
  * ```cpp
@@ -108,14 +106,17 @@ using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
  * ```
  * The type of the variable is seqan3::underlying_rank_t<alphabet_type>.
  *
- * \attention This is the base template, it needss to be specialised.
+ * \par Helper variable template
+ *   seqan3::alphabet_size_v as a shorthand for `seqan3::alphabet_size<alphabet_type>::%value`
+ *
+ * \attention This is the base template, it needs to be specialised.
  */
 template <typename alphabet_type>
 struct alphabet_size{};
 
 /*!\brief The size of the alphabet. [value metafunction shortcut]
  * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
- * \relates seqan3::semi_alphabet_concept
+ * \ingroup alphabet
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::alphabet_size.
  */
@@ -127,7 +128,7 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
 
 /*!\fn rank_type seqan3::to_rank(semi_alphabet_concept const alph)
  * \brief Returns the alphabet letter's value in rank representation.
- * \relates seqan3::semi_alphabet_concept
+ * \ingroup alphabet
  * \param alph The alphabet letter that you wish to convert to rank.
  * \returns The letter's value in the alphabet's rank type (seqan3::underlying_rank).
  *
@@ -139,7 +140,7 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
 
 /*!\fn semi_alphabet_concept && seqan3::assign_rank(semi_alphabet_concept && alph, rank_type const rank)
  * \brief Returns the alphabet letter's value in rank representation.
- * \relates seqan3::semi_alphabet_concept
+ * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
  * \param rank The rank you wish to assign.
  * \returns A reference to `alph` or a temporary if `alph` was a temporary.
@@ -158,23 +159,24 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
 
 /*!\name Requirements for seqan3::alphabet_concept
  * \brief You can expect these functions on all types that implement seqan3::alphabet_concept.
+ * \relates seqan3::alphabet_concept
  * \{
  */
 
 /*!\brief The `char_type` of the alphabet. [type metafunction base template]
  * \tparam alphabet_type Must satisfy seqan3::alphabet_concept.
- * \relates seqan3::alphabet_concept
+ * \ingroup alphabet
  *
- * Instead of calling `typename seqan3::underlying_char<alphabet_type>::type` it is recommended
- * to just the shortcut: seqan3::underlying_char_t
+ * \par Helper template alias
+ *   seqan3::underlying_char_t as a shorthand for `typename seqan3::underlying_char<alphabet_type>::%type`
  *
- * \attention This is the base template, it needss to be specialised.
+ * \attention This is the base template, it needs to be specialised.
  */
 template <typename alphabet_type>
 struct underlying_char{};
 
 /*!\brief The `char_type` of the alphabet. [type metafunction shortcut]
- * \relates seqan3::alphabet_concept
+ * \ingroup alphabet
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::underlying_char.
  */
@@ -183,7 +185,7 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
 /*!\fn char_type seqan3::to_char(alphabet_concept const alph)
  * \brief Returns the alphabet letter's value in character representation.
- * \relates seqan3::alphabet_concept
+ * \ingroup alphabet
  * \param alph The alphabet letter that you wish to convert to char.
  * \returns The letter's value in the alphabet's char type (seqan3::underlying_char).
  *
@@ -195,7 +197,7 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
 /*!\fn alphabet_concept && seqan3::assign_char(alphabet_concept && alph, char_type const chr)
  * \brief Returns the alphabet letter's value in character representation.
- * \relates seqan3::alphabet_concept
+ * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
  * \param chr The `char` you wish to assign.
  * \returns A reference to `alph` or a temporary if `alph` was a temporary.
@@ -208,7 +210,7 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
 /*!\fn std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
  * \brief Ostream operator for the alphabet.
- * \relates seqan3::alphabet_concept
+ * \ingroup alphabet
  * \param os The output stream you are printing to.
  * \param alph The alphabet letter that you wish to convert to char.
  * \returns A reference to the output stream.
@@ -227,14 +229,12 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 
 /*!\name Requirements for seqan3::rna_structure_concept
  * \brief You can expect these functions on all types that implement seqan3::rna_structure_concept.
+ * \relates seqan3::rna_structure_concept
  * \{
  */
 /*!\brief Metafunction that indicates whether an alphabet can handle pseudoknots. [value metafunction base template]
  * \tparam alphabet_type The alphabet type whose pseudoknot ability is queried.
- * \relates seqan3::rna_structure_concept
- *
- * Instead of calling seqan3::pseudoknot_support<alphabet_type>::value, you may use
- * seqan3::pseudoknot_support_v<alphabet_type>.
+ * \ingroup alphabet
  *
  * This is the expression to retrieve the value:
  * ```cpp
@@ -243,13 +243,16 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * bool has_pk_support = seqan3::pseudoknot_support_v<alphabet_type>;
  * ```
  *
+ * \par Helper variable template
+ *   seqan3::pseudoknot_support_v as a shorthand for `seqan3::pseudoknot_support<alphabet_type>::%value`
+ *
  * \attention This is the base template, it needs to be specialised.
  */
 template<typename alphabet_type>
 struct pseudoknot_support{};
 
 /*!\brief The pseudoknot ability of the alphabet. [value metafunction shortcut]
- * \relates seqan3::rna_structure_concept
+ * \ingroup alphabet
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
  */
@@ -266,7 +269,12 @@ constexpr bool pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
 namespace seqan3::detail
 {
 
-//!\brief Metafunction that indicates whether a type is a char alphabet adaptation.
+/*!\brief Metafunction that indicates whether a type is a char alphabet adaptation.
+ * \ingroup alphabet
+ *
+ * \par Helper variable template
+ *   seqan3::is_char_adaptation_v as a shorthand for `seqan3::is_char_adaptation<type>::%value`
+ */
 template <typename type>
 struct is_char_adaptation :
     std::false_type
