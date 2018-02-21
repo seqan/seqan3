@@ -41,7 +41,7 @@
 #include <seqan3/range/view/to_char.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include <seqan3_test/tmp_filename.hpp>
+#include <seqan3/test/tmp_filename.hpp>
 
 #include <fstream>
 
@@ -363,7 +363,7 @@ void do_serialisation(TypeParam const l)
 {
     // This makes sure the file is also deleted if an exception is thrown in one of the tests below
     // Generate unique file name.
-    seqan3::test::tmp_file_name filename{"container_cereal_test"};
+    test::tmp_file_name filename{"container_cereal_test"};
     {
         std::ofstream os{filename.get_path(), std::ios::binary};
         out_archive_t oarchive{os};

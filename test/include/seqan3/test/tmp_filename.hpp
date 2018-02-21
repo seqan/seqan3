@@ -48,12 +48,12 @@
 #include <stdlib.h>
 #endif
 
-#if __has_include(<experimental/filesystem>)
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#else
+#if __has_include(<filesystem>)
 #include <filesystem>
 namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
 #endif // __has_include(experimental/filesystem)
 
 namespace seqan3
@@ -65,6 +65,9 @@ namespace test
 /*!\brief Creates and maintains a filesystem::path to a temporary file.
  * Creates a temporary unique file directory and adds the given file name to construct a filesystem::path.
  * It automatically removes the temporary directory and all contained files and subdirectories on destruction.
+ * The class manages the life time of the associated directory. This means, when the instance is destructed
+ * the associated filesystem directory and all it's contents will be deleted automatically.
+ * Hence an instance of this class cannot be copied.
  *
  * \par Example
  *
@@ -94,11 +97,11 @@ public:
     //!\brief Deleted default constructor.
     tmp_file_name() = delete;
     //!\brief Copy constructor.
-    tmp_file_name(tmp_file_name const &) = default;
+    tmp_file_name(tmp_file_name const &) = delete;  // NOTE: We could store the path in a shared_ptr and by thus reactivating the .
     //!\brief Move constructor.
     tmp_file_name(tmp_file_name &&) = default;
     //!\brief Copy assignment.
-    tmp_file_name & operator=(tmp_file_name const &) = default;
+    tmp_file_name & operator=(tmp_file_name const &) = delete;
     //!\brief Move assignment.
     tmp_file_name & operator=(tmp_file_name &&) = default;
 
@@ -139,7 +142,7 @@ public:
     ~tmp_file_name()
     {
         [[maybe_unused]] std::error_code ec;
-        remove_all(file_path.parent_path(), ec);
+        fs::remove_all(file_path.parent_path(), ec);
     }
     //!\}
 
