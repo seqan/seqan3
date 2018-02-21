@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file all.hpp
+/*!\file
  * \ingroup aminoacid
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Meta-header for the aminoacid submodule; includes all headers from alphabet/aminoacid/.

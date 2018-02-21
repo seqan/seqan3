@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file aa27.hpp
+/*!\file
  * \ingroup aminoacid
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Contains seqan3::aa27, container aliases and string literals.
