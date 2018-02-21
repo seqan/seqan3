@@ -42,7 +42,7 @@
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 
-/*!\defgroup gap
+/*!\defgroup gap Gap
  * \brief Contains the gap alphabet and functionality to make an alphabet a gapped alphabet.
  * \ingroup alphabet
  *

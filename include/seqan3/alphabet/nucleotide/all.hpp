@@ -45,7 +45,7 @@
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 
-/*!\defgroup nucleotide
+/*!\defgroup nucleotide Nucleotide
  * \brief Contains the different DNA and RNA alphabet types.
  * \ingroup alphabet
  *

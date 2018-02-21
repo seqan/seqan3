@@ -42,7 +42,7 @@
 #include <seqan3/alphabet/composition/cartesian_composition.hpp>
 #include <seqan3/alphabet/composition/union_composition.hpp>
 
-/*!\defgroup composition
+/*!\defgroup composition Composition
  * \brief Provides data structures joining multiple alphabets into a single alphabet.
  * \ingroup alphabet
  *
