@@ -82,7 +82,7 @@
  *
  * For seqan3::nucl16 there are also the following aliases (typedefs): `dna16, rna16, dna, rna`
  *
- * The specialised RNA alphabets are provided for convenience, however the DNA alphabets provide a `::U` member
+ * The specialised RNA alphabets are provided for convenience, however the DNA alphabets provide a `::%U` member
  * and can handle being assigned and `'U'` character, as well. See below for the details.
  *
  * Which alphabet to chose?
@@ -107,8 +107,8 @@
  *     // ...
  * ~~~
  *
- * All alphabets define at least the letters `::A`, `::C`, `::G`, `::T`, `::U`, `::UNKNOWN` (although some might be
- * aliases of others).
+ * All alphabets define at least the letters `::%A`, `::%C`, `::%G`, `::%T`, `::%U`, `::%UNKNOWN` (although some
+ * might be aliases of others).
  *
  * \par Printing and conversion to char
  *
@@ -125,7 +125,7 @@
  * | type::UNKNOWN  |    `'N'`       |    `'N'`     |    `'A'`     |    `'N'`     |    `'A'`     |
  *
  * In the smaller alphabets `T` and `U` are represented by the same rank and you cannot differentiate between them
- * (the static members `::T` and `::U` are synonymous). The only difference between e.g. seqan3::dna4 and
+ * (the static members `::%T` and `::%U` are synonymous). The only difference between e.g. seqan3::dna4 and
  * seqan3::rna4 is the output when calling to_char().
  *
  * \par Assignment and Conversion
