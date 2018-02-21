@@ -426,7 +426,7 @@ namespace seqan3::literal
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::vector<wuss51> operator "" _wuss51(const char * str, std::size_t len)
+inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
 {
     std::vector<wuss51> vec;
     vec.resize(len);
@@ -454,7 +454,7 @@ inline std::vector<wuss51> operator "" _wuss51(const char * str, std::size_t len
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::basic_string<wuss51, std::char_traits<wuss51>> operator "" _wuss51s(const char * str, std::size_t len)
+inline std::basic_string<wuss51, std::char_traits<wuss51>> operator""_wuss51s(const char * str, std::size_t len)
 {
     std::basic_string<wuss51, std::char_traits<wuss51>> wuss51str;
     wuss51str.resize(len);

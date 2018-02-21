@@ -294,7 +294,7 @@ namespace seqan3::literal
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::vector<dot_bracket3> operator "" _db3(const char * str, std::size_t len)
+inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t len)
 {
     std::vector<dot_bracket3> vec;
     vec.resize(len);
@@ -322,8 +322,8 @@ inline std::vector<dot_bracket3> operator "" _db3(const char * str, std::size_t 
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> operator "" _db3s(const char * str,
-                                                                                                  std::size_t len)
+inline std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> operator""_db3s(const char * str,
+                                                                                       std::size_t len)
 {
     std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> db3str;
     db3str.resize(len);

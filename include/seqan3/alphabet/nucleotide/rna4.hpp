@@ -232,7 +232,7 @@ namespace seqan3::literal
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
+inline rna4_vector operator""_rna4(const char * s, std::size_t n)
 {
     rna4_vector r;
     r.resize(n);
@@ -267,7 +267,7 @@ inline rna4_vector operator "" _rna4(const char * s, std::size_t n)
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline rna4_string operator "" _rna4s(const char * s, std::size_t n)
+inline rna4_string operator""_rna4s(const char * s, std::size_t n)
 {
     rna4_string r;
     r.resize(n);

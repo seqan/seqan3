@@ -415,7 +415,7 @@ namespace seqan3::literal
  * All user-defined literals are in the namespace seqan3::literal!
  */
 
-inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
+inline dna4_vector operator""_dna4(const char * s, std::size_t n)
 {
     dna4_vector r;
     r.resize(n);
@@ -450,7 +450,7 @@ inline dna4_vector operator "" _dna4(const char * s, std::size_t n)
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline dna4_string operator "" _dna4s(const char * s, std::size_t n)
+inline dna4_string operator""_dna4s(const char * s, std::size_t n)
 {
     dna4_string r;
     r.resize(n);

@@ -400,7 +400,7 @@ namespace seqan3::literal
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline aa27_vector operator "" _aa27(const char * s, std::size_t n)
+inline aa27_vector operator""_aa27(const char * s, std::size_t n)
 {
     aa27_vector r;
     r.resize(n);
@@ -435,7 +435,7 @@ inline aa27_vector operator "" _aa27(const char * s, std::size_t n)
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline aa27_string operator "" _aa27s(const char * s, std::size_t n)
+inline aa27_string operator""_aa27s(const char * s, std::size_t n)
 {
     aa27_string r;
     r.resize(n);

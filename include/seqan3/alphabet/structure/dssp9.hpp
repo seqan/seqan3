@@ -281,7 +281,7 @@ namespace seqan3::literal
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::vector<dssp9> operator "" _dssp9(const char * str, std::size_t len)
+inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 {
     std::vector<dssp9> vec;
     vec.resize(len);
@@ -309,7 +309,7 @@ inline std::vector<dssp9> operator "" _dssp9(const char * str, std::size_t len)
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
-inline std::basic_string<dssp9, std::char_traits<dssp9>> operator "" _dssp9s(const char * str, std::size_t len)
+inline std::basic_string<dssp9, std::char_traits<dssp9>> operator""_dssp9s(const char * str, std::size_t len)
 {
     std::basic_string<dssp9, std::char_traits<dssp9>> dssp9str;
     dssp9str.resize(len);

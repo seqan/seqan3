@@ -235,7 +235,7 @@ namespace seqan3::literal
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline rna5_vector operator "" _rna5(const char * s, std::size_t n)
+inline rna5_vector operator""_rna5(const char * s, std::size_t n)
 {
     rna5_vector r;
     r.resize(n);
@@ -270,7 +270,7 @@ inline rna5_vector operator "" _rna5(const char * s, std::size_t n)
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline rna5_string operator "" _rna5s(const char * s, std::size_t n)
+inline rna5_string operator""_rna5s(const char * s, std::size_t n)
 {
     rna5_string r;
     r.resize(n);
