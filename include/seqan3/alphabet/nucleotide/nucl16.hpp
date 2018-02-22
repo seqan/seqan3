@@ -408,7 +408,7 @@ namespace seqan3::literal
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline nucl16_vector operator "" _nucl16(const char * s, std::size_t n)
+inline nucl16_vector operator""_nucl16(const char * s, std::size_t n)
 {
     nucl16_vector r;
     r.resize(n);
@@ -443,7 +443,7 @@ inline nucl16_vector operator "" _nucl16(const char * s, std::size_t n)
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline nucl16_string operator "" _nucl16s(const char * s, std::size_t n)
+inline nucl16_string operator""_nucl16s(const char * s, std::size_t n)
 {
     nucl16_string r;
     r.resize(n);

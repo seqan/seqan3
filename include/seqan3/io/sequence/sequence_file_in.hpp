@@ -4,6 +4,10 @@
 #include <variant>
 #include <vector>
 
+#if 0
+//TODO(rrahn): this is a prototype and needs more refinement, disabling for now
+//!\cond
+
 namespace seqan3
 {
 
@@ -166,3 +170,6 @@ inline void sequence_file_in::select_format(std::string const & ext)
 }
 
 } // namespace seqan
+
+//!\endcond
+#endif

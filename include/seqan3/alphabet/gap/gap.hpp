@@ -99,7 +99,7 @@ struct gap
      */
     //!\brief Assign from a character (no-op, since gap has only one character).
     //!\param c not used, since gap has only one character
-    constexpr gap & assign_char(char_type const) noexcept
+    constexpr gap & assign_char([[maybe_unused]] char_type const c) noexcept
     {
         return *this;
     }

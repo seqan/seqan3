@@ -336,7 +336,7 @@ namespace seqan3::literal
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
+inline dna5_vector operator""_dna5(const char * s, std::size_t n)
 {
     dna5_vector r;
     r.resize(n);
@@ -371,7 +371,7 @@ inline dna5_vector operator "" _dna5(const char * s, std::size_t n)
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
+inline dna5_string operator""_dna5s(const char * s, std::size_t n)
 {
     dna5_string r;
     r.resize(n);
@@ -383,4 +383,3 @@ inline dna5_string operator "" _dna5s(const char * s, std::size_t n)
 }
 
 } // namespace seqan3::literal
-

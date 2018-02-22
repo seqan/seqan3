@@ -4,6 +4,10 @@
 #include <variant>
 #include <vector>
 
+#if 0
+//TODO(rrahn): this is a prototype and needs more refinement, disabling for now
+//!\cond
+
 namespace seqan3
 {
 // ==================================================================
@@ -115,7 +119,7 @@ inline void align_file_out::write_raw(arg_types && ... args)
 {
     assert(!format.valueless_by_exception);
     std::visit([&] (align_file_out_format_concept & f)
-    { 
+    {
         f->write_raw(stream, options, store, std::forwarard<decltype(args)>(args)...);
     }, format);
 }
@@ -124,3 +128,6 @@ inline void align_file_out::write_raw(arg_types && ... args)
 
 
 } // namespace seqan
+
+//!\endcond
+#endif

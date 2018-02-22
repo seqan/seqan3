@@ -133,8 +133,14 @@ template <typename type0>
 struct pod_tuple<type0>
 {
     static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
+    //!\cond DEV
+    //!\brief The first element as member.
     type0 _head;
+    //!\endcond
 
+    //!\name Comparison operators
+    //!\{
+    //!\brief Lexicographically compares the values in the tuple.
     constexpr bool operator==(pod_tuple const & rhs) const noexcept
     {
         return _head == rhs._head;
@@ -164,6 +170,7 @@ struct pod_tuple<type0>
     {
         return _head >= rhs._head;
     }
+    //!\}
 };
 
 #undef SEQAN_NOT_POD

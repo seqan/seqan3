@@ -36,11 +36,14 @@
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4_sequence.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <string>
 #include <fstream>
 
+#if 0
+//TODO(rrahn): this is a prototype and needs more refinement, disabling for now
+//!\cond
 namespace seqan3
 {
 
@@ -84,3 +87,6 @@ constexpr bool meets_concept_sequence_file_format()
 } // namespace detail
 
 } // namespace seqan3
+
+//!\endcond
+#endif

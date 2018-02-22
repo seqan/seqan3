@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file all.hpp
+/*!\file
  * \ingroup aminoacid
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Meta-header for the aminoacid submodule; includes all headers from alphabet/aminoacid/.
@@ -42,7 +42,7 @@
 #include <seqan3/alphabet/aminoacid/translation.hpp>
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
 
-/*!\defgroup aminoacid
+/*!\defgroup aminoacid Aminoacid
  * \brief Contains the amino acid alphabets and functionality for translation from nucleotide.
  * \ingroup alphabet
  *

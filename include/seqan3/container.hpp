@@ -36,7 +36,7 @@
 
 #pragma once
 
-/*!\defgroup container
+/*!\defgroup container Container
  *
  * The container module contains adaptations and concepts for ranges and containers, as well
  * as implementations of novel containers.

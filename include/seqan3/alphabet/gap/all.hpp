@@ -36,13 +36,12 @@
  * \ingroup gap
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Meta-header for the gap submodule; includes all headers from alphabet/gap/.
- * \group gap
  */
 
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 
-/*!\defgroup gap
+/*!\defgroup gap Gap
  * \brief Contains the gap alphabet and functionality to make an alphabet a gapped alphabet.
  * \ingroup alphabet
  *

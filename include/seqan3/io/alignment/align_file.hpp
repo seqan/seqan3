@@ -4,6 +4,10 @@
 #include <variant>
 #include <vector>
 
+#if 0
+//TODO(rrahn): this is a prototype and needs more refinement, disabling for now
+//!\cond
+
 namespace seqan3
 {
 
@@ -63,4 +67,7 @@ std::string align_record_field_labels[] // required for blast, nice for sam
 };
 
 
-}
+} // namespace seqan3
+
+//!\endcond
+#endif

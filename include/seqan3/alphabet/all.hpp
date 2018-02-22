@@ -37,7 +37,7 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header for the alphabet module.
  *
- * \defgroup alphabet
+ * \defgroup alphabet Alphabet
  *
  * The alphabet module contains different biological alphabets and related functionality.
  *

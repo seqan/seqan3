@@ -42,7 +42,7 @@
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/adaptation/concept.hpp> // has to be after
 
-/*!\defgroup adaptation
+/*!\defgroup adaptation Adaptation
  * \brief Contains alphabet adaptions of some standard char and uint types.
  * \ingroup alphabet
  */

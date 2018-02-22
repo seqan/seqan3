@@ -32,7 +32,9 @@
 //
 // ============================================================================
 
-//! \cond DEV
+// This is a test case and needs no documentation
+// TODO: transform into a test case https://github.com/seqan/seqan3/issues/129
+//! \cond
 
 /*!\file
  * \brief Testing the core library concepts.
