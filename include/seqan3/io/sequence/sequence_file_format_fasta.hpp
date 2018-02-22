@@ -3,6 +3,10 @@
 #include <vector>
 #include <string>
 
+#if 0
+//TODO(rrahn): this is a prototype and needs more refinement, disabling for now
+//!\cond
+
 namespace seqan3
 {
 
@@ -64,3 +68,6 @@ static_assert(align_file_out_format_concept<align_file_out_format_sam>,
 
 
 } // namespace seqan3
+
+//!\endcond
+#endif
