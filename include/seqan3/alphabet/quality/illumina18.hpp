@@ -67,7 +67,8 @@ struct illumina18
         return *this;
     }
 
-    //! comparison operators
+    //!\name Comparison operators
+    //!\{
     constexpr bool operator==(const illumina18 & rhs) const
     {
         return this->value == rhs.value;
@@ -97,6 +98,7 @@ struct illumina18
     {
         return this->value >= rhs.value;
     }
+    //!\}
 
     //! explicit compatibility to char code of a quality score
     explicit constexpr operator char() const
