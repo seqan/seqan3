@@ -133,7 +133,10 @@ template <typename type0>
 struct pod_tuple<type0>
 {
     static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
+    //!\cond DEV
+    //!\brief The first element as member.
     type0 _head;
+    //!\endcond
 
     //!\name Comparison operators
     //!\{
