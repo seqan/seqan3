@@ -32,8 +32,6 @@
 //
 // ============================================================================
 
-#pragma once
-
 /*!\file
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \brief A constexpr string implementation to manipulate string literals at compile time.
