@@ -108,3 +108,22 @@ TYPED_TEST(char_adaptation, alphabet_size_v)
     EXPECT_EQ(alphabet_size_v<TypeParam>,
         static_cast<size_t>(std::numeric_limits<TypeParam>::max()) + 1 - std::numeric_limits<TypeParam>::lowest());
 }
+
+TYPED_TEST(char_adaptation, alphabet_name)
+{
+    if constexpr (sizeof(TypeParam) == 1)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"char"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"char"});
+    }
+    else if constexpr (sizeof(TypeParam) == 2)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"char16"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"char16"});
+    }
+    else
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"char32"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"char32"});
+    }
+}

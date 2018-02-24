@@ -212,6 +212,35 @@ TYPED_TEST(nucleotide, explicit_conversion)
     });
 }
 
+TYPED_TEST(nucleotide, alphabet_name)
+{
+    if constexpr (std::is_same_v<TypeParam, dna4>)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"dna4"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"dna4"});
+    }
+    if constexpr (std::is_same_v<TypeParam, dna5>)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"dna5"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"dna5"});
+    }
+    if constexpr (std::is_same_v<TypeParam, rna4>)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"rna4"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"rna4"});
+    }
+    if constexpr (std::is_same_v<TypeParam, rna5>)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"rna5"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"rna5"});
+    }
+    if constexpr (std::is_same_v<TypeParam, nucl16>)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"nucl16"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"nucl16"});
+    }
+}
+
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------

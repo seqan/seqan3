@@ -48,6 +48,7 @@
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 // ------------------------------------------------------------------
 // rna4
@@ -126,6 +127,9 @@ struct rna4 : public dna4
         return *this;
     }
     //!\}
+
+    //!\brief The name of the alphabet.
+    static constexpr static_string name{"rna4"};
 
     /*!\name Conversion operators
      * \{
@@ -279,4 +283,3 @@ inline rna4_string operator""_rna4s(const char * s, std::size_t n)
 }
 
 } // namespace seqan3::literal
-

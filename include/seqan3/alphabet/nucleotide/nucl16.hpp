@@ -47,6 +47,7 @@
 
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 // ------------------------------------------------------------------
 // nucl16
@@ -150,6 +151,9 @@ struct nucl16
 
     //!\copydoc seqan3::dna4::value_size
     static constexpr rank_type value_size{16};
+
+    //!\brief The name of the alphabet.
+    static constexpr static_string name{"nucl16"};
 
     /*!\name Conversion operators
      * \{
@@ -455,4 +459,3 @@ inline nucl16_string operator""_nucl16s(const char * s, std::size_t n)
 }
 
 } // namespace seqan3::literal
-

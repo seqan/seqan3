@@ -46,6 +46,7 @@
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 namespace seqan3
 {
@@ -154,6 +155,9 @@ struct aa27
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{27};
+
+    //!\brief The name of the alphabet.
+    static constexpr static_string name{"aa27"};
 
     //!\name Comparison operators
     //!\{

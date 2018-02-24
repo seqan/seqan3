@@ -84,6 +84,9 @@ struct gapped : public union_composition<alphabet_t, gap>
     using typename union_composition<alphabet_t, gap>::rank_type;
     using typename union_composition<alphabet_t, gap>::char_type;
 
+    //!\brief The name of the alphabet.
+    static constexpr static_string name{static_string{"gapped_"} + alphabet_t::name};
+
     //!\copydoc union_composition::assign_char
     constexpr gapped & assign_char(char_type const c) noexcept
     {

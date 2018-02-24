@@ -95,6 +95,10 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
     { t1 >  t2 } -> bool;
     { t1 <= t2 } -> bool;
     { t1 >= t2 } -> bool;
+
+    // alphabet name
+    alphabet_name<t>::value;
+    alphabet_name_v<t>;
 };
 //!\endcond
 

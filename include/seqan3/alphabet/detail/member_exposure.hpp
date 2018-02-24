@@ -45,6 +45,7 @@
 #include <iostream>
 
 #include <seqan3/alphabet/concept_pre.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 namespace seqan3
 {
@@ -87,6 +88,21 @@ struct alphabet_size<alphabet_type_with_members>
     //!\brief The size retrieved from the type's member.
     static constexpr underlying_rank_t<alphabet_type_with_members> value =
         alphabet_type_with_members::value_size;
+};
+
+/*!\brief Specialisation of seqan3::alphabet_name that delegates to `alphabet_type::name`.
+ * \tparam alphabet_type Must provide a static member variable calls `name`.
+ *
+ * Instead of accessing this struct directly, just use seqan3::alphabet_name_v.
+ */
+template <typename alphabet_type_with_members>
+//!\cond
+    requires requires (alphabet_type_with_members alph) { alphabet_type_with_members::name; }
+//!\endcond
+struct alphabet_name<alphabet_type_with_members>
+{
+    //!\brief The name retrieved from the type's member.
+    static constexpr static_string value{alphabet_type_with_members::name};
 };
 
 /*!\brief Implementation of seqan3::semi_alphabet_concept::to_rank() that delegates to a member function.

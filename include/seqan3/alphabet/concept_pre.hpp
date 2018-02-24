@@ -126,6 +126,39 @@ template <typename alphabet_type>
 //!\endcond
 constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
 
+/*!\brief The size of the alphabet. [value metafunction base template]
+ * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \ingroup alphabet
+ *
+ * This is the expression to retrieve the value:
+ * ```cpp
+ * auto i = seqan3::alphabet_size<alphabet_type>::value;
+ * // or
+ * auto i = seqan3::alphabet_size_v<alphabet_type>;
+ * ```
+ * The type of the variable is seqan3::underlying_rank_t<alphabet_type>.
+ *
+ * \par Helper variable template
+ *   seqan3::alphabet_size_v as a shorthand for `seqan3::alphabet_size<alphabet_type>::%value`
+ *
+ * \attention This is the base template, it needs to be specialised.
+ */
+template <typename alphabet_type>
+struct alphabet_name{};
+
+/*!\brief The size of the alphabet. [value metafunction shortcut]
+ * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \ingroup alphabet
+ *
+ * \attention Do not specialise this shortcut, instead specialise seqan3::alphabet_name.
+ */
+template <typename alphabet_type>
+//!\cond
+    // TODO(rrahn): check if condition can be met here already.
+    requires requires (alphabet_type alph) { alphabet_name<alphabet_type>::value; }
+//!\endcond
+constexpr auto alphabet_name_v = alphabet_name<alphabet_type>::value;
+
 /*!\fn rank_type seqan3::to_rank(semi_alphabet_concept const alph)
  * \brief Returns the alphabet letter's value in rank representation.
  * \ingroup alphabet

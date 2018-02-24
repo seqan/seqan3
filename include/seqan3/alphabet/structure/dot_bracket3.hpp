@@ -45,6 +45,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 // ------------------------------------------------------------------
 // dot_bracket3
@@ -143,6 +144,9 @@ struct dot_bracket3
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{3};
+
+    //! The name of this alphabet.
+    static constexpr static_string name{"dot_bracket3"};
 
     //!\name Comparison operators
     //!\{

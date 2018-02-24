@@ -172,6 +172,30 @@ TYPED_TEST(structure, rna_structure_concept)
 }
 
 // ------------------------------------------------------------------
+// alphabet name
+// ------------------------------------------------------------------
+
+TEST(structure_name, dot_bracket3)
+{
+    using alphabet_t = dot_bracket3;
+    EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"dot_bracket3"});
+    EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"dot_bracket3"});
+}
+
+TEST(structure_name, dssp9)
+{
+    using alphabet_t = dssp9;
+    EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"dssp9"});
+    EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"dssp9"});
+}
+
+TEST(structure_name, wuss)
+{
+    using alphabet_t = wuss51;
+    EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"wuss<51>"});
+    EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"wuss<51>"});
+}
+// ------------------------------------------------------------------
 // stream operator
 // ------------------------------------------------------------------
 
@@ -615,6 +639,13 @@ TEST(structured_rna, complement)
     EXPECT_EQ(complement(tU), complement(tU));
 }
 
+TEST(structured_rna, alphabet_name)
+{
+    using alphabet_t = structured_rna<rna5, dot_bracket3>;
+    EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"structured_rna<rna5_dot_bracket3>"});
+    EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"structured_rna<rna5_dot_bracket3>"});
+}
+
 // ------------------------------------------------------------------
 // composition aminoacid x protein structure
 // ------------------------------------------------------------------
@@ -895,4 +926,11 @@ TEST(structured_aa, outstream)
     s << t0;
 
     EXPECT_EQ(s.str(), "CA");
+}
+
+TEST(structured_aa, alphabet_name)
+{
+    using alphabet_t = structured_aa<aa27, dssp9>;
+    EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"structured_aa<aa27_dssp9>"});
+    EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"structured_aa<aa27_dssp9>"});
 }

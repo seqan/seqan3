@@ -47,6 +47,7 @@
 #include <seqan3/alphabet/composition/cartesian_composition.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 namespace seqan3
 {
@@ -102,6 +103,12 @@ struct structured_rna :
 
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
+
+    //! The name of this alphabet.
+    static constexpr static_string name = static_string{"structured_rna<"} +
+                                          alphabet_name_v<sequence_alphabet_t> +
+                                          static_string{'_'} + alphabet_name_v<structure_alphabet_t> +
+                                          static_string{'>'};
 
     //!\name Write functions
     //!\{

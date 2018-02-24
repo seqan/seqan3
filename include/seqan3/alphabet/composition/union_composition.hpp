@@ -50,6 +50,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 namespace seqan3::detail
 {
@@ -295,6 +296,12 @@ public:
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr size_t value_size = (alphabet_types::value_size + ... + first_alphabet_type::value_size);
+
+    //!\brief The name of the alphabet.
+    static constexpr static_string name = static_string{"union<"} +
+                                          (alphabet_name_v<first_alphabet_type> + ... +
+                                                (static_string{" & "} + alphabet_name_v<alphabet_types>)) +
+                                          static_string{'>'};
 
     //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink)
     using char_type = typename first_alphabet_type::char_type;

@@ -72,6 +72,7 @@
 
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 namespace seqan3::detail
 {
@@ -161,6 +162,22 @@ struct alphabet_size<char_type>
     //!\brief The alphabet's size.
     static constexpr type value =
         static_cast<type>(std::numeric_limits<char_type>::max()) + 1 - std::numeric_limits<char_type>::lowest();
+};
+
+// ------------------------------------------------------------------
+// name metafunctions
+// ------------------------------------------------------------------
+
+template <typename char_type>
+//!\cond
+    requires detail::is_char_adaptation_v<char_type>
+//!\endcond
+struct alphabet_name<char_type>
+{
+    static constexpr std::tuple _t{static_string{"char"}, static_string{"char16"}, static_string{"char32"}};
+
+    static constexpr static_string value =
+        std::get<meta::find_index<detail::char_adaptations, char_type>::value>(_t);
 };
 
 // ------------------------------------------------------------------
