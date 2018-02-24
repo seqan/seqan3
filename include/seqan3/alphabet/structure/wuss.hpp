@@ -45,6 +45,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 // ------------------------------------------------------------------
 // wuss
@@ -52,6 +53,27 @@
 
 namespace seqan3
 {
+
+namespace detail
+{
+template<unsigned... digits>
+struct to_chars
+{
+    constexpr static const char value[] = {('0' + digits)..., 0};
+};
+
+template<unsigned rem, unsigned... digits>
+struct explode : explode<rem / 10, rem % 10, digits...>
+{};
+
+template<unsigned... digits>
+struct explode<0, digits...> : to_chars<digits...>
+{};
+
+template<unsigned num>
+struct num_to_string : explode<num>
+{};
+}
 
 /*!\brief The WUSS structure alphabet of the characters `.<>:,-_~;()[]{}AaBbCcDd`...
  * \tparam SIZE The alphabet size defaults to 50 and must be an odd number in range 15..67.
@@ -183,6 +205,11 @@ struct wuss
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{SIZE};
+
+    //! The name of this alphabet.
+    static constexpr static_string name = static_string{"wuss<"} +
+                                          static_string{detail::explode<static_cast<unsigned>(SIZE)>::value} +
+                                          static_string{'>'};
 
     //!\name Comparison operators
     //!\{

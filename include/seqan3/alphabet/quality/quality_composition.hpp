@@ -110,6 +110,11 @@ struct quality_composition :
     //!\brief Equals the phred_type of the quality_alphabet_type.
     using phred_type = underlying_phred_t<quality_alphabet_type>;
 
+    //! The name of this alphabet.
+    static constexpr static_string name = static_string{"quality<"} + alphabet_name_v<sequence_alphabet_t> +
+                                          static_string{'-'} + alphabet_name_v<quality_alphabet_t> +
+                                          static_string{'>'};
+
     /*!\name Write functions
      * \{
      */

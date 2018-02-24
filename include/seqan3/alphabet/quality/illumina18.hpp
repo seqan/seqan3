@@ -38,6 +38,8 @@
 
 #include <cassert>
 
+#include <seqan3/core/detail/static_string.hpp>
+
 namespace seqan3
 {
 
@@ -149,6 +151,9 @@ struct illumina18
 
     //! phred score range for Illumina 1.8 standard
     static constexpr rank_type value_size{42};
+
+    //! The name of this alphabet.
+    static constexpr static_string name{"illumina18"};
 
 protected:
 

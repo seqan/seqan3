@@ -48,6 +48,7 @@
 
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 // ------------------------------------------------------------------
 // dna5
@@ -141,6 +142,9 @@ struct dna5
 
     //!\copydoc seqan3::dna4::value_size
     static constexpr rank_type value_size{5};
+
+    //!\brief The name of the alphabet.
+    static constexpr static_string name{"dna5"};
 
     /*!\name Conversion operators
      * \{

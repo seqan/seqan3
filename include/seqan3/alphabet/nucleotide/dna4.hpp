@@ -48,6 +48,7 @@
 
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 // ------------------------------------------------------------------
 // dna4
@@ -207,6 +208,9 @@ struct dna4
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{4};
+
+    //!\brief The name of the alphabet.
+    static constexpr static_string name{"dna4"};
 
     /*!\name Conversion operators
      * \{

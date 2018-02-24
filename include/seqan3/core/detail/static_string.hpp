@@ -32,6 +32,8 @@
 //
 // ============================================================================
 
+#pragma once
+
 /*!\file
  * \ingroup core
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
@@ -89,22 +91,22 @@ public:
 
     // Concatenation
     template <std::size_t N2>
-    constexpr static_string<N + N2> operator+(static_string<N2> const & rhs) noexcept
+    constexpr static_string<N + N2> operator+(static_string<N2> const & rhs) const noexcept
     {
         return static_string<N + N2>{*this, rhs};
     }
 
-    constexpr std::size_t size() noexcept
+    constexpr std::size_t size() const noexcept
     {
         return N;
     }
 
-    std::string string()
+    std::string string() const
     {
         return std::string{ _lit.cbegin(), _lit.cend() - 1};
     }
 
-    constexpr const char * c_str() noexcept
+    constexpr const char * c_str() const noexcept
     {
         return _lit.data();
     }

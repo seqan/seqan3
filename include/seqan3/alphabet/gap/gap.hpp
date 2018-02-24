@@ -118,6 +118,9 @@ struct gap
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{1};
 
+    //!\brief The name of the alphabet.
+    static constexpr static_string name{"gap"};
+
     //!\name Comparison operators
     //!\{
     constexpr bool operator==(gap const &) const noexcept

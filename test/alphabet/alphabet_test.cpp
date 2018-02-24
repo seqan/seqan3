@@ -78,6 +78,11 @@ TYPED_TEST(alphabet, alphabet_size)
     EXPECT_GT(alphabet_size_v<TypeParam>, 0u);
 }
 
+TYPED_TEST(alphabet, alphabet_name)
+{
+    EXPECT_GT(alphabet_size_v<TypeParam>, 0u);
+}
+
 TYPED_TEST(alphabet, default_value_constructor)
 {
     [[maybe_unused]] TypeParam t1;

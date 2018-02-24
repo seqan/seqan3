@@ -89,3 +89,9 @@ TEST(gap_test, assign_rank)
     EXPECT_EQ(gap{}.assign_rank(0), gap{});
     // EXPECT_EQ(gap{}.assign_rank(13), gap{});
 }
+
+TEST(gap_test, alphabet_name)
+{
+    EXPECT_EQ(alphabet_name<gap>::value.string(), std::string{"gap"});
+    EXPECT_EQ(alphabet_name_v<gap>.string(), std::string{"gap"});
+}

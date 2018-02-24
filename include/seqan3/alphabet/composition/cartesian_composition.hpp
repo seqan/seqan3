@@ -49,6 +49,7 @@
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 
 namespace seqan3
 {
@@ -93,6 +94,12 @@ public:
     //!\brief The product of the sizes of the individual alphabets.
     static constexpr rank_type value_size{(alphabet_size_v<first_alphabet_type> * ... *
                                                alphabet_size_v<alphabet_types>)};
+
+    //!\brief The name of the alphabet.
+    static constexpr static_string name = static_string{"cartesian<"} +
+                                                (alphabet_name_v<first_alphabet_type> + ... +
+                                                (static_string{" * "} + alphabet_name_v<alphabet_types>)) +
+                                          static_string{'>'};
 
     /*!\name Read functions
      * \{

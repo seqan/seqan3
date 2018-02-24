@@ -106,3 +106,22 @@ TYPED_TEST(uint_adaptation, alphabet_size_v)
     EXPECT_EQ(alphabet_size_v<TypeParam>,
         static_cast<uint64_t>(std::numeric_limits<TypeParam>::max()) + 1 - std::numeric_limits<TypeParam>::lowest());
 }
+
+TYPED_TEST(uint_adaptation, alphabet_name)
+{
+    if constexpr (sizeof(TypeParam) == 1)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"uint8_t"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"uint8_t"});
+    }
+    else if constexpr (sizeof(TypeParam) == 2)
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"uint16_t"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"uint16_t"});
+    }
+    else
+    {
+        EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"uint32_t"});
+        EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"uint32_t"});
+    }
+}

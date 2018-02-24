@@ -69,6 +69,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/detail/static_string.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 
 namespace seqan3::detail
@@ -157,6 +158,22 @@ struct alphabet_size<uint_type>
     //!\brief The alphabet's size.
     static constexpr type value =
         static_cast<type>(std::numeric_limits<uint_type>::max()) + 1 - std::numeric_limits<uint_type>::lowest();
+};
+
+// ------------------------------------------------------------------
+// name metafunctions
+// ------------------------------------------------------------------
+
+template <typename uint_type>
+//!\cond
+    requires detail::is_uint_adaptation_v<uint_type>
+//!\endcond
+struct alphabet_name<uint_type>
+{
+    static constexpr std::tuple _t{static_string{"uint8_t"}, static_string{"uint16_t"}, static_string{"uint32_t"}};
+
+    static constexpr static_string value =
+        std::get<meta::find_index<detail::uint_adaptations, uint_type>::value>(_t);
 };
 
 // ------------------------------------------------------------------

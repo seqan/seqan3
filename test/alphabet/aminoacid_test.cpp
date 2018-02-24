@@ -119,6 +119,12 @@ TYPED_TEST(aminoacid, stream_operator)
     EXPECT_EQ(ss.str(), "ACG");
 }
 
+TYPED_TEST(aminoacid, alphabet_name)
+{
+    EXPECT_EQ(alphabet_name<TypeParam>::value.string(), std::string{"aa27"});
+    EXPECT_EQ(alphabet_name_v<TypeParam>.string(), std::string{"aa27"});
+}
+
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------

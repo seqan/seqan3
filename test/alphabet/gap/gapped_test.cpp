@@ -118,3 +118,11 @@ TEST(gapped_test, stream_operator)
     ss << letterA << letterT << letterG << letterGAP << letterC;
     EXPECT_EQ(ss.str(), "ATG-C");
 }
+
+TEST(gapped_test, alphabet_name)
+{
+    using alphabet_t = gapped<dna4>;
+
+    EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"gapped_dna4"});
+    EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"gapped_dna4"});
+}

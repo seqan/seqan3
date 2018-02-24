@@ -40,6 +40,7 @@
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 
 using namespace seqan3;
 
@@ -183,4 +184,26 @@ TEST(union_composition_test, rank_type)
     EXPECT_TRUE(expect1);
     EXPECT_TRUE(expect2);
     EXPECT_TRUE(expect3);
+}
+
+TEST(union_composition_test, alphabet_name)
+{
+    {
+        using alphabet_t = union_composition<dna4>;
+        EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"union<dna4>"});
+        EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"union<dna4>"});
+    }
+
+    {
+        using alphabet_t = union_composition<dna4, gap>;
+        EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"union<dna4 & gap>"});
+        EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"union<dna4 & gap>"});
+    }
+
+    {
+        using alphabet_t = union_composition<dna4, gap, aa27>;
+        EXPECT_EQ(alphabet_name<alphabet_t>::value.string(), std::string{"union<dna4 & gap & aa27>"});
+        EXPECT_EQ(alphabet_name_v<alphabet_t>.string(), std::string{"union<dna4 & gap & aa27>"});
+    }
+
 }
