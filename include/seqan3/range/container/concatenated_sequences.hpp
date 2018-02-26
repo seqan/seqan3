@@ -138,6 +138,9 @@ template <typename inner_type,
 //!\endcond
 class concatenated_sequences
 {
+    static_assert(!detail::sequence_concept_modified_by_const_iterator_bug<inner_type>,
+                  "KNOWN BUG: inner_type = std::basic_string<> is not working "
+                  "for the ubuntu::ppa version of gcc7, because of a faulty STL version. ");
 protected:
     //!\privatesection
     //!\brief Where the concatenation is stored.
@@ -1319,8 +1322,3 @@ public:
 };
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-static_assert(seqan3::reservable_sequence_concept<seqan3::concatenated_sequences<std::string>>);
-static_assert(seqan3::forward_range_concept<seqan3::concatenated_sequences<std::string>>);
-#endif
