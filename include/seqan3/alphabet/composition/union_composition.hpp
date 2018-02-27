@@ -119,26 +119,6 @@ template <typename ...alphabet_types>
 //!\endcond
 class union_composition
 {
-protected:
-    //!\privatesection
-
-    /*!\brief Returns the sum over all alphabet_size_v<alphabets_t>'s.
-     * \tparam ...alphabets_t The types must satisfy seqan3::alphabet_concept.
-     * \hideinitializer
-     *
-     * ```cpp
-     * constexpr size_t sum = sum_of_alphabet_sizes_v<dna4, gap, dna5>;
-     * assert(sum == 10);
-     * ```
-     */
-    template <typename ...alphabets_t>
-    //!\cond
-        requires (alphabet_concept<alphabets_t> && ...)
-    //!\endcond
-    static constexpr size_t sum_of_alphabet_sizes_v =
-        (static_cast<size_t>(alphabet_size_v<alphabets_t>) + ... + static_cast<size_t>(0));
-
-    //!\publicsection
 public:
     /*!\brief Returns true if alphabet_t is one of the given alphabet types.
      * \tparam alphabet_t The type to check.
@@ -158,7 +138,10 @@ public:
     }
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr auto value_size = detail::min_viable_uint_v<sum_of_alphabet_sizes_v<alphabet_types...>>;
+    static constexpr auto value_size =
+        detail::min_viable_uint_v<
+            (static_cast<size_t>(alphabet_size_v<alphabet_types>) + ... + static_cast<size_t>(0))
+        >;
 
     //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink).
     using char_type = underlying_char_t<meta::front<meta::list<alphabet_types...>>>;
@@ -330,26 +313,14 @@ public:
 protected:
     //!\privatesection
 
-    /*!\brief Returns the max over all alphabet_size_v<alphabets_t>'s.
-     * \tparam ...alphabets_t The types must satisfy seqan3::alphabet_concept.
+    /*!\brief Compile-time generated lookup table which contains the partial
+     * sum up to the position of each alphabet.
+     *
+     * An array which contains the prefix sum over all
+     * alphabet_types::value_size's.
      *
      * ```cpp
-     * constexpr size_t max = max_of_alphabet_sizes_v<dna4, gap, dna5>;
-     * assert(max == 5);
-     * ```
-     */
-    template <typename ...alphabets_t>
-    //!\cond
-        requires (alphabet_concept<alphabets_t> && ...)
-    //!\endcond
-    static constexpr size_t max_of_alphabet_sizes_v =
-        std::max({static_cast<size_t>(0), static_cast<size_t>(alphabet_size_v<alphabets_t>)...});
-
-    /*!\brief Returns an array which contains the prefix sum over all alphabet_types::value_size's.
-     * \tparam ...alphabet_types The types must satisfy seqan3::alphabet_concept.
-     *
-     * ```cpp
-     * constexpr std::array partial_sum = partial_sum_of_alphabet_sizes<dna4, gap, dna5>();
+     * constexpr std::array partial_sum = union_composition<dna4, gap, dna5>::partial_sum_sizes; // not working; is protected
      * assert(partial_sum.size() == 4);
      * assert(partial_sum[0] == 0);
      * assert(partial_sum[1] == 4);
@@ -357,58 +328,25 @@ protected:
      * assert(partial_sum[3] == 10);
      * ```
      */
-    template <typename ...alphabets_t>
-    //!\cond
-        requires (alphabet_concept<alphabets_t> && ...)
-    //!\endcond
-    static constexpr auto partial_sum_of_alphabet_sizes() noexcept
+    static constexpr std::array partial_sum_sizes = []() constexpr
     {
-        constexpr size_t value_size = sum_of_alphabet_sizes_v<alphabets_t...>;
-        using rank_t = detail::min_viable_uint_t<value_size>;
+        constexpr size_t N = sizeof...(alphabet_types) + 1;
 
-        constexpr size_t N = sizeof...(alphabets_t) + 1;
-        using array_t = std::array<rank_t, N>;
-
-        array_t partial_sum{0, alphabet_size_v<alphabets_t>...};
+        std::array<rank_type, N> partial_sum{0, alphabet_size_v<alphabet_types>...};
         for (size_t i = 1u; i < N; ++i)
             partial_sum[i] += partial_sum[i-1];
 
         return partial_sum;
-    }
+    }();
 
-    /*!\brief Returns an fixed sized map at compile time where the key is the rank
-     * of alphabet_t and the value is the corresponding char of that rank.
-     * \sa value_to_char_table
+    /*!\brief Compile-time generated lookup table which maps the rank to char.
+     *
+     * A map generated at compile time where the key is the rank of the union
+     * of all alphabets and the value is the corresponding char of that rank
+     * and alphabet.
      *
      * ```cpp
-     * constexpr std::array table1 = make_value_to_char_table<5, char>(dna4{});
-     * assert(table1.size() == 5);
-     * assert(table1[0] == 'A');
-     * assert(table1[1] == 'C');
-     * assert(table1[2] == 'G');
-     * assert(table1[3] == 'T');
-     * assert(table1[4] == '\0');
-     * ```
-     */
-    template <size_t table_size, typename alphabet_t>
-        requires (alphabet_size_v<alphabet_t> <= table_size)
-    static constexpr auto make_value_to_char_table(alphabet_t alphabet) noexcept
-    {
-        using array_t = std::array<char_type, table_size>;
-        array_t value_to_char{};
-
-        for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i)
-            value_to_char[i] = alphabet.assign_rank(i).to_char();
-
-        return value_to_char;
-    }
-
-    /*!\brief Returns a map at compile time where the key is the rank of the union
-     * of all alphabets and the value is the corresponding char of that rank and
-     * alphabet.
-     *
-     * ```cpp
-     * constexpr std::array value_to_char = value_to_char_table<char, dna4, gap, dna5>();
+     * constexpr std::array value_to_char = union_composition<char, dna4, gap, dna5>::value_to_char; // not working; is protected
      * assert(value_to_char.size() == 10);
      * assert(value_to_char[0] == 'A');
      * assert(value_to_char[1] == 'C');
@@ -420,34 +358,45 @@ protected:
      * // and so on
      * ```
      */
-    static constexpr auto value_to_char_table() noexcept
+    static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
     {
-        constexpr size_t table_size = sum_of_alphabet_sizes_v<alphabet_types...>;
-        constexpr std::array value_sizes = std::array<size_t, table_size>
+        // figure out which fixed_size >= alphabet::value_size for each alphabet
+        constexpr size_t fixed_size = std::max({static_cast<size_t>(0), static_cast<size_t>(alphabet_size_v<alphabet_types>)...});
+        using padded_value_to_char_t = std::array<char_type, fixed_size>;
+
+        // collect all alphabet_sizes from the alphabets
+        constexpr std::array alphabet_sizes = std::array<size_t, value_size>
         {
             alphabet_size_v<alphabet_types>...
         };
 
-        constexpr size_t fixed_size = max_of_alphabet_sizes_v<alphabet_types...>;
-        using padded_value_to_char_t = std::array<char_type, fixed_size>;
-        using value_to_char_tables_t = std::array<padded_value_to_char_t, table_size>;
-
         // store all `value_to_char` tables of each alphabet in one std::array
-        constexpr std::array value_to_char_tables = value_to_char_tables_t
+        constexpr std::array value_to_char_tables = std::array<padded_value_to_char_t, value_size>
         {
-            make_value_to_char_table<fixed_size>(alphabet_types{})...
+            [](auto && alphabet) constexpr
+            {
+                using alphabet_t = std::decay_t<decltype(alphabet)>;
+                padded_value_to_char_t value_to_char{};
+
+                for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i)
+                    value_to_char[i] = alphabet.assign_rank(i).to_char();
+
+                return value_to_char;
+            }(alphabet_types{})...
         };
 
-        using value_to_char_t = std::array<char_type, table_size>;
-        value_to_char_t value_to_char{};
-        for (size_t i = 0u, value = 0u; i < table_size; ++i)
-            for (size_t k = 0u; k < value_sizes[i]; ++k, ++value)
+        // construct value_to_char table out of all value_to_char_tables
+        std::array<char_type, value_size> value_to_char{};
+        for (size_t i = 0u, value = 0u; i < value_size; ++i)
+            for (size_t k = 0u; k < alphabet_sizes[i]; ++k, ++value)
                 value_to_char[value] = value_to_char_tables[i][k];
 
         return value_to_char;
-    }
+    }();
 
-    /*!\brief Returns an map at compile time where the key is the char of one of the
+    /*!\brief Compile-time generated lookup table which maps the char to rank.
+     *
+     * An map generated at compile time where the key is the char of one of the
      * alphabets and the value is the corresponding rank over all alphabets (by
      * conflict will default to the first).
      *
@@ -467,38 +416,20 @@ protected:
      * assert(char_to_value['*'] == 0); // every other character defaults to 0
      * ```
      */
-    static constexpr auto char_to_value_table() noexcept
+    static constexpr std::array char_to_value = []() constexpr
     {
-        constexpr size_t value_size = sum_of_alphabet_sizes_v<alphabet_types...>;
-        using rank_t = detail::min_viable_uint_t<value_size>;
-
         constexpr size_t table_size = 1 << (sizeof(char_type) * 8);
-        constexpr std::array value_to_char = value_to_char_table();
 
-        using array_t = std::array<rank_t, table_size>;
-
-        array_t char_to_value{};
+        std::array<rank_type, table_size> char_to_value{};
         for (size_t i = 0u; i < value_to_char.size(); ++i)
         {
-            rank_t & old_entry = char_to_value[value_to_char[i]];
+            rank_type & old_entry = char_to_value[value_to_char[i]];
             bool is_new_entry = value_to_char[0] != value_to_char[i] && old_entry == 0;
             if (is_new_entry)
-                old_entry = static_cast<rank_t>(i);
+                old_entry = static_cast<rank_type>(i);
         }
         return char_to_value;
-    }
-
-    //!\brief Compile-time generated lookup table which contains the prefix sum up to the position of each alphabet.
-    //!\sa partial_sum_of_alphabet_sizes
-    static constexpr std::array partial_sum_sizes = partial_sum_of_alphabet_sizes<alphabet_types...>();
-
-    //!\brief Compile-time generated lookup table which maps the rank to char.
-    //!\sa value_to_char_table
-    static constexpr std::array value_to_char = value_to_char_table();
-
-    //!\brief Compile-time generated lookup table which maps the char to rank.
-    //!\sa char_to_value_table
-    static constexpr std::array char_to_value = char_to_value_table();
+    }();
 
     //!\brief Converts an object of one of the given alphabets into the internal representation.
     //!\tparam index The position of `alphabet_t` in the template pack `alphabet_types`.
