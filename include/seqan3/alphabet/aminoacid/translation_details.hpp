@@ -54,6 +54,7 @@ namespace seqan3::detail
 template <typename nucl_type, seqan3::genetic_code gc = seqan3::genetic_code::CANONICAL, typename void_type = void>
 struct translation_table
 {
+    //!\brief Holds the generic translation table.
     static constexpr std::array<std::array<std::array<aa27, alphabet_size_v<nucl_type>>, alphabet_size_v<nucl_type>>,
                                                       alphabet_size_v<nucl_type>> VALUE
     {
@@ -85,7 +86,7 @@ struct translation_table
 template <typename void_type>
 struct translation_table<nucl16, seqan3::genetic_code::CANONICAL, void_type>
 {
-
+    //!\brief Holds the translation table for canonical genetic code and nucl16 alphabet.
     static constexpr aa27 VALUE[nucl16::value_size][nucl16::value_size][nucl16::value_size]
     {
         { // a??
