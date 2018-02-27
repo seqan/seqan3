@@ -48,16 +48,19 @@ namespace seqan3
  */
 struct illumina18
 {
-    //! the 3 representation types of a quality score
+    //! the PHRED representation type of a quality score
     using phred_type = int8_t;
+    //! the rank representation type of a quality score
     using rank_type = uint8_t;
+    //! the char representation type of a quality score
     using char_type = char;
 
     //! internal rank value representation
     rank_type value;
 
-    //! projection offsets of char and rank quality score
+    //! projection offset of a char quality score
     static constexpr char_type offset_char{'!'};
+    //! projection offsets of a phred quality score
     static constexpr phred_type offset_phred{0};
 
     //! implicit compatibility to inner_type
