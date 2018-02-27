@@ -129,6 +129,10 @@ struct pod_tuple
     //!\}
 };
 
+/*!\brief Recursion anchor for pod_tuple.
+ * \ingroup core
+ * \tparam type0 The value's type (every tuple must contain at least one type).
+ */
 template <typename type0>
 struct pod_tuple<type0>
 {
