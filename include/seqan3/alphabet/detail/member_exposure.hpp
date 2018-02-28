@@ -303,6 +303,7 @@ template <typename alphabet_type_with_pseudoknot_attribute>
 //!\endcond
 struct pseudoknot_support<alphabet_type_with_pseudoknot_attribute>
 {
+    //!\brief The forwarded pseudoknot support.
     static constexpr bool value = alphabet_type_with_pseudoknot_attribute::pseudoknot_support;
 };
 //!\}
