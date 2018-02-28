@@ -151,13 +151,13 @@ TEST(aa27_literals, string)
 
 TEST(translation, translate_triplets)
 {
-    nucl16 n1{nucl16::C};
-    nucl16 n2{nucl16::T};
-    nucl16 n3{nucl16::A};
+    dna15 n1{dna15::C};
+    dna15 n2{dna15::T};
+    dna15 n3{dna15::A};
     aa27 c{aa27::L};
 
     // Nucleotide interface
-    aa27 t1{translate_triplet<genetic_code::CANONICAL, nucl16>(n1, n2, n3)};
+    aa27 t1{translate_triplet<genetic_code::CANONICAL, dna15>(n1, n2, n3)};
 
     EXPECT_EQ(t1, c);
 

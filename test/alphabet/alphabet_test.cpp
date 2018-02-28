@@ -55,7 +55,7 @@ class alphabet : public ::testing::Test
 {};
 
 // add all alphabets here
-using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
+using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         aa27,
                                         union_composition<dna4>,
                                         union_composition<dna4, gap>,
@@ -63,7 +63,7 @@ using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
                                         union_composition<dna4, dna5, gap>,
                                         /*gap,*/
                                         gapped<dna4>,
-                                        gapped<nucl16>,
+                                        gapped<dna15>,
                                         gapped<illumina18>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
@@ -285,7 +285,7 @@ class alphabet_constexpr : public ::testing::Test
 {};
 
 // add all alphabets here
-using alphabet_constexpr_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
+using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                                   /*aa27,*/
                                                   union_composition<dna4>,
                                                   union_composition<dna4, gap>,

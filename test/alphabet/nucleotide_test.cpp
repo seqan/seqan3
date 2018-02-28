@@ -48,8 +48,8 @@ class nucleotide : public ::testing::Test
 {};
 
 // add all alphabets from the nucleotide sub module here
-using nucleotide_types  = ::testing::Types<dna4, dna5, rna4, rna5, dna15>;
-using nucleotide_types2 =       meta::list<dna4, dna5, rna4, rna5, dna15>; // needed for some tests
+using nucleotide_types  = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15>;
+using nucleotide_types2 =       meta::list<dna4, dna5, dna15, rna4, rna5, rna15>; // needed for some tests
 
 TYPED_TEST_CASE(nucleotide, nucleotide_types);
 
@@ -86,7 +86,7 @@ TYPED_TEST(nucleotide, assign_char)
             t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N,
             t::N
         };
-    } else if constexpr (std::is_same_v<TypeParam, dna15>)
+    } else if constexpr (std::is_same_v<TypeParam, dna15> || std::is_same_v<TypeParam, rna15>)
     {
         cmp =
         {
@@ -109,15 +109,15 @@ TYPED_TEST(nucleotide, to_char)
     EXPECT_EQ(to_char(TypeParam::G), 'G');
 
     if constexpr (std::is_same_v<TypeParam, rna4> ||
-                  std::is_same_v<TypeParam, rna5>)
-//                   std::is_same_v<TypeParam, rna15>)
+                  std::is_same_v<TypeParam, rna5> ||
+                  std::is_same_v<TypeParam, rna15>)
     {
         EXPECT_EQ(to_char(TypeParam::U), 'U');
         EXPECT_EQ(to_char(TypeParam::T), 'U');
     }
     else if constexpr (std::is_same_v<TypeParam, dna4> ||
                        std::is_same_v<TypeParam, dna5> ||
-                       std::is_same_v<TypeParam, dna5>)
+                       std::is_same_v<TypeParam, dna15>)
     {
         EXPECT_EQ(to_char(TypeParam::U), 'T');
         EXPECT_EQ(to_char(TypeParam::T), 'T');
@@ -179,19 +179,19 @@ TYPED_TEST(nucleotide, concept)
 // conversion to rna/dna of same size
 TYPED_TEST(nucleotide, implicit_conversion)
 {
-    using complement_type = std::conditional_t<std::is_same_v<TypeParam, rna4>, dna4,
-                            std::conditional_t<std::is_same_v<TypeParam, dna4>, rna4,
-                            std::conditional_t<std::is_same_v<TypeParam, rna5>, dna5,
-                            std::conditional_t<std::is_same_v<TypeParam, dna5>, rna5, void>>>>;
-    if constexpr (!std::is_same_v<complement_type, void>)
-    {
-        // construct
-        EXPECT_EQ(complement_type{TypeParam::C}, complement_type::C);
-        // assign
-        complement_type l{};
-        l = TypeParam::C;
-        EXPECT_EQ(l, complement_type::C);
-    }
+    using other_type = std::conditional_t<std::is_same_v<TypeParam, rna4>,  dna4,
+                       std::conditional_t<std::is_same_v<TypeParam, dna4>,  rna4,
+                       std::conditional_t<std::is_same_v<TypeParam, rna5>,  dna5,
+                       std::conditional_t<std::is_same_v<TypeParam, dna5>,  rna5,
+                       std::conditional_t<std::is_same_v<TypeParam, dna15>, rna15,
+                       /* must be rna15 */                                  dna15>>>>>;
+
+    // construct
+    EXPECT_EQ(other_type{TypeParam::C}, other_type::C);
+    // assign
+    other_type l{};
+    l = TypeParam::C;
+    EXPECT_EQ(l, other_type::C);
 }
 
 // conversion to any other nucleotide type
@@ -203,6 +203,9 @@ TYPED_TEST(nucleotide, explicit_conversion)
         EXPECT_EQ(static_cast<out_type>(TypeParam::A), out_type::A);
         EXPECT_EQ(static_cast<out_type>(TypeParam::C), out_type::C);
         EXPECT_EQ(static_cast<out_type>(TypeParam::G), out_type::G);
+        EXPECT_EQ(static_cast<out_type>(TypeParam::T), out_type::T);
+        EXPECT_EQ(static_cast<out_type>(TypeParam::U), out_type::U);
+        EXPECT_EQ(static_cast<out_type>(TypeParam::T), out_type::U);
     });
 }
 
@@ -251,6 +254,16 @@ TEST(dna5_literals, basic_string)
     EXPECT_EQ(w, "ACGTTNN"_dna5s);
 }
 
+TEST(dna15_literals, vector)
+{
+    dna15_vector v;
+    v.resize(5, dna15::A);
+    EXPECT_EQ(v, "AAAAA"_dna15);
+
+    std::vector<dna15> w{dna15::A, dna15::C, dna15::G, dna15::T, dna15::U, dna15::N, dna15::UNKNOWN};
+    EXPECT_EQ(w, "ACGTTNN"_dna15);
+}
+
 TEST(rna4_literals, vector)
 {
     rna4_vector v;
@@ -292,12 +305,12 @@ TEST(rna5_literals, basic_string)
     EXPECT_EQ(w, "ACGUUNN"_rna5s);
 }
 
-TEST(dna15_literals, vector)
+TEST(rna15_literals, vector)
 {
-    dna15_vector v;
-    v.resize(5, dna15::A);
-    EXPECT_EQ(v, "AAAAA"_dna15);
+    rna15_vector v;
+    v.resize(5, rna15::A);
+    EXPECT_EQ(v, "AAAAA"_rna15);
 
-    std::vector<dna15> w{dna15::A, dna15::C, dna15::G, dna15::T, dna15::U, dna15::N, dna15::UNKNOWN};
-    EXPECT_EQ(w, "ACGTTNN"_dna15);
+    std::vector<rna15> w{rna15::A, rna15::C, rna15::G, rna15::T, rna15::U, rna15::N, rna15::UNKNOWN};
+    EXPECT_EQ(w, "ACGTTNN"_rna15);
 }
