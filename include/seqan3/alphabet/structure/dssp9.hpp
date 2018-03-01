@@ -254,10 +254,6 @@ constexpr dssp9 dssp9::X{internal_type::X};
 
 } // namespace seqan3
 
-#ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::dssp9>);
-#endif
-
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------

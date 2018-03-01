@@ -73,8 +73,3 @@ using rna5q = quality_composition<rna5, illumina18>;
 using nucl16q = quality_composition<nucl16, illumina18>;
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-static_assert(seqan3::nucleotide_concept<seqan3::dna4q>);
-static_assert(sizeof(seqan3::dna4q) == sizeof(seqan3::dna4) + sizeof(seqan3::illumina18));
-#endif

@@ -154,8 +154,4 @@ struct gap
 
 constexpr gap gap::GAP{};
 
-#ifndef NDEBUG
-static_assert(alphabet_concept<gap>);
-#endif
-
 }

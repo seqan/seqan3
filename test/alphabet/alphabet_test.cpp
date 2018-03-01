@@ -59,8 +59,9 @@ using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
                                         aa27,
                                         union_composition<dna4>,
                                         union_composition<dna4, gap>,
+                                        union_composition<dna5, dna5>,
                                         union_composition<dna4, dna5, gap>,
-                                        /*gap, */
+                                        /*gap,*/
                                         gapped<dna4>,
                                         gapped<nucl16>,
                                         gapped<illumina18>,

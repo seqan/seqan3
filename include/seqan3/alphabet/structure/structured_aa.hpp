@@ -147,9 +147,3 @@ structured_aa(sequence_alphabet_type &&, structure_alphabet_type &&)
     -> structured_aa<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/structure/dssp9.hpp>
-static_assert(seqan3::alphabet_concept<seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>>);
-#endif

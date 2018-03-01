@@ -329,11 +329,6 @@ constexpr std::array<nucl16, nucl16::value_size> nucl16::complement_table
 
 } // namespace seqan3
 
-#ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::nucl16>);
-static_assert(seqan3::nucleotide_concept<seqan3::nucl16>);
-#endif
-
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------

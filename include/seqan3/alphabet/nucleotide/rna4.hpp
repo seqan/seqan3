@@ -173,11 +173,6 @@ constexpr rna4 rna4::UNKNOWN{rna4::A};
 
 } // namespace seqan3
 
-#ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::rna4>);
-static_assert(seqan3::nucleotide_concept<seqan3::rna4>);
-#endif
-
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
