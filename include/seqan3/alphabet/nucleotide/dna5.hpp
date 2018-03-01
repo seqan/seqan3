@@ -43,7 +43,6 @@
 
 #include <cassert>
 
-#include <string>
 #include <vector>
 
 #include <seqan3/alphabet/detail/convert.hpp>
@@ -288,18 +287,6 @@ namespace seqan3
 //!\relates dna5
 using dna5_vector = std::vector<dna5>;
 
-
-/*!\brief Alias for an std::basic_string of seqan3::dna5.
- * \relates dna5
- *
- * \attention
- * Note that we recommend using seqan3::dna5_vector instead of dna5_string in almost all situations.
- * While the C++ style operations on the string are well supported, you should not access the internal c-string
- * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
- * correct length of the string (while the `.size()` returns the correct value).
- */
-using dna5_string = std::basic_string<dna5, std::char_traits<dna5>>;
-
 } // namespace seqan3
 
 // ------------------------------------------------------------------
@@ -334,41 +321,6 @@ namespace seqan3::literal
 inline dna5_vector operator""_dna5(const char * s, std::size_t n)
 {
     dna5_vector r;
-    r.resize(n);
-
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
-
-    return r;
-}
-
-/*!\brief dna5 string literal
- * \relates seqan3::dna5
- * \returns seqan3::dna5_string
- *
- * You can use this string literal to easily assign to dna5_vector:
- *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // dna5_string foo{"ACGTTA"};
- *     // dna5_string bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     dna5_string foo{"ACGTTA"_dna5s};
- *     dna5_string bar = "ACGTTA"_dna5s;
- *     auto bax = "ACGTTA"_dna5s;
- *~~~~~~~~~~~~~~~
- *
- * Please note the limitations of seqan3::dna5_string and consider using the \link operator""_dna5 \endlink instead.
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-
-inline dna5_string operator""_dna5s(const char * s, std::size_t n)
-{
-    dna5_string r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)

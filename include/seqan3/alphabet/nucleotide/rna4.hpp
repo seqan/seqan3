@@ -42,7 +42,6 @@
 
 #include <cassert>
 
-#include <string>
 #include <vector>
 
 #include <seqan3/alphabet/detail/convert.hpp>
@@ -184,18 +183,6 @@ namespace seqan3
 //!\relates rna4
 using rna4_vector = std::vector<rna4>;
 
-
-/*!\brief Alias for an std::basic_string of seqan3::rna4.
- * \relates rna4
- *
- * \attention
- * Note that we recommend using seqan3::rna4_vector instead of rna4_string in almost all situations.
- * While the C++ style operations on the string are well supported, you should not access the internal c-string
- * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
- * correct length of the string (while the `.size()` returns the correct value).
- */
-using rna4_string = std::basic_string<rna4, std::char_traits<rna4>>;
-
 } // namespace seqan3
 
 // ------------------------------------------------------------------
@@ -238,40 +225,4 @@ inline rna4_vector operator""_rna4(const char * s, std::size_t n)
     return r;
 }
 
-/*!\brief rna4 string literal
- * \relates seqan3::rna4
- * \returns seqan3::rna4_string
- *
- * You can use this string literal to easily assign to rna4_vector:
- *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // rna4_string foo{"ACGTTA"};
- *     // rna4_string bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     rna4_string foo{"ACGTTA"_rna4s};
- *     rna4_string bar = "ACGTTA"_rna4s;
- *     auto bax = "ACGTTA"_rna4s;
- *~~~~~~~~~~~~~~~
- *
- * Please note the limitations of seqan3::rna4_string and consider using the \link operator""_rna4 \endlink instead.
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-
-inline rna4_string operator""_rna4s(const char * s, std::size_t n)
-{
-    rna4_string r;
-    r.resize(n);
-
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
-
-    return r;
-}
-
 } // namespace seqan3::literal
-

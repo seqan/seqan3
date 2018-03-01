@@ -41,7 +41,6 @@
 #pragma once
 
 #include <cassert>
-#include <string>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
@@ -430,34 +429,6 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
         vec[idx].assign_char(str[idx]);
 
     return vec;
-}
-
-/*!\brief wuss string literal
- * \relates seqan3::wuss
- * \returns std::basic_string<seqan3::wuss51, std::char_traits<seqan3::wuss51>>
- *
- * You can use this string literal to easily assign to a string of wuss characters:
- *
- *```.cpp
- *     using namespace seqan3::literal;
- *     using string_t = std::basic_string<wuss51, std::char_traits<wuss51>>;
- *     string_t foo{".<..>."_wuss51s};
- *     string_t bar = ".<..>."_wuss51s;
- *     auto bax = ".<..>."_wuss51s;
- *```
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-inline std::basic_string<wuss51, std::char_traits<wuss51>> operator""_wuss51s(const char * str, std::size_t len)
-{
-    std::basic_string<wuss51, std::char_traits<wuss51>> wuss51str;
-    wuss51str.resize(len);
-
-    for (size_t idx = 0u; idx < len; ++idx)
-        wuss51str[idx].assign_char(str[idx]);
-
-    return wuss51str;
 }
 
 } // namespace seqan3::literal

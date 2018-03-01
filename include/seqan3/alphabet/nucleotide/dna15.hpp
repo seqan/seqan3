@@ -42,7 +42,6 @@
 
 #include <cassert>
 
-#include <string>
 #include <vector>
 
 #include <seqan3/alphabet/detail/convert.hpp>

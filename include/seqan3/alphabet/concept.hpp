@@ -43,7 +43,6 @@
 #define SEQAN3_ALPHABET_CONCEPT_INCLUDED
 
 #include <iostream>
-#include <string>
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
