@@ -211,18 +211,6 @@ TEST(dot_bracket3_literals, vector)
     EXPECT_EQ(vec2, ".(())."_db3);
 }
 
-TEST(dot_bracket3_literals, basic_string)
-{
-    using string_t = std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>>;
-    string_t str1;
-    str1.resize(5, dot_bracket3::PAIR_CLOSE);
-    EXPECT_EQ(str1, ")))))"_db3s);
-
-    string_t str2{dot_bracket3::PAIR_OPEN, dot_bracket3::UNPAIRED, dot_bracket3::PAIR_CLOSE,
-                  dot_bracket3::PAIR_OPEN, dot_bracket3::PAIR_CLOSE, dot_bracket3::UNKNOWN};
-    EXPECT_EQ(str2, "(.)()."_db3s);
-}
-
 TEST(wuss_literals, vector)
 {
     std::vector<wuss51> vec1;
@@ -234,18 +222,6 @@ TEST(wuss_literals, vector)
     EXPECT_EQ(vec2, ".<<>>."_wuss51);
 }
 
-TEST(wuss_literals, basic_string)
-{
-    using string_t = std::basic_string<wuss51, std::char_traits<wuss51>>;
-    string_t str1;
-    str1.resize(5, wuss51::PAIR_CLOSE);
-    EXPECT_EQ(str1, ">>>>>"_wuss51s);
-
-    string_t str2{wuss51::PAIR_OPEN, wuss51::UNPAIRED, wuss51::PAIR_CLOSE,
-                  wuss51::PAIR_OPEN, wuss51::PAIR_CLOSE, wuss51::UNPAIRED};
-    EXPECT_EQ(str2, "<.><>."_wuss51s);
-}
-
 TEST(dssp9_literals, vector)
 {
     std::vector<dssp9> vec1;
@@ -254,17 +230,6 @@ TEST(dssp9_literals, vector)
 
     std::vector<dssp9> vec2{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
     EXPECT_EQ(vec2, "EHHHTG"_dssp9);
-}
-
-TEST(dssp9_literals, basic_string)
-{
-    using string_t = std::basic_string<seqan3::dssp9, std::char_traits<seqan3::dssp9>>;
-    string_t str1;
-    str1.resize(5, dssp9::B);
-    EXPECT_EQ(str1, "BBBBB"_dssp9s);
-
-    string_t str2{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
-    EXPECT_EQ(str2, "EHHHTG"_dssp9s);
 }
 
 // ------------------------------------------------------------------

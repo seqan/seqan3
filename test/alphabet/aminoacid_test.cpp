@@ -134,17 +134,6 @@ TEST(aa27_literals, vector)
     EXPECT_EQ(w, "AYPTUNXX*"_aa27);
 }
 
-TEST(aa27_literals, string)
-{
-    aa27_string v;
-    v.resize(5, aa27::A);
-    EXPECT_EQ(v, "AAAAA"_aa27s);
-
-    std::basic_string<aa27, std::char_traits<aa27>> w{aa27::A, aa27::Y, aa27::P, aa27::T, aa27::U,
-                                                      aa27::N, aa27::X, aa27::UNKNOWN, aa27::TERMINATOR};
-    EXPECT_EQ(w, "AYPTUNXX*"_aa27s);
-}
-
 // ------------------------------------------------------------------
 // translation
 // ------------------------------------------------------------------
