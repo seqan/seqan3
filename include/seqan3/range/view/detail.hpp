@@ -54,7 +54,7 @@ namespace seqan3::detail
 /*!\brief An empty base class that our views inherit from so they are treated as views by the STL/range-v3.
  * \ingroup view
  */
-struct view_base : ranges::view_base
+struct view_base : public ranges::view_base
 {};
 
 // ============================================================================

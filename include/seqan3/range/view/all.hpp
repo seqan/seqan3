@@ -48,6 +48,7 @@
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/range/view/translation.hpp>
 #include <seqan3/range/view/trim.hpp>
+#include <seqan3/range/view/single_pass_input.hpp>
 
 /*!\defgroup view View
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
