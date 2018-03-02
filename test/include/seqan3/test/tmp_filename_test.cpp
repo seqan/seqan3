@@ -49,8 +49,8 @@ TEST(tmp_filename_aggr, aggr)
 // nullptr as filename
 TEST(tmp_filename_nullptr, null_ptr)
 {
-    ASSERT_THROW(tmp_file_name t1{nullptr}, fs::filesystem_error);
-    ASSERT_THROW(tmp_file_name t1(nullptr), fs::filesystem_error);
+    EXPECT_THROW(tmp_file_name t1{nullptr}, fs::filesystem_error);
+    EXPECT_THROW(tmp_file_name t1(nullptr), fs::filesystem_error);
 }
 
 // move construction
