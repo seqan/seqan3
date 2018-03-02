@@ -55,7 +55,8 @@ set (CMAKE_MODULE_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_MODULE_PATH})
 foreach (_PATH
          "${SEQAN3_ROOT}/range-v3/include/"
          "${SEQAN3_ROOT}/sdsl-lite/include/"
-         "${SEQAN3_ROOT}/cereal/include/")
+         "${SEQAN3_ROOT}/cereal/include/"
+         "${SEQAN3_ROOT}/lemon/include/")
     if (EXISTS ${_PATH})
         set (CMAKE_INCLUDE_PATH ${_PATH} ${CMAKE_INCLUDE_PATH})
     endif ()

@@ -7,3 +7,6 @@
 [submodule "cereal"]
 	path = cereal
 	url = https://github.com/USCiLab/cereal
+[submodule "lemon"]
+	path = lemon
+	url = https://github.com/seqan/lemon
