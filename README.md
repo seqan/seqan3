@@ -21,10 +21,11 @@ To include SeqAn3 in your app, you need the following:
 |                   | requirement                                          | version  | comment                                   |
 |-------------------|------------------------------------------------------|----------|-------------------------------------------|
 |**compiler**       | [GCC](http://gcc.gnu.org)                            | ≥ 7      | no other compiler is currently supported! |
-|**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                  |
+|**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                 |
 |**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      | succint datastructures                    |
 |                   | [Ranges-V3](https://github.com/ericniebler/range-v3) | == 0.3.0 | ranges and views                          |
 |**optional libs**  | [Cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | serialisation                             |
+|                   | [Lemon](http://lemon.cs.elte.hu)                     | ≥ 1.3.1  | graphs, required for MSA                  |
 
 ### Developers of the library
 
