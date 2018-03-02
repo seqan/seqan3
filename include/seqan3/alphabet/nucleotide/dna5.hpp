@@ -277,11 +277,6 @@ constexpr std::array<dna5, dna5::value_size> dna5::complement_table
 
 } // namespace seqan3
 
-#ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::dna5>);
-static_assert(seqan3::nucleotide_concept<seqan3::dna5>);
-#endif
-
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------

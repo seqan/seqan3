@@ -178,3 +178,9 @@ TEST(illumina18_cmp, cmp)
     EXPECT_GE(illu3, illu2);
     EXPECT_GT(illu3, illu2);
 }
+
+TEST(illumina18, quality_concept)
+{
+    EXPECT_TRUE(quality_concept<illumina18>);
+    EXPECT_TRUE(seqan3::detail::internal_quality_concept<illumina18>);
+}

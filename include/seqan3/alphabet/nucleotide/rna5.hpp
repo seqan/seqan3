@@ -176,11 +176,6 @@ constexpr rna5 rna5::UNKNOWN{rna5::N};
 
 } // namespace seqan3
 
-#ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::rna5>);
-static_assert(seqan3::nucleotide_concept<seqan3::rna5>);
-#endif
-
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------

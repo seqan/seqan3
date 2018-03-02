@@ -341,13 +341,6 @@ constexpr aa27 aa27::UNKNOWN{aa27::X};
 
 } // namespace seqan3
 
-#ifndef NDEBUGs
-
-#include <seqan3/alphabet/concept.hpp>
-
-static_assert(seqan3::alphabet_concept<seqan3::aa27>);
-#endif
-
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------

@@ -192,11 +192,3 @@ structured_rna(sequence_alphabet_type &&, structure_alphabet_type &&)
     -> structured_rna<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/structure/wuss.hpp>
-static_assert(seqan3::alphabet_concept<seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>>);
-static_assert(seqan3::nucleotide_concept<seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>>);
-static_assert(seqan3::rna_structure_concept<seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>>);
-#endif

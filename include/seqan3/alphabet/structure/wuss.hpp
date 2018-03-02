@@ -398,11 +398,6 @@ typedef wuss<51> wuss51;
 
 } // namespace seqan3
 
-#ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::wuss<>>);
-static_assert(seqan3::rna_structure_concept<seqan3::wuss<>>);
-#endif
-
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------

@@ -105,8 +105,3 @@ struct gapped : public union_composition<alphabet_t, gap>
 };
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-static_assert(seqan3::alphabet_concept<seqan3::gapped<seqan3::dna4>>);
-#endif

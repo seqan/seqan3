@@ -46,13 +46,3 @@
  * \brief Contains alphabet adaptions of some standard char and uint types.
  * \ingroup alphabet
  */
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/concept.hpp>
-static_assert(seqan3::char_adaptation_concept<char>);
-static_assert(seqan3::char_adaptation_concept<char16_t>);
-static_assert(seqan3::char_adaptation_concept<char32_t>);
-static_assert(seqan3::uint_adaptation_concept<uint8_t>);
-static_assert(seqan3::uint_adaptation_concept<uint16_t>);
-static_assert(seqan3::uint_adaptation_concept<uint32_t>);
-#endif

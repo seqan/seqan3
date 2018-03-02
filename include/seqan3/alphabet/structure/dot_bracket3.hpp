@@ -266,11 +266,6 @@ constexpr dot_bracket3 dot_bracket3::UNKNOWN{internal_type::UNKNOWN};
 
 } // namespace seqan3
 
-#ifndef NDEBUG
-static_assert(seqan3::alphabet_concept<seqan3::dot_bracket3>);
-static_assert(seqan3::rna_structure_concept<seqan3::dot_bracket3>);
-#endif
-
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
