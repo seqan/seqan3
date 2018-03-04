@@ -256,7 +256,8 @@ public:
     //!\param c The character to assign to.
     constexpr union_composition & assign_char(char_type const c) noexcept
     {
-        _value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 
@@ -360,11 +361,19 @@ protected:
      */
     static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
     {
-        auto assign_value_to_char = [] (auto alphabet, auto & value_to_char, auto & value)
+        // Explicitly writing assign_rank_to_char within assign_value_to_char
+        // causes this bug (g++-7 and g++-8):
+        // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84684
+        auto assign_rank_to_char = [](auto alphabet, size_t rank) constexpr
+        {
+            return seqan3::to_char(seqan3::assign_rank(alphabet, rank));
+        };
+
+        auto assign_value_to_char = [assign_rank_to_char] (auto alphabet, auto & value_to_char, auto & value) constexpr
         {
             using alphabet_t = std::decay_t<decltype(alphabet)>;
             for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i, ++value)
-                value_to_char[value] = alphabet.assign_rank(i).to_char();
+                value_to_char[value] = assign_rank_to_char(alphabet, i);
         };
 
         unsigned value = 0u;
@@ -408,7 +417,8 @@ protected:
         std::array<rank_type, table_size> char_to_value{};
         for (size_t i = 0u; i < value_to_char.size(); ++i)
         {
-            rank_type & old_entry = char_to_value[value_to_char[i]];
+            using index_t = std::make_unsigned_t<char_type>;
+            rank_type & old_entry = char_to_value[static_cast<index_t>(value_to_char[i])];
             bool is_new_entry = value_to_char[0] != value_to_char[i] && old_entry == 0;
             if (is_new_entry)
                 old_entry = static_cast<rank_type>(i);
@@ -426,7 +436,7 @@ protected:
     //!\endcond
     static constexpr rank_type rank_by_index_(alphabet_t const & alphabet) noexcept
     {
-        return partial_sum_sizes[index] + static_cast<rank_type>(alphabet.to_rank());
+        return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(alphabet));
     }
 
     //!\brief Converts an object of one of the given alphabets into the internal representation.
