@@ -360,36 +360,21 @@ protected:
      */
     static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
     {
-        // figure out which fixed_size >= alphabet::value_size for each alphabet
-        constexpr size_t fixed_size = std::max({static_cast<size_t>(0), static_cast<size_t>(alphabet_size_v<alphabet_types>)...});
-        using padded_value_to_char_t = std::array<char_type, fixed_size>;
-
-        // collect all alphabet_sizes from the alphabets
-        constexpr std::array alphabet_sizes = std::array<size_t, value_size>
+        auto assign_value_to_char = [] (auto alphabet, auto & value_to_char, auto & value)
         {
-            alphabet_size_v<alphabet_types>...
+            using alphabet_t = std::decay_t<decltype(alphabet)>;
+            for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i, ++value)
+                value_to_char[value] = alphabet.assign_rank(i).to_char();
         };
 
-        // store all `value_to_char` tables of each alphabet in one std::array
-        constexpr std::array value_to_char_tables = std::array<padded_value_to_char_t, value_size>
-        {
-            [](auto && alphabet) constexpr
-            {
-                using alphabet_t = std::decay_t<decltype(alphabet)>;
-                padded_value_to_char_t value_to_char{};
-
-                for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i)
-                    value_to_char[i] = alphabet.assign_rank(i).to_char();
-
-                return value_to_char;
-            }(alphabet_types{})...
-        };
-
-        // construct value_to_char table out of all value_to_char_tables
+        unsigned value = 0u;
         std::array<char_type, value_size> value_to_char{};
-        for (size_t i = 0u, value = 0u; i < value_size; ++i)
-            for (size_t k = 0u; k < alphabet_sizes[i]; ++k, ++value)
-                value_to_char[value] = value_to_char_tables[i][k];
+
+        // initializer lists guarantee sequencing;
+        // the following expression behaves as:
+        // for(auto alphabet: alphabet_types)
+        //    assign_value_to_char(alphabet, value_to_char, value);
+        ((assign_value_to_char(alphabet_types{}, value_to_char, value)),...);
 
         return value_to_char;
     }();
