@@ -48,12 +48,11 @@ namespace seqan3
 {
 
 
-/*!\brief A gapped that extends a given alphabet with a gap character.
+/*!\brief Extends a given alphabet with a gap character.
  * \ingroup gap
  * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
- * \implements seqan3::alphabet_concept
  *
- * The gapped represents the union of a given alphabet and the
+ * The gapped alphabet represents the union of a given alphabet and the
  * seqan3::gap alphabet (e.g. the four letter DNA alphabet + a gap character).
  * Note that you cannot assign regular characters, but additional functions for
  * this are available.
@@ -67,13 +66,15 @@ namespace seqan3
  * gapped<dna4>{}.assign_char('C'); // <- this does!
  * gapped<dna4>{}.assign_char('-'); // gap character
  * gapped<dna4>{}.assign_char('K'); // unknown characters map to the default/unknown
- *                                           // character of the given alphabet type (i.e. A of dna4)
+ *                                  // character of the given alphabet type (i.e. A of dna4)
  * ```
  *
- * \sa For more details see union_composition, which is the base class and more general than the gapped.
+ * \sa For more details see union_composition, which is the base class and more general than the gapped alphabet.
  */
 template <typename alphabet_t>
+//\cond
     requires alphabet_concept<alphabet_t>
+//\endcond
 struct gapped : public union_composition<alphabet_t, gap>
 {
     using union_composition<alphabet_t, gap>::_value;
