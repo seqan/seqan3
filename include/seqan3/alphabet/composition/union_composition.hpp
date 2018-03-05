@@ -51,177 +51,13 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 
-namespace seqan3::detail
-{
-
-//!\privatesection
-
-/*!\brief Returns an array which contains the prefix sum over all alphabet_types::value_size's.
- * \relates seqan3::union_composition
- *
- * ```cpp
- * using namespace seqan3::detail;
- *
- * constexpr auto prefix_sum = alphabet_prefix_sum_sizes<dna4, gap, dna5>();
- * assert(prefix_sum.size() == 4);
- * assert(prefix_sum[0] == 0);
- * assert(prefix_sum[1] == 4);
- * assert(prefix_sum[2] == 5);
- * assert(prefix_sum[3] == 10);
- * ```
- */
-template <typename ...alphabet_types>
-constexpr auto alphabet_prefix_sum_sizes()
-{
-    constexpr size_t value_size = ((size_t)alphabet_types::value_size + ... + 0);
-    using rank_t = min_viable_uint_t<value_size>;
-
-    constexpr size_t N = sizeof...(alphabet_types) + 1;
-    using array_t = std::array<rank_t, N>;
-
-    array_t prefix_sum{0, alphabet_types::value_size...};
-    for (auto i = 1u; i < N; ++i)
-        prefix_sum[i] = static_cast<rank_t>(prefix_sum[i] + prefix_sum[i-1]);
-
-    return prefix_sum;
-}
-//!\publicsection
-
-} // namespace seqan3::detail
-
-namespace seqan3::detail::union_composition
-{
-
-//!\privatesection
-
-/*!\brief Returns an fixed sized map at compile time where the key is the rank
- * of alphabet_t and the value is the corresponding char of that rank.
- * \sa value_to_char_table
- *
- * ```cpp
- * using namespace seqan3::detail::union_composition;
- *
- * constexpr auto table1 = value_to_char_table_I<5, char>(dna4{});
- * assert(table1.size() == 5);
- * assert(table1[0] == 'A');
- * assert(table1[1] == 'C');
- * assert(table1[2] == 'G');
- * assert(table1[3] == 'T');
- * assert(table1[4] == '\0');
- * ```
- */
-template <size_t max_value_size, typename char_t, typename alphabet_t>
-constexpr auto value_to_char_table_I(alphabet_t alphabet) noexcept
-{
-    using array_t = std::array<char_t, max_value_size>;
-    array_t value_to_char_{};
-
-    for (char_t i = 0; i < alphabet_t::value_size; ++i)
-        value_to_char_[i] = alphabet.assign_rank(i).to_char();
-
-    return value_to_char_;
-}
-
-/*!\brief Returns an map at compile time where the key is the rank of the union
- * of all alphabets and the value is the corresponding char of that rank and
- * alphabet.
- * \relates seqan3::union_composition
- *
- * ```cpp
- * using namespace seqan3::detail::union_composition;
- *
- * constexpr auto value_to_char = value_to_char_table<char, dna4, gap, dna5>();
- * assert(value_to_char.size() == 10);
- * assert(value_to_char[0] == 'A');
- * assert(value_to_char[1] == 'C');
- * assert(value_to_char[2] == 'G');
- * assert(value_to_char[3] == 'T');
- * assert(value_to_char[4] == '-');
- * assert(value_to_char[5] == 'A');
- * assert(value_to_char[6] == 'C');
- * // and so on
- * ```
- */
-template <typename char_t, typename ...alphabet_types>
-constexpr auto value_to_char_table() noexcept
-{
-    constexpr auto table_size = (alphabet_types::value_size + ... + 0);
-    constexpr auto value_sizes = std::array<size_t, table_size>{alphabet_types::value_size...};
-    constexpr auto max_value_size
-        = std::max({static_cast<size_t>(0), static_cast<size_t>(alphabet_types::value_size)...});
-
-    using array_t = std::array<char_t, table_size>;
-    using array_inner_t = std::array<char_t, max_value_size>;
-    using array_array_t = std::array<array_inner_t, table_size>;
-
-    constexpr auto array_array = array_array_t
-    {
-        value_to_char_table_I<max_value_size, char_t>(alphabet_types{})...
-    };
-
-    array_t value_to_char{};
-    for (auto i = 0u, value = 0u; i < table_size; ++i)
-        for (auto k = 0u; k < value_sizes[i]; ++k, ++value)
-            value_to_char[value] = array_array[i][k];
-
-    return value_to_char;
-}
-
-/*!\brief Returns an map at compile time where the key is the char of one of the
- * alphabets and the value is the corresponding rank over all alphabets (by
- * conflict will default to the first).
- * \relates seqan3::union_composition
- *
- * ```cpp
- * using namespace seqan3::detail::union_composition;
- *
- * constexpr auto char_to_value = char_to_value_table<char, dna4, gap, dna5>();
- * assert(char_to_value.size() == 256);
- * assert(char_to_value['A'] == 0);
- * assert(char_to_value['C'] == 1);
- * assert(char_to_value['G'] == 2);
- * assert(char_to_value['T'] == 3);
- * assert(char_to_value['-'] == 4);
- * assert(char_to_value['A'] == 0);
- * assert(char_to_value['C'] == 1);
- * assert(char_to_value['G'] == 2);
- * assert(char_to_value['T'] == 3);
- * assert(char_to_value['N'] == 9);
- * assert(char_to_value['*'] == 0); // every other character defaults to 0
- * ```
- */
-template <typename char_t, typename ...alphabet_types>
-constexpr auto char_to_value_table() noexcept
-{
-    constexpr size_t value_size = ((size_t)alphabet_types::value_size + ... + 0);
-    using rank_t = min_viable_uint_t<value_size>;
-
-    constexpr auto table_size = 1 << (sizeof(char_t) * 8);
-    constexpr auto value_to_char = value_to_char_table<char_t, alphabet_types...>();
-
-    using array_t = std::array<rank_t, table_size>;
-
-    array_t char_to_value{};
-    for (auto i = 0u; i < value_to_char.size(); ++i)
-    {
-        auto & old_entry = char_to_value[value_to_char[i]];
-        auto is_new_entry = value_to_char[0] != value_to_char[i] && old_entry == 0;
-        if (is_new_entry)
-            old_entry = static_cast<rank_t>(i);
-    }
-    return char_to_value;
-}
-//!\publicsection
-
-} // namespace seqan3::detail::union_composition
-
 namespace seqan3
 {
 
-/*!\brief A composition that merges different regular alphabets as a single alphabet.
+/*!\brief A composition that merges different regular alphabets into a single alphabet.
  * \ingroup composition
- * \tparam first_alphabet_type Type of the first letter, e.g. dna4; must satisfy seqan3::alphabet_concept.
- * \tparam alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept.
+ * \tparam ...alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept, e.g. dna4.
+ * \implements seqan3::alphabet_concept
  *
  * The union alphabet represents the union of two or more alphabets (e.g. the
  * four letter DNA alphabet + the gap alphabet). Note that you cannot assign
@@ -277,29 +113,40 @@ namespace seqan3
  * assert(letter.to_rank() == 6);
  * ```
  */
-template <typename first_alphabet_type, typename ...alphabet_types>
+template <typename ...alphabet_types>
 //!\cond
-    requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
+    requires (alphabet_concept<alphabet_types> && ... && (sizeof...(alphabet_types) >= 1))
 //!\endcond
 class union_composition
 {
 public:
     /*!\brief Returns true if alphabet_t is one of the given alphabet types.
-     * \tparam alphabet_t The type to check
+     * \tparam alphabet_t The type to check.
+     *
+     * ```cpp
+     * using union_t = union_composition<dna4, gap>;
+     *
+     * static_assert(union_t::has_alternative<dna4>(), "should be true");
+     * static_assert(union_t::has_alternative<gap>(), "should be true");
+     * static_assert(!union_t::has_alternative<dna5>(), "should be false");
+     * ```
      */
     template <typename alphabet_t>
-    static constexpr bool has_type() noexcept
+    static constexpr bool has_alternative() noexcept
     {
-        return meta::in<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
+        return meta::in<meta::list<alphabet_types...>, alphabet_t>::value;
     }
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr size_t value_size = (alphabet_types::value_size + ... + first_alphabet_type::value_size);
+    static constexpr auto value_size =
+        detail::min_viable_uint_v<
+            (static_cast<size_t>(alphabet_size_v<alphabet_types>) + ... + static_cast<size_t>(0))
+        >;
 
-    //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink)
-    using char_type = typename first_alphabet_type::char_type;
+    //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink).
+    using char_type = underlying_char_t<meta::front<meta::list<alphabet_types...>>>;
 
-    //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink)
+    //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink).
     using rank_type = detail::min_viable_uint_t<value_size>;
 
     /*!\name Default constructors
@@ -321,8 +168,9 @@ public:
      * \{
      */
 
-    /*!\brief Construction via a value of the base alphabets
-     * \tparam alphabet_t One of the base alphabet types
+    /*!\brief Construction via a value of the base alphabets.
+     * \tparam alphabet_t One of the base alphabet types.
+     * \param alphabet The value of a base alphabet that should be assigned.
      *
      * ```cpp
      *     union_composition<dna4, gap> letter1{dna4::C}; // or
@@ -331,15 +179,16 @@ public:
      */
     template <typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     constexpr union_composition(alphabet_t const & alphabet) noexcept :
         _value{rank_by_type_(alphabet)}
     {}
 
-    /*!\brief Construction via a value of reoccurring alphabets
-     * \tparam I The index of the i-th base alphabet
-     * \tparam alphabet_t The i-th given base alphabet type
+    /*!\brief Construction via a value of reoccurring alphabets.
+     * \tparam I The index of the i-th base alphabet.
+     * \tparam alphabet_t The i-th given base alphabet type.
+     * \param alphabet The value of a base alphabet that should be assigned.
      *
      * ```cpp
      * using alphabet_t = union_composition<dna4, dna4>;
@@ -353,7 +202,7 @@ public:
      */
     template <size_t I, typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     constexpr union_composition(std::in_place_index_t<I>, alphabet_t const & alphabet) noexcept :
         _value{rank_by_index_<I>(alphabet)}
@@ -364,8 +213,9 @@ public:
      * \{
      */
 
-    /*!\brief Assignment via a value of the base alphabets
-     * \tparam alphabet_t One of the base alphabet types
+    /*!\brief Assignment via a value of the base alphabets.
+     * \tparam alphabet_t One of the base alphabet types.
+     * \param alphabet The value of a base alphabet that should be assigned.
      *
      * ```cpp
      *     union_composition<dna4, gap> letter1{};
@@ -374,7 +224,7 @@ public:
      */
     template <typename alphabet_t>
     //!\cond
-        requires has_type<alphabet_t>()
+        requires has_alternative<alphabet_t>()
     //!\endcond
     constexpr union_composition & operator= (alphabet_t const & alphabet) noexcept
     {
@@ -403,13 +253,16 @@ public:
      * \{
      */
     //!\brief Assign from a character.
+    //!\param c The character to assign to.
     constexpr union_composition & assign_char(char_type const c) noexcept
     {
-        _value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 
     //!\brief Assign from a numeric value.
+    //!\param i The rank of a character to assign to.
     constexpr union_composition & assign_rank(rank_type const i) /*noexcept*/
     {
         // TODO(marehr): mark function noexcept if assert is replaced
@@ -461,39 +314,144 @@ public:
 protected:
     //!\privatesection
 
-    //!\brief Converts an object of one of the given alphabets into the internal representation
+    /*!\brief Compile-time generated lookup table which contains the partial
+     * sum up to the position of each alphabet.
+     *
+     * An array which contains the prefix sum over all
+     * alphabet_types::value_size's.
+     *
+     * ```cpp
+     * constexpr std::array partial_sum = union_composition<dna4, gap, dna5>::partial_sum_sizes; // not working; is protected
+     * assert(partial_sum.size() == 4);
+     * assert(partial_sum[0] == 0);
+     * assert(partial_sum[1] == 4);
+     * assert(partial_sum[2] == 5);
+     * assert(partial_sum[3] == 10);
+     * ```
+     */
+    static constexpr std::array partial_sum_sizes = []() constexpr
+    {
+        constexpr size_t N = sizeof...(alphabet_types) + 1;
+
+        std::array<rank_type, N> partial_sum{0, alphabet_size_v<alphabet_types>...};
+        for (size_t i = 1u; i < N; ++i)
+            partial_sum[i] += partial_sum[i-1];
+
+        return partial_sum;
+    }();
+
+    /*!\brief Compile-time generated lookup table which maps the rank to char.
+     *
+     * A map generated at compile time where the key is the rank of the union
+     * of all alphabets and the value is the corresponding char of that rank
+     * and alphabet.
+     *
+     * ```cpp
+     * constexpr std::array value_to_char = union_composition<char, dna4, gap, dna5>::value_to_char; // not working; is protected
+     * assert(value_to_char.size() == 10);
+     * assert(value_to_char[0] == 'A');
+     * assert(value_to_char[1] == 'C');
+     * assert(value_to_char[2] == 'G');
+     * assert(value_to_char[3] == 'T');
+     * assert(value_to_char[4] == '-');
+     * assert(value_to_char[5] == 'A');
+     * assert(value_to_char[6] == 'C');
+     * // and so on
+     * ```
+     */
+    static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
+    {
+        // Explicitly writing assign_rank_to_char within assign_value_to_char
+        // causes this bug (g++-7 and g++-8):
+        // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84684
+        auto assign_rank_to_char = [](auto alphabet, size_t rank) constexpr
+        {
+            return seqan3::to_char(seqan3::assign_rank(alphabet, rank));
+        };
+
+        auto assign_value_to_char = [assign_rank_to_char] (auto alphabet, auto & value_to_char, auto & value) constexpr
+        {
+            using alphabet_t = std::decay_t<decltype(alphabet)>;
+            for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i, ++value)
+                value_to_char[value] = assign_rank_to_char(alphabet, i);
+        };
+
+        unsigned value = 0u;
+        std::array<char_type, value_size> value_to_char{};
+
+        // initializer lists guarantee sequencing;
+        // the following expression behaves as:
+        // for(auto alphabet: alphabet_types)
+        //    assign_value_to_char(alphabet, value_to_char, value);
+        ((assign_value_to_char(alphabet_types{}, value_to_char, value)),...);
+
+        return value_to_char;
+    }();
+
+    /*!\brief Compile-time generated lookup table which maps the char to rank.
+     *
+     * An map generated at compile time where the key is the char of one of the
+     * alphabets and the value is the corresponding rank over all alphabets (by
+     * conflict will default to the first).
+     *
+     * ```cpp
+     * constexpr std::array char_to_value = char_to_value_table<char, dna4, gap, dna5>();
+     * assert(char_to_value.size() == 256);
+     * assert(char_to_value['A'] == 0);
+     * assert(char_to_value['C'] == 1);
+     * assert(char_to_value['G'] == 2);
+     * assert(char_to_value['T'] == 3);
+     * assert(char_to_value['-'] == 4);
+     * assert(char_to_value['A'] == 0);
+     * assert(char_to_value['C'] == 1);
+     * assert(char_to_value['G'] == 2);
+     * assert(char_to_value['T'] == 3);
+     * assert(char_to_value['N'] == 9);
+     * assert(char_to_value['*'] == 0); // every other character defaults to 0
+     * ```
+     */
+    static constexpr std::array char_to_value = []() constexpr
+    {
+        constexpr size_t table_size = 1 << (sizeof(char_type) * 8);
+
+        std::array<rank_type, table_size> char_to_value{};
+        for (size_t i = 0u; i < value_to_char.size(); ++i)
+        {
+            using index_t = std::make_unsigned_t<char_type>;
+            rank_type & old_entry = char_to_value[static_cast<index_t>(value_to_char[i])];
+            bool is_new_entry = value_to_char[0] != value_to_char[i] && old_entry == 0;
+            if (is_new_entry)
+                old_entry = static_cast<rank_type>(i);
+        }
+        return char_to_value;
+    }();
+
+    //!\brief Converts an object of one of the given alphabets into the internal representation.
+    //!\tparam index The position of `alphabet_t` in the template pack `alphabet_types`.
+    //!\tparam alphabet_t One of the base alphabet types.
+    //!\param alphabet The value of a base alphabet that should be assigned.
     template <size_t index, typename alphabet_t>
+    //!\cond
+        requires has_alternative<alphabet_t>()
+    //!\endcond
     static constexpr rank_type rank_by_index_(alphabet_t const & alphabet) noexcept
     {
-        return static_cast<rank_type>(prefix_sum_sizes[index] + alphabet.to_rank());
+        return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(alphabet));
     }
 
-    //!\brief Converts an object of one of the given alphabets into the internal representation
+    //!\brief Converts an object of one of the given alphabets into the internal representation.
     //!\details Finds the index of alphabet_t in the given types.
+    //!\tparam alphabet_t One of the base alphabet types.
+    //!\param alphabet The value of a base alphabet that should be assigned.
     template <typename alphabet_t>
+    //!\cond
+        requires has_alternative<alphabet_t>()
+    //!\endcond
     static constexpr rank_type rank_by_type_(alphabet_t const & alphabet) noexcept
     {
-        constexpr size_t index = meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, alphabet_t>::value;
+        constexpr size_t index = meta::find_index<meta::list<alphabet_types...>, alphabet_t>::value;
         return rank_by_index_<index>(alphabet);
     }
-
-    //!\brief Compile-time generated lookup table which contains the prefix sum up to the position of each alphabet
-    //!\hideinitializer
-    //!\sa alphabet_prefix_sum_sizes
-    static constexpr auto prefix_sum_sizes =
-        detail::alphabet_prefix_sum_sizes<first_alphabet_type, alphabet_types...>();
-
-    //!\brief Compile-time generated lookup table which maps the rank to char
-    //!\hideinitializer
-    //!\sa value_to_char_table
-    static constexpr auto value_to_char =
-        detail::union_composition::value_to_char_table<char_type, first_alphabet_type, alphabet_types...>();
-
-    //!\brief Compile-time generated lookup table which maps the char to rank
-    //!\hideinitializer
-    //!\sa char_to_value_table
-    static constexpr auto char_to_value =
-        detail::union_composition::char_to_value_table<char_type, first_alphabet_type, alphabet_types...>();
 };
 
 } // namespace seqan3
