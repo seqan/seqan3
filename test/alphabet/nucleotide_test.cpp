@@ -223,16 +223,6 @@ TEST(dna4_literals, vector)
     EXPECT_EQ(w, "ACGTTA"_dna4);
 }
 
-TEST(dna4_literals, basic_string)
-{
-    dna4_string v;
-    v.resize(5, dna4::A);
-    EXPECT_EQ(v, "AAAAA"_dna4s);
-
-    std::basic_string<dna4, std::char_traits<dna4>> w{dna4::A, dna4::C, dna4::G, dna4::T, dna4::U, dna4::UNKNOWN};
-    EXPECT_EQ(w, "ACGTTA"_dna4s);
-}
-
 TEST(dna5_literals, vector)
 {
     dna5_vector v;
@@ -241,17 +231,6 @@ TEST(dna5_literals, vector)
 
     std::vector<dna5> w{dna5::A, dna5::C, dna5::G, dna5::T, dna5::U, dna5::N, dna5::UNKNOWN};
     EXPECT_EQ(w, "ACGTTNN"_dna5);
-}
-
-TEST(dna5_literals, basic_string)
-{
-    dna5_string v;
-    v.resize(5, dna5::A);
-    EXPECT_EQ(v, "AAAAA"_dna5s);
-
-    std::basic_string<dna5, std::char_traits<dna5>> w{dna5::A, dna5::C, dna5::G, dna5::T, dna5::U, dna5::N,
-                                                      dna5::UNKNOWN};
-    EXPECT_EQ(w, "ACGTTNN"_dna5s);
 }
 
 TEST(dna15_literals, vector)
@@ -274,16 +253,6 @@ TEST(rna4_literals, vector)
     EXPECT_EQ(w, "ACGUUA"_rna4);
 }
 
-TEST(rna4_literals, basic_string)
-{
-    rna4_string v;
-    v.resize(5, rna4::A);
-    EXPECT_EQ(v, "AAAAA"_rna4s);
-
-    std::basic_string<rna4, std::char_traits<rna4>> w{rna4::A, rna4::C, rna4::G, rna4::T, rna4::U, rna4::UNKNOWN};
-    EXPECT_EQ(w, "ACGUUA"_rna4s);
-}
-
 TEST(rna5_literals, vector)
 {
     rna5_vector v;
@@ -292,17 +261,6 @@ TEST(rna5_literals, vector)
 
     std::vector<rna5> w{rna5::A, rna5::C, rna5::G, rna5::T, rna5::U, rna5::N, rna5::UNKNOWN};
     EXPECT_EQ(w, "ACGUUNN"_rna5);
-}
-
-TEST(rna5_literals, basic_string)
-{
-    rna5_string v;
-    v.resize(5, rna5::A);
-    EXPECT_EQ(v, "AAAAA"_rna5s);
-
-    std::basic_string<rna5, std::char_traits<rna5>> w{rna5::A, rna5::C, rna5::G, rna5::T, rna5::U, rna5::N,
-                                                      rna5::UNKNOWN};
-    EXPECT_EQ(w, "ACGUUNN"_rna5s);
 }
 
 TEST(rna15_literals, vector)

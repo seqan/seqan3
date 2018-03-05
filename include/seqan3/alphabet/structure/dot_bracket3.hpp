@@ -41,7 +41,6 @@
 #pragma once
 
 #include <cassert>
-#include <string>
 #include <vector>
 
 #include <seqan3/alphabet/structure/rna_structure_concept.hpp>
@@ -298,35 +297,6 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
         vec[idx].assign_char(str[idx]);
 
     return vec;
-}
-
-/*!\brief dot_bracket3 string literal
- * \relates seqan3::dot_bracket3
- * \returns std::basic_string<seqan3::dot_bracket3, std::char_traits<seqan3::dot_bracket3>>
- *
- * You can use this string literal to easily assign to a string of dot_bracket3 characters:
- *
- *```.cpp
- *     using namespace seqan3::literal;
- *     using string_t = std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>>;
- *     string_t foo{".(..)."_db3s};
- *     string_t bar = ".(..)."_db3s;
- *     auto bax = ".(..)."_db3s;
- *```
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-inline std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> operator""_db3s(const char * str,
-                                                                                       std::size_t len)
-{
-    std::basic_string<dot_bracket3, std::char_traits<dot_bracket3>> db3str;
-    db3str.resize(len);
-
-    for (size_t idx = 0u; idx < len; ++idx)
-        db3str[idx].assign_char(str[idx]);
-
-    return db3str;
 }
 
 } // namespace seqan3::literal

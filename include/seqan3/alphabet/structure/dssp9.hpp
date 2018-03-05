@@ -41,7 +41,6 @@
 #pragma once
 
 #include <cassert>
-#include <string>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
@@ -286,34 +285,6 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
         vec[idx].assign_char(str[idx]);
 
     return vec;
-}
-
-/*!\brief dssp9 string literal
- * \relates seqan3::dssp9
- * \returns std::basic_string<seqan3::dssp9, std::char_traits<seqan3::dssp9>>
- *
- * You can use this string literal to easily assign to a string of dssp9 characters:
- *
- *```.cpp
- *     using namespace seqan3::literal;
- *     using string_t = std::basic_string<dssp9, std::char_traits<dssp9>>;
- *     string_t foo{"EHHHHT"_dssp9s};
- *     string_t bar = "EHHHHT"_dssp9s;
- *     auto bax = "EHHHHT"_dssp9s;
- *```
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-inline std::basic_string<dssp9, std::char_traits<dssp9>> operator""_dssp9s(const char * str, std::size_t len)
-{
-    std::basic_string<dssp9, std::char_traits<dssp9>> dssp9str;
-    dssp9str.resize(len);
-
-    for (size_t idx = 0u; idx < len; ++idx)
-        dssp9str[idx].assign_char(str[idx]);
-
-    return dssp9str;
 }
 
 } // namespace seqan3::literal

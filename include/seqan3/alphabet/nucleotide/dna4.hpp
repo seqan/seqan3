@@ -42,7 +42,6 @@
 
 #include <cassert>
 
-#include <string>
 #include <type_traits>
 #include <vector>
 
@@ -367,18 +366,6 @@ namespace seqan3
 //!\relates dna4
 using dna4_vector = std::vector<dna4>;
 
-
-/*!\brief Alias for an std::basic_string of seqan3::dna4.
- * \relates dna4
- *
- * \attention
- * Note that we recommend using seqan3::dna4_vector instead of dna4_string in almost all situations.
- * While the C++ style operations on the string are well supported, you should not access the internal c-string
- * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
- * correct length of the string (while the `.size()` returns the correct value).
- */
-using dna4_string = std::basic_string<dna4, std::char_traits<dna4>>;
-
 } // namespace seqan3
 
 // ------------------------------------------------------------------
@@ -413,41 +400,6 @@ namespace seqan3::literal
 inline dna4_vector operator""_dna4(const char * s, std::size_t n)
 {
     dna4_vector r;
-    r.resize(n);
-
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
-
-    return r;
-}
-
-/*!\brief dna4 string literal
- * \relates seqan3::dna4
- * \returns seqan3::dna4_string
- *
- * You can use this string literal to easily assign to dna4_vector:
- *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // dna4_string foo{"ACGTTA"};
- *     // dna4_string bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     dna4_string foo{"ACGTTA"_dna4s};
- *     dna4_string bar = "ACGTTA"_dna4s;
- *     auto bax = "ACGTTA"_dna4s;
- *~~~~~~~~~~~~~~~
- *
- * Please note the limitations of seqan3::dna4_string and consider using the \link operator""_dna4 \endlink instead.
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-
-inline dna4_string operator""_dna4s(const char * s, std::size_t n)
-{
-    dna4_string r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)

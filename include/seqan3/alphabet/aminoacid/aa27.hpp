@@ -42,7 +42,6 @@
 
 #include <cassert>
 
-#include <string>
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
@@ -351,17 +350,6 @@ namespace seqan3
 //!\relates aa27
 using aa27_vector = std::vector<aa27>;
 
-/*!\brief Alias for an std::basic_string of seqan3::aa27.
- * \relates aa27
- *
- * \attention
- * Note that we recommend using seqan3::aa27_vector instead of aa27_string in almost all situations.
- * While the C++ style operations on the string are well supported, you should not access the internal c-string
- * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
- * correct length of the string (while the `.size()` returns the correct value).
- */
-using aa27_string = std::basic_string<aa27, std::char_traits<aa27>>;
-
 } // namespace seqan3
 
 // ------------------------------------------------------------------
@@ -396,41 +384,6 @@ namespace seqan3::literal
 inline aa27_vector operator""_aa27(const char * s, std::size_t n)
 {
     aa27_vector r;
-    r.resize(n);
-
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
-
-    return r;
-}
-
-/*!\brief aa27 string literal
- * \relates seqan3::aa27
- * \returns seqan3::aa27_string
- *
- * You can use this string literal to easily assign to aa27_vector:
- *
- *```cpp
- *     // these don't work:
- *     // aa27_string foo{"ABFUYR"};
- *     // aa27_string bar = "ABFUYR";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     aa27_string foo{"ABFUYR"_aa27s};
- *     aa27_string bar = "ABFUYR"_aa27s;
- *     auto bax = "ABFUYR"_aa27s;
- *```
- *
- * Please note the limitations of seqan3::aa27_string and consider using the \link operator""_aa27 \endlink instead.
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-
-inline aa27_string operator""_aa27s(const char * s, std::size_t n)
-{
-    aa27_string r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
