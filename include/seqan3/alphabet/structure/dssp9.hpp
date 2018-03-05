@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
  * \brief Contains the dssp format for protein structure.
  */

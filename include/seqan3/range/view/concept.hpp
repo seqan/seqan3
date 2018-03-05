@@ -34,7 +34,6 @@
 
 /*!\file
  * \brief Adaptation of the view concept from the Ranges TS.
- * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 

@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Contains seqan3::dna15, container aliases and string literals.
  */

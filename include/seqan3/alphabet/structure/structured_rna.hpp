@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
  * \brief Contains the composition of nucleotide with structure alphabets.
  */

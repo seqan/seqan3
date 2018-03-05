@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains seqan3::dna4, container aliases and string literals.
  */

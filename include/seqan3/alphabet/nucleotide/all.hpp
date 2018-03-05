@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header for the nucleotide submodule; includes all headers from alphabet/nucleotide/.
  */

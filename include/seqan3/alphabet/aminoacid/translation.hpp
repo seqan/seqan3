@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup aminoacid
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Contains functions for translating a triplet of nucleotides into an amino acid.
  */

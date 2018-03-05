@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains quality alphabet compositions.
  */

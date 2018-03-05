@@ -38,7 +38,6 @@
 
 /*! \file
  *  \brief Testing the iterator concepts.
- *  \ingroup core
  *  \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 

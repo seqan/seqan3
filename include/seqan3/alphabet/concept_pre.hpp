@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief seqan3::alphabet_concept metafunction base classes.
  *

@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup adaptation
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::char_adaptation_concept and seqan3::uint_adaptation_concept.
  */

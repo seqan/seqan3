@@ -34,7 +34,6 @@
 
 /*!\file
  * \brief Provides seqan3::concatenated_sequences.
- * \ingroup container
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
