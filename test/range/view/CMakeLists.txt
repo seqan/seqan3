@@ -1,5 +1,6 @@
 add_subdirectories()
 
+seqan3_test(declare_view_functor_type_test.cpp)
 seqan3_test(view_char_to_test.cpp)
 seqan3_test(view_complement_test.cpp)
 seqan3_test(view_convert_test.cpp)
