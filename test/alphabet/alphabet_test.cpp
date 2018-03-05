@@ -62,7 +62,7 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         union_composition<dna5, dna5>,
                                         union_composition<dna4, dna5, gap>,
                                         union_composition<char, gap>,
-                                        /*gap,*/
+                                        gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
                                         gapped<illumina18>,
@@ -178,7 +178,7 @@ TYPED_TEST(alphabet, swap)
 
 TYPED_TEST(alphabet, assign_char)
 {
-    using char_t = underlying_rank_t<TypeParam>;
+    using char_t = underlying_char_t<TypeParam>;
     TypeParam t0;
     for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
         assign_char(t0, i);
