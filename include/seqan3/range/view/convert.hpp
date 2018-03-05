@@ -81,9 +81,9 @@ namespace seqan3::view
  *   auto v3 = vec | view::convert<bool> | ranges::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
  * ```
  *
- * Convert from seqan3::nucl16 to seqan3::dna5:
+ * Convert from seqan3::dna15 to seqan3::dna5:
  * ```cpp
- *   nucl16_vector vec2{"ACYGTN"_nucl16};
+ *   dna15_vector vec2{"ACYGTN"_dna15};
  *   auto v4 = vec2 | view::convert<dna5>; // == "ACNGTN"_dna5
  * ```
  * \hideinitializer

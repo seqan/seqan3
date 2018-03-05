@@ -35,7 +35,7 @@
 /*!\file
  * \ingroup nucleotide
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Contains seqan3::nucl16, container aliases and string literals.
+ * \brief Contains seqan3::dna15, container aliases and string literals.
  */
 
 #pragma once
@@ -49,24 +49,24 @@
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
 // ------------------------------------------------------------------
-// nucl16
+// dna15
 // ------------------------------------------------------------------
 
 namespace seqan3
 {
 
-/*!\brief The 16 letter DNA alphabet, containing all IUPAC smybols.
+/*!\brief The 15 letter DNA alphabet, containing all IUPAC smybols minus the gap.
  * \ingroup nucleotide
  * \implements seqan3::nucleotide_concept
  *
  * \details
- * Note that in contrast to seqan3::dna4, seqan3::rna4, seqan3::dna5 and seqan3::rna5
- * the letters 'T' and 'U' are distinct values in this alphabet.
+ * Note that you can assign 'U' as a character to dna15 and it will silently
+ * be converted to 'T'.
  *
  *~~~~~~~~~~~~~~~{.cpp}
- *     nucl16 my_letter{nucl16::A};
+ *     dna15 my_letter{dna15::A};
  *     // doesn't work:
- *     // nucl16 my_letter{'A'};
+ *     // dna15 my_letter{'A'};
  *
  *     my_letter.assign_char('C'); // <- this does!
  *
@@ -76,7 +76,7 @@ namespace seqan3
  *~~~~~~~~~~~~~~~
  */
 
-struct nucl16
+struct dna15
 {
     //!\copydoc seqan3::dna4::char_type
     using char_type = char;
@@ -88,23 +88,23 @@ struct nucl16
      * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
      */
     //!\{
-    static const nucl16 A;
-    static const nucl16 B;
-    static const nucl16 C;
-    static const nucl16 D;
-    static const nucl16 G;
-    static const nucl16 H;
-    static const nucl16 K;
-    static const nucl16 M;
-    static const nucl16 N;
-    static const nucl16 R;
-    static const nucl16 S;
-    static const nucl16 T;
-    static const nucl16 U;
-    static const nucl16 V;
-    static const nucl16 W;
-    static const nucl16 Y;
-    static const nucl16 UNKNOWN;
+    static const dna15 A;
+    static const dna15 B;
+    static const dna15 C;
+    static const dna15 D;
+    static const dna15 G;
+    static const dna15 H;
+    static const dna15 K;
+    static const dna15 M;
+    static const dna15 N;
+    static const dna15 R;
+    static const dna15 S;
+    static const dna15 T;
+    static const dna15 U;
+    static const dna15 V;
+    static const dna15 W;
+    static const dna15 Y;
+    static const dna15 UNKNOWN;
     //!\}
 
     /*!\name Read functions
@@ -123,7 +123,7 @@ struct nucl16
     }
 
     //!\copydoc seqan3::dna4::complement
-    constexpr nucl16 complement() const noexcept
+    constexpr dna15 complement() const noexcept
     {
         return complement_table[to_rank()];
     }
@@ -133,14 +133,14 @@ struct nucl16
      * \{
      */
     //!\copydoc seqan3::dna4::assign_char
-    constexpr nucl16 & assign_char(char_type const c) noexcept
+    constexpr dna15 & assign_char(char_type const c) noexcept
     {
         _value = char_to_value[c];
         return *this;
     }
 
     //!\copydoc seqan3::dna4::assign_rank
-    constexpr nucl16 & assign_rank(rank_type const c)
+    constexpr dna15 & assign_rank(rank_type const c)
     {
         assert(c < value_size);
         _value = static_cast<internal_type>(c);
@@ -149,11 +149,22 @@ struct nucl16
     //!\}
 
     //!\copydoc seqan3::dna4::value_size
-    static constexpr rank_type value_size{16};
+    static constexpr rank_type value_size{15};
 
     /*!\name Conversion operators
      * \{
      */
+    //!\brief Implicit conversion between dna* and rna* of the same size.
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
+    template <typename other_nucl_type>
+    //!\cond
+        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+    //!\endcond
+    constexpr operator other_nucl_type() const noexcept
+    {
+        return other_nucl_type{_value};
+    }
+
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
     template <typename other_nucl_type>
@@ -168,32 +179,32 @@ struct nucl16
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(nucl16 const & rhs) const noexcept
+    constexpr bool operator==(dna15 const & rhs) const noexcept
     {
         return _value == rhs._value;
     }
 
-    constexpr bool operator!=(nucl16 const & rhs) const noexcept
+    constexpr bool operator!=(dna15 const & rhs) const noexcept
     {
         return _value != rhs._value;
     }
 
-    constexpr bool operator<(nucl16 const & rhs) const noexcept
+    constexpr bool operator<(dna15 const & rhs) const noexcept
     {
         return _value < rhs._value;
     }
 
-    constexpr bool operator>(nucl16 const & rhs) const noexcept
+    constexpr bool operator>(dna15 const & rhs) const noexcept
     {
         return _value > rhs._value;
     }
 
-    constexpr bool operator<=(nucl16 const & rhs) const noexcept
+    constexpr bool operator<=(dna15 const & rhs) const noexcept
     {
         return _value <= rhs._value;
     }
 
-    constexpr bool operator>=(nucl16 const & rhs) const noexcept
+    constexpr bool operator>=(dna15 const & rhs) const noexcept
     {
         return _value >= rhs._value;
     }
@@ -216,7 +227,7 @@ protected:
         R,
         S,
         T,
-        U,
+        U = T,
         V,
         W,
         Y,
@@ -238,7 +249,6 @@ protected:
         'R',
         'S',
         'T',
-        'U',
         'V',
         'W',
         'Y'
@@ -280,7 +290,7 @@ protected:
     };
 
     //!\copydoc seqan3::dna4::complement_table
-    static const std::array<nucl16, value_size> complement_table;
+    static const std::array<dna15, value_size> complement_table;
 
 public:
     //!\privatesection
@@ -289,42 +299,41 @@ public:
     //!\publicsection
 };
 
-constexpr nucl16 nucl16::A{internal_type::A};
-constexpr nucl16 nucl16::B{internal_type::B};
-constexpr nucl16 nucl16::C{internal_type::C};
-constexpr nucl16 nucl16::D{internal_type::D};
-constexpr nucl16 nucl16::G{internal_type::G};
-constexpr nucl16 nucl16::H{internal_type::H};
-constexpr nucl16 nucl16::K{internal_type::K};
-constexpr nucl16 nucl16::M{internal_type::M};
-constexpr nucl16 nucl16::N{internal_type::N};
-constexpr nucl16 nucl16::R{internal_type::R};
-constexpr nucl16 nucl16::S{internal_type::S};
-constexpr nucl16 nucl16::T{internal_type::T};
-constexpr nucl16 nucl16::U{internal_type::U};
-constexpr nucl16 nucl16::V{internal_type::V};
-constexpr nucl16 nucl16::W{internal_type::W};
-constexpr nucl16 nucl16::Y{internal_type::Y};
-constexpr nucl16 nucl16::UNKNOWN{nucl16::N};
+constexpr dna15 dna15::A{internal_type::A};
+constexpr dna15 dna15::B{internal_type::B};
+constexpr dna15 dna15::C{internal_type::C};
+constexpr dna15 dna15::D{internal_type::D};
+constexpr dna15 dna15::G{internal_type::G};
+constexpr dna15 dna15::H{internal_type::H};
+constexpr dna15 dna15::K{internal_type::K};
+constexpr dna15 dna15::M{internal_type::M};
+constexpr dna15 dna15::N{internal_type::N};
+constexpr dna15 dna15::R{internal_type::R};
+constexpr dna15 dna15::S{internal_type::S};
+constexpr dna15 dna15::T{internal_type::T};
+constexpr dna15 dna15::U{dna15::T};
+constexpr dna15 dna15::V{internal_type::V};
+constexpr dna15 dna15::W{internal_type::W};
+constexpr dna15 dna15::Y{internal_type::Y};
+constexpr dna15 dna15::UNKNOWN{dna15::N};
 
-constexpr std::array<nucl16, nucl16::value_size> nucl16::complement_table
+constexpr std::array<dna15, dna15::value_size> dna15::complement_table
 {
-    nucl16::T,    // complement of nucl16::A
-    nucl16::V,    // complement of nucl16::B
-    nucl16::G,    // complement of nucl16::C
-    nucl16::H,    // complement of nucl16::D
-    nucl16::C,    // complement of nucl16::G
-    nucl16::D,    // complement of nucl16::H
-    nucl16::M,    // complement of nucl16::K
-    nucl16::K,    // complement of nucl16::M
-    nucl16::N,    // complement of nucl16::N
-    nucl16::Y,    // complement of nucl16::R
-    nucl16::S,    // complement of nucl16::S
-    nucl16::A,    // complement of nucl16::T
-    nucl16::A,    // complement of nucl16::U
-    nucl16::B,    // complement of nucl16::V
-    nucl16::W,    // complement of nucl16::W
-    nucl16::R     // complement of nucl16::Y
+    dna15::T,    // complement of dna15::A
+    dna15::V,    // complement of dna15::B
+    dna15::G,    // complement of dna15::C
+    dna15::H,    // complement of dna15::D
+    dna15::C,    // complement of dna15::G
+    dna15::D,    // complement of dna15::H
+    dna15::M,    // complement of dna15::K
+    dna15::K,    // complement of dna15::M
+    dna15::N,    // complement of dna15::N
+    dna15::Y,    // complement of dna15::R
+    dna15::S,    // complement of dna15::S
+    dna15::A,    // complement of dna15::T
+    dna15::B,    // complement of dna15::V
+    dna15::W,    // complement of dna15::W
+    dna15::R     // complement of dna15::Y
 };
 
 } // namespace seqan3
@@ -335,42 +344,10 @@ constexpr std::array<nucl16, nucl16::value_size> nucl16::complement_table
 
 namespace seqan3
 {
-    /*!\name Alphabet aliases
-     * \{
-     * \brief Other names (typedefs) for seqan3::nucl16
-     * \relates nucl16
-     */
-    using dna16 = nucl16;
-    using rna16 = nucl16;
-    using dna = nucl16;
-    using rna = nucl16;
-    //!\}
 
-} // namespace seqan3
-
-
-// ------------------------------------------------------------------
-// containers
-// ------------------------------------------------------------------
-
-namespace seqan3
-{
-
-//!\brief Alias for an std::vector of seqan3::nucl16.
-//!\relates nucl16
-using nucl16_vector = std::vector<nucl16>;
-
-
-/*!\brief Alias for an std::basic_string of seqan3::nucl16.
- * \relates nucl16
- *
- * \attention
- * Note that we recommend using seqan3::nucl16_vector instead of nucl16_string in almost all situations.
- * While the C++ style operations on the string are well supported, you should not access the internal c-string
- * and should not use C-Style operations on it, e.g. the `char_traits::strlen` function will not return the
- * correct length of the string (while the `.size()` returns the correct value).
- */
-using nucl16_string = std::basic_string<nucl16, std::char_traits<nucl16>>;
+//!\brief Alias for an std::vector of seqan3::dna15.
+//!\relates dna15
+using dna15_vector = std::vector<dna15>;
 
 } // namespace seqan3
 
@@ -381,66 +358,31 @@ using nucl16_string = std::basic_string<nucl16, std::char_traits<nucl16>>;
 namespace seqan3::literal
 {
 
-/*!\brief nucl16 literal
- * \relates seqan3::nucl16
- * \returns seqan3::nucl16_vector
+/*!\brief dna15 literal
+ * \relates seqan3::dna15
+ * \returns seqan3::dna15_vector
  *
- * You can use this string literal to easily assign to nucl16_vector:
+ * You can use this string literal to easily assign to dna15_vector:
  *
  *~~~~~~~~~~~~~~~{.cpp}
  *     // these don't work:
- *     // nucl16_vector foo{"ACGTTA"};
- *     // nucl16_vector bar = "ACGTTA";
+ *     // dna15_vector foo{"ACGTTA"};
+ *     // dna15_vector bar = "ACGTTA";
  *
  *     // but these do:
  *     using namespace seqan3::literal;
- *     nucl16_vector foo{"ACGTTA"_nucl16};
- *     nucl16_vector bar = "ACGTTA"_nucl16;
- *     auto bax = "ACGTTA"_nucl16;
+ *     dna15_vector foo{"ACGTTA"_dna15};
+ *     dna15_vector bar = "ACGTTA"_dna15;
+ *     auto bax = "ACGTTA"_dna15;
  *~~~~~~~~~~~~~~~
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
  */
 
-inline nucl16_vector operator""_nucl16(const char * s, std::size_t n)
+inline dna15_vector operator""_dna15(const char * s, std::size_t n)
 {
-    nucl16_vector r;
-    r.resize(n);
-
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
-
-    return r;
-}
-
-/*!\brief nucl16 string literal
- * \relates seqan3::nucl16
- * \returns seqan3::nucl16_string
- *
- * You can use this string literal to easily assign to nucl16_vector:
- *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // nucl16_string foo{"ACGTTA"};
- *     // nucl16_string bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     nucl16_string foo{"ACGTTA"_nucl16s};
- *     nucl16_string bar = "ACGTTA"_nucl16s;
- *     auto bax = "ACGTTA"_nucl16s;
- *~~~~~~~~~~~~~~~
- *
- * Please note the limitations of seqan3::nucl16_string and consider using the \link operator""_nucl16 \endlink instead.
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
- */
-
-inline nucl16_string operator""_nucl16s(const char * s, std::size_t n)
-{
-    nucl16_string r;
+    dna15_vector r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
@@ -450,4 +392,3 @@ inline nucl16_string operator""_nucl16s(const char * s, std::size_t n)
 }
 
 } // namespace seqan3::literal
-

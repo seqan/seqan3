@@ -48,11 +48,7 @@
 #include <seqan3/alphabet/quality/quality_composition.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 namespace seqan3
 {
@@ -69,7 +65,10 @@ using rna4q = quality_composition<rna4, illumina18>;
 //!\brief An alphabet that stores a seqan3::rna5 letter and an seqan3::illumina18 letter at each position.
 using rna5q = quality_composition<rna5, illumina18>;
 
-//!\brief An alphabet that stores a seqan3::nucl16 letter and an seqan3::illumina18 letter at each position.
-using nucl16q = quality_composition<nucl16, illumina18>;
+//!\brief An alphabet that stores a seqan3::dna15 letter and an seqan3::illumina18 letter at each position.
+using dna15q = quality_composition<dna15, illumina18>;
+
+//!\brief An alphabet that stores a seqan3::rna15 letter and an seqan3::illumina18 letter at each position.
+using rna15q = quality_composition<rna15, illumina18>;
 
 } // namespace seqan3
