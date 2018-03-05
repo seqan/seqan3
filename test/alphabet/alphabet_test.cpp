@@ -62,7 +62,7 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         union_composition<dna5, dna5>,
                                         union_composition<dna4, dna5, gap>,
                                         union_composition<char, gap>,
-                                        /*gap,*/
+                                        gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
                                         gapped<illumina18>,
@@ -116,7 +116,9 @@ TYPED_TEST(alphabet, to_rank)
 
 TYPED_TEST(alphabet, copy_constructor)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    // the module operation ensures that the result is within the valid rank range;
+    // it will be in the most cases 1 except for alphabets like seqan3::gap where it will be 0
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
     assign_rank(t1, rank);
     TypeParam t2{t1};
@@ -127,7 +129,7 @@ TYPED_TEST(alphabet, copy_constructor)
 
 TYPED_TEST(alphabet, move_constructor)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -140,7 +142,7 @@ TYPED_TEST(alphabet, move_constructor)
 
 TYPED_TEST(alphabet, copy_assignment)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
     assign_rank(t1, rank);
     TypeParam t2;
@@ -150,7 +152,7 @@ TYPED_TEST(alphabet, copy_assignment)
 
 TYPED_TEST(alphabet, move_assignment)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -164,7 +166,7 @@ TYPED_TEST(alphabet, move_assignment)
 
 TYPED_TEST(alphabet, swap)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -178,7 +180,7 @@ TYPED_TEST(alphabet, swap)
 
 TYPED_TEST(alphabet, assign_char)
 {
-    using char_t = underlying_rank_t<TypeParam>;
+    using char_t = underlying_char_t<TypeParam>;
     TypeParam t0;
     for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
         assign_char(t0, i);
@@ -197,30 +199,27 @@ TYPED_TEST(alphabet, to_char)
 
 TYPED_TEST(alphabet, comparison_operators)
 {
+    TypeParam t0{};
+    TypeParam t1{};
+
+    assign_rank(t0, 0);
+    assign_rank(t1, 1 % alphabet_size_v<TypeParam>);
+
+    EXPECT_EQ(t0, t0);
+    EXPECT_LE(t0, t1);
+    EXPECT_LE(t1, t1);
+    EXPECT_EQ(t1, t1);
+    EXPECT_GE(t1, t1);
+    EXPECT_GE(t1, t0);
+
     if constexpr (alphabet_size_v<TypeParam> == 1)
     {
-        TypeParam t0{};
-        TypeParam t1{};
-        EXPECT_LE(t0, t1);
-        EXPECT_LE(t1, t1);
-        EXPECT_EQ(t1, t1);
-        EXPECT_GE(t1, t1);
-        EXPECT_GE(t1, t0);
+        EXPECT_EQ(t0, t1);
     }
     else
     {
-        TypeParam t0{};
-        TypeParam t1{};
-        assign_rank(t0, 0);
-        assign_rank(t1, 1);
-
         EXPECT_LT(t0, t1);
-        EXPECT_LE(t0, t1);
-        EXPECT_LE(t1, t1);
-        EXPECT_EQ(t1, t1);
         EXPECT_NE(t0, t1);
-        EXPECT_GE(t1, t1);
-        EXPECT_GE(t1, t0);
         EXPECT_GT(t1, t0);
     }
 }
@@ -259,16 +258,13 @@ void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
 TYPED_TEST(alphabet, serialisation)
 {
     TypeParam letter;
-    if constexpr (alphabet_size_v<TypeParam> > 1)
-        assign_rank(letter, 1);
-    else
-        assign_rank(letter, 0);
+
+    assign_rank(letter, 1 % alphabet_size_v<TypeParam>);
 
     std::vector<TypeParam> vec;
     vec.resize(10);
-    if constexpr (alphabet_size_v<TypeParam> > 1)
-        for (unsigned i = 0; i < 10; ++i)
-            assign_rank(vec[i], i % 2);
+    for (unsigned i = 0; i < 10; ++i)
+        assign_rank(vec[i], i % alphabet_size_v<TypeParam>);
 
     do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>(letter, vec);
     do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(letter, vec);
@@ -328,13 +324,13 @@ TYPED_TEST(alphabet_constexpr, move_constructor)
 
 TYPED_TEST(alphabet_constexpr, assign_rank)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     [[maybe_unused]] constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
 }
 
 TYPED_TEST(alphabet_constexpr, to_rank)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
     constexpr bool b = (to_rank(t0) == rank);
     EXPECT_TRUE(b);
@@ -342,7 +338,7 @@ TYPED_TEST(alphabet_constexpr, to_rank)
 
 TYPED_TEST(alphabet_constexpr, copy_assignment)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr
@@ -358,7 +354,7 @@ TYPED_TEST(alphabet_constexpr, copy_assignment)
 
 TYPED_TEST(alphabet_constexpr, move_assignment)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr
