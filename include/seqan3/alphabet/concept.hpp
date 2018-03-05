@@ -62,9 +62,17 @@ namespace seqan3
  * Beyond the requirements stated below, the type needs to be a plain old datatype (`std::is_pod_v`)
  * and be swappable (`std::is_swappable_v`).
  *
- * \todo add comparison operators
+ * \todo Implement and inherit seqan3::strictly_ordered_concept, seqan3::regular_concept,
+ * seqan3::standard_layout_concept and seqan3::trivially_copyable_concept (and then remove comp. ops)
+ *
+ * \par Serialisation
+ *
+ * Types that satisfy the concept (and all refinements) can be serialised via SeqAn3
+ * serialisation support.
+ * The rank value is (de-)serialised, types need not provide any overloads themselves.
  *
  * \par Concepts and doxygen
+ *
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
@@ -102,9 +110,20 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
  * \brief The generic alphabet concept that covers most data types used in ranges.
  * \ingroup alphabet
  *
- * \todo document
+ * This is the core alphabet concept that many other alphabet concepts refine.
+ *
+ * It defines the requirements for the rank interface and the character interface,
+ * as well as the requirement for size and comparability. For more details, see
+ * the \ref alphabet module.
+ *
+ * \par Serialisation
+ *
+ * Types that satisfy the concept (and all refinements) can be serialised via SeqAn3
+ * serialisation support.
+ * The rank value is (de-)serialised, types need not provide any overloads themselves.
  *
  * \par Concepts and doxygen
+ *
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
