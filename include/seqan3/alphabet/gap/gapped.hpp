@@ -72,9 +72,9 @@ namespace seqan3
  * \sa For more details see union_composition, which is the base class and more general than the gapped alphabet.
  */
 template <typename alphabet_t>
-//\cond
+//!\cond
     requires alphabet_concept<alphabet_t>
-//\endcond
+//!\endcond
 struct gapped : public union_composition<alphabet_t, gap>
 {
     using union_composition<alphabet_t, gap>::_value;

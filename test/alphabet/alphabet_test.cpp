@@ -116,6 +116,8 @@ TYPED_TEST(alphabet, to_rank)
 
 TYPED_TEST(alphabet, copy_constructor)
 {
+    // the module operation ensures that the result is within the valid rank range;
+    // it will be in the most cases 1 except for alphabets like seqan3::gap where it will be 0
     constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
     assign_rank(t1, rank);
