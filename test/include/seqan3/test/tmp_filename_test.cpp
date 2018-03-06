@@ -46,8 +46,9 @@ TEST(tmp_filename_aggr, aggr)
     EXPECT_NE(t1.get_path(), t2.get_path());
     EXPECT_TRUE(fs::exists(t1.get_path().parent_path()));
     EXPECT_TRUE(fs::exists(t2.get_path().parent_path()));
-    EXPECT_EQ(fs::temp_directory_path(), t1.get_path().parent_path().parent_path()/="/");
-    EXPECT_EQ(fs::temp_directory_path(), t2.get_path().parent_path().parent_path()/="/");
+
+    EXPECT_TRUE(fs::equivalent(fs::temp_directory_path(), t1.get_path().parent_path().parent_path()));
+    EXPECT_TRUE(fs::equivalent(fs::temp_directory_path(), t2.get_path().parent_path().parent_path()));
 }
 
 // nullptr as filename
