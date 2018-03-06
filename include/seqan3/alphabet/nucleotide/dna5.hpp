@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
  * \author David Heller <david.heller AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains seqan3::dna5, container aliases and string literals.

@@ -34,7 +34,6 @@
 
 /*!\file
  * \brief Adaptations of concepts from the standard library.
- * \ingroup container
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 

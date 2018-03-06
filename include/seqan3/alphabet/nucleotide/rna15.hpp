@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup nucleotide
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::rna15, container aliases and string literals.
  */

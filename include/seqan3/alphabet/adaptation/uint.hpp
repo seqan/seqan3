@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup adaptation
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides alphabet adaptations for standard uint types.
  * \details

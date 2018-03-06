@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::view::to_char.
  */

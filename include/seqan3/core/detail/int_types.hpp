@@ -41,7 +41,6 @@
 /*!\file
  * \brief Contains metaprogramming utilities for integer types.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
  */
 
 namespace seqan3::detail

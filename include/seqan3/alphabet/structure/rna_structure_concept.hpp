@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
  * \brief Provides seqan3::rna_structure_concept.
  */

@@ -34,7 +34,6 @@
 
 /*!\file
  * \brief Adaptions of concepts from the Cereal library.
- * \ingroup core
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 

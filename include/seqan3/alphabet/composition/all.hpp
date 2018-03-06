@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup composition
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Meta-header for the composition submodule; includes all headers from alphabet/composition/.
  */

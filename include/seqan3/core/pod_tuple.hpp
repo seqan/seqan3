@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup core
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains seqan3::pod_tuple
  */

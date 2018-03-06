@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup structure
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
  * \brief Meta-header for the structure module. It includes all headers from alphabet/structure/.
  *

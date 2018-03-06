@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
  * \brief Tests for the structure alphabets.
  */

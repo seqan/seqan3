@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup adaptation
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header for the adaptation submodule; includes all headers from alphabet/adaptation/.
  */

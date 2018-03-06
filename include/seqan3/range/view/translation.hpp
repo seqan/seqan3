@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup view
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Provides seqan3::view::translate, seqan3::view::translate_single and seqan3::view::translate_frames.
  */
