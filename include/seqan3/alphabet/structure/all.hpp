@@ -37,6 +37,7 @@
  * \brief Meta-header for the structure module. It includes all headers from alphabet/structure/.
  *
  * \defgroup structure Structure
+ * \ingroup alphabet
  * \brief The structure module contains alphabets for RNA and protein structure.
  * \details The following alphabets are currently supported in SeqAn. Please see the format's page for more details.
  *
