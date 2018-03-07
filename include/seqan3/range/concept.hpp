@@ -183,9 +183,9 @@ static_assert(seqan3::random_access_range_concept<sdsl::int_vector<>>);
 /* Check range-v3 containers */
 #include <range/v3/view/any_view.hpp>
 
-static_assert(seqan3::range_concept<ranges::any_random_access_view<char>>);
-// static_assert(seqan3::sized_range_concept<ranges::any_random_access_view<char>>);
-static_assert(seqan3::random_access_range_concept<ranges::any_random_access_view<char>>);
+static_assert(seqan3::range_concept<ranges::any_view<char, ranges::category::random_access>>);
+// static_assert(seqan3::sized_range_concept<ranges::any_view<char, ranges::category::random_access>>);
+static_assert(seqan3::random_access_range_concept<ranges::any_view<char, ranges::category::random_access>>);
 
 /* Check our containers */
 //TODO

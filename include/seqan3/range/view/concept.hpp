@@ -60,5 +60,5 @@ concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
 
 #ifndef NDEBUG
 #include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
+static_assert(seqan3::view_concept<ranges::any_view<char, ranges::category::random_access>>);
 #endif
