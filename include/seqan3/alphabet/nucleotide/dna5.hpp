@@ -100,22 +100,13 @@ struct dna5
      * \{
      */
     //!\copydoc seqan3::dna4::to_char
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     //!\copydoc seqan3::dna4::to_rank
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
+    constexpr rank_type to_rank() const noexcept { return static_cast<rank_type>(_value); }
 
     //!\copydoc seqan3::dna4::complement
-    constexpr dna5 complement() const noexcept
-    {
-        return complement_table[to_rank()];
-    }
+    constexpr dna5 complement() const noexcept { return complement_table[to_rank()]; }
     //!\}
 
     /*!\name Write functions
@@ -138,7 +129,7 @@ struct dna5
     //!\}
 
     //!\copydoc seqan3::dna4::value_size
-    static constexpr rank_type value_size{5};
+    static constexpr rank_type value_size{ 5 };
 
     /*!\name Conversion operators
      * \{
@@ -146,21 +137,21 @@ struct dna5
     //!\brief Implicit conversion between dna* and rna* of the same size.
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
     template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
-    //!\endcond
-    constexpr operator other_nucl_type() const noexcept
+      //!\cond
+      requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+      //!\endcond
+      constexpr operator other_nucl_type() const noexcept
     {
-        return other_nucl_type{_value};
+        return other_nucl_type{ _value };
     }
 
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type>
-    //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
+    requires nucleotide_concept<other_nucl_type>
+      //!\endcond
+      explicit constexpr operator other_nucl_type() const noexcept
     {
         return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
     }
@@ -168,38 +159,20 @@ struct dna5
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(dna5 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+    constexpr bool operator==(dna5 const & rhs) const noexcept { return _value == rhs._value; }
 
-    constexpr bool operator!=(dna5 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
+    constexpr bool operator!=(dna5 const & rhs) const noexcept { return _value != rhs._value; }
 
-    constexpr bool operator<(dna5 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
+    constexpr bool operator<(dna5 const & rhs) const noexcept { return _value < rhs._value; }
 
-    constexpr bool operator>(dna5 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
+    constexpr bool operator>(dna5 const & rhs) const noexcept { return _value > rhs._value; }
 
-    constexpr bool operator<=(dna5 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
+    constexpr bool operator<=(dna5 const & rhs) const noexcept { return _value <= rhs._value; }
 
-    constexpr bool operator>=(dna5 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
+    constexpr bool operator>=(dna5 const & rhs) const noexcept { return _value >= rhs._value; }
     //!\}
 
-protected:
+  protected:
     //!\privatesection
     //!\copydoc seqan3::dna4::internal_type
     enum struct internal_type : rank_type
@@ -214,63 +187,57 @@ protected:
     };
 
     //!\copydoc seqan3::dna4::value_to_char
-    static constexpr char_type value_to_char[value_size]
-    {
-        'A',
-        'C',
-        'G',
-        'T',
-        'N'
-    };
+    static constexpr char_type value_to_char[value_size]{ 'A', 'C', 'G', 'T', 'N' };
 
     //!\copydoc seqan3::dna4::char_to_value
-    static constexpr std::array<internal_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            using in_t = internal_type;
-            std::array<in_t, 256> ret{};
+    static constexpr std::array<internal_type, 256> char_to_value{ []() constexpr { using in_t = internal_type;
+    std::array<in_t, 256> ret{};
 
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = in_t::UNKNOWN;
+    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+    for (auto & c : ret) c = in_t::UNKNOWN;
 
-            // canonical
-            ret['A'] = in_t::A; ret['a'] = in_t::A;
-            ret['C'] = in_t::C; ret['c'] = in_t::C;
-            ret['G'] = in_t::G; ret['g'] = in_t::G;
-            ret['T'] = in_t::T; ret['t'] = in_t::T;
-            ret['U'] = in_t::U; ret['u'] = in_t::U;
+    // canonical
+    ret['A'] = in_t::A;
+    ret['a'] = in_t::A;
+    ret['C'] = in_t::C;
+    ret['c'] = in_t::C;
+    ret['G'] = in_t::G;
+    ret['g'] = in_t::G;
+    ret['T'] = in_t::T;
+    ret['t'] = in_t::T;
+    ret['U'] = in_t::U;
+    ret['u'] = in_t::U;
 
-            // iupac characters are implicitly "UNKNOWN"
-            return ret;
-        }()
-    };
-
-    //!\copydoc seqan3::dna4::complement_table
-    static const std::array<dna5, value_size> complement_table;
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
+    // iupac characters are implicitly "UNKNOWN"
+    return ret;
+}()
 };
 
-constexpr dna5 dna5::A{internal_type::A};
-constexpr dna5 dna5::C{internal_type::C};
-constexpr dna5 dna5::G{internal_type::G};
-constexpr dna5 dna5::T{internal_type::T};
-constexpr dna5 dna5::N{internal_type::N};
-constexpr dna5 dna5::U{dna5::T};
-constexpr dna5 dna5::UNKNOWN{dna5::N};
+//!\copydoc seqan3::dna4::complement_table
+static const std::array<dna5, value_size> complement_table;
 
-constexpr std::array<dna5, dna5::value_size> dna5::complement_table
-{
-    dna5::T,    // complement of dna5::A
-    dna5::G,    // complement of dna5::C
-    dna5::C,    // complement of dna5::G
-    dna5::A,    // complement of dna5::T
-    dna5::N     // complement of dna5::N
+public:
+//!\privatesection
+//!\brief The data member.
+internal_type _value;
+//!\publicsection
+}
+;
+
+constexpr dna5 dna5::A{ internal_type::A };
+constexpr dna5 dna5::C{ internal_type::C };
+constexpr dna5 dna5::G{ internal_type::G };
+constexpr dna5 dna5::T{ internal_type::T };
+constexpr dna5 dna5::N{ internal_type::N };
+constexpr dna5 dna5::U{ dna5::T };
+constexpr dna5 dna5::UNKNOWN{ dna5::N };
+
+constexpr std::array<dna5, dna5::value_size> dna5::complement_table{
+    dna5::T, // complement of dna5::A
+    dna5::G, // complement of dna5::C
+    dna5::C, // complement of dna5::G
+    dna5::A, // complement of dna5::T
+    dna5::N  // complement of dna5::N
 };
 
 } // namespace seqan3
@@ -322,8 +289,7 @@ inline dna5_vector operator""_dna5(const char * s, std::size_t n)
     dna5_vector r;
     r.resize(n);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t i = 0; i < n; ++i) r[i].assign_char(s[i]);
 
     return r;
 }

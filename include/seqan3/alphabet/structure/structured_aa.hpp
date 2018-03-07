@@ -90,10 +90,10 @@ namespace seqan3
  */
 
 template <typename sequence_alphabet_t = aa27, typename structure_alphabet_t = dssp9>
-    requires alphabet_concept<sequence_alphabet_t> && alphabet_concept<structure_alphabet_t>
-struct structured_aa :
-    public cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
-                                 sequence_alphabet_t, structure_alphabet_t>
+requires alphabet_concept<sequence_alphabet_t> && alphabet_concept<structure_alphabet_t> struct structured_aa
+  : public cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
+                                 sequence_alphabet_t,
+                                 structure_alphabet_t>
 {
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
@@ -132,10 +132,7 @@ struct structured_aa :
      * \{
      */
     //!\brief Return a character. This reads the internal sequence letter.
-    constexpr char_type to_char() const noexcept
-    {
-        return seqan3::to_char(get<0>(*this));
-    }
+    constexpr char_type to_char() const noexcept { return seqan3::to_char(get<0>(*this)); }
     //!\}
 };
 
@@ -143,6 +140,6 @@ struct structured_aa :
 //!\relates structured_aa
 template <typename sequence_alphabet_type, typename structure_alphabet_type>
 structured_aa(sequence_alphabet_type &&, structure_alphabet_type &&)
-    -> structured_aa<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
+  ->structured_aa<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
 
 } // namespace seqan3

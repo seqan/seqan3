@@ -83,8 +83,7 @@ namespace seqan3::view
  */
 
 //TODO enforce nucleotide_concept via c++2a and/or terse concept syntax
-auto const complement = ranges::view::transform([] (auto const & in)
-{
+auto const complement = ranges::view::transform([](auto const & in) {
     using seqan3::complement;
     return complement(in);
 });

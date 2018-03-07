@@ -107,16 +107,10 @@ struct rna15 : public dna15
      * \{
      */
     //!\copydoc seqan3::dna4::to_char
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     //!\copydoc seqan3::dna4::complement
-    constexpr rna15 complement() const noexcept
-    {
-        return dna15::complement();
-    }
+    constexpr rna15 complement() const noexcept { return dna15::complement(); }
     //!\}
 
     /*!\name Write functions
@@ -144,66 +138,50 @@ struct rna15 : public dna15
     //!\brief Implicit conversion between dna* and rna* of the same size.
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
     template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
-    //!\endcond
-    constexpr operator other_nucl_type() const noexcept
+      //!\cond
+      requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+      //!\endcond
+      constexpr operator other_nucl_type() const noexcept
     {
-        return other_nucl_type{_value};
+        return other_nucl_type{ _value };
     }
 
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type>
-    //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
+    requires nucleotide_concept<other_nucl_type>
+      //!\endcond
+      explicit constexpr operator other_nucl_type() const noexcept
     {
         return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
     }
     //!\}
 
-protected:
+  protected:
     //!\privatesection
     //!\copydoc seqan3::dna4::value_to_char
-    static constexpr char_type value_to_char[value_size]
-    {
-        'A',
-        'B',
-        'C',
-        'D',
-        'G',
-        'H',
-        'K',
-        'M',
-        'N',
-        'R',
-        'S',
-        'U',
-        'V',
-        'W',
-        'Y'
-    };
+    static constexpr char_type value_to_char[value_size]{ 'A', 'B', 'C', 'D', 'G', 'H', 'K', 'M',
+                                                          'N', 'R', 'S', 'U', 'V', 'W', 'Y' };
 };
 
-constexpr rna15 rna15::A{internal_type::A};
-constexpr rna15 rna15::B{internal_type::B};
-constexpr rna15 rna15::C{internal_type::C};
-constexpr rna15 rna15::D{internal_type::D};
-constexpr rna15 rna15::G{internal_type::G};
-constexpr rna15 rna15::H{internal_type::H};
-constexpr rna15 rna15::K{internal_type::K};
-constexpr rna15 rna15::M{internal_type::M};
-constexpr rna15 rna15::N{internal_type::N};
-constexpr rna15 rna15::R{internal_type::R};
-constexpr rna15 rna15::S{internal_type::S};
-constexpr rna15 rna15::U{internal_type::U};
-constexpr rna15 rna15::T{rna15::U};
-constexpr rna15 rna15::V{internal_type::V};
-constexpr rna15 rna15::W{internal_type::W};
-constexpr rna15 rna15::Y{internal_type::Y};
-constexpr rna15 rna15::UNKNOWN{rna15::N};
+constexpr rna15 rna15::A{ internal_type::A };
+constexpr rna15 rna15::B{ internal_type::B };
+constexpr rna15 rna15::C{ internal_type::C };
+constexpr rna15 rna15::D{ internal_type::D };
+constexpr rna15 rna15::G{ internal_type::G };
+constexpr rna15 rna15::H{ internal_type::H };
+constexpr rna15 rna15::K{ internal_type::K };
+constexpr rna15 rna15::M{ internal_type::M };
+constexpr rna15 rna15::N{ internal_type::N };
+constexpr rna15 rna15::R{ internal_type::R };
+constexpr rna15 rna15::S{ internal_type::S };
+constexpr rna15 rna15::U{ internal_type::U };
+constexpr rna15 rna15::T{ rna15::U };
+constexpr rna15 rna15::V{ internal_type::V };
+constexpr rna15 rna15::W{ internal_type::W };
+constexpr rna15 rna15::Y{ internal_type::Y };
+constexpr rna15 rna15::UNKNOWN{ rna15::N };
 
 } // namespace seqan3
 
@@ -254,8 +232,7 @@ inline rna15_vector operator""_rna15(const char * s, std::size_t n)
     rna15_vector r;
     r.resize(n);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t i = 0; i < n; ++i) r[i].assign_char(s[i]);
 
     return r;
 }

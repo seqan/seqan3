@@ -40,12 +40,11 @@
 
 #pragma once
 
-#include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/composition/union_composition.hpp>
+#include <seqan3/alphabet/gap/gap.hpp>
 
 namespace seqan3
 {
-
 
 /*!\brief Extends a given alphabet with a gap character.
  * \ingroup gap
@@ -72,9 +71,9 @@ namespace seqan3
  */
 template <typename alphabet_t>
 //!\cond
-    requires alphabet_concept<alphabet_t>
-//!\endcond
-struct gapped : public union_composition<alphabet_t, gap>
+requires alphabet_concept<alphabet_t>
+  //!\endcond
+  struct gapped : public union_composition<alphabet_t, gap>
 {
     using union_composition<alphabet_t, gap>::_value;
     using union_composition<alphabet_t, gap>::value_size;

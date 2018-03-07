@@ -39,8 +39,8 @@
 
 #pragma once
 
-#include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
+#include <seqan3/range/container/concept.hpp>
 
 /*!\defgroup container Container
  * \brief The container submodule contains special SeqAn3 containers and generic container concepts.

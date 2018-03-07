@@ -40,8 +40,8 @@
 #pragma once
 
 #include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/complement.hpp>
+#include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/rank_to.hpp>
 #include <seqan3/range/view/to_char.hpp>

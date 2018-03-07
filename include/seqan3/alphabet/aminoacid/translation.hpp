@@ -56,25 +56,25 @@ namespace seqan3
  */
 enum struct genetic_code : uint8_t
 {
-    CANONICAL=1,
-//     VERT_MITOCHONDRIAL,
-//     YEAST_MITOCHONDRIAL,
-//     MOLD_MITOCHONDRIAL,
-//     INVERT_MITOCHONDRIAL,
-//     CILIATE,
-//     FLATWORM_MITOCHONDRIAL = 9,
-//     EUPLOTID,
-//     PROKARYOTE,
-//     ALT_YEAST,
-//     ASCIDIAN_MITOCHONDRIAL,
-//     ALT_FLATWORM_MITOCHONDRIAL,
-//     BLEPHARISMA,
-//     CHLOROPHYCEAN_MITOCHONDRIAL,
-//     TREMATODE_MITOCHONDRIAL = 21,
-//     SCENEDESMUS_MITOCHONDRIAL,
-//     THRAUSTOCHYTRIUM_MITOCHONDRIAL,
-//     PTEROBRANCHIA_MITOCHONDRIAL,
-//     GRACILIBACTERIA
+    CANONICAL = 1,
+    //     VERT_MITOCHONDRIAL,
+    //     YEAST_MITOCHONDRIAL,
+    //     MOLD_MITOCHONDRIAL,
+    //     INVERT_MITOCHONDRIAL,
+    //     CILIATE,
+    //     FLATWORM_MITOCHONDRIAL = 9,
+    //     EUPLOTID,
+    //     PROKARYOTE,
+    //     ALT_YEAST,
+    //     ASCIDIAN_MITOCHONDRIAL,
+    //     ALT_FLATWORM_MITOCHONDRIAL,
+    //     BLEPHARISMA,
+    //     CHLOROPHYCEAN_MITOCHONDRIAL,
+    //     TREMATODE_MITOCHONDRIAL = 21,
+    //     SCENEDESMUS_MITOCHONDRIAL,
+    //     THRAUSTOCHYTRIUM_MITOCHONDRIAL,
+    //     PTEROBRANCHIA_MITOCHONDRIAL,
+    //     GRACILIBACTERIA
 };
 }
 
@@ -123,13 +123,12 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
  * No-throw guarantee.
 */
 template <genetic_code gc = genetic_code::CANONICAL, typename tuple_type>
-//!\cond
+    //!\cond
     requires std::tuple_size<tuple_type>::value == 3 &&
-             nucleotide_concept<std::tuple_element_t<0, tuple_type>> &&
-             nucleotide_concept<std::tuple_element_t<1, tuple_type>> &&
-             nucleotide_concept<std::tuple_element_t<2, tuple_type>>
-//!\endcond
-constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
+  nucleotide_concept<std::tuple_element_t<0, tuple_type>> && nucleotide_concept<std::tuple_element_t<1, tuple_type>> &&
+    nucleotide_concept<std::tuple_element_t<2, tuple_type>>
+  //!\endcond
+  constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
 {
     return translate_triplet(std::get<0>(input_tuple), std::get<1>(input_tuple), std::get<2>(input_tuple));
 }
@@ -151,10 +150,10 @@ constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
  * Strong exception guarantee (never modifies data).
 */
 template <genetic_code gc = genetic_code::CANONICAL, input_range_concept range_type>
-    //!\cond
-    requires nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<range_type>>>>
-    //!\endcond
-constexpr aa27 translate_triplet(range_type && input_range)
+//!\cond
+requires nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<range_type>>>>
+  //!\endcond
+  constexpr aa27 translate_triplet(range_type && input_range)
 {
     auto n1 = ranges::begin(input_range);
     auto n2 = ++n1;
@@ -166,7 +165,6 @@ constexpr aa27 translate_triplet(range_type && input_range)
 
     return translate_triplet(*n1, *n2, *n3);
 }
-
 
 /*!\brief Translate one nucleotide triplet into single amino acid (range interface, input range allows random access).
  * \tparam range_type Type of input_range; must satisfy seqan3::random_access_range_concept.
@@ -186,9 +184,9 @@ constexpr aa27 translate_triplet(range_type && input_range)
 */
 template <genetic_code gc = genetic_code::CANONICAL, random_access_range_concept range_type>
 //!\cond
-    requires nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<range_type>>>>
-//!\endcond
-constexpr aa27 translate_triplet(range_type && input_range)
+requires nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<range_type>>>>
+  //!\endcond
+  constexpr aa27 translate_triplet(range_type && input_range)
 {
     assert(input_range.begin() != ranges::end(input_range));
     assert(input_range.begin() + 1 != ranges::end(input_range));
@@ -196,5 +194,4 @@ constexpr aa27 translate_triplet(range_type && input_range)
 
     return translate_triplet(input_range[0], input_range[1], input_range[2]);
 }
-
 }

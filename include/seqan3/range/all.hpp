@@ -39,8 +39,8 @@
 
 #pragma once
 
-#include <seqan3/range/concept.hpp>
 #include <seqan3/range/action/all.hpp>
+#include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/all.hpp>
 

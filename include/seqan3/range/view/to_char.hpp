@@ -79,6 +79,6 @@ namespace seqan3::view
  * ```
  * \hideinitializer
  */
-auto const to_char = ranges::view::transform([] (alphabet_concept const in) { return seqan3::to_char(in); });
+auto const to_char = ranges::view::transform([](alphabet_concept const in) { return seqan3::to_char(in); });
 
 } // namespace seqan3::view

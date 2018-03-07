@@ -79,7 +79,6 @@ struct aa27
     //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = uint8_t;
 
-
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
      * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
@@ -119,16 +118,10 @@ struct aa27
      * \{
      */
     //!\brief Return the letter as a character of char_type.
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
+    constexpr rank_type to_rank() const noexcept { return static_cast<rank_type>(_value); }
     //!\}
 
     /*!\name Write functions
@@ -151,42 +144,24 @@ struct aa27
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{27};
+    static constexpr rank_type value_size{ 27 };
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(aa27 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+    constexpr bool operator==(aa27 const & rhs) const noexcept { return _value == rhs._value; }
 
-    constexpr bool operator!=(aa27 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
+    constexpr bool operator!=(aa27 const & rhs) const noexcept { return _value != rhs._value; }
 
-    constexpr bool operator<(aa27 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
+    constexpr bool operator<(aa27 const & rhs) const noexcept { return _value < rhs._value; }
 
-    constexpr bool operator>(aa27 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
+    constexpr bool operator>(aa27 const & rhs) const noexcept { return _value > rhs._value; }
 
-    constexpr bool operator<=(aa27 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
+    constexpr bool operator<=(aa27 const & rhs) const noexcept { return _value <= rhs._value; }
 
-    constexpr bool operator>=(aa27 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
+    constexpr bool operator>=(aa27 const & rhs) const noexcept { return _value >= rhs._value; }
     //!\}
 
-    protected:
+  protected:
     //!\privatesection
     /*!\brief The internal type is a strictly typed enum.
      *
@@ -227,115 +202,110 @@ struct aa27
     };
 
     //!\brief Value to char conversion table.
-    static constexpr char_type value_to_char[value_size]
-    {
-        'A',
-        'B',
-        'C',
-        'D',
-        'E',
-        'F',
-        'G',
-        'H',
-        'I',
-        'J',
-        'K',
-        'L',
-        'M',
-        'N',
-        'O',
-        'P',
-        'Q',
-        'R',
-        'S',
-        'T',
-        'U',
-        'V',
-        'W',
-        'X',
-        'Y',
-        'Z',
-        '*'
-    };
+    static constexpr char_type value_to_char[value_size]{ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+                                                          'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                                                          'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '*' };
 
     //!\brief Char to value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            using in_t = internal_type;
-            std::array<in_t, 256> ret{};
+    static constexpr std::array<internal_type, 256> char_to_value{ []() constexpr { using in_t = internal_type;
+    std::array<in_t, 256> ret{};
 
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = in_t::UNKNOWN;
+    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+    for (auto & c : ret) c = in_t::UNKNOWN;
 
-            ret['A'] = in_t::A; ret['a'] = in_t::A;
-            ret['B'] = in_t::B; ret['b'] = in_t::B;
-            ret['C'] = in_t::C; ret['c'] = in_t::C;
-            ret['D'] = in_t::D; ret['d'] = in_t::D;
-            ret['E'] = in_t::E; ret['e'] = in_t::E;
-            ret['F'] = in_t::F; ret['f'] = in_t::F;
-            ret['G'] = in_t::G; ret['g'] = in_t::G;
-            ret['H'] = in_t::H; ret['h'] = in_t::H;
-            ret['I'] = in_t::I; ret['i'] = in_t::I;
-            ret['J'] = in_t::J; ret['j'] = in_t::J;
-            ret['K'] = in_t::K; ret['k'] = in_t::K;
-            ret['L'] = in_t::L; ret['l'] = in_t::L;
-            ret['M'] = in_t::M; ret['m'] = in_t::M;
-            ret['N'] = in_t::N; ret['n'] = in_t::N;
-            ret['O'] = in_t::O; ret['o'] = in_t::O;
-            ret['P'] = in_t::P; ret['p'] = in_t::P;
-            ret['Q'] = in_t::Q; ret['q'] = in_t::Q;
-            ret['R'] = in_t::R; ret['r'] = in_t::R;
-            ret['S'] = in_t::S; ret['s'] = in_t::S;
-            ret['T'] = in_t::T; ret['t'] = in_t::T;
-            ret['U'] = in_t::U; ret['u'] = in_t::U;
-            ret['V'] = in_t::V; ret['v'] = in_t::V;
-            ret['W'] = in_t::W; ret['w'] = in_t::W;
-            ret['X'] = in_t::X; ret['x'] = in_t::X;
-            ret['Y'] = in_t::Y; ret['y'] = in_t::Y;
-            ret['Z'] = in_t::Z; ret['z'] = in_t::Z;
-            ret['*'] = in_t::TERMINATOR;
-            return ret;
-        }()
-    };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
+    ret['A'] = in_t::A;
+    ret['a'] = in_t::A;
+    ret['B'] = in_t::B;
+    ret['b'] = in_t::B;
+    ret['C'] = in_t::C;
+    ret['c'] = in_t::C;
+    ret['D'] = in_t::D;
+    ret['d'] = in_t::D;
+    ret['E'] = in_t::E;
+    ret['e'] = in_t::E;
+    ret['F'] = in_t::F;
+    ret['f'] = in_t::F;
+    ret['G'] = in_t::G;
+    ret['g'] = in_t::G;
+    ret['H'] = in_t::H;
+    ret['h'] = in_t::H;
+    ret['I'] = in_t::I;
+    ret['i'] = in_t::I;
+    ret['J'] = in_t::J;
+    ret['j'] = in_t::J;
+    ret['K'] = in_t::K;
+    ret['k'] = in_t::K;
+    ret['L'] = in_t::L;
+    ret['l'] = in_t::L;
+    ret['M'] = in_t::M;
+    ret['m'] = in_t::M;
+    ret['N'] = in_t::N;
+    ret['n'] = in_t::N;
+    ret['O'] = in_t::O;
+    ret['o'] = in_t::O;
+    ret['P'] = in_t::P;
+    ret['p'] = in_t::P;
+    ret['Q'] = in_t::Q;
+    ret['q'] = in_t::Q;
+    ret['R'] = in_t::R;
+    ret['r'] = in_t::R;
+    ret['S'] = in_t::S;
+    ret['s'] = in_t::S;
+    ret['T'] = in_t::T;
+    ret['t'] = in_t::T;
+    ret['U'] = in_t::U;
+    ret['u'] = in_t::U;
+    ret['V'] = in_t::V;
+    ret['v'] = in_t::V;
+    ret['W'] = in_t::W;
+    ret['w'] = in_t::W;
+    ret['X'] = in_t::X;
+    ret['x'] = in_t::X;
+    ret['Y'] = in_t::Y;
+    ret['y'] = in_t::Y;
+    ret['Z'] = in_t::Z;
+    ret['z'] = in_t::Z;
+    ret['*'] = in_t::TERMINATOR;
+    return ret;
+}()
 };
 
-constexpr aa27 aa27::A{internal_type::A};
-constexpr aa27 aa27::B{internal_type::B};
-constexpr aa27 aa27::C{internal_type::C};
-constexpr aa27 aa27::D{internal_type::D};
-constexpr aa27 aa27::E{internal_type::E};
-constexpr aa27 aa27::F{internal_type::F};
-constexpr aa27 aa27::G{internal_type::G};
-constexpr aa27 aa27::H{internal_type::H};
-constexpr aa27 aa27::I{internal_type::I};
-constexpr aa27 aa27::J{internal_type::J};
-constexpr aa27 aa27::K{internal_type::K};
-constexpr aa27 aa27::L{internal_type::L};
-constexpr aa27 aa27::M{internal_type::M};
-constexpr aa27 aa27::N{internal_type::N};
-constexpr aa27 aa27::O{internal_type::O};
-constexpr aa27 aa27::P{internal_type::P};
-constexpr aa27 aa27::Q{internal_type::Q};
-constexpr aa27 aa27::R{internal_type::R};
-constexpr aa27 aa27::S{internal_type::S};
-constexpr aa27 aa27::T{internal_type::T};
-constexpr aa27 aa27::U{internal_type::U};
-constexpr aa27 aa27::V{internal_type::V};
-constexpr aa27 aa27::W{internal_type::W};
-constexpr aa27 aa27::X{internal_type::X};
-constexpr aa27 aa27::Y{internal_type::Y};
-constexpr aa27 aa27::Z{internal_type::Z};
-constexpr aa27 aa27::TERMINATOR{internal_type::TERMINATOR};
-constexpr aa27 aa27::UNKNOWN{aa27::X};
+public:
+//!\privatesection
+//!\brief The data member.
+internal_type _value;
+//!\publicsection
+}
+;
+
+constexpr aa27 aa27::A{ internal_type::A };
+constexpr aa27 aa27::B{ internal_type::B };
+constexpr aa27 aa27::C{ internal_type::C };
+constexpr aa27 aa27::D{ internal_type::D };
+constexpr aa27 aa27::E{ internal_type::E };
+constexpr aa27 aa27::F{ internal_type::F };
+constexpr aa27 aa27::G{ internal_type::G };
+constexpr aa27 aa27::H{ internal_type::H };
+constexpr aa27 aa27::I{ internal_type::I };
+constexpr aa27 aa27::J{ internal_type::J };
+constexpr aa27 aa27::K{ internal_type::K };
+constexpr aa27 aa27::L{ internal_type::L };
+constexpr aa27 aa27::M{ internal_type::M };
+constexpr aa27 aa27::N{ internal_type::N };
+constexpr aa27 aa27::O{ internal_type::O };
+constexpr aa27 aa27::P{ internal_type::P };
+constexpr aa27 aa27::Q{ internal_type::Q };
+constexpr aa27 aa27::R{ internal_type::R };
+constexpr aa27 aa27::S{ internal_type::S };
+constexpr aa27 aa27::T{ internal_type::T };
+constexpr aa27 aa27::U{ internal_type::U };
+constexpr aa27 aa27::V{ internal_type::V };
+constexpr aa27 aa27::W{ internal_type::W };
+constexpr aa27 aa27::X{ internal_type::X };
+constexpr aa27 aa27::Y{ internal_type::Y };
+constexpr aa27 aa27::Z{ internal_type::Z };
+constexpr aa27 aa27::TERMINATOR{ internal_type::TERMINATOR };
+constexpr aa27 aa27::UNKNOWN{ aa27::X };
 
 } // namespace seqan3
 
@@ -385,8 +355,7 @@ inline aa27_vector operator""_aa27(const char * s, std::size_t n)
     aa27_vector r;
     r.resize(n);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t i = 0; i < n; ++i) r[i].assign_char(s[i]);
 
     return r;
 }

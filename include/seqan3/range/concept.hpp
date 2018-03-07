@@ -53,7 +53,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool range_concept               = (bool)ranges::Range<type>();
+concept bool range_concept = (bool)ranges::Range<type>();
 //!\endcond
 
 /*!\interface seqan3::sized_range_concept <>
@@ -63,7 +63,7 @@ concept bool range_concept               = (bool)ranges::Range<type>();
  */
 //!\cond
 template <typename type>
-concept bool sized_range_concept         = range_concept<type> && (bool)ranges::SizedRange<type>();
+concept bool sized_range_concept = range_concept<type> && (bool)ranges::SizedRange<type>();
 //!\endcond
 
 /*!\interface seqan3::bounded_range_concept <>
@@ -73,7 +73,7 @@ concept bool sized_range_concept         = range_concept<type> && (bool)ranges::
  */
 //!\cond
 template <typename type>
-concept bool bounded_range_concept       = range_concept<type> && (bool)ranges::BoundedRange<type>();
+concept bool bounded_range_concept = range_concept<type> && (bool)ranges::BoundedRange<type>();
 //!\endcond
 
 /*!\interface seqan3::output_range_concept <>
@@ -84,7 +84,7 @@ concept bool bounded_range_concept       = range_concept<type> && (bool)ranges::
  */
 //!\cond
 template <typename type, typename out_type>
-concept bool output_range_concept        = range_concept<type> && (bool)ranges::OutputRange<type, out_type>();
+concept bool output_range_concept = range_concept<type> && (bool)ranges::OutputRange<type, out_type>();
 //!\endcond
 
 /*!\interface seqan3::input_range_concept <>
@@ -95,7 +95,7 @@ concept bool output_range_concept        = range_concept<type> && (bool)ranges::
  */
 //!\cond
 template <typename type>
-concept bool input_range_concept         = range_concept<type> && (bool)ranges::InputRange<type>();
+concept bool input_range_concept = range_concept<type> && (bool)ranges::InputRange<type>();
 //!\endcond
 
 /*!\interface seqan3::forward_range_concept <>
@@ -106,7 +106,7 @@ concept bool input_range_concept         = range_concept<type> && (bool)ranges::
  */
 //!\cond
 template <typename type>
-concept bool forward_range_concept       = input_range_concept<type> && (bool)ranges::ForwardRange<type>();
+concept bool forward_range_concept = input_range_concept<type> && (bool)ranges::ForwardRange<type>();
 //!\endcond
 
 /*!\interface seqan3::bidirectional_range_concept <>
@@ -137,12 +137,12 @@ concept bool random_access_range_concept = bidirectional_range_concept<type> && 
 #ifndef NDEBUG
 /* Check the STL containers */
 
-#include <vector>
 #include <array>
-#include <list>
-#include <forward_list>
 #include <deque>
+#include <forward_list>
+#include <list>
 #include <string>
+#include <vector>
 
 // no fwd list
 static_assert(seqan3::sized_range_concept<std::list<char>>);

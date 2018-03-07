@@ -64,7 +64,10 @@ namespace seqan3
  */
 template <typename alphabet_type_with_members>
 //!\cond
-    requires requires (alphabet_type_with_members alph) { typename alphabet_type_with_members::rank_type; }
+requires requires(alphabet_type_with_members alph)
+{
+    typename alphabet_type_with_members::rank_type;
+}
 //!\endcond
 struct underlying_rank<alphabet_type_with_members>
 {
@@ -79,13 +82,15 @@ struct underlying_rank<alphabet_type_with_members>
  */
 template <typename alphabet_type_with_members>
 //!\cond
-    requires requires (alphabet_type_with_members alph) { alphabet_type_with_members::value_size; }
+requires requires(alphabet_type_with_members alph)
+{
+    alphabet_type_with_members::value_size;
+}
 //!\endcond
 struct alphabet_size<alphabet_type_with_members>
 {
     //!\brief The size retrieved from the type's member.
-    static constexpr underlying_rank_t<alphabet_type_with_members> value =
-        alphabet_type_with_members::value_size;
+    static constexpr underlying_rank_t<alphabet_type_with_members> value = alphabet_type_with_members::value_size;
 };
 
 /*!\brief Implementation of seqan3::semi_alphabet_concept::to_rank() that delegates to a member function.
@@ -94,8 +99,13 @@ struct alphabet_size<alphabet_type_with_members>
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
 template <typename alphabet_type>
-constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph)
-    requires requires (alphabet_type alph) { { alph.to_rank() } -> underlying_rank_t<alphabet_type>; }
+constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph) requires requires(alphabet_type alph)
+{
+    {
+        alph.to_rank()
+    }
+    ->underlying_rank_t<alphabet_type>;
+}
 {
     return alph.to_rank();
 }
@@ -107,8 +117,14 @@ constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph)
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename alphabet_type>
-constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<alphabet_type> const rank)
-    requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
+constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<alphabet_type> const rank) requires
+  requires(alphabet_type alph)
+{
+    {
+        alph.assign_rank(uint8_t{ 0 })
+    }
+    ->alphabet_type &;
+}
 {
     return alph.assign_rank(rank);
 }
@@ -125,8 +141,14 @@ constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<al
  * ~~~
  */
 template <typename alphabet_type>
-constexpr alphabet_type && assign_rank(alphabet_type && alph, underlying_rank_t<alphabet_type> const rank)
-    requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
+constexpr alphabet_type && assign_rank(alphabet_type && alph, underlying_rank_t<alphabet_type> const rank) requires
+  requires(alphabet_type alph)
+{
+    {
+        alph.assign_rank(uint8_t{ 0 })
+    }
+    ->alphabet_type &;
+}
 {
     return std::move(alph.assign_rank(rank));
 }
@@ -148,7 +170,10 @@ constexpr alphabet_type && assign_rank(alphabet_type && alph, underlying_rank_t<
  */
 template <typename alphabet_type_with_members>
 //!\cond
-    requires requires (alphabet_type_with_members alph) { typename alphabet_type_with_members::char_type; }
+requires requires(alphabet_type_with_members alph)
+{
+    typename alphabet_type_with_members::char_type;
+}
 //!\endcond
 struct underlying_char<alphabet_type_with_members>
 {
@@ -162,8 +187,13 @@ struct underlying_char<alphabet_type_with_members>
  * \returns The letter's value in the alphabet's rank type (usually `char`).
  */
 template <typename alphabet_type>
-constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph)
-    requires requires (alphabet_type alph) { { alph.to_char() } -> underlying_char_t<alphabet_type>; }
+constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph) requires requires(alphabet_type alph)
+{
+    {
+        alph.to_char()
+    }
+    ->underlying_char_t<alphabet_type>;
+}
 {
     return alph.to_char();
 }
@@ -176,8 +206,14 @@ constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph)
  */
 template <typename alphabet_type>
 std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
-//!\cond
-    requires requires (alphabet_type alph) { { alph.to_char() } -> underlying_char_t<alphabet_type>; }
+  //!\cond
+  requires requires(alphabet_type alph)
+{
+    {
+        alph.to_char()
+    }
+    ->underlying_char_t<alphabet_type>;
+}
 //!\endcond
 {
     os << alph.to_char();
@@ -191,8 +227,14 @@ std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename alphabet_type>
-constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<alphabet_type> const chr)
-    requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
+constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<alphabet_type> const chr) requires
+  requires(alphabet_type alph)
+{
+    {
+        alph.assign_char(char{ 0 })
+    }
+    ->alphabet_type &;
+}
 {
     return alph.assign_char(chr);
 }
@@ -209,8 +251,14 @@ constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<al
  * ~~~
  */
 template <typename alphabet_type>
-constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<alphabet_type> const chr)
-    requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
+constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<alphabet_type> const chr) requires
+  requires(alphabet_type alph)
+{
+    {
+        alph.assign_char(char{ 0 })
+    }
+    ->alphabet_type &;
+}
 {
     return std::move(alph.assign_char(chr));
 }
@@ -233,8 +281,13 @@ constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<
  * \returns The letter's complement, e.g. 'T' for 'A'.
  */
 template <typename nucleotide_type>
-constexpr nucleotide_type complement(nucleotide_type const alph)
-    requires requires (nucleotide_type alph) { { alph.complement() } -> nucleotide_type; }
+constexpr nucleotide_type complement(nucleotide_type const alph) requires requires(nucleotide_type alph)
+{
+    {
+        alph.complement()
+    }
+    ->nucleotide_type;
+}
 {
     return alph.complement();
 }
@@ -259,8 +312,13 @@ constexpr nucleotide_type complement(nucleotide_type const alph)
  * \returns True if the letter represents a rightward interaction, False otherwise.
  */
 template <typename structure_type>
-constexpr bool is_pair_open(structure_type const alph)
-    requires requires (structure_type alph) { { alph.is_pair_open() } -> bool; }
+constexpr bool is_pair_open(structure_type const alph) requires requires(structure_type alph)
+{
+    {
+        alph.is_pair_open()
+    }
+    ->bool;
+}
 {
     return alph.is_pair_open();
 }
@@ -272,8 +330,13 @@ constexpr bool is_pair_open(structure_type const alph)
  * \returns True if the letter represents a leftward interaction, False otherwise.
  */
 template <typename structure_type>
-constexpr bool is_pair_close(structure_type const alph)
-    requires requires (structure_type alph) { { alph.is_pair_close() } -> bool; }
+constexpr bool is_pair_close(structure_type const alph) requires requires(structure_type alph)
+{
+    {
+        alph.is_pair_close()
+    }
+    ->bool;
+}
 {
     return alph.is_pair_close();
 }
@@ -285,8 +348,13 @@ constexpr bool is_pair_close(structure_type const alph)
  * \returns True if the letter represents an unpaired site, False otherwise.
  */
 template <typename structure_type>
-constexpr bool is_unpaired(structure_type const alph)
-    requires requires (structure_type alph) { { alph.is_unpaired() } -> bool; }
+constexpr bool is_unpaired(structure_type const alph) requires requires(structure_type alph)
+{
+    {
+        alph.is_unpaired()
+    }
+    ->bool;
+}
 {
     return alph.is_unpaired();
 }
@@ -297,8 +365,13 @@ constexpr bool is_unpaired(structure_type const alph)
  */
 template <typename alphabet_type_with_pseudoknot_attribute>
 //!\cond
-    requires requires (alphabet_type_with_pseudoknot_attribute)
-    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> bool; }
+requires requires(alphabet_type_with_pseudoknot_attribute)
+{
+    {
+        alphabet_type_with_pseudoknot_attribute::pseudoknot_support
+    }
+    ->bool;
+}
 //!\endcond
 struct pseudoknot_support<alphabet_type_with_pseudoknot_attribute>
 {

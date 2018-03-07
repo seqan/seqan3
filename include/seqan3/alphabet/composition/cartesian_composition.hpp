@@ -46,8 +46,8 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
-#include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/pod_tuple.hpp>
 
 namespace seqan3
 {
@@ -77,21 +77,19 @@ namespace seqan3
  * \sa mask_composition
  */
 
-template <typename derived_type,
-          typename first_alphabet_type,
-          typename ...alphabet_types>
-      requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
-struct cartesian_composition :
-    public pod_tuple<first_alphabet_type, alphabet_types...>
+template <typename derived_type, typename first_alphabet_type, typename... alphabet_types>
+  requires alphabet_concept<first_alphabet_type> &&
+  (alphabet_concept<alphabet_types> && ...) struct cartesian_composition
+  : public pod_tuple<first_alphabet_type, alphabet_types...>
 {
-public:
+  public:
     //!\brief The type of value_size and `alphabet_size_v<cartesian_composition<...>>`
-    using rank_type = detail::min_viable_uint_t<(alphabet_size_v<first_alphabet_type> * ... *
-                                                     alphabet_size_v<alphabet_types>)>;
+    using rank_type =
+      detail::min_viable_uint_t<(alphabet_size_v<first_alphabet_type> * ... * alphabet_size_v<alphabet_types>)>;
 
     //!\brief The product of the sizes of the individual alphabets.
-    static constexpr rank_type value_size{(alphabet_size_v<first_alphabet_type> * ... *
-                                               alphabet_size_v<alphabet_types>)};
+    static constexpr rank_type value_size{ (alphabet_size_v<first_alphabet_type> * ... *
+                                            alphabet_size_v<alphabet_types>)};
 
     /*!\name Read functions
      * \{
@@ -100,20 +98,17 @@ public:
      * \par Complexity
      * Linear in the number of alphabets.
      */
-    constexpr rank_type to_rank() const
-    {
-        return to_rank_impl(positions);
-    }
+    constexpr rank_type to_rank() const { return to_rank_impl(positions); }
 
     /*!\brief Explicit cast to a single letter. Works only if the type is unique in the type list.
      * \par Complexity
      * Linear in the number of alphabets.
      */
     template <typename type>
-    constexpr explicit operator type() const
-        requires meta::in<meta::list<first_alphabet_type, alphabet_types...>, type>::value &&
-                 (meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value ==
-                  meta::reverse_find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value)
+      constexpr explicit operator type()
+        const requires meta::in<meta::list<first_alphabet_type, alphabet_types...>, type>::value
+      && (meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value ==
+          meta::reverse_find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value)
     {
         return get<type>(*this);
     }
@@ -136,7 +131,7 @@ public:
     }
     //!\}
 
-private:
+  private:
     //!\brief declared private to prevent direct use of the CRTP base
     cartesian_composition() = default;
     //!\brief declared private to prevent direct use of the CRTP base
@@ -144,9 +139,9 @@ private:
     //!\brief declared private to prevent direct use of the CRTP base
     constexpr cartesian_composition(cartesian_composition &&) = default;
     //!\brief declared private to prevent direct use of the CRTP base
-    constexpr cartesian_composition & operator =(cartesian_composition const &) = default;
+    constexpr cartesian_composition & operator=(cartesian_composition const &) = default;
     //!\brief declared private to prevent direct use of the CRTP base
-    constexpr cartesian_composition & operator =(cartesian_composition &&) = default;
+    constexpr cartesian_composition & operator=(cartesian_composition &&) = default;
     //!\brief declared private to prevent direct use of the CRTP base
     ~cartesian_composition() = default;
 
@@ -155,63 +150,56 @@ private:
     friend derived_type;
 
     //!\brief the cummulative alphabet size products (first, first*second, first*second*third...) are cached
-    static constexpr std::array<rank_type, sizeof...(alphabet_types) + 1> cummulative_alph_sizes
-    {
-        [] () constexpr
-        {
-            std::array<rank_type, sizeof...(alphabet_types) + 1> ret{};
-            size_t count = 0;
-            meta::for_each(meta::list<first_alphabet_type, alphabet_types...>{}, [&] (auto && alph) constexpr
-            {
-                ret[count] = static_cast<rank_type>(
-                    alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1));
-                ++count;
-            });
+    static constexpr std::array<rank_type, sizeof...(alphabet_types) + 1> cummulative_alph_sizes{
+        []() constexpr { std::array<rank_type, sizeof...(alphabet_types) + 1> ret{};
+    size_t count = 0;
+    meta::for_each(meta::list<first_alphabet_type, alphabet_types...>{}, [&](auto && alph) constexpr {
+        ret[count] =
+          static_cast<rank_type>(alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1));
+        ++count;
+    });
 
-            return std::move(ret);
-        }()
-    };
-
-    //!\brief An index sequence up to the number of contained letters.
-    static constexpr auto positions = std::make_index_sequence<sizeof...(alphabet_types)>{};
-
-    //!\brief Implementation of to_rank().
-    template <std::size_t ...idx>
-    constexpr rank_type to_rank_impl(std::index_sequence<idx...> const &) const
-    {
-        using seqan3::to_rank;
-        if constexpr (sizeof...(idx) > 0)
-        {
-            return static_cast<rank_type>(
-                to_rank(get<0>(*this)) +
-                ((to_rank(get<idx + 1>(*this)) * cummulative_alph_sizes[idx]) + ...));
-        }
-        else
-        {
-            return to_rank(get<0>(*this));
-        }
-    }
-
-    //!\brief Implementation of assign_rank().
-    template <std::size_t j>
-    constexpr void
-    assign_rank_impl(rank_type const i)
-    {
-        using seqan3::assign_rank;
-        if constexpr (j == 0)
-        {
-            assign_rank(get<j>(*this),
-                          i % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
-        } else
-        {
-            assign_rank(get<j>(*this),
-                          (i / cummulative_alph_sizes[j - 1]) %
-                          alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
-        }
-
-        if constexpr (j < sizeof...(alphabet_types))
-            assign_rank_impl<j + 1>(i);
-    }
+    return std::move(ret);
+}()
 };
+
+//!\brief An index sequence up to the number of contained letters.
+static constexpr auto positions = std::make_index_sequence<sizeof...(alphabet_types)>{};
+
+//!\brief Implementation of to_rank().
+template <std::size_t... idx>
+constexpr rank_type to_rank_impl(std::index_sequence<idx...> const &) const
+{
+    using seqan3::to_rank;
+    if constexpr (sizeof...(idx) > 0) {
+        return static_cast<rank_type>(to_rank(get<0>(*this)) +
+                                      ((to_rank(get<idx + 1>(*this)) * cummulative_alph_sizes[idx]) + ...));
+    }
+    else
+    {
+        return to_rank(get<0>(*this));
+    }
+}
+
+//!\brief Implementation of assign_rank().
+template <std::size_t j>
+constexpr void assign_rank_impl(rank_type const i)
+{
+    using seqan3::assign_rank;
+    if constexpr (j == 0) {
+        assign_rank(get<j>(*this),
+                    i % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+    }
+    else
+    {
+        assign_rank(get<j>(*this),
+                    (i / cummulative_alph_sizes[j - 1]) %
+                      alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+    }
+
+    if constexpr (j < sizeof...(alphabet_types)) assign_rank_impl<j + 1>(i);
+}
+}
+;
 
 } // namespace seqan3

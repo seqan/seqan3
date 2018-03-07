@@ -39,13 +39,13 @@
 
 #pragma once
 
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/translation.hpp>
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/complement.hpp>
 
@@ -64,12 +64,11 @@ namespace seqan3
  */
 enum class translation_frames
 {
-    SINGLE_FRAME             = 1,
-    WITH_REVERSE_COMPLEMENT  = 2,
-    WITH_FRAME_SHIFTS        = 3,
-    SIX_FRAME                = 6
+    SINGLE_FRAME = 1,
+    WITH_REVERSE_COMPLEMENT = 2,
+    WITH_FRAME_SHIFTS = 3,
+    SIX_FRAME = 6
 };
-
 }
 
 namespace seqan3::detail
@@ -77,10 +76,7 @@ namespace seqan3::detail
 /*!\brief Lambda for translation of one nucleotide triplet into a single aminoacid.
  * \details Used by view::translate_single.
  */
-auto translate = [] (auto range)
-{
-    return translate_triplet(range);
-};
+auto translate = [](auto range) { return translate_triplet(range); };
 
 /*!\brief The underlying type of seqan3::view::translate_single.
  * \ingroup view
@@ -93,22 +89,20 @@ struct translate_single_fn
      */
     template <typename irng_t>
     //!\cond
-        requires input_range_concept<irng_t> &&
-                 nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<irng_t>>>>
-    //!\endcond
-    auto operator()(irng_t && irange) const
+    requires input_range_concept<irng_t> &&
+      nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<irng_t>>>>
+      //!\endcond
+      auto operator()(irng_t && irange) const
     {
-        if constexpr (sized_range_concept<irng_t>)
-        {
-            return irange | ranges::view::take_exactly(ranges::size(irange) / 3 * 3)
-                          | ranges::view::chunk(3)
-                          | ranges::view::transform(translate);
+        if constexpr (sized_range_concept<irng_t>) {
+            return irange | ranges::view::take_exactly(ranges::size(irange) / 3 * 3) | ranges::view::chunk(3) |
+                   ranges::view::transform(translate);
         }
         else
         {
-            return irange  | ranges::view::chunk(3)
-                           | ranges::view::take_while([] (auto chnk) { return ranges::size(chnk) == 3; })
-                           | ranges::view::transform(translate);
+            return irange | ranges::view::chunk(3) |
+                   ranges::view::take_while([](auto chnk) { return ranges::size(chnk) == 3; }) |
+                   ranges::view::transform(translate);
         }
     }
 
@@ -185,53 +179,45 @@ struct translate_frames_fn
      */
     template <typename irng_t>
     //!\cond
-        requires forward_range_concept<irng_t> &&
-                 nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<irng_t>>>>
-    //!\endcond
-    auto operator()(irng_t && irange, translation_frames const & tf) const
+    requires forward_range_concept<irng_t> &&
+      nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<irng_t>>>>
+      //!\endcond
+      auto operator()(irng_t && irange, translation_frames const & tf) const
     {
-        std::vector<ranges::any_view<aa27, ranges::category::random_access> > frames;
+        std::vector<ranges::any_view<aa27, ranges::category::random_access>> frames;
         frames.resize(static_cast<uint8_t>(tf));
 
         switch (tf)
         {
             case translation_frames::WITH_REVERSE_COMPLEMENT:
-                frames[1] = irange | ranges::view::reverse | view::complement| view::translate_single;
+                frames[1] = irange | ranges::view::reverse | view::complement | view::translate_single;
                 [[fallthrough]];
-            case translation_frames::SINGLE_FRAME:
-                frames[0] = irange | view::translate_single;
-                break;
+            case translation_frames::SINGLE_FRAME: frames[0] = irange | view::translate_single; break;
             case translation_frames::SIX_FRAME:
                 for (unsigned i : { 0, 1, 2 })
-                    frames[i + 3] = irange | ranges::view::reverse
-                                           | view::complement
-                                           | ranges::view::drop(i)
-                                           | view::translate_single;
+                    frames[i + 3] = irange | ranges::view::reverse | view::complement | ranges::view::drop(i) |
+                                    view::translate_single;
                 [[fallthrough]];
             case translation_frames::WITH_FRAME_SHIFTS:
-                for (unsigned i : { 0, 1, 2 })
-                    frames[i] = irange | ranges::view::drop(i)
-                                       | view::translate_single;
+                for (unsigned i : { 0, 1, 2 }) frames[i] = irange | ranges::view::drop(i) | view::translate_single;
                 break;
             default:
-                throw std::invalid_argument("Invalid number of frames. Choose from SINGLE_FRAME, WITH_REVERSE_COMPLEMENT, WITH_FRAME_SHIFTS, SIX_FRAME.");
+                throw std::invalid_argument("Invalid number of frames. Choose from SINGLE_FRAME, "
+                                            "WITH_REVERSE_COMPLEMENT, WITH_FRAME_SHIFTS, SIX_FRAME.");
                 break;
         }
 
-        ranges::any_view<ranges::any_view<aa27, ranges::category::random_access> ,ranges::category::random_access> combined;
+        ranges::any_view<ranges::any_view<aa27, ranges::category::random_access>, ranges::category::random_access>
+          combined;
         switch (tf)
         {
-            case translation_frames::SINGLE_FRAME:
-                combined = ranges::view::single(frames[0]);
-                break;
+            case translation_frames::SINGLE_FRAME: combined = ranges::view::single(frames[0]); break;
             case translation_frames::WITH_REVERSE_COMPLEMENT:
-                combined = ranges::view::concat(ranges::view::single(frames[0]),
-                                                ranges::view::single(frames[1]));
+                combined = ranges::view::concat(ranges::view::single(frames[0]), ranges::view::single(frames[1]));
                 break;
             case translation_frames::WITH_FRAME_SHIFTS:
-                combined = ranges::view::concat(ranges::view::single(frames[0]),
-                                                ranges::view::single(frames[1]),
-                                                ranges::view::single(frames[2]));
+                combined = ranges::view::concat(
+                  ranges::view::single(frames[0]), ranges::view::single(frames[1]), ranges::view::single(frames[2]));
                 break;
             case translation_frames::SIX_FRAME:
                 combined = ranges::view::concat(ranges::view::single(frames[0]),
@@ -241,8 +227,7 @@ struct translate_frames_fn
                                                 ranges::view::single(frames[4]),
                                                 ranges::view::single(frames[5]));
                 break;
-            default:
-                break;
+            default: break;
         }
         return combined;
     }
@@ -266,9 +251,10 @@ struct translate_frames_fn
      * \param bound_view The result of the single-argument operator() (interface with bound tf parameter).
      */
     template <random_access_range_concept irng_t>
-    friend auto operator|(irng_t && irange, decltype(std::bind(translate_frames_fn(),
-                                                               std::placeholders::_1,
-                                                               translation_frames::SIX_FRAME)) const & bound_view)
+    friend auto operator|(irng_t && irange,
+                          decltype(std::bind(translate_frames_fn(),
+                                             std::placeholders::_1,
+                                             translation_frames::SIX_FRAME)) const & bound_view)
     {
         return bound_view(std::forward<irng_t>(irange));
     }

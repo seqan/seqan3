@@ -93,11 +93,10 @@ namespace seqan3
  */
 
 template <typename sequence_alphabet_t, typename quality_alphabet_t>
-      requires nucleotide_concept<sequence_alphabet_t> &&
-               quality_concept<quality_alphabet_t>
-struct quality_composition :
-    public cartesian_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>,
-                                sequence_alphabet_t, quality_alphabet_t>
+requires nucleotide_concept<sequence_alphabet_t> && quality_concept<quality_alphabet_t> struct quality_composition
+  : public cartesian_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>,
+                                 sequence_alphabet_t,
+                                 quality_alphabet_t>
 {
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
@@ -145,16 +144,10 @@ struct quality_composition :
      * \{
      */
     //!\brief Return the phred value. This reads the internal quality letter.
-    constexpr phred_type to_phred() const noexcept
-    {
-        return seqan3::to_phred(get<1>(*this));
-    }
+    constexpr phred_type to_phred() const noexcept { return seqan3::to_phred(get<1>(*this)); }
 
     //!\brief Return a character. This reads the internal sequence letter.
-    constexpr char_type to_char() const noexcept
-    {
-        return seqan3::to_char(get<0>(*this));
-    }
+    constexpr char_type to_char() const noexcept { return seqan3::to_char(get<0>(*this)); }
 
     /*!\brief Return a quality_composition where the quality is preserved, but the sequence letter is complemented.
      * \sa seqan3::complement
@@ -163,7 +156,7 @@ struct quality_composition :
     constexpr quality_composition complement() const noexcept
     {
         using seqan3::complement;
-        return quality_composition{complement(get<0>(*this)), get<1>(*this)};
+        return quality_composition{ complement(get<0>(*this)), get<1>(*this) };
     }
     //!\}
 };
@@ -172,6 +165,6 @@ struct quality_composition :
 //!\relates quality_composition
 template <typename sequence_alphabet_type, typename quality_alphabet_type>
 quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
-    -> quality_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
+  ->quality_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
 
 } // namespace seqan3

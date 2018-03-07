@@ -83,7 +83,9 @@ namespace seqan3
  * \attention This is the base template, it needs to be specialised.
  */
 template <typename semi_alphabet_type>
-struct underlying_rank{};
+struct underlying_rank
+{
+};
 
 /*!\brief The `rank_type` of the semi_alphabet. [type metafunction shortcut]
  * \ingroup alphabet
@@ -111,7 +113,9 @@ using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
  * \attention This is the base template, it needs to be specialised.
  */
 template <typename alphabet_type>
-struct alphabet_size{};
+struct alphabet_size
+{
+};
 
 /*!\brief The size of the alphabet. [value metafunction shortcut]
  * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
@@ -121,7 +125,10 @@ struct alphabet_size{};
  */
 template <typename alphabet_type>
 //!\cond
-    requires requires (alphabet_type alph) { alphabet_size<alphabet_type>::value; }
+requires requires(alphabet_type alph)
+{
+    alphabet_size<alphabet_type>::value;
+}
 //!\endcond
 constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
 
@@ -210,7 +217,9 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  * \attention This is the base template, it needs to be specialised.
  */
 template <typename alphabet_type>
-struct underlying_char{};
+struct underlying_char
+{
+};
 
 /*!\brief The `char_type` of the alphabet. [type metafunction shortcut]
  * \ingroup alphabet
@@ -285,15 +294,17 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  *
  * \attention This is the base template, it needs to be specialised.
  */
-template<typename alphabet_type>
-struct pseudoknot_support{};
+template <typename alphabet_type>
+struct pseudoknot_support
+{
+};
 
 /*!\brief The pseudoknot ability of the alphabet. [value metafunction shortcut]
  * \ingroup alphabet
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
  */
-template<typename alphabet_type>
+template <typename alphabet_type>
 constexpr bool pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
 //!\}
 
@@ -313,9 +324,9 @@ namespace seqan3::detail
  *   seqan3::is_char_adaptation_v as a shorthand for `seqan3::is_char_adaptation<type>::%value`
  */
 template <typename type>
-struct is_char_adaptation :
-    std::false_type
-{};
+struct is_char_adaptation : std::false_type
+{
+};
 
 //!\brief Shortcut for seqan3::detail::is_char_adaptation.
 template <typename type>
@@ -327,9 +338,9 @@ constexpr bool is_char_adaptation_v = is_char_adaptation<type>::value;
 
 //!\brief Metafunction that indicates whether a type is a uint alphabet adaptation.
 template <typename type>
-struct is_uint_adaptation :
-    std::false_type
-{};
+struct is_uint_adaptation : std::false_type
+{
+};
 
 //!\brief Shortcut for seqan3::detail::is_uint_adaptation.
 template <typename type>

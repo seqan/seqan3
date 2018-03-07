@@ -67,8 +67,8 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
+#include <seqan3/core/detail/int_types.hpp>
 
 namespace seqan3::detail
 {
@@ -76,20 +76,15 @@ namespace seqan3::detail
 //!\{
 
 //!\brief The list of types that are defined as uint adaptations.
-using uint_adaptations            = meta::list<uint8_t,
-                                               uint16_t,
-                                               uint32_t>;
+using uint_adaptations = meta::list<uint8_t, uint16_t, uint32_t>;
 //!\brief The corresponding list of rank types
-using uint_adaptations_char_types = meta::list<char,
-                                               char16_t,
-                                               char32_t>;
+using uint_adaptations_char_types = meta::list<char, char16_t, char32_t>;
 
 //!\brief Metafunction overload for types that are in seqan3::detail::uint_adaptations.
 template <typename type_in_list>
-    requires meta::in<uint_adaptations, type_in_list>::value
-struct is_uint_adaptation<type_in_list> :
-    std::true_type
-{};
+requires meta::in<uint_adaptations, type_in_list>::value struct is_uint_adaptation<type_in_list> : std::true_type
+{
+};
 
 //!\}
 } // namespace seqan3::detail
@@ -111,13 +106,12 @@ namespace seqan3
  */
 template <typename uint_type>
 //!\cond
-    requires detail::is_uint_adaptation_v<uint_type>
-//!\endcond
-struct underlying_char<uint_type>
+requires detail::is_uint_adaptation_v<uint_type>
+  //!\endcond
+  struct underlying_char<uint_type>
 {
     //!\brief The character type of the same size as `uint_type`.
-    using type = meta::at<detail::uint_adaptations_char_types,
-                          meta::find_index<detail::uint_adaptations, uint_type>>;
+    using type = meta::at<detail::uint_adaptations_char_types, meta::find_index<detail::uint_adaptations, uint_type>>;
 };
 
 /*!\brief Specialisation of seqan3::underlying_rank for uint types.
@@ -127,9 +121,9 @@ struct underlying_char<uint_type>
  */
 template <typename uint_type>
 //!\cond
-    requires detail::is_uint_adaptation_v<uint_type>
-//!\endcond
-struct underlying_rank<uint_type>
+requires detail::is_uint_adaptation_v<uint_type>
+  //!\endcond
+  struct underlying_rank<uint_type>
 {
     //!\brief The same as `uint_type`.
     using type = uint_type;
@@ -146,16 +140,16 @@ struct underlying_rank<uint_type>
  */
 template <typename uint_type>
 //!\cond
-    requires detail::is_uint_adaptation_v<uint_type>
-//!\endcond
-struct alphabet_size<uint_type>
+requires detail::is_uint_adaptation_v<uint_type>
+  //!\endcond
+  struct alphabet_size<uint_type>
 {
     //!\brief Smallest unsigned integral type that can hold value;
     using type = detail::min_viable_uint_t<static_cast<uint64_t>(std::numeric_limits<uint_type>::max()) + 1 -
                                            std::numeric_limits<uint_type>::lowest()>;
     //!\brief The alphabet's size.
     static constexpr type value =
-        static_cast<type>(std::numeric_limits<uint_type>::max()) + 1 - std::numeric_limits<uint_type>::lowest();
+      static_cast<type>(std::numeric_limits<uint_type>::max()) + 1 - std::numeric_limits<uint_type>::lowest();
 };
 
 // ------------------------------------------------------------------
@@ -174,8 +168,7 @@ struct alphabet_size<uint_type>
  * \returns The letter's value in the alphabet's rank type (usually `uint`).
  */
 template <typename uint_type>
-constexpr underlying_char_t<uint_type> to_char(uint_type const intgr)
-    requires detail::is_uint_adaptation_v<uint_type>
+constexpr underlying_char_t<uint_type> to_char(uint_type const intgr) requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr;
 }
@@ -186,8 +179,7 @@ constexpr underlying_char_t<uint_type> to_char(uint_type const intgr)
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
 template <typename uint_type>
-constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr)
-    requires detail::is_uint_adaptation_v<uint_type>
+constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr) requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr;
 }
@@ -200,7 +192,7 @@ constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr)
  */
 template <typename uint_type>
 constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type> const chr)
-    requires detail::is_uint_adaptation_v<uint_type>
+  requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr = chr;
 }
@@ -218,7 +210,7 @@ constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type
  */
 template <typename uint_type>
 constexpr uint_type && assign_char(uint_type && intgr, underlying_char_t<uint_type> const chr)
-    requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
+  requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
 {
     return std::move(intgr = chr);
 }
@@ -231,7 +223,7 @@ constexpr uint_type && assign_char(uint_type && intgr, underlying_char_t<uint_ty
  */
 template <typename uint_type>
 constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type> const intgr2)
-    requires detail::is_uint_adaptation_v<uint_type>
+  requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr = intgr2;
 }
@@ -249,7 +241,7 @@ constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type
  */
 template <typename uint_type>
 constexpr uint_type && assign_rank(uint_type && intgr, underlying_rank_t<uint_type> const intgr2)
-    requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
+  requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
 {
     return std::move(intgr = intgr2);
 }

@@ -41,8 +41,8 @@
 
 #include <type_traits>
 
-#include <range/v3/utility/iterator_traits.hpp>
 #include <range/v3/range_traits.hpp>
+#include <range/v3/utility/iterator_traits.hpp>
 
 #include <seqan3/core/platform.hpp>
 
@@ -64,7 +64,10 @@ constexpr bool has_value_type_v = false;
 
 //!\cond
 template <typename t>
-    requires requires (t) { typename ranges::value_type<std::decay_t<t>>::type; }
+requires requires(t)
+{
+    typename ranges::value_type<std::decay_t<t>>::type;
+}
 constexpr bool has_value_type_v<t> = true;
 //!\endcond
 
@@ -76,9 +79,9 @@ constexpr bool has_value_type_v<t> = true;
  */
 template <typename t>
 //!\cond
-    requires has_value_type_v<t>
-//!\endcond
-struct innermost_value_type
+requires has_value_type_v<t>
+  //!\endcond
+  struct innermost_value_type
 {
     //!\brief The forwarded type.
     using type = ranges::value_type_t<std::decay_t<t>>;
@@ -86,9 +89,7 @@ struct innermost_value_type
 
 //!\cond
 template <typename t>
-    requires has_value_type_v<t> &&
-             has_value_type_v<ranges::value_type_t<std::decay_t<t>>>
-struct innermost_value_type<t>
+requires has_value_type_v<t> && has_value_type_v<ranges::value_type_t<std::decay_t<t>>> struct innermost_value_type<t>
 {
     using type = typename innermost_value_type<ranges::value_type_t<std::decay_t<t>>>::type;
 };
@@ -99,9 +100,9 @@ struct innermost_value_type<t>
 //!\brief Shortcut for seqan3::innermost_value_type.
 template <typename t>
 //!\cond
-    requires has_value_type_v<t>
-//!\endcond
-using innermost_value_type_t = typename innermost_value_type<t>::type;
+requires has_value_type_v<t>
+  //!\endcond
+  using innermost_value_type_t = typename innermost_value_type<t>::type;
 
 // ----------------------------------------------------------------------------
 
@@ -111,15 +112,14 @@ using innermost_value_type_t = typename innermost_value_type<t>::type;
  */
 template <typename t>
 //!\cond
-    requires has_value_type_v<t>
-//!\endcond
-constexpr size_t dimension_v = 1;
+requires has_value_type_v<t>
+  //!\endcond
+  constexpr size_t dimension_v = 1;
 
 //!\cond
 template <typename t>
-    requires has_value_type_v<t> &&
-             has_value_type_v<ranges::value_type_t<std::decay_t<t>>>
-constexpr size_t dimension_v<t> = dimension_v<ranges::value_type_t<std::decay_t<t>>> + 1;
+requires has_value_type_v<t> && has_value_type_v<ranges::value_type_t<std::decay_t<t>>> constexpr size_t
+  dimension_v<t> = dimension_v<ranges::value_type_t<std::decay_t<t>>> + 1;
 //!\endcond
 
 // ----------------------------------------------------------------------------
@@ -138,9 +138,9 @@ constexpr size_t dimension_v<t> = dimension_v<ranges::value_type_t<std::decay_t<
  */
 //!\cond
 template <typename t1, typename t2>
-concept bool compatible_concept = requires (t1, t2)
+concept bool compatible_concept = requires(t1, t2)
 {
-    requires (dimension_v<t1> == dimension_v<t2>);
+    requires(dimension_v<t1> == dimension_v<t2>);
 
     requires std::is_same_v<std::decay_t<innermost_value_type_t<t1>>, std::decay_t<innermost_value_type_t<t2>>>;
 };

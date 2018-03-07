@@ -81,16 +81,10 @@ struct gap
      * \{
      */
     //!\brief Return the letter as a character of char_type (returns always '-').
-    constexpr char_type to_char() const noexcept
-    {
-        return '-';
-    }
+    constexpr char_type to_char() const noexcept { return '-'; }
 
     //!\brief Return the letter's numeric value or rank in the alphabet. (returns always 0)
-    constexpr rank_type to_rank() const noexcept
-    {
-        return 0;
-    }
+    constexpr rank_type to_rank() const noexcept { return 0; }
     //!\}
 
     /*!\name Write functions
@@ -98,10 +92,7 @@ struct gap
      */
     //!\brief Assign from a character (no-op, since gap has only one character).
     //!\param c not used, since gap has only one character
-    constexpr gap & assign_char([[maybe_unused]] char_type const c) noexcept
-    {
-        return *this;
-    }
+    constexpr gap & assign_char([[maybe_unused]] char_type const c) noexcept { return *this; }
 
     //!\brief Assign from a numeric value (no-op, since gap has only one character).
     //!\param i not used, since gap has only one character
@@ -115,42 +106,23 @@ struct gap
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{1};
+    static constexpr rank_type value_size{ 1 };
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(gap const &) const noexcept
-    {
-        return true;
-    }
+    constexpr bool operator==(gap const &) const noexcept { return true; }
 
-    constexpr bool operator!=(gap const &) const noexcept
-    {
-        return false;
-    }
+    constexpr bool operator!=(gap const &) const noexcept { return false; }
 
-    constexpr bool operator<(gap const &) const noexcept
-    {
-        return false;
-    }
+    constexpr bool operator<(gap const &) const noexcept { return false; }
 
-    constexpr bool operator>(gap const &) const noexcept
-    {
-        return false;
-    }
+    constexpr bool operator>(gap const &) const noexcept { return false; }
 
-    constexpr bool operator<=(gap const &) const noexcept
-    {
-        return true;
-    }
+    constexpr bool operator<=(gap const &) const noexcept { return true; }
 
-    constexpr bool operator>=(gap const &) const noexcept
-    {
-        return true;
-    }
+    constexpr bool operator>=(gap const &) const noexcept { return true; }
     //!\}
 };
 
 constexpr gap gap::GAP{};
-
 }
