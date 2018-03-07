@@ -39,8 +39,8 @@
  */
 
 #include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/adaptation/concept.hpp> // has to be after
+#include <seqan3/alphabet/adaptation/uint.hpp>
 
 /*!\defgroup adaptation Adaptation
  * \brief Contains alphabet adaptions of some standard char and uint types.

@@ -35,9 +35,9 @@
 #pragma once
 
 #include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/alphabet/quality/quality_composition.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/quality/quality_composition.hpp>
 
 /*!\file
  * \ingroup alphabet

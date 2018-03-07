@@ -59,12 +59,12 @@ struct illumina18
     rank_type value;
 
     //! projection offset of a char quality score
-    static constexpr char_type offset_char{'!'};
+    static constexpr char_type offset_char{ '!' };
     //! projection offsets of a phred quality score
-    static constexpr phred_type offset_phred{0};
+    static constexpr phred_type offset_phred{ 0 };
 
     //! implicit compatibility to inner_type
-    constexpr illumina18 & operator =(rank_type const c)
+    constexpr illumina18 & operator=(rank_type const c)
     {
         value = c;
         return *this;
@@ -72,48 +72,24 @@ struct illumina18
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(const illumina18 & rhs) const
-    {
-        return this->value == rhs.value;
-    }
+    constexpr bool operator==(const illumina18 & rhs) const { return this->value == rhs.value; }
 
-    constexpr bool operator!=(const illumina18 & rhs) const
-    {
-        return this->value != rhs.value;
-    }
+    constexpr bool operator!=(const illumina18 & rhs) const { return this->value != rhs.value; }
 
-    constexpr bool operator<(const illumina18 & rhs) const
-    {
-        return this->value < rhs.value;
-    }
+    constexpr bool operator<(const illumina18 & rhs) const { return this->value < rhs.value; }
 
-    constexpr bool operator>(const illumina18 & rhs) const
-    {
-        return this->value > rhs.value;
-    }
+    constexpr bool operator>(const illumina18 & rhs) const { return this->value > rhs.value; }
 
-    constexpr bool operator<=(const illumina18 & rhs) const
-    {
-        return this->value <= rhs.value;
-    }
+    constexpr bool operator<=(const illumina18 & rhs) const { return this->value <= rhs.value; }
 
-    constexpr bool operator>=(const illumina18 & rhs) const
-    {
-        return this->value >= rhs.value;
-    }
+    constexpr bool operator>=(const illumina18 & rhs) const { return this->value >= rhs.value; }
     //!\}
 
     //! explicit compatibility to char code of a quality score
-    explicit constexpr operator char() const
-    {
-        return to_char();
-    }
+    explicit constexpr operator char() const { return to_char(); }
 
     //! convert quality score to its 1-letter code
-    constexpr char_type to_char() const
-    {
-        return static_cast<char_type>(value + offset_char);
-    }
+    constexpr char_type to_char() const { return static_cast<char_type>(value + offset_char); }
 
     //! set internal value given 1-letter code
     constexpr illumina18 & assign_char(char_type const c)
@@ -123,10 +99,7 @@ struct illumina18
     }
 
     //! explicit compatibility to internal rank representation
-    constexpr rank_type to_rank() const
-    {
-        return value;
-    }
+    constexpr rank_type to_rank() const { return value; }
 
     //! set internal value given zero-based integer c
     constexpr illumina18 & assign_rank(rank_type const c)
@@ -145,29 +118,21 @@ struct illumina18
     }
 
     //! get Illumina 1.8 integer code
-    constexpr phred_type to_phred() const
-    {
-        return value + offset_phred;
-    }
+    constexpr phred_type to_phred() const { return value + offset_phred; }
 
     //! phred score range for Illumina 1.8 standard
-    static constexpr rank_type value_size{42};
+    static constexpr rank_type value_size{ 42 };
 
-protected:
-
+  protected:
     //!\brief Char to value conversion table.
-    static constexpr std::array<char_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            std::array<char_type, 256> ret{};
+    static constexpr std::array<char_type, 256> char_to_value{ []() constexpr { std::array<char_type, 256> ret{};
 
-            for (char_type c = '!'; c <= 'J'; ++c)
-                ret[c] = c - '!';
+    for (char_type c = '!'; c <= 'J'; ++c) ret[c] = c - '!';
 
-            return ret;
-        }()
-    };
+    return ret;
+}()
 };
+}
+;
 
 } // namespace seqan3

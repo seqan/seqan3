@@ -95,16 +95,10 @@ struct rna4 : public dna4
      * \{
      */
     //!\copydoc seqan3::dna4::to_char
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     //!\copydoc seqan3::dna4::complement
-    constexpr rna4 complement() const noexcept
-    {
-        return rna4{dna4::complement()};
-    }
+    constexpr rna4 complement() const noexcept { return rna4{ dna4::complement() }; }
     //!\}
 
     /*!\name Write functions
@@ -132,43 +126,37 @@ struct rna4 : public dna4
     //!\brief Implicit conversion between dna* and rna* of the same size.
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
     template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
-    //!\endcond
-    constexpr operator other_nucl_type() const noexcept
+      //!\cond
+      requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+      //!\endcond
+      constexpr operator other_nucl_type() const noexcept
     {
-        return other_nucl_type{_value};
+        return other_nucl_type{ _value };
     }
 
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type>
-    //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
+    requires nucleotide_concept<other_nucl_type>
+      //!\endcond
+      explicit constexpr operator other_nucl_type() const noexcept
     {
         return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
     }
     //!\}
 
-private:
+  private:
     //!\copydoc seqan3::dna4::value_to_char
-    static constexpr char_type value_to_char[value_size]
-    {
-        'A',
-        'C',
-        'G',
-        'U'
-    };
+    static constexpr char_type value_to_char[value_size]{ 'A', 'C', 'G', 'U' };
 };
 
-constexpr rna4 rna4::A{internal_type::A};
-constexpr rna4 rna4::C{internal_type::C};
-constexpr rna4 rna4::G{internal_type::G};
-constexpr rna4 rna4::U{internal_type::U};
-constexpr rna4 rna4::T{rna4::U};
-constexpr rna4 rna4::UNKNOWN{rna4::A};
+constexpr rna4 rna4::A{ internal_type::A };
+constexpr rna4 rna4::C{ internal_type::C };
+constexpr rna4 rna4::G{ internal_type::G };
+constexpr rna4 rna4::U{ internal_type::U };
+constexpr rna4 rna4::T{ rna4::U };
+constexpr rna4 rna4::UNKNOWN{ rna4::A };
 
 } // namespace seqan3
 
@@ -219,8 +207,7 @@ inline rna4_vector operator""_rna4(const char * s, std::size_t n)
     rna4_vector r;
     r.resize(n);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t i = 0; i < n; ++i) r[i].assign_char(s[i]);
 
     return r;
 }

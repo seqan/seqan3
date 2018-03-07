@@ -63,11 +63,14 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool nucleotide_concept = requires (type v)
+concept bool nucleotide_concept = requires(type v)
 {
     requires alphabet_concept<type>;
 
-    { complement(v) } -> type;
+    {
+        complement(v)
+    }
+    ->type;
 };
 //!\endcond
 

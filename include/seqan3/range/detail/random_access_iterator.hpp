@@ -66,21 +66,20 @@ template <typename container_type>
 class random_access_iterator
 {
 
-private:
+  private:
     //!\brief Iterator stores pointer to underlying container structure.
-    typename std::add_pointer_t<container_type> host{nullptr};
+    typename std::add_pointer_t<container_type> host{ nullptr };
     //!\brief Use container's size_type as a position.
-    using position_type =  ranges::v3::size_type_t<container_type>;
+    using position_type = ranges::v3::size_type_t<container_type>;
     //!\brief Store position index for container.
-    position_type pos{static_cast<position_type>(0)};
+    position_type pos{ static_cast<position_type>(0) };
 
     //!\brief This friend declaration is required to allow non-const to const-construction.
     template <typename t>
-        requires std::is_same_v<std::remove_const_t<container_type>, t> &&
-                 std::is_same_v<container_type, std::add_const_t<t>>
-    friend class random_access_iterator;
+    requires std::is_same_v<std::remove_const_t<container_type>, t> &&
+      std::is_same_v<container_type, std::add_const_t<t>> friend class random_access_iterator;
 
-public:
+  public:
     //!\brief Type for distances between iterators.
     using difference_type = ranges::v3::difference_type_t<container_type>;
     //!\brief Value type of container elements.
@@ -103,10 +102,17 @@ public:
     constexpr random_access_iterator() = default;
 
     //!\brief Construct by host, default position pointer with 0.
-    explicit constexpr random_access_iterator(container_type & host) noexcept : host{&host} {}
+    explicit constexpr random_access_iterator(container_type & host) noexcept
+      : host{ &host }
+    {
+    }
 
     //!\brief Construct by host and explicit position.
-    constexpr random_access_iterator(container_type & host, position_type const pos) noexcept : host{&host}, pos{pos} {}
+    constexpr random_access_iterator(container_type & host, position_type const pos) noexcept
+      : host{ &host }
+      , pos{ pos }
+    {
+    }
 
     //!\brief Copy constructor.
     constexpr random_access_iterator(random_access_iterator const &) = default;
@@ -115,7 +121,7 @@ public:
     constexpr random_access_iterator & operator=(random_access_iterator const &) = default;
 
     //!\brief Move constructor.
-    constexpr random_access_iterator (random_access_iterator &&) = default;
+    constexpr random_access_iterator(random_access_iterator &&) = default;
 
     //!\brief Move assignment.
     constexpr random_access_iterator & operator=(random_access_iterator &&) = default;
@@ -126,47 +132,34 @@ public:
     //!\brief Constructor for const version from non-const version.
     template <typename t>
     //!\cond
-        requires std::is_same_v<std::remove_const_t<container_type>, t> &&
-                 std::is_same_v<container_type, std::add_const_t<t>>
-    //!\endcond
-    constexpr random_access_iterator(random_access_iterator<t> const & rhs) noexcept :
-        host{rhs.host}, pos{rhs.pos}
-    {}
+    requires std::is_same_v<std::remove_const_t<container_type>, t> &&
+      std::is_same_v<container_type, std::add_const_t<t>>
+      //!\endcond
+      constexpr random_access_iterator(random_access_iterator<t> const & rhs) noexcept
+      : host{ rhs.host }
+      , pos{ rhs.pos }
+    {
+    }
     //!\}
 
     /*!\name Comparison operators
      * \brief Compares only the absolute position of two iterators.
      * \{
      */
-    constexpr bool operator==(random_access_iterator const & rhs) const noexcept
-    {
-        return pos == rhs.pos;
-    }
+    constexpr bool operator==(random_access_iterator const & rhs) const noexcept { return pos == rhs.pos; }
 
-    constexpr bool operator!=(random_access_iterator const & rhs) const noexcept
-    {
-        return pos != rhs.pos;
-    }
+    constexpr bool operator!=(random_access_iterator const & rhs) const noexcept { return pos != rhs.pos; }
 
     constexpr bool operator<(random_access_iterator const & rhs) const noexcept
     {
         return static_cast<bool>(pos < rhs.pos);
     }
 
-    constexpr bool operator>(random_access_iterator const & rhs) const noexcept
-    {
-        return pos > rhs.pos;
-    }
+    constexpr bool operator>(random_access_iterator const & rhs) const noexcept { return pos > rhs.pos; }
 
-    constexpr bool operator<=(random_access_iterator const & rhs) const noexcept
-    {
-        return pos <= rhs.pos;
-    }
+    constexpr bool operator<=(random_access_iterator const & rhs) const noexcept { return pos <= rhs.pos; }
 
-    constexpr bool operator>=(random_access_iterator const & rhs) const noexcept
-    {
-        return pos >= rhs.pos;
-    }
+    constexpr bool operator>=(random_access_iterator const & rhs) const noexcept { return pos >= rhs.pos; }
     //!\}
 
     /*!\name Arithmetic operators
@@ -180,9 +173,9 @@ public:
     }
 
     //!\brief Post-increment, return previous iterator state.
-    constexpr random_access_iterator operator++(int) noexcept
+    constexpr random_access_iterator operator++(int)noexcept
     {
-        random_access_iterator cpy{*this};
+        random_access_iterator cpy{ *this };
         ++pos;
         return cpy;
     }
@@ -195,9 +188,9 @@ public:
     }
 
     //!\brief Post-decrement, return previous iterator state.
-    constexpr random_access_iterator operator--(int) noexcept
+    constexpr random_access_iterator operator--(int)noexcept
     {
-        random_access_iterator cpy{*this};
+        random_access_iterator cpy{ *this };
         --pos;
         return cpy;
     }
@@ -212,11 +205,11 @@ public:
     //!\brief Forward copy of this iterator.
     constexpr random_access_iterator operator+(difference_type const skip) const noexcept
     {
-        return random_access_iterator{*host, static_cast<position_type>(pos + skip)};
+        return random_access_iterator{ *host, static_cast<position_type>(pos + skip) };
     }
 
     //!\brief Non-member operator+ delegates to non-friend operator+.
-    friend random_access_iterator operator+(difference_type const skip , random_access_iterator const & it) noexcept
+    friend random_access_iterator operator+(difference_type const skip, random_access_iterator const & it) noexcept
     {
         return it + skip;
     }
@@ -231,11 +224,12 @@ public:
     //!\brief Return decremented copy of this iterator.
     constexpr random_access_iterator operator-(difference_type const skip) const noexcept
     {
-        return random_access_iterator{*host, static_cast<position_type>(pos - skip)};
+        return random_access_iterator{ *host, static_cast<position_type>(pos - skip) };
     }
 
     //!\brief Non-member operator- delegates to non-friend operator-.
-    constexpr friend random_access_iterator operator-(difference_type const skip, random_access_iterator const & it) noexcept
+    constexpr friend random_access_iterator operator-(difference_type const skip,
+                                                      random_access_iterator const & it) noexcept
     {
         return it - skip;
     }
@@ -251,19 +245,13 @@ public:
      * \{
     */
     //!\brief Dereference operator returns element currently pointed at.
-    constexpr reference operator*() noexcept(noexcept((*host)[pos]))
-    {
-        return (*host)[pos];
-    }
+    constexpr reference operator*() noexcept(noexcept((*host)[pos])) { return (*host)[pos]; }
 
     //!\brief Return pointer to this iterator.
-    constexpr pointer operator->() const noexcept(noexcept((&host)[pos]))
-    {
-        return &host[pos];
-    }
+    constexpr pointer operator->() const noexcept(noexcept((&host)[pos])) { return &host[pos]; }
 
     //!\brief Return underlying container value currently pointed at.
-    constexpr reference operator[](position_type const n) const noexcept(noexcept((*host)[pos+n]))
+    constexpr reference operator[](position_type const n) const noexcept(noexcept((*host)[pos + n]))
     {
         return (*host)[pos + n];
     }
@@ -272,4 +260,5 @@ public:
 
 } // namespace seqan3::detail
 
-static_assert(static_cast<bool>(ranges::concepts::models<ranges::concepts::RandomAccessIterator, seqan3::detail::random_access_iterator<std::vector<int>>>()));
+static_assert(static_cast<bool>(ranges::concepts::models<ranges::concepts::RandomAccessIterator,
+                                                         seqan3::detail::random_access_iterator<std::vector<int>>>()));

@@ -63,13 +63,15 @@ namespace seqan3::detail
 //!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 struct is_basic_string : std::false_type
-{};
+{
+};
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
 //!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
 template <typename value_t, typename traits_t, typename allocator_t>
 struct is_basic_string<std::basic_string<value_t, traits_t, allocator_t>> : std::true_type
-{};
+{
+};
 
 //!\brief Shorthand of seqan3::detail::is_basic_string
 //!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
@@ -84,22 +86,49 @@ constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
  */
 //!\cond
 template <typename type>
-concept bool sequence_concept_modified_by_const_iterator = requires (type val, type val2)
+concept bool sequence_concept_modified_by_const_iterator = requires(type val, type val2)
 {
-    { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
-    { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
-    { val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})} -> typename type::iterator;
-    { val.insert(val.cbegin(), val2.begin(), val2.end())                               } -> typename type::iterator;
+    {
+        val.insert(val.cbegin(), val2.front())
+    }
+    ->typename type::iterator;
+    {
+        val.insert(val.cbegin(), typename type::value_type{})
+    }
+    ->typename type::iterator;
+    {
+        val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{})
+    }
+    ->typename type::iterator;
+    {
+        val.insert(val.cbegin(), val2.begin(), val2.end())
+    }
+    ->typename type::iterator;
     requires is_basic_string_v<type> || requires(type val)
     {
         // TODO this function is not defined on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
-        { val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{}) } -> typename type::iterator;
+        {
+            val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{})
+        }
+        ->typename type::iterator;
     };
-    { val.erase(val.cbegin())                                                          } -> typename type::iterator;
-    { val.erase(val.cbegin(), val.cend())                                              } -> typename type::iterator;
+    {
+        val.erase(val.cbegin())
+    }
+    ->typename type::iterator;
+    {
+        val.erase(val.cbegin(), val.cend())
+    }
+    ->typename type::iterator;
 
-    { val.insert(val.begin(), typename type::size_type{}, typename type::value_type{}) } -> typename type::iterator;
-    { val.insert(val.begin(), val2.begin(), val2.end())                                } -> typename type::iterator;
+    {
+        val.insert(val.begin(), typename type::size_type{}, typename type::value_type{})
+    }
+    ->typename type::iterator;
+    {
+        val.insert(val.begin(), val2.begin(), val2.end())
+    }
+    ->typename type::iterator;
 };
 //!\endcond
 
@@ -115,9 +144,9 @@ concept bool sequence_concept_modified_by_const_iterator = requires (type val, t
  * Probably when the ppa version of gcc7 is newer than `7.2.0-1ubuntu1~16.04` (2017-08-20)
  * \sa https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=xenial
  */
-template<typename string_t = std::string>
+template <typename string_t = std::string>
 constexpr bool sequence_concept_modified_by_const_iterator_bug =
-    is_basic_string_v<string_t> && !sequence_concept_modified_by_const_iterator<string_t>;
+  is_basic_string_v<string_t> && !sequence_concept_modified_by_const_iterator<string_t>;
 
 //!\publicsection
 
@@ -143,37 +172,86 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool container_concept = requires (type val, type val2)
+concept bool container_concept = requires(type val, type val2)
 {
     // member types
     typename type::value_type;
     typename type::reference;
     typename type::const_reference;
-    typename type::iterator; //TODO must satisfy forward_iterator_concept and convertible to const_interator
+    typename type::iterator;       //TODO must satisfy forward_iterator_concept and convertible to const_interator
     typename type::const_iterator; //TODO must satisfy forward_iterator_concept
     typename type::difference_type;
-    typename type::size_type; // TODO must be the same as iterator_traits::difference_type for iterator and const_iterator
+    typename type::
+      size_type; // TODO must be the same as iterator_traits::difference_type for iterator and const_iterator
 
     // methods and operator
-    { type{}          } -> type;   // default constructor
-    { type{type{}}    } -> type;   // copy/move constructor
-    { val = val2      } -> type &; // assignment
-    { (&val)->~type() } -> void;   // destructor
+    {
+        type {}
+    }
+    ->type; // default constructor
+    {
+        type
+        {
+            type {}
+        }
+    }
+    ->type; // copy/move constructor
+    {
+        val = val2
+    }
+    ->type &; // assignment
+    {
+        (&val)->~type()
+    }
+    ->void; // destructor
 
-    { val.begin()     } -> typename type::iterator;
-    { val.end()       } -> typename type::iterator;
-    { val.cbegin()    } -> typename type::const_iterator;
-    { val.cend()      } -> typename type::const_iterator;
+    {
+        val.begin()
+    }
+    ->typename type::iterator;
+    {
+        val.end()
+    }
+    ->typename type::iterator;
+    {
+        val.cbegin()
+    }
+    ->typename type::const_iterator;
+    {
+        val.cend()
+    }
+    ->typename type::const_iterator;
 
-    { val == val2     } -> bool;
-    { val != val2     } -> bool;
+    {
+        val == val2
+    }
+    ->bool;
+    {
+        val != val2
+    }
+    ->bool;
 
-    { val.swap(val2)  } -> void;
-    { swap(val, val2) } -> void;
+    {
+        val.swap(val2)
+    }
+    ->void;
+    {
+        swap(val, val2)
+    }
+    ->void;
 
-    { val.size()      } -> typename type::size_type;
-    { val.max_size()  } -> typename type::size_type;
-    { val.empty()     } -> bool;
+    {
+        val.size()
+    }
+    ->typename type::size_type;
+    {
+        val.max_size()
+    }
+    ->typename type::size_type;
+    {
+        val.empty()
+    }
+    ->bool;
 };
 //!\endcond
 
@@ -191,47 +269,80 @@ concept bool container_concept = requires (type val, type val2)
  */
 //!\cond
 template <typename type>
-concept bool sequence_concept = requires (type val, type val2)
+concept bool sequence_concept = requires(type val, type val2)
 {
     requires container_concept<type>;
 
     // construction
-    { type{typename type::size_type{}, typename type::value_type{}} };
-    { type{val2.begin(), val2.end()}                                }; // NOTE that this could be any input iterator:
-    { type{std::initializer_list<typename type::value_type>{}}      };
-    { val = std::initializer_list<typename type::value_type>{}      } -> type &;
+    { type{ typename type::size_type{}, typename type::value_type{} } };
+    { type{ val2.begin(), val2.end() } }; // NOTE that this could be any input iterator:
+    { type{ std::initializer_list<typename type::value_type>{} } };
+    {
+        val = std::initializer_list<typename type::value_type> {}
+    }
+    ->type &;
 
     // assignment NOTE return type is type & for std::string and void for other stl containers:
-    { val.assign(val2.begin(), val2.end())                                };
-    { val.assign(std::initializer_list<typename type::value_type>{})      };
+    { val.assign(val2.begin(), val2.end()) };
+    { val.assign(std::initializer_list<typename type::value_type>{}) };
     { val.assign(typename type::size_type{}, typename type::value_type{}) };
 
     // modify container
-//TODO: how do you model this?
+    //TODO: how do you model this?
     // { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
 
-    { val.insert(val.begin(), val2.front())                                            } -> typename type::iterator;
-    { val.insert(val.begin(), typename type::value_type{})                             } -> typename type::iterator;
+    {
+        val.insert(val.begin(), val2.front())
+    }
+    ->typename type::iterator;
+    {
+        val.insert(val.begin(), typename type::value_type{})
+    }
+    ->typename type::iterator;
     // because of a travis bug we can't assume typename type::iterator as return type
     { val.insert(val.begin(), typename type::size_type{}, typename type::value_type{}) };
-    { val.insert(val.begin(), val2.begin(), val2.end())                                };
+    { val.insert(val.begin(), val2.begin(), val2.end()) };
     //TODO should return type::iterator on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
-    { val.insert(val.begin(), std::initializer_list<typename type::value_type>{})      };
-    { val.erase(val.begin())                                                           } -> typename type::iterator;
-    { val.erase(val.begin(), val.end())                                                } -> typename type::iterator;
+    { val.insert(val.begin(), std::initializer_list<typename type::value_type>{}) };
+    {
+        val.erase(val.begin())
+    }
+    ->typename type::iterator;
+    {
+        val.erase(val.begin(), val.end())
+    }
+    ->typename type::iterator;
 
     // workaround a travis bug where insert/erase can't take a const iterator, e.g. cbegin()
     requires detail::sequence_concept_modified_by_const_iterator_bug<type> ||
-             detail::sequence_concept_modified_by_const_iterator<type>;
+      detail::sequence_concept_modified_by_const_iterator<type>;
 
-    { val.push_back(val.front())                                                       } -> void;
-    { val.push_back(typename type::value_type{})                                       } -> void;
-    { val.pop_back()                                                                   } -> void;
-    { val.clear()                                                                      } -> void;
+    {
+        val.push_back(val.front())
+    }
+    ->void;
+    {
+        val.push_back(typename type::value_type{})
+    }
+    ->void;
+    {
+        val.pop_back()
+    }
+    ->void;
+    {
+        val.clear()
+    }
+    ->void;
 
     // access container
-    { val.front() } -> typename type::reference;
-    { val.back()  } -> typename type::reference;
+    {
+        val.front()
+    }
+    ->typename type::reference;
+    {
+        val.back()
+    }
+    ->typename type::reference;
 };
 //!\endcond
 
@@ -251,17 +362,29 @@ concept bool sequence_concept = requires (type val, type val2)
  */
 //!\cond
 template <typename type>
-concept bool random_access_sequence_concept = requires (type val)
+concept bool random_access_sequence_concept = requires(type val)
 {
     requires sequence_concept<type>;
 
     // access container
-    { val[0]    } -> typename type::reference;
-    { val.at(0) } -> typename type::reference;
+    {
+        val[0]
+    }
+    ->typename type::reference;
+    {
+        val.at(0)
+    }
+    ->typename type::reference;
 
     // modify container
-    { val.resize(0)                              } -> void;
-    { val.resize(0, typename type::value_type{}) } -> void;
+    {
+        val.resize(0)
+    }
+    ->void;
+    {
+        val.resize(0, typename type::value_type{})
+    }
+    ->void;
 };
 //!\endcond
 
@@ -277,13 +400,22 @@ concept bool random_access_sequence_concept = requires (type val)
  */
 //!\cond
 template <typename type>
-concept bool reservable_sequence_concept = requires (type val)
+concept bool reservable_sequence_concept = requires(type val)
 {
     requires random_access_sequence_concept<type>;
 
-    { val.capacity()      } -> typename type::size_type;
-    { val.reserve(0)      } -> void;
-    { val.shrink_to_fit() } -> void;
+    {
+        val.capacity()
+    }
+    ->typename type::size_type;
+    {
+        val.reserve(0)
+    }
+    ->void;
+    {
+        val.shrink_to_fit()
+    }
+    ->void;
 };
 //!\endcond
 

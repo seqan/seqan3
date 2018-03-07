@@ -75,11 +75,10 @@ namespace seqan3::view
  */
 template <typename alphabet_type>
 //!\cond
-    requires alphabet_concept<alphabet_type>
-//!\endcond
-auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type> const in) -> alphabet_type
-{
-    return assign_char(alphabet_type{}, in);
-});
+requires alphabet_concept<alphabet_type>
+  //!\endcond
+  auto const char_to = ranges::view::transform([](underlying_char_t<alphabet_type> const in) -> alphabet_type {
+      return assign_char(alphabet_type{}, in);
+  });
 
 } // namespace seqan3::view

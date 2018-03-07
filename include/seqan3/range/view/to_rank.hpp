@@ -82,6 +82,6 @@ namespace seqan3::view
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-auto const to_rank = ranges::view::transform([] (alphabet_concept const in) { return seqan3::to_rank(in); });
+auto const to_rank = ranges::view::transform([](alphabet_concept const in) { return seqan3::to_rank(in); });
 
 } // namespace seqan3::view

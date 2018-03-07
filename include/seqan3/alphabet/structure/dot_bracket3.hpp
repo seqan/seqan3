@@ -101,18 +101,12 @@ struct dot_bracket3
     /*!\brief Get the letter as a character of char_type.
      * \returns The character representation of this dot_bracket3 letter.
      */
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     /*!\brief Get the letter's numeric value or rank in the alphabet.
      * \returns The numeric representation of this dot_bracket3 letter.
      */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
+    constexpr rank_type to_rank() const noexcept { return static_cast<rank_type>(_value); }
     //!\}
 
     //!\name Write functions
@@ -141,39 +135,21 @@ struct dot_bracket3
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{3};
+    static constexpr rank_type value_size{ 3 };
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+    constexpr bool operator==(dot_bracket3 const & rhs) const noexcept { return _value == rhs._value; }
 
-    constexpr bool operator!=(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
+    constexpr bool operator!=(dot_bracket3 const & rhs) const noexcept { return _value != rhs._value; }
 
-    constexpr bool operator<(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
+    constexpr bool operator<(dot_bracket3 const & rhs) const noexcept { return _value < rhs._value; }
 
-    constexpr bool operator>(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
+    constexpr bool operator>(dot_bracket3 const & rhs) const noexcept { return _value > rhs._value; }
 
-    constexpr bool operator<=(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
+    constexpr bool operator<=(dot_bracket3 const & rhs) const noexcept { return _value <= rhs._value; }
 
-    constexpr bool operator>=(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
+    constexpr bool operator>=(dot_bracket3 const & rhs) const noexcept { return _value >= rhs._value; }
     //!\}
 
     //!\name RNA structure properties
@@ -182,32 +158,23 @@ struct dot_bracket3
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
      */
-    constexpr bool is_pair_open() const noexcept
-    {
-        return _value == internal_type::PAIR_OPEN;
-    }
+    constexpr bool is_pair_open() const noexcept { return _value == internal_type::PAIR_OPEN; }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
      */
-    constexpr bool is_pair_close() const noexcept
-    {
-        return _value == internal_type::PAIR_CLOSE;
-    }
+    constexpr bool is_pair_close() const noexcept { return _value == internal_type::PAIR_CLOSE; }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
      */
-    constexpr bool is_unpaired() const noexcept
-    {
-        return _value == internal_type::UNPAIRED;
-    }
+    constexpr bool is_unpaired() const noexcept { return _value == internal_type::UNPAIRED; }
 
     //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: False.
-    static constexpr bool pseudoknot_support{false};
+    static constexpr bool pseudoknot_support{ false };
     //!\}
 
-protected:
+  protected:
     //!\privatesection
     /*!\brief The internal type is a strictly typed enum.
      *
@@ -224,44 +191,36 @@ protected:
     };
 
     //!\brief Value-to-char conversion table.
-    static constexpr char_type value_to_char[value_size]
-    {
-        '.',
-        '(',
-        ')'
-    };
+    static constexpr char_type value_to_char[value_size]{ '.', '(', ')' };
 
     //!\brief Char-to-value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            std::array<internal_type, 256> rank_table{};
+    static constexpr std::array<internal_type, 256> char_to_value{
+        []() constexpr { std::array<internal_type, 256> rank_table{};
 
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (internal_type & rnk : rank_table)
-                rnk = internal_type::UNKNOWN;
+    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+    for (internal_type & rnk : rank_table) rnk = internal_type::UNKNOWN;
 
-            // canonical
-            rank_table['.'] = internal_type::UNPAIRED;
-            rank_table['('] = internal_type::PAIR_OPEN;
-            rank_table[')'] = internal_type::PAIR_CLOSE;
+    // canonical
+    rank_table['.'] = internal_type::UNPAIRED;
+    rank_table['('] = internal_type::PAIR_OPEN;
+    rank_table[')'] = internal_type::PAIR_CLOSE;
 
-            return rank_table;
-        } ()
-    };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
+    return rank_table;
+}()
 };
 
-constexpr dot_bracket3 dot_bracket3::UNPAIRED{internal_type::UNPAIRED};
-constexpr dot_bracket3 dot_bracket3::PAIR_OPEN{internal_type::PAIR_OPEN};
-constexpr dot_bracket3 dot_bracket3::PAIR_CLOSE{internal_type::PAIR_CLOSE};
-constexpr dot_bracket3 dot_bracket3::UNKNOWN{internal_type::UNKNOWN};
+public:
+//!\privatesection
+//!\brief The data member.
+internal_type _value;
+//!\publicsection
+}
+;
+
+constexpr dot_bracket3 dot_bracket3::UNPAIRED{ internal_type::UNPAIRED };
+constexpr dot_bracket3 dot_bracket3::PAIR_OPEN{ internal_type::PAIR_OPEN };
+constexpr dot_bracket3 dot_bracket3::PAIR_CLOSE{ internal_type::PAIR_CLOSE };
+constexpr dot_bracket3 dot_bracket3::UNKNOWN{ internal_type::UNKNOWN };
 
 } // namespace seqan3
 
@@ -293,8 +252,7 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
     std::vector<dot_bracket3> vec;
     vec.resize(len);
 
-    for (size_t idx = 0u; idx < len; ++idx)
-        vec[idx].assign_char(str[idx]);
+    for (size_t idx = 0u; idx < len; ++idx) vec[idx].assign_char(str[idx]);
 
     return vec;
 }

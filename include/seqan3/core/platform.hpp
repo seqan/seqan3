@@ -52,42 +52,42 @@
 
 // C++ standard [required]
 #ifdef __cplusplus
-    static_assert(__cplusplus >= 201500, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
+static_assert(__cplusplus >= 201500, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
 #else
-#   error "This is not a C++ compiler."
+#error "This is not a C++ compiler."
 #endif
 
 // Concepts TS [required]
 #ifdef __cpp_concepts
-    static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
+static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
 #else
-#   error "SeqAn3 requires the Concepts TS, make sure that you have set -fconcepts (not all compilers support this)."
+#error "SeqAn3 requires the Concepts TS, make sure that you have set -fconcepts (not all compilers support this)."
 #endif
 
 // SeqAn [required]
 #if !__has_include(<seqan3/version.hpp>)
-#   error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
+#error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
 // Ranges [required]
 #if __has_include(<range/v3/version.hpp>)
-#   define RANGE_V3_MINVERSION 300
-#   define RANGE_V3_MAXVERSION 399
+#define RANGE_V3_MINVERSION 300
+#define RANGE_V3_MAXVERSION 399
 // TODO the following doesn't actually show the current version, only its formula. How'd you do it?
-#   define MSG "Your version: " STR(RANGE_V3_VERSION) \
-                "; minimum version: " STR(RANGE_V3_MINVERSION) \
-                "; expected maximum version: " STR(RANGE_V3_MAXVERSION)
-#   include <range/v3/version.hpp>
-#   if RANGE_V3_VERSION < RANGE_V3_MINVERSION
-#       error Your range-v3 library is too old.
-#       pragma message(MSG)
-#   elif RANGE_V3_VERSION > RANGE_V3_MAXVERSION
-#       pragma GCC warning "Your range-v3 library is possibly tot new. Some features might not work correctly."
-#       pragma message(MSG)
-#   endif
-#   undef MSG
+#define MSG                                                                                                            \
+    "Your version: " STR(RANGE_V3_VERSION) "; minimum version: " STR(                                                  \
+      RANGE_V3_MINVERSION) "; expected maximum version: " STR(RANGE_V3_MAXVERSION)
+#include <range/v3/version.hpp>
+#if RANGE_V3_VERSION < RANGE_V3_MINVERSION
+#error Your range-v3 library is too old.
+#pragma message(MSG)
+#elif RANGE_V3_VERSION > RANGE_V3_MAXVERSION
+#pragma GCC warning "Your range-v3 library is possibly tot new. Some features might not work correctly."
+#pragma message(MSG)
+#endif
+#undef MSG
 #else
-#   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
+#error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
 // SDSL [required]
@@ -99,30 +99,30 @@
  * \ingroup core
  */
 #ifndef SEQAN3_WITH_CEREAL
-#   if __has_include(<cereal/cereal.hpp>)
-#       define SEQAN3_WITH_CEREAL 1
-#   else
-#       define SEQAN3_WITH_CEREAL 0
-#   endif
+#if __has_include(<cereal/cereal.hpp>)
+#define SEQAN3_WITH_CEREAL 1
+#else
+#define SEQAN3_WITH_CEREAL 0
+#endif
 #elif SEQAN3_WITH_CEREAL != 0
-#   if ! __has_include(<cereal/cereal.hpp>)
-#       error Cereal was marked as required, but not found!
-#   endif
+#if !__has_include(<cereal/cereal.hpp>)
+#error Cereal was marked as required, but not found!
+#endif
 #endif
 
 #if !SEQAN3_WITH_CEREAL
-    /*!\cond DEV
+/*!\cond DEV
      * \name Cereal function macros
      * \ingroup core
      * \brief These can be changed by apps so we used the macros instead of the values internally.
      * \{
      */
-#   define CEREAL_SERIALIZE_FUNCTION_NAME serialize
-#   define CEREAL_LOAD_FUNCTION_NAME load
-#   define CEREAL_SAVE_FUNCTION_NAME save
-#   define CEREAL_LOAD_MINIMAL_FUNCTION_NAME load_minimal
-#   define CEREAL_SAVE_MINIMAL_FUNCTION_NAME save_minimal
-    /*!\}
+#define CEREAL_SERIALIZE_FUNCTION_NAME serialize
+#define CEREAL_LOAD_FUNCTION_NAME load
+#define CEREAL_SAVE_FUNCTION_NAME save
+#define CEREAL_LOAD_MINIMAL_FUNCTION_NAME load_minimal
+#define CEREAL_SAVE_MINIMAL_FUNCTION_NAME save_minimal
+/*!\}
      * \endcond
      */
 #endif
@@ -133,28 +133,28 @@
  * \ingroup core
  */
 #ifndef SEQAN3_WITH_LEMON
-#   if __has_include(<lemon/config.h>)
-#       define SEQAN3_WITH_LEMON 1
-#   else
-#       define SEQAN3_WITH_LEMON 0
-#   endif
+#if __has_include(<lemon/config.h>)
+#define SEQAN3_WITH_LEMON 1
+#else
+#define SEQAN3_WITH_LEMON 0
+#endif
 #elif SEQAN3_WITH_LEMON != 0
-#   if !__has_include(<lemon/config.h>)
-#       error Lemon was marked as required, but not found!
-#   endif
+#if !__has_include(<lemon/config.h>)
+#error Lemon was marked as required, but not found!
+#endif
 #endif
 #if SEQAN3_WITH_LEMON == 1
-#   define LEMON_HAVE_LONG_LONG 1
-#   define LEMON_CXX11 1
-#   if defined(__unix__) || defined(__APPLE__)
-#       define LEMON_USE_PTHREAD 1
-#       define LEMON_USE_WIN32_THREADS 0
-#       define LEMON_WIN32 0
-#   else
-#       define LEMON_USE_PTHREAD 0
-#       define LEMON_USE_WIN32_THREADS 1
-#       define LEMON_WIN32 1
-#   endif
+#define LEMON_HAVE_LONG_LONG 1
+#define LEMON_CXX11 1
+#if defined(__unix__) || defined(__APPLE__)
+#define LEMON_USE_PTHREAD 1
+#define LEMON_USE_WIN32_THREADS 0
+#define LEMON_WIN32 0
+#else
+#define LEMON_USE_PTHREAD 0
+#define LEMON_USE_WIN32_THREADS 1
+#define LEMON_WIN32 1
+#endif
 #endif
 
 // TODO (doesn't have a version.hpp, yet)

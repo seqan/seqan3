@@ -110,22 +110,13 @@ struct dna15
      * \{
      */
     //!\copydoc seqan3::dna4::to_char
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     //!\copydoc seqan3::dna4::to_rank
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
+    constexpr rank_type to_rank() const noexcept { return static_cast<rank_type>(_value); }
 
     //!\copydoc seqan3::dna4::complement
-    constexpr dna15 complement() const noexcept
-    {
-        return complement_table[to_rank()];
-    }
+    constexpr dna15 complement() const noexcept { return complement_table[to_rank()]; }
     //!\}
 
     /*!\name Write functions
@@ -148,7 +139,7 @@ struct dna15
     //!\}
 
     //!\copydoc seqan3::dna4::value_size
-    static constexpr rank_type value_size{15};
+    static constexpr rank_type value_size{ 15 };
 
     /*!\name Conversion operators
      * \{
@@ -156,21 +147,21 @@ struct dna15
     //!\brief Implicit conversion between dna* and rna* of the same size.
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
     template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
-    //!\endcond
-    constexpr operator other_nucl_type() const noexcept
+      //!\cond
+      requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+      //!\endcond
+      constexpr operator other_nucl_type() const noexcept
     {
-        return other_nucl_type{_value};
+        return other_nucl_type{ _value };
     }
 
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type>
-    //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
+    requires nucleotide_concept<other_nucl_type>
+      //!\endcond
+      explicit constexpr operator other_nucl_type() const noexcept
     {
         return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
     }
@@ -178,38 +169,20 @@ struct dna15
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(dna15 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+    constexpr bool operator==(dna15 const & rhs) const noexcept { return _value == rhs._value; }
 
-    constexpr bool operator!=(dna15 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
+    constexpr bool operator!=(dna15 const & rhs) const noexcept { return _value != rhs._value; }
 
-    constexpr bool operator<(dna15 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
+    constexpr bool operator<(dna15 const & rhs) const noexcept { return _value < rhs._value; }
 
-    constexpr bool operator>(dna15 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
+    constexpr bool operator>(dna15 const & rhs) const noexcept { return _value > rhs._value; }
 
-    constexpr bool operator<=(dna15 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
+    constexpr bool operator<=(dna15 const & rhs) const noexcept { return _value <= rhs._value; }
 
-    constexpr bool operator>=(dna15 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
+    constexpr bool operator>=(dna15 const & rhs) const noexcept { return _value >= rhs._value; }
     //!\}
 
-protected:
+  protected:
     //!\privatesection
     //!\copydoc seqan3::dna4::internal_type
     enum struct internal_type : rank_type
@@ -234,105 +207,100 @@ protected:
     };
 
     //!\copydoc seqan3::dna4::value_to_char
-    static constexpr char_type value_to_char[value_size]
-    {
-        'A',
-        'B',
-        'C',
-        'D',
-        'G',
-        'H',
-        'K',
-        'M',
-        'N',
-        'R',
-        'S',
-        'T',
-        'V',
-        'W',
-        'Y'
-    };
+    static constexpr char_type value_to_char[value_size]{ 'A', 'B', 'C', 'D', 'G', 'H', 'K', 'M',
+                                                          'N', 'R', 'S', 'T', 'V', 'W', 'Y' };
 
     //!\copydoc seqan3::dna4::char_to_value
-    static constexpr std::array<internal_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            using in_t = internal_type;
-            std::array<in_t, 256> ret{};
+    static constexpr std::array<internal_type, 256> char_to_value{ []() constexpr { using in_t = internal_type;
+    std::array<in_t, 256> ret{};
 
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = in_t::UNKNOWN;
+    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+    for (auto & c : ret) c = in_t::UNKNOWN;
 
-            // canonical
-            ret['A'] = in_t::A; ret['a'] = in_t::A;
-            ret['C'] = in_t::C; ret['c'] = in_t::C;
-            ret['G'] = in_t::G; ret['g'] = in_t::G;
-            ret['T'] = in_t::T; ret['t'] = in_t::T;
-            ret['U'] = in_t::U; ret['u'] = in_t::U;
+    // canonical
+    ret['A'] = in_t::A;
+    ret['a'] = in_t::A;
+    ret['C'] = in_t::C;
+    ret['c'] = in_t::C;
+    ret['G'] = in_t::G;
+    ret['g'] = in_t::G;
+    ret['T'] = in_t::T;
+    ret['t'] = in_t::T;
+    ret['U'] = in_t::U;
+    ret['u'] = in_t::U;
 
-            // iupac characters
-            ret['R'] = in_t::R; ret['r'] = in_t::R;
-            ret['Y'] = in_t::Y; ret['y'] = in_t::Y;
-            ret['S'] = in_t::S; ret['s'] = in_t::S;
-            ret['W'] = in_t::W; ret['w'] = in_t::W;
-            ret['K'] = in_t::K; ret['k'] = in_t::K;
-            ret['M'] = in_t::M; ret['m'] = in_t::M;
-            ret['B'] = in_t::B; ret['b'] = in_t::B;
-            ret['D'] = in_t::D; ret['d'] = in_t::D;
-            ret['H'] = in_t::H; ret['h'] = in_t::H;
-            ret['V'] = in_t::V; ret['v'] = in_t::V;
-            ret['N'] = in_t::N; ret['n'] = in_t::N;
-            return ret;
-        }()
-    };
-
-    //!\copydoc seqan3::dna4::complement_table
-    static const std::array<dna15, value_size> complement_table;
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
+    // iupac characters
+    ret['R'] = in_t::R;
+    ret['r'] = in_t::R;
+    ret['Y'] = in_t::Y;
+    ret['y'] = in_t::Y;
+    ret['S'] = in_t::S;
+    ret['s'] = in_t::S;
+    ret['W'] = in_t::W;
+    ret['w'] = in_t::W;
+    ret['K'] = in_t::K;
+    ret['k'] = in_t::K;
+    ret['M'] = in_t::M;
+    ret['m'] = in_t::M;
+    ret['B'] = in_t::B;
+    ret['b'] = in_t::B;
+    ret['D'] = in_t::D;
+    ret['d'] = in_t::D;
+    ret['H'] = in_t::H;
+    ret['h'] = in_t::H;
+    ret['V'] = in_t::V;
+    ret['v'] = in_t::V;
+    ret['N'] = in_t::N;
+    ret['n'] = in_t::N;
+    return ret;
+}()
 };
 
-constexpr dna15 dna15::A{internal_type::A};
-constexpr dna15 dna15::B{internal_type::B};
-constexpr dna15 dna15::C{internal_type::C};
-constexpr dna15 dna15::D{internal_type::D};
-constexpr dna15 dna15::G{internal_type::G};
-constexpr dna15 dna15::H{internal_type::H};
-constexpr dna15 dna15::K{internal_type::K};
-constexpr dna15 dna15::M{internal_type::M};
-constexpr dna15 dna15::N{internal_type::N};
-constexpr dna15 dna15::R{internal_type::R};
-constexpr dna15 dna15::S{internal_type::S};
-constexpr dna15 dna15::T{internal_type::T};
-constexpr dna15 dna15::U{dna15::T};
-constexpr dna15 dna15::V{internal_type::V};
-constexpr dna15 dna15::W{internal_type::W};
-constexpr dna15 dna15::Y{internal_type::Y};
-constexpr dna15 dna15::UNKNOWN{dna15::N};
+//!\copydoc seqan3::dna4::complement_table
+static const std::array<dna15, value_size> complement_table;
 
-constexpr std::array<dna15, dna15::value_size> dna15::complement_table
-{
-    dna15::T,    // complement of dna15::A
-    dna15::V,    // complement of dna15::B
-    dna15::G,    // complement of dna15::C
-    dna15::H,    // complement of dna15::D
-    dna15::C,    // complement of dna15::G
-    dna15::D,    // complement of dna15::H
-    dna15::M,    // complement of dna15::K
-    dna15::K,    // complement of dna15::M
-    dna15::N,    // complement of dna15::N
-    dna15::Y,    // complement of dna15::R
-    dna15::S,    // complement of dna15::S
-    dna15::A,    // complement of dna15::T
-    dna15::B,    // complement of dna15::V
-    dna15::W,    // complement of dna15::W
-    dna15::R     // complement of dna15::Y
+public:
+//!\privatesection
+//!\brief The data member.
+internal_type _value;
+//!\publicsection
+}
+;
+
+constexpr dna15 dna15::A{ internal_type::A };
+constexpr dna15 dna15::B{ internal_type::B };
+constexpr dna15 dna15::C{ internal_type::C };
+constexpr dna15 dna15::D{ internal_type::D };
+constexpr dna15 dna15::G{ internal_type::G };
+constexpr dna15 dna15::H{ internal_type::H };
+constexpr dna15 dna15::K{ internal_type::K };
+constexpr dna15 dna15::M{ internal_type::M };
+constexpr dna15 dna15::N{ internal_type::N };
+constexpr dna15 dna15::R{ internal_type::R };
+constexpr dna15 dna15::S{ internal_type::S };
+constexpr dna15 dna15::T{ internal_type::T };
+constexpr dna15 dna15::U{ dna15::T };
+constexpr dna15 dna15::V{ internal_type::V };
+constexpr dna15 dna15::W{ internal_type::W };
+constexpr dna15 dna15::Y{ internal_type::Y };
+constexpr dna15 dna15::UNKNOWN{ dna15::N };
+
+constexpr std::array<dna15, dna15::value_size> dna15::complement_table{
+    dna15::T, // complement of dna15::A
+    dna15::V, // complement of dna15::B
+    dna15::G, // complement of dna15::C
+    dna15::H, // complement of dna15::D
+    dna15::C, // complement of dna15::G
+    dna15::D, // complement of dna15::H
+    dna15::M, // complement of dna15::K
+    dna15::K, // complement of dna15::M
+    dna15::N, // complement of dna15::N
+    dna15::Y, // complement of dna15::R
+    dna15::S, // complement of dna15::S
+    dna15::A, // complement of dna15::T
+    dna15::B, // complement of dna15::V
+    dna15::W, // complement of dna15::W
+    dna15::R  // complement of dna15::Y
 };
 
 } // namespace seqan3
@@ -384,8 +352,7 @@ inline dna15_vector operator""_dna15(const char * s, std::size_t n)
     dna15_vector r;
     r.resize(n);
 
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
+    for (size_t i = 0; i < n; ++i) r[i].assign_char(s[i]);
 
     return r;
 }

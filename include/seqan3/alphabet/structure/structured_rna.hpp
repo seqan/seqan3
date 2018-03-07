@@ -90,10 +90,10 @@ namespace seqan3
  */
 
 template <typename sequence_alphabet_t, typename structure_alphabet_t>
-    requires nucleotide_concept<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t>
-struct structured_rna :
-    public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
-                                 sequence_alphabet_t, structure_alphabet_t>
+requires nucleotide_concept<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t> struct structured_rna
+  : public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
+                                 sequence_alphabet_t,
+                                 structure_alphabet_t>
 {
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
@@ -132,10 +132,7 @@ struct structured_rna :
     //!\{
 
     //!\brief Return a character. This reads the internal sequence letter.
-    constexpr char_type to_char() const noexcept
-    {
-        return seqan3::to_char(get<0>(*this));
-    }
+    constexpr char_type to_char() const noexcept { return seqan3::to_char(get<0>(*this)); }
 
     /*!\brief Return a structured_rna where the sequence letter is converted to its complement.
      * \details
@@ -149,7 +146,7 @@ struct structured_rna :
      */
     constexpr structured_rna complement() const noexcept
     {
-        return structured_rna{get<0>(*this).complement(), get<1>(*this)};
+        return structured_rna{ get<0>(*this).complement(), get<1>(*this) };
     }
     //!\}
 
@@ -159,29 +156,20 @@ struct structured_rna :
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
      */
-    constexpr bool is_pair_open() const noexcept
-    {
-        return get<1>(*this).is_pair_open();
-    };
+    constexpr bool is_pair_open() const noexcept { return get<1>(*this).is_pair_open(); };
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
      */
-    constexpr bool is_pair_close() const noexcept
-    {
-        return get<1>(*this).is_pair_close();
-    };
+    constexpr bool is_pair_close() const noexcept { return get<1>(*this).is_pair_close(); };
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
      */
-    constexpr bool is_unpaired() const noexcept
-    {
-        return get<1>(*this).is_unpaired();
-    };
+    constexpr bool is_unpaired() const noexcept { return get<1>(*this).is_unpaired(); };
 
     //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions.
-    static constexpr bool pseudoknot_support{structure_alphabet_t::pseudoknot_support};
+    static constexpr bool pseudoknot_support{ structure_alphabet_t::pseudoknot_support };
     //!\}
 };
 
@@ -189,6 +177,6 @@ struct structured_rna :
 //!\relates structured_rna
 template <typename sequence_alphabet_type, typename structure_alphabet_type>
 structured_rna(sequence_alphabet_type &&, structure_alphabet_type &&)
-    -> structured_rna<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
+  ->structured_rna<std::decay_t<sequence_alphabet_type>, std::decay_t<structure_alphabet_type>>;
 
 } // namespace seqan3

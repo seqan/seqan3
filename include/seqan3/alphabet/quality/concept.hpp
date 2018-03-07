@@ -55,25 +55,29 @@ namespace detail
  *    c) a single-letter encoding corresponding to a phred score
  */
 template <typename q>
-concept bool internal_quality_concept = requires (q quality)
+concept bool internal_quality_concept = requires(q quality)
 {
     //! fulfills the internal requirements for general alphabets
     requires alphabet_concept<q>;
     //! offers additionally a phred score data type which may not be zero based
     typename q::phred_type;
     //! converts the internal rank value (not phred score) representation to a valid phred score
-    { quality.to_phred() } -> typename q::phred_type;
+    {
+        quality.to_phred()
+    }
+    ->typename q::phred_type;
     //! internal value setter function receiving a phred score
-    { quality.assign_phred(0) } -> q;
-
+    {
+        quality.assign_phred(0)
+    }
+    ->q;
 };
 
 } // namespace seqan3::detail
 
 //! internal phred
 template <typename alphabet_type>
-    requires detail::internal_quality_concept<alphabet_type>
-struct underlying_phred
+requires detail::internal_quality_concept<alphabet_type> struct underlying_phred
 {
     //!\brief The forwarded phred type.
     using type = typename alphabet_type::phred_type;
@@ -81,20 +85,20 @@ struct underlying_phred
 
 //! internal phred type
 template <typename alphabet_type>
-    using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
+using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
 
 //! public setter function receiving char encoding of phred score
 template <typename alphabet_type>
-    requires detail::internal_quality_concept<alphabet_type>
-    constexpr alphabet_type assign_phred(alphabet_type & c, char const in)
+requires detail::internal_quality_concept<alphabet_type> constexpr alphabet_type assign_phred(alphabet_type & c,
+                                                                                              char const in)
 {
     return c.assign_phred(in);
 }
 
 //! public getter function for rank presentation of phred score
 template <typename alphabet_type>
-    requires detail::internal_quality_concept<alphabet_type>
-    constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & c)
+requires detail::internal_quality_concept<alphabet_type> constexpr underlying_phred_t<alphabet_type> to_phred(
+  alphabet_type const & c)
 {
     return c.to_phred();
 }
@@ -104,16 +108,21 @@ template <typename alphabet_type>
 // ------------------------------------------------------------------
 
 //! concept of a quality alphabet
-template<typename q>
+template <typename q>
 concept bool quality_concept = requires(q quality)
 {
     //! requires fulfillment of alphabet concept
     requires alphabet_concept<q>;
 
     //! requires additionally public getter and setter for rank phred score representation
-    { assign_phred(quality, typename q::rank_type{}) } -> q;
-    { to_phred(quality) } -> const typename q::phred_type;
+    {
+        assign_phred(quality, typename q::rank_type{})
+    }
+    ->q;
+    {
+        to_phred(quality)
+    }
+    ->const typename q::phred_type;
     typename underlying_phred<q>::type;
 };
-
 }

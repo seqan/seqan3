@@ -114,18 +114,12 @@ struct dssp9
     /*!\brief Get the letter as a character of char_type.
      * \returns The character representation of this dssp9 letter.
      */
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     /*!\brief Get the letter's numeric value or rank in the alphabet.
      * \returns The numeric representation of this dssp9 letter.
      */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
+    constexpr rank_type to_rank() const noexcept { return static_cast<rank_type>(_value); }
     //!\}
 
     //!\name Write functions
@@ -154,42 +148,24 @@ struct dssp9
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{9};
+    static constexpr rank_type value_size{ 9 };
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(dssp9 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+    constexpr bool operator==(dssp9 const & rhs) const noexcept { return _value == rhs._value; }
 
-    constexpr bool operator!=(dssp9 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
+    constexpr bool operator!=(dssp9 const & rhs) const noexcept { return _value != rhs._value; }
 
-    constexpr bool operator<(dssp9 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
+    constexpr bool operator<(dssp9 const & rhs) const noexcept { return _value < rhs._value; }
 
-    constexpr bool operator>(dssp9 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
+    constexpr bool operator>(dssp9 const & rhs) const noexcept { return _value > rhs._value; }
 
-    constexpr bool operator<=(dssp9 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
+    constexpr bool operator<=(dssp9 const & rhs) const noexcept { return _value <= rhs._value; }
 
-    constexpr bool operator>=(dssp9 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
+    constexpr bool operator>=(dssp9 const & rhs) const noexcept { return _value >= rhs._value; }
     //!\}
 
-protected:
+  protected:
     //!\privatesection
     /*!\brief The internal type is a strictly typed enum.
      *
@@ -199,57 +175,59 @@ protected:
      */
     enum struct internal_type : rank_type
     {
-        H, B, E, G, I, T, S, C, X
+        H,
+        B,
+        E,
+        G,
+        I,
+        T,
+        S,
+        C,
+        X
     };
 
     //!\brief Value-to-char conversion table.
-    static constexpr char_type value_to_char[value_size]
-    {
-        'H', 'B', 'E', 'G', 'I', 'T', 'S', 'C', 'X'
-    };
+    static constexpr char_type value_to_char[value_size]{ 'H', 'B', 'E', 'G', 'I', 'T', 'S', 'C', 'X' };
 
     //!\brief Char-to-value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            std::array<internal_type, 256> rank_table{};
+    static constexpr std::array<internal_type, 256> char_to_value{
+        []() constexpr { std::array<internal_type, 256> rank_table{};
 
-            // initialize with X (std::array::fill unfortunately not constexpr)
-            for (internal_type & rnk : rank_table)
-                rnk = internal_type::X;
+    // initialize with X (std::array::fill unfortunately not constexpr)
+    for (internal_type & rnk : rank_table) rnk = internal_type::X;
 
-            // canonical
-            rank_table['H'] = internal_type::H;
-            rank_table['B'] = internal_type::B;
-            rank_table['E'] = internal_type::E;
-            rank_table['G'] = internal_type::G;
-            rank_table['I'] = internal_type::I;
-            rank_table['T'] = internal_type::T;
-            rank_table['S'] = internal_type::S;
-            rank_table['C'] = internal_type::C;
-            rank_table['X'] = internal_type::X;
+    // canonical
+    rank_table['H'] = internal_type::H;
+    rank_table['B'] = internal_type::B;
+    rank_table['E'] = internal_type::E;
+    rank_table['G'] = internal_type::G;
+    rank_table['I'] = internal_type::I;
+    rank_table['T'] = internal_type::T;
+    rank_table['S'] = internal_type::S;
+    rank_table['C'] = internal_type::C;
+    rank_table['X'] = internal_type::X;
 
-            return rank_table;
-        } ()
-    };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
+    return rank_table;
+}()
 };
 
-constexpr dssp9 dssp9::H{internal_type::H};
-constexpr dssp9 dssp9::B{internal_type::B};
-constexpr dssp9 dssp9::E{internal_type::E};
-constexpr dssp9 dssp9::G{internal_type::G};
-constexpr dssp9 dssp9::I{internal_type::I};
-constexpr dssp9 dssp9::T{internal_type::T};
-constexpr dssp9 dssp9::S{internal_type::S};
-constexpr dssp9 dssp9::C{internal_type::C};
-constexpr dssp9 dssp9::X{internal_type::X};
+public:
+//!\privatesection
+//!\brief The data member.
+internal_type _value;
+//!\publicsection
+}
+;
+
+constexpr dssp9 dssp9::H{ internal_type::H };
+constexpr dssp9 dssp9::B{ internal_type::B };
+constexpr dssp9 dssp9::E{ internal_type::E };
+constexpr dssp9 dssp9::G{ internal_type::G };
+constexpr dssp9 dssp9::I{ internal_type::I };
+constexpr dssp9 dssp9::T{ internal_type::T };
+constexpr dssp9 dssp9::S{ internal_type::S };
+constexpr dssp9 dssp9::C{ internal_type::C };
+constexpr dssp9 dssp9::X{ internal_type::X };
 
 } // namespace seqan3
 
@@ -281,8 +259,7 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
     std::vector<dssp9> vec;
     vec.resize(len);
 
-    for (size_t idx = 0u; idx < len; ++idx)
-        vec[idx].assign_char(str[idx]);
+    for (size_t idx = 0u; idx < len; ++idx) vec[idx].assign_char(str[idx]);
 
     return vec;
 }

@@ -63,12 +63,11 @@ struct trim_fn
     template <typename irng_t>
     auto operator()(irng_t && irange,
                     underlying_phred_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
-    //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+      //!\cond
+      requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
-        return ranges::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
-        {
+        return ranges::view::take_while(std::forward<irng_t>(irange), [threshold](auto && value) {
             return to_phred(std::forward<decltype(value)>(value)) >= threshold;
         });
     }
@@ -79,10 +78,9 @@ struct trim_fn
      * \param threshold The minimum quality given by a value of the ranges type.
      */
     template <typename irng_t>
-    auto operator()(irng_t && irange,
-                    std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
-    //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+    auto operator()(irng_t && irange, std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
+      //!\cond
+      requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return (*this)(std::forward<irng_t>(irange), to_phred(threshold));
@@ -129,12 +127,13 @@ struct trim_fn
      * Binds to one of the other interfaces and forwards the threshold.
      */
     template <typename threshold_t>
-    delegate<threshold_t> operator()(threshold_t const threshold) const
-    //!\cond
-        requires std::is_integral_v<std::decay_t<threshold_t>> || quality_concept<std::decay_t<threshold_t>>
+      delegate<threshold_t> operator()(threshold_t const threshold) const
+      //!\cond
+      requires std::is_integral_v<std::decay_t<threshold_t>> ||
+      quality_concept<std::decay_t<threshold_t>>
     //!\endcond
     {
-        return delegate<threshold_t>{threshold, *this};
+        return delegate<threshold_t>{ threshold, *this };
         // this doesn't work here, see seqan3::detail::trim_fn::delegate.
         //return std::bind(trim_fn(), std::placeholders::_1, threshold);
     }
@@ -145,17 +144,15 @@ struct trim_fn
      * \param irange The range being processed as left argument of the pipe.
      * \param bound_view The result of the single-argument operator() (interface with bound threshold parameter).
      */
-    template <typename irng_t,
-              typename threshold_t>
-    //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>> &&
-                 (std::is_same_v<std::decay_t<threshold_t>,
-                                 std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>> ||
-                  std::is_convertible_v<std::decay_t<threshold_t>,
-                                        underlying_phred_t<std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>>>)
-    //!\endcond
-    friend auto operator|(irng_t && irange,
-                          seqan3::detail::trim_fn::delegate<threshold_t> const & bound_view)
+    template <typename irng_t, typename threshold_t>
+      //!\cond
+      requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>> &&
+      (std::is_same_v<std::decay_t<threshold_t>, std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>> ||
+       std::is_convertible_v<std::decay_t<threshold_t>,
+                             underlying_phred_t<std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>>>)
+      //!\endcond
+      friend auto
+      operator|(irng_t && irange, seqan3::detail::trim_fn::delegate<threshold_t> const & bound_view)
     {
         return bound_view(std::forward<irng_t>(irange));
     }

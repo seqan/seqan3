@@ -140,18 +140,12 @@ struct wuss
      * \brief Get the letter as a character of char_type.
      * \returns The character representation of this wuss letter.
      */
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
+    constexpr char_type to_char() const noexcept { return value_to_char[static_cast<rank_type>(_value)]; }
 
     /*!\brief Get the letter's numeric value or rank in the alphabet.
      * \returns The numeric representation of this wuss letter.
      */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
+    constexpr rank_type to_rank() const noexcept { return static_cast<rank_type>(_value); }
     //!\}
 
     //!\name Write functions
@@ -181,39 +175,21 @@ struct wuss
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{SIZE};
+    static constexpr rank_type value_size{ SIZE };
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(wuss const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+    constexpr bool operator==(wuss const & rhs) const noexcept { return _value == rhs._value; }
 
-    constexpr bool operator!=(wuss const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
+    constexpr bool operator!=(wuss const & rhs) const noexcept { return _value != rhs._value; }
 
-    constexpr bool operator<(wuss const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
+    constexpr bool operator<(wuss const & rhs) const noexcept { return _value < rhs._value; }
 
-    constexpr bool operator>(wuss const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
+    constexpr bool operator>(wuss const & rhs) const noexcept { return _value > rhs._value; }
 
-    constexpr bool operator<=(wuss const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
+    constexpr bool operator<=(wuss const & rhs) const noexcept { return _value <= rhs._value; }
 
-    constexpr bool operator>=(wuss const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
+    constexpr bool operator>=(wuss const & rhs) const noexcept { return _value >= rhs._value; }
     //!\}
 
     //!\name RNA structure properties
@@ -222,32 +198,23 @@ struct wuss
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
      */
-    constexpr bool is_pair_open() const noexcept
-    {
-        return interaction_tab[to_rank()] == 2;
-    }
+    constexpr bool is_pair_open() const noexcept { return interaction_tab[to_rank()] == 2; }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
      */
-    constexpr bool is_pair_close() const noexcept
-    {
-        return interaction_tab[to_rank()] == 3;
-    }
+    constexpr bool is_pair_close() const noexcept { return interaction_tab[to_rank()] == 3; }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
      */
-    constexpr bool is_unpaired() const noexcept
-    {
-        return interaction_tab[to_rank()] == 1;
-    }
+    constexpr bool is_unpaired() const noexcept { return interaction_tab[to_rank()] == 1; }
 
     //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: True.
-    static constexpr bool pseudoknot_support{true};
+    static constexpr bool pseudoknot_support{ true };
     //!\}
 
-protected:
+  protected:
     //!\privatesection
     /*!\brief The internal type is a strictly typed enum.
      *
@@ -275,122 +242,109 @@ protected:
     };
 
     //!\brief Value-to-char conversion table.
-    static constexpr std::array<char_type, value_size> value_to_char
-    {
-        [] () constexpr
-        {
-            std::array<char_type , value_size> chars
-            {
-                '.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')', ']', '}'
-            };
+    static constexpr std::array<char_type, value_size> value_to_char{
+        []() constexpr { std::array<char_type, value_size>
+                           chars{ '.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')', ']', '}' };
 
-            // pseudoknot letters
-            for (rank_type rnk = 15u; rnk + 1u < value_size; rnk += 2u)
-            {
-                char_type const off = static_cast<char_type>((rnk - 15u) / 2u);
-                chars[rnk] = 'A' + off;
-                chars[rnk + 1u] = 'a' + off;
-            }
+    // pseudoknot letters
+    for (rank_type rnk = 15u; rnk + 1u < value_size; rnk += 2u) {
+        char_type const off = static_cast<char_type>((rnk - 15u) / 2u);
+        chars[rnk] = 'A' + off;
+        chars[rnk + 1u] = 'a' + off;
+    }
 
-            return chars;
-        } ()
-    };
-
-    //!\brief Char-to-value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            std::array<internal_type, 256> rank_table{};
-
-            // initialize with unpaired (std::array::fill unfortunately not constexpr)
-            for (internal_type & rnk : rank_table)
-                rnk = internal_type::UNPAIRED6;
-
-            // set alphabet values
-            for (rank_type rnk = 0u; rnk < value_size; ++rnk)
-                rank_table[value_to_char[rnk]] = static_cast<internal_type>(rnk);
-            return rank_table;
-        } ()
-    };
-
-    //!\brief Lookup table for interactions: unpaired (1), pair-open (2), pair-close (3).
-    static constexpr std::array<unsigned char, value_size> interaction_tab
-    {
-        [] () constexpr
-        {
-            std::array<unsigned char, value_size> interaction_table{};
-
-            for (rank_type rnk = UNPAIRED.to_rank(); rnk <= UNPAIRED6.to_rank(); ++rnk)
-                interaction_table[rnk] = 1;
-
-            for (rank_type rnk = PAIR_OPEN.to_rank(); rnk <= PAIR_OPEN3.to_rank(); ++rnk)
-                interaction_table[rnk] = 2;
-
-            for (rank_type rnk = PAIR_CLOSE.to_rank(); rnk <= PAIR_CLOSE3.to_rank(); ++rnk)
-                interaction_table[rnk] = 3;
-
-            for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u)
-            {
-                interaction_table[rnk] = 2;
-                interaction_table[rnk + 1] = 3;
-            }
-
-            return interaction_table;
-        } ()
-    };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
+    return chars;
+}()
 };
 
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED{internal_type::UNPAIRED};
+//!\brief Char-to-value conversion table.
+static constexpr std::array<internal_type, 256> char_to_value{
+    []() constexpr { std::array<internal_type, 256> rank_table{};
+
+// initialize with unpaired (std::array::fill unfortunately not constexpr)
+for (internal_type & rnk : rank_table) rnk = internal_type::UNPAIRED6;
+
+// set alphabet values
+for (rank_type rnk = 0u; rnk < value_size; ++rnk) rank_table[value_to_char[rnk]] = static_cast<internal_type>(rnk);
+return rank_table;
+}
+()
+}
+;
+
+//!\brief Lookup table for interactions: unpaired (1), pair-open (2), pair-close (3).
+static constexpr std::array<unsigned char, value_size> interaction_tab{
+    []() constexpr { std::array<unsigned char, value_size> interaction_table{};
+
+for (rank_type rnk = UNPAIRED.to_rank(); rnk <= UNPAIRED6.to_rank(); ++rnk) interaction_table[rnk] = 1;
+
+for (rank_type rnk = PAIR_OPEN.to_rank(); rnk <= PAIR_OPEN3.to_rank(); ++rnk) interaction_table[rnk] = 2;
+
+for (rank_type rnk = PAIR_CLOSE.to_rank(); rnk <= PAIR_CLOSE3.to_rank(); ++rnk) interaction_table[rnk] = 3;
+
+for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u) {
+    interaction_table[rnk] = 2;
+    interaction_table[rnk + 1] = 3;
+}
+
+return interaction_table;
+}
+()
+}
+;
+
+public:
+//!\privatesection
+//!\brief The data member.
+internal_type _value;
+//!\publicsection
+}
+;
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED1{internal_type::UNPAIRED1};
+constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED{ internal_type::UNPAIRED };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED2{internal_type::UNPAIRED2};
+constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED1{ internal_type::UNPAIRED1 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED3{internal_type::UNPAIRED3};
+constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED2{ internal_type::UNPAIRED2 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED4{internal_type::UNPAIRED4};
+constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED3{ internal_type::UNPAIRED3 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED5{internal_type::UNPAIRED5};
+constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED4{ internal_type::UNPAIRED4 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED6{internal_type::UNPAIRED6};
+constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED5{ internal_type::UNPAIRED5 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN{internal_type::PAIR_OPEN};
+constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED6{ internal_type::UNPAIRED6 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN1{internal_type::PAIR_OPEN1};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN{ internal_type::PAIR_OPEN };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN2{internal_type::PAIR_OPEN2};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN1{ internal_type::PAIR_OPEN1 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{internal_type::PAIR_OPEN3};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN2{ internal_type::PAIR_OPEN2 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE{internal_type::PAIR_CLOSE};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{ internal_type::PAIR_OPEN3 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE1{internal_type::PAIR_CLOSE1};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE{ internal_type::PAIR_CLOSE };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE2{internal_type::PAIR_CLOSE2};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE1{ internal_type::PAIR_CLOSE1 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE3{internal_type::PAIR_CLOSE3};
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE2{ internal_type::PAIR_CLOSE2 };
+
+template <uint8_t SIZE>
+constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE3{ internal_type::PAIR_CLOSE3 };
 
 //!\brief Alias for the default type wuss51.
 typedef wuss<51> wuss51;
@@ -425,8 +379,7 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
     std::vector<wuss51> vec;
     vec.resize(len);
 
-    for (size_t idx = 0; idx < len; ++idx)
-        vec[idx].assign_char(str[idx]);
+    for (size_t idx = 0; idx < len; ++idx) vec[idx].assign_char(str[idx]);
 
     return vec;
 }

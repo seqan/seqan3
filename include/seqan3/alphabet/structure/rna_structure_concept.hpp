@@ -40,8 +40,8 @@
 
 #pragma once
 
-#include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/concept_pre.hpp>
 
 // ============================================================================
 // concept
@@ -88,12 +88,24 @@ concept bool rna_structure_concept = requires(structure_type val)
     requires alphabet_concept<structure_type>;
 
     // these are delegated to member functions, see file ../detail/member_exposure.hpp
-    { is_pair_open(val) } -> bool;
-    { is_pair_close(val) } -> bool;
-    { is_unpaired(val) } -> bool;
+    {
+        is_pair_open(val)
+    }
+    ->bool;
+    {
+        is_pair_close(val)
+    }
+    ->bool;
+    {
+        is_unpaired(val)
+    }
+    ->bool;
 
     // this is delegated to a static class variable
-    { pseudoknot_support_v<structure_type> } -> bool;
+    {
+        pseudoknot_support_v<structure_type>
+    }
+    ->bool;
 };
 //!\endcond
 

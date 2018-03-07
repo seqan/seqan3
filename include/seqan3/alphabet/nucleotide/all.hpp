@@ -39,12 +39,12 @@
  */
 
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
 
 /*!\defgroup nucleotide Nucleotide
  * \brief Contains the different DNA and RNA alphabet types.

@@ -79,22 +79,18 @@ namespace seqan3::detail
 //!\{
 
 //!\brief The list of types that are defined as char adaptations.
-using char_adaptations            = meta::list<char,
-                                               char16_t,
-                                               char32_t>;
+using char_adaptations = meta::list<char, char16_t, char32_t>;
 //!\brief The corresponding list of rank types
-using char_adaptations_rank_types = meta::list<std::uint_least8_t,
-                                               std::uint_least16_t,
-                                               std::uint_least32_t>;
+using char_adaptations_rank_types = meta::list<std::uint_least8_t, std::uint_least16_t, std::uint_least32_t>;
 
 //!\brief Metafunction overload for types that are in seqan3::detail::char_adaptations.
 template <typename type_in_list>
 //!\cond
-    requires meta::in<char_adaptations, type_in_list>::value
-//!\endcond
-struct is_char_adaptation<type_in_list> :
-    std::true_type
-{};
+requires meta::in<char_adaptations, type_in_list>::value
+  //!\endcond
+  struct is_char_adaptation<type_in_list> : std::true_type
+{
+};
 
 //!\}
 } // namespace seqan3::detail
@@ -116,9 +112,9 @@ namespace seqan3
  */
 template <typename char_type>
 //!\cond
-    requires detail::is_char_adaptation_v<char_type>
-//!\endcond
-struct underlying_char<char_type>
+requires detail::is_char_adaptation_v<char_type>
+  //!\endcond
+  struct underlying_char<char_type>
 {
     //!\brief The same type as char_type.
     using type = char_type;
@@ -131,13 +127,12 @@ struct underlying_char<char_type>
  */
 template <typename char_type>
 //!\cond
-    requires detail::is_char_adaptation_v<char_type>
-//!\endcond
-struct underlying_rank<char_type>
+requires detail::is_char_adaptation_v<char_type>
+  //!\endcond
+  struct underlying_rank<char_type>
 {
     //!\brief An unsigned integer type of the same size as `char_type`.
-    using type = meta::at<detail::char_adaptations_rank_types,
-                          meta::find_index<detail::char_adaptations, char_type>>;
+    using type = meta::at<detail::char_adaptations_rank_types, meta::find_index<detail::char_adaptations, char_type>>;
 };
 
 // ------------------------------------------------------------------
@@ -151,16 +146,16 @@ struct underlying_rank<char_type>
  */
 template <typename char_type>
 //!\cond
-    requires detail::is_char_adaptation_v<char_type>
-//!\endcond
-struct alphabet_size<char_type>
+requires detail::is_char_adaptation_v<char_type>
+  //!\endcond
+  struct alphabet_size<char_type>
 {
     //!\brief Smallest unsigned integral type that can hold value;
     using type = detail::min_viable_uint_t<static_cast<uint64_t>(std::numeric_limits<char_type>::max()) + 1 -
                                            std::numeric_limits<char_type>::lowest()>;
     //!\brief The alphabet's size.
     static constexpr type value =
-        static_cast<type>(std::numeric_limits<char_type>::max()) + 1 - std::numeric_limits<char_type>::lowest();
+      static_cast<type>(std::numeric_limits<char_type>::max()) + 1 - std::numeric_limits<char_type>::lowest();
 };
 
 // ------------------------------------------------------------------
@@ -179,8 +174,7 @@ struct alphabet_size<char_type>
  * \returns The letter's value in the alphabet's rank type (usually `char`).
  */
 template <typename char_type>
-constexpr underlying_char_t<char_type> to_char(char_type const chr)
-    requires detail::is_char_adaptation_v<char_type>
+constexpr underlying_char_t<char_type> to_char(char_type const chr) requires detail::is_char_adaptation_v<char_type>
 {
     return chr;
 }
@@ -191,8 +185,7 @@ constexpr underlying_char_t<char_type> to_char(char_type const chr)
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
 template <typename char_type>
-constexpr underlying_rank_t<char_type> to_rank(char_type const chr)
-    requires detail::is_char_adaptation_v<char_type>
+constexpr underlying_rank_t<char_type> to_rank(char_type const chr) requires detail::is_char_adaptation_v<char_type>
 {
     return chr;
 }
@@ -205,7 +198,7 @@ constexpr underlying_rank_t<char_type> to_rank(char_type const chr)
  */
 template <typename char_type>
 constexpr char_type & assign_char(char_type & chr, underlying_char_t<char_type> const chr2)
-    requires detail::is_char_adaptation_v<char_type>
+  requires detail::is_char_adaptation_v<char_type>
 {
     return chr = chr2;
 }
@@ -218,7 +211,7 @@ constexpr char_type & assign_char(char_type & chr, underlying_char_t<char_type> 
  */
 template <typename char_type>
 constexpr char_type && assign_char(char_type && chr, underlying_char_t<char_type> const chr2)
-    requires detail::is_char_adaptation_v<std::remove_reference_t<char_type>>
+  requires detail::is_char_adaptation_v<std::remove_reference_t<char_type>>
 {
     return std::move(chr = chr2);
 }
@@ -231,7 +224,7 @@ constexpr char_type && assign_char(char_type && chr, underlying_char_t<char_type
  */
 template <typename char_type>
 constexpr char_type & assign_rank(char_type & chr, underlying_rank_t<char_type> const rank)
-    requires detail::is_char_adaptation_v<char_type>
+  requires detail::is_char_adaptation_v<char_type>
 {
     return chr = rank;
 }
@@ -244,7 +237,7 @@ constexpr char_type & assign_rank(char_type & chr, underlying_rank_t<char_type> 
  */
 template <typename char_type>
 constexpr char_type && assign_rank(char_type && chr, underlying_rank_t<char_type> const rank)
-    requires detail::is_char_adaptation_v<std::remove_reference_t<char_type>>
+  requires detail::is_char_adaptation_v<std::remove_reference_t<char_type>>
 {
     return std::move(chr = rank);
 }

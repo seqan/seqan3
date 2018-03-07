@@ -54,7 +54,8 @@ namespace seqan3::detail::test_core_concepts
 {
 //! \brief Helper struct for testing core concepts.
 struct type_a
-{};
+{
+};
 
 //! \brief Helper struct for testing core concepts.
 struct type_b : type_a
@@ -65,7 +66,7 @@ struct type_b : type_a
     type_b & operator=(type_b const &) = delete;
     type_b & operator=(type_b &&) = default;
 
-    template <typename ...args>
+    template <typename... args>
     bool operator()(args &&...);
 };
 
@@ -73,17 +74,15 @@ struct type_b : type_a
 struct type_c
 {
     type_c() = default;
-    type_c(type_b const &)
-    {}
-    explicit type_c(type_a const &)
-    {}
+    type_c(type_b const &) {}
+    explicit type_c(type_a const &) {}
 
-    template <typename ...args>
-    void operator()(args &&... );
+    template <typename... args>
+    void operator()(args &&...);
 };
 
 //! \brief Helper struct for testing core concepts.
-struct type_d: type_b
+struct type_d : type_b
 {
     type_d() = delete;
 
@@ -102,63 +101,63 @@ struct type_d: type_b
 };
 
 // Operator overloads for testing core concepts.
-bool operator==(type_a const & , type_b const &);
-bool operator==(type_b const & , type_a const &);
-bool operator==(type_b const & , type_b const &);
-bool operator==(type_d const & , type_b const &);
-bool operator==(type_b const & , type_d const &);
-bool operator==(type_d const & , type_d const &);
-bool operator==(type_c const & , type_c const &);
+bool operator==(type_a const &, type_b const &);
+bool operator==(type_b const &, type_a const &);
+bool operator==(type_b const &, type_b const &);
+bool operator==(type_d const &, type_b const &);
+bool operator==(type_b const &, type_d const &);
+bool operator==(type_d const &, type_d const &);
+bool operator==(type_c const &, type_c const &);
 
-bool operator!=(type_a const & , type_b const &);
-bool operator!=(type_b const & , type_a const &);
-bool operator!=(type_b const & , type_b const &);
-bool operator!=(type_d const & , type_b const &);
-bool operator!=(type_b const & , type_d const &);
-bool operator!=(type_d const & , type_d const &);
-bool operator!=(type_c const & , type_c const &);
+bool operator!=(type_a const &, type_b const &);
+bool operator!=(type_b const &, type_a const &);
+bool operator!=(type_b const &, type_b const &);
+bool operator!=(type_d const &, type_b const &);
+bool operator!=(type_b const &, type_d const &);
+bool operator!=(type_d const &, type_d const &);
+bool operator!=(type_c const &, type_c const &);
 
-bool operator<(type_a const & , type_a const &);
-bool operator<(type_a const & , type_b const &);
-bool operator<(type_b const & , type_b const &);
-bool operator<(type_b const & , type_a const &);
-bool operator>(type_a const & , type_a const &);
-bool operator>(type_a const & , type_b const &);
-bool operator>(type_b const & , type_b const &);
-bool operator>(type_b const & , type_a const &);
-bool operator<=(type_a const & , type_a const &);
-bool operator<=(type_a const & , type_b const &);
-bool operator<=(type_b const & , type_b const &);
-bool operator<=(type_b const & , type_a const &);
-bool operator>=(type_a const & , type_a const &);
-bool operator>=(type_a const & , type_b const &);
-bool operator>=(type_b const & , type_b const &);
-bool operator>=(type_b const & , type_a const &);
+bool operator<(type_a const &, type_a const &);
+bool operator<(type_a const &, type_b const &);
+bool operator<(type_b const &, type_b const &);
+bool operator<(type_b const &, type_a const &);
+bool operator>(type_a const &, type_a const &);
+bool operator>(type_a const &, type_b const &);
+bool operator>(type_b const &, type_b const &);
+bool operator>(type_b const &, type_a const &);
+bool operator<=(type_a const &, type_a const &);
+bool operator<=(type_a const &, type_b const &);
+bool operator<=(type_b const &, type_b const &);
+bool operator<=(type_b const &, type_a const &);
+bool operator>=(type_a const &, type_a const &);
+bool operator>=(type_a const &, type_b const &);
+bool operator>=(type_b const &, type_b const &);
+bool operator>=(type_b const &, type_a const &);
 
-bool operator<(type_d const & , type_d const &);
-bool operator<(type_d const & , type_b const &);
-bool operator<(type_b const & , type_d const &);
-bool operator>(type_d const & , type_d const &);
-bool operator>(type_d const & , type_b const &);
-bool operator>(type_b const & , type_d const &);
-bool operator<=(type_d const & , type_d const &);
-bool operator<=(type_d const & , type_b const &);
-bool operator<=(type_b const & , type_d const &);
-bool operator>=(type_d const & , type_d const &);
-bool operator>=(type_d const & , type_b const &);
-bool operator>=(type_b const & , type_d const &);
+bool operator<(type_d const &, type_d const &);
+bool operator<(type_d const &, type_b const &);
+bool operator<(type_b const &, type_d const &);
+bool operator>(type_d const &, type_d const &);
+bool operator>(type_d const &, type_b const &);
+bool operator>(type_b const &, type_d const &);
+bool operator<=(type_d const &, type_d const &);
+bool operator<=(type_d const &, type_b const &);
+bool operator<=(type_b const &, type_d const &);
+bool operator>=(type_d const &, type_d const &);
+bool operator>=(type_d const &, type_b const &);
+bool operator>=(type_b const &, type_d const &);
 
-}  // namespace seqan3::detail::test_core_concepts
+} // namespace seqan3::detail::test_core_concepts
 
 // Check same_concept
 static_assert(seqan3::same_concept<int, int, int>);
 static_assert(!seqan3::same_concept<int, char, int>);
 
 // Check derived_from_conept
-static_assert(seqan3::derived_from_conept<seqan3::detail::test_core_concepts::type_b,
-                                          seqan3::detail::test_core_concepts::type_a>);
-static_assert(!seqan3::derived_from_conept<seqan3::detail::test_core_concepts::type_a,
-                                           seqan3::detail::test_core_concepts::type_b>);
+static_assert(
+  seqan3::derived_from_conept<seqan3::detail::test_core_concepts::type_b, seqan3::detail::test_core_concepts::type_a>);
+static_assert(
+  !seqan3::derived_from_conept<seqan3::detail::test_core_concepts::type_a, seqan3::detail::test_core_concepts::type_b>);
 
 // Check implicitly_convertible_to_concept
 static_assert(seqan3::implicitly_convertible_to_concept<seqan3::detail::test_core_concepts::type_b,
@@ -189,8 +188,8 @@ static_assert(seqan3::common_reference_concept<int32_t, int16_t, int8_t>);
 static_assert(!seqan3::common_reference_concept<int32_t, int16_t, seqan3::detail::test_core_concepts::type_c>);
 
 // Check common_concept
-static_assert(seqan3::common_concept<seqan3::detail::test_core_concepts::type_a,
-                                     seqan3::detail::test_core_concepts::type_b>);
+static_assert(
+  seqan3::common_concept<seqan3::detail::test_core_concepts::type_a, seqan3::detail::test_core_concepts::type_b>);
 static_assert(!seqan3::common_reference_concept<seqan3::detail::test_core_concepts::type_a,
                                                 seqan3::detail::test_core_concepts::type_c>);
 
@@ -263,18 +262,18 @@ static_assert(seqan3::copyable_concept<seqan3::detail::test_core_concepts::type_
 static_assert(!seqan3::copyable_concept<seqan3::detail::test_core_concepts::type_b>);
 
 // Check assignable_concept
-static_assert(seqan3::assignable_concept<seqan3::detail::test_core_concepts::type_a&,
+static_assert(seqan3::assignable_concept<seqan3::detail::test_core_concepts::type_a &,
                                          seqan3::detail::test_core_concepts::type_a const &>);
-static_assert(seqan3::assignable_concept<seqan3::detail::test_core_concepts::type_c&,
+static_assert(seqan3::assignable_concept<seqan3::detail::test_core_concepts::type_c &,
                                          seqan3::detail::test_core_concepts::type_b const &>);
-static_assert(!seqan3::assignable_concept<seqan3::detail::test_core_concepts::type_a&,
-                                          seqan3::detail::test_core_concepts::type_c&>);
+static_assert(!seqan3::assignable_concept<seqan3::detail::test_core_concepts::type_a &,
+                                          seqan3::detail::test_core_concepts::type_c &>);
 
 // Check swappable_concept
-static_assert(seqan3::swappable_concept<seqan3::detail::test_core_concepts::type_a&,
-                                        seqan3::detail::test_core_concepts::type_a&>);
-static_assert(!seqan3::swappable_concept<seqan3::detail::test_core_concepts::type_b,
-                                         seqan3::detail::test_core_concepts::type_c>);
+static_assert(seqan3::swappable_concept<seqan3::detail::test_core_concepts::type_a &,
+                                        seqan3::detail::test_core_concepts::type_a &>);
+static_assert(
+  !seqan3::swappable_concept<seqan3::detail::test_core_concepts::type_b, seqan3::detail::test_core_concepts::type_c>);
 
 // Check semi_regular_concept
 static_assert(seqan3::semi_regular_concept<seqan3::detail::test_core_concepts::type_a>);
@@ -289,24 +288,36 @@ static_assert(seqan3::regular_concept<seqan3::detail::test_core_concepts::type_c
 static_assert(!seqan3::regular_concept<seqan3::detail::test_core_concepts::type_d>);
 
 // Check invocable_concept
-static_assert(!seqan3::invocable_concept<seqan3::detail::test_core_concepts::type_a, int, double,
+static_assert(!seqan3::invocable_concept<seqan3::detail::test_core_concepts::type_a,
+                                         int,
+                                         double,
                                          seqan3::detail::test_core_concepts::type_b>);
 static_assert(seqan3::invocable_concept<std::random_device>);
-static_assert(seqan3::invocable_concept<seqan3::detail::test_core_concepts::type_c, int, double,
+static_assert(seqan3::invocable_concept<seqan3::detail::test_core_concepts::type_c,
+                                        int,
+                                        double,
                                         seqan3::detail::test_core_concepts::type_b>);
 
 // Check regular_invocable_concept
-static_assert(!seqan3::regular_invocable_concept<seqan3::detail::test_core_concepts::type_a, int, double,
+static_assert(!seqan3::regular_invocable_concept<seqan3::detail::test_core_concepts::type_a,
+                                                 int,
+                                                 double,
                                                  seqan3::detail::test_core_concepts::type_b>);
 //TODO(rrahn): Should not meet the regular_invocable_concept
 //static_assert(!seqan3::regular_invocable_concept<std::random_device>);
-static_assert(seqan3::regular_invocable_concept<seqan3::detail::test_core_concepts::type_c, int, double,
+static_assert(seqan3::regular_invocable_concept<seqan3::detail::test_core_concepts::type_c,
+                                                int,
+                                                double,
                                                 seqan3::detail::test_core_concepts::type_b>);
 
 // Check predicate_concept
-static_assert(!seqan3::predicate_concept<seqan3::detail::test_core_concepts::type_c, int, double,
+static_assert(!seqan3::predicate_concept<seqan3::detail::test_core_concepts::type_c,
+                                         int,
+                                         double,
                                          seqan3::detail::test_core_concepts::type_b>);
-static_assert(seqan3::predicate_concept<seqan3::detail::test_core_concepts::type_b, int, double,
+static_assert(seqan3::predicate_concept<seqan3::detail::test_core_concepts::type_b,
+                                        int,
+                                        double,
                                         seqan3::detail::test_core_concepts::type_b>);
 
 // Check relation_concept

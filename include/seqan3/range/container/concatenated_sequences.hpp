@@ -129,26 +129,26 @@ namespace seqan3
  * a non-`const` member function at the same time).
  *
  */
-template <typename inner_type,
-          typename data_delimiters_type = std::vector<typename inner_type::size_type>>
+template <typename inner_type, typename data_delimiters_type = std::vector<typename inner_type::size_type>>
 //!\cond
-    requires reservable_sequence_concept<std::remove_reference_t<inner_type>> &&
-             reservable_sequence_concept<std::remove_reference_t<data_delimiters_type>> &&
-             std::is_same_v<ranges::size_type_t<inner_type>, ranges::value_type_t<data_delimiters_type>>
-//!\endcond
-class concatenated_sequences
+requires reservable_sequence_concept<std::remove_reference_t<inner_type>> &&
+  reservable_sequence_concept<std::remove_reference_t<data_delimiters_type>> &&
+    std::is_same_v<ranges::size_type_t<inner_type>, ranges::value_type_t<data_delimiters_type>>
+  //!\endcond
+  class concatenated_sequences
 {
     static_assert(!detail::sequence_concept_modified_by_const_iterator_bug<inner_type>,
                   "KNOWN BUG: inner_type = std::basic_string<> is not working "
                   "for the ubuntu::ppa version of gcc7, because of a faulty STL version. ");
-protected:
+
+  protected:
     //!\privatesection
     //!\brief Where the concatenation is stored.
     std::decay_t<inner_type> data_values;
     //!\brief Where the delimiters are stored; begins with 0, has size of size() + 1.
-    data_delimiters_type data_delimiters{0};
+    data_delimiters_type data_delimiters{ 0 };
 
-public:
+  public:
     //!\publicsection
     /*!\name Member types
      * \{
@@ -214,16 +214,15 @@ public:
      */
     template <typename rng_of_rng_type>
     concatenated_sequences(rng_of_rng_type && rng_of_rng)
-    //!\cond
-        requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
-                 compatible_concept<rng_of_rng_type, concatenated_sequences>
+      //!\cond
+      requires
+      input_range_concept<std::decay_t<rng_of_rng_type>> && compatible_concept<rng_of_rng_type, concatenated_sequences>
     //!\endcond
     {
         if constexpr (sized_range_concept<std::decay_t<rng_of_rng_type>>)
             data_delimiters.reserve(ranges::size(rng_of_rng) + 1);
 
-        for (auto && val : rng_of_rng)
-        {
+        for (auto && val : rng_of_rng) {
             data_values.insert(data_values.end(), val.begin(), val.end());
             data_delimiters.push_back(data_delimiters.back() + val.size());
         }
@@ -244,16 +243,15 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     template <typename rng_type>
-    concatenated_sequences(size_type const count, rng_type && value)
-    //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      concatenated_sequences(size_type const count, rng_type && value)
+      //!\cond
+      requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     //!\endcond
     {
         // TODO SEQAN_UNLIKELY
-        if (count == 0)
-            return;
+        if (count == 0) return;
 
         insert(cend(), count, std::forward<rng_type>(value));
     }
@@ -275,10 +273,10 @@ public:
      */
     template <typename begin_iterator_type, typename end_iterator_type>
     concatenated_sequences(begin_iterator_type begin_it, end_iterator_type end_it)
-    //!\cond
-        requires forward_iterator_concept<begin_iterator_type> &&
-                 compatible_concept<begin_iterator_type, concatenated_sequences>
-                 //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
+      //!\cond
+      requires
+      forward_iterator_concept<begin_iterator_type> && compatible_concept<begin_iterator_type, concatenated_sequences>
+    //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
         insert(cend(), begin_it, end_it);
@@ -297,11 +295,11 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     template <typename rng_type = value_type>
-    concatenated_sequences(std::initializer_list<rng_type> ilist)
-    //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      concatenated_sequences(std::initializer_list<rng_type> ilist)
+      //!\cond
+      requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
@@ -320,11 +318,11 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     template <typename rng_type>
-    concatenated_sequences & operator=(std::initializer_list<rng_type> ilist)
-    //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      concatenated_sequences & operator=(std::initializer_list<rng_type> ilist)
+      //!\cond
+      requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
@@ -346,12 +344,12 @@ public:
      */
     template <typename rng_of_rng_type>
     void assign(rng_of_rng_type && rng_of_rng)
-    //!\cond
-        requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
-                 compatible_concept<rng_of_rng_type, concatenated_sequences>
+      //!\cond
+      requires
+      input_range_concept<std::decay_t<rng_of_rng_type>> && compatible_concept<rng_of_rng_type, concatenated_sequences>
     //!\endcond
     {
-        concatenated_sequences rhs{std::forward<rng_of_rng_type>(rng_of_rng)};
+        concatenated_sequences rhs{ std::forward<rng_of_rng_type>(rng_of_rng) };
         swap(rhs);
     }
 
@@ -369,14 +367,14 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     template <typename rng_type>
-    void assign(size_type const count, rng_type && value)
-    //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      void assign(size_type const count, rng_type && value)
+      //!\cond
+      requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     //!\endcond
     {
-        concatenated_sequences rhs{count, value};
+        concatenated_sequences rhs{ count, value };
         swap(rhs);
     }
 
@@ -397,13 +395,13 @@ public:
      */
     template <typename begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
-    //!\cond
-        requires forward_iterator_concept<begin_iterator_type> &&
-                 compatible_concept<begin_iterator_type, concatenated_sequences>
-                 //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
+      //!\cond
+      requires
+      forward_iterator_concept<begin_iterator_type> && compatible_concept<begin_iterator_type, concatenated_sequences>
+    //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
-        concatenated_sequences rhs{begin_it, end_it};
+        concatenated_sequences rhs{ begin_it, end_it };
         swap(rhs);
     }
 
@@ -420,11 +418,11 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     template <typename rng_type = value_type>
-    void assign(std::initializer_list<rng_type> ilist)
-    //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      void assign(std::initializer_list<rng_type> ilist)
+      //!\cond
+      requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
@@ -448,22 +446,13 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator begin() noexcept
-    {
-        return iterator{*this};
-    }
+    iterator begin() noexcept { return iterator{ *this }; }
 
     //!\copydoc begin()
-    const_iterator begin() const noexcept
-    {
-        return const_iterator{*this};
-    }
+    const_iterator begin() const noexcept { return const_iterator{ *this }; }
 
     //!\copydoc begin()
-    const_iterator cbegin() const noexcept
-    {
-        return const_iterator{*this};
-    }
+    const_iterator cbegin() const noexcept { return const_iterator{ *this }; }
 
     /*!\brief Returns an iterator to the element following the last element of the container.
      * \returns Iterator to the first element.
@@ -478,22 +467,13 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator end() noexcept
-    {
-        return iterator{*this, size()};
-    }
+    iterator end() noexcept { return iterator{ *this, size() }; }
 
     //!\copydoc end()
-    const_iterator end() const noexcept
-    {
-        return const_iterator{*this, size()};
-    }
+    const_iterator end() const noexcept { return const_iterator{ *this, size() }; }
 
     //!\copydoc end()
-    const_iterator cend() const noexcept
-    {
-        return const_iterator{*this, size()};
-    }
+    const_iterator cend() const noexcept { return const_iterator{ *this, size() }; }
     //!\}
 
     /*!\name Element access
@@ -516,7 +496,7 @@ public:
     {
         //TODO add SEQAN_UNLIKELY
         if (i >= size())
-            throw std::out_of_range{"Trying to access element behind the last in concatenated_sequences."};
+            throw std::out_of_range{ "Trying to access element behind the last in concatenated_sequences." };
         return (*this)[i];
     }
 
@@ -525,7 +505,7 @@ public:
     {
         //TODO add SEQAN_UNLIKELY
         if (i >= size())
-            throw std::out_of_range{"Trying to access element behind the last in concatenated_sequences."};
+            throw std::out_of_range{ "Trying to access element behind the last in concatenated_sequences." };
         return (*this)[i];
     }
 
@@ -546,15 +526,14 @@ public:
     reference operator[](size_type const i)
     {
         assert(i < size());
-        return data_values | ranges::view::slice(data_delimiters[i], data_delimiters[i+1]);
+        return data_values | ranges::view::slice(data_delimiters[i], data_delimiters[i + 1]);
     }
 
     //!\copydoc operator[]()
     const_reference operator[](size_type const i) const
     {
         assert(i < size());
-        return data_values | ranges::view::slice(data_delimiters[i], data_delimiters[i+1])
-                           | ranges::view::const_;
+        return data_values | ranges::view::slice(data_delimiters[i], data_delimiters[i + 1]) | ranges::view::const_;
     }
 
     /*!\brief Return the first element as a view. Calling front on an empty container is undefined.
@@ -597,14 +576,14 @@ public:
     reference back()
     {
         assert(size() > 0);
-        return (*this)[size()-1];
+        return (*this)[size() - 1];
     }
 
     //!\copydoc back()
     const_reference back() const
     {
         assert(size() > 0);
-        return (*this)[size()-1];
+        return (*this)[size() - 1];
     }
 
     /*!\brief Return the concatenation of all members.
@@ -621,10 +600,7 @@ public:
      *
      * Strong exception guarantee (never modifies data).
      */
-    reference concat()
-    {
-        return data_values | ranges::view::slice(static_cast<size_type>(0), concat_size());
-    }
+    reference concat() { return data_values | ranges::view::slice(static_cast<size_type>(0), concat_size()); }
 
     //!\copydoc concat()
     const_reference concat() const
@@ -637,15 +613,12 @@ public:
      *
      * This exact representation of the data is implementation defined. Do not rely on it for API stability.
      */
-    std::pair<decltype(data_values) &, decltype(data_delimiters) &> data()
-    {
-        return {data_values, data_delimiters};
-    }
+    std::pair<decltype(data_values) &, decltype(data_delimiters) &> data() { return { data_values, data_delimiters }; }
 
     //!\copydoc data()
     std::pair<decltype(data_values) const &, decltype(data_delimiters) const &> data() const
     {
-        return {std::as_const(data_values), std::as_const(data_delimiters)};
+        return { std::as_const(data_values), std::as_const(data_delimiters) };
     }
     //!\}
 
@@ -663,10 +636,7 @@ public:
      *
      * No-throw guarantee.
      */
-    bool empty() const noexcept
-    {
-        return size() == 0;
-    }
+    bool empty() const noexcept { return size() == 0; }
 
     /*!\brief Returns the number of elements in the container, i.e. std::distance(begin(), end()).
      * \returns The number of elements in the container.
@@ -679,10 +649,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type size() const noexcept
-    {
-        return data_delimiters.size() - 1;
-    }
+    size_type size() const noexcept { return data_delimiters.size() - 1; }
 
     /*!\brief Returns the maximum number of elements the container is able to hold due to system or library
      * implementation limitations, i.e. std::distance(begin(), end()) for the largest container.
@@ -698,10 +665,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type max_size() const noexcept
-    {
-        return data_delimiters.max_size() - 1;
-    }
+    size_type max_size() const noexcept { return data_delimiters.max_size() - 1; }
 
     /*!\brief Returns the number of elements that the container has currently allocated space for.
      * \returns The capacity of the currently allocated storage.
@@ -718,10 +682,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type capacity() const noexcept
-    {
-        return data_delimiters.capacity();
-    }
+    size_type capacity() const noexcept { return data_delimiters.capacity(); }
 
     /*!\brief Increase the capacity to a value that's greater or equal to new_cap.
      * \param new_cap The new capacity.
@@ -745,10 +706,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    void reserve(size_type const new_cap)
-    {
-        data_delimiters.reserve(new_cap + 1);
-    }
+    void reserve(size_type const new_cap) { data_delimiters.reserve(new_cap + 1); }
 
     /*!\brief Requests the removal of unused capacity.
      *
@@ -790,10 +748,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type concat_size() const noexcept
-    {
-        return data_values.size();
-    }
+    size_type concat_size() const noexcept { return data_values.size(); }
 
     /*!\brief Returns the concatenated size the container has currently allocated space for.
      * \returns The capacity of the currently allocated storage.
@@ -806,10 +761,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type concat_capacity() const noexcept
-    {
-        return data_values.capacity();
-    }
+    size_type concat_capacity() const noexcept { return data_values.capacity(); }
 
     /*!\brief Increase the concat_capacity() to a value that's greater or equal to new_cap.
      * \param new_cap The new capacity.
@@ -829,12 +781,8 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    void concat_reserve(size_type const new_cap)
-    {
-        data_values.reserve(new_cap);
-    }
+    void concat_reserve(size_type const new_cap) { data_values.reserve(new_cap); }
     //!\}
-
 
     /*!\name Modifiers
      * \{
@@ -886,10 +834,10 @@ public:
      * ```
      */
     template <typename rng_type>
-    iterator insert(const_iterator pos, rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      iterator insert(const_iterator pos,
+                      rng_type && value) requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     {
         return insert(pos, 1, std::forward<rng_type>(value));
     }
@@ -925,21 +873,19 @@ public:
      * std::cout << foobar[1] << '\n'; // [A, C, G, T]
      * ```
      */
-     template <typename rng_type>
-    iterator insert(const_iterator pos, size_type const count, rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    template <typename rng_type>
+      iterator insert(const_iterator pos,
+                      size_type const count,
+                      rng_type && value) requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
 
     {
         auto const pos_as_num = std::distance(cbegin(), pos); // we want to insert BEFORE this position
         // TODO SEQAN_UNLIKELY
-        if (count == 0)
-            return begin() + pos_as_num;
+        if (count == 0) return begin() + pos_as_num;
 
-        auto concatenated = ranges::view::repeat_n(value, count)
-                          | ranges::view::join
-                          | ranges::view::bounded;
+        auto concatenated = ranges::view::repeat_n(value, count) | ranges::view::join | ranges::view::bounded;
 
         // we could call insert(pos, concatenated.cbegin(), concatenated.cend()) here
         // if view::join didn't strip the view of its random access and sized properties
@@ -951,24 +897,20 @@ public:
             value_len = std::distance(ranges::begin(value), ranges::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
-        data_values.insert(data_values.cbegin() + data_delimiters[pos_as_num],
-                           ranges::begin(concatenated),
-                           ranges::end(concatenated));
+        data_values.insert(
+          data_values.cbegin() + data_delimiters[pos_as_num], ranges::begin(concatenated), ranges::end(concatenated));
 
         data_delimiters.reserve(data_values.size() + count);
-        data_delimiters.insert(data_delimiters.cbegin() + pos_as_num,
-                               count,
-                               *(data_delimiters.cbegin() + pos_as_num));
+        data_delimiters.insert(data_delimiters.cbegin() + pos_as_num, count, *(data_delimiters.cbegin() + pos_as_num));
 
         // adapt delimiters of inserted
-        for (size_type i = 0; i < count; ++i)
-            data_delimiters[pos_as_num + i + 1] += value_len * (i + 1);
+        for (size_type i = 0; i < count; ++i) data_delimiters[pos_as_num + i + 1] += value_len * (i + 1);
 
         // adapt delimiters after that
         // TODO parallel execution policy or vectorization?
         std::for_each(data_delimiters.begin() + pos_as_num + count + 1,
                       data_delimiters.end(),
-                      [full_len = value_len * count] (auto & d) { d += full_len; });
+                      [full_len = value_len * count](auto & d) { d += full_len; });
 
         return begin() + pos_as_num;
     }
@@ -999,29 +941,25 @@ public:
      */
     template <typename begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type first, end_iterator_type last)
-    //!\cond
-        requires forward_iterator_concept<begin_iterator_type> &&
-                 compatible_concept<begin_iterator_type, concatenated_sequences>
-                 //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
+      //!\cond
+      requires
+      forward_iterator_concept<begin_iterator_type> && compatible_concept<begin_iterator_type, concatenated_sequences>
+    //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
         // TODO SEQAN_UNLIKELY
-        if (last - first == 0)
-            return begin() + pos_as_num;
+        if (last - first == 0) return begin() + pos_as_num;
 
         auto const ilist = ranges::make_iterator_range(first, last, std::distance(first, last));
 
         data_delimiters.reserve(data_values.size() + ilist.size());
-        data_delimiters.insert(data_delimiters.cbegin() + pos_as_num,
-                               ilist.size(),
-                               *(data_delimiters.cbegin() + pos_as_num));
-
+        data_delimiters.insert(
+          data_delimiters.cbegin() + pos_as_num, ilist.size(), *(data_delimiters.cbegin() + pos_as_num));
 
         // adapt delimiters of inserted region
         size_type full_len = 0;
-        for (size_type i = 0; i < ilist.size(); ++i, ++first)
-        {
+        for (size_type i = 0; i < ilist.size(); ++i, ++first) {
             // constant for sized ranges and/or random access ranges, linear otherwise
             if constexpr (sized_range_concept<std::decay_t<decltype(*first)>>)
                 full_len += ranges::size(*first);
@@ -1034,15 +972,14 @@ public:
         // adapt values of inserted region
         auto concatenated = ilist | ranges::view::join | ranges::view::bounded;
         data_values.reserve(data_values.size() + full_len);
-        data_values.insert(data_values.cbegin() + data_delimiters[pos_as_num],
-                           ranges::begin(concatenated),
-                           ranges::end(concatenated));
+        data_values.insert(
+          data_values.cbegin() + data_delimiters[pos_as_num], ranges::begin(concatenated), ranges::end(concatenated));
 
         // adapt delimiters behind inserted region
         // TODO parallel execution policy or vectorization?
         std::for_each(data_delimiters.begin() + pos_as_num + ilist.size() + 1,
                       data_delimiters.end(),
-                      [full_len] (auto & d) { d += full_len; });
+                      [full_len](auto & d) { d += full_len; });
 
         return begin() + pos_as_num;
     }
@@ -1067,10 +1004,10 @@ public:
      * thrown.
      */
     template <typename rng_type>
-    iterator insert(const_iterator pos, std::initializer_list<rng_type> const & ilist)
+      iterator insert(const_iterator pos, std::initializer_list<rng_type> const & ilist)
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     {
         return insert(pos, ilist.begin(), ilist.end());
     }
@@ -1097,27 +1034,22 @@ public:
     {
         auto const dist = std::distance(cbegin(), last);
         // TODO SEQAN_UNLIKELY
-        if (last - first == 0)
-            return begin() + dist;
+        if (last - first == 0) return begin() + dist;
 
         auto const distf = std::distance(cbegin(), first);
 
         // we need to scan once over the input
-        size_type sum_size{0};
-        for (; first != last; ++first)
-            sum_size += ranges::size(*first);
+        size_type sum_size{ 0 };
+        for (; first != last; ++first) sum_size += ranges::size(*first);
 
-        data_values.erase(data_values.cbegin() + data_delimiters[distf],
-                          data_values.cbegin() + data_delimiters[dist]);
+        data_values.erase(data_values.cbegin() + data_delimiters[distf], data_values.cbegin() + data_delimiters[dist]);
 
-        data_delimiters.erase(data_delimiters.cbegin() + distf + 1,
-                              data_delimiters.cbegin() + dist + 1);
+        data_delimiters.erase(data_delimiters.cbegin() + distf + 1, data_delimiters.cbegin() + dist + 1);
 
         // adapt delimiters after that
         // TODO parallel execution policy or vectorization?
-        std::for_each(data_delimiters.begin() + distf + 1,
-                      data_delimiters.end(),
-                      [sum_size] (auto & d) { d -= sum_size; });
+        std::for_each(
+          data_delimiters.begin() + distf + 1, data_delimiters.end(), [sum_size](auto & d) { d -= sum_size; });
         return begin() + dist;
     }
 
@@ -1139,10 +1071,7 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      */
-    iterator erase(const_iterator pos)
-    {
-       return erase(pos, pos + 1);
-    }
+    iterator erase(const_iterator pos) { return erase(pos, pos + 1); }
 
     /*!\brief Appends the given element value to the end of the container.
      * \tparam rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with `value_type`.
@@ -1161,10 +1090,9 @@ public:
      * thrown.
      */
     template <typename rng_type>
-    void push_back(rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      void push_back(rng_type && value) requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     {
         data_values.insert(data_values.cend(), ranges::begin(value), ranges::end(value));
         data_delimiters.push_back(data_delimiters.back() + ranges::size(value));
@@ -1234,10 +1162,10 @@ public:
      * \copydetails resize()
      */
     template <typename rng_type>
-    void resize(size_type const count, rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+      void resize(size_type const count,
+                  rng_type && value) requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
+      std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
+      (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
     {
         assert(count < max_size());
         assert(concat_size() + count * ranges::size(value) < data_values.max_size());
@@ -1275,35 +1203,17 @@ public:
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(concatenated_sequences const & rhs) const noexcept
-    {
-        return data() == rhs.data();
-    }
+    constexpr bool operator==(concatenated_sequences const & rhs) const noexcept { return data() == rhs.data(); }
 
-    constexpr bool operator!=(concatenated_sequences const & rhs) const noexcept
-    {
-        return data() != rhs.data();
-    }
+    constexpr bool operator!=(concatenated_sequences const & rhs) const noexcept { return data() != rhs.data(); }
 
-    constexpr bool operator<(concatenated_sequences const & rhs) const noexcept
-    {
-        return data() < rhs.data();
-    }
+    constexpr bool operator<(concatenated_sequences const & rhs) const noexcept { return data() < rhs.data(); }
 
-    constexpr bool operator>(concatenated_sequences const & rhs) const noexcept
-    {
-        return data() > rhs.data();
-    }
+    constexpr bool operator>(concatenated_sequences const & rhs) const noexcept { return data() > rhs.data(); }
 
-    constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept
-    {
-        return data() <= rhs.data();
-    }
+    constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept { return data() <= rhs.data(); }
 
-    constexpr bool operator>=(concatenated_sequences const & rhs) const noexcept
-    {
-        return data() >= rhs.data();
-    }
+    constexpr bool operator>=(concatenated_sequences const & rhs) const noexcept { return data() >= rhs.data(); }
     //!\}
 
     /*!\cond DEV

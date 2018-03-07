@@ -47,10 +47,10 @@
 #pragma once
 
 #include <seqan3/alphabet/adaptation/all.hpp>
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/alphabet/structure/all.hpp>
-#include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/alphabet/composition/all.hpp>
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/gap/all.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/structure/all.hpp>

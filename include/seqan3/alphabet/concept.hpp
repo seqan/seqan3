@@ -44,9 +44,9 @@
 
 #include <iostream>
 
-#include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
+#include <seqan3/core/concept/cereal.hpp>
 
 namespace seqan3
 {
@@ -70,7 +70,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept bool semi_alphabet_concept = requires (t t1, t t2)
+concept bool semi_alphabet_concept = requires(t t1, t t2)
 {
     // STL concepts
     requires std::is_pod_v<t> == true;
@@ -81,19 +81,46 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
     alphabet_size_v<t>;
 
     // conversion to rank
-    { to_rank(t1) } -> underlying_rank_t<t>;
+    {
+        to_rank(t1)
+    }
+    ->underlying_rank_t<t>;
 
     // assignment from rank
-    { assign_rank(t1,  0) } -> t &;
-    { assign_rank(t{}, 0) } -> t &&;
+    {
+        assign_rank(t1, 0)
+    }
+    ->t &;
+    {
+        assign_rank(t{}, 0)
+    }
+    ->t &&;
 
     // required comparison operators
-    { t1 == t2 } -> bool;
-    { t1 != t2 } -> bool;
-    { t1 <  t2 } -> bool;
-    { t1 >  t2 } -> bool;
-    { t1 <= t2 } -> bool;
-    { t1 >= t2 } -> bool;
+    {
+        t1 == t2
+    }
+    ->bool;
+    {
+        t1 != t2
+    }
+    ->bool;
+    {
+        t1 < t2
+    }
+    ->bool;
+    {
+        t1 > t2
+    }
+    ->bool;
+    {
+        t1 <= t2
+    }
+    ->bool;
+    {
+        t1 >= t2
+    }
+    ->bool;
 };
 //!\endcond
 
@@ -110,17 +137,26 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
  */
 //!\cond
 template <typename t>
-concept bool alphabet_concept = requires (t t1, t t2)
+concept bool alphabet_concept = requires(t t1, t t2)
 {
     requires semi_alphabet_concept<t>;
 
     // conversion to char
-    { to_char(t1) } -> underlying_char_t<t>;
+    {
+        to_char(t1)
+    }
+    ->underlying_char_t<t>;
     { std::cout << t1 };
 
     // assignment from char
-    { assign_char(t1,  0) } -> t &;
-    { assign_char(t{}, 0) } -> t &&;
+    {
+        assign_char(t1, 0)
+    }
+    ->t &;
+    {
+        assign_char(t{}, 0)
+    }
+    ->t &&;
 };
 //!\endcond
 
@@ -166,9 +202,9 @@ template <cereal_input_archive_concept archive_t, typename wrapped_alphabet_t>
 void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
                                        wrapped_alphabet_t && l,
                                        underlying_rank_t<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>> const & r)
-    requires semi_alphabet_concept<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
+  requires semi_alphabet_concept<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
 {
-    assign_rank(static_cast<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>&&>(l), r);
+    assign_rank(static_cast<detail::strip_cereal_wrapper_t<wrapped_alphabet_t> &&>(l), r);
 }
 /*!\}
  * \endcond
