@@ -1,0 +1,1 @@
+seqan3_test(sequence_file_in_test.cpp)
