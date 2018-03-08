@@ -34,16 +34,18 @@
 // Author: Joerg Winkler <j.winkler AT fu-berlin.de>
 // ============================================================================
 
+//TODO rename to ...format_concept.hpp
+
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <string>
 #include <fstream>
+#include <tuple>
+#include <type_traits>
+#include <string>
 
-#if 0
-//TODO(rrahn): this is a prototype and needs more refinement, disabling for now
-//!\cond
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+
 namespace seqan3
 {
 
@@ -52,41 +54,39 @@ concept bool sequence_file_format_concept = requires (t v)
 {
     t::file_extensions;
 
-    {
-        v.read(dna4_string{},     // sequence
-               std::string{},     // meta
-               std::string{},     // quality
-               std::ifstream{},   // stream
-               options_type{})    // options
-    };
+    //TODO: this doesn't work yet, possibly can't use declval here
+//     {
+//         v.read(std::declval<std::tuple<dna4_vector, std::string>>(),
+//                std::declval<std::ifstream>(),   // stream
+//                int{})    // options
+//     } -> void;
 
-    {
-        v.write(dna4_string{},    // sequence
-                std::string{},    // meta
-                std::string{},    // quality
-                std::ofstream{},  // stream
-                options_type{})   // options
-    };
+//     {
+//         v.write(dna4_string{},    // sequence
+//                 std::string{},    // meta
+//                 std::string{},    // quality
+//                 std::ofstream{},  // stream
+//                 options_type{})   // options
+//     };
 
 };
 
-namespace detail
-{
-
-template <size_t index, typename variant_type>
-constexpr bool meets_concept_sequence_file_format()
-{
-    if constexpr (index == variant_size_v<variant_type>)
-        return true;
-    else if constexpr (!sequence_file_format_concept<variant_alternative_t<index, variant_type>>)
-        return false;
-    else
-        return meets_concept_sequence_file_format<index+1, variant_type>();
-}
-
-} // namespace detail
-
 } // namespace seqan3
 
-//!\endcond
-#endif
+namespace seqan3::detail
+{
+
+
+//TODO(h-2): a generic version, where we pass in the concept would be nice, but is not possible I fear
+template <typename variant_type, size_t index = 0>
+constexpr bool all_holdees_meets_sequence_file_format_concept()
+{
+    if constexpr (index == std::variant_size_v<variant_type>)
+        return true;
+    else if constexpr (!sequence_file_format_concept<std::variant_alternative_t<index, variant_type>>)
+        return false;
+    else
+        return all_holdees_meets_sequence_file_format_concept<variant_type, index + 1>();
+}
+
+} // namespace seqan3::detail
