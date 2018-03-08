@@ -48,7 +48,7 @@
 #include <stdlib.h>
 #endif
 
-#include <seqan3/core/filesystem.hpp>
+#include <seqan3/io/filesystem.hpp>
 
 namespace seqan3
 {

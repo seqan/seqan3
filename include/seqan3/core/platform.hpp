@@ -92,7 +92,7 @@
 // filesystem [required]
 #if !__has_include(<filesystem>)
 #   if !__has_include(<experimental/filesystem>)
-#      error SeqAn3 requires filesystem or experimental/filesystem lib
+#      error SeqAn3 requires C++17 filesystem support, but it was not found.
 #   endif
 #endif
 

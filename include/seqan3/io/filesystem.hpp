@@ -34,13 +34,16 @@
 
 /*!\file
  * \brief Filesystem checks.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Vitor C. Piro <pirov AT zedat.fu-berlin.de >
  */
 
+namespace seqan3
+{
 #if __has_include(<filesystem>)
 #include <filesystem>
-namespace seqan3::filesystem = std::filesystem;
+namespace filesystem = std::filesystem;
 #else
 #include <experimental/filesystem>
-namespace seqan3::filesystem = std::experimental::filesystem;
+namespace filesystem = std::experimental::filesystem;
 #endif // __has_include(experimental/filesystem)
+} // namespace seqan3
