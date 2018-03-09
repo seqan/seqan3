@@ -111,7 +111,7 @@ public:
     {
         if (f_name == nullptr)
             throw filesystem::filesystem_error("Empty file name!",
-                                        std::make_error_code(std::errc::invalid_argument));
+                  std::make_error_code(std::errc::invalid_argument));
 
         auto tmp_base_dir = filesystem::temp_directory_path();
         tmp_base_dir /= filesystem::path{"seqan_test_XXXXXXXX"};
@@ -126,8 +126,8 @@ public:
             return;
         }
         throw filesystem::filesystem_error("Could not create temporary directory with mkdtemp!",
-                                   tmp_base_dir,
-                                   std::make_error_code(std::errc::bad_file_descriptor));
+              tmp_base_dir,
+              std::make_error_code(std::errc::bad_file_descriptor));
     }
 
     /*!\brief Destructs the temporary file path.

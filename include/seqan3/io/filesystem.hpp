@@ -33,15 +33,19 @@
 // ============================================================================
 
 /*!\file
- * \brief Filesystem checks.
+ * \brief This header includes C++17 filesystem support and imports it into namespace seqan3::filesystem (independent of whether it is marked as "experimental").
  * \author Vitor C. Piro <pirov AT zedat.fu-berlin.de >
  */
+
+#pragma once
 
 #if __has_include(<filesystem>)
 #include <filesystem>
 #else
 #include <experimental/filesystem>
 #endif // __has_include(experimental/filesystem)
+
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {
