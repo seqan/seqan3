@@ -89,6 +89,13 @@
 #   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 
+// filesystem [required]
+#if !__has_include(<filesystem>)
+#   if !__has_include(<experimental/filesystem>)
+#      error SeqAn3 requires C++17 filesystem support, but it was not found.
+#   endif
+#endif
+
 // SDSL [required]
 // TODO (doesn't have a version.hpp, yet)
 

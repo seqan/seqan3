@@ -48,13 +48,7 @@
 #include <stdlib.h>
 #endif
 
-#if __has_include(<filesystem>)
-#include <filesystem>
-namespace fs = std::filesystem;
-#else
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#endif // __has_include(experimental/filesystem)
+#include <seqan3/io/filesystem.hpp>
 
 namespace seqan3
 {
@@ -116,11 +110,10 @@ public:
     explicit tmp_file_name(const char * f_name)
     {
         if (f_name == nullptr)
-            throw fs::filesystem_error("Empty file name!",
-                                        std::make_error_code(std::errc::invalid_argument));
+            throw filesystem::filesystem_error("Empty file name!", std::make_error_code(std::errc::invalid_argument)); 
 
-        auto tmp_base_dir = fs::temp_directory_path();
-        tmp_base_dir /= fs::path{"seqan_test_XXXXXXXX"};
+        auto tmp_base_dir = filesystem::temp_directory_path();
+        tmp_base_dir /= filesystem::path{"seqan_test_XXXXXXXX"};
         // We have to use mkdtemp, which is not deprecated. We place it into the dedicated tmp_dir
         // returned by temp_directory_path. Within this path we can safely create files, that would be
         // unique per test instance as the parent directory is.
@@ -128,12 +121,12 @@ public:
         if (char * f = mkdtemp(path_str.data()); f != nullptr)  // mkdtemp replaces XXXXXXXX in a safe and unique way.
         {
             file_path = f;
-            file_path /= fs::path{f_name};
+            file_path /= filesystem::path{f_name};
             return;
         }
-        throw fs::filesystem_error("Could not create temporary directory with mkdtemp!",
-                                   tmp_base_dir,
-                                   std::make_error_code(std::errc::bad_file_descriptor));
+        throw filesystem::filesystem_error("Could not create temporary directory with mkdtemp!",
+                                           tmp_base_dir,
+                                           std::make_error_code(std::errc::bad_file_descriptor));
     }
 
     /*!\brief Destructs the temporary file path.
@@ -142,21 +135,21 @@ public:
     ~tmp_file_name()
     {
         [[maybe_unused]] std::error_code ec;
-        fs::remove_all(file_path.parent_path(), ec);
+        filesystem::remove_all(file_path.parent_path(), ec);
     }
     //!\}
 
     /*!\brief Returns a const reference to the path object.
      * \returns std::filesystem::path containing the path of the file.
      */
-    fs::path const & get_path() const
+    filesystem::path const & get_path() const
     {
         return file_path;
     }
 
 private:
     //!\brief The object storing the path to the temporary file.
-    fs::path file_path{};
+    filesystem::path file_path{};
 };
 /// \endcond
 } // namespace test
