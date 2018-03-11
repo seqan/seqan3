@@ -34,7 +34,6 @@
 
 /*!\cond DEV
  * \file
- * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::detail::convert_through_char_representation.
  * \endcond

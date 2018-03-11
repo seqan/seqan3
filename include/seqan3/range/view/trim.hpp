@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::view::trim.
  */
@@ -63,7 +62,9 @@ struct trim_fn
     template <typename irng_t>
     auto operator()(irng_t && irange,
                     underlying_phred_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
+    //!\cond
         requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+    //!\endcond
     {
         return ranges::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
         {
@@ -79,7 +80,9 @@ struct trim_fn
     template <typename irng_t>
     auto operator()(irng_t && irange,
                     std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
+    //!\cond
         requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+    //!\endcond
     {
         return (*this)(std::forward<irng_t>(irange), to_phred(threshold));
     }
@@ -126,7 +129,9 @@ struct trim_fn
      */
     template <typename threshold_t>
     delegate<threshold_t> operator()(threshold_t const threshold) const
+    //!\cond
         requires std::is_integral_v<std::decay_t<threshold_t>> || quality_concept<std::decay_t<threshold_t>>
+    //!\endcond
     {
         return delegate<threshold_t>{threshold, *this};
         // this doesn't work here, see seqan3::detail::trim_fn::delegate.

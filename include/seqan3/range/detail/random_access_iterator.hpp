@@ -35,7 +35,6 @@
 /*!\file
  * \brief Provides the seqan3::detail::random_access_iterator class.
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
- * \ingroup range
  */
 
 #pragma once

@@ -48,16 +48,19 @@ namespace seqan3
  */
 struct illumina18
 {
-    //! the 3 representation types of a quality score
+    //! the PHRED representation type of a quality score
     using phred_type = int8_t;
+    //! the rank representation type of a quality score
     using rank_type = uint8_t;
+    //! the char representation type of a quality score
     using char_type = char;
 
     //! internal rank value representation
     rank_type value;
 
-    //! projection offsets of char and rank quality score
+    //! projection offset of a char quality score
     static constexpr char_type offset_char{'!'};
+    //! projection offsets of a phred quality score
     static constexpr phred_type offset_phred{0};
 
     //! implicit compatibility to inner_type
@@ -67,7 +70,8 @@ struct illumina18
         return *this;
     }
 
-    //! comparison operators
+    //!\name Comparison operators
+    //!\{
     constexpr bool operator==(const illumina18 & rhs) const
     {
         return this->value == rhs.value;
@@ -97,6 +101,7 @@ struct illumina18
     {
         return this->value >= rhs.value;
     }
+    //!\}
 
     //! explicit compatibility to char code of a quality score
     explicit constexpr operator char() const
@@ -166,11 +171,3 @@ protected:
 };
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality/concept.hpp>
-static_assert(seqan3::alphabet_concept<seqan3::illumina18>);
-static_assert(seqan3::quality_concept<seqan3::illumina18>);
-static_assert(seqan3::detail::internal_quality_concept<seqan3::illumina18>);
-#endif

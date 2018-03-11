@@ -33,9 +33,20 @@
 // ==========================================================================
 
 #include <gtest/gtest.h>
-#include <sstream>
 
 #include <seqan3/alphabet/all.hpp>
+
+#if SEQAN3_WITH_CEREAL
+#include <seqan3/test/tmp_filename.hpp>
+
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/portable_binary.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/vector.hpp>
+#endif // SEQAN3_WITH_CEREAL
 
 using namespace seqan3;
 
@@ -44,18 +55,23 @@ class alphabet : public ::testing::Test
 {};
 
 // add all alphabets here
-using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
+using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         aa27,
                                         union_composition<dna4>,
                                         union_composition<dna4, gap>,
+                                        union_composition<dna5, dna5>,
                                         union_composition<dna4, dna5, gap>,
-                                        /*gap, */
+                                        union_composition<char, gap>,
+                                        gap,
                                         gapped<dna4>,
-                                        gapped<nucl16>,
+                                        gapped<dna15>,
                                         gapped<illumina18>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
-                                        illumina18, dna4q>;
+                                        illumina18, dna4q,
+                                        dot_bracket3, dssp9, wuss<>, wuss<65>,
+                                        structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
+                                        structured_aa<aa27, dssp9>>;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);
 
@@ -100,7 +116,9 @@ TYPED_TEST(alphabet, to_rank)
 
 TYPED_TEST(alphabet, copy_constructor)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    // the module operation ensures that the result is within the valid rank range;
+    // it will be in the most cases 1 except for alphabets like seqan3::gap where it will be 0
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
     assign_rank(t1, rank);
     TypeParam t2{t1};
@@ -111,7 +129,7 @@ TYPED_TEST(alphabet, copy_constructor)
 
 TYPED_TEST(alphabet, move_constructor)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -124,7 +142,7 @@ TYPED_TEST(alphabet, move_constructor)
 
 TYPED_TEST(alphabet, copy_assignment)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
     assign_rank(t1, rank);
     TypeParam t2;
@@ -134,7 +152,7 @@ TYPED_TEST(alphabet, copy_assignment)
 
 TYPED_TEST(alphabet, move_assignment)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -148,7 +166,7 @@ TYPED_TEST(alphabet, move_assignment)
 
 TYPED_TEST(alphabet, swap)
 {
-    constexpr underlying_rank_t<TypeParam> rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -162,7 +180,7 @@ TYPED_TEST(alphabet, swap)
 
 TYPED_TEST(alphabet, assign_char)
 {
-    using char_t = underlying_rank_t<TypeParam>;
+    using char_t = underlying_char_t<TypeParam>;
     TypeParam t0;
     for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
         assign_char(t0, i);
@@ -181,30 +199,27 @@ TYPED_TEST(alphabet, to_char)
 
 TYPED_TEST(alphabet, comparison_operators)
 {
+    TypeParam t0{};
+    TypeParam t1{};
+
+    assign_rank(t0, 0);
+    assign_rank(t1, 1 % alphabet_size_v<TypeParam>);
+
+    EXPECT_EQ(t0, t0);
+    EXPECT_LE(t0, t1);
+    EXPECT_LE(t1, t1);
+    EXPECT_EQ(t1, t1);
+    EXPECT_GE(t1, t1);
+    EXPECT_GE(t1, t0);
+
     if constexpr (alphabet_size_v<TypeParam> == 1)
     {
-        TypeParam t0{};
-        TypeParam t1{};
-        EXPECT_LE(t0, t1);
-        EXPECT_LE(t1, t1);
-        EXPECT_EQ(t1, t1);
-        EXPECT_GE(t1, t1);
-        EXPECT_GE(t1, t0);
+        EXPECT_EQ(t0, t1);
     }
     else
     {
-        TypeParam t0{};
-        TypeParam t1{};
-        assign_rank(t0, 0);
-        assign_rank(t1, 1);
-
         EXPECT_LT(t0, t1);
-        EXPECT_LE(t0, t1);
-        EXPECT_LE(t1, t1);
-        EXPECT_EQ(t1, t1);
         EXPECT_NE(t0, t1);
-        EXPECT_GE(t1, t1);
-        EXPECT_GE(t1, t0);
         EXPECT_GT(t1, t0);
     }
 }
@@ -213,6 +228,50 @@ TYPED_TEST(alphabet, concept)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
 }
+
+#if SEQAN3_WITH_CEREAL
+template <typename in_archive_t, typename out_archive_t, typename TypeParam>
+void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
+{
+    // Generate unique file name.
+    test::tmp_file_name filename{"alphabet_cereal_test"};
+    {
+        std::ofstream os{filename.get_path(), std::ios::binary};
+        out_archive_t oarchive{os};
+        oarchive(l);
+        oarchive(vec);
+    }
+
+    {
+        TypeParam in_l{};
+        std::vector<TypeParam> in_vec;
+
+        std::ifstream is{filename.get_path(), std::ios::binary};
+        in_archive_t iarchive{is};
+        iarchive(in_l);
+        iarchive(in_vec);
+        EXPECT_EQ(l, in_l);
+        EXPECT_EQ(vec, in_vec);
+    }
+}
+
+TYPED_TEST(alphabet, serialisation)
+{
+    TypeParam letter;
+
+    assign_rank(letter, 1 % alphabet_size_v<TypeParam>);
+
+    std::vector<TypeParam> vec;
+    vec.resize(10);
+    for (unsigned i = 0; i < 10; ++i)
+        assign_rank(vec[i], i % alphabet_size_v<TypeParam>);
+
+    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>(letter, vec);
+    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(letter, vec);
+    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>(letter, vec);
+    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>(letter, vec);
+}
+#endif // SEQAN3_WITH_CEREAL
 
 // ------------------------------------------------------------------
 // constexpr tests
@@ -223,7 +282,7 @@ class alphabet_constexpr : public ::testing::Test
 {};
 
 // add all alphabets here
-using alphabet_constexpr_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
+using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                                   /*aa27,*/
                                                   union_composition<dna4>,
                                                   union_composition<dna4, gap>,
@@ -231,7 +290,10 @@ using alphabet_constexpr_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16
                                                   char, char16_t, char32_t,
                                                   uint8_t, uint16_t, uint32_t,
                                                   /*gap, gapped<nucl16>, */
-                                                  illumina18, dna4q>;
+                                                  illumina18, dna4q,
+                                                  dot_bracket3, dssp9, wuss<>, wuss<65>,
+                                                  structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
+                                                  structured_aa<aa27, dssp9>>;
 
 TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 
@@ -262,13 +324,13 @@ TYPED_TEST(alphabet_constexpr, move_constructor)
 
 TYPED_TEST(alphabet_constexpr, assign_rank)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     [[maybe_unused]] constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
 }
 
 TYPED_TEST(alphabet_constexpr, to_rank)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
     constexpr bool b = (to_rank(t0) == rank);
     EXPECT_TRUE(b);
@@ -276,7 +338,7 @@ TYPED_TEST(alphabet_constexpr, to_rank)
 
 TYPED_TEST(alphabet_constexpr, copy_assignment)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr
@@ -292,7 +354,7 @@ TYPED_TEST(alphabet_constexpr, copy_assignment)
 
 TYPED_TEST(alphabet_constexpr, move_assignment)
 {
-    constexpr size_t rank = (alphabet_size_v<TypeParam> == 1) ? 0 : 1;
+    constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
     constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr

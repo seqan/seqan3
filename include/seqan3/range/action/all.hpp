@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup action
  * \brief Meta-header for the \link action action submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */

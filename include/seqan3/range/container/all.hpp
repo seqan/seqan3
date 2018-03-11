@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup container
  * \brief Meta-header for the \link container container submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */

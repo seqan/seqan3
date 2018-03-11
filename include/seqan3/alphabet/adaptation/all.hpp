@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup adaptation
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header for the adaptation submodule; includes all headers from alphabet/adaptation/.
  */
@@ -42,17 +41,7 @@
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/adaptation/concept.hpp> // has to be after
 
-/*!\defgroup adaptation
+/*!\defgroup adaptation Adaptation
  * \brief Contains alphabet adaptions of some standard char and uint types.
  * \ingroup alphabet
  */
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/concept.hpp>
-static_assert(seqan3::char_adaptation_concept<char>);
-static_assert(seqan3::char_adaptation_concept<char16_t>);
-static_assert(seqan3::char_adaptation_concept<char32_t>);
-static_assert(seqan3::uint_adaptation_concept<uint8_t>);
-static_assert(seqan3::uint_adaptation_concept<uint16_t>);
-static_assert(seqan3::uint_adaptation_concept<uint32_t>);
-#endif

@@ -75,6 +75,7 @@ template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
 struct underlying_phred
 {
+    //!\brief The forwarded phred type.
     using type = typename alphabet_type::phred_type;
 };
 

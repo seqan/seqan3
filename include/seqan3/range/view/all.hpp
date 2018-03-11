@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup view
  * \brief Meta-header for the \link view view submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -47,6 +46,7 @@
 #include <seqan3/range/view/rank_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
+#include <seqan3/range/view/translation.hpp>
 #include <seqan3/range/view/trim.hpp>
 
 /*!\defgroup view View

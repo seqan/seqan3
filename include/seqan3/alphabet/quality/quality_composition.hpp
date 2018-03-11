@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains quality alphabet compositions.
  */
@@ -176,10 +175,3 @@ quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
     -> quality_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
-static_assert(seqan3::nucleotide_concept<seqan3::quality_composition<seqan3::dna4, seqan3::illumina18>>);
-static_assert(seqan3::quality_concept<seqan3::quality_composition<seqan3::dna4, seqan3::illumina18>>);
-#endif

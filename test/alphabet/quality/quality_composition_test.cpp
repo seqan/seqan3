@@ -52,9 +52,7 @@ TEST(quality_composition, ctr)
 // aggregate initialization
 TEST(quality_composition, aggr)
 {
-    quality_composition<dna4, illumina18> t1;
-    quality_composition<dna4, illumina18> t2{dna4::C, 7};
-    EXPECT_NE(t1, t2);
+    [[maybe_unused]]  quality_composition<dna4, illumina18> t1{dna4::C, 7};
 }
 
 // zero initialization

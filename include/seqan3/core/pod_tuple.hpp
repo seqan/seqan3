@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup core
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains seqan3::pod_tuple
  */
@@ -129,12 +128,22 @@ struct pod_tuple
     //!\}
 };
 
+/*!\brief Recursion anchor for pod_tuple.
+ * \ingroup core
+ * \tparam type0 The value's type (every tuple must contain at least one type).
+ */
 template <typename type0>
 struct pod_tuple<type0>
 {
     static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
+    //!\cond DEV
+    //!\brief The first element as member.
     type0 _head;
+    //!\endcond
 
+    //!\name Comparison operators
+    //!\{
+    //!\brief Lexicographically compares the values in the tuple.
     constexpr bool operator==(pod_tuple const & rhs) const noexcept
     {
         return _head == rhs._head;
@@ -164,6 +173,7 @@ struct pod_tuple<type0>
     {
         return _head >= rhs._head;
     }
+    //!\}
 };
 
 #undef SEQAN_NOT_POD
