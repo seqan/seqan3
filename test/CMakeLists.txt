@@ -51,17 +51,6 @@ set (CMAKE_INCLUDE_PATH ${SEQAN3_ROOT}/include ${CMAKE_INCLUDE_PATH})
 set (CMAKE_PREFIX_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_PREFIX_PATH})
 set (CMAKE_MODULE_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_MODULE_PATH})
 
-# Auto-add dependencies if present in same dir (otherwise will be searched globally)
-foreach (_PATH
-         "${SEQAN3_ROOT}/range-v3/include/"
-         "${SEQAN3_ROOT}/sdsl-lite/include/"
-         "${SEQAN3_ROOT}/cereal/include/"
-         "${SEQAN3_ROOT}/lemon/include/")
-    if (EXISTS ${_PATH})
-        set (CMAKE_INCLUDE_PATH ${_PATH} ${CMAKE_INCLUDE_PATH})
-    endif ()
-endforeach ()
-
 include_directories (${CMAKE_INCLUDE_PATH})
 
 # ----------------------------------------------------------------------------
