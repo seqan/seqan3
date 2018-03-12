@@ -40,26 +40,11 @@ project(seqan3_benchmarks CXX)
 # ----------------------------------------------------------------------------
 
 # CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
-set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
-
-# SeqAn include
-set (CMAKE_INCLUDE_PATH ${SEQAN3_ROOT}/include ${CMAKE_INCLUDE_PATH})
+set (SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/../..")
 
 # SeqAn cmake module
 set (CMAKE_PREFIX_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_PREFIX_PATH})
 set (CMAKE_MODULE_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_MODULE_PATH})
-
-# Auto-add dependencies if present in same dir (otherwise will be searched globally)
-foreach (_PATH
-         "${SEQAN3_ROOT}/range-v3/include/"
-         "${SEQAN3_ROOT}/sdsl-lite/include/"
-         "${SEQAN3_ROOT}/cereal/include/")
-    if (EXISTS ${_PATH})
-        set (CMAKE_INCLUDE_PATH ${_PATH} ${CMAKE_INCLUDE_PATH})
-    endif ()
-endforeach ()
-
-include_directories (${CMAKE_INCLUDE_PATH})
 
 # ----------------------------------------------------------------------------
 # Load SeqAn module
@@ -68,7 +53,7 @@ include_directories (${CMAKE_INCLUDE_PATH})
 find_package (SeqAn3 REQUIRED)
 
 # add include dir of test directory for some global test utility functions.
-set (SEQAN3_INCLUDE_DIRS "${SEQAN3_INCLUDE_DIRS};${CMAKE_SOURCE_DIR}/include")
+set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/../include)
 
 # import package's information (libraries are added with targets below)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}")
