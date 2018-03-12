@@ -30,6 +30,14 @@ matrix:
     env:
       - BUILD=test
       - BUILD_TYPE=Debug
+  - << : *linux-gcc-7
+    env:
+      - BUILD=benchmark
+      - BUILD_TYPE=Release
+  - << : *linux-gcc-7
+    env:
+      - BUILD=benchmark
+      - BUILD_TYPE=Debug
 
 install:
   - ccache --version
@@ -40,7 +48,14 @@ before_script:
   - mkdir ../seqan3-build
   - cd ../seqan3-build
   - cmake ../seqan3/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-  - make googletest
+  - |
+    if test test = "${BUILD}"; then
+      make googletest
+    fi
+  - |
+    if test benchmark = "${BUILD}"; then
+      make google_benchmark
+    fi
 
 script:
   - make -k
