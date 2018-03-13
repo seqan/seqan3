@@ -98,6 +98,11 @@ TEST(view_translate_frames, standalone)
     // combinability
     auto v6 = vec | view::complement | view::translate_frames(translation_frames::WITH_REVERSE_COMPLEMENT);      // == [[C,M,H,A],[M,H,A,C]]
     EXPECT_EQ(std::vector<std::vector<aa27> >(v6), cmp5);
+
+    // combinability and function syntax
+    auto v7 = detail::view_translate(view::complement(vec), translation_frames::WITH_REVERSE_COMPLEMENT);                          // == [[T,Y,V,R],[Y,V,R,T]]
+    EXPECT_EQ(std::vector<std::vector<aa27> >(v7), cmp5);
+
 }
 
 TEST(view_translate_single, concepts)
@@ -127,6 +132,6 @@ TEST(view_translate_frames, concepts)
     EXPECT_TRUE(input_range_concept<decltype(v1)>);
     EXPECT_TRUE(forward_range_concept<decltype(v1)>);
     EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
-    EXPECT_TRUE(!sized_range_concept<decltype(v1)>);
+    EXPECT_TRUE(sized_range_concept<decltype(v1)>);
     EXPECT_TRUE(view_concept<decltype(v1)>);
 }

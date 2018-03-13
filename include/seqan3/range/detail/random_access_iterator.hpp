@@ -108,7 +108,7 @@ public:
     //!\brief Type for distances between iterators.
     using difference_type = typename range_type::difference_type; // TODO should be range_ but is broken in ranges
     //!\brief Value type of container elements.
-    using value_type = ranges::v3::value_type_t<range_type>;
+    using value_type = typename range_type::value_type;
     //!\brief Use reference type defined by container.
     using reference = std::conditional_t<std::is_const_v<range_type>,
                                          typename range_type::const_reference,
