@@ -130,8 +130,7 @@ macro(seqan3_benchmark target_cpp)
     # NOTE(marehr): ".+/benchmark/" REGEX is greedy, that means
     # /benchmark/benchmark/benchmark/hello_benchmark.cpp will result in an empty `benchmark_path`
     string(REGEX REPLACE "_benchmark.cpp$" "" target_name ${target_cpp})
-    string(REGEX REPLACE ".+/benchmark/" "" benchmark_path ${CMAKE_CURRENT_LIST_DIR})
-    string(REGEX REPLACE "/" "_" benchmark_path ${benchmark_path})
+    string(REGEX REPLACE ".+/test/" "" benchmark_path ${CMAKE_CURRENT_LIST_DIR})
     set(target "${target_name}_benchmark")
 
     add_executable(${target} ${target_cpp})
@@ -139,7 +138,7 @@ macro(seqan3_benchmark target_cpp)
     target_compile_definitions(${target} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_BENCHMARK_DEFINITIONS})
     target_include_directories(${target} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_BENCHMARK_INCLUDE_DIRS})
     target_link_libraries(${target} ${SEQAN3_LIBRARIES} ${SEQAN3_BENCHMARK_LIBRARIES})
-    add_test(NAME "${benchmark_path}_${target_name}" COMMAND ${target})
+    add_test(NAME "${benchmark_path}/${target}" COMMAND ${target})
     add_dependencies(${target} benchmark)
 
     unset(cxx_flags_list)
@@ -194,7 +193,6 @@ macro(seqan3_test target_cpp)
     # /test/test/test/hello_test.cpp will result in an empty `test_path`
     string(REGEX REPLACE "_test.cpp$" "" target_name ${target_cpp})
     string(REGEX REPLACE ".+/test/" "" test_path ${CMAKE_CURRENT_LIST_DIR})
-    string(REGEX REPLACE "/" "_" test_path ${test_path})
     set(target "${target_name}_test")
 
     add_executable(${target} ${target_cpp})
@@ -202,7 +200,7 @@ macro(seqan3_test target_cpp)
     target_compile_definitions(${target} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_TEST_DEFINITIONS})
     target_include_directories(${target} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_TEST_INCLUDE_DIRS})
     target_link_libraries(${target} ${SEQAN3_LIBRARIES} ${SEQAN3_TEST_LIBRARIES})
-    add_test(NAME "${test_path}_${target_name}" COMMAND ${target})
+    add_test(NAME "${test_path}/${target}" COMMAND ${target})
     add_dependencies(${target} gtest)
 
     unset(cxx_flags_list)
