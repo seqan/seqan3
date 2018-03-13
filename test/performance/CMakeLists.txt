@@ -33,7 +33,7 @@
 
 cmake_minimum_required (VERSION 3.2)
 
-project(seqan3_benchmarks CXX)
+project(seqan3_performance_test CXX)
 
 # ----------------------------------------------------------------------------
 # Define paths
@@ -123,12 +123,6 @@ macro(seqan3_benchmark target_cpp)
     target_link_libraries(${target_name}_benchmark "pthread" "benchmark")
     add_dependencies(${target_name}_benchmark benchmark)
 endmacro()
-
-# define all include folders
-include_directories("${BENCHMARK_ROOT}/include/")
-include_directories("${SEQAN3_ROOT}/include/")
-include_directories("${SEQAN3_ROOT}/range-v3/include/")
-include_directories("${SEQAN3_ROOT}/sdsl-lite/include/")
 
 # ----------------------------------------------------------------------------
 # Add the benchmarks

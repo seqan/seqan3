@@ -33,7 +33,7 @@
 
 cmake_minimum_required (VERSION 3.2)
 
-project (seqan3_tests CXX)
+project (seqan3_unit_tests CXX)
 
 include (ExternalProject)
 
