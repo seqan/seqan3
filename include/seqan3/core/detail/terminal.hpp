@@ -69,7 +69,7 @@ inline bool is_terminal()
 /*!\brief  Retrieve size of terminal.
  * \return The width of the current terminal in number of characters.
  *
- * \detail
+ * \details
  *
  * Note: Only works on Linux/Unix.
  * TIOCGWINSZ is the command (number) to trigger filling the winsize struct.
