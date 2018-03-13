@@ -1,0 +1,1 @@
+seqan3_test(structure_file_in_test.cpp)

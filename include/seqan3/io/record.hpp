@@ -67,6 +67,16 @@ enum class field
     QUAL,           //!< The qualities, usually in phred-score notation.
     SEQ_QUAL,       //!< Sequence and qualities combined in one range.
     // ...
+    BPP,            //!< Base pair probability matrix of interactions, usually a matrix of float numbers.
+    STRUCTURE,      //!< Fixed interactions, usually a string of structure alphabet characters.
+    STRUCTURED_SEQ, //!< Sequence and fixed interactions combined in one range.
+    ENERGY,         //!< Energy of a folded sequence, represented by one float number.
+    REACT,          //!< Reactivity values of the sequence characters given in a vector of float numbers.
+    REACT_ERR,      //!< Reactivity error values given in a vector corresponding to REACT.
+    COMMENT,        //!< Comment field of arbitrary content, usually a string.
+    OFFSET,         //!< Sequence start position, unsigned value.
+    ALIGN,          //!< The alignment
+    // ...
     USER_DEFINED_0, //!< Identifier for user defined file formats and specialisations.
     USER_DEFINED_1, //!< Identifier for user defined file formats and specialisations.
     USER_DEFINED_2, //!< Identifier for user defined file formats and specialisations.
