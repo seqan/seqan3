@@ -112,7 +112,7 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
 template <typename t>
 concept bool alphabet_concept = requires (t t1, t t2)
 {
-    requires semi_alphabet_concept<t>;
+    //requires semi_alphabet_concept<t>;
 
     // conversion to char
     { to_char(t1) } -> underlying_char_t<t>;
