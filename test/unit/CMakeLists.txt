@@ -46,7 +46,7 @@ set (SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/../../")
 
 # SeqAn cmake module
 set (CMAKE_PREFIX_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_PREFIX_PATH})
-set (CMAKE_MODULE_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_MODULE_PATH})
+# set (CMAKE_MODULE_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_MODULE_PATH})
 
 # ----------------------------------------------------------------------------
 # Load SeqAn module
@@ -54,59 +54,76 @@ set (CMAKE_MODULE_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_MODULE_PATH})
 
 find_package (SeqAn3 REQUIRED)
 
-# add include dir of test directory for some global test utility functions.
-set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/../include)
+include(../seqan3-test-config.cmake)
 
-# import package's information (libraries are added with targets below)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}")
-include_directories (${SEQAN3_INCLUDE_DIRS})
-add_definitions (${SEQAN3_DEFINITIONS})
-
-# add warning levels
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra")
+# # add include dir of test directory for some global test utility functions.
+# set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/../include)
+#
+# # import package's information (libraries are added with targets below)
+# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}")
+# include_directories (${SEQAN3_INCLUDE_DIRS})
+# add_definitions (${SEQAN3_DEFINITIONS})
+#
+# # add warning levels
+# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra")
 
 # ----------------------------------------------------------------------------
 # Use CCache if possible
 # ----------------------------------------------------------------------------
 
-find_program (CCACHE_PROGRAM ccache)
-# TODO(marehr): Once we require cmake>=3.4 use CMAKE_CXX_COMPILER_LAUNCHER instead
-# https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html
-if (CCACHE_PROGRAM)
-    set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-    set_property (GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
-endif (CCACHE_PROGRAM)
+# find_program (CCACHE_PROGRAM ccache)
+# # TODO(marehr): Once we require cmake>=3.4 use CMAKE_CXX_COMPILER_LAUNCHER instead
+# # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html
+# if (CCACHE_PROGRAM)
+#     set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+#     set_property (GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+# endif (CCACHE_PROGRAM)
+seqan3_require_ccache()
 
 # ----------------------------------------------------------------------------
 # Add GTest
 # ----------------------------------------------------------------------------
 
-enable_testing ()
+macro(seqan3_require_test)
+    ### set googletest
+    enable_testing()
 
-set (GOOGLETEST_ROOT "${PROJECT_BINARY_DIR}/vendor/googletest")
-include_directories ("${GOOGLETEST_ROOT}/googletest/include/")
+    set(google_test_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
+    list(APPEND google_test_args "-DBUILD_GTEST=1")
+    list(APPEND google_test_args "-DBUILD_GMOCK=0")
 
-# TODO(marehr): Once we require cmake>=3.4 add "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER};"
-# to CMAKE_ARGS
-ExternalProject_Add(
-    googletest
-    PREFIX googletest
-    GIT_REPOSITORY "https://github.com/google/googletest.git"
-    GIT_TAG "15392f1a38fa0b8c3f13a9732e94b209069efa1c"
-    SOURCE_DIR "${GOOGLETEST_ROOT}"
-    CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR};-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER};-DBUILD_GTEST=1;-DBUILD_GMOCK=0"
-    UPDATE_DISCONNECTED yes
-)
+    include(ExternalProject)
+    ExternalProject_Add(
+        googletest
+        PREFIX googletest
+        GIT_REPOSITORY "https://github.com/google/googletest.git"
+        GIT_TAG "15392f1a38fa0b8c3f13a9732e94b209069efa1c"
+        SOURCE_DIR "${SEQAN3_TEST_SRC_DIR}"
+        CMAKE_ARGS "${google_test_args}"
+        UPDATE_DISCONNECTED yes
+    )
+    unset(google_test_args)
 
-add_library (gtest_main STATIC IMPORTED)
-add_dependencies (gtest_main googletest)
-set_target_properties (gtest_main PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/lib/libgtest_main.a")
+    add_library (gtest_main STATIC IMPORTED)
+    add_dependencies(gtest_main googletest)
+    set_target_properties(gtest_main PROPERTIES IMPORTED_LOCATION
+        "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
-add_library (gtest STATIC IMPORTED)
-add_dependencies (gtest gtest_main)
-set_target_properties (gtest PROPERTIES IMPORTED_LOCATION "${PROJECT_BINARY_DIR}/lib/libgtest.a")
+    add_library (gtest STATIC IMPORTED)
+    add_dependencies(gtest gtest_main)
+    set_target_properties(gtest PROPERTIES IMPORTED_LOCATION
+        "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
+    list(APPEND SEQAN3_TEST_LIBRARIES "gtest_main")
+    list(APPEND SEQAN3_TEST_LIBRARIES "gtest")
+    list(APPEND SEQAN3_TEST_LIBRARIES "pthread")
+endmacro()
+
+seqan3_require_test()
 
 macro(seqan3_test target_cpp)
+    separate_arguments(cxx_flags_list UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
+
     # $target_cpp = "pod_tuple_test.cpp"
     #   * will register the global TARGET name "pod_tuple_test" and
     #   * will register the test case name "core_pod_tuple" if
@@ -117,29 +134,38 @@ macro(seqan3_test target_cpp)
     string(REGEX REPLACE "_test.cpp$" "" target_name ${target_cpp})
     string(REGEX REPLACE ".+/test/" "" test_path ${CMAKE_CURRENT_LIST_DIR})
     string(REGEX REPLACE "/" "_" test_path ${test_path})
+    set(target "${target_name}_test")
 
-    add_executable(${target_name}_test ${target_cpp})
-    target_link_libraries(${target_name}_test ${SEQAN3_LIBRARIES} "gtest" "gtest_main")
-    add_test(NAME "${test_path}_${target_name}" COMMAND ${target_name}_test)
-    add_dependencies(${target_name}_test gtest)
+    add_executable(${target} ${target_cpp})
+    target_compile_options(${target} PRIVATE ${cxx_flags_list} ${SEQAN3_TEST_CXX_FLAGS})
+    target_compile_definitions(${target} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_TEST_DEFINITIONS})
+    target_include_directories(${target} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_TEST_INCLUDE_DIRS})
+    target_link_libraries(${target} ${SEQAN3_LIBRARIES} ${SEQAN3_TEST_LIBRARIES})
+    add_test(NAME "${test_path}_${target_name}" COMMAND ${target})
+    add_dependencies(${target} gtest)
+
+    unset(cxx_flags_list)
+    unset(target_name)
+    unset(test_path)
+    unset(target)
 endmacro()
 
 # ----------------------------------------------------------------------------
 # Add the tests
 # ----------------------------------------------------------------------------
 
-macro (add_subdirectories)
-    file (GLOB ENTRIES
-          RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-          ${CMAKE_CURRENT_SOURCE_DIR}/[!.]*)
-
-    foreach (ENTRY ${ENTRIES})
-        if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
-            if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
-                add_subdirectory(${ENTRY})
-            endif ()
-        endif ()
-    endforeach ()
-endmacro ()
+# macro (add_subdirectories)
+#     file (GLOB ENTRIES
+#           RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+#           ${CMAKE_CURRENT_SOURCE_DIR}/[!.]*)
+#
+#     foreach (ENTRY ${ENTRIES})
+#         if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
+#             if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
+#                 add_subdirectory(${ENTRY})
+#             endif ()
+#         endif ()
+#     endforeach ()
+# endmacro ()
 
 add_subdirectories()
