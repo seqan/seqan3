@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::view::convert.
  */
@@ -48,20 +47,22 @@ namespace seqan3::view
 {
 
 /*!\brief A view that converts each element in the input range (implicitly or via `static_cast`).
- * \tparam out_t The type to convert to (must be given).
- * \param input_range The range you wish to convert, must satisfy seqan3::input_range_concept.
- * \returns A view with the value_type being `out_t`
- * \details
+ * \tparam irng_t The type of the range being processed. See below for requirements. [template parameter is omitted in pipe notation]
+ * \param irange The range being processed. [parameter is omitted in pipe notation]
+ * \returns A range of converted elements. See below for the properties of the returned range.
+ * \ingroup view
+ *
  * \par View properties
- * * view type: same input_range
- * * value type: out_t
- * * `const` iterable: yes
- * \par Complexity
- * Linear in the size if the input range (\f$O(n)\f$).
- * \par Exceptions
- * Strong exception guarantee (does not modify data).
- * \par Thread safety
- * Does not modify data.
+ *
+ * |                     | `irng_t` (range input type)   | `rrng_t` (range return type)                              |
+ * |---------------------|-------------------------------|-----------------------------------------------------------|
+ * | range               | seqan3::input_range_concept   | seqan3::view_concept + all range concepts met by `irng_t` |
+ * | `range_reference_t` | *convertible to* `out_t`      | `out_t`                                                   |
+ *
+ * * The input properties are **requirements** on the range input type.
+ * * The return properties are **guarantees** given on the range return type.
+ * * for more details, see \ref view.
+ *
  * \par Example
  *
  * Convert from `int` to `bool`:
@@ -79,9 +80,9 @@ namespace seqan3::view
  *   auto v3 = vec | view::convert<bool> | ranges::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
  * ```
  *
- * Convert from seqan3::nucl16 to seqan3::dna5:
+ * Convert from seqan3::dna15 to seqan3::dna5:
  * ```cpp
- *   nucl16_vector vec2{"ACYGTN"_nucl16};
+ *   dna15_vector vec2{"ACYGTN"_dna15};
  *   auto v4 = vec2 | view::convert<dna5>; // == "ACNGTN"_dna5
  * ```
  * \hideinitializer

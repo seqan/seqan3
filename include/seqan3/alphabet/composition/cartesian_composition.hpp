@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup composition
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Contains cartesian_composition.
  */

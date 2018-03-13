@@ -40,7 +40,6 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 
 /*!\file
- * \ingroup alphabet
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header that includes all headers from alphabet/quality/
  */

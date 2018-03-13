@@ -34,7 +34,6 @@
 
 /*!\file
  * \brief Adaptation of the view concept from the Ranges TS.
- * \ingroup view
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -45,15 +44,21 @@
 namespace seqan3
 {
 
-/*!\brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
+/*!\interface seqan3::view_concept <>
+ * \extends seqan3::range_concept
+ * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
+ * \ingroup view
+ * \sa \ref view
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
  */
+//!\cond
 template <typename type>
 concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+//!\endcond
 
 } // namespace seqan3
 
 #ifndef NDEBUG
 #include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_random_access_view<char>>);
+static_assert(seqan3::view_concept<ranges::any_view<char, ranges::category::random_access>>);
 #endif

@@ -1,1 +1,0 @@
-seqan3_test(container_of_container_test.cpp)

@@ -33,7 +33,6 @@
 // ============================================================================
 
 /*!\file
- * \ingroup core
  * \brief Meta-header for the \link core core module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>

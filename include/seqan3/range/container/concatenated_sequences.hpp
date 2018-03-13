@@ -34,7 +34,6 @@
 
 /*!\file
  * \brief Provides seqan3::concatenated_sequences.
- * \ingroup container
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -49,10 +48,15 @@
 #include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/slice.hpp>
 
+#include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/iterator.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/metafunction.hpp>
+
+#if SEQAN3_WITH_CEREAL
+#include <cereal/types/vector.hpp>
+#endif
 
 namespace seqan3
 {
@@ -61,6 +65,8 @@ namespace seqan3
  * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::reservable_sequence_concept.
  * \tparam data_delimiters_type A container that stores the begin/end positions in the inner_type. Must be
  * seqan3::reservable_sequence_concept and have inner_type's size_type as value_type.
+ * \implements seqan3::reservable_sequence_concept
+ * \ingroup container
  *
  * This class may be used whenever you would usually use `std::vector<std::vector<some_alphabet>>` or
  * `std::vector<std::string>`, i.e. whenever you have a collection of sequences. It is the spiritual successor of
@@ -131,6 +137,9 @@ template <typename inner_type,
 //!\endcond
 class concatenated_sequences
 {
+    static_assert(!detail::sequence_concept_modified_by_const_iterator_bug<inner_type>,
+                  "KNOWN BUG: inner_type = std::basic_string<> is not working "
+                  "for the ubuntu::ppa version of gcc7, because of a faulty STL version. ");
 protected:
     //!\privatesection
     //!\brief Where the concatenation is stored.
@@ -204,8 +213,10 @@ public:
      */
     template <typename rng_of_rng_type>
     concatenated_sequences(rng_of_rng_type && rng_of_rng)
+    //!\cond
         requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
                  compatible_concept<rng_of_rng_type, concatenated_sequences>
+    //!\endcond
     {
         if constexpr (sized_range_concept<std::decay_t<rng_of_rng_type>>)
             data_delimiters.reserve(ranges::size(rng_of_rng) + 1);
@@ -233,9 +244,11 @@ public:
      */
     template <typename rng_type>
     concatenated_sequences(size_type const count, rng_type && value)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         // TODO SEQAN_UNLIKELY
         if (count == 0)
@@ -284,9 +297,11 @@ public:
      */
     template <typename rng_type = value_type>
     concatenated_sequences(std::initializer_list<rng_type> ilist)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
     }
@@ -305,9 +320,11 @@ public:
      */
     template <typename rng_type>
     concatenated_sequences & operator=(std::initializer_list<rng_type> ilist)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
         return *this;
@@ -328,8 +345,10 @@ public:
      */
     template <typename rng_of_rng_type>
     void assign(rng_of_rng_type && rng_of_rng)
+    //!\cond
         requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
                  compatible_concept<rng_of_rng_type, concatenated_sequences>
+    //!\endcond
     {
         concatenated_sequences rhs{std::forward<rng_of_rng_type>(rng_of_rng)};
         swap(rhs);
@@ -350,9 +369,11 @@ public:
      */
     template <typename rng_type>
     void assign(size_type const count, rng_type && value)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         concatenated_sequences rhs{count, value};
         swap(rhs);
@@ -399,9 +420,11 @@ public:
      */
     template <typename rng_type = value_type>
     void assign(std::initializer_list<rng_type> ilist)
+    //!\cond
         requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
                  std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
                  (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+    //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
     }
@@ -1281,12 +1304,20 @@ public:
         return data() >= rhs.data();
     }
     //!\}
+
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive_concept.
+     * \param archive The archive being serialised from/to.
+     *
+     * \attention These functions are never called directly, see \ref serialisation for more details.
+     */
+    template <cereal_archive_concept archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
+    {
+        archive(data_values, data_delimiters);
+    }
+    //!\endcond
 };
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-static_assert(seqan3::reservable_sequence_concept<seqan3::concatenated_sequences<std::string>>);
-static_assert(seqan3::ra_sequence_of_ra_sequence_concept<seqan3::concatenated_sequences<std::string>>);
-static_assert(seqan3::forward_range_concept<seqan3::concatenated_sequences<std::string>>);
-#endif

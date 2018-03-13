@@ -41,7 +41,6 @@
 /*!\file
  * \brief Contains metaprogramming utilities for integer types.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup core
  */
 
 namespace seqan3::detail
@@ -54,6 +53,11 @@ using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
                           std::conditional_t<value <= 255ull,        uint8_t,
                           std::conditional_t<value <= 65535ull,      uint16_t,
                           std::conditional_t<value <= 4294967295ull, uint32_t, uint64_t>>>>;
+
+//!\brief Given a value, cast the value as the smallest unsigned integer that can hold it.
+//!\sa seqan3::min_viable_uint_t
+template <uint64_t value>
+constexpr auto min_viable_uint_v = static_cast<min_viable_uint_t<value>>(value);
 //!\endcond
 
 } // namespace seqan3::detail

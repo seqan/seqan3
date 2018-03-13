@@ -21,11 +21,12 @@ To include SeqAn3 in your app, you need the following:
 |                   | requirement                                          | version  | comment                                   |
 |-------------------|------------------------------------------------------|----------|-------------------------------------------|
 |**compiler**       | [GCC](http://gcc.gnu.org)                            | ≥ 7      | no other compiler is currently supported! |
-|**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                  |
+|**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                 |
 |**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      | succint datastructures                    |
-|                   | [Ranges-V3](https://github.com/ericniebler/range-v3) | == 0.3.0 | ranges and views                          |
-|                   | [Cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.2  | serialization                             |
-   
+|                   | [Ranges-V3](https://github.com/ericniebler/range-v3) | == 0.3.* | ranges and views                          |
+|**optional libs**  | [Cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | serialisation                             |
+|                   | [Lemon](http://lemon.cs.elte.hu)                     | ≥ 1.3.1  | graphs, required for MSA                  |
+
 ### Developers of the library
 
 To build the tests and API documentation, you also need:
@@ -33,7 +34,7 @@ To build the tests and API documentation, you also need:
 |                   | requirement                                          | version  |
 |-------------------|------------------------------------------------------|----------|
 |**build system**   | [cmake](https://cmake.org)                           | ≥ 3.4    |
-|**test system**    | [GoogleTest](https://github.com/google/googletest)   | ≥ 1.8    | 
+|**test system**    | [GoogleTest](https://github.com/google/googletest)   | ≥ 1.8    |
 |**doc system**     | [Doxygen](https://github.com/doxygen/doxygen)        | ≥ 1.8    |
 
 ## Using
@@ -55,14 +56,14 @@ g++-7 -std=c++17 -fconcepts -I /path/to/seqan3/include -I /path/to/seqan3/range-
 ### Recommended reading for (modern) C++
 
   * [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md)
-  
+
 ### Users of the library
 
   * [API documentation](https://seqan3-api.readthedocs.org)
   * [Manual and tutorials](https://seqan3-manual.readthedocs.org)
 
-  
+
 ### Developers of the library
 
   * [Github Wiki](https://github.com/seqan/seqan3/wiki)
-  
+

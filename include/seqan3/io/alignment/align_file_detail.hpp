@@ -4,6 +4,10 @@
 #include <variant>
 #include <vector>
 
+#if 0
+//TODO(rrahn): this is a prototype and needs more refinement, disabling for now
+//!\cond
+
 namespace seqan3::detail
 {
 
@@ -145,3 +149,6 @@ inline void align_file::select_format(std::string const & ext)
 }
 
 } // namespace seqan::detail
+
+//!\endcond
+#endif

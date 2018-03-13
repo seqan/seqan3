@@ -35,7 +35,6 @@
 /*!\file
  * \brief Provides various metafunctions used by the range module.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \ingroup range
  */
 
 #pragma once

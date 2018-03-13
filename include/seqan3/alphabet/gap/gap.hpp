@@ -33,7 +33,6 @@
 // ==========================================================================
 
 /*!\file
- * \ingroup gap
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
  * \brief Contains seqan3::gap.
@@ -99,7 +98,7 @@ struct gap
      */
     //!\brief Assign from a character (no-op, since gap has only one character).
     //!\param c not used, since gap has only one character
-    constexpr gap & assign_char(char_type const) noexcept
+    constexpr gap & assign_char([[maybe_unused]] char_type const c) noexcept
     {
         return *this;
     }
@@ -153,9 +152,5 @@ struct gap
 };
 
 constexpr gap gap::GAP{};
-
-#ifndef NDEBUG
-static_assert(alphabet_concept<gap>);
-#endif
 
 }

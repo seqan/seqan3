@@ -34,7 +34,6 @@
 
 /*!\file
  * \brief Adaptions of core concepts from the Ranges TS.
- * \ingroup core
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
