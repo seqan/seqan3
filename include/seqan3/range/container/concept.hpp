@@ -40,9 +40,13 @@
 #pragma once
 
 #include <initializer_list>
+#include <iterator>
+#include <type_traits>
 
 // remove if sequence_concept_modified_by_const_iterator_bug vanished from travis
 #include <string>
+
+#include <seqan3/std/concept/iterator.hpp>
 
 // TODO:
 // * merge sequence_concept_modified_by_const_iterator back into
@@ -143,16 +147,30 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool container_concept = requires (type val, type val2)
+concept bool container_concept = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
     typename type::reference;
     typename type::const_reference;
-    typename type::iterator; //TODO must satisfy forward_iterator_concept and convertible to const_interator
-    typename type::const_iterator; //TODO must satisfy forward_iterator_concept
+
+    typename type::iterator;
+    requires forward_iterator_concept<typename type::iterator>;
+    { it } -> typename type::const_iterator; // NOTE check whether iterator is const convertible
+
+    typename type::const_iterator;
+    requires forward_iterator_concept<typename type::const_iterator>;
+
     typename type::difference_type;
-    typename type::size_type; // TODO must be the same as iterator_traits::difference_type for iterator and const_iterator
+    typename type::size_type;
+    requires std::is_same_v<
+        typename type::difference_type,
+        typename std::iterator_traits<typename type::iterator>::difference_type
+    >;
+    requires std::is_same_v<
+        typename std::iterator_traits<typename type::iterator>::difference_type,
+        typename std::iterator_traits<typename type::const_iterator>::difference_type
+    >;
 
     // methods and operator
     { type{}          } -> type;   // default constructor
@@ -162,6 +180,8 @@ concept bool container_concept = requires (type val, type val2)
 
     { val.begin()     } -> typename type::iterator;
     { val.end()       } -> typename type::iterator;
+    { cval.begin()    } -> typename type::const_iterator;
+    { cval.end()      } -> typename type::const_iterator;
     { val.cbegin()    } -> typename type::const_iterator;
     { val.cend()      } -> typename type::const_iterator;
 
@@ -169,7 +189,8 @@ concept bool container_concept = requires (type val, type val2)
     { val != val2     } -> bool;
 
     { val.swap(val2)  } -> void;
-    { swap(val, val2) } -> void;
+    requires requires (type val, type val2) { { swap(val, val2) } -> void; } ||
+             requires (type val, type val2) { { std::swap(val, val2) } -> void };
 
     { val.size()      } -> typename type::size_type;
     { val.max_size()  } -> typename type::size_type;
@@ -191,7 +212,7 @@ concept bool container_concept = requires (type val, type val2)
  */
 //!\cond
 template <typename type>
-concept bool sequence_concept = requires (type val, type val2)
+concept bool sequence_concept = requires (type val, type val2, type const cval)
 {
     requires container_concept<type>;
 
@@ -207,7 +228,7 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.assign(typename type::size_type{}, typename type::value_type{}) };
 
     // modify container
-//TODO: how do you model this?
+    // TODO: how do you model this?
     // { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
 
     { val.insert(val.begin(), val2.front())                                            } -> typename type::iterator;
@@ -230,8 +251,12 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.clear()                                                                      } -> void;
 
     // access container
-    { val.front() } -> typename type::reference;
-    { val.back()  } -> typename type::reference;
+    { val.front()  } -> typename type::reference;
+    { val.front()  } -> typename type::const_reference;
+    { cval.front() } -> typename type::const_reference;
+    { val.back()   } -> typename type::reference;
+    { val.back()   } -> typename type::const_reference;
+    { cval.back()  } -> typename type::const_reference;
 };
 //!\endcond
 
