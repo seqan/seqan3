@@ -193,11 +193,3 @@ protected:
 };
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality/concept.hpp>
-static_assert(seqan3::alphabet_concept<seqan3::phred42>);
-static_assert(seqan3::quality_concept<seqan3::phred42>);
-static_assert(seqan3::detail::internal_quality_concept<seqan3::phred42>);
-#endif

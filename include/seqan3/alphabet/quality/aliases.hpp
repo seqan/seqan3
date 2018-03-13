@@ -47,11 +47,7 @@
 #include <seqan3/alphabet/quality/quality_composition.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/nucl16.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 namespace seqan3
 {
@@ -73,8 +69,3 @@ using dna15q = quality_composition<dna15, phred42>;
 
 //!\brief An alphabet that stores a seqan3::rna15 letter and an seqan3::illumina18 letter at each position.
 using rna15q = quality_composition<rna15, phred42>;
-
-#ifndef NDEBUG
-static_assert(seqan3::nucleotide_concept<seqan3::dna4q>);
-static_assert(sizeof(seqan3::dna4q) == sizeof(seqan3::dna4) + sizeof(seqan3::phred42));
-#endif

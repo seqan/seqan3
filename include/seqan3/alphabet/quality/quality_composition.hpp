@@ -175,10 +175,3 @@ quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
     -> quality_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
 
 } // namespace seqan3
-
-#ifndef NDEBUG
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
-static_assert(seqan3::nucleotide_concept<seqan3::quality_composition<seqan3::dna4, seqan3::phred42>>);
-static_assert(seqan3::quality_concept<seqan3::quality_composition<seqan3::dna4, seqan3::phred42>>);
-#endif
