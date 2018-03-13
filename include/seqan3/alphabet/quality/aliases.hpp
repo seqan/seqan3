@@ -47,7 +47,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/quality_composition.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
@@ -57,24 +57,24 @@
 namespace seqan3
 {
 
-//!\brief An alphabet that stores a seqan3::dna4 letter and an seqan3::illumina18 letter at each position.
-using dna4q = quality_composition<dna4, illumina18>;
+//!\brief An alphabet that stores a seqan3::dna4 letter and an seqan3::phred42 letter at each position.
+using dna4q = quality_composition<dna4, phred42>;
 
-//!\brief An alphabet that stores a seqan3::dna5 letter and an seqan3::illumina18 letter at each position.
-using dna5q = quality_composition<dna5, illumina18>;
+//!\brief An alphabet that stores a seqan3::dna5 letter and an seqan3::phred42 letter at each position.
+using dna5q = quality_composition<dna5, phred42>;
 
-//!\brief An alphabet that stores a seqan3::rna4 letter and an seqan3::illumina18 letter at each position.
-using rna4q = quality_composition<rna4, illumina18>;
+//!\brief An alphabet that stores a seqan3::rna4 letter and an seqan3::phred42 letter at each position.
+using rna4q = quality_composition<rna4, phred42>;
 
-//!\brief An alphabet that stores a seqan3::rna5 letter and an seqan3::illumina18 letter at each position.
-using rna5q = quality_composition<rna5, illumina18>;
+//!\brief An alphabet that stores a seqan3::rna5 letter and an seqan3::phred42 letter at each position.
+using rna5q = quality_composition<rna5, phred42>;
 
-//!\brief An alphabet that stores a seqan3::nucl16 letter and an seqan3::illumina18 letter at each position.
-using nucl16q = quality_composition<nucl16, illumina18>;
+//!\brief An alphabet that stores a seqan3::nucl16 letter and an seqan3::phred42 letter at each position.
+using nucl16q = quality_composition<nucl16, phred42>;
 
 } // namespace seqan3
 
 #ifndef NDEBUG
 static_assert(seqan3::nucleotide_concept<seqan3::dna4q>);
-static_assert(sizeof(seqan3::dna4q) == sizeof(seqan3::dna4) + sizeof(seqan3::illumina18));
+static_assert(sizeof(seqan3::dna4q) == sizeof(seqan3::dna4) + sizeof(seqan3::phred42));
 #endif

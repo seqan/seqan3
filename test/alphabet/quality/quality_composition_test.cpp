@@ -36,7 +36,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/quality_composition.hpp>
 
 using namespace seqan3;
@@ -46,22 +46,22 @@ using namespace seqan3;
 // default/zero construction
 TEST(quality_composition, ctr)
 {
-    [[maybe_unused]] quality_composition<dna4, illumina18> t1;
+    [[maybe_unused]] quality_composition<dna4, phred42> t1;
 }
 
 // aggregate initialization
 TEST(quality_composition, aggr)
 {
-    quality_composition<dna4, illumina18> t1;
-    quality_composition<dna4, illumina18> t2{dna4::C, 7};
+    quality_composition<dna4, phred42> t1;
+    quality_composition<dna4, phred42> t2{dna4::C, 7};
     EXPECT_NE(t1, t2);
 }
 
 // zero initialization
 TEST(quality_composition, zro)
 {
-    quality_composition<dna4, illumina18> t1{dna4::A, 0};
-    quality_composition<dna4, illumina18> t2{};
+    quality_composition<dna4, phred42> t1{dna4::A, 0};
+    quality_composition<dna4, phred42> t2{};
 
     EXPECT_EQ(t1, t2);
 }
@@ -69,9 +69,9 @@ TEST(quality_composition, zro)
 // copy construction
 TEST(quality_composition, cp_ctr)
 {
-    quality_composition<dna4, illumina18> t1{dna4::C, 7};
-    quality_composition<dna4, illumina18> t2{t1};
-    quality_composition<dna4, illumina18> t3(t1);
+    quality_composition<dna4, phred42> t1{dna4::C, 7};
+    quality_composition<dna4, phred42> t2{t1};
+    quality_composition<dna4, phred42> t3(t1);
     EXPECT_EQ(t1, t2);
     EXPECT_EQ(t2, t3);
 }
@@ -79,20 +79,20 @@ TEST(quality_composition, cp_ctr)
 // move construction
 TEST(quality_composition, mv_ctr)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
-    quality_composition<dna4, illumina18> t1{dna4::C, 7};
-    quality_composition<dna4, illumina18> t2{std::move(t1)};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t1{dna4::C, 7};
+    quality_composition<dna4, phred42> t2{std::move(t1)};
     EXPECT_EQ(t2, t0);
-    quality_composition<dna4, illumina18> t3(std::move(t2));
+    quality_composition<dna4, phred42> t3(std::move(t2));
     EXPECT_EQ(t3, t0);
 }
 
 // copy assignment
 TEST(quality_composition, cp_assgn)
 {
-    quality_composition<dna4, illumina18> t1{dna4::C, 7};
-    quality_composition<dna4, illumina18> t2;
-    quality_composition<dna4, illumina18> t3;
+    quality_composition<dna4, phred42> t1{dna4::C, 7};
+    quality_composition<dna4, phred42> t2;
+    quality_composition<dna4, phred42> t3;
 
     t2 = t1;
     t3 = t1;
@@ -103,10 +103,10 @@ TEST(quality_composition, cp_assgn)
 // move assignment
 TEST(quality_composition, mv_assgn)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
-    quality_composition<dna4, illumina18> t1{dna4::C, 7};
-    quality_composition<dna4, illumina18> t2;
-    quality_composition<dna4, illumina18> t3;
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t1{dna4::C, 7};
+    quality_composition<dna4, phred42> t2;
+    quality_composition<dna4, phred42> t3;
     t2 = std::move(t1);
     EXPECT_EQ(t2, t0);
     t3 = std::move(t2);
@@ -116,10 +116,10 @@ TEST(quality_composition, mv_assgn)
 // swap
 TEST(quality_composition, swap)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
-    quality_composition<dna4, illumina18> t1{dna4::C, 7};
-    quality_composition<dna4, illumina18> t2{};
-    quality_composition<dna4, illumina18> t3{};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t1{dna4::C, 7};
+    quality_composition<dna4, phred42> t2{};
+    quality_composition<dna4, phred42> t3{};
 
     std::swap(t1, t2);
     EXPECT_EQ(t2, t0);
@@ -129,99 +129,99 @@ TEST(quality_composition, swap)
 // get<1>
 TEST(quality_composition, get_i)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
 
     static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), dna4 &>);
-    static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), illumina18 &>);
+    static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), phred42 &>);
 
     EXPECT_EQ(seqan3::get<0>(t0), dna4::C);
-    EXPECT_EQ(seqan3::get<1>(t0), illumina18{7});
+    EXPECT_EQ(seqan3::get<1>(t0), phred42{7});
 }
 
 // std::get<1>
 TEST(quality_composition, stdget_i)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
 
     static_assert(std::is_same_v<decltype(std::get<0>(t0)), dna4 &>);
-    static_assert(std::is_same_v<decltype(std::get<1>(t0)), illumina18 &>);
+    static_assert(std::is_same_v<decltype(std::get<1>(t0)), phred42 &>);
 
     EXPECT_EQ(std::get<0>(t0), dna4::C);
-    EXPECT_EQ(std::get<1>(t0), illumina18{7});
+    EXPECT_EQ(std::get<1>(t0), phred42{7});
 }
 
 // structured bindings
 TEST(quality_composition, struct_binding)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
     auto [ i, l ] = t0;
 
     static_assert(std::is_same_v<decltype(i), dna4>);
-    static_assert(std::is_same_v<decltype(l), illumina18>);
+    static_assert(std::is_same_v<decltype(l), phred42>);
 
     EXPECT_EQ(i, dna4::C);
-    EXPECT_EQ(l, illumina18{7});
+    EXPECT_EQ(l, phred42{7});
 }
 
 // get<type>
 TEST(quality_composition, get_type)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
 
     EXPECT_EQ(seqan3::get<dna4>(t0), dna4::C);
-    EXPECT_EQ(seqan3::get<illumina18>(t0), illumina18{7});
+    EXPECT_EQ(seqan3::get<phred42>(t0), phred42{7});
 }
 
 // std::get<type>
 TEST(quality_composition, stdget_type)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
 
     EXPECT_EQ(std::get<dna4>(t0), dna4::C);
-    EXPECT_EQ(std::get<illumina18>(t0), illumina18{7});;
+    EXPECT_EQ(std::get<phred42>(t0), phred42{7});;
 }
 
 // std::tuple_element
 TEST(quality_composition, tuple_element)
 {
-    using pt = quality_composition<dna4, illumina18>;
+    using pt = quality_composition<dna4, phred42>;
 
     static_assert(std::is_same_v<std::tuple_element_t<0, pt>, dna4>);
-    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, illumina18>);
+    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, phred42>);
     static_assert(std::tuple_size_v<pt> == 2);
 }
 
 // type deduction
 TEST(quality_composition, type_deduce)
 {
-    quality_composition t0{dna4::C, illumina18{7}};
+    quality_composition t0{dna4::C, phred42{7}};
     using pt = decltype(t0);
 
     static_assert(std::is_same_v<std::tuple_element_t<0, pt>, dna4>);
-    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, illumina18>);
+    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, phred42>);
     static_assert(std::tuple_size_v<pt> == 2);
 }
 
 // explicit cast to element
 TEST(quality_composition, cast_to_element)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 7};
+    quality_composition<dna4, phred42> t0{dna4::C, 7};
 
     auto d = static_cast<dna4>(t0);
-    auto q = static_cast<illumina18>(t0);
+    auto q = static_cast<phred42>(t0);
     static_assert(std::is_same_v<decltype(d), dna4>);
-    static_assert(std::is_same_v<decltype(q), illumina18>);
+    static_assert(std::is_same_v<decltype(q), phred42>);
 
     EXPECT_EQ(d, dna4::C);
-    EXPECT_EQ(q, illumina18{7});
+    EXPECT_EQ(q, phred42{7});
 }
 
-// comparison operators illumina18 comparison broken?
+// comparison operators phred42 comparison broken?
 TEST(quality_composition, cmp)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 6};
-    quality_composition<dna4, illumina18> t1{dna4::C, 7};
-    quality_composition<dna4, illumina18> t2{dna4::G, 7};
+    quality_composition<dna4, phred42> t0{dna4::C, 6};
+    quality_composition<dna4, phred42> t1{dna4::C, 7};
+    quality_composition<dna4, phred42> t2{dna4::G, 7};
 
     EXPECT_LT(t0, t1);
     EXPECT_LE(t0, t1);
@@ -236,31 +236,31 @@ TEST(quality_composition, cmp)
 
 TEST(quality_composition, rank_type)
 {
-    EXPECT_TRUE((std::is_same_v<underlying_rank_t<quality_composition<dna4, illumina18>>,
+    EXPECT_TRUE((std::is_same_v<underlying_rank_t<quality_composition<dna4, phred42>>,
                                uint8_t>));
 }
 
 TEST(quality_composition, char_type)
 {
-    EXPECT_TRUE((std::is_same_v<underlying_char_t<quality_composition<dna4, illumina18>>,
+    EXPECT_TRUE((std::is_same_v<underlying_char_t<quality_composition<dna4, phred42>>,
                                underlying_char_t<dna4>>));
 }
 
 TEST(quality_composition, phred_type)
 {
-    EXPECT_TRUE((std::is_same_v<underlying_phred_t<quality_composition<dna4, illumina18>>,
-                               underlying_phred_t<illumina18>>));
+    EXPECT_TRUE((std::is_same_v<underlying_phred_t<quality_composition<dna4, phred42>>,
+                               underlying_phred_t<phred42>>));
 }
 
 TEST(quality_composition, alphabet_size_v)
 {
-    EXPECT_EQ((alphabet_size_v<quality_composition<dna4, illumina18>>),
-              (alphabet_size_v<dna4> * alphabet_size_v<illumina18>));
+    EXPECT_EQ((alphabet_size_v<quality_composition<dna4, phred42>>),
+              (alphabet_size_v<dna4> * alphabet_size_v<phred42>));
 }
 
 TEST(quality_composition, to_rank)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 6};
+    quality_composition<dna4, phred42> t0{dna4::C, 6};
     EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
     EXPECT_EQ(to_rank(std::get<1>(t0)), 6);
     EXPECT_EQ(to_rank(t0),
@@ -270,7 +270,7 @@ TEST(quality_composition, to_rank)
 
 TEST(quality_composition, assign_rank)
 {
-    using type = quality_composition<dna4, illumina18>;
+    using type = quality_composition<dna4, phred42>;
 
     type t0{};
 
@@ -283,7 +283,7 @@ TEST(quality_composition, assign_rank)
 
 TEST(quality_composition, to_char)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 6};
+    quality_composition<dna4, phred42> t0{dna4::C, 6};
     EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
     EXPECT_EQ(to_char(std::get<1>(t0)), '!' + 6);
     EXPECT_EQ(to_char(t0), 'C');
@@ -291,7 +291,7 @@ TEST(quality_composition, to_char)
 
 TEST(quality_composition, assign_char)
 {
-    using type = quality_composition<dna4, illumina18>;
+    using type = quality_composition<dna4, phred42>;
 
     type t0{dna4::C, 17};
     char qchar = to_char(std::get<1>(t0));
@@ -315,14 +315,14 @@ TEST(quality_composition, assign_char)
 
 TEST(quality_composition, to_phred)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 6};
+    quality_composition<dna4, phred42> t0{dna4::C, 6};
     EXPECT_EQ(to_phred(std::get<1>(t0)), 6);
     EXPECT_EQ(to_phred(t0), 6);
 }
 
 TEST(quality_composition, assign_phred)
 {
-    using type = quality_composition<dna4, illumina18>;
+    using type = quality_composition<dna4, phred42>;
 
     type t0{dna4::C, 17};
     char schar = to_char(t0);
@@ -337,7 +337,7 @@ TEST(quality_composition, assign_phred)
 
 TEST(quality_composition, outstream)
 {
-    quality_composition<dna4, illumina18> t0{dna4::C, 6};
+    quality_composition<dna4, phred42> t0{dna4::C, 6};
     std::stringstream s;
     s << t0;
     t0 = dna4::A;

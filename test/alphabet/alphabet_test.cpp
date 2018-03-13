@@ -52,10 +52,10 @@ using alphabet_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16,
                                         /*gap, */
                                         gapped<dna4>,
                                         gapped<nucl16>,
-                                        gapped<illumina18>,
+                                        gapped<phred42>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
-                                        illumina18, dna4q>;
+                                        phred42, dna4q>;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);
 
@@ -231,7 +231,7 @@ using alphabet_constexpr_types = ::testing::Types<dna4, dna5, rna4, rna5, nucl16
                                                   char, char16_t, char32_t,
                                                   uint8_t, uint16_t, uint32_t,
                                                   /*gap, gapped<nucl16>, */
-                                                  illumina18, dna4q>;
+                                                  phred42, dna4q>;
 
 TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 

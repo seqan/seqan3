@@ -66,7 +66,7 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~{.cpp}
  *
- * quality_composition<dna4, illumina18> l{dna4::A, 7};
+ * quality_composition<dna4, phred42> l{dna4::A, 7};
  * std::cout << int(to_rank(l)) << ' '
  *           << int(to_rank(get<0>(l))) << ' '
  *           << int(to_rank(get<1>(l))) << '\n';
@@ -179,7 +179,7 @@ quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
 
 #ifndef NDEBUG
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
-static_assert(seqan3::nucleotide_concept<seqan3::quality_composition<seqan3::dna4, seqan3::illumina18>>);
-static_assert(seqan3::quality_concept<seqan3::quality_composition<seqan3::dna4, seqan3::illumina18>>);
+#include <seqan3/alphabet/quality/phred42.hpp>
+static_assert(seqan3::nucleotide_concept<seqan3::quality_composition<seqan3::dna4, seqan3::phred42>>);
+static_assert(seqan3::quality_concept<seqan3::quality_composition<seqan3::dna4, seqan3::phred42>>);
 #endif
