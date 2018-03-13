@@ -1,4 +1,8 @@
 
+cmake_minimum_required (VERSION 3.2)
+
+find_package (SeqAn3 REQUIRED HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
+
 include(CheckCXXSourceCompiles)
 include(FindPackageHandleStandardArgs)
 include(FindPackageMessage)

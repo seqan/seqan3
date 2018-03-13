@@ -32,59 +32,11 @@
 # ============================================================================
 
 cmake_minimum_required (VERSION 3.2)
-
 project(seqan3_performance_test CXX)
-
-# ----------------------------------------------------------------------------
-# Define paths
-# ----------------------------------------------------------------------------
-
-# CMAKE_SOURCE_DIR is seqan3/test (the path of this CMakeLists.txt)
-set (SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/../..")
-
-# SeqAn cmake module
-set (CMAKE_PREFIX_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_PREFIX_PATH})
-# set (CMAKE_MODULE_PATH ${SEQAN3_ROOT}/build_system ${CMAKE_MODULE_PATH})
-
-# ----------------------------------------------------------------------------
-# Load SeqAn module
-# ----------------------------------------------------------------------------
-
-find_package (SeqAn3 REQUIRED)
 
 include(../seqan3-test-config.cmake)
 
-# add include dir of test directory for some global test utility functions.
-# set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/../include)
-
-# import package's information (libraries are added with targets below)
-# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}")
-# include_directories (${SEQAN3_INCLUDE_DIRS})
-# add_definitions (${SEQAN3_DEFINITIONS})
-
-# add warning levels
-# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra")
-
-# CMAKE_SOURCE_DIR is seqan3/benchmark (the path of this CMakeLists.txt)
-# set(SEQAN3_ROOT "${CMAKE_SOURCE_DIR}/..")
-# set(BENCHMARK_ROOT "${PROJECT_BINARY_DIR}/vendor/benchmark")
-
-# ----------------------------------------------------------------------------
-# Use CCache if possible
-# ----------------------------------------------------------------------------
-
-# find_program(CCACHE_PROGRAM ccache)
-# # TODO(marehr): Once we require cmake>=3.4 use CMAKE_CXX_COMPILER_LAUNCHER instead
-# # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html
-# if(CCACHE_PROGRAM)
-#     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-#     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
-# endif(CCACHE_PROGRAM)
 seqan3_require_ccache()
-
-# ----------------------------------------------------------------------------
-# Add google/benchmark
-# ----------------------------------------------------------------------------
 
 macro(seqan3_require_benchmark)
     # add each benchmark as "test case"
@@ -144,24 +96,5 @@ macro(seqan3_benchmark target_cpp)
     unset(benchmark_path)
     unset(target)
 endmacro()
-
-# ----------------------------------------------------------------------------
-# Add the benchmarks
-# ----------------------------------------------------------------------------
-
-# macro (add_subdirectories)
-#     file (GLOB ENTRIES
-#           RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-#           ${CMAKE_CURRENT_SOURCE_DIR}/[!.]*)
-#
-#     foreach (ENTRY ${ENTRIES})
-#         if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
-#             if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
-#                 add_subdirectory(${ENTRY})
-#             endif ()
-#         endif ()
-#     endforeach ()
-#     unset(ENTRIES)
-# endmacro ()
 
 add_subdirectories()
