@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -320,14 +320,26 @@ protected:
         {
             std::array<unsigned char, value_size> interaction_table{};
 
-            for (rank_type rnk = UNPAIRED.to_rank(); rnk <= UNPAIRED6.to_rank(); ++rnk)
+            for (rank_type rnk = static_cast<rank_type>(internal_type::UNPAIRED);
+                 rnk <= static_cast<rank_type>(internal_type::UNPAIRED6);
+                 ++rnk)
+            {
                 interaction_table[rnk] = 1;
+            }
 
-            for (rank_type rnk = PAIR_OPEN.to_rank(); rnk <= PAIR_OPEN3.to_rank(); ++rnk)
+            for (rank_type rnk = static_cast<rank_type>(internal_type::PAIR_OPEN);
+                 rnk <= static_cast<rank_type>(internal_type::PAIR_OPEN3);
+                 ++rnk)
+            {
                 interaction_table[rnk] = 2;
+            }
 
-            for (rank_type rnk = PAIR_CLOSE.to_rank(); rnk <= PAIR_CLOSE3.to_rank(); ++rnk)
+            for (rank_type rnk = static_cast<rank_type>(internal_type::PAIR_CLOSE);
+                 rnk <= static_cast<rank_type>(internal_type::PAIR_CLOSE3);
+                 ++rnk)
+            {
                 interaction_table[rnk] = 3;
+            }
 
             for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u)
             {
