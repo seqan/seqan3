@@ -128,16 +128,6 @@ include (CheckIncludeFileCXX)
 include (CheckCXXSourceCompiles)
 
 # ----------------------------------------------------------------------------
-# Options for CheckCXXSourceCompiles
-# ----------------------------------------------------------------------------
-
-# deactivate messages in check_*
-set (CMAKE_REQUIRED_QUIET       1)
-# use global variables in Check* calls
-set (CMAKE_REQUIRED_INCLUDES    ${CMAKE_INCLUDE_PATH})
-set (CMAKE_REQUIRED_FLAGS       ${CMAKE_CXX_FLAGS})
-
-# ----------------------------------------------------------------------------
 # Pretty printing and error handling
 # ----------------------------------------------------------------------------
 
@@ -157,6 +147,39 @@ macro (seqan3_config_error text)
         return ()
     endif ()
 endmacro ()
+
+# ----------------------------------------------------------------------------
+# Detect if we are a clone of repository and if yes auto-add submodules
+# ----------------------------------------------------------------------------
+
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/../build_system")
+    message (STATUS "  Detected as running from a repository checkout…")
+
+    if (IS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../include")
+        message (STATUS "  …adding SeqAn3 include:     ${CMAKE_CURRENT_LIST_DIR}/../include")
+        set (SEQAN3_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../include" ${SEQAN3_INCLUDE_DIRS})
+    endif ()
+
+    if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/../submodules")
+        file (GLOB submodules ${CMAKE_CURRENT_LIST_DIR}/../submodules/*/include)
+        foreach (submodule ${submodules})
+            if (IS_DIRECTORY ${submodule})
+                message (STATUS "  …adding submodule include:  ${submodule}")
+                set (SEQAN3_INCLUDE_DIRS ${submodule} ${SEQAN3_INCLUDE_DIRS})
+            endif ()
+        endforeach ()
+    endif ()
+endif ()
+
+# ----------------------------------------------------------------------------
+# Options for CheckCXXSourceCompiles
+# ----------------------------------------------------------------------------
+
+# deactivate messages in check_*
+set (CMAKE_REQUIRED_QUIET       1)
+# use global variables in Check* calls
+set (CMAKE_REQUIRED_INCLUDES    ${CMAKE_INCLUDE_PATH} ${SEQAN3_INCLUDE_DIRS})
+set (CMAKE_REQUIRED_FLAGS       ${CMAKE_CXX_FLAGS})
 
 # ----------------------------------------------------------------------------
 # Force-deactivate optional dependencies
@@ -471,7 +494,7 @@ endif ()
 # ----------------------------------------------------------------------------
 
 if (NOT SEQAN3_BASEDIR)
-    find_path (SEQAN3_BASEDIR "seqan3")
+    find_path (SEQAN3_BASEDIR "seqan3"  PATHS ${SEQAN3_INCLUDE_DIRS})
 endif ()
 
 mark_as_advanced (SEQAN3_BASEDIR)
