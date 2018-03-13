@@ -44,20 +44,17 @@ include(FindPackageMessage)
 set(SEQAN3_BENCHMARK_SRC_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
 set(SEQAN3_TEST_SRC_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
 
-if(SEQAN3_SRC_DIR)
-    find_package_message(SEQAN3_SRC_DIR "Found SEQAN3_SRC_DIR - ${SEQAN3_SRC_DIR}" "[${SEQAN3_SRC_DIR}]")
-endif()
-
 # required flags, includes, definitions and libraries for seqan3
 set(SEQAN3_STRICT_CXX_FLAGS "-pedantic" "-Werror" "-Wall" "-Wextra")
 
-# required flags, includes and libraries for seqan3/test/unit
+# required flags, includes and libraries for seqan3/test/performance
 set(SEQAN3_BENCHMARK_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
 set(SEQAN3_BENCHMARK_INCLUDE_DIRS "")
 set(SEQAN3_BENCHMARK_LIBRARIES "")
 list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_BENCHMARK_SRC_DIR}/include/")
+list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_SRC_DIR}/test/include/")
 
-# required flags, includes and libraries for seqan3/test
+# required flags, includes and libraries for seqan3/test/unit
 set(SEQAN3_TEST_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
 set(SEQAN3_TEST_INCLUDE_DIRS "")
 set(SEQAN3_TEST_LIBRARIES "")
@@ -96,7 +93,6 @@ macro(seqan3_require_ccache)
 endmacro()
 
 macro(seqan3_require_benchmark)
-    # add each benchmark as "test case"
     enable_testing()
 
     set(google_benchmark_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
