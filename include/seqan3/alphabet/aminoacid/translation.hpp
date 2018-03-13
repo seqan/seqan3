@@ -44,41 +44,8 @@
 #include <range/v3/view/any_view.hpp>
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/range/concept.hpp>
-
-namespace seqan3
-{
-/*!\brief Genetic codes used for translation of nucleotides into amino acids.
- *
- * \details
- * The numeric values of the enums correspond to the genbank transl_table values
- * (see http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi).
- */
-enum struct genetic_code : uint8_t
-{
-    CANONICAL=1,
-//     VERT_MITOCHONDRIAL,
-//     YEAST_MITOCHONDRIAL,
-//     MOLD_MITOCHONDRIAL,
-//     INVERT_MITOCHONDRIAL,
-//     CILIATE,
-//     FLATWORM_MITOCHONDRIAL = 9,
-//     EUPLOTID,
-//     PROKARYOTE,
-//     ALT_YEAST,
-//     ASCIDIAN_MITOCHONDRIAL,
-//     ALT_FLATWORM_MITOCHONDRIAL,
-//     BLEPHARISMA,
-//     CHLOROPHYCEAN_MITOCHONDRIAL,
-//     TREMATODE_MITOCHONDRIAL = 21,
-//     SCENEDESMUS_MITOCHONDRIAL,
-//     THRAUSTOCHYTRIUM_MITOCHONDRIAL,
-//     PTEROBRANCHIA_MITOCHONDRIAL,
-//     GRACILIBACTERIA
-};
-}
-
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
+#include <seqan3/range/concept.hpp>
 
 namespace seqan3
 {
