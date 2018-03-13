@@ -42,10 +42,11 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/action/all.hpp>
 #include <seqan3/range/container/all.hpp>
+#include <seqan3/range/decorator/all.hpp>
 #include <seqan3/range/view/all.hpp>
 
 /*!\defgroup range Range
- * \brief The range module contains containers, views and actions.
+ * \brief The range module contains containers, decorators, views and actions.
  *
  * *Ranges* are an abstraction of "a collection of items", or "something iterable". The most basic definition
  * requires only the existence of begin() and end() on the range. See range/concept.hpp for the different range
@@ -53,6 +54,11 @@
  *
  * *Containers* are ranges that own their elements. SeqAn3 makes use of standard STL containers like std::vector,
  * but also implements some custom containers. See range/container.hpp for more details.
+ *
+ * *Decorators* are ranges that offer the same interfaces as their underlying range
+ * but decorate/annotate them with special features, extensions or different
+ * runtime or memory efficiencies. The do not own the underlying range, but can
+ * contain members of their own.
  *
  * *Views* are "lazy range combinators" that provide operations on other ranges, e.g. containers, but do so on-demand,
  * i.e. views don't own elements, but return (mutated) elements on request. This is similar to how iterators can
