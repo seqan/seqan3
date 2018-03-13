@@ -46,7 +46,7 @@
 
 #include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/concept/iterator.hpp>
-#include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/detail/all.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/platform.hpp>
 
