@@ -82,6 +82,7 @@ namespace seqan3
 template <uint8_t SIZE = 51>
 struct wuss
 {
+
     // check alphabet size constraint
     static_assert(SIZE >= 15 && SIZE <= 67 && SIZE % 2 == 1);
 
@@ -90,6 +91,35 @@ struct wuss
     //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = uint8_t;
 
+protected:
+    //!\privatesection
+
+    /*!\brief The internal type is a strictly typed enum.
+     *
+     * This is done to prevent aggregate initialization from numbers and/or chars.
+     * It has the drawback that it also introduces a scope which in turn makes
+     * the static "letter values " members necessary.
+     */
+    enum struct internal_type : rank_type
+    {
+        UNPAIRED,    // not paired .
+        UNPAIRED1,   // not paired :
+        UNPAIRED2,   // not paired ,
+        UNPAIRED3,   // not paired -
+        UNPAIRED4,   // not paired _
+        UNPAIRED5,   // not paired ~
+        UNPAIRED6,   // not paired ;
+        PAIR_OPEN,   // bracket left <
+        PAIR_OPEN1,  // bracket left (
+        PAIR_OPEN2,  // bracket left [
+        PAIR_OPEN3,  // bracket left {
+        PAIR_CLOSE,  // bracket right >
+        PAIR_CLOSE1, // bracket right )
+        PAIR_CLOSE2, // bracket right ]
+        PAIR_CLOSE3  // bracket right }
+    };
+
+public:
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
      * \details Similar to an Enum interface. *Don't worry about the `internal_type`.*
@@ -98,37 +128,37 @@ struct wuss
     //!\{
 
     //!\brief `.` not paired (insertion to known structure)
-    static const wuss UNPAIRED;
+    static constexpr wuss UNPAIRED{internal_type::UNPAIRED};
     //!\brief `:` not paired (external residue outside structure)
-    static const wuss UNPAIRED1;
+    static constexpr wuss UNPAIRED1{internal_type::UNPAIRED1};
     //!\brief `,` not paired (multifurcation loop)
-    static const wuss UNPAIRED2;
+    static constexpr wuss UNPAIRED2{internal_type::UNPAIRED2};
     //!\brief `-` not paired (bulge, interior loop)
-    static const wuss UNPAIRED3;
+    static constexpr wuss UNPAIRED3{internal_type::UNPAIRED3};
     //!\brief `_` not paired (hairpin loop)
-    static const wuss UNPAIRED4;
+    static constexpr wuss UNPAIRED4{internal_type::UNPAIRED4};
     //!\brief `~` not paired (due to local alignment)
-    static const wuss UNPAIRED5;
+    static constexpr wuss UNPAIRED5{internal_type::UNPAIRED5};
     //!\brief `;` not paired
-    static const wuss UNPAIRED6;
+    static constexpr wuss UNPAIRED6{internal_type::UNPAIRED6};
 
     //!\brief `<` bracket left (simple terminal stem)
-    static const wuss PAIR_OPEN;
+    static constexpr wuss PAIR_OPEN{internal_type::PAIR_OPEN};
     //!\brief `(` bracket left (internal helix enclosing `<>`)
-    static const wuss PAIR_OPEN1;
+    static constexpr wuss PAIR_OPEN1{internal_type::PAIR_OPEN1};
     //!\brief `[` bracket left (internal helix enclosing `()`)
-    static const wuss PAIR_OPEN2;
+    static constexpr wuss PAIR_OPEN2{internal_type::PAIR_OPEN2};
     //!\brief `{` bracket left (internal helix enclosing `[]`)
-    static const wuss PAIR_OPEN3;
+    static constexpr wuss PAIR_OPEN3{internal_type::PAIR_OPEN3};
 
     //!\brief `>` bracket right (simple terminal stem)
-    static const wuss PAIR_CLOSE;
+    static constexpr wuss PAIR_CLOSE{internal_type::PAIR_CLOSE};
     //!\brief `)` bracket right (internal helix enclosing `<>`)
-    static const wuss PAIR_CLOSE1;
+    static constexpr wuss PAIR_CLOSE1{internal_type::PAIR_CLOSE1};
     //!\brief `]` bracket right (internal helix enclosing `()`)
-    static const wuss PAIR_CLOSE2;
+    static constexpr wuss PAIR_CLOSE2{internal_type::PAIR_CLOSE2};
     //!\brief `}` bracket right (internal helix enclosing `[]`)
-    static const wuss PAIR_CLOSE3;
+    static constexpr wuss PAIR_CLOSE3{internal_type::PAIR_CLOSE3};
     // pseudoknots not accessible
     //!\}
 
@@ -248,30 +278,6 @@ struct wuss
 
 protected:
     //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        UNPAIRED,    // not paired .
-        UNPAIRED1,   // not paired :
-        UNPAIRED2,   // not paired ,
-        UNPAIRED3,   // not paired -
-        UNPAIRED4,   // not paired _
-        UNPAIRED5,   // not paired ~
-        UNPAIRED6,   // not paired ;
-        PAIR_OPEN,   // bracket left <
-        PAIR_OPEN1,  // bracket left (
-        PAIR_OPEN2,  // bracket left [
-        PAIR_OPEN3,  // bracket left {
-        PAIR_CLOSE,  // bracket right >
-        PAIR_CLOSE1, // bracket right )
-        PAIR_CLOSE2, // bracket right ]
-        PAIR_CLOSE3  // bracket right }
-    };
 
     //!\brief Value-to-char conversion table.
     static constexpr std::array<char_type, value_size> value_to_char
@@ -345,51 +351,6 @@ public:
     internal_type _value;
     //!\publicsection
 };
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED{internal_type::UNPAIRED};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED1{internal_type::UNPAIRED1};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED2{internal_type::UNPAIRED2};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED3{internal_type::UNPAIRED3};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED4{internal_type::UNPAIRED4};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED5{internal_type::UNPAIRED5};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED6{internal_type::UNPAIRED6};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN{internal_type::PAIR_OPEN};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN1{internal_type::PAIR_OPEN1};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN2{internal_type::PAIR_OPEN2};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{internal_type::PAIR_OPEN3};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE{internal_type::PAIR_CLOSE};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE1{internal_type::PAIR_CLOSE1};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE2{internal_type::PAIR_CLOSE2};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE3{internal_type::PAIR_CLOSE3};
 
 //!\brief Alias for the default type wuss51.
 typedef wuss<51> wuss51;
