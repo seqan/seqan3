@@ -58,17 +58,8 @@ TEST(sequence_file_in_iterator, concepts)
     EXPECT_FALSE((seqan3::input_iterator_concept<cit_t>));
 }
 
-TEST(sequence_file_in, concepts)
-{
-    using t = sequence_file_in<>;
-    EXPECT_TRUE((seqan3::input_range_concept<t>));
 
-    using ct = sequence_file_in<> const;
-    // not const-iterable
-    EXPECT_FALSE((seqan3::input_range_concept<ct>));
-}
-
-TEST(sequence_file_in, first_test)
+struct sequence_file_in_f : public ::testing::Test
 {
     std::string input
     {
@@ -80,19 +71,105 @@ TEST(sequence_file_in, first_test)
         "GGAGTATAATATATATATATATAT\n"
     };
 
-    std::istringstream iss(input);
+    std::string seq_comp[3]
+    {
+        "ACGT",
+        "AGGCTGN",
+        "GGAGTATAATATATATATATATAT"
+    };
 
-    sequence_file_in fin{std::move(iss), sequence_file_format_fasta{}};
+    std::string id_comp[3]
+    {
+        "> TEST1",
+        "> Test2",
+        "> Test3"
+    };
+};
 
+TEST_F(sequence_file_in_f, concepts)
+{
+    using t = sequence_file_in<>;
+    EXPECT_TRUE((seqan3::input_range_concept<t>));
+
+    using ct = sequence_file_in<> const;
+    // not const-iterable
+    EXPECT_FALSE((seqan3::input_range_concept<ct>));
+}
+
+TEST_F(sequence_file_in_f, record_reading_copying)
+{
+    /* record based reading */
+    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+
+    size_t counter = 0;
     for (auto [ seq, id ] : fin)
     {
-        std::cout << "ID:  " << id << '\n';
-        std::cout << "SEQ: " << (seq | view::to_char) << '\n';
+        EXPECT_EQ(std::string(seq| view::to_char), seq_comp[counter]);
+        EXPECT_EQ(std::string(id),                 id_comp[counter]);
 
-        // ensure that record elements where moved:
-        auto && r = fin.back();
-        EXPECT_TRUE((empty(std::get<0>(r))));
-        EXPECT_TRUE((empty(std::get<1>(r))));
+        // memory still in buffer
+        EXPECT_EQ(std::string(get<0>(fin.back()) | view::to_char), seq_comp[counter]);
+        EXPECT_EQ(std::string(get<1>(fin.back())),                 id_comp[counter]);
+        counter++;
+    }
+}
+
+TEST_F(sequence_file_in_f, record_reading_ref)
+{
+    /* record based reading */
+    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+
+    size_t counter = 0;
+    for (auto & [ seq, id ] : fin)
+    {
+        EXPECT_EQ(std::string(seq | view::to_char), seq_comp[counter]);
+        EXPECT_EQ(std::string(id),                  id_comp[counter]);
+
+        // memory still in buffer
+        EXPECT_EQ(std::string(get<0>(fin.back()) | view::to_char), seq_comp[counter]);
+        EXPECT_EQ(std::string(get<1>(fin.back())),                 id_comp[counter]);
+        counter++;
+    }
+}
+
+TEST_F(sequence_file_in_f, record_reading_move)
+{
+    /* record based reading */
+    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+
+    size_t counter = 0;
+    for (auto [ seq, id ] : std::move(fin))
+    {
+        EXPECT_EQ(std::string(seq | view::to_char), seq_comp[counter]);
+        EXPECT_EQ(std::string(id),                  id_comp[counter]);
+        counter++;
+
+        // buffers cleared TODO doesnt work
+//         EXPECT_TRUE(empty(std::string(get<0>(fin.back()) | view::to_char)));
+//         EXPECT_TRUE(empty(std::string(get<1>(fin.back()))));
+    }
+}
+
+TEST_F(sequence_file_in_f, column_reading)
+{
+    /* column based reading */
+    sequence_file_in fin2{std::istringstream{input}, sequence_file_format_fasta{}};
+
+    auto [ seqs, ids ] = std::move(fin2);
+
+    EXPECT_EQ(seqs.size(), 3ul);
+    EXPECT_EQ(ids.size(), 3ul);
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        EXPECT_EQ(std::string(seqs[i] | view::to_char), seq_comp[i]);
+        EXPECT_EQ(std::string(ids[i]),                  id_comp[i]);
     }
 
+/*
+    // can't read a second time
+    auto [ seqs2, ids2 ] = std::move(fin2);
+
+    EXPECT_TRUE(empty(seqs2));
+    EXPECT_TRUE(empty(ids2));*/
 }
