@@ -60,23 +60,28 @@ template <typename file_type>
 class in_file_iterator
 {
 public:
+    /*!\name Member types
+     * \{
+     */
     //!\brief The value_type is the recored_type.
     using value_type = typename file_type::value_type;
     //!\brief The reference_type is an rvalue reference, because the record is always moved out..
-    using reference = typename file_type::reference;
+    using reference = std::conditional_t<std::is_const_v<file_type>,
+                                         typename file_type::const_reference,
+                                         typename file_type::reference>;
     //!\brief The const_reference type.
     using const_reference = typename file_type::const_reference;
     //!\brief An unsigned integer type, usually std::size_t.
     using size_type = typename file_type::size_type;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type = typename file_type::difference_type;
-
     //!\brief Tag this class as an input access iterator.
     using iterator_category = std::input_iterator_tag;
+    //!\}
 
-    /*!\name Constructors/Destructors
+    /*!\name Constructors, destructor and assignment.
      * \{
-    */
+     */
     //!\brief Default constructor.
     constexpr in_file_iterator() = default;
     //!\brief Construct by host, default position pointer with 0.
@@ -123,14 +128,18 @@ public:
         return cpy;
      }
 
-     template <typename = std::enable_if_t<!std::is_const_v<file_type>>>
-     reference operator*() const noexcept
-     {
-         return std::move(host->back());
-     }
+    reference operator*() noexcept
+    {
+        return host->back();
+    }
+
+    const_reference operator*() const noexcept
+    {
+        return host->back();
+    }
 
     /*!\name Comparison operators
-     * \brief Compares only the absolute position of two iterators.
+     * \brief Only (in-)equality comparison of iterator with end() is supported.
      * \{
      */
     constexpr bool operator==(in_file_sentinel<file_type> const &) const noexcept
