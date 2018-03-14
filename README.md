@@ -48,7 +48,7 @@ git clone --recursive https://github.com/seqan/seqan3.git
 SeqAn3 is still a header-only library so it is sufficient to add the `include` folder to your include path. When building make sure that you add the required parameters:
 
 ```sh
-g++-7 -std=c++17 -fconcepts -I /path/to/seqan3/include -I /path/to/seqan3/range-v3/include -I /path/to/seqan3/sdsl-lite/include myfile.cpp
+g++-7 -std=c++17 -fconcepts -I /path/to/seqan3/include -I /path/to/seqan3/submodules/range-v3/include -I /path/to/seqan3/submodules/sdsl-lite/include myfile.cpp
 ```
 
 ## Documentation
