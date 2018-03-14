@@ -66,8 +66,6 @@ set(SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "")
 list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
 list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}")
-# force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
-list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
 macro(seqan3_require_ccache)
     find_program(CCACHE_PROGRAM ccache)
@@ -154,6 +152,9 @@ macro(seqan3_require_test)
     set(google_test_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
     list(APPEND google_test_args "-DBUILD_GTEST=1")
     list(APPEND google_test_args "-DBUILD_GMOCK=0")
+
+    # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
+    list(APPEND google_test_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
     include(ExternalProject)
     ExternalProject_Add(
