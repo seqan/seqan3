@@ -110,10 +110,11 @@ macro(seqan3_require_benchmark)
     )
     unset(google_benchmark_args)
 
+    set(benchmark_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
     add_library (benchmark STATIC IMPORTED)
     add_dependencies(benchmark google_benchmark)
-    set_target_properties(benchmark PROPERTIES IMPORTED_LOCATION
-        "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set_target_properties(benchmark PROPERTIES IMPORTED_LOCATION "${benchmark_library}")
 
     list(APPEND SEQAN3_BENCHMARK_LIBRARIES "benchmark")
     list(APPEND SEQAN3_BENCHMARK_LIBRARIES "pthread")
@@ -166,15 +167,24 @@ macro(seqan3_require_test)
     )
     unset(google_test_args)
 
+    # google sets CMAKE_DEBUG_POSTFIX = "d"
+    set(gtest_main_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(gtest_main_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_maind${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endif()
+
     add_library (gtest_main STATIC IMPORTED)
     add_dependencies(gtest_main googletest)
-    set_target_properties(gtest_main PROPERTIES IMPORTED_LOCATION
-        "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set_target_properties(gtest_main PROPERTIES IMPORTED_LOCATION "${gtest_main_library}")
+
+    set(gtest_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(gtest_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endif()
 
     add_library (gtest STATIC IMPORTED)
     add_dependencies(gtest gtest_main)
-    set_target_properties(gtest PROPERTIES IMPORTED_LOCATION
-        "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${gtest_library}")
 
     list(APPEND SEQAN3_TEST_LIBRARIES "gtest_main")
     list(APPEND SEQAN3_TEST_LIBRARIES "gtest")
