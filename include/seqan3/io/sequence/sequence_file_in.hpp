@@ -45,18 +45,48 @@
 #include <variant>
 #include <vector>
 
+#include <seqan3/io/record.hpp>
 #include <seqan3/io/sequence/sequence_file_traits.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/sequence/sequence_file_format.hpp>
 #include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
 
+
+namespace seqan3::detail
+{
+
+// template <typename type>
+// concept bool sequence_file_in_valid_fields = requires (type const & val)
+// {
+//     for (field f : type::as_array)
+//         require (f == field::SEQ || f == field::ID || f == field::QUAL || f == field::SEQ_QUAL);
+// };
+
+// template <typename tup_t = std::tuple<>, size_t field_no = 0, typename ...types, field ...fs>
+// constexpr auto generate_record_type(meta::list<types...> const &, fields<fs...> const &)
+// {
+//     if constexpr (field_no == ffields<fs...>::as_array.size())
+//         return tup_t{};
+//
+//     using new_tup_t = decltype(std::tuple_cat(tup{},
+//                                               std::tuple<meta::at<meta::list<types...>,
+//                                                                   static_cast<size_t>(fields<fs...>::as_array[field_no])>{}));
+//     return generate_record_type<new_tup_t, field_no++>(
+// }
+//
+
+
+}
+
 namespace seqan3
 {
 
 /*!\brief A class for reading sequence files, e.g. FASTA, FASTQ ...
+ * \ingroup io
  * \tparam traits_type An auxiliary type that defines certain member type and constants, must satisfy
  * seqan3::sequence_file_traits_concept.
  * \tparam stream_type The type of the stream, must satisfy seqan3::istream_concept.
+ * \tparam selected_fields A \ref fields type with the list and order of desired record entries.
  *
  * \details
  *
@@ -66,11 +96,18 @@ namespace seqan3
  *
  * ### Introduction
  *
- * TODO: Explain the fields and the options.
+ * Sequence files are the most generic and common biological files. Well-known formats include
+ * FastA and FastQ, but some may also be interested in treating SAM or BAM files as sequence
+ * files, discarding the alignment.
+ *
+ * The Sequence file abstraction provides two fields: seqan3::field::SEQ and seqan3::field::ID.
+ *
+ * By default the SEQ field is retrieved as a vector over seqan3::qualified <seqan3::dna5>, i.e.
+ * the sequence combines qualities and actual sequence in one. You can later drop the qualities if
+ * you are not interested in them, or specify a custom traits type to change the underlying
+ * alphabet of the sequence field so they are never returned.
  *
  * ### Construction and specialisation
- *
- * TODO explain automatic template parameter deduction, give example of how to read AA
  *
  * This class comes with two constructors, one for construction from a file name and one for construction from
  * an existing stream and a known format. The first one automatically picks the format based on the extension
@@ -154,10 +191,9 @@ namespace seqan3
  *
  *
  */
-
-
 template <sequence_file_traits_concept traits_type = sequence_file_default_traits_dna,
-          typename stream_type = std::ifstream> // TODO istream_concept stream_type
+          typename stream_type = std::ifstream,
+          typename selected_fields = fields<field::SEQ, field::ID>> // TODO istream_concept stream_type
 class sequence_file_in
 {
 public:
@@ -171,12 +207,24 @@ public:
     using sequence_type         = typename traits_type::template sequence_container<typename traits_type::sequence_alphabet>;
     //!\brief The type of the ID field (usually std::string).
     using id_type               = typename traits_type::template id_container<typename traits_type::id_alphabet>;
-    //!\brief The type of the record (a tuple of the fields).
-    using record_type           = std::tuple<sequence_type, id_type>;
+    //!\brief The type of the QUAL field TODO
+    using quality_type             = typename traits_type::template quality_container<typename traits_type::quality_alphabet>;
+////!\brief The type of the QUAL field TODO
+//     using seq_quality_type         = typename traits_type::
+//                                     template sequence_container<quality_composition<typename traits_type::sequence_alphabet,
+//                                                                                     typename traits_type::quality_alphabet>>;
+    //!\brief The previously defined types in a type list (meta::list).
+    using field_types           = meta::list<sequence_type, id_type, quality_type, quality_type>; //TODO replace last with seq_quality_type
+    //!\brief The corresponding seqan3::field IDs to \ref field_types.
+    using field_types_as_ids    = fields<field::SEQ, field::ID, field::QUAL, field::SEQ_QUAL>;
+    //!\brief The type of the record, specialisation of seqan3::record; acts as a tuple of the selected field types.
+    using record_type           = record<field_types, field_types_as_ids, selected_fields>;
     //!\brief Column type of field 0 (sequences); usually seqan3::concatenated_sequences <sequence_type>.
     using sequence_column_type  = typename traits_type::template sequence_container_container<sequence_type>;
     //!\brief Column type of field 1 (IDs); usually seqan3::concatenated_sequences <id_type>.
     using id_column_type        = typename traits_type::template id_container_container<id_type>;
+    //!\brief A tuple of sean3::field that specifies the order of the fields.
+//     static constexpr std::tuple<field, field> fields = { field::SEQ, field::ID };
     //!\}
 
     /*!\name Range member types
@@ -184,10 +232,10 @@ public:
      */
     //!\brief The value_type is the recored_type.
     using value_type        = record_type;
-    //!\brief The reference_type is an rvalue reference, because the record is always moved out.
-    using reference         = record_type &&;
-    //!\brief The const_reference type `void`, because files are not `const`-iterable (the file changes while reading!).
-    using const_reference   = void;
+    //!\brief The reference_type.
+    using reference         = record_type &;
+    //!\brief The const_reference type.
+    using const_reference   = record_type const &;
     //!\brief An unsigned integer type, usually std::size_t.
     using size_type         = size_t;
     //!\brief A signed integer type, usually std::ptrdiff_t.
@@ -200,7 +248,7 @@ public:
     using sentinel          = detail::in_file_sentinel<sequence_file_in>;
     //!\}
 
-    /*!\name Constructors / destructor / assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     //!\brief Construct from filename.
@@ -277,11 +325,82 @@ public:
     //!\copydoc end
     sentinel cend() const noexcept;
 
-    //!\brief TODO
-    reference back()
+    /*!\brief Return the record we are currently at in the file.
+     * \returns The current record marked as an rvalue.
+     *
+     * The record is moved out of the file upon calling this so you avoid expensive copies. This
+     * also means that if you call this function a second time without incrementing an iterator,
+     * you will receive an empty record.
+     *
+     * ### Example
+     *
+     * ```cpp
+     *
+     * sequence_file_in fin{"/tmp/my.fasta"};
+     *
+     * auto record1 = fin.back();         // record is retrieved and moved into record1
+     * auto record2 = fin.back();         // the buffer is now empty so record2 received nothing
+     *
+     * auto it = fin.begin();
+     *
+     * ++it;                              // file iterator is moved to next record
+     * auto record3 = fin.back();         // record3 now receives data again
+     *
+     * ++it;                              // file iterator is moved to next record
+     * auto const & record4 = fin.back(); // this binds to the reference and does not trigger a move
+     * auto const & record5 = fin.back(); // of course you can have multiple references
+     * ++it;                              // however the previous references may now be invalid
+     * ```
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    reference back() noexcept
     {
-        return std::move(record_buffer);
+        return record_buffer;
     }
+
+    //!\copydoc back
+    const_reference back() const noexcept
+    {
+        return record_buffer;
+    }
+    //!\}
+
+
+    /*!\name Tuple interface
+     * \brief Provides functions for field-based ("column"-based) reading.
+     * \{
+     */
+    template <size_t i>
+    friend auto & get(sequence_file_in & file)
+    {
+        static_assert(i < 2);
+
+        file.read_columns();
+
+        if constexpr (i == 0)
+            return file.sequence_column_buffer;
+        else
+            return file.id_column_buffer;
+    }
+
+    template <size_t i>
+    friend auto && get(sequence_file_in && file)
+    {
+        return std::move(get<i>(file));
+    }
+
+//     template <field f>
+//     friend auto && get(sequence_file_in & file)
+//     {
+//         return get<get_position_in_tuple(f, fields)>(file);
+//     }
     //!\}
 
     /* options */
@@ -290,7 +409,7 @@ public:
         // post-processing filters that operate on buffer before assignment to out-value
         std::function<void(std::string &)>  sequence_filter = [] (std::string &) {};
         std::function<void(std::string &)>        id_filter = [] (std::string &) {};
-        std::function<void(std::string &)>      qual_filter = [] (std::string &) {};
+        std::function<void(std::string &)>      quality_filter = [] (std::string &) {};
     };
     options_type options;
 
@@ -312,26 +431,32 @@ private:
 
     void read_record(record_type &);
     void buffer_next_record();
+    void read_columns();
 
     // befriend iterator so it can access record, stream, and read()...
     friend iterator;
     friend const_iterator;
 };
 
-template <sequence_file_traits_concept traits_type, typename stream_type>
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields>
 sequence_file_in(std::string const &)
-    -> sequence_file_in<sequence_file_default_traits_dna, std::ifstream>;// TODO virtual_stream<input>
+    -> sequence_file_in<sequence_file_default_traits_dna,
+                        std::ifstream,
+                        fields<field::SEQ, field::ID>>;// TODO virtual_stream<input>
 
-template <sequence_file_traits_concept traits_type, typename stream_type, sequence_file_format_concept file_format>
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields, sequence_file_format_concept file_format>
 sequence_file_in(stream_type && _stream, file_format const &)
-    -> sequence_file_in<sequence_file_default_traits_dna, std::decay_t<stream_type>>;
+    -> sequence_file_in<sequence_file_default_traits_dna,
+                        std::decay_t<stream_type>,
+                        fields<field::SEQ, field::ID>>;
+
 
 // ------------------------------------------------------------------
 // public API
 // ------------------------------------------------------------------
 
-template <sequence_file_traits_concept traits_type, typename stream_type>
-sequence_file_in<traits_type, stream_type>::sequence_file_in(std::string const & _file_name) :
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields>
+sequence_file_in<traits_type, stream_type, selected_fields>::sequence_file_in(std::string const & _file_name) :
         file_name(_file_name)
 {
 //     // open stream
@@ -342,27 +467,43 @@ sequence_file_in<traits_type, stream_type>::sequence_file_in(std::string const &
 //     select_format<0>(format, ext);
 }
 
-template <sequence_file_traits_concept traits_type, typename stream_type>
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields>
 template <sequence_file_format_concept file_format>
-sequence_file_in<traits_type, stream_type>::sequence_file_in(stream_type && _stream, file_format const &) :
+sequence_file_in<traits_type, stream_type, selected_fields>::sequence_file_in(stream_type && _stream, file_format const &) :
     stream{std::move(_stream)}, format{file_format{}}
 {
     buffer_next_record();
 }
 
-template <sequence_file_traits_concept traits_type, typename stream_type>
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields>
 inline void
-sequence_file_in<traits_type, stream_type>::read_record(record_type & _record)
+sequence_file_in<traits_type, stream_type, selected_fields>::read_record(record_type & _record)
 {
     assert(!format.valueless_by_exception);
     std::visit([&] (sequence_file_format_concept & f) { f.read(_record, stream, options); }, format);
 }
 
-template <sequence_file_traits_concept traits_type, typename stream_type>
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields>
 inline void
-sequence_file_in<traits_type, stream_type>::buffer_next_record()
+sequence_file_in<traits_type, stream_type, selected_fields>::buffer_next_record()
 {
     read_record(record_buffer);
+}
+
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields>
+inline void
+sequence_file_in<traits_type, stream_type, selected_fields>::read_columns()
+{
+    //TODO delegate to format if column-wise available there
+    if (!stream.eof())
+    {
+        // read the remaining records and split into column buffers
+        for (auto [ seq, id ] : std::move(*this))
+        {
+            sequence_column_buffer.push_back(std::move(seq));
+            id_column_buffer.push_back(std::move(id));
+        }
+    }
 }
 
 // ------------------------------------------------------------------
@@ -382,10 +523,10 @@ sequence_file_in<traits_type, stream_type>::buffer_next_record()
 //     }
 // }
 
-template <sequence_file_traits_concept traits_type, typename stream_type>
+template <sequence_file_traits_concept traits_type, typename stream_type, typename selected_fields>
 template <size_t index>
 inline void
-sequence_file_in<traits_type, stream_type>::select_format(std::string const & ext)
+sequence_file_in<traits_type, stream_type, selected_fields>::select_format(std::string const & ext)
 {
     if (index == std::variant_size_v<format_type>)
         throw std::runtime_error("No valid format found for this extension.");
@@ -397,3 +538,48 @@ sequence_file_in<traits_type, stream_type>::select_format(std::string const & ex
 
 } // namespace seqan3
 
+
+// ------------------------------------------------------------------
+// public API
+// ------------------------------------------------------------------
+
+
+namespace std
+{
+
+template <typename traits_type, typename stream_type, typename selected_fields>
+struct tuple_size<seqan3::sequence_file_in<traits_type, stream_type, selected_fields>>
+{
+    static constexpr size_t value = 2;
+};
+
+template <typename traits_type, typename stream_type, typename selected_fields>
+struct tuple_element<0, seqan3::sequence_file_in<traits_type, stream_type, selected_fields>>
+{
+    using type = typename seqan3::sequence_file_in<traits_type, stream_type, selected_fields>::sequence_column_type;
+};
+
+template <typename traits_type, typename stream_type, typename selected_fields>
+struct tuple_element<1, seqan3::sequence_file_in<traits_type, stream_type, selected_fields>>
+{
+    using type = typename seqan3::sequence_file_in<traits_type, stream_type, selected_fields>::id_column_type;
+};
+
+}
+
+/*
+template <seqan3::field f, typename ...types>
+auto get(sequence_file_in<types...>::record_type & tup)
+{
+    static constexpr size_t i = [] ()
+    {
+        for (size_t j = 0; j < std::tuple_size_v<sequence_file_in<types...>::record_type>; ++j)
+            if (
+
+
+    };
+
+
+
+}
+*/
