@@ -74,6 +74,12 @@ concept bool sequence_file_traits_concept = requires (t v)
     requires sequence_concept<typename t::template id_container<typename t::id_alphabet>>;
     requires sequence_concept<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;
+
+//     requires alphabet_concept<typename t::quality_alphabet>;
+//     requires alphabet_concept<typename t::quality_legal_alphabet>;
+//     requires sequence_concept<typename t::template quality_container<typename t::quality_alphabet>>;
+//     requires sequence_concept<typename t::template quality_container_container<
+//         typename t::template quality_container<typename t::quality_alphabet>>>;
 };
 
 struct sequence_file_default_traits_dna
@@ -84,18 +90,24 @@ struct sequence_file_default_traits_dna
 //                                      sequence_file_format_genbank<stream_type>,
 //                                      sequence_file_format_raw<stream_type>>;
 
-    using sequence_alphabet                 = dna5; //TODO qualified<dna5>;
-    using sequence_legal_alphabet           = dna15; //TODO qualified<dna15>;
+    using sequence_alphabet                 = dna5;
+    using sequence_legal_alphabet           = dna15;
     template <typename _sequence_alphabet>
     using sequence_container                = std::vector<_sequence_alphabet>;
     template <typename _sequence_container>
     using sequence_container_container      = concatenated_sequences<_sequence_container>;
 
-    using id_alphabet                     = char;
+    using id_alphabet                       = char;
     template <typename _id_alphabet>
-    using id_container                    = std::basic_string<_id_alphabet>;
+    using id_container                      = std::basic_string<_id_alphabet>;
     template <typename _id_container>
-    using id_container_container          = concatenated_sequences<_id_container>;
+    using id_container_container            = concatenated_sequences<_id_container>;
+
+    using quality_alphabet                  = char; //TODO phred42;
+    template <typename _quality_alphabet>
+    using quality_container                 = std::vector<_quality_alphabet>;
+    template <typename _quality_container>
+    using quality_container_container       = concatenated_sequences<_quality_container>;
 };
 
 struct sequence_file_default_traits_aa : sequence_file_default_traits_dna
