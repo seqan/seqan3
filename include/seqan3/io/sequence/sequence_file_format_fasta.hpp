@@ -65,21 +65,20 @@ public:
         // ...
     };
 
-    template <sequence_concept sequence_type,
-              sequence_concept id_type,
+    template <typename record_type,
               typename stream_type, // TODO: istream_concept
               typename options_type> // TODO constrain this?
-    void read(std::tuple<sequence_type, id_type> & record,
+    void read(record_type & record,
               stream_type & stream,
               options_type const & /*options*/)
     {
         //TODO actual implementation goes here
-        std::getline(stream, std::get<1>(record));
+        std::getline(stream, get<field::ID>(record));
 
         std::string buffer;
         std::getline(stream, buffer);
 
-        std::get<0>(record) = buffer | view::char_to<typename sequence_type::value_type>;
+        get<field::SEQ>(record) = buffer | view::char_to<ranges::range_value_t<tuple_element_t<field::SEQ, record_type>>>;
     }
 
 //     template <typename seqs_type,
