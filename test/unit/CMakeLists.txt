@@ -34,7 +34,7 @@
 cmake_minimum_required (VERSION 3.2)
 project(seqan3_unit_test CXX)
 
-include(../seqan3-test-config.cmake)
+include(../seqan3-test.cmake)
 
 seqan3_require_ccache()
 seqan3_require_test()
