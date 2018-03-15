@@ -35,7 +35,7 @@
 //! \cond DEV
 
 /*! \file
- *  \brief Provides seqn3::aligned_sequence_adaptor_constant_access.
+ *  \brief Provides seqn3::gap_decorator_anchor_list.
  *  \ingroup container
  *  \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
  */
@@ -57,21 +57,7 @@
 
 namespace seqan3 {
 
-/*!\brief Container for an aligned sequence with random access at constant time.
- * \tparam inner_type {The container type with which aligned sequence structure
- * can be constructed, e.g. std::vector<dna4>. The inner type of the
- * container must fulfill the seqan3::alphabet_concept.}
- * \implements partially the seqan3::random_access_sequence_concept
- * \remark {An aligned sequence does not operate on the actual, i.e. ungapped
- * sequence, it holds a pointer to it, and augments it by allowing gap insert or
- * delete operations. A typical use case is that a large sequence is loaded once,
- * but remains unmodified in terms of base pair exchanges.
- * Therefore an aligned sequence with random access in constant time only stores
- * a bit vector for the gap information. It is assumed that gaps are rather
- * distributed sparsely. Therefore we use the compressed bit vector sdsl::sd_vector
- * with m*(2+log n/m) space (n = vector length, m = number of set bits).
- * We use rank and a select functions of the sd_vector to map from the gapped
- * sequence space to the ungapped space and vice versa.
+/*!\brief Container for an aligned sequence or to compute an alignment.
  * \par Example
  * '---AT--ATC-GT' is represensed by the bit vector '1110011000100' and a pointer
  * to the ungapped sequence 'ATATCGT'.
@@ -82,21 +68,12 @@ template <typename inner_type>
     requires alphabet_concept<ranges::v3::value_type_t<inner_type>> &&
     random_access_range_concept<inner_type> && sized_range_concept<inner_type>
 //!\endcond
-struct aligned_sequence_adaptor_constant_access
+struct gap_decorator_anchor_list
 {
 
 private:
      //!\privatesection
-    using aligned_sequence_t    = aligned_sequence_adaptor_constant_access;
-    //using alphabet_t = typename ranges::v3::value_type_t<inner_type>::alphabet_type;
-    //!\brief Type of the bit-vector.
-    using bit_vector_t          = sdsl::sd_vector<>;
-    //!\brief Type of the rank support data structure.
-    using rank_1_support_t        = sdsl::rank_support_sd<1>;     // bit_vector_t::rank_1_type;
-    //!\brief Type of the 0 select support data structure.
-    using select_0_support_t      = sdsl::select_support_sd<0>;  //bit_vector_t::select_0_type;
-    //!\brief Type of the 1 select support data structure.
-    using select_1_support_t      = sdsl::select_support_sd<1>;  //bit_vector_t::select_0_type;
+    using gap_decorator_t   = gap_decorator_anchor_list;
 
 public:
     //!\publicsection
@@ -134,31 +111,34 @@ public:
     using size_type = typename ranges::v3::size_type_t<inner_type>;
     //!\}
 
+    using gap_t             = std::pair<size_type, size_type>
+    using gap_list_t        = std::vector<gap_t>;
+
     /* rule of six */
     /*!\name Constructors, destructor and assignment
     * \{
     */
     // \brief Default constructor.
-    constexpr aligned_sequence_adaptor_constant_access()
+    constexpr gap_decorator_anchor_list()
     {
         inner_type sequence{};
         data = std::shared_ptr<data_t>(new data_t{sequence});
     };
 
     //!\brief Default copy constructor.
-    constexpr aligned_sequence_adaptor_constant_access(aligned_sequence_adaptor_constant_access const &) = default;
+    constexpr gap_decorator_anchor_list(gap_decorator_anchor_list const &) = default;
 
     //!\brief Default copy construction via assignment.
-    constexpr aligned_sequence_adaptor_constant_access & operator=(aligned_sequence_adaptor_constant_access const &) = default;
+    constexpr gap_decorator_anchor_list & operator=(gap_decorator_anchor_list const &) = default;
 
     //!\brief Move constructor.
-    constexpr aligned_sequence_adaptor_constant_access (aligned_sequence_adaptor_constant_access && rhs) = default;
+    constexpr gap_decorator_anchor_list (gap_decorator_anchor_list && rhs) = default;
 
     //!\brief Move assignment.
-    constexpr aligned_sequence_adaptor_constant_access & operator=(aligned_sequence_adaptor_constant_access && rhs) = default;
+    constexpr gap_decorator_anchor_list & operator=(gap_decorator_anchor_list && rhs) = default;
 
     //!\brief Use default deconstructor.
-    ~aligned_sequence_adaptor_constant_access() = default;
+    ~gap_decorator_anchor_list() = default;
     //!\}
 
     //!\brief
@@ -167,11 +147,7 @@ public:
     */
     //!\brief Construct by single value repeated 'size' times
     //shared_ptr<data_t>
-    constexpr aligned_sequence_adaptor_constant_access(inner_type & sequence): data{new data_t{sequence}}
-    {
-        sdsl::sd_vector_builder builder(sequence.size(), 0);
-        data->gap_vector = bit_vector_t(builder);
-    };
+    constexpr gap_decorator_anchor_list(inner_type & sequence): data{new data_t{sequence}} {};
     //!\}
 
     /*!\name Iterators
@@ -202,39 +178,34 @@ public:
     * O(r+s+m) where r,s are the initialization costs of sdsl::rank_1_support_sd,
     * and sdsl::select_support_sd, and m the number of 1 bits.
     */
-    bool operator==(aligned_sequence_t & rhs)
+    bool operator==(aligned_sequence_t & rhs) // DONE
     {
         if (data->sequence != rhs.data->sequence || this->size() != rhs.size())
             return false;
-        if (data->dirty)
-            update_support_structures();
-        if (rhs.data->dirty)
-            rhs.update_support_structures();
-        if (data->rank_1_support.rank(this->size()) != rhs.data->rank_1_support.rank(rhs.size()))
-            return false;
-        size_type m = data->rank_1_support.rank(this->size());
-        for (size_type i = 1; i < m; ++i)
-            if (data->select_1_support.select(i) != rhs.data->select_1_support.select(i))
+        for (std::uint64_t i = 0; i < data->gap_list.size(); ++i)
+            if (data->gap_list[i] != rhs.data->gap_list[i])
                 return false;
         return true;
     }
 
     //!\brief Unequality operator for aligned sequences.
-    bool operator!=(aligned_sequence_t & rhs)
+    bool operator!=(aligned_sequence_t & rhs)   // DONE
     {
         return !(*this == rhs);
     }
 
     //!\brief Swap two aligned sequences and their support structures.
-    void swap(aligned_sequence_t & rhs)
+    void swap(aligned_sequence_t & rhs)         // DONE
     {
         data.swap(rhs.data);
     }
 
     //!\brief Return gapped sequence length.
-    size_type size() const noexcept
+    size_type size() const noexcept             // DONE
     {
-        return data->gap_vector.size();
+        if (!data->gap_list.size())
+            return data->sequence.size();
+        return data->sequence.size() + data->gap_list.back().second;
     }
 
     /*!\brief Return the maximal aligned sequence length.
@@ -244,15 +215,15 @@ public:
     * max_size() member function, but can be constructed by a bit_vector, we
     * assume the maximal size is restricted by the one of sdsl::bit_vector.
     */
-    size_type max_size() const
+    size_type max_size() const                  // DONE
     {
-        return std::min<size_type>(data->sequence.max_size(), sdsl::bit_vector{}.max_size());
+        return std::min<size_type>(data->sequence.max_size(), data->gap_list.max_size());
     }
 
     //!\brief An aligned sequence is empty if it contains no alphabet letters or gaps.
-    bool empty() const
+    bool empty() const                          // DONE
     {
-        return data->sequence.empty() && data->gap_vector.size() == 0;
+        return data->sequence.empty() && data->gap_list.size() == 0;
     }
     //!\}
 
@@ -270,7 +241,7 @@ public:
     * The returned iterator points to the position of the left-most inserted
     * element.
     */
-    iterator insert_gap(iterator it, size_type size=1)
+    iterator insert_gap(iterator it, size_type size=1)      // DONE
     {
         size_type pos = static_cast<size_type>(it - detail::random_access_iterator<aligned_sequence_t>());
         assert(insert_gap(pos, size));
@@ -281,30 +252,57 @@ public:
     *
     * Return false if given position exceeds the current size by one.
     */
-    bool insert_gap(size_type const pos, size_type const size=1)
+    bool insert_gap(size_type const pos, size_type const size=1) // TO TEST
     {
         if (pos > this->size())
             return false;
-        if (data->dirty)
-            update_support_structures();
-        // rank queries on empty sd_vector throws assertion
-        size_type m = (!this->size()) ? size : data->rank_1_support.rank(this->size()) + size;
-        sdsl::sd_vector_builder builder = sdsl::sd_vector_builder(this->size() + size, m);
-        // copy prefix
-        for (size_type i = 0; i < pos; ++i)
-            if (data->gap_vector[i])
-                builder.set(i);
-        // insert gap
-        for (size_type i = pos; i < pos+size; ++i)
-            builder.set(i);
-        // shift suffix, note that we need i to be a signed integer for the case
-        // that the aligned sequence was empty
-        for (signed int i = this->size() - size - 1; i >= static_cast<signed int>(pos); --i)
-            if (data->gap_vector[i])
-                builder.set(i+size);
-        data->gap_vector = bit_vector_t(builder);
-        // TODO: delete old one?
-        data->dirty = true;
+        // case 1: no merging or position computation needed when new gap is first gap
+        if (!data->gap_list.size())
+            data->gap_list.push_back(gap_t(pos, size));
+        else // search true position or expand existing one
+        {
+            size_type y, x = 0; // current gap range [x .. y[
+            bool search_flag = true;
+            for (auto it = data->gap_list.begin(); search_flag && it != data->gap_list.end(); ++it)
+            {
+                x += (*it).first;
+                y = x + (*it).second;
+                // case 2a: insert before to current gap
+                if (pos < x)
+                {
+                    data->gap_list.insert(it, gap_t(pos, size));
+                    search_flag = false;
+                }
+                // case 2b: pos is gap position or follows directly => expand current gap
+                if (pos >= x & pos <= y)
+                {
+                    *it = gap_t((*it).first, (*it).second + size);
+                    search_flag = false;
+                }
+            }
+            // case 2c: new gap starting position is beyond all gaps
+            if (search_flag)
+                data->gap_list.push_back(gap_t(pos, size));
+        }
+        return true;
+    }
+
+    /* Insert gap relative to sequence, i.e. before the index of the underlying
+    * sequence. The maximal allowed insertion position is therefore right after
+    * the sequence end. If a gap has already been insert at the given position,
+    * false is returned and the state remains unchanged.
+    */
+    bool insert_gap_rs(size_type const seq_pos, size_type const size=1)
+    {
+        auto lower = std::lower_bound(data->gap_list.begin(), data->gap_list.end(), seq_pos,
+            [seq_pos] (const gap_t& gap) { return seq_pos == gap.first; } );
+        // case: push back
+        if (lower == data->gap_list.cend())
+            data->gap_list.push_back(gap_t(seq_pos, size));
+        else if ((*lower).first == seq_pos) // already existing gap
+            return false;
+        else    // insert before succeeding gap
+            data->gap_list.insert(--lower, gap_t(seq_pos, size));
         return true;
     }
 
@@ -324,42 +322,48 @@ public:
     * Worst-case runtime is O(r+s+m). r,s re-initialization of rank and select
     * support, m number of set bits.
     */
-    bool erase_gap(size_type const pos)
+    bool erase_gap(size_type const pos)     // DONE
     {
-        if (!data->gap_vector[pos])
+        if ((value_type)(*this)[pos] != gap::GAP)
             return false;
         return erase_gap(pos, pos+1);
     }
 
     //!\brief Erase all gaps in range pos1 and pos2 (exclusive). Gaps
-    // right-hand of 2nd iterator are shifted by the number of gaps deleted.
-    bool erase_gap(size_type const pos1, size_type const pos2)
+    /* right-hand of 2nd iterator are shifted by the number of gaps deleted.
+    * If the range does not correspond to a contiguous gap, no gaps will be
+    * deleted and false will be returned.
+    * Remark: this behaviour deviates from the one using a bit_vector, which
+    * simply resets all bits in the range without checking connectivity!
+    */
+    bool erase_gap(size_type const pos1, size_type const pos2)      // UNTESTED
     {
-        if (pos1 >= size() || pos2 > size())
+        assert(pos1 <= pos2);
+        if (pos1 >= size() || pos2 > size() || !data->gap_list.size() || pos2 < data->gap_list[0].first)
             return false;
-        if (data->dirty)
-            update_support_structures();
-        // number of deleted gaps
-        size_type m_del = data->rank_1_support.rank(pos2) - data->rank_1_support.rank(pos1);
-        sdsl::sd_vector_builder builder{this->size() - m_del, data->rank_1_support.rank(this->size()) - m_del};
-        // copy prefix
-        size_type m = data->rank_1_support.rank(this->size());
-        for (size_type i = 1; i <= m && data->select_1_support.select(i) < pos1; ++i)
-            builder.set(data->select_1_support.select(i));
-        // shift suffix at it2 by the size_type m_del it2-it1
-        size_type j = data->rank_1_support.rank(pos2) + 1;
-        for (size_type i = j; i <= m; ++i)
-            builder.set(data->select_1_support.select(i) - m_del);
-        // reset bit_vector
-        data->gap_vector = bit_vector_t{builder};
-        data->dirty = true;
-        return true;
+        size_type x = 0, y; // current gap range [x; y[
+        for (auto it = data->gap_list.begin(); it != data->gap_list.end(); ++it)
+        {
+            x += (*it).first;
+            y = x + (*it).second;
+            if (pos1 >= x && pos2 <= y)
+            {
+                if (pos1 > x) // shorten gap
+                    *it = gap_t((*it).first, (*it).second - pos2 + pos1);
+                else if (pos1 == x && pos2 == y) // delete gap completely
+                    data->gap_list.erase(it);
+                else   // remove head of gap
+                    *it = gap_t(pos1, (*it).second - pos1 + pos2);
+                return true;
+            }
+        }
+        return false;
     }
 
     //!\brief Erase all gaps falling into range given by first and second
     // iterator (exclusive). Gaps right-hand of 2nd iterator are shifted by
     // the number of gaps deleted.
-    iterator erase_gap(iterator const it1, iterator const it2)
+    iterator erase_gap(iterator const it1, iterator const it2)      // DONE
     {
         size_type pos1 = static_cast<size_type>(it1 - iterator{});
         size_type pos2 = static_cast<size_type>(it2 - iterator{});
@@ -367,61 +371,76 @@ public:
         return it1;
     }
 
-    //!\brief Append gap symbol to the aligned sequence.
-    // Note: there is no resize for sd_vector, it has to be re-initialized with
-    // sd_vector_builder.
-    void push_back()
+    //!\brief Append gap of length size to the aligned sequence.
+    // If last symbol is a gap it will be extended.
+    // Remark: pos is global index
+    void push_back(size_type pos, size_type size=1)     // UNTESTED
     {
         assert(max_size() >= size() + 1);
-        //data->gap_vector.resize(this->size() + 1);
-        if (data->dirty)
-            update_support_structures();
-        size_type m = data->rank_1_support.rank(this->size());
-        sdsl::sd_vector_builder builder(this->size() + 1, m + 1);
-        for (size_type i = 1; i <= m; ++i)
-            builder.set(data->select_1_support.select(i));
-        builder.set(this->size());  // set last bit to 1
-        data->gap_vector = bit_vector_t(builder);
-        data->dirty = true;
+        // case 1: there is no gap, sequence is empty or last symbol is not gap
+        if (!data->gap_list.size() || !size() || (value_type)(*this)[size()-1] != gap::GAP)
+            data->gap_list.push_back(gap_t(pos, size));
+        else    // case 2: expand existing one
+        {
+            auto it = --data->gap_list.end();
+            *it = gap_t((*it).first, ++(*it).second);
+        }
+    }
+
+    // add gap by giving underlying sequence position
+    // If a gap has already been inserted at the given position, the existing
+    // one will be extended.
+    void push_back_rs(size_type pos_rs, size_type size=1)       // UNTESTED
+    {
+        assert(pos_rs <= data->sequence.size());
+        if (!data->gap_list.size())
+            data->gap_list.push_back(gap_t(pos_rs, size));
+        else if (data->gap_list.back().first == pos_rs)
+        {
+            auto it = --data->gap_list.end();
+            *it = gap_t((*it).first, (*it).second + size);
+        }
+        else
+            data->gap_list.push_back(gap_t());
     }
 
     //!\brief Delete last gap symbol if set, else return false.
-    //
-    // Worst-case runtime O(r+s+m), r, s rank and select support initialization,
-    // m number of 1 bits.
-    // TODO: behaviour - pop last gap or (wherever it occurs) or only query
-    // last position and remove if gap?
     bool pop_back()
     {
         assert(this->size() > 0);
-        if (!data->gap_vector[size() - 1])
+        if ((value_type)(*this)[this->size()-1] == gap::GAP)
+        {   // TODO: one liner by directly writing into the listed pair possible?
+            gap_t last = data->gap_list.back();
+            data->gap_list[data->gap_list.size()-1] = gap_t(last.first, --last.second);
+        }
+        else
             return false;
-        if (data->dirty)
-            update_support_structures();
-        size_type m = data->rank_1_support.rank(this->size() - 1);
-        sdsl::sd_vector_builder builder(this->size()-1, m);
-        for (size_type i = 1; i <= m; ++i)
-            builder.set(data->select_1_support.select(i));
-        data->gap_vector = bit_vector_t(builder);
+        return true;
+    }
+
+    // pop last contiguous gap
+    bool pop_back_rs()                  // UNTESTED
+    {
+        assert(data->gap_list.size() > 0);
+        data->gap_list.pop_back();
         return true;
     }
 
     //!\brief Clear gaps in bit vector. Alphabet sequence remains unchanged.
-    void clear()
+    void clear()                        // UNTESTED
     {
-        data->gap_vector = bit_vector_t(sdsl::bit_vector{data->sequence.size(), 0});
-        data->dirty = true;
+        data->gap_list.clear();
     }
 
     //!\brief Return first symbol of aligned sequence.
-    reference front()
+    reference front()                                           // DONE
     {
         assert(size() > 0u);
         return (*this)[0];
     }
 
     //!\brief Return last symbol of aligned sequence.
-    reference back()
+    reference back()                                            // DONE
     {
         assert(size() > 0u);
         return (*this)[size()-1];
@@ -432,56 +451,39 @@ public:
      * \{
     */
     //!\brief Return pointer to gap-free sequence.
-    inner_type & get_underlying_sequence() const
+    inner_type & get_underlying_sequence() const                // DONE
     {
         return data->sequence;
     }
 
-    //!\brief Set pointer to ungapped sequence.
-    void set_underlying_sequence(inner_type & sequence) const
+    //!\brief Set pointer to ungapped sequence and reset gap vector.
+    void set_underlying_sequence(inner_type & sequence) const   // DONE
     {
         data->sequence = sequence;
-        data->gap_vector = bit_vector_t(sdsl::bit_vector{sequence.size(), 0});
-        data->dirty = true;
+        data->gap_list.clear();
     }
     //!\}
 
     /*\brief Map a compressed representation index to the aligned sequence index.
     *
     * Note that a i-th 0 corresponds to the i-th position in the compressed sequence.
-    * We therefore can directly use the select support structure to map to the
-    * aligned sequence space.
-    * E.g. '--TA-TA--' with input pos = 2 returns select<0>(2) = 5.
+    * E.g. '--TA-TA--' with input pos = 2 returns 5.
     */
-    size_type map_to_aligned_position(size_type const idx)
+    size_type map_to_aligned_position(size_type const idx)      // UNTESTED
     {
         //TODO add SEQAN_UNLIKELY
-        if (idx >= size())
+        if (idx >= data->sequence.size())
             throw std::out_of_range{"Trying to access element behind the last in aligned_sequence."};
-        if (data->dirty)
-            update_support_structures();
-        return data->select_0_support.select(idx + 1);
+        // case 1: no gap before position idx
+        if (!data->gap_list.size() || data->gap_list[0].first < idx)
+            return idx;
+        // case 2: sum up gaps until idx-th underlying sequence position
+        size_type offset = 0; // gap sum up to position idx in anchor gap vector
+        auto upper = std::upper_bound(data->gap_vector.begin(), data->gap_vector.end(),
+            idx, [idx] (gap_t gap) {return idx < gap.first});
+        size_type s = std::accumulate(data->gap_vector.begin(), upper);
+        return s;
     }
-
-    /*!\brief Map from gapped sequence position to index of compressed
-    * sequence representation.
-    *
-    * We use the rank support structure indexed for counting 1s and substract
-    * the number gaps in [0; position_gap] from the input position.
-    * E.g.           aligned sequence  | - A - - T
-    *                 position_gapped  | 0 1 2 3 4
-    *      map_to_underlying_position  |-1 0 0 0 1
-    * Note that a gap is mapped to the same position than the next preceeding
-    * non-gap symbol.
-    */
-    difference_type map_to_underlying_position(size_type const position_gapped)
-    {
-        if (data->dirty)
-            update_support_structures();
-        return static_cast<difference_type>(position_gapped) -
-        static_cast<difference_type>(data->rank_1_support.rank(std::min<size_type>(position_gapped+1, this->size())));
-    }
-    //!\}
 
     /*!\name Random access sequence concept support.
      * \{
@@ -490,11 +492,22 @@ public:
     constexpr reference operator[](size_type const idx) // const noexcept(noexcept((*host)[pos+n]))
     {
         assert(idx < size());
-        if (!data->gap_vector[idx]){
-            size_type const pos = map_to_underlying_position(idx);
-            return value_type(data->sequence[pos]);
+        if (!data->gap_list.size() || position_gapped < data->gap_list[0].first)
+            return position_gapped;
+        // case 2: compute position in gap or between two gaps
+        auto it = data->gap_list.begin();
+        difference_type acc = (*it).first;
+        ++it;
+        // sum up gap offsets and gap lengths
+        while (it != data->gap_list.end() && idx > acc + (*it).first - (*(it-1)).first + (*it).second)
+        {
+            acc += (*it).first - (*(it-1)).first + (*it).second;
+            ++it;
         }
-        return gap::GAP;
+        if (idx >= acc + (*it).first - (*(it-1)).first)
+            return gap::GAP;
+        else
+            return data->sequence[idx - acc];
     }
 
     //!\brief Return reference to aligned sequence for given index.
@@ -508,6 +521,7 @@ public:
     //!\}
 
 private:
+
     //!\privatesection
     //!\brief Structure for storing a sequence and gap information and helper functions.
 
@@ -521,56 +535,18 @@ private:
         */
         inner_type & sequence;
 
-        /*!\brief Where the gapped sequence is stored.
+        /*!\brief Where the gaps are stored.
         *
-        * Gap presentation of the aligned sequence (1: gap, 0: alphabet letter).
-        * The total length is sequence size + number of gaps and therefore corresponds
-        * to the aligned sequence size.
         */
-        bit_vector_t gap_vector = bit_vector_t();
+        gap_list_t gap_list = gap_list_t();
 
-        /*!\brief Rank support structure for projection into ungapped sequence space.
-        *
-        * The rank of position i is number 1s in the prefix 0..i-1. This corresponds
-        * to the number of gaps in the aligned sequence. Rank queries are answered in
-        * constant time.
-        */
-        //!\hideinitializer
-        rank_1_support_t rank_1_support{};
-        /*!\brief Select support structure for projection into gap space.
-        *
-        * Select i returns the gap vector position of the i-th zero in constant time.
-        */
-        //!\hideinitializer
-        select_0_support_t select_0_support{};
-
-        /*!\brief Select support structure for copying set bits in O(m).
-        *
-        * Select i returns the gap vector position of the i-th 1 in constant time.
-        */
-        //!\hideinitializer
-        select_1_support_t select_1_support{};
-
-        //!\brief Flag to indicate whether sd_vector support structures needs to be
-        // updated before executing rank or select queries.
-        bool dirty{true};
     };
-
     std::shared_ptr<data_t> data;
-
-    //!\brief Re-initialize rank and select support structures of bit_vector.
-    void update_support_structures()
-    {
-        data->rank_1_support = sdsl::rank_support_sd<1>(&data->gap_vector);
-        data->select_0_support = sdsl::select_support_sd<0>(&data->gap_vector);
-        data->select_1_support = sdsl::select_support_sd<1>(&data->gap_vector);
-        data->dirty = false;
-    }
 };
 
 //!\brief Global swap function.
 template <typename inner_type, char gap_symbol = '_'>
-void swap (aligned_sequence_adaptor_constant_access<inner_type> & lhs, aligned_sequence_adaptor_constant_access<inner_type> & rhs)
+void swap (gap_decorator_anchor_list<inner_type> & lhs, gap_decorator_anchor_list<inner_type> & rhs)
 {
     lhs.swap(rhs);
 }
