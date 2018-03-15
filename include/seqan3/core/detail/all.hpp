@@ -33,19 +33,11 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-header for the \link container container submodule \endlink.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for implementation details in the core module.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
-
-/*!\defgroup container Container
- * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
- * \ingroup range
- * \sa http://en.cppreference.com/w/cpp/container
- * \sa range/container/all.hpp
- */
+#include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/core/detail/reflection.hpp>

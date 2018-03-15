@@ -67,6 +67,15 @@ protected:
     }
 };
 
+
+// concept checks
+
+TEST(random_access_iterator_test, concept_checks)
+{
+    EXPECT_TRUE((seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int>>>));
+    EXPECT_TRUE((seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int> const>>));
+}
+
 // default constructor
 TEST(random_access_iterator_test, default_constructor)
 {
@@ -138,15 +147,26 @@ TEST_F(random_access_iterator_test_fixture, cp_constructor2)
 
 }
 
+// construct const_iterator from iterator
+TEST_F(random_access_iterator_test_fixture, constructor_const_from_nonconst)
+{
+    // non-const
+    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it(v);
+    EXPECT_EQ('a', it[0]);
+    // const
+    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> cit(it);
+    EXPECT_EQ('a', cit[0]);
+}
+
 // test assignment construction with empty container reference
 TEST_F(random_access_iterator_test_fixture, constructor_assign1)
 {
     // non-const
     seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_base(v_empty);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_derived = it_base;
+    [[maybe_unused]] seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_derived = it_base;
     // const
     seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_base2(v_const_empty);
-    seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_derived2 = it_base2;
+    [[maybe_unused]] seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_derived2 = it_base2;
 }
 
 // test assignment construction with non-empty container reference and subscript
@@ -223,6 +243,9 @@ TEST_F(random_access_iterator_test_fixture, equality)
     EXPECT_FALSE(it_v2 == it_w2);
     ++it_w2;
     EXPECT_TRUE(it_v2 == it_w2);
+    // const vs non-const
+    EXPECT_TRUE(it_v2 == it_w);
+    EXPECT_TRUE(it_w == it_v2);
 }
 
 TEST_F(random_access_iterator_test_fixture, inequality)
@@ -237,7 +260,11 @@ TEST_F(random_access_iterator_test_fixture, inequality)
     EXPECT_FALSE(it_v2 != it_w2);
     ++it_v2;
     EXPECT_TRUE(it_v2 != it_w2);
+    // const vs non-const
+    EXPECT_TRUE(it_v2 != it_w);
+    EXPECT_TRUE(it_w != it_v2);
 }
+
 
 TEST_F(random_access_iterator_test_fixture, less)
 {
@@ -251,6 +278,9 @@ TEST_F(random_access_iterator_test_fixture, less)
     EXPECT_FALSE(it_v2 < it_w2);
     ++it_w2;
     EXPECT_TRUE(it_v2 < it_w2);
+    // const vs non-const
+    EXPECT_TRUE(it_v2 < it_w);
+    EXPECT_TRUE(it_v < it_w2);
 }
 
 TEST_F(random_access_iterator_test_fixture, greater)
@@ -265,7 +295,9 @@ TEST_F(random_access_iterator_test_fixture, greater)
     EXPECT_FALSE(it_v2 > it_w2);
     ++it_v2;
     EXPECT_TRUE(it_v2 > it_w2);
-
+    // const vs non-const
+    EXPECT_TRUE(it_v2 > it_w);
+    EXPECT_TRUE(it_v > it_w2);
 }
 
 TEST_F(random_access_iterator_test_fixture, leq)
@@ -280,20 +312,26 @@ TEST_F(random_access_iterator_test_fixture, leq)
     EXPECT_TRUE(it_v2 <= it_w2);
     ++it_v2;
     EXPECT_FALSE(it_v2 <= it_w2);
+    // const vs non-const
+    EXPECT_FALSE(it_v2 <= it_w);
+    EXPECT_FALSE(it_v <= it_w2);
 }
 
 TEST_F(random_access_iterator_test_fixture, geq)
 {
     // non-const
     seqan3::detail::random_access_iterator<std::vector<uint8_t>> it_v(v2), it_w(w);
-    EXPECT_TRUE(it_v <= it_w);
+    EXPECT_TRUE(it_v >= it_w);
     ++it_v;
-    EXPECT_FALSE(it_v <= it_w);
+    EXPECT_TRUE(it_v >= it_w);
     // const
     seqan3::detail::random_access_iterator<std::vector<uint8_t> const> it_v2(v2_const), it_w2(w_const);
-    EXPECT_TRUE(it_v2 <= it_w2);
+    EXPECT_TRUE(it_v2 >= it_w2);
     ++it_v2;
-    EXPECT_FALSE(it_v2 <= it_w2);
+    EXPECT_TRUE(it_v2 >= it_w2);
+    // const vs non-const
+    EXPECT_TRUE(it_v >= it_w2);
+    EXPECT_FALSE(it_w2 >= it_v);
 }
 
 TEST_F(random_access_iterator_test_fixture, postfix_increment)

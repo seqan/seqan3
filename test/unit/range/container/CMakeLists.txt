@@ -1,2 +1,3 @@
 seqan3_test(container_concept_test.cpp)
 seqan3_test(container_of_container_test.cpp)
+seqan3_test(constexpr_string_test.cpp)
