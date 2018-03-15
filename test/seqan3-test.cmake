@@ -41,68 +41,68 @@ cmake_minimum_required (VERSION 3.2)
 find_package (SeqAn3 REQUIRED
               HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
 
-include(CheckCXXSourceCompiles)
-include(FindPackageHandleStandardArgs)
-include(FindPackageMessage)
+include (CheckCXXSourceCompiles)
+include (FindPackageHandleStandardArgs)
+include (FindPackageMessage)
 
-set(SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
-set(SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
+set (SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
+set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
 
 # required flags, includes, definitions and libraries for seqan3
-set(SEQAN3_STRICT_CXX_FLAGS "-pedantic" "-Werror" "-Wall" "-Wextra")
+set (SEQAN3_STRICT_CXX_FLAGS "-pedantic" "-Werror" "-Wall" "-Wextra")
 
 # required flags, includes and libraries for seqan3/test/performance
-set(SEQAN3_BENCHMARK_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
-set(SEQAN3_BENCHMARK_INCLUDE_DIRS "")
-set(SEQAN3_BENCHMARK_LIBRARIES "")
-list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
-list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/test/include/")
+set (SEQAN3_BENCHMARK_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
+set (SEQAN3_BENCHMARK_INCLUDE_DIRS "")
+set (SEQAN3_BENCHMARK_LIBRARIES "")
+list (APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
+list (APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/test/include/")
 
 # required flags, includes and libraries for seqan3/test/unit
-set(SEQAN3_TEST_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
-set(SEQAN3_TEST_INCLUDE_DIRS "")
-set(SEQAN3_TEST_LIBRARIES "")
-list(APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
-list(APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/test/include/")
+set (SEQAN3_TEST_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
+set (SEQAN3_TEST_INCLUDE_DIRS "")
+set (SEQAN3_TEST_LIBRARIES "")
+list (APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
+list (APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/test/include/")
 
 # commonly shared options:
-set(SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "")
-list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
-list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
-list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}")
+set (SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "")
+list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
+list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
+list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}")
 
-macro(seqan3_require_ccache)
-    find_program(CCACHE_PROGRAM ccache)
-    find_package_message(CCACHE_PROGRAM_PRE "Finding program ccache" "[${CCACHE_PROGRAM}]")
+macro (seqan3_require_ccache)
+    find_program (CCACHE_PROGRAM ccache)
+    find_package_message (CCACHE_PROGRAM_PRE "Finding program ccache" "[${CCACHE_PROGRAM}]")
 
-    if(NOT CCACHE_PROGRAM)
-        find_package_message(CCACHE_PROGRAM "Finding program ccache - Failed" "[${CCACHE_PROGRAM}]")
-    else()
-        find_package_message(CCACHE_PROGRAM "Finding program ccache - Success" "[${CCACHE_PROGRAM}]")
-        if(CMAKE_VERSION VERSION_LESS 3.4)
-            set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-            set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
-        else()
+    if (NOT CCACHE_PROGRAM)
+        find_package_message (CCACHE_PROGRAM "Finding program ccache - Failed" "[${CCACHE_PROGRAM}]")
+    else ()
+        find_package_message (CCACHE_PROGRAM "Finding program ccache - Success" "[${CCACHE_PROGRAM}]")
+        if (CMAKE_VERSION VERSION_LESS 3.4)
+            set_property (GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+            set_property (GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+        else ()
             # New option since cmake >= 3.4:
             # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html
-            set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+            set (CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
 
             # use ccache in external cmake projects
-            list(APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}")
-        endif()
-    endif()
-    unset(CCACHE_PROGRAM)
-endmacro()
+            list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}")
+        endif ()
+    endif ()
+    unset (CCACHE_PROGRAM)
+endmacro ()
 
-macro(seqan3_require_benchmark)
-    enable_testing()
+macro (seqan3_require_benchmark)
+    enable_testing ()
 
-    set(google_benchmark_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
-    list(APPEND google_benchmark_args "-DBENCHMARK_ENABLE_TESTING=false")
-    # list(APPEND google_benchmark_args "-DBENCHMARK_ENABLE_LTO=true")
+    set (google_benchmark_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
+    list (APPEND google_benchmark_args "-DBENCHMARK_ENABLE_TESTING=false")
+    # list (APPEND google_benchmark_args "-DBENCHMARK_ENABLE_LTO=true")
 
-    include(ExternalProject)
-    ExternalProject_Add(
+    include (ExternalProject)
+    ExternalProject_Add (
         google_benchmark
         PREFIX google_benchmark
         GIT_REPOSITORY "https://github.com/google/benchmark.git"
@@ -110,30 +110,30 @@ macro(seqan3_require_benchmark)
         CMAKE_ARGS "${google_benchmark_args}"
         UPDATE_DISCONNECTED yes
     )
-    unset(google_benchmark_args)
+    unset (google_benchmark_args)
 
-    set(benchmark_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set (benchmark_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
     add_library (benchmark STATIC IMPORTED)
-    add_dependencies(benchmark google_benchmark)
-    set_target_properties(benchmark PROPERTIES IMPORTED_LOCATION "${benchmark_library}")
+    add_dependencies (benchmark google_benchmark)
+    set_target_properties (benchmark PROPERTIES IMPORTED_LOCATION "${benchmark_library}")
 
-    list(APPEND SEQAN3_BENCHMARK_LIBRARIES "benchmark")
-    list(APPEND SEQAN3_BENCHMARK_LIBRARIES "pthread")
-endmacro()
+    list (APPEND SEQAN3_BENCHMARK_LIBRARIES "benchmark")
+    list (APPEND SEQAN3_BENCHMARK_LIBRARIES "pthread")
+endmacro ()
 
-macro(seqan3_require_test)
-    enable_testing()
+macro (seqan3_require_test)
+    enable_testing ()
 
-    set(google_test_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
-    list(APPEND google_test_args "-DBUILD_GTEST=1")
-    list(APPEND google_test_args "-DBUILD_GMOCK=0")
+    set (google_test_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
+    list (APPEND google_test_args "-DBUILD_GTEST=1")
+    list (APPEND google_test_args "-DBUILD_GMOCK=0")
 
     # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
-    list(APPEND google_test_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
+    list (APPEND google_test_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
-    include(ExternalProject)
-    ExternalProject_Add(
+    include (ExternalProject)
+    ExternalProject_Add (
         googletest
         PREFIX googletest
         GIT_REPOSITORY "https://github.com/google/googletest.git"
@@ -142,31 +142,31 @@ macro(seqan3_require_test)
         CMAKE_ARGS "${google_test_args}"
         UPDATE_DISCONNECTED yes
     )
-    unset(google_test_args)
+    unset (google_test_args)
 
     # google sets CMAKE_DEBUG_POSTFIX = "d"
-    set(gtest_main_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set (gtest_main_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(gtest_main_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_maind${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    endif()
+        set (gtest_main_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_maind${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endif ()
 
     add_library (gtest_main STATIC IMPORTED)
-    add_dependencies(gtest_main googletest)
-    set_target_properties(gtest_main PROPERTIES IMPORTED_LOCATION "${gtest_main_library}")
+    add_dependencies (gtest_main googletest)
+    set_target_properties (gtest_main PROPERTIES IMPORTED_LOCATION "${gtest_main_library}")
 
-    set(gtest_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set (gtest_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(gtest_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    endif()
+        set (gtest_library "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endif ()
 
     add_library (gtest STATIC IMPORTED)
-    add_dependencies(gtest gtest_main)
-    set_target_properties(gtest PROPERTIES IMPORTED_LOCATION "${gtest_library}")
+    add_dependencies (gtest gtest_main)
+    set_target_properties (gtest PROPERTIES IMPORTED_LOCATION "${gtest_library}")
 
-    list(APPEND SEQAN3_TEST_LIBRARIES "gtest_main")
-    list(APPEND SEQAN3_TEST_LIBRARIES "gtest")
-    list(APPEND SEQAN3_TEST_LIBRARIES "pthread")
-endmacro()
+    list (APPEND SEQAN3_TEST_LIBRARIES "gtest_main")
+    list (APPEND SEQAN3_TEST_LIBRARIES "gtest")
+    list (APPEND SEQAN3_TEST_LIBRARIES "pthread")
+endmacro ()
 
 macro (add_subdirectories)
     file (GLOB ENTRIES
@@ -176,9 +176,9 @@ macro (add_subdirectories)
     foreach (ENTRY ${ENTRIES})
         if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
             if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
-                add_subdirectory(${ENTRY})
+                add_subdirectory (${ENTRY})
             endif ()
         endif ()
     endforeach ()
-    unset(ENTRIES)
+    unset (ENTRIES)
 endmacro ()

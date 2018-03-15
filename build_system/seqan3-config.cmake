@@ -152,7 +152,7 @@ endmacro ()
 # Detect if we are a clone of repository and if yes auto-add submodules
 # ----------------------------------------------------------------------------
 # Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
-find_path(SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
+find_path (SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
 
 if (SEQAN3_CLONE_DIR)
     message (STATUS "  Detected as running from a repository checkout…")
