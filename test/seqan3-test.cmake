@@ -31,6 +31,10 @@
 # DAMAGE.
 # ============================================================================
 
+# This file provides functionality common to the different test modules used by
+# SeqAn3. To build tests, run cmake on one of the sub-folders in this directory
+# which contain a CMakeLists.txt.
+
 cmake_minimum_required (VERSION 3.2)
 
 # require SeqAn3 package
