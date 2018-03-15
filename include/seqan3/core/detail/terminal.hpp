@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,19 +33,57 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-header for the \link container container submodule \endlink.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
+ * \brief Checks if program is run interactively and retrieves dimensions of
+ *        terminal (Transferred from seqan2).
  */
 
 #pragma once
 
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
-/*!\defgroup container Container
- * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
- * \ingroup range
- * \sa http://en.cppreference.com/w/cpp/container
- * \sa range/container/all.hpp
+#include <cstdio>
+
+#include <seqan3/core/platform.hpp>
+
+namespace seqan3::detail
+{
+
+// ----------------------------------------------------------------------------
+// Function is_terminal()
+// ----------------------------------------------------------------------------
+
+/*!\brief Check whether we are printing to a terminal.
+ * \return True if code is run in a terminal, false otherwise.
  */
+inline bool is_terminal()
+{
+    return isatty(STDOUT_FILENO);
+}
+
+// ----------------------------------------------------------------------------
+// Function get_terminal_size()
+// ----------------------------------------------------------------------------
+
+/*!\brief  Retrieve size of terminal.
+ * \return The width of the current terminal in number of characters.
+ *
+ * \details
+ *
+ * Note: Only works on Linux/Unix.
+ * TIOCGWINSZ is the command (number) to trigger filling the winsize struct.
+ * STDOUT_FILENO is the default file descriptor (STDOUT_FILENO == fileno(stdout)).
+ */
+inline unsigned get_terminal_width()
+{
+    struct winsize w;
+    w.ws_row = 0;
+    w.ws_col = 0;
+
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    return w.ws_col;
+}
+
+}  // namespace seqan::detail

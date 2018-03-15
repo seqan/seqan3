@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,22 +30,54 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
+// ==========================================================================
 
-/*!\file
- * \brief Meta-header for the \link container container submodule \endlink.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
+#include <algorithm>
+#include <cstring>
 
-#pragma once
+#include <benchmark/benchmark.h>
 
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
+static void vector_copy_benchmark(benchmark::State& state) {
+    std::vector<int> x = {15, 13, 12, 10};
+    for (auto _ : state)
+        std::vector<int> copy{x};
+}
 
-/*!\defgroup container Container
- * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
- * \ingroup range
- * \sa http://en.cppreference.com/w/cpp/container
- * \sa range/container/all.hpp
- */
+static void memcpy_benchmark(benchmark::State& state) {
+    unsigned size = state.range(0);
+    char* src = new char[size];
+    char* dst = new char[size];
+
+    memset(src, '-', size);
+    for (auto _ : state)
+        memcpy(dst, src, size);
+
+    int64_t bytes = int64_t(state.iterations()) * int64_t(size);
+    state.SetBytesProcessed(bytes);
+    delete[] src;
+    delete[] dst;
+}
+
+static void copy_benchmark(benchmark::State& state) {
+    unsigned size = state.range(0);
+    char* src = new char[size];
+    char* dst = new char[size];
+
+    memset(src, '-', size);
+    for (auto _ : state)
+        std::copy_n(src, size, dst);
+
+    int64_t bytes = int64_t(state.iterations()) * int64_t(size);
+    state.SetBytesProcessed(bytes);
+    delete[] src;
+    delete[] dst;
+}
+
+// Register the function as a benchmark
+BENCHMARK(vector_copy_benchmark);
+
+BENCHMARK(memcpy_benchmark)->Arg(8)->Arg(64)->Arg(512);
+BENCHMARK(memcpy_benchmark)->Range(4, 4<<5);
+BENCHMARK(copy_benchmark)->RangeMultiplier(2)->Range(4, 4<<5);
+
+BENCHMARK_MAIN();

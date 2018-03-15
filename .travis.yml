@@ -24,11 +24,19 @@ matrix:
   include:
   - << : *linux-gcc-7
     env:
-      - BUILD=test
+      - BUILD=unit
       - BUILD_TYPE=Release
   - << : *linux-gcc-7
     env:
-      - BUILD=test
+      - BUILD=unit
+      - BUILD_TYPE=Debug
+  - << : *linux-gcc-7
+    env:
+      - BUILD=performance
+      - BUILD_TYPE=Release
+  - << : *linux-gcc-7
+    env:
+      - BUILD=performance
       - BUILD_TYPE=Debug
 
 install:
@@ -39,8 +47,15 @@ install:
 before_script:
   - mkdir ../seqan3-build
   - cd ../seqan3-build
-  - cmake ../seqan3/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-  - make googletest
+  - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+  - |
+    if test test = "${BUILD}"; then
+      make googletest
+    fi
+  - |
+    if test benchmark = "${BUILD}"; then
+      make google_benchmark
+    fi
 
 script:
   - make -k

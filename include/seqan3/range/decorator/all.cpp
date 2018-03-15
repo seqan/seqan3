@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,19 +33,14 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-header for the \link container container submodule \endlink.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for the \link decorator decorator submodule \endlink.
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
-
-/*!\defgroup container Container
- * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
+/*!\defgroup decorator Decorator
+ * \brief The decorator submodule contains special SeqAn3 decorators and generic decorator concepts.
  * \ingroup range
- * \sa http://en.cppreference.com/w/cpp/container
- * \sa range/container/all.hpp
+ * \sa seqan3/range/decorator/all.hpp
  */
