@@ -63,6 +63,10 @@ namespace seqan3
  * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You can implicitly
  * convert between values of seqan3::dna15 and seqan3::rna15.
  *
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::rna15::assign_char().
+ *
  *\snippet test/snippet/alphabet/nucleotide/rna15.cpp code
  */
 
