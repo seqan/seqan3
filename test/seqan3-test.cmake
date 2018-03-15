@@ -41,8 +41,8 @@ include(CheckCXXSourceCompiles)
 include(FindPackageHandleStandardArgs)
 include(FindPackageMessage)
 
-set(SEQAN3_BENCHMARK_SRC_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
-set(SEQAN3_TEST_SRC_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
+set(SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
+set(SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
 
 # required flags, includes, definitions and libraries for seqan3
 set(SEQAN3_STRICT_CXX_FLAGS "-pedantic" "-Werror" "-Wall" "-Wextra")
@@ -51,15 +51,15 @@ set(SEQAN3_STRICT_CXX_FLAGS "-pedantic" "-Werror" "-Wall" "-Wextra")
 set(SEQAN3_BENCHMARK_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
 set(SEQAN3_BENCHMARK_INCLUDE_DIRS "")
 set(SEQAN3_BENCHMARK_LIBRARIES "")
-list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_BENCHMARK_SRC_DIR}/include/")
-list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_SRC_DIR}/test/include/")
+list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
+list(APPEND SEQAN3_BENCHMARK_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/test/include/")
 
 # required flags, includes and libraries for seqan3/test/unit
 set(SEQAN3_TEST_CXX_FLAGS ${SEQAN3_STRICT_CXX_FLAGS})
 set(SEQAN3_TEST_INCLUDE_DIRS "")
 set(SEQAN3_TEST_LIBRARIES "")
-list(APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_TEST_SRC_DIR}/googletest/include/")
-list(APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_SRC_DIR}/test/include/")
+list(APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
+list(APPEND SEQAN3_TEST_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/test/include/")
 
 # commonly shared options:
 set(SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "")
@@ -102,7 +102,7 @@ macro(seqan3_require_benchmark)
         google_benchmark
         PREFIX google_benchmark
         GIT_REPOSITORY "https://github.com/google/benchmark.git"
-        SOURCE_DIR "${SEQAN3_BENCHMARK_SRC_DIR}"
+        SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${google_benchmark_args}"
         UPDATE_DISCONNECTED yes
     )
@@ -134,7 +134,7 @@ macro(seqan3_require_test)
         PREFIX googletest
         GIT_REPOSITORY "https://github.com/google/googletest.git"
         GIT_TAG "15392f1a38fa0b8c3f13a9732e94b209069efa1c"
-        SOURCE_DIR "${SEQAN3_TEST_SRC_DIR}"
+        SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${google_test_args}"
         UPDATE_DISCONNECTED yes
     )

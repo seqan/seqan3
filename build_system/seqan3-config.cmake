@@ -151,19 +151,19 @@ endmacro ()
 # ----------------------------------------------------------------------------
 # Detect if we are a clone of repository and if yes auto-add submodules
 # ----------------------------------------------------------------------------
-# Note that seqan3-config.cmake can be standalone and thus SEQAN3_SRC_DIR might be empty.
-find_path(SEQAN3_SRC_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
+# Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
+find_path(SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/..")
 
-if (SEQAN3_SRC_DIR)
+if (SEQAN3_CLONE_DIR)
     message (STATUS "  Detected as running from a repository checkout…")
 
-    if (IS_DIRECTORY "${SEQAN3_SRC_DIR}/include")
-        message (STATUS "  …adding SeqAn3 include:     ${SEQAN3_SRC_DIR}/include")
-        set (SEQAN3_INCLUDE_DIRS "${SEQAN3_SRC_DIR}/include" ${SEQAN3_INCLUDE_DIRS})
+    if (IS_DIRECTORY "${SEQAN3_CLONE_DIR}/include")
+        message (STATUS "  …adding SeqAn3 include:     ${SEQAN3_CLONE_DIR}/include")
+        set (SEQAN3_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/include" ${SEQAN3_INCLUDE_DIRS})
     endif ()
 
-    if (EXISTS "${SEQAN3_SRC_DIR}/submodules")
-        file (GLOB submodules ${SEQAN3_SRC_DIR}/submodules/*/include)
+    if (EXISTS "${SEQAN3_CLONE_DIR}/submodules")
+        file (GLOB submodules ${SEQAN3_CLONE_DIR}/submodules/*/include)
         foreach (submodule ${submodules})
             if (IS_DIRECTORY ${submodule})
                 message (STATUS "  …adding submodule include:  ${submodule}")
