@@ -36,6 +36,34 @@ project(seqan3_unit_test CXX)
 
 include(../seqan3-test.cmake)
 
+macro(seqan3_test target_cpp)
+    separate_arguments(cxx_flags_list UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
+
+    # $target_cpp = "pod_tuple_test.cpp"
+    #   * will register the global TARGET name "pod_tuple_test" and
+    #   * will register the test case name "core_pod_tuple" if
+    #     pod_tuple_test.cpp is in test/core/
+    #
+    # NOTE(marehr): ".+/test/" REGEX is greedy, that means
+    # /test/test/test/hello_test.cpp will result in an empty `test_path`
+    string(REGEX REPLACE "_test.cpp$" "" target_name ${target_cpp})
+    string(REGEX REPLACE ".+/test/" "" test_path ${CMAKE_CURRENT_LIST_DIR})
+    set(target "${target_name}_test")
+
+    add_executable(${target} ${target_cpp})
+    target_compile_options(${target} PRIVATE ${cxx_flags_list} ${SEQAN3_TEST_CXX_FLAGS})
+    target_compile_definitions(${target} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_TEST_DEFINITIONS})
+    target_include_directories(${target} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_TEST_INCLUDE_DIRS})
+    target_link_libraries(${target} ${SEQAN3_LIBRARIES} ${SEQAN3_TEST_LIBRARIES})
+    add_test(NAME "${test_path}/${target}" COMMAND ${target})
+    add_dependencies(${target} gtest)
+
+    unset(cxx_flags_list)
+    unset(target_name)
+    unset(test_path)
+    unset(target)
+endmacro()
+
 seqan3_require_ccache()
 seqan3_require_test()
 
