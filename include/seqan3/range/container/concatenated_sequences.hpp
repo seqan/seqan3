@@ -50,9 +50,9 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
-#include <seqan3/range/metafunction.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/vector.hpp>
@@ -181,7 +181,39 @@ public:
     using size_type = ranges::size_type_t<data_delimiters_type>;
     //!\}
 
-    /* rule of six */
+protected:
+    /*!\name Compatibility
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible_concept (which doesn't work for types during their definition).
+     * \{
+     */
+    //!\cond
+    // unfortunately we cannot specialise the variable template so we have to add an auxiliary here
+    template <typename t>
+        requires (dimension_v<t> == dimension_v<value_type> + 1) &&
+                 std::is_same_v<remove_cvref_t<innermost_value_type_t<value_type>>,
+                                remove_cvref_t<innermost_value_type_t<t>>>
+    static constexpr bool is_compatible_this_aux = true;
+    //!\endcond
+
+    //!\brief Whether a type satisfies seqan3::compatible_concept with this class.
+    //!\hideinitializer
+    // cannot use the concept, because this class is not yet fully defined
+    template <typename t>
+    static constexpr bool is_compatible_this = is_compatible_this_aux<t>                                    ||
+                                               std::is_same_v<remove_cvref_t<t>, concatenated_sequences>    ||
+                                               std::is_same_v<remove_cvref_t<t>, iterator>                  ||
+                                               std::is_same_v<remove_cvref_t<t>, const_iterator>;
+
+    //!\brief Whether a type satisfies seqan3::compatible_concept with this class's value_type or reference type.
+    //!\hideinitializer
+    // we explicitly check same-ness, because these types may not be fully resolved, yet
+    template <typename t>
+    static constexpr bool is_compatible_value = compatible_concept<value_type, t>                   ||
+                                                std::is_same_v<remove_cvref_t<t>, value_type>       ||
+                                                std::is_same_v<remove_cvref_t<t>, reference>        ||
+                                                std::is_same_v<remove_cvref_t<t>, const_reference>;
+    //!\}
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -199,8 +231,7 @@ public:
     ~concatenated_sequences() = default;
 
     /*!\brief Construct/assign from a different range.
-     * \tparam rng_of_rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with
-     * `concatenated_sequences`.
+     * \tparam rng_of_rng_type The type of range to be inserted; must satisfy \ref is_compatible_this.
      * \param rng_of_rng The sequences to construct/assign from.
      *
      * \par Complexity
@@ -211,14 +242,13 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename rng_of_rng_type>
+    template <input_range_concept rng_of_rng_type>
     concatenated_sequences(rng_of_rng_type && rng_of_rng)
     //!\cond
-        requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
-                 compatible_concept<rng_of_rng_type, concatenated_sequences>
+        requires is_compatible_this<rng_of_rng_type>
     //!\endcond
     {
-        if constexpr (sized_range_concept<std::decay_t<rng_of_rng_type>>)
+        if constexpr (sized_range_concept<rng_of_rng_type>)
             data_delimiters.reserve(ranges::size(rng_of_rng) + 1);
 
         for (auto && val : rng_of_rng)
@@ -229,8 +259,7 @@ public:
     }
 
     /*!\brief Construct/assign with `count` times `value`.
-     * \tparam rng_type The type of range to be inserted; `rng_type` and `value_type` must satisfy
-     * seqan3::compatible_concept.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param count Number of elements.
      * \param value The initial value to be assigned.
      *
@@ -242,12 +271,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename rng_type>
+    template <forward_range_concept rng_type>
     concatenated_sequences(size_type const count, rng_type && value)
     //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     //!\endcond
     {
         // TODO SEQAN_UNLIKELY
@@ -258,8 +285,8 @@ public:
     }
 
     /*!\brief Construct/assign from pair of iterators.
-     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and satisfy seqan3::compatible_concept
-     * with `value_type`.
+     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and must satisfy
+     * \ref is_compatible_value.
      * \tparam end_iterator_type Must satisfy seqan3::sized_sentinel_concept.
      * \param begin_it begin of range to construct/assign from.
      * \param end_it end of range to construct/assign from.
@@ -272,19 +299,18 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename begin_iterator_type, typename end_iterator_type>
+    template <forward_iterator_concept begin_iterator_type, typename end_iterator_type>
     concatenated_sequences(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires forward_iterator_concept<begin_iterator_type> &&
-                 compatible_concept<begin_iterator_type, concatenated_sequences>
-                 //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
+        requires is_compatible_this<begin_iterator_type> &&
+                 sized_sentinel_concept<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
         insert(cend(), begin_it, end_it);
     }
 
     /*!\brief Construct/assign from `std::initializer_list`.
-     * \tparam rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with `value_type`.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param ilist an `std::initializer_list` of `rng_type`.
      *
      * \par Complexity
@@ -295,19 +321,17 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename rng_type = value_type>
+    template <forward_range_concept rng_type = value_type>
     concatenated_sequences(std::initializer_list<rng_type> ilist)
     //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
     }
 
     /*!\brief Construct/assign from `std::initializer_list`.
-     * \tparam rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with `value_type`.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param ilist an `std::initializer_list` of `rng_type`.
      *
      * \par Complexity
@@ -318,12 +342,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename rng_type>
+    template <forward_range_concept rng_type>
     concatenated_sequences & operator=(std::initializer_list<rng_type> ilist)
     //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
@@ -331,8 +353,7 @@ public:
     }
 
     /*!\brief Construct/assign from a different range.
-     * \tparam rng_of_rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with
-     * `concatenated_sequences`.
+     * \tparam rng_of_rng_type The type of range to be inserted; must satisfy \ref is_compatible_this.
      * \param rng_of_rng The sequences to construct/assign from.
      *
      * \par Complexity
@@ -343,11 +364,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename rng_of_rng_type>
+    template <input_range_concept rng_of_rng_type>
     void assign(rng_of_rng_type && rng_of_rng)
     //!\cond
-        requires input_range_concept<std::decay_t<rng_of_rng_type>> &&
-                 compatible_concept<rng_of_rng_type, concatenated_sequences>
+        requires is_compatible_this<rng_of_rng_type>
     //!\endcond
     {
         concatenated_sequences rhs{std::forward<rng_of_rng_type>(rng_of_rng)};
@@ -355,7 +375,7 @@ public:
     }
 
     /*!\brief Construct/assign with `count` times `value`.
-     * \tparam rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with `value_type`.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param count Number of elements.
      * \param value The initial value to be assigned.
      *
@@ -370,9 +390,7 @@ public:
     template <typename rng_type>
     void assign(size_type const count, rng_type && value)
     //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires (forward_range_concept<rng_type> && is_compatible_value<rng_type>)
     //!\endcond
     {
         concatenated_sequences rhs{count, value};
@@ -380,8 +398,7 @@ public:
     }
 
     /*!\brief Construct/assign from pair of iterators.
-     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and satisfy seqan3::compatible_concept
-     * with `value_type`.
+     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and satisfy \ref is_compatible_value.
      * \tparam end_iterator_type Must satisfy seqan3::sized_sentinel_concept.
      * \param begin_it begin of range to construct/assign from.
      * \param end_it end of range to construct/assign from.
@@ -394,12 +411,11 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename begin_iterator_type, typename end_iterator_type>
+    template <forward_iterator_concept begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires forward_iterator_concept<begin_iterator_type> &&
-                 compatible_concept<begin_iterator_type, concatenated_sequences>
-                 //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
+        requires is_compatible_this<begin_iterator_type> &&
+                 sized_sentinel_concept<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
         concatenated_sequences rhs{begin_it, end_it};
@@ -407,7 +423,7 @@ public:
     }
 
     /*!\brief Construct/assign from `std::initializer_list`.
-     * \tparam rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with `value_type`.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param ilist an `std::initializer_list` of `rng_type`.
      *
      * \par Complexity
@@ -418,12 +434,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <typename rng_type = value_type>
+    template <forward_range_concept rng_type = value_type>
     void assign(std::initializer_list<rng_type> ilist)
     //!\cond
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     //!\endcond
     {
         assign(std::begin(ilist), std::end(ilist));
@@ -884,19 +898,16 @@ public:
      * std::cout << foobar[0] << '\n'; // [A, C, G, T]
      * ```
      */
-    template <typename rng_type>
+    template <forward_range_concept rng_type>
     iterator insert(const_iterator pos, rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     {
         return insert(pos, 1, std::forward<rng_type>(value));
     }
     // no specialisation for temporaries, since we have to copy anyway
 
     /*!\brief Inserts count copies of value before position in the container.
-     * \tparam rng_type The type of range to be inserted; `rng_type` and `value_type` must satisfy
-     * seqan3::compatible_concept.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_this.
      * \param pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param count Number of copies.
      * \param value Element value to insert.
@@ -924,11 +935,9 @@ public:
      * std::cout << foobar[1] << '\n'; // [A, C, G, T]
      * ```
      */
-     template <typename rng_type>
+    template <forward_range_concept rng_type>
     iterator insert(const_iterator pos, size_type const count, rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
 
     {
         auto const pos_as_num = std::distance(cbegin(), pos); // we want to insert BEFORE this position
@@ -944,7 +953,7 @@ public:
         // if view::join didn't strip the view of its random access and sized properties
 
         size_type value_len = 0;
-        if constexpr (sized_range_concept<std::decay_t<rng_type>>)
+        if constexpr (sized_range_concept<rng_type>)
             value_len = ranges::size(value);
         else
             value_len = std::distance(ranges::begin(value), ranges::end(value));
@@ -973,8 +982,7 @@ public:
     }
 
     /*!\brief Inserts elements from range `[first, last)` before position in the container.
-     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and satisfy seqan3::compatible_concept
-     * with `value_type`.
+     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and \ref is_compatible_value.
      * \tparam end_iterator_type Must satisfy seqan3::sized_sentinel_concept.
      * \param pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param first Begin of range to insert.
@@ -996,12 +1004,11 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      */
-    template <typename begin_iterator_type, typename end_iterator_type>
+    template <forward_iterator_concept begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type first, end_iterator_type last)
     //!\cond
-        requires forward_iterator_concept<begin_iterator_type> &&
-                 compatible_concept<begin_iterator_type, concatenated_sequences>
-                 //&& sized_sentinel_concept<end_iterator_type, begin_iterator_type>
+        requires is_compatible_this<begin_iterator_type> &&
+                 sized_sentinel_concept<end_iterator_type, begin_iterator_type>
     //!\endcond
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
@@ -1047,7 +1054,7 @@ public:
     }
 
     /*!\brief Inserts elements from initializer list before position in the container.
-     * \tparam rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with `value_type`.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param ilist Initializer list with values to insert.
      * \returns Iterator pointing to the first element inserted, or pos if `ilist` is empty.
@@ -1065,11 +1072,9 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      */
-    template <typename rng_type>
+    template <forward_range_concept rng_type>
     iterator insert(const_iterator pos, std::initializer_list<rng_type> const & ilist)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     {
         return insert(pos, ilist.begin(), ilist.end());
     }
@@ -1144,7 +1149,7 @@ public:
     }
 
     /*!\brief Appends the given element value to the end of the container.
-     * \tparam rng_type The type of range to be inserted; must satisfy seqan3::compatible_concept with `value_type`.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param value The value to append.
      *
      * If the new size() is greater than capacity() then all iterators and references (including the past-the-end
@@ -1159,11 +1164,9 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      */
-    template <typename rng_type>
+    template <forward_range_concept rng_type>
     void push_back(rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     {
         data_values.insert(data_values.cend(), ranges::begin(value), ranges::end(value));
         data_delimiters.push_back(data_delimiters.back() + ranges::size(value));
@@ -1227,16 +1230,13 @@ public:
     }
 
     /*!\copybrief resize()
-     * \tparam rng_type The type of range to be inserted; `rng_type` and `value_type` must satisfy
-     * seqan3::compatible_concept.
+     * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_value.
      * \param value Instead of appending empty containers, append copies of value.
      * \copydetails resize()
      */
-    template <typename rng_type>
+    template <forward_range_concept rng_type>
     void resize(size_type const count, rng_type && value)
-        requires std::is_same_v<std::decay_t<rng_type>, std::decay_t<reference>> ||
-                 std::is_same_v<std::decay_t<rng_type>, std::decay_t<const_reference>> ||
-                 (forward_range_concept<std::decay_t<rng_type>> && compatible_concept<rng_type, value_type>)
+        requires is_compatible_value<rng_type>
     {
         assert(count < max_size());
         assert(concat_size() + count * ranges::size(value) < data_values.max_size());
