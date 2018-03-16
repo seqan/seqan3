@@ -40,6 +40,7 @@
 #pragma once
 
 #include <range/v3/range_concepts.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {

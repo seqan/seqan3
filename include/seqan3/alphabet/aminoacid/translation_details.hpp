@@ -42,6 +42,7 @@
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 
 namespace seqan3::detail
 {
