@@ -101,20 +101,6 @@ TEST(phred42_implicit_assign, implicit_assign)
     EXPECT_EQ(illu2._value, 41);
 }
 
-// char operator
-TEST(phred42_op_char, op_char)
-{
-    // in [0..value_size[
-    phred42 illu;
-    illu = 0;
-    char c = char(illu);
-    EXPECT_EQ(c, '!');
-    // in [value_size .. max_value_size[
-    illu = 47;
-    c = char(illu);
-    EXPECT_EQ(c, 'J');
-}
-
 TEST(phred42_to_rank, to_rank)
 {
     phred42 illu;

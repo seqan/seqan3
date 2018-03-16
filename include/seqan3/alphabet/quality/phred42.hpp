@@ -48,23 +48,20 @@ namespace seqan3
 */
 struct phred42
 {
-    //!\publicsection
     /*!\name Member types
     * \{
     */
     //!\brief The 0-based integer representation of a quality score.
-    //!\hideinitializer
     using rank_type = uint8_t;
 
     //!\brief The integer representation of a quality score.
-    //!\hideinitializer
     using phred_type = uint8_t;
 
     //!\brief The '!'-based character representation of a quality score.
-    //!\hideinitializer
     using char_type = char;
     //!\}
 
+    //!\privatesection
     /*!\name Member variables.
     * \{
     */
@@ -72,10 +69,10 @@ struct phred42
     rank_type _value;
 
     //!\brief The projection offset between char and rank quality score representation.
-    //!\hideinitializer
     static constexpr char_type offset_char{'!'};
     //!\}
 
+public:
     //!\brief Value assignment with implicit compatibility to inner type.
     constexpr phred42 & operator =(phred_type const c)
     {
@@ -117,15 +114,6 @@ struct phred42
         return this->_value >= rhs._value;
     }
     //!\}
-
-    /*!\name Conversion and explicit conversion functions.
-    * \{
-   */
-    //!\brief Explicit compatibility to char code of a quality score.
-    explicit constexpr operator char() const
-    {
-        return to_char();
-    }
 
     //!\brief Convert quality score to its ascii representation.
     constexpr char_type to_char() const
@@ -171,11 +159,15 @@ struct phred42
     //!\brief The phred score range size for Illumina 1.8 standard.
     static constexpr rank_type value_size{42};
 
-private:
+protected:
+    //!\privatesection
+    /*!\name Member variables.
+    * \{
+    */
     //!\brief Maximally tolerated phred score [42..61] that will be mapped to 41.
     static constexpr rank_type max_value_size{62};
+    //!\}
 
-protected:
     //!\brief Char to value conversion table.
     static constexpr std::array<char_type, 256> char_to_value
     {
