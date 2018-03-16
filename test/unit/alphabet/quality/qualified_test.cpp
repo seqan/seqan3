@@ -46,13 +46,13 @@ using namespace seqan3;
 // default/zero construction
 TEST(qualified, ctr)
 {
-    [[maybe_unused]] qualified<dna4, phred42> t1;
+    [[maybe_unused]] qualified<dna4, phred42> t1{};
 }
 
 // aggregate initialization
 TEST(qualified, aggr)
 {
-    qualified<dna4, phred42> t1;
+    qualified<dna4, phred42> t1{};
     qualified<dna4, phred42> t2{dna4::C, 7};
     EXPECT_NE(t1, t2);
 }
@@ -91,8 +91,8 @@ TEST(qualified, mv_ctr)
 TEST(qualified, cp_assgn)
 {
     qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2;
-    qualified<dna4, phred42> t3;
+    qualified<dna4, phred42> t2{};
+    qualified<dna4, phred42> t3{};
 
     t2 = t1;
     t3 = t1;
@@ -105,8 +105,8 @@ TEST(qualified, mv_assgn)
 {
     qualified<dna4, phred42> t0{dna4::C, 7};
     qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2;
-    qualified<dna4, phred42> t3;
+    qualified<dna4, phred42> t2{};
+    qualified<dna4, phred42> t3{};
     t2 = std::move(t1);
     EXPECT_EQ(t2, t0);
     t3 = std::move(t2);
