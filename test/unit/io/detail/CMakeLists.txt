@@ -1,0 +1,1 @@
+seqan3_test(output_iterator_conversion_adaptor_test.cpp)

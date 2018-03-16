@@ -43,7 +43,6 @@
 
 #include <seqan3/io/concept.hpp>
 
-
 using namespace seqan3;
 
 TEST(io, stream_concept)
