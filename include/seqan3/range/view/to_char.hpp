@@ -69,7 +69,7 @@ namespace seqan3::view
  * auto v = vec | view::to_char;
  * std::cout << v << '\n'; // [A,C,T,T,T,G,A,T,A]
  *
- * std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
+ * std::vector<qualified> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
  * auto v3 = qvec | view::to_char;
  * std::cout << v3 << '\n'; // [!,(,&,$,(,%,?,1,8]
  *

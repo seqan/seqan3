@@ -38,106 +38,96 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 
 using namespace seqan3;
 
 // constructor
-TEST(illumina18_ctr, ctr)
+TEST(phred42_ctr, ctr)
 {
-    [[maybe_unused]] illumina18 illu;
+    [[maybe_unused]] phred42 illu;
 }
 
 // default copy constructor
-TEST(illumina18_cp_ctr, cp_ctr)
+TEST(phred42_cp_ctr, cp_ctr)
 {
-    illumina18 illu{0};
-    illumina18 illu2(illu);
+    // in value_size range
+    phred42 illu1{0};
+    phred42 illu1_cp(illu1);
+    // in max_value_size range
+    phred42 illu2{52};
+    phred42 illu2_cp(illu2);
 }
 
 // default destructor
-TEST(illumina18_des, des)
+TEST(phred42_des, des)
 {
-    illumina18* illu_ptr = new illumina18{};
+    phred42* illu_ptr = new phred42{};
     delete illu_ptr;
 }
 
 // cp by assignment
-TEST(illumina18_cp_ass, cp_ass)
+TEST(phred42_cp_ass, cp_ass)
 {
-    illumina18 illu{0};
-    [[maybe_unused]] illumina18 illu2 = illu;
-}
-
-// phred score offset
-TEST(illumina18_int_offset, int_offset)
-{
-    EXPECT_EQ(illumina18::offset_phred, 0);
+    phred42 illu{0};
+    [[maybe_unused]] phred42 illu2 = illu;
 }
 
 // char offset
-TEST(illumina18_char_offset, const_offset)
+TEST(phred42_char_offset, const_offset)
 {
-    EXPECT_EQ(illumina18::offset_char, '!');
+    EXPECT_EQ(phred42::offset_char, '!');
 }
 
 // global and static quality alphabet size
-TEST(illumina18_alphabet_size, const_value_size)
+TEST(phred42_alphabet_size, const_value_size)
 {
-    EXPECT_EQ(illumina18::value_size, 42);
-    EXPECT_EQ(alphabet_size_v<illumina18>, 42);
+    EXPECT_EQ(phred42::value_size, 42);
+    EXPECT_EQ(alphabet_size_v<phred42>, 42);
 }
 
 // implicit value assignment
-TEST(illumina18_implicit_assign, implicit_assign)
+TEST(phred42_implicit_assign, implicit_assign)
 {
-    illumina18 illu;
+    phred42 illu;
     illu = 19;
     // expect size unmodified
-    EXPECT_EQ(illumina18::value_size, 42);
+    EXPECT_EQ(phred42::value_size, 42);
     // newly assigned member
-    EXPECT_EQ(illu.value, 19);
+    EXPECT_EQ(illu._value, 19);
+    // value in [value_size .. max_value_size[
+    phred42 illu2;
+    illu2 = 49;
+    EXPECT_EQ(illu2._value, 41);
 }
 
-// char operator
-TEST(illumina18_op_char, op_char)
+TEST(phred42_to_rank, to_rank)
 {
-    illumina18 illu;
-    illu = 0;
-    char c = char(illu);
-    EXPECT_EQ(c, '!');
-}
-
-TEST(illumina18_assign_rank, assign_rank)
-{
-    illumina18 illu;
-    illumina18 illu2 = assign_rank(illu, 1);
-    EXPECT_EQ(1, to_rank(illu2));
-
-    illu2 = illu.assign_rank(2);
-    EXPECT_EQ(2, to_rank(illu2));
-}
-
-TEST(illumina18_to_rank, to_rank)
-{
-    illumina18 illu;
+    phred42 illu;
     illu = 19;
     EXPECT_EQ(19, to_rank(illu));
     EXPECT_EQ(19, illu.to_rank());
+    // in [value_size .. max_value_size[
+    illu = 47;
+    EXPECT_EQ(41, to_rank(illu));
+    EXPECT_EQ(41, illu.to_rank());
 }
 
 // global assign_char operator
-TEST(illumina18_assign_char, assign_char)
+TEST(phred42_assign_char, assign_char)
 {
-    illumina18 illu;
+    phred42 illu;
     illu = assign_char(illu, '!');
     EXPECT_EQ(0, to_rank(illu));
+    // in [value_size .. max_value_size[
+    illu = assign_char(illu, 'O');
+    EXPECT_EQ(41, to_rank(illu));
 }
 
 // global and internal to_char
-TEST(illumina18_op_tochar, op_to_char)
+TEST(phred42_op_tochar, op_to_char)
 {
-    illumina18 illu;
+    phred42 illu;
     illu = 2;
     EXPECT_EQ(to_char(illu), '#');
     EXPECT_EQ(illu.to_char(), '#');
@@ -145,30 +135,40 @@ TEST(illumina18_op_tochar, op_to_char)
     illu = 41;
     EXPECT_EQ(to_char(illu), 'J');
     EXPECT_EQ(illu.to_char(), 'J');
+    illu = 42;
+    EXPECT_EQ(to_char(illu), 'J');
+    EXPECT_EQ(illu.to_char(), 'J');
 }
 
-TEST(illumina18_assign_phred, assign_phred)
+TEST(phred42_assign_phred, assign_phred)
 {
-    illumina18 illu;
+    phred42 illu;
     illu = 7;
     illu = assign_phred(illu, 9);
-    [[maybe_unused]] seqan3::illumina18::rank_type val = illu.value;
+    [[maybe_unused]] seqan3::phred42::rank_type val = illu._value;
     EXPECT_EQ(9, to_rank(illu));
+    illu = assign_phred(illu, 43);
+    EXPECT_EQ(41, to_rank(illu));
 }
 
-TEST(illumina18_to_phred, to_phred)
+TEST(phred42_to_phred, to_phred)
 {
-    illumina18 illu{};
+    phred42 illu{};
     EXPECT_EQ(0, to_phred(illu));
     illu = 39;
     EXPECT_EQ(39, to_rank(illu));
+    illu = 41;
+    EXPECT_EQ(41, to_rank(illu));
+    // in [value_size .. max_value_size[
+    illu = 42;
+    EXPECT_EQ(41, to_rank(illu));
 }
 
-TEST(illumina18_cmp, cmp)
+TEST(phred42_cmp, cmp)
 {
-    illumina18 illu1{7};
-    illumina18 illu2{11};
-    illumina18 illu3{30};
+    // phred42 p{<num>} should never be called due to unimplemented range check
+    phred42 illu1, illu2, illu3, illu4, illu5;
+    illu1 = 7, illu2 = 11, illu3 = 30, illu4 = 41, illu5 = 43;
 
     EXPECT_LT(illu1, illu2);
     EXPECT_LE(illu1, illu2);
@@ -177,10 +177,5 @@ TEST(illumina18_cmp, cmp)
     EXPECT_GE(illu2, illu2);
     EXPECT_GE(illu3, illu2);
     EXPECT_GT(illu3, illu2);
-}
-
-TEST(illumina18, quality_concept)
-{
-    EXPECT_TRUE(quality_concept<illumina18>);
-    EXPECT_TRUE(seqan3::detail::internal_quality_concept<illumina18>);
+    EXPECT_EQ(illu4, illu5);
 }

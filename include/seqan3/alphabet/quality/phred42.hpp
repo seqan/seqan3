@@ -42,118 +42,131 @@ namespace seqan3
 {
 
 /*!
- * Implementation of the Illumina 1.8 standard fulfilling the quality concept.
- * The permitted phred score range is [0 .. 41], mapped to ascii-ordered range ['!' .. 'J'].
- * For this standard internal and rank phred representation are both zero-based.
- */
-struct illumina18
+ * The phred42 alphabet structure represents the zero-based phred score range
+ * [0..41], mapped to the ascii-ordered range ['!' .. 'J']. It therefore can
+ * represent the Illumina 1.8 standard score and the original Sanger score.
+*/
+struct phred42
 {
-    //! the PHRED representation type of a quality score
-    using phred_type = int8_t;
-    //! the rank representation type of a quality score
+    /*!\name Member types
+    * \{
+    */
+    //!\brief The 0-based integer representation of a quality score.
     using rank_type = uint8_t;
-    //! the char representation type of a quality score
+
+    //!\brief The integer representation of a quality score.
+    using phred_type = uint8_t;
+
+    //!\brief The '!'-based character representation of a quality score.
     using char_type = char;
+    //!\}
 
-    //! internal rank value representation
-    rank_type value;
+    //!\privatesection
+    /*!\name Member variables.
+    * \{
+    */
+    //!\brief The internal 0-based rank value.
+    rank_type _value;
 
-    //! projection offset of a char quality score
+    //!\brief The projection offset between char and rank quality score representation.
     static constexpr char_type offset_char{'!'};
-    //! projection offsets of a phred quality score
-    static constexpr phred_type offset_phred{0};
+    //!\}
 
-    //! implicit compatibility to inner_type
-    constexpr illumina18 & operator =(rank_type const c)
+public:
+    //!\brief Value assignment with implicit compatibility to inner type.
+    constexpr phred42 & operator =(phred_type const c)
     {
-        value = c;
+        assert(c < max_value_size);
+        _value = (c < value_size) ? c : value_size - 1;
         return *this;
     }
 
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(const illumina18 & rhs) const
+    /*!\name Comparison operators.
+    * \{
+    */
+    constexpr bool operator==(const phred42 & rhs) const
     {
-        return this->value == rhs.value;
+        return this->_value == rhs._value;
     }
 
-    constexpr bool operator!=(const illumina18 & rhs) const
+    constexpr bool operator!=(const phred42 & rhs) const
     {
-        return this->value != rhs.value;
+        return this->_value != rhs._value;
     }
 
-    constexpr bool operator<(const illumina18 & rhs) const
+    constexpr bool operator<(const phred42 & rhs) const
     {
-        return this->value < rhs.value;
+        return this->_value < rhs._value;
     }
 
-    constexpr bool operator>(const illumina18 & rhs) const
+    constexpr bool operator>(const phred42 & rhs) const
     {
-        return this->value > rhs.value;
+        return this->_value > rhs._value;
     }
 
-    constexpr bool operator<=(const illumina18 & rhs) const
+    constexpr bool operator<=(const phred42 & rhs) const
     {
-        return this->value <= rhs.value;
+        return this->_value <= rhs._value;
     }
 
-    constexpr bool operator>=(const illumina18 & rhs) const
+    constexpr bool operator>=(const phred42 & rhs) const
     {
-        return this->value >= rhs.value;
+        return this->_value >= rhs._value;
     }
     //!\}
 
-    //! explicit compatibility to char code of a quality score
-    explicit constexpr operator char() const
-    {
-        return to_char();
-    }
-
-    //! convert quality score to its 1-letter code
+    //!\brief Convert quality score to its ascii representation.
     constexpr char_type to_char() const
     {
-        return static_cast<char_type>(value + offset_char);
+        return static_cast<char_type>(_value + offset_char);
     }
 
-    //! set internal value given 1-letter code
-    constexpr illumina18 & assign_char(char_type const c)
+    //!\brief Set internal value given its ascii representation.
+    constexpr phred42 & assign_char(char_type const c)
     {
-        value = char_to_value[c];
+        _value = char_to_value[c];
         return *this;
     }
 
-    //! explicit compatibility to internal rank representation
+    //!\brief Explicit compatibility to internal rank representation.
     constexpr rank_type to_rank() const
     {
-        return value;
+        return _value;
     }
 
-    //! set internal value given zero-based integer c
-    constexpr illumina18 & assign_rank(rank_type const c)
+    //!\brief Set internal value given phred integer code p.
+    constexpr phred42 & assign_phred(phred_type const p)
     {
-        assert(c < value_size);
-        value = c;
+        // p >= 0 is implicitly always true
+        assert(p < max_value_size);
+        _value = (p < value_size) ? p : value_size - 1;
         return *this;
     }
 
-    //! set internal value given Illumina 1.8 integer code p
-    constexpr illumina18 & assign_phred(phred_type const p)
+    //!\brief Set internal value given 0-based rank code p.
+    constexpr phred42 & assign_rank(phred_type const p)
     {
-        assert(p >= offset_phred && p < offset_phred + value_size);
-        value = p - offset_phred;
-        return *this;
+        return assign_phred(p);
     }
 
-    //! get Illumina 1.8 integer code
-    constexpr phred_type to_phred() const
+    //!\brief Return the integer rank code.
+    constexpr rank_type to_phred() const
     {
-        return value + offset_phred;
+        return _value;
     }
+    //!\}
 
-    //! phred score range for Illumina 1.8 standard
+    //!\brief The phred score range size for Illumina 1.8 standard.
     static constexpr rank_type value_size{42};
 
 protected:
+    //!\privatesection
+    /*!\name Member variables.
+    * \{
+    */
+    //!\brief Maximally tolerated phred score [42..61] that will be mapped to 41.
+    static constexpr rank_type max_value_size{62};
+    //!\}
 
     //!\brief Char to value conversion table.
     static constexpr std::array<char_type, 256> char_to_value
@@ -161,10 +174,11 @@ protected:
         [] () constexpr
         {
             std::array<char_type, 256> ret{};
-
             for (char_type c = '!'; c <= 'J'; ++c)
                 ret[c] = c - '!';
-
+            // reduce ['K' .. '_']  to 'J'
+            for (char_type c = 'K'; c <= '^'; ++c)
+                ret[c] = ret['J'];
             return ret;
         }()
     };

@@ -69,7 +69,7 @@ namespace seqan3::view
  * auto v = vec | view::to_rank | view::convert<unsigned>;
  * std::cout << v << '\n'; // [0,1,3,3,3,2,0,3,0]
  *
- * std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
+ * std::vector<qualified> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
  * auto v3 = qvec | view::to_rank | view::convert<unsigned>;
  * std::cout << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
  *
