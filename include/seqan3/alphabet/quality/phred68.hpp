@@ -31,12 +31,19 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
-// ============================================================================
+
+/*!\file
+ * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
+ * \brief Contains seqan3::phred68 quality scores.
+ */
 
 #pragma once
 
 #include <cassert>
+
+// ------------------------------------------------------------------
+// phred68
+// ------------------------------------------------------------------
 
 namespace seqan3
 {
@@ -46,22 +53,37 @@ namespace seqan3
  * to the ascii-ordered range [';' .. '~']. It represents the Solexa standard
  * score.
 */
+/*!\brief The sequence quality alphabet from ';' to '~'.
+ * \ingroup quality
+ *
+ * \details
+ * The phred68 quality alphabet represents the -5-based phred score range
+ * [-5..62] mapped to the ASCII range [';' .. '~']. It represents the Solexa and
+ * the Illumina [1.0;1.8[ standard.
+ *
+ *~~~~~~~~~~~~~~~{.cpp}
+ *     phred68 phred;
+ *     phred = -2;
+ *     std::cout << phred.to_phred() << "\n";  // -2
+ *     std::cout << phred.to_char() << "\n";  // '>'
+ *     std::cout << phred.to_rank() << "\n";  // 3
+ *     // this doesn't work:
+ *     // phred63{4};
+ *     // phred = 75; // <- throws assertion
+ *~~~~~~~~~~~~~~~
+ */
 struct phred68
 {
-    //!\publicsection
     /*!\name Member types
     * \{
     */
-    //!\brief The 0-based integer representation of a quality score.
-    //!\hideinitializer
+    //!\brief The 0-based rank representation of a quality score.
     using rank_type = uint8_t;
 
-    //!\brief The integer representation of a quality score.
-    //!\hideinitializer
+    //!\brief The -5-based integer representation of a quality score assignable with =operator.
     using phred_type = int8_t;
 
     //!\brief The ';'-based character representation of a quality score.
-    //!\hideinitializer
     using char_type = char;
     //!\}
 
@@ -72,8 +94,7 @@ struct phred68
     //!\brief The internal 0-based rank value.
     rank_type _value;
 
-    //!\brief The projection offset between char and rank quality score representation.
-    //!\hideinitializer
+    //!\brief The projection offset between char and rank score representation.
     static constexpr char_type offset_char{';'};
 
     //! projection offsets of a phred quality score
@@ -87,6 +108,136 @@ struct phred68
         _value = c - offset_phred;  // assign its rank value
         return *this;
     }
+
+    /*!\name Read functions
+     * \{
+     */
+    /*!\brief Return the letter as a character of char_type.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    constexpr char_type to_char() const
+    {
+        return static_cast<char_type>(_value + offset_char);
+    }
+
+    /*!\brief Return the letter's numeric phred code.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::detail::quality_concept::to_phred() requirement via the seqan3::to_phred() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    constexpr phred_type to_phred() const
+    {
+        return _value + offset_phred;
+    }
+
+    /*!\brief Return the letter as a character of char_type.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    constexpr rank_type to_rank() const
+    {
+        return _value;
+    }
+    //!\}
+
+    /*!\name Write functions
+     * \{
+     */
+     /*!\brief Assign from a character.
+      *
+      * \details
+      *
+      * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
+      *
+      * \par Complexity
+      *
+      * Constant.
+      *
+      * \par Exceptions
+      *
+      * Guaranteed not to throw.
+      */
+    constexpr phred68 & assign_char(char_type const c)
+    {
+        assert(c >= offset_char && c < offset_char + value_size);
+        _value = char_to_value[c];
+        return *this;
+    }
+
+    /*!\brief Assign from the numeric phred value.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::quality_concept::assign_phred() requirement via the seqan3::assign_rank() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    constexpr phred68 & assign_phred(phred_type const p)
+    {
+        // p >= 0 is implicitly always true
+        assert((p >= offset_phred) && (p < value_size + offset_phred));
+        _value = p - offset_phred;
+        return *this;
+    }
+
+    /*!\brief Assign from a the numeric rank value.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    constexpr phred68 & assign_rank(rank_type const p)
+    {
+        // p implicitly always true due to unsignedness of p
+        assert(p < value_size);
+        _value = p;
+        return *this;
+    }
+    //!\}
 
     /*!\name Comparison operators.
     * \{
@@ -119,53 +270,6 @@ struct phred68
     constexpr bool operator>=(const phred68 & rhs) const
     {
         return this->_value >= rhs._value;
-    }
-    //!\}
-
-    /*!\name Conversion and explicit conversion functions.
-    * \{
-    */
-    //!\brief Convert quality score to its ascii representation.
-    constexpr char_type to_char() const
-    {
-        return static_cast<char_type>(_value + offset_char);
-    }
-
-    //!\brief Set internal value given its ascii representation.
-    constexpr phred68 & assign_char(char_type const c)
-    {
-        _value = char_to_value[c];
-        return *this;
-    }
-
-    //!\brief Explicit compatibility to internal rank representation.
-    constexpr rank_type to_rank() const
-    {
-        return _value;
-    }
-
-    //!\brief Set internal value given phred_offset-based integer code p.
-    constexpr phred68 & assign_phred(phred_type const p)
-    {
-        // p >= 0 is implicitly always true
-        assert((p >= offset_phred) & (p < value_size + offset_phred));
-        _value = p - offset_phred;
-        return *this;
-    }
-
-    //!\brief Set internal value given 0-based rank code p.
-    constexpr phred68 & assign_rank(rank_type const p)
-    {
-        // p implicitly always true due to unsignedness of p
-        assert(p < value_size);
-        _value = p;
-        return *this;
-    }
-
-    //!\brief Return the integer phred score [offset_phred .. offset_phred+68[.
-    constexpr rank_type to_phred() const
-    {
-        return _value + offset_phred;
     }
     //!\}
 

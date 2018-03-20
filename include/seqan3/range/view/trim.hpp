@@ -41,7 +41,7 @@
 
 #include <range/v3/view/take_while.hpp>
 
-#include <seqan3/alphabet/quality/qualified.hpp>
+#include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/range/concept.hpp>
 
 namespace seqan3::detail
@@ -190,15 +190,15 @@ namespace seqan3::view
  *
  * \par Example
  *
- * Operating on a range of seqan3::qualified:
+ * Operating on a range of seqan3::phred42:
  * ```cpp
- * std::vector<qualified> vec{qualified{40}, qualified{40}, qualified{30}, qualified{20}, qualified{10}};
+ * std::vector<phred42> vec{phred42{40}, phred42{40}, phred42{30}, phred42{20}, phred42{10}};
  *
  * // trim by phred_value
  * auto v1 = vec | view::trim(20u);                        // == ['I','I','?','5']
  *
  * // trim by quality character
- * auto v2 = vec | view::trim(qualified{40});             // == ['I','I']
+ * auto v2 = vec | view::trim(phred42{40});             // == ['I','I']
  *
  * // function syntax
  * auto v3 = view::trim(vec, 20u);                         // == ['I','I','?','5']
@@ -209,17 +209,17 @@ namespace seqan3::view
  *
  * Or operating on a range of seqan3::dna5q:
  * ```cpp
- * std::vector<dna5q> vec{{dna5::A, qualified{40}}, {dna5::G, qualified{40}}, {dna5::G, qualified{30}},
- *                        {dna5::A, qualified{20}}, {dna5::T, qualified{10}}};
- * std::vector<dna5q> cmp{{dna5::A, qualified{40}}, {dna5::G, qualified{40}}, {dna5::G, qualified{30}},
- *                        {dna5::A, qualified{20}}};
+ * std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
+ *                        {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
+ * std::vector<dna5q> cmp{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
+ *                        {dna5::A, phred42{20}}};
  *
  * // trim by phred_value
  * auto v1 = vec | view::trim(20u);
  * assert(std::vector<dna5q>(v1) == cmp);
  *
  * // trim by quality character; in this case the nucleotide part of the character is irrelevant
- * auto v2 = vec | view::trim(dna5q{dna5::C, qualified{20}});
+ * auto v2 = vec | view::trim(dna5q{dna5::C, phred42{20}});
  * assert(std::vector<dna5q>(v2) == cmp);
  *
  * // combinability

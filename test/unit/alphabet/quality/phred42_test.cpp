@@ -31,8 +31,6 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
-// ============================================================================
 
 #include <gtest/gtest.h>
 
@@ -45,32 +43,35 @@ using namespace seqan3;
 // constructor
 TEST(phred42_ctr, ctr)
 {
-    [[maybe_unused]] phred42 illu;
+    [[maybe_unused]] phred42 phred;
 }
 
 // default copy constructor
 TEST(phred42_cp_ctr, cp_ctr)
 {
     // in value_size range
-    phred42 illu1{0};
-    phred42 illu1_cp(illu1);
+    phred42 phred1;
+    phred1 = 3;
+    phred42 phred1_cp(phred1);
     // in max_value_size range
-    phred42 illu2{52};
-    phred42 illu2_cp(illu2);
+    phred42 phred2;
+    phred2 = 52;
+    phred42 phred2_cp(phred2);
 }
 
 // default destructor
 TEST(phred42_des, des)
 {
-    phred42* illu_ptr = new phred42{};
-    delete illu_ptr;
+    phred42* phred_ptr = new phred42{};
+    delete phred_ptr;
 }
 
 // cp by assignment
 TEST(phred42_cp_ass, cp_ass)
 {
-    phred42 illu{0};
-    [[maybe_unused]] phred42 illu2 = illu;
+    phred42 phred;
+    phred = 0;
+    [[maybe_unused]] phred42 phred2 = phred;
 }
 
 // char offset
@@ -89,93 +90,93 @@ TEST(phred42_alphabet_size, const_value_size)
 // implicit value assignment
 TEST(phred42_implicit_assign, implicit_assign)
 {
-    phred42 illu;
-    illu = 19;
+    phred42 phred;
+    phred = 19;
     // expect size unmodified
     EXPECT_EQ(phred42::value_size, 42);
     // newly assigned member
-    EXPECT_EQ(illu._value, 19);
+    EXPECT_EQ(phred._value, 19);
     // value in [value_size .. max_value_size[
-    phred42 illu2;
-    illu2 = 49;
-    EXPECT_EQ(illu2._value, 41);
+    phred42 phred2;
+    phred2 = 49;
+    EXPECT_EQ(phred2._value, 41);
 }
 
 TEST(phred42_to_rank, to_rank)
 {
-    phred42 illu;
-    illu = 19;
-    EXPECT_EQ(19, to_rank(illu));
-    EXPECT_EQ(19, illu.to_rank());
+    phred42 phred;
+    phred = 19;
+    EXPECT_EQ(19, to_rank(phred));
+    EXPECT_EQ(19, phred.to_rank());
     // in [value_size .. max_value_size[
-    illu = 47;
-    EXPECT_EQ(41, to_rank(illu));
-    EXPECT_EQ(41, illu.to_rank());
+    phred = 47;
+    EXPECT_EQ(41, to_rank(phred));
+    EXPECT_EQ(41, phred.to_rank());
 }
 
 // global assign_char operator
 TEST(phred42_assign_char, assign_char)
 {
-    phred42 illu;
-    illu = assign_char(illu, '!');
-    EXPECT_EQ(0, to_rank(illu));
+    phred42 phred;
+    phred = assign_char(phred, '!');
+    EXPECT_EQ(0, to_rank(phred));
     // in [value_size .. max_value_size[
-    illu = assign_char(illu, 'O');
-    EXPECT_EQ(41, to_rank(illu));
+    phred = assign_char(phred, 'O');
+    EXPECT_EQ(41, to_rank(phred));
 }
 
 // global and internal to_char
 TEST(phred42_op_tochar, op_to_char)
 {
-    phred42 illu;
-    illu = 2;
-    EXPECT_EQ(to_char(illu), '#');
-    EXPECT_EQ(illu.to_char(), '#');
+    phred42 phred;
+    phred = 2;
+    EXPECT_EQ(to_char(phred), '#');
+    EXPECT_EQ(phred.to_char(), '#');
     // change internal value
-    illu = 41;
-    EXPECT_EQ(to_char(illu), 'J');
-    EXPECT_EQ(illu.to_char(), 'J');
-    illu = 42;
-    EXPECT_EQ(to_char(illu), 'J');
-    EXPECT_EQ(illu.to_char(), 'J');
+    phred = 41;
+    EXPECT_EQ(to_char(phred), 'J');
+    EXPECT_EQ(phred.to_char(), 'J');
+    phred = 42;
+    EXPECT_EQ(to_char(phred), 'J');
+    EXPECT_EQ(phred.to_char(), 'J');
 }
 
 TEST(phred42_assign_phred, assign_phred)
 {
-    phred42 illu;
-    illu = 7;
-    illu = assign_phred(illu, 9);
-    [[maybe_unused]] seqan3::phred42::rank_type val = illu._value;
-    EXPECT_EQ(9, to_rank(illu));
-    illu = assign_phred(illu, 43);
-    EXPECT_EQ(41, to_rank(illu));
+    phred42 phred;
+    phred = 7;
+    phred = assign_phred(phred, 9);
+    [[maybe_unused]] seqan3::phred42::rank_type val = phred._value;
+    EXPECT_EQ(9, to_rank(phred));
+    phred = assign_phred(phred, 43);
+    EXPECT_EQ(41, to_rank(phred));
 }
 
 TEST(phred42_to_phred, to_phred)
 {
-    phred42 illu{};
-    EXPECT_EQ(0, to_phred(illu));
-    illu = 39;
-    EXPECT_EQ(39, to_rank(illu));
-    illu = 41;
-    EXPECT_EQ(41, to_rank(illu));
+    phred42 phred;
+    phred = 0;
+    EXPECT_EQ(0, to_phred(phred));
+    phred = 39;
+    EXPECT_EQ(39, to_rank(phred));
+    phred = 41;
+    EXPECT_EQ(41, to_rank(phred));
     // in [value_size .. max_value_size[
-    illu = 42;
-    EXPECT_EQ(41, to_rank(illu));
+    phred = 42;
+    EXPECT_EQ(41, to_rank(phred));
 }
 
 TEST(phred42_cmp, cmp)
 {
     // phred42 p{<num>} should never be called due to unimplemented range check
-    phred42 illu1, illu2, illu3, illu4, illu5;
-    illu1 = 7, illu2 = 11, illu3 = 30, illu4 = 41, illu5 = 43;
-
-    EXPECT_LT(illu1, illu2);
-    EXPECT_LE(illu1, illu2);
-    EXPECT_LE(illu2, illu2);
-    EXPECT_EQ(illu2, illu2);
-    EXPECT_GE(illu2, illu2);
-    EXPECT_GE(illu3, illu2);
-    EXPECT_GT(illu3, illu2);
-    EXPECT_EQ(illu4, illu5);
+    phred42 phred1, phred2, phred3, phred4, phred5;
+    phred1 = 7, phred2 = 11, phred3 = 30, phred4 = 41, phred5 = 43;
+    EXPECT_LT(phred1, phred2);
+    EXPECT_LE(phred1, phred2);
+    EXPECT_LE(phred2, phred2);
+    EXPECT_EQ(phred2, phred2);
+    EXPECT_GE(phred2, phred2);
+    EXPECT_GE(phred3, phred2);
+    EXPECT_GT(phred3, phred2);
+    EXPECT_EQ(phred4, phred5);
 }

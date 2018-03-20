@@ -31,8 +31,6 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
-// ============================================================================
 
 #include <gtest/gtest.h>
 
@@ -75,7 +73,7 @@ TEST(phred63_cp_ass, cp_ass)
 // char offset
 TEST(phred63_char_offset, const_offset)
 {
-    EXPECT_EQ(phred63::offset_char, '@');
+    EXPECT_EQ(phred63::offset_char, '!');
 }
 
 // global and static quality alphabet size
@@ -111,10 +109,10 @@ TEST(phred63_to_rank, to_rank)
 TEST(phred63_assign_char, assign_char)
 {
     phred63 illu;
-    illu = assign_char(illu, '@');
+    illu = assign_char(illu, '!');
     EXPECT_EQ(0, to_rank(illu));
-    illu = assign_char(illu, 'O');
-    EXPECT_EQ(15, to_rank(illu));
+    illu = assign_char(illu, '1');
+    EXPECT_EQ(16, to_rank(illu));
 }
 
 // global and internal to_char
@@ -122,12 +120,12 @@ TEST(phred63_op_tochar, op_to_char)
 {
     phred63 illu;
     illu = 2;
-    EXPECT_EQ(to_char(illu), 'B');
-    EXPECT_EQ(illu.to_char(), 'B');
+    EXPECT_EQ(to_char(illu), '#');
+    EXPECT_EQ(illu.to_char(), '#');
     // change internal value
     illu = 62;
-    EXPECT_EQ(to_char(illu), '~');
-    EXPECT_EQ(illu.to_char(), '~');
+    EXPECT_EQ(to_char(illu), '_');
+    EXPECT_EQ(illu.to_char(), '_');
 }
 
 TEST(phred63_assign_phred, assign_phred)
@@ -141,12 +139,11 @@ TEST(phred63_assign_phred, assign_phred)
 
 TEST(phred63_to_phred, to_phred)
 {
-    phred63 illu{};
+    phred63 illu;
+    illu = 0;
     EXPECT_EQ(0, to_phred(illu));
-    illu = 39;
-    EXPECT_EQ(39, to_rank(illu));
-    illu = 42;
-    EXPECT_EQ(42, to_rank(illu));
+    illu = 62;
+    EXPECT_EQ(62, to_phred(illu));
 }
 
 TEST(phred63_cmp, cmp)

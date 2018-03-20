@@ -65,10 +65,9 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
-                                        gapped<phred42>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
-                                        phred42, dna4q,
+                                        dna4q,
                                         dot_bracket3, dssp9, wuss<>, wuss<65>,
                                         structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                         structured_aa<aa27, dssp9>>;
@@ -290,7 +289,7 @@ using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5,
                                                   char, char16_t, char32_t,
                                                   uint8_t, uint16_t, uint32_t,
                                                   /*gap, gapped<nucl16>, */
-                                                  phred42, dna4q,
+                                                  dna4q,
                                                   dot_bracket3, dssp9, wuss<>, wuss<65>,
                                                   structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                                   structured_aa<aa27, dssp9>>;
