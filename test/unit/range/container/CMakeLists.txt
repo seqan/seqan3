@@ -1,5 +1,5 @@
 seqan3_test(aligned_sequences_adaptor_constant_access_test.cpp)
-seqan3_test(gap_decorator_anchor_list_test.cpp);
 seqan3_test(container_concept_test.cpp)
 seqan3_test(container_of_container_test.cpp)
 seqan3_test(constexpr_string_test.cpp)
+seqan3_test(gap_decorator_anchor_list_test.cpp)

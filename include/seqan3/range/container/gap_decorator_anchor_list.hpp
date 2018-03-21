@@ -32,8 +32,6 @@
 //
 // ============================================================================
 
-//! \cond DEV
-
 /*! \file
  *  \brief Provides seqn3::gap_decorator_anchor_list.
  *  \ingroup container
@@ -96,7 +94,7 @@ public:
 
     //!\brief Use random access iterator on container as iterator type.
     //!\hideinitializer
-    using iterator = detail::random_access_iterator<aligned_sequence_t>;
+    using iterator = detail::random_access_iterator<gap_decorator_t>;
 
     //!\brief Use const random access iterator on container as const iterator type.
     //!\hideinitializer
@@ -111,7 +109,7 @@ public:
     using size_type = typename ranges::v3::size_type_t<inner_type>;
     //!\}
 
-    using gap_t             = std::pair<size_type, size_type>
+    using gap_t             = std::pair<size_type, size_type>;
     using gap_list_t        = std::vector<gap_t>;
 
     /* rule of six */
@@ -121,8 +119,8 @@ public:
     // \brief Default constructor.
     constexpr gap_decorator_anchor_list()
     {
-        inner_type sequence{};
-        data = std::shared_ptr<data_t>(new data_t{sequence});
+        std::cout << "default constr called ... " << std::endl;
+        data = std::shared_ptr<data_t>(new data_t{});
     };
 
     //!\brief Default copy constructor.
@@ -178,7 +176,7 @@ public:
     * O(r+s+m) where r,s are the initialization costs of sdsl::rank_1_support_sd,
     * and sdsl::select_support_sd, and m the number of 1 bits.
     */
-    bool operator==(aligned_sequence_t & rhs) // DONE
+    bool operator==(gap_decorator_t & rhs) // DONE
     {
         if (data->sequence != rhs.data->sequence || this->size() != rhs.size())
             return false;
@@ -189,13 +187,13 @@ public:
     }
 
     //!\brief Unequality operator for aligned sequences.
-    bool operator!=(aligned_sequence_t & rhs)   // DONE
+    bool operator!=(gap_decorator_t & rhs)   // DONE
     {
         return !(*this == rhs);
     }
 
     //!\brief Swap two aligned sequences and their support structures.
-    void swap(aligned_sequence_t & rhs)         // DONE
+    void swap(gap_decorator_t & rhs)         // DONE
     {
         data.swap(rhs.data);
     }
@@ -203,9 +201,15 @@ public:
     //!\brief Return gapped sequence length.
     size_type size() const noexcept             // DONE
     {
-        if (!data->gap_list.size())
-            return data->sequence.size();
-        return data->sequence.size() + data->gap_list.back().second;
+        if (!data->gap_list.size()){
+            if (!data->sequence)
+                return 0;
+            return data->sequence->size();
+        }
+        size_type gap_sum = std::accumulate(std::next(data->gap_list.begin()),
+            data->gap_list.end(), static_cast<size_type>(data->gap_list[0].second),
+            [](size_type s, gap_t gap){return s + gap.second;});
+        return (!data->sequence) ? data->sequence->size() + gap_sum : gap_sum;
     }
 
     /*!\brief Return the maximal aligned sequence length.
@@ -217,13 +221,13 @@ public:
     */
     size_type max_size() const                  // DONE
     {
-        return std::min<size_type>(data->sequence.max_size(), data->gap_list.max_size());
+        return std::min<size_type>((!data->sequence) ? 0 : data->sequence->max_size(), data->gap_list->max_size());
     }
 
     //!\brief An aligned sequence is empty if it contains no alphabet letters or gaps.
     bool empty() const                          // DONE
     {
-        return data->sequence.empty() && data->gap_list.size() == 0;
+        return ((!data->sequence) ? true : data->sequence->empty()) && data->gap_list->size() == 0;
     }
     //!\}
 
@@ -243,7 +247,9 @@ public:
     */
     iterator insert_gap(iterator it, size_type size=1)      // DONE
     {
-        size_type pos = static_cast<size_type>(it - detail::random_access_iterator<aligned_sequence_t>());
+        std::cout << "insert_gap1 called ... " << std::endl; // TODO: continue here
+        size_type pos = static_cast<size_type>(it - detail::random_access_iterator<gap_decorator_t>());
+        std::cout << "pos = " << pos << std::endl;
         assert(insert_gap(pos, size));
         return it;
     }
@@ -254,6 +260,7 @@ public:
     */
     bool insert_gap(size_type const pos, size_type const size=1) // TO TEST
     {
+        std::cout << "insert_gap2, this size = " << static_cast<size_type>(this->size()) << std::endl;
         if (pos > this->size())
             return false;
         // case 1: no merging or position computation needed when new gap is first gap
@@ -274,7 +281,7 @@ public:
                     search_flag = false;
                 }
                 // case 2b: pos is gap position or follows directly => expand current gap
-                if (pos >= x & pos <= y)
+                if ((pos >= x) & (pos <= y))
                 {
                     *it = gap_t((*it).first, (*it).second + size);
                     search_flag = false;
@@ -392,7 +399,7 @@ public:
     // one will be extended.
     void push_back_rs(size_type pos_rs, size_type size=1)       // UNTESTED
     {
-        assert(pos_rs <= data->sequence.size());
+        assert(pos_rs <= ((!data->sequence) ? 0 : data->sequence->size()));
         if (!data->gap_list.size())
             data->gap_list.push_back(gap_t(pos_rs, size));
         else if (data->gap_list.back().first == pos_rs)
@@ -472,7 +479,7 @@ public:
     size_type map_to_aligned_position(size_type const idx)      // UNTESTED
     {
         //TODO add SEQAN_UNLIKELY
-        if (idx >= data->sequence.size())
+        if (idx >= (!data->sequence) ? 0 : data->sequence->size())
             throw std::out_of_range{"Trying to access element behind the last in aligned_sequence."};
         // case 1: no gap before position idx
         if (!data->gap_list.size() || data->gap_list[0].first < idx)
@@ -480,7 +487,7 @@ public:
         // case 2: sum up gaps until idx-th underlying sequence position
         size_type offset = 0; // gap sum up to position idx in anchor gap vector
         auto upper = std::upper_bound(data->gap_vector.begin(), data->gap_vector.end(),
-            idx, [idx] (gap_t gap) {return idx < gap.first});
+            idx, [idx] (gap_t gap) {return idx < gap.first;});
         size_type s = std::accumulate(data->gap_vector.begin(), upper);
         return s;
     }
@@ -488,12 +495,13 @@ public:
     /*!\name Random access sequence concept support.
      * \{
     */
-    //!\brief Return reference to aligned sequence for given index.
+    //!\brief Return reference to aligned sequence position.
     constexpr reference operator[](size_type const idx) // const noexcept(noexcept((*host)[pos+n]))
     {
         assert(idx < size());
-        if (!data->gap_list.size() || position_gapped < data->gap_list[0].first)
-            return position_gapped;
+        // case1: no gaps before position idx
+        if (!data->gap_list.size() || idx < data->gap_list[0].first)
+            return data->sequence[idx];
         // case 2: compute position in gap or between two gaps
         auto it = data->gap_list.begin();
         difference_type acc = (*it).first;
@@ -521,24 +529,21 @@ public:
     //!\}
 
 private:
-
     //!\privatesection
     //!\brief Structure for storing a sequence and gap information and helper functions.
-
     struct data_t
     {
         /*!\brief Where the ungapped sequence is stored.
         *
-        * The ungapped sequence is the original sequence of arbitrary alphabet type.
+        * The ungapped sequence is the original sequence of arbitrary ungapped alphabet type.
         * If the alphabet type allows gap symbols, these are treated as normal symbols.
         * Only gaps inserted via this interface are stored in a bit vector.
         */
-        inner_type & sequence;
-
+        inner_type * sequence{};
         /*!\brief Where the gaps are stored.
         *
         */
-        gap_list_t gap_list = gap_list_t();
+        gap_list_t gap_list{}; // = gap_list_t();
 
     };
     std::shared_ptr<data_t> data;

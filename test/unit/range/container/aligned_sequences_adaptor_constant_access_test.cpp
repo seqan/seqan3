@@ -101,11 +101,11 @@ TEST(aligned_sequences_test, constructor_by_sequence)
 {
     // case 1: empty sequence
     container_t sequence_empty{};
-    sequence_t as_empty(sequence_empty);
+    sequence_t as_empty(&sequence_empty);
     EXPECT_EQ(0u, as_empty.size());
     // case 2: non-empty sequence
     container_t sequence{dna4::A, dna4::C, dna4::G, dna4::T};
-    sequence_t as(sequence);
+    sequence_t as(&sequence);
     auto it = as.begin();
     EXPECT_EQ(sequence.size(), as.size());
     EXPECT_EQ(gapped<dna4>{dna4::A}, it[0]);
@@ -120,7 +120,7 @@ TEST(aligned_sequences_test, constructor_move)
     sequence_t as_derived(std::move(as_base));
     // case 1.2: move construction with non-empty sequence
     container_t seq = {dna4::A, dna4::C, dna4::G, dna4::T};
-    sequence_t as_base2(seq);
+    sequence_t as_base2(&seq);
     sequence_t as_derived2(std::move(as_base2));
     auto it2 = as_derived2.begin();
     EXPECT_EQ(gapped<dna4>{dna4::A}, *it2++);
@@ -130,7 +130,7 @@ TEST(aligned_sequences_test, constructor_move)
 
     // case 2:  move construction via assignment
     container_t seq2 = {dna4::T, dna4::A};
-    sequence_t as_base3(seq2), as_derived3(seq);
+    sequence_t as_base3(&seq2), as_derived3(&seq);
     as_derived3 = std::move(as_base3);
     auto it3 = as_derived3.begin();
     auto it3_end = as_derived3.end();
@@ -144,8 +144,8 @@ TEST(aligned_sequences_test, destructor)
 {
     container_t seq = {dna4::T, dna4::A};
     using aligned_sequence_t = sequence_t;
-    aligned_sequence_t s(seq);
-    aligned_sequence_t * s_ptr = new aligned_sequence_t(seq);//&s;
+    aligned_sequence_t s(&seq);
+    aligned_sequence_t * s_ptr = new aligned_sequence_t(&seq);//&s;
     s_ptr->aligned_sequence_adaptor_constant_access<container_t>::~aligned_sequence_adaptor_constant_access<container_t>();
 }
 
@@ -153,7 +153,7 @@ TEST(aligned_sequences_test, destructor)
 TEST(aligned_sequences_test, container_concepts_iterators)
 {
     container_t seq = {dna4::T, dna4::A};
-    sequence_t s(seq);
+    sequence_t s(&seq);
     auto it = s.begin();
     EXPECT_EQ(gapped<dna4>{dna4::T}, *it);
     it = s.end();
@@ -163,9 +163,9 @@ TEST(aligned_sequences_test, container_concepts_iterators)
 TEST(aligned_sequences_test, container_concepts_boolean)
 {
     container_t seq = {dna4::T, dna4::A}, seq2 = {dna4::C};
-    sequence_t s(seq), t(seq);
+    sequence_t s(&seq), t(&seq);
     EXPECT_TRUE(s == t);
-    sequence_t u(seq2);
+    sequence_t u(&seq2);
     EXPECT_TRUE(t != u);
 }
 
@@ -173,7 +173,7 @@ TEST(aligned_sequences_test, container_concepts_boolean)
 TEST(aligned_sequences_test, container_concepts_swap)
 {
     container_t seq = {dna4::T, dna4::A}, seq2 = {dna4::C};
-    sequence_t t(seq), u(seq2);
+    sequence_t t(&seq), u(&seq2);
     t.swap(u);
     auto it = t.begin();
     EXPECT_EQ(gapped<dna4>{dna4::C}, *it);
@@ -191,7 +191,7 @@ TEST(aligned_sequences_test, container_concepts_swap)
     EXPECT_TRUE(max_size > 0);
     EXPECT_FALSE(t.empty());
     container_t s_empty{};
-    sequence_t seq_empty(s_empty);
+    sequence_t seq_empty(&s_empty);
     EXPECT_TRUE(seq_empty.empty());
 }
 
@@ -209,7 +209,7 @@ TEST(aligned_sequences_test, insert_gap)
     container_t seq{dna4::C, dna4::T, dna4::A};
     container_t l{seq};
     std::vector<gapped<dna4>> l_post{gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::T, dna4::A};
-    sequence_t t(seq);
+    sequence_t t(&seq);
     it = t.insert_gap(t.begin());
     EXPECT_EQ(t.begin(), it);
     EXPECT_EQ(4u, t.size());
@@ -222,7 +222,7 @@ TEST(aligned_sequences_test, insert_gap)
         EXPECT_EQ(*l_it, *it);
 
     // case 2: insert after last element
-    sequence_t w(seq);
+    sequence_t w(&seq);
     it = w.insert_gap(w.end());
     EXPECT_EQ(4u, w.size());
     EXPECT_EQ(w.end()-1, it);
@@ -239,7 +239,7 @@ TEST(aligned_sequences_test, insert_gap)
     EXPECT_EQ(gapped<dna4>{gap::GAP}, *z.begin());
     // case 3.2: into non-empty sequence
     container_t seq_u{dna4::A, dna4::C, dna4::G};
-    sequence_t u{seq_u};
+    sequence_t u{&seq_u};
     b = u.insert_gap(1);
     EXPECT_EQ(true, b);
     EXPECT_EQ(4u, u.size());
@@ -271,7 +271,7 @@ TEST(aligned_sequences_test, insert_gaps)
     container_t seq{dna4::C, dna4::T, dna4::A};
     container_t l{seq};
     std::vector<gapped<dna4>> l_post{gap::GAP, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::T, dna4::A};
-    sequence_t t(seq);
+    sequence_t t(&seq);
     it = t.insert_gap(t.begin(), 2);
     EXPECT_EQ(t.begin(), it);
     EXPECT_EQ(5u, t.size());
@@ -283,7 +283,7 @@ TEST(aligned_sequences_test, insert_gaps)
         EXPECT_EQ(*l_it, *it);
 
     // case 2: insert after last element
-    sequence_t w(seq);
+    sequence_t w(&seq);
     it = w.insert_gap(w.end(), 3);
     EXPECT_EQ(6u, w.size());
     EXPECT_EQ(w.begin()+3, it);
@@ -304,7 +304,7 @@ TEST(aligned_sequences_test, insert_gaps)
 
     // case 3.2: into non-empty sequence
     container_t u_vec{dna4::A, dna4::C, dna4::G};
-    sequence_t u{u_vec};
+    sequence_t u{&u_vec};
     b = u.insert_gap(1, 16u);
     EXPECT_EQ(true, b);
     EXPECT_EQ(19u, u.size());
@@ -326,7 +326,7 @@ TEST(aligned_sequences_test, erase_gap)
 {
     container_t seq{dna4::T, dna4::A};
     std::vector<gapped<dna4>> aseq{gap::GAP, dna4::T, dna4::A};
-    sequence_t s{seq};
+    sequence_t s{&seq};
     s.insert_gap(0, 2);
     auto it = s.begin();
     EXPECT_EQ(4u, s.size());
@@ -364,7 +364,7 @@ TEST(aligned_sequences_test, erase_gap)
     // case 2: erase single gaps by position index
     // case 2.1: erase 1st gap
     container_t vec_t{dna4::A, dna4::C};
-    sequence_t t{vec_t};
+    sequence_t t{&vec_t};
     t.insert_gap(0);            // -AC
     bool b = t.erase_gap(0u);    // AC
     EXPECT_EQ(2u, t.size());
@@ -394,7 +394,7 @@ TEST(aligned_sequences_test, erase_gaps_iterators)
 {
     std::vector<gapped<dna4>> gseq{gap::GAP, gap::GAP, dna4::T, gap::GAP, gap::GAP, dna4::A, gap::GAP, gap::GAP};
     container_t vec_s{dna4::T, dna4::A};
-    sequence_t s{vec_s};    // TA
+    sequence_t s{&vec_s};    // TA
     s.insert_gap(0u, 2);    // --TA
     s.insert_gap(3u, 2);    // --T--A
     s.insert_gap(6u, 2);    // --T--A--
@@ -429,7 +429,7 @@ TEST(aligned_sequences_test, erase_gaps_indices)
 {
     std::vector<gapped<dna4>> gseq{gap::GAP, gap::GAP, dna4::T, gap::GAP, gap::GAP, dna4::A, gap::GAP, gap::GAP};
     container_t vec_s{dna4::T, dna4::A};
-    sequence_t s{vec_s};
+    sequence_t s{&vec_s};
     s.insert_gap(0u, 2);
     s.insert_gap(3u, 2);
     s.insert_gap(6u, 2);
@@ -464,14 +464,14 @@ TEST(aligned_sequences_test, sequence_concepts_push_back)
 {
     // case 1: into empty sequence a gap or alphabet symbol
     container_t vec{};
-    sequence_t s{vec};
+    sequence_t s{&vec};
     s.push_back();
     EXPECT_EQ(1u, s.size());
     EXPECT_EQ(gapped<dna4>{gap::GAP}, *s.begin());
 
     // case 2: into non-empty sequence
     container_t t_vec{dna4::A};
-    sequence_t t{t_vec};
+    sequence_t t{&t_vec};
     t.push_back();
     EXPECT_EQ(2u, t.size());
     EXPECT_EQ(gapped<dna4>{dna4::A}, *(t.begin()));
@@ -482,7 +482,7 @@ TEST(aligned_sequences_test, sequence_concepts_pop_back)
 {
     // case 1: pop last element from sequence made out of gaps only
     container_t vec{};
-    sequence_t s{vec};
+    sequence_t s{&vec};
     s.insert_gap(0, 4);
     EXPECT_EQ(4u, s.size());
     bool b = s.pop_back();
@@ -491,7 +491,7 @@ TEST(aligned_sequences_test, sequence_concepts_pop_back)
 
     // case 2: pop last element from sequence with gaps
     container_t vec_t{dna4::A, dna4::A};
-    sequence_t t{vec_t};
+    sequence_t t{&vec_t};
     t.insert_gap(0u);   // -AA
     b = t.pop_back();   // -AA
     EXPECT_EQ(3u, t.size());
@@ -507,13 +507,13 @@ TEST(aligned_sequences_test, sequence_concepts_clear)
 {
     // case 1.1: clear empty sequence
     container_t vec{};
-    sequence_t s{vec};
+    sequence_t s{&vec};
     s.clear();
     EXPECT_EQ(0u, s.size());
 
     // case 1.2: clear non-empty sequence with no gaps
     container_t vec_t{dna4::T};
-    sequence_t t{vec_t};
+    sequence_t t{&vec_t};
     t.clear();
     EXPECT_EQ(1u, t.size());
 
@@ -530,12 +530,12 @@ TEST(aligned_sequences_test, sequence_concepts_front)
 {
     // case 1: front on empty sequence
     container_t v{};
-    sequence_t s{v};
+    sequence_t s{&v};
     //should throw assertion s.front();
 
     // case 2: front element is alphabet symbol
     container_t seq_u{dna4::A, dna4::T};
-    sequence_t u{seq_u};
+    sequence_t u{&seq_u};
     EXPECT_EQ(gapped<dna4>{dna4::A}, u.front());
 
     // case 3: front element is gap
@@ -546,7 +546,7 @@ TEST(aligned_sequences_test, sequence_concepts_front)
 TEST(aligned_sequences_test, sequence_concepts_back)
 {
     container_t v{dna4::A};
-    sequence_t s{v};
+    sequence_t s{&v};
     EXPECT_EQ(gapped<dna4>{dna4::A}, s.back());
     s.push_back();
     EXPECT_EQ(gapped<dna4>{gap::GAP}, s.back());
@@ -555,33 +555,33 @@ TEST(aligned_sequences_test, sequence_concepts_back)
 TEST(aligned_sequences_test, get_underlying_sequence)
 {
     container_t v;
-    sequence_t s{v};
-    EXPECT_EQ(0u, s.get_underlying_sequence().size());
+    sequence_t s{&v};
+    EXPECT_EQ(0u, s.get_underlying_sequence()->size());
     s.push_back();
-    EXPECT_EQ(0u, s.get_underlying_sequence().size());
+    EXPECT_EQ(0u, s.get_underlying_sequence()->size());
     container_t seq{dna4::A};
-    s.set_underlying_sequence(seq);
-    EXPECT_EQ(1u, s.get_underlying_sequence().size());
-    EXPECT_EQ(gapped<dna4>{dna4::A}, s.get_underlying_sequence().at(0));
+    s.set_underlying_sequence(&seq);
+    EXPECT_EQ(1u, s.get_underlying_sequence()->size());
+    EXPECT_EQ(gapped<dna4>{dna4::A}, s.get_underlying_sequence()->at(0));
 }
 
 TEST(aligned_sequences_test, set_underlying_sequence)
 {
     // case 1: set empty sequence
     container_t v{};
-    sequence_t s{v};
-    EXPECT_EQ(0u, s.get_underlying_sequence().size());
+    sequence_t s{&v};
+    EXPECT_EQ(0u, s.get_underlying_sequence()->size());
     // case 2: set non-empty sequence
     container_t seq{dna4::A, dna4::A, dna4::A, dna4::A};
-    s.set_underlying_sequence(seq);
-    EXPECT_EQ(seq.size(), s.get_underlying_sequence().size());
-    EXPECT_EQ(gapped<dna4>{dna4::A}, s.get_underlying_sequence().at(0));
+    s.set_underlying_sequence(&seq);
+    EXPECT_EQ(seq.size(), s.get_underlying_sequence()->size());
+    EXPECT_EQ(gapped<dna4>{dna4::A}, s.get_underlying_sequence()->at(0));
 }
 
 TEST(aligned_sequences_test, map_to_aligned_position)
 {
     container_t s_vec{dna4::A, dna4::T};
-    sequence_t s{s_vec};
+    sequence_t s{&s_vec};
     s.insert_gap(0); s.insert_gap(2); // -A-T
     EXPECT_EQ(1u, s.map_to_aligned_position(0));
     EXPECT_EQ(3u, s.map_to_aligned_position(1));
@@ -590,7 +590,7 @@ TEST(aligned_sequences_test, map_to_aligned_position)
 TEST(aligned_sequences_test, map_to_underlying_position)
 {
     container_t s_vec{dna4::A, dna4::T};
-    sequence_t s{s_vec};
+    sequence_t s{&s_vec};
     s.insert_gap(0); s.insert_gap(2, 2); // -A--T
     std::array<sequence_t::difference_type, 5> upos{ {-1, 0, 0, 0, 1} };
     auto it = upos.begin();
@@ -602,7 +602,7 @@ TEST(aligned_sequences_test, random_access_operators)
 {
     // []-operator on gap postion
     container_t s_vec{dna4::A, dna4::T};
-    sequence_t s{s_vec};
+    sequence_t s{&s_vec};
     s.insert_gap(0); s.insert_gap(2, 2);
     EXPECT_EQ(gapped<dna4>{gap::GAP}, s[0]);
     EXPECT_EQ(gapped<dna4>{dna4::T}, s[4]);

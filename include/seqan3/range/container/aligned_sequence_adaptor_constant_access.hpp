@@ -141,8 +141,7 @@ public:
     // \brief Default constructor.
     constexpr aligned_sequence_adaptor_constant_access()
     {
-        inner_type sequence{};
-        data = std::shared_ptr<data_t>(new data_t{sequence});
+        data = std::shared_ptr<data_t>(new data_t{});
     };
 
     //!\brief Default copy constructor.
@@ -167,9 +166,9 @@ public:
     */
     //!\brief Construct by single value repeated 'size' times
     //shared_ptr<data_t>
-    constexpr aligned_sequence_adaptor_constant_access(inner_type & sequence): data{new data_t{sequence}}
+    constexpr aligned_sequence_adaptor_constant_access(inner_type * sequence): data{new data_t{sequence}}
     {
-        sdsl::sd_vector_builder builder(sequence.size(), 0);
+        sdsl::sd_vector_builder builder(sequence->size(), 0);
         data->gap_vector = bit_vector_t(builder);
     };
     //!\}
@@ -246,13 +245,13 @@ public:
     */
     size_type max_size() const
     {
-        return std::min<size_type>(data->sequence.max_size(), sdsl::bit_vector{}.max_size());
+        return std::min<size_type>(data->sequence->max_size(), sdsl::bit_vector{}.max_size());
     }
 
     //!\brief An aligned sequence is empty if it contains no alphabet letters or gaps.
     bool empty() const
     {
-        return data->sequence.empty() && data->gap_vector.size() == 0;
+        return data->sequence->empty() && data->gap_vector.size() == 0;
     }
     //!\}
 
@@ -409,7 +408,7 @@ public:
     //!\brief Clear gaps in bit vector. Alphabet sequence remains unchanged.
     void clear()
     {
-        data->gap_vector = bit_vector_t(sdsl::bit_vector{data->sequence.size(), 0});
+        data->gap_vector = bit_vector_t(sdsl::bit_vector{data->sequence->size(), 0});
         data->dirty = true;
     }
 
@@ -432,16 +431,16 @@ public:
      * \{
     */
     //!\brief Return pointer to gap-free sequence.
-    inner_type & get_underlying_sequence() const
+    inner_type * get_underlying_sequence() const
     {
         return data->sequence;
     }
 
     //!\brief Set pointer to ungapped sequence.
-    void set_underlying_sequence(inner_type & sequence) const
+    void set_underlying_sequence(inner_type * sequence) const
     {
         data->sequence = sequence;
-        data->gap_vector = bit_vector_t(sdsl::bit_vector{sequence.size(), 0});
+        data->gap_vector = bit_vector_t(sdsl::bit_vector{sequence->size(), 0});
         data->dirty = true;
     }
     //!\}
@@ -492,7 +491,7 @@ public:
         assert(idx < size());
         if (!data->gap_vector[idx]){
             size_type const pos = map_to_underlying_position(idx);
-            return value_type(data->sequence[pos]);
+            return value_type((*data->sequence)[pos]);
         }
         return gap::GAP;
     }
@@ -513,13 +512,14 @@ private:
 
     struct data_t
     {
-        /*!\brief Where the ungapped sequence is stored.
+        /*!\brief Pointer to where the ungapped sequence is stored.
         *
-        * The ungapped sequence is the original sequence of arbitrary alphabet type.
+        * The ungapped sequence is the original sequence of an ungapped alphabet type.
         * If the alphabet type allows gap symbols, these are treated as normal symbols.
         * Only gaps inserted via this interface are stored in a bit vector.
+        * Per default it is a null pointer.
         */
-        inner_type & sequence;
+        inner_type * sequence{};
 
         /*!\brief Where the gapped sequence is stored.
         *
