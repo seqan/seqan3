@@ -119,7 +119,6 @@ public:
     // \brief Default constructor.
     constexpr gap_decorator_anchor_list()
     {
-        std::cout << "default constr called ... " << std::endl;
         data = std::shared_ptr<data_t>(new data_t{});
     };
 
@@ -145,7 +144,7 @@ public:
     */
     //!\brief Construct by single value repeated 'size' times
     //shared_ptr<data_t>
-    constexpr gap_decorator_anchor_list(inner_type & sequence): data{new data_t{sequence}} {};
+    constexpr gap_decorator_anchor_list(inner_type * sequence): data{new data_t{sequence}} {};
     //!\}
 
     /*!\name Iterators
@@ -199,7 +198,7 @@ public:
     }
 
     //!\brief Return gapped sequence length.
-    size_type size() const noexcept             // DONE
+    size_type size() const noexcept             // ok
     {
         if (!data->gap_list.size()){
             if (!data->sequence)
@@ -209,7 +208,7 @@ public:
         size_type gap_sum = std::accumulate(std::next(data->gap_list.begin()),
             data->gap_list.end(), static_cast<size_type>(data->gap_list[0].second),
             [](size_type s, gap_t gap){return s + gap.second;});
-        return (!data->sequence) ? data->sequence->size() + gap_sum : gap_sum;
+        return (data->sequence) ? data->sequence->size() + gap_sum : gap_sum;
     }
 
     /*!\brief Return the maximal aligned sequence length.
@@ -221,13 +220,14 @@ public:
     */
     size_type max_size() const                  // DONE
     {
-        return std::min<size_type>((!data->sequence) ? 0 : data->sequence->max_size(), data->gap_list->max_size());
+        return inner_type{}.max_size() + data->gap_list.max_size();
+//        return std::min<size_type>((!data->sequence) ? 0 : data->sequence->max_size(), data->gap_list->max_size());
     }
 
     //!\brief An aligned sequence is empty if it contains no alphabet letters or gaps.
     bool empty() const                          // DONE
     {
-        return ((!data->sequence) ? true : data->sequence->empty()) && data->gap_list->size() == 0;
+        return ((!data->sequence) ? true : data->sequence->empty()) && data->gap_list.size() == 0;
     }
     //!\}
 
@@ -260,14 +260,21 @@ public:
     */
     bool insert_gap(size_type const pos, size_type const size=1) // TO TEST
     {
-        std::cout << "insert_gap2, this size = " << static_cast<size_type>(this->size()) << std::endl;
-        if (pos > this->size())
+        std::cout << "insert_gap2, this size = " << this->size() << ", pos = " << pos << std::endl;
+        if (pos > this->size()){
+            std::cout << "pos > size\n";
             return false;
+        }
         // case 1: no merging or position computation needed when new gap is first gap
-        if (!data->gap_list.size())
+        std::cout << "next\n";
+        if (!data->gap_list.size()){
+            std::cout << "push back into empty gap_list\n";
             data->gap_list.push_back(gap_t(pos, size));
+            std::cout << "inserted gap: " << data->gap_list[0].first << ", " << data->gap_list[0].second << std::endl;
+        }
         else // search true position or expand existing one
         {
+            std::cout << "push back into non-empty gap_list\n";
             size_type y, x = 0; // current gap range [x .. y[
             bool search_flag = true;
             for (auto it = data->gap_list.begin(); search_flag && it != data->gap_list.end(); ++it)
@@ -291,6 +298,7 @@ public:
             if (search_flag)
                 data->gap_list.push_back(gap_t(pos, size));
         }
+        std::cout << "leaving insert_gap2\n";
         return true;
     }
 
@@ -499,23 +507,31 @@ public:
     constexpr reference operator[](size_type const idx) // const noexcept(noexcept((*host)[pos+n]))
     {
         assert(idx < size());
+        std::cout << "[] with idx = " << idx << std::endl;
         // case1: no gaps before position idx
         if (!data->gap_list.size() || idx < data->gap_list[0].first)
-            return data->sequence[idx];
+        {
+            std::cout << "gaps.size == 0 or first gap pos < idx\n";
+            return (*data->sequence)[idx];
+        }
+        std::cout << "acc gaps ...\n";
         // case 2: compute position in gap or between two gaps
         auto it = data->gap_list.begin();
-        difference_type acc = (*it).first;
+        // the accumulator points to the first postition AFTER the current gap
+        size_type acc = (*it).first + (*it).second;
+        std::cout << "acc init = " << acc << std::endl;
         ++it;
         // sum up gap offsets and gap lengths
-        while (it != data->gap_list.end() && idx > acc + (*it).first - (*(it-1)).first + (*it).second)
+        while (it != data->gap_list.end() && idx >= acc + (*it).first - (*(it-1)).first + (*it).second)
         {
             acc += (*it).first - (*(it-1)).first + (*it).second;
             ++it;
         }
-        if (idx >= acc + (*it).first - (*(it-1)).first)
+        std::cout << "acc = " << acc << ", acc + it.second = " <<  acc + (*it).second << std::endl;
+        if (idx >= acc - (*(it-1)).second && idx < acc)
             return gap::GAP;
         else
-            return data->sequence[idx - acc];
+            return (*data->sequence)[idx - acc];
     }
 
     //!\brief Return reference to aligned sequence for given index.
