@@ -33,68 +33,60 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-header for the \link core core module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \brief Provides seqan3::type_list and auxiliary metafunctions.
  */
 
 #pragma once
 
-// ============================================================================
-// External concept implementations
-// ============================================================================
+#include <meta/meta.hpp>
 
-#include <seqan3/core/concept/core.hpp>
-#include <seqan3/core/concept/iterator.hpp>
-#include <seqan3/core/detail/all.hpp>
-#include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/platform.hpp>
 
-/*!\defgroup core Core
- * \brief Contains core functionality used by multiple modules.
+namespace seqan3
+{
+
+/*!\brief Type that contains multiple types, an alias for
+ * [meta::list](https://ericniebler.github.io/range-v3/structmeta_1_1list.html).
+ * \ingroup core
+ */
+template <typename ... types>
+using type_list = meta::list<types...>;
+
+/*!\brief Type metafunction that extracts the types from a seqan3::type_list and specialises another template with them.
+ * \tparam target_type  The type template you wish to specialise.
+ * \tparam type_list    The seqan3::type_list with the source types.
+ * \ingroup core
  *
- * The core module contains concepts, functions and some classes that
- * are used by multiple other modules, but that usually are not relevant
- * to most users of the library.
+ * Enables using the types contained in a seqan3::type_list to specialise another type template. A metafunction
+ * shortcut is also defined: seqan3::unpack_type_list_onto_t
+ *
+ * ### Example
+ *
+ * ```cpp
+ * using tl = type_list<int, char, double>;
+ * using t = unpack_type_list_onto_t<std::tuple, tl>;
+ * // t is std::tuple<int, char, double>
+ * ```
  */
 
-/*!\namespace seqan3
- * \brief The main SeqAn3 namespace.
- */
+//!\cond
+template <template <typename ...> typename target_type, typename type_list_t>
+struct unpack_type_list_onto;
+//!\endcond
 
-/*!\namespace seqan3::literal
- * \brief The SeqAn3 namespace for literals.
- *
- * SeqAn implements "user defined" literals in multiple places, e.g. `auto foo = "ACGTG"_dna4`. These
- * make working with small examples and tests a lot easier, but the risk of having a name collision with
- * another library is higher so follow the example of the standard library and define all our literals
- * in the namespace `seqan3::literal`.
- *
- * \attention
- * This means you cannot use them, unless you explicitly add `using namespace seqan3::literal;` (in addition
- * to `using namespace seqan3;`).
- */
+template <template <typename ...> typename target_type, typename ... types>
+struct unpack_type_list_onto<target_type, type_list<types...>>
+{
+    //!\brief The return type: the target type specialised by the unpacked types in the list.
+    using type = target_type<types...>;
+};
 
-/*!\cond DEV
- * \namespace seqan3::detail
- * \brief The internal SeqAn3 namespace.
- * \details
- * The contents of this namespace are not visible to consumers of the library and the documentation is
- * only generated for developers.
- * \sa https://github.com/seqan/seqan3/wiki/Documentation
- * \endcond
+/*!\brief Type metafunction shortcut for seqan3::unpack_type_list_onto.
+ * \ingroup core
+ * \relates unpack_type_list_onto
  */
+template <template <typename ...> typename target_type, typename type_list_t>
+using unpack_type_list_onto_t = typename unpack_type_list_onto<target_type, type_list_t>::type;
 
-/*!\namespace std
- * \brief SeqAn specific customisations in the standard namespace.
- */
-/*!\mainpage SeqAn3 API documentation
- *
- * This is the API documentation for the SeqAn3 library.
- *
- * We recommend browsing the documentation via the "Modules" menu on the left.
- *
- * Installation instructions are available on [GitHub](https://github.com/seqan/seqan3).
- *
- * A manual will be added in the future.
- */
+} // namespace seqan3
