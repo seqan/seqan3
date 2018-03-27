@@ -247,9 +247,7 @@ public:
     */
     iterator insert_gap(iterator it, size_type size=1)      // DONE
     {
-        std::cout << "insert_gap1 called ... " << std::endl; // TODO: continue here
         size_type pos = static_cast<size_type>(it - detail::random_access_iterator<gap_decorator_t>());
-        std::cout << "pos = " << pos << std::endl;
         assert(insert_gap(pos, size));
         return it;
     }
@@ -260,21 +258,13 @@ public:
     */
     bool insert_gap(size_type const pos, size_type const size=1) // TO TEST
     {
-        std::cout << "insert_gap2, this size = " << this->size() << ", pos = " << pos << std::endl;
-        if (pos > this->size()){
-            std::cout << "pos > size\n";
+        if (pos > this->size())
             return false;
-        }
         // case 1: no merging or position computation needed when new gap is first gap
-        std::cout << "next\n";
-        if (!data->gap_list.size()){
-            std::cout << "push back into empty gap_list\n";
+        if (!data->gap_list.size())
             data->gap_list.push_back(gap_t(pos, size));
-            std::cout << "inserted gap: " << data->gap_list[0].first << ", " << data->gap_list[0].second << std::endl;
-        }
         else // search true position or expand existing one
         {
-            std::cout << "push back into non-empty gap_list\n";
             size_type y, x = 0; // current gap range [x .. y[
             bool search_flag = true;
             for (auto it = data->gap_list.begin(); search_flag && it != data->gap_list.end(); ++it)
@@ -298,7 +288,6 @@ public:
             if (search_flag)
                 data->gap_list.push_back(gap_t(pos, size));
         }
-        std::cout << "leaving insert_gap2\n";
         return true;
     }
 
@@ -354,11 +343,13 @@ public:
     bool erase_gap(size_type const pos1, size_type const pos2)      // UNTESTED
     {
         assert(pos1 <= pos2);
+        std::cout << "enter erase_gap with pos1 = " << pos1 << ", pos2 = " << pos2 << std::endl;
         if (pos1 >= size() || pos2 > size() || !data->gap_list.size() || pos2 < data->gap_list[0].first)
             return false;
         size_type x = 0, y; // current gap range [x; y[
         for (auto it = data->gap_list.begin(); it != data->gap_list.end(); ++it)
         {
+            std::cout << "current gap = (" << (*it).first << ", " << (*it).second << ")\n";
             x += (*it).first;
             y = x + (*it).second;
             if (pos1 >= x && pos2 <= y)
@@ -507,6 +498,10 @@ public:
     constexpr reference operator[](size_type const idx) // const noexcept(noexcept((*host)[pos+n]))
     {
         assert(idx < size());
+        std::cout << "gaps = ";
+        for (gap_t gap : data->gap_list)
+            std::cout << "(" << gap.first << ", " << gap.second << "), ";
+        std::cout << std::endl;
         std::cout << "[] with idx = " << idx << std::endl;
         // case1: no gaps before position idx
         if (!data->gap_list.size() || idx < data->gap_list[0].first)
@@ -519,19 +514,28 @@ public:
         auto it = data->gap_list.begin();
         // the accumulator points to the first postition AFTER the current gap
         size_type acc = (*it).first + (*it).second;
+        size_type gap_acc = (*it).second;
         std::cout << "acc init = " << acc << std::endl;
         ++it;
-        // sum up gap offsets and gap lengths
-        while (it != data->gap_list.end() && idx >= acc + (*it).first - (*(it-1)).first + (*it).second)
+        // skip forward
+        while (it != data->gap_list.end() && idx >= acc + (*it).first - ((*(it-1)).first + (*(it-1)).second))
         {
-            acc += (*it).first - (*(it-1)).first + (*it).second;
+            // add current gap and underlying sequence offset = current_gap_pos - last_gap_end_pos
+            acc += (*it).first - ((*(it-1)).first + (*(it-1)).second) + (*it).second;
+            gap_acc += (*it).second;
             ++it;
         }
-        std::cout << "acc = " << acc << ", acc + it.second = " <<  acc + (*it).second << std::endl;
-        if (idx >= acc - (*(it-1)).second && idx < acc)
+        std::cout << "acc = " << acc << ", gap_acc = " << gap_acc << "\n";
+        if (idx < acc)
+        {
+            std::cout << "return gap\n";
             return gap::GAP;
+        }
         else
-            return (*data->sequence)[idx - acc];
+        {
+            std::cout << "return char at seq pos " << idx - gap_acc << std::endl;
+            return (*data->sequence)[idx - gap_acc];
+        }
     }
 
     //!\brief Return reference to aligned sequence for given index.
