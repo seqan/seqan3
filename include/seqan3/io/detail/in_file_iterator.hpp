@@ -54,7 +54,7 @@ namespace seqan3::detail
  * \ingroup io
  *
  * This iterator is a single-pass input iterator for input files. All member types are resolved
- * via `file_type`'s member types, dereference is implemented via file's `back()` member
+ * via `file_type`'s member types, dereference is implemented via file's `front()` member
  * function and increment calls the `buffer_next_record()` member of file.
  *
  * Note that since this is a single-pass input iterator, post-increment returns void because
@@ -79,7 +79,7 @@ public:
     using const_reference   = typename file_type::reference;
     using size_type         = typename file_type::size_type;
     using difference_type   = typename file_type::difference_type;
-    //!\brief Tag this class as an input access iterator.
+    //!\brief Tag this class as an input iterator.
     using iterator_category = std::input_iterator_tag;
     //!\}
 
@@ -112,7 +112,7 @@ public:
     in_file_iterator & operator++()
     {
         assert(host != nullptr);
-        host->buffer_next_record();
+        host->read_next_record();
         return *this;
     }
 
@@ -127,14 +127,14 @@ public:
     reference operator*() noexcept
     {
         assert(host != nullptr);
-        return host->back();
+        return host->front();
     }
 
     //!\brief Dereference returns the currently buffered record.
     reference operator*() const noexcept
     {
         assert(host != nullptr);
-        return host->back();
+        return host->front();
     }
     //!\}
 

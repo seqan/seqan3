@@ -51,12 +51,12 @@ struct fake_file_t : std::vector<int>
 
     size_t current_position = 0;
 
-    void buffer_next_record()
+    void read_next_record()
     {
         ++current_position;
     }
 
-    int & back()
+    int & front()
     {
         return begin()[current_position];
     }
