@@ -44,6 +44,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/core/type_list.hpp>
+#include <seqan3/core/metafunction/template_inspection.hpp>
 
 namespace seqan3
 {
@@ -96,7 +97,7 @@ enum class field
  * // specify custom field combination/order to file:
  * sequence_file_in fin{"/tmp/my.fasta", fields<field::ID, field::SEQ>{}};
  *
- * auto record = fin.back(); // get current record, in this case the first
+ * auto record = fin.front(); // get current record, in this case the first
  *
  * // record is tuple-like type, but allows access via field identifiers:
  * auto & id = get<field::ID>(record);
@@ -164,7 +165,7 @@ struct fields
  * ```cpp
  *
  * using types        = type_list<dna4_vector, std::string, std::vector<phred42>>;
- * using types_as_ids = fields<field::SEQ,     field::ID,   field::QUAL>;
+ * using types_as_ids =    fields<field::SEQ,  field::ID,   field::QUAL>;
  *
  * using record_type  = record<types, types_as_ids>;
  * // record_type now mimics std::tuple<std::string, dna4_vector, std::vector<phred42>>, the order also depends on selected_ids
@@ -176,10 +177,10 @@ struct fields
  * ```
  */
 template <typename field_types, typename field_ids>
-struct record : unpack_type_list_onto_t<std::tuple, field_types>
+struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
 {
     //!\brief A specialisation of std::tuple.
-    using base_type = unpack_type_list_onto_t<std::tuple, field_types>;
+    using base_type = detail::transfer_template_args_onto_t<field_types, std::tuple>;
 
     //!\brief Inherit base constructors.
     using base_type::base_type;
