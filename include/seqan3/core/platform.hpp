@@ -165,5 +165,12 @@
 
 // TODO (doesn't have a version.hpp, yet)
 
+// Doxygen related
+// this macro is a NO-OP unless doxygen parses it, in which case it resolves to the argument
+#ifndef SEQAN3_DOXYGEN_ONLY
+#   define SEQAN3_DOXYGEN_ONLY(x)
+#endif
+
+// macro cruft undefine
 #undef STR
 #undef STR_HELPER
