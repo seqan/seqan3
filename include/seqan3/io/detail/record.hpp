@@ -47,6 +47,17 @@ namespace seqan3::detail
 {
 
 // ----------------------------------------------------------------------------
+// fields_concept
+// ----------------------------------------------------------------------------
+
+/*!\brief Auxiliary concept that checks whether a type is a specialisation of seqan3::fields.
+ * \ingroup io
+ * \relates seqan3::fields
+ */
+template <typename t>
+concept bool fields_concept = is_value_specialisation_of_v<t, fields>;
+
+// ----------------------------------------------------------------------------
 // select_types_with_ids
 // ----------------------------------------------------------------------------
 
@@ -124,5 +135,22 @@ struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids
 
 };
 //!\endcond
+
+
+// ----------------------------------------------------------------------------
+// get_or_ignore
+// ----------------------------------------------------------------------------
+
+/*!\brief Perform a get-by-field on the record and return reference to std::ignore if record doesn't have field.
+ * \ingroup core
+ */
+template <field f, typename field_types, typename field_ids>
+auto & get_or_ignore(record<field_types, field_ids> & r)
+{
+    if constexpr (field_ids::contains(f))
+        return std::get<field_ids::index_of(f)>(r);
+    else
+        return std::ignore;
+}
 
 } // namespace seqan3::detail
