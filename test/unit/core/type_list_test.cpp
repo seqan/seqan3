@@ -46,14 +46,3 @@ TEST(type_list, basic)
 
     EXPECT_TRUE((std::is_same_v<meta::at_c<t, 1>, char>));
 }
-
-TEST(type_list, unpack_type_list_onto)
-{
-    using tl = type_list<int, char, double>;
-    using t = unpack_type_list_onto<std::tuple, tl>::type;
-    EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
-
-    // shortcut
-    using t = unpack_type_list_onto_t<std::tuple, tl>;
-    EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
-}
