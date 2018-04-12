@@ -137,9 +137,6 @@ template <typename inner_type,
 //!\endcond
 class concatenated_sequences
 {
-    static_assert(!detail::sequence_concept_modified_by_const_iterator_bug<inner_type>,
-                  "KNOWN BUG: inner_type = std::basic_string<> is not working "
-                  "for the ubuntu::ppa version of gcc7, because of a faulty STL version. ");
 protected:
     //!\privatesection
     //!\brief Where the concatenation is stored.
@@ -959,14 +956,14 @@ public:
             value_len = std::distance(ranges::begin(value), ranges::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
-        data_values.insert(data_values.cbegin() + data_delimiters[pos_as_num],
+        data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            ranges::begin(concatenated),
                            ranges::end(concatenated));
 
         data_delimiters.reserve(data_values.size() + count);
-        data_delimiters.insert(data_delimiters.cbegin() + pos_as_num,
+        data_delimiters.insert(data_delimiters.begin() + pos_as_num,
                                count,
-                               *(data_delimiters.cbegin() + pos_as_num));
+                               *(data_delimiters.begin() + pos_as_num));
 
         // adapt delimiters of inserted
         for (size_type i = 0; i < count; ++i)
@@ -1019,9 +1016,9 @@ public:
         auto const ilist = ranges::make_iterator_range(first, last, std::distance(first, last));
 
         data_delimiters.reserve(data_values.size() + ilist.size());
-        data_delimiters.insert(data_delimiters.cbegin() + pos_as_num,
+        data_delimiters.insert(data_delimiters.begin() + pos_as_num,
                                ilist.size(),
-                               *(data_delimiters.cbegin() + pos_as_num));
+                               *(data_delimiters.begin() + pos_as_num));
 
 
         // adapt delimiters of inserted region
@@ -1040,7 +1037,7 @@ public:
         // adapt values of inserted region
         auto concatenated = ilist | ranges::view::join | ranges::view::bounded;
         data_values.reserve(data_values.size() + full_len);
-        data_values.insert(data_values.cbegin() + data_delimiters[pos_as_num],
+        data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            ranges::begin(concatenated),
                            ranges::end(concatenated));
 
@@ -1111,11 +1108,11 @@ public:
         for (; first != last; ++first)
             sum_size += ranges::size(*first);
 
-        data_values.erase(data_values.cbegin() + data_delimiters[distf],
-                          data_values.cbegin() + data_delimiters[dist]);
+        data_values.erase(data_values.begin() + data_delimiters[distf],
+                          data_values.begin() + data_delimiters[dist]);
 
-        data_delimiters.erase(data_delimiters.cbegin() + distf + 1,
-                              data_delimiters.cbegin() + dist + 1);
+        data_delimiters.erase(data_delimiters.begin() + distf + 1,
+                              data_delimiters.begin() + dist + 1);
 
         // adapt delimiters after that
         // TODO parallel execution policy or vectorization?
@@ -1168,7 +1165,7 @@ public:
     void push_back(rng_type && value)
         requires is_compatible_value<rng_type>
     {
-        data_values.insert(data_values.cend(), ranges::begin(value), ranges::end(value));
+        data_values.insert(data_values.end(), ranges::begin(value), ranges::end(value));
         data_delimiters.push_back(data_delimiters.back() + ranges::size(value));
     }
 
