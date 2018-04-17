@@ -77,7 +77,7 @@ using iterator_t = ranges::iterator_t<rng_t>;
 // sentinel
 // ----------------------------------------------------------------------------
 
-/*!\brief For a seqan3::range return its iterator type. [Type metafunction].
+/*!\brief For a seqan3::range return its sentinel type. [Type metafunction].
  * \tparam t The type to operate on.
  */
 template <range_concept rng_t>
