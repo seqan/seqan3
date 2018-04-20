@@ -358,10 +358,3 @@ namespace seqan3::view
 detail::declare_view_functor_type<detail::single_pass_input_view> const single_pass_input;
 
 } // namespace seqan3::view
-
-namespace ranges
-{
-    template<typename urng_t>
-    struct enable_view<::seqan3::detail::single_pass_input_view<urng_t>> : std::true_type
-    {};
-}
