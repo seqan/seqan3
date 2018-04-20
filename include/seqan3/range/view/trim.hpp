@@ -165,28 +165,44 @@ struct trim_fn
 namespace seqan3::view
 {
 
-/*!\brief A view that does quality-threshold trimming on a range of seqan3::quality_concept.
- * \tparam irng_t The type of the range being processed. See below for requirements.
- * \tparam threshold_t Either of `value_type_t<irng_t>` or of `seqan3::underlying_phred_t<value_type_t<irng_t>>`.
- * \param irange The range being processed. [parameter is omitted in pipe notation]
- * \param threshold The minimum quality.
- * \returns A trimmed range. See below for the properties of the returned range.
+/*!\name Alphabet related views
+ * \{
+ */
+
+/*!\brief               A view that does quality-threshold trimming on a range of seqan3::quality_concept.
+ * \tparam urng_t       The type of the range being processed. See below for requirements.
+ * \tparam threshold_t  Either seqan3::value_type_t<urng_t> or
+ *                      seqan3::underlying_phred_t<seqan3::value_type_t<urng_t>>.
+ * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
+ * \param[in] threshold The minimum quality.
+ * \returns             A trimmed range. See below for the properties of the returned range.
  * \ingroup view
  *
  * \details
  *
  * This view can be used to do easy quality based trimming of sequences.
  *
- * \par View properties
+ * ### View properties
  *
- * |                     | `irng_t` (range input type)   | `rrng_t` (range return type)                              |
- * |---------------------|-------------------------------|-----------------------------------------------------------|
- * | range               | seqan3::input_range_concept   | seqan3::view_concept + all range concepts met by `irng_t` except seqan3::sized_range_concept |
- * | `range_reference_t` | seqan3::quality_concept       | `range_reference_t<irng_t>`                               |
+ * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
+ * the transformation on the innermost range (instead of the outermost range).
  *
- * * The input properties are **requirements** on the range input type.
- * * The return properties are **guarantees** given on the range return type.
- * * for more details, see \ref view.
+ * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |-------------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | seqan3::input_range_concept         | *required*                            | *preserved*                     |
+ * | seqan3::forward_range_concept       |                                       | *preserved*                     |
+ * | seqan3::bidirectional_range_concept |                                       | *preserved*                     |
+ * | seqan3::random_access_range_concept |                                       | *preserved*                     |
+ * |                                     |                                       |                                 |
+ * | seqan3::view_concept                |                                       | *guaranteed*                    |
+ * | seqan3::sized_range_concept         |                                       | *lost*                          |
+ * | seqan3::bounded_range_concept       |                                       | *lost*                          |
+ * | seqan3::output_range_concept        |                                       | *preserved*                     |
+ * | seqan3::const_iterable_concept      |                                       | *preserved*                     |
+ * |                                     |                                       |                                 |
+ * | seqan3::reference_t                 | seqan3::quality_concept               | seqan3::reference_t<urng_t>     |
+ *
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \par Example
  *
@@ -229,5 +245,7 @@ namespace seqan3::view
  */
 
 seqan3::detail::trim_fn const trim;
+
+//!\}
 
 } // namespace seqan3::view

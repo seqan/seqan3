@@ -46,24 +46,37 @@
 namespace seqan3::view
 {
 
-/*!\brief A view that converts each element in the input range (implicitly or via `static_cast`).
- * \tparam irng_t The type of the range being processed. See below for requirements. [template parameter is omitted in pipe notation]
- * \param irange The range being processed. [parameter is omitted in pipe notation]
- * \returns A range of converted elements. See below for the properties of the returned range.
+/*!\name General purpose views
+ * \{
+ */
+
+/*!\brief               A view that converts each element in the input range (implicitly or via `static_cast`).
+ * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
+ *                      omitted in pipe notation]
+ * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
+ * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
  *
- * \par View properties
+ * ### View properties
  *
- * |                     | `irng_t` (range input type)   | `rrng_t` (range return type)                              |
- * |---------------------|-------------------------------|-----------------------------------------------------------|
- * | range               | seqan3::input_range_concept   | seqan3::view_concept + all range concepts met by `irng_t` |
- * | `range_reference_t` | *convertible to* `out_t`      | `out_t`                                                   |
+ * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |-------------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | seqan3::input_range_concept         | *required*                            | *preserved*                     |
+ * | seqan3::forward_range_concept       |                                       | *preserved*                     |
+ * | seqan3::bidirectional_range_concept |                                       | *preserved*                     |
+ * | seqan3::random_access_range_concept |                                       | *preserved*                     |
+ * |                                     |                                       |                                 |
+ * | seqan3::view_concept                |                                       | *guaranteed*                    |
+ * | seqan3::sized_range_concept         |                                       | *preserved*                     |
+ * | seqan3::bounded_range_concept       |                                       | *preserved*                     |
+ * | seqan3::output_range_concept        |                                       | *lost*                          |
+ * | seqan3::const_iterable_concept      |                                       | *preserved*                     |
+ * |                                     |                                       |                                 |
+ * | seqan3::reference_t                 | seqan3::convertible_to_concept<out_t> | `out_t`                         |
  *
- * * The input properties are **requirements** on the range input type.
- * * The return properties are **guarantees** given on the range return type.
- * * for more details, see \ref view.
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \par Example
+ * ### Example
  *
  * Convert from `int` to `bool`:
  * ```cpp
@@ -95,5 +108,7 @@ auto const convert = ranges::view::transform([] (auto const & in) -> out_t
     else
         return static_cast<out_t>(in);
 });
+
+//!\}
 
 } // namespace seqan3::view

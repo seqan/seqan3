@@ -315,10 +315,10 @@ protected:
 
 namespace seqan3::view
 {
-/*!\brief A view adapter to add single pass input behavior to the underlying range.
- * \tparam urng_t The type of the range being processed. See below for requirements.
- * \param urange The range being processed.
- * \returns A range with single pass input behavior. See below for the properties of the returned range.
+/*!\brief               A view adapter that decays most of the range properties and adds single pass behavior.
+ * \tparam urng_t       The type of the range being processed. See below for requirements.
+ * \param[in] urange    The range being processed.
+ * \returns             A range with single pass input behavior. See below for the properties of the returned range.
  * \ingroup view
  *
  * \details
@@ -331,14 +331,23 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * |                     | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                               |
- * |---------------------|---------------------------------------|------------------------------------------------------------------------------|
- * | range               | seqan3::input_range_concept           | seqan3::view_concept + seqan3::input_range_concept + single_pass semantics   |
- * | `range_reference_t` | `reference_t<urng_t>`                 | `reference_t<urng_t>`                                                        |
  *
- * * The input properties are **requirements** on the underlying range type.
- * * The return properties are **guarantees** given on the range return type.
- * * for more details, see \ref view.
+ * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
+ * | seqan3::forward_range_concept       |                                       | *lost*                                             |
+ * | seqan3::bidirectional_range_concept |                                       | *lost*                                             |
+ * | seqan3::random_access_range_concept |                                       | *lost*                                             |
+ * |                                     |                                       |                                                    |
+ * | seqan3::view_concept                |                                       | *guaranteed*                                       |
+ * | seqan3::sized_range_concept         |                                       | *lost*                                             |
+ * | seqan3::bounded_range_concept       |                                       | *lost*                                             |
+ * | seqan3::output_range_concept        |                                       | *preserved*                                        |
+ * | seqan3::const_iterable_concept      |                                       | *lost*                                             |
+ * |                                     |                                       |                                                    |
+ * | seqan3::reference_t                 |                                       | seqan3::reference_t<urng_t>                        |
+ *
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Thread safety
  *
