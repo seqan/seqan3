@@ -45,9 +45,39 @@
 #include <range/v3/view/take.hpp>
 #include <range/v3/istream_range.hpp>
 
-template <typename T>
+template <typename rng_type>
 class single_pass_input : public ::testing::Test
-{};
+{
+
+    virtual void SetUp()
+    {
+        data = get_data();
+    }
+
+    auto get_data()
+    {
+        if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::vector<char>>)
+        {
+            return rng_type{'1','2','3','4','5'};
+        }
+        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::vector<int>>)
+        {
+            return rng_type{1, 2, 3, 4, 5};
+        }
+        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, ranges::v3::istream_range<char>>)
+        {
+            return std::istringstream{"12345"};
+        }
+        else /*(std::is_same_v<rng_type, ranges::v3::istream_range<int>>)*/
+        {
+            return std::istringstream{"1 2 3 4 5"};
+        }
+    }
+
+public:
+
+    decltype(std::declval<single_pass_input>().get_data()) data;
+};
 
 // add all <out_rng,in_rng> pairs here.
 using underlying_range_types = ::testing::Types<std::vector<char>,
@@ -59,27 +89,6 @@ using underlying_range_types = ::testing::Types<std::vector<char>,
 TYPED_TEST_CASE(single_pass_input, underlying_range_types);
 
 using namespace seqan3;
-
-template <typename rng_type>
-auto get_data()
-{
-    if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::vector<char>>)
-    {
-        return rng_type{'1','2','3','4','5'};
-    }
-    else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::vector<int>>)
-    {
-        return rng_type{1, 2, 3, 4, 5};
-    }
-    else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, ranges::v3::istream_range<char>>)
-    {
-        return std::istringstream{"12345"};
-    }
-    else /*(std::is_same_v<rng_type, ranges::v3::istream_range<int>>)*/
-    {
-        return std::istringstream{"1 2 3 4 5"};
-    }
-}
 
 TYPED_TEST(single_pass_input, view_concepts)
 {
@@ -103,23 +112,19 @@ TYPED_TEST(single_pass_input, view_construction)
     EXPECT_TRUE(std::is_move_assignable_v<view_t>);
     EXPECT_TRUE(std::is_destructible_v<view_t>);
 
-    //TODO(rrahn): We need some method that allows us to check if an expression is valid.
-    // So we actually can test it and not run into a compiler error.
-    auto data = get_data<TypeParam>();
     {  // from lvalue
-        TypeParam p{data};
+        TypeParam p{this->data};
         [[maybe_unused]] detail::single_pass_input_view v{p};
     }
 
     {  // from rvalue
-        [[maybe_unused]] detail::single_pass_input_view v{TypeParam{data}};
+        [[maybe_unused]] detail::single_pass_input_view v{TypeParam{this->data}};
     }
 }
 
 TYPED_TEST(single_pass_input, view_begin)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
 
@@ -131,8 +136,7 @@ TYPED_TEST(single_pass_input, view_begin)
 
 TYPED_TEST(single_pass_input, view_end)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
 
@@ -143,12 +147,11 @@ TYPED_TEST(single_pass_input, view_end)
 
 TYPED_TEST(single_pass_input, view_iterate)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
 
-    if constexpr (std::is_base_of_v<std::ios_base, decltype(data)>)
+    if constexpr (std::is_base_of_v<std::ios_base, decltype(this->data)>)
     {
         for (auto && elem : view)
         {
@@ -186,8 +189,7 @@ TYPED_TEST(single_pass_input, iterator_construction)
 
 TYPED_TEST(single_pass_input, iterator_pre_increment)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
 
@@ -212,8 +214,7 @@ TYPED_TEST(single_pass_input, iterator_pre_increment)
 
 TYPED_TEST(single_pass_input, iterator_post_increment)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
 
@@ -248,8 +249,7 @@ TYPED_TEST(single_pass_input, iterator_post_increment)
 
 TYPED_TEST(single_pass_input, iterator_eq_comparison)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
     EXPECT_FALSE(view.begin() == view.end());
@@ -266,8 +266,7 @@ TYPED_TEST(single_pass_input, iterator_eq_comparison)
 
 TYPED_TEST(single_pass_input, iterator_neq_comparison)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
     EXPECT_TRUE(view.begin() != view.end());
@@ -294,8 +293,7 @@ TYPED_TEST(single_pass_input, sentinel_concepts)
 
 TYPED_TEST(single_pass_input, sentinel_eq_comparison)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
     EXPECT_FALSE(view.end() == view.begin());
@@ -312,8 +310,7 @@ TYPED_TEST(single_pass_input, sentinel_eq_comparison)
 
 TYPED_TEST(single_pass_input, sentinel_neq_comparison)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     detail::single_pass_input_view view{p};
     EXPECT_TRUE(view.end() != view.begin());
@@ -331,8 +328,7 @@ TYPED_TEST(single_pass_input, sentinel_neq_comparison)
 TYPED_TEST(single_pass_input, fn_functional)
 {
     // use case 1: functional;
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     auto view = ranges::view::take(view::single_pass_input(p), 3);
 
@@ -355,8 +351,7 @@ TYPED_TEST(single_pass_input, fn_functional)
 
 TYPED_TEST(single_pass_input, fn_pipeable)
 {
-    auto data = get_data<TypeParam>();
-    TypeParam p{data};
+    TypeParam p{this->data};
 
     auto view = p | view::single_pass_input | ranges::view::take(3);
     auto it = view.begin();
