@@ -65,20 +65,20 @@
  * can be lazy, only doing work when the answer is requested, and purely functional, without mutating the original
  * data. This makes it easier to reason about your code, especially when writing concurrent programs."</i>
  *
- * The (less flexible) equivalent in SeqAn2 was the `ModifiedString<>`.
+ * See the \link range range module \endlink for how views relate to containers and decorators.
  *
  * Most views provided by SeqAn3 are specific to biological operations, like seqan3::view::trim which trims
  * sequences based on the quality or seqan3::view::complement which generates the complement of a nucleotide sequence.
  * But SeqAn3 also provides some general purpose views.
  *
- * \par Namespaces
+ * ### Namespaces
  *
  *   * [All views from the range-v3 libary](https://ericniebler.github.io/range-v3/index.html#range-views) are available
  * in the namespace `ranges::view`.
  *
  *   * All SeqAn views are available in the namespace `seqan3::view`.
  *
- * \par Example
+ * ### Example
  *
  * Functional and pipe notations:
  * ```cpp
@@ -115,48 +115,97 @@
  * // vec_view4 and vec_view5 are the reverse complement of "ACGGTC": "GACCGT"
  * ```
  *
- * \par View properties
+ * ### Views vs view adaptors
  *
- * All of these are documented for SeqAn3's views individually, but only explained here in detail:
+ * When talking about views, two different entities are often conflated:
  *
- * **Source-only views:** Most views operate on an input range and return a (modified) range, i.e. they can be placed
+ *   1. the view (this is the type that is a range and meets seqan3::view_concept; it is what we refer to with
+ * `auto vec_view` above)
+ *   2. the view adaptor (this is the functor that returns the actual view based on it's parameters, including the
+ * underlying range; in the above example `ranges::view::reverse` and `view::complement` are view adaptors)
+ *
+ * The view adaptor also facilitates the piping behaviour. It is the only entity that is publicly documented and
+ * the actual view type (the range type returned by the adaptor) is considered implementation defined.
+ * The *properties* of the returned range are however specified and documented as part of the adaptor, see below.
+ *
+ * <sub>
+ * An exception to this rule are views that don't work on an underlying range and can only be
+ * placed at the beginning of a pipe of operations; they do not need an adaptor, because their constructor is
+ * sufficient. This is not relevant for the documention, though, we always document `view::foo`, independent of
+ * whether `view::foo` is the adaptor that returns the "foo type" or whether `view::foo` is the "foo type".
+ * </sub>
+ *
+ * ### View properties
+ *
+ * There are three view properties that are documented for a view, **only if that view fulfills them:**
+ *
+ * **Source-only views:** Most views operate on an underlying range and return a (modified) range, i.e. they can be placed
  * at the beginning, middle or end of a "pipe" of view operations. However, some views are limited to being at
- * the front ("source"), e.g. `ranges::view::single`, `ranges::view::concat` and `ranges::view::ints`.
+ * the front ("source"), e.g. `ranges::view::single`, `ranges::view::concat` and `ranges::view::ints`. These views
+ * are marked as "source-only" and have no `urng_t` column in the second table.
  *
  * **Sink-only views:** The opposite of a *source-only view*. It can only be placed at the end of a pipe, i.e.
- * it operates on views, but does not actually return a view.
+ * it operates on views, but does not actually return a range (has no `rrng_t` column in the second table).
  *
  * **Deep views:** Some views are declared as "deeps views". This means, that in case they are given a range-of-range
  * as input (as opposed to just a range), they will apply their transformation on the innermost range (instead of
  * the outermost range which would be default). This is handy especially for alphabet-based transformations that you
  * wish to apply to a collection of sequences.
  *
- * **Input range requirements:** All views that are not *source-only views* make certain assumptions about their input.
+ * **For all views the following are documented:**
+ *
+ * | range concepts and reference_t      | `urng_t` (underlying range type) | `rrng_t` (returned range type)                     |
+ * |-------------------------------------|----------------------------------|----------------------------------------------------|
+ * | seqan3::input_range_concept         | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually preserved)  |
+ * | seqan3::forward_range_concept       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::bidirectional_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::random_access_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * |                                     |                                  |                                                    |
+ * | seqan3::view_concept                | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually guaranteed) |
+ * | seqan3::sized_range_concept         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::bounded_range_concept       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::output_range_concept        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::const_iterable_concept      | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
+ * |                                     |                                  |                                                    |
+ * | seqan3::reference_t                 | optionally a type or concept     | optionally a type or concept                       |
+ *
+ * **Underlying range requirements:** All view adaptors that are not *source-only* make certain assumptions about their
+ * underlying range.
  * The most basic assumption is that the range satisfies `seqan3::input_range_concept`, but some views require
  * stronger properties, e.g. `seqan3::random_access_range_concept`. *Note that these being* requirements *means that
  * they are the minimal set of properties assumed. Views may very well make use of stronger properties if available.*
  *
- * **Return range guarantees:** All views that are not *sink-only views* return a range that meets at least
- * `seqan3::input_range_concept` and of course also `seqan3::view_concept`. Most views also preserve stronger
+ * **Return range guarantees:** All view adaptors that are not *sink-only* return a range that meets at least
+ * `seqan3::input_range_concept` and also `seqan3::view_concept`. Most views also preserve stronger
  * properties, e.g. `seqan3::random_access_range_concept`, but this depends on the view. Some views also add
- * proporties not present on the input range, e.g. the range returned by `ranges::view::take_exactly` meets
+ * properties not present on the input range, e.g. the range returned by `ranges::view::take_exactly` meets
  * `seqan3::sized_range_concept`, independent of whether this was met by the input range.
+ *   * *preserved* in this context means that the returned range satisfies this concept if it is also satisfied by the
+ * underlying range.
+ *   * *lost* means that this concept is never satisfied by the returned range, independent of whether the underlying
+ * range supports it.
+ *   * *guaranteed* means that this concept is always satisfied by the returned range, independent of whether the underlying
+ * range supports it.
  *
- * **Input range's reference type:** The reference type is the type the elements of the input range are accessed by
+ * **Underlying range's reference type:** The reference type is the type the elements of the underlying range are
+ * accessed by
  * (since dereferencing an iterator or calling operator[] returns the reference type). The reference type may or may
  * not actually contain a `&` (see below). For many SeqAn specific views additional concept requirements are defined
  * for the input range's reference type, e.g. seqan3::view::complement can only operate on ranges whose elements are
  * nucleotides (meet seqan3::nucleotide_concept). In some case the type may even be a specific type or the result
  * of a metafunction.
  *
- * **Return range's reference type:** Conversely certain views make guarantees on the concepts satisfied by the
+ * **Returned range's reference type:** Conversely certain views make guarantees on the concepts satisfied by the
  * return range's reference type or even always have a fixed type, e.g. seqan3::view::complement operates on
- * nucleotides and of course also returns nucleotides. However, and this is important to note, the reference type
- * of seqan3::view::complement has any actual `&` removed from the input ranges' reference type (if originally present).
+ * nucleotides and of course also returns nucleotides and "seqan3::reference_t<urng_t>" would imply that
+ * the reference type is the same. However, and this is important to note, the reference type
+ * of seqan3::view::complement has any actual `&` removed from the underlying ranges' reference type (if originally present),
+ * this goes hand-in-hand with seqan3::output_range_concept being lost → original elements cannot be written to through
+ * this view.
  * This is because *new elements* are being generated. Other views like `ranges::view::reverse` also preserve the
  * `&` (if originally present), because the elements in the return view still point to the elements in the original
  * range (just in different order). This has the effect that through some combinations of views you can modify the
- * elements in the original range (if all views in the pipe preserve the reference type fully), but through others
+ * elements in the original range (if all views in the pipe preserve seqan3::output_range_concept), but through others
  * you can't.
  *
  * \sa https://ericniebler.github.io/range-v3/index.html#range-views
