@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,35 +33,37 @@
 // ============================================================================
 
 /*!\file
+ * \brief Provides exceptions used in the I/O module.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::type_list and auxiliary metafunctions.
  */
 
 #pragma once
 
-#include <meta/meta.hpp>
+#include <stdexcept>
 
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {
 
-/*!\brief Type that contains multiple types, an alias for
- * [meta::list](https://ericniebler.github.io/range-v3/structmeta_1_1list.html).
- * \ingroup core
- */
-template <typename ... types>
-using type_list = meta::list<types...>;
+// ----------------------------------------------------------------------------
+// file open exceptions
+// ----------------------------------------------------------------------------
 
-} // namespace seqan3
-
-namespace seqan3::detail
+//!\brief Thrown if there is no format that accepts a given file extension.
+struct unhandled_extension_error : std::invalid_argument
 {
+    //!\brief Constructor that forwards the exception string.
+    unhandled_extension_error(std::string const & s) : std::invalid_argument{s}
+    {}
+};
 
-/*!\brief Auxiliary concept that checks whether a type is a specialisation of seqan3::type_list.
- * \ingroup core
- */
-template <typename t>
-concept bool type_list_concept = is_type_specialisation_of_v<t, type_list>;
+//!\brief Thrown if there is an unspecified filesystem or stream error while opening, e.g. permission problem.
+struct file_open_error : std::runtime_error
+{
+    //!\brief Constructor that forwards the exception string.
+    file_open_error(std::string const & s) : std::runtime_error{s}
+    {}
+};
 
-} // namespace seqan3::detail
+}
