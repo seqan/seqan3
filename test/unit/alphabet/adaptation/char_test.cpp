@@ -48,6 +48,14 @@ using char_types = ::testing::Types<char, char16_t, char32_t>;
 
 TYPED_TEST_CASE(char_adaptation, char_types);
 
+TYPED_TEST(char_adaptation, concept)
+{
+    EXPECT_TRUE(char_adaptation_concept<TypeParam>);
+    // NOTE: Using intermediate concept notation with forwarding references cause the concept type
+    // to hold a reference.
+    EXPECT_TRUE(char_adaptation_concept<TypeParam &>);
+}
+
 TYPED_TEST(char_adaptation, underlying_char_t)
 {
     EXPECT_TRUE((std::is_same_v<underlying_char_t<TypeParam>, TypeParam>));
