@@ -57,7 +57,6 @@ namespace seqan3
 
 /*!\brief The 15 letter RNA alphabet, containing all IUPAC smybols minus the gap.
  * \ingroup nucleotide
- * \implements seqan3::nucleotide_concept
  *
  * \details
  * This alphabet inherits from seqan3::dna15 and is guaranteed to have the same internal representation of
