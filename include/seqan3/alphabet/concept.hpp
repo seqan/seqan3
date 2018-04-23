@@ -76,23 +76,26 @@ namespace seqan3
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond
+//TODO(rrahn): Change to template <typename t2, typename t = std::remove_reference_t<t2>>
+// in order to get rid of the remove_reference_t within the concept, after the ICE
+// get's fixed. See issue #228
 template <typename t>
 concept bool semi_alphabet_concept = requires (t t1, t t2)
 {
     // STL concepts
-    requires std::is_pod_v<t> == true;
-    requires std::is_swappable_v<t> == true;
+    requires std::is_pod_v<std::remove_reference_t<t>> == true;
+    requires std::is_swappable_v<std::remove_reference_t<t>> == true;
 
     // static data members
-    alphabet_size<t>::value;
-    alphabet_size_v<t>;
+    alphabet_size<std::remove_reference_t<t>>::value;
+    alphabet_size_v<std::remove_reference_t<t>>;
 
     // conversion to rank
-    { to_rank(t1) } -> underlying_rank_t<t>;
+    { to_rank(t1) } -> underlying_rank_t<std::remove_reference_t<t>>;
 
     // assignment from rank
-    { assign_rank(t1,  0) } -> t &;
-    { assign_rank(t{}, 0) } -> t &&;
+    { assign_rank(t1,  0) }                          -> std::remove_reference_t<t> &;
+    { assign_rank(std::remove_reference_t<t>{}, 0) } -> std::remove_reference_t<t> &&;
 
     // required comparison operators
     { t1 == t2 } -> bool;
@@ -127,18 +130,21 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
  * Types that satisfy this concept are shown as "implementing this interface".
  */
 //!\cond
+//TODO(rrahn): Change to template <typename t2, typename t = std::remove_reference_t<t2>>
+// in order to get rid of the remove_reference_t within the concept, after the ICE
+// get's fixed. See issue #228
 template <typename t>
 concept bool alphabet_concept = requires (t t1, t t2)
 {
     requires semi_alphabet_concept<t>;
 
     // conversion to char
-    { to_char(t1) } -> underlying_char_t<t>;
+    { to_char(t1) } -> underlying_char_t<std::remove_reference_t<t>>;
     { std::cout << t1 };
 
     // assignment from char
-    { assign_char(t1,  0) } -> t &;
-    { assign_char(t{}, 0) } -> t &&;
+    { assign_char(t1,  0) }                          -> std::remove_reference_t<t> &;
+    { assign_char(std::remove_reference_t<t>{}, 0) } -> std::remove_reference_t<t> &&;
 };
 //!\endcond
 

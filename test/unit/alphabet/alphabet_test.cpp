@@ -227,6 +227,17 @@ TYPED_TEST(alphabet, comparison_operators)
 TYPED_TEST(alphabet, concept)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
+    // NOTE: Using intermediate concept notation with forwarding references cause the concept type
+    // to hold a reference.
+    EXPECT_TRUE(alphabet_concept<TypeParam &>);
+}
+
+TYPED_TEST(alphabet, concept_semi)
+{
+    EXPECT_TRUE(semi_alphabet_concept<TypeParam>);
+    // NOTE: Using intermediate concept notation with forwarding references cause the concept type
+    // to hold a reference.
+    EXPECT_TRUE(semi_alphabet_concept<TypeParam &>);
 }
 
 #if SEQAN3_WITH_CEREAL

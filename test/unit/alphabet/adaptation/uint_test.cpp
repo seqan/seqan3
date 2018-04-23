@@ -48,6 +48,14 @@ using uint_types = ::testing::Types<uint8_t, uint16_t, uint32_t>;
 
 TYPED_TEST_CASE(uint_adaptation, uint_types);
 
+TYPED_TEST(uint_adaptation, concept)
+{
+    EXPECT_TRUE(uint_adaptation_concept<TypeParam>);
+    // NOTE: Using intermediate concept notation with forwarding references cause the concept type
+    // to hold a reference.
+    EXPECT_TRUE(uint_adaptation_concept<TypeParam &>);
+}
+
 TYPED_TEST(uint_adaptation, underlying_rank_t)
 {
     EXPECT_TRUE((std::is_same_v<underlying_rank_t<TypeParam>, TypeParam>));
