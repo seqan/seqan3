@@ -33,45 +33,12 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides exceptions used in the I/O module.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for all stream related functionality.
+ * \author René Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <stdexcept>
-
-#include <seqan3/core/platform.hpp>
-
-namespace seqan3
-{
-
-// ----------------------------------------------------------------------------
-// file open exceptions
-// ----------------------------------------------------------------------------
-
-//!\brief Thrown if there is no format that accepts a given file extension.
-struct unhandled_extension_error : std::invalid_argument
-{
-    //!\brief Constructor that forwards the exception string.
-    unhandled_extension_error(std::string const & s) : std::invalid_argument{s}
-    {}
-};
-
-//!\brief Thrown if there is an unspecified filesystem or stream error while opening, e.g. permission problem.
-struct file_open_error : std::runtime_error
-{
-    //!\brief Constructor that forwards the exception string.
-    file_open_error(std::string const & s) : std::runtime_error{s}
-    {}
-};
-
-//!\brief Thrown if there is a parse error, such as reading an unexpected character from an input stream.
-struct parse_error : std::runtime_error
-{
-    //!\brief Constructor that forwards the exception string.
-    parse_error(std::string const & s) : std::runtime_error{s}
-    {}
-};
-
-}
+/*!\defgroup stream Stream
+ * \brief The stream sub-module contains data structures and functions for streaming and tokenization.
+ * \ingroup io
+ * \todo write me!
+ */

@@ -449,57 +449,57 @@ TEST(parse_condition, char_types)
     using namespace seqan3;
 
     {  // is_char
-        char c1 = 0x9;
+        char c1 = '\t';
         EXPECT_TRUE(is_char<'\t'>{}(c1));
-        char16_t c2 = 0x9;
+        char16_t c2 = '\t';
         EXPECT_TRUE(is_char<'\t'>{}(c2));
-        char32_t c3 = 0x9;
+        char32_t c3 = '\t';
         EXPECT_TRUE(is_char<'\t'>{}(c3));
     }
 
     {  // check throw
-
+        EXPECT_THROW(is_char<'\t'>{}(char16_t{128}), parse_error);
     }
 
     {  // is_in_range
-        char c1 = 0x62;
+        char c1 = 'n';
         EXPECT_TRUE((is_in_range<'a', 'z'>{}(c1)));
-        char16_t c2 = 0x62;
+        char16_t c2 = 'n';
         EXPECT_TRUE((is_in_range<'a', 'z'>{}(c2)));
-        char32_t c3 = 0x62;
+        char32_t c3 = 'n';
         EXPECT_TRUE((is_in_range<'a', 'z'>{}(c3)));
     }
 
     {  // check throw
-
+        EXPECT_THROW((is_in_range<'a', 'z'>{}(char16_t{128})), parse_error);
     }
 
     {  // is_in_alphabet
-        char c1 = 0x4E;
+        char c1 = 'N';
         EXPECT_TRUE(is_in_alphabet<seqan3::dna5>{}(c1));
-        char16_t c2 = 0x4E;
+        char16_t c2 = 'N';
         EXPECT_TRUE(is_in_alphabet<seqan3::dna5>{}(c2));
-        char32_t c3 = 0x4E;
+        char32_t c3 = 'N';
         EXPECT_TRUE(is_in_alphabet<seqan3::dna5>{}(c3));
     }
 
     {  // check throw
-
+        EXPECT_THROW(is_in_alphabet<seqan3::dna5>{}(char16_t{128}), parse_error);
     }
 }
 
-TEST(parse_condition, expected)
+TEST(parse_condition, parse_asserter)
 {
     using namespace seqan3;
 
-    expected ex{is_alnum};
-    EXPECT_THROW(ex('\t'), std::runtime_error);
-    EXPECT_NO_THROW(ex('a'));
+    parse_asserter asserter{is_alnum};
+    EXPECT_THROW(asserter('\t'), parse_error);
+    EXPECT_NO_THROW(asserter('a'));
 
     try
     {
-        ex('\t');
-    } catch(std::runtime_error & e)
+        asserter('\t');
+    } catch(parse_error & e)
     {
         EXPECT_EQ(e.what(), "Parsed value <'\t'> which does not fulfill the following condition:"
                             " (is_in_range<'0', '9'> || is_in_range<'A', 'Z'> || is_in_range<'a', 'z'>)"s);
