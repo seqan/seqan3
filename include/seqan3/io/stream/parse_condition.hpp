@@ -47,6 +47,7 @@
 #include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/io/exception.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
 
 namespace seqan3::detail
@@ -391,7 +392,7 @@ struct is_in_range : public detail::parse_condition<is_in_range<rng_beg, rng_end
         if constexpr (!std::is_same_v<char_t, char>)
         {
             if (static_cast<uint32_t>(val) > 127u)
-                throw std::invalid_argument{"The given value is out of the testable range."};
+                throw parse_error{"The given value is out of the testable range."};
         }
 
         return (rng_beg <= val) && (val <= rng_end);
@@ -443,7 +444,7 @@ struct is_in_alphabet : public detail::parse_condition<is_in_alphabet<alphabet_t
         if constexpr (!std::is_same_v<char_t, char>)
         {
             if (static_cast<uint32_t>(val) > 127u)
-                throw std::invalid_argument{"The given value is out of the testable range."};
+                throw parse_error{"The given value is out of the testable range."};
         }
 
         // TODO(rrahn): implement to_upper / to_lower!
@@ -496,7 +497,7 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
         if constexpr (!std::is_same_v<char_t, char>)
         {
             if (static_cast<uint32_t>(val) > 127u)
-                throw std::invalid_argument{"The given value is out of the testable range."};
+                throw parse_error{"The given value is out of the testable range."};
         }
 
         return val == char_v;
@@ -742,12 +743,11 @@ constexpr detail::or_fn<is_in_range<'0', '9'>, is_in_range<'A', 'F'>, is_in_rang
  *        met.
  * \ingroup stream
  * \tparam condition_type The wrapped parse condition type to be use for testing
- * \tparam error_type     The associated exception that should be thrown if the condition was not met.
  *
  * \details
  *
- * The `expected` type is used to enforce that a parsed character satisfies certain conditions.
- * For example, when reading an input fasta file and the expected alphabet is an dna4
+ * The `parse_asserter` type is used to enforce that a parsed character satisfies certain conditions.
+ * For example, when reading an input fasta file and the expected alphabet is a dna4
  * but the actual data contained in the file is based on amino acids.
  * Thus, the condition would not be satisfied, causing the exception to be thrown.
  *
@@ -757,53 +757,30 @@ constexpr detail::or_fn<is_in_range<'0', '9'>, is_in_range<'A', 'F'>, is_in_rang
  * std::istringstream istr{"ATZE"};
  *
  * std::istream_iterator<char> it{istr},
- * expected<is_in_alphabet<dna5>, parse_error> ex;
+ * parse_asserter<is_in_alphabet<dna5>> asserter{};
  *
  * while (it != std::istream_iterator<char>{})
  * {
- *     ex(*it);  // will throw when reading `Z` from the input stream.
+ *     asserter(*it);  // will throw when reading `Z` from the input stream.
  *     ++it;
  * }
  * ```
  *
  * ### Deduction Guide
  *
- * The `expected` class itself is stateless. Still there are constructors implemented such that
- * template argument deduction is performed by the passed arguments.
- * The following listing shows the alternative definition, which generates the same `expected` type as above.
+ * The `parse_asserter` class itself is stateless. Still, it holds a member of the given parse_condition, in order
+ * to allow template deduction from a passed argument.
+ * The following listing shows the alternative definition, which generates the same `parse_asserter` type as above.
  *
  * ```cpp
- * is_in_alphabet<dna5> checker;
- * expected ex{checker, parse_error{}};
+ * parse_asserter asserter{is_alnum};
  * ```
  */
-template <detail::parse_condition_concept condition_type, typename error_type = std::runtime_error>
-struct expected
+template <typename condition_type>
+struct parse_asserter
 {
-    /*!\name Constructor, destructor and assignment
-     * \{
-     */
-    //!\brief Default constructor.
-    constexpr expected() = default;
-    //!\brief Copy constructor.
-    constexpr expected(expected const &) = default;
-    //!\brief Move constructor.
-    constexpr expected(expected &&) = default;
-    //!\brief Copy assignment operator.
-    constexpr expected & operator=(expected const &) = default;
-    //!\brief Move assignment operator.
-    constexpr expected & operator=(expected &&) = default;
-    //!\brief Destructor.
-    ~expected() = default;
-
-    //!\brief Deduces error condition by passed argument.
-    explicit constexpr expected(condition_type /**/)
-    {}
-
-    //!\brief Deduces error condition and exception type by passed argument.
-    constexpr expected(condition_type /**/, error_type)
-    {}
-    //!\}
+    //!\brief Stores an instance of the stateless condition.
+    condition_type cond;
 
     /*!\brief Checks if the given character satisfies the associated parse condition.
      * \param[in] c The character to be checked. Must satisfy the seqan3::char_adaptation_concept.
@@ -825,16 +802,25 @@ struct expected
     template <char_adaptation_concept char_type>
     void operator()(char_type && c) const
     {
-        if (!std::invoke(condition_type(), std::forward<char_type>(c)))
+        if (!std::invoke(cond, std::forward<char_type>(c)))
         {
             using namespace std::literals;
             // I can not assure that all parameters are convertible to c.
-            throw error_type{"Parsed value <"s + detail::make_printable(to_char(c)) +
-                             "> which does not fulfill the following condition: "s +
-                             condition_type{}.message()};
+            throw parse_error{"Parsed value <"s + detail::make_printable(to_char(c)) +
+                              "> which does not fulfill the following condition: "s  +
+                              cond.message()};
         }
     }
 };
+
+/*!\name Deduction Guide
+ * \brief Deduction guide for parse_asserter.
+ * \{
+ */
+//!\brief Deduction guide to infer the condition type from the constructor argument.
+template <detail::parse_condition_concept parse_cond_type>
+parse_asserter(parse_cond_type) -> parse_asserter<parse_cond_type>;
+//!\}
 
 /*!\name Parse conditions
  *
