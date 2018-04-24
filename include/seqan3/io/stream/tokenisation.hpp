@@ -121,6 +121,33 @@ void read_until(receiver_type  && rcvr,
                               std::forward<delimiter_type>(delim), std::forward<asserter_type>(asserter));
 }
 
+// ----------------------------------------------------------------------------
+// read_line
+// ----------------------------------------------------------------------------
+
+template <typename            receiver_type,
+          input_range_concept input_rng_type,
+          typename            asserter_type  = decltype(detail::invocable_dummy) &>
+//!\cond
+    requires (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>> ||
+              output_iterator_concept<std::remove_reference_t<receiver_type>, char>) &&
+              invocable_concept<std::remove_reference_t<asserter_type>, char>
+//!\endcond
+void read_line(receiver_type  && rcvr,
+               input_rng_type && input_rng,
+               asserter_type  && asserter = detail::invocable_dummy)
+{
+    read_until(std::forward<receiver_type>(rcvr), std::forward<input_rng_type>(input_rng),
+               is_char<'\n'>{} || is_char<'\r'>{}, std::forward<asserter_type>(asserter));
+
+    // Check if the statement was carriage return plus new-line.
+    auto it = ranges::begin(input_rng);
+    if (*it == '\r')
+        if (*(++it) != '\n')  // consume the '\r' symbol and check if '\n' follows.
+            throw parse_error{"Missing newline '\n' character after reading '\r' character."};
+    ++it; // extract the newline character.
+}
+
 // std::interface of ostream
 // put
 // write

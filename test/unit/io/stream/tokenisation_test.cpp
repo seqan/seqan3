@@ -49,7 +49,7 @@ class tokenisation : public ::testing::Test
 {
     virtual void SetUp()
     {
-        std::string input = "acgt\tacgt\nacgt acgt\r\nacgtn\n>123;@#\nACGTR\n";
+        std::string input = "acgt\tacgt\nacgt acgt\r\nacgtn\r>123;@#\nACGTR\n";
         data = {std::begin(input), std::end(input)};
     }
 
@@ -113,4 +113,34 @@ TYPED_TEST(tokenisation, read_until)
 
     EXPECT_THROW((read_until(target_it, src, is_blank, asserter)), parse_error);
     EXPECT_EQ(std::string{target | view::to_char}, "ACGTACGT"s);
+}
+
+TYPED_TEST(tokenisation, read_line)
+{
+    std::vector<dna5> target;
+    auto target_it = detail::make_conversion_output_iterator(target);
+    auto src = this->data | view::single_pass_input;
+    parse_asserter asserter{is_in_alphabet<dna5>{}};
+
+    // Read until first newline.
+    read_line(target_it, src);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGT"s);
+
+    // Throw at the space character. Ignore the input.
+    EXPECT_THROW((read_line(std::ignore, src, asserter)), parse_error);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGT"s);
+
+    // Ignore the space character
+    unsigned count = 1;
+    read_until(std::ignore, src, [&](auto){ return (count-- > 0) ? false : true; });
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGT"s);
+
+    // Read until \r\n signal.
+    read_line(target_it, src, asserter);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGTACGT"s);
+
+    // Read until wrong newline signal.
+    EXPECT_THROW((read_line(target_it, src, asserter)), parse_error);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGTACGTACGTN"s);
+    EXPECT_EQ(*ranges::begin(src), '>');
 }
