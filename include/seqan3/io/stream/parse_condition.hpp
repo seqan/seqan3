@@ -89,8 +89,8 @@ class parse_condition;
  *
  * \details
  *
- * The must be invocable with an seqan3::alphabet_concept type and supply a static constexpr `msg` member of type
- * seqan3::detail::constexpr_string.
+ * The must be invocable with an seqan3::char_adaptation_concept type and supply a static constexpr `msg` member of type
+ * seqan3::constexpr_string.
  */
 //!\cond
 template <typename condition_t>
@@ -108,54 +108,73 @@ concept bool parse_condition_concept = requires
 };
 //!\endcond
 
+/*!\name Requirements for seqan3::detail::parse_condition_concept
+ * \brief You can expect the variable and the predicate function on all types that satisfy seqan3::ostream_concept.
+ * \{
+ */
+/*!\fn      bool operator()(char_type c);
+ * \brief   Predicate function to test if `c` satisfies the given condition.
+ * \memberof seqan3::detail::parse_condition_concept
+ * \param   c The character to be tested.
+ * \returns `true` on success, `false` otherwise.
+ *
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
+ */
+
+/*!\var static constexpr auto msg
+ * \memberof seqan3::detail::parse_condition_concept
+ * \brief Defines the condition msg. The type is deduced from the constant expression in the definition of the variable.
+ */
+//!\}
+
 // ----------------------------------------------------------------------------
 // make_printable
 // ----------------------------------------------------------------------------
 
 /*!\brief Returns a printable value for the given character `c`.
- * \tparam c Non-type template parameter containing the character to be transformed.
- * \return a seqan3::constexpr_string containing a printable version of the given character `c`.
+ * \param[in] c The character to be represented as printable string.
+ * \return    a std::string containing a printable version of the given character `c`.
  *
  * \details
  *
- * Some characters, e.g. control commands cannot be printed. This function converts them to a constexpr_string
+ * Some characters, e.g. control commands cannot be printed. This function converts them to a std::string
  * containing the visual representation of this character. For all control commands the value `'CTRL'` is returned.
  *
  * ### Exception
  *
- * No-throw guarantee.
+ * Strong exception guarantee is given.
  *
  * ### Complexity
  *
  * Constant.
  *
- * ### Multi-Threading
+ * ### Concurrency
  *
  * Thread-safe.
  */
 template <typename char_type>
-inline constexpr std::string
-make_printable(char_type const c) noexcept
+inline std::string
+make_printable(char_type const c)
 {
-    if (c == '\0')
-        return "'\0'";
-    else if (c == '\t')
-        return "'\t'";
-    else if (c == '\n')
-        return "'\n'";
-    else if (c == '\v')
-        return "'\v'";
-    else if (c == '\f')
-        return "'\f'";
-    else if (c == '\r')
-        return "'\r'";
-    else if ((c >= static_cast<char>(1) && c <= static_cast<char>(8)) ||
-                  (c >= static_cast<char>(14) && c <= static_cast<char>(31)))
-        return "'CTRL'";
-    else if (c == static_cast<char>(127))
-        return "'DEL'";
-    else
-        return {'\'', c, '\''};
+    switch (c)
+    {
+        case '\0':                   return "'\\0'";
+        case '\t':                   return "'\\t'";
+        case '\n':                   return "'\\n'";
+        case '\v':                   return "'\\v'";
+        case '\f':                   return "'\\f'";
+        case '\r':                   return "'\\r'";
+        case static_cast<char>(127): return "'DEL'";
+        default:
+        {
+            if ((c >= static_cast<char>(1) && c <= static_cast<char>(8)) ||
+                (c >= static_cast<char>(14) && c <= static_cast<char>(31)))
+                return "'CTRL'";
+            else
+                return {'\'', c, '\''};
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -165,34 +184,28 @@ make_printable(char_type const c) noexcept
 //!\cond
 template <parse_condition_concept... condition_ts>
     requires sizeof...(condition_ts) >= 2
-struct or_fn;
-
-template <parse_condition_concept... condition_ts>
-    requires sizeof...(condition_ts) >= 2
-struct and_fn;
+struct parse_condition_combiner;
 
 template <parse_condition_concept condition_t>
-struct not_fn;
+struct parse_condition_negator;
 //!\endcond
 
-/*!\brief A [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) class for parse conditions to add
- *        logical conjunction, disjunction and negation operator.
+/*!\brief An abstract [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) base class for
+ *        parse conditions to add logical disjunction and negation operator.
  * \ingroup stream
- * \tparam condition_t The parse condition type to be extended with the logical operators.
- *                     Must satisfy the seqan3::detail::parse_condition_concept.
+ * \tparam derived_t The parse condition type to be extended with the logical operators.
+ *                   Must satisfy the seqan3::detail::parse_condition_concept.
  */
-template <typename condition_t>
+template <typename derived_t>
 class parse_condition
 {
 private:
 
-    //!\brief Friend declaration for other seqan3::detail::parse_condition types.
-    template <typename other_condition_type>
-    friend class parse_condition;
+    //!\brief Friend declaration for the derived type to access the private constructors.
+    friend derived_t;
 
-public:
     /*!\name Constructor, destructor and assignment
-     * \brief Standard constructors are defaulted.
+     * \brief This base class is abstract and all constructors are declared private.
      * \{
      */
     constexpr parse_condition() = default;
@@ -203,23 +216,23 @@ public:
     ~parse_condition() =  default;
     //!\}
 
+public:
+
     /*!\name Logical operators
      * \brief Adds logical operators to allow logical disjunction, conjunction and negation on parse conditions.
      * \{
      */
     //!\brief Combines the result of two seqan3::detail::parse_condition via logical disjunction.
-    template <parse_condition_concept rhs_condition_t>
-    constexpr auto operator||(parse_condition<rhs_condition_t> const &) const
+    template <parse_condition_concept rhs_derived_t>
+    constexpr auto operator||(parse_condition<rhs_derived_t> const &) const
     {
-        // using new_condition_t = decltype(or_fn{cond, rhs.cond});
-        return or_fn<condition_t, rhs_condition_t>{};
+        return parse_condition_combiner<derived_t, rhs_derived_t>{};
     }
 
     //!\brief Negates the result of a seqan3::detail::parse_condition
     constexpr auto operator!() const
     {
-        // using new_condition_t = decltype(not_fn{cond});
-        return not_fn<condition_t>{};
+        return parse_condition_negator<derived_t>{};
     }
     //!\}
 
@@ -229,9 +242,9 @@ public:
     //!\brief Invokes the condition on `val`.
     template <char_adaptation_concept value_t>
     constexpr bool
-    operator()(value_t && val) const noexcept(std::is_nothrow_invocable_r_v<bool, condition_t, value_t>)
+    operator()(value_t && val) const noexcept(std::is_nothrow_invocable_r_v<bool, derived_t, value_t>)
     {
-        return std::invoke(condition_t(), std::forward<value_t>(val));
+        return std::invoke(derived_t(), std::forward<value_t>(val));
     }
     //!\}
 
@@ -240,15 +253,15 @@ public:
      */
     //!\brief Returns the message representing this condition as std::string.
     std::string message() const
-        requires parse_condition_concept<condition_t>
+        requires parse_condition_concept<derived_t>
     {
-        return condition_t::msg.string();
+        return derived_t::msg.string();
     }
     //!\}
 };
 
 // ----------------------------------------------------------------------------
-// or_fn
+// parse_condition_combiner
 // ----------------------------------------------------------------------------
 
 /*!\brief Logical disjunction operator for parse conditions.
@@ -261,10 +274,13 @@ template <parse_condition_concept... condition_ts>
 //\cond
     requires sizeof...(condition_ts) >= 2
 //\endcond
-struct or_fn : public parse_condition<or_fn<condition_ts...>>
+struct parse_condition_combiner : public parse_condition<parse_condition_combiner<condition_ts...>>
 {
     //!\brief The message representing the disjunction of the associated conditions.
     static constexpr auto msg = detail::condition_message_v<'|', condition_ts...>;
+
+    //!\brief Inherit constructors from CRTP base class.
+    using parse_condition<parse_condition_combiner<condition_ts...>>::parse_condition;
 
     /*!\brief Invokes the condition check for `val` and returns the logical disjunction of their results.
      * \tparam    char_t The type of the character to test. Must satisfy seqan3::char_adaptation_concept.
@@ -275,7 +291,7 @@ struct or_fn : public parse_condition<or_fn<condition_ts...>>
      *
      * ### Complexity
      *
-     * Constant
+     * Linear in the number of conditions.
      *
      * ### Exception
      *
@@ -301,10 +317,13 @@ struct or_fn : public parse_condition<or_fn<condition_ts...>>
  * \ingroup stream
  */
 template <parse_condition_concept condition_t>
-struct not_fn : public parse_condition<not_fn<condition_t>>
+struct parse_condition_negator : public parse_condition<parse_condition_negator<condition_t>>
 {
     //!\brief The message representing the negation of the associated condition.
     static constexpr auto msg = constexpr_string{'!'} + condition_t::msg;
+
+    //!\brief Inherit constructors from CRTP base class.
+    using parse_condition<parse_condition_negator<condition_t>>::parse_condition;
 
     /*!\brief Invokes the condition check for `val` and returns the negated result.
      * \tparam    char_t The type of the character to test. Must satisfy seqan3::char_adaptation_concept.
@@ -340,29 +359,32 @@ namespace seqan3
 {
 
 // ----------------------------------------------------------------------------
-// is_in_range
+// is_in_interval
 // ----------------------------------------------------------------------------
 
-/*!\brief Parse condition that checks if a given value is in the range of `rng_beg` and `rng_end`.
+/*!\brief Parse condition that checks if a given value is in the range of `rng_beg` and `interval_last`.
  * \ingroup stream
  * \implements seqan3::detail::parse_condition_concept
- * \tparam rng_beg non-type template parameter denoting the begin of the allowed range.
- *         Must be less than or equal to `rng_end`.
- * \tparam rng_end non-type template parameter denoting the end of the allowed range.
- *         Must be greater than or equal to `rng_beg`.
+ * \tparam interval_first non-type template parameter denoting the begin of the allowed range.
+ *                        Must be less than or equal to `interval_last`.
+ * \tparam interval_last non-type template parameter denoting the end of the allowed range.
+ *                       Must be greater than or equal to `interval_first`.
  */
-template <char rng_beg, char rng_end>
+template <char interval_first, char interval_last>
 //\cond
-    requires rng_beg <= rng_end
+    requires interval_first <= interval_last
 //\endcond
-struct is_in_range : public detail::parse_condition<is_in_range<rng_beg, rng_end>>
+struct is_in_interval : public detail::parse_condition<is_in_interval<interval_first, interval_last>>
 {
     //!\brief The message representing this condition.
-    static constexpr constexpr_string msg = constexpr_string{"is_in_range<'"} +
-                                            constexpr_string{rng_beg}         +
+    static constexpr constexpr_string msg = constexpr_string{"is_in_interval<'"} +
+                                            constexpr_string{interval_first}         +
                                             constexpr_string{"', '"}          +
-                                            constexpr_string{rng_end}         +
+                                            constexpr_string{interval_last}         +
                                             constexpr_string{"'>"};
+
+    //!\brief Inherit constructors from CRTP base class.
+    using detail::parse_condition<is_in_interval<interval_first, interval_last>>::parse_condition;
 
     /*!\brief Invokes the condition check for `val`.
      * \tparam    char_t The type of the character to test. Must satisfy seqan3::char_adaptation_concept.
@@ -377,9 +399,7 @@ struct is_in_range : public detail::parse_condition<is_in_range<rng_beg, rng_end
      *
      * ### Exception
      *
-     * No-throw guarantee if the expression `std::is_same_v<char_t, char>`.
-     * Otherwise might throw, if the integer representation of the given wide character value is bigger than the
-     * biggest representable ASCII sign (> 127).
+     * No-throw guarantee.
      *
      * ### Concurrency
      *
@@ -387,15 +407,10 @@ struct is_in_range : public detail::parse_condition<is_in_range<rng_beg, rng_end
      */
     template <char_adaptation_concept char_t>
     constexpr bool
-    operator()(char_t const & val) const noexcept(std::is_same_v<char_t, char>)
+    operator()(char_t const & val) const noexcept
     {
-        if constexpr (!std::is_same_v<char_t, char>)
-        {
-            if (static_cast<uint32_t>(val) > 127u)
-                throw parse_error{"The given value is out of the testable range."};
-        }
-
-        return (rng_beg <= val) && (val <= rng_end);
+        return (static_cast<uint64_t>(interval_first) <= static_cast<uint64_t>(val)) &&
+               (static_cast<uint64_t>(val) <= static_cast<uint64_t>(interval_last));
     }
 };
 
@@ -416,6 +431,9 @@ struct is_in_alphabet : public detail::parse_condition<is_in_alphabet<alphabet_t
                                 constexpr_string{detail::get_display_name_v<alphabet_t>} +
                                 constexpr_string{">"};
 
+    //!\brief Inherit constructors from CRTP base class.
+    using detail::parse_condition<is_in_alphabet<alphabet_t>>::parse_condition;
+
     /*!\brief Invokes the condition check for `val`.
      * \tparam    char_t The type of the character to test. Must satisfy seqan3::char_adaptation_concept.
      * \param[in] val    The value to test.
@@ -429,9 +447,7 @@ struct is_in_alphabet : public detail::parse_condition<is_in_alphabet<alphabet_t
      *
      * ### Exception
      *
-     * No-throw guarantee if the expression `std::is_same_v<char_t, char>`.
-     * Otherwise might throw, if the integer representation of the given wide character value is bigger than the
-     * biggest representable ASCII sign (> 127).
+     * No-throw guarantee.
      *
      * ### Concurrency
      *
@@ -442,12 +458,12 @@ struct is_in_alphabet : public detail::parse_condition<is_in_alphabet<alphabet_t
     operator()(char_t && val) const noexcept(std::is_same_v<char_t, char>)
     {
         if constexpr (!std::is_same_v<char_t, char>)
-        {
-            if (static_cast<uint32_t>(val) > 127u)
-                throw parse_error{"The given value is out of the testable range."};
+        {  // Check if alphabet is able to represent the underlying char type of the tested alphabet.
+            if (static_cast<uint64_t>(val) >
+                static_cast<uint64_t>(std::numeric_limits<underlying_char_t<alphabet_t>>::max()))
+                return false;
         }
 
-        // TODO(rrahn): implement to_upper / to_lower!
         return to_char(assign_char(alphabet_t{}, val)) == std::toupper(static_cast<uint8_t>(val));
     }
 };
@@ -469,6 +485,9 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
                                 constexpr_string{char_v}     +
                                 constexpr_string("'>");
 
+    //!\brief Inherit constructors from CRTP base class.
+    using detail::parse_condition<is_char<char_v>>::parse_condition;
+
     /*!\brief Invokes the condition check for `val`.
      * \tparam    char_t The type of the character to test. Must satisfy seqan3::char_adaptation_concept.
      * \param[in] val    The value to test.
@@ -482,9 +501,7 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
      *
      * ### Exception
      *
-     * No-throw guarantee if the expression `std::is_same_v<char_t, char>` evaluates to `true`.
-     * Otherwise might throw, if the integer representation of the given wide character value is bigger than the
-     * biggest representable ASCII sign (> 127).
+     * No-throw guarantee.
      *
      * ### Concurrency
      *
@@ -492,14 +509,8 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
      */
     template <char_adaptation_concept char_t>
     constexpr bool
-    operator()(char_t && val) const noexcept(std::is_same_v<char_t, char>)
+    operator()(char_t && val) const noexcept
     {
-        if constexpr (!std::is_same_v<char_t, char>)
-        {
-            if (static_cast<uint32_t>(val) > 127u)
-                throw parse_error{"The given value is out of the testable range."};
-        }
-
         return val == char_v;
     }
 };
@@ -513,6 +524,7 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
  * \ingroup stream
  * \{
  */
+
 /*!\brief Checks wether `c` is a control character.
  * \ingroup stream
  *
@@ -528,7 +540,9 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
  * seqan3::is_cntrl('\0');  // returns true.
  * ```
  */
-constexpr detail::or_fn<is_in_range<'\0', static_cast<char>(31)>, is_char<static_cast<char>(127)>> is_cntrl;
+constexpr detail::parse_condition_combiner<is_in_interval<'\0', static_cast<char>(31)>,
+                                           is_char<static_cast<char>(127)>> is_cntrl;
+
 /*!\brief Checks wether `c` is a printable character.
  * \ingroup stream
  *
@@ -543,7 +557,8 @@ constexpr detail::or_fn<is_in_range<'\0', static_cast<char>(31)>, is_char<static
  * seqan3::is_print(' ');  // returns true.
  * ```
  */
-constexpr is_in_range<' ', '~'> is_print;
+constexpr is_in_interval<' ', '~'> is_print;
+
 /*!\brief Checks wether `c` is a space character.
  * \ingroup stream
  *
@@ -562,10 +577,10 @@ constexpr is_in_range<' ', '~'> is_print;
  * ### Example
  *
  * ```cpp
- * seqan3::is_space('\\n');  // returns true.
+ * seqan3::is_space('\n');  // returns true.
  * ```
  */
-constexpr detail::or_fn<is_in_range<'\t', '\r'>, is_char<' '>> is_space;
+constexpr detail::parse_condition_combiner<is_in_interval<'\t', '\r'>, is_char<' '>> is_space;
 
 /*!\brief Checks wether `c` is a blank character.
  * \ingroup stream
@@ -581,10 +596,10 @@ constexpr detail::or_fn<is_in_range<'\t', '\r'>, is_char<' '>> is_space;
  * ### Example
  *
  * ```cpp
- * seqan3::is_blank('\\t');  // returns true.
+ * seqan3::is_blank('\t');  // returns true.
  * ```
  */
-constexpr detail::or_fn<is_char<'\t'>, is_char<' '>> is_blank;
+constexpr detail::parse_condition_combiner<is_char<'\t'>, is_char<' '>> is_blank;
 
 /*!\brief Checks wether `c` is a graphic character.
  * \ingroup stream
@@ -606,7 +621,8 @@ constexpr detail::or_fn<is_char<'\t'>, is_char<' '>> is_blank;
  * seqan3::is_graph('%');  // returns true.
  * ```
  */
-constexpr is_in_range<'!', '~'> is_graph;
+constexpr is_in_interval<'!', '~'> is_graph;
+
 /*!\brief Checks wether `c` is a punctuation character.
  * \ingroup stream
  *
@@ -623,8 +639,8 @@ constexpr is_in_range<'!', '~'> is_graph;
  * seqan3::is_punct(':');  // returns true.
  * ```
  */
-constexpr detail::or_fn<is_in_range<'!', '/'>, is_in_range<':', '@'>,
-                        is_in_range<'[', '`'>, is_in_range<'{', '~'>> is_punct;
+constexpr detail::parse_condition_combiner<is_in_interval<'!', '/'>, is_in_interval<':', '@'>,
+                                           is_in_interval<'[', '`'>, is_in_interval<'{', '~'>> is_punct;
 
 /*!\brief Checks wether `c` is a alphanumeric character.
  * \ingroup stream
@@ -644,7 +660,8 @@ constexpr detail::or_fn<is_in_range<'!', '/'>, is_in_range<':', '@'>,
  * seqan3::is_alnum('9');  // returns true.
  * ```
  */
-constexpr detail::or_fn<is_in_range<'0','9'>, is_in_range<'A','Z'>, is_in_range<'a','z'>> is_alnum;
+constexpr detail::parse_condition_combiner<is_in_interval<'0','9'>, is_in_interval<'A','Z'>, is_in_interval<'a','z'>> is_alnum;
+
 /*!\brief Checks wether `c` is a alphabetical character.
  * \ingroup stream
  *
@@ -662,7 +679,7 @@ constexpr detail::or_fn<is_in_range<'0','9'>, is_in_range<'A','Z'>, is_in_range<
  * seqan3::is_alpha('z');  // returns true.
  * ```
  */
-constexpr detail::or_fn<is_in_range<'A', 'Z'>, is_in_range<'a', 'z'>> is_alpha;
+constexpr detail::parse_condition_combiner<is_in_interval<'A', 'Z'>, is_in_interval<'a', 'z'>> is_alpha;
 
 /*!\brief Checks wether `c` is a upper case character.
  * \ingroup stream
@@ -680,7 +697,7 @@ constexpr detail::or_fn<is_in_range<'A', 'Z'>, is_in_range<'a', 'z'>> is_alpha;
  * seqan3::is_upper('K');  // returns true.
  * ```
  */
-constexpr is_in_range<'A', 'Z'> is_upper;
+constexpr is_in_interval<'A', 'Z'> is_upper;
 
 /*!\brief Checks wether `c` is a lower case character.
  * \ingroup stream
@@ -695,10 +712,10 @@ constexpr is_in_range<'A', 'Z'> is_upper;
  * ### Example
  *
  * ```cpp
- * seqan3::is_lower('K');  // returns true.
+ * seqan3::is_lower('a');  // returns true.
  * ```
  */
-constexpr is_in_range<'a', 'z'> is_lower;
+constexpr is_in_interval<'a', 'z'> is_lower;
 
 /*!\brief Checks wether `c` is a digital character.
  * \ingroup stream
@@ -716,7 +733,7 @@ constexpr is_in_range<'a', 'z'> is_lower;
  * seqan3::is_digit('1');  // returns true.
  * ```
  */
-constexpr is_in_range<'0', '9'> is_digit;
+constexpr is_in_interval<'0', '9'> is_digit;
 
 /*!\brief Checks wether `c` is a hexadecimal character.
  * \ingroup stream
@@ -736,7 +753,8 @@ constexpr is_in_range<'0', '9'> is_digit;
  * seqan3::is_xdigit('e');  // returns true.
  * ```
  */
-constexpr detail::or_fn<is_in_range<'0', '9'>, is_in_range<'A', 'F'>, is_in_range<'a', 'f'>> is_xdigit;
+constexpr detail::parse_condition_combiner<is_in_interval<'0', '9'>, is_in_interval<'A', 'F'>,
+                                           is_in_interval<'a', 'f'>> is_xdigit;
 //!\}
 
 /*!\brief A condition checker, that wraps a parse condition and throws a specified exception if the condition was not
@@ -793,7 +811,7 @@ struct parse_asserter
      *
      * ### Exception
      *
-     * Throws the specified exception if the associated condition is not met.
+     * Throws seqan3::parse_error if the associated condition is not met.
      *
      * ### Concurrency
      *
@@ -815,9 +833,11 @@ struct parse_asserter
 
 /*!\name Deduction Guide
  * \brief Deduction guide for parse_asserter.
+ * \ingroup stream
+ * \relates parse_asserter
  * \{
  */
-//!\brief Deduction guide to infer the condition type from the constructor argument.
+//!\brief Deduction guide to infer the template argument for the condition type from the constructor argument.
 template <detail::parse_condition_concept parse_cond_type>
 parse_asserter(parse_cond_type) -> parse_asserter<parse_cond_type>;
 //!\}
@@ -830,7 +850,7 @@ parse_asserter(parse_cond_type) -> parse_asserter<parse_cond_type>;
  * constraints. There are three basic condition types:
  *
  * * seqan3::is_in_alphabet: Checks if the given character is part of the specified alphabet.
- * * seqan3::is_in_range: Checks if the given character is within specified range of ASCII characters.
+ * * seqan3::is_in_interval: Checks if the given character is within specified range of ASCII characters.
  * * seqan3::is_char: Checks if the character is equal to the specified ASCII character.
  *
  * These checks are necessary when parsing input streams, where the input characters need to be checked for consistency,
