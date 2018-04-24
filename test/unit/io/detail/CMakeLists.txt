@@ -1,3 +1,4 @@
 seqan3_test(in_file_iterator_test.cpp)
 seqan3_test(out_file_iterator_test.cpp)
 seqan3_test(output_iterator_conversion_adaptor_test.cpp)
+seqan3_test(null_out_iterator_test.cpp)
