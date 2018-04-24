@@ -37,7 +37,7 @@
 #include <string>
 
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/io/detail/null_out_iterator.hpp>
+#include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/io/stream/tokenisation.hpp>
@@ -74,7 +74,7 @@ TYPED_TEST(tokenisation, transfer_data_w_delim_w_asserter)
     detail::transfer_data(target_it, src, is_space, parse_asserter{is_in_alphabet<dna5>{}});
     EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
 
-    detail::transfer_data(detail::null_out_iterator{}, src, is_alpha, is_space);
+    detail::transfer_data(detail::ignore_output_iterator{}, src, is_alpha, is_space);
     EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
 
     EXPECT_THROW((detail::transfer_data(target_it, src, is_blank, parse_asserter{is_in_alphabet<dna5>{}})), parse_error);
@@ -90,9 +90,27 @@ TYPED_TEST(tokenisation, transfer_data_w_delim_wo_asserter)
     detail::transfer_data(target_it, src, is_space);
     EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
 
-    detail::transfer_data(detail::null_out_iterator{}, src, is_alpha);
+    detail::transfer_data(detail::ignore_output_iterator{}, src, is_alpha);
     EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
 
     EXPECT_NO_THROW((detail::transfer_data(target_it, src, is_blank)));
     EXPECT_EQ(std::string{target | view::to_char}, "ACGTACGTNACGT"s);
+}
+
+TYPED_TEST(tokenisation, read_until)
+{
+    std::vector<dna5> target;
+    auto target_it = detail::make_conversion_output_iterator(target);
+    auto src = this->data | view::single_pass_input;
+    parse_asserter asserter{is_in_alphabet<dna5>{}};
+
+    read_until(target_it, src, is_space, asserter);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
+
+    unsigned count = 1;
+    read_until(std::ignore, src, [&](auto){ return (count-- > 0) ? false : true; });
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
+
+    EXPECT_THROW((read_until(target_it, src, is_blank, asserter)), parse_error);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTACGT"s);
 }
