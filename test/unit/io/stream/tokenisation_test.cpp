@@ -144,3 +144,21 @@ TYPED_TEST(tokenisation, read_line)
     EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGTACGTACGTN"s);
     EXPECT_EQ(*ranges::begin(src), '>');
 }
+
+TYPED_TEST(tokenisation, read_n)
+{
+    std::vector<dna5> target;
+    auto target_it = detail::make_conversion_output_iterator(target);
+    auto src = this->data | view::single_pass_input;
+    parse_asserter asserter{is_in_alphabet<dna5>{}};
+
+    // Read until first newline.
+    read_n(target_it, src, 10);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGTN"s);
+    EXPECT_EQ(*ranges::begin(src), 'a');
+
+    // Throw at the space character. Ignore the input.
+    EXPECT_THROW((read_n(std::ignore, src, 9, asserter)), parse_error);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGTN"s);
+    EXPECT_EQ(*ranges::begin(src), ' ');
+}
