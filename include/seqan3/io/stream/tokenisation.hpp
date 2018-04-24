@@ -40,9 +40,11 @@
 #pragma once
 
 #include <functional>
+#include <tuple>
 
 #include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
@@ -61,7 +63,7 @@ auto invocable_dummy = [](auto){};
 template <typename            out_iterator_type,
           input_range_concept input_rng_type,
           typename            delimiter_type,
-          typename            asserter_type  = decltype(invocable_dummy)>
+          typename            asserter_type  = decltype(invocable_dummy) &>
 //!\cond
     requires output_iterator_concept<std::remove_reference_t<out_iterator_type>, char> &&
              predicate_concept<std::remove_reference_t<delimiter_type>, char> &&
@@ -70,7 +72,7 @@ template <typename            out_iterator_type,
 void transfer_data(out_iterator_type && receiver,
                    input_rng_type    && transmitter,
                    delimiter_type    && delim,
-                   asserter_type     && asserter = std::move(invocable_dummy))
+                   asserter_type     && asserter = invocable_dummy)
 {
     for (auto && c : transmitter)
     {
@@ -91,6 +93,33 @@ namespace seqan3
 // get_line([delim])
 // ignore(count, delim)
 // read(count)
+
+// ----------------------------------------------------------------------------
+// read_until
+// ----------------------------------------------------------------------------
+
+template <typename receiver_type,
+          input_range_concept input_rng_type,
+          typename delimiter_type,
+          typename asserter_type  = decltype(detail::invocable_dummy) &>
+//!\cond
+    requires (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>> ||
+              output_iterator_concept<std::remove_reference_t<receiver_type>, char>) &&
+             predicate_concept<std::remove_reference_t<delimiter_type>, char> &&
+             invocable_concept<std::remove_reference_t<asserter_type>, char>
+//!\endcond
+void read_until(receiver_type  && rcvr,
+                input_rng_type && input_rng,
+                delimiter_type && delim,
+                asserter_type  && asserter = detail::invocable_dummy)
+{
+    if constexpr (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>>)
+        detail::transfer_data(detail::make_conversion_output_iterator(rcvr), std::forward<input_rng_type>(input_rng),
+                              std::forward<delimiter_type>(delim), std::forward<asserter_type>(asserter));
+    else
+        detail::transfer_data(std::forward<receiver_type>(rcvr), std::forward<input_rng_type>(input_rng),
+                              std::forward<delimiter_type>(delim), std::forward<asserter_type>(asserter));
+}
 
 // std::interface of ostream
 // put
