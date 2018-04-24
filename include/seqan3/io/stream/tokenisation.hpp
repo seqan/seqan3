@@ -33,53 +33,66 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides exceptions used in the I/O module.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Provides tokenisation functionality.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <stdexcept>
+#include <functional>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/core/concept/core.hpp>
+#include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/io/exception.hpp>
+#include <seqan3/range/concept.hpp>
+
+namespace seqan3::detail
+{
+// ----------------------------------------------------------------------------
+// transfer_data
+// ----------------------------------------------------------------------------
+
+//!\cond
+//TODO(rrahn): Replace by anonymous lambda expression once https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85513 is fixed.
+auto invocable_dummy = [](auto){};
+//!\endcond
+
+template <typename            out_iterator_type,
+          input_range_concept input_rng_type,
+          typename            delimiter_type,
+          typename            asserter_type  = decltype(invocable_dummy)>
+//!\cond
+    requires output_iterator_concept<std::remove_reference_t<out_iterator_type>, char> &&
+             predicate_concept<std::remove_reference_t<delimiter_type>, char> &&
+             invocable_concept<std::remove_reference_t<asserter_type>, char>
+//!\endcond
+void transfer_data(out_iterator_type && receiver,
+                   input_rng_type    && transmitter,
+                   delimiter_type    && delim,
+                   asserter_type     && asserter = std::move(invocable_dummy))
+{
+    for (auto && c : transmitter)
+    {
+        if (delim(c)) // delimiter was reached.
+            return;
+        *receiver = (asserter(c), c);  // Check if c satisfies given assert condition and write to the receiver on success.
+        ++receiver;
+    }
+    throw unexpected_end_of_error{"Reached end of input while expecting more data."};
+}
+
+} // namespace seqan3::detail
 
 namespace seqan3
 {
+// std::interface of istream
+// get([std::streamsize count][, char_type delim])
+// get_line([delim])
+// ignore(count, delim)
+// read(count)
 
-// ----------------------------------------------------------------------------
-// file open exceptions
-// ----------------------------------------------------------------------------
-
-//!\brief Thrown if there is no format that accepts a given file extension.
-struct unhandled_extension_error : std::invalid_argument
-{
-    //!\brief Constructor that forwards the exception string.
-    unhandled_extension_error(std::string const & s) : std::invalid_argument{s}
-    {}
-};
-
-//!\brief Thrown if there is an unspecified filesystem or stream error while opening, e.g. permission problem.
-struct file_open_error : std::runtime_error
-{
-    //!\brief Constructor that forwards the exception string.
-    file_open_error(std::string const & s) : std::runtime_error{s}
-    {}
-};
-
-//!\brief Thrown if there is a parse error, such as reading an unexpected character from an input stream.
-struct parse_error : std::runtime_error
-{
-    //!\brief Constructor that forwards the exception string.
-    parse_error(std::string const & s) : std::runtime_error{s}
-    {}
-};
-
-//!\brief Thrown if there there was an unexpected end of input, e.g. the end-of-file marker was reached unexpectedly.
-struct unexpected_end_of_error : parse_error
-{
-    //!\brief Constructor that forwards the exception string.
-    unexpected_end_of_error(std::string const & s) : parse_error{s}
-    {}
-};
-
-}
+// std::interface of ostream
+// put
+// write
+} // namespace seqan3
