@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- * \brief Provides seqan3::detail::null_out_iterator for writing to `null` stream.
+ * \brief Provides seqan3::detail::ignore_output_iterator for writing to `null` stream.
  */
 
 #pragma once
@@ -53,7 +53,7 @@ namespace seqan3::detail
  * A typical use case is when extracted bytes from an input stream should be ignored, as they contain only structural
  * information, e.g. a newline character.
  */
-class null_out_iterator
+class ignore_output_iterator
 {
 public:
 
@@ -73,44 +73,60 @@ public:
      * \{
      * \brief All non-user defined constructors are explicitly defaulted.
      */
-    null_out_iterator() = default;
-    null_out_iterator(null_out_iterator const &) = default;
-    null_out_iterator(null_out_iterator &&) = default;
-    null_out_iterator & operator= (null_out_iterator const &) = default;
-    null_out_iterator & operator= (null_out_iterator &&) = default;
-    ~null_out_iterator() = default;
+    ignore_output_iterator() = default;
+    ignore_output_iterator(ignore_output_iterator const &) = default;
+    ignore_output_iterator(ignore_output_iterator &&) = default;
+    ignore_output_iterator & operator= (ignore_output_iterator const &) = default;
+    ignore_output_iterator & operator= (ignore_output_iterator &&) = default;
+    ~ignore_output_iterator() = default;
     //!\}
 
     /*!\name Member functions
-     * \brief All function perform no operations. In fact writing to the seqan3::detail::null_out_iterator, is subject
-     *        to removal by compiler optimizations.
+     * \brief Each function performs no operation. In fact writing to the seqan3::detail::ignore_output_iterator,
+     *        is subject to removal by compiler optimizations.
      * \{
      */
     //!\brief Emulates writing the passed value to the `null`-stream.
     template <typename type>
-    constexpr null_out_iterator & operator= (type const /*v*/) noexcept
+    constexpr ignore_output_iterator & operator= (type const /*v*/) noexcept
     {
         return *this;
     }
 
     //!\brief This operator performs no function in output iterators.
-    constexpr null_out_iterator & operator* () noexcept
+    constexpr ignore_output_iterator & operator* () noexcept
     {
         return *this;
     }
 
     //!\brief This operator performs no function in output iterators.
-    constexpr null_out_iterator & operator++ () noexcept
+    constexpr ignore_output_iterator & operator++ () noexcept
     {
         return *this;
     }
 
     //!\brief This operator performs no function in output iterators.
-    constexpr null_out_iterator & operator++ (int) noexcept
+    constexpr ignore_output_iterator & operator++ (int) noexcept
     {
         return *this;
     }
     //!\}
 };
+
+/*!\name Convenience functions
+ * \{
+ */
+/*!\brief     A convenience function that constructs a seqan3::detail::ignore_output_iterator if the input type
+ *            is std::ignore.
+ * \param[in] v Any value of type std::ignore.
+ * \returns   seqan3::detail::ignore_output_iterator.
+ * \ingroup   io
+ * \relates   ignore_output_iterator
+ */
+ignore_output_iterator make_conversion_output_iterator(decltype(std::ignore) const SEQAN3_DOXYGEN_ONLY(v))
+{
+    return ignore_output_iterator{};
+}
+//!/}
 
 } // namespace seqan3::detail
