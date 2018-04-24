@@ -95,11 +95,11 @@ TEST(parse_condition, parse_condition_concept)
     EXPECT_FALSE(detail::parse_condition_concept<int>);
 }
 
-TEST(parse_condition, or_fn)
+TEST(parse_condition, parse_condition_combiner)
 {
     using namespace seqan3::detail;
 
-    using cond_t = or_fn<foo<'a'>, foo<'A'>, foo<'0'>>;
+    using cond_t = parse_condition_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_TRUE(cond_t{}('a'));
     EXPECT_TRUE(cond_t{}('A'));
     EXPECT_TRUE(cond_t{}('0'));
@@ -108,17 +108,17 @@ TEST(parse_condition, or_fn)
     EXPECT_FALSE(cond_t{}('1'));
 }
 
-TEST(parse_condition, or_fn_msg)
+TEST(parse_condition, parse_condition_combiner_msg)
 {
     using namespace seqan3::detail;
-    using or_t = or_fn<foo<'a'>, foo<'A'>, foo<'0'>>;
+    using or_t = parse_condition_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_EQ(or_t::msg.string(),   "(foo_a || foo_A || foo_0)"s);
 }
 
 TEST(parse_condition, is_not)
 {
     using namespace seqan3::detail;
-    using cond_t = not_fn<foo<'a'>>;
+    using cond_t = parse_condition_negator<foo<'a'>>;
     EXPECT_FALSE(cond_t{}('a'));
     EXPECT_TRUE(cond_t{}('A'));
     EXPECT_TRUE(cond_t{}('0'));
