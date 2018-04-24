@@ -47,6 +47,8 @@ struct foo : seqan3::detail::parse_condition<foo<char_v>>
 {
     inline static constexpr constexpr_string msg{constexpr_string{"foo_"} + constexpr_string{char_v}};
 
+    using seqan3::detail::parse_condition<foo<char_v>>::parse_condition;
+
     bool operator()(char c) const
     {
         return c == char_v;
@@ -64,7 +66,7 @@ struct bar
 
 TEST(parse_condition, parse_condition)
 {
-    detail::parse_condition<foo<'a'>> p;
+    foo<'a'> p{};
     EXPECT_TRUE(p('a'));
     EXPECT_FALSE(p('f'));
 }
@@ -80,7 +82,7 @@ TEST(parse_condition, parse_condition_concept)
 
     EXPECT_TRUE(detail::parse_condition_concept<is_in_alphabet<dna4>>);
     EXPECT_TRUE(detail::parse_condition_concept<is_char<to_char(aa27::A)>>);
-    EXPECT_TRUE((detail::parse_condition_concept<is_in_range<'a','z'>>));
+    EXPECT_TRUE((detail::parse_condition_concept<is_in_interval<'a','z'>>));
     EXPECT_TRUE(detail::parse_condition_concept<decltype(is_space)>);
     EXPECT_TRUE(detail::parse_condition_concept<decltype(is_blank)>);
     EXPECT_TRUE(detail::parse_condition_concept<decltype(is_graph)>);
@@ -95,11 +97,11 @@ TEST(parse_condition, parse_condition_concept)
     EXPECT_FALSE(detail::parse_condition_concept<int>);
 }
 
-TEST(parse_condition, or_fn)
+TEST(parse_condition, parse_condition_combiner)
 {
     using namespace seqan3::detail;
 
-    using cond_t = or_fn<foo<'a'>, foo<'A'>, foo<'0'>>;
+    using cond_t = parse_condition_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_TRUE(cond_t{}('a'));
     EXPECT_TRUE(cond_t{}('A'));
     EXPECT_TRUE(cond_t{}('0'));
@@ -108,17 +110,17 @@ TEST(parse_condition, or_fn)
     EXPECT_FALSE(cond_t{}('1'));
 }
 
-TEST(parse_condition, or_fn_msg)
+TEST(parse_condition, parse_condition_combiner_msg)
 {
     using namespace seqan3::detail;
-    using or_t = or_fn<foo<'a'>, foo<'A'>, foo<'0'>>;
+    using or_t = parse_condition_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_EQ(or_t::msg.string(),   "(foo_a || foo_A || foo_0)"s);
 }
 
 TEST(parse_condition, is_not)
 {
     using namespace seqan3::detail;
-    using cond_t = not_fn<foo<'a'>>;
+    using cond_t = parse_condition_negator<foo<'a'>>;
     EXPECT_FALSE(cond_t{}('a'));
     EXPECT_TRUE(cond_t{}('A'));
     EXPECT_TRUE(cond_t{}('0'));
@@ -128,13 +130,13 @@ TEST(parse_condition, is_not_msg)
 {
     using namespace seqan3::detail;
     using fn = decltype(!is_alpha);
-    EXPECT_EQ(fn::msg.string(), "!(is_in_range<'A', 'Z'> || is_in_range<'a', 'z'>)"s);
+    EXPECT_EQ(fn::msg.string(), "!(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }
 
-TEST(parse_condition, is_in_range)
+TEST(parse_condition, is_in_interval)
 {
     using namespace seqan3;
-    is_in_range<'a', 'z'> cond;
+    is_in_interval<'a', 'z'> cond;
     EXPECT_TRUE(cond('a'));
     EXPECT_TRUE(cond('k'));
     EXPECT_TRUE(cond('z'));
@@ -143,10 +145,10 @@ TEST(parse_condition, is_in_range)
     EXPECT_FALSE(cond('!'));
 }
 
-TEST(parse_condition, is_in_range_msg)
+TEST(parse_condition, is_in_interval_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_in_range<'a', 'z'>::msg.string()), "is_in_range<'a', 'z'>"s);
+    EXPECT_EQ((is_in_interval<'a', 'z'>::msg.string()), "is_in_interval<'a', 'z'>"s);
 }
 
 TEST(parse_condition, is_in_alphabet)
@@ -233,7 +235,7 @@ TEST(parse_condition, is_print)
 TEST(parse_condition, is_print_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_print.message()), "is_in_range<' ', '~'>"s);
+    EXPECT_EQ((is_print.message()), "is_in_interval<' ', '~'>"s);
 }
 
 
@@ -269,7 +271,7 @@ TEST(parse_condition, is_space_msg)
 {
     using namespace seqan3;
     EXPECT_EQ((is_space.message()),
-              "(is_in_range<'\t', '\r'> || is_char<' '>)"s);
+              "(is_in_interval<'\t', '\r'> || is_char<' '>)"s);
 }
 
 TEST(parse_condition, is_punct)
@@ -294,7 +296,7 @@ TEST(parse_condition, is_punct_msg)
 {
     using namespace seqan3;
     EXPECT_EQ((is_punct.message()),
-              "(is_in_range<'!', '/'> || is_in_range<':', '@'> || is_in_range<'[', '`'> || is_in_range<'{', '~'>)"s);
+              "(is_in_interval<'!', '/'> || is_in_interval<':', '@'> || is_in_interval<'[', '`'> || is_in_interval<'{', '~'>)"s);
 }
 
 TEST(parse_condition, is_alpha)
@@ -314,7 +316,7 @@ TEST(parse_condition, is_alpha_msg)
 {
     using namespace seqan3;
     EXPECT_EQ((is_alpha.message()),
-              "(is_in_range<'A', 'Z'> || is_in_range<'a', 'z'>)"s);
+              "(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }
 
 TEST(parse_condition, is_upper)
@@ -334,7 +336,7 @@ TEST(parse_condition, is_upper)
 TEST(parse_condition, is_upper_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_upper.message()), "is_in_range<'A', 'Z'>"s);
+    EXPECT_EQ((is_upper.message()), "is_in_interval<'A', 'Z'>"s);
 }
 
 TEST(parse_condition, is_lower)
@@ -354,7 +356,7 @@ TEST(parse_condition, is_lower)
 TEST(parse_condition, is_lower_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_lower.message()), "is_in_range<'a', 'z'>"s);
+    EXPECT_EQ((is_lower.message()), "is_in_interval<'a', 'z'>"s);
 }
 
 TEST(parse_condition, is_digit)
@@ -374,7 +376,7 @@ TEST(parse_condition, is_digit)
 TEST(parse_condition, is_digit_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_digit.message()), "is_in_range<'0', '9'>"s);
+    EXPECT_EQ((is_digit.message()), "is_in_interval<'0', '9'>"s);
 }
 
 TEST(parse_condition, is_xdigit)
@@ -400,7 +402,7 @@ TEST(parse_condition, is_xdigit)
 TEST(parse_condition, is_xdigit_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_xdigit.message()), "(is_in_range<'0', '9'> || is_in_range<'A', 'F'> || is_in_range<'a', 'f'>)"s);
+    EXPECT_EQ((is_xdigit.message()), "(is_in_interval<'0', '9'> || is_in_interval<'A', 'F'> || is_in_interval<'a', 'f'>)"s);
 }
 
 TEST(parse_condition, is_alnum)
@@ -420,7 +422,7 @@ TEST(parse_condition, is_alnum)
 TEST(parse_condition, is_alnum_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_alnum.message()), "(is_in_range<'0', '9'> || is_in_range<'A', 'Z'> || is_in_range<'a', 'z'>)"s);
+    EXPECT_EQ((is_alnum.message()), "(is_in_interval<'0', '9'> || is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }
 
 TEST(parse_condition, is_graph)
@@ -441,7 +443,7 @@ TEST(parse_condition, is_graph)
 TEST(parse_condition, is_graph_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_graph.message()), "is_in_range<'!', '~'>"s);
+    EXPECT_EQ((is_graph.message()), "is_in_interval<'!', '~'>"s);
 }
 
 TEST(parse_condition, char_types)
@@ -457,21 +459,21 @@ TEST(parse_condition, char_types)
         EXPECT_TRUE(is_char<'\t'>{}(c3));
     }
 
-    {  // check throw
-        EXPECT_THROW(is_char<'\t'>{}(char16_t{128}), parse_error);
+    {  // check value out of range.
+        EXPECT_FALSE(is_char<'\t'>{}(char16_t{256}));
     }
 
-    {  // is_in_range
+    {  // is_in_interval
         char c1 = 'n';
-        EXPECT_TRUE((is_in_range<'a', 'z'>{}(c1)));
+        EXPECT_TRUE((is_in_interval<'a', 'z'>{}(c1)));
         char16_t c2 = 'n';
-        EXPECT_TRUE((is_in_range<'a', 'z'>{}(c2)));
+        EXPECT_TRUE((is_in_interval<'a', 'z'>{}(c2)));
         char32_t c3 = 'n';
-        EXPECT_TRUE((is_in_range<'a', 'z'>{}(c3)));
+        EXPECT_TRUE((is_in_interval<'a', 'z'>{}(c3)));
     }
 
-    {  // check throw
-        EXPECT_THROW((is_in_range<'a', 'z'>{}(char16_t{128})), parse_error);
+    {  // check value out of range.
+        EXPECT_FALSE((is_in_interval<'a', 'z'>{}(char16_t{256})));
     }
 
     {  // is_in_alphabet
@@ -483,8 +485,8 @@ TEST(parse_condition, char_types)
         EXPECT_TRUE(is_in_alphabet<seqan3::dna5>{}(c3));
     }
 
-    {  // check throw
-        EXPECT_THROW(is_in_alphabet<seqan3::dna5>{}(char16_t{128}), parse_error);
+    {  // check value out of range
+        EXPECT_FALSE(is_in_alphabet<seqan3::dna5>{}(char16_t{256}));
     }
 }
 
@@ -501,7 +503,7 @@ TEST(parse_condition, parse_asserter)
         asserter('\t');
     } catch(parse_error & e)
     {
-        EXPECT_EQ(e.what(), "Parsed value <'\t'> which does not fulfill the following condition:"
-                            " (is_in_range<'0', '9'> || is_in_range<'A', 'Z'> || is_in_range<'a', 'z'>)"s);
+        EXPECT_EQ(e.what(), "Parsed value <'\\t'> which does not fulfill the following condition:"
+                            " (is_in_interval<'0', '9'> || is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
     }
 }
