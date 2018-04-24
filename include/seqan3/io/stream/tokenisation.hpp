@@ -88,11 +88,6 @@ void transfer_data(out_iterator_type && receiver,
 
 namespace seqan3
 {
-// std::interface of istream
-// get([std::streamsize count][, char_type delim])
-// get_line([delim])
-// ignore(count, delim)
-// read(count)
 
 // ----------------------------------------------------------------------------
 // read_until
@@ -177,7 +172,29 @@ void read_n(receiver_type        && rcvr,
                std::forward<asserter_type>(asserter));
 }
 
-// std::interface of ostream
+// ----------------------------------------------------------------------------
+// read_one
+// ----------------------------------------------------------------------------
+
+template <typename            receiver_type,
+          input_range_concept input_rng_type,
+          typename            asserter_type  = decltype(detail::invocable_dummy) &>
+//!\cond
+    requires (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>> ||
+              output_iterator_concept<std::remove_reference_t<receiver_type>, char>) &&
+              invocable_concept<std::remove_reference_t<asserter_type>, char>
+//!\endcond
+void read_one(receiver_type  && rcvr,
+              input_rng_type && input_rng,
+              asserter_type  && asserter = detail::invocable_dummy)
+{
+    read_n(std::forward<receiver_type>(rcvr),
+           std::forward<input_rng_type>(input_rng),
+           1,
+           std::forward<asserter_type>(asserter));
+}
+
+//TODO(rrahn) add std::interface for ostream
 // put
 // write
 } // namespace seqan3

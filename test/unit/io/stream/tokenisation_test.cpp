@@ -162,3 +162,33 @@ TYPED_TEST(tokenisation, read_n)
     EXPECT_EQ(std::string{target | view::to_char}, "ACGTNACGTN"s);
     EXPECT_EQ(*ranges::begin(src), ' ');
 }
+
+TYPED_TEST(tokenisation, read_one)
+{
+    std::vector<dna5> target;
+    auto target_it = detail::make_conversion_output_iterator(target);
+    auto src = this->data | view::single_pass_input;
+    parse_asserter asserter{is_in_alphabet<dna5>{}};
+
+    // Read until first newline.
+    read_one(target_it, src);
+    EXPECT_EQ(std::string{target | view::to_char}, "A"s);
+    EXPECT_EQ(*ranges::begin(src), 'c');
+
+    read_one(target_it, src);
+    EXPECT_EQ(std::string{target | view::to_char}, "AC"s);
+    EXPECT_EQ(*ranges::begin(src), 'g');
+
+    read_one(target_it, src);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACG"s);
+    EXPECT_EQ(*ranges::begin(src), 't');
+
+    read_one(target_it, src);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
+    EXPECT_EQ(*ranges::begin(src), '\t');
+
+    // Throw at the space character. Ignore the input.
+    EXPECT_THROW((read_one(std::ignore, src, asserter)), parse_error);
+    EXPECT_EQ(std::string{target | view::to_char}, "ACGT"s);
+    EXPECT_EQ(*ranges::begin(src), '\t');
+}
