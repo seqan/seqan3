@@ -35,39 +35,45 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/concept/iterator.hpp>
-#include <seqan3/io/detail/null_out_iterator.hpp>
+#include <seqan3/io/detail/ignore_output_iterator.hpp>
 
 using namespace seqan3;
 using namespace std::literals;
 
-TEST(null_out_iterator, concept)
+TEST(ignore_output_iterator, concept)
 {
-    EXPECT_TRUE((output_iterator_concept<detail::null_out_iterator, char>));
-    EXPECT_TRUE((output_iterator_concept<detail::null_out_iterator, int>));
-    EXPECT_FALSE((input_iterator_concept<detail::null_out_iterator>));
+    EXPECT_TRUE((output_iterator_concept<detail::ignore_output_iterator, char>));
+    EXPECT_TRUE((output_iterator_concept<detail::ignore_output_iterator, int>));
+    EXPECT_FALSE((input_iterator_concept<detail::ignore_output_iterator>));
 }
 
-TEST(null_out_iterator, assign)
+TEST(ignore_output_iterator, assign)
 {
-    detail::null_out_iterator it;
+    detail::ignore_output_iterator it;
     EXPECT_EQ(std::addressof(it = 'A'), std::addressof(it));
     EXPECT_EQ(std::addressof(it = 10), std::addressof(it));
 }
 
-TEST(null_out_iterator, pre_increment)
+TEST(ignore_output_iterator, pre_increment)
 {
-    detail::null_out_iterator it;
+    detail::ignore_output_iterator it;
     EXPECT_EQ(std::addressof(++it), std::addressof(it));
 }
 
-TEST(null_out_iterator, post_increment)
+TEST(ignore_output_iterator, post_increment)
 {
-    detail::null_out_iterator it;
+    detail::ignore_output_iterator it;
     EXPECT_EQ(std::addressof(it++), std::addressof(it));
 }
 
-TEST(null_out_iterator, dereference)
+TEST(ignore_output_iterator, dereference)
 {
-    detail::null_out_iterator it;
+    detail::ignore_output_iterator it;
     EXPECT_EQ(std::addressof(*it), std::addressof(it));
+}
+
+TEST(ignore_output_iterator, make_conversion_output_iterator)
+{
+    auto it = detail::make_conversion_output_iterator(std::ignore);
+    EXPECT_TRUE((std::is_same_v<decltype(it), detail::ignore_output_iterator>));
 }
