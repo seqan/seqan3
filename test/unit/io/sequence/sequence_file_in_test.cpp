@@ -39,12 +39,11 @@
 #include <range/v3/view/zip.hpp>
 #include <range/v3/view/filter.hpp>
 
-#include <seqan3/core/concept/iterator.hpp>
-// #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/std/concept/iterator.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;

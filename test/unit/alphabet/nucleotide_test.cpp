@@ -170,6 +170,7 @@ TYPED_TEST(nucleotide, stream_operator)
 TYPED_TEST(nucleotide, concept)
 {
     EXPECT_TRUE(nucleotide_concept<TypeParam>);
+    EXPECT_TRUE(nucleotide_concept<TypeParam &>);
 }
 
 // ------------------------------------------------------------------
