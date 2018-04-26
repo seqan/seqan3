@@ -66,7 +66,7 @@ concept bool nucleotide_concept = requires (type v)
 {
     requires alphabet_concept<type>;
 
-    { complement(v) } -> type;
+    { complement(v) } -> std::remove_reference_t<type>;
 };
 //!\endcond
 

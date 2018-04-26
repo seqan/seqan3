@@ -149,45 +149,6 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  * will provide an implementation).
  */
 // just implement the interface
-
-/*!\fn bool operator==(semi_alphabet_concept const & lhs, semi_alphabet_concept const & rhs)
- * \brief Compare the alphabet letters' rank values.
- * \ingroup alphabet
- * \param lhs Left hand side parameter to compare.
- * \param rhs Right hand side parameter to compare.
- * \returns true or false.
- *
- * \details
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
- */
-// just implement the interface
-
-/*!\fn bool operator!=(semi_alphabet_concept const & lhs, semi_alphabet_concept const & rhs)
- * \copydoc seqan3::semi_alphabet_concept::operator==
- */
-// just implement the interface
-
-/*!\fn bool operator<(semi_alphabet_concept const & lhs, semi_alphabet_concept const & rhs)
- * \copydoc seqan3::semi_alphabet_concept::operator==
- */
-// just implement the interface
-
-/*!\fn bool operator<=(semi_alphabet_concept const & lhs, semi_alphabet_concept const & rhs)
- * \copydoc seqan3::semi_alphabet_concept::operator==
- */
-// just implement the interface
-
-/*!\fn bool operator>(semi_alphabet_concept const & lhs, semi_alphabet_concept const & rhs)
- * \copydoc seqan3::semi_alphabet_concept::operator==
- */
-// just implement the interface
-
-/*!\fn bool operator>=(semi_alphabet_concept const & lhs, semi_alphabet_concept const & rhs)
- * \copydoc seqan3::semi_alphabet_concept::operator==
- */
-// just implement the interface
-
 //!\}
 
 // ------------------------------------------------------------------

@@ -46,6 +46,8 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
+#include <seqan3/std/concept/object.hpp>
+#include <seqan3/std/concept/comparison.hpp>
 
 namespace seqan3
 {
@@ -53,16 +55,24 @@ namespace seqan3
 /*!\interface seqan3::semi_alphabet_concept <>
  * \brief The basis for seqan3::alphabet_concept, but requires only rank interface (not char).
  * \ingroup alphabet
+ * \extends seqan3::regular_concept
+ * \extends seqan3::standard_layout_concept
+ * \extends seqan3::trivial_concept
+ * \extends seqan3::totally_ordered_concept
  *
  * This concept represents "one half" of the seqan3::alphabet_concept, it requires no
  * `char` representation and corresponding interfaces. It is mostly used internally and
  * in the composition of alphabet types (see seqan3::cartesian_composition).
  *
- * Beyond the requirements stated below, the type needs to be a plain old datatype (`std::is_pod_v`)
- * and be swappable (`std::is_swappable_v`).
+ * Beyond the requirements stated below, the type needs to satisfy the following standard library
+ * concepts:
  *
- * \todo Implement and inherit seqan3::strictly_ordered_concept, seqan3::regular_concept,
- * seqan3::standard_layout_concept and seqan3::trivially_copyable_concept (and then remove comp. ops)
+ *   * seqan3::regular_concept ("copyable and default-constructible")
+ *   * seqan3::standard_layout_concept and seqan3::trivial_concept ("plain-old-datatype")
+ *   * seqan3::totally_ordered_concept ("has all comparison operators")
+ *
+ * For the purpose of concept checking the types `t &` and `t &&` are also considered to satisfy
+ * seqan3::semi_alphabet_concept if the type `t` satisfies it.
  *
  * \par Serialisation
  *
@@ -80,11 +90,12 @@ namespace seqan3
 // in order to get rid of the remove_reference_t within the concept, after the ICE
 // get's fixed. See issue #228
 template <typename t>
-concept bool semi_alphabet_concept = requires (t t1, t t2)
+concept bool semi_alphabet_concept = regular_concept<std::remove_reference_t<t>> &&
+                                     standard_layout_concept<std::remove_reference_t<t>> &&
+                                     trivial_concept<std::remove_reference_t<t>> &&
+                                     strict_totally_ordered_concept<t> &&
+                                     requires (t t1, t t2)
 {
-    // STL concepts
-    requires std::is_pod_v<std::remove_reference_t<t>> == true;
-    requires std::is_swappable_v<std::remove_reference_t<t>> == true;
 
     // static data members
     alphabet_size<std::remove_reference_t<t>>::value;
@@ -96,14 +107,6 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
     // assignment from rank
     { assign_rank(t1,  0) }                          -> std::remove_reference_t<t> &;
     { assign_rank(std::remove_reference_t<t>{}, 0) } -> std::remove_reference_t<t> &&;
-
-    // required comparison operators
-    { t1 == t2 } -> bool;
-    { t1 != t2 } -> bool;
-    { t1 <  t2 } -> bool;
-    { t1 >  t2 } -> bool;
-    { t1 <= t2 } -> bool;
-    { t1 >= t2 } -> bool;
 };
 //!\endcond
 
@@ -117,6 +120,9 @@ concept bool semi_alphabet_concept = requires (t t1, t t2)
  * It defines the requirements for the rank interface and the character interface,
  * as well as the requirement for size and comparability. For more details, see
  * the \ref alphabet module.
+ *
+ * For the purpose of concept checking the types `t &` and `t &&` are also considered to satisfy
+ * seqan3::alphabet_concept if the type `t` satisfies it.
  *
  * \par Serialisation
  *
