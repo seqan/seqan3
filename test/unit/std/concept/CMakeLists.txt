@@ -1,0 +1,7 @@
+add_subdirectories()
+
+seqan3_test(core_language_test.cpp)
+seqan3_test(comparison_test.cpp)
+seqan3_test(object_test.cpp)
+seqan3_test(callable_test.cpp)
+seqan3_test(iterator_test.cpp)
