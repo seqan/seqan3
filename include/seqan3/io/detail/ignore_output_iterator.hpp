@@ -118,7 +118,7 @@ public:
  */
 /*!\brief     A convenience function that constructs a seqan3::detail::ignore_output_iterator if the input type
  *            is std::ignore.
- * \param[in] v Any value of type std::ignore.
+ * \param[in] v A value of type `decltype(std::ignore)`.
  * \returns   seqan3::detail::ignore_output_iterator.
  * \ingroup   io
  * \relates   ignore_output_iterator
