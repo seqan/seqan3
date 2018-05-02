@@ -45,11 +45,11 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/concept/iterator.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/iterator.hpp>
 #include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/iterator.hpp>
 
 // TODO(h-2): add innermost_reference instead of or addition to innermost_value_type?
 

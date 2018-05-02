@@ -41,7 +41,7 @@
 
 #include <range/v3/view/transform.hpp>
 
-#include <seqan3/core/concept/core.hpp>
+#include <seqan3/std/concept/core_language.hpp>
 
 namespace seqan3::view
 {

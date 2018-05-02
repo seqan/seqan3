@@ -42,8 +42,8 @@
 #include <type_traits>
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/std/concept/core_language.hpp>
 
 namespace seqan3::detail
 {

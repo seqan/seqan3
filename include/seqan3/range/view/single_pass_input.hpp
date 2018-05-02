@@ -39,15 +39,11 @@
 
 #pragma once
 
-#include <seqan3/core/concept/core.hpp>
-#include <seqan3/core/concept/iterator.hpp>
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
-
-#include <range/v3/range_traits.hpp>
-
-#include <range/v3/istream_range.hpp>
+#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concept/iterator.hpp>
 
 //-----------------------------------------------------------------------------
 // Implementation of single pass input view.

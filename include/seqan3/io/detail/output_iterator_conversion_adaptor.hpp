@@ -39,16 +39,16 @@
 
 #pragma once
 
-#include <seqan3/alphabet/all.hpp>
-#include <seqan3/core/concept/core.hpp>
-#include <seqan3/core/concept/iterator.hpp>
-#include <seqan3/io/concept.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <utility>
 
 #include <range/v3/range_traits.hpp>
-#include <seqan3/range/concept.hpp>
 
-#include <utility>
+#include <seqan3/alphabet/all.hpp>
+#include <seqan3/io/concept.hpp>
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concept/iterator.hpp>
 
 namespace seqan3::detail
 {
