@@ -46,25 +46,42 @@
 namespace seqan3::view
 {
 
-/*!\brief A view over an alphabet, given a range of characters.
- * \tparam irng_t The type of the range being processed. See below for requirements. [template parameter is omitted in pipe notation]
- * \tparam alphabet_t The alphabet to convert to; must satisfy seqan3::alphabet_concept.
- * \param irange The range being processed. [parameter is omitted in pipe notation]
- * \returns A range of converted elements. See below for the properties of the returned range.
+/*!\name Alphabet related views
+ * \{
+ */
+
+/*!\brief               A view over an alphabet, given a range of characters.
+ * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
+ *                      omitted in pipe notation]
+ * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::alphabet_concept.
+ * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
+ * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
  *
- * \par View properties
+ * ### View properties
  *
- * |                     | `irng_t` (range input type)                   | `rrng_t` (range return type)                              |
- * |---------------------|-----------------------------------------------|-----------------------------------------------------------|
- * | range               | seqan3::input_range_concept                   | seqan3::view_concept + all range concepts met by `irng_t` |
- * | `range_reference_t` | seqan3::underlying_char_t<alphabet_t>         | `alphabet_t`                                              |
+ * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
+ * the transformation on the innermost range (instead of the outermost range).
  *
- * * The input properties are **requirements** on the range input type.
- * * The return properties are **guarantees** given on the range return type.
- * * for more details, see \ref view.
+ * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
+ * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
+ * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
+ * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
+ * |                                     |                                       |                                                    |
+ * | seqan3::view_concept                |                                       | *guaranteed*                                       |
+ * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
+ * | seqan3::bounded_range_concept       |                                       | *preserved*                                        |
+ * | seqan3::output_range_concept        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
+ * |                                     |                                       |                                                    |
+ * | seqan3::reference_t                 | seqan3::underlying_char_t<alphabet_t> | `alphabet_t`                                       |
  *
- * \par Example
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ *
+ * ### Example
+ *
  * ```cpp
  * std::string s{"ACTTTGATAN"};
  * auto v1 = s | view::char_to<dna4>; // == "ACTTTGATAA"_dna4
@@ -72,13 +89,12 @@ namespace seqan3::view
  * ```
  * \hideinitializer
  */
-template <typename alphabet_type>
-//!\cond
-    requires alphabet_concept<alphabet_type>
-//!\endcond
+template <alphabet_concept alphabet_type>
 auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type> const in) -> alphabet_type
 {
     return assign_char(alphabet_type{}, in);
 });
+
+//!\}
 
 } // namespace seqan3::view
