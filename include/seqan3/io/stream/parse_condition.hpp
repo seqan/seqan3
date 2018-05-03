@@ -44,11 +44,12 @@
 #include <string>
 
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/core/concept/core.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concept/callable.hpp>
 
 namespace seqan3::detail
 {
@@ -57,7 +58,7 @@ namespace seqan3::detail
 // condition_message_v
 // ----------------------------------------------------------------------------
 
-/*!\brief Defines a compound seqan3::detail::constexpr_string consisting of all given conditions separated by the
+/*!\brief Defines a compound seqan3::constexpr_string consisting of all given conditions separated by the
  *        operator-name `op`.
  * \ingroup stream
  * \tparam op               non-type template parameter specifying the separator character, e.g. '|'.
