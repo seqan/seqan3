@@ -34,7 +34,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/std/concept/iterator.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 
 using namespace seqan3;
