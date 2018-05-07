@@ -73,4 +73,19 @@ constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_char_represen
     }()
 };
 
+template <typename out_t, typename in_t>
+//!\cond
+    requires quality_concept<out_t> && quality_concept<in_t>
+//!\endcond
+constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_phred_representation
+{
+    [] () constexpr
+    {
+        std::array<out_t, alphabet_size_v<in_t>> ret{};
+        for (typename in_t::rank_type i = 0; i < alphabet_size_v<in_t>; ++i)
+            assign_char(ret[i], to_phred(assign_rank(in_t{}, i)));
+        return ret;
+    }()
+};
+
 } // namespace seqan3::detail

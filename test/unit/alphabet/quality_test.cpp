@@ -33,6 +33,8 @@
 // ============================================================================
 
 #include <sstream>
+#include <tuple>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -181,4 +183,35 @@ TYPED_TEST(quality, assign_to_rank)
 
     for (auto [ ch, cm ] : ranges::view::zip(input_rank, output_rank))
         EXPECT_EQ((assign_rank(TypeParam{}, ch)).to_rank(), cm);
+}
+
+
+// ------------------------------------------------------------------
+// conversion
+// ------------------------------------------------------------------
+template<typename Function, typename... Args>
+void va_for_each(Function&& fn, Args&&... args)
+{
+    using dummy = int[];
+    static_cast<void>(dummy
+        {
+            0, (static_cast<void>(fn(std::forward<Args>(args))), 0)...
+        });
+}
+
+TYPED_TEST(quality, implicit_conversion)
+{
+    auto action = [](auto other) {
+        if constexpr (!std::is_same_v<TypeParam, decltype(other)>)
+        {
+            TypeParam p;
+            p.assign_rank(0);
+            [[maybe_unused]] decltype(other) p_other = static_cast<decltype(other)>(p);
+            EXPECT_EQ(p_other.to_phred(), decltype(other)::phred_type{0});
+        }
+    };
+    phred42 p42;
+    phred63 p63;
+    phred68 p68;
+    va_for_each(action, p42, p63, p68);
 }

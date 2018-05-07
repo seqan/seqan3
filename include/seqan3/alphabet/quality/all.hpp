@@ -61,7 +61,8 @@
  * variants of its computation:
  *   1. Salinger format with Q = -10log_10(p)
  *   2. Solexa format with Q = -10log_10(p/(1-p))
- * Thus, for very low quality levels the scores vary significantly and need to be
+ * Thus, despite implicit conversion between different quality types is supported,
+ * for very low quality levels the scores vary significantly and need to be
  * corrected by an offset before being compared. The Phred score range is not
  * displayable with one digit, and is therefore mapped to ASCII values. Depending
  * on the format and the analyzer machine generation, the mappings may differ.

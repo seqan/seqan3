@@ -94,6 +94,9 @@ struct phred68
     //!\brief The internal 0-based rank value.
     rank_type _value;
 
+    //!\brief The phred score range size for the Solexa standard.
+    static constexpr rank_type value_size{68};
+
     //!\brief The projection offset between char and rank score representation.
     static constexpr char_type offset_char{';'};
 
@@ -189,7 +192,7 @@ struct phred68
       */
     constexpr phred68 & assign_char(char_type const c)
     {
-        assert(c >= offset_char && c < offset_char + value_size);
+        //assert(c >= offset_char && c < offset_char + value_size);
         _value = char_to_value[c];
         return *this;
     }
@@ -239,6 +242,32 @@ struct phred68
     }
     //!\}
 
+    /*!\name Conversion operators
+     * \{
+     */
+    //!\brief Implicit conversion between dna* and rna* of the same size.
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::quality_concept and have the same \link value_size \endlink.
+/*    template <typename other_qual_type>
+    //!\cond
+        requires quality_concept<other_qual_type> //&& value_size == alphabet_size_v<other_qual_type>
+    //!\endcond
+    constexpr operator other_qual_type() const noexcept
+    {
+        return other_qual_type{_value};
+    }*/
+
+    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::quality_concept.
+    template <typename other_qual_type>
+    //!\cond
+        requires quality_concept<other_qual_type>
+    //!\endcond
+    explicit constexpr operator other_qual_type() const //noexcept
+    {
+        return detail::convert_through_phred_representation<other_qual_type, std::decay_t<decltype(*this)>>[to_phred()];
+    }
+    //!\}
+
     /*!\name Comparison operators.
     * \{
     */
@@ -272,9 +301,6 @@ struct phred68
         return this->_value >= rhs._value;
     }
     //!\}
-
-    //!\brief The phred score range size for the Solexa standard.
-    static constexpr rank_type value_size{68};
 
 protected:
     //!\brief Char to value conversion table.
