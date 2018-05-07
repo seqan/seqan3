@@ -42,159 +42,138 @@
 #include <functional>
 #include <tuple>
 
-#include <seqan3/core/concept/core.hpp>
-#include <seqan3/core/concept/iterator.hpp>
+#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concept/iterator.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 
-namespace seqan3::detail
-{
-// ----------------------------------------------------------------------------
-// transfer_data
-// ----------------------------------------------------------------------------
-
-//!\cond
-//TODO(rrahn): Replace by anonymous lambda expression once https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85513 is fixed.
-auto invocable_dummy = [](auto){};
-//!\endcond
-
-template <typename            out_iterator_type,
-          input_range_concept input_rng_type,
-          typename            delimiter_type,
-          typename            asserter_type  = decltype(invocable_dummy) &>
-//!\cond
-    requires output_iterator_concept<std::remove_reference_t<out_iterator_type>, char> &&
-             predicate_concept<std::remove_reference_t<delimiter_type>, char> &&
-             invocable_concept<std::remove_reference_t<asserter_type>, char>
-//!\endcond
-void transfer_data(out_iterator_type && receiver,
-                   input_rng_type    && transmitter,
-                   delimiter_type    && delim,
-                   asserter_type     && asserter = invocable_dummy)
-{
-    for (auto && c : transmitter)
-    {
-        if (delim(c)) // delimiter was reached.
-            return;
-        *receiver = (asserter(c), c);  // Check if c satisfies given assert condition and write to the receiver on success.
-        ++receiver;
-    }
-    throw unexpected_end_of_error{"Reached end of input while expecting more data."};
-}
-
-} // namespace seqan3::detail
-
 namespace seqan3
 {
 
 // ----------------------------------------------------------------------------
-// read_until
+// copy
 // ----------------------------------------------------------------------------
 
-template <typename receiver_type,
-          input_range_concept input_rng_type,
-          typename delimiter_type,
-          typename asserter_type  = decltype(detail::invocable_dummy) &>
+/*!\brief      Copies elements from the input range to the output iterator, optionally checking certain conditions.
+ * \ingroup    stream
+ * \tparam     input_rng_type      The type of the input range; must satisfy seqan3::input_range_concept.
+ * \tparam     out_iterator_type   The type of the output iterator; must satisfy seqan3::output_iterator_concept.
+ * \tparam     stop_type           Type of the "stop" condition; must satisfy seqan3::predicate_concept (unless set to
+ *                                 std::ignore).
+ * \tparam     fail_type           Type of the "fail" condition; must satisfy seqan3::predicate_concept (unless set to
+ *                                 std::ignore).
+ * \tparam     skip_type           Type of the "skip" condition; must satisfy seqan3::predicate_concept (unless set to
+ *                                 std::ignore).
+ * \param[in]  input_range         The range to be parsed.
+ * \param[out] output_it           The iterator to be written to.
+ * \param[in]  stop_if             The condition on which to stop [optional]; usually a seqan3::parse_condition.
+ * \param[in]  fail_if             The condition on which to fail [optional]; usually a seqan3::parse_condition.
+ * \param[in]  skip_if             The condition on which to skip [optional]; usually a seqan3::parse_condition.
+ * \throws     seqan3::parse_error If the fail condition is met or if the end of the input is reached without the
+ *                                 stop condition being met.
+ *
+ * \details
+ *
+ * This function behaves similarly to std::copy, but it can perform certain condition checks to achieve fine-grained
+ * tokenisation. The conditions are checked in the order: "stop", "fail", "skip". Any or all can be set to
+ * std::ignore in which case the check will not be performed (this is the default if the parameters are not specified).
+ *
+ * ### Stop condition
+ *
+ * By default all elements of the input range are assigned to the output iterator, but if a "stop" condition is set,
+ * it will instead stop if this condition is met. If the end of the input range is reached without satisfying
+ * the condition an exception is thrown. To achieve a "stop condition is met or at end"-behaviour, you can make
+ * the condition contain seqan3::is_end.
+ *
+ * ### Fail condition
+ *
+ * If you expect all elements read to satisfy certain conditions (e.g. be letters) and you want to raise an
+ * exception if this is not the case, you can specify a fail condition. If it returns `true` on an element,
+ * a seqan3::parse_error will be thrown.
+ *
+ * ### Skip condition
+ *
+ * If you wish to filter out certain elements without raising an exception, you can specify a skip condition.
+ */
+template <input_range_concept           input_rng_type,
+          output_iterator_concept<char> out_iterator_type,
+          typename                      stop_type = detail::ignore_t &,
+          typename                      fail_type = detail::ignore_t &,
+          typename                      skip_type = detail::ignore_t &>
 //!\cond
-    requires (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>> ||
-              output_iterator_concept<std::remove_reference_t<receiver_type>, char>) &&
-             predicate_concept<std::remove_reference_t<delimiter_type>, char> &&
-             invocable_concept<std::remove_reference_t<asserter_type>, char>
+    requires (predicate_concept<std::remove_reference_t<stop_type>, char> || decays_to_ignore_v<stop_type>) &&
+             (predicate_concept<std::remove_reference_t<fail_type>, char> || decays_to_ignore_v<fail_type>) &&
+             (predicate_concept<std::remove_reference_t<skip_type>, char> || decays_to_ignore_v<skip_type>)
 //!\endcond
-void read_until(receiver_type  && rcvr,
-                input_rng_type && input_rng,
-                delimiter_type && delim,
-                asserter_type  && asserter = detail::invocable_dummy)
+void copy(input_rng_type    && input_range,
+          out_iterator_type && output_it,
+          stop_type         && stop_if = std::ignore,
+          fail_type         && fail_if = std::ignore,
+          skip_type         && skip_if = std::ignore)
 {
-    if constexpr (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>>)
-        detail::transfer_data(detail::make_conversion_output_iterator(rcvr),
-                              std::forward<input_rng_type>(input_rng),
-                              std::forward<delimiter_type>(delim),
-                              std::forward<asserter_type>(asserter));
-    else
-        detail::transfer_data(std::forward<receiver_type>(rcvr),
-                              std::forward<input_rng_type>(input_rng),
-                              std::forward<delimiter_type>(delim),
-                              std::forward<asserter_type>(asserter));
+    //TODO extract is_eof from stop_type  to avoid redundant checks in the loop
+    for (auto && input_char : input_range)
+    {
+        if constexpr (!decays_to_ignore_v<stop_type>)
+            if (stop_if(input_char))
+                return;
+
+        if constexpr (!decays_to_ignore_v<fail_type>)
+        {
+            if (fail_if(input_char))
+            {
+                if constexpr (detail::parse_condition_concept<fail_type>)
+                    throw parse_error{fail_type::msg.string()};
+                else
+                    throw parse_error{"Fail condition met while parsing character "s +
+                                      detail::make_printable(input_char) + "."};
+            }
+        }
+
+        if constexpr (!decays_to_ignore_v<skip_type>)
+            if (skip_if(input_char))
+                continue;
+
+        *output_it = input_char;
+        ++output_it;
+    }
+
+    //TODO and stop_type  does not contain is_eof
+    if constexpr (!decays_to_ignore_v<stop_type>)
+        throw unexpected_end_of_error{"Reached end of input while expecting more data."};
 }
 
 // ----------------------------------------------------------------------------
-// read_line
+// copy_line
 // ----------------------------------------------------------------------------
 
-template <typename            receiver_type,
-          input_range_concept input_rng_type,
-          typename            asserter_type  = decltype(detail::invocable_dummy) &>
+template <input_range_concept           input_rng_type,
+          output_iterator_concept<char> out_iterator_type,
+          typename                      fail_type = detail::ignore_t &,
+          typename                      skip_type = detail::ignore_t &>
 //!\cond
-    requires (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>> ||
-              output_iterator_concept<std::remove_reference_t<receiver_type>, char>) &&
-              invocable_concept<std::remove_reference_t<asserter_type>, char>
+    requires (predicate_concept<std::remove_reference_t<fail_type>, char> || decays_to_ignore_v<fail_type>) &&
+             (predicate_concept<std::remove_reference_t<skip_type>, char> || decays_to_ignore_v<skip_type>)
 //!\endcond
-void read_line(receiver_type  && rcvr,
-               input_rng_type && input_rng,
-               asserter_type  && asserter = detail::invocable_dummy)
+void copy_line(input_rng_type    && input_range,
+               out_iterator_type && output_it,
+               fail_type         && fail_if = std::ignore,
+               skip_type         && skip_if = std::ignore)
 {
-    read_until(std::forward<receiver_type>(rcvr),
-               std::forward<input_rng_type>(input_rng),
-               is_char<'\n'>{} || is_char<'\r'>{},
-               std::forward<asserter_type>(asserter));
+    copy(std::forward<input_rng_type>(input_range),
+         std::forward<out_iterator_type>(output_it),
+         is_char<'\n'>{} || is_char<'\r'>{},
+         std::forward<fail_type>(fail_if),
+         std::forward<skip_type>(skip_if));
 
     // Check if the statement was carriage return plus new-line.
     auto it = ranges::begin(input_rng);
     if (*it == '\r')
         if (*(++it) != '\n')  // consume the '\r' symbol and check if '\n' follows.
-            throw parse_error{"Missing newline '\n' character after reading '\r' character."};
+            throw parse_error{"Missing newline '\\n' character after reading '\\r' character."};
     ++it; // extract the newline character.
 }
 
-// ----------------------------------------------------------------------------
-// read_n
-// ----------------------------------------------------------------------------
-
-template <typename            receiver_type,
-          input_range_concept input_rng_type,
-          typename            asserter_type  = decltype(detail::invocable_dummy) &>
-//!\cond
-    requires (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>> ||
-              output_iterator_concept<std::remove_reference_t<receiver_type>, char>) &&
-              invocable_concept<std::remove_reference_t<asserter_type>, char>
-//!\endcond
-void read_n(receiver_type        && rcvr,
-            input_rng_type       && input_rng,
-            uint32_t       const    count,
-            asserter_type        && asserter = detail::invocable_dummy)
-{
-    read_until(std::forward<receiver_type>(rcvr),
-               std::forward<input_rng_type>(input_rng),
-               [count = count] (auto) mutable { return (count-- > 0) ? false : true; },
-               std::forward<asserter_type>(asserter));
-}
-
-// ----------------------------------------------------------------------------
-// read_one
-// ----------------------------------------------------------------------------
-
-template <typename            receiver_type,
-          input_range_concept input_rng_type,
-          typename            asserter_type  = decltype(detail::invocable_dummy) &>
-//!\cond
-    requires (std::is_same_v<remove_cvref_t<receiver_type>, remove_cvref_t<decltype(std::ignore)>> ||
-              output_iterator_concept<std::remove_reference_t<receiver_type>, char>) &&
-              invocable_concept<std::remove_reference_t<asserter_type>, char>
-//!\endcond
-void read_one(receiver_type  && rcvr,
-              input_rng_type && input_rng,
-              asserter_type  && asserter = detail::invocable_dummy)
-{
-    read_n(std::forward<receiver_type>(rcvr),
-           std::forward<input_rng_type>(input_rng),
-           1,
-           std::forward<asserter_type>(asserter));
-}
-
-//TODO(rrahn) add std::interface for ostream
-// put
-// write
 } // namespace seqan3
