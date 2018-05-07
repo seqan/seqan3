@@ -74,4 +74,12 @@ struct parse_error : std::runtime_error
     {}
 };
 
+//!\brief Thrown if there there was an unexpected end of input, e.g. the end-of-file marker was reached unexpectedly.
+struct unexpected_end_of_error : parse_error
+{
+    //!\brief Constructor that forwards the exception string.
+    unexpected_end_of_error(std::string const & s) : parse_error{s}
+    {}
+};
+
 }

@@ -66,3 +66,30 @@ using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<t>>;
 //!\}
 
 } // namespace seqan3
+
+namespace seqan3::detail
+{
+
+/*!\addtogroup metafunction
+ * \{
+ */
+
+// ----------------------------------------------------------------------------
+// remove_cvref_t
+// ----------------------------------------------------------------------------
+
+//!\brief Return the type of std::ignore with `const`, `volatile` and references removed [Type metafunction].
+using ignore_t = remove_cvref_t<decltype(std::ignore)>;
+
+template <typename t>
+constexpr bool decays_to_ignore_v = std::is_same_v<remove_cvref_t<t>, ignore_t>;
+
+/*!\brief Return whether the type input type with `const`, `volatile` and references removed is std::ignore's type.
+ * [Value metafunction].
+ * \tparam t The type to operate on.
+ */
+
+//!\}
+
+} // namespace seqan3
+
