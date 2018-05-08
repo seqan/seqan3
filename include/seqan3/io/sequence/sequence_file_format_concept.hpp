@@ -49,6 +49,18 @@
 #include <seqan3/alphabet/quality/illumina18.hpp>
 #include <seqan3/core/type_list.hpp>
 
+//!\cond
+//TODO(h-2): find a better way to access the options without seperating them out
+namespace seqan3::detail
+{
+struct sequence_file_in_options_type_dummy
+{
+    using sequence_legal_alphabet = dna5;
+    bool truncate_ids = false;
+};
+} // namespace seqan3::detail
+//!\endcond
+
 namespace seqan3
 {
 
@@ -66,7 +78,7 @@ namespace seqan3
 template <typename t>
 concept bool sequence_file_format_concept = requires (t & v,
                                                       std::ifstream           & f,
-                                                      int                     & options,
+                                                      detail::sequence_file_in_options_type_dummy & options,
                                                       dna5_vector             & seq,
                                                       std::string             & id,
                                                       std::vector<illumina18> & qual,
@@ -91,7 +103,7 @@ concept bool sequence_file_format_concept = requires (t & v,
  * \{
  */
 
-/*!\fn void read(stream_type & stream, options_type const & opt, seq_type & sequence, id_type & id, qual_type & quality, seq_qual_type & seq_qual)
+/*!\fn void read(stream_type & stream, options_type const & options, seq_type & sequence, id_type & id, qual_type & qualities, seq_qual_type & seq_qual)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \memberof seqan3::sequence_file_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
@@ -105,10 +117,10 @@ concept bool sequence_file_format_concept = requires (t & v,
  * \tparam seq_qual_type    Type of the seqan3::field::SEQ_QUAL input; must satisfy seqan3::output_range_concept
  * over a seqan3::quality_composition.
  * \param[in,out] stream    The input stream to read from.
- * \param[in]     opt       File specific options passed to the format.
+ * \param[in]     options   File specific options passed to the format.
  * \param[out]    sequence  The buffer for seqan3::field::SEQ input, i.e. the "sequence".
  * \param[out]    id        The buffer for seqan3::field::ID input, e.g. the header line in FastA.
- * \param[out]    quality   The buffer for seqan3::field::QUAL input.
+ * \param[out]    qualities The buffer for seqan3::field::QUAL input.
  * \param[out]    seq_qual  The buffer for seqan3::field::SEQ_QUAL input.
  *
  * \details
@@ -120,7 +132,7 @@ concept bool sequence_file_format_concept = requires (t & v,
  *   * `seq_qual` must be set to std::ignore if either `seq` or `qual` are not set to std::ignore. [this shall be checked by a `static_assert` inside the function]
  *
  */
-/*!\fn void write(stream_type & stream, options_type const & opt, seq_type && sequence, id_type && id, qual_type && quality, seq_qual_type && seq_qual)
+/*!\fn void write(stream_type & stream, options_type const & options, seq_type && sequence, id_type && id, qual_type && qualities, seq_qual_type && seq_qual)
  * \brief Write the given fields to the specified stream.
  * \memberof seqan3::sequence_file_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
@@ -134,10 +146,10 @@ concept bool sequence_file_format_concept = requires (t & v,
  * \tparam seq_qual_type    Type of the seqan3::field::SEQ_QUAL input; must satisfy seqan3::input_range_concept
  * over a seqan3::quality_composition.
  * \param[in,out] stream    The input stream to read from.
- * \param[in]     opt       File specific options passed to the format.
+ * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".
  * \param[in]     id        The data for seqan3::field::ID, e.g. the header line in FastA.
- * \param[in]     quality   The data for seqan3::field::QUAL.
+ * \param[in]     qualities The data for seqan3::field::QUAL.
  * \param[in]     seq_qual  The data for seqan3::field::SEQ_QUAL.
  *
  * \details
