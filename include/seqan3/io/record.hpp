@@ -179,6 +179,7 @@ struct fields
 template <typename field_types, typename field_ids>
 struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
 {
+public:
     //!\brief A specialisation of std::tuple.
     using base_type = detail::transfer_template_args_onto_t<field_types, std::tuple>;
 
@@ -187,6 +188,19 @@ struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
 
     static_assert(field_types::size() == field_ids::as_array.size(),
                   "You must give as many IDs as types to seqan3::record.");
+
+    //!\brief (Re-)Initialise all tuple elements with `{}`.
+    void clear()
+    {
+        clear_impl(*this, std::make_integer_sequence<size_t, field_types::size()>{});
+    }
+private:
+    //!\brief Auxiliary function for clear().
+    template <size_t ...Is>
+    constexpr void clear_impl(base_type & tup, std::integer_sequence<size_t, Is...> const &)
+    {
+        ((std::get<Is>(tup) = {}), ...);
+    }
 };
 
 } // namespace seqan3
