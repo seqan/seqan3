@@ -243,9 +243,9 @@ public:
     //!\brief Invokes the condition on `val`.
     template <char_adaptation_concept value_t>
     constexpr bool
-    operator()(value_t && val) const noexcept(std::is_nothrow_invocable_r_v<bool, derived_t, value_t>)
+    operator()(value_t const val) const noexcept(std::is_nothrow_invocable_r_v<bool, derived_t, value_t>)
     {
-        return std::invoke(derived_t(), std::forward<value_t>(val));
+        return std::invoke(derived_t(), val);
     }
     //!\}
 
@@ -305,9 +305,9 @@ struct parse_condition_combiner : public parse_condition<parse_condition_combine
      */
     template <char_adaptation_concept char_t>
     constexpr bool
-    operator()(char_t && val) const noexcept((... && std::is_nothrow_invocable_r_v<bool, condition_ts, char_t &&>))
+    operator()(char_t const val) const noexcept((... && std::is_nothrow_invocable_r_v<bool, condition_ts, char_t &&>))
     {
-        return (... || std::invoke(condition_ts(), std::forward<char_t>(val)));
+        return (... || std::invoke(condition_ts(), val));
     }
 };
 
@@ -348,9 +348,9 @@ struct parse_condition_negator : public parse_condition<parse_condition_negator<
      */
     template <char_adaptation_concept value_t>
     constexpr bool
-    operator()(value_t && val) const noexcept(std::is_nothrow_invocable_r_v<bool, condition_t, value_t &&>)
+    operator()(value_t const val) const noexcept(std::is_nothrow_invocable_r_v<bool, condition_t, value_t &&>)
     {
-        return !std::invoke(condition_t(), std::forward<value_t>(val));
+        return !std::invoke(condition_t(), val);
     }
 };
 
@@ -408,7 +408,7 @@ struct is_in_interval : public detail::parse_condition<is_in_interval<interval_f
      */
     template <char_adaptation_concept char_t>
     constexpr bool
-    operator()(char_t const & val) const noexcept
+    operator()(char_t const val) const noexcept
     {
         return (static_cast<uint64_t>(interval_first) <= static_cast<uint64_t>(val)) &&
                (static_cast<uint64_t>(val) <= static_cast<uint64_t>(interval_last));
@@ -456,7 +456,7 @@ struct is_in_alphabet : public detail::parse_condition<is_in_alphabet<alphabet_t
      */
     template <char_adaptation_concept char_t>
     constexpr bool
-    operator()(char_t && val) const noexcept(std::is_same_v<char_t, char>)
+    operator()(char_t const val) const noexcept(std::is_same_v<char_t, char>)
     {
         if constexpr (!std::is_same_v<char_t, char>)
         {  // Check if alphabet is able to represent the underlying char type of the tested alphabet.
@@ -510,7 +510,7 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
      */
     template <char_adaptation_concept char_t>
     constexpr bool
-    operator()(char_t && val) const noexcept
+    operator()(char_t const & val) const noexcept
     {
         return val == char_v;
     }
@@ -819,9 +819,9 @@ struct parse_asserter
      * Thread-safe.
      */
     template <char_adaptation_concept char_type>
-    void operator()(char_type && c) const
+    void operator()(char_type const c) const
     {
-        if (!std::invoke(cond, std::forward<char_type>(c)))
+        if (!std::invoke(cond, c))
         {
             using namespace std::literals;
             // I can not assure that all parameters are convertible to c.
