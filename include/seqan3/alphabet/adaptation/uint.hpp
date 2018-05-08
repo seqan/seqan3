@@ -48,20 +48,9 @@
  * \attention
  * Note that `uint64_t` is absent from the list, because there is no corresponding
  * character type.
- *
- * \attention
- * Please be aware that if you also include `alphabet/concept.hpp` and/or `alphabet/adaptation/concept.hpp`,
- * you need to do so **after** including this file, not before.
  */
 
 #pragma once
-
-//!\cond
-#ifdef SEQAN3_ALPHABET_CONCEPT_INCLUDED
-#error You must include alphabet/concept.hpp and/or alphabet/adaptations/concept.hpp AFTER including \
-       alphabet/adaptation/uint.hpp, not before!
-#endif
-//!\endcond
 
 #include <limits>
 

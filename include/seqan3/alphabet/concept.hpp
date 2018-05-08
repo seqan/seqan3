@@ -39,11 +39,10 @@
 
 #pragma once
 
-#define SEQAN3_ALPHABET_CONCEPT_INCLUDED
-
 #include <iostream>
 
 #include <seqan3/core/concept/cereal.hpp>
+#include <seqan3/alphabet/adaptation/pre.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/std/concept/object.hpp>

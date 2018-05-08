@@ -50,20 +50,9 @@
  * their type ambiguity with `int8_t` and `uint8_t`.
  *   * Note that `wchar_t` is absent from the list for its notorious brokenness (different sizes and signedness
  * between platforms); use `char16_t` or `char32_t` instead.
- *
- * \attention
- * Please be aware that if you also include `alphabet/concept.hpp` and/or `alphabet/adaptation/concept.hpp`,
- * you need to do so **after** including this file, not before.
  */
 
 #pragma once
-
-//!\cond
-#ifdef SEQAN3_ALPHABET_CONCEPT_INCLUDED
-#error You must include alphabet/concept.hpp and/or alphabet/adaptations/concept.hpp AFTER including \
-       alphabet/adaptation/char.hpp, not before!
-#endif
-//!\endcond
 
 #include <limits>
 
