@@ -706,7 +706,6 @@ public:
         return {};
     }
 
-
     /*!\brief Return the record we are currently at in the file.
      * \returns A reference to the currently buffered record.
      *
@@ -837,6 +836,9 @@ protected:
     //!\brief The stream we are reading from.
     stream_type stream;
 
+    //!\brief File is at position 1 behind the last record.
+    bool at_end{false};
+
     //!\brief Type of the format, an std::variant over the `valid_formats`.
     using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
@@ -845,9 +847,23 @@ protected:
     //!\brief Tell the format to move to the next record and update the buffer.
     void read_next_record()
     {
+        if (at_end)
+            return;
+
+        // clear the record
+        record_buffer.clear();
+
+        // at end if we could not read further
+        if (stream.eof())
+        {
+            at_end = true;
+            return;
+        }
+
         assert(!format.valueless_by_exception());
         std::visit([&] (sequence_file_format_concept & f)
         {
+            // read new record
             f.read(stream,
                    options,
                    detail::get_or_ignore<field::SEQ>(record_buffer),

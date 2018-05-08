@@ -50,10 +50,13 @@ struct fake_file_t : std::vector<int>
     using base::base;
 
     size_t current_position = 0;
+    bool at_end = false;
 
     void read_next_record()
     {
         ++current_position;
+        if (current_position == size())
+            at_end = true;
     }
 
     int & front()
@@ -61,20 +64,8 @@ struct fake_file_t : std::vector<int>
         return begin()[current_position];
     }
 
-    struct stream_t
-    {
-        fake_file_t * parent = nullptr; // silence warnings
-        bool eof()
-        {
-            return parent->current_position == parent->size();
-        }
-    };
-
-    stream_t stream;
-
     fake_file_t() :
-        base{},
-        stream{this}
+        base{}
     {}
 };
 
@@ -129,7 +120,6 @@ TEST(in_file_iterator, comparison)
     using it_t = detail::in_file_iterator<fake_file_t>;
 
     fake_file_t f{1, 2, 3, 4, 5, 6, 8};
-    f.stream = fake_file_t::stream_t{&f};
     it_t it{f};
 
     // not at end
