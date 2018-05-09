@@ -123,7 +123,7 @@ public:
  * \ingroup   io
  * \relates   ignore_output_iterator
  */
-ignore_output_iterator make_conversion_output_iterator(decltype(std::ignore) const SEQAN3_DOXYGEN_ONLY(v))
+inline ignore_output_iterator make_conversion_output_iterator(decltype(std::ignore) const SEQAN3_DOXYGEN_ONLY(v))
 {
     return ignore_output_iterator{};
 }

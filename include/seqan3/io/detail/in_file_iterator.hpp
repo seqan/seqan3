@@ -145,13 +145,13 @@ public:
     constexpr bool operator==(ranges::default_sentinel const &) const noexcept
     {
         assert(host != nullptr);
-        return host->stream.eof();
+        return host->at_end;
     }
 
     constexpr bool operator!=(ranges::default_sentinel const &) const noexcept
     {
         assert(host != nullptr);
-        return !host->stream.eof();
+        return !host->at_end;
     }
 
     constexpr friend bool operator==(ranges::default_sentinel const &,

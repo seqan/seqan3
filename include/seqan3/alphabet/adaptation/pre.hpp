@@ -32,18 +32,16 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Meta-include for the sequence IO submodule.
+/*!\cond DEV
+ * \file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for the adaptation submodule that includes those headers that need be included before
+ * alphabet/concept.hpp.
  */
 
 #pragma once
 
-/*!\defgroup sequence Sequence
- * \ingroup io
- * \brief \todo document at a later point in time
- */
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/adaptation/uint.hpp>
 
-#include <seqan3/io/sequence/sequence_file_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
+//!\endcond
