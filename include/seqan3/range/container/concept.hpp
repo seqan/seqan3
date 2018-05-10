@@ -139,7 +139,8 @@ namespace seqan3
  * \extends seqan3::const_iterable_concept
  * \brief The (most general) container concept as defined by the standard library.
  * \details
- * The container concept is modelled exactly as in the [STL](http://en.cppreference.com/w/cpp/concept/Container).
+ * The container concept is modelled as in the [STL](http://en.cppreference.com/w/cpp/concept/Container), but
+ * additionally requires std::swap() to be implemented.
  *
  * \attention
  * Other than one might expect, `std::forward_list` does not satisfy this concept (because it does not provide
@@ -189,8 +190,8 @@ concept bool container_concept = requires (type val, type val2, type const cval,
     { val != val2     } -> bool;
 
     { val.swap(val2)  } -> void;
-    requires requires (type val, type val2) { { swap(val, val2) } -> void; } ||
-             requires (type val, type val2) { { std::swap(val, val2) } -> void };
+    { swap(val, val2) } -> void;
+    { std::swap(val, val2) } -> void;
 
     { val.size()      } -> typename type::size_type;
     { val.max_size()  } -> typename type::size_type;
