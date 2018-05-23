@@ -67,4 +67,23 @@ TEST(cereal, cereal_text_archive_concept)
     EXPECT_FALSE((cereal_text_archive_concept<cereal::PortableBinaryInputArchive>));
 }
 
+struct my_struct{};
+
+TEST(cereal, cerealisable_concept)
+{
+    EXPECT_TRUE((cerealisable_concept<int>));
+    EXPECT_TRUE((cerealisable_concept<float>));
+
+    // my_struct does not define any serialise functions
+    EXPECT_FALSE((cerealisable_concept<my_struct>));
+
+    // will be true, since <cereal/types/array.hpp> is included
+    EXPECT_TRUE((cerealisable_concept<std::array<int, 10>>));
+    // is false, because <cereal/types/vector.hpp> is not included
+    EXPECT_FALSE((cerealisable_concept<std::vector<int>>));
+
+    // recursive containers of cerealisable value types work
+    EXPECT_TRUE((cerealisable_concept<std::array<std::array<int, 10>, 10>>));
+}
+
 #endif
