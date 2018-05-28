@@ -64,7 +64,7 @@ namespace seqan3
  *
  * \attention
  * This is a "pure base class", you cannot instantiate it, you can only inherit from it.
- * Most likely you are interested in using one of it's descendents like quality_composition.
+ * Most likely you are interested in using one of it's descendents like qualified.
  * \cond DEV
  * To make a derived class "complete", you should add at least the following:
  *   * .to_char() member
@@ -73,7 +73,7 @@ namespace seqan3
  *   * a type deduction guide
  * \endcond
  *
- * \sa quality_composition
+ * \sa qualified
  * \sa mask_composition
  */
 

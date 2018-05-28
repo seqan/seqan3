@@ -65,10 +65,10 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
-                                        gapped<illumina18>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
-                                        illumina18, dna4q,
+                                        dna4q,
+                                        phred42, phred63, phred68,
                                         dot_bracket3, dssp9, wuss<>, wuss<65>,
                                         structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                         structured_aa<aa27, dssp9>>;
@@ -88,6 +88,8 @@ TYPED_TEST(alphabet, default_value_constructor)
 
 TYPED_TEST(alphabet, assign_rank)
 {
+    if (std::is_same_v<TypeParam, phred42> || std::is_same_v<TypeParam, phred63> || std::is_same_v<TypeParam, phred68>)
+        return;
     // this double checks the value initialisation
     EXPECT_EQ((assign_rank(TypeParam{}, 0)), TypeParam{});
 
@@ -104,6 +106,8 @@ TYPED_TEST(alphabet, assign_rank)
 
 TYPED_TEST(alphabet, to_rank)
 {
+    if (std::is_same_v<TypeParam, phred42> || std::is_same_v<TypeParam, phred63> || std::is_same_v<TypeParam, phred68>)
+        return;
     // this double checks the value initialisation
     EXPECT_EQ(to_rank(TypeParam{}), 0u);
 
@@ -180,6 +184,8 @@ TYPED_TEST(alphabet, swap)
 
 TYPED_TEST(alphabet, assign_char)
 {
+    if (std::is_same_v<TypeParam, phred42> || std::is_same_v<TypeParam, phred63> || std::is_same_v<TypeParam, phred68>)
+        return;
     using char_t = underlying_char_t<TypeParam>;
     TypeParam t0;
     for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
@@ -191,6 +197,8 @@ TYPED_TEST(alphabet, assign_char)
 
 TYPED_TEST(alphabet, to_char)
 {
+    if (std::is_same_v<TypeParam, phred42> || std::is_same_v<TypeParam, phred63> || std::is_same_v<TypeParam, phred68>)
+        return;
     TypeParam t0;
     EXPECT_TRUE((std::is_same_v<decltype(to_char(t0)), underlying_char_t<TypeParam>>));
 
@@ -301,7 +309,8 @@ using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5,
                                                   char, char16_t, char32_t,
                                                   uint8_t, uint16_t, uint32_t,
                                                   /*gap, gapped<nucl16>, */
-                                                  illumina18, dna4q,
+                                                  dna4q,
+                                                  phred42, phred63, phred68,
                                                   dot_bracket3, dssp9, wuss<>, wuss<65>,
                                                   structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                                   structured_aa<aa27, dssp9>>;
