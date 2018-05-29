@@ -46,7 +46,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/core/type_list.hpp>
 
 //!\cond
@@ -81,7 +81,7 @@ concept bool sequence_file_format_concept = requires (t & v,
                                                       detail::sequence_file_in_options_type_dummy & options,
                                                       dna5_vector             & seq,
                                                       std::string             & id,
-                                                      std::vector<illumina18> & qual,
+                                                      std::vector<phred42> & qual,
                                                       std::vector<dna5q>      & seq_qual)
 {
     t::file_extensions;
@@ -115,7 +115,7 @@ concept bool sequence_file_format_concept = requires (t & v,
  * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::output_range_concept
  * over a seqan3::quality_concept.
  * \tparam seq_qual_type    Type of the seqan3::field::SEQ_QUAL input; must satisfy seqan3::output_range_concept
- * over a seqan3::quality_composition.
+ * over a seqan3::qualified.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
  * \param[out]    sequence  The buffer for seqan3::field::SEQ input, i.e. the "sequence".
@@ -144,7 +144,7 @@ concept bool sequence_file_format_concept = requires (t & v,
  * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::input_range_concept
  * over a seqan3::quality_concept.
  * \tparam seq_qual_type    Type of the seqan3::field::SEQ_QUAL input; must satisfy seqan3::input_range_concept
- * over a seqan3::quality_composition.
+ * over a seqan3::qualified.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".
