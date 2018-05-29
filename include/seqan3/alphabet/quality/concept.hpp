@@ -31,8 +31,11 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
-// ============================================================================
+
+/*!\file
+ * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
+ * \brief Quality alphabet concept.
+ */
 
 #pragma once
 
