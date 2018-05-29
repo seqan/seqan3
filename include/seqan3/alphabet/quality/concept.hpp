@@ -80,11 +80,18 @@ concept bool internal_quality_concept = requires (q quality)
 //!\endcond
 } // namespace seqan3::detail
 
-//!\brief The internal phred type.
+
+/*!\brief The internal phred type.
+ * \ingroup quality
+ *
+ * The underlying_phred type requires the internal_quality_concept.
+ */
+//!\cond
 template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
+//!\endcond
 struct underlying_phred
-{
+    //!\brief The underlying phred data type.
     using type = typename alphabet_type::phred_type;
 };
 
@@ -137,5 +144,5 @@ concept bool quality_concept = requires(q quality)
     { to_phred(quality) } -> const typename q::phred_type;
     typename underlying_phred<q>::type;
 };
-
+//!\endcond
 }
