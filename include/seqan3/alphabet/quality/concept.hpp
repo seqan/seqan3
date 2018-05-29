@@ -91,6 +91,7 @@ template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
 //!\endcond
 struct underlying_phred
+{
     //!\brief The underlying phred data type.
     using type = typename alphabet_type::phred_type;
 };
