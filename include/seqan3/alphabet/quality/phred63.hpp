@@ -41,6 +41,7 @@
 
 #include <cassert>
 
+#include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/platform.hpp>
 
