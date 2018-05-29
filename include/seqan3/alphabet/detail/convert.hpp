@@ -75,6 +75,12 @@ constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_char_represen
     }()
 };
 
+/*!\brief A precomputed conversion table for two alphabets based on their phred representations.
+ * \ingroup alphabet
+ * \tparam out_t The type of the output, must satisfy seqan3::quality_concept.
+ * \tparam in_t The type of the input, must satisfy seqan3::quality_concept.
+ * \hideinitializer
+ */
 template <typename out_t, typename in_t>
 //!\cond
     requires quality_concept<out_t> && quality_concept<in_t>

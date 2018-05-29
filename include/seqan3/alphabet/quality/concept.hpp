@@ -50,13 +50,20 @@ namespace seqan3
 namespace detail
 {
 
-/*!
- * Internal conversion functions of a quality alphabet.
- * A quality has three representations:
- *    a) internal unsigned integer, simply called "value"
- *    b) an integer representing the phred score, calibration is machine-dependent
- *    c) a single-letter encoding corresponding to a phred score
+/*!\interface seqan3::internal_quality_concept <>
+ * \extends seqan3::alphabet_concept
+ * \brief A concept that indicates whether an alphabet represents quality scores.
+ * \ingroup quality
+ *
+ * In addition to the requirements for seqan3::alphabet_concept, the
+ * internal_quality_concept introduces a requirement for conversion functions
+ * from and to a Phred score.
+ *
+ * \par Concepts and doxygen
+ * The requirements for this concept are given as related functions and metafunctions.
+ * Types that satisfy this concept are shown as "implementing this interface".
  */
+//!\cond
 template <typename q>
 concept bool internal_quality_concept = requires (q quality)
 {
@@ -70,23 +77,23 @@ concept bool internal_quality_concept = requires (q quality)
     { quality.assign_phred(0) } -> q;
 
 };
-
+//!\endcond
 } // namespace seqan3::detail
 
-//! internal phred
+//!\brief The internal phred type.
 template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
 struct underlying_phred
 {
-    //!\brief The forwarded phred type.
     using type = typename alphabet_type::phred_type;
 };
 
-//! internal phred type
+//!\brief The internal phred type.
 template <typename alphabet_type>
     using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
 
-//! public setter function receiving char encoding of phred score
+
+//!\brief The public setter function of a phred score.
 template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
     constexpr alphabet_type assign_phred(alphabet_type & c, char const in)
@@ -94,7 +101,7 @@ template <typename alphabet_type>
     return c.assign_phred(in);
 }
 
-//! public getter function for rank presentation of phred score
+//!\brief The public getter function for the phred representation of a score.
 template <typename alphabet_type>
     requires detail::internal_quality_concept<alphabet_type>
     constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & c)
@@ -102,18 +109,30 @@ template <typename alphabet_type>
     return c.to_phred();
 }
 
-// ------------------------------------------------------------------
+// ============================================================================
 // concept
-// ------------------------------------------------------------------
+// ============================================================================
 
-//! concept of a quality alphabet
+/*!\interface seqan3::quality_concept <>
+ * \extends seqan3::alphabet_concept
+ * \brief A concept that indicates whether an alphabet represents quality scores.
+ * \ingroup quality
+ *
+ * In addition to the requirements for seqan3::alphabet_concept, the
+ * quality_concept introduces a requirement for conversion functions from and to
+ * a Phred score.
+ *
+ * \par Concepts and doxygen
+ * The requirements for this concept are given as related functions and
+ * metafunctions. Types that satisfy this concept are shown as "implementing
+ * this interface".
+ */
+//!\cond
 template<typename q>
 concept bool quality_concept = requires(q quality)
 {
-    //! requires fulfillment of alphabet concept
     requires alphabet_concept<q>;
 
-    //! requires additionally public getter and setter for rank phred score representation
     { assign_phred(quality, typename q::rank_type{}) } -> q;
     { to_phred(quality) } -> const typename q::phred_type;
     typename underlying_phred<q>::type;
