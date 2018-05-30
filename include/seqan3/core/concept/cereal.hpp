@@ -133,7 +133,7 @@ concept bool cereal_text_archive_concept = false;
 
 /*!\interface seqan3::cerealisable_concept <>
  * \ingroup core
- * \brief Is a given type serialisable with cereal?
+ * \brief Specifies the requirements for types that are serialisable via Cereal.
  *
  * The `value_t` type satisfy the cerealisable_concept, if `value_t` can be
  * serialised with cereal, i.e. `value_t` has a single serialisation function
