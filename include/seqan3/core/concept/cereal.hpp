@@ -45,6 +45,7 @@
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/details/traits.hpp>
+#include <cereal/archives/binary.hpp>
 #endif
 
 namespace seqan3
@@ -127,6 +128,49 @@ concept bool cereal_text_archive_concept = std::is_base_of_v<cereal::traits::Tex
 #else
 template <typename t>
 concept bool cereal_text_archive_concept = false;
+#endif
+//!\endcond
+
+/*!\interface seqan3::cerealisable_concept <>
+ * \ingroup core
+ * \brief Specifies the requirements for types that are serialisable via Cereal.
+ *
+ * The `value_t` type satisfy the cerealisable_concept, if `value_t` can be
+ * serialised with cereal, i.e. `value_t` has a single serialisation function
+ * (`serialize`) or split load/save pair (load and save) either inside or
+ * outside of the class.
+ *
+ * \sa https://uscilab.github.io/cereal/serialization_functions.html
+ *
+ * ```
+ * #include <seqan3/core/concept/cereal.hpp>
+ * using namespace seqan3;
+ *
+ * // fundamental types are serialisable
+ * static_assert(cerealisable_concept<int>);
+ *
+ * #include <array>
+ * #include <cereal/types/array.hpp> // std::array is now serialisable
+ * static_assert(cerealisable_concept<std::array<int, 12>>);
+ *
+ * #include <seqan3/alphabet/nucleotide/dna4.hpp> // dna4 is serialisable
+ * static_assert(cerealisable_concept<dna4>);
+ * ```
+ *
+ * \attention
+ * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
+ */
+//!\cond
+#if SEQAN3_WITH_CEREAL
+template <typename value_t,
+          typename input_archive_t = cereal::BinaryInputArchive,
+          typename output_archive_t = cereal::BinaryOutputArchive>
+concept bool cerealisable_concept =
+    cereal::traits::is_input_serializable<value_t, input_archive_t>::value &&
+    cereal::traits::is_output_serializable<value_t, output_archive_t>::value;
+#else
+template <typename t>
+concept bool cerealisable_concept = false;
 #endif
 //!\endcond
 
