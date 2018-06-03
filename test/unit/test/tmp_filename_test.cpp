@@ -34,8 +34,10 @@
 
 #include <gtest/gtest.h>
 #include <fstream>
-#include "tmp_filename.hpp"
 
+#include <seqan3/test/tmp_filename.hpp>
+
+namespace fs = seqan3::filesystem;
 using namespace seqan3::test;
 
 // aggregate initialization
