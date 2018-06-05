@@ -52,6 +52,12 @@ include (FindPackageMessage)
 set (SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
 set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
 
+# needed for add_library (seqan3::test::* INTERFACE IMPORTED)
+# see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
+file(MAKE_DIRECTORY ${SEQAN3_BENCHMARK_CLONE_DIR}/include/)
+file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
+file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googlemock/include/)
+
 # ----------------------------------------------------------------------------
 # Interface targets for the different test modules in seqan3.
 # ----------------------------------------------------------------------------
@@ -68,7 +74,6 @@ set_property (TARGET seqan3::test APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES 
 add_library (seqan3::test::performance INTERFACE IMPORTED)
 set_property (TARGET seqan3::test::performance APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test" "gbenchmark")
 set_property (TARGET seqan3::test::performance APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
-file(MAKE_DIRECTORY ${SEQAN3_BENCHMARK_CLONE_DIR}/include/) # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
 
 # seqan3::test::unit specifies required flags, includes and libraries
 # needed for unit test cases in seqan3/test/unit
@@ -77,8 +82,12 @@ set_property (TARGET seqan3::test::unit APPEND PROPERTY INTERFACE_LINK_LIBRARIES
 set_property (TARGET seqan3::test::unit
               APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES  "${SEQAN3_TEST_CLONE_DIR}/googletest/include/"
                                                              "${SEQAN3_TEST_CLONE_DIR}/googlemock/include/")
-file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/) # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
-file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googlemock/include/) # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
+
+# seqan3::test::coverage specifies required flags, includes and libraries
+# needed for coverage test cases in seqan3/test/coverage
+add_library (seqan3::test::coverage INTERFACE IMPORTED)
+set_property (TARGET seqan3::test::coverage APPEND PROPERTY INTERFACE_COMPILE_OPTIONS "--coverage" "-fprofile-arcs" "-ftest-coverage")
+set_property (TARGET seqan3::test::coverage APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test::unit" "gcov")
 
 # seqan3::test::header specifies required flags, includes and libraries
 # needed for header test cases in seqan3/test/header
@@ -195,17 +204,21 @@ macro (seqan3_require_test)
     unset(gtest_path)
 endmacro ()
 
-macro (add_subdirectories)
+macro (add_subdirectories_of directory)
     file (GLOB ENTRIES
-          RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-          ${CMAKE_CURRENT_SOURCE_DIR}/[!.]*)
+          RELATIVE ${directory}
+          ${directory}/[!.]*)
 
     foreach (ENTRY ${ENTRIES})
-        if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
-            if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
-                add_subdirectory (${ENTRY})
+        if (IS_DIRECTORY ${directory}/${ENTRY})
+            if (EXISTS ${directory}/${ENTRY}/CMakeLists.txt)
+                add_subdirectory (${directory}/${ENTRY} ${CMAKE_CURRENT_BINARY_DIR}/${ENTRY})
             endif ()
         endif ()
     endforeach ()
     unset (ENTRIES)
+endmacro ()
+
+macro (add_subdirectories)
+    add_subdirectories_of(${CMAKE_CURRENT_SOURCE_DIR})
 endmacro ()
