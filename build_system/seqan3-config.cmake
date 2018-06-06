@@ -82,6 +82,19 @@
 #   SEQAN3_DEFINITIONS      -- to be passed to add_definitions ()
 #   SEQAN3_CXX_FLAGS        -- to be added to CMAKE_CXX_FLAGS
 #
+# Additionally, the following [IMPORTED][IMPORTED] targets are defined:
+#
+#   seqan3::seqan3          -- interface target where
+#                                  target_link_libraries(target seqan3::seqan3)
+#                              automatically sets
+#                                  target_include_directories(target $SEQAN3_INCLUDE_DIRS),
+#                                  target_link_libraries(target $SEQAN3_LIBRARIES),
+#                                  target_compile_definitions(target $SEQAN3_DEFINITIONS) and
+#                                  target_compile_options(target $SEQAN3_CXX_FLAGS)
+#                              for a target.
+#
+#   [IMPORTED]: https://cmake.org/cmake/help/v3.10/prop_tgt/IMPORTED.html#prop_tgt:IMPORTED
+#
 # ============================================================================
 
 cmake_minimum_required (VERSION 3.2)

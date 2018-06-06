@@ -45,11 +45,19 @@ include (CheckCXXSourceCompiles)
 include (FindPackageHandleStandardArgs)
 include (FindPackageMessage)
 
+# ----------------------------------------------------------------------------
+# Paths to folders.
+# ----------------------------------------------------------------------------
+
 set (SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
 set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
 
+# ----------------------------------------------------------------------------
+# Interface targets for the different test modules in seqan3.
+# ----------------------------------------------------------------------------
+
 # seqan3::test exposes a base set of required flags, includes, definitions and
-# libraries qhich are in common for **all** seqan3 tests
+# libraries which are in common for **all** seqan3 tests
 add_library (seqan3::test INTERFACE IMPORTED)
 set_property (TARGET seqan3::test APPEND PROPERTY INTERFACE_COMPILE_OPTIONS "-pedantic"  "-Wall" "-Wextra" "-Werror")
 set_property (TARGET seqan3::test APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::seqan3" "pthread")
@@ -74,11 +82,18 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/) # see cmake bu
 add_library (seqan3::test::header INTERFACE IMPORTED)
 set_property (TARGET seqan3::test::header APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test::unit")
 
-# commonly shared options:
+# ----------------------------------------------------------------------------
+# Commonly shared options for external projects.
+# ----------------------------------------------------------------------------
+
 set (SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "")
 list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
 list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}")
+
+# ----------------------------------------------------------------------------
+# Commonly used macros for the different test modules in seqan3.
+# ----------------------------------------------------------------------------
 
 macro (seqan3_require_ccache)
     find_program (CCACHE_PROGRAM ccache)
