@@ -54,11 +54,11 @@ before_script:
   - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
   - |
     if test unit = "${BUILD}" || test header = "${BUILD}"; then
-      make googletest
+      make gtest_project
     fi
   - |
     if test performance = "${BUILD}"; then
-      make google_benchmark
+      make gbenchmark_project
     fi
 
 script:

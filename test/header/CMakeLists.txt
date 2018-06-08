@@ -49,7 +49,6 @@ include (../seqan3-test.cmake)
 # https://github.com/openmicroscopy/bioformats/blob/d3bb33eeda23e81f78fd25f658bfc14a4363805f/cpp/cmake/HeaderTest.cmake#L81-L113
 macro (seqan3_header_test component header_base_path)
     set (target "${component}_header_test")
-    separate_arguments (cxx_flags_list UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
 
     file (RELATIVE_PATH header_relative_base_path "${CMAKE_SOURCE_DIR}" "${header_base_path}")
 
@@ -77,12 +76,8 @@ macro (seqan3_header_test component header_base_path)
     file (WRITE "${PROJECT_BINARY_DIR}/header_test_src/empty.cpp" "")
 
     add_executable (${target} ${PROJECT_BINARY_DIR}/header_test_src/empty.cpp)
-    target_compile_options (${target} PRIVATE ${cxx_flags_list} ${SEQAN3_TEST_CXX_FLAGS})
-    target_compile_definitions (${target} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_TEST_DEFINITIONS})
-    target_include_directories (${target} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_TEST_INCLUDE_DIRS})
-    target_link_libraries (${target} ${SEQAN3_LIBRARIES} ${SEQAN3_TEST_LIBRARIES})
+    target_link_libraries (${target} seqan3::test::header)
     add_test (NAME "header/${target}" COMMAND ${target})
-    add_dependencies (${target} gtest)
 
     foreach (header ${header_files})
         foreach (repeat 1 2)
@@ -102,9 +97,11 @@ macro (seqan3_header_test component header_base_path)
 TEST(Header, ${header_source_test_name}) {}")
 
             add_library (${target_library} OBJECT "${source_file}")
-            target_compile_options (${target_library} PRIVATE ${cxx_flags_list} ${SEQAN3_TEST_CXX_FLAGS})
-            target_compile_definitions (${target_library} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_TEST_DEFINITIONS})
-            target_include_directories (${target_library} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_TEST_INCLUDE_DIRS})
+            # NOTE: a simple target_link_libraries (${target_library} seqan3::test::header)
+            # is not possible for OBJECT libraries
+            target_compile_options (${target_library} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_OPTIONS>)
+            target_compile_definitions (${target_library} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_DEFINITIONS>)
+            target_include_directories (${target_library} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_INCLUDE_DIRECTORIES>)
             add_dependencies (${target_library} gtest)
 
             target_sources (${target} PRIVATE $<TARGET_OBJECTS:${target_library}>)
@@ -112,7 +109,6 @@ TEST(Header, ${header_source_test_name}) {}")
     endforeach ()
 
     unset (target)
-    unset (cxx_flags_list)
     unset (header_relative_base_path)
     unset (header_files)
     unset (header_source_file_name)

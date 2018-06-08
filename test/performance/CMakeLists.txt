@@ -32,13 +32,11 @@
 # ============================================================================
 
 cmake_minimum_required (VERSION 3.2)
-project (seqan3_performance_test CXX)
+project (seqan3_test_performance CXX)
 
 include (../seqan3-test.cmake)
 
 macro (seqan3_benchmark target_cpp)
-    separate_arguments (cxx_flags_list UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
-
     # $target_cpp = "pod_tuple_benchmark.cpp"
     #   * will register the global TARGET name "pod_tuple_benchmark" and
     #   * will register the benchmark name "core_pod_tuple" if
@@ -51,14 +49,9 @@ macro (seqan3_benchmark target_cpp)
     set (target "${target_name}_benchmark")
 
     add_executable (${target} ${target_cpp})
-    target_compile_options (${target} PRIVATE ${cxx_flags_list} ${SEQAN3_BENCHMARK_CXX_FLAGS})
-    target_compile_definitions (${target} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_BENCHMARK_DEFINITIONS})
-    target_include_directories (${target} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_BENCHMARK_INCLUDE_DIRS})
-    target_link_libraries (${target} ${SEQAN3_LIBRARIES} ${SEQAN3_BENCHMARK_LIBRARIES})
+    target_link_libraries (${target} seqan3::test::performance)
     add_test (NAME "${benchmark_path}/${target}" COMMAND ${target})
-    add_dependencies (${target} benchmark)
 
-    unset (cxx_flags_list)
     unset (target_name)
     unset (benchmark_path)
     unset (target)
