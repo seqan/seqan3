@@ -61,7 +61,7 @@ struct get_display_name_size
 {
 private:
     //!\brief Helper function to extract the size of the display name.
-    static constexpr auto get_size = [] ()
+    static constexpr auto get_size()
     {
         // __PRETTY_FUNCTION__ exposes the signature of the class including the name of the template instance as
         // a static const char[]. The following code, extracts the part that displays the template name.
@@ -142,7 +142,7 @@ struct get_display_name
 {
 private:
     //!\brief Helper function to get the display name.
-    static constexpr auto get_display_name_fn = [] () constexpr
+    static constexpr auto get_display_name_fn()
     {
         // Use a helper function to extract the size of the requested type.
         constexpr_string<get_display_name_size_v<type>> tmp{};
