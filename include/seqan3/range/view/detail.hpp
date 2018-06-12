@@ -183,8 +183,7 @@ struct declare_view_functor_type
         template <typename urng_t, size_t... Is>
         auto explode(urng_t && urange, std::index_sequence<Is...> const &)
         {
-            using parent_type = declare_view_functor_type<view_type, arg_types...>;
-            return parent_type{}(std::forward<urng_t>(urange), std::forward<arg_types>(std::get<Is>(_arguments))...);
+            return declare_view_functor_type{}(std::forward<urng_t>(urange), std::forward<arg_types>(std::get<Is>(_arguments))...);
         }
     };
 
