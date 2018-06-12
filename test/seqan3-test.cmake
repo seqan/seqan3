@@ -192,17 +192,21 @@ macro (seqan3_require_test)
     unset(gtest_path)
 endmacro ()
 
-macro (add_subdirectories)
+macro (add_subdirectories_of directory)
     file (GLOB ENTRIES
-          RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-          ${CMAKE_CURRENT_SOURCE_DIR}/[!.]*)
+          RELATIVE ${directory}
+      ${directory}/[!.]*)
 
     foreach (ENTRY ${ENTRIES})
-        if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY})
-            if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${ENTRY}/CMakeLists.txt)
-                add_subdirectory (${ENTRY})
+        if (IS_DIRECTORY ${directory}/${ENTRY})
+            if (EXISTS ${directory}/${ENTRY}/CMakeLists.txt)
+                add_subdirectory (${directory}/${ENTRY} ${CMAKE_CURRENT_BINARY_DIR}/${ENTRY})
             endif ()
         endif ()
     endforeach ()
     unset (ENTRIES)
+endmacro ()
+
+macro (add_subdirectories)
+    add_subdirectories_of(${CMAKE_CURRENT_SOURCE_DIR})
 endmacro ()

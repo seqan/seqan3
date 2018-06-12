@@ -15,7 +15,7 @@ linux-gcc-7: &linux-gcc-7
   addons:
     apt:
       sources: ['ubuntu-toolchain-r-test']
-      packages: ['g++-7']
+      packages: ['g++-7', 'valgrind']
   before_install:
     - export CC="gcc-7" CXX="g++-7"
 
@@ -42,6 +42,10 @@ matrix:
     env:
       - BUILD=header
       - BUILD_TYPE=Release
+  - << : *linux-gcc-7
+    env:
+      - BUILD=memory
+      - BUILD_TYPE=Debug
 
 install:
   - ccache --version
@@ -53,7 +57,7 @@ before_script:
   - cd ../seqan3-build
   - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
   - |
-    if test unit = "${BUILD}" || test header = "${BUILD}"; then
+    if test unit = "${BUILD}" || test header = "${BUILD}" || test memory = "${BUILD}"; then
       make gtest_project
     fi
   - |
@@ -63,7 +67,12 @@ before_script:
 
 script:
   - make -k
-  - ctest . --output-on-failure
+  - |
+    if test memory == "${BUILD}"; then
+      ctest . --test-action memcheck --output-on-failure
+    else
+      ctest . --output-on-failure
+    fi
 
 after_script:
   - ccache -s
