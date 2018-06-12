@@ -94,7 +94,7 @@ struct view_base : public ranges::view_base
  * }
  * ```
  */
-template <template <typename> class view_type>
+template <template <typename, typename...> class view_type>
 struct declare_view_functor_type
 {
     /*!\brief Enables function style usage of the view, forwards to the constructor of `view_type`.
@@ -320,10 +320,10 @@ struct declare_view_functor_type
      */
     template <typename urng_t>
     friend auto operator|(urng_t && urange,
-                          [[maybe_unused]] declare_view_functor_type const & fn)
+                          declare_view_functor_type const & fn)
         requires requires { view_type{std::declval<urng_t>()}; }
     {
-        return view_type{std::forward<urng_t>(urange)};
+        return fn(std::forward<urng_t>(urange));
     }
 };
 
