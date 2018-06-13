@@ -380,11 +380,13 @@ else ()
     seqan3_config_error ("The range-v3 library is required, but wasn't found. Get it from https://github.com/ericniebler/range-v3/")
 endif ()
 
-# TODO: Doesn't have a version file, yet
-# check_include_file_cxx (sdsl-lite/version.hpp _SEQAN3_HAVE_SDSL)
-# if (NOT _SEQAN3_HAVE_SDSL)
-#     seqan3_config_error ("The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
-# endif ()
+check_include_file_cxx (sdsl/version.hpp _SEQAN3_HAVE_SDSL)
+
+if (_SEQAN3_HAVE_SDSL)
+    seqan3_config_print ("Required dependency:        SDSL found.")
+else ()
+    seqan3_config_error ("The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
+endif ()
 
 # ----------------------------------------------------------------------------
 # Cereal dependency is optional, but may set as required
