@@ -44,6 +44,8 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
+#include <sdsl/int_vector.hpp>
+
 using namespace seqan3;
 
 // if detail::sequence_concept_modified_by_const_iterator_bug<> is false
@@ -258,6 +260,11 @@ TEST(container_concept, reservable_sequence_concept)
 
     EXPECT_TRUE((seqan3::reservable_sequence_concept<concatenated_sequences_string_t>));
     EXPECT_TRUE((seqan3::reservable_sequence_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+
+    EXPECT_TRUE((seqan3::reservable_sequence_concept<sdsl::bit_vector>));
+    EXPECT_TRUE((seqan3::reservable_sequence_concept<sdsl::int_vector<>>));
+    EXPECT_TRUE((seqan3::reservable_sequence_concept<sdsl::int_vector<13>>));
+    EXPECT_TRUE((seqan3::reservable_sequence_concept<sdsl::int_vector<64>>));
 }
 
 /* Check the SDSL containers */
