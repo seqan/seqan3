@@ -1,0 +1,1 @@
+seqan3_test(aligned_allocator_test.cpp)
