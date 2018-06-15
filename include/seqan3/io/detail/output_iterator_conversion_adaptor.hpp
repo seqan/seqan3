@@ -169,13 +169,13 @@ public:
  */
 /*!\brief     A convenience function template that constructs a seqan3::detail::output_iterator_conversion_adaptor for
  *            the container `c` with the type deduced from the type of the argument.
- * \tparam    container_type Any type that satisfies the seqan3::sequence_concept.
+ * \tparam    container_type Any type that satisfies the seqan3::sequence_container_concept.
  * \param[in] c The instance to construct a push back iterator for.
  * \returns   seqan3::detail::output_iterator_conversion_adaptor over the output container.
  * \ingroup   io
  * \relates   output_iterator_conversion_adaptor
  */
-template <sequence_concept container_type>
+template <sequence_container_concept container_type>
 //!\cond
     requires !std::is_const_v<container_type>
 //!\endcond
