@@ -42,6 +42,8 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::view
 {
@@ -98,12 +100,14 @@ namespace seqan3::view
  * \hideinitializer
  */
 
-//TODO enforce nucleotide_concept via c++2a and/or terse concept syntax
-auto const complement = ranges::view::transform([] (auto const & in)
+inline auto const complement = deep{ranges::view::transform([] (auto && in)
 {
+    static_assert(nucleotide_concept<std::remove_const_t<decltype(in)>>,
+                  "The innermost value type must satisfy the nucleotide_concept.");
+    // call element-wise complement from the nucleotide_concept
     using seqan3::complement;
     return complement(in);
-});
+})};
 
 //!\}
 
