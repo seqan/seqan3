@@ -42,6 +42,9 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::view
 {
@@ -90,10 +93,13 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <alphabet_concept alphabet_type>
-auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type> const in) -> alphabet_type
+inline auto const char_to = deep{ranges::view::transform([] (auto && in)
 {
+    static_assert(std::is_same_v<remove_cvref_t<decltype(in)>, remove_cvref_t<underlying_char_t<alphabet_type>>>,
+                    "The innermost value type must be the underlying char type of alphabet_type.");
+    // call element-wise assign_char from the alphabet_concept
     return assign_char(alphabet_type{}, in);
-});
+})};
 
 //!\}
 

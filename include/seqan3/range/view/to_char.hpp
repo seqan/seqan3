@@ -42,6 +42,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::view
 {
@@ -95,7 +96,10 @@ namespace seqan3::view
  * ```
  * \hideinitializer
  */
-auto const to_char = ranges::view::transform([] (alphabet_concept const in) { return seqan3::to_char(in); });
+inline auto const to_char = deep{ranges::view::transform([] (alphabet_concept const in)
+{
+    return seqan3::to_char(in);
+})};
 
 //!\}
 

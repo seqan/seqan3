@@ -311,6 +311,10 @@ protected:
 
 namespace seqan3::view
 {
+/*!\name General purpose views
+ * \{
+ */
+
 /*!\brief               A view adapter that decays most of the range properties and adds single pass behavior.
  * \tparam urng_t       The type of the range being processed. See below for requirements.
  * \param[in] urange    The range being processed.
@@ -359,7 +363,9 @@ namespace seqan3::view
  * std::cout << *++v.begin() << std::endl;  // prints 'l'
  * std::cout << *++v.begin() << std::endl;  // prints 'o'
  * ```
+ * \hideinitializer
  */
-detail::declare_view_functor_type<detail::single_pass_input_view> const single_pass_input;
+inline constexpr auto single_pass_input = detail::generic_pipable_view_adaptor<detail::single_pass_input_view>{};
 
+//!\}
 } // namespace seqan3::view

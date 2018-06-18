@@ -43,6 +43,7 @@
 
 #include <seqan3/alphabet/quality/quality_composition.hpp>
 #include <seqan3/range/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::detail
 {
@@ -242,9 +243,10 @@ namespace seqan3::view
  * std::string v4 = view::trim(vec, 20u) | view::to_char;
  * EXPECT_EQ("AGGA", v4);
  * ```
+ * \hideinitializer
  */
 
-seqan3::detail::trim_fn const trim;
+inline constexpr auto trim = deep{seqan3::detail::trim_fn{}};
 
 //!\}
 

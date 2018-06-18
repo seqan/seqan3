@@ -42,6 +42,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::view
 {
@@ -92,10 +93,11 @@ template <typename alphabet_type>
 //!\cond
     requires alphabet_concept<alphabet_type>
 //!\endcond
-auto const rank_to = ranges::view::transform([] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
+inline auto const rank_to = deep{ranges::view::transform(
+[] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
 {
     return assign_rank(alphabet_type{}, in);
-});
+})};
 
 //!\}
 
