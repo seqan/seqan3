@@ -36,6 +36,7 @@
 
 #include <gtest/gtest.h>
 
+#include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/reverse.hpp>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
@@ -60,6 +61,17 @@ TEST(view_complement, basic)
     // combinability
     dna5_vector v3 = foo | view::complement | ranges::view::reverse;
     EXPECT_EQ(v3, "TACGT"_dna5);
+}
+
+TEST(view_complement, deep_view)
+{
+    std::vector<dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5};
+
+    auto v = foo | view::complement;
+
+    ASSERT_EQ(ranges::size(v), 2);
+    EXPECT_TRUE((ranges::equal(v[0], "TGCAT"_dna5)));
+    EXPECT_TRUE((ranges::equal(v[1], "ACGTA"_dna5)));
 }
 
 TEST(view_complement, concepts)
