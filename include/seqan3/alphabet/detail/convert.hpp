@@ -41,9 +41,11 @@
 
 #pragma once
 
+#include <algorithm>
 #include <array>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/quality/concept.hpp>
 
 // ============================================================================
 // conversion to/from char/rank types
@@ -69,6 +71,28 @@ constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_char_represen
         std::array<out_t, alphabet_size_v<in_t>> ret{};
         for (typename in_t::rank_type i = 0; i < alphabet_size_v<in_t>; ++i)
             assign_char(ret[i], to_char(assign_rank(in_t{}, i)));
+        return ret;
+    }()
+};
+
+/*!\brief A precomputed conversion table for two alphabets based on their phred representations.
+ * \ingroup alphabet
+ * \tparam out_t The type of the output, must satisfy seqan3::quality_concept.
+ * \tparam in_t The type of the input, must satisfy seqan3::quality_concept.
+ * \hideinitializer
+ */
+template <typename out_t, typename in_t>
+//!\cond
+    requires quality_concept<out_t> && quality_concept<in_t>
+//!\endcond
+constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_phred_representation
+{
+    [] () constexpr
+    {
+        std::array<out_t, alphabet_size_v<in_t>> ret{};
+        typename in_t::rank_type table_size = std::min<typename in_t::rank_type>(in_t::value_size, out_t::value_size);
+        for (typename in_t::rank_type i = 0; i < table_size; ++i)
+            assign_phred(ret[i], std::max<typename in_t::phred_type>(0, to_phred(assign_rank(in_t{}, i))));
         return ret;
     }()
 };

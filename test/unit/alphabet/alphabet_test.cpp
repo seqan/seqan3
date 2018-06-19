@@ -65,10 +65,10 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
-                                        gapped<illumina18>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
-                                        illumina18, dna4q,
+                                        dna4q,
+                                        phred42, phred63, phred68legacy,
                                         dot_bracket3, dssp9, wuss<>, wuss<65>,
                                         structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                         structured_aa<aa27, dssp9>>;
@@ -181,9 +181,19 @@ TYPED_TEST(alphabet, swap)
 TYPED_TEST(alphabet, assign_char)
 {
     using char_t = underlying_char_t<TypeParam>;
+    char_t i = std::numeric_limits<char_t>::min();
+    char_t j = std::numeric_limits<char_t>::max();
+    if (std::is_same_v<TypeParam, phred42> || std::is_same_v<TypeParam, phred63> || std::is_same_v<TypeParam, phred68legacy>)
+    {
+        // specification details documented in alphabet/quality/all.hpp
+        i = (!std::is_same_v<TypeParam, phred68legacy>) ? '!' : ';';
+        j = (std::is_same_v<TypeParam, phred42>) ? 'J' : ((std::is_same_v<TypeParam, phred63>) ? '_' : '~');
+    }
+
     TypeParam t0;
-    for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
+    for (; i < j; ++i){
         assign_char(t0, i);
+    }
 
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(t0, 0)), TypeParam &>));
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{}, 0)), TypeParam &&>));
@@ -195,6 +205,7 @@ TYPED_TEST(alphabet, to_char)
     EXPECT_TRUE((std::is_same_v<decltype(to_char(t0)), underlying_char_t<TypeParam>>));
 
     // more elaborate tests are done in specific alphabets
+
 }
 
 TYPED_TEST(alphabet, comparison_operators)
@@ -227,17 +238,6 @@ TYPED_TEST(alphabet, comparison_operators)
 TYPED_TEST(alphabet, concept)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
-    // NOTE: Using intermediate concept notation with forwarding references cause the concept type
-    // to hold a reference.
-    EXPECT_TRUE(alphabet_concept<TypeParam &>);
-}
-
-TYPED_TEST(alphabet, concept_semi)
-{
-    EXPECT_TRUE(semi_alphabet_concept<TypeParam>);
-    // NOTE: Using intermediate concept notation with forwarding references cause the concept type
-    // to hold a reference.
-    EXPECT_TRUE(semi_alphabet_concept<TypeParam &>);
 }
 
 #if SEQAN3_WITH_CEREAL
@@ -301,7 +301,8 @@ using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5,
                                                   char, char16_t, char32_t,
                                                   uint8_t, uint16_t, uint32_t,
                                                   /*gap, gapped<nucl16>, */
-                                                  illumina18, dna4q,
+                                                  dna4q,
+                                                  phred42, phred63, phred68legacy,
                                                   dot_bracket3, dssp9, wuss<>, wuss<65>,
                                                   structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                                   structured_aa<aa27, dssp9>>;

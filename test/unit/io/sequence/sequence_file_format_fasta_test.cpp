@@ -275,7 +275,7 @@ TEST_F(read, seq_qual)
 
     std::stringstream istream{input};
 
-    std::vector<quality_composition<dna5, illumina18>> seq_qual;
+    std::vector<qualified<dna5, phred42>> seq_qual;
 
     for (unsigned i = 0; i < 3; ++i)
     {

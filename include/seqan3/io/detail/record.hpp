@@ -79,12 +79,12 @@ concept bool fields_concept = is_value_specialisation_of_v<t, fields>;
  * ### Example
  *
  * ```cpp
- * using types         = type_list<std::string, dna4_vector, std::vector<illumina18>>;
+ * using types         = type_list<std::string, dna4_vector, std::vector<phred42>>;
  * using types_as_ids  = fields<field::ID,      field::SEQ,  field::QUAL>;
  * using selected_ids  = fields<field::QUAL, field::ID>;
  *
  * using selected_types = detail::select_types_with_ids_t<types, types_as_ids, selected_ids>;
- * // resolves to type_list<std::vector<illumina18>, std::string>>
+ * // resolves to type_list<std::vector<phred42>, std::string>>
  * ```
  */
 template <typename field_types,
