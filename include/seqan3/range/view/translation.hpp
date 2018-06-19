@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Provides seqan3::view::translate, seqan3::view::translate_single and seqan3::view::translate_frames.
+ * \brief Provides seqan3::view::translate and seqan3::view::translate_single.
  */
 
 #pragma once
@@ -45,292 +45,684 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/translation.hpp>
-#include <seqan3/alphabet/aminoacid/translation_details.hpp>
+#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/range/concept.hpp>
-#include <seqan3/range/view/complement.hpp>
-
-#include <range/v3/view/chunk.hpp>
-#include <range/v3/view/concat.hpp>
-#include <range/v3/view/drop.hpp>
-#include <range/v3/view/reverse.hpp>
-#include <range/v3/view/single.hpp>
-#include <range/v3/view/take_while.hpp>
-#include <range/v3/view/transform.hpp>
+#include <seqan3/range/container/concept.hpp>
+#include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/view/detail.hpp>
+#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/range/detail/random_access_iterator.hpp>
 
 namespace seqan3
 {
-/*!\brief Specialization values for translation frames.
- * \details The numeric values of the enums correspond to the number of frames that are represented.
- */
-enum class translation_frames
+//!\brief Specialisation values for single and multiple translation frames.
+enum class translation_frames : uint8_t
 {
-    SINGLE_FRAME             = 1,
-    WITH_REVERSE_COMPLEMENT  = 2,
-    WITH_FRAME_SHIFTS        = 3,
-    SIX_FRAME                = 6
+    FWD_FRAME_0 = 1,                                    //!< The first forward frame starting at position 0
+    FWD_FRAME_1 = 1 << 1,                               //!< The second forward frame starting at position 1
+    FWD_FRAME_2 = 1 << 2,                               //!< The third forward frame starting at position 2
+    REV_FRAME_0 = 1 << 3,                               //!< The first reverse frame starting at position 0
+    REV_FRAME_1 = 1 << 4,                               //!< The second reverse frame starting at position 1
+    REV_FRAME_2 = 1 << 5,                               //!< The third reverse frame starting at position 2
+    FWD_REV_0 = FWD_FRAME_0 | REV_FRAME_0,              //!< The first forward and first reverse frame
+    FWD_REV_1 = FWD_FRAME_1 | REV_FRAME_1,              //!< The second forward and second reverse frame
+    FWD_REV_2 = FWD_FRAME_2 | REV_FRAME_2,              //!< The first third and third reverse frame
+    FWD = FWD_FRAME_0 | FWD_FRAME_1 | FWD_FRAME_2,      //!< All forward frames
+    REV = REV_FRAME_0 | REV_FRAME_1 | REV_FRAME_2,      //!< All reverse frames
+    SIX_FRAME = FWD | REV                               //!< All frames
 };
 
+//!\brief Enable bitwise operators for enum translation_frames.
+template<>
+constexpr bool add_enum_bitwise_operators<translation_frames> = true;
 }
 
 namespace seqan3::detail
 {
-/*!\brief Lambda for translation of one nucleotide triplet into a single aminoacid.
- * \details Used by view::translate_single.
- */
-auto translate = [] (auto range)
-{
-    return translate_triplet(range);
-};
 
-/*!\brief The underlying type of seqan3::view::translate_single.
+/*!\brief The return type of seqan3::view::translate_single.
+ * \implements seqan3::view_concept
+ * \implements seqan3::sized_range_concept
+ * \implements seqan3::random_access_range_concept
  * \ingroup view
  */
-struct translate_single_fn
+template <typename urng_t>
+//!\cond
+    requires sized_range_concept<urng_t> &&
+             random_access_range_concept<urng_t> &&
+             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+class view_translate_single
 {
-    /*!\brief Single frame translation from nucleotide to aminoacid.
-     * \tparam irng_t The type of the range being processed.
-     * \param irange The range being processed.
-     */
-    template <typename irng_t>
-    //!\cond
-        requires input_range_concept<irng_t> &&
-                 nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<irng_t>>>>
-    //!\endcond
-    auto operator()(irng_t && irange) const
+private:
+    //!\brief The data members of view_translate_single.
+    struct data_members_t
     {
-        if constexpr (sized_range_concept<irng_t>)
+        //!\brief The input range (of ranges).
+        urng_t urange;
+        //!\brief The frame that should be used for translation.
+        translation_frames const tf;
+    };
+    //!\brief Storage of data members.
+    std::shared_ptr<data_members_t> data_members;
+
+    //!\brief Error thrown if tried to be used with multiple frames.
+    static constexpr constexpr_string multiple_frame_error = "Error: Invalid type of frame. Choose one out of FWD_FRAME_0, "
+                                                "REV_FRAME_0, FWD_FRAME_1, REV_FRAME_1, FWD_FRAME_2 and REV_FRAME_2.";
+public:
+    /*!\name Member types
+     * \{
+     */
+    //!\brief The reference_type.
+    using reference         = aa27;
+    //!\brief The const_reference type.
+    using const_reference   = aa27;
+    //!\brief The value_type (which equals the reference_type with any references removed).
+    using value_type        = aa27;
+    //!\brief The size_type.
+    using size_type         = size_type_t<urng_t>;
+    //!\brief A signed integer type, usually std::ptrdiff_t.
+    using difference_type   = difference_type_t<urng_t>;
+    //!\brief The iterator type of this view (a random access iterator).
+    using iterator          = detail::random_access_iterator<view_translate_single const>;
+    //!\brief The const iterator type of this view (same as iterator, because it's a view).
+    using const_iterator    = iterator;
+    //!\}
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    view_translate_single() = default;
+    constexpr view_translate_single(view_translate_single const & rhs) = default;
+    constexpr view_translate_single(view_translate_single && rhs) = default;
+    constexpr view_translate_single & operator=(view_translate_single const & rhs) = default;
+    constexpr view_translate_single & operator=(view_translate_single && rhs) = default;
+    ~view_translate_single() = default;
+
+    /*!\brief Construct from another range.
+     * \param[in] urange The underlying range.
+     * \param[in] tf The frame that should be used for translation.
+     *
+     * ### Exceptions
+     *
+     * Throws if multiple frames are given as tf input argument.
+     */
+    view_translate_single(urng_t && urange, translation_frames const tf = translation_frames::FWD_FRAME_0)
+        : data_members{new data_members_t{std::forward<urng_t>(urange), tf}}
+    {
+        if (__builtin_popcount(static_cast<uint8_t>(tf)) > 1)
         {
-            return irange | ranges::view::take_exactly(ranges::size(irange) / 3 * 3)
-                          | ranges::view::chunk(3)
-                          | ranges::view::transform(translate);
+            throw std::invalid_argument(multiple_frame_error.c_str());
         }
-        else
+    }
+    //!\}
+
+    /*!\name Iterators
+     * \{
+     */
+    /*!\brief Returns an iterator to the first element of the container.
+     * \returns Iterator to the first element.
+     *
+     * If the container is empty, the returned iterator will be equal to end().
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    iterator begin() const noexcept
+    {
+        return {*this, 0};
+    }
+
+    //!\copydoc begin()
+    iterator cbegin() const noexcept
+    {
+        return begin();
+    }
+
+    /*!\brief Returns an iterator to the element following the last element of the container.
+     * \returns Iterator to the first element.
+     *
+     * This element acts as a placeholder; attempting to dereference it results in undefined behaviour.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    iterator end() const noexcept
+    {
+        return {*this, size()};
+    }
+
+    //!\copydoc end()
+    iterator cend() const noexcept
+    {
+        return end();
+    }
+    //!\}
+
+     /*!\brief Returns the number of elements in the view.
+     * \returns The number of elements in the container.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * Strong exception guarantee (never modifies data).
+     */
+    size_type size() const
+    {
+        switch (data_members->tf)
         {
-            return irange  | ranges::view::chunk(3)
-                           | ranges::view::take_while([] (auto chnk) { return ranges::size(chnk) == 3; })
-                           | ranges::view::transform(translate);
+            case translation_frames::FWD_FRAME_0:
+                [[fallthrough]];
+            case translation_frames::REV_FRAME_0:
+                return ranges::size(data_members->urange) / 3;
+                break;
+            case translation_frames::FWD_FRAME_1:
+                [[fallthrough]];
+            case translation_frames::REV_FRAME_1:
+                return (ranges::size(data_members->urange) - 1) / 3;
+                break;
+            case translation_frames::FWD_FRAME_2:
+                [[fallthrough]];
+            case translation_frames::REV_FRAME_2:
+                return (ranges::size(data_members->urange) - 2) / 3;
+                break;
+            default:
+                throw std::invalid_argument(multiple_frame_error.c_str());
+                break;
         }
     }
 
-    /*!\brief Pipe operator that enables view-typical use of pipe notation.
-    * \tparam irng_t The type of the range being processed.
-    * \param irange The range being processed as left argument of the pipe.
-    * \param translate_single_fn_v The result of the single-argument operator().
-    */
-    template <typename irng_t>
-    friend auto operator|(irng_t && irange, seqan3::detail::translate_single_fn const & translate_single_fn_v)
+    /*!\name Element access
+     * \{
+     */
+    /*!\brief Return the n-th element.
+     * \param[in] n The element to retrieve.
+     *
+     * Accessing an element behind the last causes undefined behaviour. In debug mode an assertion checks the size of
+     * the container.
+     *
+     * ### Exceptions
+     *
+     * Strong exception guarantee (never modifies data).
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
+    reference operator[](size_type const n) const
     {
-        return translate_single_fn_v(std::forward<irng_t>(irange));
+        assert(n < size());
+        switch (data_members->tf)
+        {
+            case translation_frames::FWD_FRAME_0:
+                return translate_triplet((data_members->urange)[n * 3], (data_members->urange)[n * 3 + 1], (data_members->urange)[n * 3 + 2]);
+                break;
+            case translation_frames::REV_FRAME_0:
+                return translate_triplet(complement((data_members->urange)[(data_members->urange).size() - n * 3 - 1]), complement((data_members->urange)[(data_members->urange).size() - n * 3 - 2]), complement((data_members->urange)[(data_members->urange).size() - n * 3 - 3]));
+                break;
+            case translation_frames::FWD_FRAME_1:
+                return translate_triplet((data_members->urange)[n * 3 + 1], (data_members->urange)[n * 3 + 2], (data_members->urange)[n * 3 + 3]);
+                break;
+            case translation_frames::REV_FRAME_1:
+                return translate_triplet(complement((data_members->urange)[(data_members->urange).size() - n * 3 - 2]), complement((data_members->urange)[(data_members->urange).size() - n * 3 - 3]), complement((data_members->urange)[(data_members->urange).size() - n * 3 - 4]));
+                break;
+            case translation_frames::FWD_FRAME_2:
+                return translate_triplet((data_members->urange)[n * 3 + 2], (data_members->urange)[n * 3 + 3], (data_members->urange)[n * 3 + 4]);
+                break;
+            case translation_frames::REV_FRAME_2:
+                return translate_triplet(complement((data_members->urange)[(data_members->urange).size() - n * 3 - 3]), complement((data_members->urange)[(data_members->urange).size() - n * 3 - 4]), complement((data_members->urange)[(data_members->urange).size() - n * 3 - 5]));
+                break;
+            default:
+                throw std::invalid_argument(multiple_frame_error.c_str());
+                break;
+        }
+    }
+    //!\}
+
+    //!\brief Implicit conversion to container types.
+    template <random_access_sequence_concept container_type>
+    explicit operator container_type()
+    //!\cond
+        requires std::is_same_v<aa27, value_type_t<container_type>>
+    //!\endcond
+    {
+        container_type ret;
+        ret.resize(size());
+        std::copy(cbegin(), cend(), ret.begin());
+        return ret;
     }
 };
+
+//!\brief Class template argument deduction for view_translate_single.
+template <typename urng_t>
+//!\cond
+    requires sized_range_concept<urng_t> &&
+             random_access_range_concept<urng_t> &&
+             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+view_translate_single(urng_t &&, translation_frames const) -> view_translate_single<urng_t>;
+
+//!\brief Class template argument deduction for view_translate_single with default translation_frames.
+template <typename urng_t>
+//!\cond
+    requires sized_range_concept<urng_t> &&
+             random_access_range_concept<urng_t> &&
+             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+view_translate_single(urng_t &&) -> view_translate_single<urng_t>;
+
+
+//!\brief Enable view-typical use with pipe operator.
+using translate_single_fn = declare_view_functor_type<view_translate_single>;
 
 } // namespace seqan3::detail
 
 namespace seqan3::view
 {
-/*!\brief A view performs single frame translation of nucleotide into aminoacid alphabet.
- * \tparam irng_t The type of the range being processed.
- * \param irange The range being processed.
- * \returns A range containing aminoacid sequence. See below for the properties of the returned range.
+
+/*!\name Alphabet related views
+ * \{
+ */
+
+/*!\brief A view that translates nucleotide into aminoacid alphabet for one of the six frames.
+ * \tparam urng_t The type of the range being processed.
+ * \param[in] urange The range being processed.
+ * \param[in] tf A value of seqan3::tanslation_frames that indicates the desired frames.
+ * \returns A range containing frames with aminoacid sequence. See below for the properties of the returned range.
  * \ingroup view
  *
  * \details
  *
- * This view can be used to translate nucleotide sequences into single forward aminoacid sequences.
-
- * \par View properties
+ * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
  *
- * |                     | `irng_t` (range input type)           | `rrng_t` (range return type)                              |
- * |---------------------|---------------------------------------|-----------------------------------------------------------|
- * | range               | seqan3::input_range_concept           | seqan3::view_concept + all range concepts met by `irng_t` |
- * | `range_reference_t` | seqan3::nucleotide_concept            |                                                           |
+ * ### View properties
  *
- * * `irng_t` is the type of the range modified by this view (input).
+ * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
+ * | seqan3::forward_range_concept       | *required*                            | *preserved*                                        |
+ * | seqan3::bidirectional_range_concept | *required*                            | *preserved*                                        |
+ * | seqan3::random_access_range_concept | *required*                            | *preserved*                                        |
+ * |                                     |                                       |                                                    |
+ * | seqan3::view_concept                |                                       | *guaranteed*                                       |
+ * | seqan3::sized_range_concept         | *required*                            | *preserved*                                        |
+ * | seqan3::bounded_range_concept       |                                       | *guaranteed*                                        |
+ * | seqan3::output_range_concept        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept      | *required*                            | *preserved*                                        |
+ * |                                     |                                       |                                                    |
+ * | seqan3::reference_t                 | seqan3::nucleotide_concept            | seqan3::aa27                                       |
+ *
+ * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
  * * for more details, see \ref view.
  *
- * \par Example
+ * ### Example
  *
  * Operating on a range of seqan3::dna5:
  * ```cpp
  * dna5_vector vec{"ACGTACGTACGTA"_dna5};
  *
- * // single frame translation
- * auto v1 = vec | view::translate_single;                     // == [T,Y,V,R]
+ * // Default (first forward frame)
+ * auto v1 = vec | view::translate_single;                                                           // == [T,Y,V,R]
+ *
+ * // Default (first forward frame)
+ * auto v2 = vec | view::translate_single();                                                         // == [T,Y,V,R]
+ *
+ * // First forward frame
+ * auto v3 = vec | view::translate_single(translation_frames::FWD_FRAME_0);                          // == [T,Y,V,R]
+ *
+ * // First reverse frame
+ * auto v4 = vec | view::translate_single(translation_frames::REV_FRAME_0);                          // == [Y,V,R,T]
+ *
+ * // Second forward frame
+ * auto v5 = vec | view::translate_single(translation_frames::FWD_FRAME_1);                          // == [R,T,Y,V]
+ *
+ * // Second reverse frame
+ * auto v6 = vec | view::translate_single(translation_frames::REV_FRAME_1);                          // == [T,Y,V,R]
+ *
+ * // Third forward frame
+ * auto v7 = vec | view::translate_single(translation_frames::FWD_FRAME_2);                            // == [V,R,T]
+ *
+ * // Third reverse frame
+ * auto v8 = vec | view::translate_single(translation_frames::REV_FRAME_w);                            // == [R,T,Y]
  *
  * // function syntax
- * auto v2 = view::translate_single(vec);                      // == [T,Y,V,R]
+ * auto v9 = view::translate_single(vec, translation_frames::FWD_FRAME_0);                           // == [T,Y,V,R]
  *
  * // combinability
- * auto v3 = vec | view::complement | view::translate_single;  // == [C,M,H,A]
+ * auto v10 = vec | view::complement | view::translate_single(translation_frames::REV_FRAME_0);      // == [M,H,A,C]
+ *
+ * // combinability with default parameter
+ * auto v11 = vec | view::complement | view::translate_single;                                       // == [C,M,H,A]
+ *
+ * // combinability with default parameter
+ * auto v12 = vec | view::complement | view::translate_single();                                     // == [C,M,H,A]
+ *
  * ```
  */
+inline constexpr seqan3::detail::translate_single_fn translate_single;
 
-seqan3::detail::translate_single_fn const translate_single;
+//!\}
 
 } // namespace seqan3::view
 
 namespace seqan3::detail
 {
-/*!\brief The underlying type of seqan3::view::translate_frames.
+/*!\brief The return type of seqan3::view::translate.
+ * \implements seqan3::view_concept
+ * \implements seqan3::sized_range_concept
+ * \implements seqan3::random_access_range_concept
+ * \tparam urng_t The type of the range being translated.
+ * \param[in] tf Translation frames to be used.
  * \ingroup view
  */
-struct translate_frames_fn
+template <typename urng_t>
+//!\cond
+    requires sized_range_concept<urng_t> &&
+             random_access_range_concept<urng_t> &&
+             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+class view_translate
 {
-    /*!\brief Single, reverse, forward-frame or six-frame translation from nucleotide to aminoacid.
-     * \tparam irng_t The type of the range being processed.
-     * \param irange The range being processed.
-     * \param tf Translation frames (translation_frames::SINGLE_FRAME, translation_frames::WITH_REVERSE_COMPLEMENT,
-     * translation_frames::WITH_FRAME_SHIFTS, translation_frames::SIX_FRAME).
+private:
+    //!\brief The data members of view_translate_single.
+    struct data_members_t
+    {
+        //!\brief The input range (of ranges).
+        urng_t urange;
+        //!\brief The frames that should be used for translation.
+        translation_frames const tf;
+        //!\brief The selected frames corresponding to the frames required.
+        std::vector<translation_frames> selected_frames{};
+    };
+    //!\brief Storage of data members.
+    std::shared_ptr<data_members_t> data_members;
+
+public:
+    /*!\name Member types
+     * \{
      */
-    template <typename irng_t>
+    //!\brief The reference_type.
+    using reference         = view_translate_single<urng_t &>;
+    //!\brief The const_reference type.
+    using const_reference   = reference;
+    //!\brief The value_type (which equals the reference_type with any references removed).
+    using value_type        = reference;
+    //!\brief The size_type.
+    using size_type         = size_type_t<urng_t>;
+    //!\brief A signed integer type, usually std::ptrdiff_t.
+    using difference_type   = difference_type_t<urng_t>;
+    //!\brief The iterator type of this view (a random access iterator).
+    using iterator          = detail::random_access_iterator<view_translate const>;
+    //!\brief The const iterator type of this view (same as iterator, because it's a view).
+    using const_iterator    = iterator;
+    //!\}
+
+protected:
+    /*!\name Compatibility
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible_concept (which doesn't work for types during their definition).
+     * \{
+     */
     //!\cond
-        requires forward_range_concept<irng_t> &&
-                 nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<irng_t>>>>
+    // unfortunately we cannot specialise the variable template so we have to add an auxiliary here
+    template <typename t>
+        requires (dimension_v<t> == dimension_v<value_type> + 1) &&
+                 std::is_same_v<remove_cvref_t<innermost_value_type_t<value_type>>,
+                                remove_cvref_t<innermost_value_type_t<t>>>
+    static constexpr bool is_compatible_this_aux = true;
     //!\endcond
-    auto operator()(irng_t && irange, translation_frames const & tf) const
+    //!\}
+
+public:
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    view_translate() = default;
+    constexpr view_translate(view_translate const & rhs) = default;
+    constexpr view_translate(view_translate && rhs) = default;
+    constexpr view_translate & operator=(view_translate const & rhs) = default;
+    constexpr view_translate & operator=(view_translate && rhs) = default;
+    ~view_translate() = default;
+
+    /*!\brief Construct from another range.
+     * \param[in] urange The underlying range (of ranges).
+     * \param[in] tf The frames that should be used for translation.
+     */
+    view_translate(urng_t && urange, translation_frames const tf = translation_frames::SIX_FRAME)
+        : data_members{new data_members_t{std::forward<urng_t>(urange), tf}}
     {
-        std::vector<ranges::any_view<aa27, ranges::category::random_access> > frames;
-        frames.resize(static_cast<uint8_t>(tf));
-
-        switch (tf)
-        {
-            case translation_frames::WITH_REVERSE_COMPLEMENT:
-                frames[1] = irange | ranges::view::reverse | view::complement| view::translate_single;
-                [[fallthrough]];
-            case translation_frames::SINGLE_FRAME:
-                frames[0] = irange | view::translate_single;
-                break;
-            case translation_frames::SIX_FRAME:
-                for (unsigned i : { 0, 1, 2 })
-                    frames[i + 3] = irange | ranges::view::reverse
-                                           | view::complement
-                                           | ranges::view::drop(i)
-                                           | view::translate_single;
-                [[fallthrough]];
-            case translation_frames::WITH_FRAME_SHIFTS:
-                for (unsigned i : { 0, 1, 2 })
-                    frames[i] = irange | ranges::view::drop(i)
-                                       | view::translate_single;
-                break;
-            default:
-                throw std::invalid_argument("Invalid number of frames. Choose from SINGLE_FRAME, WITH_REVERSE_COMPLEMENT, WITH_FRAME_SHIFTS, SIX_FRAME.");
-                break;
-        }
-
-        ranges::any_view<ranges::any_view<aa27, ranges::category::random_access> ,ranges::category::random_access> combined;
-        switch (tf)
-        {
-            case translation_frames::SINGLE_FRAME:
-                combined = ranges::view::single(frames[0]);
-                break;
-            case translation_frames::WITH_REVERSE_COMPLEMENT:
-                combined = ranges::view::concat(ranges::view::single(frames[0]),
-                                                ranges::view::single(frames[1]));
-                break;
-            case translation_frames::WITH_FRAME_SHIFTS:
-                combined = ranges::view::concat(ranges::view::single(frames[0]),
-                                                ranges::view::single(frames[1]),
-                                                ranges::view::single(frames[2]));
-                break;
-            case translation_frames::SIX_FRAME:
-                combined = ranges::view::concat(ranges::view::single(frames[0]),
-                                                ranges::view::single(frames[1]),
-                                                ranges::view::single(frames[2]),
-                                                ranges::view::single(frames[3]),
-                                                ranges::view::single(frames[4]),
-                                                ranges::view::single(frames[5]));
-                break;
-            default:
-                break;
-        }
-        return combined;
+        if ((tf & translation_frames::FWD_FRAME_0) == translation_frames::FWD_FRAME_0)
+            data_members->selected_frames.push_back(translation_frames::FWD_FRAME_0);
+        if ((tf & translation_frames::FWD_FRAME_1) == translation_frames::FWD_FRAME_1)
+            data_members->selected_frames.push_back(translation_frames::FWD_FRAME_1);
+        if ((tf & translation_frames::FWD_FRAME_2) == translation_frames::FWD_FRAME_2)
+            data_members->selected_frames.push_back(translation_frames::FWD_FRAME_2);
+        if ((tf & translation_frames::REV_FRAME_0) == translation_frames::REV_FRAME_0)
+            data_members->selected_frames.push_back(translation_frames::REV_FRAME_0);
+        if ((tf & translation_frames::REV_FRAME_1) == translation_frames::REV_FRAME_1)
+            data_members->selected_frames.push_back(translation_frames::REV_FRAME_1);
+        if ((tf & translation_frames::REV_FRAME_2) == translation_frames::REV_FRAME_2)
+            data_members->selected_frames.push_back(translation_frames::REV_FRAME_2);
     }
+    //!\}
 
-    /*!\brief Range-less interface for use with the pipe notation.
-     * \tparam size_type The type of the input number of frames. Must be an integral type.
-     * \param tf Translation frames (translation_frames::SINGLE_FRAME, translation_frames::WITH_REVERSE_COMPLEMENT,
-     * translation_frames::WITH_FRAME_SHIFTS, translation_frames::SIX_FRAME).
+    /*!\name Iterators
+     * \{
+     */
+    /*!\brief Returns an iterator to the first element of the container.
+     * \returns Iterator to the first element.
      *
-     * \details
-     * Binds to translate_frames_fn and forwards the number of frames.
+     * If the container is empty, the returned iterator will be equal to end().
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
      */
-    auto operator()(translation_frames const tf) const
+    iterator begin() const
     {
-        return std::bind(translate_frames_fn(), std::placeholders::_1, tf);
+        return {*this, 0};
     }
 
-    /*!\brief Pipe operator that enables view-typical use of pipe notation.
-     * \tparam irng_t The type of the range being processed.
-     * \param irange The range being processed as left argument of the pipe.
-     * \param bound_view The result of the single-argument operator() (interface with bound tf parameter).
-     */
-    template <random_access_range_concept irng_t>
-    friend auto operator|(irng_t && irange, decltype(std::bind(translate_frames_fn(),
-                                                               std::placeholders::_1,
-                                                               translation_frames::SIX_FRAME)) const & bound_view)
+    //!\copydoc begin()
+    iterator cbegin() const
     {
-        return bound_view(std::forward<irng_t>(irange));
+        return begin();
+    }
+
+    /*!\brief Returns an iterator to the element following the last element of the container.
+     * \returns Iterator to the first element.
+     *
+     * This element acts as a placeholder; attempting to dereference it results in undefined behaviour.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    iterator end() const
+    {
+        return {*this, size()};
+    }
+
+    //!\copydoc end()
+    iterator cend() const
+    {
+        return end();
+    }
+    //!\}
+
+    /*!\brief Returns the number of elements in the view.
+     * \returns The number of elements in the container.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    size_type size() const noexcept
+    {
+        return (size_type) data_members->selected_frames.size();
+    }
+
+    /*!\name Element access
+     * \{
+     */
+    /*!\brief Return the n-th element.
+     * \param[in] n The element to retrieve.
+     *
+     * Accessing an element behind the last causes undefined behaviour. In debug mode an assertion checks the size of
+     * the container.
+     *
+     * ### Exceptions
+     *
+     * Strong exception guarantee (never modifies data).
+     *
+     * ### Complexity
+     *
+     * Constant.
+     */
+    reference operator[](size_type const n) const
+    {
+        assert(n < size());
+        return data_members->urange | view::translate_single(data_members->selected_frames[n]);
+    }
+    //!\}
+
+    //!\brief Implicit conversion to container types.
+    template <random_access_sequence_concept container_type>
+    explicit operator container_type()
+    //!\cond
+        requires is_compatible_this_aux<container_type>
+    //!\endcond
+    {
+        container_type ret;
+        ret.resize(size());
+        for (size_type i = 0; i < size(); i++)
+            ret[i] = static_cast<value_type_t<container_type>>(operator[](i));
+        return ret;
     }
 };
+
+//!\brief Class template argument deduction for view_translate.
+template <typename urng_t>
+//!\cond
+    requires sized_range_concept<urng_t> &&
+             random_access_range_concept<urng_t> &&
+             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+view_translate(urng_t &&, translation_frames const) -> view_translate<urng_t>;
+
+//!\brief Class template argument deduction for view_translate with default translation_frames.
+template <typename urng_t>
+//!\cond
+    requires sized_range_concept<urng_t> &&
+             random_access_range_concept<urng_t> &&
+             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+view_translate(urng_t &&) -> view_translate<urng_t>;
+
+//!\brief Enable view-typical use with pipe operator.
+using translate_fn = declare_view_functor_type<view_translate>;
 
 } // namespace seqan3::detail
 
 namespace seqan3::view
 {
+
+/*!\name Alphabet related views
+ * \{
+ */
+
 /*!\brief A view that translates nucleotide into aminoacid alphabet with 1, 2, 3 or 6 frames.
- * \tparam irng_t The type of the range being processed.
- * \param irange The range being processed.
- * \param tf Translation frames (translation_frames::SINGLE_FRAME, translation_frames::WITH_REVERSE_COMPLEMENT,
- * translation_frames::WITH_FRAME_SHIFTS, translation_frames::SIX_FRAME).
+ * \tparam urng_t The type of the range being processed.
+ * \param[in] urange The range being processed.
+ * \param[in] tf A value of seqan3::tanslation_frames that indicates the desired frames.
  * \returns A range of ranges containing frames with aminoacid sequence. See below for the properties of the returned range.
  * \ingroup view
  *
  * \details
  *
- * This view can be used to translate nucleotide sequences into aminoacid sequences:
- * translation_frames::SINGLE_FRAME             - forward frame (Note: The output will be a range of ranges. If a single range
- *                                                is wanted or needed, please use view::translate_single)
- * translation_frames::WITH_REVERSE_COMPLEMENT  - forward/ reverse frames
- * translation_frames::WITH_FRAME_SHIFTS        - all forward frames
- * translation_frames::SIX_FRAME                - all forward and reverse frames
+ * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
  *
- * \par View properties
+ * ### View properties
  *
- * |                     | `irng_t` (range input type)           | `rrng_t` (range return type)                                |
- * |---------------------|---------------------------------------|-------------------------------------------------------------|
- * | range               | seqan3::forward_range_concept         | seqan3::view_concept && seqan3::random_access_range_concept |
- * | `range_reference_t` | seqan3::nucleotide_concept            |                                                             |
+ * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
+ * | seqan3::forward_range_concept       | *required*                            | *preserved*                                        |
+ * | seqan3::bidirectional_range_concept | *required*                            | *preserved*                                        |
+ * | seqan3::random_access_range_concept | *required*                            | *preserved*                                        |
+ * |                                     |                                       |                                                    |
+ * | seqan3::view_concept                |                                       | *guaranteed*                                       |
+ * | seqan3::sized_range_concept         | *required*                            | *preserved*                                        |
+ * | seqan3::bounded_range_concept       |                                       | *guaranteed*                                        |
+ * | seqan3::output_range_concept        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept      | *required*                            | *preserved*                                        |
+ * |                                     |                                       |                                                    |
+ * | seqan3::reference_t                 | seqan3::nucleotide_concept            | seqan3::view_concept && seqan3::random_access_range_concept && sized_range_concept |
  *
- * * `irng_t` is the type of the range modified by this view (input).
+ * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
  * * for more details, see \ref view.
  *
- * \par Example
+ * ### Example
  *
  * Operating on a range of seqan3::dna5:
  * ```cpp
  * dna5_vector vec{"ACGTACGTACGTA"_dna5};
  *
+ * // default frame translation
+ * auto v1 = vec | view::translate;                                  // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
+ *
+ * // default frame translation
+ * auto v2 = vec | view::translate();                                // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
+ *
  * // single frame translation
- * auto v1 = vec | view::translate_frames(translation_frames::SINGLE_FRAME);                                              // == [[T,Y,V,R]]
+ * auto v3 = vec | view::translate(translation_frames::FWD_FRAME_0);                                               // == [[T,Y,V,R]]
  *
  * // reverse translation
- * auto v2 = vec | view::translate_frames(translation_frames::WITH_REVERSE_COMPLEMENT);                         // == [[T,Y,V,R],[Y,V,R,T]]
+ * auto v4 = vec | view::translate(translation_frames::FWD_REV_0);                                       // == [[T,Y,V,R],[Y,V,R,T]]
  *
  * // forward frames translation
- * auto v3 = vec | view::translate_frames(translation_frames::WITH_FRAME_SHIFTS);                       // == [[T,Y,V,R],[R,T,Y,V],[V,R,T]]
+ * auto v5 = vec | view::translate(translation_frames::FWD);                                     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T]]
  *
  * // six frame translation
- * auto v4 = vec | view::translate_frames(translation_frames::SIX_FRAME);   // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
+ * auto v6 = vec | view::translate(translation_frames::SIX_FRAME);   // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
 
  * // function syntax
- * auto v5 = view::translate_frames(vec, translation_frames::WITH_REVERSE_COMPLEMENT);                          // == [[T,Y,V,R],[Y,V,R,T]]
+ * auto v7 = view::translate(vec, translation_frames::FWD_REV_0);                                        // == [[T,Y,V,R],[Y,V,R,T]]
  *
  * // combinability
- * auto v6 = vec | view::complement | view::translate_frames(translation_frames::WITH_REVERSE_COMPLEMENT);      // == [[C,M,H,A],[M,H,A,C]]
+ * auto v8 = vec | view::complement | view::translate(translation_frames::FWD_REV_0);                    // == [[C,M,H,A],[M,H,A,C]]
  * ```
  */
-seqan3::detail::translate_frames_fn const translate_frames;
+inline constexpr seqan3::detail::translate_fn translate;
+
+//!\}
 
 } // namespace seqan3::view

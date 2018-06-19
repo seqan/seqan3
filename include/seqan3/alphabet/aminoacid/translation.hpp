@@ -41,29 +41,31 @@
 
 #include <tuple>
 
-#include <range/v3/view/any_view.hpp>
-
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
+#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/concept.hpp>
+#include <seqan3/alphabet/nucleotide/concept.hpp>
 
 namespace seqan3
 {
 /*!\brief Translate one nucleotide triplet into single amino acid (single nucleotide interface).
  * \tparam nucl_type The type of input nucleotides.
- * \param n1 First nucleotide in triplet.
- * \param n2 Second nucleotide in triplet.
- * \param n3 Third nucleotide in triplet.
+ * \param[in] n1 First nucleotide in triplet.
+ * \param[in] n2 Second nucleotide in triplet.
+ * \param[in] n3 Third nucleotide in triplet.
  *
  * \details
  *
  * Translates single nucleotides into amino acid according to given genetic code.
  *
- * \par Complexity
+ * ### Complexity
  *
  * Constant.
  *
- * \par Exceptions
+ * ### Exceptions
  *
  * No-throw guarantee.
 */
@@ -76,16 +78,16 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
 /*!\brief Translate one nucleotide triplet into single amino acid (tuple interface).
  * \tparam tuple_type Type of `input_tuple`. Usually std::tuple, but similar types like std::array
  * and seqan3::pod_tuple are also supported.
- * \param input_tuple Triplet of nucleotides that should be converted to amino acid.
+ * \param[in] input_tuple Triplet of nucleotides that should be converted to amino acid.
  * \details
  *
  * Translates std::tuple or std::array with 3 nucleotides into amino acid according to given genetic code.
  *
- * \par Complexity
+ * ### Complexity
  *
  * Constant.
  *
- * \par Exceptions
+ * ### Exceptions
  *
  * No-throw guarantee.
 */
@@ -103,23 +105,23 @@ constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
 
 /*!\brief Translate one nucleotide triplet into single amino acid (range interface).
  * \tparam range_type Type of input_range; must satisfy seqan3::input_range_concept.
- * \param input_range Range of three nucleotides that should be converted to amino acid.
+ * \param[in] input_range Range of three nucleotides that should be converted to amino acid.
  *
  * \details
  *
  * Translates range with 3 nucleotides into amino acid according to given genetic code.
  *
- * \par Complexity
+ * ### Complexity
  *
  * Constant.
  *
- * \par Exceptions
+ * ### Exceptions
  *
  * Strong exception guarantee (never modifies data).
 */
 template <genetic_code gc = genetic_code::CANONICAL, input_range_concept range_type>
     //!\cond
-    requires nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<range_type>>>>
+    requires nucleotide_concept<std::decay_t<reference_t<std::decay_t<range_type>>>>
     //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {
@@ -137,23 +139,23 @@ constexpr aa27 translate_triplet(range_type && input_range)
 
 /*!\brief Translate one nucleotide triplet into single amino acid (range interface, input range allows random access).
  * \tparam range_type Type of input_range; must satisfy seqan3::random_access_range_concept.
- * \param input_range Range of three nucleotides that should be converted to amino acid.
+ * \param[in] input_range Range of three nucleotides that should be converted to amino acid.
  *
  * \details
  *
  * Translates range with 3 nucleotides into amino acid according to given genetic code.
  *
- * \par Complexity
+ * ### Complexity
  *
  * Constant.
  *
- * \par Exceptions
+ * ### Exceptions
  *
  * Strong exception guarantee (never modifies data).
 */
 template <genetic_code gc = genetic_code::CANONICAL, random_access_range_concept range_type>
 //!\cond
-    requires nucleotide_concept<std::decay_t<ranges::range_reference_t<std::decay_t<range_type>>>>
+    requires nucleotide_concept<std::decay_t<reference_t<std::decay_t<range_type>>>>
 //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {
@@ -164,4 +166,4 @@ constexpr aa27 translate_triplet(range_type && input_range)
     return translate_triplet(input_range[0], input_range[1], input_range[2]);
 }
 
-}
+} // namespace seqan3
