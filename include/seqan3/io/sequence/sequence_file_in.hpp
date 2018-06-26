@@ -59,7 +59,7 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
-#include <seqan3/io/sequence/sequence_file_format_concept.hpp>
+#include <seqan3/io/sequence/sequence_file_in_format_concept.hpp>
 #include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
@@ -244,7 +244,7 @@ struct sequence_file_in_default_traits_aa : sequence_file_in_default_traits_dna
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields
  * must be in seqan3::sequence_file_in::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::sequence_file_format_concept).
+ * seqan3::sequence_file_in_format_concept).
  * \tparam stream_type          The type of the stream, must satisfy seqan3::istream_concept.
  * \details
  *
@@ -458,13 +458,14 @@ struct sequence_file_in_default_traits_aa : sequence_file_in_default_traits_dna
  * TODO give overview of formats, once they are all implemented
  */
 
-template <sequence_file_in_traits_concept                    traits_type_        = sequence_file_in_default_traits_dna,
-          detail::fields_concept                             selected_field_ids_ = fields<field::SEQ,
-                                                                                          field::ID,
-                                                                                          field::QUAL>,
-          detail::type_list_of_sequence_file_formats_concept valid_formats_      = type_list<sequence_file_format_fasta
+template <
+    sequence_file_in_traits_concept                       traits_type_        = sequence_file_in_default_traits_dna,
+    detail::fields_concept                                selected_field_ids_ = fields<field::SEQ,
+                                                                                       field::ID,
+                                                                                       field::QUAL>,
+    detail::type_list_of_sequence_file_in_formats_concept valid_formats_      = type_list<sequence_file_format_fasta
                                                                                          /*, ...*/>,
-          istream_concept<char>                              stream_type_        = std::ifstream>
+    istream_concept<char>                                 stream_type_        = std::ifstream>
 class sequence_file_in
 {
 public:
@@ -647,12 +648,12 @@ public:
      */
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_format_concept.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_in_format_concept.
      * \param[in] _stream    The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      */
-    template <sequence_file_format_concept file_format>
+    template <sequence_file_in_format_concept file_format>
     sequence_file_in(stream_type             && _stream,
                      file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -806,18 +807,8 @@ public:
     }
     //!\}
 
-    /* options */
-    //!\brief The options type defines various option members that influence the behaviour of all or some formats.
-    struct options_type
-    {
-        //!\brief Export the (possibly larger) legal alphabet to the format.
-        using sequence_legal_alphabet = typename traits_type::sequence_alphabet;
-
-        //!\brief Read the ID string only up until the first whitespace character.
-        bool truncate_ids;
-    };
     //!\brief The options are public and its members can be set directly.
-    options_type options;
+    sequence_file_in_options<typename traits_type::sequence_legal_alphabet> options;
 
 protected:
     //!\privatesection
@@ -861,7 +852,7 @@ protected:
         }
 
         assert(!format.valueless_by_exception());
-        std::visit([&] (sequence_file_format_concept & f)
+        std::visit([&] (sequence_file_in_format_concept & f)
         {
             // read new record
             f.read(stream,
@@ -908,9 +899,9 @@ protected:
  * \relates seqan3::sequence_file_in
  * \{
  */
-template <istream_concept<char>          stream_type,
-          sequence_file_format_concept   file_format,
-          detail::fields_concept         selected_field_ids>
+template <istream_concept<char>             stream_type,
+          sequence_file_in_format_concept   file_format,
+          detail::fields_concept            selected_field_ids>
 sequence_file_in(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> sequence_file_in<typename sequence_file_in<>::traits_type,       // actually use the default
                         selected_field_ids,
@@ -927,10 +918,10 @@ sequence_file_in(stream_type && _stream, file_format const &, selected_field_ids
 namespace std
 {
 //!\brief std::tuple_size overload for column-like access. [metafunction specialisation for seqan3::sequence_file_in]
-template <seqan3::sequence_file_in_traits_concept                    traits_type,
-          seqan3::detail::fields_concept                             selected_field_ids,
-          seqan3::detail::type_list_of_sequence_file_formats_concept valid_formats,
-          seqan3::istream_concept<char>                              stream_type>
+template <seqan3::sequence_file_in_traits_concept                       traits_type,
+          seqan3::detail::fields_concept                                selected_field_ids,
+          seqan3::detail::type_list_of_sequence_file_in_formats_concept valid_formats,
+          seqan3::istream_concept<char>                                 stream_type>
 struct tuple_size<seqan3::sequence_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -938,11 +929,11 @@ struct tuple_size<seqan3::sequence_file_in<traits_type, selected_field_ids, vali
 };
 
 //!\brief std::tuple_element overload for column-like access. [metafunction specialisation for seqan3::sequence_file_in]
-template <size_t                                                     elem_no,
-          seqan3::sequence_file_in_traits_concept                    traits_type,
-          seqan3::detail::fields_concept                             selected_field_ids,
-          seqan3::detail::type_list_of_sequence_file_formats_concept valid_formats,
-          seqan3::istream_concept<char>                              stream_type>
+template <size_t                                                        elem_no,
+          seqan3::sequence_file_in_traits_concept                       traits_type,
+          seqan3::detail::fields_concept                                selected_field_ids,
+          seqan3::detail::type_list_of_sequence_file_in_formats_concept valid_formats,
+          seqan3::istream_concept<char>                                 stream_type>
 struct tuple_element<elem_no, seqan3::sequence_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
 {
 private:
