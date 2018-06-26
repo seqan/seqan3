@@ -53,6 +53,7 @@ namespace seqan3
 
 /*!\brief Behaves like std::tuple but is an aggregate [PODType](http://en.cppreference.com/w/cpp/concept/PODType).
  * \ingroup core
+ * \implements seqan3::tuple_like_concept
  * \tparam type0 The first value's type (every tuple must contain at least one type).
  * \tparam ...types 0-n further types (the types of the other values).
  *
