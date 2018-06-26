@@ -33,19 +33,33 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-include for the sequence IO submodule.
+ * \brief Provides seqan3::sequence_file_out_options.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup sequence Sequence
- * \ingroup io
- * \brief \todo document at a later point in time
- */
+#include <seqan3/core/platform.hpp>
 
-#include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
-#include <seqan3/io/sequence/sequence_file_in_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
-#include <seqan3/io/sequence/sequence_file_out_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_out.hpp>
+namespace seqan3
+{
+
+//!\brief The options type defines various option members that influence the behaviour of all or some formats.
+struct sequence_file_out_options
+{
+    //!\brief Begin the ID line with ";" instead of ">" (not recommended).
+    bool        fasta_legacy_id_marker  = false;
+    //!\brief Insert a single space after ">" (or ";") before the actual ID.
+    bool        fasta_blank_before_id   = true;
+    //!\brief Inserts linebreaks after every n-th letter in the sequence; 0 means no linebreaks.
+    uint32_t    fasta_letters_per_line  = 80;
+    //TODO:
+//     bool        fasta_charcounts        = false;
+
+    /*!\brief The default plain text line-ending is "\n", but on Windows an additional carriage return is
+     *        recommended ("\r\n" for line-ending).
+     */
+    bool        add_carriage_return     = false;
+};
+
+} // namespace seqan3
