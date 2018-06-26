@@ -61,7 +61,7 @@ struct sequence_file_in_f : public ::testing::Test
 {
     std::string input
     {
-        "> TEST1\n"
+        "> TEST 1\n"
         "ACGT\n"
         ">Test2\n"
         "AGGCTGN\n"
@@ -78,7 +78,7 @@ struct sequence_file_in_f : public ::testing::Test
 
     std::string id_comp[3]
     {
-        "TEST1",
+        "TEST 1",
         "Test2",
         "Test3"
     };
@@ -242,8 +242,6 @@ TEST_F(sequence_file_in_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        std::cout << (get<field::SEQ>(rec) | view::to_char) << std::endl;
-        std::cout << (get<field::ID>(rec) | view::to_char) << std::endl;
         EXPECT_TRUE((ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
         EXPECT_TRUE((ranges::equal(get<field::ID>(rec),  id_comp[counter])));
         EXPECT_TRUE(empty(get<field::QUAL>(rec)));
