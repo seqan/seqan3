@@ -41,11 +41,14 @@
 
 #include <iterator>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/utility/iterator.hpp>
+#include <range/v3/view/chunk.hpp>
 #include <range/v3/view/drop_while.hpp>
+#include <range/v3/view/join.hpp>
 #include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/take_while.hpp>
 
@@ -54,8 +57,11 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
+#include <seqan3/io/sequence/sequence_file_in_options.hpp>
+#include <seqan3/io/sequence/sequence_file_out_options.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/concept/range.hpp>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
@@ -95,15 +101,132 @@ namespace seqan3
  */
 class sequence_file_format_fasta
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \brief Rule of five explicitly defaulted.
+     * \{
+     */
+    sequence_file_format_fasta() = default;
+    sequence_file_format_fasta(sequence_file_format_fasta const &) = delete;
+    sequence_file_format_fasta & operator=(sequence_file_format_fasta const &) = delete;
+    sequence_file_format_fasta(sequence_file_format_fasta &&) = default;
+    sequence_file_format_fasta & operator=(sequence_file_format_fasta &&) = default;
+    //!\}
+
+    //!\brief The valid file extensions for this format; note that you can modify this value.
+    static inline std::vector<std::string> file_extensions
+    {
+        { "fasta" },
+        { "fa"    },
+        { "fna"   },
+        { "ffn"   },
+        { "faa"   },
+        { "frn"   },
+    };
+
+    //!\copydoc sequence_file_in_format_concept::read
+    template <typename stream_type,     // constraints checked by file
+              typename seq_legal_alph_type,
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename qual_type,
+              typename seq_qual_type>
+    void read(stream_type                                         & stream,
+              sequence_file_in_options<seq_legal_alph_type> const & options,
+              seq_type                                            & sequence,
+              id_type                                             & id,
+              qual_type                                           & SEQAN3_DOXYGEN_ONLY(qualities),
+              seq_qual_type                                       & seq_qual)
+    {
+        static_assert(detail::decays_to_ignore_v<seq_type> || detail::decays_to_ignore_v<seq_qual_type>,
+                      "Either the sequence field, or the seq_qual field need to be set to std::ignore.");
+        static_assert(detail::decays_to_ignore_v<qual_type> || detail::decays_to_ignore_v<seq_qual_type>,
+                      "Either the qualities field, or the seq_qual field need to be set to std::ignore.");
+
+        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
+                                          decltype(std::istreambuf_iterator<char>{})>
+                            {std::istreambuf_iterator<char>{stream},
+                             std::istreambuf_iterator<char>{}};
+        // ID
+        read_id(stream_view, options, id);
+
+        // Sequence
+        if constexpr (!detail::decays_to_ignore_v<seq_type>) // sequence
+            read_seq(stream_view, options, sequence);
+        else
+            read_seq(stream_view, options, seq_qual);        // seq_qual (possibly std::ignore, too)
+
+        // make sure "buffer at end" implies "stream at end"
+        if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
+            (!stream.eof()))
+        {
+            stream.get(); // triggers error in stream and sets eof
+        }
+    }
+
+    //!\copydoc sequence_file_out_format_concept::write
+    template <typename stream_type,     // constraints checked by file
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename qual_type,
+              typename seq_qual_type>
+    void write(stream_type                     & stream,
+               sequence_file_out_options const & options,
+               seq_type                       && sequence,
+               id_type                        && id,
+               qual_type                      && SEQAN3_DOXYGEN_ONLY(qualities),
+               seq_qual_type                  && seq_qual)
+    {
+        static_assert(detail::decays_to_ignore_v<seq_type> || detail::decays_to_ignore_v<seq_qual_type>,
+                      "Either the sequence field, or the seq_qual field need to be set to std::ignore.");
+        static_assert(detail::decays_to_ignore_v<qual_type> || detail::decays_to_ignore_v<seq_qual_type>,
+                      "Either the qualities field, or the seq_qual field need to be set to std::ignore.");
+
+        ranges::ostreambuf_iterator stream_it{stream};
+
+        // ID
+        if constexpr (detail::decays_to_ignore_v<id_type>)
+        {
+            throw std::logic_error{"The ID field may not be set to ignore when writing FASTA files."};
+        }
+        else
+        {
+            if (ranges::empty(id)) //[[unlikely]]
+                throw std::runtime_error{"The ID field may not be empty when writing FASTA files."};
+
+            write_id(stream_it, options, id);
+        }
+
+        // Sequence
+        if constexpr (!detail::decays_to_ignore_v<seq_type>) // sequence
+        {
+            if (ranges::empty(sequence)) //[[unlikely]]
+                throw std::runtime_error{"The SEQ field may not be empty when writing FASTA files."};
+
+            write_seq(stream_it, options, sequence);
+        }
+        else if constexpr (!detail::decays_to_ignore_v<seq_qual_type>) // seq_qual
+        {
+            if (ranges::empty(seq_qual)) //[[unlikely]]
+                throw std::runtime_error{"The SEQ_QUAL field may not be empty when writing FASTA files."};
+
+            write_seq(stream_it, options, seq_qual);
+        }
+        else
+        {
+            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing FASTA files."};
+        }
+    }
+
 protected:
     //!\privatesection
     //!\brief Implementation of reading the ID.
     template <typename stream_view_t,
-              typename options_type,
+              typename seq_legal_alph_type,
               typename id_type>
-    void read_id(stream_view_t & stream_view,
-                 options_type  & options,
-                 id_type       & id)
+    void read_id(stream_view_t                                       & stream_view,
+                 sequence_file_in_options<seq_legal_alph_type> const & options,
+                 id_type                                             & id)
     {
         auto const is_id = is_char<'>'>{} || is_char<';'>{};
 
@@ -132,13 +255,13 @@ protected:
 
     //!\brief Implementation of reading the sequence.
     template <typename      stream_view_t,
-              typename      options_type,
+              typename      seq_legal_alph_type,
               range_concept seq_type>
-    void read_seq(stream_view_t  & stream_view,
-                  options_type   &,
-                  seq_type       & seq)
+    void read_seq(stream_view_t                                       & stream_view,
+                  sequence_file_in_options<seq_legal_alph_type> const &,
+                  seq_type                                            & seq)
     {
-        is_in_alphabet<typename options_type::sequence_legal_alphabet> const is_legal_alph;
+        is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
         auto const is_id = is_char<'>'>{} || is_char<';'>{};
 
         ranges::copy(stream_view | ranges::view::take_while(!is_id)                // until next header (or end)
@@ -159,11 +282,11 @@ protected:
     }
 
     //!\brief Implementation of reading the sequence; overload for std::ignore (should be slightly faster).
-    template <typename stream_view_t,
-              typename options_type>
-    void read_seq(stream_view_t          & stream_view,
-                  options_type           &,
-                  detail::ignore_t const &)
+    template <typename      stream_view_t,
+              typename      seq_legal_alph_type>
+    void read_seq(stream_view_t                                       & stream_view,
+                  sequence_file_in_options<seq_legal_alph_type> const &,
+                  detail::ignore_t                              const &)
     {
         auto seq_view = stream_view | ranges::view::take_while(!is_char<'>'>{});     // until next header (or end)
 
@@ -171,86 +294,69 @@ protected:
         {}
     }
 
-public:
-    /*!\name Constructors, destructor and assignment
-     * \brief Rule of five explicitly defaulted.
-     * \{
-     */
-    sequence_file_format_fasta() = default;
-    sequence_file_format_fasta(sequence_file_format_fasta const &) = delete;
-    sequence_file_format_fasta & operator=(sequence_file_format_fasta const &) = delete;
-    sequence_file_format_fasta(sequence_file_format_fasta &&) = default;
-    sequence_file_format_fasta & operator=(sequence_file_format_fasta &&) = default;
-    //!\}
-
-    //!\brief The valid file extensions for this format; note that you can modify this value.
-    static inline std::vector<std::string> file_extensions
+    //!\brief Implementation of writing the ID.
+    template <typename stream_it_t,
+              typename id_type>
+    void write_id(stream_it_t                     & stream_it,
+                  sequence_file_out_options const & options,
+                  id_type                        && id)
     {
-        { "fasta" },
-        { "fa"    },
-        { "fna"   },
-        { "ffn"   },
-        { "faa"   },
-        { "frn"   },
-    };
-
-    //!\copydoc sequence_file_format_concept::read
-    template <typename stream_type,     // constraints checked by file
-              typename options_type,    // given by file
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type,
-              typename seq_qual_type>
-    void read(stream_type        & stream,
-              options_type const & options,
-              seq_type           & sequence,
-              id_type            & id,
-              qual_type          & SEQAN3_DOXYGEN_ONLY(qualities),
-              seq_qual_type      & seq_qual)
-    {
-        static_assert(detail::decays_to_ignore_v<seq_type> || detail::decays_to_ignore_v<seq_qual_type>,
-                      "Either the sequence field, or the seq_qual field need to be set to std::ignore.");
-        static_assert(detail::decays_to_ignore_v<qual_type> || detail::decays_to_ignore_v<seq_qual_type>,
-                      "Either the qualities field, or the seq_qual field need to be set to std::ignore.");
-
-        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
-                                          decltype(std::istreambuf_iterator<char>{})>
-                            {std::istreambuf_iterator<char>{stream},
-                             std::istreambuf_iterator<char>{}};
-        // ID
-        read_id(stream_view, options, id);
-
-        // Sequence
-        if constexpr (!detail::decays_to_ignore_v<seq_type>) // sequence
-            read_seq(stream_view, options, sequence);
+        if (options.fasta_legacy_id_marker)
+            stream_it = ';';
         else
-            read_seq(stream_view, options, seq_qual);        // seq_qual (possibly std::ignore, too)
+            stream_it = '>';
 
-        // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
-            (!stream.eof()))
-        {
-            stream.get(); // triggers error in stream and sets eof
-        }
+        if (options.fasta_blank_before_id)
+            stream_it = ' ';
+
+        ranges::copy(id, stream_it);
+
+        if (options.add_carriage_return)
+            stream_it = '\r';
+
+        stream_it = '\n';
     }
 
-    //!\copydoc sequence_file_format_concept::write
-    template <typename stream_type,     // constraints checked by file
-              typename options_type,    // given by file
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type,
-              typename seq_qual_type>
-    void write([[maybe_unused]] stream_type        & stream,
-               [[maybe_unused]] options_type const & options,
-               [[maybe_unused]] seq_type           && sequence,
-               [[maybe_unused]] id_type            && id,
-               [[maybe_unused]] qual_type          && qualities,
-               [[maybe_unused]] seq_qual_type      && seq_qual)
+    //!\brief Implementation of writing the sequence.
+    template <typename stream_it_t,
+              typename seq_type>
+    void write_seq(stream_it_t                    & stream_it,
+                  sequence_file_out_options const & options,
+                  seq_type                       && seq)
     {
-        //TODO
+        if (options.fasta_letters_per_line > 0)
+        {
+            ranges::copy(seq | view::to_char
+                             | ranges::view::chunk(options.fasta_letters_per_line)
+                             | ranges::view::join(options.add_carriage_return
+                                                    ? std::string_view{"\r\n"}
+                                                    : std::string_view{"\n"}),
+                         stream_it);
+            // TODO(h-2): benchmark the above vs:
+//             size_t count = 0;
+//             for (auto seq_it = ranges::begin(seq); seq_it != ranges::end(seq_it); ++seq_it)
+//             {
+//                 stream_it = to_char(*seq_it);
+//                 ++count;
+//                 if (count % fasta_letters_per_line == 0)
+//                 {
+//                     if (options.add_carriage_return)
+//                         stream_it = '\r';
+//                     stream_it = '\n';
+//                 }
+//             }
+        }
+        else
+        {
+            ranges::copy(seq | view::to_char, stream_it);
+        }
+
+
+        if (options.add_carriage_return)
+            stream_it = '\r';
+
+        stream_it = '\n';
     }
 };
 
 } // namespace seqan3
-
