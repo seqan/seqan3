@@ -40,13 +40,17 @@
 #pragma once
 
 #include <initializer_list>
+#include <iterator>
+#include <type_traits>
 
-// remove if sequence_concept_modified_by_const_iterator_bug vanished from travis
+// remove if sequence_container_concept_modified_by_const_iterator_bug vanished from travis
 #include <string>
 
+#include <seqan3/std/concept/iterator.hpp>
+
 // TODO:
-// * merge sequence_concept_modified_by_const_iterator back into
-//   sequence_concept
+// * merge sequence_container_concept_modified_by_const_iterator back into
+//   sequence_container_concept
 // * remove is_basic_string
 // * fix test cases
 // * remove #include <string> in this file
@@ -59,31 +63,31 @@ namespace seqan3::detail
 //!\privatesection
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
-//!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 struct is_basic_string : std::false_type
 {};
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
-//!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
 template <typename value_t, typename traits_t, typename allocator_t>
 struct is_basic_string<std::basic_string<value_t, traits_t, allocator_t>> : std::true_type
 {};
 
 //!\brief Shorthand of seqan3::detail::is_basic_string
-//!\attention Will be deleted once seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
 
-/*!\interface seqan3::detail::sequence_concept_modified_by_const_iterator <>
+/*!\interface seqan3::detail::sequence_container_concept_modified_by_const_iterator <>
  * \brief Checks whether insert and erase can be used with const_iterator
  *
- * \attention This will be merged back into sequence_concept once
- * seqan3::detail::sequence_concept_modified_by_const_iterator_bug is fixed.
+ * \attention This will be merged back into sequence_container_concept once
+ * seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
  */
 //!\cond
 template <typename type>
-concept bool sequence_concept_modified_by_const_iterator = requires (type val, type val2)
+concept bool sequence_container_concept_modified_by_const_iterator = requires (type val, type val2)
 {
     { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
     { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
@@ -104,7 +108,7 @@ concept bool sequence_concept_modified_by_const_iterator = requires (type val, t
 
 /*!\brief Workaround for a ubuntu/travis-ci exclusive bug with g++-7.2.
  *
- * seqan3::detail::sequence_concept_modified_by_const_iterator <std::string> is
+ * seqan3::detail::sequence_container_concept_modified_by_const_iterator <std::string> is
  * known to work, but ubuntu::ppa (<18.04)/travis-ci has a version of g++-7.2
  * where a bug in the STL prevents this concept to be true.
  *
@@ -115,8 +119,8 @@ concept bool sequence_concept_modified_by_const_iterator = requires (type val, t
  * \sa https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=xenial
  */
 template<typename string_t = std::string>
-constexpr bool sequence_concept_modified_by_const_iterator_bug =
-    is_basic_string_v<string_t> && !sequence_concept_modified_by_const_iterator<string_t>;
+constexpr bool sequence_container_concept_modified_by_const_iterator_bug =
+    is_basic_string_v<string_t> && !sequence_container_concept_modified_by_const_iterator<string_t>;
 
 //!\publicsection
 
@@ -135,7 +139,8 @@ namespace seqan3
  * \extends seqan3::const_iterable_concept
  * \brief The (most general) container concept as defined by the standard library.
  * \details
- * The container concept is modelled exactly as in the [STL](http://en.cppreference.com/w/cpp/concept/Container).
+ * The container concept is modelled as in the [STL](http://en.cppreference.com/w/cpp/concept/Container), but
+ * additionally requires std::swap() to be implemented.
  *
  * \attention
  * Other than one might expect, `std::forward_list` does not satisfy this concept (because it does not provide
@@ -143,16 +148,30 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool container_concept = requires (type val, type val2)
+concept bool container_concept = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
     typename type::reference;
     typename type::const_reference;
-    typename type::iterator; //TODO must satisfy forward_iterator_concept and convertible to const_interator
-    typename type::const_iterator; //TODO must satisfy forward_iterator_concept
+
+    typename type::iterator;
+    requires forward_iterator_concept<typename type::iterator>;
+    { it } -> typename type::const_iterator; // NOTE check whether iterator is const convertible
+
+    typename type::const_iterator;
+    requires forward_iterator_concept<typename type::const_iterator>;
+
     typename type::difference_type;
-    typename type::size_type; // TODO must be the same as iterator_traits::difference_type for iterator and const_iterator
+    typename type::size_type;
+    requires std::is_same_v<
+        typename type::difference_type,
+        typename std::iterator_traits<typename type::iterator>::difference_type
+    >;
+    requires std::is_same_v<
+        typename std::iterator_traits<typename type::iterator>::difference_type,
+        typename std::iterator_traits<typename type::const_iterator>::difference_type
+    >;
 
     // methods and operator
     { type{}          } -> type;   // default constructor
@@ -162,6 +181,8 @@ concept bool container_concept = requires (type val, type val2)
 
     { val.begin()     } -> typename type::iterator;
     { val.end()       } -> typename type::iterator;
+    { cval.begin()    } -> typename type::const_iterator;
+    { cval.end()      } -> typename type::const_iterator;
     { val.cbegin()    } -> typename type::const_iterator;
     { val.cend()      } -> typename type::const_iterator;
 
@@ -170,6 +191,7 @@ concept bool container_concept = requires (type val, type val2)
 
     { val.swap(val2)  } -> void;
     { swap(val, val2) } -> void;
+    { std::swap(val, val2) } -> void;
 
     { val.size()      } -> typename type::size_type;
     { val.max_size()  } -> typename type::size_type;
@@ -177,7 +199,7 @@ concept bool container_concept = requires (type val, type val2)
 };
 //!\endcond
 
-/*!\interface seqan3::sequence_concept <>
+/*!\interface seqan3::sequence_container_concept <>
  * \extends seqan3::container_concept
  * \brief A more refined container concept than seqan3::container_concept.
  *
@@ -191,7 +213,7 @@ concept bool container_concept = requires (type val, type val2)
  */
 //!\cond
 template <typename type>
-concept bool sequence_concept = requires (type val, type val2)
+concept bool sequence_container_concept = requires (type val, type val2, type const cval)
 {
     requires container_concept<type>;
 
@@ -207,7 +229,7 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.assign(typename type::size_type{}, typename type::value_type{}) };
 
     // modify container
-//TODO: how do you model this?
+    // TODO: how do you model this?
     // { val.emplace(typename type::const_iterator{}, ?                                   } -> typename type::iterator;
 
     { val.insert(val.begin(), val2.front())                                            } -> typename type::iterator;
@@ -221,8 +243,8 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.erase(val.begin(), val.end())                                                } -> typename type::iterator;
 
     // workaround a travis bug where insert/erase can't take a const iterator, e.g. cbegin()
-    requires detail::sequence_concept_modified_by_const_iterator_bug<type> ||
-             detail::sequence_concept_modified_by_const_iterator<type>;
+    requires detail::sequence_container_concept_modified_by_const_iterator_bug<type> ||
+             detail::sequence_container_concept_modified_by_const_iterator<type>;
 
     { val.push_back(val.front())                                                       } -> void;
     { val.push_back(typename type::value_type{})                                       } -> void;
@@ -230,15 +252,19 @@ concept bool sequence_concept = requires (type val, type val2)
     { val.clear()                                                                      } -> void;
 
     // access container
-    { val.front() } -> typename type::reference;
-    { val.back()  } -> typename type::reference;
+    { val.front()  } -> typename type::reference;
+    { val.front()  } -> typename type::const_reference;
+    { cval.front() } -> typename type::const_reference;
+    { val.back()   } -> typename type::reference;
+    { val.back()   } -> typename type::const_reference;
+    { cval.back()  } -> typename type::const_reference;
 };
 //!\endcond
 
-/*!\interface seqan3::random_access_sequence_concept <>
- * \extends seqan3::sequence_concept
+/*!\interface seqan3::random_access_container_concept <>
+ * \extends seqan3::sequence_container_concept
  * \extends seqan3::random_access_range_concept
- * \brief A more refined container concept than seqan3::sequence_concept.
+ * \brief A more refined container concept than seqan3::sequence_container_concept.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the
  * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
@@ -251,9 +277,9 @@ concept bool sequence_concept = requires (type val, type val2)
  */
 //!\cond
 template <typename type>
-concept bool random_access_sequence_concept = requires (type val)
+concept bool random_access_container_concept = requires (type val)
 {
-    requires sequence_concept<type>;
+    requires sequence_container_concept<type>;
 
     // access container
     { val[0]    } -> typename type::reference;
@@ -265,9 +291,9 @@ concept bool random_access_sequence_concept = requires (type val)
 };
 //!\endcond
 
-/*!\interface seqan3::reservable_sequence_concept <>
- * \extends seqan3::random_access_sequence_concept
- * \brief A more refined container concept than seqan3::random_access_sequence_concept.
+/*!\interface seqan3::reservable_container_concept <>
+ * \extends seqan3::random_access_container_concept
+ * \brief A more refined container concept than seqan3::random_access_container_concept.
  *
  * Adds requirements for `.reserve()`, `.capacity()` and `.shrink_to_fit()`.
  * Satisfied by `std::vector` and `std::basic_string`.
@@ -277,9 +303,9 @@ concept bool random_access_sequence_concept = requires (type val)
  */
 //!\cond
 template <typename type>
-concept bool reservable_sequence_concept = requires (type val)
+concept bool reservable_container_concept = requires (type val)
 {
-    requires random_access_sequence_concept<type>;
+    requires random_access_container_concept<type>;
 
     { val.capacity()      } -> typename type::size_type;
     { val.reserve(0)      } -> void;

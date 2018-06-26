@@ -81,7 +81,7 @@
 #       error Your range-v3 library is too old.
 #       pragma message(MSG)
 #   elif RANGE_V3_VERSION > RANGE_V3_MAXVERSION
-#       pragma GCC warning "Your range-v3 library is possibly tot new. Some features might not work correctly."
+#       pragma GCC warning "Your range-v3 library is possibly too new. Some features might not work correctly."
 #       pragma message(MSG)
 #   endif
 #   undef MSG
@@ -97,7 +97,12 @@
 #endif
 
 // SDSL [required]
-// TODO (doesn't have a version.hpp, yet)
+#if __has_include(<sdsl/version.hpp>)
+#   include <sdsl/version.hpp>
+    static_assert(true, "Only version 3 of the SDSL is supported by SeqAn3.");
+#else
+#   error The sdsl library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
+#endif
 
 // Cereal [optional]
 /*!\def SEQAN3_WITH_CEREAL

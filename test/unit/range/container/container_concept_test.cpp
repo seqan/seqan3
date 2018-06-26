@@ -44,14 +44,16 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
+#include <sdsl/int_vector.hpp>
+
 using namespace seqan3;
 
-// if detail::sequence_concept_modified_by_const_iterator_bug<> is false
+// if detail::sequence_container_concept_modified_by_const_iterator_bug<> is false
 // test seqan3::concatenated_sequences<std::string>, otherwise
 // test seqan3::concatenated_sequences<std::vector<char>>
 using concatenated_sequences_string_t = seqan3::concatenated_sequences<
         std::conditional_t<
-            detail::sequence_concept_modified_by_const_iterator_bug<>,
+            detail::sequence_container_concept_modified_by_const_iterator_bug<>,
             std::vector<char>,
             std::string
       >>;
@@ -116,7 +118,7 @@ void container_concept_travis_bug_test()
 
     // insert(const_iterator pos, size_type count, char ch)
     //TODO should return type::iterator on strings, remove if
-    // sequence_concept_modified_by_const_iterator_bug is no issue anymore
+    // sequence_container_concept_modified_by_const_iterator_bug is no issue anymore
     // it =
     s.insert(s.begin() + s.find_first_of(':') + 1, 2, '=');
     EXPECT_EQ("Exemplar is an:== example", s);
@@ -125,7 +127,7 @@ void container_concept_travis_bug_test()
     {
         string_t seq = " string";
         //TODO should return type::iterator on strings, remove if
-        // sequence_concept_modified_by_const_iterator_bug is no issue anymore
+        // sequence_container_concept_modified_by_const_iterator_bug is no issue anymore
         // it =
         s.insert(s.begin() + s.find_last_of('e') + 1,
             std::begin(seq), std::end(seq));
@@ -143,7 +145,7 @@ template <typename string_t>
 void container_concept_const_travis_bug_test()
 {
     // travis failed on this statement
-    // concept bool sequence_concept = requires (type val, type val2)
+    // concept bool sequence_container_concept = requires (type val, type val2)
     //              ^~~~~~~~~~~~~~~~
     // /include/seqan3/range/container/concept.hpp:113:14: note:     with ‘std::basic_string<char> val’
     // /include/seqan3/range/container/concept.hpp:113:14: note:     with ‘std::basic_string<char> val2’
@@ -152,8 +154,8 @@ void container_concept_const_travis_bug_test()
 
     using namespace std::string_literals;
 
-    static_assert(detail::sequence_concept_modified_by_const_iterator<string_t>);
-    static_assert(!detail::sequence_concept_modified_by_const_iterator_bug<string_t> && std::is_same_v<string_t, std::string>);
+    static_assert(detail::sequence_container_concept_modified_by_const_iterator<string_t>);
+    static_assert(!detail::sequence_container_concept_modified_by_const_iterator_bug<string_t> && std::is_same_v<string_t, std::string>);
     static_assert(seqan3::container_concept<string_t>);
 
     // example code from http://en.cppreference.com/w/cpp/string/basic_string/insert
@@ -201,63 +203,68 @@ TEST(container_concept, container_concept_travis_bug)
 {
     container_concept_travis_bug_test<std::string>();
 
-    if constexpr(!detail::sequence_concept_modified_by_const_iterator_bug<>)
+    if constexpr(!detail::sequence_container_concept_modified_by_const_iterator_bug<>)
         container_concept_const_travis_bug_test<std::string>();
 }
 
-TEST(container_concept, sequence_concept)
+TEST(container_concept, sequence_container_concept)
 {
-    EXPECT_FALSE((seqan3::sequence_concept<std::array<char, 2>>));
-    EXPECT_TRUE((seqan3::sequence_concept<std::list<char>>));
-    EXPECT_FALSE((seqan3::sequence_concept<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::sequence_concept<std::vector<char>>));
-    EXPECT_TRUE((seqan3::sequence_concept<std::deque<char>>));
-    EXPECT_TRUE((seqan3::sequence_concept<std::string>));
+    EXPECT_FALSE((seqan3::sequence_container_concept<std::array<char, 2>>));
+    EXPECT_TRUE((seqan3::sequence_container_concept<std::list<char>>));
+    EXPECT_FALSE((seqan3::sequence_container_concept<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::sequence_container_concept<std::vector<char>>));
+    EXPECT_TRUE((seqan3::sequence_container_concept<std::deque<char>>));
+    EXPECT_TRUE((seqan3::sequence_container_concept<std::string>));
 
-    EXPECT_TRUE((seqan3::sequence_concept<concatenated_sequences_string_t>));
-    EXPECT_TRUE((seqan3::sequence_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::sequence_container_concept<concatenated_sequences_string_t>));
+    EXPECT_TRUE((seqan3::sequence_container_concept<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_concept, sequence_concept_modified_by_const_iterator)
+TEST(container_concept, sequence_container_concept_modified_by_const_iterator)
 {
-    EXPECT_FALSE((seqan3::detail::sequence_concept_modified_by_const_iterator<std::array<char, 2>>));
-    EXPECT_TRUE((seqan3::detail::sequence_concept_modified_by_const_iterator<std::list<char>>));
-    EXPECT_FALSE((seqan3::detail::sequence_concept_modified_by_const_iterator<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::detail::sequence_concept_modified_by_const_iterator<std::vector<char>>));
-    EXPECT_TRUE((seqan3::detail::sequence_concept_modified_by_const_iterator<std::deque<char>>));
-    if constexpr(!detail::sequence_concept_modified_by_const_iterator_bug<>)
+    EXPECT_FALSE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<std::array<char, 2>>));
+    EXPECT_TRUE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<std::list<char>>));
+    EXPECT_FALSE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<std::vector<char>>));
+    EXPECT_TRUE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<std::deque<char>>));
+    if constexpr(!detail::sequence_container_concept_modified_by_const_iterator_bug<>)
     {
-        EXPECT_TRUE((seqan3::detail::sequence_concept_modified_by_const_iterator<std::string>));
+        EXPECT_TRUE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<std::string>));
     }
 
-    EXPECT_TRUE((seqan3::detail::sequence_concept_modified_by_const_iterator<concatenated_sequences_string_t>));
-    EXPECT_TRUE((seqan3::detail::sequence_concept_modified_by_const_iterator<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<concatenated_sequences_string_t>));
+    EXPECT_TRUE((seqan3::detail::sequence_container_concept_modified_by_const_iterator<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_concept, random_access_sequence_concept)
+TEST(container_concept, random_access_container_concept)
 {
-    EXPECT_FALSE((seqan3::random_access_sequence_concept<std::array<char, 2>>));
-    EXPECT_FALSE((seqan3::random_access_sequence_concept<std::list<char>>));
-    EXPECT_FALSE((seqan3::random_access_sequence_concept<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::random_access_sequence_concept<std::vector<char>>));
-    EXPECT_TRUE((seqan3::random_access_sequence_concept<std::deque<char>>));
-    EXPECT_TRUE((seqan3::random_access_sequence_concept<std::string>));
+    EXPECT_FALSE((seqan3::random_access_container_concept<std::array<char, 2>>));
+    EXPECT_FALSE((seqan3::random_access_container_concept<std::list<char>>));
+    EXPECT_FALSE((seqan3::random_access_container_concept<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::random_access_container_concept<std::vector<char>>));
+    EXPECT_TRUE((seqan3::random_access_container_concept<std::deque<char>>));
+    EXPECT_TRUE((seqan3::random_access_container_concept<std::string>));
 
-    EXPECT_TRUE((seqan3::random_access_sequence_concept<concatenated_sequences_string_t>));
-    EXPECT_TRUE((seqan3::random_access_sequence_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::random_access_container_concept<concatenated_sequences_string_t>));
+    EXPECT_TRUE((seqan3::random_access_container_concept<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_concept, reservable_sequence_concept)
+TEST(container_concept, reservable_container_concept)
 {
-    EXPECT_FALSE((seqan3::reservable_sequence_concept<std::array<char, 2>>));
-    EXPECT_FALSE((seqan3::reservable_sequence_concept<std::list<char>>));
-    EXPECT_FALSE((seqan3::reservable_sequence_concept<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::reservable_sequence_concept<std::vector<char>>));
-    EXPECT_FALSE((seqan3::reservable_sequence_concept<std::deque<char>>));
-    EXPECT_TRUE((seqan3::reservable_sequence_concept<std::string>));
+    EXPECT_FALSE((seqan3::reservable_container_concept<std::array<char, 2>>));
+    EXPECT_FALSE((seqan3::reservable_container_concept<std::list<char>>));
+    EXPECT_FALSE((seqan3::reservable_container_concept<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::reservable_container_concept<std::vector<char>>));
+    EXPECT_FALSE((seqan3::reservable_container_concept<std::deque<char>>));
+    EXPECT_TRUE((seqan3::reservable_container_concept<std::string>));
 
-    EXPECT_TRUE((seqan3::reservable_sequence_concept<concatenated_sequences_string_t>));
-    EXPECT_TRUE((seqan3::reservable_sequence_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::reservable_container_concept<concatenated_sequences_string_t>));
+    EXPECT_TRUE((seqan3::reservable_container_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+
+    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::bit_vector>));
+    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::int_vector<>>));
+    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::int_vector<13>>));
+    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::int_vector<64>>));
 }
 
 /* Check the SDSL containers */
