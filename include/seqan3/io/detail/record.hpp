@@ -41,7 +41,11 @@
 
 #pragma once
 
+#include <range/v3/view/repeat.hpp>
+
+#include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/record.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 namespace seqan3::detail
 {
@@ -141,9 +145,10 @@ struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids
 // get_or_ignore
 // ----------------------------------------------------------------------------
 
-/*!\brief Perform a get-by-field on the record and return reference to std::ignore if record doesn't have field.
- * \ingroup core
+/*!\addtogroup io
+ *!\{
  */
+//!\brief Access an element in a std::tuple or seqan3::record; return reference to std::ignore if not contained.
 template <field f, typename field_types, typename field_ids>
 auto & get_or_ignore(record<field_types, field_ids> & r)
 {
@@ -151,6 +156,59 @@ auto & get_or_ignore(record<field_types, field_ids> & r)
         return std::get<field_ids::index_of(f)>(r);
     else
         return std::ignore;
+}
+
+//!\copydoc seqan3::detail::get_or_ignore
+template <field f, typename field_types, typename field_ids>
+auto const & get_or_ignore(record<field_types, field_ids> const & r)
+{
+    if constexpr (field_ids::contains(f))
+        return std::get<field_ids::index_of(f)>(r);
+    else
+        return std::ignore;
+}
+
+//!\copydoc seqan3::detail::get_or_ignore
+template <size_t i, typename ... types>
+auto & get_or_ignore(std::tuple<types...> & t)
+{
+    if constexpr (i < sizeof...(types))
+        return std::get<i>(t);
+    else
+        return std::ignore;
+}
+
+//!\copydoc seqan3::detail::get_or_ignore
+template <size_t i, typename ... types>
+auto const & get_or_ignore(std::tuple<types...> const & t)
+{
+    if constexpr (i < sizeof...(types))
+        return std::get<i>(t);
+    else
+        return std::ignore;
+}
+//!\}
+
+// ----------------------------------------------------------------------------
+// range_wrap_ignore
+// ----------------------------------------------------------------------------
+
+//!\brief Pass through the reference to the argument in case the argument satisfies seqan3::input_range_concept.
+template <input_range_concept rng_t>
+inline auto & range_wrap_ignore(rng_t & range)
+{
+    return range;
+}
+
+/*!\brief If the argument is std::ignore, return an infinite range of std::ignore values.
+ * \details
+ *
+ * This function can be used in combination with seqan3::detail::get_or_ignore to ensure same dimensionality of
+ * the returned type, even for fields not present in the record / tuple.
+ */
+inline auto range_wrap_ignore(ignore_t const &)
+{
+    return ranges::view::repeat(std::ignore);
 }
 
 } // namespace seqan3::detail
