@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::sequence_file_format_concept and auxiliary classes.
+ * \brief Provides seqan3::sequence_file_in_format_concept and auxiliary classes.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -48,23 +48,12 @@
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/illumina18.hpp>
 #include <seqan3/core/type_list.hpp>
-
-//!\cond
-//TODO(h-2): find a better way to access the options without seperating them out
-namespace seqan3::detail
-{
-struct sequence_file_in_options_type_dummy
-{
-    using sequence_legal_alphabet = dna5;
-    bool truncate_ids = false;
-};
-} // namespace seqan3::detail
-//!\endcond
+#include <seqan3/io/sequence/sequence_file_in_options.hpp>
 
 namespace seqan3
 {
 
-/*!\interface seqan3::sequence_file_format_concept <>
+/*!\interface seqan3::sequence_file_in_format_concept <>
  * \brief The generic concept for sequence file formats.
  * \ingroup sequence
  *
@@ -76,38 +65,33 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept bool sequence_file_format_concept = requires (t & v,
-                                                      std::ifstream           & f,
-                                                      detail::sequence_file_in_options_type_dummy & options,
-                                                      dna5_vector             & seq,
-                                                      std::string             & id,
-                                                      std::vector<illumina18> & qual,
-                                                      std::vector<dna5q>      & seq_qual)
+concept bool sequence_file_in_format_concept = requires (t                              & v,
+                                                         std::ifstream                  & f,
+                                                         sequence_file_in_options<dna5> & options,
+                                                         dna5_vector                    & seq,
+                                                         std::string                    & id,
+                                                         std::vector<illumina18>        & qual,
+                                                         std::vector<dna5q>             & seq_qual)
 {
     t::file_extensions;
 
     { v.read(f, options, seq,         id,          qual,        std::ignore) } -> void;
     { v.read(f, options, std::ignore, id,          std::ignore, seq_qual)    } -> void;
     { v.read(f, options, std::ignore, std::ignore, std::ignore, std::ignore) } -> void;
-
-    { v.write(f, options, seq,         id,          qual,        std::ignore) } -> void;
-    { v.write(f, options, std::ignore, id,          std::ignore, seq_qual)    } -> void;
-    { v.write(f, options, std::ignore, std::ignore, std::ignore, std::ignore) } -> void;
-    // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::sequence_file_format_concept
- * \brief You can expect these **members** on all types that implement seqan3::sequence_file_format_concept.
- * \memberof seqan3::sequence_file_format_concept
+/*!\name Requirements for seqan3::sequence_file_in_format_concept
+ * \brief You can expect these **members** on all types that implement seqan3::sequence_file_in_format_concept.
+ * \memberof seqan3::sequence_file_in_format_concept
  * \{
  */
 
-/*!\fn void read(stream_type & stream, options_type const & options, seq_type & sequence, id_type & id, qual_type & qualities, seq_qual_type & seq_qual)
+/*!\fn void read(stream_type & stream, seqan3::sequence_file_in_options const & options, seq_type & sequence,
+ *               id_type & id, qual_type & qualities, seq_qual_type & seq_qual)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::sequence_file_format_concept
+ * \memberof seqan3::sequence_file_in_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
- * \tparam options_type     Type of the options, must satisfy sequence_file_in::options_type.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy seqan3::output_range_concept
  * over a seqan3::alphabet_concept.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy seqan3::output_range_concept
@@ -132,38 +116,6 @@ concept bool sequence_file_format_concept = requires (t & v,
  *   * `seq_qual` must be set to std::ignore if either `seq` or `qual` are not set to std::ignore. [this shall be checked by a `static_assert` inside the function]
  *
  */
-/*!\fn void write(stream_type & stream, options_type const & options, seq_type && sequence, id_type && id, qual_type && qualities, seq_qual_type && seq_qual)
- * \brief Write the given fields to the specified stream.
- * \memberof seqan3::sequence_file_format_concept
- * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
- * \tparam options_type     Type of the options, must satisfy sequence_file_out::options_type.
- * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy seqan3::input_range_concept
- * over a seqan3::alphabet_concept.
- * \tparam id_type          Type of the seqan3::field::ID input; must satisfy seqan3::input_range_concept
- * over a seqan3::alphabet_concept.
- * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::input_range_concept
- * over a seqan3::quality_concept.
- * \tparam seq_qual_type    Type of the seqan3::field::SEQ_QUAL input; must satisfy seqan3::input_range_concept
- * over a seqan3::quality_composition.
- * \param[in,out] stream    The input stream to read from.
- * \param[in]     options   File specific options passed to the format.
- * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".
- * \param[in]     id        The data for seqan3::field::ID, e.g. the header line in FastA.
- * \param[in]     qualities The data for seqan3::field::QUAL.
- * \param[in]     seq_qual  The data for seqan3::field::SEQ_QUAL.
- *
- * \details
- *
- * ### Additional requirements (reading)
- *
- *   * The format must also accept std::ignore as parameter for any of the fields, however it shall throw an exception
- * if one of the fields required for writing the format is marked as such. [this shall be checked inside the function]
- *   * `seq_qual` must be set to std::ignore if either `seq` or `qual` are not set to std::ignore. [this shall be checked by a `static_assert` inside the function]
- */
-/*!\var static inline std::vector<std::string> seqan3::sequence_file_format_concept::file_extensions
- * \brief The format type is required to provide a vector of all supported file extensions.
- */
-
 //!\}
 
 } // namespace seqan3
@@ -172,26 +124,28 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_format_concept [default is false].
+ * seqan3::sequence_file_in_format_concept [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_sequence_file_formats_concept
+ * \see seqan3::type_list_of_sequence_file_in_formats_concept
  */
 template <typename t>
-constexpr bool is_type_list_of_sequence_file_formats_v = false;
+constexpr bool is_type_list_of_sequence_file_in_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_format_concept [overload].
+ * seqan3::sequence_file_in_format_concept [overload].
  * \ingroup core
-  * \see seqan3::type_list_of_sequence_file_formats_concept
+  * \see seqan3::type_list_of_sequence_file_in_formats_concept
  */
 template <typename ... ts>
-constexpr bool is_type_list_of_sequence_file_formats_v<type_list<ts...>> = (sequence_file_format_concept<ts> && ...);
+constexpr bool is_type_list_of_sequence_file_in_formats_v<type_list<ts...>> =
+    (sequence_file_in_format_concept<ts> && ...);
 
-/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet seqan3::sequence_file_format_concept.
+/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
+ *        seqan3::sequence_file_in_format_concept.
  * \ingroup core
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-concept bool type_list_of_sequence_file_formats_concept = is_type_list_of_sequence_file_formats_v<t>;
+concept bool type_list_of_sequence_file_in_formats_concept = is_type_list_of_sequence_file_in_formats_v<t>;
 
 } // namespace seqan3::detail
