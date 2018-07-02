@@ -42,6 +42,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::view
 {
@@ -97,7 +98,10 @@ namespace seqan3::view
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-auto const to_rank = ranges::view::transform([] (alphabet_concept const in) { return seqan3::to_rank(in); });
+inline auto const to_rank = deep{ranges::view::transform([] (alphabet_concept const in)
+{
+    return seqan3::to_rank(in);
+})};
 
 //!\}
 

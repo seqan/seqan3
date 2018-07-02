@@ -54,9 +54,9 @@ struct test_view
     {}
 };
 
-TEST(declare_view_functor_type_without_args, function_interface)
+TEST(generic_pipable_view_adaptor_without_args, function_interface)
 {
-    using test_fn = detail::declare_view_functor_type<test_view>;
+    using test_fn = detail::generic_pipable_view_adaptor<test_view>;
 
     test_fn f;
 
@@ -69,9 +69,9 @@ TEST(declare_view_functor_type_without_args, function_interface)
     EXPECT_EQ(v.urange[2], urange[2]);
 }
 
-TEST(declare_view_functor_type_without_args, pipe_interface)
+TEST(generic_pipable_view_adaptor_without_args, pipe_interface)
 {
-    using test_fn = detail::declare_view_functor_type<test_view>;
+    using test_fn = detail::generic_pipable_view_adaptor<test_view>;
 
     test_fn f;
 
@@ -106,9 +106,9 @@ struct test_view_args
     {}
 };
 
-TEST(declare_view_functor_type_with_args, function_interface)
+TEST(generic_pipable_view_adaptor_with_args, function_interface)
 {
-    using test_fn = detail::declare_view_functor_type<test_view_args>;
+    using test_fn = detail::generic_pipable_view_adaptor<test_view_args>;
 
     test_fn f;
 
@@ -122,9 +122,9 @@ TEST(declare_view_functor_type_with_args, function_interface)
     EXPECT_EQ(v.param.number, 7u);
 }
 
-TEST(declare_view_functor_type_with_args, pipe_interface)
+TEST(generic_pipable_view_adaptor_with_args, pipe_interface)
 {
-    using test_fn = detail::declare_view_functor_type<test_view_args>;
+    using test_fn = detail::generic_pipable_view_adaptor<test_view_args>;
 
     test_fn f;
 

@@ -43,6 +43,7 @@
 #include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/complement.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/rank_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
@@ -149,9 +150,8 @@
  *
  * **Deep views:** Some views are declared as "deeps views". This means, that in case they are given a range-of-range
  * as input (as opposed to just a range), they will apply their transformation on the innermost range (instead of
- * the outermost range which would be default). This is handy especially for alphabet-based transformations that you
- * wish to apply to a collection of sequences. Note that in case of a single-dimensional range deep views work the
- * same way as non-deep views.
+ * the outermost range which would be default). Most alphabet-based transformations are defined as deep, but
+ * you can use seqan3::view::deep to make any view (adaptor) deep. See seqan3::view::deep for more details.
  *
  * **For all views the following are documented:**
  *

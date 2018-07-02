@@ -50,6 +50,7 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
@@ -325,10 +326,6 @@ template <typename urng_t>
 //!\endcond
 view_translate_single(urng_t &&) -> view_translate_single<urng_t>;
 
-
-//!\brief Enable view-typical use with pipe operator.
-using translate_single_fn = declare_view_functor_type<view_translate_single>;
-
 } // namespace seqan3::detail
 
 namespace seqan3::view
@@ -341,7 +338,7 @@ namespace seqan3::view
 /*!\brief A view that translates nucleotide into aminoacid alphabet for one of the six frames.
  * \tparam urng_t The type of the range being processed.
  * \param[in] urange The range being processed.
- * \param[in] tf A value of seqan3::tanslation_frames that indicates the desired frames.
+ * \param[in] tf A value of seqan3::translation_frames that indicates the desired frames.
  * \returns A range containing frames with aminoacid sequence. See below for the properties of the returned range.
  * \ingroup view
  *
@@ -413,8 +410,9 @@ namespace seqan3::view
  * auto v12 = vec | view::complement | view::translate_single();                                     // == [C,M,H,A]
  *
  * ```
+ * \hideinitializer
  */
-inline constexpr seqan3::detail::translate_single_fn translate_single;
+inline constexpr auto translate_single =deep{detail::generic_pipable_view_adaptor<detail::view_translate_single>{}};
 
 //!\}
 
@@ -646,9 +644,6 @@ template <typename urng_t>
 //!\endcond
 view_translate(urng_t &&) -> view_translate<urng_t>;
 
-//!\brief Enable view-typical use with pipe operator.
-using translate_fn = declare_view_functor_type<view_translate>;
-
 } // namespace seqan3::detail
 
 namespace seqan3::view
@@ -720,9 +715,9 @@ namespace seqan3::view
  * // combinability
  * auto v8 = vec | view::complement | view::translate(translation_frames::FWD_REV_0);                    // == [[C,M,H,A],[M,H,A,C]]
  * ```
+ * \hideinitializer
  */
-inline constexpr seqan3::detail::translate_fn translate;
-
+inline constexpr auto translate = deep{detail::generic_pipable_view_adaptor<detail::view_translate>{}};
 //!\}
 
 } // namespace seqan3::view

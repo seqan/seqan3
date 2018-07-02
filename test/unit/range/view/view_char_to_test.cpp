@@ -36,6 +36,7 @@
 
 #include <gtest/gtest.h>
 
+#include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/reverse.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -62,6 +63,17 @@ TEST(view_char_to, basic)
     dna5_vector cmp2{"ATAGTTTCA"_dna5};
     dna5_vector v3 = vec | view::char_to<dna5> | ranges::view::reverse;
     EXPECT_EQ(cmp2, v3);
+}
+
+TEST(view_char_to, deep_view)
+{
+    std::vector<std::string> foo{"ACGTA", "TGCAT"};
+
+    std::vector<dna5_vector> v = foo | view::char_to<dna5>;
+
+    ASSERT_EQ(ranges::size(v), 2);
+    EXPECT_TRUE((ranges::equal(v[0], "ACGTA"_dna5)));
+    EXPECT_TRUE((ranges::equal(v[1], "TGCAT"_dna5)));
 }
 
 TEST(view_char_to, concepts)
