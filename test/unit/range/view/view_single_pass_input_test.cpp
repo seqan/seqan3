@@ -35,8 +35,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/range/view/single_pass_input.hpp>
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/view/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 #include <vector>
 #include <type_traits>

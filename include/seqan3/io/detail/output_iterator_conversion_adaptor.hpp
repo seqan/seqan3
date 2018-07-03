@@ -45,8 +45,8 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/io/concept.hpp>
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/concept/container.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/std/concept/iterator.hpp>
 

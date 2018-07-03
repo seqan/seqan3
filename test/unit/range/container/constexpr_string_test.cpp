@@ -35,8 +35,8 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/range/container/constexpr_string.hpp>
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/container.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 #include <utility>
 #include <string>

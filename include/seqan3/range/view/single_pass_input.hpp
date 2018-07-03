@@ -40,7 +40,7 @@
 #pragma once
 
 #include <seqan3/core/metafunction/all.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/std/concept/iterator.hpp>

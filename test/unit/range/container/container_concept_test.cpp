@@ -41,7 +41,7 @@
 #include <deque>
 #include <string>
 
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concept/container.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 #include <sdsl/int_vector.hpp>
@@ -147,10 +147,10 @@ void container_concept_const_travis_bug_test()
     // travis failed on this statement
     // concept bool sequence_container_concept = requires (type val, type val2)
     //              ^~~~~~~~~~~~~~~~
-    // /include/seqan3/range/container/concept.hpp:113:14: note:     with ‘std::basic_string<char> val’
-    // /include/seqan3/range/container/concept.hpp:113:14: note:     with ‘std::basic_string<char> val2’
+    // /include/seqan3/std/concept/container.hpp:113:14: note:     with ‘std::basic_string<char> val’
+    // /include/seqan3/std/concept/container.hpp:113:14: note:     with ‘std::basic_string<char> val2’
     // [...]
-    // /include/seqan3/range/container/concept.hpp:113:14: note: the required expression ‘val.erase(val.cbegin(), val.cend())’ would be ill-formed
+    // /include/seqan3/std/concept/container.hpp:113:14: note: the required expression ‘val.erase(val.cbegin(), val.cend())’ would be ill-formed
 
     using namespace std::string_literals;
 
