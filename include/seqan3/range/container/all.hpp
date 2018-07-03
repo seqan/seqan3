@@ -39,7 +39,6 @@
 
 #pragma once
 
-#include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
 

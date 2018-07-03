@@ -46,7 +46,7 @@
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
 namespace seqan3

@@ -43,7 +43,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::view

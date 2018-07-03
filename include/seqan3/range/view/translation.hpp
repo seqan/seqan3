@@ -47,8 +47,8 @@
 #include <seqan3/alphabet/aminoacid/translation.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/concept/container.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/detail.hpp>

@@ -56,7 +56,7 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/char_to.hpp>
 
 namespace seqan3

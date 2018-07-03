@@ -42,7 +42,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/deep.hpp>
 
 namespace seqan3::view

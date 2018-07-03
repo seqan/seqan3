@@ -50,7 +50,7 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concept/container.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/std/concept/iterator.hpp>
 
