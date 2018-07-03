@@ -39,7 +39,7 @@
 #include <range/v3/view/reverse.hpp>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/range/view/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/convert.hpp>
 
 using namespace seqan3;

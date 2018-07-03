@@ -41,7 +41,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
