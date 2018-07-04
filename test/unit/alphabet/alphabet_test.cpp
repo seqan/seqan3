@@ -245,7 +245,7 @@ template <typename in_archive_t, typename out_archive_t, typename TypeParam>
 void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
 {
     // Generate unique file name.
-    test::tmp_file_name filename{"alphabet_cereal_test"};
+    test::tmp_filename filename{"alphabet_cereal_test"};
     {
         std::ofstream os{filename.get_path(), std::ios::binary};
         out_archive_t oarchive{os};

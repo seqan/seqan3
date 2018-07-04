@@ -43,8 +43,8 @@ using namespace seqan3::test;
 // aggregate initialization
 TEST(tmp_filename_aggr, aggr)
 {
-    tmp_file_name t1{"aggr_test"};
-    tmp_file_name t2("aggr_test");
+    tmp_filename t1{"aggr_test"};
+    tmp_filename t2("aggr_test");
     EXPECT_NE(t1.get_path(), t2.get_path());
     EXPECT_TRUE(fs::exists(t1.get_path().parent_path()));
     EXPECT_TRUE(fs::exists(t2.get_path().parent_path()));
@@ -56,34 +56,34 @@ TEST(tmp_filename_aggr, aggr)
 // nullptr as filename
 TEST(tmp_filename_nullptr, null_ptr)
 {
-    EXPECT_THROW(tmp_file_name t1{nullptr}, fs::filesystem_error);
-    EXPECT_THROW(tmp_file_name t1(nullptr), fs::filesystem_error);
+    EXPECT_THROW(tmp_filename t1{nullptr}, fs::filesystem_error);
+    EXPECT_THROW(tmp_filename t1(nullptr), fs::filesystem_error);
 }
 
 // move construction
 TEST(tmp_filename_mv_ctr, mv_ctr)
 {
-    tmp_file_name t1{"mv_ctr_test"};
-    tmp_file_name t2{"mv_ctr_test"};
-    tmp_file_name t3{std::move(t2)};
+    tmp_filename t1{"mv_ctr_test"};
+    tmp_filename t2{"mv_ctr_test"};
+    tmp_filename t3{std::move(t2)};
     EXPECT_NE(t1.get_path(), t3.get_path());
-    tmp_file_name t4(std::move(t1));
+    tmp_filename t4(std::move(t1));
     EXPECT_NE(t3.get_path(), t4.get_path());
 }
 
 // move assignment
 TEST(tmp_filename_mv_assign, mv_assign)
 {
-    tmp_file_name t1{"mv_ctr_test"};
-    tmp_file_name t2{"mv_ctr_test"};
-    tmp_file_name t3 = std::move(t2);
+    tmp_filename t1{"mv_ctr_test"};
+    tmp_filename t2{"mv_ctr_test"};
+    tmp_filename t3 = std::move(t2);
     EXPECT_NE(t1.get_path(), t3.get_path());
 }
 
 // destructor
 TEST(tmp_filename_dtr, dtr)
 {
-    auto t1 = std::make_unique<tmp_file_name>("delete_test");
+    auto t1 = std::make_unique<tmp_filename>("delete_test");
     auto path = t1->get_path();
     std::ofstream os{path, std::ios::out};
     os << "delete_test";
