@@ -66,7 +66,7 @@ namespace test
  * \par Example
  *
  * ```cpp
- * tmp_file_name fn{"my_file"};
+ * tmp_filename fn{"my_file"};
  * std::cout << fn.get_path() << std::endl;
  * ```
  *
@@ -80,7 +80,7 @@ namespace test
  * \a mkdtemp is thread safe, such that creating multiple parallel instances of this class will
  * not induce a data race on the creation of temporary file path.
  */
-class tmp_file_name
+class tmp_filename
 {
 public:
 
@@ -89,15 +89,15 @@ public:
      * \{
      */
     //!\brief Deleted default constructor.
-    tmp_file_name() = delete;
+    tmp_filename() = delete;
     //!\brief Copy constructor.
-    tmp_file_name(tmp_file_name const &) = delete;  // NOTE: We could store the path in a shared_ptr and by thus reactivating the .
+    tmp_filename(tmp_filename const &) = delete;  // NOTE: We could store the path in a shared_ptr and by thus reactivating the .
     //!\brief Move constructor.
-    tmp_file_name(tmp_file_name &&) = default;
+    tmp_filename(tmp_filename &&) = default;
     //!\brief Copy assignment.
-    tmp_file_name & operator=(tmp_file_name const &) = delete;
+    tmp_filename & operator=(tmp_filename const &) = delete;
     //!\brief Move assignment.
-    tmp_file_name & operator=(tmp_file_name &&) = default;
+    tmp_filename & operator=(tmp_filename &&) = default;
 
     /*!\brief Constructs temp path with given file name.
      * \param f_name The name of the file.
@@ -107,7 +107,7 @@ public:
      * \par Exceptions
      * Might throw std::filesystem::filesystem_error.
      */
-    explicit tmp_file_name(const char * f_name)
+    explicit tmp_filename(const char * f_name)
     {
         if (f_name == nullptr)
             throw filesystem::filesystem_error("Empty file name!", std::make_error_code(std::errc::invalid_argument)); 
@@ -132,7 +132,7 @@ public:
     /*!\brief Destructs the temporary file path.
      * Removes the temporary directory and all it's subdirectories and files contained.
      */
-    ~tmp_file_name()
+    ~tmp_filename()
     {
         [[maybe_unused]] std::error_code ec;
         filesystem::remove_all(file_path.parent_path(), ec);

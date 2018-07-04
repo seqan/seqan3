@@ -363,7 +363,7 @@ void do_serialisation(TypeParam const l)
 {
     // This makes sure the file is also deleted if an exception is thrown in one of the tests below
     // Generate unique file name.
-    test::tmp_file_name filename{"container_cereal_test"};
+    test::tmp_filename filename{"container_cereal_test"};
     {
         std::ofstream os{filename.get_path(), std::ios::binary};
         out_archive_t oarchive{os};
