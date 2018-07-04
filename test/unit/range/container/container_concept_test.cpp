@@ -41,10 +41,10 @@
 #include <deque>
 #include <string>
 
-#include <seqan3/std/concept/container.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
-
 #include <sdsl/int_vector.hpp>
+
+#include <seqan3/range/container/concatenated_sequences.hpp>
+#include <seqan3/std/concept/container.hpp>
 
 using namespace seqan3;
 

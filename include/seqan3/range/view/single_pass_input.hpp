@@ -40,10 +40,10 @@
 #pragma once
 
 #include <seqan3/core/metafunction/all.hpp>
-#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 //-----------------------------------------------------------------------------
 // Implementation of single pass input view.
@@ -340,7 +340,7 @@ namespace seqan3::view
  * | seqan3::random_access_range_concept |                                       | *lost*                                             |
  * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
- * | seqan3::viewable_concept            | *required*                            | *guaranteed*                                       |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         |                                       | *lost*                                             |
  * | seqan3::common_range_concept        |                                       | *lost*                                             |

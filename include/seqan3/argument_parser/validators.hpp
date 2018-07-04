@@ -42,13 +42,12 @@
 #include <sstream>
 #include <regex>
 
-#include <range/v3/view/all.hpp> // ranges::view::all()
-
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
-#include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/std/concept/callable.hpp>
+#include <seqan3/std/concept/container.hpp>
+#include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3
 {
@@ -280,13 +279,13 @@ public:
     void operator()(option_value_type const & cmp) const
     {
         if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
-            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", ranges::view::all(values), "."));
+            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", view::all(values), "."));
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("Value must be one of ", ranges::view::all(values), ".");
+        return detail::to_string("Value must be one of ", view::all(values), ".");
     }
 
 private:
@@ -337,14 +336,14 @@ public:
             {
                 if (!(std::find(values.begin(), values.end(), cmp_v) != values.end()))
                     throw parser_invalid_argument(detail::to_string("Value ", cmp_v, " is not one of ",
-                                                                ranges::view::all(values), "."));
+                                                                view::all(values), "."));
             });
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("Value must be one of ", ranges::view::all(values), ".");
+        return detail::to_string("Value must be one of ", view::all(values), ".");
     }
 
 private:
@@ -424,7 +423,7 @@ public:
 
         if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
             throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
-                                                            ranges::view::all(extensions), "."));
+                                                            view::all(extensions), "."));
     }
 
     //!\brief Tests whether every value of v lies inside extensions.
@@ -436,7 +435,7 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("File name extension must be one of ", ranges::view::all(extensions), ".");
+        return detail::to_string("File name extension must be one of ", view::all(extensions), ".");
     }
 
 private:

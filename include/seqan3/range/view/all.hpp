@@ -99,18 +99,18 @@
  * assert(complemented == "TGCCAG"_dna4);
  *
  * // or immediately create on container
- * dna4_vector reversed = vec | ranges::view::reverse;
+ * dna4_vector reversed = vec | view::reverse;
  * assert(complemented == "CTGGCA"_dna4);
  * ```
  *
  * Composability:
  * ```cpp
  * // views can be composed iteratively
- * auto vec_view3 = vec | ranges::view::reverse;
+ * auto vec_view3 = vec | view::reverse;
  * auto vec_view4 = vec_view3 | view::complement;
  *
  * // or in one line similar to the unix command line
- * auto vec_view5 = vec | view::complement | ranges::view::reverse;
+ * auto vec_view5 = vec | view::complement | view::reverse;
  *
  * // vec_view4 and vec_view5 are the reverse complement of "ACGGTC": "GACCGT"
  * ```
@@ -122,7 +122,7 @@
  *   1. the view (this is the type that is a range and meets seqan3::view_concept; it is what we refer to with
  * `auto vec_view` above)
  *   2. the view adaptor (this is the functor that returns the actual view based on it's parameters, including the
- * underlying range; in the above example `ranges::view::reverse` and `view::complement` are view adaptors)
+ * underlying range; in the above example `view::reverse` and `view::complement` are view adaptors)
  *
  * The view adaptor also facilitates the piping behaviour. It is the only entity that is publicly documented and
  * the actual view type (the range type returned by the adaptor) is considered implementation defined.
@@ -162,7 +162,7 @@
  * | seqan3::random_access_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | seqan3::contiguous_range_concept    | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually lost)       |
  * |                                     |                                  |                                                    |
- * | seqan3::viewable_concept            | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually guaranteed) |
+ * | seqan3::viewable_range_concept      | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually guaranteed) |
  * | seqan3::view_concept                | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually guaranteed) |
  * | seqan3::sized_range_concept         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | seqan3::common_range_concept        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
@@ -176,13 +176,13 @@
  * The most basic assumption is that the range satisfies `seqan3::input_range_concept`, but many have stronger
  * requirements, e.g. `seqan3::random_access_range_concept`. The concepts in the first block all build up on
  * each other, i.e. requiring one implies requiring those above; the other concepts are mostly independent of each
- * other. Most views also require that the underlying range satisfy seqan3::viewable_concept which means they don't
+ * other. Most views also require that the underlying range satisfy seqan3::viewable_range_concept which means they don't
  * accept temporary range objects other than views (because they are cheap to copy). A prominent exception
  * to the latter is view::persist that exists exactly for this purpose. *Note that these being* requirements *means that
  * they are the minimal set of properties assumed. Views may very well make use of stronger properties if available.*
  *
  * **Return range guarantees:** All view adaptors that are not *sink-only* return a range that meets at least
- * `seqan3::input_range_concept` and also `seqan3::view_concept` (and conversely also `seqan3::viewable_concept`,
+ * `seqan3::input_range_concept` and also `seqan3::view_concept` (and conversely also `seqan3::viewable_range_concept`,
  * because all views are viewable). Most views also preserve stronger
  * properties, e.g. `seqan3::random_access_range_concept`, but this depends on the view. Some views also add
  * properties not present on the input range, e.g. the range returned by `ranges::view::take_exactly` meets
@@ -209,7 +209,7 @@
  * of seqan3::view::complement has any actual `&` removed from the underlying ranges' reference type (if originally present),
  * this goes hand-in-hand with seqan3::output_range_concept being lost → original elements cannot be written to through
  * this view.
- * This is because *new elements* are being generated. Other views like `ranges::view::reverse` also preserve the
+ * This is because *new elements* are being generated. Other views like `view::reverse` also preserve the
  * `&` (if originally present), because the elements in the return view still point to the elements in the original
  * range (just in different order). This has the effect that through some combinations of views you can modify the
  * elements in the original range (if all views in the pipe preserve seqan3::output_range_concept), but through others

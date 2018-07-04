@@ -39,10 +39,9 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -71,7 +70,7 @@ namespace seqan3::view
  * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
  * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
- * | seqan3::viewable_concept            | *required*                            | *guaranteed*                                       |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
  * | seqan3::common_range_concept        |                                       | *preserved*                                        |
@@ -100,7 +99,7 @@ namespace seqan3::view
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-inline auto const to_rank = deep{ranges::view::transform([] (alphabet_concept const in)
+inline auto const to_rank = deep{view::transform([] (alphabet_concept const in)
 {
     return seqan3::to_rank(in);
 })};

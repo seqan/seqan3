@@ -39,9 +39,8 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -90,7 +89,7 @@ namespace seqan3::view
  *   std::vector<bool> v2(view::convert<bool>(vec));
  *
  *   // combinability
- *   auto v3 = vec | view::convert<bool> | ranges::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
+ *   auto v3 = vec | view::convert<bool> | view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
  * ```
  *
  * Convert from seqan3::dna15 to seqan3::dna5:
@@ -101,7 +100,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <typename out_t>
-auto const convert = ranges::view::transform([] (auto const & in) -> out_t
+auto const convert = view::transform([] (auto const & in) -> out_t
 {
     if constexpr (implicitly_convertible_to_concept<std::remove_reference_t<decltype(in)>, out_t>)
         return in;

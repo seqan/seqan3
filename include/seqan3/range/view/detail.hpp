@@ -41,7 +41,6 @@
 #pragma once
 
 #include <range/v3/range_fwd.hpp>
-#include <range/v3/view/transform.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>

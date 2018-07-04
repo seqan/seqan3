@@ -39,12 +39,10 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -74,7 +72,7 @@ namespace seqan3::view
  * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
  * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
- * | seqan3::viewable_concept            | *required*                            | *guaranteed*                                       |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
  * | seqan3::common_range_concept        |                                       | *preserved*                                        |
@@ -95,7 +93,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <alphabet_concept alphabet_type>
-inline auto const char_to = deep{ranges::view::transform([] (auto && in)
+inline auto const char_to = deep{view::transform([] (auto && in)
 {
     static_assert(std::is_same_v<remove_cvref_t<decltype(in)>, remove_cvref_t<underlying_char_t<alphabet_type>>>,
                     "The innermost value type must be the underlying char type of alphabet_type.");

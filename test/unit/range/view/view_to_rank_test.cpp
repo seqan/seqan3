@@ -36,11 +36,10 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/reverse.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/to_rank.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -60,7 +59,7 @@ TEST(view_to_rank, basic)
 
     // combinability
     std::vector<unsigned> cmp2{0, 3, 0, 2, 3, 3, 3, 1, 0};
-    std::vector<unsigned> v3 = vec | view::to_rank | ranges::view::reverse;
+    std::vector<unsigned> v3 = vec | view::to_rank | view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 

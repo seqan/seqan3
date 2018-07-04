@@ -45,15 +45,15 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/translation.hpp>
-#include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/std/concept/range.hpp>
-#include <seqan3/std/concept/container.hpp>
+#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/detail.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/concept/container.hpp>
 
 namespace seqan3
 {
@@ -356,7 +356,7 @@ namespace seqan3::view
  * | seqan3::random_access_range_concept | *required*                            | *preserved*                                        |
  * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
- * | seqan3::viewable_concept            | *required*                            | *guaranteed*                                       |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         | *required*                            | *preserved*                                        |
  * | seqan3::common_range_concept        |                                       | *guaranteed*                                       |
@@ -676,7 +676,7 @@ namespace seqan3::view
  * | seqan3::random_access_range_concept | *required*                            | *preserved*                                        |
  * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
- * | seqan3::viewable_concept            | *required*                            | *guaranteed*                                       |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         | *required*                            | *preserved*                                        |
  * | seqan3::common_range_concept        |                                       | *guaranteed*                                       |
