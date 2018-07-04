@@ -84,7 +84,7 @@ concept bool incrementable_concept =            regular_concept<i> &&
                                                 weakly_incrementable_concept<i> &&
                                                 static_cast<bool>(ranges::Incrementable<i>());
 /*!\brief Resolves to `ranges::Iterator<iterator_type>()`
- * \sa http://en.cppreference.com/w/cpp/concept/Iterator
+ * \sa https://en.cppreference.com/w/cpp/named_req/Iterator
  */
 template <typename i>
 concept bool iterator_concept =                 weakly_incrementable_concept<i> &&
@@ -107,7 +107,7 @@ concept bool sized_sentinel_concept =           sentinel_concept<s, i> &&
                                                 static_cast<bool>(ranges::SizedSentinel<s, i>());
 
 /*!\brief Resolves to `ranges::OutputIterator<iterator_type, type>()`
- * \sa http://en.cppreference.com/w/cpp/concept/OutputIterator
+ * \sa https://en.cppreference.com/w/cpp/named_req/OutputIterator
  */
 template <typename out, typename t>
 concept bool output_iterator_concept =          iterator_concept<out> &&
