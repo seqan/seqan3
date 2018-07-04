@@ -197,7 +197,7 @@ namespace seqan3::view
  * |                                     |                                       |                                 |
  * | seqan3::view_concept                |                                       | *guaranteed*                    |
  * | seqan3::sized_range_concept         |                                       | *lost*                          |
- * | seqan3::bounded_range_concept       |                                       | *lost*                          |
+ * | seqan3::common_range_concept        |                                       | *lost*                          |
  * | seqan3::output_range_concept        |                                       | *preserved*                     |
  * | seqan3::const_iterable_concept      |                                       | *preserved*                     |
  * |                                     |                                       |                                 |

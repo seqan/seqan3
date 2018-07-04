@@ -69,10 +69,12 @@ namespace seqan3::view
  * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
  * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
  * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
+ * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
+ * | seqan3::viewable_concept            | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::bounded_range_concept       |                                       | *preserved*                                        |
+ * | seqan3::common_range_concept        |                                       | *preserved*                                        |
  * | seqan3::output_range_concept        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
  * |                                     |                                       |                                                    |
