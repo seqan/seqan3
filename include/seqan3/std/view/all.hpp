@@ -33,17 +33,22 @@
 // ============================================================================
 
 /*!\file
- * \brief  Meta-include for standard library and core language imports.
+ * \brief  Meta-include for standard library views.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/std/concept/all.hpp>
-#include <seqan3/std/view/all.hpp>
+#include <seqan3/std/view/common.hpp>
+#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/view/subrange.hpp>
+#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/view/view_all.hpp>
 
-/*!\defgroup std STD
- * \brief Adaptations, imports and aliases of current and future standard library entities.
+/*!\defgroup core_view View
+ * \ingroup std
+ * \brief Standard library views
  *
  * \details
  *
