@@ -42,8 +42,8 @@
 #include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/quality/quality_composition.hpp>
-#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 namespace seqan3::detail
 {

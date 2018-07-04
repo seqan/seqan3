@@ -34,15 +34,15 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/range/view/single_pass_input.hpp>
-#include <seqan3/std/concept/range.hpp>
-
 #include <vector>
 #include <type_traits>
 
 #include <range/v3/view/zip.hpp>
 #include <range/v3/view/take.hpp>
 #include <range/v3/istream_range.hpp>
+
+#include <seqan3/range/view/single_pass_input.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 template <typename rng_type>
 class single_pass_input : public ::testing::Test
