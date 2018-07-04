@@ -100,7 +100,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(vec)>);
     EXPECT_FALSE(view_concept<decltype(vec)>);
     EXPECT_TRUE(sized_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(vec)>);
+    EXPECT_TRUE(common_range_concept<decltype(vec)>);
     EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
     EXPECT_TRUE((output_range_concept<decltype(vec), dna5_vector>));
 
@@ -111,7 +111,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
     EXPECT_TRUE(view_concept<decltype(v1)>);
     EXPECT_TRUE(sized_range_concept<decltype(v1)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(v1)>);
+    EXPECT_TRUE(common_range_concept<decltype(v1)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((output_range_concept<decltype(v1), dna5_vector>)); // view temporary returned in deep case
 
@@ -122,7 +122,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(v_elem)>);
     EXPECT_TRUE(view_concept<decltype(v_elem)>);
     EXPECT_TRUE(sized_range_concept<decltype(v_elem)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(v_elem)>);
+    EXPECT_TRUE(common_range_concept<decltype(v_elem)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v_elem)>);
     EXPECT_TRUE((output_range_concept<decltype(v_elem), dna5>));
 }

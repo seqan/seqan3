@@ -160,10 +160,12 @@
  * | seqan3::forward_range_concept       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | seqan3::bidirectional_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | seqan3::random_access_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::contiguous_range_concept    | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually lost)       |
  * |                                     |                                  |                                                    |
+ * | seqan3::viewable_concept            | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually guaranteed) |
  * | seqan3::view_concept                | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually guaranteed) |
  * | seqan3::sized_range_concept         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::bounded_range_concept       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::common_range_concept        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | seqan3::output_range_concept        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | seqan3::const_iterable_concept      | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
  * |                                     |                                  |                                                    |
@@ -171,12 +173,17 @@
  *
  * **Underlying range requirements:** All view adaptors that are not *source-only* make certain assumptions about their
  * underlying range.
- * The most basic assumption is that the range satisfies `seqan3::input_range_concept`, but some views require
- * stronger properties, e.g. `seqan3::random_access_range_concept`. *Note that these being* requirements *means that
+ * The most basic assumption is that the range satisfies `seqan3::input_range_concept`, but many have stronger
+ * requirements, e.g. `seqan3::random_access_range_concept`. The concepts in the first block all build up on
+ * each other, i.e. requiring one implies requiring those above; the other concepts are mostly independent of each
+ * other. Most views also require that the underlying range satisfy seqan3::viewable_concept which means they don't
+ * accept temporary range objects other than views (because they are cheap to copy). A prominent exception
+ * to the latter is view::persist that exists exactly for this purpose. *Note that these being* requirements *means that
  * they are the minimal set of properties assumed. Views may very well make use of stronger properties if available.*
  *
  * **Return range guarantees:** All view adaptors that are not *sink-only* return a range that meets at least
- * `seqan3::input_range_concept` and also `seqan3::view_concept`. Most views also preserve stronger
+ * `seqan3::input_range_concept` and also `seqan3::view_concept` (and conversely also `seqan3::viewable_concept`,
+ * because all views are viewable). Most views also preserve stronger
  * properties, e.g. `seqan3::random_access_range_concept`, but this depends on the view. Some views also add
  * properties not present on the input range, e.g. the range returned by `ranges::view::take_exactly` meets
  * `seqan3::sized_range_concept`, independent of whether this was met by the input range.
