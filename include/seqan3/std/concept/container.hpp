@@ -135,7 +135,7 @@ namespace seqan3
 /*!\interface seqan3::container_concept <>
  * \extends seqan3::forward_range_concept
  * \extends seqan3::sized_range_concept
- * \extends seqan3::bounded_range_concept
+ * \extends seqan3::common_range_concept
  * \extends seqan3::const_iterable_concept
  * \brief The (most general) container concept as defined by the standard library.
  * \details

@@ -67,14 +67,14 @@ template <typename type>
 concept bool sized_range_concept         = range_concept<type> && (bool)ranges::SizedRange<type>();
 //!\endcond
 
-/*!\interface seqan3::bounded_range_concept <>
+/*!\interface seqan3::common_range_concept  <>
  * \extends seqan3::range_concept
  * \brief Specifies requirements of a Range type for which `begin` and `end` return objects of the same type.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/BoundedRange
  */
 //!\cond
 template <typename type>
-concept bool bounded_range_concept       = range_concept<type> && (bool)ranges::BoundedRange<type>();
+concept bool common_range_concept        = range_concept<type> && (bool)ranges::BoundedRange<type>();
 //!\endcond
 
 /*!\interface seqan3::output_range_concept <>
@@ -172,7 +172,7 @@ concept bool const_iterable_concept =
 
 /*!\interface seqan3::view_concept <>
  * \extends seqan3::semi_regular_concept
- * \extends seqan3::viewable_concept
+ * \extends seqan3::viewable_range_concept
  * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
  * \ingroup view
  * \sa \ref view
@@ -183,7 +183,7 @@ template <typename type>
 concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
 //!\endcond
 
-/*!\interface seqan3::viewable_concept <>
+/*!\interface seqan3::viewable_range_concept <>
  * \extends seqan3::range_concept
  * \brief Specifies the requirements of a Range type that is either a seqan3::view_concept or an lvalue-reference.
  * \ingroup view
@@ -191,7 +191,7 @@ concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
  */
 //!\cond
 template <typename type>
-concept bool viewable_concept = range_concept<type> && (std::is_lvalue_reference_v<type> || view_concept<type>);
+concept bool viewable_range_concept = range_concept<type> && (std::is_lvalue_reference_v<type> || view_concept<type>);
 //!\endcond
 
 //!\}
