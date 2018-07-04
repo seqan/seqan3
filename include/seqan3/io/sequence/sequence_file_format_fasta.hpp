@@ -47,7 +47,6 @@
 #include <range/v3/utility/iterator.hpp>
 #include <range/v3/view/drop_while.hpp>
 #include <range/v3/view/remove_if.hpp>
-#include <range/v3/view/transform.hpp>
 #include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -56,8 +55,10 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
-#include <seqan3/std/concept/range.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/view/subrange.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
@@ -142,7 +143,7 @@ protected:
 
         ranges::copy(stream_view | ranges::view::take_while(!is_id)                // until next header (or end)
                                  | ranges::view::remove_if(is_space || is_digit)   // ignore whitespace and numbers
-                                 | ranges::view::transform([is_legal_alph] (char const c)
+                                 | view::transform([is_legal_alph] (char const c)
                                    {
                                        if (!is_legal_alph(c))
                                        {
@@ -212,8 +213,10 @@ public:
         static_assert(detail::decays_to_ignore_v<qual_type> || detail::decays_to_ignore_v<seq_qual_type>,
                       "Either the qualities field, or the seq_qual field need to be set to std::ignore.");
 
-        auto stream_view = ranges::iterator_range{std::istreambuf_iterator<char>{stream},
-                                                  std::istreambuf_iterator<char>{}};
+        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
+                                          decltype(std::istreambuf_iterator<char>{})>
+                            {std::istreambuf_iterator<char>{stream},
+                             std::istreambuf_iterator<char>{}};
         // ID
         read_id(stream_view, options, id);
 

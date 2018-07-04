@@ -174,7 +174,6 @@ concept bool const_iterable_concept =
  * \extends seqan3::semi_regular_concept
  * \extends seqan3::viewable_range_concept
  * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \ingroup view
  * \sa \ref view
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
  */
@@ -186,7 +185,6 @@ concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
 /*!\interface seqan3::viewable_range_concept <>
  * \extends seqan3::range_concept
  * \brief Specifies the requirements of a Range type that is either a seqan3::view_concept or an lvalue-reference.
- * \ingroup view
  * \sa \ref view
  */
 //!\cond
