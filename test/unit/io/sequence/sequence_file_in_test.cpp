@@ -98,7 +98,7 @@ TEST_F(sequence_file_in_f, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_file_name filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
@@ -112,7 +112,7 @@ TEST_F(sequence_file_in_f, construct_by_filename)
 
     /* wrong extension */
     {
-        test::tmp_file_name filename{"sequence_file_in_constructor.xyz"};
+        test::tmp_filename filename{"sequence_file_in_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
         EXPECT_THROW( sequence_file_in<>{filename.get_path()} ,
                       unhandled_extension_error );
@@ -126,7 +126,7 @@ TEST_F(sequence_file_in_f, construct_by_filename)
 
     /* filename + fields */
     {
-        test::tmp_file_name filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
@@ -177,7 +177,7 @@ TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        test::tmp_file_name filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
@@ -195,7 +195,7 @@ TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        test::tmp_file_name filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
