@@ -113,7 +113,8 @@ struct rna5 : public dna5
     //!\copydoc seqan3::dna4::assign_char
     constexpr rna5 & assign_char(char_type const c) noexcept
     {
-        _value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 

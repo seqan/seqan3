@@ -123,7 +123,8 @@ struct dot_bracket3
      */
     constexpr dot_bracket3 & assign_char(char_type const chr) noexcept
     {
-        _value = char_to_value[chr];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(chr)];
         return *this;
     }
 

@@ -118,7 +118,8 @@ struct illumina18
     //! set internal value given 1-letter code
     constexpr illumina18 & assign_char(char_type const c)
     {
-        value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 
