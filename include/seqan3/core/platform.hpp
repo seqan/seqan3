@@ -99,7 +99,7 @@
 // SDSL [required]
 #if __has_include(<sdsl/version.hpp>)
 #   include <sdsl/version.hpp>
-    static_assert(true, "Only version 3 of the SDSL is supported by SeqAn3.");
+    static_assert(sdsl::sdsl_version_major == 3, "Only version 3 of the SDSL is supported by SeqAn3.");
 #else
 #   error The sdsl library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
