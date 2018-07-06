@@ -36,12 +36,11 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/reverse.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
-#include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/trim.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 using namespace seqan3::view;
@@ -103,7 +102,7 @@ TEST(view_trim, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(vec)>);
     EXPECT_FALSE(view_concept<decltype(vec)>);
     EXPECT_TRUE(sized_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(vec)>);
+    EXPECT_TRUE(common_range_concept<decltype(vec)>);
     EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
     EXPECT_TRUE((output_range_concept<decltype(vec), dna5q>));
 
@@ -114,7 +113,7 @@ TEST(view_trim, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
     EXPECT_TRUE(view_concept<decltype(v1)>);
     EXPECT_FALSE(sized_range_concept<decltype(v1)>);
-    EXPECT_FALSE(bounded_range_concept<decltype(v1)>);
+    EXPECT_FALSE(common_range_concept<decltype(v1)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_TRUE((output_range_concept<decltype(v1), dna5q>));
 }

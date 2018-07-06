@@ -36,11 +36,10 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/reverse.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -60,7 +59,7 @@ TEST(view_to_char, basic)
 
     // combinability
     std::string cmp2{"ATAGTTTCA"};
-    std::string v3 = vec | view::to_char | ranges::view::reverse;
+    std::string v3 = vec | view::to_char | view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 
@@ -73,7 +72,7 @@ TEST(view_to_char, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(vec)>);
     EXPECT_FALSE(view_concept<decltype(vec)>);
     EXPECT_TRUE(sized_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(vec)>);
+    EXPECT_TRUE(common_range_concept<decltype(vec)>);
     EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
     EXPECT_TRUE((output_range_concept<decltype(vec), dna5>));
 
@@ -84,7 +83,7 @@ TEST(view_to_char, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
     EXPECT_TRUE(view_concept<decltype(v1)>);
     EXPECT_TRUE(sized_range_concept<decltype(v1)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(v1)>);
+    EXPECT_TRUE(common_range_concept<decltype(v1)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((output_range_concept<decltype(v1), dna5>));
     EXPECT_FALSE((output_range_concept<decltype(v1), char>));

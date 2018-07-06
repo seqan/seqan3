@@ -37,17 +37,17 @@
 #include <gtest/gtest.h>
 
 #include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/reverse.hpp>
 #include <range/v3/view/take.hpp>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/range/view/deep.hpp>
-#include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/view/reverse.hpp>
 
 namespace seqan3::view
 {
-inline auto const deep_reverse = deep{ranges::view::reverse};
+inline auto const deep_reverse = deep{view::reverse};
 inline auto const deep_take = deep{ranges::view::take};
 inline auto const deep_take2 = deep{ranges::view::take(2)};
 }
@@ -64,7 +64,7 @@ TEST(view_deep_reverse, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{ranges::view::reverse};
+    dna5_vector v0 = foo | view::deep{view::reverse};
     EXPECT_EQ(v0, "ATGCA"_dna5);
 
     // pipe notation
@@ -76,7 +76,7 @@ TEST(view_deep_reverse, basic)
     EXPECT_EQ(v2, "ATGCA"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_reverse | ranges::view::reverse;
+    dna5_vector v3 = foo | view::deep_reverse | view::reverse;
     EXPECT_EQ(v3, "ACGTA"_dna5);
 }
 
@@ -100,7 +100,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(vec)>);
     EXPECT_FALSE(view_concept<decltype(vec)>);
     EXPECT_TRUE(sized_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(vec)>);
+    EXPECT_TRUE(common_range_concept<decltype(vec)>);
     EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
     EXPECT_TRUE((output_range_concept<decltype(vec), dna5_vector>));
 
@@ -111,7 +111,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
     EXPECT_TRUE(view_concept<decltype(v1)>);
     EXPECT_TRUE(sized_range_concept<decltype(v1)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(v1)>);
+    EXPECT_TRUE(common_range_concept<decltype(v1)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((output_range_concept<decltype(v1), dna5_vector>)); // view temporary returned in deep case
 
@@ -122,7 +122,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(random_access_range_concept<decltype(v_elem)>);
     EXPECT_TRUE(view_concept<decltype(v_elem)>);
     EXPECT_TRUE(sized_range_concept<decltype(v_elem)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(v_elem)>);
+    EXPECT_TRUE(common_range_concept<decltype(v_elem)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v_elem)>);
     EXPECT_TRUE((output_range_concept<decltype(v_elem), dna5>));
 }
@@ -148,7 +148,7 @@ TEST(view_deep_take, basic)
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take(2) | ranges::view::reverse;
+    dna5_vector v3 = foo | view::deep_take(2) | view::reverse;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 
@@ -193,7 +193,7 @@ TEST(view_deep_take2, basic)
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take2 | ranges::view::reverse;
+    dna5_vector v3 = foo | view::deep_take2 | view::reverse;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 

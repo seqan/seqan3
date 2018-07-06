@@ -39,10 +39,9 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -70,10 +69,12 @@ namespace seqan3::view
  * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
  * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
  * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
+ * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::bounded_range_concept       |                                       | *preserved*                                        |
+ * | seqan3::common_range_concept        |                                       | *preserved*                                        |
  * | seqan3::output_range_concept        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
  * |                                     |                                       |                                                    |
@@ -93,7 +94,7 @@ template <typename alphabet_type>
 //!\cond
     requires alphabet_concept<alphabet_type>
 //!\endcond
-inline auto const rank_to = deep{ranges::view::transform(
+inline auto const rank_to = deep{view::transform(
 [] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
 {
     return assign_rank(alphabet_type{}, in);

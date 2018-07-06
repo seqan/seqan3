@@ -44,8 +44,8 @@
 #include <vector>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
-#include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concept/container.hpp>
 
 namespace seqan3::detail
 {

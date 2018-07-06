@@ -32,22 +32,24 @@
 //
 // ==========================================================================
 
+#include <gtest/gtest.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <gtest/gtest.h>
+#include <range/v3/view/take.hpp>
+#include <range/v3/algorithm/equal.hpp>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/view/complement.hpp>
-#include <seqan3/range/view/concept.hpp>
 #include <seqan3/range/view/translation.hpp>
+#include <seqan3/std/concept/range.hpp>
 
-#include <range/v3/view/take.hpp>
-#include <range/v3/algorithm/equal.hpp>
+
 
 using namespace seqan3;
 using namespace seqan3::literal;

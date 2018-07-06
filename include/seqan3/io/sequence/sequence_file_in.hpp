@@ -408,7 +408,7 @@ struct sequence_file_in_default_traits_aa : sequence_file_in_default_traits_dna
  * ```cpp
  * sequence_file_in fin{"/tmp/my.fasta"};
  *
- * auto minimum_length5_filter = ranges::view::filter([] (auto const & rec)
+ * auto minimum_length5_filter = view::filter([] (auto const & rec)
  * {
  *     return size(get<field::SEQ>(rec)) >= 5;
  * });

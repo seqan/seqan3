@@ -39,9 +39,8 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/range/view/detail.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -56,7 +55,7 @@ namespace seqan3::view
  *
  * If you pass a range to a view that view performs some transformation on that range. If the range passed is
  * multi-dimensional (i.e. a range-of-ranges) that transformation happens on the outermost range. So if you
- * call ranges::view::reverse on a range-of-dna-ranges, it will revert *the order* of the dna-ranges, but leave
+ * call view::reverse on a range-of-dna-ranges, it will revert *the order* of the dna-ranges, but leave
  * the dna-ranges themselves unchanged.
  *
  * In some cases this is not desirable or even possible, i.e. seqan3::view::complement performs it's operation on
@@ -87,10 +86,12 @@ namespace seqan3::view
  * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
  * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
  * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
+ * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::bounded_range_concept       |                                       | *preserved*                                        |
+ * | seqan3::common_range_concept        |                                       | *preserved*                                        |
  * | seqan3::output_range_concept        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
  * |                                     |                                       |                                                    |
@@ -103,14 +104,14 @@ namespace seqan3::view
  * ```cpp
  * std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
  *
- * auto r = foo | ranges::view::reverse;             // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
+ * auto r = foo | view::reverse;             // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
  *
- * auto d = foo | view::deep{ranges::view::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
+ * auto d = foo | view::deep{view::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
  *
  * // You can also create a permanent alias:
  * namespace view
  * {
- * inline auto const deep_reverse = deep{ranges::view::reverse};
+ * inline auto const deep_reverse = deep{view::reverse};
  * }
  *
  * auto e = foo | view::deep_reverse;                // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
@@ -209,7 +210,7 @@ public:
      *
      * \details
      *
-     * Recurses and calls ranges::view::transform if the underlying range is a range-of-ranges.
+     * Recurses and calls view::transform if the underlying range is a range-of-ranges.
      */
 
     template <typename urng_t, typename ...arg_types>
@@ -217,7 +218,7 @@ public:
     {
         if constexpr (input_range_concept<urng_t> && input_range_concept<reference_t<urng_t>>)
         {
-            return urange | ranges::view::transform(
+            return urange | view::transform(
                 [argos = std::tuple<arg_types...>(std::forward<arg_types>(args)...), this] (auto && subrange)
                 {
                     return impl_expand(std::forward<decltype(subrange)>(subrange),

@@ -39,7 +39,6 @@
 
 #pragma once
 
-#include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/decorator/all.hpp>
 #include <seqan3/range/view/all.hpp>
@@ -73,7 +72,7 @@
  * (Click on the respective concepts to learn the exact definitions)
  *
  * Independent of input or output, a range can also be \link seqan3::sized_range_concept sized \endlink and/or
- * \link seqan3::bounded_range_concept bounded \endlink.
+ * \link seqan3::common_range_concept  common \endlink.
  *
  * ### Storage behaviour
  *

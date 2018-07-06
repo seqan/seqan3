@@ -39,11 +39,9 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -72,10 +70,12 @@ namespace seqan3::view
  * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
  * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
  * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
+ * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
+ * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
  * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::bounded_range_concept       |                                       | *preserved*                                        |
+ * | seqan3::common_range_concept        |                                       | *preserved*                                        |
  * | seqan3::output_range_concept        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
  * |                                     |                                       |                                                    |
@@ -95,12 +95,12 @@ namespace seqan3::view
  *  dna5_vector v2(view::complement(foo));                            // == "TGCAT"
  *
  *  // generate the reverse complement:
- *  dna5_vector v3 = foo | view::complement | ranges::view::reverse;  // == "TACGT"
+ *  dna5_vector v3 = foo | view::complement | view::reverse;  // == "TACGT"
  * ```
  * \hideinitializer
  */
 
-inline auto const complement = deep{ranges::view::transform([] (auto && in)
+inline auto const complement = deep{view::transform([] (auto && in)
 {
     static_assert(nucleotide_concept<std::remove_const_t<decltype(in)>>,
                   "The innermost value type must satisfy the nucleotide_concept.");

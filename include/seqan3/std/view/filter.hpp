@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,76 +34,64 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::view::to_rank.
+ * \brief Provides seqan3::view::filter.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/range/view/deep.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <range/v3/view/filter.hpp>
+
+#include <seqan3/std/concept/iterator.hpp>
 
 namespace seqan3::view
 {
 
-/*!\name Alphabet related views
- * \{
- */
-
-/*!\brief               A view that calls seqan3::to_rank() on each element in the input range.
- * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
- *                      omitted in pipe notation]
- * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
- * \returns             A range of converted elements. See below for the properties of the returned range.
- * \ingroup view
+/*!\brief A range adaptor that takes a predicate and returns a view of the elements that satisfy the predicate.
+ * \tparam           urng_t The type of the range being processed. See below for requirements. [template parameter
+ *                          is omitted in pipe notation]
+ * \tparam      predicate_t The type of the predicate, must satisfy seqan3::predicate_concept.
+ * \param[in]        urange The range being processed. [parameter is omitted in pipe notation]
+ * \param[in,out] predicate The predicate.
+ * \returns A range of those elements in the underlying range that satisfy the predicate.
+ * \ingroup core_view
  *
  * ### View properties
- *
- * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
- * the transformation on the innermost range (instead of the outermost range).
  *
  * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
  * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
  * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
  * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
  * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
- * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
+ * | seqan3::random_access_range_concept |                                       | *lost*                                             |
  * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
  * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
  * | seqan3::view_concept                |                                       | *guaranteed*                                       |
- * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::common_range_concept        |                                       | *preserved*                                        |
- * | seqan3::output_range_concept        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
+ * | seqan3::sized_range_concept         |                                       | *lost*                                             |
+ * | seqan3::common_range_concept        |                                       | *lost*                                             |
+ * | seqan3::output_range_concept        |                                       | *preserved*                                        |
+ * | seqan3::const_iterable_concept      |                                       | *lost*                                             |
  * |                                     |                                       |                                                    |
- * | seqan3::reference_t                 | seqan3::alphabet_concept              | seqan3::underlying_rank_t<seqan3::value_type_t<urng_t>> |
+ * | seqan3::reference_t                 |                                       | seqan3::reference_t<urng_t>                        |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \par Example
+ * ### STD module
+ *
+ * This entity will likely be part of C++20 or C++23. It's API will track current proposals and not be stable
+ * within SeqAn3 releases. It is implemented via the range-v3 library or the standard library (if available).
+ * Should it become clear that it will not become part of a future standard, it will migrate to a regular SeqAn3
+ * module.
+ *
+ * ### Example
+ *
  * ```cpp
- * dna4_vector vec = "ACTTTGATA"_dna4;
- * auto v = vec | view::to_rank | view::convert<unsigned>;
- * std::cout << v << '\n'; // [0,1,3,3,3,2,0,3,0]
- *
- * std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
- * auto v3 = qvec | view::to_rank | view::convert<unsigned>;
- * std::cout << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
- *
- * std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4}, {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
- * auto v4 = qcvec | view::to_rank | view::convert<unsigned>;
- * std::cout << v4 << '\n'; // [1,28,22,15,30,16,121,67,92]
+ * dna5_vector s{"ACTNTGATAN"_dna5};
+ * auto v1 = s | view::filter([](dna5 const l) { return (l != dna5::N); }); // == "ACTTGATA"_dna5
  * ```
- * We also convert to unsigned here, because the seqan3::underlying_rank_t is often `uint8_t` which is
- * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-inline auto const to_rank = deep{view::transform([] (alphabet_concept const in)
-{
-    return seqan3::to_rank(in);
-})};
 
-//!\}
+inline constexpr auto filter = ranges::view::filter;
 
 } // namespace seqan3::view

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,32 +33,24 @@
 // ============================================================================
 
 /*!\file
- * \brief Adaptation of the view concept from the Ranges TS.
+ * \brief  Meta-include for standard library views.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/view/common.hpp>
+#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/view/subrange.hpp>
+#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/view/view_all.hpp>
 
-namespace seqan3
-{
-
-/*!\interface seqan3::view_concept <>
- * \extends seqan3::range_concept
- * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
- * \ingroup view
- * \sa \ref view
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
+/*!\defgroup core_view View
+ * \ingroup std
+ * \brief Standard library views
+ *
+ * \details
+ *
+ * \todo write me.
  */
-//!\cond
-template <typename type>
-concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
-//!\endcond
-
-} // namespace seqan3
-
-#ifndef NDEBUG
-#include <range/v3/view/any_view.hpp>
-static_assert(seqan3::view_concept<ranges::any_view<char, ranges::category::random_access>>);
-#endif

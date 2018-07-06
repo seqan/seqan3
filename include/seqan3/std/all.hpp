@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/std/concept/all.hpp>
+#include <seqan3/std/view/all.hpp>
 
 /*!\defgroup std STD
  * \brief Adaptations, imports and aliases of current and future standard library entities.

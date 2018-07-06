@@ -44,7 +44,7 @@
 
 namespace seqan3
 {
-/*!\addtogroup range
+/*!\addtogroup concept
  * \{
  */
 /*!\interface seqan3::range_concept <>
@@ -67,14 +67,14 @@ template <typename type>
 concept bool sized_range_concept         = range_concept<type> && (bool)ranges::SizedRange<type>();
 //!\endcond
 
-/*!\interface seqan3::bounded_range_concept <>
+/*!\interface seqan3::common_range_concept  <>
  * \extends seqan3::range_concept
  * \brief Specifies requirements of a Range type for which `begin` and `end` return objects of the same type.
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/BoundedRange
  */
 //!\cond
 template <typename type>
-concept bool bounded_range_concept       = range_concept<type> && (bool)ranges::BoundedRange<type>();
+concept bool common_range_concept        = range_concept<type> && (bool)ranges::BoundedRange<type>();
 //!\endcond
 
 /*!\interface seqan3::output_range_concept <>
@@ -132,6 +132,15 @@ template <typename type>
 concept bool random_access_range_concept = bidirectional_range_concept<type> && (bool)ranges::RandomAccessRange<type>();
 //!\endcond
 
+/*!\interface seqan3::contiguous_range_concept <>
+ * \extends seqan3::random_access_range_concept
+ * \brief Specifies requirements of an Range type whose elements occupy adjacent locations in memory.
+ */
+//!\cond
+template <typename type>
+concept bool contiguous_range_concept = random_access_range_concept<type> && (bool)ranges::ContiguousRange<type>();
+//!\endcond
+
 /*!\interface seqan3::const_iterable_concept <>
  * \extends seqan3::input_range_concept
  * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
@@ -160,62 +169,28 @@ concept bool const_iterable_concept =
     (random_access_range_concept<std::remove_const_t<type>> == random_access_range_concept<type const>);
 //!\endcond
 
+
+/*!\interface seqan3::view_concept <>
+ * \extends seqan3::semi_regular_concept
+ * \extends seqan3::viewable_range_concept
+ * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
+ * \sa \ref view
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/View
+ */
+//!\cond
+template <typename type>
+concept bool view_concept = range_concept<type> && (bool)ranges::View<type>();
+//!\endcond
+
+/*!\interface seqan3::viewable_range_concept <>
+ * \extends seqan3::range_concept
+ * \brief Specifies the requirements of a Range type that is either a seqan3::view_concept or an lvalue-reference.
+ * \sa \ref view
+ */
+//!\cond
+template <typename type>
+concept bool viewable_range_concept = range_concept<type> && (std::is_lvalue_reference_v<type> || view_concept<type>);
+//!\endcond
+
 //!\}
 } // namespace seqan3
-
-#ifndef NDEBUG
-/* Check the STL containers */
-
-#include <vector>
-#include <array>
-#include <list>
-#include <forward_list>
-#include <deque>
-#include <string>
-
-// no fwd list
-static_assert(seqan3::sized_range_concept<std::list<char>>);
-static_assert(seqan3::sized_range_concept<std::array<char, 2>>);
-static_assert(seqan3::sized_range_concept<std::vector<char>>);
-static_assert(seqan3::sized_range_concept<std::deque<char>>);
-static_assert(seqan3::sized_range_concept<std::string>);
-
-static_assert(seqan3::bounded_range_concept<std::forward_list<char>>);
-static_assert(seqan3::bounded_range_concept<std::list<char>>);
-static_assert(seqan3::bounded_range_concept<std::array<char, 2>>);
-static_assert(seqan3::bounded_range_concept<std::vector<char>>);
-static_assert(seqan3::bounded_range_concept<std::deque<char>>);
-static_assert(seqan3::bounded_range_concept<std::string>);
-
-static_assert(seqan3::output_range_concept<std::forward_list<char>, char>);
-static_assert(seqan3::output_range_concept<std::list<char>, char>);
-static_assert(seqan3::output_range_concept<std::array<char, 2>, char>);
-static_assert(seqan3::output_range_concept<std::vector<char>, char>);
-static_assert(seqan3::output_range_concept<std::deque<char>, char>);
-static_assert(seqan3::output_range_concept<std::string, char>);
-
-static_assert(seqan3::forward_range_concept<std::forward_list<char>>);
-static_assert(seqan3::bidirectional_range_concept<std::list<char>>);
-static_assert(seqan3::random_access_range_concept<std::array<char, 2>>);
-static_assert(seqan3::random_access_range_concept<std::vector<char>>);
-static_assert(seqan3::random_access_range_concept<std::deque<char>>);
-static_assert(seqan3::random_access_range_concept<std::string>);
-
-/* Check the SDSL containers */
-#include <sdsl/int_vector.hpp>
-static_assert(seqan3::sized_range_concept<sdsl::int_vector<>>);
-static_assert(seqan3::bounded_range_concept<sdsl::int_vector<>>);
-// doesn't work?
-// static_assert(seqan3::output_range_concept<sdsl::int_vector<>, int>);
-static_assert(seqan3::random_access_range_concept<sdsl::int_vector<>>);
-
-/* Check range-v3 containers */
-#include <range/v3/view/any_view.hpp>
-
-static_assert(seqan3::range_concept<ranges::any_view<char, ranges::category::random_access>>);
-// static_assert(seqan3::sized_range_concept<ranges::any_view<char, ranges::category::random_access>>);
-static_assert(seqan3::random_access_range_concept<ranges::any_view<char, ranges::category::random_access>>);
-
-/* Check our containers */
-//TODO
-#endif

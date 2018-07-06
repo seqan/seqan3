@@ -42,8 +42,8 @@
 #include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/quality/quality_composition.hpp>
-#include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 namespace seqan3::detail
 {
@@ -197,7 +197,7 @@ namespace seqan3::view
  * |                                     |                                       |                                 |
  * | seqan3::view_concept                |                                       | *guaranteed*                    |
  * | seqan3::sized_range_concept         |                                       | *lost*                          |
- * | seqan3::bounded_range_concept       |                                       | *lost*                          |
+ * | seqan3::common_range_concept        |                                       | *lost*                          |
  * | seqan3::output_range_concept        |                                       | *preserved*                     |
  * | seqan3::const_iterable_concept      |                                       | *preserved*                     |
  * |                                     |                                       |                                 |

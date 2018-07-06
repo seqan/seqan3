@@ -41,11 +41,10 @@
 #pragma once
 
 #include <range/v3/range_fwd.hpp>
-#include <range/v3/view/transform.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/concept/range.hpp>
 
 namespace seqan3::detail
 {

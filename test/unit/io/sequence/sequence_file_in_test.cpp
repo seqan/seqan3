@@ -37,13 +37,13 @@
 #include <gtest/gtest.h>
 
 #include <range/v3/view/zip.hpp>
-#include <range/v3/view/filter.hpp>
 
 #include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
-#include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/view/filter.hpp>
+#include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -295,7 +295,7 @@ TEST_F(sequence_file_in_f, file_view)
 {
     sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
-    auto minimum_length_filter = ranges::view::filter([] (auto const & rec)
+    auto minimum_length_filter = view::filter([] (auto const & rec)
     {
         return size(get<field::SEQ>(rec)) >= 5;
     });
