@@ -95,3 +95,12 @@ namespace seqan3::view
 inline constexpr auto all = ranges::view::all;
 
 } // namespace seqan3::view
+
+namespace seqan3::detail
+{
+
+//!\brief A transformation trait that returns for a given type `t` the return type of seqan3::view::all(t{}).
+template <typename t>
+using view_all_t = ranges::view::all_t<t>;
+
+} // namespace seqan3::detail
