@@ -42,6 +42,7 @@
 #include <seqan3/alphabet/quality/illumina18.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/record.hpp>
+#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
@@ -88,6 +89,8 @@ TEST_F(record_, definition_tuple_traits)
     EXPECT_TRUE((std::is_same_v<std::tuple_element_t<1, record_type>,
                                 dna4_vector>));
     EXPECT_EQ(std::tuple_size_v<record_type>, 2ul);
+
+    EXPECT_TRUE(tuple_like_concept<record_type>);
 }
 
 TEST_F(record_, construction)

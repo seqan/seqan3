@@ -147,6 +147,7 @@ struct fields
 
 /*!\brief The class template that file records are based on; behaves like an std::tuple.
  * \ingroup io
+ * \implements seqan3::tuple_like_concept
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids   A seqan3::fields type with seqan3::field IDs corresponding to field_types.
  *
@@ -183,8 +184,19 @@ public:
     //!\brief A specialisation of std::tuple.
     using base_type = detail::transfer_template_args_onto_t<field_types, std::tuple>;
 
-    //!\brief Inherit base constructors.
+    /*!\name Constructors, destructor and assignment
+     * \brief Rule of five explicitly defaulted.
+     * \{
+     */
+    record() = default;
+    record(record const &) = default;
+    record & operator=(record const &) = default;
+    record(record &&) = default;
+    record & operator=(record &&) = default;
+
+    //!\brief Inherit std::tuple's constructors.
     using base_type::base_type;
+    //!\}
 
     static_assert(field_types::size() == field_ids::as_array.size(),
                   "You must give as many IDs as types to seqan3::record.");
