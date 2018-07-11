@@ -44,7 +44,7 @@ template <typename T>
 class char_adaptation : public ::testing::Test
 {};
 
-using char_types = ::testing::Types<char, char16_t, char32_t>;
+using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
 TYPED_TEST_CASE(char_adaptation, char_types);
 
