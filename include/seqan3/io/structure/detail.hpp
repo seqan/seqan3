@@ -33,19 +33,66 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-include for the structure IO submodule.
+ * \brief Helper functions (e.g. conversions) for the structure IO submodule.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup structure Structure
- * \ingroup io
- * \brief \todo document at a later point in time
- */
+#include <map>
+#include <stack>
 
-#include <seqan3/io/structure/structure_file_in.hpp>
-#include <seqan3/io/structure/structure_file_in_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_out.hpp>
-#include <seqan3/io/structure/structure_file_out_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_format_dot_bracket.hpp>
+#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+
+namespace seqan3::detail
+{
+
+template <rna_structure_concept structure_alph_type, typename bpp_type, range_concept structure_type>
+inline
+void bpp_from_structure(bpp_type & bpp, structure_type const & structure, double weight = 1.)
+{
+    bpp.clear();
+    if constexpr (sized_range_concept<structure_type>)
+        bpp.reserve(ranges::size(structure));
+
+    size_t max_bracket_depth = 1ul;
+    if constexpr (pseudoknot_support_v<structure_alph_type>)
+        max_bracket_depth = structure_alph_type::bracket_depth;
+
+    std::stack<size_t> brackets[max_bracket_depth];
+    size_t pos = 0ul;
+    for (structure_alph_type symbol : structure)
+    {
+        bpp.push_back({});
+        int id = 0;
+        if constexpr (pseudoknot_support_v<structure_alph_type>)
+            id = symbol.bracket_id();
+
+        if (symbol.is_pair_open())
+        {
+            brackets[id].push(pos);
+        }
+        else if (symbol.is_pair_close())
+        {
+            if (!brackets[id].empty())
+            {
+                bpp[pos].emplace(weight, brackets[id].top());
+                bpp[brackets[id].top()].emplace(weight, pos);
+                brackets[id].pop();
+            }
+            else
+            {
+                throw parse_error{std::string{"Invalid bracket notation: Unpaired closing bracket at position "}
+                                  + std::to_string(pos) + "."};
+            };
+        }
+        // no actions for unpaired
+        ++pos;
+    }
+    for (unsigned id = 0u; id < max_bracket_depth; ++id)
+        if (!brackets[id].empty())
+            throw parse_error{std::string{"Invalid bracket notation: Unpaired opening bracket at position "}
+                              + std::to_string(brackets[id].top()) + "."};
+};
+
+} // namespace seqan3::detail

@@ -41,8 +41,10 @@
 
 #include <charconv>
 #include <iterator>
+#include <stack>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <vector>
 
 #include <range/v3/algorithm/copy.hpp>
@@ -58,18 +60,52 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
+#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/io/structure/detail.hpp>
 #include <seqan3/io/structure/structure_file_in_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_in.hpp>
+#include <seqan3/io/structure/structure_file_out_format_concept.hpp>
+#include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/take_line.hpp>
 #include <seqan3/std/concept/range.hpp>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
-
+/*!\brief       The FastA format.
+ * \implements  sequence_file_format_concept
+ * \ingroup     sequence
+ *
+ * \details
+ *
+ * ### Introduction
+ *
+ * FastA is the de-facto-standard for sequence storage in bionformatics. See the
+ * [article on wikipedia](https://en.wikipedia.org/wiki/FASTA_format) for a an in-depth description of the format.
+ *
+ * ### Fields
+ *
+ * The FastA format provides the fields seqan3::field::SEQ and seqan3::field::ID. Both fields are required when writing.
+ *
+ * ### Implementation notes
+ *
+ * When reading the ID-line the identifier (either `;` or `>`) and any blank characters before the actual ID are
+ * stripped.
+ *
+ * This implementation supports the following less known and optional features of the format:
+ *
+ *   * ID lines beginning with `;` instead of `>`
+ *   * line breaks and other whitespace characters in any part of the sequence
+ *   * character counts within the sequence (they are simply ignored)
+ *
+ * The following optional features are currently **not supported:**
+ *
+ *   * Multiple comment lines (starting with either `;` or `>`), only one ID line before the sequence line is accepted
+ *
+ */
 class structure_file_format_dot_bracket
 {
 public:
@@ -93,38 +129,30 @@ public:
     //!\copydoc sequence_file_in_format_concept::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
-              typename structure_legal_alph_type,
+              bool     structured_seq_combined,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename bpp_type,
               typename structure_type,
-              typename structured_seq_type,
               typename energy_type,
               typename react_type,
               typename comment_type,
               typename offset_type>
     void read(stream_type & stream,
-              structure_file_in_options<seq_legal_alph_type, structure_legal_alph_type> const & options,
+              structure_file_in_options<seq_legal_alph_type, structured_seq_combined> const & options,
               seq_type & seq,
               id_type & id,
               bpp_type & bpp,
               structure_type & structure,
-              structured_seq_type & structured_seq,
               energy_type & energy,
               react_type & react,
               react_type & react_error,
               comment_type & comment,
               offset_type & offset)
     {
-        static_assert(detail::decays_to_ignore_v<seq_type> || detail::decays_to_ignore_v<structured_seq_type>,
-                      "Either the sequence field, or the structured sequence field need to be set to std::ignore.");
-        static_assert(detail::decays_to_ignore_v<structure_type> || detail::decays_to_ignore_v<structured_seq_type>,
-                      "Either the structure field, or the structured sequence field need to be set to std::ignore.");
-
-        auto stream_view = ranges::iterator_range{std::istreambuf_iterator<char>{stream},
-                                                  std::istreambuf_iterator<char>{}};
-        auto const is_eol = is_char<'\n'>{} || is_char<'\r'>{};
-
+        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
+                                          decltype(std::istreambuf_iterator<char>{})>
+                           { std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{} };
         // READ ID
         auto const is_id = is_char<'>'>{} || is_char<';'>{};
         if (!is_id(*ranges::begin(stream_view)))
@@ -135,86 +163,75 @@ public:
             ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
                                      | ranges::view::take_while(!(is_cntrl || is_blank)), // read ID until delimiter…
                          detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
-            // consume rest of line
-            ranges::copy(stream_view | ranges::view::take_while(!is_eol),
-                         detail::make_conversion_output_iterator(std::ignore));
+            detail::consume(stream_view | view::take_line_or_throw);
         }
         else
         {
             ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                     | ranges::view::take_while(!is_eol),                 // read line
+                                     | view::take_line_or_throw,                          // read line
                          detail::make_conversion_output_iterator(id));
         }
-        // skip newline
-        auto it = ranges::begin(stream_view);
-        if (*it == '\r')
-            ++it;
-        if (*it == '\n')
-            ++it;
 
         // READ SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
-            ranges::copy(stream_view | ranges::view::take_while(!is_eol)               // until end of line
-                                     | ranges::view::remove_if(is_space || is_digit)   // ignore whitespace and numbers
-                                     | ranges::view::transform([is_legal_alph] (char const c)
+            ranges::copy(stream_view | view::take_line_or_throw                      // until end of line
+                                     | ranges::view::remove_if(is_space || is_digit) // ignore whitespace and numbers
+                                     | ranges::view::transform([is_legal_alph](char const c)
                                        {
-                                           if (!is_legal_alph(c))
+                                           if (!is_legal_alph(c))                    // enforce legal alphabet
                                            {
                                                throw parse_error{std::string{"Encountered an unexpected letter: "} +
                                                                  is_legal_alph.msg.string() +
                                                                  " evaluated to false on " +
                                                                  detail::make_printable(c)};
                                            }
-                                           return c;
-                                       })                                              // enforce legal alphabet
-                                     | view::char_to<value_type_t<seq_type>>,     // convert to actual target alphabet
+                                         return c;
+                                       })
+                                     | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
                          detail::make_conversion_output_iterator(seq));
-//            std::cout << "read sequence: " << (sequence | view::to_char ) << std::endl;
         }
         else
         {
-            auto seq_view = stream_view | ranges::view::take_while(!is_eol);
-            for (auto iter = ranges::begin(seq_view); iter != ranges::end(seq_view); ++iter) {}
-//            std::cout << "skip sequence" << std::endl;
+            detail::consume(stream_view | view::take_line_or_throw);
         }
-        // skip newline
-        it = ranges::begin(stream_view);
-        if (*it == '\r')
-            ++it;
-        if (*it == '\n')
-            ++it;
 
         // READ STRUCTURE
         if constexpr (!detail::decays_to_ignore_v<structure_type>)
         {
-            is_in_alphabet<structure_legal_alph_type> const is_legal_structure;
-            ranges::copy(stream_view | ranges::view::take_while(!is_space) // until whitespace
-                                     | ranges::view::transform([is_legal_structure](char const c)
-                                       {
-                                           if (!is_legal_structure(c))
-                                           {
-                                               throw parse_error{
-                                                   std::string{"Encountered an unexpected letter: "} +
-                                                   is_legal_structure.msg.string() +
-                                                   " evaluated to false on " + detail::make_printable(c)};
-                                           }
-                                           return c;
-                                       })                                        // enforce legal alphabet
-                                     | view::char_to<value_type_t<structure_type>>,    // convert to actual target alphabet
-                         detail::make_conversion_output_iterator(structure));
+            if constexpr (structured_seq_combined)
+            {
+                assert(std::addressof(seq) == std::addressof(structure));
+                using alph_type = typename value_type_t<structure_type>::structure_alphabet_type;
+                ranges::copy(read_structure<alph_type>(stream_view), ranges::begin(structure));
+
+                if constexpr (!detail::decays_to_ignore_v<bpp_type>)
+                    detail::bpp_from_structure<alph_type>(bpp, structure);
+            }
+            else
+            {
+                using alph_type = value_type_t<structure_type>;
+                ranges::copy(read_structure<alph_type>(stream_view),
+                             detail::make_conversion_output_iterator(structure));
+
+                if constexpr (!detail::decays_to_ignore_v<bpp_type>)
+                    detail::bpp_from_structure<alph_type>(bpp, structure);
+            }
+        }
+        else if constexpr (!detail::decays_to_ignore_v<bpp_type>)
+        {
+            detail::bpp_from_structure<wuss51>(bpp, read_structure<wuss51>(stream_view));
         }
         else
         {
-            auto seq_view = stream_view | ranges::view::take_while(!is_space);     // until whitespace
-            for (auto iter = ranges::begin(seq_view); iter != ranges::end(seq_view); ++iter) {}
+            detail::consume(stream_view | ranges::view::take_while(!is_space)); // until whitespace
         }
 
         // READ ENERGY
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
-            std::string e_str = stream_view | ranges::view::take_while(!is_eol)
+            std::string e_str = stream_view | view::take_line
                                             | ranges::view::remove_if(is_space || is_char<'('>{} || is_char<')'>{});
 
             // std::from_chars_result res = std::from_chars(e_str.data(), e_str.data() + e_str.size(), energy);
@@ -232,15 +249,8 @@ public:
         }
         else
         {
-            auto seq_view = stream_view | ranges::view::take_while(!is_eol);     // until newline
-            for (auto iter = ranges::begin(seq_view); iter != ranges::end(seq_view); ++iter) {}
+            detail::consume(stream_view | view::take_line);
         }
-        // skip newline
-        it = ranges::begin(stream_view);
-        if (*it == '\r')
-            ++it;
-        if (*it == '\n')
-            ++it;
 
         // make sure "buffer at end" implies "stream at end"
         if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
@@ -250,21 +260,115 @@ public:
         }
     }
 
-//    template<typename stream_type,     // constraints checked by file
-//             typename options_type,    // given by file
-//             typename seq_type,        // other constraints checked inside function
-//             typename id_type>
-//    void write([[maybe_unused]] stream_type &stream,
-//               [[maybe_unused]] options_type const &options,
-//               [[maybe_unused]] seq_type &&seq,
-//               [[maybe_unused]] id_type &&id)
-//    {
-//        //TODO
-//    }
+    //!\copydoc structure_file_in_format_concept::write
+    template <typename stream_type,     // constraints checked by file
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename bpp_type,
+              typename structure_type,
+              typename energy_type,
+              typename react_type,
+              typename comment_type,
+              typename offset_type>
+    void write(stream_type & stream,
+               structure_file_out_options const & options,
+               seq_type && seq,
+               id_type && id,
+               bpp_type && bpp,
+               structure_type && structure,
+               energy_type && energy,
+               react_type && react,
+               react_type && react_error,
+               comment_type && comment,
+               offset_type && offset)
+    {
+        ranges::ostreambuf_iterator stream_it{stream};
+
+        // WRITE ID
+        if constexpr (!detail::decays_to_ignore_v<id_type>)
+        {
+            if (ranges::empty(id)) //[[unlikely]]
+                throw std::runtime_error{"The ID field may not be empty when writing Dot-Bracket files."};
+
+            if (options.fasta_legacy_id_marker)
+                stream_it = ';';
+            else
+                stream_it = '>';
+
+            if (options.fasta_blank_before_id)
+                stream_it = ' ';
+
+            ranges::copy(id, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
+        else
+        {
+            throw std::logic_error{"The ID field may not be set to ignore when writing Dot-Bracket files."};
+        }
+
+        // WRITE SEQUENCE
+        if constexpr (!detail::decays_to_ignore_v<seq_type>)
+        {
+            if (ranges::empty(seq)) //[[unlikely]]
+                throw std::runtime_error{"The SEQ field may not be empty when writing Dot-Bracket files."};
+
+            ranges::copy(seq | view::to_char, stream_it);
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
+        else
+        {
+            throw std::logic_error{"The SEQ and STRUCTURED_SEQ fields may not both be set to ignore "
+                                   "when writing Dot-Bracket files."};
+        }
+
+        // WRITE STRUCTURE
+        if constexpr (!detail::decays_to_ignore_v<structure_type>)
+        {
+            if (ranges::empty(structure)) //[[unlikely]]
+                throw std::runtime_error{"The STRUCTURE field may not be empty when writing Dot-Bracket files."};
+
+            ranges::copy(structure | view::to_char, stream_it);
+        }
+        else
+        {
+            throw std::logic_error{"The STRUCTURE and STRUCTURED_SEQ fields may not both be set to ignore "
+                                   "when writing Dot-Bracket files."};
+        }
+
+        // WRITE ENERGY
+        if constexpr (!detail::decays_to_ignore_v<energy_type>)
+        {
+            if (ranges::empty(structure)) //[[unlikely]]
+                throw std::runtime_error{"The STRUCTURE field may not be empty when writing Dot-Bracket files."};
+
+            stream_it = ' ';
+            stream_it = '(';
+            ranges::copy(std::to_string(energy), stream_it);
+            stream_it = ')';
+        }
+        detail::write_eol(stream_it, options.add_carriage_return);
+    }
+
+private:
+    template <rna_structure_concept alph_type, typename stream_view_type>
+    auto read_structure(stream_view_type & stream_view)
+    {
+        is_in_alphabet<alph_type> const is_legal_structure;
+        return stream_view | ranges::view::take_while(!is_space) // until whitespace
+                           | ranges::view::transform([is_legal_structure](char const c)
+                             {
+                                 if (!is_legal_structure(c))
+                                 {
+                                     throw parse_error{
+                                         std::string{"Encountered an unexpected letter: "} +
+                                         is_legal_structure.msg.string() +
+                                         " evaluated to false on " + detail::make_printable(c)};
+                                 }
+                                 return c;
+                             })                                  // enforce legal alphabet
+                           | view::char_to<alph_type>;           // convert to actual target alphabet
+    }
 };
-
-/** implementations **/
-
 
 } // namespace seqan3
 
