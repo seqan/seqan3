@@ -84,7 +84,7 @@ pipeline {
                     }
                     steps {
                         script {
-                            build job: 'pipeline_performance_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'ON')], quietPeriod: 0
+                            build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'ON')], quietPeriod: 0
                         }
                     }
                 }
@@ -95,7 +95,7 @@ pipeline {
                     // }
                     // steps {
                         // script {
-                            // build job: 'pipeline_performance_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'OFF')], quietPeriod: 0
+                            // build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'OFF')], quietPeriod: 0
                         // }
                     // }
                 // }
