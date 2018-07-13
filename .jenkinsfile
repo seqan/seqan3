@@ -72,7 +72,7 @@ pipeline {
                         branch 'master'
                         environment name: 'BUILD_TRIGGER', value: 'cron'
                     }
-                    tag "seqan-*"
+                    // tag "seqan-*"  // TODO: Currently breaks the pipeline: see https://issues.jenkins-ci.org/browse/JENKINS-52554
                 }
             }
             stages {
@@ -88,17 +88,17 @@ pipeline {
                         }
                     }
                 }
-                stage ('package release') {
-                    when {
-                        beforeAgent true
-                        tag "seqan-*"
-                    }
-                    steps {
-                        script {
-                            build job: 'pipeline_performance_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'OFF')], quietPeriod: 0
-                        }
-                    }
-                }
+                // stage ('package release') {
+                    // when {
+                        // beforeAgent true
+                        // tag "seqan-*"
+                    // }
+                    // steps {
+                        // script {
+                            // build job: 'pipeline_performance_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'OFF')], quietPeriod: 0
+                        // }
+                    // }
+                // }
                 stage ('acceptance test') {
                     steps {
                         echo "TODO: perform acceptance test"
