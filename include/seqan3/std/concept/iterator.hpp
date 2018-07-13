@@ -66,9 +66,16 @@ concept bool writable_concept =                 static_cast<bool>(ranges::Writab
 /*!\brief Resolves to `ranges::WeaklyIncrementable<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/WeaklyIncrementable
  */
-template <typename i>
-concept bool weakly_incrementable_concept =     semi_regular_concept<i> &&
-                                                static_cast<bool>(ranges::WeaklyIncrementable<i>());
+template <typename t>
+concept bool weakly_incrementable_concept =     semi_regular_concept<t> &&
+                                                requires (t v)
+                                                {
+                                                    typename ranges::difference_type_t<t>;
+                                                    requires signed_integral_concept<ranges::difference_type_t<t>>;
+                                                    { ++v } -> t &; /* not required to be equality preserving */
+                                                    v++; /* not required to be equality preserving */
+                                                };
+
 /*!\brief Resolves to `ranges::Incrementable<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Incrementable
  */
