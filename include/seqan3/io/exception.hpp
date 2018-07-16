@@ -74,4 +74,16 @@ struct parse_error : std::runtime_error
     {}
 };
 
+// ----------------------------------------------------------------------------
+// parse exceptions
+// ----------------------------------------------------------------------------
+
+//!\brief Thrown if I/O was expecting more input (e.g. a delimiter or a new line), but the end of input was reached.
+struct unexpected_end_of_input : std::runtime_error
+{
+    //!\brief Constructor that forwards the exception string.
+    unexpected_end_of_input(std::string const & s) : std::runtime_error{s}
+    {}
+};
+
 }
