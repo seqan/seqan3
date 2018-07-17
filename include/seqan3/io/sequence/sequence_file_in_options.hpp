@@ -43,8 +43,12 @@
 
 namespace seqan3
 {
-//!\brief The options type defines various option members that influence the behaviour of all or some formats.
-template <typename sequence_legal_alphabet_>
+/*!\brief The options type defines various option members that influence the behaviour of all or some formats.
+ * \tparam sequence_legal_alphabet_ The sequence legal alphabet exposed as type trait to the format.
+ * \tparam seq_qual_combined Trait that exposes to the format whether seq and qual arguments are actually the
+ * same/combined.
+ */
+template <typename sequence_legal_alphabet_, bool seq_qual_combined>
 struct sequence_file_in_options
 {
     //!\brief Export the (possibly larger) legal alphabet to the format.

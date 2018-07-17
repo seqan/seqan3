@@ -60,8 +60,10 @@
 #include <seqan3/io/sequence/sequence_file_in_options.hpp>
 #include <seqan3/io/sequence/sequence_file_out_options.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/take_line.hpp>
 #include <seqan3/std/concept/range.hpp>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
@@ -126,23 +128,16 @@ public:
 
     //!\copydoc sequence_file_in_format_concept::read
     template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type,
+              typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
-              typename qual_type,
-              typename seq_qual_type>
-    void read(stream_type                                         & stream,
-              sequence_file_in_options<seq_legal_alph_type> const & options,
-              seq_type                                            & sequence,
-              id_type                                             & id,
-              qual_type                                           & SEQAN3_DOXYGEN_ONLY(qualities),
-              seq_qual_type                                       & seq_qual)
+              typename qual_type>
+    void read(stream_type                                                            & stream,
+              sequence_file_in_options<seq_legal_alph_type, seq_qual_combined> const & options,
+              seq_type                                                               & sequence,
+              id_type                                                                & id,
+              qual_type                                                              & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        static_assert(detail::decays_to_ignore_v<seq_type> || detail::decays_to_ignore_v<seq_qual_type>,
-                      "Either the sequence field, or the seq_qual field need to be set to std::ignore.");
-        static_assert(detail::decays_to_ignore_v<qual_type> || detail::decays_to_ignore_v<seq_qual_type>,
-                      "Either the qualities field, or the seq_qual field need to be set to std::ignore.");
-
         auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
                                           decltype(std::istreambuf_iterator<char>{})>
                             {std::istreambuf_iterator<char>{stream},
@@ -151,10 +146,7 @@ public:
         read_id(stream_view, options, id);
 
         // Sequence
-        if constexpr (!detail::decays_to_ignore_v<seq_type>) // sequence
-            read_seq(stream_view, options, sequence);
-        else
-            read_seq(stream_view, options, seq_qual);        // seq_qual (possibly std::ignore, too)
+        read_seq(stream_view, options, sequence);
 
         // make sure "buffer at end" implies "stream at end"
         if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
@@ -168,19 +160,13 @@ public:
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
-              typename qual_type,
-              typename seq_qual_type>
+              typename qual_type>
     void write(stream_type                     & stream,
                sequence_file_out_options const & options,
                seq_type                       && sequence,
                id_type                        && id,
-               qual_type                      && SEQAN3_DOXYGEN_ONLY(qualities),
-               seq_qual_type                  && seq_qual)
+               qual_type                      && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        static_assert(detail::decays_to_ignore_v<seq_type> || detail::decays_to_ignore_v<seq_qual_type>,
-                      "Either the sequence field, or the seq_qual field need to be set to std::ignore.");
-        static_assert(detail::decays_to_ignore_v<qual_type> || detail::decays_to_ignore_v<seq_qual_type>,
-                      "Either the qualities field, or the seq_qual field need to be set to std::ignore.");
 
         ranges::ostreambuf_iterator stream_it{stream};
 
@@ -198,23 +184,16 @@ public:
         }
 
         // Sequence
-        if constexpr (!detail::decays_to_ignore_v<seq_type>) // sequence
+        if constexpr (detail::decays_to_ignore_v<seq_type>) // sequence
+        {
+            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing FASTA files."};
+        }
+        else
         {
             if (ranges::empty(sequence)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing FASTA files."};
 
             write_seq(stream_it, options, sequence);
-        }
-        else if constexpr (!detail::decays_to_ignore_v<seq_qual_type>) // seq_qual
-        {
-            if (ranges::empty(seq_qual)) //[[unlikely]]
-                throw std::runtime_error{"The SEQ_QUAL field may not be empty when writing FASTA files."};
-
-            write_seq(stream_it, options, seq_qual);
-        }
-        else
-        {
-            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing FASTA files."};
         }
     }
 
@@ -222,11 +201,11 @@ protected:
     //!\privatesection
     //!\brief Implementation of reading the ID.
     template <typename stream_view_t,
-              typename seq_legal_alph_type,
+              typename seq_legal_alph_type, bool seq_qual_combined,
               typename id_type>
-    void read_id(stream_view_t                                       & stream_view,
-                 sequence_file_in_options<seq_legal_alph_type> const & options,
-                 id_type                                             & id)
+    void read_id(stream_view_t                                                          & stream_view,
+                 sequence_file_in_options<seq_legal_alph_type, seq_qual_combined> const & options,
+                 id_type                                                                & id)
     {
         auto const is_id = is_char<'>'>{} || is_char<';'>{};
 
@@ -242,56 +221,49 @@ protected:
                          detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
 
             // consume rest of line
-            ranges::copy(stream_view | ranges::view::take_while(!(is_char<'\n'>{} || is_char<'\r'>{})),
-                         detail::make_conversion_output_iterator(std::ignore));
+            detail::consume(stream_view | view::take_line_or_throw);
         }
         else
         {
-            ranges::copy(stream_view | ranges::view::take_while(!(is_char<'\n'>{} || is_char<'\r'>{})) // read line
+            ranges::copy(stream_view | view::take_line_or_throw                                        // read line
                                      | ranges::view::drop_while(is_id || is_blank),                    // skip leading >
                          detail::make_conversion_output_iterator(id));
         }
     }
 
     //!\brief Implementation of reading the sequence.
-    template <typename      stream_view_t,
-              typename      seq_legal_alph_type,
-              range_concept seq_type>
-    void read_seq(stream_view_t                                       & stream_view,
-                  sequence_file_in_options<seq_legal_alph_type> const &,
-                  seq_type                                            & seq)
+    template <typename stream_view_t,
+              typename seq_legal_alph_type, bool seq_qual_combined,
+              typename seq_type>
+    void read_seq(stream_view_t                                                          & stream_view,
+                  sequence_file_in_options<seq_legal_alph_type, seq_qual_combined> const &,
+                  seq_type                                                               & seq)
     {
-        is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
         auto const is_id = is_char<'>'>{} || is_char<';'>{};
 
-        ranges::copy(stream_view | ranges::view::take_while(!is_id)                // until next header (or end)
-                                 | ranges::view::remove_if(is_space || is_digit)   // ignore whitespace and numbers
-                                 | view::transform([is_legal_alph] (char const c)
-                                   {
-                                       if (!is_legal_alph(c))
+        if constexpr (!detail::decays_to_ignore_v<seq_type>)
+        {
+            is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
+            ranges::copy(stream_view | ranges::view::take_while(!is_id)             // until next header (or end)
+                                     | ranges::view::remove_if(is_space || is_digit)// ignore whitespace and numbers
+                                     | view::transform([is_legal_alph] (char const c)
                                        {
-                                           throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                             is_legal_alph.msg.string() +
-                                                             " evaluated to false on " +
-                                                             detail::make_printable(c)};
-                                       }
-                                       return c;
-                                   })                                              // enforce legal alphabet
-                                 | view::char_to<value_type_t<seq_type>>,          // convert to actual target alphabet
-                     detail::make_conversion_output_iterator(seq));
-    }
-
-    //!\brief Implementation of reading the sequence; overload for std::ignore (should be slightly faster).
-    template <typename      stream_view_t,
-              typename      seq_legal_alph_type>
-    void read_seq(stream_view_t                                       & stream_view,
-                  sequence_file_in_options<seq_legal_alph_type> const &,
-                  detail::ignore_t                              const &)
-    {
-        auto seq_view = stream_view | ranges::view::take_while(!is_char<'>'>{});     // until next header (or end)
-
-        for (auto it = ranges::begin(seq_view); it != ranges::end(seq_view); ++it)
-        {}
+                                           if (!is_legal_alph(c))
+                                           {
+                                               throw parse_error{std::string{"Encountered an unexpected letter: "} +
+                                                                   is_legal_alph.msg.string() +
+                                                                   " evaluated to false on " +
+                                                                   detail::make_printable(c)};
+                                           }
+                                           return c;
+                                       })                                           // enforce legal alphabet
+                                     | view::char_to<value_type_t<seq_type>>,       // convert to actual target alphabet
+                         detail::make_conversion_output_iterator(seq));
+        }
+        else
+        {
+            detail::consume(stream_view | ranges::view::take_while(!is_id));
+        }
     }
 
     //!\brief Implementation of writing the ID.

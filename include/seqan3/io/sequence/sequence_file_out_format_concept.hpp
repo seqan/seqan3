@@ -74,9 +74,9 @@ concept bool sequence_file_out_format_concept = requires (t                     
 {
     t::file_extensions;
 
-    { v.write(f, options, seq,         id,          qual,        std::ignore) } -> void;
-    { v.write(f, options, std::ignore, id,          std::ignore, seq_qual)    } -> void;
-    { v.write(f, options, std::ignore, std::ignore, std::ignore, std::ignore) } -> void;
+    { v.write(f, options, seq,         id,          qual)        } -> void;
+    { v.write(f, options, std::ignore, id,          std::ignore) } -> void;
+    { v.write(f, options, std::ignore, std::ignore, std::ignore) } -> void;
     // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
@@ -88,7 +88,7 @@ concept bool sequence_file_out_format_concept = requires (t                     
  */
 
 /*!\fn void write(stream_type & stream, seqan3::sequence_file_out_options const & options, seq_type && sequence,
- *                id_type && id, qual_type && qualities, seq_qual_type && seq_qual)
+ *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
  * \memberof seqan3::sequence_file_out_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
@@ -98,14 +98,11 @@ concept bool sequence_file_out_format_concept = requires (t                     
  * over a seqan3::alphabet_concept.
  * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::input_range_concept
  * over a seqan3::quality_concept.
- * \tparam seq_qual_type    Type of the seqan3::field::SEQ_QUAL input; must satisfy seqan3::input_range_concept
- * over a seqan3::quality_composition.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".
  * \param[in]     id        The data for seqan3::field::ID, e.g. the header line in FastA.
  * \param[in]     qualities The data for seqan3::field::QUAL.
- * \param[in]     seq_qual  The data for seqan3::field::SEQ_QUAL.
  *
  * \details
  *
@@ -113,8 +110,8 @@ concept bool sequence_file_out_format_concept = requires (t                     
  *
  *   * The format must also accept std::ignore as parameter for any of the fields, however it shall throw an exception
  * if one of the fields required for writing the format is marked as such. [this shall be checked inside the function]
- *   * `seq_qual` must be set to std::ignore if either `seq` or `qual` are not set to std::ignore. [this shall be
- * checked by a `static_assert` inside the function]
+ *   * The format does not handle seqan3::field::SEQ_QUAL, instead seqan3::sequence_file_out splits it into two views
+ *     and passes it to the format as if they were separate.
  */
 /*!\var static inline std::vector<std::string> seqan3::sequence_file_out_format_concept::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.

@@ -46,6 +46,7 @@
 #include <vector>
 
 #include <range/v3/algorithm/equal.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
@@ -57,8 +58,10 @@
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
+#include <seqan3/io/sequence/sequence_file_format_fastq.hpp>
 #include <seqan3/io/sequence/sequence_file_out_format_concept.hpp>
 #include <seqan3/io/sequence/sequence_file_out_options.hpp>
+#include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/concept/range.hpp>
 
 namespace seqan3
@@ -263,7 +266,7 @@ namespace seqan3
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::type_list_of_sequence_file_out_formats_concept valid_formats_ =
-              type_list<sequence_file_format_fasta /*, ...*/>,
+              type_list<sequence_file_format_fasta, sequence_file_format_fastq>,
           ostream_concept<char> stream_type_ = std::ofstream>
 class sequence_file_out
 {
@@ -817,11 +820,29 @@ protected:
     template <typename seq_t, typename id_t, typename qual_t, typename seq_qual_t>
     void write_record(seq_t && seq, id_t && id, qual_t && qual, seq_qual_t && seq_qual)
     {
+        static_assert(detail::decays_to_ignore_v<seq_qual_t> ||
+                      (detail::decays_to_ignore_v<seq_t> && detail::decays_to_ignore_v<qual_t>),
+                  "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
+
         assert(!format.valueless_by_exception());
-        std::visit([&] (sequence_file_out_format_concept & f)
+        std::visit([&] (auto & f)
         {
-            // read new record
-            f.write(stream, options, seq, id, qual, seq_qual);
+            if constexpr (!detail::decays_to_ignore_v<seq_qual_t>)
+            {
+                f.write(stream,
+                        options,
+                        seq_qual | view::convert<typename seq_qual_t::sequence_alphabet_type>,
+                        id,
+                        seq_qual | view::convert<typename seq_qual_t::quality_alphabet_type>);
+            }
+            else
+            {
+                f.write(stream,
+                        options,
+                        seq,
+                        id,
+                        qual);
+            }
         }, format);
     }
 
@@ -841,32 +862,32 @@ protected:
                         detail::decays_to_ignore_v<reference_t<seq_quals_t>>),
                       "At least one of the columns must not be set to std::ignore.");
 
-        // make sure that std::ignore inputs are actually range of std::ignore
+        static_assert(detail::decays_to_ignore_v<reference_t<seq_quals_t>> ||
+                      (detail::decays_to_ignore_v<reference_t<seqs_t>> &&
+                       detail::decays_to_ignore_v<reference_t<quals_t>>),
+                  "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
+
         assert(!format.valueless_by_exception());
-        std::visit([&] (sequence_file_out_format_concept & f)
+        std::visit([&] (auto & f)
         {
-            auto seqs_it       = ranges::begin(seqs);
-            auto ids_it        = ranges::begin(ids);
-            auto quals_it      = ranges::begin(quals);
-            auto seq_quals_it  = ranges::begin(seq_quals);
-
-            auto seqs_end      = ranges::end(seqs);
-            auto ids_end       = ranges::end(ids);
-            auto quals_end     = ranges::end(quals);
-            auto seq_quals_end = ranges::end(seq_quals);
-
-            do
+            if constexpr (!detail::decays_to_ignore_v<reference_t<seq_quals_t>>)
             {
-                f.write(stream, options, *seqs_it, *ids_it, *quals_it, *seq_quals_it);
+                auto zipped = ranges::view::zip(seq_quals, ids);
 
-                ++seqs_it;
-                ++ids_it;
-                ++quals_it;
-                ++seq_quals_it;
-            } while ((seqs_it != seqs_end)   &&
-                     (ids_it != ids_end)     &&
-                     (quals_it != quals_end) &&
-                     (seq_quals_it != seq_quals_end));
+                for (auto && v : zipped)
+                    f.write(stream,
+                            options,
+                            std::get<0>(v) | view::convert<typename reference_t<seq_quals_t>::sequence_alphabet_type>,
+                            std::get<1>(v),
+                            std::get<0>(v) | view::convert<typename reference_t<seq_quals_t>::quality_alphabet_type>);
+            }
+            else
+            {
+                auto zipped = ranges::view::zip(seqs, ids, quals);
+
+                for (auto && v : zipped)
+                    f.write(stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v));
+            }
         }, format);
     }
 
@@ -878,9 +899,9 @@ protected:
  * \relates seqan3::sequence_file_out
  * \{
  */
-template <ostream_concept<char>          stream_type,
-          sequence_file_out_format_concept   file_format,
-          detail::fields_concept         selected_field_ids>
+template <ostream_concept<char>             stream_type,
+          sequence_file_out_format_concept  file_format,
+          detail::fields_concept            selected_field_ids>
 sequence_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> sequence_file_out<selected_field_ids,
                          type_list<file_format>,
