@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,10 +44,12 @@
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/alphabet/detail/convert.hpp>
+#include <seqan3/alphabet/aminoacid/concept.hpp>
 
 namespace seqan3
 {
-/*!\brief The twenty-seven letter amino acid alphabet
+/*!\brief The twenty-seven letter amino acid alphabet.
  * \ingroup aminoacid
  * \implements seqan3::alphabet_concept
  *
@@ -154,6 +156,21 @@ struct aa27
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{27};
 
+    /*!\name Conversion operators
+     * \{
+     */
+    //!\brief Explicit conversion to any other amino acid alphabet (via char representation).
+    //!\tparam other_aa_type The type to convert to; must satisfy seqan3::aminoacid_concept.
+    template <typename other_aa_type>
+    //!\cond
+        requires aminoacid_concept<other_aa_type>
+    //!\endcond
+    explicit constexpr operator other_aa_type() const noexcept
+    {
+        return detail::convert_through_char_representation<other_aa_type, std::decay_t<decltype(*this)>>[to_rank()];
+    }
+    //!\}
+
     //!\name Comparison operators
     //!\{
     constexpr bool operator==(aa27 const & rhs) const noexcept
@@ -187,7 +204,7 @@ struct aa27
     }
     //!\}
 
-    protected:
+protected:
     //!\privatesection
     /*!\brief The internal type is a strictly typed enum.
      *
