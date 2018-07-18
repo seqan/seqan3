@@ -56,6 +56,10 @@ struct sequence_file_out_options
     //TODO:
 //     bool        fasta_charcounts        = false;
 
+
+    //!\brief Whether to write the ID only '@' or also after '+' line.
+    bool        fastq_double_id         = false;
+
     /*!\brief The default plain text line-ending is "\n", but on Windows an additional carriage return is
      *        recommended ("\r\n" for line-ending).
      */

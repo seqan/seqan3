@@ -65,19 +65,19 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept bool sequence_file_in_format_concept = requires (t                              & v,
-                                                         std::ifstream                  & f,
-                                                         sequence_file_in_options<dna5> & options,
-                                                         dna5_vector                    & seq,
-                                                         std::string                    & id,
-                                                         std::vector<illumina18>        & qual,
-                                                         std::vector<dna5q>             & seq_qual)
+concept bool sequence_file_in_format_concept = requires (t                                     & v,
+                                                         std::ifstream                         & f,
+                                                         sequence_file_in_options<dna5, false> & options,
+                                                         dna5_vector                           & seq,
+                                                         std::string                           & id,
+                                                         std::vector<illumina18>               & qual,
+                                                         std::vector<dna5q>                    & seq_qual)
 {
     t::file_extensions;
 
-    { v.read(f, options, seq,         id,          qual,        std::ignore) } -> void;
-    { v.read(f, options, std::ignore, id,          std::ignore, seq_qual)    } -> void;
-    { v.read(f, options, std::ignore, std::ignore, std::ignore, std::ignore) } -> void;
+    { v.read(f, options, seq,         id,          qual)        } -> void;
+    { v.read(f, options, seq_qual,    id,          seq_qual)    } -> void;
+    { v.read(f, options, std::ignore, std::ignore, std::ignore) } -> void;
 };
 //!\endcond
 
@@ -88,7 +88,7 @@ concept bool sequence_file_in_format_concept = requires (t                      
  */
 
 /*!\fn void read(stream_type & stream, seqan3::sequence_file_in_options const & options, seq_type & sequence,
- *               id_type & id, qual_type & qualities, seq_qual_type & seq_qual)
+ *               id_type & id, qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \memberof seqan3::sequence_file_in_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
@@ -98,23 +98,23 @@ concept bool sequence_file_in_format_concept = requires (t                      
  * over a seqan3::alphabet_concept.
  * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::output_range_concept
  * over a seqan3::quality_concept.
- * \tparam seq_qual_type    Type of the seqan3::field::SEQ_QUAL input; must satisfy seqan3::output_range_concept
- * over a seqan3::quality_composition.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
  * \param[out]    sequence  The buffer for seqan3::field::SEQ input, i.e. the "sequence".
  * \param[out]    id        The buffer for seqan3::field::ID input, e.g. the header line in FastA.
  * \param[out]    qualities The buffer for seqan3::field::QUAL input.
- * \param[out]    seq_qual  The buffer for seqan3::field::SEQ_QUAL input.
  *
  * \details
+ *
  *
  * ### Additional requirements
  *
  *   * The function must also accept std::ignore as parameter for any of the fields. [this is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
- *   * `seq_qual` must be set to std::ignore if either `seq` or `qual` are not set to std::ignore. [this shall be checked by a `static_assert` inside the function]
- *
+ *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::QUAL, you may also pass
+ *     seqan3::field::SEQ_QUAL to both parameters. If you do, the seqan3::value_type_t of the argument must be
+ *     a specialisation of seqan3::quality_composition and the second template parameter to
+ *     seqan3::sequence_file_in_options must be set to true.
  */
 //!\}
 

@@ -33,29 +33,30 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::sequence_file_in_options.
+ * \brief Provides various utility functions.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/std/concept/iterator.hpp>
 
-namespace seqan3
+namespace seqan3::detail
 {
-/*!\brief The options type defines various option members that influence the behaviour of all or some formats.
- * \tparam sequence_legal_alphabet_ The sequence legal alphabet exposed as type trait to the format.
- * \tparam seq_qual_combined Trait that exposes to the format whether seq and qual arguments are actually the
- * same/combined.
+
+/*!\brief Write `'\n'` or `"\r\n"` to the stream iterator, depending on arguments.
+ * \tparam  it_t Type of the iterator; must satisfy seqan3::output_iterator_concept with `char`.
+ * \param     it The iterator.
+ * \param add_cr Whether to add carriage return, too.
+ * \ingroup io
  */
-template <typename sequence_legal_alphabet_, bool seq_qual_combined>
-struct sequence_file_in_options
+template <output_iterator_concept<char> it_t>
+constexpr void write_eol(it_t & it, bool const add_cr)
 {
-    //!\brief Export the (possibly larger) legal alphabet to the format.
-    using sequence_legal_alphabet = sequence_legal_alphabet_;
+    if (add_cr)
+        it = '\r';
 
-    //!\brief Read the ID string only up until the first whitespace character.
-    bool truncate_ids = false;
-};
+    it = '\n';
+}
 
-} // namespace seqan3
+} // namespace seqan3::detail

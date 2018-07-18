@@ -142,7 +142,7 @@ TEST(general, construct_from_stream)
 TEST(general, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
-    using comp2 = type_list<sequence_file_format_fasta>;
+    using comp2 = type_list<sequence_file_format_fasta, sequence_file_format_fastq>;
     using comp3 = std::ofstream;
 
     /* default template args */
@@ -183,7 +183,8 @@ TEST(general, default_template_args_and_deduction_guides)
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta,
+                                                                              sequence_file_format_fastq>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_type,        std::ostringstream>));                   // changed
     }
 

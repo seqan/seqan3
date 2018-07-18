@@ -61,6 +61,7 @@
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence/sequence_file_in_format_concept.hpp>
 #include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
+#include <seqan3/io/sequence/sequence_file_format_fastq.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 namespace seqan3
@@ -463,7 +464,8 @@ template <
     detail::fields_concept                                selected_field_ids_ = fields<field::SEQ,
                                                                                        field::ID,
                                                                                        field::QUAL>,
-    detail::type_list_of_sequence_file_in_formats_concept valid_formats_      = type_list<sequence_file_format_fasta
+    detail::type_list_of_sequence_file_in_formats_concept valid_formats_      = type_list<sequence_file_format_fasta,
+                                                                                          sequence_file_format_fastq
                                                                                          /*, ...*/>,
     istream_concept<char>                                 stream_type_        = std::ifstream>
 class sequence_file_in
@@ -808,7 +810,8 @@ public:
     //!\}
 
     //!\brief The options are public and its members can be set directly.
-    sequence_file_in_options<typename traits_type::sequence_legal_alphabet> options;
+    sequence_file_in_options<typename traits_type::sequence_legal_alphabet,
+                             selected_field_ids::contains(field::SEQ_QUAL)> options;
 
 protected:
     //!\privatesection
@@ -855,12 +858,22 @@ protected:
         std::visit([&] (sequence_file_in_format_concept & f)
         {
             // read new record
-            f.read(stream,
-                   options,
-                   detail::get_or_ignore<field::SEQ>(record_buffer),
-                   detail::get_or_ignore<field::ID>(record_buffer),
-                   detail::get_or_ignore<field::QUAL>(record_buffer),
-                   detail::get_or_ignore<field::SEQ_QUAL>(record_buffer));
+            if constexpr (selected_field_ids::contains(field::SEQ_QUAL))
+            {
+                f.read(stream,
+                       options,
+                       detail::get_or_ignore<field::SEQ_QUAL>(record_buffer),
+                       detail::get_or_ignore<field::ID>(record_buffer),
+                       detail::get_or_ignore<field::SEQ_QUAL>(record_buffer));
+            }
+            else
+            {
+                f.read(stream,
+                       options,
+                       detail::get_or_ignore<field::SEQ>(record_buffer),
+                       detail::get_or_ignore<field::ID>(record_buffer),
+                       detail::get_or_ignore<field::QUAL>(record_buffer));
+            }
         }, format);
     }
 

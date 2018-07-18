@@ -33,29 +33,38 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::sequence_file_in_options.
+ * \brief Provides various utility functions.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/std/concept/range.hpp>
 
-namespace seqan3
+namespace seqan3::detail
 {
-/*!\brief The options type defines various option members that influence the behaviour of all or some formats.
- * \tparam sequence_legal_alphabet_ The sequence legal alphabet exposed as type trait to the format.
- * \tparam seq_qual_combined Trait that exposes to the format whether seq and qual arguments are actually the
- * same/combined.
+
+/*!\brief Iterate over a range (consumes single-pass input ranges).
+ * \ingroup range
+ * \tparam rng_t Type of the range; must satisfy seqan3::input_range_concept.
+ * \param rng The range.
  */
-template <typename sequence_legal_alphabet_, bool seq_qual_combined>
-struct sequence_file_in_options
+template <input_range_concept rng_t>
+constexpr void consume(rng_t && rng)
 {
-    //!\brief Export the (possibly larger) legal alphabet to the format.
-    using sequence_legal_alphabet = sequence_legal_alphabet_;
+    auto it = ranges::begin(rng);
+    auto it_end = ranges::end(rng);
+    while (it != it_end)
+        ++it;
+}
 
-    //!\brief Read the ID string only up until the first whitespace character.
-    bool truncate_ids = false;
-};
+/*!\brief Iterate over a range (NO-OP for forward ranges).
+ * \ingroup range
+ * \tparam rng_t Type of the range; must satisfy seqan3::forward_range_concept.
+ * \param rng The range.
+ */
+template <forward_range_concept rng_t>
+constexpr void consume(rng_t &&)
+{}
 
-} // namespace seqan3
+} // namespace seqan3::detail
