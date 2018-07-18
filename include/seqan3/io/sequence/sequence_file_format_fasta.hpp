@@ -57,6 +57,7 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
+#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence/sequence_file_in_options.hpp>
 #include <seqan3/io/sequence/sequence_file_out_options.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -283,10 +284,7 @@ protected:
 
         ranges::copy(id, stream_it);
 
-        if (options.add_carriage_return)
-            stream_it = '\r';
-
-        stream_it = '\n';
+        detail::write_eol(stream_it, options.add_carriage_return);
     }
 
     //!\brief Implementation of writing the sequence.
@@ -312,9 +310,7 @@ protected:
 //                 ++count;
 //                 if (count % fasta_letters_per_line == 0)
 //                 {
-//                     if (options.add_carriage_return)
-//                         stream_it = '\r';
-//                     stream_it = '\n';
+//                     detail::write_eol(stream_it, options.add_carriage_return);
 //                 }
 //             }
         }
@@ -323,11 +319,7 @@ protected:
             ranges::copy(seq | view::to_char, stream_it);
         }
 
-
-        if (options.add_carriage_return)
-            stream_it = '\r';
-
-        stream_it = '\n';
+        detail::write_eol(stream_it, options.add_carriage_return);
     }
 };
 

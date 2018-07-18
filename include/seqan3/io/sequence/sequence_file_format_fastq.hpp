@@ -57,6 +57,7 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
+#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence/sequence_file_in_options.hpp>
 #include <seqan3/io/sequence/sequence_file_out_options.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -260,10 +261,7 @@ public:
             stream_it = '@';
             ranges::copy(id, stream_it);
 
-            if (options.add_carriage_return)
-                stream_it = '\r';
-
-            stream_it = '\n';
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
 
         // Sequence
@@ -278,10 +276,7 @@ public:
 
             ranges::copy(sequence | view::to_char, stream_it);
 
-            if (options.add_carriage_return)
-                stream_it = '\r';
-
-            stream_it = '\n';
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
 
         // 2nd ID-line
@@ -292,10 +287,7 @@ public:
             if (options.fastq_double_id)
                 ranges::copy(id, stream_it);
 
-            if (options.add_carriage_return)
-                stream_it = '\r';
-
-            stream_it = '\n';
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
 
         // Quality line
@@ -315,10 +307,7 @@ public:
 
             ranges::copy(qualities | view::to_char, stream_it);
 
-            if (options.add_carriage_return)
-                stream_it = '\r';
-
-            stream_it = '\n';
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
     }
 };
