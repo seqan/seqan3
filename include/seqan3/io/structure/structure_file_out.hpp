@@ -500,23 +500,22 @@ public:
      * }
      * ```
      */
-    template <typename record_t>
-    void push_back(record_t && record)
-        requires tuple_like_concept<record_t> &&
-                 requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
-    {
-        write_record(detail::get_or_ignore<field::SEQ>(record),
-                     detail::get_or_ignore<field::ID>(record),
-                     detail::get_or_ignore<field::BPP>(record),
-                     detail::get_or_ignore<field::STRUCTURE>(record),
-                     detail::get_or_ignore<field::STRUCTURED_SEQ>(record),
-                     detail::get_or_ignore<field::ENERGY>(record),
-                     detail::get_or_ignore<field::REACT>(record),
-                     detail::get_or_ignore<field::REACT_ERR>(record),
-                     detail::get_or_ignore<field::COMMENT>(record),
-                     detail::get_or_ignore<field::OFFSET>(record));
-
-    }
+//    template <typename record_t>
+//    void push_back(record_t && r)
+//        requires tuple_like_concept<record_t> &&
+//                 requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
+//    {
+//        write_record(detail::get_or_ignore<field::SEQ>(r),
+//                     detail::get_or_ignore<field::ID>(r),
+//                     detail::get_or_ignore<field::BPP>(r),
+//                     detail::get_or_ignore<field::STRUCTURE>(r),
+//                     detail::get_or_ignore<field::STRUCTURED_SEQ>(r),
+//                     detail::get_or_ignore<field::ENERGY>(r),
+//                     detail::get_or_ignore<field::REACT>(r),
+//                     detail::get_or_ignore<field::REACT_ERR>(r),
+//                     detail::get_or_ignore<field::COMMENT>(r),
+//                     detail::get_or_ignore<field::OFFSET>(r));
+//    }
 
     /*!\brief           Write a record in form of a std::tuple to the file.
      * \tparam tuple_t  Type of the record, a specialisation of std::tuple.
@@ -554,20 +553,20 @@ public:
      * ```
      */
     template <typename tuple_t>
-    void push_back(tuple_t && tuple)
+    void push_back(tuple_t && t)
         requires tuple_like_concept<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
-        write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::ID)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::BPP)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURE)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURED_SEQ)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::ENERGY)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::REACT)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::REACT_ERR)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::COMMENT)>(tuple),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::OFFSET)>(tuple));
+        write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::ID)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::BPP)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURE)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURED_SEQ)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::ENERGY)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::REACT)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::REACT_ERR)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::COMMENT)>(t),
+                     detail::get_or_ignore<selected_field_ids::index_of(field::OFFSET)>(t));
     }
 
     /*!\brief            Write a record to the file by passing individual fields.

@@ -67,47 +67,7 @@ TEST(structure_file_in_iterator, concepts)
     EXPECT_TRUE((seqan3::sentinel_concept<sen_t, it_t>));
 }
 
-struct structure_file_in_f : public ::testing::Test
-{
-    std::string const input
-    {
-        ">S.cerevisiae_tRNA-PHE M10740/1-73\n"
-        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-        "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
-    };
-
-    rna5_vector const seq_comp[1]
-    {
-        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5
-    };
-
-    std::string const id_comp[1]
-    {
-        "S.cerevisiae_tRNA-PHE M10740/1-73"
-    };
-
-    double const energy_comp[1]
-    {
-        -17.5
-    };
-
-    std::vector<wuss51> const structure_comp[1]
-    {
-        "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51
-    };
-
-    std::vector<double> const interaction_comp[1]
-    {
-        {
-            71, 70, 69, 68, 67, 66, 65, 24, 23, 22, 21, 12, 11, 10,  9, 42, 41, 40, 39, 29,
-            28, 27, 26, 64, 63, 62, 61, 60, 52, 51, 50, 49, 48,  6,  5,  4,  3,  2,  1,  0
-        }
-    };
-
-    size_t const num_records = 1ul;
-};
-
-TEST_F(structure_file_in_f, concepts)
+TEST(structure_file_in_class, concepts)
 {
     using t = structure_file_in<>;
     EXPECT_TRUE((seqan3::input_range_concept<t>));
@@ -117,7 +77,7 @@ TEST_F(structure_file_in_f, concepts)
     EXPECT_FALSE((seqan3::input_range_concept<ct>));
 }
 
-TEST_F(structure_file_in_f, construct_by_filename)
+TEST(structure_file_in_class, construct_by_filename)
 {
     /* just the filename */
     {
@@ -160,13 +120,13 @@ TEST_F(structure_file_in_f, construct_by_filename)
     }
 }
 
-TEST_F(structure_file_in_f, construct_from_stream)
+TEST(structure_file_in_class, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_in<structure_file_in_default_traits_rna,
                                        fields<field::SEQ, field::ID, field::STRUCTURE>,
                                        type_list<structure_file_format_dot_bracket>,
-                                       std::istringstream>{std::istringstream{input},
+                                       std::istringstream>{std::istringstream{"> ID\nACGU\n....\n"},
                                                            structure_file_format_dot_bracket{}}));
 
 
@@ -174,12 +134,12 @@ TEST_F(structure_file_in_f, construct_from_stream)
     EXPECT_NO_THROW((structure_file_in<structure_file_in_default_traits_rna,
                                        fields<field::SEQ, field::ID, field::STRUCTURE>,
                                        type_list<structure_file_format_dot_bracket>,
-                                       std::istringstream>{std::istringstream{input},
+                                       std::istringstream>{std::istringstream{"> ID\nACGU\n....\n"},
                                                            structure_file_format_dot_bracket{},
                                                            fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
-TEST_F(structure_file_in_f, default_template_args_and_deduction_guides)
+TEST(structure_file_in_class, default_template_args_and_deduction_guides)
 {
     using comp0 = structure_file_in_default_traits_rna;
     using comp1 = fields<field::SEQ, field::ID, field::BPP>;
@@ -233,7 +193,7 @@ TEST_F(structure_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided stream constructor */
     {
-        structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{}};
+        structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"}, structure_file_format_dot_bracket{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -244,7 +204,9 @@ TEST_F(structure_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided stream constructor + custom fields */
     {
-        structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{}, fields<field::SEQ>{}};
+        structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"},
+                              structure_file_format_dot_bracket{},
+                              fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -254,7 +216,56 @@ TEST_F(structure_file_in_f, default_template_args_and_deduction_guides)
     }
 }
 
-TEST_F(structure_file_in_f, record_reading)
+struct structure_file_in_read : public ::testing::Test
+{
+    size_t const num_records = 2ul;
+
+    std::string const input
+    {
+        ">S.cerevisiae_tRNA-PHE M10740/1-73\n"
+        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+        "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
+        "> example\n"
+        "UUGGAGUACACAACCUGUACACUCUUUC\n"
+        "..(((((..(((...)))..)))))... (-3.71)\n"
+    };
+
+    rna5_vector const seq_comp[2]
+    {
+        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5,
+        "UUGGAGUACACAACCUGUACACUCUUUC"_rna5
+    };
+
+    std::string const id_comp[2]
+    {
+        "S.cerevisiae_tRNA-PHE M10740/1-73",
+        "example"
+    };
+
+    double const energy_comp[2]
+    {
+        -17.5, -3.71
+    };
+
+    std::vector<wuss51> const structure_comp[2]
+    {
+        "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51,
+        "..(((((..(((...)))..)))))..."_wuss51
+    };
+
+    std::vector<double> const interaction_comp[2]
+    {
+        {
+            71, 70, 69, 68, 67, 66, 65, 24, 23, 22, 21, 12, 11, 10,  9, 42, 41, 40, 39, 29,
+            28, 27, 26, 64, 63, 62, 61, 60, 52, 51, 50, 49, 48,  6,  5,  4,  3,  2,  1,  0
+        },
+        {
+            24, 23, 22, 21, 20, 17, 16, 15, 11, 10,  9,  6,  5,  4,  3,  2
+        }
+    };
+};
+
+TEST_F(structure_file_in_read, record_reading)
 {
     /* record based reading */
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{}};
@@ -270,7 +281,7 @@ TEST_F(structure_file_in_f, record_reading)
     EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_f, record_reading_struct_bind)
+TEST_F(structure_file_in_read, record_reading_struct_bind)
 {
     /* record based reading */
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
@@ -298,7 +309,7 @@ TEST_F(structure_file_in_f, record_reading_struct_bind)
     EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_f, record_reading_custom_fields)
+TEST_F(structure_file_in_read, record_reading_custom_fields)
 {
     /* record based reading */
     structure_file_in fin{std::istringstream{input},
@@ -316,7 +327,7 @@ TEST_F(structure_file_in_f, record_reading_custom_fields)
     EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_f, file_view)
+TEST_F(structure_file_in_read, file_view)
 {
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
@@ -336,10 +347,10 @@ TEST_F(structure_file_in_f, file_view)
         EXPECT_DOUBLE_EQ(get<field::ENERGY>(rec).value(), energy_comp[counter]);
         ++counter;
     }
-    EXPECT_EQ(counter, 1u);
+    EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_f, column_reading)
+TEST_F(structure_file_in_read, column_reading)
 {
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
@@ -366,7 +377,7 @@ TEST_F(structure_file_in_f, column_reading)
     }
 }
 
-TEST_F(structure_file_in_f, column_reading_temporary)
+TEST_F(structure_file_in_read, column_reading_temporary)
 {
     structure_file_in{std::istringstream{input}, structure_file_format_dot_bracket{}};
 
@@ -380,7 +391,7 @@ TEST_F(structure_file_in_f, column_reading_temporary)
     }
 }
 
-TEST_F(structure_file_in_f, column_reading_decomposed)
+TEST_F(structure_file_in_read, column_reading_decomposed)
 {
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::STRUCTURE, field::ENERGY, field::BPP>{}};
@@ -403,7 +414,7 @@ TEST_F(structure_file_in_f, column_reading_decomposed)
     }
 }
 
-TEST_F(structure_file_in_f, column_reading_decomposed_temporary)
+TEST_F(structure_file_in_read, column_reading_decomposed_temporary)
 {
     auto && [ seqs, ids, struc, energies, bpps ] = structure_file_in{std::istringstream{input},
                                                                      structure_file_format_dot_bracket{},
