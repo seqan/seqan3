@@ -46,7 +46,17 @@
 
 namespace seqan3::detail
 {
-
+/*!
+ * \brief Transforms a structure annotation string into a base pair probability matrix.
+ * \throws seqan3::parse_error if unpaired brackets are found in the structure annotation.
+ * \tparam structure_alph_type The type of the structure alphabet; must satisfy seqan3::rna_structure_concept.
+ * \tparam bpp_type            The type of the target matrix.
+ * \tparam structure_type      The range type of the structure annotation.
+ * \param[out] bpp             The target matrix that receives the base pair probabilities.
+ * \param[in]  structure       The source structure annotation.
+ * \param[in]  weight          The weight to be assigned to all interactions present.
+ *                             As the source allows only one interaction partner, the weight defaults to 1.0.
+ */
 template <rna_structure_concept structure_alph_type, typename bpp_type, range_concept structure_type>
 inline
 void bpp_from_structure(bpp_type & bpp, structure_type const & structure, double weight = 1.)

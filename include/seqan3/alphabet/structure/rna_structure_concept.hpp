@@ -94,6 +94,7 @@ concept bool rna_structure_concept = requires(structure_type val)
     // this is delegated to a static class variable
     { pseudoknot_support_v<structure_type> } -> bool;
 
+// TODO(joergi-w) the following does not work -> repair
 //    requires (!pseudoknot_support<structure_type>::value) || requires (structure_type val)
 //    {
 //        { bracket_id(val) } -> bool;

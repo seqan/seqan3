@@ -75,31 +75,37 @@
 
 namespace seqan3
 {
-/*!\brief       The FastA format.
- * \implements  sequence_file_format_concept
- * \ingroup     sequence
+/*!\brief       The Dot Bracket format.
+ * \implements  structure_file_format_concept
+ * \ingroup     structure
  *
  * \details
  *
  * ### Introduction
  *
- * FastA is the de-facto-standard for sequence storage in bionformatics. See the
- * [article on wikipedia](https://en.wikipedia.org/wiki/FASTA_format) for a an in-depth description of the format.
+ * Dot Bracket Notation is widely used for secondary structure annotation. Is is similar to the FastA format,
+ * containing an ID in the first line and a sequence in the second line. An additional third line represents the
+ * secondary structure, using brackets to denote interacting nucleotides or amino acids, and dots for unpaired sites.
+ * Optionally, the structure can be followed by a space character and the minimum free energy value enclosed
+ * in round brackets ().
  *
  * ### Fields
  *
- * The FastA format provides the fields seqan3::field::SEQ and seqan3::field::ID. Both fields are required when writing.
+ * The Dot Bracket format provides the fields seqan3::field::SEQ, seqan3::field::ID, seqan3::field::STRUCTURE,
+ * seqan3::field::STRUCTURED_SEQ and seqan3::field::ENERGY.
+ * The first three of these fields are required when writing, except seqan3::field::SEQ and seqan3::field::STRUCTURE
+ * can be replaced by seqan3::field::STRUCTURED_SEQ.\n
+ * If you select seqan3::field::STRUCTURED_SEQ you must not select seqan3::field::SEQ or seqan3::field::STRUCTURE.
  *
  * ### Implementation notes
  *
  * When reading the ID-line the identifier (either `;` or `>`) and any blank characters before the actual ID are
- * stripped.
+ * stripped. Each field is read/written as a single line.
  *
  * This implementation supports the following less known and optional features of the format:
  *
  *   * ID lines beginning with `;` instead of `>`
- *   * line breaks and other whitespace characters in any part of the sequence
- *   * character counts within the sequence (they are simply ignored)
+ *   * character counts and spaces within the sequence (they are simply ignored)
  *
  * The following optional features are currently **not supported:**
  *
@@ -126,7 +132,7 @@ public:
         { "dbn" }
     };
 
-    //!\copydoc sequence_file_in_format_concept::read
+    //!\copydoc structure_file_in_format_concept::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               bool     structured_seq_combined,
@@ -146,7 +152,7 @@ public:
               structure_type & structure,
               energy_type & energy,
               react_type & react,
-              react_type & react_error,
+              react_type & react_err,
               comment_type & comment,
               offset_type & offset)
     {
@@ -155,21 +161,28 @@ public:
                            { std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{} };
         // READ ID
         auto const is_id = is_char<'>'>{} || is_char<';'>{};
-        if (!is_id(*ranges::begin(stream_view)))
-            throw parse_error{std::string{"Expected to be on beginning of ID, but "} + is_id.msg.string() +
-                              " evaluated to false on " + detail::make_printable(*ranges::begin(stream_view))};
-        if (options.truncate_ids)
+        if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                     | ranges::view::take_while(!(is_cntrl || is_blank)), // read ID until delimiter…
-                         detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
-            detail::consume(stream_view | view::take_line_or_throw);
+            if (!is_id(*ranges::begin(stream_view)))
+                throw parse_error{std::string{"Expected to be on beginning of ID, but "} + is_id.msg.string() +
+                                  " evaluated to false on " + detail::make_printable(*ranges::begin(stream_view))};
+            if (options.truncate_ids)
+            {
+                ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
+                                         | ranges::view::take_while(!(is_cntrl || is_blank)), // read ID until delimiter
+                             detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
+                detail::consume(stream_view | view::take_line_or_throw);
+            }
+            else
+            {
+                ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
+                                         | view::take_line_or_throw,                          // read line
+                             detail::make_conversion_output_iterator(id));
+            }
         }
         else
         {
-            ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                     | view::take_line_or_throw,                          // read line
-                         detail::make_conversion_output_iterator(id));
+            detail::consume(stream_view | view::take_line_or_throw);
         }
 
         // READ SEQUENCE
@@ -250,17 +263,22 @@ public:
         else
         {
             detail::consume(stream_view | view::take_line);
+            // skip newline (why does consume not work here?)
+            auto it = ranges::begin(stream_view);
+            if (*it == '\r')
+                ++it;
+            if (*it == '\n')
+                ++it;
         }
 
         // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
-            (!stream.eof()))
+        if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) && (!stream.eof()))
         {
             stream.get(); // triggers error in stream and sets eof
         }
     }
 
-    //!\copydoc structure_file_in_format_concept::write
+    //!\copydoc structure_file_out_format_concept::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
@@ -278,7 +296,7 @@ public:
                structure_type && structure,
                energy_type && energy,
                react_type && react,
-               react_type && react_error,
+               react_type && react_err,
                comment_type && comment,
                offset_type && offset)
     {
@@ -350,6 +368,13 @@ public:
     }
 
 private:
+    /*!
+     * \brief Extract the structure string from the given stream-
+     * \tparam alph_type        The alphabet type the structure is converted to.
+     * \tparam stream_view_type The type of the input stream.
+     * \param stream_view       The input stream to be read.
+     * \return                  A ranges::view containing the structure annotation string.
+     */
     template <rna_structure_concept alph_type, typename stream_view_type>
     auto read_structure(stream_view_type & stream_view)
     {

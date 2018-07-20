@@ -52,8 +52,7 @@ namespace seqan3
 {
 /*!\brief The options type defines various option members that influence the behaviour of all or some formats.
  * \tparam seq_legal_alphabet_ The sequence legal alphabet exposed as type trait to the format.
- * \tparam structure_legal_alphabet_ The structure legal alphabet exposed as type trait to the format.
- * \tparam structured_seq_combined Trait that exposes to the format whether seq and qual arguments are actually the
+ * \tparam structured_seq_combined Trait that exposes to the format whether seq and structure arguments are actually the
  * same/combined.
  */
 template<typename seq_legal_alphabet_, bool structured_seq_combined>
@@ -67,7 +66,7 @@ struct structure_file_in_options
 };
 
 /*!\interface seqan3::structure_file_in_format_concept <>
- * \brief The generic concept for structure file formats.
+ * \brief The generic concept for structure file in formats.
  * \ingroup structure
  *
  * \details
@@ -114,10 +113,17 @@ concept bool structure_file_in_format_concept = requires(t & v,
  * \memberof seqan3::structure_file_in_format_concept
  * \{
  */
-
-// TODO(joergi-w) documentation
-/*!\fn void read(stream_type & stream, seqan3::structure_file_in_options const & options, seq_type & sequence,
- *               id_type & id, qual_type & qualities)
+/*!\fn void read(stream_type & stream,
+ *               structure_file_in_options<seq_legal_alph_type, structured_seq_combined> const & options,
+ *               seq_type & seq,
+ *               id_type & id,
+ *               bpp_type & bpp,
+ *               structure_type & structure,
+ *               energy_type & energy,
+ *               react_type & react,
+ *               react_type & react_err,
+ *               comment_type & comment,
+ *               offset_type & offset)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \memberof seqan3::sequence_file_in_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
@@ -125,13 +131,27 @@ concept bool structure_file_in_format_concept = requires(t & v,
  * over a seqan3::alphabet_concept.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy seqan3::output_range_concept
  * over a seqan3::alphabet_concept.
- * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::output_range_concept
- * over a seqan3::quality_concept.
+ * \tparam bpp_type         Type of the seqan3::field::BPP input; must satisfy seqan3::output_range_concept
+ * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
+ * \tparam structure_type   Type of the seqan3::field::STRUCTURE input; must satisfy seqan3::output_range_concept
+ * over a seqan3::rna_structure_concept.
+ * \tparam energy_type      Type of the seqan3::field::ENERGY input; must satisfy std::is_floating_point.
+ * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR input;
+ * must satisfy std::is_floating_point.
+ * \tparam comment_type     Type of the seqan3::field::COMMENT input; must satisfy seqan3::output_range_concept
+ * over a seqan3::alphabet_concept.
+ * \tparam offset_type      Type of the seqan3::field::OFFSET input; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
- * \param[out]    sequence  The buffer for seqan3::field::SEQ input, i.e. the "sequence".
- * \param[out]    id        The buffer for seqan3::field::ID input, e.g. the header line in FastA.
- * \param[out]    qualities The buffer for seqan3::field::QUAL input.
+ * \param[out]    seq       The buffer for seqan3::field::SEQ input, i.e. the "sequence".
+ * \param[out]    id        The buffer for seqan3::field::ID input, e.g. the header line.
+ * \param[out]    bpp       The buffer for seqan3::field::BPP input.
+ * \param[out]    structure The buffer for seqan3::field::STRUCTURE input.
+ * \param[out]    energy    The buffer for seqan3::field::ENERGY input.
+ * \param[out]    react     The buffer for seqan3::field::REACT input.
+ * \param[out]    react_err The buffer for seqan3::field::REACT_ERR input.
+ * \param[out]    comment   The buffer for seqan3::field::COMMENT input.
+ * \param[out]    offset    The buffer for seqan3::field::OFFSET input.
  *
  * \details
  *
@@ -139,10 +159,13 @@ concept bool structure_file_in_format_concept = requires(t & v,
  *
  *   * The function must also accept std::ignore as parameter for any of the fields. [this is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
- *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::QUAL, you may also pass
- *     seqan3::field::SEQ_QUAL to both parameters. If you do, the seqan3::value_type_t of the argument must be
- *     a specialisation of seqan3::quality_composition and the second template parameter to
+ *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::STRUCTURE, you may also pass
+ *     seqan3::field::STRUCTURED_SEQ to both parameters. If you do, the seqan3::value_type_t of the argument must be
+ *     a specialisation of seqan3::structured_rna and the second template parameter to
  *     seqan3::sequence_file_in_options must be set to true.
+ */
+ /*!\var static inline std::vector<std::string> seqan3::structure_file_out_format_concept::file_extensions
+ * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}
 
@@ -162,7 +185,7 @@ constexpr bool is_type_list_of_structure_file_in_formats_v = false;
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::structure_file_in_format_concept [overload].
  * \ingroup core
-  * \see seqan3::type_list_of_structure_file_in_formats_concept
+ * \see seqan3::type_list_of_structure_file_in_formats_concept
  */
 template<typename ... ts>
 constexpr bool is_type_list_of_structure_file_in_formats_v<type_list<ts...>>

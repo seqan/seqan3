@@ -34,7 +34,7 @@
 
 /*!\file
  * \brief Provides seqan3::structure_file_out and corresponding traits classes.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
 #pragma once
@@ -72,27 +72,35 @@ namespace seqan3
 // structure_file_out
 // ----------------------------------------------------------------------------
 
-/*!\brief A class for writing sequence files, e.g. FASTA, FASTQ ...
- * \ingroup sequence
- * \tparam selected_field_ids   A seqan3::fields type with the list and order of fields IDs; only relevant if these
- * can't be deduced.
- * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::structure_file_out_format_concept).
- * \tparam stream_type          The type of the stream, must satisfy seqan3::ostream_concept.
+/*!\brief A class for writing structured sequence files, e.g. Dot Bracket Notation, Connect, ViennaRNA bpp matrix ...
+ * \ingroup structure
+ * \tparam selected_field_ids A seqan3::fields type with the list and order of fields IDs; only relevant if these
+ *                            can't be deduced.
+ * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
+ *                            seqan3::structure_file_out_format_concept).
+ * \tparam stream_type        The type of the stream, must satisfy seqan3::ostream_concept.
  * \details
  *
  * ### Introduction
  *
- * Sequence files are the most generic and common biological files. Well-known formats include
- * FastA and FastQ, but some may also be interested in treating SAM or BAM files as sequence
- * files, discarding the alignment.
+ * Structured sequence files contain intra-molecular interactions of RNA or protein. Usually, but not necessarily, they
+ * contain the nucleotide or amino acid sequences and descriptions as well. Interactions can be represented
+ * either as fixed _secondary structure_, where every character is assigned at most one interaction partner
+ * (structure of minimum free energy), or an _annotated sequence_, where every character is assigned a set
+ * of interaction partners with specific base pair probabilities.
  *
- * The Sequence file abstraction supports writing four different fields:
+ * The structured sequence file abstraction supports writing ten different fields:
  *
- *   1. seqan3::field::SEQ
- *   2. seqan3::field::ID
- *   3. seqan3::field::QUAL
- *   4. seqan3::field::SEQ_QUAL (sequence and qualities in one range)
+ *   1. seqan3::field::SEQ (sequence)
+ *   2. seqan3::field::ID (identifier)
+ *   3. seqan3::field::BPP (annotated sequence)
+ *   4. seqan3::field::STRUCTURE (secondary structure)
+ *   5. seqan3::field::STRUCTURED_SEQ (sequence and structure in one range)
+ *   6. seqan3::field::ENERGY (minimum free energy)
+ *   7. seqan3::field::REACT (reactivity)
+ *   8. seqan3::field::REACT_ERR (reactivity error)
+ *   9. seqan3::field::COMMENT (free text)
+ *   10. seqan3::field::OFFSET (index of first sequence character)
  *
  * The member functions take any and either of these fields. If the field ID of an argument cannot be deduced, it
  * is assumed to correspond to the field ID of the respective template parameter.
@@ -108,13 +116,13 @@ namespace seqan3
  * In most cases the template parameters are deduced completely automatically:
  *
  * ```cpp
- * structure_file_out fout{"/tmp/my.fasta"}; // FastA format detected, std::ofstream opened for file
+ * structure_file_out fout{"/tmp/my.dbn"}; // Bot bracket format detected, std::ofstream opened for file
  * ```
  *
  * Writing to std::cout:
  * ```cpp
- * structure_file_out fout{std::move(std::cout), structure_file_format_fasta{}};
- * //              ^ no need to specify the template arguments
+ * structure_file_out fout{std::move(std::cout), structure_file_format_dot_bracket{}};
+ * //               ^ no need to specify the template arguments
  *
  * fout.emplace_back("example_id", "ACGTN"_dna5);
  * ```
@@ -130,18 +138,19 @@ namespace seqan3
  * You can iterate over this file record-wise:
  *
  * ```cpp
- * structure_file_out fout{"/tmp/my.fasta"};
+ * structure_file_out fout{"/tmp/my.dbn"};
  *
  * for // ...
  * {
  *     std::string id;
- *     dna5_vector seq;
+ *     rna5_vector seq;
+ *     std::vector<wuss51> structure;
  *
  *     // ...
  *
- *     fout.emplace_back(seq, id);          // as individual variables
+ *     fout.emplace_back(seq, id, structure);        // as individual variables
  *     // or:
- *     fout.push_back(std::tie(seq, id));   // as a tuple
+ *     fout.push_back(std::tie(seq, id, structure)); // as a tuple
  * }
  * ```
  *
@@ -149,34 +158,34 @@ namespace seqan3
  * work similarly to how they work on an std::vector. If you pass a tuple to push_back() or give arguments to
  * emplace_back() the seqan3::field ID of the i-th tuple-element/argument is assumed to be the i-th value of
  * selected_field_ids, i.e. by default the first is assumed to be seqan3::field::SEQ, the second seqan3::field::ID
- * and the third one seqan3::field::QUAL. You may give less fields than are selected if the actual format you are
+ * and the third one seqan3::field::STRUCTURE. You may give less fields than are selected, if the actual format you are
  * writing to can cope with less
- * (e.g. for FastA it is sufficient to write seqan3::field::SEQ and seqan3::field::ID, even if selected_field_ids
- * also contains seqan3::field::QUAL at the third position).
+ * (e.g. for Dot Bracket it is sufficient to write seqan3::field::SEQ, seqan3::field::ID and seqan3::field::STRUCTURE,
+ * even if selected_field_ids also contains seqan3::field::ENERGY).
  *
  * You may also use the output file's iterator for writing, however, this rarely provides an advantage.
  *
 * ### Writing record-wise (custom fields)
  *
- * If you want to pass a combined object for SEQ and QUAL fields to push_back() / emplace_back(), or if you want
+ * If you want to pass a combined object for SEQ and STRUCTURE fields to push_back() / emplace_back(), or if you want
  * to change the order of the parameters, you can pass a non-empty fields trait object to the
  * structure_file_out constructor to select the fields that are used for interpreting the arguments.
  *
  * The following snippets demonstrates the usage of such a fields trait object.
  *
  * ```cpp
- * structure_file_out fout{"/tmp/my.fastq", fields<field::ID, field::SEQ_QUAL>{}};
+ * structure_file_out fout{"/tmp/my.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
  *
  * for // ...
  * {
  *     std::string id;
- *     std::vector<qualified<dna5>> seq_qual; // vector of combined data structure
+ *     std::vector<structured_rna<rna5, wuss51>> structured_seq; // vector of combined data structure
  *
  *     // ...
  *
- *     fout.emplace_back(id, seq_qual);       // note also that the order the argumets is now different, because
+ *     fout.emplace_back(id, structured_seq); // note also that the order the argumets is now different, because
  *     // or:                                    you specified that ID should be first in the fields template argument
- *     fout.push_back(std::tie(id, seq_qual));
+ *     fout.push_back(std::tie(id, structured_seq));
  * }
  * ```
  *
@@ -186,8 +195,8 @@ namespace seqan3
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
  * ```cpp
- * structure_file_in   fin{"input.fasta", fields<field::ID, field::SEQ_QUAL>{}};
- * structure_file_out fout{"output.fasta"}; // doesn't have to match the configuration
+ * structure_file_in  fin{"input.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
+ * structure_file_out fout{"output.dbn"}; // doesn't have to match the configuration
  *
  * for (auto & r : fin)
  * {
@@ -203,13 +212,13 @@ namespace seqan3
  * You can write multiple records at once, by assigning to the file:
  *
  * ```cpp
- * structure_file_out fout{"/tmp/my.fasta"};
+ * structure_file_out fout{"/tmp/my.dbn"};
  *
- * std::vector<std::tuple<dna5_vector, std::string>> range
+ * std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
  * {
- *     { "ACGT"_dna5, "First" },
- *     { "NATA"_dna5, "2nd" },
- *     { "GATA"_dna5, "Third" }
+ *     { "ACGT"_rna5, "First", "...."_wuss51 },
+ *     { "NATA"_rna5, "2nd",   "...."_wuss51 },
+ *     { "GATA"_rna5, "Third", "...."_wuss51 }
  * }; // a range of "records"
  *
  * fout = range; // will iterate over the records and write them
@@ -221,19 +230,18 @@ namespace seqan3
  *
  * ```cpp
  * // file format conversion in one line:
- * structure_file_out fout{"output.fasta"} = structure_file_in{"input.fastq"};
+ * structure_file_out fout{"output.dbn"} = structure_file_in{"input.dbn"};
  *
  * // or in pipe notation:
- * structure_file_in{"input.fastq"} | structure_file_out{"output.fasta"};
+ * structure_file_in{"input.dbn"} | structure_file_out{"output.dbn"};
  * ```
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
  * ```cpp
- * structure_file_in{"input.fastq"} | view::minimum_average_quality_filter(20)
- *                                 | view::minimum_sequence_length_filter(50)
- *                                 | ranges::view::take(5)
- *                                 | structure_file_out{"output.fasta"};
+ * structure_file_in{"input.dbn"} | view::minimum_sequence_length_filter(50)
+ *                                | ranges::view::take(5)
+ *                                | structure_file_out{"output.dbn"};
  * ```
  *
  * ### Column-based writing
@@ -247,22 +255,23 @@ namespace seqan3
  *
  * struct data_storage_t
  * {
- *     concatenated_sequences<dna5_vector>  sequences;
- *     concatenated_sequences<std::string>  ids;
+ *     concatenated_sequences<rna5_vector>         sequences;
+ *     concatenated_sequences<std::string>         ids;
+ *     concatenated_sequences<std::vector<wuss51>> structures;
  * };
  *
  * data_storage_t data_storage; // a global or globally used variable in your program
  *
  * // ... in your file writing function:
  *
- * structure_file_out fout{"/tmp/my.fasta"};
+ * structure_file_out fout{"/tmp/my.dbn"};
  *
- * fout = std::tie(data_storage.sequences, data_storage.ids);
+ * fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structures);
  * ```
  *
  * ### Formats
  *
- * TODO give overview of formats, once they are all implemented
+ * Currently, the only implemented format is seqan3::structure_file_format_dot_bracket. More formats will follow soon.
  */
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
@@ -284,7 +293,7 @@ public:
     using stream_type           = stream_type_;
     //!\}
 
-    //!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in.
+    //!\brief The subset of seqan3::field IDs that are valid for this file.
     using field_ids = fields<field::SEQ,
                              field::ID,
                              field::BPP,
@@ -349,8 +358,8 @@ public:
     ~structure_file_out() = default;
 
     /*!\brief Construct from filename.
-     * \param[in] _file_name    Path to the file you wish to open.
-     * \param[in] fields_tag    A seqan3::fields tag. [optional]
+     * \param[in] _file_name Path to the file you wish to open.
+     * \param[in] fields_tag A seqan3::fields tag. [optional]
      *
      * \details
      *
@@ -391,8 +400,8 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::structure_file_out_format_concept.
-     * \param[in] _stream    The stream to operate on (this must be std::move'd in!).
+     * \tparam file_format The format of the file in the stream, must satisfy seqan3::structure_file_out_format_concept.
+     * \param[in] _stream  The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      */
@@ -427,21 +436,22 @@ public:
      * ### Example
      *
      * ```cpp
-     * structure_file_out fout{"/tmp/my.fasta"};
+     * structure_file_out fout{"/tmp/my.dbn"};
      *
      * auto it = fout.begin();
      *
      * for // ...
      * {
      *     std::string id;
-     *     dna5_vector seq;
+     *     rna5_vector seq;
+     *     std::vector<wuss51> structure;
      *
      *     // ...
      *
      *     // assign to iterator
-     *     *it = std::tie(seq, id);
+     *     *it = std::tie(seq, id, structure);
      *     // is the same as:
-     *     fout.push_back(std::tie(seq, id));
+     *     fout.push_back(std::tie(seq, id, structure));
      * }
      * ```
      */
@@ -469,37 +479,41 @@ public:
         return {};
     }
 
-    /*!\brief           Write a seqan3::record to the file.
-     * \tparam record_t Type of the record, a specialisation of seqan3::record.
-     * \param[in] r     The record to write.
-     *
-     * \details
-     *
-     * ### Complexity
-     *
-     * Constant. TODO linear in the size of the written sequences?
-     *
-     * ### Exceptions
-     *
-     * Basic exception safety.
-     *
-     * ### Example
-     *
-     * ```cpp
-     * structure_file_out fout{"/tmp/my.fasta"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r;
-     *
-     *     // ...
-     *
-     *     fout.push_back(r);
-     * }
-     * ```
-     */
+// NOTE(joergi-w) I removed the following function, because the tests run successful without it and they fail
+// when this function is present. I will have to figure out why and whether we need it.
+
+//    /*!\brief           Write a seqan3::record to the file.
+//     * \tparam record_t Type of the record, a specialisation of seqan3::record.
+//     * \param[in] r     The record to write.
+//     *
+//     * \details
+//     *
+//     * ### Complexity
+//     *
+//     * Constant. TODO linear in the size of the written sequences?
+//     *
+//     * ### Exceptions
+//     *
+//     * Basic exception safety.
+//     *
+//     * ### Example
+//     *
+//     * ```cpp
+//     * structure_file_out fout{"/tmp/my.dbn"};
+//     *
+//     * auto it = fout.begin();
+//     *
+//     * for // ...
+//     * {
+//     *     record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
+//     *            fields<field::SEQ, field::ID, field::STRUCTURE>> r;
+//     *
+//     *     // ...
+//     *
+//     *     fout.push_back(r);
+//     * }
+//     * ```
+//     */
 //    template <typename record_t>
 //    void push_back(record_t && r)
 //        requires tuple_like_concept<record_t> &&
@@ -537,18 +551,19 @@ public:
      * ### Example
      *
      * ```cpp
-     * structure_file_out fout{"/tmp/my.fasta"};
+     * structure_file_out fout{"/tmp/my.dbn"};
      *
      * auto it = fout.begin();
      *
      * for // ...
      * {
      *     std::string id;
-     *     dna5_vector seq;
+     *     rna5_vector seq;
+     *     std::vector<wuss51> structure;
      *
      *     // ...
      *
-     *     fout.push_back(std::tie(seq, id));
+     *     fout.push_back(std::tie(seq, id, structure));
      * }
      * ```
      */
@@ -591,18 +606,19 @@ public:
      * ### Example
      *
      * ```cpp
-     * structure_file_out fout{"/tmp/my.fasta"};
+     * structure_file_out fout{"/tmp/my.dbn"};
      *
      * auto it = fout.begin();
      *
      * for // ...
      * {
      *     std::string id;
-     *     dna5_vector seq;
+     *     rna5_vector seq;
+     *     std::vector<wuss51> structure;
      *
      *     // ...
      *
-     *     fout.emplace_back(seq, id);
+     *     fout.emplace_back(seq, id, structure);
      * }
      * ```
      */
@@ -613,7 +629,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::input_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range_concept and have a reference type that
      *                   satisfies seqan3::tuple_like_concept.
      * \param[in] range  The range to write.
      *
@@ -632,13 +648,13 @@ public:
      * ### Example
      *
      * ```cpp
-     * structure_file_out fout{"/tmp/my.fasta"};
+     * structure_file_out fout{"/tmp/my.dbn"};
      *
-     * std::vector<std::tuple<dna5_vector, std::string>> range
+     * std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
      * {
-     *     { "ACGT"_dna5, "First" },
-     *     { "NATA"_dna5, "2nd" },
-     *     { "GATA"_dna5, "Third" }
+     *     { "ACGT"_rna5, "First", "...."_wuss51 },
+     *     { "NATA"_rna5, "2nd",   "...."_wuss51 },
+     *     { "GATA"_rna5, "Third", "...."_wuss51 }
      * }; // a range of "records"
      *
      * fout = range; // will iterate over the records and write them
@@ -674,13 +690,13 @@ public:
      * ### Example
      *
      * ```cpp
-     * structure_file_out fout{"/tmp/my.fasta"};
+     * structure_file_out fout{"/tmp/my.dbn"};
      *
-     * std::vector<std::tuple<dna5_vector, std::string>> range
+     * std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
      * {
-     *     { "ACGT"_dna5, "First" },
-     *     { "NATA"_dna5, "2nd" },
-     *     { "GATA"_dna5, "Third" }
+     *     { "ACGT"_rna5, "First", "...."_wuss51 },
+     *     { "NATA"_rna5, "2nd",   "...."_wuss51 },
+     *     { "GATA"_rna5, "Third", "...."_wuss51 }
      * }; // a range of "records"
      *
      * range | fout;
@@ -691,10 +707,9 @@ public:
      * This is especially useful in combination with file-based filters:
      *
      * ```cpp
-     * structure_file_in{"input.fastq"} | view::minimum_average_quality_filter(20)
-     *                                 | view::minimum_sequence_length_filter(50)
-     *                                 | ranges::view::take(5)
-     *                                 | structure_file_out{"output.fasta"};
+     * structure_file_in{"input.dbn"} | view::minimum_sequence_length_filter(50)
+     *                                | ranges::view::take(5)
+     *                                | structure_file_out{"output.dbn"};
      * ```
      */
     template <typename rng_t>
@@ -721,7 +736,7 @@ public:
      */
     /*!\brief            Write columns (wrapped in a seqan3::record) to the file.
      * \tparam typelist  Template argument to seqan3::record, each type must be a column (range-of-range).
-     * \tparam field_ids Template argument to seqan3::record, the IDs cooresponding to the columns.
+     * \tparam field_ids Template argument to seqan3::record, the IDs corresponding to the columns.
      * \param[in] r      The record of columns.
      *
      * \details
@@ -743,32 +758,33 @@ public:
      *
      * struct data_storage_t
      * {
-     *     concatenated_sequences<dna5_vector>  sequences;
-     *     concatenated_sequences<std::string>  ids;
+     *     concatenated_sequences<rna5_vector>         sequences;
+     *     concatenated_sequences<std::string>         ids;
+     *     concatenated_sequences<std::vector<wuss51>> structures;
      * };
      *
      * data_storage_t data_storage; // a global or globally used variable in your program
      *
      * // ... in your file writing function:
      *
-     * structure_file_out fout{"/tmp/my.fasta"};
+     * structure_file_out fout{"/tmp/my.dbn"};
      *
-     * fout = std::tie(data_storage.sequences, data_storage.ids);
+     * fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structures);
      * ```
      */
     template <typename typelist, typename field_ids>
-    structure_file_out & operator=(record<typelist, field_ids> const & record)
+    structure_file_out & operator=(record<typelist, field_ids> const & r)
     {
-        write_columns(detail::range_wrap_ignore(detail::get_or_ignore<field::SEQ>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::ID>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::BPP>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::STRUCTURE>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::STRUCTURED_SEQ>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::ENERGY>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::REACT>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::REACT_ERR>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::COMMENT>(record)),
-                      detail::range_wrap_ignore(detail::get_or_ignore<field::OFFSET>(record)));
+        write_columns(detail::range_wrap_ignore(detail::get_or_ignore<field::SEQ>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::ID>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::BPP>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::STRUCTURE>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::STRUCTURED_SEQ>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::ENERGY>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::REACT>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::REACT_ERR>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::COMMENT>(r)),
+                      detail::range_wrap_ignore(detail::get_or_ignore<field::OFFSET>(r)));
     }
 
     /*!\brief            Write columns (wrapped in a std::tuple) to the file.
@@ -794,34 +810,35 @@ public:
      *
      * struct data_storage_t
      * {
-     *     concatenated_sequences<dna5_vector>  sequences;
-     *     concatenated_sequences<std::string>  ids;
+     *     concatenated_sequences<rna5_vector>         sequences;
+     *     concatenated_sequences<std::string>         ids;
+     *     concatenated_sequences<std::vector<wuss51>> structures;
      * };
      *
      * data_storage_t data_storage; // a global or globally used variable in your program
      *
      * // ... in your file writing function:
      *
-     * structure_file_out fout{"/tmp/my.fasta"};
+     * structure_file_out fout{"/tmp/my.dbn"};
      *
-     * fout = std::tie(data_storage.sequences, data_storage.ids);
+     * fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structures);
      * ```
      */
     template <typename ... arg_types>
-    structure_file_out & operator=(std::tuple<arg_types...> const & tuple)
+    structure_file_out & operator=(std::tuple<arg_types...> const & t)
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_columns(
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::ID)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::BPP)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURE)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURED_SEQ)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::ENERGY)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::REACT)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::REACT_ERR)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::COMMENT)>(tuple)),
-           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::OFFSET)>(tuple)));
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::ID)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::BPP)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURE)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::STRUCTURED_SEQ)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::ENERGY)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::REACT)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::REACT_ERR)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::COMMENT)>(t)),
+           detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::OFFSET)>(t)));
     }
     //!\}
 

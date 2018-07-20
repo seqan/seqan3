@@ -186,22 +186,6 @@ struct structure_file_out_write : public ::testing::Test
 {
     size_t const num_records = 2ul;
 
-//    std::vector<std::vector<structured_rna<rna5, wuss51>>> str_seqs
-//    {
-//        [] ()
-//        {
-//            std::vector<std::vector<structured_rna<rna5, wuss51>>> k{};
-//            k.resize(2);
-//            ranges::copy("GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5,
-//                         ranges::begin(k[0]));
-//            ranges::copy("(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51,
-//                         ranges::begin(k[0]));
-//            ranges::copy("UUGGAGUACACAACCUGUACACUCUUUC"_rna5, ranges::begin(k[1]));
-//            ranges::copy("..(((((..(((...)))..)))))..."_wuss51, ranges::begin(k[1]));
-//            return k;
-//        } ()
-//    };
-
     rna5_vector const seqs[2]
     {
         "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5,
@@ -391,7 +375,7 @@ TEST_F(structure_file_out_rows, assign_range_of_tuples)
 
 TEST_F(structure_file_out_rows, assign_structure_file_in)
 {
-    std::string const input // differs from output above by formatting
+    std::string const inp // differs from output above by formatting
     {
         "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
         "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
@@ -401,7 +385,7 @@ TEST_F(structure_file_out_rows, assign_structure_file_in)
         "..(((((..(((...)))..)))))...\n"
     };
 
-    structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
+    structure_file_in fin{std::istringstream{inp}, structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::STRUCTURE>{}};
     assign_impl(fin);
 }
@@ -423,15 +407,6 @@ TEST_F(structure_file_out_rows, assign_structure_file_pipes)
 }
 
 struct structure_file_out_columns : public structure_file_out_rows{};
-
-//TEST_F(structure_file_out_columns, assign_record_of_columns)
-//{
-//    record<type_list<std::vector<rna5_vector>, std::vector<std::string>, std::vector<std::vector<wuss51>>>,
-//           fields<field::SEQ, field::ID, field::STRUCTURE>> columns
-//    { seqs, ids, structures };
-//
-//    assign_impl(columns);
-//}
 
 TEST_F(structure_file_out_columns, assign_tuple_of_columns)
 {
