@@ -57,26 +57,23 @@ namespace seqan3::detail
  * \param[in]  weight          The weight to be assigned to all interactions present.
  *                             As the source allows only one interaction partner, the weight defaults to 1.0.
  */
-template <rna_structure_concept structure_alph_type, typename bpp_type, range_concept structure_type>
+template <typename structure_alph_type, typename bpp_type, range_concept structure_type>
 inline
-void bpp_from_structure(bpp_type & bpp, structure_type const & structure, double weight = 1.)
+void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, double weight = 1.)
 {
+    if constexpr (!rna_structure_concept<structure_alph_type>)
+        throw parse_error{"Cannot create base pair probabilities from a structure that is not RNA structure."};
+
     bpp.clear();
     if constexpr (sized_range_concept<structure_type>)
         bpp.reserve(ranges::size(structure));
 
-    size_t max_bracket_depth = 1ul;
-    if constexpr (pseudoknot_support_v<structure_alph_type>)
-        max_bracket_depth = structure_alph_type::bracket_depth;
-
-    std::stack<size_t> brackets[max_bracket_depth];
+    std::stack<size_t> brackets[pseudoknot_support_v<structure_alph_type>];
     size_t pos = 0ul;
     for (structure_alph_type symbol : structure)
     {
         bpp.push_back({});
-        int id = 0;
-        if constexpr (pseudoknot_support_v<structure_alph_type>)
-            id = symbol.bracket_id();
+        uint8_t const id = pseudoknot_id(symbol).value_or(0);
 
         if (symbol.is_pair_open())
         {
@@ -99,10 +96,14 @@ void bpp_from_structure(bpp_type & bpp, structure_type const & structure, double
         // no actions for unpaired
         ++pos;
     }
-    for (unsigned id = 0u; id < max_bracket_depth; ++id)
+    for (uint8_t id = 0u; id < pseudoknot_support_v<structure_alph_type>; ++id)
+    {
         if (!brackets[id].empty())
+        {
             throw parse_error{std::string{"Invalid bracket notation: Unpaired opening bracket at position "}
                               + std::to_string(brackets[id].top()) + "."};
+        };
+    }
 };
 
 } // namespace seqan3::detail

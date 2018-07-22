@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::structure_file_(in|out)_format_concept and options.
+ * \brief Provides seqan3::structure_file_in_format_concept and options.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -125,7 +125,7 @@ concept bool structure_file_in_format_concept = requires(t & v,
  *               comment_type & comment,
  *               offset_type & offset)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::sequence_file_in_format_concept
+ * \memberof seqan3::structure_file_in_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy seqan3::output_range_concept
  * over a seqan3::alphabet_concept.
@@ -164,7 +164,7 @@ concept bool structure_file_in_format_concept = requires(t & v,
  *     a specialisation of seqan3::structured_rna and the second template parameter to
  *     seqan3::sequence_file_in_options must be set to true.
  */
- /*!\var static inline std::vector<std::string> seqan3::structure_file_out_format_concept::file_extensions
+ /*!\var static inline std::vector<std::string> seqan3::structure_file_in_format_concept::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}

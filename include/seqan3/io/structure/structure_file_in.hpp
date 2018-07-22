@@ -52,9 +52,8 @@
 #include <range/v3/algorithm/equal.hpp>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/concept.hpp>
@@ -253,14 +252,20 @@ concept bool structure_file_in_traits_concept = requires(t v)
                         <typename t::bpp_prob, typename t::bpp_partner>>>>>;
 
     // structure
-    requires rna_structure_concept<typename t::structure_alphabet>;
+    requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
+          || rna_structure_concept<typename t::structure_alphabet>;
     requires sequence_container_concept<typename t::template structure_container<typename t::structure_alphabet>>;
     requires sequence_container_concept
         <typename t::template structure_container_container
             <typename t::template structure_container
                 <typename t::structure_alphabet>>>;
 
-    // structured sequence
+    // structured sequence: cartesian compositions of seq and structure
+    requires std::is_base_of_v<cartesian_composition
+        <typename t::template structured_seq_alphabet
+            <typename t::seq_alphabet, typename t::structure_alphabet>,
+             typename t::seq_alphabet, typename t::structure_alphabet>,
+        typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
     requires sequence_container_concept
         <typename t::template structured_seq_container
             <typename t::template structured_seq_alphabet
@@ -310,21 +315,9 @@ concept bool structure_file_in_traits_concept = requires(t v)
  * If you wish to change a single or a few types from the default, just inherit from this class and
  * "overwrite" the respective type definitions.
  *
- * This example will make the file read into a smaller alphabet and a compressed container:
+ * This example will make the file read into a smaller alphabet:
  *
- * ```cpp
- * struct my_traits : structure_file_in_default_traits_rna
- * {
- *     using sequence_alphabet = rna4;                   // instead of rna5
- *
- *     template <typename alph>
- *     using seq_container = bitcompressed_vector<alph>; // must be defined as a template!
- * };
- *
- * structure_file_in<my_traits> fin{"/tmp/my.dbn"};
- *
- * //...
- * ```
+ * \snippet test/unit/io/structure/structure_file_in_test.cpp structure_file_in_class mod_traits
  */
 struct structure_file_in_default_traits_rna
 {
@@ -362,15 +355,14 @@ struct structure_file_in_default_traits_rna
 
     // fixed structure
     using structure_alphabet                 = wuss51;
-    using structure_legal_alphabet           = wuss51;
     template<typename _structure_alphabet>
     using structure_container                = std::vector<_structure_alphabet>;
     template<typename _structure_container>
     using structure_container_container      = concatenated_sequences<_structure_container>;
 
     // combined sequence and structure
-    template<typename _sequence_alphabet, typename _structure_alphabet>
-    using structured_seq_alphabet            = structured_rna<_sequence_alphabet, _structure_alphabet>;
+    template<typename _seq_alphabet, typename _structure_alphabet>
+    using structured_seq_alphabet            = structured_rna<_seq_alphabet, _structure_alphabet>;
     template<typename _structured_seq_alphabet>
     using structured_seq_container           = std::vector<_structured_seq_alphabet>;
     template<typename _structured_seq_container>
@@ -410,12 +402,11 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
      * \brief Definitions to satisfy seqan3::structure_file_in_traits_concept.
      * \{
      */
-    using seq_alphabet        = aa27;
-    using seq_legal_alphabet  = aa27;
+    using seq_alphabet             = aa27;
+    using seq_legal_alphabet       = aa27;
     using structure_alphabet       = dssp9;
-    using structure_legal_alphabet = dssp9;
     template<typename _seq_alphabet, typename _structure_alphabet>
-    using structured_seq_alphabet        = structured_aa<_seq_alphabet, _structure_alphabet>;
+    using structured_seq_alphabet  = structured_aa<_seq_alphabet, _structure_alphabet>;
     //!\}
 };
 
@@ -473,10 +464,11 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  * ```
  *
  * Reading from an std::istringstream:
+ *
  * ```cpp
- * std::string input
+ * std::string const input
  * {
- *     "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+ *     ">S.cerevisiae_tRNA-PHE M10740/1-73\n"
  *     "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
  *     "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
  *     "> example\n"
@@ -655,7 +647,7 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  * Currently, the only implemented format is seqan3::structure_file_format_dot_bracket. More formats will follow soon.
  */
 template<structure_file_in_traits_concept traits_type_ = structure_file_in_default_traits_rna,
-         detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::BPP>,
+         detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::type_list_of_structure_file_in_formats_concept valid_formats_
              = type_list<structure_file_format_dot_bracket>,
          istream_concept<char> stream_type_ = std::ifstream>
@@ -871,12 +863,6 @@ public:
         // buffer first record
         read_next_record();
     }
-    /* NOTE(h-2): Curiously we do not need a user-defined deduction guide for the above constructor.
-     * A combination of default template parameters and auto-deduction guides works as expected,
-     * independent of whether the second/optional parameter is specified or not, i.e. it is possible
-     * to auto-deduct and overwrite a single template parameter out of the four if the optional parameter
-     * is specified and use the default otherwise.
-     */
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam file_format The format of the file in the stream, must satisfy seqan3::structure_file_in_format_concept.

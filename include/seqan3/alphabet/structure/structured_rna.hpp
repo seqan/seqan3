@@ -40,6 +40,7 @@
 #pragma once
 
 #include <iostream>
+#include <optional>
 #include <string>
 #include <utility>
 
@@ -180,7 +181,21 @@ struct structured_rna :
     };
 
     //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions.
-    static constexpr bool pseudoknot_support{structure_alphabet_t::pseudoknot_support};
+    static constexpr uint8_t pseudoknot_support{structure_alphabet_t::pseudoknot_support};
+
+    /*!\brief Get an identifier for a pseudoknotted interaction.
+     * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
+     * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+     */
+    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
+    {
+        if constexpr (structure_alphabet_type::pseudoknot_support > 1)
+            return get<1>(*this).pseudoknot_id();
+        else if constexpr (is_pair_open() || is_pair_close())
+            return 0;
+        else
+            return std::nullopt;
+    };
     //!\}
 };
 

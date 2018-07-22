@@ -39,6 +39,7 @@
 
 #pragma once
 
+#include <optional>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/concept.hpp>
 
@@ -48,7 +49,6 @@
 
 namespace seqan3
 {
-
 /*!\interface seqan3::rna_structure_concept
  * \brief A concept that indicates whether an alphabet represents RNA structure.
  * \implements alphabet_concept
@@ -76,6 +76,13 @@ namespace seqan3
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents an unpaired site, False otherwise.
  */
+/*!\fn std::optional<uint8_t> pseudoknot_id(structure_type const alph)
+ * \brief Get an identifier for a pseudoknotted interaction.
+ * \relates seqan3::rna_structure_concept
+ * \param alph The alphabet letter which is checked for the pseudoknot id.
+ * \returns The pseudoknot id, if alph represents an interaction, and no value otherwise.
+ * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+ */
 /*!\struct pseudoknot_support<structure_type>
  * \brief The pseudoknot ability of the structure_type.
  */
@@ -90,16 +97,10 @@ concept bool rna_structure_concept = requires(structure_type val)
     { is_pair_open(val) } -> bool;
     { is_pair_close(val) } -> bool;
     { is_unpaired(val) } -> bool;
+    { pseudoknot_id(val) } -> std::optional<uint8_t>;
 
     // this is delegated to a static class variable
-    { pseudoknot_support_v<structure_type> } -> bool;
-
-// TODO(joergi-w) the following does not work -> repair
-//    requires (!pseudoknot_support<structure_type>::value) || requires (structure_type val)
-//    {
-//        { bracket_id(val) } -> bool;
-//        { structure_type::bracket_depth } -> unsigned;
-//    };
+    { pseudoknot_support_v<structure_type> } -> uint8_t;
 };
 //!\endcond
 

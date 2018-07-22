@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::structure_file_format_out_concept and auxiliary classes.
+ * \brief Provides seqan3::structure_file_out_format_concept and auxiliary classes.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -52,10 +52,6 @@ namespace seqan3
 //!\brief The options type defines various option members that influence the behaviour of all or some formats.
 struct structure_file_out_options
 {
-    //!\brief Begin the ID line with ";" instead of ">" (not recommended).
-    bool fasta_legacy_id_marker = false;
-    //!\brief Insert a single space after ">" (or ";") before the actual ID.
-    bool fasta_blank_before_id  = true;
     /*!\brief The default plain text line-ending is "\n", but on Windows an additional carriage return is
      *        recommended ("\r\n" for line-ending).
      */

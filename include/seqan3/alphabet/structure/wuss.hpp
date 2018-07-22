@@ -244,21 +244,24 @@ struct wuss
         return interaction_tab[to_rank()] == 0;
     }
 
-    /*!\brief Get an identifier for the bracket type. Opening and closing brackets of the same type have equal ids.
-     * \returns A unique number >= 0 representing a bracket type, or -1 if unpaired.
+    /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
+     *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
      */
-    constexpr int bracket_id() const noexcept
+    // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
+    static constexpr uint8_t pseudoknot_support{(value_size - 7) / 2};
+
+    /*!\brief Get an identifier for a pseudoknotted interaction.
+     * Opening and closing brackets of the same type have the same id.
+     * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
+     * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+     */
+    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {
-        return std::abs(interaction_tab[to_rank()]) - 1;
+        if (interaction_tab[to_rank()] != 0)
+            return std::abs(interaction_tab[to_rank()]) - 1;
+        else
+            return std::nullopt;
     }
-
-    /*!\brief The maximum depth of pseudoknots the structure alphabet type can represent.
-     * \returns The number of distinct bracket types.
-     */
-    static constexpr unsigned bracket_depth{(value_size - 7u) / 2u};
-
-    //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: True.
-    static constexpr bool pseudoknot_support{true};
     //!\}
 
 protected:
@@ -329,11 +332,11 @@ protected:
     };
 
     //!\brief Lookup table for interactions: unpaired (1), pair-open (2), pair-close (3).
-    static constexpr std::array<int, value_size> interaction_tab
+    static constexpr std::array<int8_t, value_size> interaction_tab
     {
         [] () constexpr
         {
-            std::array<int, value_size> interaction_table{};
+            std::array<int8_t, value_size> interaction_table{};
             int cnt_open = 0;
             int cnt_close = 0;
 

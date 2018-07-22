@@ -230,15 +230,20 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * \relates seqan3::rna_structure_concept
  * \{
  */
-/*!\brief Metafunction that indicates whether an alphabet can handle pseudoknots. [value metafunction base template]
+/*!\brief Metafunction that indicates to what extent an alphabet can handle pseudoknots.
+ * [value metafunction base template]
  * \tparam alphabet_type The alphabet type whose pseudoknot ability is queried.
  * \ingroup alphabet
+ * \details The value is the maximum allowed depth of pseudoknots.
+ * A value of 1 denotes no pseudoknots `((....))`,
+ * while higher values denote the maximum allowed complexity of
+ * crossing interactions, e.g. depth 2 `(({....))}` or depth 3 `({[....)}]`.
  *
  * This is the expression to retrieve the value:
  * ```cpp
- * bool has_pk_support = seqan3::pseudoknot_support<alphabet_type>::value;
+ * uint8_t pk_support = seqan3::pseudoknot_support<alphabet_type>::value;
  * // or
- * bool has_pk_support = seqan3::pseudoknot_support_v<alphabet_type>;
+ * uint8_t pk_support = seqan3::pseudoknot_support_v<alphabet_type>;
  * ```
  *
  * \par Helper variable template
@@ -255,7 +260,7 @@ struct pseudoknot_support{};
  * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
  */
 template<typename alphabet_type>
-constexpr bool pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
+constexpr uint8_t pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
 //!\}
 
 } // namespace seqan3

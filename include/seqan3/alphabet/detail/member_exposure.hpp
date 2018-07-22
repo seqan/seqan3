@@ -42,6 +42,7 @@
 #pragma once
 
 #include <iostream>
+#include <optional>
 
 #include <seqan3/alphabet/concept_pre.hpp>
 
@@ -293,18 +294,41 @@ constexpr bool is_unpaired(structure_type const alph)
 
 /*!\brief Specialisation of seqan3::pseudoknot_support that delegates to structure_type::pseudoknot_support.
  * \relates seqan3::rna_structure_concept
- * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static bool pseudoknot_support` member variable.
+ * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static uint8_t pseudoknot_support` member variable.
  */
 template <typename alphabet_type_with_pseudoknot_attribute>
 //!\cond
     requires requires (alphabet_type_with_pseudoknot_attribute)
-    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> bool; }
+    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> uint8_t; }
 //!\endcond
 struct pseudoknot_support<alphabet_type_with_pseudoknot_attribute>
 {
     //!\brief The forwarded pseudoknot support.
-    static constexpr bool value = alphabet_type_with_pseudoknot_attribute::pseudoknot_support;
+    static constexpr uint8_t value = alphabet_type_with_pseudoknot_attribute::pseudoknot_support;
 };
+
+/*!\brief Implementation of seqan3::rna_structure_concept::pseudoknot_id() that delegates to a member function.
+ * \relates seqan3::rna_structure_concept
+ * \tparam alphabet_type_with_pseudoknot_attribute If it supports pseudoknots, it must provide a `.pseudoknot_id()`
+ * member function, otherwise it can be omitted.
+ * \param alph The alphabet letter which is checked for the pseudoknot id.
+ * \returns The pseudoknot id, if alph represents an interaction, and no value otherwise.
+ * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+ */
+template<typename alphabet_type_with_pseudoknot_attribute>
+constexpr std::optional<uint8_t> pseudoknot_id(alphabet_type_with_pseudoknot_attribute const alph)
+//!\cond
+    requires requires(alphabet_type_with_pseudoknot_attribute)
+    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> uint8_t; }
+//!\endcond
+{
+    if constexpr (alphabet_type_with_pseudoknot_attribute::pseudoknot_support > 1)
+        return alph.pseudoknot_id();
+    else if (is_pair_open(alph) || is_pair_close(alph))
+        return 0;
+    else
+        return std::nullopt;
+}
 //!\}
 
 } // namespace seqan3

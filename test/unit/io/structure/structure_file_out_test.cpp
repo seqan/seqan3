@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- * \brief Tests for the structure in- and output.
+ * \brief Tests for writing sequence files with structure information.
  */
 
 #include <iterator>
@@ -186,24 +186,24 @@ struct structure_file_out_write : public ::testing::Test
 {
     size_t const num_records = 2ul;
 
-    rna5_vector const seqs[2]
+    std::vector<rna5_vector> const seqs
     {
         "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA"_rna5,
         "UUGGAGUACACAACCUGUACACUCUUUC"_rna5
     };
 
-    std::string const ids[2]
+    std::vector<std::string> const ids
     {
         "S.cerevisiae_tRNA-PHE M10740/1-73",
         "example"
     };
 
-    double const energies[2]
+    std::vector<double> const energies
     {
         -17.5, -3.71
     };
 
-    std::vector<wuss51> const structures[2]
+    std::vector<std::vector<wuss51>> const structures
     {
         "(((((((..((((........)))).((((.........)))).....(((((.......))))))))))))."_wuss51,
         "..(((((..(((...)))..)))))..."_wuss51
@@ -393,20 +393,31 @@ TEST_F(structure_file_out_rows, assign_structure_file_in)
 TEST_F(structure_file_out_rows, assign_structure_file_pipes)
 {
     // valid without assignment?
-    structure_file_in{std::istringstream{output_comp}, structure_file_format_dot_bracket{},
-                      fields<field::SEQ, field::ID, field::STRUCTURE>{}}
-        | structure_file_out{std::ostringstream{}, structure_file_format_dot_bracket{}};
+    structure_file_in{std::istringstream{output_comp}, structure_file_format_dot_bracket{}}
+              | structure_file_out{std::ostringstream{}, structure_file_format_dot_bracket{}};
 
     // valid with assignment and check contents
-    auto fout = structure_file_in{std::istringstream{output_comp}, structure_file_format_dot_bracket{},
-                                  fields<field::SEQ, field::ID, field::STRUCTURE>{}}
-        | structure_file_out{std::ostringstream{}, structure_file_format_dot_bracket{}};
+    auto fout = structure_file_in{std::istringstream{output_comp}, structure_file_format_dot_bracket{}}
+              | structure_file_out{std::ostringstream{}, structure_file_format_dot_bracket{}};
 
     fout.get_stream().flush();
     EXPECT_EQ(fout.get_stream().str(), output_comp);
 }
 
 struct structure_file_out_columns : public structure_file_out_rows{};
+
+TEST_F(structure_file_out_columns, assign_record_of_columns)
+{
+    record<type_list<std::vector<rna5_vector>, std::vector<std::string>, std::vector<std::vector<wuss51>>>,
+           fields<field::SEQ, field::ID, field::STRUCTURE>> columns
+    {
+        seqs,
+        ids,
+        structures
+    };
+
+    assign_impl(columns);
+}
 
 TEST_F(structure_file_out_columns, assign_tuple_of_columns)
 {

@@ -203,8 +203,11 @@ struct dot_bracket3
         return _value == internal_type::UNPAIRED;
     }
 
-    //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: False.
-    static constexpr bool pseudoknot_support{false};
+    /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
+     * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
+     * pseudoknot support.
+     */
+    static constexpr uint8_t pseudoknot_support{1};
     //!\}
 
 protected:

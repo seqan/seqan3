@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- * \brief Tests for the structure in- and output.
+ * \brief Tests for reading sequence files with structure information.
  */
 
 #include <iterator>
@@ -50,7 +50,6 @@
 
 #include <seqan3/io/structure/structure_file_in.hpp>
 #include <seqan3/range/view/convert.hpp>
-#include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/concept/iterator.hpp>
 #include <seqan3/std/view/filter.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -67,7 +66,25 @@ TEST(structure_file_in_iterator, concepts)
     EXPECT_TRUE((seqan3::sentinel_concept<sen_t, it_t>));
 }
 
-TEST(structure_file_in_class, concepts)
+struct structure_file_in_class : public ::testing::Test
+{
+    using comp0 = structure_file_in_default_traits_rna;
+    using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
+    using comp2 = type_list<structure_file_format_dot_bracket>;
+    using comp3 = std::ifstream;
+
+    test::tmp_filename create_file()
+    {
+        test::tmp_filename filename{"structure_file_in_constructor.dbn"};
+        {
+            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            filecreator << "> ID\nACGU\n....\n"; // must contain at least one record
+        }
+        return std::move(filename);
+    }
+};
+
+TEST_F(structure_file_in_class, concepts)
 {
     using t = structure_file_in<>;
     EXPECT_TRUE((seqan3::input_range_concept<t>));
@@ -77,16 +94,11 @@ TEST(structure_file_in_class, concepts)
     EXPECT_FALSE((seqan3::input_range_concept<ct>));
 }
 
-TEST(structure_file_in_class, construct_by_filename)
+TEST_F(structure_file_in_class, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_filename filename{"structure_file_in_constructor.dbn"};
-
-        {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGU\n....\n"; // must contain at least one record
-        }
+        test::tmp_filename filename = create_file();
         EXPECT_NO_THROW(structure_file_in<>{filename.get_path()});
     }
 
@@ -106,13 +118,7 @@ TEST(structure_file_in_class, construct_by_filename)
 
     /* filename + fields */
     {
-        test::tmp_filename filename{"structure_file_in_constructor.dbn"};
-
-        {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGU\n....\n"; // must contain at least one record
-        }
-
+        test::tmp_filename filename = create_file();
         EXPECT_NO_THROW((structure_file_in<structure_file_in_default_traits_rna,
                                            fields<field::SEQ>,
                                            type_list<structure_file_format_dot_bracket>,
@@ -120,7 +126,7 @@ TEST(structure_file_in_class, construct_by_filename)
     }
 }
 
-TEST(structure_file_in_class, construct_from_stream)
+TEST_F(structure_file_in_class, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_in<structure_file_in_default_traits_rna,
@@ -139,87 +145,110 @@ TEST(structure_file_in_class, construct_from_stream)
                                                            fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
-TEST(structure_file_in_class, default_template_args_and_deduction_guides)
+TEST_F(structure_file_in_class, default_template_args)
 {
-    using comp0 = structure_file_in_default_traits_rna;
-    using comp1 = fields<field::SEQ, field::ID, field::BPP>;
-    using comp2 = type_list<structure_file_format_dot_bracket>;
-    using comp3 = std::ifstream;
-
     /* default template args */
-    {
-        using t = structure_file_in<>;
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
-    }
+    using t = structure_file_in<>;
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
+}
 
+TEST_F(structure_file_in_class, guided_filename_constructor)
+{
     /* guided filename constructor */
-    {
-        test::tmp_filename filename{"structure_file_in_constructor.dbn"};
+    test::tmp_filename filename = create_file();
+    structure_file_in fin{filename.get_path()};
 
-        {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGU\n....\n"; // must contain at least one record
-        }
+    using t = decltype(fin);
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type, comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats, comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_type, comp3>));
+}
 
-        structure_file_in fin{filename.get_path()};
-
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
-    }
-
+TEST_F(structure_file_in_class, guided_filename_constructor_and_custom_fields)
+{
     /* guided filename constructor + custom fields */
-    {
-        test::tmp_filename filename{"structure_file_in_constructor.dbn"};
+    test::tmp_filename filename = create_file();
+    structure_file_in fin{filename.get_path(), fields<field::SEQ>{}};
 
-        {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGU\n....\n"; // must contain at least one record
-        }
+    using t = decltype(fin);
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
+}
 
-        structure_file_in fin{filename.get_path(), fields<field::SEQ>{}};
-
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
-    }
-
+TEST_F(structure_file_in_class, guided_stream_constructor)
+{
     /* guided stream constructor */
-    {
-        structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"}, structure_file_format_dot_bracket{}};
+    structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"}, structure_file_format_dot_bracket{}};
 
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_dot_bracket>>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_type,        std::istringstream>));
-    }
+    using t = decltype(fin);
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_dot_bracket>>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_type,        std::istringstream>));
+}
 
+TEST_F(structure_file_in_class, guided_stream_constructor_and_custom_fields)
+{
     /* guided stream constructor + custom fields */
-    {
-        structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"},
-                              structure_file_format_dot_bracket{},
-                              fields<field::SEQ>{}};
+    structure_file_in fin{std::istringstream{"> ID\nACGU\n....\n"},
+                          structure_file_format_dot_bracket{},
+                          fields<field::SEQ>{}};
 
-        using t = decltype(fin);
-        EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
-        EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_dot_bracket>>));
-        EXPECT_TRUE((std::is_same_v<typename t::stream_type,        std::istringstream>));
+    using t = decltype(fin);
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_dot_bracket>>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_type,        std::istringstream>));
+}
+
+TEST_F(structure_file_in_class, amino_acids_traits)
+{
+//    structure_file_in<structure_file_in_default_traits_aa> fin{std::istringstream{"> ID\nACEW\nHHHH\n"},
+//                                                               structure_file_format_dot_bracket{}};
+    test::tmp_filename filename{"structure_file_in_constructor.dbn"};
+    {
+        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        filecreator << "> ID\nACEW\nHHHH\n"; // must contain at least one record
     }
+    structure_file_in<structure_file_in_default_traits_aa> fin{filename.get_path()};
+
+    using t = decltype(fin);
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        structure_file_in_default_traits_aa>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
+}
+
+TEST_F(structure_file_in_class, modified_traits)
+{
+    test::tmp_filename filename = create_file();
+    //! [structure_file_in_class mod_traits]
+    struct my_traits : structure_file_in_default_traits_rna
+    {
+        using seq_alphabet = rna4; // instead of rna5
+    };
+
+    structure_file_in<my_traits> fin{filename.get_path()};
+    //! [structure_file_in_class mod_traits]
+
+    using t = decltype(fin);
+    EXPECT_TRUE((std::is_same_v<typename t::traits_type,        my_traits>));
+    EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+    EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
+    EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
 }
 
 struct structure_file_in_read : public ::testing::Test
 {
     size_t const num_records = 2ul;
 
+    //! [structure_file_in_class input_string]
     std::string const input
     {
         ">S.cerevisiae_tRNA-PHE M10740/1-73\n"
@@ -229,6 +258,7 @@ struct structure_file_in_read : public ::testing::Test
         "UUGGAGUACACAACCUGUACACUCUUUC\n"
         "..(((((..(((...)))..)))))... (-3.71)\n"
     };
+    //! [structure_file_in_class input_string]
 
     rna5_vector const seq_comp[2]
     {
@@ -263,9 +293,23 @@ struct structure_file_in_read : public ::testing::Test
             24, 23, 22, 21, 20, 17, 16, 15, 11, 10,  9,  6,  5,  4,  3,  2
         }
     };
+
+    template <typename bpp_type>
+    void bpp_test(bpp_type & bpp, std::vector<double> const & bpp_comp)
+    {
+        size_t idx = 0ul;
+        auto interactions = bpp | ranges::view::remove_if([] (auto & set) { return set.size() != 1; });
+        for (auto & elem : interactions)
+        {
+            EXPECT_EQ(elem.begin()->second, bpp_comp[idx++]);
+        }
+        EXPECT_EQ(idx, bpp_comp.size());
+    }
 };
 
-TEST_F(structure_file_in_read, record_reading)
+struct structure_file_in_record_reading : public structure_file_in_read {};
+
+TEST_F(structure_file_in_record_reading, general)
 {
     /* record based reading */
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{}};
@@ -275,16 +319,17 @@ TEST_F(structure_file_in_read, record_reading)
     {
         EXPECT_TRUE((ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
         EXPECT_TRUE((ranges::equal(get<field::ID>(rec), id_comp[counter])));
-        EXPECT_FALSE(empty(get<field::BPP>(rec)));
+        EXPECT_TRUE((ranges::equal(get<field::STRUCTURE>(rec), structure_comp[counter])));
         ++counter;
     }
     EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_read, record_reading_struct_bind)
+TEST_F(structure_file_in_record_reading, struct_bind)
 {
     /* record based reading */
-    structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
+    structure_file_in fin{std::istringstream{input},
+                          structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
 
     size_t counter = 0ul;
@@ -294,22 +339,13 @@ TEST_F(structure_file_in_read, record_reading_struct_bind)
         EXPECT_TRUE((ranges::equal(id, id_comp[counter])));
         EXPECT_TRUE((ranges::equal(structure, structure_comp[counter])));
         EXPECT_DOUBLE_EQ(energy.value(), energy_comp[counter]);
-
-        auto interactions = bpp | ranges::view::remove_if([] (auto & set) { return set.size() != 1; });
-//                                | ranges::for_each ([] (auto & set) { return set.begin(); });
-//        EXPECT_TRUE((ranges::equal(interactions | ranges::view::values, interaction_comp[counter])));
-        size_t idx = 0ul;
-        for (auto & elem : interactions)
-        {
-            EXPECT_EQ(elem.begin()->second, interaction_comp[counter][idx++]);
-        }
-        EXPECT_EQ(idx, interaction_comp[counter].size());
+        bpp_test(bpp, interaction_comp[counter]);
         ++counter;
     }
     EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_read, record_reading_custom_fields)
+TEST_F(structure_file_in_record_reading, custom_fields)
 {
     /* record based reading */
     structure_file_in fin{std::istringstream{input},
@@ -327,7 +363,7 @@ TEST_F(structure_file_in_read, record_reading_custom_fields)
     EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_read, file_view)
+TEST_F(structure_file_in_record_reading, file_view)
 {
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
@@ -342,7 +378,7 @@ TEST_F(structure_file_in_read, file_view)
     {
         EXPECT_TRUE((ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
         EXPECT_TRUE((ranges::equal(get<field::ID>(rec),  id_comp[counter])));
-        EXPECT_FALSE(empty(get<field::BPP>(rec)));
+        bpp_test(get<field::BPP>(rec), interaction_comp[counter]);
         EXPECT_TRUE((ranges::equal(get<field::STRUCTURE>(rec), structure_comp[counter])));
         EXPECT_DOUBLE_EQ(get<field::ENERGY>(rec).value(), energy_comp[counter]);
         ++counter;
@@ -350,20 +386,22 @@ TEST_F(structure_file_in_read, file_view)
     EXPECT_EQ(counter, num_records);
 }
 
-TEST_F(structure_file_in_read, column_reading)
+struct structure_file_in_column_reading : public structure_file_in_read{};
+
+TEST_F(structure_file_in_column_reading, general)
 {
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::BPP, field::STRUCTURE, field::ENERGY>{}};
 
     auto & seqs  = get<field::SEQ>(fin);                                    // by field
     auto & ids   = get<1>(fin);                                             // by index
-    auto & bpp = get<field::BPP>(fin);
+    auto & bpps = get<field::BPP>(fin);
     auto & struc = get<typename decltype(fin)::structure_column_type>(fin); // by type
     auto & energies = get<field::ENERGY>(fin);
 
     ASSERT_EQ(seqs.size(), num_records);
     ASSERT_EQ(ids.size(), num_records);
-    ASSERT_EQ(bpp.size(), num_records);
+    ASSERT_EQ(bpps.size(), num_records);
     ASSERT_EQ(struc.size(), num_records);
     ASSERT_EQ(energies.size(), num_records);
 
@@ -371,13 +409,13 @@ TEST_F(structure_file_in_read, column_reading)
     {
         EXPECT_TRUE((ranges::equal(seqs[idx], seq_comp[idx])));
         EXPECT_TRUE((ranges::equal(ids[idx], id_comp[idx])));
-        EXPECT_FALSE(empty(bpp[idx]));
+        bpp_test(bpps[idx], interaction_comp[idx]);
         EXPECT_TRUE((ranges::equal(struc[idx], structure_comp[idx])));
         EXPECT_DOUBLE_EQ(energies[idx].value(), energy_comp[idx]);
     }
 }
 
-TEST_F(structure_file_in_read, column_reading_temporary)
+TEST_F(structure_file_in_column_reading, temporary)
 {
     structure_file_in{std::istringstream{input}, structure_file_format_dot_bracket{}};
 
@@ -391,7 +429,7 @@ TEST_F(structure_file_in_read, column_reading_temporary)
     }
 }
 
-TEST_F(structure_file_in_read, column_reading_decomposed)
+TEST_F(structure_file_in_column_reading, decomposed)
 {
     structure_file_in fin{std::istringstream{input}, structure_file_format_dot_bracket{},
                           fields<field::SEQ, field::ID, field::STRUCTURE, field::ENERGY, field::BPP>{}};
@@ -410,11 +448,11 @@ TEST_F(structure_file_in_read, column_reading_decomposed)
         EXPECT_TRUE((ranges::equal(ids[idx], id_comp[idx])));
         EXPECT_TRUE((ranges::equal(struc[idx], structure_comp[idx])));
         EXPECT_DOUBLE_EQ(energies[idx].value(), energy_comp[idx]);
-        EXPECT_FALSE(empty(bpps[idx]));
+        bpp_test(bpps[idx], interaction_comp[idx]);
     }
 }
 
-TEST_F(structure_file_in_read, column_reading_decomposed_temporary)
+TEST_F(structure_file_in_column_reading, decomposed_temporary)
 {
     auto && [ seqs, ids, struc, energies, bpps ] = structure_file_in{std::istringstream{input},
                                                                      structure_file_format_dot_bracket{},
@@ -436,6 +474,6 @@ TEST_F(structure_file_in_read, column_reading_decomposed_temporary)
         EXPECT_TRUE((ranges::equal(ids[idx], id_comp[idx])));
         EXPECT_TRUE((ranges::equal(struc[idx], structure_comp[idx])));
         EXPECT_DOUBLE_EQ(energies[idx].value(), energy_comp[idx]);
-        EXPECT_FALSE(empty(bpps[idx]));
+        bpp_test(bpps[idx], interaction_comp[idx]);
     }
 }
