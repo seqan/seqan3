@@ -45,6 +45,12 @@ pipeline {
                         build job: 'pipeline_doc_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
                     }
                 }
+                stage ('header') {
+                    agent none
+                    steps {
+                        build job: 'pipeline_header_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+                    }
+                }
                 stage ('memory') {
                     steps {
                         echo "TODO: Perform memory tests."
