@@ -102,8 +102,8 @@ void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, do
         {
             throw parse_error{std::string{"Invalid bracket notation: Unpaired opening bracket at position "}
                               + std::to_string(brackets[id].top()) + "."};
-        };
+        }
     }
-};
+}
 
 } // namespace seqan3::detail

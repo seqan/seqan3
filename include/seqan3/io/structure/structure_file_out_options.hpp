@@ -33,19 +33,22 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-include for the structure IO submodule.
+ * \brief Provides seqan3::structure_file_out_options.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup structure Structure
- * \ingroup io
- * \brief \todo document at a later point in time
- */
+namespace seqan3
+{
 
-#include <seqan3/io/structure/structure_file_format_vienna.hpp>
-#include <seqan3/io/structure/structure_file_in.hpp>
-#include <seqan3/io/structure/structure_file_in_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_out.hpp>
-#include <seqan3/io/structure/structure_file_out_format_concept.hpp>
+//!\brief The options type defines various option members that influence the behaviour of all or some formats.
+struct structure_file_out_options
+{
+    /*!\brief The default plain text line-ending is "\n", but on Windows an additional carriage return is
+     *        recommended ("\r\n" for line-ending).
+     */
+    bool add_carriage_return = false;
+};
+
+} // namespace seqan3

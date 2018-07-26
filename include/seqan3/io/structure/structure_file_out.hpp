@@ -60,8 +60,9 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
-#include <seqan3/io/structure/structure_file_in_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_format_dot_bracket.hpp>
+#include <seqan3/io/structure/structure_file_out_format_concept.hpp>
+#include <seqan3/io/structure/structure_file_out_options.hpp>
+#include <seqan3/io/structure/structure_file_format_vienna.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/concept/range.hpp>
 
@@ -72,7 +73,7 @@ namespace seqan3
 // structure_file_out
 // ----------------------------------------------------------------------------
 
-/*!\brief A class for writing structured sequence files, e.g. Dot Bracket Notation, Connect, ViennaRNA bpp matrix ...
+/*!\brief A class for writing structured sequence files, e.g. Stockholm, Connect, Vienna, ViennaRNA bpp matrix ...
  * \ingroup structure
  * \tparam selected_field_ids A seqan3::fields type with the list and order of fields IDs; only relevant if these
  *                            can't be deduced.
@@ -121,7 +122,7 @@ namespace seqan3
  *
  * Writing to std::cout:
  * ```cpp
- * structure_file_out fout{std::move(std::cout), structure_file_format_dot_bracket{}};
+ * structure_file_out fout{std::move(std::cout), structure_file_format_vienna{}};
  * //               ^ no need to specify the template arguments
  *
  * fout.emplace_back("example_id", "ACGTN"_dna5);
@@ -160,7 +161,7 @@ namespace seqan3
  * selected_field_ids, i.e. by default the first is assumed to be seqan3::field::SEQ, the second seqan3::field::ID
  * and the third one seqan3::field::STRUCTURE. You may give less fields than are selected, if the actual format you are
  * writing to can cope with less
- * (e.g. for Dot Bracket it is sufficient to write seqan3::field::SEQ, seqan3::field::ID and seqan3::field::STRUCTURE,
+ * (e.g. for Vienna it is sufficient to write seqan3::field::SEQ, seqan3::field::ID and seqan3::field::STRUCTURE,
  * even if selected_field_ids also contains seqan3::field::ENERGY).
  *
  * You may also use the output file's iterator for writing, however, this rarely provides an advantage.
@@ -271,12 +272,12 @@ namespace seqan3
  *
  * ### Formats
  *
- * Currently, the only implemented format is seqan3::structure_file_format_dot_bracket. More formats will follow soon.
+ * Currently, the only implemented format is seqan3::structure_file_format_vienna. More formats will follow soon.
  */
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
           detail::type_list_of_structure_file_out_formats_concept valid_formats_
-              = type_list<structure_file_format_dot_bracket>,
+              = type_list<structure_file_format_vienna>,
           ostream_concept<char> stream_type_ = std::ofstream>
 class structure_file_out
 {
@@ -922,10 +923,12 @@ protected:
                 for (auto && v : zipped)
                     f.write(stream,
                             options,
-                            std::get<0>(v) | view::convert<typename reference_t<structured_seq_type>::sequence_alphabet_type>,
+                            std::get<0>(v) | view::convert
+                                             <typename reference_t<structured_seq_type>::sequence_alphabet_type>,
                             std::get<1>(v),  // id
                             std::get<2>(v),  // bpp
-                            std::get<0>(v) | view::convert<typename reference_t<structured_seq_type>::structure_alphabet_type>,
+                            std::get<0>(v) | view::convert
+                                             <typename reference_t<structured_seq_type>::structure_alphabet_type>,
                             std::get<3>(v),  // energy
                             std::get<4>(v),  // react
                             std::get<5>(v),  // react_error

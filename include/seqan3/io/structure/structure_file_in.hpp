@@ -63,7 +63,8 @@
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/structure/structure_file_in_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_format_dot_bracket.hpp>
+#include <seqan3/io/structure/structure_file_in_options.hpp>
+#include <seqan3/io/structure/structure_file_format_vienna.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 namespace seqan3
@@ -414,7 +415,7 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
 // structure_file_in
 // ----------------------------------------------------------------------------
 
-/*!\brief A class for reading structured sequence files, e.g. Dot Bracket Notation, Connect, ViennaRNA bpp matrix ...
+/*!\brief A class for reading structured sequence files, e.g. Stockholm, Connect, Vienna, ViennaRNA bpp matrix ...
  * \ingroup structure
  * \tparam traits_type        An auxiliary type that defines certain member types and constants, must satisfy
  *                            seqan3::structure_file_in_traits_concept.
@@ -460,7 +461,7 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  *
  * In most cases the template parameters are deduced completely automatically:
  * ```cpp
- * structure_file_in sf{"/tmp/my.dbn"}; // Dot bracket with RNA sequences assumed, regular std::ifstream taken as stream
+ * structure_file_in sf{"/tmp/my.dbn"}; // Vienna with RNA sequences assumed, regular std::ifstream taken as stream
  * ```
  *
  * Reading from an std::istringstream:
@@ -478,7 +479,7 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  *
  * std::istringstream iss(input);
  *
- * structure_file_in fin{std::move(iss), structure_file_format_dot_bracket{}};
+ * structure_file_in fin{std::move(iss), structure_file_format_vienna{}};
  * //              ^ no need to specify the template arguments
  * ```
  *
@@ -506,8 +507,8 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  *
  * structure_file_in<structure_file_default_traits_aa,
  *                   fields<field::SEQ, field::ID, field::STRUCTURE>,
- *                   type_list<structure_file_format_dot_bracket>,
- *                   std::istringstream> fin{std::move(iss), structure_file_format_dot_bracket{}};
+ *                   type_list<structure_file_format_vienna>,
+ *                   std::istringstream> fin{std::move(iss), structure_file_format_vienna{}};
  * ```
  *
  * ### Reading record-wise
@@ -519,7 +520,7 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  *
  * for (auto & rec : fin)
  * {
- *     std::cout << "ID:  " << get<field::ID>(rec) << '\n';
+ *     std::cout << "ID: " << get<field::ID>(rec) << '\n';
  *     std::cout << "SEQ: " << (get<field::SEQ>(rec) | view::to_char) << '\n'; // sequence is converted to char on-the-fly
  *     std::cout << "STRUCTURE: " << (get<field::STRUCTURE>(rec) | view::to_char) << '\n';
  * }
@@ -555,7 +556,7 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  *
  * for (auto & [ seq, id, structure ] : fin)
  * {
- *     std::cout << "ID:  " << id << '\n';
+ *     std::cout << "ID: " << id << '\n';
  *     std::cout << "SEQ: " << (seq | view::to_char) << '\n'; // sequence is converted to char on-the-fly
  *     std::cout << "STRUCTURE: " << (structure | view::to_char) << '\n';
  * }
@@ -577,7 +578,7 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  *
  * for (auto & [ id, structured_seq ] : fin) // note that the order is now different, "id" comes first, because it was specified first
  * {
- *     std::cout << "ID:  " << id << '\n';
+ *     std::cout << "ID: " << id << '\n';
  *     // sequence and structure are part of the same vector, of type std::vector<structured_rna<rna5, wuss51>>
  *     std::cout << "SEQ: "  << (structured_seq | view::get<0> | view::to_char) << '\n'; // sequence string is extracted and converted to char on-the-fly
  *     std::cout << "STRUCTURE: " << (structured_seq | view::get<1> | view::to_char) << '\n'; // structure string is extracted and converted to char on-the-fly
@@ -644,12 +645,12 @@ struct structure_file_in_default_traits_aa : structure_file_in_default_traits_rn
  *
  * ### Formats
  *
- * Currently, the only implemented format is seqan3::structure_file_format_dot_bracket. More formats will follow soon.
+ * Currently, the only implemented format is seqan3::structure_file_format_vienna. More formats will follow soon.
  */
 template<structure_file_in_traits_concept traits_type_ = structure_file_in_default_traits_rna,
          detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::type_list_of_structure_file_in_formats_concept valid_formats_
-             = type_list<structure_file_format_dot_bracket>,
+             = type_list<structure_file_format_vienna>,
          istream_concept<char> stream_type_ = std::ifstream>
 class structure_file_in
 {
@@ -1176,7 +1177,9 @@ structure_file_in(stream_type && _stream, file_format const &, selected_field_id
 
 namespace std
 {
-//!\brief std::tuple_size overload for column-like access. [metafunction specialisation for seqan3::structure_file_in]
+/*!\brief std::tuple_size overload for column-like access.
+ * [metafunction specialisation for seqan3::structure_file_in]
+ */
 template<seqan3::structure_file_in_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,
          seqan3::detail::type_list_of_structure_file_in_formats_concept valid_formats,
@@ -1187,7 +1190,9 @@ struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, val
     static constexpr size_t value = selected_field_ids::as_array.size();
 };
 
-//!\brief std::tuple_element overload for column-like access. [metafunction specialisation for seqan3::structure_file_in]
+/*!\brief std::tuple_element overload for column-like access.
+ * [metafunction specialisation for seqan3::structure_file_in]
+ */
 template<size_t elem_no,
          seqan3::structure_file_in_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,

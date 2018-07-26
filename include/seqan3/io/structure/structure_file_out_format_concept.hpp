@@ -46,17 +46,10 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
 #include <seqan3/core/type_list.hpp>
+#include <seqan3/io/structure/structure_file_out_options.hpp>
 
 namespace seqan3
 {
-//!\brief The options type defines various option members that influence the behaviour of all or some formats.
-struct structure_file_out_options
-{
-    /*!\brief The default plain text line-ending is "\n", but on Windows an additional carriage return is
-     *        recommended ("\r\n" for line-ending).
-     */
-    bool add_carriage_return    = false;
-};
 
 /*!\interface seqan3::structure_file_out_format_concept <>
  * \brief The generic concept for sequence file out formats.
@@ -181,7 +174,8 @@ template <typename ... ts>
 constexpr bool is_type_list_of_structure_file_out_formats_v<type_list<ts...>>
                 = (structure_file_out_format_concept<ts> && ...);
 
-/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet seqan3::structure_file_format_concept.
+/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
+ * seqan3::structure_file_format_concept.
  * \ingroup core
  * \see seqan3::is_type_list_of_structure_file_formats_v
  */

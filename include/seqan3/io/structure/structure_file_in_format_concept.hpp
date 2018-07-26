@@ -42,29 +42,17 @@
 #include <fstream>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/alphabet/structure/structured_rna.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/type_list.hpp>
+#include <seqan3/io/structure/structure_file_in_options.hpp>
 
 namespace seqan3
 {
-/*!\brief The options type defines various option members that influence the behaviour of all or some formats.
- * \tparam seq_legal_alphabet_ The sequence legal alphabet exposed as type trait to the format.
- * \tparam structured_seq_combined Trait that exposes to the format whether seq and structure arguments are actually the
- * same/combined.
- */
-template<typename seq_legal_alphabet_, bool structured_seq_combined>
-struct structure_file_in_options
-{
-    //!\brief Export the (possibly larger) legal sequence alphabet to the format.
-    using seq_legal_alphabet = seq_legal_alphabet_;
-
-    //!\brief Read the ID string only up until the first whitespace character.
-    bool truncate_ids = false;
-};
-
 /*!\interface seqan3::structure_file_in_format_concept <>
  * \brief The generic concept for structure file in formats.
  * \ingroup structure
@@ -157,7 +145,8 @@ concept bool structure_file_in_format_concept = requires(t & v,
  *
  * ### Additional requirements
  *
- *   * The function must also accept std::ignore as parameter for any of the fields. [this is enforced by the concept checker!]
+ *   * The function must also accept std::ignore as parameter for any of the fields.
+ *     [this is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::STRUCTURE, you may also pass
  *     seqan3::field::STRUCTURED_SEQ to both parameters. If you do, the seqan3::value_type_t of the argument must be

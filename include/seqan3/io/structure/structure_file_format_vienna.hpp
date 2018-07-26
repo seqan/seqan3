@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides the seqan3::structure_file_format_dot_bracket class.
+ * \brief Provides the seqan3::structure_file_format_vienna class.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -62,8 +62,8 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/io/structure/detail.hpp>
-#include <seqan3/io/structure/structure_file_in_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_out_format_concept.hpp>
+#include <seqan3/io/structure/structure_file_in_options.hpp>
+#include <seqan3/io/structure/structure_file_out_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -74,7 +74,7 @@
 
 namespace seqan3
 {
-/*!\brief       The Dot Bracket format for RNA sequences with secondary structure.
+/*!\brief       The Vienna format (dot bracket notation) for RNA sequences with secondary structure.
  * \implements  seqan3::structure_file_in_format_concept
  * \implements  seqan3::structure_file_out_format_concept
  * \ingroup     structure
@@ -83,46 +83,46 @@ namespace seqan3
  *
  * ### Introduction
  *
- * Dot Bracket Notation is widely used for secondary structure annotation. Is is similar to the FastA format,
- * containing an ID in the first line and a sequence in the second line. An additional third line represents the
+ * Dot Bracket or Vienna Notation is widely used for secondary structure annotation. Is is a very simple format,
+ * containing one or more sequences. Each sequence must appear as a single line in the file.
+ * A sequence may be preceded by a special line starting with the '>' character followed by a sequence name
+ * (like FastA). After each sequence line there is usually a line containing
  * secondary structure, using brackets to denote interacting nucleotides or amino acids, and dots for unpaired sites.
- * Optionally, the structure can be followed by a space character and the minimum free energy value enclosed
- * in parentheses ().
+ * The length of the struture must equal the length of the sequence.
+ * Optionally, the structure may be followed by a space character and the minimum free energy value enclosed
+ * in parentheses (). Note that there cannot be energy without structure.
+ *
+ * The Vienna format is the output format of _RNAfold_. Furthermore, it is designed to be compatible with the
+ * input format of the ViennaRNA package (if structure and energy are omitted).
+ * See https://www.tbi.univie.ac.at/RNA/tutorial/#sec2_7 for details.
  *
  * ### Fields
  *
- * The Dot Bracket format provides the fields seqan3::field::SEQ, seqan3::field::ID, seqan3::field::STRUCTURE,
- * seqan3::field::STRUCTURED_SEQ and seqan3::field::ENERGY.
- * The first three of these fields are required when writing, but seqan3::field::SEQ and seqan3::field::STRUCTURE
- * can be replaced by seqan3::field::STRUCTURED_SEQ.\n
+ * The Vienna format provides the fields seqan3::field::SEQ, seqan3::field::ID, seqan3::field::STRUCTURE,
+ * seqan3::field::STRUCTURED_SEQ and seqan3::field::ENERGY.\n
  * If you select seqan3::field::STRUCTURED_SEQ you must not select seqan3::field::SEQ or seqan3::field::STRUCTURE.
+ * Either the field seqan3::field::SEQ or the field seqan3::field::STRUCTURED_SEQ is required when writing.
  *
  * ### Implementation notes
  *
+ * In the unlikely case that you want to read a Vienna file, which does not contain structure lines, you have to
+ * assign false to `seqan3::structure_file_in_options::file_has_structure`. \n\n
  * When reading the ID-line the identifier (`>`) and any blank characters before the actual ID are
- * stripped. Each field is read/written as a single line.
- *
- * This implementation supports the following less known and optional features of the format:
- *
- *   * character counts and spaces within the sequence (they are simply ignored)
- *
- * The following optional features are currently **not supported:**
- *
- *   * Multiple comment lines (starting with `>`), only one ID line before the sequence line is accepted
- *
+ * stripped. Each field is read/written as a single line (except ENERGY, which goes right after the structure).
+ * Numbers and spaces within the sequence are simply ignored, but not within the structure.
  */
-class structure_file_format_dot_bracket
+class structure_file_format_vienna
 {
 public:
     /*!\name Constructors, destructor and assignment
      * \brief Rule of five explicitly defaulted.
      * \{
      */
-    structure_file_format_dot_bracket() = default;
-    structure_file_format_dot_bracket(structure_file_format_dot_bracket const &) = delete;
-    structure_file_format_dot_bracket & operator=(structure_file_format_dot_bracket const &) = delete;
-    structure_file_format_dot_bracket(structure_file_format_dot_bracket &&) = default;
-    structure_file_format_dot_bracket & operator=(structure_file_format_dot_bracket &&) = default;
+    structure_file_format_vienna() = default;
+    structure_file_format_vienna(structure_file_format_vienna const &) = delete;
+    structure_file_format_vienna & operator=(structure_file_format_vienna const &) = delete;
+    structure_file_format_vienna(structure_file_format_vienna &&) = default;
+    structure_file_format_vienna & operator=(structure_file_format_vienna &&) = default;
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
@@ -158,46 +158,44 @@ public:
         auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
                                           decltype(std::istreambuf_iterator<char>{})>
                            { std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{} };
-        // READ ID
+        // READ ID (if present)
         auto const is_id = is_char<'>'>{};
-        if constexpr (!detail::decays_to_ignore_v<id_type>)
+        if (is_id(*ranges::begin(stream_view)))
         {
-            if (!is_id(*ranges::begin(stream_view)))
+            if constexpr (!detail::decays_to_ignore_v<id_type>)
             {
-                throw parse_error{std::string{"Expected to be on beginning of ID, but "} + is_id.msg.string() +
-                                  " evaluated to false on " + detail::make_printable(*ranges::begin(stream_view))};
-            }
-            if (options.truncate_ids)
-            {
-                ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                         | ranges::view::take_while(!(is_cntrl || is_blank)), // read ID until delimiter
-                             detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
-                detail::consume(stream_view | view::take_line_or_throw);
+                if (options.truncate_ids)
+                {
+                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
+                                 | ranges::view::take_while(!(is_cntrl || is_blank)), // read ID until delimiter
+                                 detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
+                    detail::consume(stream_view | view::take_line_or_throw);
+                }
+                else
+                {
+                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
+                                 | view::take_line_or_throw,                          // read line
+                                 detail::make_conversion_output_iterator(id));
+                }
             }
             else
             {
-                ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                         | view::take_line_or_throw,                          // read line
-                             detail::make_conversion_output_iterator(id));
+                detail::consume(stream_view | view::take_line_or_throw);
             }
-        }
-        else
-        {
-            detail::consume(stream_view | view::take_line_or_throw);
         }
 
         // READ SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
+            is_in_alphabet<seq_legal_alph_type> const is_legal_seq;
             ranges::copy(stream_view | view::take_line_or_throw                      // until end of line
                                      | ranges::view::remove_if(is_space || is_digit) // ignore whitespace and numbers
-                                     | ranges::view::transform([is_legal_alph](char const c)
+                                     | ranges::view::transform([is_legal_seq](char const c)
                                        {
-                                           if (!is_legal_alph(c))                    // enforce legal alphabet
+                                           if (!is_legal_seq(c))                    // enforce legal alphabet
                                            {
                                                throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                 is_legal_alph.msg.string() +
+                                                                 is_legal_seq.msg.string() +
                                                                  " evaluated to false on " +
                                                                  detail::make_printable(c)};
                                            }
@@ -208,7 +206,16 @@ public:
         }
         else
         {
-            detail::consume(stream_view | view::take_line_or_throw);
+            detail::consume(stream_view | view::take_line);
+            detail::consume(stream_view | ranges::view::take_while(is_space));
+        }
+
+        if (!options.file_has_structure)
+        {
+            if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) && (!stream.eof()))
+                stream.get();
+
+            return;
         }
 
         // READ STRUCTURE
@@ -242,7 +249,7 @@ public:
             detail::consume(stream_view | ranges::view::take_while(!is_space)); // until whitespace
         }
 
-        // READ ENERGY
+        // READ ENERGY (if present)
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
             std::string e_str = stream_view | view::take_line
@@ -259,7 +266,8 @@ public:
         }
         else
         {
-            detail::consume(stream_view | ranges::view::take_while(!is_id));
+            detail::consume(stream_view | view::take_line);
+            detail::consume(stream_view | ranges::view::take_while(is_space));
         }
 
         // make sure "buffer at end" implies "stream at end"
@@ -293,27 +301,23 @@ public:
     {
         ranges::ostreambuf_iterator stream_it{stream};
 
-        // WRITE ID
+        // WRITE ID (optional)
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            if (ranges::empty(id)) //[[unlikely]]
-                throw std::runtime_error{"The ID field may not be empty when writing Dot-Bracket files."};
-
-            stream_it = '>';
-            stream_it = ' ';
-            ranges::copy(id, stream_it);
-            detail::write_eol(stream_it, options.add_carriage_return);
-        }
-        else
-        {
-            throw std::logic_error{"The ID field may not be set to ignore when writing Dot-Bracket files."};
+            if (!ranges::empty(id))
+            {
+                stream_it = '>';
+                stream_it = ' ';
+                ranges::copy(id, stream_it);
+                detail::write_eol(stream_it, options.add_carriage_return);
+            }
         }
 
         // WRITE SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             if (ranges::empty(seq)) //[[unlikely]]
-                throw std::runtime_error{"The SEQ field may not be empty when writing Dot-Bracket files."};
+                throw std::runtime_error{"The SEQ field may not be empty when writing Vienna files."};
 
             ranges::copy(seq | view::to_char, stream_it);
             detail::write_eol(stream_it, options.add_carriage_return);
@@ -321,40 +325,37 @@ public:
         else
         {
             throw std::logic_error{"The SEQ and STRUCTURED_SEQ fields may not both be set to ignore "
-                                   "when writing Dot-Bracket files."};
+                                   "when writing Vienna files."};
         }
 
-        // WRITE STRUCTURE
+        // WRITE STRUCTURE (optional)
         if constexpr (!detail::decays_to_ignore_v<structure_type>)
         {
-            if (ranges::empty(structure)) //[[unlikely]]
-                throw std::runtime_error{"The STRUCTURE field may not be empty when writing Dot-Bracket files."};
+            if (!ranges::empty(structure))
+                ranges::copy(structure | view::to_char, stream_it);
 
-            ranges::copy(structure | view::to_char, stream_it);
+            // WRITE ENERGY (optional)
+            if constexpr (!detail::decays_to_ignore_v<energy_type>)
+            {
+                if (energy)
+                {
+                    stream_it = ' ';
+                    stream_it = '(';
+                    ranges::copy(std::to_string(energy), stream_it);
+                    stream_it = ')';
+                }
+            }
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
-        else
+        else if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
-            throw std::logic_error{"The STRUCTURE and STRUCTURED_SEQ fields may not both be set to ignore "
-                                   "when writing Dot-Bracket files."};
+            throw std::logic_error{"The ENERGY field cannot be written to a Vienna file without providing STRUCTURE."};
         }
-
-        // WRITE ENERGY
-        if constexpr (!detail::decays_to_ignore_v<energy_type>)
-        {
-            if (ranges::empty(structure)) //[[unlikely]]
-                throw std::runtime_error{"The STRUCTURE field may not be empty when writing Dot-Bracket files."};
-
-            stream_it = ' ';
-            stream_it = '(';
-            ranges::copy(std::to_string(energy), stream_it);
-            stream_it = ')';
-        }
-        detail::write_eol(stream_it, options.add_carriage_return);
     }
 
 private:
     /*!
-     * \brief Extract the structure string from the given stream-
+     * \brief Extract the structure string from the given stream.
      * \tparam alph_type        The alphabet type the structure is converted to.
      * \tparam stream_view_type The type of the input stream.
      * \param stream_view       The input stream to be read.
@@ -381,4 +382,3 @@ private:
 };
 
 } // namespace seqan3
-

@@ -103,7 +103,7 @@ TEST(structure_file_out_class, construct_by_filename)
     {
         test::tmp_filename filename{"structure_file_out_constructor.dbn"};
         EXPECT_NO_THROW((structure_file_out<fields<field::SEQ>,
-                                            type_list<structure_file_format_dot_bracket>,
+                                            type_list<structure_file_format_vienna>,
                                             std::ofstream>
                                             {filename.get_path(), fields<field::SEQ>{}}));
     }
@@ -113,22 +113,22 @@ TEST(structure_file_out_class, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_out<fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                        type_list<structure_file_format_dot_bracket>,
+                                        type_list<structure_file_format_vienna>,
                                         std::ostringstream>
-                                        {std::ostringstream{}, structure_file_format_dot_bracket{}}));
+                                        {std::ostringstream{}, structure_file_format_vienna{}}));
 
     /* stream + format_tag + fields */
     EXPECT_NO_THROW((structure_file_out<fields<field::SEQ, field::ID, field::STRUCTURE>,
-                                        type_list<structure_file_format_dot_bracket>,
+                                        type_list<structure_file_format_vienna>,
                                         std::ostringstream>
-                     {std::ostringstream{}, structure_file_format_dot_bracket{},
+                     {std::ostringstream{}, structure_file_format_vienna{},
                       fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
 TEST(structure_file_out_class, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
-    using comp2 = type_list<structure_file_format_dot_bracket>;
+    using comp2 = type_list<structure_file_format_vienna>;
     using comp3 = std::ofstream;
 
     /* default template args */
@@ -163,21 +163,21 @@ TEST(structure_file_out_class, default_template_args_and_deduction_guides)
 
     /* guided stream constructor */
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_dot_bracket{}};
+        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_dot_bracket>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_type,        std::ostringstream>));
     }
 
     /* guided stream constructor + custom fields */
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_dot_bracket{}, fields<field::SEQ>{}};
+        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_dot_bracket>>));
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<structure_file_format_vienna>>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_type,        std::ostringstream>));
     }
 }
@@ -225,7 +225,7 @@ struct structure_file_out_row : public structure_file_out_write
     template <typename fn_t>
     void row_wise_impl(fn_t fn)
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_dot_bracket{}};
+        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
 
         for (size_t idx = 0ul; idx < num_records; ++idx)
             fn(fout, idx);
@@ -334,7 +334,7 @@ struct structure_file_out_rows : public structure_file_out_write
     template<typename source_t>
     void assign_impl(source_t && source)
     {
-        structure_file_out fout{std::ostringstream{}, structure_file_format_dot_bracket{}};
+        structure_file_out fout{std::ostringstream{}, structure_file_format_vienna{}};
         fout = source;
         fout.get_stream().flush();
         EXPECT_EQ(fout.get_stream().str(), output_comp);
@@ -385,7 +385,7 @@ TEST_F(structure_file_out_rows, assign_structure_file_in)
         "..(((((..(((...)))..)))))...\n"
     };
 
-    structure_file_in fin{std::istringstream{inp}, structure_file_format_dot_bracket{},
+    structure_file_in fin{std::istringstream{inp}, structure_file_format_vienna{},
                           fields<field::SEQ, field::ID, field::STRUCTURE>{}};
     assign_impl(fin);
 }
@@ -393,12 +393,12 @@ TEST_F(structure_file_out_rows, assign_structure_file_in)
 TEST_F(structure_file_out_rows, assign_structure_file_pipes)
 {
     // valid without assignment?
-    structure_file_in{std::istringstream{output_comp}, structure_file_format_dot_bracket{}}
-              | structure_file_out{std::ostringstream{}, structure_file_format_dot_bracket{}};
+    structure_file_in{std::istringstream{output_comp}, structure_file_format_vienna{}}
+              | structure_file_out{std::ostringstream{}, structure_file_format_vienna{}};
 
     // valid with assignment and check contents
-    auto fout = structure_file_in{std::istringstream{output_comp}, structure_file_format_dot_bracket{}}
-              | structure_file_out{std::ostringstream{}, structure_file_format_dot_bracket{}};
+    auto fout = structure_file_in{std::istringstream{output_comp}, structure_file_format_vienna{}}
+              | structure_file_out{std::ostringstream{}, structure_file_format_vienna{}};
 
     fout.get_stream().flush();
     EXPECT_EQ(fout.get_stream().str(), output_comp);
