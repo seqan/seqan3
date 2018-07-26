@@ -65,6 +65,7 @@ namespace seqan3::detail
  * This metafunction works for templates that have **only type-arguments**. See
  * seqan3::detail::transfer_template_vargs_onto for a metafunction that transfers non-type arguments. There is
  * no metafunction that can handle a combination of type and non-type arguments.
+ * If the `source_type` is a not a template class, e.g. an `int`, the return type defaults to `void`.
  *
  * ### Example
  *
@@ -75,7 +76,11 @@ namespace seqan3::detail
  * ```
  */
 template <typename source_type, template <typename ...> typename target_template>
-struct transfer_template_args_onto;
+struct transfer_template_args_onto
+{
+    //!\brief The return type: set to void for non template types.
+    using type = void;
+};
 
 /*!\brief Type metafunction that extracts a type template's **type** arguments and specialises another template
  * with them [metafunction definition].
@@ -120,10 +125,15 @@ using transfer_template_args_onto_t = typename transfer_template_args_onto<sourc
  * This metafunction works for templates that have **only non-type-arguments**. See
  * seqan3::detail::transfer_template_args_onto for a metafunction that transfers type arguments. There is
  * no metafunction that can handle a combination of type and non-type arguments.
+ * If the `source_type` is a not a template class, e.g. an `int`, the return type defaults to `void`.
  */
 
 template <typename source_type, template <auto ...> typename target_template>
-struct transfer_template_vargs_onto;
+struct transfer_template_vargs_onto
+{
+    //!\brief The return type: set to void for non template types.
+    using type = void;
+};
 
 /*!\brief Type metafunction that extracts a type template's **non-type** arguments and specialises another template
  * with them [metafunction definition].

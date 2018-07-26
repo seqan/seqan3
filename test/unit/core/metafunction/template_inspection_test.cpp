@@ -52,6 +52,13 @@ TEST(template_inspect, transfer_template_args_onto_t)
     EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
 }
 
+TEST(template_inspect, is_type_specialisation_of_v)
+{
+    using tl = type_list<int, char, double>;
+    EXPECT_TRUE((detail::is_type_specialisation_of_v<tl, type_list>));
+    EXPECT_FALSE((detail::is_type_specialisation_of_v<int, type_list>));
+}
+
 template <int i, char c>
 struct t1 {};
 
@@ -73,4 +80,12 @@ TEST(template_inspect, transfer_template_vargs_onto_t)
     using ta2 = detail::transfer_template_vargs_onto_t<tl, t2>;
     EXPECT_EQ(1,   ta2::i);
     EXPECT_EQ('a', ta2::c);
+}
+
+TEST(template_inspect, is_value_specialisation_of_v)
+{
+    using tl = t1<1, 'a'>;
+
+    EXPECT_TRUE((detail::is_value_specialisation_of_v<tl, t1>));
+    EXPECT_FALSE((detail::is_value_specialisation_of_v<int, t1>));
 }
