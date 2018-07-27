@@ -49,7 +49,6 @@
 #include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/view/map.hpp>
 
-#include <seqan3/alphabet/structure/structured_rna.hpp>
 #include <seqan3/io/structure/structure_file_out.hpp>
 #include <seqan3/io/structure/structure_file_in.hpp>
 #include <seqan3/range/view/convert.hpp>

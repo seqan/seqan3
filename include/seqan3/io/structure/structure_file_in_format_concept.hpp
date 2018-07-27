@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::structure_file_in_format_concept and options.
+ * \brief Provides seqan3::structure_file_in_format_concept.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 

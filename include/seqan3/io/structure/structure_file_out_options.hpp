@@ -49,6 +49,9 @@ struct structure_file_out_options
      *        recommended ("\r\n" for line-ending).
      */
     bool add_carriage_return = false;
+
+    //!\brief The precision for writing floating point types.
+    int precision = 6;
 };
 
 } // namespace seqan3

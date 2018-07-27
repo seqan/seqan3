@@ -117,7 +117,7 @@ namespace seqan3
  * In most cases the template parameters are deduced completely automatically:
  *
  * ```cpp
- * structure_file_out fout{"/tmp/my.dbn"}; // Bot bracket format detected, std::ofstream opened for file
+ * structure_file_out fout{"/tmp/my.dbn"}; // Vienna format detected, std::ofstream opened for file
  * ```
  *
  * Writing to std::cout:

@@ -277,7 +277,7 @@ struct structure_file_in_read : public ::testing::Test
         "..(((((..(((...)))..)))))..."_wuss51
     };
 
-    std::vector<double> const interaction_comp[2]
+    std::vector<uint8_t> const interaction_comp[2]
     {
         {
             71, 70, 69, 68, 67, 66, 65, 24, 23, 22, 21, 12, 11, 10,  9, 42, 41, 40, 39, 29,
@@ -289,7 +289,7 @@ struct structure_file_in_read : public ::testing::Test
     };
 
     template <typename bpp_type>
-    void bpp_test(bpp_type & bpp, std::vector<double> const & bpp_comp)
+    void bpp_test(bpp_type & bpp, std::vector<uint8_t> const & bpp_comp)
     {
         size_t idx = 0ul;
         auto interactions = bpp | ranges::view::remove_if([] (auto & set) { return set.size() != 1; });

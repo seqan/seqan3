@@ -39,6 +39,7 @@
 
 #pragma once
 
+#include <cstdio>
 #include <iterator>
 #include <stack>
 #include <string>
@@ -55,7 +56,6 @@
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/take_while.hpp>
 
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
@@ -98,15 +98,21 @@ namespace seqan3
  *
  * ### Fields
  *
- * The Vienna format provides the fields seqan3::field::SEQ, seqan3::field::ID, seqan3::field::STRUCTURE,
- * seqan3::field::STRUCTURED_SEQ and seqan3::field::ENERGY.\n
- * If you select seqan3::field::STRUCTURED_SEQ you must not select seqan3::field::SEQ or seqan3::field::STRUCTURE.
- * Either the field seqan3::field::SEQ or the field seqan3::field::STRUCTURED_SEQ is required when writing.
+ * The Vienna format provides the fields seqan3::field::SEQ, seqan3::field::ID, seqan3::field::BPP (read only),
+ * seqan3::field::STRUCTURE, seqan3::field::STRUCTURED_SEQ and seqan3::field::ENERGY.\n\n
+ * If you select seqan3::field::STRUCTURED_SEQ you must not select seqan3::field::SEQ or seqan3::field::STRUCTURE.\n
+ * Either the field seqan3::field::SEQ or the field seqan3::field::STRUCTURED_SEQ is required when writing.\n
+ * The field seqan3::field::BPP is ignored when writing, but a structure string can be converted to bpp when reading.
  *
  * ### Implementation notes
  *
  * In the unlikely case that you want to read a Vienna file, which does not contain structure lines, you have to
- * assign false to `seqan3::structure_file_in_options::file_has_structure`. \n\n
+ * assign false to `seqan3::structure_file_in_options::file_has_structure`.
+ * ```cpp
+ *    structure_file_in_options<rna4, false> options;
+ *    options.file_has_structure = false;
+ * ```
+ *
  * When reading the ID-line the identifier (`>`) and any blank characters before the actual ID are
  * stripped. Each field is read/written as a single line (except ENERGY, which goes right after the structure).
  * Numbers and spaces within the sequence are simply ignored, but not within the structure.
@@ -158,6 +164,7 @@ public:
         auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
                                           decltype(std::istreambuf_iterator<char>{})>
                            { std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{} };
+
         // READ ID (if present)
         auto const is_id = is_char<'>'>{};
         if (is_id(*ranges::begin(stream_view)))
@@ -166,21 +173,31 @@ public:
             {
                 if (options.truncate_ids)
                 {
-                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                 | ranges::view::take_while(!(is_cntrl || is_blank)), // read ID until delimiter
-                                 detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
+                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
+                                             | ranges::view::take_while(!(is_cntrl || is_blank)),
+                                 detail::make_conversion_output_iterator(id));
                     detail::consume(stream_view | view::take_line_or_throw);
                 }
                 else
                 {
-                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                 | view::take_line_or_throw,                          // read line
+                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
+                                             | view::take_line_or_throw,
                                  detail::make_conversion_output_iterator(id));
                 }
             }
             else
             {
                 detail::consume(stream_view | view::take_line_or_throw);
+            }
+        }
+        else if constexpr (!detail::decays_to_ignore_v<id_type>)
+        {
+            is_in_alphabet<seq_legal_alph_type> const is_legal_seq;
+            if (!is_legal_seq(*ranges::begin(stream_view))) // if neither id nor seq found: throw
+            {
+                throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} +
+                                  is_id.msg.string() + " and " + is_legal_seq.msg.string() +
+                                  " evaluated to false on " + detail::make_printable(*ranges::begin(stream_view))};
             }
         }
 
@@ -218,7 +235,7 @@ public:
             return;
         }
 
-        // READ STRUCTURE
+        // READ STRUCTURE (if present)
         if constexpr (!detail::decays_to_ignore_v<structure_type>)
         {
             if constexpr (structured_seq_combined)
@@ -239,10 +256,17 @@ public:
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
                     detail::bpp_from_rna_structure<alph_type>(bpp, structure);
             }
+            if constexpr (!detail::decays_to_ignore_v<seq_type>)
+                if (ranges::size(seq) != ranges::size(structure))
+                    throw parse_error{"Found sequence and associated structure of different length."};
         }
         else if constexpr (!detail::decays_to_ignore_v<bpp_type>)
         {
             detail::bpp_from_rna_structure<wuss51>(bpp, read_structure<wuss51>(stream_view));
+
+            if constexpr (!detail::decays_to_ignore_v<seq_type>)
+                if (ranges::size(seq) != ranges::size(bpp))
+                    throw parse_error{"Found sequence and associated structure of different length."};
         }
         else
         {
@@ -267,8 +291,8 @@ public:
         else
         {
             detail::consume(stream_view | view::take_line);
-            detail::consume(stream_view | ranges::view::take_while(is_space));
         }
+        detail::consume(stream_view | ranges::view::take_while(is_space));
 
         // make sure "buffer at end" implies "stream at end"
         if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) && (!stream.eof()))
@@ -339,9 +363,26 @@ public:
             {
                 if (energy)
                 {
+// TODO(joergi-w) enable the following when std::to_chars is implemented for float types
+//                    auto [endptr, ec] = std::to_chars(str.data(),
+//                                                      str.data() + str.size(),
+//                                                      energy,
+//                                                      std::chars_format::fixed,
+//                                                      options.precision);
+//                    if (ec == std::errc())
+//                        ranges::copy(str.data(), endptr, stream_it);
+//                    else
+//                        throw std::runtime_error{"The energy could not be transformed into a string."};
+
                     stream_it = ' ';
                     stream_it = '(';
-                    ranges::copy(std::to_string(energy), stream_it);
+
+                    std::array<char, 100> str;
+                    int len = std::snprintf(str.data(), 100, "%.*f", options.precision, energy);
+                    if (len < 0 || len >= 100)
+                        throw std::runtime_error{"The energy could not be transformed into a string."};
+                    ranges::copy(str.data(), str.data() + len, stream_it);
+
                     stream_it = ')';
                 }
             }
