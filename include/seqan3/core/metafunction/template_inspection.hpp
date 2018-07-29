@@ -170,7 +170,8 @@ using transfer_template_vargs_onto_t = typename transfer_template_vargs_onto<sou
  * \tparam source_type      The source type.
  * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
  * \ingroup metafunction
- * \see seqan3::detail::is_value_specialisation_of_v
+ * \see seqan3::detail::is_value_specialisation_of
+ * \see seqan3::detail::is_type_specialisation_of_v
  *
  * \details
  *
@@ -186,8 +187,17 @@ using transfer_template_vargs_onto_t = typename transfer_template_vargs_onto<sou
  * ```
  */
 template <typename source_t, template <typename ...> typename target_template>
-constexpr bool is_type_specialisation_of_v =
-    std::is_same_v<source_t, transfer_template_args_onto_t<source_t, target_template>>;
+struct is_type_specialisation_of :
+    std::is_same<source_t, transfer_template_args_onto_t<source_t, target_template>>
+{};
+
+/*!\brief Helper variable template for seqan3::detail::is_type_specialisation_of.
+ * \tparam source_type      The source type.
+ * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
+ * \ingroup metafunction
+ */
+template <typename source_t, template <typename ...> typename target_template>
+inline constexpr bool is_type_specialisation_of_v = is_type_specialisation_of<source_t, target_template>::value;
 
 // ----------------------------------------------------------------------------
 // is_value_specialisation_of_v
@@ -198,10 +208,20 @@ constexpr bool is_type_specialisation_of_v =
  * \tparam target_template  The type template you wish to compare against (must take only non-types as template
  * arguments).
  * \ingroup metafunction
- * \see seqan3::detail::is_type_specialisation_of_v
+ * \see seqan3::detail::is_type_specialisation_of
+ * \see seqan3::detail::is_value_specialisation_of_v
  */
 template <typename source_t, template <auto ...> typename target_template>
-constexpr bool is_value_specialisation_of_v =
-    std::is_same_v<source_t, transfer_template_vargs_onto_t<source_t, target_template>>;
+struct is_value_specialisation_of :
+    std::is_same<source_t, transfer_template_vargs_onto_t<source_t, target_template>>
+{};
+
+/*!\brief Helper variable template for seqan3::detail::is_value_specialisation_of.
+ * \tparam source_type      The source type.
+ * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
+ * \ingroup metafunction
+ */
+template <typename source_t, template <auto ...> typename target_template>
+inline constexpr bool is_value_specialisation_of_v = is_value_specialisation_of<source_t, target_template>::value;
 
 } // namespace seqan3::detail
