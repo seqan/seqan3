@@ -67,7 +67,7 @@ protected:
     using data_type = std::array<char, N + 1>;
 
     //!\brief Gives access to the merge constructor to constexpr_string with different size.
-    template <size_t _N>
+    template <size_t N2>
     friend class constexpr_string;
 
     //!\brief The internal string stored as array including \0-byte as last character.
