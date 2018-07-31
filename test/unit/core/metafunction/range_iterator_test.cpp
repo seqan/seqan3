@@ -43,6 +43,7 @@
 #include <range/v3/view/take_exactly.hpp>
 
 #include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
 using namespace seqan3;
@@ -80,10 +81,16 @@ TEST(range_and_iterator, sentinel_)
 template <typename list1, typename list2, size_t pos = 0>
 void expect_same_types()
 {
-    EXPECT_TRUE((std::is_same_v<meta::at_c<list1, pos>, meta::at_c<list2, pos>>));
+    constexpr bool val = std::is_same_v<meta::at_c<list1, pos>, meta::at_c<list2, pos>>;
+    if constexpr (!val)
+    {
+        std::cerr << "\'" << detail::get_display_name_v<meta::at_c<list1, pos>>.string() << "\' not equal to \'"
+                  << detail::get_display_name_v<meta::at_c<list2, pos>>.string() << "\' \n";
+    }
+    EXPECT_TRUE(val);
+
     if constexpr (pos < list1::size() - 1)
         expect_same_types<list1, list2, pos + 1>();
-    //NOTE(h-2): diagnostics could maybe be improved via get_display_name
 }
 
 TEST(range_and_iterator, value_type_)
@@ -192,13 +199,23 @@ TEST(range_and_iterator, difference_type_)
                                  difference_type_t<foreign_iterator>,                    // iterator2
                                  difference_type_t<decltype(v)>>;                        // range, no member
 
-    using comp_list = meta::list<std::make_signed_t<size_t>,
-                                 std::make_signed_t<size_t>,
-                                 std::make_signed_t<size_t>,
-                                 std::make_signed_t<size_t>,
-                                 std::make_signed_t<size_t>,
-                                 std::make_signed_t<size_t>,
-                                 std::make_signed_t<size_t>>;
+    // view::ints' difference_type is not std::ptrdiff_t, but depends on the size.
+    // For infinite views, like in our case, it's std::int_fast64_t (or std::int_fast32_t on 32bit).
+    // On most platforms this is the same as std::size_t (`long int` on Linux and FreeBSD;
+    // `long long int` on macOS and MSVC) BUT on some platforms like OpenBSD std::ptrdiff_t is
+    // `long int`, but std::int64_t and std::int_fast64_t are `long long int`.
+    // This detects word-size and selects the corresponding int_fast*_t which is always correct
+    using view_int_diff_t = std::conditional_t<sizeof(std::ptrdiff_t) == 8,
+                                               std::int_fast64_t,
+                                               std::int_fast32_t>;
+
+    using comp_list = meta::list<std::ptrdiff_t,
+                                 std::ptrdiff_t,
+                                 std::ptrdiff_t,
+                                 std::ptrdiff_t,
+                                 std::ptrdiff_t,
+                                 std::ptrdiff_t,
+                                 view_int_diff_t>;
 
     expect_same_types<type_list, comp_list>();
 }
@@ -217,13 +234,17 @@ TEST(range_and_iterator, size_type_)
                                  size_type_t<foreign_iterator>,                    // iterator2
                                  size_type_t<decltype(v)>>;                        // range, no member
 
+    // see above
+    using view_int_size_t = std::conditional_t<sizeof(std::size_t) == 8,
+                                               std::uint_fast64_t,
+                                               std::uint_fast32_t>;
     using comp_list = meta::list<size_t,
                                  size_t,
                                  size_t,
                                  size_t,
                                  size_t,
                                  size_t,
-                                 size_t>;
+                                 view_int_size_t>;
 
     expect_same_types<type_list, comp_list>();
 }
