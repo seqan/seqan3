@@ -283,7 +283,7 @@ public:
     using stream_type           = stream_type_;
     //!\}
 
-    //!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in.
+    //!\brief The subset of seqan3::field IDs that are valid for this file.
     using field_ids            = fields<field::SEQ, field::ID, field::QUAL, field::SEQ_QUAL>;
 
     static_assert([] () constexpr
@@ -592,7 +592,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::input_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range_concept and have a reference type that
      *                   satisfies seqan3::tuple_like_concept.
      * \param[in] range  The range to write.
      *
@@ -700,7 +700,7 @@ public:
      */
     /*!\brief            Write columns (wrapped in a seqan3::record) to the file.
      * \tparam typelist  Template argument to seqan3::record, each type must be a column (range-of-range).
-     * \tparam field_ids Template argument to seqan3::record, the IDs cooresponding to the columns.
+     * \tparam field_ids Template argument to seqan3::record, the IDs corresponding to the columns.
      * \param[in] r      The record of columns.
      *
      * \details

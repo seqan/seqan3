@@ -51,9 +51,6 @@ namespace seqan3
 template <typename sequence_legal_alphabet_, bool seq_qual_combined>
 struct sequence_file_in_options
 {
-    //!\brief Export the (possibly larger) legal alphabet to the format.
-    using sequence_legal_alphabet = sequence_legal_alphabet_;
-
     //!\brief Read the ID string only up until the first whitespace character.
     bool truncate_ids = false;
 };

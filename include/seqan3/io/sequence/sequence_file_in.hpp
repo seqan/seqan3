@@ -384,7 +384,7 @@ struct sequence_file_in_default_traits_aa : sequence_file_in_default_traits_dna
  * If you want to skip specific fields from the record you can pass a non-empty fields trait object to the
  * sequence_file_in constructor to select the fields that should be read from the input. For example to choose a
  * combined field for SEQ and QUAL (see above). Or to never actually read the QUAL, if you don't need it.
- * The following snippets demonstrates the usage of such a fields trait object.
+ * The following snippets demonstrate the usage of such a fields trait object.
  *
  * ```cpp
  * sequence_file_in fin{"/tmp/my.fasta", fields<field::ID, field::SEQ_QUAL>{}};
@@ -887,20 +887,17 @@ protected:
         auto &     qual_column_buffer = detail::get_or_ignore<field::QUAL>(columns_buffer);
         auto & seq_qual_column_buffer = detail::get_or_ignore<field::SEQ_QUAL>(columns_buffer);
 
-        if (!stream.eof())
+        // read the remaining records and split into column buffers
+        for (auto & rec : *this)
         {
-            // read the remaining records and split into column buffers
-            for (auto & rec : *this)
-            {
-                if constexpr (selected_field_ids::contains(field::SEQ))
-                    sequence_column_buffer.push_back(std::move(seqan3::get<field::SEQ>(rec)));
-                if constexpr (selected_field_ids::contains(field::ID))
-                    id_column_buffer.push_back(std::move(seqan3::get<field::ID>(rec)));
-                if constexpr (selected_field_ids::contains(field::QUAL))
-                    qual_column_buffer.push_back(std::move(seqan3::get<field::QUAL>(rec)));
-                if constexpr (selected_field_ids::contains(field::SEQ_QUAL))
-                    seq_qual_column_buffer.push_back(std::move(seqan3::get<field::SEQ_QUAL>(rec)));
-            }
+            if constexpr (selected_field_ids::contains(field::SEQ))
+                sequence_column_buffer.push_back(std::move(seqan3::get<field::SEQ>(rec)));
+            if constexpr (selected_field_ids::contains(field::ID))
+                id_column_buffer.push_back(std::move(seqan3::get<field::ID>(rec)));
+            if constexpr (selected_field_ids::contains(field::QUAL))
+                qual_column_buffer.push_back(std::move(seqan3::get<field::QUAL>(rec)));
+            if constexpr (selected_field_ids::contains(field::SEQ_QUAL))
+                seq_qual_column_buffer.push_back(std::move(seqan3::get<field::SEQ_QUAL>(rec)));
         }
     }
 
@@ -948,13 +945,10 @@ template <size_t                                                        elem_no,
           seqan3::detail::type_list_of_sequence_file_in_formats_concept valid_formats,
           seqan3::istream_concept<char>                                 stream_type>
 struct tuple_element<elem_no, seqan3::sequence_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
-{
-private:
-    //!\brief Shortcut.
-    using file_type = seqan3::sequence_file_in<traits_type, selected_field_ids, valid_formats, stream_type>;
-public:
-    //!\brief The return type.
-    using type = meta::at_c<typename file_type::field_column_types, elem_no>;
-};
+    : tuple_element<elem_no, typename seqan3::sequence_file_in<traits_type,
+                                                               selected_field_ids,
+                                                               valid_formats,
+                                                               stream_type>::file_as_tuple_type>
+{};
 
 } // namespace std

@@ -54,7 +54,7 @@ namespace seqan3
 {
 
 /*!\interface seqan3::sequence_file_in_format_concept <>
- * \brief The generic concept for sequence file formats.
+ * \brief The generic concept for sequence file in formats.
  * \ingroup sequence
  *
  * \details
@@ -106,15 +106,18 @@ concept bool sequence_file_in_format_concept = requires (t                      
  *
  * \details
  *
- *
  * ### Additional requirements
  *
- *   * The function must also accept std::ignore as parameter for any of the fields. [this is enforced by the concept checker!]
+ *   * The function must also accept std::ignore as parameter for any of the fields.
+ *     [this is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::QUAL, you may also pass
  *     seqan3::field::SEQ_QUAL to both parameters. If you do, the seqan3::value_type_t of the argument must be
  *     a specialisation of seqan3::quality_composition and the second template parameter to
  *     seqan3::sequence_file_in_options must be set to true.
+ */
+ /*!\var static inline std::vector<std::string> seqan3::sequence_file_in_format_concept::file_extensions
+ * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}
 

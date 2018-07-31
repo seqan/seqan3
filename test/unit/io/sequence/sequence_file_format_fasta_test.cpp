@@ -363,7 +363,7 @@ struct write : public ::testing::Test
 
     std::ostringstream ostream;
 
-    void do_read_test()
+    void do_write_test()
     {
         for (unsigned i = 0; i < 3; ++i)
             EXPECT_NO_THROW(( format.write(ostream, options, seqs[i], ids[i], std::ignore) ));
@@ -409,7 +409,7 @@ TEST_F(write, default_options)
         "GGAGTATAATATATATATATATAT\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -459,7 +459,7 @@ TEST_F(write, options_letters_per_line)
         "GGAGTAT\nAATATAT\nATATATA\nTAT\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -479,7 +479,7 @@ TEST_F(write, options_legacy_id_marker)
         "GGAGTATAATATATATATATATAT\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -499,7 +499,7 @@ TEST_F(write, options_blank_before_id)
         "GGAGTATAATATATATATATATAT\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -519,7 +519,7 @@ TEST_F(write, options_add_carriage_return)
         "GGAGTATAATATATATATATATAT\r\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -541,7 +541,7 @@ TEST_F(write, options_all)
         ";Test3\r\n"
         "GGAGTATAATATATATATATA\r\nTAT\r\n"
     };
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
