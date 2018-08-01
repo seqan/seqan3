@@ -48,7 +48,7 @@ namespace seqan3
  * \tparam seq_qual_combined Trait that exposes to the format whether seq and qual arguments are actually the
  * same/combined.
  */
-template <typename sequence_legal_alphabet_, bool seq_qual_combined>
+template <typename sequence_legal_alphabet, bool seq_qual_combined>
 struct sequence_file_in_options
 {
     //!\brief Read the ID string only up until the first whitespace character.

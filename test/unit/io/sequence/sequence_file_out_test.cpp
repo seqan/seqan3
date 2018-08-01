@@ -330,6 +330,30 @@ TEST(row, emplace_back)
     });
 }
 
+/* Here the record contains a different field composition than the file. The record knows about the
+ * association of values and fields, so it does not need to be guessed from the file.
+ */
+TEST(row, different_fields_in_record_and_file)
+{
+    std::vector<illumina18> qual;
+    qual.resize(seqs[1].size());
+
+    record<type_list<std::vector<illumina18>, std::string, dna5_vector>,
+           fields<field::QUAL, field::ID, field::SEQ>> rec{qual, ids[1], seqs[1]};
+
+    sequence_file_out fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ, field::ID>{}};
+    fout.push_back(rec);
+    fout.get_stream().flush();
+
+    std::string const expected_out
+    {
+        "> Test2\n"
+        "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGG\n"
+        "CTGNAGGCTGN\n"
+    };
+    EXPECT_EQ(fout.get_stream().str(), expected_out);
+}
+
 // ----------------------------------------------------------------------------
 // rows
 // ----------------------------------------------------------------------------
@@ -403,6 +427,34 @@ TEST(rows, assign_sequence_file_pipes)
 
     fout.get_stream().flush();
     EXPECT_EQ(fout.get_stream().str(), input);
+}
+
+TEST(rows, convert_fastq_to_fasta)
+{
+    std::string const fastq_in
+    {
+    "@ID1\n"
+    "ACGTT\n"
+    "+\n"
+    "!##$%\n"
+    "@ID2\n"
+    "TATTA\n"
+    "+\n"
+    ",BDEB\n"
+    };
+
+    std::string const fasta_out
+    {
+        "> ID1\n"
+        "ACGTT\n"
+        "> ID2\n"
+        "TATTA\n"
+    };
+
+    auto fout = sequence_file_in{std::istringstream{fastq_in}, sequence_file_format_fastq{}} |
+                sequence_file_out{std::ostringstream{}, sequence_file_format_fasta{}};
+    fout.get_stream().flush();
+    EXPECT_EQ(fout.get_stream().str(), fasta_out);
 }
 
 // ----------------------------------------------------------------------------
