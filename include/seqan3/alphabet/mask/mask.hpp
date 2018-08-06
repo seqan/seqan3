@@ -48,7 +48,7 @@ namespace seqan3
  * \implements seqan3::semi_alphabet_concept
  *
  * \details
- * This alphabet is not usually used directly, but instead via seqan3::masked.
+ * This alphabet is not usually used directly, but instead via seqan3::masked_composition.
  * For more information see the \link mask Mask submodule \endlink.
  */
 struct mask

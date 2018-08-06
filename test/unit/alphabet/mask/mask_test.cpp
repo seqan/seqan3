@@ -33,7 +33,7 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Test files for the mask composition.
+ * \brief Test files for the mask alphabet.
  */
 
 

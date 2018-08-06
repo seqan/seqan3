@@ -36,6 +36,7 @@
  */
 
 #include <seqan3/alphabet/mask/mask.hpp>
+#include <seqan3/alphabet/mask/masked_composition.hpp>
 
 /*!\defgroup mask Mask
  * \brief Contains the mask alphabet and functionality for creating masked compositions.
