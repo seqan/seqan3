@@ -29,10 +29,6 @@
 // LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
-//
-// ============================================================================
-// Author: Joshua Kim <joshua.kim AT fu-berlin.de>
-// ============================================================================
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
@@ -49,5 +45,11 @@
  * Masks are useful as cartesian compositions when one wants to create a masked alphabet with
  * don't care positions, but does not want to use the seqan3::dna15::N or
  * seqan3::aa27::X because of loss of information. It will instead mark the specified characters as masked,
- * and display them as lowercase representations when printed.
+ * and display them as lowercase representations when printed.\n
+ * There are two types of masking: "hard-masking" which converts to the UNKNOWN character and
+ * "soft-masking", which is visualised by using lower-case instead of upper-case.
+ * However because regular nucleotide and aminoacid alphabets discard case on assignment,
+ * one needs to create additional alphabets to preserve this information (if desired).\n
+ * This alphabet in itself is not useful to users directly, but instead the composition seqan3::masked may be used to
+ * transform another alphabet into a new alphabet that can represent the original alphabet plus masking information.
  */

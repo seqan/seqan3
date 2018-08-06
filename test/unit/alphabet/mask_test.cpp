@@ -30,9 +30,12 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
-// Author: Joshua Kim <joshua.kim AT fu-berlin.de>
-// ============================================================================
+
+/*!\file
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
+ * \brief Test files for the mask composition.
+ */
+
 
 #include <gtest/gtest.h>
 
@@ -43,17 +46,43 @@ using namespace seqan3;
 
 TEST(assignment, assign_rank)
 {
-    mask m1;
-    EXPECT_EQ(m1.assign_rank(1), mask::MASKED);
-    EXPECT_TRUE(m1.to_rank());
-    EXPECT_EQ(m1.assign_rank(0), mask::UNMASKED);
-    EXPECT_FALSE(m1.to_rank());
-    EXPECT_EQ(m1.assign_rank(true), mask::MASKED);
-    EXPECT_EQ(m1.assign_rank(false), mask::UNMASKED);
-    EXPECT_EQ(m1.assign_rank(mask::MASKED), mask::MASKED);
-    EXPECT_TRUE(m1.to_rank());
-    EXPECT_EQ(m1.assign_rank(mask::UNMASKED), mask::UNMASKED);
-    EXPECT_FALSE(m1.to_rank());
+    // l-value
+    mask lmask;
+    EXPECT_EQ(lmask.assign_rank(1), mask::MASKED);
+    EXPECT_TRUE(lmask.to_rank());
+    EXPECT_EQ(lmask.assign_rank(0), mask::UNMASKED);
+    EXPECT_FALSE(lmask.to_rank());
+    EXPECT_EQ(lmask.assign_rank(true), mask::MASKED);
+    EXPECT_EQ(lmask.assign_rank(false), mask::UNMASKED);
+    EXPECT_EQ(lmask.assign_rank(mask::MASKED), mask::MASKED);
+    EXPECT_TRUE(lmask.to_rank());
+    EXPECT_EQ(lmask.assign_rank(mask::UNMASKED), mask::UNMASKED);
+    EXPECT_FALSE(lmask.to_rank());
+
+    // const l-value
+    lmask.assign_rank(1);
+    mask const clmask{lmask};
+    EXPECT_TRUE(clmask.to_rank());
+
+    // r-value
+    mask rmask{lmask};
+    EXPECT_EQ(std::move(rmask).to_rank(), lmask.to_rank());
+    EXPECT_TRUE((std::is_same_v<decltype(std::move(rmask)), mask &&>));
+    EXPECT_EQ(std::move(rmask).assign_rank(1), mask::MASKED);
+    EXPECT_TRUE(std::move(rmask).to_rank());
+    EXPECT_EQ(std::move(rmask).assign_rank(0), mask::UNMASKED);
+    EXPECT_FALSE(std::move(rmask).to_rank());
+    EXPECT_EQ(std::move(rmask).assign_rank(true), mask::MASKED);
+    EXPECT_EQ(std::move(rmask).assign_rank(false), mask::UNMASKED);
+    EXPECT_EQ(std::move(rmask).assign_rank(mask::MASKED), mask::MASKED);
+    EXPECT_TRUE(std::move(rmask).to_rank());
+    EXPECT_EQ(std::move(rmask).assign_rank(mask::UNMASKED), mask::UNMASKED);
+    EXPECT_FALSE(std::move(rmask).to_rank());
+
+    // const r-value
+    mask const crmask{lmask};
+    EXPECT_EQ(std::move(crmask).to_rank(), lmask.to_rank());
+    EXPECT_TRUE((std::is_same_v<decltype(std::move(crmask)), mask const &&>));
 }
 
 // ------------------------------------------------------------------

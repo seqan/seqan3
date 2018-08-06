@@ -30,9 +30,11 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
-// Author: Joshua Kim <joshua.kim AT fu-berlin.de>
-// ============================================================================
+
+/*!\file
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
+ * \brief Create a mask composition which can be applied with another alphabet.
+ */
 
 #pragma once
 
@@ -46,8 +48,8 @@ namespace seqan3
  * \implements seqan3::semi_alphabet_concept
  *
  * \details
- * Should only be used in conjunction with mask::masked_composition, to create a new
- * alphabet which combines an existing one with the mask functionality.
+ * This alphabet is not usually used directly, but instead via seqan3::masked.
+ * For more information see the \link mask Mask submodule \endlink.
  */
 struct mask
 {
@@ -80,7 +82,7 @@ struct mask
      * \{
      */
     //!\brief Assign from a numeric value or true/false.
-    constexpr mask & assign_rank(rank_type const c)
+    constexpr mask & assign_rank(rank_type const c) noexcept
     {
         assert(c < value_size);
         _value = static_cast<internal_type>(c);
@@ -88,10 +90,9 @@ struct mask
     }
 
     //!\brief Assign from mask::MASKED or mask::UNMASKED.
-    constexpr mask & assign_rank(mask const & c)
+    constexpr mask & assign_rank(mask const & c) noexcept
     {
-        assert(c == MASKED || c == UNMASKED);
-        return assign_rank(c == MASKED ? 1 : 0);
+        return assign_rank(c.to_rank());
     }
     //!\}
 
@@ -132,7 +133,7 @@ protected:
     /*!\brief The internal type is a strictly typed enum.
      *
      * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
+     * It has the drawback that it also introduces a scope which in turn makes
      * the static "letter values" members necessary.
      */
     enum struct internal_type : rank_type
