@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::structure_file_out_format_concept and auxiliary classes.
+ * \brief Provides seqan3::structure_file_output_format_concept and auxiliary classes.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -46,12 +46,12 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/io/structure/structure_file_out_options.hpp>
+#include <seqan3/io/structure_file/output_options.hpp>
 
 namespace seqan3
 {
 
-/*!\interface seqan3::structure_file_out_format_concept <>
+/*!\interface seqan3::structure_file_output_format_concept <>
  * \brief The generic concept for sequence file out formats.
  * \ingroup structure
  *
@@ -63,19 +63,19 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept bool structure_file_out_format_concept = requires (t & v,
-                                                           std::ofstream & f,
-                                                           structure_file_out_options & options,
-                                                           rna5_vector & seq,
-                                                           std::string & id,
-                                                           std::vector<std::set<std::pair<double, size_t>>> & bpp,
-                                                           std::vector<wuss51> & structure,
-                                                           std::vector<structured_rna<rna5, wuss51>> & structured_seq,
-                                                           double energy,
-                                                           double react,
-                                                           double react_err,
-                                                           std::string & comment,
-                                                           size_t offset)
+concept bool structure_file_output_format_concept = requires(t & v,
+                                                             std::ofstream & f,
+                                                             structure_file_output_options & options,
+                                                             rna5_vector & seq,
+                                                             std::string & id,
+                                                             std::vector<std::set<std::pair<double, size_t>>> & bpp,
+                                                             std::vector<wuss51> & structure,
+                                                             std::vector<structured_rna<rna5, wuss51>> & structured_seq,
+                                                             double energy,
+                                                             double react,
+                                                             double react_err,
+                                                             std::string & comment,
+                                                             size_t offset)
 {
     t::file_extensions;
 
@@ -91,14 +91,14 @@ concept bool structure_file_out_format_concept = requires (t & v,
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::structure_file_out_format_concept
- * \brief You can expect these **members** on all types that implement seqan3::structure_file_out_format_concept.
- * \memberof seqan3::structure_file_out_format_concept
+/*!\name Requirements for seqan3::structure_file_output_format_concept
+ * \brief You can expect these **members** on all types that implement seqan3::structure_file_output_format_concept.
+ * \memberof seqan3::structure_file_output_format_concept
  * \{
  */
 
 /*!\fn void write(stream_type & stream,
- *                structure_file_out_options const & options,
+ *                structure_file_output_options const & options,
  *                seq_type && seq,
  *                id_type && id,
  *                bpp_type && bpp,
@@ -109,7 +109,7 @@ concept bool structure_file_out_format_concept = requires (t & v,
  *                comment_type && comment,
  *                offset_type && offset)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::structure_file_out_format_concept
+ * \memberof seqan3::structure_file_output_format_concept
  * \tparam stream_type      Output stream, must satisfy seqan3::ostream_concept with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy seqan3::output_range_concept
  * over a seqan3::alphabet_concept.
@@ -146,7 +146,7 @@ concept bool structure_file_out_format_concept = requires (t & v,
  *   * The format does not handle seqan3::field::STRUCTURED_SEQ, instead seqan3::structure_file_out splits it into
  * two views and passes it to the format as if they were separate.
  */
-/*!\var static inline std::vector<std::string> seqan3::structure_file_out_format_concept::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::structure_file_output_format_concept::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 
@@ -158,21 +158,21 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_out_format_concept [default is false].
+ * seqan3::structure_file_output_format_concept [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_structure_file_out_formats_concept
+ * \see seqan3::type_list_of_structure_file_output_formats_concept
  */
 template <typename t>
-constexpr bool is_type_list_of_structure_file_out_formats_v = false;
+constexpr bool is_type_list_of_structure_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_out_format_concept [overload].
+ * seqan3::structure_file_output_format_concept [overload].
  * \ingroup core
- * \see seqan3::type_list_of_structure_file_out_formats_concept
+ * \see seqan3::type_list_of_structure_file_output_formats_concept
  */
 template <typename ... ts>
-constexpr bool is_type_list_of_structure_file_out_formats_v<type_list<ts...>>
-                = (structure_file_out_format_concept<ts> && ...);
+constexpr bool is_type_list_of_structure_file_output_formats_v<type_list<ts...>>
+                = (structure_file_output_format_concept<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::structure_file_format_concept.
@@ -180,5 +180,5 @@ constexpr bool is_type_list_of_structure_file_out_formats_v<type_list<ts...>>
  * \see seqan3::is_type_list_of_structure_file_formats_v
  */
 template <typename t>
-concept bool type_list_of_structure_file_out_formats_concept = is_type_list_of_structure_file_out_formats_v<t>;
+concept bool type_list_of_structure_file_output_formats_concept = is_type_list_of_structure_file_output_formats_v<t>;
 } // namespace seqan3::detail

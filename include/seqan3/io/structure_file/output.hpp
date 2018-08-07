@@ -60,9 +60,9 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
-#include <seqan3/io/structure/structure_file_out_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_out_options.hpp>
-#include <seqan3/io/structure/structure_file_format_vienna.hpp>
+#include <seqan3/io/structure_file/output_format_concept.hpp>
+#include <seqan3/io/structure_file/output_options.hpp>
+#include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/concept/range.hpp>
 
@@ -78,7 +78,7 @@ namespace seqan3
  * \tparam selected_field_ids A seqan3::fields type with the list and order of fields IDs; only relevant if these
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
- *                            seqan3::structure_file_out_format_concept).
+ *                            seqan3::structure_file_output_format_concept).
  * \tparam stream_type        The type of the stream, must satisfy seqan3::ostream_concept.
  * \details
  *
@@ -276,7 +276,7 @@ namespace seqan3
  */
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-          detail::type_list_of_structure_file_out_formats_concept valid_formats_
+          detail::type_list_of_structure_file_output_formats_concept valid_formats_
               = type_list<structure_file_format_vienna>,
           ostream_concept<char> stream_type_ = std::ofstream>
 class structure_file_out
@@ -401,12 +401,13 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format The format of the file in the stream, must satisfy seqan3::structure_file_out_format_concept.
+     * \tparam file_format The format of the file in the stream, must satisfy
+     * seqan3::structure_file_output_format_concept.
      * \param[in] _stream  The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      */
-    template <structure_file_out_format_concept file_format>
+    template <structure_file_output_format_concept file_format>
     structure_file_out(stream_type             && _stream,
                       file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -792,7 +793,7 @@ public:
     //!\}
 
     //!\brief The options are public and its members can be set directly.
-    structure_file_out_options options;
+    structure_file_output_options options;
 
     /*!\cond DEV
      * \brief Expose a reference to the underlying stream object. [public, but not documented as part of the API]
@@ -921,6 +922,7 @@ protected:
                 auto zipped = ranges::view::zip(structured_seq, id, bpp, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
+                {
                     f.write(stream,
                             options,
                             std::get<0>(v) | view::convert
@@ -934,14 +936,17 @@ protected:
                             std::get<5>(v),  // react_error
                             std::get<6>(v),  // comment
                             std::get<7>(v)); // offset
+                }
             }
             else
             {
                 auto zipped = ranges::view::zip(seq, id, bpp, structure, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
+                {
                     f.write(stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v), std::get<3>(v),
-                             std::get<4>(v), std::get<5>(v), std::get<6>(v), std::get<7>(v), std::get<8>(v));
+                            std::get<4>(v), std::get<5>(v), std::get<6>(v), std::get<7>(v), std::get<8>(v));
+                }
             }
         }, format);
     }
@@ -954,9 +959,9 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
-template <ostream_concept<char>             stream_type,
-          structure_file_out_format_concept file_format,
-          detail::fields_concept            selected_field_ids>
+template <ostream_concept<char>                stream_type,
+          structure_file_output_format_concept file_format,
+          detail::fields_concept               selected_field_ids>
 structure_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
                          type_list<file_format>,

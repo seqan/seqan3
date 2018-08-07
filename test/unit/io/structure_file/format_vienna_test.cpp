@@ -49,9 +49,9 @@
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
-#include <seqan3/io/structure/structure_file_format_vienna.hpp>
-#include <seqan3/io/structure/structure_file_in_format_concept.hpp>
-#include <seqan3/io/structure/structure_file_out_format_concept.hpp>
+#include <seqan3/io/structure_file/format_vienna.hpp>
+#include <seqan3/io/structure_file/input_format_concept.hpp>
+#include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/range/view/convert.hpp>
 
 using namespace seqan3;
@@ -63,8 +63,8 @@ using namespace seqan3::literal;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((structure_file_in_format_concept<structure_file_format_vienna>));
-    EXPECT_TRUE((structure_file_out_format_concept<structure_file_format_vienna>));
+    EXPECT_TRUE((structure_file_input_format_concept<structure_file_format_vienna>));
+    EXPECT_TRUE((structure_file_output_format_concept<structure_file_format_vienna>));
 }
 
 // ----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ struct read : public ::testing::Test
 
     structure_file_format_vienna format;
 
-    structure_file_in_options<rna4, false> options;
+    structure_file_input_options<rna4, false> options;
 
     static constexpr auto ig = std::ignore; // shortcut
 
@@ -233,32 +233,6 @@ TEST_F(read, no_ids)
     do_read_test(input);
 }
 
-TEST_F(read, no_structure)
-{
-    check_structure = check_energy = false;
-    input =
-    {
-        "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
-        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-        "> example 2\n"
-        "UUGGAGUACACAACCUGUACACUCUUUC\n"
-    };
-    options.file_has_structure = false;
-    do_read_test(input);
-}
-
-TEST_F(read, no_structure_and_id)
-{
-    check_structure = check_energy = check_id = false;
-    input =
-    {
-        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
-        "UUGGAGUACACAACCUGUACACUCUUUC\n"
-    };
-    options.file_has_structure = false;
-    do_read_test(input);
-}
-
 TEST_F(read, spaces_and_carriage_return)
 {
     check_id = false;
@@ -344,7 +318,7 @@ TEST_F(read_fields, only_energy)
 
 TEST_F(read_fields, structured_seq)
 {
-    structure_file_in_options<rna4, true> opt{};
+    structure_file_input_options<rna4, true> opt{};
     std::stringstream istream{input};
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx)
     {
@@ -383,6 +357,30 @@ TEST_F(read_fail, missing_seq)
     {
         "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
         "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
+    };
+    std::stringstream istream{input};
+    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
+}
+
+TEST_F(read_fail, missing_structure)
+{
+    input =
+    {
+        "> S.cerevisiae_tRNA-PHE M10740/1-73\n"
+        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+        "> example 2\n"
+        "UUGGAGUACACAACCUGUACACUCUUUC\n"
+    };
+    std::stringstream istream{input};
+    EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
+}
+
+TEST_F(read_fail, missing_structure_and_id)
+{
+    input =
+    {
+        "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
+        "UUGGAGUACACAACCUGUACACUCUUUC\n"
     };
     std::stringstream istream{input};
     EXPECT_THROW( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig), parse_error );
@@ -493,7 +491,7 @@ struct write : public ::testing::Test
 
     structure_file_format_vienna format;
 
-    structure_file_out_options options;
+    structure_file_output_options options;
 
     static constexpr auto ig = std::ignore; // shortcut
 

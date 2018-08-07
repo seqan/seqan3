@@ -49,8 +49,8 @@
 #include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/view/map.hpp>
 
-#include <seqan3/io/structure/structure_file_out.hpp>
-#include <seqan3/io/structure/structure_file_in.hpp>
+#include <seqan3/io/structure_file/output.hpp>
+#include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/concept/iterator.hpp>
@@ -60,7 +60,7 @@
 using namespace seqan3;
 using namespace seqan3::literal;
 
-TEST(structure_file_out_iterator, concepts)
+TEST(general, concepts)
 {
     using it_t = typename structure_file_out<>::iterator;
     using sen_t = typename structure_file_out<>::sentinel;
@@ -69,7 +69,7 @@ TEST(structure_file_out_iterator, concepts)
     EXPECT_TRUE((seqan3::sentinel_concept<sen_t, it_t>));
 }
 
-TEST(structure_file_out_class, concepts)
+TEST(structure_file_output_class, concepts)
 {
     using t = structure_file_out<>;
     EXPECT_TRUE((seqan3::output_range_concept<t, std::tuple<std::string, std::string>>));
@@ -79,17 +79,17 @@ TEST(structure_file_out_class, concepts)
     EXPECT_FALSE((seqan3::output_range_concept<ct, std::tuple<std::string, std::string>>));
 }
 
-TEST(structure_file_out_class, construct_by_filename)
+TEST(structure_file_output_class, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_filename filename{"structure_file_out_constructor.dbn"};
+        test::tmp_filename filename{"structure_file_output_constructor.dbn"};
         EXPECT_NO_THROW(structure_file_out<>{filename.get_path()});
     }
 
     /* wrong extension */
     {
-        test::tmp_filename filename{"structure_file_out_constructor.xyz"};
+        test::tmp_filename filename{"structure_file_output_constructor.xyz"};
         EXPECT_THROW(structure_file_out<>{filename.get_path()}, unhandled_extension_error);
     }
 
@@ -100,7 +100,7 @@ TEST(structure_file_out_class, construct_by_filename)
 
     /* filename + fields */
     {
-        test::tmp_filename filename{"structure_file_out_constructor.dbn"};
+        test::tmp_filename filename{"structure_file_output_constructor.dbn"};
         EXPECT_NO_THROW((structure_file_out<fields<field::SEQ>,
                                             type_list<structure_file_format_vienna>,
                                             std::ofstream>
@@ -108,7 +108,7 @@ TEST(structure_file_out_class, construct_by_filename)
     }
 }
 
-TEST(structure_file_out_class, construct_from_stream)
+TEST(structure_file_output_class, construct_from_stream)
 {
     /* stream + format_tag */
     EXPECT_NO_THROW((structure_file_out<fields<field::SEQ, field::ID, field::STRUCTURE>,
@@ -124,7 +124,7 @@ TEST(structure_file_out_class, construct_from_stream)
                       fields<field::SEQ, field::ID, field::STRUCTURE>{}}));
 }
 
-TEST(structure_file_out_class, default_template_args_and_deduction_guides)
+TEST(structure_file_output_class, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::SEQ, field::ID, field::STRUCTURE>;
     using comp2 = type_list<structure_file_format_vienna>;
@@ -140,7 +140,7 @@ TEST(structure_file_out_class, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        test::tmp_filename filename{"structure_file_out_constructor.dbn"};
+        test::tmp_filename filename{"structure_file_output_constructor.dbn"};
         structure_file_out fout{filename.get_path()};
 
         using t = decltype(fout);
@@ -151,7 +151,7 @@ TEST(structure_file_out_class, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        test::tmp_filename filename{"structure_file_out_constructor.dbn"};
+        test::tmp_filename filename{"structure_file_output_constructor.dbn"};
         structure_file_out fout{filename.get_path(), fields<field::SEQ>{}};
 
         using t = decltype(fout);
@@ -181,7 +181,7 @@ TEST(structure_file_out_class, default_template_args_and_deduction_guides)
     }
 }
 
-struct structure_file_out_write : public ::testing::Test
+struct structure_file_output_write : public ::testing::Test
 {
     size_t const num_records = 2ul;
 
@@ -219,7 +219,7 @@ struct structure_file_out_write : public ::testing::Test
     };
 };
 
-struct structure_file_out_row : public structure_file_out_write
+struct structure_file_output_row : public structure_file_output_write
 {
     template <typename fn_t>
     void row_wise_impl(fn_t fn)
@@ -234,7 +234,7 @@ struct structure_file_out_row : public structure_file_out_write
     }
 };
 
-TEST_F(structure_file_out_row, assign_to_iterator)
+TEST_F(structure_file_output_row, assign_to_iterator)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -244,7 +244,7 @@ TEST_F(structure_file_out_row, assign_to_iterator)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_record)
+TEST_F(structure_file_output_row, push_back_record)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -254,7 +254,7 @@ TEST_F(structure_file_out_row, push_back_record)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_record_rvalue)
+TEST_F(structure_file_output_row, push_back_record_rvalue)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -264,7 +264,7 @@ TEST_F(structure_file_out_row, push_back_record_rvalue)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_record_const)
+TEST_F(structure_file_output_row, push_back_record_const)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -274,7 +274,7 @@ TEST_F(structure_file_out_row, push_back_record_const)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_record_const_element)
+TEST_F(structure_file_output_row, push_back_record_const_element)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -284,7 +284,7 @@ TEST_F(structure_file_out_row, push_back_record_const_element)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_tuple)
+TEST_F(structure_file_output_row, push_back_tuple)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -293,7 +293,7 @@ TEST_F(structure_file_out_row, push_back_tuple)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_tuple_rvalue)
+TEST_F(structure_file_output_row, push_back_tuple_rvalue)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -302,7 +302,7 @@ TEST_F(structure_file_out_row, push_back_tuple_rvalue)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_tuple_const)
+TEST_F(structure_file_output_row, push_back_tuple_const)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -311,7 +311,7 @@ TEST_F(structure_file_out_row, push_back_tuple_const)
     });
 }
 
-TEST_F(structure_file_out_row, push_back_tuple_const_element)
+TEST_F(structure_file_output_row, push_back_tuple_const_element)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -320,7 +320,7 @@ TEST_F(structure_file_out_row, push_back_tuple_const_element)
     });
 }
 
-TEST_F(structure_file_out_row, emplace_back)
+TEST_F(structure_file_output_row, emplace_back)
 {
     row_wise_impl([&] (auto & file, size_t i)
     {
@@ -328,7 +328,7 @@ TEST_F(structure_file_out_row, emplace_back)
     });
 }
 
-struct structure_file_out_rows : public structure_file_out_write
+struct structure_file_output_rows : public structure_file_output_write
 {
     template<typename source_t>
     void assign_impl(source_t && source)
@@ -340,7 +340,7 @@ struct structure_file_out_rows : public structure_file_out_write
     }
 };
 
-TEST_F(structure_file_out_rows, assign_range_of_records)
+TEST_F(structure_file_output_rows, assign_range_of_records)
 {
     std::vector<record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
                 fields<field::SEQ, field::ID, field::STRUCTURE>>> range;
@@ -351,7 +351,7 @@ TEST_F(structure_file_out_rows, assign_range_of_records)
     assign_impl(range);
 }
 
-TEST_F(structure_file_out_rows, assign_range_of_records_const)
+TEST_F(structure_file_output_rows, assign_range_of_records_const)
 {
     std::vector<record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
                 fields<field::SEQ, field::ID, field::STRUCTURE>>> range;
@@ -362,7 +362,7 @@ TEST_F(structure_file_out_rows, assign_range_of_records_const)
     assign_impl(std::as_const(range));
 }
 
-TEST_F(structure_file_out_rows, assign_range_of_tuples)
+TEST_F(structure_file_output_rows, assign_range_of_tuples)
 {
     std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range;
 
@@ -372,7 +372,7 @@ TEST_F(structure_file_out_rows, assign_range_of_tuples)
     assign_impl(range);
 }
 
-TEST_F(structure_file_out_rows, assign_structure_file_in)
+TEST_F(structure_file_output_rows, assign_structure_file_in)
 {
     std::string const inp // differs from output above by formatting
     {
@@ -389,7 +389,7 @@ TEST_F(structure_file_out_rows, assign_structure_file_in)
     assign_impl(fin);
 }
 
-TEST_F(structure_file_out_rows, assign_structure_file_pipes)
+TEST_F(structure_file_output_rows, assign_structure_file_pipes)
 {
     // valid without assignment?
     structure_file_in{std::istringstream{output_comp}, structure_file_format_vienna{}}
@@ -403,9 +403,9 @@ TEST_F(structure_file_out_rows, assign_structure_file_pipes)
     EXPECT_EQ(fout.get_stream().str(), output_comp);
 }
 
-struct structure_file_out_columns : public structure_file_out_rows{};
+struct structure_file_output_columns : public structure_file_output_rows{};
 
-TEST_F(structure_file_out_columns, assign_record_of_columns)
+TEST_F(structure_file_output_columns, assign_record_of_columns)
 {
     record<type_list<std::vector<rna5_vector>, std::vector<std::string>, std::vector<std::vector<wuss51>>>,
            fields<field::SEQ, field::ID, field::STRUCTURE>> columns
@@ -418,7 +418,7 @@ TEST_F(structure_file_out_columns, assign_record_of_columns)
     assign_impl(columns);
 }
 
-TEST_F(structure_file_out_columns, assign_tuple_of_columns)
+TEST_F(structure_file_output_columns, assign_tuple_of_columns)
 {
     assign_impl(std::tie(seqs, ids, structures));
 }

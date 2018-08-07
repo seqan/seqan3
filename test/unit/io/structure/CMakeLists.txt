@@ -1,3 +1,0 @@
-seqan3_test(structure_file_format_vienna_test.cpp)
-seqan3_test(structure_file_in_test.cpp)
-seqan3_test(structure_file_out_test.cpp)

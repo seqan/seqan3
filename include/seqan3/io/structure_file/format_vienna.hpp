@@ -61,9 +61,9 @@
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
-#include <seqan3/io/structure/detail.hpp>
-#include <seqan3/io/structure/structure_file_in_options.hpp>
-#include <seqan3/io/structure/structure_file_out_options.hpp>
+#include <seqan3/io/structure_file/detail.hpp>
+#include <seqan3/io/structure_file/input_options.hpp>
+#include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -75,8 +75,8 @@
 namespace seqan3
 {
 /*!\brief       The Vienna format (dot bracket notation) for RNA sequences with secondary structure.
- * \implements  seqan3::structure_file_in_format_concept
- * \implements  seqan3::structure_file_out_format_concept
+ * \implements  seqan3::structure_file_input_format_concept
+ * \implements  seqan3::structure_file_output_format_concept
  * \ingroup     structure
  *
  * \details
@@ -106,13 +106,6 @@ namespace seqan3
  *
  * ### Implementation notes
  *
- * In the unlikely case that you want to read a Vienna file, which does not contain structure lines, you have to
- * assign false to `seqan3::structure_file_in_options::file_has_structure`.
- * ```cpp
- *    structure_file_in_options<rna4, false> options;
- *    options.file_has_structure = false;
- * ```
- *
  * When reading the ID-line the identifier (`>`) and any blank characters before the actual ID are
  * stripped. Each field is read/written as a single line (except ENERGY, which goes right after the structure).
  * Numbers and spaces within the sequence are simply ignored, but not within the structure.
@@ -134,10 +127,12 @@ public:
     //!\brief The valid file extensions for this format; note that you can modify this value.
     static inline std::vector<std::string> file_extensions
     {
-        { "dbn" }
+        { "dbn" },
+        { "fasta" },
+        { "fa" }
     };
 
-    //!\copydoc seqan3::structure_file_in_format_concept::read
+    //!\copydoc seqan3::structure_file_input_format_concept::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               bool     structured_seq_combined,
@@ -150,7 +145,7 @@ public:
               typename comment_type,
               typename offset_type>
     void read(stream_type & stream,
-              structure_file_in_options<seq_legal_alph_type, structured_seq_combined> const & options,
+              structure_file_input_options<seq_legal_alph_type, structured_seq_combined> const & options,
               seq_type & seq,
               id_type & id,
               bpp_type & bpp,
@@ -223,16 +218,7 @@ public:
         }
         else
         {
-            detail::consume(stream_view | view::take_line);
-            detail::consume(stream_view | ranges::view::take_while(is_space));
-        }
-
-        if (!options.file_has_structure)
-        {
-            if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) && (!stream.eof()))
-                stream.get();
-
-            return;
+            detail::consume(stream_view | view::take_line_or_throw);
         }
 
         // READ STRUCTURE (if present)
@@ -301,7 +287,7 @@ public:
         }
     }
 
-    //!\copydoc seqan3::structure_file_out_format_concept::write
+    //!\copydoc seqan3::structure_file_output_format_concept::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
@@ -312,10 +298,10 @@ public:
               typename comment_type,
               typename offset_type>
     void write(stream_type & stream,
-               structure_file_out_options const & options,
+               structure_file_output_options const & options,
                seq_type && seq,
                id_type && id,
-               bpp_type && bpp,
+               bpp_type && SEQAN3_DOXYGEN_ONLY(bpp),
                structure_type && structure,
                energy_type && energy,
                react_type && SEQAN3_DOXYGEN_ONLY(react),
