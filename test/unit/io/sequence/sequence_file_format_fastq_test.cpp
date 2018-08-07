@@ -393,7 +393,7 @@ struct write : public ::testing::Test
 
     std::ostringstream ostream;
 
-    void do_read_test()
+    void do_write_test()
     {
         for (unsigned i = 0; i < 3; ++i)
             EXPECT_NO_THROW(( format.write(ostream, options, seqs[i], ids[i], quals[i]) ));
@@ -456,7 +456,7 @@ TEST_F(write, default_options)
         "!!*+,-./+*+,-./+!!FF!!\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -523,7 +523,7 @@ TEST_F(write, options_fastq_double_id)
         "!!*+,-./+*+,-./+!!FF!!\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -548,7 +548,7 @@ TEST_F(write, options_add_carriage_return)
         "!!*+,-./+*+,-./+!!FF!!\r\n"
     };
 
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
@@ -573,7 +573,7 @@ TEST_F(write, options_all)
         "+Test3\r\n"
         "!!*+,-./+*+,-./+!!FF!!\r\n"
     };
-    do_read_test();
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }

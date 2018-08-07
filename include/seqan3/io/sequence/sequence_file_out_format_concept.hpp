@@ -53,7 +53,7 @@ namespace seqan3
 {
 
 /*!\interface seqan3::sequence_file_out_format_concept <>
- * \brief The generic concept for sequence file formats.
+ * \brief The generic concept for sequence file out formats.
  * \ingroup sequence
  *
  * \details
@@ -91,14 +91,14 @@ concept bool sequence_file_out_format_concept = requires (t                     
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
  * \memberof seqan3::sequence_file_out_format_concept
- * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy seqan3::input_range_concept
+ * \tparam stream_type      Output stream, must satisfy seqan3::ostream_concept with `char`.
+ * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy seqan3::output_range_concept
  * over a seqan3::alphabet_concept.
- * \tparam id_type          Type of the seqan3::field::ID input; must satisfy seqan3::input_range_concept
+ * \tparam id_type          Type of the seqan3::field::ID output; must satisfy seqan3::output_range_concept
  * over a seqan3::alphabet_concept.
- * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::input_range_concept
+ * \tparam qual_type        Type of the seqan3::field::QUAL output; must satisfy seqan3::output_range_concept
  * over a seqan3::quality_concept.
- * \param[in,out] stream    The input stream to read from.
+ * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".
  * \param[in]     id        The data for seqan3::field::ID, e.g. the header line in FastA.
