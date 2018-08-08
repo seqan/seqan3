@@ -76,6 +76,9 @@ public:
 
     ~bar() = default;
 
+    bar(int v) : state{v}
+    {}
+
     static inline size_t default_counter{0};
     static inline size_t copy_counter{0};
     static inline size_t move_counter{0};
@@ -126,6 +129,9 @@ public:
         return *this;
     }
 
+    bax(float v) : state{v}
+    {}
+
     ~bax() = default;
 
     static inline size_t default_counter{0};
@@ -150,21 +156,6 @@ TEST(configuration, metafunction)
     EXPECT_TRUE((detail::is_algorithm_configuration_v<detail::configuration<bax, bar>>));
     EXPECT_FALSE((detail::is_algorithm_configuration<type_list<bax>>::value));
     EXPECT_FALSE((detail::is_algorithm_configuration_v<type_list<bax>>));
-}
-
-TEST(configuration, tuple_size)
-{
-    detail::configuration<bax, bar> cfg{};
-
-    EXPECT_EQ(2, std::tuple_size_v<decltype(cfg)>);
-}
-
-TEST(configuration, tuple_element)
-{
-    detail::configuration<bax, bar> cfg{};
-
-    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, decltype(cfg)>, bax>));
-    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<1, decltype(cfg)>, bar>));
 }
 
 TEST(configuration, standard_construction)
@@ -208,152 +199,12 @@ TEST(configuration, get_by_position)
     }
 }
 
-TEST(configuration, get_by_position_std)
+TEST(configuration, construction_from_tuple)
 {
-    detail::configuration<bax, bar> cfg{};
+    detail::configuration cfg{std::tuple<bar, bax>{bar{}, bax{}}};
 
-    { // l-value
-        EXPECT_EQ(std::get<1>(cfg), 1);
-        std::get<1>(cfg) = 3;
-        EXPECT_EQ(std::get<1>(cfg), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(cfg)), int &>));
-    }
-
-    { // const l-value
-        detail::configuration<bax, bar> const cfg_c{cfg};
-        EXPECT_EQ(std::get<1>(cfg_c), 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(cfg_c)), int const &>));
-    }
-
-    { // r-value
-        detail::configuration<bax, bar> cfg_r{cfg};
-        EXPECT_EQ(std::get<1>(std::move(cfg_r)), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_r))), int &&>));
-    }
-
-    { // const r-value
-        detail::configuration<bax, bar> const cfg_rc{cfg};
-        EXPECT_EQ(std::get<1>(std::move(cfg_rc)), 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_rc))), int const &&>));
-    }
-}
-
-TEST(configuration, get_by_type)
-{
-    detail::configuration<bax, bar> cfg{};
-
-    { // l-value
-        EXPECT_EQ(get<bar>(cfg), 1);
-        get<bar>(cfg) = 3;
-        EXPECT_EQ(get<bar>(cfg), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(get<bar>(cfg)), int &>));
-    }
-
-    { // const l-value
-        detail::configuration<bax, bar> const cfg_c{cfg};
-        EXPECT_EQ(get<bar>(cfg_c), 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(get<bar>(cfg_c)), int const &>));
-    }
-
-    { // r-value
-        detail::configuration<bax, bar> cfg_r{cfg};
-        EXPECT_EQ(get<bar>(std::move(cfg_r)), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(get<bar>(std::move(cfg_r))), int &&>));
-    }
-
-    { // const r-value
-        detail::configuration<bax, bar> const cfg_rc{cfg};
-        EXPECT_EQ(get<bar>(std::move(cfg_rc)), 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(get<bar>(std::move(cfg_rc))), int const &&>));
-    }
-}
-
-TEST(configuration, get_by_type_std)
-{
-    detail::configuration<bax, bar> cfg{};
-
-    { // l-value
-        EXPECT_EQ(std::get<bar>(cfg), 1);
-        std::get<bar>(cfg) = 3;
-        EXPECT_EQ(std::get<bar>(cfg), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<bar>(cfg)), int &>));
-    }
-
-    { // const l-value
-        detail::configuration<bax, bar> const cfg_c{cfg};
-        EXPECT_EQ(std::get<bar>(cfg_c), 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<bar>(cfg_c)), int const &>));
-    }
-
-    { // r-value
-        detail::configuration<bax, bar> cfg_r{cfg};
-        EXPECT_EQ(std::get<bar>(std::move(cfg_r)), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<bar>(std::move(cfg_r))), int &&>));
-    }
-
-    { // const r-value
-        detail::configuration<bax, bar> const cfg_rc{cfg};
-        EXPECT_EQ(std::get<bar>(std::move(cfg_rc)), 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<bar>(std::move(cfg_rc))), int const &&>));
-    }
-}
-
-TEST(configuration, construction_w_lvalue_cfg)
-{
-    bar::reset_counter();
-    bax::reset_counter();
-
-    detail::configuration<bar> cfg;
-
-    EXPECT_EQ(bar::default_counter, 1);
-    EXPECT_EQ(bar::copy_counter, 0);
-    EXPECT_EQ(bar::move_counter, 0);
-    EXPECT_EQ(bax::default_counter, 0);
-    EXPECT_EQ(bax::copy_counter, 0);
-    EXPECT_EQ(bax::move_counter, 0);
-
-    detail::configuration<bax, bar> cfg2{cfg};
-
-    EXPECT_EQ(bar::default_counter, 2);
-    EXPECT_EQ(bar::copy_counter, 1);
-    EXPECT_EQ(bar::move_counter, 0);
-    EXPECT_EQ(bax::default_counter, 1);
-    EXPECT_EQ(bax::copy_counter, 0);
-    EXPECT_EQ(bax::move_counter, 0);
-
-    EXPECT_EQ(get<1>(cfg2), 1);
-}
-
-TEST(configuration, construction_w_rvalue_cfg)
-{
-    bar::reset_counter();
-    bax::reset_counter();
-
-    detail::configuration<bar> cfg;
-
-    EXPECT_EQ(bar::default_counter, 1);
-    EXPECT_EQ(bar::copy_counter, 0);
-    EXPECT_EQ(bar::move_counter, 0);
-    EXPECT_EQ(bax::default_counter, 0);
-    EXPECT_EQ(bax::copy_counter, 0);
-    EXPECT_EQ(bax::move_counter, 0);
-
-    detail::configuration<bax, bar> cfg2{std::move(cfg)};
-
-    EXPECT_EQ(bar::default_counter, 2);
-    EXPECT_EQ(bar::copy_counter, 0);
-    EXPECT_EQ(bar::move_counter, 1);
-    EXPECT_EQ(bax::default_counter, 1);
-    EXPECT_EQ(bax::copy_counter, 0);
-    EXPECT_EQ(bax::move_counter, 0);
-
-    EXPECT_EQ(get<1>(cfg2), 1);
+    using t = typename decltype(cfg)::base_type;
+    EXPECT_EQ(std::tuple_size_v<decltype(static_cast<t>(cfg))>, 2);
 }
 
 template <size_t I>
@@ -367,72 +218,78 @@ private:
     size_t state{I};
 };
 
+TEST(configuration, push_front)
+{
+    { // l-value
+        detail::configuration<foo<0>> cfg{};
+        auto cfg_2 = cfg.push_front(foo<1>{});
+
+        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>, foo<0>>>));
+    }
+
+    { // r-value
+        auto cfg_2 = detail::configuration<foo<0>>{}.push_front(foo<1>{});
+
+        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>, foo<0>>>));
+    }
+}
+
 TEST(configuration, replace_with)
 {
-    using t1 = detail::configuration<foo<0>, foo<1>, foo<2>>;
-    using t2 = detail::replace_config_with_t<t1, foo<1>, foo<3>>;
+    { // l-value
+        detail::configuration<foo<0>> cfg{};
+        auto cfg_2 = cfg.replace_with(foo<0>{}, foo<1>{});
+        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>>>));
+    }
 
-    EXPECT_TRUE((std::is_same_v<t2, detail::configuration<foo<3>, foo<0>, foo<2>>>));
+    { // r-value
+        auto cfg_2 = detail::configuration<foo<0>>{}.replace_with(foo<0>{}, foo<1>{});
+        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>>>));
+    }
+}
+
+TEST(configuration, size)
+{
+    detail::configuration<foo<0>> cfg{};
+    EXPECT_EQ(cfg.size(), 1);
+    EXPECT_EQ((detail::configuration<foo<1>, foo<0>>{}.size()), 2);
+    EXPECT_EQ(detail::configuration<>{}.size(), 0);
 }
 
 struct bar_fn_impl : public detail::configuration_fn_base<bar_fn_impl>
 {
 
-    // using detail::configuration_fn_base<bar_fn_impl>::configuration_fn_base;
-
     template <typename configuration_t>
     constexpr auto invoke(configuration_t && cfg,
-                          int new_v) const
+                                           int new_v) const
         requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
     {
-        using configuration_t_ = std::remove_reference_t<configuration_t>;
-        using new_cfg_t = detail::push_front_config_t<configuration_t_, bar>;
-
-        new_cfg_t new_cfg{std::forward<configuration_t>(cfg)};
-        std::get<0>(new_cfg) = new_v;
-        return new_cfg;
+        return std::forward<configuration_t>(cfg).push_front(bar{new_v});
     }
 
     template <typename configuration_t>
     constexpr auto invoke(configuration_t && cfg) const
         requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
     {
-        using configuration_t_ = std::remove_reference_t<configuration_t>;
-        using new_cfg_t = detail::push_front_config_t<configuration_t_, bar>;
-
-        new_cfg_t new_cfg{std::forward<configuration_t>(cfg)};
-        std::get<0>(new_cfg) = 0;
-        return new_cfg;
+        return std::forward<configuration_t>(cfg).push_front(bar{0});
     }
 };
 
 struct bax_fn_impl : public detail::configuration_fn_base<bax_fn_impl>
 {
-    // using detail::configuration_fn_base<bax_fn_impl>::configuration_fn_base;
-
     template <typename configuration_t>
     constexpr auto invoke(configuration_t && cfg,
                           float new_v) const
         requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
     {
-        using configuration_t_ = std::remove_reference_t<configuration_t>;
-        using new_cfg_t = detail::push_front_config_t<configuration_t_, bax>;
-
-        new_cfg_t new_cfg{std::forward<configuration_t>(cfg)};
-        std::get<0>(new_cfg) = new_v;
-        return new_cfg;
+        return std::forward<configuration_t>(cfg).push_front(bax{new_v});
     }
 
     template <typename configuration_t>
     constexpr auto invoke(configuration_t && cfg) const
         requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
     {
-        using configuration_t_ = std::remove_reference_t<configuration_t>;
-        using new_cfg_t = detail::push_front_config_t<configuration_t_, bax>;
-
-        new_cfg_t new_cfg{std::forward<configuration_t>(cfg)};
-        std::get<0>(new_cfg) = 0.0;
-        return new_cfg;
+        return std::forward<configuration_t>(cfg).push_front(bax{0.});
     }
 };
 
@@ -459,14 +316,14 @@ TEST(configuration_fn, invoke_w_configuration)
         detail::configuration<bax> cfg;
         auto new_cfg = bar_fn_impl{}(cfg, 3);
 
-        EXPECT_EQ(get<bar>(new_cfg), 3);
+        EXPECT_EQ(get<0>(new_cfg), 3);
         EXPECT_TRUE((std::is_same_v<decltype(new_cfg), detail::configuration<bar, bax>>));
     }
 
     { // as r-value
         auto new_cfg = bar_fn_impl{}(detail::configuration<bax>{}, 3);
 
-        EXPECT_EQ(get<bar>(new_cfg), 3);
+        EXPECT_EQ(get<0>(new_cfg), 3);
         EXPECT_TRUE((std::is_same_v<decltype(new_cfg), detail::configuration<bar, bax>>));
     }
 }
@@ -547,30 +404,30 @@ TEST(configuration_fn, pipable_fn_fn)
 {
     auto cfg = bar_fn_impl{} | bax_fn_impl{};
 
-    EXPECT_EQ(get<bar>(cfg), 0);
-    EXPECT_FLOAT_EQ(get<bax>(cfg), 0.0);
+    EXPECT_EQ(get<1>(cfg), 0);
+    EXPECT_FLOAT_EQ(get<0>(cfg), 0.0);
 }
 
 TEST(configuration_fn, pipable_fn_proxy)
 {
     auto cfg = bar_fn_impl{} | bax_fn_impl{}(3.0);
 
-    EXPECT_EQ(get<bar>(cfg), 0);
-    EXPECT_FLOAT_EQ(get<bax>(cfg), 3.0);
+    EXPECT_EQ(get<1>(cfg), 0);
+    EXPECT_FLOAT_EQ(get<0>(cfg), 3.0);
 }
 
 TEST(configuration_fn, pipable_proxy_fn)
 {
     auto cfg = bar_fn_impl{}(2) | bax_fn_impl{};
 
-    EXPECT_EQ(get<bar>(cfg), 2);
-    EXPECT_FLOAT_EQ(get<bax>(cfg), 0.0);
+    EXPECT_EQ(get<1>(cfg), 2);
+    EXPECT_FLOAT_EQ(get<0>(cfg), 0.0);
 }
 
 TEST(configuration_fn, pipable_proxy_proxy)
 {
     auto cfg = bar_fn_impl{}(2) | bax_fn_impl{}(3.0);
 
-    EXPECT_EQ(get<bar>(cfg), 2);
-    EXPECT_FLOAT_EQ(get<bax>(cfg), 3.0);
+    EXPECT_EQ(get<1>(cfg), 2);
+    EXPECT_FLOAT_EQ(get<0>(cfg), 3.0);
 }

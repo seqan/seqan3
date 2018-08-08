@@ -83,16 +83,9 @@ namespace seqan3::detail
  *          requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
  *      {
  *          if (state == 0)
- *          {
- *              using new_cfg_t = detail::replace_config_with_t<std::remove_reference_t<configuration_t>,
- *                                                              my_deferred_config,
- *                                                              my_config<0>>;
- *              return fn(new_cfg_t{std::forward<configuration_t>(config)});
- *          }
- *          using new_cfg_t = detail::replace_config_with_t<std::remove_reference_t<configuration_t>,
- *                                                          my_deferred_config,
- *                                                          my_config<1>>;
- *          return fn(new_cfg_t{std::forward<configuration_t>(config)});
+ *              return fn(std::forward<configuration_t>(cfg).replace_with(my_deferred_config{}, my_config<0>{}));
+ *          else
+ *              return fn(std::forward<configuration_t>(cfg).replace_with(my_deferred_config{}, my_config<1>{}));
  *      }
  *
  *     int state{0};  // Has to be named `state`.
@@ -100,13 +93,13 @@ namespace seqan3::detail
  * ```
  *
  * The configuration class must provide a member variable with the name `state`, which the base class can access via the
- * seqan3::detail::config_element_access struct. This class, then gives access to the underlying data via getter functions.
- * For a dynamic dispatching of configurations, that should be translated to a static configuration for the target algorithm,
- * the `invoke` function is triggered by the configuration system before the algorithm is executed. In this function, as
- * can be seen above, the runtime parameter can be translated to a static config and then calls the passed callable `fn`, with
- * the new configuration object. Please make sure, you pass the old configuration to the new one, such that the other configs are
- * correctly passed to the new configuration.
- * One can use the helper meta-function seqan3::detail::replace_config_with to easily create a new configuration with the deferred
+ * seqan3::detail::config_element_access struct. This class, then gives access to the underlying data via getter
+ * functions. For a dynamic dispatching of configurations, that should be translated to a static configuration for the
+ * target algorithm, the `invoke` function is triggered by the configuration system before the algorithm is executed.
+ * In this function, as can be seen above, the runtime parameter can be translated to a static config and then calls the
+ * passed callable `fn`, with the new configuration object. Please make sure, you pass the old configuration to the new
+ * one, such that the other configs are correctly passed to the new configuration.
+ * One can use the helper function seqan3::detail::replace_with to easily create a new configuration with the deferred
  * config replaced with the static one.
  *
  * \see seqan3::detail::config_element_base

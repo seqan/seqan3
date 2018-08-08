@@ -46,6 +46,7 @@
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/std/concept/callable.hpp>
 #include <seqan3/std/concept/core_language.hpp>
@@ -64,18 +65,6 @@ template <size_t elem_no, typename ... _configs_t>
 constexpr auto && get(detail::configuration<_configs_t...> &&) noexcept;
 
 template <size_t elem_no, typename ... _configs_t>
-constexpr auto const && get(detail::configuration<_configs_t...> const &&) noexcept;
-
-template <typename target_t, typename ... _configs_t>
-constexpr auto & get(detail::configuration<_configs_t...> &) noexcept;
-
-template <typename target_t, typename ... _configs_t>
-constexpr auto const & get(detail::configuration<_configs_t...> const &) noexcept;
-
-template <typename target_t, typename ... _configs_t>
-constexpr auto && get(detail::configuration<_configs_t...> &&) noexcept;
-
-template <typename target_t, typename ... _configs_t>
 constexpr auto const && get(detail::configuration<_configs_t...> const &&) noexcept;
 //!\endcond
 }
@@ -119,9 +108,9 @@ class configuration_fn_base;
  *
  * The entire configuration system is designed to work completely in the background of any algorithm. The implementor
  * of an algorithm only needs to provide the configurations for the algorithm.
- * In general the type of a configuration is static (see seqan3::detail::config_element_base) within the context of an algorithm
- * to select the correct code branches based on a policy-driven design, albeit the stored state might still be a runtime
- * parameter.
+ * In general the type of a configuration is static (see seqan3::detail::config_element_base) within the context of an
+ * algorithm to select the correct code branches based on a policy-driven design, albeit the stored state might still be
+ * a runtime parameter.
  * However, in some cases a specific configuration might be known first at runtime but needs to be converted to a static
  * type for the algorithm in use. To enable a transparent conversion from the runtime parameters to a static type
  * configuration one can use deferred configs (seqan3::detail::deferred_config_element_base), which are invocable
@@ -133,41 +122,38 @@ class configuration_fn_base;
  *
  * ### Pipe Notation
  *
- * To enable simple extension of configurations the configuration provides a generic pipe interface for the different
- * configurations. Thus, a config class can be easily constructed by chaining together different properties.
- * Consider the following example, where we assume that the config `bar` and the config functor `with_foo` are already
- * given:
+ * To enable simple extension of configurations the configuration supports a pipe interface for the different
+ * configurations and configuration adaptors. A configuration adaptor is a functor similar to the view adaptor, which
+ * provides the pipe interface. Adaptors need to implement the abstract base seqan3::detail::configuration_fn_base,
+ * which adds all the necessary interfaces.
+ * Using this, a configuration class can be easily constructed by chaining together different config elements.
+ * Consider the following example, where we assume that the config element `bar` and the configuration adaptor
+ * `with_foo` are already given:
  *
  * ```cpp
  * auto my_cfg = configuration<bar>{} | with_foo;  // my_cfg is now of type configuration<foo, bar>
  * ```
- * The `with_foo` functor captures the `configuration<bar>` object and returns a new configuration with the added
+ * The `with_foo` adaptor captures the `configuration<bar>` object and returns a new configuration with the added
  * `foo`-config.
 
- * ### Tuple interface
+ * ### Access the data
  *
- * The configuration exposes a tuple interface. The type_trait functions std::tuple_size and std::tuple_element are
- * overloaded for this class. To access a specific element one can either use `seqan3::get` or `std::get` to query
- * the state of the configuration. Considering the example from above one can get the state of
- * the bar-config either as:
+ * The configuration exposes a positional get interface. To access a specific element one can either use `seqan3::get`
+ * to query the state stored in the config element at the specified position of the configuration.
+ * Considering the example from above one can get the state of the bar-config as:
  *
  * ```cpp
  * auto bar_state = get<1>(my_cfg);
  * ```
- *
- * or as:
- *
- * ```cpp
- * auto bar_state = get<bar>(my_cfg);
- * ```
- *
- * In addition every algorithm specific config implementation can overload the get-interface with a enum based
- * get-interface, such that the correct config is extracted based on some type-independent enum value.
+ * Note, that a type based get cannot be exposed as for the user it is completely hidden, what the exact type
+ * will be which was added by a configuration adaptor. To allow algorithm implementors to still access data for
+ * specific properties every algorithm will expose a enum based get interface, that allows to access the element
+ * associated with the enum identifier.
  * This is necessary for the algorithm implementation, as the algorithm neither knows the order nor the exact type of
- * all configs (the config type could be a template class).
+ * all config elements.
  */
 template <config_element_concept ... configs_t>
-class configuration
+class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
     template <typename ... _configs_t>
@@ -179,8 +165,8 @@ class configuration
     constexpr void transfer_config_elements(configuration<old_configs_t...> const & other,
                                             std::index_sequence<Is...> const & /*idx*/)
     {
-        ((std::get<Is + 1>(this->config_elements) =
-            std::get<std::tuple_element_t<Is + 1, std::tuple<configs_t...>>>(other.config_elements)), ...);
+        ((std::get<Is + 1>(*this) =
+            std::get<std::tuple_element_t<Is + 1, std::tuple<configs_t...>>>(other)), ...);
     }
 
     //!\copydoc configuration::transfer_config_elements
@@ -189,8 +175,8 @@ class configuration
     constexpr void transfer_config_elements(configuration<old_configs_t...> && other,
                                             std::index_sequence<Is...> const & /*idx*/)
     {
-        ((std::get<Is + 1>(this->config_elements) =
-            std::get<std::tuple_element_t<Is + 1, std::tuple<configs_t...>>>(std::move(other.config_elements))), ...);
+        ((std::get<Is + 1>(*this) =
+            std::get<std::tuple_element_t<Is + 1, std::tuple<configs_t...>>>(std::move(other))), ...);
     }
 
 public:
@@ -199,6 +185,8 @@ public:
      */
     //!\brief Exposes the configurations as a seqan3::type_list to allow meta operations on this list.
     using type_list_type = type_list<configs_t...>;
+
+    using base_type = std::tuple<configs_t...>;
     //!\}
 
     /*!\name Constructor, destructor and assignment
@@ -212,30 +200,13 @@ public:
     configuration & operator=(configuration &&)      = default;
     ~configuration()                                 = default;
 
-    /*!\brief Constructs a configuration from the configuration prior to the modification with the new config.
-     * \tparam other_configs_t The other configs.
-     * \param cfg The configuration immediately prior to it's extension by another configuration.
-     *
-     * \details
-     *
-     * Note, that this constructor is only enabled for types that are in direct relation to this class, namely for
-     * types for which the following invariant holds: `configuration<configs...>` corresponds to
-     * `configuration<head, configs...>`, with `decltype(*this) = configuration<head, configs...>`.
-     */
-    template <typename ... other_configs_t>
-    constexpr configuration(configuration<other_configs_t ...> const & cfg) : configuration{}
-    {
-        if constexpr (sizeof...(configs_t) > 0)
-            transfer_config_elements(cfg, std::make_index_sequence<sizeof...(configs_t) - 1>{});
-    }
+    //!\brief Constructs from std::tuple.
+    constexpr configuration(std::tuple<configs_t...> const & cfg) : base_type{cfg}
+    {}
 
-    //!\copydoc configuration::configuration(configuration<other_configs_t ...> const & cfg)
-    template <typename ... other_configs_t>
-    constexpr configuration(configuration<other_configs_t ...> && cfg) : configuration{}
-    {
-        if constexpr (sizeof...(configs_t) > 0)
-            transfer_config_elements(std::move(cfg), std::make_index_sequence<sizeof...(configs_t) - 1>{});
-    }
+    //!\brief Constructs from std::tuple.
+    constexpr configuration(std::tuple<configs_t...> && cfg) : base_type{std::move(cfg)}
+    {}
 
     /*!\brief Constructs a configuration from a variable of type seqan3::detail::configuration_fn_proxy or
      *        seqan3::detail::configuration_fn_base
@@ -285,164 +256,127 @@ public:
     template <size_t elem_no, typename ... _configs_t>
         requires (std::is_same_v<configs_t, _configs_t> && ...)
     friend constexpr auto const && seqan3::get(configuration<_configs_t...> const &&) noexcept;
-
-    template <typename target_t, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto & seqan3::get(configuration<_configs_t...> &) noexcept;
-
-    //!\copydoc configuration::get()
-    template <typename target_t, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto const & seqan3::get(configuration<_configs_t...> const &) noexcept;
-
-    //!\copydoc configuration::get()
-    template <typename target_t, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto && seqan3::get(configuration<_configs_t...> &&) noexcept;
-
-    //!\copydoc configuration::get()
-    template <typename target_t, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto const && seqan3::get(configuration<_configs_t...> const &&) noexcept;
     //!\endcond
 
-private:
+    /*!\name Capacity
+     * \{
+     */
 
-    //!\brief The cached config elements.
-    std::tuple<configs_t...> config_elements;
+    //!\brief Returns the number of contained config elements.
+    constexpr size_t size() const
+    {
+        return std::tuple_size_v<base_type>;
+    }
+
+    /*!\name Modifiers
+     * \brief Note that modifications return new configurations and do not modify `this`.
+     * \{
+     */
+
+    /*!\brief Adds a new config element to the beginning of the configuration.
+     * \relates seqan3::detail::configuration
+     * \ingroup core_algorithm
+     *
+     * \param[in] cfg_element The element to add.
+     *
+     * \returns A new seqan3::detail::configuration containing the added element.
+     *
+     * \details
+     *
+     * Creates a new seqan3::detail::configuration from `this` and adds the passed config element.
+     * Note, that `this` is not modified by this operation.
+     *
+     * Complexity
+     *
+     * Linear in the number of elements.
+     */
+    template <config_element_concept config_element_t>
+    constexpr auto push_front(config_element_t && cfg_element) const &
+    {
+        return detail::configuration{std::tuple_cat(std::tuple{std::forward<config_element_t>(cfg_element)},
+                                                    static_cast<base_type>(*this))};
+    }
+
+    //!\copydoc push_front
+    template <config_element_concept config_element_t>
+    constexpr auto push_front(config_element_t && cfg_element) const &&
+    {
+        return detail::configuration{std::tuple_cat(std::tuple{std::forward<config_element_t>(cfg_element)},
+                                                    std::move(static_cast<base_type>(*this)))};
+    }
+
+    /*!\brief Replaces the old config element with the new one.
+     * \relates seqan3::detail::configuration
+     * \ingroup core_algorithm
+     *
+     * \param[in] old_element The element to replace.
+     * \param[in] new_element The new element to insert.
+     *
+     * \returns A new seqan3::detail::configuration containing the replaced element.
+     *
+     * \details
+     *
+     * Splits the `this` at the position of the `old_config_element_t` and replaces it with `new_element` at
+     * the same position and constructs a new seqan3::detail::configuration from it. Note, that `this` is not
+     * modified by this operation.
+     *
+     * Complexity
+     *
+     * Linear in the number of elements.
+     */
+    template <config_element_concept old_config_element_t,
+              config_element_concept new_config_element_t>
+    constexpr auto replace_with(old_config_element_t const & SEQAN3_DOXYGEN_ONLY(old_element),
+                                new_config_element_t && new_element) const &
+    {
+        static_assert(std::tuple_size_v<base_type> > 0, "The configuration cannot be empty.");
+        static_assert(meta::find_index<transfer_template_args_onto_t<base_type, type_list>,
+                                       old_config_element_t>::value != meta::npos::value,
+                      "The element to be replaced is not contained in the passed configuration.");
+
+        auto && [prefix, remainder] = seqan3::tuple_split<old_config_element_t>(static_cast<base_type>(*this));
+
+        return detail::configuration{std::tuple_cat(std::move(prefix),
+                                                    std::tuple{std::forward<new_config_element_t>(new_element)},
+                                                    tuple_pop_front(std::move(remainder)))};
+    }
+
+    //!\copydoc replace_with
+    template <config_element_concept old_config_element_t,
+              config_element_concept new_config_element_t>
+    constexpr auto replace_with(old_config_element_t const & SEQAN3_DOXYGEN_ONLY(old_element),
+                                new_config_element_t && new_element) const &&
+    {
+        static_assert(std::tuple_size_v<base_type> > 0, "The configuration cannot be empty.");
+        static_assert(meta::find_index<transfer_template_args_onto_t<base_type, type_list>,
+                                       old_config_element_t>::value != meta::npos::value,
+                      "The element to be replaced is not contained in the passed configuration.");
+
+        auto && [prefix, remainder] =
+            seqan3::tuple_split<old_config_element_t>(std::move(static_cast<base_type>(*this)));
+
+        return detail::configuration{std::tuple_cat(std::move(prefix),
+                                                    std::tuple{std::forward<new_config_element_t>(new_element)},
+                                                    tuple_pop_front(std::move(remainder)))};
+    }
+    //!\}
 };
 
-/*!\name Deduction guide
+/*!\name Deduction guides
  * \relates seqan3::detail::configuration
  * \{
  */
 
 //!\brief Deduces the correct templates from a seqan3::detail::configuration_fn_proxy
-template <typename cfg_proxy_t>
-//!\cond
-    requires is_type_specialisation_of_v<std::remove_reference_t<cfg_proxy_t>, configuration_fn_proxy>
-//!\endcond
-configuration(cfg_proxy_t &&) ->
-    configuration<meta::front<typename std::invoke_result_t<std::remove_reference_t<cfg_proxy_t>,
-                                                            configuration<>>::type_list_type>>;
-
-//!\brief Deduces the correct templates from a seqan3::detail::configuration_fn_base
 template <typename cfg_fn_t>
 //!\cond
-    requires std::is_base_of_v<configuration_fn_base<remove_cvref_t<cfg_fn_t>>, remove_cvref_t<cfg_fn_t>>
+    requires is_type_specialisation_of_v<std::remove_reference_t<cfg_fn_t>, configuration_fn_proxy> ||
+             std::is_base_of_v<configuration_fn_base<remove_cvref_t<cfg_fn_t>>, remove_cvref_t<cfg_fn_t>>
 //!\endcond
 configuration(cfg_fn_t &&) ->
     configuration<meta::front<typename std::invoke_result_t<std::remove_reference_t<cfg_fn_t>,
-                                                                configuration<>>::type_list_type>>;
+                                                            configuration<>>::type_list_type>>;
 //!\}
-// ----------------------------------------------------------------------------
-// Metafunction replace_config_with
-// ----------------------------------------------------------------------------
-
-//!\cond
-template <typename configuration_t, detail::config_element_concept old_config_t, detail::config_element_concept new_config_t>
-struct replace_config_with;
-//!\endcond
-
-/*!\brief Helper traits meta-function to replace one configuration type with another by pushing it to the front of
- *        the configurations for a specific seqan3::detail::configuration.
- * \ingroup core_algorithm
- * \relates seqan3::detail::configuration
- *
- * \tparam configuration_t The configuration type to be altered. Must be a template class.
- * \tparam old_config_t   The old_config_t to be removed.
- * \tparam new_config_t   The new_config_t to be added at the front of the configurations.
- *
- * \details
- *
- * This meta-function parses the list of config types contained in the given seqan3::detail::configuration and
- * removes the `old_config_t` from the list if it exists, and adds `new_config_t` at the front of
- * the type list. Subsequently a new `configuration_t` type is defined containing the new config type list.
- *
- * \see seqan3::detail::push_front_config
- * \see seqan3::detail::replace_config_with_t
- */
-template <template <typename ...> class configuration_t,
-          detail::config_element_concept old_config_t,
-          detail::config_element_concept new_config_t,
-          detail::config_element_concept ... configs_t>
-struct replace_config_with<configuration_t<configs_t...>, old_config_t, new_config_t>
-{
-protected:
-
-    //!\cond
-    template <typename target_t>
-    struct invoke_exclude
-    {
-        /*!\brief A template type which is used by meta::invoke.
-         * \tparam query_t The type to query.
-         * \returns `std::true_type` if `query_t` and `target_t` are not the same, `std::false_type` otherwise.
-         */
-        template <typename query_t>
-        using invoke = std::negation<std::is_same<query_t, target_t>>;
-    };
-
-    //!\brief Helper typedef with the modified type_list.
-    using _new_list = meta::push_front<meta::filter<seqan3::type_list<configs_t...>,
-                                                    invoke_exclude<old_config_t>>,
-                                       new_config_t>;
-    //!\endcond
-public:
-
-    //!\brief Typedef with the modified configuration type.
-    using type = detail::transfer_template_args_onto_t<_new_list, configuration_t>;
-};
-
-/*!\brief Shortcut typedef for seqan3::detail::replace_config_with.
- * \ingroup core_algorithm
- * \see seqan3::detail::replace_config_with
- */
-template <typename configuration_t, typename old_config_t, typename new_config_t>
-using replace_config_with_t = typename replace_config_with<configuration_t, old_config_t, new_config_t>::type;
-
-//!\cond
-template <typename configuration_t, detail::config_element_concept new_config_t>
-struct push_front_config;
-//!\endcond
-
-// ----------------------------------------------------------------------------
-// Metafunction push_front_config
-// ----------------------------------------------------------------------------
-
-/*!\brief Helper traits meta-function to replace one configuration type with another by pushing it to the front of
- *        the configurations for a specific seqan3::detail::configuration.
- * \ingroup core_algorithm
- *
- * \tparam configuration_t The configuration type to be altered. Must be a template class.
- * \tparam new_config_t   The new_config_t to be added at the front of the configurations.
- *
- * \details
- *
- * This meta-function adds `new_config_t` at the front of the configuration.
- *
- * \see seqan3::detail::push_front_config_t
- * \see seqan3::detail::replace_config_with
- */
-template <template <typename ...> class configuration_t,
-          detail::config_element_concept new_config_t,
-          detail::config_element_concept ... configs_t>
-struct push_front_config<configuration_t<configs_t...>, new_config_t>
-{
-private:
-    //!\brief Helper typedef with the modified type_list.
-    using _new_list = meta::push_front<seqan3::type_list<configs_t...>, new_config_t>;
-public:
-
-    //!\brief Typedef with the modified configuration type.
-    using type = detail::transfer_template_args_onto_t<_new_list, configuration_t>;
-};
-
-/*!\brief Shortcut typedef for seqan3::detail::push_front_config.
- * \ingroup core_algorithm
- * \see seqan3::detail::push_front_config
- */
-template <typename configuration_t, typename new_config_t>
-using push_front_config_t = typename push_front_config<configuration_t, new_config_t>::type;
 
 // ----------------------------------------------------------------------------
 // configuration_fn_base
@@ -657,6 +591,10 @@ public:
     //!\}
 };
 
+// ============================================================================
+// Utility functions
+// ============================================================================
+
 // ----------------------------------------------------------------------------
 // apply_deferred_configs
 // ----------------------------------------------------------------------------
@@ -743,7 +681,7 @@ constexpr auto & get(detail::configuration<configs_t...> & cfg) noexcept
 
     static_assert(elem_no < meta::size<type_list_type>::value,
                   "Not requested position is to large.");
-    return std::get<elem_no>(cfg.config_elements).data();
+    return std::get<elem_no>(cfg).data();
 }
 
 /*!\brief Returns the state of the corresponding config at the specified position.
@@ -776,7 +714,7 @@ constexpr auto const & get(detail::configuration<configs_t...> const & cfg) noex
 
     static_assert(elem_no < meta::size<type_list_type>::value,
                   "Not requested position is to large.");
-    return std::get<elem_no>(cfg.config_elements).data();
+    return std::get<elem_no>(cfg).data();
 }
 
 /*!\brief Returns the state of the corresponding config at the specified position.
@@ -809,7 +747,7 @@ constexpr auto && get(detail::configuration<configs_t...> && cfg) noexcept
 
     static_assert(elem_no < meta::size<type_list_type>::value,
                   "Not requested position is to large.");
-    return std::get<elem_no>(std::move(cfg.config_elements)).data();
+    return std::get<elem_no>(std::move(cfg)).data();
 }
 
 /*!\brief Returns the state of the corresponding config at the specified position.
@@ -844,228 +782,6 @@ constexpr auto const && get(detail::configuration<configs_t...> const && cfg) no
                   "Not requested position is to large.");
 
     // TODO: It is unclear why return must be wrapped in std::move here.
-    return std::move(std::get<elem_no>(std::move(cfg.config_elements)).data());
-}
-
-/*!\brief Returns the state of the corresponding config at the specified position.
- * \tparam     target_t  Template parameter specifying the type of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The state of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe as long as the referenced data is not modified.
- */
-template <typename target_t, typename ... configs_t>
-constexpr auto & get(detail::configuration<configs_t...> & cfg) noexcept
-{
-    using type_list_type = typename detail::configuration<configs_t...>::type_list_type;
-    constexpr size_t pos = meta::find_index<type_list_type, target_t>::value;
-    static_assert(pos != meta::npos::value,
-                  "The requested type does not exists in the list.");
-
-    return get<pos>(cfg);
-}
-
-/*!\brief Returns the state of the corresponding config at the specified position.
- * \tparam     target_t  Template parameter specifying the type of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The state of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe.
- */
-template <typename target_t, typename ... configs_t>
-constexpr auto const & get(seqan3::detail::configuration<configs_t...> const & cfg) noexcept
-{
-    using type_list_type = typename detail::configuration<configs_t...>::type_list_type;
-    constexpr size_t pos = meta::find_index<type_list_type, target_t>::value;
-    static_assert(pos != meta::npos::value,
-                  "The requested type does not exists in the list.");
-
-    return get<pos>(cfg);
-}
-
-/*!\brief Returns the state of the corresponding config at the specified position.
- * \tparam     target_t  Template parameter specifying the type of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The state of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe.
- */
-template <typename target_t, typename ... configs_t>
-constexpr auto && get(detail::configuration<configs_t...> && cfg) noexcept
-{
-    using type_list_type = typename detail::configuration<configs_t...>::type_list_type;
-    constexpr size_t pos = meta::find_index<type_list_type, target_t>::value;
-    static_assert(pos != meta::npos::value,
-                  "The requested type does not exists in the list.");
-
-    return get<pos>(std::move(cfg));
-}
-
-/*!\brief Returns the state of the corresponding config at the specified position.
- * \tparam     target_t  Template parameter specifying the type of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The state of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe.
- */
-template <typename target_t, typename ... configs_t>
-constexpr auto const && get(detail::configuration<configs_t...> const && cfg) noexcept
-{
-    using type_list_type = typename detail::configuration<configs_t...>::type_list_type;
-    constexpr size_t pos = meta::find_index<type_list_type, target_t>::value;
-    static_assert(pos != meta::npos::value,
-                  "The requested type does not exists in the list.");
-
-    return get<pos>(std::move(cfg));
+    return std::move(std::get<elem_no>(std::move(cfg)).data());
 }
 } // namespace seqan3
-
-namespace std
-{
-
-/*!\brief Value metafunction specialisation for seqan3::detail::configuration
- * \ingroup core_algorithm
- * \relates seqan3::detail::configuration
- * \returns The number of configurations contained in seqan3::detail::configuration.
- */
-template <typename ... configs_t>
-struct tuple_size<seqan3::detail::configuration<configs_t...>>
-{
-    //!\brief The number of elements.
-    static constexpr size_t value = sizeof...(configs_t);
-};
-
-/*!\brief Value metafunction specialisation for seqan3::detail::configuration.
- * \ingroup core_algorithm
- * \relates seqan3::detail::configuration
- * \returns The the type of configuration for the requested position.
- */
-template <size_t elem_no, typename ... configs_t>
-struct tuple_element<elem_no, seqan3::detail::configuration<configs_t...>>
-{
-    //!\brief The type of the element at position `elem_no`.
-    using type = meta::at_c<typename seqan3::detail::configuration<configs_t...>::type_list_type, elem_no>;
-};
-
-//!\cond
-//!\brief Provides std::get interface.
-template <size_t elem_no, typename ... configs_t>
-constexpr auto & get(seqan3::detail::configuration<configs_t...> & cfg) noexcept
-{
-    return seqan3::get<elem_no>(cfg);
-}
-
-//!\brief Provides std::get interface.
-template <size_t elem_no, typename ... configs_t>
-constexpr auto const & get(seqan3::detail::configuration<configs_t...> const & cfg) noexcept
-{
-    return  seqan3::get<elem_no>(cfg);
-}
-
-//!\brief Provides std::get interface.
-template <size_t elem_no, typename ... configs_t>
-constexpr auto && get(seqan3::detail::configuration<configs_t...> && cfg) noexcept
-{
-    return seqan3::get<elem_no>(std::move(cfg));
-}
-
-//!\brief Provides std::get interface.
-template <size_t elem_no, typename ... configs_t>
-constexpr auto const && get(seqan3::detail::configuration<configs_t...> const && cfg) noexcept
-{
-    return seqan3::get<elem_no>(std::move(cfg));
-}
-
-//!\brief Provides std::get interface.
-template <typename target_t, typename ... configs_t>
-constexpr auto & get(seqan3::detail::configuration<configs_t...> & cfg) noexcept
-{
-    return seqan3::get<target_t>(cfg);
-}
-
-//!\brief Provides std::get interface.
-template <typename target_t, typename ... configs_t>
-constexpr auto const & get(seqan3::detail::configuration<configs_t...> const & cfg) noexcept
-{
-    return  seqan3::get<target_t>(cfg);
-}
-
-//!\brief Provides std::get interface.
-template <typename target_t, typename ... configs_t>
-constexpr auto && get(seqan3::detail::configuration<configs_t...> && cfg) noexcept
-{
-    return seqan3::get<target_t>(std::move(cfg));
-}
-
-//!\brief Provides std::get interface.
-template <typename target_t, typename ... configs_t>
-constexpr auto const && get(seqan3::detail::configuration<configs_t...> const && cfg) noexcept
-{
-    return seqan3::get<target_t>(std::move(cfg));
-}
-//!\endcond
-} // namespace std

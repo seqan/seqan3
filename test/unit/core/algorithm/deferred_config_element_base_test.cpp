@@ -56,10 +56,10 @@ class bar : public detail::deferred_config_element_base<bar>
     template <typename fn_t, typename configuration_t>
     constexpr auto invoke(fn_t && fn, configuration_t && config) const
     {
-        using new_cfg_t = detail::replace_config_with_t<std::remove_reference_t<configuration_t>,
-                                                        bar,
-                                                        bar_static<1>>;
-        return fn(new_cfg_t{config});
+        if (std::get<bar>(config).data() == 1)
+            return fn(config.replace_with(*this, bar_static<1>{}));
+        else
+            return fn(config.replace_with(*this, bar_static<0>{}));
     }
 
     int state{1};
@@ -133,14 +133,29 @@ TEST(deferred_config_element_base, data)
 
 TEST(deferred_config_element_base, invoke)
 {
-    detail::configuration<bar> cfg{};
-    get<0>(cfg) = 3;
-
-    auto call_on_site = [] (auto && new_cfg)
     {
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(new_cfg)>,
-                                    detail::configuration<bar_static<1>>>));
-        return std::get<0>(new_cfg);
-    };
-    EXPECT_EQ((bar{}(call_on_site, cfg)), 1);
+        detail::configuration<bar> cfg{};
+        get<0>(cfg) = 3;
+
+        auto call_on_site = [] (auto && new_cfg)
+        {
+            EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(new_cfg)>,
+                                        detail::configuration<bar_static<0>>>));
+            return get<0>(new_cfg);
+        };
+        EXPECT_EQ((bar{}(call_on_site, cfg)), 0);
+    }
+
+    {
+        detail::configuration<bar> cfg{};
+        get<0>(cfg) = 1;
+
+        auto call_on_site = [] (auto && new_cfg)
+        {
+            EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(new_cfg)>,
+                                        detail::configuration<bar_static<1>>>));
+            return get<0>(new_cfg);
+        };
+        EXPECT_EQ((bar{}(call_on_site, cfg)), 1);
+    }
 }

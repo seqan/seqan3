@@ -93,11 +93,6 @@ class configuration;
 
 template <typename derived_t>
 class deferred_config_element_base;
-
-auto _callable_dummy = [] (auto && cfg)
-{
-    return std::forward<decltype(cfg)>(cfg);
-};
 //!\endcond
 
 /*!\interface seqan3::detail::deferred_config_element_concept <>
@@ -116,10 +111,7 @@ auto _callable_dummy = [] (auto && cfg)
 template <typename config_t>
 concept bool deferred_config_element_concept =
     std::is_base_of_v<deferred_config_element_base<std::remove_reference_t<config_t>>, std::remove_reference_t<config_t>> &&
-    config_element_concept<config_t> &&
-    invocable_concept<std::remove_reference_t<config_t>,
-                      decltype(_callable_dummy),
-                      detail::configuration<std::remove_reference_t<config_t>>>;
+    config_element_concept<config_t>;
 //!\endcond
 
 // ----------------------------------------------------------------------------
