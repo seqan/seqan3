@@ -46,7 +46,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/sequence/sequence_file_in_options.hpp>
 
@@ -70,7 +70,7 @@ concept bool sequence_file_in_format_concept = requires (t                      
                                                          sequence_file_in_options<dna5, false> & options,
                                                          dna5_vector                           & seq,
                                                          std::string                           & id,
-                                                         std::vector<illumina18>               & qual,
+                                                         std::vector<phred42>                  & qual,
                                                          std::vector<dna5q>                    & seq_qual)
 {
     t::file_extensions;
@@ -113,7 +113,7 @@ concept bool sequence_file_in_format_concept = requires (t                      
  *   * In this case the data read for that field shall be discarded by the format.
  *   * Instead of passing the fields seqan3::field::SEQ and seqan3::field::QUAL, you may also pass
  *     seqan3::field::SEQ_QUAL to both parameters. If you do, the seqan3::value_type_t of the argument must be
- *     a specialisation of seqan3::quality_composition and the second template parameter to
+ *     a specialisation of seqan3::qualified and the second template parameter to
  *     seqan3::sequence_file_in_options must be set to true.
  */
  /*!\var static inline std::vector<std::string> seqan3::sequence_file_in_format_concept::file_extensions

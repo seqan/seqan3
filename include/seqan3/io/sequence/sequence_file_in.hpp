@@ -50,8 +50,8 @@
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
-#include <seqan3/alphabet/quality/quality_composition.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/concept.hpp>
 #include <seqan3/io/exception.hpp>
@@ -213,7 +213,7 @@ struct sequence_file_in_default_traits_dna
     template <typename _id_container>
     using id_container_container            = concatenated_sequences<_id_container>;
 
-    using quality_alphabet                  = illumina18;
+    using quality_alphabet                  = phred42;
     template <typename _quality_alphabet>
     using quality_container                 = std::vector<_quality_alphabet>;
     template <typename _quality_container>
@@ -524,7 +524,7 @@ public:
                                     typename traits_type::quality_alphabet>;
     //!\brief The type of field::SEQ_QUAL (std::vector <seqan3::dna5q> by default).
     using sequence_quality_type = typename traits_type::
-                                    template sequence_container<quality_composition<typename traits_type::sequence_alphabet,
+                                    template sequence_container<qualified<typename traits_type::sequence_alphabet,
                                                                                     typename traits_type::quality_alphabet>>;
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.

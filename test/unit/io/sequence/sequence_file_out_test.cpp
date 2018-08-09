@@ -335,10 +335,10 @@ TEST(row, emplace_back)
  */
 TEST(row, different_fields_in_record_and_file)
 {
-    std::vector<illumina18> qual;
+    std::vector<phred42> qual;
     qual.resize(seqs[1].size());
 
-    record<type_list<std::vector<illumina18>, std::string, dna5_vector>,
+    record<type_list<std::vector<phred42>, std::string, dna5_vector>,
            fields<field::QUAL, field::ID, field::SEQ>> rec{qual, ids[1], seqs[1]};
 
     sequence_file_out fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ, field::ID>{}};

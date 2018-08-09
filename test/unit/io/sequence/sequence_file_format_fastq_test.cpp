@@ -49,9 +49,9 @@ using namespace seqan3;
 using namespace seqan3::literal;
 
 //TODO remove after #256 is merged
-inline std::vector<illumina18> operator""_illumina18(const char * s, std::size_t n)
+inline std::vector<phred42> operator""_phred42(const char * s, std::size_t n)
 {
-    std::vector<illumina18> r;
+    std::vector<phred42> r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
@@ -106,11 +106,11 @@ struct read : public ::testing::Test
         { "ACGTTTA"_dna5 },
     };
 
-    std::vector<std::vector<illumina18>> expected_quals
+    std::vector<std::vector<phred42>> expected_quals
     {
-        { "!##$%&'()*+,-./++-"_illumina18 },
-        { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE"_illumina18 },
-        { "!!!!!!!"_illumina18 },
+        { "!##$%&'()*+,-./++-"_phred42 },
+        { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE"_phred42 },
+        { "!!!!!!!"_phred42 },
     };
 
     sequence_file_format_fastq format;
@@ -119,7 +119,7 @@ struct read : public ::testing::Test
 
     std::string id;
     dna5_vector seq;
-    std::vector<illumina18> qual;
+    std::vector<phred42> qual;
 
     void do_read_test(std::string const & input)
     {
@@ -300,7 +300,7 @@ TEST_F(read, seq_qual)
 {
     std::stringstream istream{input};
 
-    std::vector<quality_composition<dna5, illumina18>> seq_qual;
+    std::vector<qualified<dna5, phred42>> seq_qual;
     sequence_file_in_options<dna5, true> options2;
 
     for (unsigned i = 0; i < 3; ++i)
@@ -312,7 +312,7 @@ TEST_F(read, seq_qual)
 
         EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
         EXPECT_TRUE((ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
-        EXPECT_TRUE((ranges::equal(seq_qual | view::convert<illumina18>, expected_quals[i])));
+        EXPECT_TRUE((ranges::equal(seq_qual | view::convert<phred42>, expected_quals[i])));
     }
 }
 
@@ -380,11 +380,11 @@ struct write : public ::testing::Test
         "Test3"
     };
 
-    std::vector<std::vector<illumina18>> quals
+    std::vector<std::vector<phred42>> quals
     {
-        { "!##$"_illumina18 },
-        { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_illumina18 },
-        { "!!*+,-./+*+,-./+!!FF!!"_illumina18 },
+        { "!##$"_phred42 },
+        { "!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE"_phred42 },
+        { "!!*+,-./+*+,-./+!!FF!!"_phred42 },
     };
 
     sequence_file_format_fastq format;
@@ -463,7 +463,7 @@ TEST_F(write, default_options)
 
 TEST_F(write, seq_qual)
 {
-    std::vector<std::vector<quality_composition<dna5, illumina18>>> vec;
+    std::vector<std::vector<qualified<dna5, phred42>>> vec;
     vec.resize(3);
     for (unsigned i = 0; i < 3; ++i)
     {
@@ -480,7 +480,7 @@ TEST_F(write, seq_qual)
                                        options,
                                        vec[i] | view::convert<dna5>,
                                        ids[i],
-                                       vec[i] | view::convert<illumina18>) ));
+                                       vec[i] | view::convert<phred42>) ));
 
     ostream.flush();
 
