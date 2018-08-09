@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -50,9 +50,10 @@ namespace seqan3
 {
 
 /*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with a quality alphabet.
- * \ingroup alphabet
+ * \ingroup quality
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
  * \tparam quality_alphabet_t Types of further letters (up to 4); must satisfy seqan3::quality_concept.
+ * \implements seqan3::quality_concept
  *
  * This composition pairs a nucleotide alphabet with a quality alphabet. The rank values
  * correpsond to numeric values in the size of the composition, while the character values
@@ -65,7 +66,7 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~{.cpp}
  *
- * quality_composition<dna4, illumina18> l{dna4::A, 7};
+ * qualified<dna4, phred42> l{dna4::A, 7};
  * std::cout << int(to_rank(l)) << ' '
  *           << int(to_rank(get<0>(l))) << ' '
  *           << int(to_rank(get<1>(l))) << '\n';
@@ -92,12 +93,10 @@ namespace seqan3
  * This seqan3::cartesian_composition itself fulfills both seqan3::alphabet_concept and seqan3::quality_concept .
  */
 
-template <typename sequence_alphabet_t, typename quality_alphabet_t>
-      requires nucleotide_concept<sequence_alphabet_t> &&
-               quality_concept<quality_alphabet_t>
-struct quality_composition :
-    public cartesian_composition<quality_composition<sequence_alphabet_t, quality_alphabet_t>,
-                                sequence_alphabet_t, quality_alphabet_t>
+template <nucleotide_concept sequence_alphabet_t, quality_concept quality_alphabet_t>
+struct qualified :
+    public cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
+                                 sequence_alphabet_t, quality_alphabet_t>
 {
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
@@ -113,28 +112,28 @@ struct quality_composition :
      * \{
      */
     //!\brief Directly assign the sequence letter.
-    constexpr quality_composition & operator=(sequence_alphabet_type const l) noexcept
+    constexpr qualified & operator=(sequence_alphabet_type const l) noexcept
     {
         get<0>(*this) = l;
         return *this;
     }
 
     //!\brief Directly assign the quality letter.
-    constexpr quality_composition & operator=(quality_alphabet_type const l) noexcept
+    constexpr qualified & operator=(quality_alphabet_type const l) noexcept
     {
         get<1>(*this) = l;
         return *this;
     }
 
     //!\brief Assign from a character. This modifies the internal sequence letter.
-    constexpr quality_composition & assign_char(char_type const c)
+    constexpr qualified & assign_char(char_type const c)
     {
         seqan3::assign_char(get<0>(*this), c);
         return *this;
     }
 
     //!\brief Assign from a phred value. This modifies the internal quality letter.
-    constexpr quality_composition & assign_phred(phred_type const c)
+    constexpr qualified & assign_phred(phred_type const c)
     {
         seqan3::assign_phred(get<1>(*this), c);
         return *this;
@@ -156,22 +155,22 @@ struct quality_composition :
         return seqan3::to_char(get<0>(*this));
     }
 
-    /*!\brief Return a quality_composition where the quality is preserved, but the sequence letter is complemented.
+    /*!\brief Return a qualified where the quality is preserved, but the sequence letter is complemented.
      * \sa seqan3::complement
      * \sa seqan3::nucleotide_concept::complement
      */
-    constexpr quality_composition complement() const noexcept
+    constexpr qualified complement() const noexcept
     {
         using seqan3::complement;
-        return quality_composition{complement(get<0>(*this)), get<1>(*this)};
+        return qualified{complement(get<0>(*this)), get<1>(*this)};
     }
     //!\}
 };
 
-//!\brief Type deduction guide enables usage of quality_composition without specifying template args.
-//!\relates quality_composition
+//!\brief Type deduction guide enables usage of qualified without specifying template args.
+//!\relates qualified
 template <typename sequence_alphabet_type, typename quality_alphabet_type>
-quality_composition(sequence_alphabet_type &&, quality_alphabet_type &&)
-    -> quality_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
+qualified(sequence_alphabet_type &&, quality_alphabet_type &&)
+    -> qualified<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;
 
 } // namespace seqan3
