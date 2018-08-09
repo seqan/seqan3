@@ -55,47 +55,39 @@ namespace seqan3
  * without losing additional information by replacing the sequence directly.
  */
 
- template <typename sequence_alphabet_t, typename mask_alphabet_t>
-    requires alphabet_concept<sequence_alphabet_t> &&
-             semi_alphabet_concept<mask_alphabet_t>
- struct masked_composition :
-    public cartesian_composition<masked_composition<sequence_alphabet_t, mask_alphabet_t>,
-        sequence_alphabet_t, mask_alphabet_t>
+ template <typename sequence_alphabet_t, typename mask_t = mask>
+    requires alphabet_concept<sequence_alphabet_t>
+
+ struct masked :
+    public cartesian_composition<masked<sequence_alphabet_t, mask_t>,
+        sequence_alphabet_t, mask_t>
 {
     using sequence_alphabet_type = sequence_alphabet_t;
-    using mask_alphabet_type = mask_alphabet_t;
 
     using char_type = underlying_char_t<sequence_alphabet_type>;
-    using mask_type = underlying_rank_t<mask_alphabet_type>;
 
     /*!\name Write functions
      * \{
      */
     //!\brief Directly assign the sequence letter.
-    constexpr masked_composition & operator=(sequence_alphabet_type const l) noexcept
+    constexpr masked & operator=(sequence_alphabet_type const l) noexcept
     {
         get<0>(*this) = l;
         return *this;
     }
 
     //!\brief Directly assign the mask letter.
-    constexpr masked_composition & operator=(mask_alphabet_type const l) noexcept
+    constexpr masked & operator=(mask const l) noexcept
     {
         get<1>(*this) = l;
         return *this;
     }
 
     //!\brief Assign from a character. This modifies the internal sequence letter.
-    constexpr masked_composition & assign_char(char_type const c)
+    constexpr masked & assign_char(char_type const c)
     {
         seqan3::assign_char(get<0>(*this), c);
-        return *this;
-    }
-
-    //!\brief Assign from a mask value. This modifies the internal mask value.
-    constexpr masked_composition & assign_mask(mask_type const c)
-    {
-        seqan3::assign_rank(get<1>(*this), c);
+        seqan3::assign_rank(get<1>(*this), islower(c));
         return *this;
     }
     //!\}
@@ -103,16 +95,10 @@ namespace seqan3
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the mask value. This reads the internal mask value.
-    constexpr mask_type to_mask() const noexcept
-    {
-        return seqan3::to_rank(get<1>(*this));
-    }
-
     //!\brief Return a character. This reads the internal sequence letter.
     constexpr char_type to_char() const noexcept
     {
-        if (to_mask())
+        if (seqan3::to_rank(get<1>(*this)))
         {
             return std::tolower(seqan3::to_char(get<0>(*this)));
         }
@@ -123,9 +109,9 @@ namespace seqan3
     }
 };
 
-//!\brief Type deduction guide enables usage of masked_composition without specifying template args.
-//!\relates masked_composition
-template <typename sequence_alphabet_type, typename mask_alphabet_type>
-masked_composition(sequence_alphabet_type &&, mask_alphabet_type &&)
-    -> masked_composition<std::decay_t<sequence_alphabet_type>, std::decay_t<mask_alphabet_type>>;
+//!\brief Type deduction guide enables usage of masked without specifying template args.
+//!\relates masked
+template <typename sequence_alphabet_type>
+masked(sequence_alphabet_type &&, mask const &)
+    -> masked<std::decay_t<sequence_alphabet_type>>;
 } //namespace seqan3
