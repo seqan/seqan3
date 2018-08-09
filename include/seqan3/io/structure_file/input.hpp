@@ -139,10 +139,15 @@ namespace seqan3
  * \brief Data type for the partner index of an interaction in seqan3::field::BPP; must satisfy
  * std::numeric_limits::is_integer.
  */
+/*!\typedef using bpp_queue
+ * \memberof seqan3::structure_file_input_traits_concept
+ * \brief A container template representing a set of interactions of type bpp_item,
+ * which are (comparable) tuples of `bpp_prob` and `bpp_partner`;
+ * must satisfy seqan3::container_concept and must provide an std::emplace(bpp_prob, bpp_partner) function.
+ */
 /*!\typedef using bpp_container
  * \memberof seqan3::structure_file_input_traits_concept
- * \brief Type template of the seqan3::field::BPP, a container template over a priority queue of interactions
- * (bpp_item), which are (comparable) tuples of `bpp_prob` and `bpp_partner`;
+ * \brief Type template of the seqan3::field::BPP, a container template over a set (bpp_queue) of interactions;
  * must satisfy seqan3::sequence_container_concept.
  */
 /*!\typedef using bpp_container_container
@@ -240,17 +245,26 @@ concept bool structure_file_input_traits_concept = requires(t v)
     // bpp
     requires std::is_floating_point_v<typename t::bpp_prob>;
     requires std::numeric_limits<typename t::bpp_partner>::is_integer;
-    requires sequence_container_concept
-        <typename t::template bpp_container
-            <typename t::template bpp_queue
-                 <typename t::template bpp_item
-                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
-    requires sequence_container_concept
-        <typename t::template bpp_container_container
-            <typename t::template bpp_container
-                <typename t::template bpp_queue
-                    <typename t::template bpp_item
-                        <typename t::bpp_prob, typename t::bpp_partner>>>>>;
+
+// TODO(joergi-w) The expensive concept check for bpp is currently omitted. Check again when compiler has improved.
+//    requires container_concept // TODO check Associative Container Concept when implemented
+//        <typename t::template bpp_queue
+//            <typename t::template bpp_item
+//                <typename t::bpp_prob, typename t::bpp_partner>>>
+//        && requires(typename t::template bpp_queue // TODO maybe implement also a version that allows emplace_back
+//            <typename t::template bpp_item
+//                <typename t::bpp_prob, typename t::bpp_partner>> value) { value.emplace(1.0, 1); };
+//    requires sequence_container_concept
+//        <typename t::template bpp_container
+//            <typename t::template bpp_queue
+//                 <typename t::template bpp_item
+//                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
+//    requires sequence_container_concept
+//        <typename t::template bpp_container_container
+//            <typename t::template bpp_container
+//                <typename t::template bpp_queue
+//                    <typename t::template bpp_item
+//                        <typename t::bpp_prob, typename t::bpp_partner>>>>>;
 
     // structure
     requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
