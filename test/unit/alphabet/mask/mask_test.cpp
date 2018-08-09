@@ -54,10 +54,6 @@ TEST(assignment, assign_rank)
     EXPECT_FALSE(lmask.to_rank());
     EXPECT_EQ(lmask.assign_rank(true), mask::MASKED);
     EXPECT_EQ(lmask.assign_rank(false), mask::UNMASKED);
-    EXPECT_EQ(lmask.assign_rank(mask::MASKED), mask::MASKED);
-    EXPECT_TRUE(lmask.to_rank());
-    EXPECT_EQ(lmask.assign_rank(mask::UNMASKED), mask::UNMASKED);
-    EXPECT_FALSE(lmask.to_rank());
 
     // const l-value
     lmask.assign_rank(1);
@@ -74,10 +70,6 @@ TEST(assignment, assign_rank)
     EXPECT_FALSE(std::move(rmask).to_rank());
     EXPECT_EQ(std::move(rmask).assign_rank(true), mask::MASKED);
     EXPECT_EQ(std::move(rmask).assign_rank(false), mask::UNMASKED);
-    EXPECT_EQ(std::move(rmask).assign_rank(mask::MASKED), mask::MASKED);
-    EXPECT_TRUE(std::move(rmask).to_rank());
-    EXPECT_EQ(std::move(rmask).assign_rank(mask::UNMASKED), mask::UNMASKED);
-    EXPECT_FALSE(std::move(rmask).to_rank());
 
     // const r-value
     mask const crmask{lmask};

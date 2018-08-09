@@ -48,7 +48,7 @@ namespace seqan3
  * \implements seqan3::semi_alphabet_concept
  *
  * \details
- * This alphabet is not usually used directly, but instead via seqan3::masked_composition.
+ * This alphabet is not usually used directly, but instead via seqan3::masked.
  * For more information see the \link mask Mask submodule \endlink.
  */
 struct mask
@@ -66,7 +66,7 @@ struct mask
     //!\}
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{2};
+    static constexpr uint8_t value_size{2};
 
     /*!\name Read function
      * \{
@@ -87,12 +87,6 @@ struct mask
         assert(c < value_size);
         _value = static_cast<internal_type>(c);
         return *this;
-    }
-
-    //!\brief Assign from mask::MASKED or mask::UNMASKED.
-    constexpr mask & assign_rank(mask const & c) noexcept
-    {
-        return assign_rank(c.to_rank());
     }
     //!\}
 
