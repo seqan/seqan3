@@ -74,7 +74,7 @@ namespace seqan3
  * \endcond
  *
  * \sa quality_composition
- * \sa mask_composition
+ * \sa masked
  */
 
 template <typename derived_type,

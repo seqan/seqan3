@@ -44,8 +44,8 @@
  *
  * \par Introduction
  * Masks are useful as cartesian compositions when one wants to create a masked alphabet with
- * don't care positions, but does not want to use the seqan3::dna15::N or
- * seqan3::aa27::X because of loss of information. It will instead mark the specified characters as masked,
+ * don't care positions, but does not want to use the seqan3::dna15 **N** or
+ * seqan3::aa27 **X** because of loss of information. It will instead mark the specified characters as masked,
  * and display them as lowercase representations when printed.\n
  * There are two types of masking: "hard-masking" which converts to the UNKNOWN character and
  * "soft-masking", which is visualised by using lower-case instead of upper-case.

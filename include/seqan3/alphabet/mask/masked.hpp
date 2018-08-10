@@ -47,7 +47,7 @@ namespace seqan3
  * with a mask.
  * \ingroup mask
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_alphabet_concept.
- * \tparam mask_alphabet_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept.
+ * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept, defaults to seqan3::mask.
  *
  * \details
  * The masked composition represents a seqan3::cartesian_composition of any given alphabet with the
@@ -57,13 +57,14 @@ namespace seqan3
 
  template <typename sequence_alphabet_t, typename mask_t = mask>
     requires alphabet_concept<sequence_alphabet_t>
-
  struct masked :
     public cartesian_composition<masked<sequence_alphabet_t, mask_t>,
         sequence_alphabet_t, mask_t>
 {
+    //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
 
+    //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
 
     /*!\name Write functions

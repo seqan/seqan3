@@ -58,7 +58,7 @@ struct mask
 
     /*!\name Boolean values
      * \brief Static member "booleans" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.
+     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
      */
     //!\{
     static const mask UNMASKED;
