@@ -54,8 +54,8 @@ namespace seqan3::detail
  * \details
  *
  * This class provides a common interface for deferred config types that are stored in a seqan3::configuration object.
- * It provides getter functions to retrieve the stored state of the config implementation and an additional
- * constructor that takes the seqan3::configuration and copies the state of the corresponding configuration.
+ * It provides getter functions to retrieve the stored value of the config implementation and an additional
+ * constructor that takes the seqan3::configuration and copies the value of the corresponding configuration.
  * In addition, this base class requires, that the `derived_t` type provides a member function `invoke`, that
  * transforms the passed configuration to a new configuration replacing the deferred config type with it's static
  * counter part after resolving the runtime information to a static type or value.
@@ -65,34 +65,34 @@ namespace seqan3::detail
  *
  * ```cpp
  * template <size_t I>
- * class my_config = detail::config_element_base<my_config<I>>
+ * class my_config : detail::config_element_base<my_config<I>>
  * {
- *     // Grant the base class access to the private member `state`.
+ *     // Grant the base class access to the private member `value`.
  *     friend class detail::config_element_access<my_config<I>>;
  *
- *     size_t state{I};  // Has to be named `state`.
+ *     size_t value{I};  // Has to be named `value`.
  * };
  *
  * class my_deferred_config = detail::deferred_config_element_base<my_deferred_config>
  * {
- *     // Grant the base class access to the private member `state`.
+ *     // Grant the base class access to the private member `value`.
  *     friend class detail::config_element_access<my_deferred_config>;
  *
  *      template <typename fn_t, typename configuration_t>
  *      constexpr auto invoke(fn_t && fn, configuration_t && config) const
  *          requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
  *      {
- *          if (state == 0)
+ *          if (value == 0)
  *              return fn(std::forward<configuration_t>(cfg).replace_with(my_deferred_config{}, my_config<0>{}));
  *          else
  *              return fn(std::forward<configuration_t>(cfg).replace_with(my_deferred_config{}, my_config<1>{}));
  *      }
  *
- *     int state{0};  // Has to be named `state`.
+ *     int value{0};  // Has to be named `value`.
  * };
  * ```
  *
- * The configuration class must provide a member variable with the name `state`, which the base class can access via the
+ * The configuration class must provide a member variable with the name `value`, which the base class can access via the
  * seqan3::detail::config_element_access struct. This class, then gives access to the underlying data via getter
  * functions. For a dynamic dispatching of configurations, that should be translated to a static configuration for the
  * target algorithm, the `invoke` function is triggered by the configuration system before the algorithm is executed.
@@ -131,6 +131,8 @@ public:
      * \param cfg The old configuration containing the deferred_config (`derived_t`) that is currently invoked.
      *
      * \returns The result of invoking `fn` with the altered configuration.
+     *
+     * \attention The result is declared `[[nodiscard]]` and cannot be silently ignored.
      */
     template <typename fn_t,
               typename configuration_t>

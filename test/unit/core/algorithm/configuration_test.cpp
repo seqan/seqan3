@@ -50,33 +50,33 @@ public:
         ++default_counter;
     }
 
-    bar(bar const & b) : detail::config_element_base<bar>{b}, state(b.state)
+    bar(bar const & b) : detail::config_element_base<bar>{b}, value(b.value)
     {
         ++copy_counter;
     }
 
-    bar(bar && b) : detail::config_element_base<bar>{std::move(b)}, state(b.state)
+    bar(bar && b) : detail::config_element_base<bar>{std::move(b)}, value(b.value)
     {
         ++move_counter;
     }
 
     bar & operator=(bar const & b)
     {
-        state = b.state;
+        value = b.value;
         ++copy_counter;
         return *this;
     }
 
     bar & operator=(bar && b)
     {
-        state = std::move(b.state);
+        value = std::move(b.value);
         ++move_counter;
         return *this;
     }
 
     ~bar() = default;
 
-    bar(int v) : state{v}
+    bar(int v) : value{v}
     {}
 
     static inline size_t default_counter{0};
@@ -92,7 +92,7 @@ public:
 
 private:
 
-    int state{1};
+    int value{1};
 };
 
 struct bax : public detail::config_element_base<bax>
@@ -105,31 +105,31 @@ public:
         ++default_counter;
     }
 
-    bax(bax const & b) : detail::config_element_base<bax>{b}, state(b.state)
+    bax(bax const & b) : detail::config_element_base<bax>{b}, value(b.value)
     {
         ++copy_counter;
     }
 
-    bax(bax && b) : detail::config_element_base<bax>{std::move(b)}, state(b.state)
+    bax(bax && b) : detail::config_element_base<bax>{std::move(b)}, value(b.value)
     {
         ++move_counter;
     }
 
     bax & operator=(bax const & b)
     {
-        state = b.state;
+        value = b.value;
         ++copy_counter;
         return *this;
     }
 
     bax & operator=(bax && b)
     {
-        state = std::move(b.state);
+        value = std::move(b.value);
         ++move_counter;
         return *this;
     }
 
-    bax(float v) : state{v}
+    bax(float v) : value{v}
     {}
 
     ~bax() = default;
@@ -147,7 +147,7 @@ public:
 
 private:
 
-    float state{2.2};
+    float value{2.2};
 };
 
 TEST(configuration, metafunction)
@@ -215,7 +215,7 @@ public:
 
 private:
 
-    size_t state{I};
+    size_t value{I};
 };
 
 TEST(configuration, push_front)

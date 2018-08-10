@@ -57,24 +57,24 @@ namespace seqan3::detail
  * \details
  *
  * This class provides a common interface for config types that are stored in a seqan3::configuration object.
- * It provides getter functions to retrieve the stored state of the config implementation and an additional
- * constructor that takes the seqan3::configuration and copies the state of the corresponding configuration.
+ * It provides getter functions to retrieve the stored value of the config implementation and an additional
+ * constructor that takes the seqan3::configuration and copies the value of the corresponding configuration.
  * To allow the base class access to the private members of this config implementation, the class must add a friend declaration for
  * seqan3::detail::config_element_access.
  * The following example demonstrates the usage of this base class for a simple example.
  *
  * ```cpp
  * template <typename t>
- * class my_config = detail::config_element_base<my_config<t>>
+ * class my_config : detail::config_element_base<my_config<t>>
  * {
- *     // Grant the base class access to the private member `state`.
+ *     // Grant the base class access to the private member `value`.
  *     friend class detail::config_element_access<my_config<t>>;
  *
- *     t state{};  // Must name the variable `state`.
+ *     t value{};  // Must name the variable `value`.
  * };
  * ```
  *
- * The configuration class must provide a state with the name `state`, which the base class can access via the
+ * The configuration class must provide a value with the name `value`, which the base class can access via the
  * seqan3::detail::config_element_access struct. This class, then gives access to the underlying data via getter functions.
  * Often, the config is a static type and can be set with an enum value to specify a certain policy for the target
  * algorithm. In case the exact config can also be set at runtime, one can use the seqan3::detail::deferred_config_element_base
@@ -110,7 +110,7 @@ public:
      *
      * \details
      *
-     * Extending classes must provide a data member called `state` and grant access to it by adding
+     * Extending classes must provide a data member called `value` and grant access to it by adding
      * seqan3::detail::config_element_access to the type definition.
      *
      * ### Complexity
@@ -125,27 +125,27 @@ public:
      *
      * Thread-safe if data is not written.
      */
-    constexpr auto & data() & noexcept
+    constexpr auto & get() & noexcept
     {
-        return config_element_access<derived_t>::_data(static_cast<derived_t &>(*this));
+        return config_element_access<derived_t>::_get(static_cast<derived_t &>(*this));
     }
 
-    //!\copydoc config_element_base::data()
-    constexpr auto const & data() const & noexcept
+    //!\copydoc get()
+    constexpr auto const & get() const & noexcept
     {
-        return config_element_access<derived_t>::_data(static_cast<derived_t const &>(*this));
+        return config_element_access<derived_t>::_get(static_cast<derived_t const &>(*this));
     }
 
-    //!\copydoc config_element_base::data()
-    constexpr auto && data() && noexcept
+    //!\copydoc get()
+    constexpr auto && get() && noexcept
     {
-        return config_element_access<derived_t>::_data(std::move(static_cast<derived_t &&>(*this)));
+        return config_element_access<derived_t>::_get(std::move(static_cast<derived_t &&>(*this)));
     }
 
-    //!\copydoc config_element_base::data()
-    constexpr auto const && data() const && noexcept
+    //!\copydoc get()
+    constexpr auto const && get() const && noexcept
     {
-        return config_element_access<derived_t>::_data(std::move(static_cast<derived_t const &&>(*this)));
+        return config_element_access<derived_t>::_get(std::move(static_cast<derived_t const &&>(*this)));
     }
     //!\}
 };

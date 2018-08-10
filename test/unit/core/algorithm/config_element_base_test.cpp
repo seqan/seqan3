@@ -43,7 +43,7 @@ class bar : public detail::config_element_base<bar>
 {
     friend class detail::config_element_access<bar>;
 
-    int state{1};
+    int value{1};
 };
 
 TEST(config_element_base, concept)
@@ -61,53 +61,53 @@ TEST(config_element_base, standard_construction)
     EXPECT_TRUE((std::is_move_assignable_v<bar>));
 }
 
-TEST(config_element_base, data)
+TEST(config_element_base, get)
 {
     { // l-value
         bar br{};
 
-        EXPECT_EQ(br.data(), 1);
-        br.data() = 2;
-        EXPECT_EQ(br.data(), 2);
+        EXPECT_EQ(br.get(), 1);
+        br.get() = 2;
+        EXPECT_EQ(br.get(), 2);
 
-        EXPECT_TRUE((std::is_same_v<decltype(br.data()), int &>));
+        EXPECT_TRUE((std::is_same_v<decltype(br.get()), int &>));
     }
 
     { // const l-value
         bar const br_c{};
 
-        EXPECT_EQ(br_c.data(), 1);
+        EXPECT_EQ(br_c.get(), 1);
 
         bar br;
-        br.data() = 2;
+        br.get() = 2;
         bar const br_c2{br};
 
-        EXPECT_EQ(br_c2.data(), 2);
+        EXPECT_EQ(br_c2.get(), 2);
 
-        EXPECT_TRUE((std::is_same_v<decltype(br_c2.data()), int const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(br_c2.get()), int const &>));
     }
 
     { // r-value
         bar br{};
 
-        EXPECT_EQ(std::move(br).data(), 1);
-        br.data() = 2;
-        EXPECT_EQ(std::move(br).data(), 2);
+        EXPECT_EQ(std::move(br).get(), 1);
+        br.get() = 2;
+        EXPECT_EQ(std::move(br).get(), 2);
 
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(br).data()), int &&>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(br).get()), int &&>));
     }
 
     { // const r-value
         bar const br_c{};
 
-        EXPECT_EQ(std::move(br_c).data(), 1);
+        EXPECT_EQ(std::move(br_c).get(), 1);
 
         bar br;
-        br.data() = 2;
+        br.get() = 2;
         bar const br_c2{br};
 
-        EXPECT_EQ(std::move(br_c2).data(), 2);
+        EXPECT_EQ(std::move(br_c2).get(), 2);
 
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(br_c2).data()), int const &&>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(br_c2).get()), int const &&>));
     }
 }

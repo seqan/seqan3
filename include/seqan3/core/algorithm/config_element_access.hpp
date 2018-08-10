@@ -65,31 +65,31 @@ class deferred_config_element_base;
 template <typename derived_config_t>
 class config_element_access
 {
-    /*!\brief Grant access to the member variable `state` of the actual config implementation.
-     * \param cfg The actual config to get the state from.
-     * \returns The state.
+    /*!\brief Grant access to the member variable `value` of the actual config implementation.
+     * \param cfg The actual config to get the value from.
+     * \returns The value.
      */
-    constexpr static auto & _data(derived_config_t & cfg)
+    constexpr static auto & _get(derived_config_t & cfg)
     {
-        return cfg.state;
+        return cfg.value;
     }
 
-    //!\copydoc _data()
-    constexpr static auto const & _data(derived_config_t const & cfg)
+    //!\copydoc _get()
+    constexpr static auto const & _get(derived_config_t const & cfg)
     {
-        return cfg.state;
+        return cfg.value;
     }
 
-    //!\copydoc _data()
-    constexpr static auto && _data(derived_config_t && cfg)
+    //!\copydoc _get()
+    constexpr static auto && _get(derived_config_t && cfg)
     {
-        return std::move(cfg.state);
+        return std::move(cfg.value);
     }
 
-    //!\copydoc _data()
-    constexpr static auto const && _data(derived_config_t const && cfg)
+    //!\copydoc _get()
+    constexpr static auto const && _get(derived_config_t const && cfg)
     {
-        return std::move(cfg.state);
+        return std::move(cfg.value);
     }
 
     /*!\brief Grant access to the member function `invoke` of the actual config implementation.
@@ -100,8 +100,8 @@ class config_element_access
      */
     template <typename fn_t, typename configuration_t>
     constexpr static auto _invoke(derived_config_t const & cfg,
-                                           fn_t && fn,
-                                           configuration_t && configuration)
+                                  fn_t && fn,
+                                  configuration_t && configuration)
     {
         return cfg.invoke(std::forward<fn_t>(fn), std::forward<configuration_t>(configuration));
     }
