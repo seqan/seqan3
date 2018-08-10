@@ -37,6 +37,8 @@
  * \brief Meta-header for the gap submodule; includes all headers from alphabet/gap/.
  */
 
+#pragma once
+
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 
