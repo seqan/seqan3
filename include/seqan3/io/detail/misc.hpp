@@ -44,7 +44,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief Write `'\n'` or `"\r\n"` to the stream iterator, depending on arguments.
+/*!\brief Write `"\n"` or `"\r\n"` to the stream iterator, depending on arguments.
  * \tparam  it_t Type of the iterator; must satisfy seqan3::output_iterator_concept with `char`.
  * \param     it The iterator.
  * \param add_cr Whether to add carriage return, too.

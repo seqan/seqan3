@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (chr) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (chr) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (chr) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (chr) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without

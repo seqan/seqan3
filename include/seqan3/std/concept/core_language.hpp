@@ -162,6 +162,7 @@ concept bool nothrow_assignable_concept =           assignable_concept<t1, t2> &
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
  * will provide an implementation).
  */
+//!\}
 //!\cond
 template <typename t>
 concept bool swappable_concept =               requires (t && v1, t && v2) { std::swap(v1, v2); } ||
