@@ -42,9 +42,99 @@
 #include <tuple>
 #include <type_traits>
 
+#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_list.hpp>
 #include <seqan3/std/concept/comparison.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/std/concept/object.hpp>
+
+namespace seqan3::detail
+{
+
+/*!\interface seqan3::detail::tuple_size_concept <>
+ * \ingroup   core
+ * \brief     Subconcept definition for seqan3::tuple_like_concept to test for std::tuple_size-interface.
+ * \see       seqan3::tuple_like_concept
+ */
+//!\cond
+template <typename tuple_t>
+concept bool tuple_size_concept = requires (tuple_t v)
+{
+    { std::tuple_size<tuple_t>::value } -> size_t;
+};
+//!\endcond
+
+/*!\interface seqan3::detail::tuple_get_concept <>
+ * \ingroup   core
+ * \brief     Subconcept definition for seqan3::tuple_like_concept to test for std::get-interface.
+ * \see       seqan3::tuple_like_concept
+ */
+//!\cond
+template <typename tuple_t>
+concept bool tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
+{
+    requires std::tuple_size_v<tuple_t> > 0;
+
+    typename std::tuple_element<0, tuple_t>::type;
+    { std::get<0>(v)              } -> typename std::tuple_element<0, tuple_t>::type &;
+    { std::get<0>(v_c)            } -> typename std::tuple_element<0, tuple_t>::type const &;
+    { std::get<0>(std::move(v))   } -> typename std::tuple_element<0, tuple_t>::type &&;
+    // TODO: The return type for std::tuple is wrong until gcc-8.0, for gcc > 8.0 this is fixed.
+    { std::get<0>(std::move(v_c)) };// -> typename std::tuple_element<0, tuple_t>::type const &&;
+};
+//!\endcond
+
+/*!\brief   Helper type trait function to check for seqan3::strict_totally_ordered_concept on all elements of
+ *          the given tuple type.
+ * \ingroup core
+ * \tparam  state_t   The last state of the fold operation.
+ * \tparam  element_t The current processed element by the meta::fold operation.
+ *
+ * \returns std::true_type if strict_totally_ordered_concept<element_t> and state_t::value evaluate to `true`,
+ *          std::false_type otherwise.
+ */
+template <typename state_t, typename element_t>
+struct satisfies_strict_totally_ordered_concept
+{
+    //!\brief The resulting type definition.
+    using type =  std::conditional_t<state_t::value && strict_totally_ordered_concept<element_t>,
+                                    std::true_type,
+                                    std::false_type>;
+};
+
+/*!\brief   Transformation trait to expose the tuple element types as seqan3::type_list
+ * \ingroup core
+ * \tparam  tuple_t The tuple to extract the element types from.
+ *
+ * \returns A seqan3::type_list over the element types of the given tuple.
+ * \see seqan3::detail::tuple_type_list_t
+ */
+template <detail::tuple_size_concept tuple_t>
+struct tuple_type_list
+{
+protected:
+
+    //!\brief Helper function to extract the types using the tuple elements.
+    template <size_t ... Is>
+    static constexpr auto invoke_to_type_list(std::index_sequence<Is...>)
+    {
+        return type_list<std::tuple_element_t<Is, tuple_t>...>{};
+    }
+
+public:
+    //!\brief The generated seqan3::type_list.
+    using type = decltype(invoke_to_type_list(std::make_index_sequence<std::tuple_size<tuple_t>::value>{}));
+};
+
+/*!\brief   Helper type for seqan3::detail::tuple_type_list
+ * \ingroup core
+ *
+ * \see seqan3::detail::tuple_type_list
+ */
+template <detail::tuple_size_concept tuple_t>
+using tuple_type_list_t = typename tuple_type_list<tuple_t>::type;
+} // namespace::seqan3
 
 namespace seqan3
 {
@@ -60,7 +150,9 @@ namespace seqan3
  *
  * \details
  *
- * Types that meet this concept are std::tuple, std::pair, std::array, seqan3::pod_tuple, seqan3::record.
+ * Types that meet this concept are for example std::tuple, std::pair, std::array, seqan3::pod_tuple, seqan3::record.
+ * The seqan3::strict_totally_ordered_concept will only be required if all types contained in the tuple like
+ * data structure are them selfs strict totally ordered.
  */
 /*!\name Requirements for seqan3::tuple_like_concept
  * \brief You can expect these (meta-)functions on all types that implement seqan3::tuple_like_concept.
@@ -101,10 +193,20 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept bool tuple_like_concept = strict_totally_ordered_concept<t> &&
-                                  requires (t v)
+concept bool tuple_like_concept = detail::tuple_size_concept<std::remove_reference_t<t>> && requires(t v)
 {
-    { std::tuple_size_v<std::remove_reference_t<t>> } -> size_t;
+    typename detail::tuple_type_list<remove_cvref_t<t>>::type;
+
+    // NOTE(rrahn): To check the full tuple_concept including the get interface and the strict_totally_ordered_concept
+    //              we need to make some assumptions. In general these checks can only be executed if the tuple is not
+    //              empty. Furthermore, the strict_totally_ordered_concept can only be checked if all elements in the
+    //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
+    requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
+                detail::tuple_get_concept<remove_cvref_t<t>> &&
+                (!meta::fold<detail::tuple_type_list_t<remove_cvref_t<t>>,
+                             std::true_type,
+                             meta::quote_trait<detail::satisfies_strict_totally_ordered_concept>>::value ||
+                strict_totally_ordered_concept<remove_cvref_t<t>>);
 };
 //!\endcond
 
