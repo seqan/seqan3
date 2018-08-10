@@ -49,20 +49,29 @@
 namespace seqan3
 {
 
-/*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with a quality alphabet.
+/*!\brief Joins an arbitrary alphabet with a quality alphabet.
  * \ingroup quality
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
- * \tparam quality_alphabet_t Types of further letters (up to 4); must satisfy seqan3::quality_concept.
+ * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::alphabet_concept.
+ * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::quality_concept.
  * \implements seqan3::quality_concept
  *
- * This composition pairs a nucleotide alphabet with a quality alphabet. The rank values
- * correpsond to numeric values in the size of the composition, while the character values
- * are taken from the sequence alphabet and the phred values are taken from the quality
- * alphabet.
+ * This composition pairs an arbitrary alphabet with a quality alphabet, where
+ * each alphabet character is stored together with its quality score in a
+ * single value. That way, you can can conveniently access the character and
+ * score information at each position of the qualified-sequence.
+ * The use case that this was designed for is a nucleotide sequence with
+ * corresponding quality scores, e.g. obtained when reading in a FASTQ file
+ * of Illumina reads.
+ * The composition also allows to store quality scores for different or extended
+ * alphabets like a `qualified<char, phred42>` or a `qualified<gapped<dna4>, phred42>`
+ * sequence.
+ * The rank values correspond to numeric values in the size of the composition,
+ * while the character values are taken from the sequence alphabet and the phred
+ * values are taken from the quality alphabet.
  *
- * As with all `seqan3::cartesian_composition` s you may access the individual alphabet letters in
- * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
- * with the individual members.
+ * As with all `seqan3::cartesian_composition` s you may access the individual
+ * alphabet letters in regular c++ tuple notation, i.e. `get<0>(t)` and objects
+ * can be brace-initialised with the individual members.
  *
  * ~~~~~~~~~~~~~~~{.cpp}
  *
@@ -90,10 +99,9 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~
  *
- * This seqan3::cartesian_composition itself fulfills both seqan3::alphabet_concept and seqan3::quality_concept .
+ * This seqan3::cartesian_composition itself fulfils both seqan3::alphabet_concept and seqan3::quality_concept.
  */
-
-template <nucleotide_concept sequence_alphabet_t, quality_concept quality_alphabet_t>
+template <alphabet_concept sequence_alphabet_t, quality_concept quality_alphabet_t>
 struct qualified :
     public cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                  sequence_alphabet_t, quality_alphabet_t>
