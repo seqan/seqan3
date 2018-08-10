@@ -45,8 +45,11 @@
 // ============================================================================
 
 #include <seqan3/core/detail/all.hpp>
-#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/core/platform.hpp>
+#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/core/tuple_utility.hpp>
+#include <seqan3/core/type_list.hpp>
 
 /*!\defgroup core Core
  * \brief Contains core functionality used by multiple modules.

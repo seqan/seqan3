@@ -51,11 +51,17 @@ namespace seqan3
 #define SEQAN_NOT_POD "If you are not going to insert a POD type, use std::tuple instead."
 //!\endcond
 
+//!cond
+template <typename ...types>
+struct pod_tuple
+{};
+//!endcond
+
 /*!\brief Behaves like std::tuple but is an aggregate [PODType](http://en.cppreference.com/w/cpp/concept/PODType).
  * \ingroup core
  * \implements seqan3::tuple_like_concept
- * \tparam type0 The first value's type (every tuple must contain at least one type).
- * \tparam ...types 0-n further types (the types of the other values).
+ * \tparam type0    The first type (the first type).
+ * \tparam ...types 0-n types (the remaining types of the values to be stored).
  *
  * This class behaves like std::tuple, but it is itself a POD type while std::tuple is not (even
  * if all contained types are POD). Since the only benefit of this class is that it stays POD it
@@ -84,7 +90,7 @@ namespace seqan3
  *
  */
 template <typename type0, typename ...types>
-struct pod_tuple
+struct pod_tuple<type0, types...>
 {
     static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
     //!\cond DEV
