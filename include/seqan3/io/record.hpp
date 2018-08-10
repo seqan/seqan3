@@ -182,7 +182,7 @@ struct fields
  * // record_type now mimics std::tuple<std::string, dna4_vector, std::vector<phred42>>, the order also depends on selected_ids
  *
  * record_type my_record;
- * get<0>(my_record) = "the most important sequence in the database";   // access via index
+ * get<1>(my_record) = "the most important sequence in the database";   // access via index
  * get<field::SEQ>(my_record) = "ACGT"_dna4;                            // access via seqan3::field
  * get<std::string>(my_record) = "the least important sequence in the database";   // access via type
  * ```
