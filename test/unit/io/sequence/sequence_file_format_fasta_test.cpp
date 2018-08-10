@@ -287,7 +287,7 @@ TEST_F(read, seq_qual)
     std::stringstream istream{input};
     sequence_file_in_options<dna5, true> options2;
 
-    std::vector<quality_composition<dna5, illumina18>> seq_qual;
+    std::vector<qualified<dna5, phred42>> seq_qual;
 
     for (unsigned i = 0; i < 3; ++i)
     {
@@ -418,7 +418,7 @@ TEST_F(write, seq_qual)
 {
     auto convert_to_qualified = ranges::view::transform([] (auto const in)
     {
-        return quality_composition<dna5, illumina18>{} = in;
+        return qualified<dna5, phred42>{} = in;
     });
 
     for (unsigned i = 0; i < 3; ++i)

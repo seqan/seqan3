@@ -45,7 +45,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/alphabet/quality/illumina18.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/sequence/sequence_file_out_options.hpp>
 
@@ -69,7 +69,7 @@ concept bool sequence_file_out_format_concept = requires (t                     
                                                           sequence_file_out_options & options,
                                                           dna5_vector               & seq,
                                                           std::string               & id,
-                                                          std::vector<illumina18>   & qual,
+                                                          std::vector<phred42>   & qual,
                                                           std::vector<dna5q>        & seq_qual)
 {
     t::file_extensions;
