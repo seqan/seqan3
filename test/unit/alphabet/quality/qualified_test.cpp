@@ -216,20 +216,91 @@ TEST(qualified, cast_to_element)
     EXPECT_EQ(q, phred42{7});
 }
 
-// comparison operators phred42 comparison broken?
+// comparison operators
 TEST(qualified, cmp)
 {
     qualified<dna4, phred42> t0{dna4::C, 6};
     qualified<dna4, phred42> t1{dna4::C, 7};
     qualified<dna4, phred42> t2{dna4::G, 7};
+    qualified<dna4, phred42> t3{dna4::A, 7};
+
+    EXPECT_EQ(t1, t1);
+
+    EXPECT_NE(t0, t1);
+    EXPECT_NE(t0, t2);
+    EXPECT_NE(t2, t3);
 
     EXPECT_LT(t0, t1);
+    EXPECT_LT(t0, t2);
+    EXPECT_LT(t1, t2);
+    EXPECT_LT(t3, t0);
+    EXPECT_LT(t3, t1);
+    EXPECT_LT(t3, t2);
+
     EXPECT_LE(t0, t1);
+    EXPECT_LE(t0, t2);
+    EXPECT_LE(t1, t2);
+    EXPECT_LE(t3, t0);
+    EXPECT_LE(t3, t1);
+    EXPECT_LE(t3, t2);
     EXPECT_LE(t1, t1);
-    EXPECT_EQ(t1, t1);
-    EXPECT_GE(t1, t1);
+
+    EXPECT_GE(t1, t0);
+    EXPECT_GE(t2, t0);
     EXPECT_GE(t2, t1);
+    EXPECT_GE(t0, t3);
+    EXPECT_GE(t1, t3);
+    EXPECT_GE(t2, t3);
+    EXPECT_GE(t1, t1);
+
+    EXPECT_GT(t1, t0);
+    EXPECT_GT(t2, t0);
     EXPECT_GT(t2, t1);
+    EXPECT_GT(t0, t3);
+    EXPECT_GT(t1, t3);
+    EXPECT_GT(t2, t3);
+}
+
+TEST(qualified, cmp_alph)
+{
+    qualified<dna4, phred42> t0{dna4::C, 6};
+
+    EXPECT_EQ(t0, dna4::C);
+    EXPECT_LE(t0, dna4::C);
+    EXPECT_GE(t0, dna4::C);
+    EXPECT_LE(t0, dna4::G);
+    EXPECT_LT(t0, dna4::G);
+    EXPECT_GE(t0, dna4::A);
+    EXPECT_GT(t0, dna4::A);
+
+    EXPECT_EQ(dna4::C, t0);
+    EXPECT_GE(dna4::C, t0);
+    EXPECT_LE(dna4::C, t0);
+    EXPECT_GE(dna4::G, t0);
+    EXPECT_GT(dna4::G, t0);
+    EXPECT_LE(dna4::A, t0);
+    EXPECT_LT(dna4::A, t0);
+}
+
+TEST(qualified, cmp_qual)
+{
+    qualified<dna4, phred42> t0{dna4::C, 6};
+
+    EXPECT_EQ(t0, phred42{6});
+    EXPECT_LE(t0, phred42{6});
+    EXPECT_GE(t0, phred42{6});
+    EXPECT_LE(t0, phred42{8});
+    EXPECT_LT(t0, phred42{8});
+    EXPECT_GE(t0, phred42{2});
+    EXPECT_GT(t0, phred42{2});
+
+    EXPECT_EQ(phred42{6}, t0);
+    EXPECT_GE(phred42{6}, t0);
+    EXPECT_LE(phred42{6}, t0);
+    EXPECT_GE(phred42{8}, t0);
+    EXPECT_GT(phred42{8}, t0);
+    EXPECT_LE(phred42{2}, t0);
+    EXPECT_LT(phred42{2}, t0);
 }
 
 /************** ALPHABET and QUALITY concept **********************/
