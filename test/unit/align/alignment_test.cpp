@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,15 +31,18 @@
 // DAMAGE.
 //
 // ============================================================================
-// Author: Joerg Winkler <j.winkler AT fu-berlin.de>
-// ============================================================================
+
+/*!\file
+ * \brief Provides tests for the seqan3::alignment class.
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ */
 
 #include <gtest/gtest.h>
 
 #include <sstream>
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/align/alignment.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -47,15 +50,16 @@ using namespace seqan3::literal;
 TEST(alignment_class_test, constructor_and_ostream)
 {
     alignment align("GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCCTTCACTACGAGGGCAGGGCC"
-                    "GTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTACGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4s,
+                    "GTGGACATCACCACGTCAGACAGGGACAAGAGCAAGTACGGCACCCTGTCCAGACTGGCGGTGGAAGCTG"_dna4,
                     "CTACGGCAGAAGAAGACATCCGAAAAAGCTGACACCTCTCGCCTACAAGCAGTTCATACCTAATGTCGCG"
-                    "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4s,
+                    "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATAACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4,
                     "CTACGGCAGAAGAAGACATCCCAAGAAGCTGACACCTCTCGCCTACAAGCAGTTTATACCTAATGTCGCG"
-                    "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4s);
+                    "GAGAAGACCTTAGGGGCCAGCGGCAGATACGAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC"_dna4);
     std::stringstream stream;
     stream << align;
 
-    std::string expected = "\n"
+    std::string const expected
+    {
         "      0     .    :    .    :    .    :    .    :    .    :\n"
         "        GCGGGTCACTGAGGGCTGGGATGAGGACGGCCACCACTTCGAGGAGTCCC\n"
         "            | ||      |        |  |       |   |||   |    |\n"
@@ -75,35 +79,70 @@ TEST(alignment_class_test, constructor_and_ostream)
         "               |    || |          |    |  |||   \n"
         "        GAGGGCAAGATAACGCGCAATTCGGAGAGATTTAAAGAAC\n"
         "        ||||||||||| ||||||||||||||||||||||||||||\n"
-        "        GAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC\n";
+        "        GAGGGCAAGATCACGCGCAATTCGGAGAGATTTAAAGAAC\n"
+    };
 
     EXPECT_EQ(expected, stream.str());
 }
 
-TEST(alignment_class_test, column_iterator)
+TEST(alignment_class_test, column_view)
 {
-    alignment align("GCGG"_dna4s, "CTAC"_dna4s, "CTAC"_dna4s);
-    column_iterator_type<dna4_string, dna4_string, dna4_string> iter = column_iterator(align);
-    auto column = iter.begin();
-    // 1st alignment column
-    EXPECT_EQ(std::get<0>(*column), dna4{dna4::G});
-    EXPECT_EQ(std::get<1>(*column), dna4{dna4::C});
-    EXPECT_EQ(std::get<2>(*column), dna4{dna4::C});
-    ++column; // 2nd column
-    EXPECT_TRUE(column > iter.begin());
-    EXPECT_EQ(std::get<1>(*column), dna4{dna4::T});
-    column += 2; // 4th column
-    EXPECT_EQ(std::get<1>(*column), dna4{dna4::C});
-    --column; // 3rd column
-    EXPECT_EQ(std::get<1>(*column), dna4{dna4::A});
-    ++column;
-    column++; // end
-    EXPECT_TRUE(column == iter.end());
+    alignment align("GCGG"_dna4, "CTAC"_dna4, "CTAC"_dna4);
+    column_view_type<dna4_vector, dna4_vector, dna4_vector> columns = column_view(align);
+    auto iter = columns.begin();
+    // 1st alignment iter
+    EXPECT_EQ(std::get<0>(*iter), dna4{dna4::G});
+    EXPECT_EQ(std::get<1>(*iter), dna4{dna4::C});
+    EXPECT_EQ(std::get<2>(*iter), dna4{dna4::C});
+    ++iter; // 2nd iter
+    EXPECT_TRUE(iter > columns.begin());
+    EXPECT_EQ(std::get<1>(*iter), dna4{dna4::T});
+    iter += 2; // 4th iter
+    EXPECT_EQ(std::get<1>(*iter), dna4{dna4::C});
+    --iter; // 3rd iter
+    EXPECT_EQ(std::get<1>(*iter), dna4{dna4::A});
+    ++iter;
+    iter++; // end
+    EXPECT_TRUE(iter == columns.end());
 
     std::stringstream stream;
-    std::for_each(iter.begin(), iter.end(), [&stream] (auto const & col)
+    std::for_each(columns.begin(), columns.end(), [&stream] (auto const & col)
     {
         stream << std::get<0>(col) << std::get<1>(col) << std::get<2>(col) << ' ';
     });
     EXPECT_EQ("GCC CTT GAA GCC ", stream.str());
+}
+
+TEST(alignment_class_test, column_view_deduced)
+{
+    alignment align("AUUGN"_rna5, "AUUGN"_rna5);
+    EXPECT_EQ(align.depth, 2);
+    for (auto const & col : column_view(align))
+        EXPECT_EQ(std::get<0>(col), std::get<1>(col));
+}
+
+TEST(alignment_class_test, depth)
+{
+    alignment align("GCGG"_dna4, "CTAC"_dna4, "CTAC"_dna4);
+    EXPECT_EQ(align.depth, 3);
+}
+
+TEST(alignment_class_test, different_sequence_types)
+{
+    std::string const expected
+    {
+        "      0     \n"
+        "        CTTC\n"
+        "        ||  \n"
+        "        CTAN\n"
+        "        | | \n"
+        "        CUAC\n"
+    };
+
+    alignment align("CTTC"_dna4, "CTAN"_dna5, "CUAC"_rna4);
+    EXPECT_EQ(align.depth, 3);
+
+    std::stringstream stream;
+    stream << align;
+    EXPECT_EQ(stream.str(), expected);
 }
