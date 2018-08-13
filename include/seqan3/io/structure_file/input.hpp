@@ -224,29 +224,29 @@ namespace seqan3
 template<typename t>
 concept bool structure_file_input_traits_concept = requires(t v)
 {
+    // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
     // sequence
     requires alphabet_concept<typename t::seq_alphabet>;
     requires alphabet_concept<typename t::seq_legal_alphabet>;
     requires explicitly_convertible_to_concept<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
     requires sequence_container_concept<typename t::template seq_container<typename t::seq_alphabet>>;
-    requires sequence_container_concept
-        <typename t::template seq_container_container
-            <typename t::template seq_container
-                <typename t::seq_alphabet>>>;
+//    requires sequence_container_concept
+//        <typename t::template seq_container_container
+//            <typename t::template seq_container
+//                <typename t::seq_alphabet>>>;
 
     // id
     requires alphabet_concept<typename t::id_alphabet>;
     requires sequence_container_concept<typename t::template id_container<typename t::id_alphabet>>;
-    requires sequence_container_concept
-        <typename t::template id_container_container
-            <typename t::template id_container
-                <typename t::id_alphabet>>>;
+//    requires sequence_container_concept
+//        <typename t::template id_container_container
+//            <typename t::template id_container
+//                <typename t::id_alphabet>>>;
 
     // bpp
     requires std::is_floating_point_v<typename t::bpp_prob>;
     requires std::numeric_limits<typename t::bpp_partner>::is_integer;
 
-// TODO(joergi-w) The expensive concept check for bpp is currently omitted. Check again when compiler has improved.
 //    requires container_concept // TODO check Associative Container Concept when implemented
 //        <typename t::template bpp_queue
 //            <typename t::template bpp_item
@@ -270,10 +270,10 @@ concept bool structure_file_input_traits_concept = requires(t v)
     requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
           || rna_structure_concept<typename t::structure_alphabet>;
     requires sequence_container_concept<typename t::template structure_container<typename t::structure_alphabet>>;
-    requires sequence_container_concept
-        <typename t::template structure_container_container
-            <typename t::template structure_container
-                <typename t::structure_alphabet>>>;
+//    requires sequence_container_concept
+//        <typename t::template structure_container_container
+//            <typename t::template structure_container
+//                <typename t::structure_alphabet>>>;
 
     // structured sequence: cartesian compositions of seq and structure
     requires std::is_base_of_v<cartesian_composition
@@ -281,15 +281,15 @@ concept bool structure_file_input_traits_concept = requires(t v)
             <typename t::seq_alphabet, typename t::structure_alphabet>,
              typename t::seq_alphabet, typename t::structure_alphabet>,
         typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
-    requires sequence_container_concept
-        <typename t::template structured_seq_container
-            <typename t::template structured_seq_alphabet
-                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
-    requires sequence_container_concept
-        <typename t::template structured_seq_container_container
-            <typename t::template structured_seq_container
-                <typename t::template structured_seq_alphabet
-                    <typename t::seq_alphabet, typename t::structure_alphabet>>>>;
+//    requires sequence_container_concept
+//        <typename t::template structured_seq_container
+//            <typename t::template structured_seq_alphabet
+//                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
+//    requires sequence_container_concept
+//        <typename t::template structured_seq_container_container
+//            <typename t::template structured_seq_container
+//                <typename t::template structured_seq_alphabet
+//                    <typename t::seq_alphabet, typename t::structure_alphabet>>>>;
 
     // energy: std::optional of floating point number
     requires std::is_floating_point_v<typename t::energy_type::value_type>;
@@ -298,18 +298,18 @@ concept bool structure_file_input_traits_concept = requires(t v)
     // reactivity [error]
     requires std::is_floating_point_v<typename t::react_type>;
     requires sequence_container_concept<typename t::template react_container<typename t::react_type>>;
-    requires sequence_container_concept
-        <typename t::template react_container_container
-            <typename t::template react_container
-                <typename t::react_type>>>;
+//    requires sequence_container_concept
+//        <typename t::template react_container_container
+//            <typename t::template react_container
+//                <typename t::react_type>>>;
 
     // comment
     requires alphabet_concept<typename t::comment_alphabet>;
     requires sequence_container_concept<typename t::template comment_container<typename t::comment_alphabet>>;
-    requires sequence_container_concept
-        <typename t::template comment_container_container
-            <typename t::template comment_container
-                <typename t::comment_alphabet>>>;
+//    requires sequence_container_concept
+//        <typename t::template comment_container_container
+//            <typename t::template comment_container
+//                <typename t::comment_alphabet>>>;
 
     // offset
     requires std::numeric_limits<typename t::offset_type>::is_integer;
