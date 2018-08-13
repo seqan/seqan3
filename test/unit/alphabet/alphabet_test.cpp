@@ -71,7 +71,8 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         phred42, phred63, phred68legacy,
                                         dot_bracket3, dssp9, wuss<>, wuss<65>,
                                         structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
-                                        structured_aa<aa27, dssp9>>;
+                                        structured_aa<aa27, dssp9>,
+                                        masked<dna5>>;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);
 
@@ -305,7 +306,8 @@ using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5,
                                                   phred42, phred63, phred68legacy,
                                                   dot_bracket3, dssp9, wuss<>, wuss<65>,
                                                   structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
-                                                  structured_aa<aa27, dssp9>>;
+                                                  structured_aa<aa27, dssp9>,
+                                                  masked<dna5>>;
 
 TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 

@@ -73,7 +73,7 @@ namespace seqan3
  *   * a type deduction guide
  * \endcond
  *
- * \sa quality_composition
+ * \sa qualified
  * \sa masked
  */
 

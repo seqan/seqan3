@@ -40,6 +40,7 @@
 
 #include <seqan3/alphabet/mask/all.hpp>
 #include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <locale>
 
 namespace seqan3
 {
@@ -88,7 +89,8 @@ namespace seqan3
     constexpr masked & assign_char(char_type const c)
     {
         seqan3::assign_char(get<0>(*this), c);
-        seqan3::assign_rank(get<1>(*this), islower(c));
+        // TODO: The check of if c is lowercase can be optimized using a lookup table.
+        seqan3::assign_rank(get<1>(*this), (c >= 'a' && c <= 'z'));
         return *this;
     }
     //!\}
@@ -101,7 +103,7 @@ namespace seqan3
     {
         if (seqan3::to_rank(get<1>(*this)))
         {
-            return std::tolower(seqan3::to_char(get<0>(*this)));
+            return std::tolower(seqan3::to_char(get<0>(*this)), std::locale("C"));
         }
         else
         {
