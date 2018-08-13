@@ -39,6 +39,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include <range/v3/range_concepts.hpp>
 #include <range/v3/utility/functional.hpp>
 
@@ -90,11 +92,17 @@ concept bool common_reference_concept =             static_cast<bool>(ranges::Co
 template <typename t, typename u, typename ...rest>
 concept bool common_concept =                       static_cast<bool>(ranges::Common<t, u, rest...>());
 
+/*!\brief Resolves to `std::is_arithmetic_v<type>`.
+ * \sa https://en.cppreference.com/w/cpp/types/is_arithmetic
+ */
+template <typename t>
+concept bool arithmetic_concept =                   std::is_arithmetic_v<t>;
+
 /*!\brief Resolves to `ranges::Integral<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Integral
  */
 template <typename t>
-concept bool integral_concept =                     static_cast<bool>(ranges::Integral<t>());
+concept bool integral_concept =                     arithmetic_concept<t> && static_cast<bool>(ranges::Integral<t>());
 
 /*!\brief Resolves to `ranges::SignedIntegral<type>()`
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/SignedIntegral
@@ -109,6 +117,12 @@ concept bool signed_integral_concept =              integral_concept<t> &&
 template <typename t>
 concept bool unsigned_integral_concept =            integral_concept<t> &&
                                                     static_cast<bool>(ranges::UnsignedIntegral<t>());
+
+/*!\brief Resolves to `std::is_floating_point_v<type>`.
+ * \sa https://en.cppreference.com/w/cpp/types/is_floating_point
+ */
+template <typename t>
+concept bool floating_point_concept =               arithmetic_concept<t> && std::is_floating_point_v<t>;
 
 /*!\interface   seqan3::assignable_concept <>
  * \brief       Resolves to `std::is_assignable_v<t1, t2>`.
