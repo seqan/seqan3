@@ -50,7 +50,7 @@ namespace seqan3::align_cfg
 /*!\brief Specifies an id for every configuration element.
  * \ingroup configuration
  *
- * \detail
+ * \details
  *
  * The seqan3::align_cfg::id is used to identify a specific alignment configuration element independent of
  * it's concrete type and position within the seqan3::align_cfg::alignment_configuration object.
@@ -67,10 +67,10 @@ enum struct id : uint8_t
 {
     //!\brief Identifier for gap configuration.
     gap
-//!\privatesection
-// ATTENTION: Must always be the last item; will be used to determine the number of ids.
+    //!\cond
+    // ATTENTION: Must always be the last item; will be used to determine the number of ids.
     ,SIZE
-//!\publicsection
+    //!\endcond
 };
 
 } // namespace seqan3::align_cfg
@@ -155,7 +155,7 @@ inline constexpr align_cfg::id align_config_type_to_id_v = align_config_type_to_
 /*!\brief Validation matrix to check how alignment configuration elements can be combined.
  * \ingroup configuration
  *
- * \detail
+ * \details
  *
  * This matrix is used to check if the specified alignment configurations can be combined with each other.
  * A cell value `true`, indicates that the corresponding seqan3::align_cfg::id in the current column can be combined
@@ -268,7 +268,7 @@ namespace seqan3
  */
 
 /*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
- * \relates seqan3::detail::alignment_configuration
+ * \relates seqan3::detail::configuration
  *
  * \tparam e                 The seqan3::align_cfg::id to get the stored configuration value for.
  * \tparam cfg_elements_t... The configuration elements stored in detail::alignment_configuration.
@@ -293,7 +293,7 @@ constexpr auto & get(detail::configuration<cfg_elements_t...> & cfg) noexcept
 }
 
 /*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
- * \relates seqan3::detail::alignment_configuration
+ * \relates seqan3::detail::configuration
  *
  * \tparam e                 The seqan3::align_cfg::id to get the stored configuration value for.
  * \tparam cfg_elements_t... The configuration elements stored in detail::alignment_configuration.
@@ -317,7 +317,7 @@ constexpr auto const & get(detail::configuration<cfg_elements_t...> const & cfg)
 }
 
 /*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
- * \relates seqan3::detail::alignment_configuration
+ * \relates seqan3::detail::configuration
  *
  * \tparam e                 The seqan3::align_cfg::id to get the stored configuration value for.
  * \tparam cfg_elements_t... The configuration elements stored in detail::alignment_configuration.
@@ -341,7 +341,7 @@ constexpr auto && get(detail::configuration<cfg_elements_t...> && cfg) noexcept
 }
 
 /*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
- * \relates seqan3::detail::alignment_configuration
+ * \relates seqan3::detail::configuration
  *
  * \tparam e                 The seqan3::align_cfg::id to get the stored configuration value for.
  * \tparam cfg_elements_t... The configuration elements stored in detail::alignment_configuration.

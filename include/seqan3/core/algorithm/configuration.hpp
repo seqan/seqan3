@@ -387,7 +387,9 @@ public:
               typename ... args_t>
     constexpr auto operator()(configuration_t && configuration,
                               args_t && ... args) const
+    //!\cond
         requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+    //!\endcond
     {
         return static_cast<derived_fn_t const &>(*this).invoke(std::forward<configuration_t>(configuration),
                                                                std::forward<args_t>(args)...);
