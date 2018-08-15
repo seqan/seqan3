@@ -35,120 +35,24 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/core/algorithm/config_element_base.hpp>
 
 using namespace seqan3;
 
-struct bar : public detail::config_element_base<bar>
+struct bar
 {
-public:
-
-    friend class detail::config_element_access<bar>;
-
-    bar() : detail::config_element_base<bar>{}
-    {
-        ++default_counter;
-    }
-
-    bar(bar const & b) : detail::config_element_base<bar>{b}, value(b.value)
-    {
-        ++copy_counter;
-    }
-
-    bar(bar && b) : detail::config_element_base<bar>{std::move(b)}, value(b.value)
-    {
-        ++move_counter;
-    }
-
-    bar & operator=(bar const & b)
-    {
-        value = b.value;
-        ++copy_counter;
-        return *this;
-    }
-
-    bar & operator=(bar && b)
-    {
-        value = std::move(b.value);
-        ++move_counter;
-        return *this;
-    }
-
-    ~bar() = default;
-
-    bar(int v) : value{v}
-    {}
-
-    static inline size_t default_counter{0};
-    static inline size_t copy_counter{0};
-    static inline size_t move_counter{0};
-
-    static void reset_counter()
-    {
-        default_counter = 0;
-        copy_counter = 0;
-        move_counter = 0;
-    }
-
-private:
-
     int value{1};
 };
 
-struct bax : public detail::config_element_base<bax>
+struct bax
 {
-public:
-    friend class detail::config_element_access<bax>;
-
-    bax() : detail::config_element_base<bax>{}
-    {
-        ++default_counter;
-    }
-
-    bax(bax const & b) : detail::config_element_base<bax>{b}, value(b.value)
-    {
-        ++copy_counter;
-    }
-
-    bax(bax && b) : detail::config_element_base<bax>{std::move(b)}, value(b.value)
-    {
-        ++move_counter;
-    }
-
-    bax & operator=(bax const & b)
-    {
-        value = b.value;
-        ++copy_counter;
-        return *this;
-    }
-
-    bax & operator=(bax && b)
-    {
-        value = std::move(b.value);
-        ++move_counter;
-        return *this;
-    }
-
-    bax(float v) : value{v}
-    {}
-
-    ~bax() = default;
-
-    static inline size_t default_counter{0};
-    static inline size_t copy_counter{0};
-    static inline size_t move_counter{0};
-
-    static void reset_counter()
-    {
-        default_counter = 0;
-        copy_counter = 0;
-        move_counter = 0;
-    }
-
-private:
-
     float value{2.2};
 };
+
+TEST(configuration, concept)
+{
+    EXPECT_TRUE(detail::config_element_concept<bar>);
+    EXPECT_FALSE(detail::config_element_concept<int>);
+}
 
 TEST(configuration, metafunction)
 {
@@ -208,13 +112,8 @@ TEST(configuration, construction_from_tuple)
 }
 
 template <size_t I>
-struct foo : public detail::config_element_base<foo<I>>
+struct foo
 {
-public:
-    friend class detail::config_element_access<foo<I>>;
-
-private:
-
     size_t value{I};
 };
 

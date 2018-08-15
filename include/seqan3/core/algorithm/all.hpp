@@ -39,14 +39,12 @@
 
 #pragma once
 
-/*!\defgroup core_algorithm Algorithm
+/*!\defgroup algorithm Algorithm
  * \ingroup core
  * \brief Contains core functionality used to configure algorithms.
  * \todo Write detailed description about usage of this module.
  */
 
 #include <seqan3/core/algorithm/concept.hpp>
-#include <seqan3/core/algorithm/config_element_access.hpp>
-#include <seqan3/core/algorithm/config_element_base.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/deferred_config_element_base.hpp>

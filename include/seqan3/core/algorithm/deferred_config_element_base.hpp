@@ -40,44 +40,32 @@
 #pragma once
 
 #include <seqan3/core/algorithm/concept.hpp>
-#include <seqan3/core/algorithm/config_element_access.hpp>
-#include <seqan3/core/algorithm/config_element_base.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 
 namespace seqan3::detail
 {
 /*!\brief Abstract crtp-base class for deferred configurations in use with seqan3::configuration.
- * \ingroup core_algorithm
+ * \ingroup algorithm
  *
  * \tparam derived_t The type that should be extended with the config interface.
  *
  * \details
  *
  * This class provides a common interface for deferred config types that are stored in a seqan3::configuration object.
- * It provides getter functions to retrieve the stored value of the config implementation and an additional
- * constructor that takes the seqan3::configuration and copies the value of the corresponding configuration.
- * In addition, this base class requires, that the `derived_t` type provides a member function `invoke`, that
- * transforms the passed configuration to a new configuration replacing the deferred config type with it's static
- * counter part after resolving the runtime information to a static type or value.
- * To allow the base class access to the private members of this config implementation, the class must add a firend declaration for
- * seqan3::detail::config_element_access.
+ * It provides a member function `invoke` that must be implemented by `derived_t` as well.
+ * Within this `invoke` function the passed configuration is transformed to a new configuration replacing the deferred
+ * config type with it's static counter part after resolving the runtime information to a static type or value.
  * The following example demonstrates the usage of this base class with a simple example:
  *
  * ```cpp
  * template <size_t I>
- * class my_config : detail::config_element_base<my_config<I>>
+ * struct my_config
  * {
- *     // Grant the base class access to the private member `value`.
- *     friend class detail::config_element_access<my_config<I>>;
- *
  *     size_t value{I};  // Has to be named `value`.
  * };
  *
- * class my_deferred_config = detail::deferred_config_element_base<my_deferred_config>
+ * struct my_deferred_config
  * {
- *     // Grant the base class access to the private member `value`.
- *     friend class detail::config_element_access<my_deferred_config>;
- *
  *      template <typename fn_t, typename configuration_t>
  *      constexpr auto invoke(fn_t && fn, configuration_t && config) const
  *          requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
@@ -92,12 +80,11 @@ namespace seqan3::detail
  * };
  * ```
  *
- * The configuration class must provide a member variable with the name `value`, which the base class can access via the
- * seqan3::detail::config_element_access struct. This class, then gives access to the underlying data via getter
- * functions. For a dynamic dispatching of configurations, that should be translated to a static configuration for the
+ * The configuration class must provide a member variable with the name `value`.
+ * For a dynamic dispatching of configurations, that should be translated to a static configuration for the
  * target algorithm, the `invoke` function is triggered by the configuration system before the algorithm is executed.
  * In this function, as can be seen above, the runtime parameter can be translated to a static config and then calls the
- * passed callable `fn`, with the new configuration object. Please make sure, you pass the old configuration to the new
+ * passed callable `fn`, with the new configuration object. Please make sure you pass the old configuration to the new
  * one, such that the other configs are correctly passed to the new configuration.
  * One can use the helper function seqan3::detail::replace_with to easily create a new configuration with the deferred
  * config replaced with the static one.
@@ -105,12 +92,12 @@ namespace seqan3::detail
  * \see seqan3::detail::config_element_base
  */
 template <typename derived_t>
-class deferred_config_element_base : public config_element_base<derived_t>
+class deferred_config_element_base
 {
 protected:
 
-    //!|brief Inherit constructor of base class.
-    using config_element_base<derived_t>::config_element_base;
+    //!|brief Give `derived_t` access to protected constructors.
+    friend derived_t;
 
     /*!\name Constructor, destructor and assignment
      * \brief Non public constructor to avoid instantiation of this abstract base class.
@@ -136,15 +123,14 @@ public:
      */
     template <typename fn_t,
               typename configuration_t>
-    [[nodiscard]] constexpr auto operator()(fn_t && fn,
-                                            configuration_t && cfg) const
+    [[nodiscard]] constexpr auto operator()(fn_t && fn, configuration_t && cfg) const
+    //!\cond
         requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+    //!\endcond
     {
-        return config_element_access<derived_t>::_invoke(static_cast<derived_t const &>(*this),
-                                                 std::forward<fn_t>(fn),
-                                                 std::forward<configuration_t>(cfg));
+        return static_cast<derived_t const &>(*this).invoke(std::forward<fn_t>(fn),
+                                                          std::forward<configuration_t>(cfg));
     }
-
 };
 
 } // namespace seqan3::detail

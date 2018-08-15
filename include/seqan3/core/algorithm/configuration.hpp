@@ -67,14 +67,14 @@ constexpr auto && get(detail::configuration<_configs_t...> &&) noexcept;
 template <size_t elem_no, typename ... _configs_t>
 constexpr auto const && get(detail::configuration<_configs_t...> const &&) noexcept;
 //!\endcond
-}
+} // namespace seqan3
 
 namespace seqan3::detail
 {
 
 //!\cond
 // Forward declaration.
-template <typename ... args_t>
+template <typename derived_t, typename ... args_t>
 struct configuration_fn_proxy;
 
 template <typename derived_fn_t>
@@ -86,7 +86,7 @@ class configuration_fn_base;
 // ----------------------------------------------------------------------------
 
 /*!\brief Collection of configurations objects used to specify the runtime behavior of algorithms.
- * \ingroup core_algorithm
+ * \ingroup algorithm
  *
  * \tparam configs_t Template parameter pack containing all the inherited configs. Each must satisfy the
  *                   seqan3::detail::config_element_concept
@@ -94,10 +94,10 @@ class configuration_fn_base;
  * \details
  *
  * This class provides a unified interface and additional helper functions to create and query configurations
- * for a specific algorithm. Certain bioinformatics algorithms, e.g. alignment or find interfaces, support a various set
- * of different configurations and policies that alter the execution of the algorithm. These configurations can be
- * orthogonal or might be mutual exclusive. Using this configuration the interface for the user becomes much more easier,
- * and incompatible configurations can be checked at compile time.
+ * for a specific algorithm. Certain bioinformatics algorithms, e.g. alignment or find interfaces, can contain
+ * many different configurations and policies that alter the execution of the algorithm. These configurations can be
+ * orthogonal or might be mutually exclusive. Using this configuration the interface for the user becomes much more
+ * easier, and incompatible configurations can be checked at compile time.
  *
  * ### Usage
  *
@@ -106,7 +106,7 @@ class configuration_fn_base;
  * In general the type of a configuration is static (see seqan3::detail::config_element_base) within the context of an
  * algorithm to select the correct code branches based on a policy-driven design, albeit the stored value might still be
  * a runtime parameter.
- * However, in some cases a specific configuration might be known first at runtime but needs to be converted to a static
+ * However, in some cases a specific configuration might be known only at runtime, and needs to be converted to a static
  * type for the algorithm in use. To enable a transparent conversion from the runtime parameters to a static type
  * configuration one can use deferred configs (seqan3::detail::deferred_config_element_base), which are invocable
  * configurations, that store the runtime parameter and on invocation translate this runtime parameter to a static
@@ -115,12 +115,12 @@ class configuration_fn_base;
  * it is a deferred configuration it will invoke the translation function and continue with the modified configuration,
  * which contains now the static type for the specific configuration.
  *
- * ### Pipe Notation
+ * ### Combining Configurations
  *
- * To enable simple extension of configurations the configuration supports a pipe interface for the different
- * configurations and configuration adaptors. A configuration adaptor is a functor similar to the view adaptor, which
- * provides the pipe interface. Adaptors need to implement the abstract base seqan3::detail::configuration_fn_base,
- * which adds all the necessary interfaces.
+ * To enable simple extension of configurations the configuration supports a logical-or interface for the different
+ * configurations and configuration adaptors. A configuration adaptor is a functor, which provides the logical-or
+ * interface. Adaptors need to implement the abstract base seqan3::detail::configuration_fn_base,
+ * to add all the necessary interfaces.
  * Using this, a configuration class can be easily constructed by chaining together different config elements.
  * Consider the following example, where we assume that the config element `bar` and the configuration adaptor
  * `with_foo` are already given:
@@ -237,17 +237,14 @@ public:
         requires (std::is_same_v<configs_t, _configs_t> && ...)
     friend constexpr auto & seqan3::get(configuration<_configs_t...> & cfg) noexcept;
 
-    //!\copydoc seqan3::get()
     template <size_t elem_no, typename ... _configs_t>
         requires (std::is_same_v<configs_t, _configs_t> && ...)
     friend constexpr auto const & seqan3::get(configuration<_configs_t...> const &) noexcept;
 
-    //!\copydoc seqan3::get<elem_no>(seqan3::detail::configuration)
     template <size_t elem_no, typename ... _configs_t>
         requires (std::is_same_v<configs_t, _configs_t> && ...)
     friend constexpr auto && seqan3::get(configuration<_configs_t...> &&) noexcept;
 
-    //!\copydoc seqan3::get<elem_no>(seqan3::detail::configuration)
     template <size_t elem_no, typename ... _configs_t>
         requires (std::is_same_v<configs_t, _configs_t> && ...)
     friend constexpr auto const && seqan3::get(configuration<_configs_t...> const &&) noexcept;
@@ -292,7 +289,7 @@ public:
 
     //!\copydoc push_front
     template <config_element_concept config_element_t>
-    constexpr auto push_front(config_element_t && cfg_element) const &&
+    constexpr auto push_front(config_element_t && cfg_element) &&
     {
         return detail::configuration{std::tuple_cat(std::tuple{std::forward<config_element_t>(cfg_element)},
                                                     std::move(static_cast<base_type>(*this)))};
@@ -336,7 +333,7 @@ public:
     template <config_element_concept old_config_element_t,
               config_element_concept new_config_element_t>
     constexpr auto replace_with(old_config_element_t const & SEQAN3_DOXYGEN_ONLY(old_element),
-                                new_config_element_t && new_element) const &&
+                                new_config_element_t && new_element) &&
     {
         static_assert(std::tuple_size_v<base_type> > 0, "The configuration cannot be empty.");
         static_assert(meta::find_index<transfer_template_args_onto_t<base_type, type_list>,
@@ -353,7 +350,7 @@ public:
     //!\}
 };
 
-/*!\name Deduction guides
+/*!\name Type deduction guides
  * \relates seqan3::detail::configuration
  * \{
  */
@@ -370,12 +367,44 @@ configuration(cfg_fn_t &&) ->
 //!\}
 
 // ----------------------------------------------------------------------------
+// Metafunction is_configuration_combinable_with
+// ----------------------------------------------------------------------------
+
+/*!\brief Variable template that checks if two adaptor types can be combined with the logical-or operator.
+ * \ingroup algorithm
+ * \tparam target_t The type of the left operand.
+ * \tparam query_t The type of the right operand.
+ *
+ * \returns `true` if `target_t` and `query_t` are either a derived type of seqan3::detail::configuration_fn_base or a
+ *           seqan3::detail::configuration_fn_proxy and `target_t` and `query_t` are not the same.
+ *           Otherwise it returns `false`.
+ *
+ * \see seqan3::detail::is_configuration_combinable_with_v.
+ */
+template <typename target_t, typename query_t>
+struct is_configuration_combinable_with
+{
+    //!\brief The result of the test expression.
+    static constexpr bool value =
+        (std::is_base_of_v<configuration_fn_base<remove_cvref_t<target_t>>, remove_cvref_t<target_t>> ||
+         is_type_specialisation_of_v<remove_cvref_t<target_t>, configuration_fn_proxy>) &&
+        (is_type_specialisation_of_v<remove_cvref_t<query_t>, configuration_fn_proxy> ||
+        (std::is_base_of_v<configuration_fn_base<remove_cvref_t<query_t>>, remove_cvref_t<query_t>> &&
+            !std::is_same_v<remove_cvref_t<target_t>, remove_cvref_t<query_t>>));
+};
+
+//!\brief Helper variable template for seqan3::detail::is_configuration_combinable_with.
+//!\ingroup algorithm
+template <typename target_t, typename query_t>
+inline constexpr bool is_configuration_combinable_with_v = is_configuration_combinable_with<target_t, query_t>::value;
+
+// ----------------------------------------------------------------------------
 // configuration_fn_base
 // ----------------------------------------------------------------------------
 
 /*!\brief An abstract crtp-base class to add pipeable concept for configuration functors in combination with
           seqan3::detail::configuration.
- * \ingroup core_algorithm
+ * \ingroup algorithm
  * \tparam derived_t The derived type to be extended with functionality from this base class.
  *
  * \details
@@ -432,7 +461,7 @@ public:
     template <typename ... args_t>
     constexpr configuration_fn_proxy<derived_fn_t, args_t...> operator()(args_t && ... args) const
     {
-        return {{std::forward<args_t>(args)...}};
+        return {std::forward<args_t>(args)...};
     }
 };
 
@@ -441,13 +470,13 @@ public:
  * \{
  */
 
-/*!\brief Combines a seqan3::detail::configuration with an configuration adaptor.
+/*!\brief Combines a seqan3::detail::configuration with a configuration adaptor.
  * \tparam configuration_t The configuration type to be extended. Must be of type seqan3::detail::configuration.
- * \tparam fn_t            Either an instance of seqan3::detail::configuration_fn_proxy or
+ * \tparam fn_t            The type of the right operand. Must be of type seqan3::detail::configuration_fn_proxy or
  *                         seqan3::detail::configuration_fn_base
  *
  * \param[in] cfg The configuration to be extended.
- * \param[in] fn  The functor implementation, invoking the associated configuration adaptor.
+ * \param[in] fn  The right operand.
  * \returns The result of invoking the configuration adaptor with the passed `cfg` object.
  */
 template <typename configuration_t,
@@ -464,51 +493,45 @@ constexpr auto operator|(configuration_t && cfg,
 }
 
 /*!\brief Combines a configuration adaptor with another configuration adaptor.
- * \tparam lhs_fn_t The configuration adaptor to be combined.
- *                  Must be an instance of an instance of seqan3::detail::configuration_fn_base.
- * \tparam rhs_fn_t Either an instance of seqan3::detail::configuration_fn_proxy or
- *                  seqan3::detail::configuration_fn_base.
+ * \tparam lhs_fn_t The type of the left operand. Must be of type seqan3::detail::configuration_fn_base or
+ *                  seqan3::detail::configuration_fn_proxy.
+ * \tparam rhs_fn_t The type of the right operand. Must be of type seqan3::detail::configuration_fn_base or
+ *                  seqan3::detail::configuration_fn_proxy.
  *
- * \param[in] lhs_fn A configuration adaptor.
- * \param[in] rhs_fn The functor, invoking the associated configuration adaptor.
- * \returns The result of invoking the configuration adaptor with the passed `lhs_fn` object.
+ * \param[in] lhs_fn A configuration adaptor or a proxy there of.
+ * \param[in] rhs_fn A configuration adaptor or a proxy there of.
+ * \returns The result of invoking the right operand with the result of invoking the left operand.
+ *
+ * \details
+ *
+ * Allows any configuration adaptor or a proxy there of to be at the beginning of a configuration
+ * declaration.
+ *
+ * ### Example
+ *
+ * ```cpp
+ * // case 1: adaptor with adaptor
+ * auto cfg1 = my_config1 | my_config2;
+ *
+ * // case 2: adaptor with proxy
+ * auto cfg2 = my_config1 | my_config2(2);
+ *
+ * // case 3: proxy with adaptor
+ * auto cfg3 = my_config1(1) | my_config2;
+ *
+ * // case 4: proxy with proxy
+ * auto cfg4 = my_config1(1) | my_config2(2);
+ * ```
  */
 template <typename lhs_fn_t,
           typename rhs_fn_t>
 constexpr auto operator|(lhs_fn_t && lhs_fn,
                          rhs_fn_t && rhs_fn)
 //!\cond
-    requires std::is_base_of_v<configuration_fn_base<remove_cvref_t<lhs_fn_t>>, remove_cvref_t<lhs_fn_t>> &&
-             (is_type_specialisation_of_v<remove_cvref_t<rhs_fn_t>, configuration_fn_proxy> ||
-             (std::is_base_of_v<configuration_fn_base<remove_cvref_t<rhs_fn_t>>, remove_cvref_t<rhs_fn_t>> &&
-              !std::is_same_v<remove_cvref_t<lhs_fn_t>, remove_cvref_t<rhs_fn_t>>))
+    requires is_configuration_combinable_with_v<rhs_fn_t, lhs_fn_t>
 //!\endcond
 {
     return rhs_fn(std::invoke(std::forward<lhs_fn_t>(lhs_fn), configuration<>{}));
-}
-
-/*!\brief Combines a seqan3::detail::configuration_fn_proxy adaptor with another configuration adaptor.
- * \tparam proxy_fn_t The configuration adaptor proxy to be combined.
- *                    Must be an instance of an instance of seqan3::detail::configuration_fn_proxy.
- * \tparam rhs_fn_t   Either an instance of seqan3::detail::configuration_fn_proxy or
- *                    seqan3::detail::configuration_fn_base.
- *
- * \param[in] proxy_fn A configuration adaptor proxy.
- * \param[in] rhs_fn   The functor, invoking the associated configuration adaptor.
- * \returns The result of invoking the configuration adaptor with the passed `proxy_fn` object.
- */
-template <typename proxy_fn_t,
-          typename rhs_fn_t>
-constexpr auto operator|(proxy_fn_t && proxy_fn,
-                         rhs_fn_t && rhs_fn)
-//!\cond
-    requires is_type_specialisation_of_v<remove_cvref_t<proxy_fn_t>, configuration_fn_proxy> &&
-             (is_type_specialisation_of_v<remove_cvref_t<rhs_fn_t>, configuration_fn_proxy> ||
-             (std::is_base_of_v<configuration_fn_base<remove_cvref_t<rhs_fn_t>>, remove_cvref_t<rhs_fn_t>> &&
-              !std::is_same_v<remove_cvref_t<proxy_fn_t>, remove_cvref_t<rhs_fn_t>>))
-//!\endcond
-{
-    return rhs_fn(std::invoke(std::forward<proxy_fn_t>(proxy_fn), configuration<>{}));
 }
 //!\}
 
@@ -517,7 +540,7 @@ constexpr auto operator|(proxy_fn_t && proxy_fn,
 // ----------------------------------------------------------------------------
 
 /*!\brief A proxy class used to defer invocation of the actual functor.
- * \ingroup core_algorithm
+ * \ingroup algorithm
  * \tparam derived_t The template parameter of seqan3::detail::configuration_fn_base.
  * \tparam args_t    Template parameter pack with intermediate arguments that should be applied on invocation.
  *
@@ -530,7 +553,7 @@ constexpr auto operator|(proxy_fn_t && proxy_fn,
  * There are special pipe-operator overloads, that work in combination with this proxy implementation.
  */
 template <typename derived_t, typename ... args_t>
-struct configuration_fn_proxy<derived_t, args_t...>
+struct configuration_fn_proxy
 {
 protected:
 
@@ -547,14 +570,14 @@ protected:
      * \{
      */
     template <typename configuration_t, std::size_t ... Is>
-    auto explode(configuration_t && cfg, std::index_sequence<Is...> const & /*unsued*/) &&
+    constexpr auto explode(configuration_t && cfg, std::index_sequence<Is...> /*unused*/) &&
     {
         // Move out the elements from cache.
         return derived_t{}(std::forward<configuration_t>(cfg), std::move(std::get<Is>(args_cache))...);
     }
 
     template <typename configuration_t, std::size_t ... Is>
-    auto explode(configuration_t && cfg, std::index_sequence<Is...> const & /*unsued*/) &
+    constexpr auto explode(configuration_t && cfg, std::index_sequence<Is...> /*unused*/) const &
     {
         // Copy the elements from cache.
         return derived_t{}(std::forward<configuration_t>(cfg), std::get<Is>(args_cache)...);
@@ -569,13 +592,13 @@ public:
      * \{
      */
     template <typename configuration_t>
-    auto operator()(configuration_t && cfg) &&
+    constexpr auto operator()(configuration_t && cfg) &&
     {
         return explode(std::forward<configuration_t>(cfg), std::make_index_sequence<sizeof...(args_t)>{});
     }
 
     template <typename configuration_t>
-    auto operator()(configuration_t && cfg) &
+    constexpr auto operator()(configuration_t && cfg) const &
     {
         return explode(std::forward<configuration_t>(cfg), std::make_index_sequence<sizeof...(args_t)>{});
     }
@@ -665,14 +688,14 @@ namespace seqan3
  *
  * Thread-safe as long as the referenced data is not modified.
  */
-template <size_t elem_no, typename ... configs_t>
+template <size_t elem_no, detail::config_element_concept ... configs_t>
 constexpr auto & get(detail::configuration<configs_t...> & cfg) noexcept
 {
     using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
 
     static_assert(elem_no < meta::size<type_list_type>::value,
                   "Index out of range.");
-    return std::get<elem_no>(cfg).get();
+    return std::get<elem_no>(cfg).value;
 }
 
 /*!\brief Returns the value of the corresponding config at the specified position.
@@ -698,14 +721,14 @@ constexpr auto & get(detail::configuration<configs_t...> & cfg) noexcept
  *
  * Thread-safe.
  */
-template <size_t elem_no, typename ... configs_t>
+template <size_t elem_no, detail::config_element_concept ... configs_t>
 constexpr auto const & get(detail::configuration<configs_t...> const & cfg) noexcept
 {
     using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
 
     static_assert(elem_no < meta::size<type_list_type>::value,
                   "Index out of range.");
-    return std::get<elem_no>(cfg).get();
+    return std::get<elem_no>(cfg).value;
 }
 
 /*!\brief Returns the value of the corresponding config at the specified position.
@@ -731,14 +754,14 @@ constexpr auto const & get(detail::configuration<configs_t...> const & cfg) noex
  *
  * Thread-safe.
  */
-template <size_t elem_no, typename ... configs_t>
+template <size_t elem_no, detail::config_element_concept ... configs_t>
 constexpr auto && get(detail::configuration<configs_t...> && cfg) noexcept
 {
     using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
 
     static_assert(elem_no < meta::size<type_list_type>::value,
                   "Index out of range.");
-    return std::get<elem_no>(std::move(cfg)).get();
+    return std::get<elem_no>(std::move(cfg)).value;
 }
 
 /*!\brief Returns the value of the corresponding config at the specified position.
@@ -764,7 +787,7 @@ constexpr auto && get(detail::configuration<configs_t...> && cfg) noexcept
  *
  * Thread-safe.
  */
-template <size_t elem_no, typename ... configs_t>
+template <size_t elem_no, detail::config_element_concept ... configs_t>
 constexpr auto const && get(detail::configuration<configs_t...> const && cfg) noexcept
 {
     using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
@@ -773,6 +796,6 @@ constexpr auto const && get(detail::configuration<configs_t...> const && cfg) no
                   "Index out of range.");
 
     // TODO: It is unclear why return must be wrapped in std::move here.
-    return std::move(std::get<elem_no>(std::move(cfg)).get());
+    return std::move(std::get<elem_no>(std::move(cfg)).value);
 }
 } // namespace seqan3
