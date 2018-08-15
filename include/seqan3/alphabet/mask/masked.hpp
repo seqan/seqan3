@@ -85,7 +85,7 @@ namespace seqan3
         return *this;
     }
 
-    //!\brief Assign from a character. This modifies the internal sequence letter.
+    //!\brief Assign from a character.
     constexpr masked & assign_char(char_type const c)
     {
         seqan3::assign_char(get<0>(*this), c);
@@ -98,7 +98,7 @@ namespace seqan3
     /*!\name Read functions
      * \{
      */
-    //!\brief Return a character. This reads the internal sequence letter.
+    //!\brief Return a character.
     constexpr char_type to_char() const noexcept
     {
         if (seqan3::to_rank(get<1>(*this)))
