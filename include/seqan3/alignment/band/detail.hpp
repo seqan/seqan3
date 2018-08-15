@@ -32,30 +32,32 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
+/*!\file
+ * \brief Provides utility functions for alignment band configuration.
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ */
 
- #pragma once
+#pragma once
 
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
+#include <type_traits>
+
+#include <seqan3/core/platform.hpp>
+
+namespace seqan3::detail
+{
+
+/*!\brief Tests whether the passed type can be used in a band configuration element. Defaults to `std::false_type`.
  * \ingroup alignment
- *
- * \todo Write detailed landing page.
+ * \see seqan3::detail::is_band_config_v
  */
+template <typename object_t>
+struct is_band_config : public std::false_type
+{};
 
-#include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_edit.hpp>
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/align_config_max_error.hpp>
-#include <seqan3/alignment/configuration/align_config_output.hpp>
-#include <seqan3/alignment/configuration/align_config_score.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
-
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
+/*!\brief Helper variable template for seqan3::detail::is_band_config.
+ * \ingroup alignment
  */
+template <typename object_t>
+inline constexpr bool is_band_config_v = is_band_config<object_t>::value;
+
+} // namespace seqan3::detail
