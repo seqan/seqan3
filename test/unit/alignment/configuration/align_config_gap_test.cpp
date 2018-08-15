@@ -38,6 +38,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/gap/affine.hpp>
 #include <seqan3/alignment/gap/linear.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 
@@ -51,12 +52,17 @@ struct bar
 TEST(align_config_gap, constructor)
 {
     EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_gap<gap_linear<int32_t>>>));
+    EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_gap<gap_affine<int32_t>>>));
 }
 
 TEST(align_config_gap, on_align_config)
 {
-    using gap_config_t = detail::align_config_gap<gap_linear<int32_t>>;
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::gap>::invoke<gap_config_t>,
+    using gap_linear_config_t = detail::align_config_gap<gap_linear<int32_t>>;
+    using gap_affine_config_t = detail::align_config_gap<gap_affine<int32_t>>;
+
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::gap>::invoke<gap_linear_config_t>,
+                 std::true_type>));
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::gap>::invoke<gap_affine_config_t>,
                  std::true_type>));
     EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::gap>::invoke<bar>,
                  std::false_type>));
@@ -64,12 +70,16 @@ TEST(align_config_gap, on_align_config)
 
 TEST(align_config_gap, align_config_type_to_id)
 {
-    using gap_config_t = detail::align_config_gap<gap_linear<int32_t>>;
-    EXPECT_EQ(detail::align_config_type_to_id<gap_config_t>::value, align_cfg::id::gap);
-    EXPECT_EQ(detail::align_config_type_to_id_v<gap_config_t>, align_cfg::id::gap);
+    using gap_linear_config_t = detail::align_config_gap<gap_linear<int32_t>>;
+    using gap_affine_config_t = detail::align_config_gap<gap_affine<int32_t>>;
+
+    EXPECT_EQ(detail::align_config_type_to_id<gap_linear_config_t>::value, align_cfg::id::gap);
+    EXPECT_EQ(detail::align_config_type_to_id<gap_affine_config_t>::value, align_cfg::id::gap);
+    EXPECT_EQ(detail::align_config_type_to_id_v<gap_linear_config_t>, align_cfg::id::gap);
+    EXPECT_EQ(detail::align_config_type_to_id_v<gap_affine_config_t>, align_cfg::id::gap);
 }
 
-TEST(align_config_gap, invoke)
+TEST(align_config_gap, invoke_linear)
 {
     {
         auto cfg = std::invoke(align_cfg::gap_linear(gap_cost{4}), detail::configuration<>{});
@@ -88,7 +98,28 @@ TEST(align_config_gap, invoke)
     }
 }
 
-TEST(align_config_gap, get_by_enum)
+TEST(align_config_gap, invoke_affine)
+{
+    {
+        auto cfg = std::invoke(align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2}), detail::configuration<>{});
+
+        EXPECT_EQ(get<0>(cfg).gap_open_cost, 4);
+        EXPECT_EQ(get<0>(cfg).gap_extend_cost, 2);
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                    detail::configuration<detail::align_config_gap<gap_affine<int32_t>>>>));
+    }
+
+    {
+        detail::configuration cfg = align_cfg::gap_affine(gap_open_cost{4.1}, gap_extend_cost{2.2});
+
+        EXPECT_DOUBLE_EQ(get<0>(cfg).gap_open_cost, 4.1);
+        EXPECT_DOUBLE_EQ(get<0>(cfg).gap_extend_cost, 2.2);
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                    detail::configuration<detail::align_config_gap<gap_affine<double>>>>));
+    }
+}
+
+TEST(align_config_gap, get_by_enum_linear)
 {
 
     {
@@ -123,5 +154,47 @@ TEST(align_config_gap, get_by_enum)
         EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).gap_cost, 4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
                                     gap_linear<int> const &&>));
+    }
+}
+
+TEST(align_config_gap, get_by_enum_affine)
+{
+
+    {
+        detail::configuration cfg = align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2});
+
+        EXPECT_EQ(get<align_cfg::id::gap>(cfg).gap_open_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(cfg).gap_extend_cost, 2);
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(cfg)),
+                                    gap_affine<int> &>));
+    }
+
+    {
+        detail::configuration<detail::align_config_gap<gap_affine<int>>> const c_cfg =
+            detail::configuration{align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2})};
+
+        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).gap_open_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).gap_extend_cost, 2);
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(c_cfg)),
+                                    gap_affine<int> const &>));
+    }
+
+    {
+        detail::configuration cfg = align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2});
+
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).gap_open_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).gap_extend_cost, 2);
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(cfg))),
+                                    gap_affine<int> &&>));
+    }
+
+    {
+        detail::configuration<detail::align_config_gap<gap_affine<int>>> const c_cfg =
+            detail::configuration{align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2})};
+
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).gap_open_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).gap_extend_cost, 2);
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
+                                    gap_affine<int> const &&>));
     }
 }

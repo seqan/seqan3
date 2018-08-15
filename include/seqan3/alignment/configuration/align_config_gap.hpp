@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/utility.hpp>
+#include <seqan3/alignment/gap/affine.hpp>
 #include <seqan3/alignment/gap/linear.hpp>
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
@@ -71,7 +72,7 @@ template <template <typename ...> typename gap_t>
 struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_adaptor<gap_t>>
 {
 
-    /*!\brief Adds to the configuration a gap configuration element.
+    /*!\brief Adds to the configuration a linear gap configuration element.
      * \param[in] cfg  The configuration to be extended.
      * \param[in] cost The gap cost used to for the algorithm.
      * \returns A new configuration containing the gap configuration element.
@@ -88,6 +89,29 @@ struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_
                       SEQAN3_INVALID_CONFIG(align_cfg::id::gap));
 
         return std::forward<configuration_t>(cfg).push_front(align_config_gap<gap_t<value_t>>{cost});
+    }
+
+    /*!\brief Adds to the configuration an affine gap configuration element.
+     * \param[in] cfg  The configuration to be extended.
+     * \param[in] open_cost The gap open cost used to for the algorithm.
+     * \param[in] extend_cost The gap extend cost used to for the algorithm.
+     * \returns A new configuration containing the gap configuration element.
+     */
+    template <typename configuration_t,
+              typename value_t>
+    //!\cond
+        requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+    //!\endcond
+    constexpr auto invoke(configuration_t && cfg,
+                          gap_open_cost<value_t> const open_cost,
+                          gap_extend_cost<value_t> const extend_cost) const
+    {
+        static_assert(is_valid_alignment_configuration_v<align_cfg::id::gap, remove_cvref_t<configuration_t>>,
+                      SEQAN3_INVALID_CONFIG(align_cfg::id::gap));
+
+        align_config_gap<gap_t<value_t>> tmp;
+        tmp.get() = gap_t<value_t>{open_cost, extend_cost};
+        return std::forward<configuration_t>(cfg).push_front(std::move(tmp));
     }
 };
 
@@ -118,5 +142,9 @@ namespace seqan3::align_cfg
  */
 inline constexpr detail::align_config_gap_adaptor<seqan3::gap_linear> gap_linear;
 
-// inline constexpr detail::align_config_gap_adaptor<seqan3::gap_affine> gap_affine;
+/*!\brief A configuration adaptor for affine gaps.
+ * \ingroup configuration
+ */
+inline constexpr detail::align_config_gap_adaptor<seqan3::gap_affine> gap_affine;
+
 } // namespace seqan3::align_cfg
