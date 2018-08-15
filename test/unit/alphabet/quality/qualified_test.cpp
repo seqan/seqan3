@@ -53,14 +53,14 @@ TEST(qualified, ctr)
 TEST(qualified, aggr)
 {
     qualified<dna4, phred42> t1{};
-    qualified<dna4, phred42> t2{dna4::C, 7};
+    qualified<dna4, phred42> t2{dna4::C, phred42{7}};
     EXPECT_NE(t1, t2);
 }
 
 // zero initialization
 TEST(qualified, zro)
 {
-    qualified<dna4, phred42> t1{dna4::A, 0};
+    qualified<dna4, phred42> t1{dna4::A, phred42{0}};
     qualified<dna4, phred42> t2{};
 
     EXPECT_EQ(t1, t2);
@@ -69,7 +69,7 @@ TEST(qualified, zro)
 // copy construction
 TEST(qualified, cp_ctr)
 {
-    qualified<dna4, phred42> t1{dna4::C, 7};
+    qualified<dna4, phred42> t1{dna4::C, phred42{7}};
     qualified<dna4, phred42> t2{t1};
     qualified<dna4, phred42> t3(t1);
     EXPECT_EQ(t1, t2);
@@ -79,8 +79,8 @@ TEST(qualified, cp_ctr)
 // move construction
 TEST(qualified, mv_ctr)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
-    qualified<dna4, phred42> t1{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
+    qualified<dna4, phred42> t1{dna4::C, phred42{7}};
     qualified<dna4, phred42> t2{std::move(t1)};
     EXPECT_EQ(t2, t0);
     qualified<dna4, phred42> t3(std::move(t2));
@@ -90,7 +90,7 @@ TEST(qualified, mv_ctr)
 // copy assignment
 TEST(qualified, cp_assgn)
 {
-    qualified<dna4, phred42> t1{dna4::C, 7};
+    qualified<dna4, phred42> t1{dna4::C, phred42{7}};
     qualified<dna4, phred42> t2{};
     qualified<dna4, phred42> t3{};
 
@@ -103,8 +103,8 @@ TEST(qualified, cp_assgn)
 // move assignment
 TEST(qualified, mv_assgn)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
-    qualified<dna4, phred42> t1{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
+    qualified<dna4, phred42> t1{dna4::C, phred42{7}};
     qualified<dna4, phred42> t2{};
     qualified<dna4, phred42> t3{};
     t2 = std::move(t1);
@@ -116,8 +116,8 @@ TEST(qualified, mv_assgn)
 // swap
 TEST(qualified, swap)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
-    qualified<dna4, phred42> t1{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
+    qualified<dna4, phred42> t1{dna4::C, phred42{7}};
     qualified<dna4, phred42> t2{};
     qualified<dna4, phred42> t3{};
 
@@ -129,7 +129,7 @@ TEST(qualified, swap)
 // get<1>
 TEST(qualified, get_i)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
 
     static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), dna4 &>);
     static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), phred42 &>);
@@ -141,7 +141,7 @@ TEST(qualified, get_i)
 // std::get<1>
 TEST(qualified, stdget_i)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
 
     static_assert(std::is_same_v<decltype(std::get<0>(t0)), dna4 &>);
     static_assert(std::is_same_v<decltype(std::get<1>(t0)), phred42 &>);
@@ -153,7 +153,7 @@ TEST(qualified, stdget_i)
 // structured bindings
 TEST(qualified, struct_binding)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
     auto [ i, l ] = t0;
 
     static_assert(std::is_same_v<decltype(i), dna4>);
@@ -166,7 +166,7 @@ TEST(qualified, struct_binding)
 // get<type>
 TEST(qualified, get_type)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
 
     EXPECT_EQ(seqan3::get<dna4>(t0), dna4::C);
     EXPECT_EQ(seqan3::get<phred42>(t0), phred42{7});
@@ -175,7 +175,7 @@ TEST(qualified, get_type)
 // std::get<type>
 TEST(qualified, stdget_type)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
 
     EXPECT_EQ(std::get<dna4>(t0), dna4::C);
     EXPECT_EQ(std::get<phred42>(t0), phred42{7});
@@ -205,7 +205,7 @@ TEST(qualified, type_deduce)
 // explicit cast to element
 TEST(qualified, cast_to_element)
 {
-    qualified<dna4, phred42> t0{dna4::C, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{7}};
 
     auto d = static_cast<dna4>(t0);
     auto q = static_cast<phred42>(t0);
@@ -219,10 +219,10 @@ TEST(qualified, cast_to_element)
 // comparison operators
 TEST(qualified, cmp)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
-    qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2{dna4::G, 7};
-    qualified<dna4, phred42> t3{dna4::A, 7};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
+    qualified<dna4, phred42> t1{dna4::C, phred42{7}};
+    qualified<dna4, phred42> t2{dna4::G, phred42{7}};
+    qualified<dna4, phred42> t3{dna4::A, phred42{7}};
 
     EXPECT_EQ(t1, t1);
 
@@ -263,7 +263,7 @@ TEST(qualified, cmp)
 
 TEST(qualified, cmp_alph)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
 
     EXPECT_EQ(t0, dna4::C);
     EXPECT_LE(t0, dna4::C);
@@ -284,7 +284,7 @@ TEST(qualified, cmp_alph)
 
 TEST(qualified, cmp_qual)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
 
     EXPECT_EQ(t0, phred42{6});
     EXPECT_LE(t0, phred42{6});
@@ -331,7 +331,7 @@ TEST(qualified, alphabet_size_v)
 
 TEST(qualified, to_rank)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
     EXPECT_EQ(to_rank(std::get<1>(t0)), 6);
     EXPECT_EQ(to_rank(t0),
@@ -354,7 +354,7 @@ TEST(qualified, assign_rank)
 
 TEST(qualified, to_char)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
     EXPECT_EQ(to_char(std::get<1>(t0)), '!' + 6);
     EXPECT_EQ(to_char(t0), 'C');
@@ -364,7 +364,7 @@ TEST(qualified, assign_char)
 {
     using type = qualified<dna4, phred42>;
 
-    type t0{dna4::C, 17};
+    type t0{dna4::C, phred42{17}};
     char qchar = to_char(std::get<1>(t0));
 
     assign_char(t0, 'A');
@@ -386,7 +386,7 @@ TEST(qualified, assign_char)
 
 TEST(qualified, to_phred)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     EXPECT_EQ(to_phred(std::get<1>(t0)), 6);
     EXPECT_EQ(to_phred(t0), 6);
 }
@@ -395,7 +395,7 @@ TEST(qualified, assign_phred)
 {
     using type = qualified<dna4, phred42>;
 
-    type t0{dna4::C, 17};
+    type t0{dna4::C, phred42{17}};
     char schar = to_char(t0);
 
     assign_phred(t0, 12);
@@ -408,7 +408,7 @@ TEST(qualified, assign_phred)
 
 TEST(qualified, outstream)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     std::stringstream s;
     s << t0;
     t0 = dna4::A;
