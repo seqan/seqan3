@@ -33,19 +33,19 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-header for the \link data_structure Data Structure sub-module \endlink.
+ * \brief Meta-header for the \link scoring Scoring sub-module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup data_structure Data Structure
- * \brief Provides the data structures used in alignment computation.
+/*!\defgroup scoring Scoring
+ * \brief Provides the data structures used for scoring alphabets and sequences.
  * \ingroup alignment
  *
  * \todo Write detailed landing page.
  */
 
-#include <seqan3/alignment/data_structure/aminoacid_scoring_scheme.hpp>
-#include <seqan3/alignment/data_structure/nucleotide_scoring_scheme.hpp>
-#include <seqan3/alignment/data_structure/scoring_scheme_base.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/scoring_scheme_base.hpp>

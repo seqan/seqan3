@@ -38,8 +38,8 @@
 
 #include <range/v3/algorithm/equal.hpp>
 
-#include <seqan3/alignment/data_structure/aminoacid_scoring_scheme.hpp>
-#include <seqan3/alignment/data_structure/nucleotide_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/all.hpp>

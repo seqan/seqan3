@@ -40,7 +40,7 @@
 
 #pragma once
 
-#include <seqan3/alignment/data_structure/scoring_scheme_base.hpp>
+#include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 
 namespace seqan3
@@ -48,7 +48,7 @@ namespace seqan3
 
 /*!\brief A data structure for managing and computing the score of two nucleotides.
  * \tparam score_type The underlying type.
- * \ingroup data_structure
+ * \ingroup scoring
  *
  * \details
  *

@@ -42,14 +42,14 @@
 
 #include <range/v3/algorithm/copy.hpp>
 
-#include <seqan3/alignment/data_structure/scoring_scheme_base.hpp>
+#include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 
 namespace seqan3
 {
 
 /*!\brief Identifiers for amino acid similarity matrixes.
- * \ingroup data_structure
+ * \ingroup scoring
  *
  * \details
  *
@@ -64,28 +64,28 @@ enum class aminoacid_similarity_matrix
     //ATTENTION: when you change this, also update set_similarity_matrix() below
     /*!\brief The BLOSUM30 matrix for very distantly related proteins.
      * \details
-     * \snippet include/seqan3/alignment/data_structure/aminoacid_scoring_scheme.hpp matrix_data blosum30
+     * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum30
      */
     BLOSUM30,
     /*!\brief The BLOSUM45 matrix for distantly related proteins.
      * \details
-     * \snippet include/seqan3/alignment/data_structure/aminoacid_scoring_scheme.hpp matrix_data blosum45
+     * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum45
      */
     BLOSUM45,
     /*!\brief The BLOSUM62 matrix recommended for most use-cases.
      * \details
-     * \snippet include/seqan3/alignment/data_structure/aminoacid_scoring_scheme.hpp matrix_data blosum62
+     * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum62
      */
     BLOSUM62,
     /*!\brief The BLOSUM80 matrix for closely related proteins.
      * \details
-     * \snippet include/seqan3/alignment/data_structure/aminoacid_scoring_scheme.hpp matrix_data blosum80
+     * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum80
      */
     BLOSUM80
 };
 
 /*!\brief A data structure for managing and computing the score of two amino acids.
- * \ingroup data_structure
+ * \ingroup scoring
  *
  * \details
  *
