@@ -85,7 +85,6 @@ struct mask
     //!\brief Assign from a numeric value or true/false.
     constexpr mask & assign_rank(rank_type const c) noexcept
     {
-        assert(c < value_size);
         _value = static_cast<internal_type>(c);
         return *this;
     }
