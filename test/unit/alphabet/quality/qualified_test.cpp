@@ -178,7 +178,7 @@ TEST(qualified, stdget_type)
     qualified<dna4, phred42> t0{dna4::C, 7};
 
     EXPECT_EQ(std::get<dna4>(t0), dna4::C);
-    EXPECT_EQ(std::get<phred42>(t0), phred42{7});;
+    EXPECT_EQ(std::get<phred42>(t0), phred42{7});
 }
 
 // std::tuple_element

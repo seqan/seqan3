@@ -186,3 +186,4 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/alphabet/composition/all.hpp>
+#include <seqan3/alphabet/mask/all.hpp>

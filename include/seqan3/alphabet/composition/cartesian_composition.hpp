@@ -54,8 +54,8 @@ namespace seqan3
 
 /*!\brief The CRTP base of alphabets that contain multiple (different) letters at one position.
  * \ingroup composition
- * \tparam first_alphabet_type Type of the first letter; must satisfy alphabet_concept.
- * \tparam alphabet_types Types of further letters (up to 4); must satisfy alphabet_concept.
+ * \tparam first_alphabet_type Type of the first letter; must satisfy semi_alphabet_concept.
+ * \tparam alphabet_types Types of further letters (up to 4); must satisfy semi_alphabet_concept.
  *
  * This data structure is CRTP base class for combined alphabets, where the different
  * alphabet letters exist independently, similar to a tuple. In fact this class
@@ -73,14 +73,14 @@ namespace seqan3
  *   * a type deduction guide
  * \endcond
  *
- * \sa quality_composition
- * \sa mask_composition
+ * \sa qualified
+ * \sa masked
  */
 
 template <typename derived_type,
           typename first_alphabet_type,
           typename ...alphabet_types>
-      requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
+      requires semi_alphabet_concept<first_alphabet_type> && (semi_alphabet_concept<alphabet_types> && ...)
 struct cartesian_composition :
     public pod_tuple<first_alphabet_type, alphabet_types...>
 {
@@ -124,7 +124,7 @@ public:
      */
     /*!\brief Assign from a numeric value.
      * \par Complexity
-     * Linear in the number of alpahabets.
+     * Linear in the number of alphabets.
      * \par Exceptions
      * Asserts that the parameter is smaller than value_size [only in debug mode].
      */
