@@ -52,6 +52,20 @@ TEST(configuration, concept)
 {
     EXPECT_TRUE(detail::config_element_concept<bar>);
     EXPECT_FALSE(detail::config_element_concept<int>);
+
+    EXPECT_TRUE((tuple_like_concept<detail::configuration<bax, bar>>));
+}
+
+TEST(configuration, tuple_size)
+{
+    EXPECT_EQ((std::tuple_size_v<detail::configuration<bax, bar>>), 2);
+    EXPECT_EQ((std::tuple_size<detail::configuration<bax, bar>>::value), 2);
+}
+
+TEST(configuration, tuple_element)
+{
+    EXPECT_TRUE((std::is_same_v<typename std::tuple_element<0, detail::configuration<bax, bar>>::type, bax>));
+    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, detail::configuration<bax, bar>>, bax>));
 }
 
 TEST(configuration, metafunction)
@@ -76,30 +90,30 @@ TEST(configuration, get_by_position)
     detail::configuration<bax, bar> cfg{};
 
     { // l-value
-        EXPECT_EQ(get<1>(cfg), 1);
-        get<1>(cfg) = 3;
-        EXPECT_EQ(get<1>(cfg), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(get<1>(cfg)), int &>));
+        EXPECT_EQ(std::get<1>(cfg).value, 1);
+        std::get<1>(cfg).value = 3;
+        EXPECT_EQ(std::get<1>(cfg).value, 3);
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(cfg)), bar &>));
     }
 
     { // const l-value
         detail::configuration<bax, bar> const cfg_c{cfg};
-        EXPECT_EQ(get<1>(cfg_c), 3);
+        EXPECT_EQ(std::get<1>(cfg_c).value, 3);
 
-        EXPECT_TRUE((std::is_same_v<decltype(get<1>(cfg_c)), int const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(cfg_c)), bar const &>));
     }
 
     { // r-value
         detail::configuration<bax, bar> cfg_r{cfg};
-        EXPECT_EQ(get<1>(std::move(cfg_r)), 3);
-        EXPECT_TRUE((std::is_same_v<decltype(get<1>(std::move(cfg_r))), int &&>));
+        EXPECT_EQ(std::get<1>(std::move(cfg_r)).value, 3);
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_r))), bar &&>));
     }
 
     { // const r-value
         detail::configuration<bax, bar> const cfg_rc{cfg};
-        EXPECT_EQ(get<1>(std::move(cfg_rc)), 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(get<1>(std::move(cfg_rc))), int const &&>));
+        EXPECT_EQ(std::get<1>(std::move(cfg_rc)).value, 3);
+        // TODO(rrahn): Enable when std::get(const &&) is fixed for gcc7 as well.
+        //EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_rc))), bar const &&>));
     }
 }
 
@@ -196,7 +210,7 @@ TEST(configuration, template_deduction_from_proxy)
 {
     detail::configuration cfg = bar_fn_impl{}(3);
 
-    EXPECT_EQ(get<0>(cfg), 3);
+    EXPECT_EQ(std::get<0>(cfg).value, 3);
     EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar>>));
 }
 
@@ -204,7 +218,7 @@ TEST(configuration, template_deduction_from_variable)
 {
     detail::configuration cfg = bar_fn_impl{};
 
-    EXPECT_EQ(get<0>(cfg), 0);
+    EXPECT_EQ(std::get<0>(cfg).value, 0);
     EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar>>));
 }
 
@@ -215,14 +229,14 @@ TEST(configuration_fn, invoke_w_configuration)
         detail::configuration<bax> cfg;
         auto new_cfg = bar_fn_impl{}(cfg, 3);
 
-        EXPECT_EQ(get<0>(new_cfg), 3);
+        EXPECT_EQ(std::get<0>(new_cfg).value, 3);
         EXPECT_TRUE((std::is_same_v<decltype(new_cfg), detail::configuration<bar, bax>>));
     }
 
     { // as r-value
         auto new_cfg = bar_fn_impl{}(detail::configuration<bax>{}, 3);
 
-        EXPECT_EQ(get<0>(new_cfg), 3);
+        EXPECT_EQ(std::get<0>(new_cfg).value, 3);
         EXPECT_TRUE((std::is_same_v<decltype(new_cfg), detail::configuration<bar, bax>>));
     }
 }
@@ -234,7 +248,7 @@ TEST(configuration_fn, pipeable_w_derived_fn)
         bar_fn_impl fn{};
         auto cfg_r = cfg | fn;
 
-        EXPECT_EQ(get<0>(cfg_r), 0);
+        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
         EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
     }
 
@@ -242,7 +256,7 @@ TEST(configuration_fn, pipeable_w_derived_fn)
         bar_fn_impl fn{};
         auto cfg_r = detail::configuration<bax>{} | fn;
 
-        EXPECT_EQ(get<0>(cfg_r), 0);
+        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
         EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
     }
 
@@ -250,14 +264,14 @@ TEST(configuration_fn, pipeable_w_derived_fn)
         detail::configuration<bax> cfg{};
         auto cfg_r = cfg | bar_fn_impl{};
 
-        EXPECT_EQ(get<0>(cfg_r), 0);
+        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
         EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
     }
 
     { // as r-value
         auto cfg_r = detail::configuration<bax>{} | bar_fn_impl{};
 
-        EXPECT_EQ(get<0>(cfg_r), 0);
+        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
         EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
     }
 }
@@ -270,7 +284,7 @@ TEST(configuration_fn, pipeable_w_proxy)
         auto proxy = bar_fn_impl{}(val);
         auto cfg = cfg_ | proxy;
 
-        EXPECT_EQ(get<0>(cfg), 3);
+        EXPECT_EQ(std::get<0>(cfg).value, 3);
         EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
     }
 
@@ -279,7 +293,7 @@ TEST(configuration_fn, pipeable_w_proxy)
         auto proxy = bar_fn_impl{}(val);
         auto cfg = detail::configuration<bax>{} | proxy;
 
-        EXPECT_EQ(get<0>(cfg), 3);
+        EXPECT_EQ(std::get<0>(cfg).value, 3);
         EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
     }
 
@@ -287,14 +301,14 @@ TEST(configuration_fn, pipeable_w_proxy)
         detail::configuration<bax> cfg_{};
         auto cfg = cfg_ | bar_fn_impl{}(3);
 
-        EXPECT_EQ(get<0>(cfg), 3);
+        EXPECT_EQ(std::get<0>(cfg).value, 3);
         EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
     }
 
     { // as r-value
         auto cfg = detail::configuration<bax>{} | bar_fn_impl{}(3);
 
-        EXPECT_EQ(get<0>(cfg), 3);
+        EXPECT_EQ(std::get<0>(cfg).value, 3);
         EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
     }
 }
@@ -303,30 +317,30 @@ TEST(configuration_fn, pipable_fn_fn)
 {
     auto cfg = bar_fn_impl{} | bax_fn_impl{};
 
-    EXPECT_EQ(get<1>(cfg), 0);
-    EXPECT_FLOAT_EQ(get<0>(cfg), 0.0);
+    EXPECT_EQ(std::get<1>(cfg).value, 0);
+    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 0.0);
 }
 
 TEST(configuration_fn, pipable_fn_proxy)
 {
     auto cfg = bar_fn_impl{} | bax_fn_impl{}(3.0);
 
-    EXPECT_EQ(get<1>(cfg), 0);
-    EXPECT_FLOAT_EQ(get<0>(cfg), 3.0);
+    EXPECT_EQ(std::get<1>(cfg).value, 0);
+    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 3.0);
 }
 
 TEST(configuration_fn, pipable_proxy_fn)
 {
     auto cfg = bar_fn_impl{}(2) | bax_fn_impl{};
 
-    EXPECT_EQ(get<1>(cfg), 2);
-    EXPECT_FLOAT_EQ(get<0>(cfg), 0.0);
+    EXPECT_EQ(std::get<1>(cfg).value, 2);
+    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 0.0);
 }
 
 TEST(configuration_fn, pipable_proxy_proxy)
 {
     auto cfg = bar_fn_impl{}(2) | bax_fn_impl{}(3.0);
 
-    EXPECT_EQ(get<1>(cfg), 2);
-    EXPECT_FLOAT_EQ(get<0>(cfg), 3.0);
+    EXPECT_EQ(std::get<1>(cfg).value, 2);
+    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 3.0);
 }

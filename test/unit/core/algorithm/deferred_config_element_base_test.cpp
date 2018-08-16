@@ -80,26 +80,26 @@ TEST(deferred_config_element_base, invoke)
 {
     {
         detail::configuration<bar> cfg{};
-        get<0>(cfg) = 3;
+        std::get<0>(cfg).value = 3;
 
         auto call_on_site = [] (auto && new_cfg)
         {
             EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(new_cfg)>,
                                         detail::configuration<bar_static<0>>>));
-            return get<0>(new_cfg);
+            return std::get<0>(new_cfg).value;
         };
         EXPECT_EQ((bar{}(call_on_site, cfg)), 0);
     }
 
     {
         detail::configuration<bar> cfg{};
-        get<0>(cfg) = 1;
+        std::get<0>(cfg).value = 1;
 
         auto call_on_site = [] (auto && new_cfg)
         {
             EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(new_cfg)>,
                                         detail::configuration<bar_static<1>>>));
-            return get<0>(new_cfg);
+            return std::get<0>(new_cfg).value;
         };
         EXPECT_EQ((bar{}(call_on_site, cfg)), 1);
     }

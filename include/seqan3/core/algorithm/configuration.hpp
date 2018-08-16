@@ -51,24 +51,6 @@
 #include <seqan3/std/concept/callable.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 
-// Forward declaration for providing get interface for top-level namespace.
-namespace seqan3
-{
-//!\cond
-template <size_t elem_no, typename ... _configs_t>
-constexpr auto & get(detail::configuration<_configs_t...> &) noexcept;
-
-template <size_t elem_no, typename ... _configs_t>
-constexpr auto const & get(detail::configuration<_configs_t...> const &) noexcept;
-
-template <size_t elem_no, typename ... _configs_t>
-constexpr auto && get(detail::configuration<_configs_t...> &&) noexcept;
-
-template <size_t elem_no, typename ... _configs_t>
-constexpr auto const && get(detail::configuration<_configs_t...> const &&) noexcept;
-//!\endcond
-} // namespace seqan3
-
 namespace seqan3::detail
 {
 
@@ -133,49 +115,27 @@ class configuration_fn_base;
 
  * ### Access the data
  *
- * The configuration exposes a positional get interface. To access a specific element one can either use `seqan3::get`
- * to query the value stored in the config element at the specified position of the configuration.
+ * The configuration inherits from a std::tuple and exposes a tuple like interface. To access a specific element one
+ * can use `std::get` to query the config element at the specified position or for the respective type
+ * within the configuration.
  * Considering the example from above one can get the value of the bar-config as:
  *
  * ```cpp
- * auto bar_value = get<1>(my_cfg);
+ * auto bar_value = std::get<1>(my_cfg);
  * ```
- * Note, that a type based get cannot be exposed as for the user it is completely hidden, what the exact type
- * will be which was added by a configuration adaptor. To allow algorithm implementors to still access data for
- * specific properties every algorithm will expose a enum based get interface, that allows to access the element
- * associated with the enum identifier.
- * This is necessary for the algorithm implementation, as the algorithm neither knows the order nor the exact type of
- * all config elements.
+ * Note, that the type based get should be used with caution. In the typical usage scenario, the user of the
+ * configuration works with config adaptor types. Only these adaptors know what exact type was added to the
+ * configuration.
+ * To allow algorithm implementors to still access data for specific properties independent of their type and position,
+ *  every algorithm will expose a enum based get interface, that allows to access the element associated with the
+ * enum identifier. The details can be found in the respective algorithm description.
  */
 template <config_element_concept ... configs_t>
-class configuration
-//!\cond
-    : public std::tuple<configs_t...>
-//!\endcond
+class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
     template <typename ... _configs_t>
     friend class configuration;
-
-    //!\brief Helper function for constructing a configuration from the predecessor prior it's modification.
-    template <typename ... old_configs_t,
-              size_t ... Is>
-    constexpr void transfer_config_elements(configuration<old_configs_t...> const & other,
-                                            std::index_sequence<Is...> const & /*idx*/)
-    {
-        ((std::get<Is + 1>(*this) =
-            std::get<std::tuple_element_t<Is + 1, std::tuple<configs_t...>>>(other)), ...);
-    }
-
-    //!\copydoc configuration::transfer_config_elements
-    template <typename ... old_configs_t,
-              size_t ... Is>
-    constexpr void transfer_config_elements(configuration<old_configs_t...> && other,
-                                            std::index_sequence<Is...> const & /*idx*/)
-    {
-        ((std::get<Is + 1>(*this) =
-            std::get<std::tuple_element_t<Is + 1, std::tuple<configs_t...>>>(std::move(other))), ...);
-    }
 
 public:
     /*!\name Member types
@@ -232,30 +192,12 @@ public:
     {}
     //!\}
 
-    //!\cond
-    template <size_t elem_no, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto & seqan3::get(configuration<_configs_t...> & cfg) noexcept;
-
-    template <size_t elem_no, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto const & seqan3::get(configuration<_configs_t...> const &) noexcept;
-
-    template <size_t elem_no, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto && seqan3::get(configuration<_configs_t...> &&) noexcept;
-
-    template <size_t elem_no, typename ... _configs_t>
-        requires (std::is_same_v<configs_t, _configs_t> && ...)
-    friend constexpr auto const && seqan3::get(configuration<_configs_t...> const &&) noexcept;
-    //!\endcond
-
     /*!\name Capacity
      * \{
      */
 
     //!\brief Returns the number of contained config elements.
-    constexpr size_t size() const
+    constexpr size_t size() const noexcept
     {
         return std::tuple_size_v<base_type>;
     }
@@ -658,144 +600,28 @@ constexpr auto apply_deferred_configs(fn_t & fn,
 //!\endcond
 } // namespace seqan3::detail
 
-namespace seqan3
+namespace std
 {
-/*!\name Tuple-like get interface
- * \relates seqan3::detail::configuration
- * \{
- */
+//!\cond DEV
 
-/*!\brief Returns the value of the corresponding config at the specified position.
- * \tparam     elem_no   Non-type template parameter specifying the position of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The value of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe as long as the referenced data is not modified.
+/*!\brief Returns the number of elements stored in seqan3::detail::configuration.
+ * \ingroup algorithm
  */
-template <size_t elem_no, detail::config_element_concept ... configs_t>
-constexpr auto & get(detail::configuration<configs_t...> & cfg) noexcept
+template <seqan3::detail::config_element_concept ... configs_t>
+struct tuple_size<seqan3::detail::configuration<configs_t...>>
 {
-    using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
+    //!\brief The number of elements.
+    static constexpr size_t value = std::tuple_size_v<typename seqan3::detail::configuration<configs_t...>::base_type>;
+};
 
-    static_assert(elem_no < meta::size<type_list_type>::value,
-                  "Index out of range.");
-    return std::get<elem_no>(cfg).value;
-}
-
-/*!\brief Returns the value of the corresponding config at the specified position.
- * \tparam     elem_no   Non-type template parameter specifying the position of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The value of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe.
+/*!\brief Returns the type of the element at the specified position within seqan3::detail::configuration.
+ * \ingroup algorithm
  */
-template <size_t elem_no, detail::config_element_concept ... configs_t>
-constexpr auto const & get(detail::configuration<configs_t...> const & cfg) noexcept
+template <size_t pos, seqan3::detail::config_element_concept ... configs_t>
+struct tuple_element<pos, seqan3::detail::configuration<configs_t...>>
 {
-    using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
-
-    static_assert(elem_no < meta::size<type_list_type>::value,
-                  "Index out of range.");
-    return std::get<elem_no>(cfg).value;
-}
-
-/*!\brief Returns the value of the corresponding config at the specified position.
- * \tparam     elem_no   Non-type template parameter specifying the position of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The value of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe.
- */
-template <size_t elem_no, detail::config_element_concept ... configs_t>
-constexpr auto && get(detail::configuration<configs_t...> && cfg) noexcept
-{
-    using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
-
-    static_assert(elem_no < meta::size<type_list_type>::value,
-                  "Index out of range.");
-    return std::get<elem_no>(std::move(cfg)).value;
-}
-
-/*!\brief Returns the value of the corresponding config at the specified position.
- * \tparam     elem_no   Non-type template parameter specifying the position of the config to get.
- * \tparam     configs_t Template parameter pack specifying the seqan3::detail::config_elements.
- * \param[in]  cfg       The configuration to query for it's config.
- *
- * \returns The value of the specified configuration.
- *
- * \details
- *
- * This function has the same semantics as std::get.
- *
- * ### Complexity
- *
- * Constant.
- *
- * ### Exception
- *
- * No-throw guarantee.
- *
- * ### Concurrency
- *
- * Thread-safe.
- */
-template <size_t elem_no, detail::config_element_concept ... configs_t>
-constexpr auto const && get(detail::configuration<configs_t...> const && cfg) noexcept
-{
-    using type_list_type = detail::tuple_type_list_t<typename detail::configuration<configs_t...>::base_type>;
-
-    static_assert(elem_no < meta::size<type_list_type>::value,
-                  "Index out of range.");
-
-    // TODO: It is unclear why return must be wrapped in std::move here.
-    return std::move(std::get<elem_no>(std::move(cfg)).value);
-}
-} // namespace seqan3
+    //!\brief The type of the config at position `pos`
+    using type = std::tuple_element_t<pos, typename seqan3::detail::configuration<configs_t...>::base_type>;
+};
+//!\endcond
+}  //namespace std
