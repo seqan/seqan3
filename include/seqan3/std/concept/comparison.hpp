@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concept/object.hpp>
 
 namespace seqan3
 {
@@ -47,6 +48,34 @@ namespace seqan3
 /*!\addtogroup concept
  * \{
  */
+
+/*!\interface   seqan3::boolean_concept <>
+ * \extends     seqan3::movable_concept
+ * \brief       Specifies that a type can be used in Boolean contexts.
+ * \sa          https://en.cppreference.com/w/cpp/experimental/ranges/concepts/Boolean
+ */
+//!\cond
+template <typename B>
+concept bool boolean_concept = movable_concept<std::decay_t<B>> &&
+                               requires(std::remove_reference_t<B> const & b1,
+                                        std::remove_reference_t<B> const & b2, bool const a)
+{
+    { b1 }       -> convertible_to_concept<bool> &&;
+    { !b1 }      -> convertible_to_concept<bool> &&;
+    { b1 && a }  -> same_concept<bool> &&;
+    { b1 || a }  -> same_concept<bool> &&;
+    { b1 && b2 } -> same_concept<bool> &&;
+    { a && b2  } -> same_concept<bool> &&;
+    { b1 || b2 } -> same_concept<bool> &&;
+    { a || b2  } -> same_concept<bool> &&;
+    { b1 == b2 } -> convertible_to_concept<bool> &&;
+    { b1 == a  } -> convertible_to_concept<bool> &&;
+    { a == b2  } -> convertible_to_concept<bool> &&;
+    { b1 != b2 } -> convertible_to_concept<bool> &&;
+    { b1 != a  } -> convertible_to_concept<bool> &&;
+    { a != b2  } -> convertible_to_concept<bool> &&;
+};
+//!\endcond
 
 /*!\interface   seqan3::weakly_equality_comparable_with_concept <>
  * \tparam t1   The first type to compare.

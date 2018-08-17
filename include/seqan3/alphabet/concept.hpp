@@ -45,7 +45,7 @@
 #include <seqan3/alphabet/adaptation/pre.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
-#include <seqan3/std/concept/object.hpp>
+#include <seqan3/std/concept/object_regular.hpp>
 #include <seqan3/std/concept/comparison.hpp>
 
 namespace seqan3

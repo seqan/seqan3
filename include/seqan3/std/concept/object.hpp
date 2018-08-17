@@ -39,7 +39,6 @@
 
 #pragma once
 
-#include <seqan3/std/concept/comparison.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 
 namespace seqan3
@@ -262,16 +261,5 @@ concept bool semi_regular_concept =                 copyable_concept<t> &&
                                                     default_constructible_concept<t>;
 //!\endcond
 
-/*!\interface   seqan3::regular_concept
- * \brief       Subsumes seqan3::semi_regular_concept and seqan3::equality_comparable_concept.
- * \extends     seqan3::semi_regular_concept
- * \extends     seqan3::equality_comparable_concept
- * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Regular
- */
-//!\cond
-template <typename t>
-concept bool regular_concept =                      semi_regular_concept<t> &&
-                                                    equality_comparable_concept<t>;
-//!\endcond
 //!\}
 }  // namespace seqan3

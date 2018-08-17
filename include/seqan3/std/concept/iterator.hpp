@@ -43,7 +43,7 @@
 #include <range/v3/utility/iterator.hpp>
 
 #include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/object.hpp>
+#include <seqan3/std/concept/object_regular.hpp>
 
 namespace seqan3
 {
