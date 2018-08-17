@@ -86,6 +86,7 @@ enum class aminoacid_similarity_matrix
 
 /*!\brief A data structure for managing and computing the score of two amino acids.
  * \ingroup scoring
+ * \implements seqan3::scoring_scheme_concept
  *
  * \details
  *
@@ -97,24 +98,24 @@ enum class aminoacid_similarity_matrix
  * Score two letters:
  * ```cpp
  * aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM62};
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 1
+ * std::cout << scheme.score(aa27::T, aa27::S); // == 1
  *
  * scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
- * std::cout << scheme.get_score(aa27::T, aa20::S); // == 2
+ * std::cout << scheme.score(aa27::T, aa20::S); // == 2
  * // you can score aa20 against aa27        ^
  *
  * scheme.set_scheme_hamming();
- * std::cout << scheme.get_score(aa27::T, aa20::S); // == -1
- * std::cout << scheme.get_score(aa27::T, aa20::T); // == 0
+ * std::cout << scheme.score(aa27::T, aa20::S); // == -1
+ * std::cout << scheme.score(aa27::T, aa20::T); // == 0
  * ```
  *
  * You can "edit" a given matrix directly:
  * ```cpp
  * scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 2
- * auto & cell = scheme.get_score(aa27::T, aa27::S);
+ * std::cout << scheme.score(aa27::T, aa27::S); // == 2
+ * auto & cell = scheme.score(aa27::T, aa27::S);
  * cell = 3;
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 3
+ * std::cout << scheme.score(aa27::T, aa27::S); // == 3
  * ```
  *
  * Score two sequences:
@@ -125,7 +126,7 @@ enum class aminoacid_similarity_matrix
  * aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM62};
  * int score = 0;
  * for (auto pair : ranges::view::zip(one, two))
- *     score += scheme.get_score(std::get<0>(pair), std::get<1>(pair));
+ *     score += scheme.score(std::get<0>(pair), std::get<1>(pair));
  *
  * ```
  */
@@ -143,7 +144,7 @@ public:
     //!\brief Inherit the base class's constructors.
     using base_t::base_t;
     //!\brief Make the base's private member type visible.
-    using typename base_t::matrix_t;
+    using typename base_t::matrix_type;
     //!\publicsection
 
     /*!\name Constructors, destructor and assignment
@@ -157,8 +158,8 @@ public:
       template <arithmetic_concept score_arg_t>
       constexpr aminoacid_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms) {}
     ))
-    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_t const & _matrix)
-    SEQAN3_DOXYGEN_ONLY(( constexpr aminoacid_scoring_scheme(matrix_t const & _matrix) noexcept {} ))
+    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & _matrix)
+    SEQAN3_DOXYGEN_ONLY(( constexpr aminoacid_scoring_scheme(matrix_type const & _matrix) noexcept {} ))
 
     //!\brief Construct for seqan3::aminoacid_similarity_matrix.
     //!\copydetails set_similarity_matrix()
@@ -191,7 +192,7 @@ public:
 
 private:
     //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM30.
-    static constexpr matrix_t blosum30
+    static constexpr matrix_type blosum30
     {{
         //! [matrix_data blosum30]
         //A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   *
@@ -226,7 +227,7 @@ private:
     }};
 
     //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM45.
-    static constexpr matrix_t blosum45
+    static constexpr matrix_type blosum45
     {{
         //! [matrix_data blosum45]
         //A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   *
@@ -261,7 +262,7 @@ private:
     }};
 
     //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM62.
-    static constexpr matrix_t blosum62
+    static constexpr matrix_type blosum62
     {{
         //! [matrix_data blosum62]
         //A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   *
@@ -296,7 +297,7 @@ private:
     }};
 
     //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM80.
-    static constexpr matrix_t blosum80
+    static constexpr matrix_type blosum80
     {{
         //! [matrix_data blosum80]
         //A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   *
