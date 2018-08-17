@@ -81,7 +81,7 @@ TEST(view_trim, qualified)
     EXPECT_EQ(std::vector<dna5q>(v1), cmp1);
 
     // trim by quality character
-    auto v2 = vec | view::trim(dna5q{dna5::C, 40});
+    auto v2 = vec | view::trim(dna5q{dna5::C, phred42{40}});
     EXPECT_EQ(std::vector<dna5q>(v2), cmp2);
 
     // function syntax
@@ -95,7 +95,7 @@ TEST(view_trim, qualified)
 
 TEST(view_trim, concepts)
 {
-    std::vector<dna5q> vec{{dna5::A, 40}, {dna5::G, 40}, {dna5::G, 30}, {dna5::A, 20}, {dna5::T, 10}};
+    std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}}, {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
     EXPECT_TRUE(input_range_concept<decltype(vec)>);
     EXPECT_TRUE(forward_range_concept<decltype(vec)>);
     EXPECT_TRUE(random_access_range_concept<decltype(vec)>);

@@ -41,48 +41,6 @@
 
 using namespace seqan3;
 
-TEST(qualified, cmp_alph)
-{
-    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
-
-    EXPECT_EQ(t0, dna4::C);
-    EXPECT_LE(t0, dna4::C);
-    EXPECT_GE(t0, dna4::C);
-    EXPECT_LE(t0, dna4::G);
-    EXPECT_LT(t0, dna4::G);
-    EXPECT_GE(t0, dna4::A);
-    EXPECT_GT(t0, dna4::A);
-
-    EXPECT_EQ(dna4::C, t0);
-    EXPECT_GE(dna4::C, t0);
-    EXPECT_LE(dna4::C, t0);
-    EXPECT_GE(dna4::G, t0);
-    EXPECT_GT(dna4::G, t0);
-    EXPECT_LE(dna4::A, t0);
-    EXPECT_LT(dna4::A, t0);
-}
-
-TEST(qualified, cmp_qual)
-{
-    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
-
-    EXPECT_EQ(t0, phred42{6});
-    EXPECT_LE(t0, phred42{6});
-    EXPECT_GE(t0, phred42{6});
-    EXPECT_LE(t0, phred42{8});
-    EXPECT_LT(t0, phred42{8});
-    EXPECT_GE(t0, phred42{2});
-    EXPECT_GT(t0, phred42{2});
-
-    EXPECT_EQ(phred42{6}, t0);
-    EXPECT_GE(phred42{6}, t0);
-    EXPECT_LE(phred42{6}, t0);
-    EXPECT_GE(phred42{8}, t0);
-    EXPECT_GT(phred42{8}, t0);
-    EXPECT_LE(phred42{2}, t0);
-    EXPECT_LT(phred42{2}, t0);
-}
-
 /************** ALPHABET and QUALITY concept **********************/
 
 TEST(qualified, rank_type)

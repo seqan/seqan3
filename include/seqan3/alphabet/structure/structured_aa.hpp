@@ -53,6 +53,7 @@ namespace seqan3
 
 /*!\brief A seqan3::cartesian_composition that joins an aminoacid alphabet with a protein structure alphabet.
  * \ingroup structure
+ * \implements seqan3::alphabet_concept
  * \tparam sequence_alphabet_t Type of the first aminoacid letter; must satisfy seqan3::alphabet_concept.
  * \tparam structure_alphabet_t Types of further structure letters; must satisfy seqan3::alphabet_concept.
  *
@@ -88,13 +89,19 @@ namespace seqan3
  *
  * This seqan3::cartesian_composition itself fulfills seqan3::alphabet_concept.
  */
-
 template <typename sequence_alphabet_t = aa27, typename structure_alphabet_t = dssp9>
+//!\cond
     requires alphabet_concept<sequence_alphabet_t> && alphabet_concept<structure_alphabet_t>
-struct structured_aa :
+//!\endcond
+class structured_aa :
     public cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
 {
+private:
+    //!\brief The base type.
+    using base_type = cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
+                                            sequence_alphabet_t, structure_alphabet_t>;
+public:
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
     //!\brief Second template parameter as member type.
@@ -103,23 +110,33 @@ struct structured_aa :
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
 
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    structured_aa() = default;
+    constexpr structured_aa(structured_aa const &) = default;
+    constexpr structured_aa(structured_aa &&) = default;
+    constexpr structured_aa & operator =(structured_aa const &) = default;
+    constexpr structured_aa & operator =(structured_aa &&) = default;
+    ~structured_aa() = default;
+
+    using base_type::base_type; // Inherit non-default constructors
+
+    using base_type::operator=; // Inherit non-default assignment operators
+
+    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa(indirect_component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa & operator=(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa & operator=(indirect_component_type const alph) {} ))
+    //!\}
+
     /*!\name Write functions
      * \{
      */
-    //!\brief Directly assign the sequence character.
-    constexpr structured_aa & operator=(sequence_alphabet_type const l) noexcept
-    {
-        get<0>(*this) = l;
-        return *this;
-    }
-
-    //!\brief Directly assign the structure character.
-    constexpr structured_aa & operator=(structure_alphabet_type const l) noexcept
-    {
-        get<1>(*this) = l;
-        return *this;
-    }
-
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
     constexpr structured_aa & assign_char(char_type const c)
     {
