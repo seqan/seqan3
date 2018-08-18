@@ -149,7 +149,7 @@ TEST_F(score_matrix, vector)
 TEST_F(score_matrix, equal)
 {
     // last entry of second row
-    std::vector scores_unequal{scores};
+    std::vector scores_unequal = scores;
     scores_unequal[2 * 16] = 16;
 
     alignment_score_matrix matrix_shorter_cols{scores_shorter_cols, database, query};
@@ -167,7 +167,7 @@ TEST_F(score_matrix, equal)
 TEST_F(score_matrix, not_equal)
 {
     // last entry of second row
-    std::vector scores_unequal{scores};
+    std::vector scores_unequal = scores;
     scores_unequal[2 * 16] = 16;
 
     alignment_score_matrix matrix_shorter_cols{scores_shorter_cols, database, query};
@@ -207,7 +207,7 @@ TEST_F(trace_matrix, score_matrix_indirect)
 TEST_F(trace_matrix, equal)
 {
     // last entry of second row
-    std::vector traces_unequal{traces};
+    std::vector traces_unequal = traces;
     traces_unequal[2 * 16] = trace_matrix_directions::up;
 
     alignment_trace_matrix matrix_shorter_cols{traces_shorter_cols, database, query};
@@ -243,7 +243,7 @@ TEST_F(trace_matrix, equal)
 TEST_F(trace_matrix, not_equal)
 {
     // last entry of second row
-    std::vector traces_unequal{traces};
+    std::vector traces_unequal = traces;
     traces_unequal[2 * 16] = trace_matrix_directions::up;
 
     alignment_trace_matrix matrix_shorter_cols{traces_shorter_cols, database, query};
