@@ -107,7 +107,7 @@ struct alignment_trace_matrix<std::vector<trace_matrix_directions>, sequence_t>
      */
     /*!\brief Construct the trace matrix out of the \a traces, the \a database,
      *        and the \a query.
-     * \param     traces   The trace values as flat #std::vector<#entry_type>.
+     * \param     traces   The trace values as flat std::vector<#entry_type>.
      * \param[in] database The #database sequence.
      * \param[in] query    The #query sequence.
      *

@@ -88,7 +88,7 @@ struct alignment_score_matrix<std::vector<score_t>, sequence_t>
      */
     /*!\brief Construct the score matrix out of the \a scores, the \a database,
      *        and the \a query.
-     * \param     scores   The score values as flat #std::vector<#entry_type>.
+     * \param     scores   The score values as flat std::vector<#entry_type>.
      * \param[in] database The #database sequence.
      * \param[in] query    The #query sequence.
      *
