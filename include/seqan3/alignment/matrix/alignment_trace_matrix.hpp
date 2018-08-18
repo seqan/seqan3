@@ -86,10 +86,10 @@ struct alignment_trace_matrix;
  *
  * ## Example
  *
- * \snippet test/example/alignment/matrix/alignment_trace_matrix_vector.cpp code
+ * \snippet test/snippet/alignment/matrix/alignment_trace_matrix_vector.cpp code
  *
  * ### Output
- * \include test/example/alignment/matrix/alignment_trace_matrix_vector.out
+ * \include test/snippet/alignment/matrix/alignment_trace_matrix_vector.out
  */
 template <typename sequence_t>
 struct alignment_trace_matrix<std::vector<trace_matrix_directions>, sequence_t>
@@ -176,10 +176,10 @@ private:
  *
  * ## Example
  *
- * \snippet test/example/alignment/matrix/alignment_trace_matrix.cpp code
+ * \snippet test/snippet/alignment/matrix/alignment_trace_matrix.cpp code
  *
  * ### Output
- * \include test/example/alignment/matrix/alignment_trace_matrix.out
+ * \include test/snippet/alignment/matrix/alignment_trace_matrix.out
  */
 template <typename ...score_matrix_params_t>
 //!\cond

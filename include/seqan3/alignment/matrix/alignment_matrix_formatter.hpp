@@ -63,10 +63,10 @@ namespace seqan3
  *  * the traces symbols of a traceback matrix (alignment_matrix_format::trace_dir)
  *
  * ## Example
- * \snippet test/example/alignment/matrix/alignment_matrix_formatter.cpp alignment_matrix_format
+ * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.cpp alignment_matrix_format
  *
  * ### Output
- * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::out
+ * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::out
  */
 struct alignment_matrix_format
 {
@@ -113,10 +113,10 @@ struct alignment_matrix_format
      *
      *
      * ### Score output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::csv#score
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::csv#score
      *
      * ### Trace output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::csv#trace
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::csv#trace
      */
     static const alignment_matrix_format csv;
 
@@ -125,10 +125,10 @@ struct alignment_matrix_format
      *
      *
      * ### Score output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::ascii#score
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::ascii#score
      *
      * ### Trace output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::ascii#trace
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::ascii#trace
      */
     static const alignment_matrix_format ascii;
 
@@ -137,10 +137,10 @@ struct alignment_matrix_format
      *
      *
      * ### Score output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_block#score
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_block#score
      *
      * ### Trace output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_block#trace
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_block#trace
      */
     static const alignment_matrix_format unicode_block;
 
@@ -149,10 +149,10 @@ struct alignment_matrix_format
      *
      *
      * ### Score output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_braille#score
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_braille#score
      *
      * ### Trace output
-     * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_braille#trace
+     * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_braille#trace
      */
     static const alignment_matrix_format unicode_braille;
 
@@ -161,10 +161,10 @@ struct alignment_matrix_format
     *
     *
     * ### Score output
-    * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_arrows#score
+    * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_arrows#score
     *
     * ### Trace output
-    * \snippet test/example/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_arrows#trace
+    * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.out alignment_matrix_format::unicode_arrows#trace
     */
     static const alignment_matrix_format unicode_arrows;
 };
@@ -210,10 +210,10 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  *
  * ## Example
  *
- * \snippet test/example/alignment/matrix/alignment_score_matrix.cpp code
+ * \snippet test/snippet/alignment/matrix/alignment_score_matrix.cpp code
  *
  * ### Output
- * \include test/example/alignment/matrix/alignment_score_matrix.out
+ * \include test/snippet/alignment/matrix/alignment_score_matrix.out
  */
 template <alignment_matrix_concept alignment_matrix_t>
 struct alignment_matrix_formatter

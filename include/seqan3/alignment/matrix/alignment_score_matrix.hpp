@@ -64,10 +64,10 @@ struct alignment_score_matrix;
  *
  * ## Example
  *
- * \snippet test/example/alignment/matrix/alignment_score_matrix.cpp code
+ * \snippet test/snippet/alignment/matrix/alignment_score_matrix.cpp code
  *
  * ### Output
- * \include test/example/alignment/matrix/alignment_score_matrix.out
+ * \include test/snippet/alignment/matrix/alignment_score_matrix.out
  */
 template <typename score_t, typename sequence_t>
 //!\cond
