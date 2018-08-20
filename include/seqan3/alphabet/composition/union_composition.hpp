@@ -49,6 +49,8 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/std/concept/core_language.hpp> // implicitly_convertible_to_concept
+#include <seqan3/std/concept/object.hpp>        // constructible_concept
 
 namespace seqan3
 {
@@ -118,6 +120,63 @@ template <typename ...alphabet_types>
 //!\endcond
 class union_composition
 {
+private:
+    //!\brief A meta::list The types of each composite in the composition
+    using composites = meta::list<alphabet_types...>;
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `type` is constructable from `T`.
+      */
+    template <typename T>
+    struct constructible_from
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, std::is_constructible_v<type, T>>;
+    };
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `T` is implicitly convertible to `type`.
+      */
+    template <typename T>
+    struct implicitely_convertible_from
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, implicitly_convertible_to_concept<T, type>>;
+    };
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `type` is assignable from `T`.
+      */
+    template <typename T>
+    struct assignable_from
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, assignable_concept<type, T>>;
+    };
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `type` is weakly equality comparable to `T`.
+      */
+    template <typename T>
+    struct weakly_equality_comparable_with
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, weakly_equality_comparable_with_concept<type, T>>;
+    };
+
+    /*!\brief 'Is set to `true` if one composite type in `composites` evaluates
+     * to true when invoked with `subtype` by FUN.
+     */
+    template <template <typename> typename FUN, typename subtype>
+    static constexpr bool one_composite_is =
+         !std::is_same_v<subtype, union_composition> &&
+         !meta::in<composites, subtype>::value &&
+         !meta::empty<meta::find_if<composites, FUN<subtype>>>::value;
+
 public:
     /*!\brief Returns true if alphabet_t is one of the given alphabet types.
      * \tparam alphabet_t The type to check.
@@ -133,7 +192,7 @@ public:
     template <typename alphabet_t>
     static constexpr bool has_alternative() noexcept
     {
-        return meta::in<meta::list<alphabet_types...>, alphabet_t>::value;
+        return meta::in<composites, alphabet_t>::value;
     }
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
@@ -143,7 +202,7 @@ public:
         >;
 
     //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink).
-    using char_type = underlying_char_t<meta::front<meta::list<alphabet_types...>>>;
+    using char_type = underlying_char_t<meta::front<composites>>;
 
     //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink).
     using rank_type = detail::min_viable_uint_t<value_size>;
@@ -163,13 +222,12 @@ public:
     constexpr union_composition & operator= (union_composition &&) = default;
     //!\}
 
-    /*!\name Conversion constructors
+    /*!\name Conversion constructors and assignment
      * \{
      */
-
-    /*!\brief Construction via a value of the base alphabets.
-     * \tparam alphabet_t One of the base alphabet types.
-     * \param alphabet The value of a base alphabet that should be assigned.
+    /*!\brief Construction via a value of a composite alphabet.
+     * \tparam alphabet_t One of the composite alphabet types.
+     * \param  alphabet   The value of a composite alphabet that should be assigned.
      *
      * ```cpp
      *     union_composition<dna4, gap> letter1{dna4::C}; // or
@@ -185,9 +243,9 @@ public:
     {}
 
     /*!\brief Construction via a value of reoccurring alphabets.
-     * \tparam I The index of the i-th base alphabet.
-     * \tparam alphabet_t The i-th given base alphabet type.
-     * \param alphabet The value of a base alphabet that should be assigned.
+     * \tparam I The index of the i-th composite alphabet.
+     * \tparam alphabet_t The i-th given composite alphabet type.
+     * \param alphabet The value of a composite alphabet that should be assigned.
      *
      * ```cpp
      * using alphabet_t = union_composition<dna4, dna4>;
@@ -206,27 +264,51 @@ public:
     constexpr union_composition(std::in_place_index_t<I>, alphabet_t const & alphabet) noexcept :
         _value{rank_by_index_<I>(alphabet)}
     {}
-    //!\}
 
-    /*!\name Conversion assignment operators
-     * \{
+    /*!\brief Construction via a value that one of the composite alphabets is constructible from.
+     * \tparam alphabet_subt A type that one of the composite alphabet types is constructible from.
+     * \param  subalphabet   The value that should be assigned.
+     *
+     * ```cpp
+     *     union_composition<dna4, gap> letter1{rna4::C};
+     * ```
+     * \attention When selecting the composite alphabet types which require only implicit conversion
+     * or constructor calls, are preferred over those that require explicit ones.
      */
+    template <typename alphabet_subt>
+    //!\cond
+        requires !has_alternative<alphabet_subt>() && one_composite_is<constructible_from, alphabet_subt>
+        && !one_composite_is<implicitely_convertible_from, alphabet_subt>
+    //!\endcond
+    constexpr union_composition(alphabet_subt const & subalphabet) noexcept :
+        _value{rank_by_type_(meta::front<meta::find_if<composites, constructible_from<alphabet_subt>>>(subalphabet))}
+    {}
 
-    /*!\brief Assignment via a value of the base alphabets.
-     * \tparam alphabet_t One of the base alphabet types.
-     * \param alphabet The value of a base alphabet that should be assigned.
+    //!\cond
+    template <typename alphabet_subt>
+        requires !has_alternative<alphabet_subt>() && one_composite_is<implicitely_convertible_from, alphabet_subt>
+    constexpr union_composition(alphabet_subt const & subalphabet) noexcept :
+        _value{rank_by_type_(meta::front<meta::find_if<composites, implicitely_convertible_from<alphabet_subt>>>(subalphabet))}
+    {}
+    //!\endcond
+
+    /*!\brief Assignment via a value that one of the composite alphabets is constructible from.
+     * \tparam alphabet_subt Type that one of the composite alphabets is constructible from.
+     * \param  subalphabet   The value of a composite alphabet that should be assigned.
      *
      * ```cpp
      *     union_composition<dna4, gap> letter1{};
-     *     letter1 = gap::GAP;
+     *     letter1 = rna4::C;
      * ```
      */
-    template <typename alphabet_t>
+    template <typename alphabet_subt>
     //!\cond
-        requires has_alternative<alphabet_t>()
+        requires !has_alternative<alphabet_subt>() && one_composite_is<assignable_from, alphabet_subt>
     //!\endcond
-    constexpr union_composition & operator= (alphabet_t const & alphabet) noexcept
+    constexpr union_composition & operator= (alphabet_subt const & subalphabet) noexcept
     {
+        using alphabet_t = meta::front<meta::find_if<composites, assignable_from<alphabet_subt>>>;
+        alphabet_t alphabet = subalphabet;
         _value = rank_by_type_(alphabet);
         return *this;
     }
@@ -302,6 +384,32 @@ public:
     constexpr bool operator>=(union_composition const & rhs) const noexcept
     {
         return _value >= rhs._value;
+    }
+
+    //!\name Friend conversion equality comparison operators
+    //!\{
+    /*!\brief This enables the comparison of the union_composition with a
+     * composite type. Note that the member comparison operators exist through
+     * implicit conversion.
+     * We intentionally do not overload the comparison
+     * of <,<=,>,>= of a union composition with their composite alphabet type,
+     * because a definition of such is not trivial and depends on the composites
+     * (e.g. how to define union_composition<dna4,dna5>{dna4::T} < dna5::A?).
+     */
+    template <typename alphabet_t,
+              typename = std::enable_if_t<has_alternative<alphabet_t>() ||
+                                          one_composite_is<weakly_equality_comparable_with, alphabet_t>>>
+    friend constexpr bool operator==(alphabet_t const & lhs, union_composition const & rhs) noexcept
+    {
+        return rhs == lhs;
+    }
+
+    template <typename alphabet_t,
+              typename = std::enable_if_t<has_alternative<alphabet_t>() ||
+                                          one_composite_is<weakly_equality_comparable_with, alphabet_t>>>
+    friend constexpr bool operator!=(alphabet_t const & lhs, union_composition const & rhs) noexcept
+    {
+        return rhs != lhs;
     }
     //!\}
 
@@ -448,7 +556,7 @@ protected:
     //!\endcond
     static constexpr rank_type rank_by_type_(alphabet_t const & alphabet) noexcept
     {
-        constexpr size_t index = meta::find_index<meta::list<alphabet_types...>, alphabet_t>::value;
+        constexpr size_t index = meta::find_index<composites, alphabet_t>::value;
         return rank_by_index_<index>(alphabet);
     }
 };

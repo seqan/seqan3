@@ -38,8 +38,7 @@
 
 #include <seqan3/alphabet/composition/union_composition.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 using namespace seqan3;
 
@@ -49,6 +48,8 @@ using namespace seqan3;
 
 TEST(union_composition_test, initialise_from_component_alphabet)
 {
+    dna5 l(rna5::A);
+
     using alphabet_t = union_composition<dna4, dna5, gap>;
     using variant_t = std::variant<dna4, dna5, gap>;
 
@@ -92,6 +93,49 @@ TEST(union_composition_test, initialise_from_component_alphabet)
     EXPECT_EQ(letter7.to_rank(), 7);
     EXPECT_EQ(letter8.to_rank(), 8);
     EXPECT_EQ(letter9.to_rank(), 9);
+}
+
+TEST(union_composition_test, initialise_from_component_alphabet_subtype)
+{
+    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using variant_t = std::variant<dna4, dna5, gap>;
+
+    variant_t variant0{rna4::A};
+    alphabet_t letter0{rna4::A};
+
+    variant_t variant1 = rna4::C;
+    alphabet_t letter1 = rna4::C;
+
+    variant_t variant2 = {rna4::G};
+    alphabet_t letter2 = {rna4::G};
+
+    variant_t variant3 = static_cast<variant_t>(rna4::T);
+    alphabet_t letter3 = static_cast<alphabet_t>(rna4::T);
+
+    variant_t variant4 = {static_cast<variant_t>(rna5::A)};
+    alphabet_t letter4 = {static_cast<alphabet_t>(rna5::A)};
+
+    variant_t variant5{rna5::C};
+    alphabet_t letter5{rna5::C};
+
+    variant_t variant6 = rna5::G;
+    alphabet_t letter6 = rna5::G;
+
+    variant_t variant7 = {rna5::T};
+    alphabet_t letter7 = {rna5::T};
+
+    variant_t variant8 = static_cast<variant_t>(rna5::N);
+    alphabet_t letter8 = static_cast<alphabet_t>(rna5::N);
+
+    EXPECT_EQ(letter0.to_rank(), 0);
+    EXPECT_EQ(letter1.to_rank(), 1);
+    EXPECT_EQ(letter2.to_rank(), 2);
+    EXPECT_EQ(letter3.to_rank(), 3);
+    EXPECT_EQ(letter4.to_rank(), 4);
+    EXPECT_EQ(letter5.to_rank(), 5);
+    EXPECT_EQ(letter6.to_rank(), 6);
+    EXPECT_EQ(letter7.to_rank(), 7);
+    EXPECT_EQ(letter8.to_rank(), 8);
 }
 
 TEST(union_composition_test, initialise_from_same_component_alphabet)
@@ -160,6 +204,78 @@ TEST(union_composition_test, assign_from_component_alphabet)
 
     letter = gap::GAP;
     EXPECT_EQ(letter.to_rank(), 9);
+}
+
+TEST(union_composition_test, assign_from_component_alphabet_subtype)
+{
+    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using variant_t = std::variant<dna4, dna5, gap>;
+    alphabet_t letter{};
+    variant_t variant{};
+
+    variant = rna4::A;
+    letter = rna4::A;
+    EXPECT_EQ(variant.index(), 0u);
+    EXPECT_EQ(letter.to_rank(), 0);
+
+    variant = {rna4::C};
+    letter = {rna4::C};
+    EXPECT_EQ(variant.index(), 0u);
+    EXPECT_EQ(letter.to_rank(), 1);
+
+    variant = static_cast<variant_t>(rna4::G);
+    letter = static_cast<alphabet_t>(rna4::G);
+    EXPECT_EQ(variant.index(), 0u);
+    EXPECT_EQ(letter.to_rank(), 2);
+
+    variant = {static_cast<variant_t>(rna4::T)};
+    letter = {static_cast<alphabet_t>(rna4::T)};
+    EXPECT_EQ(letter.to_rank(), 3);
+
+    letter = rna5::A;
+    EXPECT_EQ(letter.to_rank(), 4);
+
+    letter = rna5::C;
+    EXPECT_EQ(letter.to_rank(), 5);
+
+    letter = rna5::G;
+    EXPECT_EQ(letter.to_rank(), 6);
+
+    letter = rna5::T;
+    EXPECT_EQ(letter.to_rank(), 7);
+
+    letter = rna5::N;
+    EXPECT_EQ(letter.to_rank(), 8);
+}
+
+TEST(union_composition_test, compare_to_component_alphabet)
+{
+    using alphabet_t = union_composition<dna4, dna5>;
+
+    constexpr alphabet_t letter0{dna4::G};
+
+    EXPECT_EQ(letter0, dna4::G);
+    EXPECT_NE(letter0, dna4::A);
+    EXPECT_NE(letter0, dna5::A);
+
+    EXPECT_EQ(dna4::G, letter0);
+    EXPECT_NE(dna4::A, letter0);
+    EXPECT_NE(dna5::A, letter0);
+}
+
+TEST(union_composition_test, compare_to_component_alphabet_subtype)
+{
+    using alphabet_t = union_composition<dna4, dna5>;
+
+    constexpr alphabet_t letter0{dna4::G};
+
+    EXPECT_EQ(letter0, rna4::G);
+    EXPECT_NE(letter0, rna4::A);
+    EXPECT_NE(letter0, rna5::A);
+
+    EXPECT_EQ(rna4::G, letter0);
+    EXPECT_NE(rna4::A, letter0);
+    EXPECT_NE(rna5::A, letter0);
 }
 
 TEST(union_composition_test, fulfills_concepts)
