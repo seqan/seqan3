@@ -35,8 +35,6 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/core/algorithm/config_element_access.hpp>
-#include <seqan3/core/algorithm/config_element_base.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
 using namespace seqan3;
@@ -47,10 +45,8 @@ TEST(utility, align_cfg_id)
     EXPECT_EQ(static_cast<uint8_t>(align_cfg::id::SIZE), 1);
 }
 
-class bar : public detail::config_element_base<bar>
+struct bar
 {
-    friend class detail::config_element_access<bar>;
-
     int value;
 };
 

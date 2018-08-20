@@ -289,7 +289,7 @@ constexpr auto & get(detail::configuration<cfg_elements_t...> & cfg) noexcept
     static_assert(pos < meta::size<type_list_t>::value,
                   "The specified config element is not contained in the configuration.");
 
-    return get<pos>(cfg);
+    return get<pos>(cfg).value;
 }
 
 /*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
@@ -313,7 +313,7 @@ constexpr auto const & get(detail::configuration<cfg_elements_t...> const & cfg)
     static_assert(pos < meta::size<type_list_t>::value,
                   "The specified config element is not contained in the configuration.");
 
-    return get<pos>(cfg);
+    return get<pos>(cfg).value;
 }
 
 /*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
@@ -337,7 +337,7 @@ constexpr auto && get(detail::configuration<cfg_elements_t...> && cfg) noexcept
     static_assert(pos < meta::size<type_list_t>::value,
                   "The specified config element is not contained in the configuration.");
 
-    return get<pos>(std::move(cfg));
+    return get<pos>(std::move(cfg)).value;
 }
 
 /*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
@@ -361,7 +361,7 @@ constexpr auto const && get(detail::configuration<cfg_elements_t...> const && cf
     static_assert(pos < meta::size<type_list_t>::value,
                   "The specified config element is not contained in the configuration.");
 
-    return get<pos>(std::move(cfg));
+    return get<pos>(std::move(cfg)).value;
 }
 //!\}
 } // namespace seqan3

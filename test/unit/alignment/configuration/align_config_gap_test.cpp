@@ -43,10 +43,8 @@
 
 using namespace seqan3;
 
-class bar : public detail::config_element_base<bar>
+struct bar
 {
-    friend class detail::config_element_access<bar>;
-
     int value;
 };
 
@@ -76,7 +74,7 @@ TEST(align_config_gap, invoke)
     {
         auto cfg = std::invoke(align_cfg::gap_linear(gap_cost{4}), detail::configuration<>{});
 
-        EXPECT_EQ(get<0>(cfg).gap_cost, 4);
+        EXPECT_EQ(std::get<0>(cfg).value.gap_cost, 4);
         EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
                                     detail::configuration<detail::align_config_gap<gap_linear<int32_t>>>>));
     }
@@ -84,7 +82,7 @@ TEST(align_config_gap, invoke)
     {
         detail::configuration cfg = align_cfg::gap_linear(gap_cost{4.1});
 
-        EXPECT_DOUBLE_EQ(get<0>(cfg).gap_cost, 4.1);
+        EXPECT_DOUBLE_EQ(std::get<0>(cfg).value.gap_cost, 4.1);
         EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
                                     detail::configuration<detail::align_config_gap<gap_linear<double>>>>));
     }
