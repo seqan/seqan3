@@ -66,7 +66,9 @@ namespace seqan3::align_cfg
 enum struct id : uint8_t
 {
     //!\brief Identifier for gap configuration.
-    gap
+    gap,
+    //!\brief Identifier for global alignment configuration.
+    global
     //!\cond
     // ATTENTION: Must always be the last item; will be used to determine the number of ids.
     ,SIZE
@@ -165,8 +167,9 @@ inline constexpr align_cfg::id align_config_type_to_id_v = align_config_type_to_
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_cfg::id::SIZE)>,
                             static_cast<uint8_t>(align_cfg::id::SIZE)> align_config_validation_matrix =
 {
-    // gap
-    { false }  // gap
+    // gap    global
+    { { false, true },// gap
+    { true, false } } // global
 };
 
 /*!\brief Determines the first type in reverse order of the given detail::configuration that is not combinable with
