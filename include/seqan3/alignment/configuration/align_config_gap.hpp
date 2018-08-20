@@ -53,10 +53,8 @@ namespace seqan3::detail
  * \tparam gap_t The underlying gap class.
  */
 template <typename gap_t>
-class align_config_gap : public detail::config_element_base<align_config_gap<gap_t>>
+struct align_config_gap
 {
-    //!\brief Friend declaration to grant access to `value`.
-    friend class detail::config_element_access<align_config_gap<gap_t>>;
     //!\brief The actual value.
     gap_t value;
 };
@@ -89,9 +87,7 @@ struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_
         static_assert(is_valid_alignment_configuration_v<align_cfg::id::gap, remove_cvref_t<configuration_t>>,
                       SEQAN3_INVALID_CONFIG(align_cfg::id::gap));
 
-        align_config_gap<gap_t<value_t>> tmp;
-        tmp.get() = cost;
-        return std::forward<configuration_t>(cfg).push_front(std::move(tmp));
+        return std::forward<configuration_t>(cfg).push_front(align_config_gap<gap_t<value_t>>{cost});
     }
 };
 
