@@ -305,6 +305,14 @@ TEST(qualified, cmp_qual)
 
 /************** ALPHABET and QUALITY concept **********************/
 
+TEST(qualified, concept)
+{
+    // if the first template argument is a nucleotide, qualified models the nucleotide concept
+    EXPECT_TRUE((nucleotide_concept<qualified<dna4, phred42>>));
+    // else, qualified models the nucleotide concept
+    EXPECT_TRUE((alphabet_concept<qualified<char, phred42>>));
+}
+
 TEST(qualified, rank_type)
 {
     EXPECT_TRUE((std::is_same_v<underlying_rank_t<qualified<dna4, phred42>>,
@@ -415,4 +423,12 @@ TEST(qualified, outstream)
     s << t0;
 
     EXPECT_EQ(s.str(), "CA");
+}
+
+TEST(qualified, complement)
+{
+    qualified<dna4, phred42> t0{dna4::A, phred42{8}};
+    qualified<dna4, phred42> t0_c{(dna4::A).complement(), phred42{8}};
+
+    EXPECT_EQ(t0.complement(), t0_c);
 }
