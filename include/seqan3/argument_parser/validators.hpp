@@ -88,37 +88,7 @@ class integral_range_validator;
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given value does not lie inside the given min/max range.
  *
- *```cpp
- *     int main(int argc, char ** argv)
- *     {
- *          seqan3::argument_parser myparser(argc, argv); // initialize
- *
- *          int myint;
- *          seqan3::integral_range_validator my_validator<int>{2, 10};
- *
- *          myparser.add_option(myint,'i',"integer","Give me a number.",
- *                              seqan3::option_spec::DEFAULT, my_validator);
- *
- *          // an exception will be thrown if the user specifies an integer
- *          // that is not in range [2,10] (e.g. "./test_app -i 15")
- *          try
- *          {
- *               myparser.parse();
- *          }
- *          catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
- *          {
- *               std::cerr << "[PARSER ERROR] " << ext.what(); // customize your error message
- *               return -1;
- *          }
- *          catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
- *          {
- *               return 0;
- *          }
- *
- *          std::cout << "integer given by user passed validation: " << myint << endl;
- *          return 0;
- *     }
- *```
+ * \snippet test/snippet/argument_parser/validators_1.cpp usage
  */
 template <std::Integral option_value_type>
 class integral_range_validator<option_value_type>
@@ -218,37 +188,7 @@ private:
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given value is not in the given list.
  *
- *```cpp
- *     int main(int argc, char ** argv)
- *     {
- *          seqan3::argument_parser myparser(argc, argv); // initialize
- *
- *          int myint;
- *          seqan3::value_list_validator my_validator{2,4,6,8,10};
- *
- *          myparser.add_option(myint,'i',"integer","Give me a number.",
- *                              seqan3::option_spec::DEFAULT, my_validator);
- *
- *          // an exception will be thrown if the user specifies an integer
- *          // that is not one of [2,4,6,8,10] (e.g. "./test_app -i 3")
- *          try
- *          {
- *               myparser.parse();
- *          }
- *          catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
- *          {
- *               std::cerr << "[PARSER ERROR] " << ext.what(); // customize your error message
- *               return -1;
- *          }
- *          catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
- *          {
- *               return 0;
- *          }
- *
- *          std::cout << "integer given by user passed validation: " << myint << endl;
- *          return 0;
- *     }
- *```
+ * \snippet test/snippet/argument_parser/validators_2.cpp usage
  */
 template <typename option_value_type>
 class value_list_validator
@@ -360,37 +300,7 @@ private:
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given filename (string) is not in the given extension list.
  *
- *```cpp
- * int main(int argc, char ** argv)
- * {
- *      seqan3::argument_parser myparser(argc, argv); // initialize
- *
- *      std::string myfile;
- *      seqan3::file_ext_validator my_validator{"fa","fasta"};
- *
- *      myparser.add_option(myfile,'f',"file","Give me a filename.",
- *                          seqan3::option_spec::DEFAULT, my_validator);
- *
- *      // an exception will be thrown if the user specifies a filename
- *      // that does not have one of the extensions ["fa","fasta"]
- *      try
- *      {
- *           myparser.parse();
- *      }
- *      catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
- *      {
- *           std::cerr << "[PARSER ERROR] " << ext.what(); // customize your error message
- *           return -1;
- *      }
- *      catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
- *      {
- *           return 0;
- *      }
- *
- *      std::cout << "filename given by user passed validation: " << myfile << endl;
- *      return 0;
- * }
- *```
+ * \snippet test/snippet/argument_parser/validators_3.cpp usage
  */
 class file_ext_validator // TODO AFTER INITIAL MERGE: Check if file exists, also allow filepath
 {
@@ -460,37 +370,7 @@ class regex_validator;
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
  * exception whenever a given filename (string) is not in the given extension list.
  *
- *```cpp
- * int main(int argc, char ** argv)
- * {
- *      seqan3::argument_parser myparser(argc, argv); // initialize
- *
- *      std::string my_string;
- *      seqan3::regex_validator my_validator{"[a-zA-Z]+@[a-zA-Z]+\\.com"};
- *
- *      myparser.add_option(my_string,'s',"str","Give me a string.",
- *                          seqan3::option_spec::DEFAULT, my_validator);
- *
- *      // an exception will be thrown if the user specifies a string
- *      // that is no email address ending on .com
- *      try
- *      {
- *           myparser.parse();
- *      }
- *      catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
- *      {
- *           std::cerr << "[PARSER ERROR] " << ext.what(); // customize your error message
- *           return -1;
- *      }
- *      catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
- *      {
- *           return 0;
- *      }
- *
- *      std::cout << "email address given by user passed validation: " << my_string << endl;
- *      return 0;
- * }
- *```
+ * \snippet test/snippet/argument_parser/validators_4.cpp usage
  */
 template <>
 class regex_validator<std::string>
@@ -567,6 +447,13 @@ private:
     //!\brief The pattern to match.
     std::string pattern;
 };
+
+/*!\brief Type deduction guides
+ * \relates seqan3::regex_validator
+ * \{
+ */
+ regex_validator(char const *) -> regex_validator<std::string>;
+ //!\}
 
 namespace detail
 {

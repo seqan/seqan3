@@ -43,6 +43,8 @@
 #include <vector>
 
 #include <seqan3/io/concept.hpp>
+#include <vector>
+#include <sstream>
 
 namespace seqan3
 {
@@ -55,10 +57,7 @@ namespace seqan3
  * All options and flags are set to option_spec::DEFAULT unless specified
  * otherwise by the developer, e.g. when calling argument_parser::add_option().
  *
- * ```cpp
- *     myparser.add_option(myvar, 's', "special-op", "You know what you doin'?",
- *                         option_spec::ADVANCED);
- * ```
+ * \snippet test/snippet/argument_parser/auxiliary.cpp usage
  */
 enum option_spec
 {
