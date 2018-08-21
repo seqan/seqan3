@@ -1,9 +1,8 @@
 #include <seqan3/alphabet/structure/structured_aa.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 
-int main()
-{
 using namespace seqan3;
+int main()
 {
 //! [general]
 structured_aa<aa27, dssp9> l{aa27::W, dssp9::B};
@@ -24,5 +23,4 @@ std::cout << to_char(l) << '\n';
 // V
 //! [general]
 (void) structure_l;
-}
 }

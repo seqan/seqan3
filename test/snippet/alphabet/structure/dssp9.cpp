@@ -1,8 +1,8 @@
 #include <seqan3/alphabet/structure/dssp9.hpp>
 
-int main()
-{
 using namespace seqan3;
+
+int main()
 {
 //! [general]
 // create vector
@@ -13,5 +13,4 @@ for (dssp9 chr : vec)
     std::cout << chr;  // ECHHTG
 std::cout << "\n";
 //! [general]
-}
 }

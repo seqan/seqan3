@@ -3,9 +3,11 @@
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
 
+using namespace seqan3;
+
 int main()
 {
-using namespace seqan3;
+
 {
 //! [include order]
 #include <seqan3/alphabet/concept_pre.hpp>
@@ -15,6 +17,7 @@ using namespace seqan3;
 #include <seqan3/alphabet/concept.hpp>
 //! [include order]
 }
+
 {
 using alphabet_type = rna4;
 //! [value retrieval]
@@ -25,6 +28,7 @@ auto j = seqan3::alphabet_size_v<alphabet_type>;
 (void) i;
 (void) j;
 }
+
 {
 using alphabet_type = structured_rna<rna4, dot_bracket3>;
 //! [pseudoknot value retrieval]
@@ -35,4 +39,5 @@ uint8_t pk_support_2 = seqan3::pseudoknot_support_v<alphabet_type>;
 (void) pk_support;
 (void) pk_support_2;
 }
+
 }

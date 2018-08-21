@@ -1,9 +1,10 @@
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 
+using namespace seqan3;
+
 int main()
 {
 
-using namespace seqan3;
 {
 //! [construction]
 aa20 my_letter{aa20::A};
@@ -18,6 +19,7 @@ if (my_letter.to_char() == 'A')
     std::cout << "yeah\n"; // "yeah";
 //! [construction]
 }
+
 {
 //! [literal]
 // these don't work:
@@ -31,4 +33,5 @@ aa20_vector bar = "ABFUYR"_aa20;
 auto bax = "ABFUYR"_aa20;
 //! [literal]
 }
+
 }
