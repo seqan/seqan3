@@ -39,9 +39,10 @@
 
 #pragma once
 
-#include <seqan3/io/concept.hpp>
 #include <sstream>
 #include <vector>
+
+#include <seqan3/io/concept.hpp>
 
 namespace seqan3
 {
