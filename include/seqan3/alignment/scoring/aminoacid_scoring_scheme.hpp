@@ -95,39 +95,13 @@ enum class aminoacid_similarity_matrix
  * ### Example
  *
  * Score two letters:
- * ```cpp
- * aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM62};
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 1
- *
- * scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
- * std::cout << scheme.get_score(aa27::T, aa20::S); // == 2
- * // you can score aa20 against aa27        ^
- *
- * scheme.set_scheme_hamming();
- * std::cout << scheme.get_score(aa27::T, aa20::S); // == -1
- * std::cout << scheme.get_score(aa27::T, aa20::T); // == 0
- * ```
+ * \snippet test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp two letters
  *
  * You can "edit" a given matrix directly:
- * ```cpp
- * scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 2
- * auto & cell = scheme.get_score(aa27::T, aa27::S);
- * cell = 3;
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 3
- * ```
+ * \snippet test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp edit matrix
  *
  * Score two sequences:
- * ```cpp
- * std::vector<aa27> one = "ALIGATOR"_aa27;
- * std::vector<aa27> two = "ANIMATOR"_aa27;
- *
- * aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM62};
- * int score = 0;
- * for (auto pair : ranges::view::zip(one, two))
- *     score += scheme.get_score(std::get<0>(pair), std::get<1>(pair));
- *
- * ```
+ * \snippet test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp score sequences
  */
 template <arithmetic_concept score_type = int8_t>
 class aminoacid_scoring_scheme : public scoring_scheme_base<aminoacid_scoring_scheme<score_type>, aa27, score_type>
