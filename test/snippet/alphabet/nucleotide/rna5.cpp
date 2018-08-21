@@ -1,9 +1,11 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 
+using namespace seqan3;
+
 int main()
 {
-    using namespace seqan3;
 
+{
 //! [code]
 rna5 my_letter{rna5::A};
 // doesn't work:
@@ -15,7 +17,9 @@ my_letter.assign_char('F'); // converted to A internally
 if (my_letter.to_char() == 'N')
     std::cout << "yeah\n"; // "yeah";
 //! [code]
+}
 
+{
 //! [operator""_rna5]
 // these don't work:
 // rna5_vector foo{"ACGTTA"};
@@ -27,4 +31,6 @@ rna5_vector foo{"ACGTTA"_rna5};
 rna5_vector bar = "ACGTTA"_rna5;
 auto bax = "ACGTTA"_rna5;
 //! [operator""_rna5]
+}
+
 }

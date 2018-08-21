@@ -1,8 +1,8 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 
-int main()
-{
 using namespace seqan3;
+
+int main()
 {
 //! [general]
 // create vector
@@ -13,5 +13,4 @@ for (wuss51 chr : vec)
     std::cout << chr;  // .<>
 std::cout << "\n";
 //! [general]
-}
 }

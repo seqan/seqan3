@@ -4,10 +4,10 @@
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <gtest/gtest.h>
 
+using namespace seqan3;
 int main()
 {
 
-using namespace seqan3;
 {
 //! [variant]
 union_composition<dna4, gap> my_letter{};
@@ -22,6 +22,7 @@ if (my_letter.to_char() == 'A')
 std::cout << "yeah\n"; // "yeah";
 //! [variant]
 }
+
 {
 //! [construct base]
 using alphabet_t = union_composition<dna4, dna5, gap>;
@@ -37,6 +38,7 @@ assert(letter2.to_rank() == 2);
 assert(letter3.to_rank() == 3);
 //! [construct base]
 }
+
 {
 //! [assign base]
 using alphabet_t = union_composition<dna4, dna5, gap>;
@@ -53,6 +55,7 @@ letter = static_cast<alphabet_t>(dna5::G);
 assert(letter.to_rank() == 6);
 //! [assign base]
 }
+
 {
 //! [has_alternative]
 using union_t = union_composition<dna4, gap>;
@@ -62,6 +65,7 @@ static_assert(union_t::has_alternative<gap>(), "should be true");
 static_assert(!union_t::has_alternative<dna5>(), "should be false");
 //! [has_alternative]
 }
+
 {
 //! [value construction]
 union_composition<dna4, gap> letter1{dna4::C}; // or
@@ -69,6 +73,7 @@ union_composition<dna4, gap> letter2 = gap::GAP;
 //! [value construction]
 (void) letter2;
 }
+
 {
 //! [reoccurring construction]
 using alphabet_t = union_composition<dna4, dna4>;
@@ -80,12 +85,14 @@ EXPECT_EQ(letter0.to_rank(), 0);
 EXPECT_EQ(letter4.to_rank(), 4);
 //! [reoccurring construction]
 }
+
 {
 //! [assign by base]
 union_composition<dna4, gap> letter1{};
 letter1 = gap::GAP;
 //! [assign by base]
 }
+
 {
 // TODO: Make the partial_sum_sizes accessible.
 //! [partial_sum]
@@ -97,6 +104,7 @@ letter1 = gap::GAP;
 // assert(partial_sum[3] == 10);
 //! [partial_sum]
 }
+
 {
 // TODO: Make the value_to_char accessible.
 //![value_to_char]
@@ -111,6 +119,7 @@ letter1 = gap::GAP;
 // assert(value_to_char[6] == 'C');
 //! [value_to_char]
 }
+
 {
 // TODO: Make the char_to_value accessible.
 //! [char_to_value]
@@ -129,4 +138,5 @@ letter1 = gap::GAP;
 // assert(char_to_value['*'] == 0); // every other character defaults to 0
 //! [char_to_value]
 }
+
 }

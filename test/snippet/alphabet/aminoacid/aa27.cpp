@@ -1,8 +1,9 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 
+using namespace seqan3;
+
 int main()
 {
-using namespace seqan3;
 
 {
 //! [construction]
@@ -17,6 +18,7 @@ if (my_letter.to_char() == 'X')
     std::cout << "yeah\n"; // "yeah";
 //! [construction]
 }
+
 {
 //! [literal]
 // these don't work:
@@ -30,4 +32,5 @@ aa27_vector bar = "ABFUYR"_aa27;
 auto bax = "ABFUYR"_aa27;
 //! [literal]
 }
+
 }

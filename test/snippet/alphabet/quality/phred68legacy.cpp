@@ -1,8 +1,7 @@
 #include <seqan3/alphabet/quality/phred68legacy.hpp>
 
-int main()
-{
 using namespace seqan3;
+int main()
 {
 //! [general]
 phred68legacy phred;
@@ -14,5 +13,4 @@ std::cout << (int) phred.to_rank() << "\n";  // 3
 // phred68legacy{4};
 // phred = 75; // <- throws assertion
 //! [general]
-}
 }

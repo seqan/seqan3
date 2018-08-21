@@ -1,10 +1,11 @@
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 
+using namespace seqan3;
+
 int main()
 {
 
-using namespace seqan3;
 {
 //! [assign_char]
 auto l = assign_char(dna5{}, 'G');  // l is of type dna5

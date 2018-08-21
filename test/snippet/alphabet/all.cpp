@@ -1,9 +1,11 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
+using namespace seqan3;
+
 int main()
 {
-using namespace seqan3;
+
 {
 //! [ambiguity]
 // does not work:
@@ -13,6 +15,7 @@ using namespace seqan3;
 // std::cout << my_letter; // you expect 'A', but how would you access the number?
 //! [ambiguity]
 }
+
 {
 //! [nonambiguous]
 dna4 my_letter;
@@ -25,4 +28,5 @@ std::cout << (unsigned)to_rank(my_letter);  // prints 0
 // we have to add the cast here, because uint8_t is also treated as a char type by default :(
 //! [nonambiguous]
 }
+
 }

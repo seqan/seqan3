@@ -1,10 +1,10 @@
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+
+using namespace seqan3;
 
 int main()
-{
-using namespace seqan3;
 {
 //! [general]
 qualified<dna4, phred42> l{dna4::A, 7};
@@ -30,5 +30,4 @@ std::cout << to_char(l) << '\n';
 // G
 //! [general]
 (void) qual_l;
-}
 }

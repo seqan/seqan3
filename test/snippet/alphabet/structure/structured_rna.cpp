@@ -2,9 +2,9 @@
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 
-int main()
-{
 using namespace seqan3;
+
+int main()
 {
 //! [general]
 structured_rna<rna4, dot_bracket3> l{rna4::G, dot_bracket3::PAIR_OPEN};
@@ -25,5 +25,4 @@ std::cout << to_char(l) << '\n';
 // U
 //! [general]
 (void) structure_l;
-}
 }

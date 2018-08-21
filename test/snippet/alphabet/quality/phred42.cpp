@@ -1,8 +1,8 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 
-int main()
-{
 using namespace seqan3;
+
+int main()
 {
 //! [general]
 // doesn't work:
@@ -21,5 +21,4 @@ phred42 another_phred;
 another_phred.assign_rank(49);
 std::cout << (int) another_phred.to_phred() << "\n";  // converted down to 41
 //! [general]
-}
 }

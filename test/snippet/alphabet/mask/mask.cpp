@@ -1,9 +1,9 @@
-#include <seqan3/alphabet/mask/mask.hpp>
 #include <iostream>
+#include <seqan3/alphabet/mask/mask.hpp>
+
+using namespace seqan3;
 
 int main()
-{
-using namespace seqan3;
 {
 //! [general]
 mask my_mask = mask::MASKED;
@@ -16,5 +16,4 @@ if (my_mask.to_rank() == another_mask.to_rank())
     std::cout << "Both are UNMASKED!\n";
 
 //! [general]
-}
 }
