@@ -66,14 +66,7 @@ namespace seqan3
  *
  * \par Usage
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stdout.
- * ```cpp
- *     // create vector
- *     std::vector<dot_bracket3> vec{dot_bracket3::UNPAIRED, dot_bracket3::PAIR_CLOSE, dot_bracket3::PAIR_CLOSE};
- *     // modify and print
- *     vec[1] = dot_bracket3::PAIR_OPEN;
- *     for (dot_bracket3 chr : vec)
- *         std::cout << chr;  // .()
- * ```
+ * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp general
  */
 
 struct dot_bracket3

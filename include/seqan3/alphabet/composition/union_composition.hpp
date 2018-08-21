@@ -216,10 +216,7 @@ public:
      * \tparam alternative_t One of the alternative types.
      * \param  alternative   The value of a alternative that should be assigned.
      *
-     * ```cpp
-     *     union_composition<dna5, gap> letter1{dna5::C}; // or
-     *     union_composition<dna5, gap> letter2 = gap::GAP;
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp value construction
      */
     template <typename alternative_t>
     //!\cond
@@ -262,10 +259,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
      * \param  rhs The value of an alternative.
      *
-     * ```cpp
-     * union_composition<dna5, gap> letter1{};
-     * letter1 = rna5::C;
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp assign by base
      */
     template <typename indirect_alternative_t>
     //!\cond
@@ -507,14 +501,7 @@ protected:
      * An array which contains the prefix sum over all
      * alternative_types::value_size's.
      *
-     * ```cpp
-     * constexpr std::array partial_sum = union_composition<dna5, gap, dna5>::partial_sum_sizes; // not working; is protected
-     * assert(partial_sum.size() == 4);
-     * assert(partial_sum[0] == 0);
-     * assert(partial_sum[1] == 4);
-     * assert(partial_sum[2] == 5);
-     * assert(partial_sum[3] == 10);
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp partial_sum
      */
     static constexpr std::array partial_sum_sizes = []() constexpr
     {
@@ -533,18 +520,7 @@ protected:
      * of all alternatives and the value is the corresponding char of that rank
      * and alternative.
      *
-     * ```cpp
-     * constexpr std::array value_to_char = union_composition<char, dna5, gap, dna5>::value_to_char; // not working; is protected
-     * assert(value_to_char.size() == 10);
-     * assert(value_to_char[0] == 'A');
-     * assert(value_to_char[1] == 'C');
-     * assert(value_to_char[2] == 'G');
-     * assert(value_to_char[3] == 'T');
-     * assert(value_to_char[4] == '-');
-     * assert(value_to_char[5] == 'A');
-     * assert(value_to_char[6] == 'C');
-     * // and so on
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp value_to_char
      */
     static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
     {
@@ -581,21 +557,7 @@ protected:
      * alternatives and the value is the corresponding rank over all alternatives (by
      * conflict will default to the first).
      *
-     * ```cpp
-     * constexpr std::array char_to_value = char_to_value_table<char, dna5, gap, dna5>();
-     * assert(char_to_value.size() == 256);
-     * assert(char_to_value['A'] == 0);
-     * assert(char_to_value['C'] == 1);
-     * assert(char_to_value['G'] == 2);
-     * assert(char_to_value['T'] == 3);
-     * assert(char_to_value['-'] == 4);
-     * assert(char_to_value['A'] == 0);
-     * assert(char_to_value['C'] == 1);
-     * assert(char_to_value['G'] == 2);
-     * assert(char_to_value['T'] == 3);
-     * assert(char_to_value['N'] == 9);
-     * assert(char_to_value['*'] == 0); // every other character defaults to 0
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp char_to_value
      */
     static constexpr std::array char_to_value = []() constexpr
     {
