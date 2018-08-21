@@ -78,18 +78,7 @@ namespace seqan3
  * in the human genome: a comparison with sense codon usage.
  * BMC Genomics, 17, 366. http://doi.org/10.1186/s12864-016-2692-4
  *
- * ### Example
- *```cpp
- *     aa20 my_letter{aa20::A};
- *     // doesn't work:
- *     // aa20 my_letter{'A'};
- *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('?'); // converted to A internally
- *     if (my_letter.to_char() == 'A')
- *        std::cout << "yeah\n"; // "yeah";
- *```
+ * \snippet test/snippet/alphabet/aminoacid/aa20.cpp construction
  */
 
 struct aa20
@@ -394,17 +383,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to aa20_vector:
  *
- *```cpp
- *     // these don't work:
- *     // aa20_vector foo{"ABFUYR"};
- *     // aa20_vector bar = "ABFUYR";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     aa20_vector foo{"ABFUYR"_aa20};
- *     aa20_vector bar = "ABFUYR"_aa20;
- *     auto bax = "ABFUYR"_aa20;
- *```
+ *\snippet test/snippet/alphabet/aminoacid/aa20.cpp literal
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!

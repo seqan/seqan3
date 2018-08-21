@@ -54,6 +54,8 @@ namespace seqan3
  * The masked composition represents a seqan3::cartesian_composition of any given alphabet with the
  * masked alphabet. It allows one to specify which portions of a sequence should be masked,
  * without losing additional information by replacing the sequence directly.
+ *
+ * \snippet test/snippet/alphabet/mask/masked.cpp general
  */
 
  template <typename sequence_alphabet_t, typename mask_t = mask>

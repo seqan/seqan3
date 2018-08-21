@@ -74,14 +74,7 @@ namespace seqan3
  *
  * \par Usage
  * The following code example creates a dssp9 vector, modifies it, and prints the result to stdout.
- * ```cpp
- *     // create vector
- *     std::vector<dssp9> vec{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
- *     // modify and print
- *     vec[1] = dssp9::C;
- *     for (dssp9 chr : vec)
- *         std::cout << chr;  // ECHHTG
- * ```
+ * \snippet test/snippet/alphabet/structure/dssp9.cpp general
  */
 
 struct dssp9

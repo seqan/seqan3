@@ -65,26 +65,7 @@ namespace seqan3
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
- * ~~~~~~~~~~~~~~~{.cpp}
- *
- * structured_aa<aa27, dssp9> l{aa27::W, dssp9::B};
- * std::cout << int(to_rank(l)) << ' '
- *           << int(to_rank(get<0>(l))) << ' '
- *           << int(to_rank(get<1>(l))) << '\n';
- * // 49 22 1
- *
- * std::cout << to_char(l) << ' '
- *           << to_char(get<0>(l)) << ' '
- *           << to_char(get<1>(l)) << '\n';
- * // W W B
- *
- * // modify via structured bindings and references:
- * auto & [ seq_l, structure_l ] = l;
- * seq_l = aa27::V;
- * std::cout << to_char(l) << '\n';
- * // V
- *
- * ~~~~~~~~~~~~~~~
+ * \snippet test/snippet/alphabet/structure/structured_aa.cpp general
  *
  * This seqan3::cartesian_composition itself fulfills seqan3::alphabet_concept.
  */

@@ -42,13 +42,7 @@
  * \attention
  *
  * Note that you need to strictly follow this include order:
- * ```cpp
- * #include <alphabet/concept_pre.hpp>
- *
- * // your custom alphabet
- *
- * #include <alphabet/concept.hpp>
- * ```
+ * \snippet test/snippet/alphabet/concept_pre.cpp include order
  *
  * If you include `concept.hpp` before your definitions, than your type will
  * not be resolved as satisfying seqan3::alphabet_concept.
@@ -98,11 +92,7 @@ using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
  * \ingroup alphabet
  *
  * This is the expression to retrieve the value:
- * ```cpp
- * auto i = seqan3::alphabet_size<alphabet_type>::value;
- * // or
- * auto i = seqan3::alphabet_size_v<alphabet_type>;
- * ```
+ * \snippet test/snippet/alphabet/concept_pre.cpp value retrieval
  * The type of the variable is seqan3::underlying_rank_t<alphabet_type>.
  *
  * \par Helper variable template
@@ -240,11 +230,7 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * crossing interactions, e.g. depth 2 `(({....))}` or depth 3 `({[....)}]`.
  *
  * This is the expression to retrieve the value:
- * ```cpp
- * uint8_t pk_support = seqan3::pseudoknot_support<alphabet_type>::value;
- * // or
- * uint8_t pk_support = seqan3::pseudoknot_support_v<alphabet_type>;
- * ```
+ * \snippet test/snippet/alphabet/concept_pre.cpp pseudoknot value retrieval
  *
  * \par Helper variable template
  *   seqan3::pseudoknot_support_v as a shorthand for `seqan3::pseudoknot_support<alphabet_type>::%value`

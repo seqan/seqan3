@@ -53,14 +53,7 @@ namespace seqan3
  *
  * The alphabet always has the same value ('-').
  *
- * ```cpp
- *     gap my_gap = gap::GAP;
- *     gap another_gap{}.assign_char('A'); // setting this does not change anything
- *
- *     std::cout << my_gap.to_char(); // outputs '-'
- *     if (my_gap.to_char() == another_gap.to_char())
- *        std::cout << "Both gaps are the same!";
- * ```
+ * \snippet test/snippet/alphabet/gap/gap.cpp general
  */
 
 struct gap

@@ -64,53 +64,16 @@ namespace seqan3
  *
  * This class has a similar behavior as std::variant.
  *
- * ```cpp
- *     union_composition<dna4, gap> my_letter{};
- *     union_composition<dna4, gap> converted_letter{dna4::C};
- *     // doesn't work:
- *     // union_composition<dna4, gap> my_letter{'A'};
- *
- *     union_composition<dna4, gap>{}.assign_char('C'); // <- this does!
- *     union_composition<dna4, gap>{}.assign_char('-'); // gap character
- *     union_composition<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
- *                                                   // character of the first alphabet type (i.e. A of dna4)
- *     if (my_letter.to_char() == 'A')
- *        std::cout << "yeah\n"; // "yeah";
- * ```
+ * \snippet test/snippet/alphabet/composition/union_composition.cpp variant
  *
  * The union alphabet can also be constructed directly from one of the base
  * alphabets.
  *
- * ```cpp
- * using alphabet_t = union_composition<dna4, dna5, gap>;
- *
- * constexpr alphabet_t letter0{dna4::A};
- * constexpr alphabet_t letter1 = dna4::C;
- * constexpr alphabet_t letter2 = {dna4::G};
- * constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
- *
- * assert(letter0.to_rank() == 0);
- * assert(letter1.to_rank() == 1);
- * assert(letter2.to_rank() == 2);
- * assert(letter3.to_rank() == 3);
- * ```
+ * \snippet test/snippet/alphabet/composition/union_composition.cpp construct base
  *
  * Or can be assigned by one of the base alphabets.
  *
- * ```cpp
- * using alphabet_t = union_composition<dna4, dna5, gap>;
- *
- * alphabet_t letter;
- *
- * letter = dna5::A;
- * assert(letter.to_rank() == 4);
- *
- * letter = {dna5::C};
- * assert(letter.to_rank() == 5);
- *
- * letter = static_cast<alphabet_t>(dna5::G);
- * assert(letter.to_rank() == 6);
- * ```
+ * \snippet test/snippet/alphabet/composition/union_composition.cpp assign base
  */
 template <typename ...alphabet_types>
 //!\cond
@@ -122,13 +85,7 @@ public:
     /*!\brief Returns true if alphabet_t is one of the given alphabet types.
      * \tparam alphabet_t The type to check.
      *
-     * ```cpp
-     * using union_t = union_composition<dna4, gap>;
-     *
-     * static_assert(union_t::has_alternative<dna4>(), "should be true");
-     * static_assert(union_t::has_alternative<gap>(), "should be true");
-     * static_assert(!union_t::has_alternative<dna5>(), "should be false");
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp has_alternative
      */
     template <typename alphabet_t>
     static constexpr bool has_alternative() noexcept
@@ -171,10 +128,7 @@ public:
      * \tparam alphabet_t One of the base alphabet types.
      * \param alphabet The value of a base alphabet that should be assigned.
      *
-     * ```cpp
-     *     union_composition<dna4, gap> letter1{dna4::C}; // or
-     *     union_composition<dna4, gap> letter2 = gap::GAP;
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp value construction
      */
     template <typename alphabet_t>
     //!\cond
@@ -189,15 +143,7 @@ public:
      * \tparam alphabet_t The i-th given base alphabet type.
      * \param alphabet The value of a base alphabet that should be assigned.
      *
-     * ```cpp
-     * using alphabet_t = union_composition<dna4, dna4>;
-     *
-     * constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
-     * constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
-     *
-     * EXPECT_EQ(letter0.to_rank(), 0);
-     * EXPECT_EQ(letter4.to_rank(), 4);
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp reoccurring construction
      */
     template <size_t I, typename alphabet_t>
     //!\cond
@@ -216,10 +162,7 @@ public:
      * \tparam alphabet_t One of the base alphabet types.
      * \param alphabet The value of a base alphabet that should be assigned.
      *
-     * ```cpp
-     *     union_composition<dna4, gap> letter1{};
-     *     letter1 = gap::GAP;
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp assign by base
      */
     template <typename alphabet_t>
     //!\cond
@@ -319,14 +262,7 @@ protected:
      * An array which contains the prefix sum over all
      * alphabet_types::value_size's.
      *
-     * ```cpp
-     * constexpr std::array partial_sum = union_composition<dna4, gap, dna5>::partial_sum_sizes; // not working; is protected
-     * assert(partial_sum.size() == 4);
-     * assert(partial_sum[0] == 0);
-     * assert(partial_sum[1] == 4);
-     * assert(partial_sum[2] == 5);
-     * assert(partial_sum[3] == 10);
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp partial_sum
      */
     static constexpr std::array partial_sum_sizes = []() constexpr
     {
@@ -345,18 +281,7 @@ protected:
      * of all alphabets and the value is the corresponding char of that rank
      * and alphabet.
      *
-     * ```cpp
-     * constexpr std::array value_to_char = union_composition<char, dna4, gap, dna5>::value_to_char; // not working; is protected
-     * assert(value_to_char.size() == 10);
-     * assert(value_to_char[0] == 'A');
-     * assert(value_to_char[1] == 'C');
-     * assert(value_to_char[2] == 'G');
-     * assert(value_to_char[3] == 'T');
-     * assert(value_to_char[4] == '-');
-     * assert(value_to_char[5] == 'A');
-     * assert(value_to_char[6] == 'C');
-     * // and so on
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp value_to_char
      */
     static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
     {
@@ -393,21 +318,7 @@ protected:
      * alphabets and the value is the corresponding rank over all alphabets (by
      * conflict will default to the first).
      *
-     * ```cpp
-     * constexpr std::array char_to_value = char_to_value_table<char, dna4, gap, dna5>();
-     * assert(char_to_value.size() == 256);
-     * assert(char_to_value['A'] == 0);
-     * assert(char_to_value['C'] == 1);
-     * assert(char_to_value['G'] == 2);
-     * assert(char_to_value['T'] == 3);
-     * assert(char_to_value['-'] == 4);
-     * assert(char_to_value['A'] == 0);
-     * assert(char_to_value['C'] == 1);
-     * assert(char_to_value['G'] == 2);
-     * assert(char_to_value['T'] == 3);
-     * assert(char_to_value['N'] == 9);
-     * assert(char_to_value['*'] == 0); // every other character defaults to 0
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp char_to_value
      */
     static constexpr std::array char_to_value = []() constexpr
     {
