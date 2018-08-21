@@ -207,24 +207,15 @@ public:
     //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink).
     using rank_type = detail::min_viable_uint_t<value_size>;
 
-    /*!\name Default constructors
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr union_composition() = default;
     constexpr union_composition(union_composition const &) = default;
     constexpr union_composition(union_composition &&) = default;
-    //!\}
+    constexpr union_composition & operator=(union_composition const &) = default;
+    constexpr union_composition & operator=(union_composition &&) = default;
 
-    /*!\name Default assignment operators
-     * \{
-     */
-    constexpr union_composition & operator= (union_composition const &) = default;
-    constexpr union_composition & operator= (union_composition &&) = default;
-    //!\}
-
-    /*!\name Conversion constructors and assignment
-     * \{
-     */
     /*!\brief Construction via a value of a composite alphabet.
      * \tparam alphabet_t One of the composite alphabet types.
      * \param  alphabet   The value of a composite alphabet that should be assigned.
@@ -305,7 +296,7 @@ public:
     //!\cond
         requires !has_alternative<alphabet_subt>() && one_composite_is<assignable_from, alphabet_subt>
     //!\endcond
-    constexpr union_composition & operator= (alphabet_subt const & subalphabet) noexcept
+    constexpr union_composition & operator=(alphabet_subt const & subalphabet) noexcept
     {
         using alphabet_t = meta::front<meta::find_if<composites, assignable_from<alphabet_subt>>>;
         alphabet_t alphabet = subalphabet;
