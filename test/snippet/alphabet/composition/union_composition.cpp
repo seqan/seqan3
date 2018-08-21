@@ -1,6 +1,7 @@
 #include <seqan3/alphabet/composition/union_composition.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <gtest/gtest.h>
 
@@ -89,7 +90,7 @@ EXPECT_EQ(letter4.to_rank(), 4);
 {
 //! [assign by base]
 union_composition<dna4, gap> letter1{};
-letter1 = gap::GAP;
+letter1 = rna4::A;
 //! [assign by base]
 }
 
