@@ -40,6 +40,8 @@
 #pragma once
 
 #include <seqan3/io/concept.hpp>
+#include <sstream>
+#include <vector>
 
 namespace seqan3
 {
