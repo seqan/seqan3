@@ -44,6 +44,7 @@
 
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_list.hpp>
 #include <seqan3/std/concept/range.hpp>
 
 namespace seqan3::detail
@@ -153,6 +154,9 @@ public:
      * TODO re-evaluate this since pipable_adaptor_base is no longer template template
      */
     template <typename ...arg_types>
+    //!\cond
+        requires (sizeof...(arg_types) > 0)
+    //!\endcond
     struct auxiliary_functor_t
     {
         /*!\brief Define the operator() that is ultimately called inside the pipe-operator to fill in the `urange`
@@ -160,9 +164,15 @@ public:
          * \tparam urng_t Type of the underlying range.
          * \param[in] urange The underlying range.
          */
-        template <typename urng_t>
+        template <input_range_concept urng_t>
         auto operator()(urng_t && urange)
-            requires (sizeof...(arg_types) > 0) && input_range_concept<urng_t>
+        {
+            return explode(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(arg_types)>{});
+        }
+
+        //!\overload
+        template <input_range_concept urng_t>
+        auto operator()(urng_t && urange) const
         {
             return explode(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(arg_types)>{});
         }
@@ -173,8 +183,29 @@ public:
     protected:
         //!\brief Helper function to unpack the tuple.
         template <typename urng_t, size_t... Is>
-        auto explode(urng_t && urange, std::index_sequence<Is...> const &)
+        auto explode(urng_t && urange, std::index_sequence<Is...> const &) const &
         {
+            // std::get returns lvalue-reference to value, but we need to copy the values
+            return pipable_adaptor_base{}(
+                std::forward<urng_t>(urange),
+                static_cast<std::tuple_element_t<Is, std::tuple<arg_types...>>>(std::get<Is>(_arguments))...);
+        }
+
+        //!\brief Helper function to unpack the tuple.
+        template <typename urng_t, size_t... Is>
+        auto explode(urng_t && urange, std::index_sequence<Is...> const &) &
+        {
+            // std::get returns lvalue-reference to value, but we need to copy the values
+            return pipable_adaptor_base{}(
+                std::forward<urng_t>(urange),
+                static_cast<std::tuple_element_t<Is, std::tuple<arg_types...>>>(std::get<Is>(_arguments))...);
+        }
+
+        //!\overload
+        template <typename urng_t, size_t... Is>
+        auto explode(urng_t && urange, std::index_sequence<Is...> const &) &&
+        {
+            // move out values, because we don't need them anymore (this is temporary)
             return pipable_adaptor_base{}(std::forward<urng_t>(urange),
                                           std::forward<arg_types>(std::get<Is>(_arguments))...);
         }
@@ -266,11 +297,25 @@ public:
      * //     this operator           the intermediate operator() that returns a bound functor
      * ```
      */
-    template <typename urng_t,
-              typename ...arg_types>
-    friend auto operator|(urng_t && urange,
-                          auxiliary_functor_t<arg_types...> && bound_functor)
-        requires (sizeof...(arg_types) > 0) && input_range_concept<urng_t>
+    template <input_range_concept urng_t, typename ...arg_types>
+    friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> & bound_functor)
+        requires (sizeof...(arg_types) > 0)
+    {
+        return bound_functor(std::forward<urng_t>(urange));
+    }
+
+    //!\overload
+    template <input_range_concept urng_t, typename ...arg_types>
+    friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> const & bound_functor)
+        requires (sizeof...(arg_types) > 0)
+    {
+        return bound_functor(std::forward<urng_t>(urange));
+    }
+
+    //!\overload
+    template <input_range_concept urng_t, typename ...arg_types>
+    friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> && bound_functor)
+        requires (sizeof...(arg_types) > 0)
     {
         return bound_functor(std::forward<urng_t>(urange));
     }

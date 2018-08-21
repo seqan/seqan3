@@ -42,6 +42,8 @@
 #include <range/v3/range_concepts.hpp>
 #include <range/v3/utility/functional.hpp>
 
+#include <seqan3/std/concept/comparison.hpp>
+
 namespace seqan3
 {
 
@@ -49,31 +51,65 @@ namespace seqan3
  * \{
  */
 
-/*!\brief Resolves to `ranges::Invocable<func, ...args>()`
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Invocable
+/*!\interface   seqan3::invocable_concept <>
+ * \brief       Specifies whether the given callable is invocable with the given arguments.
+ * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Invocable
  */
-template <typename f, typename ...args>
-concept bool invocable_concept =                    static_cast<bool>(ranges::Invocable<f, args...>());
+//!\cond
+template <typename fun_t, typename ...arg_types>
+concept bool invocable_concept = requires(fun_t && f, arg_types &&... args)
+{
+    ranges::invoke(std::forward<fun_t>(f), std::forward<arg_types>(args)...);
+      /* not required to be equality preserving */
+};
+//!\endcond
 
-/*!\brief Resolves to `ranges::RegularInvocable<func, ...args>()`
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/RegularInvocable
+/*!\interface   seqan3::regular_invocable_concept <>
+ * \extends     seqan3::invocable_concept
+ * \brief       Specifies whether the given callable is invocable with the given arguments and equality preserving
+ *              (invocations change neither the callable, nor the arguments).
+ * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/RegularInvocable
  */
-template <typename f, typename ...args>
-concept bool regular_invocable_concept =            invocable_concept<f, args...> &&
-                                                    static_cast<bool>(ranges::RegularInvocable<f, args...>());
+//!\cond
+template <typename fun_t, typename ...arg_types>
+concept bool regular_invocable_concept = invocable_concept<fun_t, arg_types...> &&
+                                         requires(fun_t && f, arg_types &&... args)
+{
+    ranges::invoke(static_cast<std::remove_reference_t<fun_t> const &>(f), std::forward<arg_types>(args)...);
+      /* required to be equality preserving */
+};
+//!\endcond
 
-/*!\brief Resolves to `ranges::Predicate<func, ...args>()`
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Predicate
+/*!\interface   seqan3::predicate_concept <>
+ * \extends     seqan3::regular_invocable_concept
+ * \brief       Specifies whether the given callable is seqan3::regular_invocable_concept and returns bool.
+ * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Predicate
  */
-template <typename f, typename ...args>
-concept bool predicate_concept =                    regular_invocable_concept<f, args...> &&
-                                                    static_cast<bool>(ranges::Predicate<f, args...>());
+//!\cond
+template <typename fun_t, typename ...arg_types>
+concept bool predicate_concept = regular_invocable_concept<fun_t, arg_types...> &&
+                                 boolean_concept<std::result_of_t<fun_t&&(arg_types&&...)>>;
+//!\endcond
 
-/*!\brief Resolves to `ranges::Relation<func, type1, type2>()`
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Relation
+/*!\interface   seqan3::relation_concept <>
+ * \extends     seqan3::predicate_concept
+ * \brief       Specifies that fun_t defines a binary relation over the set of expressions whose type and value category
+ *              are those encoded by either t or u.
+ * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Relation
  */
-template <typename f, typename t, typename u>
-concept bool relation_concept =                     static_cast<bool>(ranges::Relation<f, t, u>());
-
+//!\cond
+template <typename fun_t, typename t, typename u>
+concept bool relation_concept = predicate_concept<fun_t, t, t> &&
+                                predicate_concept<fun_t, u, u> &&
+                                common_reference_concept<std::remove_reference_t<t> const &,
+                                                         std::remove_reference_t<u> const &> &&
+                                predicate_concept<fun_t,
+                                    ranges::common_reference_t<std::remove_reference_t<t> const &,
+                                                               std::remove_reference_t<u> const &>,
+                                    ranges::common_reference_t<std::remove_reference_t<t> const &,
+                                                               std::remove_reference_t<u> const &>> &&
+                                predicate_concept<fun_t, t, u> &&
+                                predicate_concept<fun_t, u, t>;
+//!\endcond
 //!\}
 }  // namespace seqan3

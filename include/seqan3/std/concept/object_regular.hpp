@@ -32,75 +32,32 @@
 //
 // ============================================================================
 
-#include <gtest/gtest.h>
+/*!\file
+ * \brief Adaptions of core language concepts.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
 
-#include <random>
+#pragma once
 
+#include <seqan3/std/concept/comparison.hpp>
 #include <seqan3/std/concept/object.hpp>
-#include <seqan3/std/concept/object_regular.hpp>
 
-#include "auxiliary.hpp"
-
-using namespace seqan3;
-
-TEST(destructible_concept, basic)
+namespace seqan3
 {
-    EXPECT_TRUE((destructible_concept<type_a>));
-    EXPECT_TRUE((!destructible_concept<type_d>));
-}
 
-TEST(constructible_concept, basic)
-{
-    EXPECT_TRUE((constructible_concept<type_a>));
-    EXPECT_TRUE((constructible_concept<type_c,
-                                       type_a>));
-    EXPECT_TRUE((!constructible_concept<type_c,
-                                        type_a,
-                                        type_b>));
-}
+/*!\addtogroup concept
+ * \{
+ */
 
-TEST(default_constructible_concept, basic)
-{
-    EXPECT_TRUE((default_constructible_concept<type_a>));
-    EXPECT_TRUE((!default_constructible_concept<type_d>));
-}
-
-TEST(move_constructible_concept, basic)
-{
-    EXPECT_TRUE((move_constructible_concept<type_b>));
-    EXPECT_TRUE((!move_constructible_concept<type_d>));
-}
-
-TEST(copy_constructible_concept, basic)
-{
-    EXPECT_TRUE((copy_constructible_concept<type_a>));
-    EXPECT_TRUE((!copy_constructible_concept<type_b>));
-}
-
-TEST(movable_concept, basic)
-{
-    EXPECT_TRUE((movable_concept<type_b>));
-    EXPECT_TRUE((!movable_concept<type_d>));
-}
-
-TEST(copyable_concept, basic)
-{
-    EXPECT_TRUE((copyable_concept<type_a>));
-    EXPECT_TRUE((!copyable_concept<type_b>));
-}
-
-TEST(semi_regular_concept, basic)
-{
-    EXPECT_TRUE((semi_regular_concept<type_a>));
-    EXPECT_TRUE((semi_regular_concept<type_c>));
-    EXPECT_TRUE((!semi_regular_concept<type_b>));
-    EXPECT_TRUE((!semi_regular_concept<type_d>));
-}
-
-TEST(regular_concept, basic)
-{
-    EXPECT_TRUE((!regular_concept<type_a>));
-    EXPECT_TRUE((!regular_concept<type_b>));
-    EXPECT_TRUE((regular_concept<type_c>));
-    EXPECT_TRUE((!regular_concept<type_d>));
-}
+/*!\interface   seqan3::regular_concept
+ * \brief       Subsumes seqan3::semi_regular_concept and seqan3::equality_comparable_concept.
+ * \extends     seqan3::semi_regular_concept
+ * \extends     seqan3::equality_comparable_concept
+ * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Regular
+ */
+//!\cond
+template <typename t>
+concept bool regular_concept = semi_regular_concept<t> && equality_comparable_concept<t>;
+//!\endcond
+//!\}
+}  // namespace seqan3
