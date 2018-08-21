@@ -59,6 +59,7 @@ namespace seqan3
  * ### Example
  *
  * Score two letters:
+<<<<<<< HEAD
  * ```cpp
  * nucleotide_scoring_scheme scheme; // hamming is default
  * std::cout << scheme.score(dna5::A, dna5::G); // == -1
@@ -90,6 +91,15 @@ namespace seqan3
  * std::cout << score; // == 1 - 1 + 1 - 1 + 1 + 1 == 2
  *
  * ```
+=======
+ * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp two letters
+ *
+ * You can "edit" a given matrix directly:
+ * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp edit matrix
+ *
+ * Score two sequences:
+ * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp score sequences
+>>>>>>> [FEATURE] introduce the snippets into the alignment module as well.
  */
 template <arithmetic_concept score_type = int8_t>
 class nucleotide_scoring_scheme : public scoring_scheme_base<nucleotide_scoring_scheme<score_type>, dna15, score_type>
