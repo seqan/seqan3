@@ -62,11 +62,14 @@ namespace seqan3
  */
 enum class field
 {
+    // Fields used in multiple contexts ........................................
     SEQ,            //!< The "sequence", usually a range of nucleotides or amino acids.
     ID,             //!< The identifier, usually a string.
     QUAL,           //!< The qualities, usually in phred-score notation.
     SEQ_QUAL,       //!< Sequence and qualities combined in one range.
-    // ...
+    OFFSET,         //!< Sequence (SEQ) relative start position (0-based), unsigned value.
+
+    // Fields unique to structure io ...........................................
     BPP,            //!< Base pair probability matrix of interactions, usually a matrix of float numbers.
     STRUCTURE,      //!< Fixed interactions, usually a string of structure alphabet characters.
     STRUCTURED_SEQ, //!< Sequence and fixed interactions combined in one range.
@@ -74,9 +77,23 @@ enum class field
     REACT,          //!< Reactivity values of the sequence characters given in a vector of float numbers.
     REACT_ERR,      //!< Reactivity error values given in a vector corresponding to REACT.
     COMMENT,        //!< Comment field of arbitrary content, usually a string.
-    OFFSET,         //!< Sequence start position, unsigned value.
-    ALIGN,          //!< The alignment
-    // ...
+
+    // Fields unique to alignment io ...........................................
+    ALIGNMENT,      //!< The (pairwise) alignment stored in an seqan3::alignment object.
+    REF_ID,         //!< The identifier of the (reference) sequence that SEQ was aligned to.
+    REF_SEQ,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
+    REF_OFFSET,     //!< Sequence (REF_SEQ) relative start position (0-based), unsigned value.
+    HEADER_PTR,     //!< A pointer to the seqan3::alignment_file_header object storing header information.
+
+    FLAG,           //!< The alignment flag (bit information), `uint16_t` value.
+    MATE,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.
+    MAPQ,           //!< The mapping quality of the SEQ alignment, usually a ohred-scaled score.
+    TAGS,           //!< The optional tags in the SAM format, stored in a dictionary.
+
+    BIT_SCORE,      //!< The bit score (statistical significance indicator), unsigned value.
+    EVALUE,         //!< The e-value (length normalized bit score), `double` value.
+
+    // User defined field aliases .. ...........................................
     USER_DEFINED_0, //!< Identifier for user defined file formats and specialisations.
     USER_DEFINED_1, //!< Identifier for user defined file formats and specialisations.
     USER_DEFINED_2, //!< Identifier for user defined file formats and specialisations.
