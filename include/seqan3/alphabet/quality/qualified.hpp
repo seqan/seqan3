@@ -102,12 +102,12 @@ namespace seqan3
  * This seqan3::cartesian_composition itself fulfils both seqan3::alphabet_concept and seqan3::quality_concept.
  */
 template <alphabet_concept sequence_alphabet_t, quality_concept quality_alphabet_t>
-struct qualified :
+class qualified :
     public cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                  sequence_alphabet_t, quality_alphabet_t>
 {
 private:
-    //!\brief The base type
+    //!\brief The base type.
     using base_type = cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                             sequence_alphabet_t, quality_alphabet_t>;
 
@@ -122,23 +122,33 @@ public:
     //!\brief Equals the phred_type of the quality_alphabet_type.
     using phred_type = underlying_phred_t<quality_alphabet_type>;
 
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    qualified() = default;
+    constexpr qualified(qualified const &) = default;
+    constexpr qualified(qualified &&) = default;
+    constexpr qualified & operator =(qualified const &) = default;
+    constexpr qualified & operator =(qualified &&) = default;
+    ~qualified() = default;
+
+    using base_type::base_type; // Inherit non-default constructors
+
+    using base_type::operator=; // Inherit non-default assignment operators
+
+    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified(indirect_component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(indirect_component_type const alph) {} ))
+    //!\}
+
     /*!\name Write functions
      * \{
      */
-    //!\brief Directly assign the sequence letter.
-    constexpr qualified & operator=(sequence_alphabet_type const l) noexcept
-    {
-        get<0>(*this) = l;
-        return *this;
-    }
-
-    //!\brief Directly assign the quality letter.
-    constexpr qualified & operator=(quality_alphabet_type const l) noexcept
-    {
-        get<1>(*this) = l;
-        return *this;
-    }
-
     //!\brief Assign from a character. This modifies the internal sequence letter.
     constexpr qualified & assign_char(char_type const c)
     {
@@ -177,186 +187,6 @@ public:
     {
         using seqan3::complement;
         return qualified{complement(get<0>(*this)), get<1>(*this)};
-    }
-    //!\}
-
-    // Inherit default comparators from base class
-    using base_type::operator==;
-    using base_type::operator!=;
-    using base_type::operator<;
-    using base_type::operator>;
-    using base_type::operator<=;
-    using base_type::operator>=;
-
-    /*!\name Member comparison operators for the qualified composition and its inner alphabet type
-     * \brief This enables the comparison of a qualified composition value against a value
-     * of the inner **alphabet type** while ignoring its quality score. The operators
-     * delegate to the comparison operators of the alphabet type.
-     * \{
-     */
-    //!\brief Returns `true` if \p std::get<0>(*this) == \p rhs, `false` otherwise.
-    constexpr bool operator==(sequence_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<0>(*this) == rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(*this) != \p rhs, `false` otherwise.
-    constexpr bool operator!=(sequence_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<0>(*this) != rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(*this) < \p rhs, `false` otherwise.
-    constexpr bool operator<(sequence_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<0>(*this) < rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(*this) > \p rhs, `false` otherwise.
-    constexpr bool operator>(sequence_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<0>(*this) > rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(*this) <= \p rhs, `false` otherwise.
-    constexpr bool operator<=(sequence_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<0>(*this) <= rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(*this) >= \p rhs, `false` otherwise.
-    constexpr bool operator>=(sequence_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<0>(*this) >= rhs;
-    }
-    //!\}
-
-    /*!\name Friend comparison operators for the qualified composition and its inner alphabet type
-     * \brief This enables the comparison of a qualified composition value against a value
-     * of the inner **alphabet type** while ignoring its quality score. The operators
-     * delegate to the comparison operators of the alphabet type.
-     * \{
-     */
-    //!\brief Returns `true` if \p std::get<0>(rhs) == \p lhs, `false` otherwise.
-    friend constexpr bool operator==(sequence_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs == lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) != \p lhs, `false` otherwise.
-    friend constexpr bool operator!=(sequence_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs != lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) < \p lhs, `false` otherwise.
-    friend constexpr bool operator<(sequence_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs > lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) > \p lhs, `false` otherwise.
-    friend constexpr bool operator>(sequence_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs < lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) <= \p lhs, `false` otherwise.
-    friend constexpr bool operator<=(sequence_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs >= lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) >= \p lhs, `false` otherwise.
-    friend constexpr bool operator>=(sequence_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs <= lhs;
-    }
-    //!\}
-
-    /*!\name Member comparison operators for the qualified composition and its inner quality type
-     * \brief This enables the comparison of a qualified composition value against a value
-     * of the inner **quality type** while ignoring its alphabet character value.
-     * The operators delegate to the comparison operators of the quality type.
-     *\{
-     */
-    //!\brief Returns `true` if \p std::get<1>(*this) == \p rhs, `false` otherwise.
-    constexpr bool operator==(quality_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<1>(*this) == rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<1>(*this) != \p rhs, `false` otherwise.
-    constexpr bool operator!=(quality_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<1>(*this) != rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<1>(*this) < \p rhs, `false` otherwise.
-    constexpr bool operator<(quality_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<1>(*this) < rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<1>(*this) > \p rhs, `false` otherwise.
-    constexpr bool operator>(quality_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<1>(*this) > rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<1>(*this) <= \p rhs, `false` otherwise.
-    constexpr bool operator<=(quality_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<1>(*this) <= rhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<1>(*this) >= \p rhs, `false` otherwise.
-    constexpr bool operator>=(quality_alphabet_t const & rhs) const noexcept
-    {
-        return std::get<1>(*this) >= rhs;
-    }
-    //!\}
-
-    /*!\name Friend comparison operators for the qualified composition and its inner quality type
-     * \brief This enables the comparison of a qualified composition value against a value
-     * of the inner **quality type** while ignoring its alphabet character value.
-     * The operators delegate to the comparison operators of the quality type.
-     *\{
-     */
-    //!\brief Returns `true` if \p std::get<0>(rhs) == \p lhs, `false` otherwise.
-    friend constexpr bool operator==(quality_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs == lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) != \p lhs, `false` otherwise.
-    friend constexpr bool operator!=(quality_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs != lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) < \p lhs, `false` otherwise.
-    friend constexpr bool operator<(quality_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs > lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) > \p lhs, `false` otherwise.
-    friend constexpr bool operator>(quality_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs < lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) <= \p lhs, `false` otherwise.
-    friend constexpr bool operator<=(quality_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs >= lhs;
-    }
-
-    //!\brief Returns `true` if \p std::get<0>(rhs) >= \p lhs, `false` otherwise.
-    friend constexpr bool operator>=(quality_alphabet_t const & lhs, qualified const & rhs) noexcept
-    {
-        return rhs <= lhs;
     }
     //!\}
 };

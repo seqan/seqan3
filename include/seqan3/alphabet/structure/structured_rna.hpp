@@ -53,6 +53,7 @@ namespace seqan3
 
 /*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with an RNA structure alphabet.
  * \ingroup structure
+ * \implements seqan3::rna_structure_concept
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
  * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::rna_structure_concept.
  *
@@ -86,15 +87,21 @@ namespace seqan3
  *
  * ~~~~~~~~~~~~~~~
  *
- * This seqan3::cartesian_composition itself fulfills both seqan3::nucleotide_concept and seqan3::rna_structure_concept.
+ * This seqan3::cartesian_composition itself models both seqan3::nucleotide_concept and seqan3::rna_structure_concept.
  */
-
 template <typename sequence_alphabet_t, typename structure_alphabet_t>
+//!\cond
     requires nucleotide_concept<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t>
-struct structured_rna :
+//!\endcond
+class structured_rna :
     public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
 {
+private:
+    //!\brief The base type.
+    using base_type = cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
+                                            sequence_alphabet_t, structure_alphabet_t>;
+public:
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
     //!\brief Second template parameter as member type.
@@ -103,23 +110,32 @@ struct structured_rna :
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
 
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    structured_rna() = default;
+    constexpr structured_rna(structured_rna const &) = default;
+    constexpr structured_rna(structured_rna &&) = default;
+    constexpr structured_rna & operator =(structured_rna const &) = default;
+    constexpr structured_rna & operator =(structured_rna &&) = default;
+    ~structured_rna() = default;
+
+    using base_type::base_type; // Inherit non-default constructors
+
+    using base_type::operator=; // Inherit non-default assignment operators
+
+    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(indirect_component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(indirect_component_type const alph) {} ))
+    //!\}
+
     //!\name Write functions
     //!\{
-
-    //!\brief Directly assign the sequence character.
-    constexpr structured_rna & operator=(sequence_alphabet_type const l) noexcept
-    {
-        get<0>(*this) = l;
-        return *this;
-    }
-
-    //!\brief Directly assign the structure character.
-    constexpr structured_rna & operator=(structure_alphabet_type const l) noexcept
-    {
-        get<1>(*this) = l;
-        return *this;
-    }
-
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
     constexpr structured_rna & assign_char(char_type const c)
     {

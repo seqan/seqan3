@@ -41,268 +41,6 @@
 
 using namespace seqan3;
 
-/************** TUPLE INHERITANCE **********************/
-
-// default/zero construction
-TEST(qualified, ctr)
-{
-    [[maybe_unused]] qualified<dna4, phred42> t1{};
-}
-
-// aggregate initialization
-TEST(qualified, aggr)
-{
-    qualified<dna4, phred42> t1{};
-    qualified<dna4, phred42> t2{dna4::C, 7};
-    EXPECT_NE(t1, t2);
-}
-
-// zero initialization
-TEST(qualified, zro)
-{
-    qualified<dna4, phred42> t1{dna4::A, 0};
-    qualified<dna4, phred42> t2{};
-
-    EXPECT_EQ(t1, t2);
-}
-
-// copy construction
-TEST(qualified, cp_ctr)
-{
-    qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2{t1};
-    qualified<dna4, phred42> t3(t1);
-    EXPECT_EQ(t1, t2);
-    EXPECT_EQ(t2, t3);
-}
-
-// move construction
-TEST(qualified, mv_ctr)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-    qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2{std::move(t1)};
-    EXPECT_EQ(t2, t0);
-    qualified<dna4, phred42> t3(std::move(t2));
-    EXPECT_EQ(t3, t0);
-}
-
-// copy assignment
-TEST(qualified, cp_assgn)
-{
-    qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2{};
-    qualified<dna4, phred42> t3{};
-
-    t2 = t1;
-    t3 = t1;
-    EXPECT_EQ(t1, t2);
-    EXPECT_EQ(t2, t3);
-}
-
-// move assignment
-TEST(qualified, mv_assgn)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-    qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2{};
-    qualified<dna4, phred42> t3{};
-    t2 = std::move(t1);
-    EXPECT_EQ(t2, t0);
-    t3 = std::move(t2);
-    EXPECT_EQ(t3, t0);
-}
-
-// swap
-TEST(qualified, swap)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-    qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2{};
-    qualified<dna4, phred42> t3{};
-
-    std::swap(t1, t2);
-    EXPECT_EQ(t2, t0);
-    EXPECT_EQ(t1, t3);
-}
-
-// get<1>
-TEST(qualified, get_i)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-
-    static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), dna4 &>);
-    static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), phred42 &>);
-
-    EXPECT_EQ(seqan3::get<0>(t0), dna4::C);
-    EXPECT_EQ(seqan3::get<1>(t0), phred42{7});
-}
-
-// std::get<1>
-TEST(qualified, stdget_i)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-
-    static_assert(std::is_same_v<decltype(std::get<0>(t0)), dna4 &>);
-    static_assert(std::is_same_v<decltype(std::get<1>(t0)), phred42 &>);
-
-    EXPECT_EQ(std::get<0>(t0), dna4::C);
-    EXPECT_EQ(std::get<1>(t0), phred42{7});
-}
-
-// structured bindings
-TEST(qualified, struct_binding)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-    auto [ i, l ] = t0;
-
-    static_assert(std::is_same_v<decltype(i), dna4>);
-    static_assert(std::is_same_v<decltype(l), phred42>);
-
-    EXPECT_EQ(i, dna4::C);
-    EXPECT_EQ(l, phred42{7});
-}
-
-// get<type>
-TEST(qualified, get_type)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-
-    EXPECT_EQ(seqan3::get<dna4>(t0), dna4::C);
-    EXPECT_EQ(seqan3::get<phred42>(t0), phred42{7});
-}
-
-// std::get<type>
-TEST(qualified, stdget_type)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-
-    EXPECT_EQ(std::get<dna4>(t0), dna4::C);
-    EXPECT_EQ(std::get<phred42>(t0), phred42{7});
-}
-
-// std::tuple_element
-TEST(qualified, tuple_element)
-{
-    using pt = qualified<dna4, phred42>;
-
-    static_assert(std::is_same_v<std::tuple_element_t<0, pt>, dna4>);
-    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, phred42>);
-    static_assert(std::tuple_size_v<pt> == 2);
-}
-
-// type deduction
-TEST(qualified, type_deduce)
-{
-    qualified t0{dna4::C, phred42{7}};
-    using pt = decltype(t0);
-
-    static_assert(std::is_same_v<std::tuple_element_t<0, pt>, dna4>);
-    static_assert(std::is_same_v<std::tuple_element_t<1, pt>, phred42>);
-    static_assert(std::tuple_size_v<pt> == 2);
-}
-
-// explicit cast to element
-TEST(qualified, cast_to_element)
-{
-    qualified<dna4, phred42> t0{dna4::C, 7};
-
-    auto d = static_cast<dna4>(t0);
-    auto q = static_cast<phred42>(t0);
-    static_assert(std::is_same_v<decltype(d), dna4>);
-    static_assert(std::is_same_v<decltype(q), phred42>);
-
-    EXPECT_EQ(d, dna4::C);
-    EXPECT_EQ(q, phred42{7});
-}
-
-// comparison operators
-TEST(qualified, cmp)
-{
-    qualified<dna4, phred42> t0{dna4::C, 6};
-    qualified<dna4, phred42> t1{dna4::C, 7};
-    qualified<dna4, phred42> t2{dna4::G, 7};
-    qualified<dna4, phred42> t3{dna4::A, 7};
-
-    EXPECT_EQ(t1, t1);
-
-    EXPECT_NE(t0, t1);
-    EXPECT_NE(t0, t2);
-    EXPECT_NE(t2, t3);
-
-    EXPECT_LT(t0, t1);
-    EXPECT_LT(t0, t2);
-    EXPECT_LT(t1, t2);
-    EXPECT_LT(t3, t0);
-    EXPECT_LT(t3, t1);
-    EXPECT_LT(t3, t2);
-
-    EXPECT_LE(t0, t1);
-    EXPECT_LE(t0, t2);
-    EXPECT_LE(t1, t2);
-    EXPECT_LE(t3, t0);
-    EXPECT_LE(t3, t1);
-    EXPECT_LE(t3, t2);
-    EXPECT_LE(t1, t1);
-
-    EXPECT_GE(t1, t0);
-    EXPECT_GE(t2, t0);
-    EXPECT_GE(t2, t1);
-    EXPECT_GE(t0, t3);
-    EXPECT_GE(t1, t3);
-    EXPECT_GE(t2, t3);
-    EXPECT_GE(t1, t1);
-
-    EXPECT_GT(t1, t0);
-    EXPECT_GT(t2, t0);
-    EXPECT_GT(t2, t1);
-    EXPECT_GT(t0, t3);
-    EXPECT_GT(t1, t3);
-    EXPECT_GT(t2, t3);
-}
-
-TEST(qualified, cmp_alph)
-{
-    qualified<dna4, phred42> t0{dna4::C, 6};
-
-    EXPECT_EQ(t0, dna4::C);
-    EXPECT_LE(t0, dna4::C);
-    EXPECT_GE(t0, dna4::C);
-    EXPECT_LE(t0, dna4::G);
-    EXPECT_LT(t0, dna4::G);
-    EXPECT_GE(t0, dna4::A);
-    EXPECT_GT(t0, dna4::A);
-
-    EXPECT_EQ(dna4::C, t0);
-    EXPECT_GE(dna4::C, t0);
-    EXPECT_LE(dna4::C, t0);
-    EXPECT_GE(dna4::G, t0);
-    EXPECT_GT(dna4::G, t0);
-    EXPECT_LE(dna4::A, t0);
-    EXPECT_LT(dna4::A, t0);
-}
-
-TEST(qualified, cmp_qual)
-{
-    qualified<dna4, phred42> t0{dna4::C, 6};
-
-    EXPECT_EQ(t0, phred42{6});
-    EXPECT_LE(t0, phred42{6});
-    EXPECT_GE(t0, phred42{6});
-    EXPECT_LE(t0, phred42{8});
-    EXPECT_LT(t0, phred42{8});
-    EXPECT_GE(t0, phred42{2});
-    EXPECT_GT(t0, phred42{2});
-
-    EXPECT_EQ(phred42{6}, t0);
-    EXPECT_GE(phred42{6}, t0);
-    EXPECT_LE(phred42{6}, t0);
-    EXPECT_GE(phred42{8}, t0);
-    EXPECT_GT(phred42{8}, t0);
-    EXPECT_LE(phred42{2}, t0);
-    EXPECT_LT(phred42{2}, t0);
-}
-
 /************** ALPHABET and QUALITY concept **********************/
 
 TEST(qualified, rank_type)
@@ -331,7 +69,7 @@ TEST(qualified, alphabet_size_v)
 
 TEST(qualified, to_rank)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
     EXPECT_EQ(to_rank(std::get<1>(t0)), 6);
     EXPECT_EQ(to_rank(t0),
@@ -354,7 +92,7 @@ TEST(qualified, assign_rank)
 
 TEST(qualified, to_char)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
     EXPECT_EQ(to_char(std::get<1>(t0)), '!' + 6);
     EXPECT_EQ(to_char(t0), 'C');
@@ -364,7 +102,7 @@ TEST(qualified, assign_char)
 {
     using type = qualified<dna4, phred42>;
 
-    type t0{dna4::C, 17};
+    type t0{dna4::C, phred42{17}};
     char qchar = to_char(std::get<1>(t0));
 
     assign_char(t0, 'A');
@@ -386,7 +124,7 @@ TEST(qualified, assign_char)
 
 TEST(qualified, to_phred)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     EXPECT_EQ(to_phred(std::get<1>(t0)), 6);
     EXPECT_EQ(to_phred(t0), 6);
 }
@@ -395,7 +133,7 @@ TEST(qualified, assign_phred)
 {
     using type = qualified<dna4, phred42>;
 
-    type t0{dna4::C, 17};
+    type t0{dna4::C, phred42{17}};
     char schar = to_char(t0);
 
     assign_phred(t0, 12);
@@ -408,7 +146,7 @@ TEST(qualified, assign_phred)
 
 TEST(qualified, outstream)
 {
-    qualified<dna4, phred42> t0{dna4::C, 6};
+    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
     std::stringstream s;
     s << t0;
     t0 = dna4::A;
