@@ -338,7 +338,7 @@ TEST_F(read, fail_no_seq_after_id)
     std::stringstream istream{input};
 
     EXPECT_THROW( (format.read(istream, options, seq, id, qual)),
-                  parse_error );
+                  unexpected_end_of_input );
 }
 
 //TODO fail_no_quals

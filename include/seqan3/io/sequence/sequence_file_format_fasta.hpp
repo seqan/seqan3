@@ -64,7 +64,10 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/take.hpp>
+#include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
+#include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/concept/range.hpp>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
@@ -217,9 +220,9 @@ protected:
         // read id
         if (options.truncate_ids)
         {
-            ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)        // skip leading >
-                                     | ranges::view::take_while(!(is_cntrl || is_blank)), // read ID until delimiter…
-                         detail::make_conversion_output_iterator(id));                    // … ^A is old delimiter
+            ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)      // skip leading >
+                                     | view::take_until_or_throw(is_cntrl || is_blank), // read ID until delimiter…
+                         detail::make_conversion_output_iterator(id));                  // … ^A is old delimiter
 
             // consume rest of line
             detail::consume(stream_view | view::take_line_or_throw);
@@ -245,7 +248,7 @@ protected:
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
-            ranges::copy(stream_view | ranges::view::take_while(!is_id)             // until next header (or end)
+            ranges::copy(stream_view | view::take_until(is_id)                      // until next header (or end)
                                      | ranges::view::remove_if(is_space || is_digit)// ignore whitespace and numbers
                                      | view::transform([is_legal_alph] (char const c)
                                        {
@@ -263,7 +266,7 @@ protected:
         }
         else
         {
-            detail::consume(stream_view | ranges::view::take_while(!is_id));
+            detail::consume(stream_view | view::take_until(is_id));
         }
     }
 

@@ -47,10 +47,8 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/utility/iterator.hpp>
 #include <range/v3/view/chunk.hpp>
-#include <range/v3/view/drop_while.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/remove_if.hpp>
-#include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
@@ -64,7 +62,10 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/take.hpp>
+#include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
+#include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/concept/range.hpp>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
@@ -157,7 +158,7 @@ public:
         ++stream_it; // skip '@'
         if (options.truncate_ids)
         {
-            ranges::copy(stream_view | ranges::view::take_while(!(is_cntrl || is_blank)),
+            ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
                          detail::make_conversion_output_iterator(id));
             detail::consume(stream_view | view::take_line_or_throw);
         }
@@ -168,7 +169,7 @@ public:
         }
 
         /* Sequence */
-        auto seq_view = stream_view | ranges::view::take_while(!is_char<'+'>{})    // until 2nd ID line TODO: or_throw
+        auto seq_view = stream_view | view::take_until_or_throw(is_char<'+'>{})    // until 2nd ID line
                                     | ranges::view::remove_if(is_space);           // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
@@ -209,7 +210,7 @@ public:
 
         /* Qualities */
         auto qview = stream_view | ranges::view::remove_if(is_space)                  // this consumes trailing newline
-                                 | ranges::view::take_exactly(sequence_size_after - sequence_size_before);//TODO orthrow
+                                 | view::take_exactly_or_throw(sequence_size_after - sequence_size_before);
         if constexpr (seq_qual_combined)
         {
             // seq_qual field implies that they are the same variable

@@ -54,7 +54,6 @@
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/transform.hpp>
-#include <range/v3/view/take_while.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
@@ -67,7 +66,9 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_line.hpp>
+#include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/concept/range.hpp>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
@@ -169,7 +170,7 @@ public:
                 if (options.truncate_ids)
                 {
                     ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
-                                             | ranges::view::take_while(!(is_cntrl || is_blank)),
+                                             | view::take_until_or_throw(is_cntrl || is_blank),
                                  detail::make_conversion_output_iterator(id));
                     detail::consume(stream_view | view::take_line_or_throw);
                 }
@@ -256,7 +257,7 @@ public:
         }
         else
         {
-            detail::consume(stream_view | ranges::view::take_while(!is_space)); // until whitespace
+            detail::consume(stream_view | view::take_until(is_space)); // until whitespace
         }
 
         // READ ENERGY (if present)
@@ -278,7 +279,7 @@ public:
         {
             detail::consume(stream_view | view::take_line);
         }
-        detail::consume(stream_view | ranges::view::take_while(is_space));
+        detail::consume(stream_view | view::take_until(!is_space));
 
         // make sure "buffer at end" implies "stream at end"
         if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) && (!stream.eof()))
@@ -392,7 +393,7 @@ private:
     auto read_structure(stream_view_type & stream_view)
     {
         is_in_alphabet<alph_type> const is_legal_structure;
-        return stream_view | ranges::view::take_while(!is_space) // until whitespace
+        return stream_view | view::take_until(is_space) // until whitespace
                            | ranges::view::transform([is_legal_structure](char const c)
                              {
                                  if (!is_legal_structure(c))
