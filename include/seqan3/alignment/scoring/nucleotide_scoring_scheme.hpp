@@ -49,6 +49,7 @@ namespace seqan3
 /*!\brief A data structure for managing and computing the score of two nucleotides.
  * \tparam score_type The underlying type.
  * \ingroup scoring
+ * \implements seqan3::scoring_scheme_concept
  *
  * \details
  *
@@ -60,21 +61,21 @@ namespace seqan3
  * Score two letters:
  * ```cpp
  * nucleotide_scoring_scheme scheme; // hamming is default
- * std::cout << scheme.get_score(dna5::A, dna5::G); // == -1
- * std::cout << scheme.get_score(dna5::A, dna5::A); // == 0
+ * std::cout << scheme.score(dna5::A, dna5::G); // == -1
+ * std::cout << scheme.score(dna5::A, dna5::A); // == 0
  *
  * scheme.set_scheme_simple(match_score{3}, mismatch_score{-2});
- * std::cout << scheme.get_score(dna5::A, rna15::G); // == -2
- * std::cout << scheme.get_score(dna5::A, rna15::A); // == 3
- * // you can score differenct nucleotides  ^
+ * std::cout << scheme.score(dna5::A, rna15::G); // == -2
+ * std::cout << scheme.score(dna5::A, rna15::A); // == 3
+ * // you can score different nucleotides  ^
  * ```
  *
  * You can "edit" a given matrix directly:
  * ```cpp
  * scheme.set_scheme_similarity_matrix;
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 2
- * scheme.get_score(aa27::T, aa27::S) = 3;
- * std::cout << scheme.get_score(aa27::T, aa27::S); // == 3
+ * std::cout << scheme.score(aa27::T, aa27::S); // == 2
+ * scheme.score(aa27::T, aa27::S) = 3;
+ * std::cout << scheme.score(aa27::T, aa27::S); // == 3
  * ```
  *
  * Score two sequences:
@@ -85,7 +86,7 @@ namespace seqan3
  * nucleotide_scoring_scheme scheme; // haming distance is default
  * int score = 0;
  * for (auto pair : ranges::view::zip(one, two))
- *     score += scheme.get_score(std::get<0>(pair), std::get<1>(pair));
+ *     score += scheme.score(std::get<0>(pair), std::get<1>(pair));
  * std::cout << score; // == 1 - 1 + 1 - 1 + 1 + 1 == 2
  *
  * ```
@@ -108,8 +109,8 @@ public:
       template <arithmetic_concept score_arg_t>
       constexpr nucleotide_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms) {}
     ))
-    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_t const & _matrix)
-    SEQAN3_DOXYGEN_ONLY(( constexpr nucleotide_scoring_scheme(matrix_t const & _matrix) noexcept {} ))
+    //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & _matrix)
+    SEQAN3_DOXYGEN_ONLY(( constexpr nucleotide_scoring_scheme(matrix_type const & _matrix) noexcept {} ))
     //!\}
 
     //!\privatesection

@@ -113,7 +113,7 @@ mismatch_score(score_type &&) -> mismatch_score<score_type>;
  *
  * This type is never used directly, instead use seqan3::nucleotide_scoring_scheme or seqan3::aminoacid_scoring_scheme.
  */
-template <typename derived_t, alphabet_concept alphabet_t, arithmetic_concept score_type>
+template <typename derived_t, alphabet_concept alphabet_t, arithmetic_concept score_t>
 class scoring_scheme_base
 {
 public:
@@ -121,19 +121,19 @@ public:
      * \{
      */
     //!\brief Type of the score values.
-    using score_t = score_type;
+    using score_type = score_t;
     //!\brief Size type that can hold the dimension of the matrix (i.e. size of the alphabet).
-    using matrix_size_t = uint8_t;
+    using matrix_size_type = uint8_t;
     //!\}
 
     //!\brief Size of the matrix dimensions (i.e. size of the alphabet).
-    static constexpr matrix_size_t matrix_size = alphabet_size_v<alphabet_t>;
+    static constexpr matrix_size_type matrix_size = alphabet_size_v<alphabet_t>;
 
     /*!\name Member types
      * \{
      */
     //!\brief Type of the internal matrix (a two-dimensional array).
-    using matrix_t = std::array<std::array<score_t, matrix_size>, matrix_size>;
+    using matrix_type = std::array<std::array<score_type, matrix_size>, matrix_size>;
     //!\}
 
 private:
@@ -168,7 +168,7 @@ private:
     /*!\brief Constructor for a custom scheme (delegates to set_custom_matrix()).
      * \copydetails set_custom_matrix()
      */
-    constexpr scoring_scheme_base(matrix_t const & _matrix) noexcept
+    constexpr scoring_scheme_base(matrix_type const & _matrix) noexcept
     {
         set_custom_matrix(_matrix);
     }
@@ -204,15 +204,15 @@ public:
                                         "this exception."};
         }
 
-        for (matrix_size_t i = 0; i < matrix_size; ++i)
-            for (matrix_size_t j = 0; j < matrix_size; ++j)
+        for (matrix_size_type i = 0; i < matrix_size; ++i)
+            for (matrix_size_type j = 0; j < matrix_size; ++j)
                 matrix[i][j] = (i == j) ? static_cast<score_t>(i_ms) : static_cast<score_t>(i_mms);
     }
 
     /*!\brief Set a custom scheme by passing a full matrix with arbitrary content.
      * \param[in] _matrix A full matrix that is copied into the scheme.
      */
-    constexpr void set_custom_matrix(matrix_t const & _matrix) noexcept
+    constexpr void set_custom_matrix(matrix_type const & _matrix) noexcept
     {
         ranges::copy(_matrix, ranges::begin(matrix));
     }
@@ -230,15 +230,15 @@ public:
      */
     template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
               explicitly_convertible_to_concept<alphabet_t> alph2_t>
-    constexpr score_t & get_score(alph1_t const alph1, alph2_t const alph2) noexcept
+    constexpr score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
-    //!\copydoc get_score
+    //!\copydoc score
     template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
               explicitly_convertible_to_concept<alphabet_t> alph2_t>
-    constexpr score_t get_score(alph1_t const alph1, alph2_t const alph2) const noexcept
+    constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
@@ -273,7 +273,7 @@ public:
 
 private:
     //!\brief The actual data member.
-    matrix_t matrix;
+    matrix_type matrix;
 };
 
 } // namespace seqan3

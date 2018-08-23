@@ -40,6 +40,7 @@
 
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
@@ -134,35 +135,43 @@ TEST(aminoacid_scoring_scheme, template_argument_deduction)
 // generic test
 // ------------------------------------------------------------------
 
+TYPED_TEST(generic, concept)
+{
+    using alph_t = typename TestFixture::alph_t;
+    EXPECT_TRUE((scoring_scheme_concept<TypeParam, alph_t>));
+    EXPECT_TRUE((scoring_scheme_concept<TypeParam const, alph_t>));
+    EXPECT_TRUE((scoring_scheme_concept<TypeParam const &, alph_t>));
+}
+
 TYPED_TEST(generic, member_types)
 {
     using alph_t = typename TestFixture::alph_t;
 
     TypeParam scheme{};
 
-    using score_type = typename TypeParam::score_t;
-    using matrix_size_type = typename TypeParam::matrix_size_t;
-    using matrix_type = typename TypeParam::matrix_t;
+    using score_t = typename TypeParam::score_type;
+    using matrix_size_t = typename TypeParam::matrix_size_type;
+    using matrix_t = typename TypeParam::matrix_type;
     constexpr auto matrix_size = TypeParam::matrix_size;
 
     if constexpr (std::is_same_v<TypeParam, nucleotide_scoring_scheme<float>>)
     {
-        EXPECT_TRUE((std::is_same_v<score_type, float>));
+        EXPECT_TRUE((std::is_same_v<score_t, float>));
     }
     else if constexpr (std::is_same_v<TypeParam, aminoacid_scoring_scheme<int>>)
     {
-        EXPECT_TRUE((std::is_same_v<score_type, int>));
+        EXPECT_TRUE((std::is_same_v<score_t, int>));
     }
     else
     {
-        EXPECT_TRUE((std::is_same_v<score_type, int8_t>));
+        EXPECT_TRUE((std::is_same_v<score_t, int8_t>));
     }
 
     EXPECT_EQ(matrix_size, alphabet_size_v<alph_t>);
-    EXPECT_TRUE((std::is_same_v<std::remove_const_t<decltype(matrix_size)>, matrix_size_type>));
-    EXPECT_TRUE((std::is_same_v<matrix_size_type, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<std::remove_const_t<decltype(matrix_size)>, matrix_size_t>));
+    EXPECT_TRUE((std::is_same_v<matrix_size_t, uint8_t>));
 
-    EXPECT_TRUE((std::is_same_v<matrix_type, std::array<std::array<score_type, matrix_size>, matrix_size>>));
+    EXPECT_TRUE((std::is_same_v<matrix_t, std::array<std::array<score_t, matrix_size>, matrix_size>>));
 }
 
 TYPED_TEST(generic, simple_score)
@@ -179,14 +188,14 @@ TYPED_TEST(generic, simple_score)
         for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
         {
             int8_t expected = i == j ? 5 : -3;
-            EXPECT_EQ(expected, scheme.get_score(assign_rank(alph_t{}, i), assign_rank(alph_t{}, j)));
+            EXPECT_EQ(expected, scheme.score(assign_rank(alph_t{}, i), assign_rank(alph_t{}, j)));
         }
     }
 }
 
 TYPED_TEST(generic, simple_score_failure)
 {
-    if constexpr (std::is_same_v<typename TypeParam::score_t, int8_t>)
+    if constexpr (std::is_same_v<typename TypeParam::score_type, int8_t>)
     {
         // Test constructor
         EXPECT_THROW((TypeParam{match_score{600}, mismatch_score{-4}}),
@@ -222,7 +231,7 @@ TYPED_TEST(generic, hamming)
         for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
         {
             int8_t expected = i == j ? 0 : -1;
-            EXPECT_EQ(expected, scheme.get_score(assign_rank(alph_t{}, i), assign_rank(alph_t{}, j)));
+            EXPECT_EQ(expected, scheme.score(assign_rank(alph_t{}, i), assign_rank(alph_t{}, j)));
         }
     }
 }
@@ -231,7 +240,7 @@ TYPED_TEST(generic, custom)
 {
     using alph_t = typename TestFixture::alph_t;
 
-    typename TypeParam::matrix_t matrix;
+    typename TypeParam::matrix_type matrix;
 
     for (uint8_t i = 0; i < alphabet_size_v<alph_t>; ++i)
         for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
@@ -244,20 +253,20 @@ TYPED_TEST(generic, custom)
 
     if constexpr (detail::is_type_specialisation_of_v<TypeParam, aminoacid_scoring_scheme>)
     {
-        EXPECT_EQ(0*0+0,    scheme.get_score(aa27::A, aa27::A));
-        EXPECT_EQ(0*0+2,    scheme.get_score(aa27::A, aa27::C));
-        EXPECT_EQ(2*2+0,    scheme.get_score(aa27::C, aa27::A));
-        EXPECT_EQ(8*8+8,    scheme.get_score(aa27::I, aa27::I));
-        EXPECT_EQ(0*0+13,   scheme.get_score(aa27::A, aa27::N));
-        EXPECT_EQ(2*2+1,    scheme.get_score(aa27::C, aa27::B));
+        EXPECT_EQ(0*0+0,    scheme.score(aa27::A, aa27::A));
+        EXPECT_EQ(0*0+2,    scheme.score(aa27::A, aa27::C));
+        EXPECT_EQ(2*2+0,    scheme.score(aa27::C, aa27::A));
+        EXPECT_EQ(8*8+8,    scheme.score(aa27::I, aa27::I));
+        EXPECT_EQ(0*0+13,   scheme.score(aa27::A, aa27::N));
+        EXPECT_EQ(2*2+1,    scheme.score(aa27::C, aa27::B));
     } else
     {
-        EXPECT_EQ(0*0+0,    scheme.get_score(dna15::A, dna15::A)); // A is 0th
-        EXPECT_EQ(0*0+2,    scheme.get_score(dna15::A, dna15::C)); // C is 2nd
-        EXPECT_EQ(2*2+0,    scheme.get_score(dna15::C, dna15::A));
-        EXPECT_EQ(3*3+3,    scheme.get_score(dna15::D, dna15::D)); // D is 3rd
-        EXPECT_EQ(8*8+0,    scheme.get_score(dna15::N, dna15::A)); // N is 8th
-        EXPECT_EQ(0*0+8,    scheme.get_score(dna15::A, dna15::N));
+        EXPECT_EQ(0*0+0,    scheme.score(dna15::A, dna15::A)); // A is 0th
+        EXPECT_EQ(0*0+2,    scheme.score(dna15::A, dna15::C)); // C is 2nd
+        EXPECT_EQ(2*2+0,    scheme.score(dna15::C, dna15::A));
+        EXPECT_EQ(3*3+3,    scheme.score(dna15::D, dna15::D)); // D is 3rd
+        EXPECT_EQ(8*8+0,    scheme.score(dna15::N, dna15::A)); // N is 8th
+        EXPECT_EQ(0*0+8,    scheme.score(dna15::A, dna15::N));
     }
 }
 
@@ -265,7 +274,7 @@ TYPED_TEST(generic, convertability)
 {
     using alph_t = typename TestFixture::alph_t;
 
-    typename TypeParam::matrix_t matrix;
+    typename TypeParam::matrix_type matrix;
 
     for (uint8_t i = 0; i < alphabet_size_v<alph_t>; ++i)
         for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
@@ -281,10 +290,10 @@ TYPED_TEST(generic, convertability)
         {
             using nucl_t = std::decay_t<decltype(aa)>;
 
-            EXPECT_EQ(scheme.get_score(aa27::C,  aa27::G),
-                      scheme.get_score(nucl_t::C, nucl_t::G));
-            EXPECT_EQ(scheme.get_score(aa27::T,  nucl_t::T),
-                      scheme.get_score(nucl_t::T, aa27::T));
+            EXPECT_EQ(scheme.score(aa27::C,  aa27::G),
+                      scheme.score(nucl_t::C, nucl_t::G));
+            EXPECT_EQ(scheme.score(aa27::T,  nucl_t::T),
+                      scheme.score(nucl_t::T, aa27::T));
         });
     } else
     {
@@ -294,17 +303,17 @@ TYPED_TEST(generic, convertability)
         {
             using nucl_t = std::decay_t<decltype(nucl)>;
 
-            EXPECT_EQ(scheme.get_score(dna15::C,  dna15::G),
-                      scheme.get_score(nucl_t::C, nucl_t::G));
-            EXPECT_EQ(scheme.get_score(dna15::T,  dna15::T),
-                      scheme.get_score(nucl_t::T, nucl_t::T));
-            EXPECT_EQ(scheme.get_score(dna15::A,  dna15::C),
-                      scheme.get_score(nucl_t::A, nucl_t::C));
+            EXPECT_EQ(scheme.score(dna15::C,  dna15::G),
+                      scheme.score(nucl_t::C, nucl_t::G));
+            EXPECT_EQ(scheme.score(dna15::T,  dna15::T),
+                      scheme.score(nucl_t::T, nucl_t::T));
+            EXPECT_EQ(scheme.score(dna15::A,  dna15::C),
+                      scheme.score(nucl_t::A, nucl_t::C));
 
-            EXPECT_EQ(scheme.get_score(dna15::C,  nucl_t::G),
-                      scheme.get_score(nucl_t::C, dna15::G));
-            EXPECT_EQ(scheme.get_score(dna15::C,  nucl_t::A),
-                      scheme.get_score(nucl_t::C, dna15::A));
+            EXPECT_EQ(scheme.score(dna15::C,  nucl_t::G),
+                      scheme.score(nucl_t::C, dna15::G));
+            EXPECT_EQ(scheme.score(dna15::C,  nucl_t::A),
+                      scheme.score(nucl_t::C, dna15::A));
         });
 
     }
@@ -368,34 +377,34 @@ TYPED_TEST(aminoacid, similarity_matrix)
 {
     // Test constructor
     aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM30};
-    EXPECT_EQ( 4,    scheme.get_score(aa27::A, aa27::A));
-    EXPECT_EQ(-3,    scheme.get_score(aa27::A, aa27::C));
-    EXPECT_EQ(-3,    scheme.get_score(aa27::C, aa27::A));
-    EXPECT_EQ( 9,    scheme.get_score(aa27::D, aa27::D));
-    EXPECT_EQ( 0,    scheme.get_score(aa27::N, aa27::A));
+    EXPECT_EQ( 4,    scheme.score(aa27::A, aa27::A));
+    EXPECT_EQ(-3,    scheme.score(aa27::A, aa27::C));
+    EXPECT_EQ(-3,    scheme.score(aa27::C, aa27::A));
+    EXPECT_EQ( 9,    scheme.score(aa27::D, aa27::D));
+    EXPECT_EQ( 0,    scheme.score(aa27::N, aa27::A));
 
     // Test set function
     scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM45);
 
-    EXPECT_EQ( 5,    scheme.get_score(aa27::A, aa27::A));
-    EXPECT_EQ(-1,    scheme.get_score(aa27::A, aa27::C));
-    EXPECT_EQ(-1,    scheme.get_score(aa27::C, aa27::A));
-    EXPECT_EQ( 7,    scheme.get_score(aa27::D, aa27::D));
-    EXPECT_EQ(-1,    scheme.get_score(aa27::N, aa27::A));
+    EXPECT_EQ( 5,    scheme.score(aa27::A, aa27::A));
+    EXPECT_EQ(-1,    scheme.score(aa27::A, aa27::C));
+    EXPECT_EQ(-1,    scheme.score(aa27::C, aa27::A));
+    EXPECT_EQ( 7,    scheme.score(aa27::D, aa27::D));
+    EXPECT_EQ(-1,    scheme.score(aa27::N, aa27::A));
 
     scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM62);
 
-    EXPECT_EQ( 4,    scheme.get_score(aa27::A, aa27::A));
-    EXPECT_EQ( 0,    scheme.get_score(aa27::A, aa27::C));
-    EXPECT_EQ( 0,    scheme.get_score(aa27::C, aa27::A));
-    EXPECT_EQ( 6,    scheme.get_score(aa27::D, aa27::D));
-    EXPECT_EQ(-2,    scheme.get_score(aa27::N, aa27::A));
+    EXPECT_EQ( 4,    scheme.score(aa27::A, aa27::A));
+    EXPECT_EQ( 0,    scheme.score(aa27::A, aa27::C));
+    EXPECT_EQ( 0,    scheme.score(aa27::C, aa27::A));
+    EXPECT_EQ( 6,    scheme.score(aa27::D, aa27::D));
+    EXPECT_EQ(-2,    scheme.score(aa27::N, aa27::A));
 
     scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
 
-    EXPECT_EQ( 7,    scheme.get_score(aa27::A, aa27::A));
-    EXPECT_EQ(-1,    scheme.get_score(aa27::A, aa27::C));
-    EXPECT_EQ(-1,    scheme.get_score(aa27::C, aa27::A));
-    EXPECT_EQ(10,    scheme.get_score(aa27::D, aa27::D));
-    EXPECT_EQ(-3,    scheme.get_score(aa27::N, aa27::A));
+    EXPECT_EQ( 7,    scheme.score(aa27::A, aa27::A));
+    EXPECT_EQ(-1,    scheme.score(aa27::A, aa27::C));
+    EXPECT_EQ(-1,    scheme.score(aa27::C, aa27::A));
+    EXPECT_EQ(10,    scheme.score(aa27::D, aa27::D));
+    EXPECT_EQ(-3,    scheme.score(aa27::N, aa27::A));
 }
