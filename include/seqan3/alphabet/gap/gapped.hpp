@@ -74,34 +74,6 @@ template <typename alphabet_t>
 //!\cond
     requires alphabet_concept<alphabet_t>
 //!\endcond
-struct gapped : public union_composition<alphabet_t, gap>
-{
-    using union_composition<alphabet_t, gap>::_value;
-    using union_composition<alphabet_t, gap>::value_size;
-
-    using union_composition<alphabet_t, gap>::union_composition;
-
-    using typename union_composition<alphabet_t, gap>::rank_type;
-    using typename union_composition<alphabet_t, gap>::char_type;
-
-    //!\copydoc union_composition::assign_char
-    constexpr gapped & assign_char(char_type const c) noexcept
-    {
-        // We can't just use `using union_composition<alphabet_t, gap>::assign_char;` and need to explicitly forward
-        // `assign_char`, because otherwise the return type would be `union_composition` and not `gapped`, which is
-        // required by the `alphabet_concept`.
-        union_composition<alphabet_t, gap>::assign_char(c);
-        return *this;
-    }
-
-    //!\copydoc union_composition::assign_rank
-    constexpr gapped & assign_rank(rank_type const i) /*noexcept*/
-    {
-        // TODO(marehr): mark function noexcept if assert (within union_composition) is replaced
-        // https://github.com/seqan/seqan3/issues/85
-        union_composition<alphabet_t, gap>::assign_rank(i);
-        return *this;
-    }
-};
+using gapped = union_composition<alphabet_t, gap>;
 
 } // namespace seqan3
