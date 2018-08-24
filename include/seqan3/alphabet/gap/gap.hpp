@@ -70,6 +70,10 @@ struct gap
     //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = bool;
 
+    //!\cond
+    bool _bug_workaround; // See GCC Bug-Report: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
+    //!\endcond
+
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
      */

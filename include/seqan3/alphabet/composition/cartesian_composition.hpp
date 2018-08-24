@@ -90,18 +90,18 @@ private:
     //!\brief The base type of this class.
     using base_t = pod_tuple<first_component_type, component_types...>;
 
-    //!\brief A meta::list The types of each composite in the composition
+    //!\brief A meta::list The types of each component in the composition
     using components = meta::list<first_component_type, component_types...>;
 
     //!\brief Is set to `true` if the type is contained in the type list.
     template <typename type>
-    static constexpr bool is_composite =
+    static constexpr bool is_component =
         meta::in<components, type>::value;
 
     //!\brief Is set to `true` if the type is uniquely contained in the type list.
     template <typename type>
-    static constexpr bool is_unique_composite =
-        is_composite<type> &&
+    static constexpr bool is_unique_component =
+        is_component<type> &&
         (meta::find_index<components, type>::value == meta::reverse_find_index<components, type>::value);
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -159,12 +159,12 @@ private:
         using invoke = std::integral_constant<bool, weakly_ordered_with_concept<type, T>>;
     };
 
-    //!\brief Is set to `true` if the one composite type fulfils the FUN callable with `subtype`.
+    //!\brief Is set to `true` if the one component type fulfils the FUN callable with `subtype`.
     template <template <typename> typename FUN, typename subtype>
-    static constexpr bool one_composite_is =
+    static constexpr bool one_component_is =
          !std::is_same_v<subtype, cartesian_composition> &&
          !std::is_same_v<subtype, derived_type> &&
-         !is_composite<subtype> &&
+         !is_component<subtype> &&
          !meta::empty<meta::find_if<components, FUN<subtype>>>::value;
 
     /*!\name Constructors, destructor and assignment
@@ -211,7 +211,7 @@ public:
      */
     template <typename component_type>
     //!\cond
-        requires is_unique_composite<component_type>
+        requires is_unique_component<component_type>
     //!\endcond
     constexpr cartesian_composition(component_type const alph) : cartesian_composition{}
     {
@@ -236,28 +236,28 @@ public:
      *     cartesian_composition<dna5, dna15> letter2{dna4::C};
      * ```
      */
-     template <typename indirect_component_type>
-     //!\cond
-        requires one_composite_is<implicitely_convertible_from, indirect_component_type>
-     //!\endcond
-     constexpr cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
-     {
-        using component_type = meta::front<meta::find_if<components, implicitely_convertible_from<indirect_component_type>>>;
-        component_type tmp(alph); // delegate construction
-        get<component_type>(*this) = tmp;
-     }
+    template <typename indirect_component_type>
+    //!\cond
+       requires one_component_is<implicitely_convertible_from, indirect_component_type>
+    //!\endcond
+    constexpr cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
+    {
+       using component_type = meta::front<meta::find_if<components, implicitely_convertible_from<indirect_component_type>>>;
+       component_type tmp(alph); // delegate construction
+       get<component_type>(*this) = tmp;
+    }
 
-     //!\cond
-     template <typename indirect_component_type>
-        requires !one_composite_is<implicitely_convertible_from, indirect_component_type> &&
-                  one_composite_is<constructible_from, indirect_component_type>
-     constexpr cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
-     {
-        using component_type = meta::front<meta::find_if<components, constructible_from<indirect_component_type>>>;
-        component_type tmp(alph); // delegate construction
-        get<component_type>(*this) = tmp;
-     }
-     //!\endcond
+    //!\cond
+    template <typename indirect_component_type>
+       requires !one_component_is<implicitely_convertible_from, indirect_component_type> &&
+                 one_component_is<constructible_from, indirect_component_type>
+    constexpr cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
+    {
+       using component_type = meta::front<meta::find_if<components, constructible_from<indirect_component_type>>>;
+       component_type tmp(alph); // delegate construction
+       get<component_type>(*this) = tmp;
+    }
+    //!\endcond
 
     /*!\brief Assignment via a value of one of the components.
      * \tparam component_type One of the component types. Must be uniquely
@@ -273,7 +273,7 @@ public:
      */
     template <typename component_type>
     //!\cond
-        requires is_unique_composite<component_type>
+        requires is_unique_component<component_type>
     //!\endcond
     constexpr derived_type & operator=(component_type const alph)
     {
@@ -294,14 +294,29 @@ public:
      */
     template <typename indirect_component_type>
     //!\cond
-        requires one_composite_is<assignable_from, indirect_component_type>
+        requires one_component_is<assignable_from, indirect_component_type>
     //!\endcond
     constexpr derived_type & operator=(indirect_component_type const alph)
     {
-        using type_list = meta::find_if<components, assignable_from<indirect_component_type>>;
-        get<meta::front<type_list>>(*this) = alph; // delegate assignment
+        using component_type = meta::front<meta::find_if<components, assignable_from<indirect_component_type>>>;
+        get<component_type>(*this) = alph; // delegate assignment
         return static_cast<derived_type &>(*this);
     }
+    //!\cond
+    // If not assignable but implicit convertible, convert first and assign afterwards
+    template <typename indirect_component_type>
+    //!\cond
+        requires !one_component_is<assignable_from, indirect_component_type> &&
+                 one_component_is<implicitely_convertible_from, indirect_component_type>
+    //!\endcond
+    constexpr derived_type & operator=(indirect_component_type const alph)
+    {
+        using component_type = meta::front<meta::find_if<components, implicitely_convertible_from<indirect_component_type>>>;
+        component_type tmp(alph);
+        get<component_type>(*this) = tmp;
+        return static_cast<derived_type &>(*this);
+    }
+    //!\endcond
     //!\}
 
     /*!\name Read functions
@@ -323,7 +338,7 @@ public:
     template <typename type>
     constexpr explicit operator type() const
     //!\cond
-        requires is_unique_composite<type>
+        requires is_unique_component<type>
     //!\endcond
     {
         return get<type>(*this);
@@ -363,166 +378,112 @@ public:
      * \brief This enables the comparison of a cartesian composition value against
      * a value of the inner **alphabet type** while ignoring the other values.
      * The operators delegate to the comparison operators of the alphabet type
-     * by retrieving the comparable element via `std::get<alphabet_t>`.
-     * It either takes a type that is itself a composite type contained the
+     * by retrieving the comparable element via `std::get<component_type>`.
+     * It either takes a type that is itself a component type contained the
      * cartesian composition, or a subtype that is comparable to one of the
-     * composite types.
+     * component types.
      * \{
      */
-    template <typename alphabet_t>
+    template <typename component_type>
     //!\cond
-        requires is_unique_composite<alphabet_t>
+        requires is_unique_component<component_type>
     //!\endcond
-    constexpr bool operator==(alphabet_t const & rhs) const noexcept
+    constexpr bool operator==(component_type const & rhs) const noexcept
     {
-        return std::get<alphabet_t>(*this) == rhs;
+        return std::get<component_type>(*this) == rhs;
     }
 
-    template <typename alphabet_t>
+    template <typename component_type>
     //!\cond
-        requires is_unique_composite<alphabet_t>
+        requires is_unique_component<component_type>
     //!\endcond
-    constexpr bool operator!=(alphabet_t const & rhs) const noexcept
+    constexpr bool operator!=(component_type const & rhs) const noexcept
     {
-        return std::get<alphabet_t>(*this) != rhs;
+        return std::get<component_type>(*this) != rhs;
     }
 
-    template <typename alphabet_t>
+    template <typename component_type>
     //!\cond
-        requires is_unique_composite<alphabet_t>
+        requires is_unique_component<component_type>
     //!\endcond
-    constexpr bool operator<(alphabet_t const & rhs) const noexcept
+    constexpr bool operator<(component_type const & rhs) const noexcept
     {
-        return std::get<alphabet_t>(*this) < rhs;
+        return std::get<component_type>(*this) < rhs;
     }
 
-    template <typename alphabet_t>
+    template <typename component_type>
     //!\cond
-        requires is_unique_composite<alphabet_t>
+        requires is_unique_component<component_type>
     //!\endcond
-    constexpr bool operator>(alphabet_t const & rhs) const noexcept
+    constexpr bool operator>(component_type const & rhs) const noexcept
     {
-        return std::get<alphabet_t>(*this) > rhs;
+        return std::get<component_type>(*this) > rhs;
     }
 
-    template <typename alphabet_t>
+    template <typename component_type>
     //!\cond
-        requires is_unique_composite<alphabet_t>
+        requires is_unique_component<component_type>
     //!\endcond
-    constexpr bool operator<=(alphabet_t const & rhs) const noexcept
+    constexpr bool operator<=(component_type const & rhs) const noexcept
     {
-        return std::get<alphabet_t>(*this) <= rhs;
+        return std::get<component_type>(*this) <= rhs;
     }
 
-    template <typename alphabet_t>
+    template <typename component_type>
     //!\cond
-        requires is_unique_composite<alphabet_t>
+        requires is_unique_component<component_type>
     //!\endcond
-    constexpr bool operator>=(alphabet_t const & rhs) const noexcept
+    constexpr bool operator>=(component_type const & rhs) const noexcept
     {
-        return std::get<alphabet_t>(*this) >= rhs;
+        return std::get<component_type>(*this) >= rhs;
     }
 
-    template <typename alphabet_subt,
-              typename = std::enable_if_t<one_composite_is<weakly_equality_comparable_with, alphabet_subt>>>
-    constexpr bool operator==(alphabet_subt const rhs) const noexcept
+    template <typename indirect_component_type>
+        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
+    constexpr bool operator==(indirect_component_type const rhs) const noexcept
     {
-        using type_list = meta::find_if<components, weakly_equality_comparable_with<alphabet_subt>>;
-        return get<meta::front<type_list>>(*this) == rhs;
+        using component_type = meta::front<meta::find_if<components, weakly_equality_comparable_with<indirect_component_type>>>;
+        return get<component_type>(*this) == rhs;
     }
 
-    template <typename alphabet_subt,
-              typename = std::enable_if_t<one_composite_is<weakly_equality_comparable_with, alphabet_subt>>>
-    constexpr bool operator!=(alphabet_subt const & rhs) const noexcept
+    template <typename indirect_component_type>
+        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
+    constexpr bool operator!=(indirect_component_type const & rhs) const noexcept
     {
-        using type_list = meta::find_if<components, weakly_equality_comparable_with<alphabet_subt>>;
-        return get<meta::front<type_list>>(*this) != rhs;
+        using component_type = meta::front<meta::find_if<components, weakly_equality_comparable_with<indirect_component_type>>>;
+        return get<component_type>(*this) != rhs;
     }
 
-    template <typename alphabet_subt,
-              typename = std::enable_if_t<one_composite_is<weakly_ordered_with, alphabet_subt>>>
-    constexpr bool operator<(alphabet_subt const & rhs) const noexcept
+    template <typename indirect_component_type>
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    constexpr bool operator<(indirect_component_type const & rhs) const noexcept
     {
-        using type_list = meta::find_if<components, weakly_ordered_with<alphabet_subt>>;
-        return get<meta::front<type_list>>(*this) < rhs;
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) < rhs;
     }
 
-    template <typename alphabet_subt,
-              typename = std::enable_if_t<one_composite_is<weakly_ordered_with, alphabet_subt>>>
-    constexpr bool operator>(alphabet_subt const & rhs) const noexcept
+    template <typename indirect_component_type>
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    constexpr bool operator>(indirect_component_type const & rhs) const noexcept
     {
-        using type_list = meta::find_if<components, weakly_ordered_with<alphabet_subt>>;
-        return get<meta::front<type_list>>(*this) > rhs;
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) > rhs;
     }
 
-    template <typename alphabet_subt,
-              typename = std::enable_if_t<one_composite_is<weakly_ordered_with, alphabet_subt>>>
-    constexpr bool operator<=(alphabet_subt const & rhs) const noexcept
+    template <typename indirect_component_type>
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    constexpr bool operator<=(indirect_component_type const & rhs) const noexcept
     {
-        using type_list = meta::find_if<components, weakly_ordered_with<alphabet_subt>>;
-        return get<meta::front<type_list>>(*this) <= rhs;
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) <= rhs;
     }
 
-    template <typename alphabet_subt,
-              typename = std::enable_if_t<one_composite_is<weakly_ordered_with, alphabet_subt>>>
-    constexpr bool operator>=(alphabet_subt const & rhs) const noexcept
+    template <typename indirect_component_type>
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    constexpr bool operator>=(indirect_component_type const & rhs) const noexcept
     {
-        using type_list = meta::find_if<components, weakly_ordered_with<alphabet_subt>>;
-        return get<meta::front<type_list>>(*this) >= rhs;
-    }
-    //!\}
-
-    /*!\name Friend comparison operators with one of its composite alphabet types
-     * \{
-     * \brief Enables the comparison of a cartesian composition type on the right
-     * hand side by delegating to the member function.
-    */
-    template <typename alphabet_t,
-              typename = std::enable_if_t<is_unique_composite<alphabet_t> ||
-                                          one_composite_is<weakly_equality_comparable_with, alphabet_t>>>
-    friend constexpr bool operator==(alphabet_t const & lhs, cartesian_composition const & rhs) noexcept
-    {
-        return rhs == lhs;
-    }
-
-    template <typename alphabet_t,
-              typename = std::enable_if_t<is_unique_composite<alphabet_t> ||
-                                          one_composite_is<weakly_equality_comparable_with, alphabet_t>>>
-    friend constexpr bool operator!=(alphabet_t const & lhs, cartesian_composition const & rhs) noexcept
-    {
-        return rhs != lhs;
-    }
-
-    template <typename alphabet_t,
-              typename = std::enable_if_t<is_unique_composite<alphabet_t> ||
-                                          one_composite_is<weakly_ordered_with, alphabet_t>>>
-    friend constexpr bool operator<(alphabet_t const & lhs, cartesian_composition const & rhs) noexcept
-    {
-        return rhs > lhs;
-    }
-
-    template <typename alphabet_t,
-              typename = std::enable_if_t<is_unique_composite<alphabet_t> ||
-                                          one_composite_is<weakly_ordered_with, alphabet_t>>>
-    friend constexpr bool operator>(alphabet_t const & lhs, cartesian_composition const & rhs) noexcept
-    {
-        return rhs < lhs;
-    }
-
-    template <typename alphabet_t,
-              typename = std::enable_if_t<is_unique_composite<alphabet_t> ||
-                                          one_composite_is<weakly_ordered_with, alphabet_t>>>
-    friend constexpr bool operator<=(alphabet_t const & lhs, cartesian_composition const & rhs) noexcept
-    {
-        return rhs >= lhs;
-    }
-
-    template <typename alphabet_t,
-              typename = std::enable_if_t<is_unique_composite<alphabet_t> ||
-                                          one_composite_is<weakly_ordered_with, alphabet_t>>>
-    friend constexpr bool operator>=(alphabet_t const & lhs, cartesian_composition const & rhs) noexcept
-    {
-        return rhs <= lhs;
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) >= rhs;
     }
     //!\}
 
@@ -587,5 +548,71 @@ private:
             assign_rank_impl<j + 1>(i);
     }
 };
+
+/*!\name Friend comparison operators with one of its component alphabet types
+ * \{
+ * \brief Enables the comparison of a cartesian composition type on the right
+ * hand side by delegating to the member function.
+ */
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
+             (std::detail::WeaklyEqualityComparableWith<component_type, first_component_type> ||
+             (std::detail::WeaklyEqualityComparableWith<component_type, component_types> || ...))
+constexpr bool operator==(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs == lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
+             (std::detail::WeaklyEqualityComparableWith<component_type, first_component_type> ||
+             (std::detail::WeaklyEqualityComparableWith<component_type, component_types> || ...))
+constexpr bool operator!=(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs != lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
+             (weakly_ordered_with_concept<component_type, first_component_type> ||
+             (weakly_ordered_with_concept<component_type, component_types> || ...))
+constexpr bool operator<(component_type const & lhs,
+                         cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs > lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
+             (weakly_ordered_with_concept<component_type, first_component_type> ||
+             (weakly_ordered_with_concept<component_type, component_types> || ...))
+constexpr bool operator>(component_type const & lhs,
+                         cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs < lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
+             (weakly_ordered_with_concept<component_type, first_component_type> ||
+             (weakly_ordered_with_concept<component_type, component_types> || ...))
+constexpr bool operator<=(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs >= lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
+             (weakly_ordered_with_concept<component_type, first_component_type> ||
+             (weakly_ordered_with_concept<component_type, component_types> || ...))
+constexpr bool operator>=(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs <= lhs;
+}
+//!\}
 
 } // namespace seqan3

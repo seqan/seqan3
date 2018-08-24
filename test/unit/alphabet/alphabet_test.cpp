@@ -62,6 +62,11 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         union_composition<dna5, dna5>,
                                         union_composition<dna4, dna5, gap>,
                                         union_composition<char, gap>,
+                                        qualified<dna4, phred42>,
+                                        qualified<dna4, phred63>,
+                                        qualified<aa27, phred42>,
+                                        qualified<gapped<dna4>, phred42>,
+                                        gapped<qualified<dna4, phred42>>,
                                         gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
@@ -294,20 +299,7 @@ class alphabet_constexpr : public ::testing::Test
 {};
 
 // add all alphabets here
-using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
-                                                  /*aa27,*/
-                                                  union_composition<dna4>,
-                                                  union_composition<dna4, gap>,
-                                                  union_composition<dna4, dna5, gap>,
-                                                  char, char16_t, char32_t,
-                                                  uint8_t, uint16_t, uint32_t,
-                                                  /*gap, gapped<nucl16>, */
-                                                  dna4q,
-                                                  phred42, phred63, phred68legacy,
-                                                  dot_bracket3, dssp9, wuss<>, wuss<65>,
-                                                  structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
-                                                  structured_aa<aa27, dssp9>,
-                                                  masked<dna5>>;
+using alphabet_constexpr_types = alphabet_types;
 
 TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 

@@ -55,13 +55,13 @@
 namespace seqan3
 {
 
-/*!\brief A composition that merges different regular alphabets into a single alphabet.
+/*!\brief A composition that merges different regular components into a single component.
  * \ingroup composition
- * \tparam ...alphabet_types Types of further letters; must satisfy seqan3::alphabet_concept, e.g. dna4.
+ * \tparam ...component_types Types of further letters; must satisfy seqan3::alphabet_concept, e.g. dna4.
  * \implements seqan3::alphabet_concept
  *
- * The union alphabet represents the union of two or more alphabets (e.g. the
- * four letter DNA alphabet + the gap alphabet). Note that you cannot assign
+ * The union component represents the union of two or more components (e.g. the
+ * four letter DNA component + the gap component). Note that you cannot assign
  * regular characters, but additional functions for this are available.
  *
  * This class has a similar behavior as std::variant.
@@ -75,21 +75,21 @@ namespace seqan3
  *     union_composition<dna4, gap>{}.assign_char('C'); // <- this does!
  *     union_composition<dna4, gap>{}.assign_char('-'); // gap character
  *     union_composition<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
- *                                                   // character of the first alphabet type (i.e. A of dna4)
+ *                                                   // character of the first component type (i.e. A of dna4)
  *     if (my_letter.to_char() == 'A')
  *        std::cout << "yeah\n"; // "yeah";
  * ```
  *
- * The union alphabet can also be constructed directly from one of the base
- * alphabets.
+ * The union component can also be constructed directly from one of the base
+ * components.
  *
  * ```cpp
- * using alphabet_t = union_composition<dna4, dna5, gap>;
+ * using component_t = union_composition<dna4, dna5, gap>;
  *
- * constexpr alphabet_t letter0{dna4::A};
- * constexpr alphabet_t letter1 = dna4::C;
- * constexpr alphabet_t letter2 = {dna4::G};
- * constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
+ * constexpr component_t letter0{dna4::A};
+ * constexpr component_t letter1 = dna4::C;
+ * constexpr component_t letter2 = {dna4::G};
+ * constexpr component_t letter3 = static_cast<component_t>(dna4::T);
  *
  * assert(letter0.to_rank() == 0);
  * assert(letter1.to_rank() == 1);
@@ -97,12 +97,12 @@ namespace seqan3
  * assert(letter3.to_rank() == 3);
  * ```
  *
- * Or can be assigned by one of the base alphabets.
+ * Or can be assigned by one of the base components.
  *
  * ```cpp
- * using alphabet_t = union_composition<dna4, dna5, gap>;
+ * using component_t = union_composition<dna4, dna5, gap>;
  *
- * alphabet_t letter;
+ * component_t letter;
  *
  * letter = dna5::A;
  * assert(letter.to_rank() == 4);
@@ -110,19 +110,19 @@ namespace seqan3
  * letter = {dna5::C};
  * assert(letter.to_rank() == 5);
  *
- * letter = static_cast<alphabet_t>(dna5::G);
+ * letter = static_cast<component_t>(dna5::G);
  * assert(letter.to_rank() == 6);
  * ```
  */
-template <typename ...alphabet_types>
+template <typename ...component_types>
 //!\cond
-    requires (alphabet_concept<alphabet_types> && ... && (sizeof...(alphabet_types) >= 1))
+    requires (alphabet_concept<component_types> && ... && (sizeof...(component_types) >= 1))
 //!\endcond
 class union_composition
 {
 private:
-    //!\brief A meta::list The types of each composite in the composition
-    using composites = meta::list<alphabet_types...>;
+    //!\brief A meta::list The types of each component in the composition
+    using components = meta::list<component_types...>;
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
       * Returns an std::true_type if the `type` is constructable from `T`.
@@ -168,18 +168,18 @@ private:
         using invoke = std::integral_constant<bool, std::detail::WeaklyEqualityComparableWith<type, T>>;
     };
 
-    /*!\brief 'Is set to `true` if one composite type in `composites` evaluates
+    /*!\brief 'Is set to `true` if one component type in `components` evaluates
      * to true when invoked with `subtype` by FUN.
      */
     template <template <typename> typename FUN, typename subtype>
-    static constexpr bool one_composite_is =
+    static constexpr bool one_component_is =
          !std::is_same_v<subtype, union_composition> &&
-         !meta::in<composites, subtype>::value &&
-         !meta::empty<meta::find_if<composites, FUN<subtype>>>::value;
+         !meta::in<components, subtype>::value &&
+         !meta::empty<meta::find_if<components, FUN<subtype>>>::value;
 
 public:
-    /*!\brief Returns true if alphabet_t is one of the given alphabet types.
-     * \tparam alphabet_t The type to check.
+    /*!\brief Returns true if component_t is one of the given component types.
+     * \tparam component_t The type to check.
      *
      * ```cpp
      * using union_t = union_composition<dna4, gap>;
@@ -189,22 +189,22 @@ public:
      * static_assert(!union_t::has_alternative<dna5>(), "should be false");
      * ```
      */
-    template <typename alphabet_t>
+    template <typename component_t>
     static constexpr bool has_alternative() noexcept
     {
-        return meta::in<composites, alphabet_t>::value;
+        return meta::in<components, component_t>::value;
     }
 
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    //!\brief The size of the component, i.e. the number of different values it can take.
     static constexpr auto value_size =
         detail::min_viable_uint_v<
-            (static_cast<size_t>(alphabet_size_v<alphabet_types>) + ... + static_cast<size_t>(0))
+            (static_cast<size_t>(alphabet_size_v<component_types>) + ... + static_cast<size_t>(0))
         >;
 
-    //!\brief The type of the alphabet when converted to char (e.g. via \link to_char \endlink).
-    using char_type = underlying_char_t<meta::front<composites>>;
+    //!\brief The type of the component when converted to char (e.g. via \link to_char \endlink).
+    using char_type = underlying_char_t<meta::front<components>>;
 
-    //!\brief The type of the alphabet when represented as a number (e.g. via \link to_rank \endlink).
+    //!\brief The type of the component when represented as a number (e.g. via \link to_rank \endlink).
     using rank_type = detail::min_viable_uint_t<value_size>;
 
     /*!\name Constructors, destructor and assignment
@@ -216,91 +216,93 @@ public:
     constexpr union_composition & operator=(union_composition const &) = default;
     constexpr union_composition & operator=(union_composition &&) = default;
 
-    /*!\brief Construction via a value of a composite alphabet.
-     * \tparam alphabet_t One of the composite alphabet types.
-     * \param  alphabet   The value of a composite alphabet that should be assigned.
+    /*!\brief Construction via a value of a component component.
+     * \tparam component_t One of the component component types.
+     * \param  component   The value of a component component that should be assigned.
      *
      * ```cpp
      *     union_composition<dna4, gap> letter1{dna4::C}; // or
      *     union_composition<dna4, gap> letter2 = gap::GAP;
      * ```
      */
-    template <typename alphabet_t>
+    template <typename component_t>
     //!\cond
-        requires has_alternative<alphabet_t>()
+        requires has_alternative<component_t>()
     //!\endcond
-    constexpr union_composition(alphabet_t const & alphabet) noexcept :
-        _value{rank_by_type_(alphabet)}
+    constexpr union_composition(component_t const & component) noexcept :
+        _value{rank_by_type_(component)}
     {}
 
-    /*!\brief Construction via a value of reoccurring alphabets.
-     * \tparam I The index of the i-th composite alphabet.
-     * \tparam alphabet_t The i-th given composite alphabet type.
-     * \param alphabet The value of a composite alphabet that should be assigned.
+    /*!\brief Construction via a value of reoccurring components.
+     * \tparam I The index of the i-th component component.
+     * \tparam component_t The i-th given component component type.
+     * \param component The value of a component component that should be assigned.
      *
      * ```cpp
-     * using alphabet_t = union_composition<dna4, dna4>;
+     * using component_t = union_composition<dna4, dna4>;
      *
-     * constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
-     * constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
+     * constexpr component_t letter0{std::in_place_index_t<0>{}, dna4::A};
+     * constexpr component_t letter4{std::in_place_index_t<1>{}, dna4::A};
      *
      * EXPECT_EQ(letter0.to_rank(), 0);
      * EXPECT_EQ(letter4.to_rank(), 4);
      * ```
      */
-    template <size_t I, typename alphabet_t>
+    template <size_t I, typename component_t>
     //!\cond
-        requires has_alternative<alphabet_t>()
+        requires has_alternative<component_t>()
     //!\endcond
-    constexpr union_composition(std::in_place_index_t<I>, alphabet_t const & alphabet) noexcept :
-        _value{rank_by_index_<I>(alphabet)}
+    constexpr union_composition(std::in_place_index_t<I>, component_t const & component) noexcept :
+        _value{rank_by_index_<I>(component)}
     {}
 
-    /*!\brief Construction via a value that one of the composite alphabets is constructible from.
-     * \tparam alphabet_subt A type that one of the composite alphabet types is constructible from.
-     * \param  subalphabet   The value that should be assigned.
+    /*!\brief Construction via a value that one of the component components is constructible from.
+     * \tparam component_subt A type that one of the component component types is constructible from.
+     * \param  subcomponent   The value that should be assigned.
      *
      * ```cpp
      *     union_composition<dna4, gap> letter1{rna4::C};
      * ```
-     * \attention When selecting the composite alphabet types which require only implicit conversion
+     * \attention When selecting the component component types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
-    template <typename alphabet_subt>
+    template <typename component_subt>
     //!\cond
-        requires !has_alternative<alphabet_subt>() && one_composite_is<constructible_from, alphabet_subt>
-        && !one_composite_is<implicitely_convertible_from, alphabet_subt>
+        requires !has_alternative<component_subt>() &&
+                 !one_component_is<implicitely_convertible_from, component_subt> &&
+                 one_component_is<constructible_from, component_subt>
     //!\endcond
-    constexpr union_composition(alphabet_subt const & subalphabet) noexcept :
-        _value{rank_by_type_(meta::front<meta::find_if<composites, constructible_from<alphabet_subt>>>(subalphabet))}
+    constexpr union_composition(component_subt const & subcomponent) noexcept :
+        _value{rank_by_type_(meta::front<meta::find_if<components, constructible_from<component_subt>>>(subcomponent))}
     {}
 
     //!\cond
-    template <typename alphabet_subt>
-        requires !has_alternative<alphabet_subt>() && one_composite_is<implicitely_convertible_from, alphabet_subt>
-    constexpr union_composition(alphabet_subt const & subalphabet) noexcept :
-        _value{rank_by_type_(meta::front<meta::find_if<composites, implicitely_convertible_from<alphabet_subt>>>(subalphabet))}
+    template <typename component_subt>
+        requires !has_alternative<component_subt>() &&
+                 one_component_is<implicitely_convertible_from, component_subt>
+    constexpr union_composition(component_subt const & subcomponent) noexcept :
+        _value{rank_by_type_(meta::front<meta::find_if<components, implicitely_convertible_from<component_subt>>>(subcomponent))}
     {}
     //!\endcond
 
-    /*!\brief Assignment via a value that one of the composite alphabets is constructible from.
-     * \tparam alphabet_subt Type that one of the composite alphabets is constructible from.
-     * \param  subalphabet   The value of a composite alphabet that should be assigned.
+    /*!\brief Assignment via a value that one of the component components is constructible from.
+     * \tparam component_subt Type that one of the component components is constructible from.
+     * \param  subcomponent   The value of a component component that should be assigned.
      *
      * ```cpp
      *     union_composition<dna4, gap> letter1{};
      *     letter1 = rna4::C;
      * ```
      */
-    template <typename alphabet_subt>
+    template <typename component_subt>
     //!\cond
-        requires !has_alternative<alphabet_subt>() && one_composite_is<assignable_from, alphabet_subt>
+        requires !has_alternative<component_subt>() && one_component_is<assignable_from, component_subt>
     //!\endcond
-    constexpr union_composition & operator=(alphabet_subt const & subalphabet) noexcept
+    constexpr union_composition & operator=(component_subt const & subcomponent) noexcept
     {
-        using alphabet_t = meta::front<meta::find_if<composites, assignable_from<alphabet_subt>>>;
-        alphabet_t alphabet = subalphabet;
-        _value = rank_by_type_(alphabet);
+        using component_t = meta::front<meta::find_if<components, assignable_from<component_subt>>>;
+        component_t component = subcomponent;
+        _value = rank_by_type_(component);
         return *this;
     }
     //!\}
@@ -314,7 +316,7 @@ public:
         return value_to_char[_value];
     }
 
-    //!\brief Return the letter's numeric value or rank in the alphabet.
+    //!\brief Return the letter's numeric value or rank in the component.
     constexpr rank_type to_rank() const noexcept
     {
         return _value;
@@ -377,33 +379,6 @@ public:
         return _value >= rhs._value;
     }
 
-    //!\name Friend conversion equality comparison operators
-    //!\{
-    /*!\brief This enables the comparison of the union_composition with a
-     * composite type. Note that the member comparison operators exist through
-     * implicit conversion.
-     * We intentionally do not overload the comparison
-     * of <,<=,>,>= of a union composition with their composite alphabet type,
-     * because a definition of such is not trivial and depends on the composites
-     * (e.g. how to define union_composition<dna4,dna5>{dna4::T} < dna5::A?).
-     */
-    template <typename alphabet_t,
-              typename = std::enable_if_t<has_alternative<alphabet_t>() ||
-                                          one_composite_is<weakly_equality_comparable_with, alphabet_t>>>
-    friend constexpr bool operator==(alphabet_t const & lhs, union_composition const & rhs) noexcept
-    {
-        return rhs == lhs;
-    }
-
-    template <typename alphabet_t,
-              typename = std::enable_if_t<has_alternative<alphabet_t>() ||
-                                          one_composite_is<weakly_equality_comparable_with, alphabet_t>>>
-    friend constexpr bool operator!=(alphabet_t const & lhs, union_composition const & rhs) noexcept
-    {
-        return rhs != lhs;
-    }
-    //!\}
-
     //!\privatesection
     //!\brief The data member.
     rank_type _value;
@@ -413,10 +388,10 @@ protected:
     //!\privatesection
 
     /*!\brief Compile-time generated lookup table which contains the partial
-     * sum up to the position of each alphabet.
+     * sum up to the position of each component.
      *
      * An array which contains the prefix sum over all
-     * alphabet_types::value_size's.
+     * component_types::value_size's.
      *
      * ```cpp
      * constexpr std::array partial_sum = union_composition<dna4, gap, dna5>::partial_sum_sizes; // not working; is protected
@@ -429,9 +404,9 @@ protected:
      */
     static constexpr std::array partial_sum_sizes = []() constexpr
     {
-        constexpr size_t N = sizeof...(alphabet_types) + 1;
+        constexpr size_t N = sizeof...(component_types) + 1;
 
-        std::array<rank_type, N> partial_sum{0, alphabet_size_v<alphabet_types>...};
+        std::array<rank_type, N> partial_sum{0, alphabet_size_v<component_types>...};
         for (size_t i = 1u; i < N; ++i)
             partial_sum[i] += partial_sum[i-1];
 
@@ -441,8 +416,8 @@ protected:
     /*!\brief Compile-time generated lookup table which maps the rank to char.
      *
      * A map generated at compile time where the key is the rank of the union
-     * of all alphabets and the value is the corresponding char of that rank
-     * and alphabet.
+     * of all components and the value is the corresponding char of that rank
+     * and component.
      *
      * ```cpp
      * constexpr std::array value_to_char = union_composition<char, dna4, gap, dna5>::value_to_char; // not working; is protected
@@ -462,16 +437,16 @@ protected:
         // Explicitly writing assign_rank_to_char within assign_value_to_char
         // causes this bug (g++-7 and g++-8):
         // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84684
-        auto assign_rank_to_char = [](auto alphabet, size_t rank) constexpr
+        auto assign_rank_to_char = [](auto component, size_t rank) constexpr
         {
-            return seqan3::to_char(seqan3::assign_rank(alphabet, rank));
+            return seqan3::to_char(seqan3::assign_rank(component, rank));
         };
 
-        auto assign_value_to_char = [assign_rank_to_char] (auto alphabet, auto & value_to_char, auto & value) constexpr
+        auto assign_value_to_char = [assign_rank_to_char] (auto component, auto & value_to_char, auto & value) constexpr
         {
-            using alphabet_t = std::decay_t<decltype(alphabet)>;
-            for (size_t i = 0u; i < alphabet_size_v<alphabet_t>; ++i, ++value)
-                value_to_char[value] = assign_rank_to_char(alphabet, i);
+            using component_t = std::decay_t<decltype(component)>;
+            for (size_t i = 0u; i < alphabet_size_v<component_t>; ++i, ++value)
+                value_to_char[value] = assign_rank_to_char(component, i);
         };
 
         unsigned value = 0u;
@@ -479,9 +454,9 @@ protected:
 
         // initializer lists guarantee sequencing;
         // the following expression behaves as:
-        // for(auto alphabet: alphabet_types)
-        //    assign_value_to_char(alphabet, value_to_char, value);
-        ((assign_value_to_char(alphabet_types{}, value_to_char, value)),...);
+        // for(auto component: component_types)
+        //    assign_value_to_char(component, value_to_char, value);
+        ((assign_value_to_char(component_types{}, value_to_char, value)),...);
 
         return value_to_char;
     }();
@@ -489,7 +464,7 @@ protected:
     /*!\brief Compile-time generated lookup table which maps the char to rank.
      *
      * An map generated at compile time where the key is the char of one of the
-     * alphabets and the value is the corresponding rank over all alphabets (by
+     * components and the value is the corresponding rank over all components (by
      * conflict will default to the first).
      *
      * ```cpp
@@ -524,32 +499,57 @@ protected:
         return char_to_value;
     }();
 
-    //!\brief Converts an object of one of the given alphabets into the internal representation.
-    //!\tparam index The position of `alphabet_t` in the template pack `alphabet_types`.
-    //!\tparam alphabet_t One of the base alphabet types.
-    //!\param alphabet The value of a base alphabet that should be assigned.
-    template <size_t index, typename alphabet_t>
+    //!\brief Converts an object of one of the given components into the internal representation.
+    //!\tparam index The position of `component_t` in the template pack `component_types`.
+    //!\tparam component_t One of the base component types.
+    //!\param component The value of a base component that should be assigned.
+    template <size_t index, typename component_t>
     //!\cond
-        requires has_alternative<alphabet_t>()
+        requires has_alternative<component_t>()
     //!\endcond
-    static constexpr rank_type rank_by_index_(alphabet_t const & alphabet) noexcept
+    static constexpr rank_type rank_by_index_(component_t const & component) noexcept
     {
-        return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(alphabet));
+        return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(component));
     }
 
-    //!\brief Converts an object of one of the given alphabets into the internal representation.
-    //!\details Finds the index of alphabet_t in the given types.
-    //!\tparam alphabet_t One of the base alphabet types.
-    //!\param alphabet The value of a base alphabet that should be assigned.
-    template <typename alphabet_t>
+    //!\brief Converts an object of one of the given components into the internal representation.
+    //!\details Finds the index of component_t in the given types.
+    //!\tparam component_t One of the base component types.
+    //!\param component The value of a base component that should be assigned.
+    template <typename component_t>
     //!\cond
-        requires has_alternative<alphabet_t>()
+        requires has_alternative<component_t>()
     //!\endcond
-    static constexpr rank_type rank_by_type_(alphabet_t const & alphabet) noexcept
+    static constexpr rank_type rank_by_type_(component_t const & component) noexcept
     {
-        constexpr size_t index = meta::find_index<composites, alphabet_t>::value;
-        return rank_by_index_<index>(alphabet);
+        constexpr size_t index = meta::find_index<components, component_t>::value;
+        return rank_by_index_<index>(component);
     }
 };
+
+//!\name Conversion equality comparison operators
+//!\{
+/*!\brief This enables the comparison of the union_composition with a
+ * component type. Note that the member comparison operators exist through
+ * implicit conversion.
+ * We intentionally do not overload the comparison
+ * of <,<=,>,>= of a union composition with their component component type,
+ * because a definition of such is not trivial and depends on the components
+ * (e.g. how to define union_composition<dna4,dna5>{dna4::T} < dna5::A?).
+ */
+template <typename component_t, typename ...component_types>
+    requires (implicitly_convertible_to_concept<component_t, component_types> || ...)
+constexpr bool operator==(component_t const & lhs, union_composition<component_types...> const & rhs) noexcept
+{
+    return rhs == lhs;
+}
+
+template <typename component_t, typename ...component_types>
+    requires (implicitly_convertible_to_concept<component_t, component_types> || ...)
+constexpr bool operator!=(component_t const & lhs, union_composition<component_types...> const & rhs) noexcept
+{
+    return rhs != lhs;
+}
+//!\}
 
 } // namespace seqan3
