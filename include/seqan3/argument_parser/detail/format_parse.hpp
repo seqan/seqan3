@@ -44,8 +44,7 @@
 #include <vector>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/container.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -370,7 +369,7 @@ private:
      * for unsigned long int's but that kind of large a number will hopefully never be supplied
      * via the command line..
      */
-    template <integral_concept option_t>
+    template <std::Integral option_t>
     //!\cond
         requires istream_concept<std::istringstream, option_t>
     //!\endcond

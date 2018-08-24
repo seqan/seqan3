@@ -45,10 +45,10 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/io/concept.hpp>
-#include <seqan3/std/concept/range.hpp>
-#include <seqan3/std/concept/container.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
 
 namespace seqan3::detail
 {
@@ -84,7 +84,7 @@ namespace seqan3::detail
  */
 template <typename oiter_type, alphabet_concept alpha_type = char>
 //!\cond
-    requires output_iterator_concept<oiter_type, alpha_type>
+    requires std::OutputIterator<oiter_type, alpha_type>
 //!\endcond
 class output_iterator_conversion_adaptor
 {
@@ -136,7 +136,7 @@ public:
     //!\brief Inserts an object into the associated writable object from char.
     constexpr output_iterator_conversion_adaptor & operator= (char const c)
     //!\cond
-        requires !same_concept<alpha_type, char>
+        requires !std::Same<alpha_type, char>
     //!\endcond
     {  // Explicit conversion through char conversion.
         *oiter = assign_char(alpha_type{}, c);

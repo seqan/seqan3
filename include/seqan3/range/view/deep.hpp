@@ -80,22 +80,22 @@ namespace seqan3::view
  *
  * *For the higher dimensions* (all except the innermost ranges) the following properties hold:
  *
- * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
- * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
- * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
- * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
- * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
- * |                                     |                                       |                                                    |
- * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
- * | seqan3::view_concept                |                                       | *guaranteed*                                       |
- * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::common_range_concept        |                                       | *preserved*                                        |
- * | seqan3::output_range_concept        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
- * |                                     |                                       |                                                    |
- * | seqan3::reference_t                 | seqan3::input_range_concept           | seqan3::input_range_concept + seqan3::view_concept |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
+ * |                                 |                                       |                                                    |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::View               |                                       | *guaranteed*                                       |
+ * | std::ranges::SizedRange         |                                       | *preserved*                                        |
+ * | std::ranges::CommonRange        |                                       | *preserved*                                        |
+ * | std::ranges::outputRange        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * |                                 |                                       |                                                    |
+ * | seqan3::reference_t             | std::ranges::InputRange           | std::ranges::InputRange + std::ranges::View |
  *
  * ### Examples
  *
@@ -216,7 +216,7 @@ public:
     template <typename urng_t, typename ...arg_types>
     constexpr auto impl(urng_t && urange, arg_types && ...args) const
     {
-        if constexpr (input_range_concept<urng_t> && input_range_concept<reference_t<urng_t>>)
+        if constexpr (std::ranges::InputRange<urng_t> && std::ranges::InputRange<reference_t<urng_t>>)
         {
             return urange | view::transform(
                 [argos = std::tuple<arg_types...>(std::forward<arg_types>(args)...), this] (auto && subrange)

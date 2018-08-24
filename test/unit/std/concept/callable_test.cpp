@@ -36,28 +36,28 @@
 
 #include <random>
 
-#include <seqan3/std/concept/callable.hpp>
+#include <seqan3/std/concepts>
 
 #include "auxiliary.hpp"
 
 using namespace seqan3;
 
-TEST(invocable_concept, basic)
+TEST(std::Invocable, basic)
 {
-    EXPECT_TRUE((!invocable_concept<type_a, int, double,
+    EXPECT_TRUE((!std::Invocable<type_a, int, double,
                                     type_b>));
-    EXPECT_TRUE((invocable_concept<std::random_device>));
-    EXPECT_TRUE((invocable_concept<type_c, int, double,
+    EXPECT_TRUE((std::Invocable<std::random_device>));
+    EXPECT_TRUE((std::Invocable<type_c, int, double,
                                    type_b>));
 }
 
-TEST(regular_invocable_concept, basic)
+TEST(regular_std::Invocable, basic)
 {
-    EXPECT_TRUE((!regular_invocable_concept<type_a, int, double,
+    EXPECT_TRUE((!regular_std::Invocable<type_a, int, double,
                                             type_b>));
-//TODO(rrahn): Should not meet the regular_invocable_concept
-//    EXPECT_TRUE((!regular_invocable_concept<std::random_device>));
-    EXPECT_TRUE((regular_invocable_concept<type_c, int, double,
+//TODO(rrahn): Should not meet the regular_std::Invocable
+//    EXPECT_TRUE((!regular_std::Invocable<std::random_device>));
+    EXPECT_TRUE((regular_std::Invocable<type_c, int, double,
                                            type_b>));
 }
 

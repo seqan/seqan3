@@ -45,8 +45,8 @@
 #include <range/v3/utility/iterator_traits.hpp>
 #include <range/v3/range_traits.hpp>
 
-#include <seqan3/std/concept/range.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/std/iterator>
 
 namespace seqan3::detail
 {
@@ -54,11 +54,11 @@ namespace seqan3::detail
 /*!\brief A CRTP base template for creating random access iterators.
  * \tparam range_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
  * \tparam derived_t_template The derived type template, see below.
- * \implements seqan3::random_access_iterator_concept
+ * \implements std::RandomAccessIterator
  * \ingroup range
  *
  * The iterator makes certain assumptions on the `range_type`, but does not formally require
- * it to satisfy the seqan3::random_access_range_concept, because the iterator itself may be
+ * it to satisfy the std::ranges::RandomAccessRange, because the iterator itself may be
  * a requirement for this.
  *
  * Actual functionality of this iterator is realised via the host range's [] operator and member type definitions, i.e.
@@ -338,7 +338,7 @@ private:
  * \ingroup range
  *
  * The iterator makes certain assumptions on the `range_type`, but does not formally require
- * it to satisfy the seqan3::random_access_range_concept, because the iterator itself may be
+ * it to satisfy the std::ranges::RandomAccessRange, because the iterator itself may be
  * a requirement for this.
  */
 template <typename range_type>

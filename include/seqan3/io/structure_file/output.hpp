@@ -64,7 +64,7 @@
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/range/view/convert.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -579,7 +579,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::OutputRange and have a reference type that
      *                   satisfies seqan3::tuple_like_concept.
      * \param[in] range  The range to write.
      *
@@ -610,16 +610,16 @@ public:
      * fout = range; // will iterate over the records and write them
      * ```
      */
-    template <typename rng_t>
+    template <std::ranges::InputRange rng_t>
     structure_file_out & operator=(rng_t && range)
-        requires input_range_concept<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires tuple_like_concept<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::input_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
      *                   satisfies seqan3::tuple_like_concept.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
@@ -662,18 +662,18 @@ public:
      *                                | structure_file_out{"output.dbn"};
      * ```
      */
-    template <typename rng_t>
+    template <std::ranges::InputRange rng_t>
     friend structure_file_out & operator|(rng_t && range, structure_file_out & f)
-        requires input_range_concept<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires tuple_like_concept<reference_t<rng_t>>
     {
         f = range;
         return f;
     }
 
     //!\overload
-    template <typename rng_t>
+    template <std::ranges::InputRange rng_t>
     friend structure_file_out operator|(rng_t && range, structure_file_out && f)
-        requires input_range_concept<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires tuple_like_concept<reference_t<rng_t>>
     {
         f = range;
         return std::move(f);
@@ -877,15 +877,15 @@ protected:
     }
 
     //!\brief Write columns to file format, only tag-dispatch once.
-    template <input_range_concept seq_type,
-              input_range_concept id_type,
-              input_range_concept bpp_type,
-              input_range_concept structure_type,
-              input_range_concept structured_seq_type,
-              input_range_concept energy_type,
-              input_range_concept react_type,
-              input_range_concept comment_type,
-              input_range_concept offset_type>
+    template <std::ranges::InputRange seq_type,
+              std::ranges::InputRange id_type,
+              std::ranges::InputRange bpp_type,
+              std::ranges::InputRange structure_type,
+              std::ranges::InputRange structured_seq_type,
+              std::ranges::InputRange energy_type,
+              std::ranges::InputRange react_type,
+              std::ranges::InputRange comment_type,
+              std::ranges::InputRange offset_type>
     void write_columns(seq_type && seq,
                        id_type && id,
                        bpp_type && bpp,

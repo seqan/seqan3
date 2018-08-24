@@ -88,9 +88,9 @@ concept bool scoring_scheme_concept = requires (t scheme,
                                                 alphabet_t const alph1,
                                                 alphabet2_t const alph2)
 {
-    { scheme.score(alph1, alph2) } -> common_reference_concept<typename std::remove_reference_t<t>::score_type>;
+    { scheme.score(alph1, alph2) } -> std::CommonReference<typename std::remove_reference_t<t>::score_type>;
     { scheme.score(alphabet_t{}, alphabet2_t{}) }
-        -> common_reference_concept<typename std::remove_reference_t<t>::score_type>;
+        -> std::CommonReference<typename std::remove_reference_t<t>::score_type>;
 };
 //!\endcond
 

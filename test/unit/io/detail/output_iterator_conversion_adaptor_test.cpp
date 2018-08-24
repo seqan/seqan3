@@ -90,8 +90,8 @@ TYPED_TEST(oiter_conversion_adaptor, concept)
 {
     using adaptor_type = typename TestFixture::output_iterator_adaptor;
 
-    EXPECT_TRUE((output_iterator_concept<adaptor_type, char>));
-    EXPECT_FALSE((input_iterator_concept<adaptor_type>));
+    EXPECT_TRUE((std::OutputIterator<adaptor_type, char>));
+    EXPECT_FALSE((std::InputIterator<adaptor_type>));
 }
 
 TYPED_TEST(oiter_conversion_adaptor, assign)
@@ -112,7 +112,7 @@ TYPED_TEST(oiter_conversion_adaptor, pre_increment)
 
     [[maybe_unused]] adaptor_type it{this->inner_it};
 
-    EXPECT_TRUE((same_concept<std::remove_reference_t<decltype(++it)>, adaptor_type>));
+    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(++it)>, adaptor_type>));
 }
 
 TYPED_TEST(oiter_conversion_adaptor, post_increment)
@@ -121,7 +121,7 @@ TYPED_TEST(oiter_conversion_adaptor, post_increment)
 
     [[maybe_unused]] adaptor_type it{this->inner_it};
 
-    EXPECT_TRUE((same_concept<std::remove_reference_t<decltype(it++)>, adaptor_type>));
+    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(it++)>, adaptor_type>));
 }
 
 TYPED_TEST(oiter_conversion_adaptor, dereference)
@@ -130,7 +130,7 @@ TYPED_TEST(oiter_conversion_adaptor, dereference)
 
     [[maybe_unused]] adaptor_type it{this->inner_it};
 
-    EXPECT_TRUE((same_concept<std::remove_reference_t<decltype(*it)>, adaptor_type>));
+    EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(*it)>, adaptor_type>));
 }
 
 TEST(output_iterator, vector)

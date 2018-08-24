@@ -41,7 +41,7 @@
 
 #include <range/v3/view/filter.hpp>
 
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 
 namespace seqan3::view
 {
@@ -57,22 +57,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
- * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
- * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
- * | seqan3::random_access_range_concept |                                       | *lost*                                             |
- * | seqan3::contiguous_range_concept    |                                       | *lost*                                             |
- * |                                     |                                       |                                                    |
- * | seqan3::viewable_range_concept      | *required*                            | *guaranteed*                                       |
- * | seqan3::view_concept                |                                       | *guaranteed*                                       |
- * | seqan3::sized_range_concept         |                                       | *lost*                                             |
- * | seqan3::common_range_concept        |                                       | *lost*                                             |
- * | seqan3::output_range_concept        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept      |                                       | *lost*                                             |
- * |                                     |                                       |                                                    |
- * | seqan3::reference_t                 |                                       | seqan3::reference_t<urng_t>                        |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
+ * | std::ranges::RandomAccessRange  |                                       | *lost*                                             |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
+ * |                                 |                                       |                                                    |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::View               |                                       | *guaranteed*                                       |
+ * | std::ranges::SizedRange         |                                       | *lost*                                             |
+ * | std::ranges::CommonRange        |                                       | *lost*                                             |
+ * | std::ranges::OutputRange        |                                       | *preserved*                                        |
+ * | seqan3::const_iterable_concept  |                                       | *lost*                                             |
+ * |                                 |                                       |                                                    |
+ * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

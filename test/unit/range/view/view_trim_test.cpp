@@ -37,9 +37,10 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/trim.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
@@ -96,18 +97,18 @@ TEST(view_trim, qualified)
 TEST(view_trim, concepts)
 {
     std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}}, {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
-    EXPECT_TRUE(input_range_concept<decltype(vec)>);
-    EXPECT_TRUE(forward_range_concept<decltype(vec)>);
-    EXPECT_TRUE(random_access_range_concept<decltype(vec)>);
-    EXPECT_TRUE(common_range_concept<decltype(vec)>);
-    EXPECT_TRUE((output_range_concept<decltype(vec), dna5q>));
-    EXPECT_TRUE(sized_range_concept<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5q>));
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
 
     auto v1 = vec | view::trim(20u);
-    EXPECT_TRUE(input_range_concept<decltype(v1)>);
-    EXPECT_TRUE(forward_range_concept<decltype(v1)>);
-    EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
-    EXPECT_FALSE(common_range_concept<decltype(v1)>);
-    EXPECT_TRUE((output_range_concept<decltype(v1), dna5q>));
-    EXPECT_TRUE(!sized_range_concept<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), dna5q>));
+    EXPECT_TRUE(!std::ranges::SizedRange<decltype(v1)>);
 }

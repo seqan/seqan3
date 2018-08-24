@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Adaptions of core language concepts from the STL / range-v3.
+ * \brief Provides concepts for core language types and relations that don't have concepts in C++20 (yet).
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -53,6 +53,25 @@ namespace seqan3
 /*!\addtogroup concept
  * \{
  */
+
+/*!\interface   seqan3::weakly_ordered_with_concept <>
+ * \tparam t1   The first type to compare.
+ * \tparam t2   The second type to compare.
+ * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
+ * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/WeaklyEqualityComparableWith
+ */
+//!\cond
+template <typename t1, typename t2>
+concept bool weakly_ordered_with_concept = requires (std::remove_reference_t<t1> const & v1,
+                                                     std::remove_reference_t<t2> const & v2)
+{
+    { v1 <  v2 } -> bool &&;
+    { v1 <= v2 } -> bool &&;
+    { v2 >  v1 } -> bool &&;
+    { v2 >= v1 } -> bool &&;
+};
+//!\endcond
+
 /*!\interface   seqan3::implicitly_convertible_to_concept <>
  * \brief       Resolves to `ranges::ImplicitlyConvertibleTo<type1, type2>()`.
  */

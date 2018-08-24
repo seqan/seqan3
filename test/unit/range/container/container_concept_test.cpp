@@ -44,7 +44,7 @@
 #include <sdsl/int_vector.hpp>
 
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/std/concept/container.hpp>
+#include <seqan3/range/container/concept.hpp>
 
 using namespace seqan3;
 
@@ -58,17 +58,17 @@ using concatenated_sequences_string_t = seqan3::concatenated_sequences<
             std::string
       >>;
 
-TEST(range_concept, forward_range_concept)
+TEST(container_concept, ForwardRange)
 {
-    EXPECT_TRUE((seqan3::forward_range_concept<std::array<char, 2>>));
-    EXPECT_TRUE((seqan3::forward_range_concept<std::list<char>>));
-    EXPECT_TRUE((seqan3::forward_range_concept<std::forward_list<char>>)); // `.size()` missing
-    EXPECT_TRUE((seqan3::forward_range_concept<std::vector<char>>));
-    EXPECT_TRUE((seqan3::forward_range_concept<std::deque<char>>));
-    EXPECT_TRUE((seqan3::forward_range_concept<std::string>));
+    EXPECT_TRUE((std::ranges::ForwardRange<std::array<char, 2>>));
+    EXPECT_TRUE((std::ranges::ForwardRange<std::list<char>>));
+    EXPECT_TRUE((std::ranges::ForwardRange<std::forward_list<char>>)); // `.size()` missing
+    EXPECT_TRUE((std::ranges::ForwardRange<std::vector<char>>));
+    EXPECT_TRUE((std::ranges::ForwardRange<std::deque<char>>));
+    EXPECT_TRUE((std::ranges::ForwardRange<std::string>));
 
-    EXPECT_TRUE((seqan3::forward_range_concept<concatenated_sequences_string_t>));
-    EXPECT_TRUE((seqan3::forward_range_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((std::ranges::ForwardRange<concatenated_sequences_string_t>));
+    EXPECT_TRUE((std::ranges::ForwardRange<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
 TEST(container_concept, container_concept)
@@ -147,10 +147,10 @@ void container_concept_const_travis_bug_test()
     // travis failed on this statement
     // concept bool sequence_container_concept = requires (type val, type val2)
     //              ^~~~~~~~~~~~~~~~
-    // /include/seqan3/std/concept/container.hpp:113:14: note:     with ‘std::basic_string<char> val’
-    // /include/seqan3/std/concept/container.hpp:113:14: note:     with ‘std::basic_string<char> val2’
+    // /include/seqan3/range/container/concept.hpp:113:14: note:     with ‘std::basic_string<char> val’
+    // /include/seqan3/range/container/concept.hpp:113:14: note:     with ‘std::basic_string<char> val2’
     // [...]
-    // /include/seqan3/std/concept/container.hpp:113:14: note: the required expression ‘val.erase(val.cbegin(), val.cend())’ would be ill-formed
+    // /include/seqan3/range/container/concept.hpp:113:14: note: the required expression ‘val.erase(val.cbegin(), val.cend())’ would be ill-formed
 
     using namespace std::string_literals;
 

@@ -36,16 +36,16 @@
 
 #include <random>
 
-#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/iterator>
 
 #include "auxiliary.hpp"
 
 using namespace seqan3;
 
-TEST(same_concept, basic)
+TEST(std::Same, basic)
 {
-    EXPECT_TRUE((same_concept<int, int, int>));
-    EXPECT_TRUE((!same_concept<int, char, int>));
+    EXPECT_TRUE((std::Same<int, int, int>));
+    EXPECT_TRUE((!std::Same<int, char, int>));
 }
 
 TEST(derived_from_conept, basic)

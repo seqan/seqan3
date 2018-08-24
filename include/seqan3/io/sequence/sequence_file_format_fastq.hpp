@@ -66,7 +66,7 @@
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
 
@@ -301,7 +301,7 @@ public:
             if (ranges::empty(qualities)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing FASTQ files."};
 
-            if constexpr (sized_range_concept<seq_type> && sized_range_concept<qual_type>)
+            if constexpr (std::ranges::SizedRange<seq_type> && std::ranges::SizedRange<qual_type>)
             {
                 assert(ranges::size(sequence) == ranges::size(qualities));
             }

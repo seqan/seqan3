@@ -46,7 +46,7 @@
 // remove if sequence_container_concept_modified_by_const_iterator_bug vanished from travis
 #include <string>
 
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 
 // TODO:
 // * merge sequence_container_concept_modified_by_const_iterator back into
@@ -133,9 +133,9 @@ namespace seqan3
  * \{
  */
 /*!\interface seqan3::container_concept <>
- * \extends seqan3::forward_range_concept
- * \extends seqan3::sized_range_concept
- * \extends seqan3::common_range_concept
+ * \extends std::ranges::ForwardRange
+ * \extends std::ranges::SizedRange
+ * \extends std::ranges::CommonRange
  * \extends seqan3::const_iterable_concept
  * \brief The (most general) container concept as defined by the standard library.
  * \details
@@ -154,13 +154,13 @@ concept bool container_concept = requires (type val, type val2, type const cval,
     typename type::value_type;
     typename type::reference;
     typename type::const_reference;
-
+/*
     typename type::iterator;
-    requires forward_iterator_concept<typename type::iterator>;
+    requires std::ForwardIterator<typename type::iterator>;
     { it } -> typename type::const_iterator; // NOTE check whether iterator is const convertible
 
     typename type::const_iterator;
-    requires forward_iterator_concept<typename type::const_iterator>;
+    requires std::ForwardIterator<typename type::const_iterator>;
 
     typename type::difference_type;
     typename type::size_type;
@@ -172,7 +172,7 @@ concept bool container_concept = requires (type val, type val2, type const cval,
         typename std::iterator_traits<typename type::iterator>::difference_type,
         typename std::iterator_traits<typename type::const_iterator>::difference_type
     >;
-
+*/
     // methods and operator
     { type{}          } -> type;   // default constructor
     { type{type{}}    } -> type;   // copy/move constructor
@@ -263,7 +263,7 @@ concept bool sequence_container_concept = requires (type val, type val2, type co
 
 /*!\interface seqan3::random_access_container_concept <>
  * \extends seqan3::sequence_container_concept
- * \extends seqan3::random_access_range_concept
+ * \extends std::ranges::RandomAccessRange
  * \brief A more refined container concept than seqan3::sequence_container_concept.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the

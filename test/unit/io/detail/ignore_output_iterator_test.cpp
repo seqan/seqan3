@@ -34,7 +34,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
+
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 
 using namespace seqan3;
@@ -42,9 +43,9 @@ using namespace std::literals;
 
 TEST(ignore_output_iterator, concept)
 {
-    EXPECT_TRUE((output_iterator_concept<detail::ignore_output_iterator, char>));
-    EXPECT_TRUE((output_iterator_concept<detail::ignore_output_iterator, int>));
-    EXPECT_FALSE((input_iterator_concept<detail::ignore_output_iterator>));
+    EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, char>));
+    EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, int>));
+    EXPECT_FALSE((std::InputIterator<detail::ignore_output_iterator>));
 }
 
 TEST(ignore_output_iterator, assign)

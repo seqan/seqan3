@@ -46,7 +46,7 @@
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
 namespace seqan3
@@ -104,7 +104,7 @@ constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
 }
 
 /*!\brief Translate one nucleotide triplet into single amino acid (range interface).
- * \tparam range_type Type of input_range; must satisfy seqan3::input_range_concept.
+ * \tparam range_type Type of input_range; must satisfy std::ranges::InputRange.
  * \param[in] input_range Range of three nucleotides that should be converted to amino acid.
  *
  * \details
@@ -119,7 +119,7 @@ constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
  *
  * Strong exception guarantee (never modifies data).
 */
-template <genetic_code gc = genetic_code::CANONICAL, input_range_concept range_type>
+template <genetic_code gc = genetic_code::CANONICAL, std::ranges::InputRange range_type>
     //!\cond
     requires nucleotide_concept<std::decay_t<reference_t<std::decay_t<range_type>>>>
     //!\endcond
@@ -138,7 +138,7 @@ constexpr aa27 translate_triplet(range_type && input_range)
 
 
 /*!\brief Translate one nucleotide triplet into single amino acid (range interface, input range allows random access).
- * \tparam range_type Type of input_range; must satisfy seqan3::random_access_range_concept.
+ * \tparam range_type Type of input_range; must satisfy std::ranges::RandomAccessRange.
  * \param[in] input_range Range of three nucleotides that should be converted to amino acid.
  *
  * \details
@@ -153,7 +153,7 @@ constexpr aa27 translate_triplet(range_type && input_range)
  *
  * Strong exception guarantee (never modifies data).
 */
-template <genetic_code gc = genetic_code::CANONICAL, random_access_range_concept range_type>
+template <genetic_code gc = genetic_code::CANONICAL, std::ranges::RandomAccessRange range_type>
 //!\cond
     requires nucleotide_concept<std::decay_t<reference_t<std::decay_t<range_type>>>>
 //!\endcond

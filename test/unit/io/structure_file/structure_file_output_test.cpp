@@ -53,7 +53,7 @@
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 #include <seqan3/std/view/filter.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -65,18 +65,18 @@ TEST(general, concepts)
     using it_t = typename structure_file_out<>::iterator;
     using sen_t = typename structure_file_out<>::sentinel;
 
-    EXPECT_TRUE((seqan3::output_iterator_concept<it_t, std::tuple<std::string, std::string>>));
-    EXPECT_TRUE((seqan3::sentinel_concept<sen_t, it_t>));
+    EXPECT_TRUE((std::OutputIterator<it_t, std::tuple<std::string, std::string>>));
+    EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
 }
 
 TEST(structure_file_output_class, concepts)
 {
     using t = structure_file_out<>;
-    EXPECT_TRUE((seqan3::output_range_concept<t, std::tuple<std::string, std::string>>));
+    EXPECT_TRUE((std::ranges::OutputRange<t, std::tuple<std::string, std::string>>));
 
     using ct = structure_file_out<> const;
     // not const-iterable
-    EXPECT_FALSE((seqan3::output_range_concept<ct, std::tuple<std::string, std::string>>));
+    EXPECT_FALSE((std::ranges::OutputRange<ct, std::tuple<std::string, std::string>>));
 }
 
 TEST(structure_file_output_class, construct_by_filename)

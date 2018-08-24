@@ -41,14 +41,14 @@
 
 #include <range/v3/iterator_range.hpp>
 
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 
 namespace seqan3::view
 {
 
 /*!\brief Create a view from a pair of iterator and sentinel.
- * \tparam   it_t Type of the iterator; must satisfy seqan3::iterator_concept.
- * \tparam  sen_t Type of the sentinel; must satisfy seqan3::sentinel_concept with it_t.
+ * \tparam   it_t Type of the iterator; must satisfy std::Iterator.
+ * \tparam  sen_t Type of the sentinel; must satisfy std::Sentinel with it_t.
  * \param[in]  it The iterator on the underlying range.
  * \param[in] sen The sentinel on the underlying range
  * \returns  A view of the elements between it_t and sen_t.
@@ -58,22 +58,22 @@ namespace seqan3::view
  *
  * This view is **source-only**, it can only be at the beginning of a pipe of range transformations.
  *
- * | range concepts and reference_t      | `rrng_t` (returned range type)                     |
- * |-------------------------------------|:--------------------------------------------------:|
- * | seqan3::input_range_concept         | *preserved*                                        |
- * | seqan3::forward_range_concept       | *preserved*                                        |
- * | seqan3::bidirectional_range_concept | *preserved*                                        |
- * | seqan3::random_access_range_concept | *preserved*                                        |
- * | seqan3::contiguous_range_concept    | *preserved*                                        |
- * |                                     |                                                    |
- * | seqan3::viewable_range_concept      | *guaranteed*                                       |
- * | seqan3::view_concept                | *guaranteed*                                       |
- * | seqan3::sized_range_concept         | *preserved*                                        |
- * | seqan3::common_range_concept        | *preserved*                                        |
- * | seqan3::output_range_concept        | *preserved*                                        |
- * | seqan3::const_iterable_concept      | *preserved*                                        |
- * |                                     |                                                    |
- * | seqan3::reference_t                 | seqan3::value_type_t<it_t>                         |
+ * | range concepts and reference_t  | `rrng_t` (returned range type)                     |
+ * |---------------------------------|:--------------------------------------------------:|
+ * | std::ranges::InputRange         | *preserved*                                        |
+ * | std::ranges::ForwardRange       | *preserved*                                        |
+ * | std::ranges::BidirectionalRange | *preserved*                                        |
+ * | std::ranges::RandomAccessRange  | *preserved*                                        |
+ * | std::ranges::ContiguousRange    | *preserved*                                        |
+ * |                                 |                                                    |
+ * | std::ranges::ViewableRange      | *guaranteed*                                       |
+ * | std::ranges::View               | *guaranteed*                                       |
+ * | std::ranges::SizedRange         | *preserved*                                        |
+ * | std::ranges::CommonRange        | *preserved*                                        |
+ * | std::ranges::OutputRange        | *preserved*                                        |
+ * | seqan3::const_iterable_concept  | *preserved*                                        |
+ * |                                 |                                                    |
+ * | seqan3::reference_t             | seqan3::value_type_t<it_t>                         |
  *
  * Preservation in this table refers to the properties of the iterator/sentinel pair.
  *
@@ -94,7 +94,7 @@ namespace seqan3::view
  * ```
  * \hideinitializer
  */
-template <iterator_concept it_t, sentinel_concept<it_t> sen_t>
+template <std::Iterator it_t, std::Sentinel<it_t> sen_t>
 using subrange = ranges::iterator_range<it_t, sen_t>;
 //TODO change to ranges::subrange once that has arrived
 

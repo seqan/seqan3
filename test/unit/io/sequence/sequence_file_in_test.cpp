@@ -41,7 +41,7 @@
 #include <seqan3/io/sequence/sequence_file_in.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 #include <seqan3/std/view/filter.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -53,8 +53,8 @@ TEST(sequence_file_in_iterator, concepts)
     using it_t = typename sequence_file_in<>::iterator;
     using sen_t = typename sequence_file_in<>::sentinel;
 
-    EXPECT_TRUE((seqan3::input_iterator_concept<it_t>));
-    EXPECT_TRUE((seqan3::sentinel_concept<sen_t, it_t>));
+    EXPECT_TRUE((std::InputIterator<it_t>));
+    EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
 }
 
 struct sequence_file_in_f : public ::testing::Test
@@ -87,11 +87,11 @@ struct sequence_file_in_f : public ::testing::Test
 TEST_F(sequence_file_in_f, concepts)
 {
     using t = sequence_file_in<>;
-    EXPECT_TRUE((seqan3::input_range_concept<t>));
+    EXPECT_TRUE((std::ranges::InputRange<t>));
 
     using ct = sequence_file_in<> const;
     // not const-iterable
-    EXPECT_FALSE((seqan3::input_range_concept<ct>));
+    EXPECT_FALSE((std::ranges::InputRange<ct>));
 }
 
 TEST_F(sequence_file_in_f, construct_by_filename)

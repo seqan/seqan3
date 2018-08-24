@@ -119,7 +119,7 @@
  *
  * When talking about views, two different entities are often conflated:
  *
- *   1. the view (this is the type that is a range and meets seqan3::view_concept; it is what we refer to with
+ *   1. the view (this is the type that is a range and meets std::ranges::View; it is what we refer to with
  * `auto vec_view` above)
  *   2. the view adaptor (this is the functor that returns the actual view based on it's parameters, including the
  * underlying range; in the above example `view::reverse` and `view::complement` are view adaptors)
@@ -154,39 +154,39 @@
  *
  * **For all views the following are documented:**
  *
- * | range concepts and reference_t      | `urng_t` (underlying range type) | `rrng_t` (returned range type)                     |
- * |-------------------------------------|----------------------------------|----------------------------------------------------|
- * | seqan3::input_range_concept         | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually preserved)  |
- * | seqan3::forward_range_concept       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::bidirectional_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::random_access_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::contiguous_range_concept    | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually lost)       |
- * |                                     |                                  |                                                    |
- * | seqan3::viewable_range_concept      | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually guaranteed) |
- * | seqan3::view_concept                | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually guaranteed) |
- * | seqan3::sized_range_concept         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::common_range_concept        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::output_range_concept        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::const_iterable_concept      | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
- * |                                     |                                  |                                                    |
- * | seqan3::reference_t                 | optionally a type or concept     | optionally a type or concept                       |
+ * | range concepts and reference_t  | `urng_t` (underlying range type) | `rrng_t` (returned range type)                     |
+ * |---------------------------------|----------------------------------|----------------------------------------------------|
+ * | std::ranges::InputRange         | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually preserved)  |
+ * | std::ranges::ForwardRange       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | std::ranges::BidirectionalRange | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | std::ranges::RandomAccessRange  | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | std::ranges::ContiguousRange    | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually lost)       |
+ * |                                 |                                  |                                                    |
+ * | std::ranges::ViewableRange      | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually guaranteed) |
+ * | std::ranges::View               | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually guaranteed) |
+ * | std::ranges::SizedRange         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | std::ranges::CommonRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | std::ranges::OutputRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
+ * | seqan3::const_iterable_concept  | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
+ * |                                 |                                  |                                                    |
+ * | seqan3::reference_t             | optionally a type or concept     | optionally a type or concept                       |
  *
  * **Underlying range requirements:** All view adaptors that are not *source-only* make certain assumptions about their
  * underlying range.
- * The most basic assumption is that the range satisfies `seqan3::input_range_concept`, but many have stronger
- * requirements, e.g. `seqan3::random_access_range_concept`. The concepts in the first block all build up on
+ * The most basic assumption is that the range satisfies `std::ranges::InputRange`, but many have stronger
+ * requirements, e.g. `std::ranges::RandomAccessRange`. The concepts in the first block all build up on
  * each other, i.e. requiring one implies requiring those above; the other concepts are mostly independent of each
- * other. Most views also require that the underlying range satisfy seqan3::viewable_range_concept which means they don't
+ * other. Most views also require that the underlying range satisfy std::ranges::ViewableRange which means they don't
  * accept temporary range objects other than views (because they are cheap to copy). A prominent exception
  * to the latter is view::persist that exists exactly for this purpose. *Note that these being* requirements *means that
  * they are the minimal set of properties assumed. Views may very well make use of stronger properties if available.*
  *
  * **Return range guarantees:** All view adaptors that are not *sink-only* return a range that meets at least
- * `seqan3::input_range_concept` and also `seqan3::view_concept` (and conversely also `seqan3::viewable_range_concept`,
+ * `std::ranges::InputRange` and also `std::ranges::View` (and conversely also `std::ranges::ViewableRange`,
  * because all views are viewable). Most views also preserve stronger
- * properties, e.g. `seqan3::random_access_range_concept`, but this depends on the view. Some views also add
+ * properties, e.g. `std::ranges::RandomAccessRange`, but this depends on the view. Some views also add
  * properties not present on the input range, e.g. the range returned by `ranges::view::take_exactly` meets
- * `seqan3::sized_range_concept`, independent of whether this was met by the input range.
+ * `std::ranges::SizedRange`, independent of whether this was met by the input range.
  *   * *preserved* in this context means that the returned range satisfies this concept if it is also satisfied by the
  * underlying range.
  *   * *lost* means that this concept is never satisfied by the returned range, independent of whether the underlying
@@ -207,12 +207,12 @@
  * nucleotides and of course also returns nucleotides and "seqan3::reference_t<urng_t>" would imply that
  * the reference type is the same. However, and this is important to note, the reference type
  * of seqan3::view::complement has any actual `&` removed from the underlying ranges' reference type (if originally present),
- * this goes hand-in-hand with seqan3::output_range_concept being lost → original elements cannot be written to through
+ * this goes hand-in-hand with std::ranges::OutputRange being lost → original elements cannot be written to through
  * this view.
  * This is because *new elements* are being generated. Other views like `view::reverse` also preserve the
  * `&` (if originally present), because the elements in the return view still point to the elements in the original
  * range (just in different order). This has the effect that through some combinations of views you can modify the
- * elements in the original range (if all views in the pipe preserve seqan3::output_range_concept), but through others
+ * elements in the original range (if all views in the pipe preserve std::ranges::OutputRange), but through others
  * you can't.
  *
  * \sa https://ericniebler.github.io/range-v3/index.html#range-views

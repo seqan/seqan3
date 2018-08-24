@@ -72,8 +72,8 @@ protected:
 
 TEST(random_access_iterator_test, concept_checks)
 {
-    EXPECT_TRUE((seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int>>>));
-    EXPECT_TRUE((seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int> const>>));
+    EXPECT_TRUE((std::RandomAccessIterator<seqan3::detail::random_access_iterator<std::vector<int>>>));
+    EXPECT_TRUE((std::RandomAccessIterator<seqan3::detail::random_access_iterator<std::vector<int> const>>));
 }
 
 // default constructor

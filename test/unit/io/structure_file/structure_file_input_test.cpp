@@ -50,7 +50,7 @@
 
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 #include <seqan3/std/view/filter.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -62,8 +62,8 @@ TEST(general, concepts)
     using it_t = typename structure_file_in<>::iterator;
     using sen_t = typename structure_file_in<>::sentinel;
 
-    EXPECT_TRUE((seqan3::input_iterator_concept<it_t>));
-    EXPECT_TRUE((seqan3::sentinel_concept<sen_t, it_t>));
+    EXPECT_TRUE((std::InputIterator<it_t>));
+    EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
 }
 
 struct structure_file_input_class : public ::testing::Test
@@ -87,11 +87,11 @@ struct structure_file_input_class : public ::testing::Test
 TEST_F(structure_file_input_class, concepts)
 {
     using t = structure_file_in<>;
-    EXPECT_TRUE((seqan3::input_range_concept<t>));
+    EXPECT_TRUE((std::ranges::InputRange<t>));
 
     using ct = structure_file_in<> const;
     // not const-iterable
-    EXPECT_FALSE((seqan3::input_range_concept<ct>));
+    EXPECT_FALSE((std::ranges::InputRange<ct>));
 }
 
 TEST_F(structure_file_input_class, construct_by_filename)

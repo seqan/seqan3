@@ -45,16 +45,16 @@
 #include <range/v3/utility/iterator_traits.hpp>
 #include <range/v3/range_traits.hpp>
 
-#include <seqan3/std/concept/range.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/std/iterator>
 
 namespace seqan3::detail
 {
 
 /*!\brief A CRTP base template for creating iterators that inherit from other iterators.
  * \tparam derived_t The CRTP specialisation.
- * \tparam base_t    The type to inherit from; must satisfy seqan3::iterator_concept.
- * \implements seqan3::iterator_concept
+ * \tparam base_t    The type to inherit from; must satisfy std::Iterator.
+ * \implements std::Iterator
  * \ingroup range
  *
  * \details
@@ -72,7 +72,7 @@ namespace seqan3::detail
  *
  * \snippet test/unit/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base def
  */
-template <typename derived_t, iterator_concept base_t>
+template <typename derived_t, std::Iterator base_t>
 class inherited_iterator_base : public base_t
 {
 public:
@@ -105,37 +105,49 @@ public:
      * \{
      */
     constexpr bool operator==(derived_t const & rhs) const noexcept(noexcept(base_t{} == base_t{}))
-        requires equality_comparable_concept<base_t>
+    //!\cond
+        requires std::EqualityComparable<base_t>
+    //!\endcond
     {
         return *this_to_base() == static_cast<base_t>(rhs);
     }
 
     constexpr bool operator!=(derived_t const & rhs) const noexcept(noexcept(base_t{} == base_t{}))
-        requires equality_comparable_concept<base_t>
+    //!\cond
+        requires std::EqualityComparable<base_t>
+    //!\endcond
     {
         return !(*this == rhs);
     }
 
     constexpr bool operator<(derived_t const & rhs) const noexcept(noexcept(base_t{} < base_t{}))
-        requires strict_totally_ordered_concept<base_t>
+    //!\cond
+        requires std::StrictTotallyOrdered<base_t>
+    //!\endcond
     {
         return *this_to_base() < static_cast<base_t>(rhs);
     }
 
     constexpr bool operator>(derived_t const & rhs) const noexcept(noexcept(base_t{} > base_t{}))
-        requires strict_totally_ordered_concept<base_t>
+    //!\cond
+        requires std::StrictTotallyOrdered<base_t>
+    //!\endcond
     {
         return *this_to_base() > static_cast<base_t>(rhs);
     }
 
     constexpr bool operator<=(derived_t const & rhs) const noexcept(noexcept(base_t{} < base_t{}))
-        requires strict_totally_ordered_concept<base_t>
+    //!\cond
+        requires std::StrictTotallyOrdered<base_t>
+    //!\endcond
     {
         return !(*this > rhs);
     }
 
     constexpr bool operator>=(derived_t const & rhs) const noexcept(noexcept(base_t{} < base_t{}))
-        requires strict_totally_ordered_concept<base_t>
+    //!\cond
+        requires std::StrictTotallyOrdered<base_t>
+    //!\endcond
     {
         return !(*this < rhs);
     }
@@ -147,7 +159,9 @@ public:
     */
     //!\brief Pre-increment, return updated iterator.
     constexpr derived_t & operator++() noexcept(noexcept(++base_t{}))
-        requires input_iterator_concept<base_t>
+    //!\cond
+        requires std::InputIterator<base_t>
+    //!\endcond
     {
         ++(*this_to_base());
         return *this_derived();
@@ -155,7 +169,9 @@ public:
 
     //!\brief Post-increment, return previous iterator state.
     constexpr derived_t operator++(int) noexcept(noexcept(++base_t{}))
-        requires input_iterator_concept<base_t>
+    //!\cond
+        requires std::InputIterator<base_t>
+    //!\endcond
     {
         inherited_iterator_base cpy{*this};
         ++(*this_derived());
@@ -164,7 +180,9 @@ public:
 
     //!\brief Pre-decrement, return updated iterator.
     constexpr derived_t & operator--() noexcept(noexcept(--base_t{}))
-        requires bidirectional_iterator_concept<base_t>
+    //!\cond
+        requires std::BidirectionalIterator<base_t>
+    //!\endcond
     {
         --(*this_to_base());
         return *this_derived();
@@ -172,7 +190,9 @@ public:
 
     //!\brief Post-decrement, return previous iterator state.
     constexpr derived_t operator--(int) noexcept(noexcept(--base_t{}))
-        requires bidirectional_iterator_concept<base_t>
+    //!\cond
+        requires std::BidirectionalIterator<base_t>
+    //!\endcond
     {
         inherited_iterator_base cpy{*this};
         --(*this);
@@ -181,7 +201,9 @@ public:
 
     //!\brief Move iterator to the right.
     constexpr derived_t & operator+=(difference_type const skip) noexcept(noexcept(base_t{} += skip))
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         *this_to_base() += skip;
         return *this_derived();
@@ -189,7 +211,9 @@ public:
 
     //!\brief Return a an iterator moved to the right.
     constexpr derived_t operator+(difference_type const skip) const noexcept(noexcept(base_t{} += skip))
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         derived_t cpy{*this_derived()};
         return cpy += skip;
@@ -197,14 +221,18 @@ public:
 
     //!\brief Non-member operator+ delegates to non-friend operator+.
     constexpr friend derived_t operator+(difference_type const skip, derived_t const & it) noexcept(noexcept(base_t{} += skip))
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         return it + skip;
     }
 
     //!\brief Decrement iterator by skip.
     constexpr derived_t & operator-=(difference_type const skip) noexcept(noexcept(base_t{} -= skip))
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         *this_to_base() -= skip;
         return *this_derived();
@@ -212,7 +240,9 @@ public:
 
     //!\brief Return decremented copy of this iterator.
     constexpr derived_t operator-(difference_type const skip) const noexcept(noexcept(base_t{} -= skip))
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         derived_t cpy{*this_derived()};
         return cpy -= skip;
@@ -220,14 +250,18 @@ public:
 
     //!\brief Non-member operator- delegates to non-friend operator-.
     constexpr friend derived_t operator-(difference_type const skip, derived_t const & it) noexcept(noexcept(base_t{} -= skip))
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         return it - skip;
     }
 
     //!\brief Return offset between this and remote iterator's position.
     constexpr difference_type operator-(derived_t const rhs) const noexcept
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         assert(static_cast<base_t>(rhs) > *this_to_base());
         return static_cast<difference_type>(*this_to_base() - static_cast<base_t>(rhs));
@@ -239,21 +273,27 @@ public:
     */
     //!\brief Dereference operator returns element currently pointed at.
     constexpr reference operator*() const noexcept(noexcept(*base_t{}))
-        requires input_iterator_concept<base_t>
+    //!\cond
+        requires std::InputIterator<base_t>
+    //!\endcond
     {
         return **this_to_base();
     }
 
     //!\brief Return pointer to this iterator.
     constexpr pointer operator->() const noexcept(noexcept(*base_t{}))
-        requires input_iterator_concept<base_t>
+    //!\cond
+        requires std::InputIterator<base_t>
+    //!\endcond
     {
         return &*this_to_base();
     }
 
     //!\brief Return underlying container value currently pointed at.
     constexpr reference operator[](std::make_signed_t<difference_type> const n) const noexcept(noexcept(base_t{}[0]))
-        requires random_access_iterator_concept<base_t>
+    //!\cond
+        requires std::RandomAccessIterator<base_t>
+    //!\endcond
     {
         return this_to_base()[n];
     }

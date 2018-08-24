@@ -43,7 +43,7 @@
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/tuple_utility.hpp>
-#include <seqan3/std/concept/comparison.hpp>
+#include <seqan3/std/concepts>
 
 using namespace seqan3;
 

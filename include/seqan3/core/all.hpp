@@ -89,6 +89,7 @@
 /*!\namespace std
  * \brief SeqAn specific customisations in the standard namespace.
  */
+
 /*!\mainpage SeqAn3 API documentation
  *
  * This is the API documentation for the SeqAn3 library.

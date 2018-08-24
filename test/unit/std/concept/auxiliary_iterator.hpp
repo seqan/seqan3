@@ -39,7 +39,7 @@
 #include <forward_list>
 #include <vector>
 
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 
 using namespace seqan3;
 
@@ -114,7 +114,7 @@ struct test_sized_sentinel : public test_sentinel<value_type_t<iterator_type>>
 };
 
 template <typename iterator_t>
-    requires random_access_iterator_concept<iterator_t>
+    requires std::RandomAccessIterator<iterator_t>
 inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(test_sized_sentinel<iterator_t> const & s,
           iterator_t const & i)
@@ -123,7 +123,7 @@ operator-(test_sized_sentinel<iterator_t> const & s,
 }
 
 template <typename iterator_t>
-    requires random_access_iterator_concept<iterator_t>
+    requires std::RandomAccessIterator<iterator_t>
 inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(iterator_t const & i,
           test_sized_sentinel<iterator_t> const & s)

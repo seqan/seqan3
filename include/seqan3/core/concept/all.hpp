@@ -39,9 +39,9 @@
 
 #pragma once
 
-#include <seqan3/std/core/cereal.hpp>
-#include <seqan3/std/core/core_language.hpp>
-#include <seqan3/std/core/tuple.hpp>
+#include <seqan3/core/concept/cereal.hpp>
+#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/concept/tuple.hpp>
 
 /*!\defgroup concept Concept
  * \ingroup core

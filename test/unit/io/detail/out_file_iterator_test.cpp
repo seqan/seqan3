@@ -36,7 +36,8 @@
 
 #include <vector>
 
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
+
 #include <seqan3/io/detail/out_file_iterator.hpp>
 
 using namespace seqan3;
@@ -47,7 +48,7 @@ TEST(out_file_iterator, concepts)
 {
     using it_t = detail::out_file_iterator<std::vector<int>>;
 
-    EXPECT_TRUE((output_iterator_concept<it_t, int>));
+    EXPECT_TRUE((std::OutputIterator<it_t, int>));
 }
 
 TEST(out_file_iterator, member_types)

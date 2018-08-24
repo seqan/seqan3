@@ -111,18 +111,18 @@ concept bool structure_file_output_format_concept = requires(t & v,
  * \brief Write the given fields to the specified stream.
  * \memberof seqan3::structure_file_output_format_concept
  * \tparam stream_type      Output stream, must satisfy seqan3::ostream_concept with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy seqan3::output_range_concept
+ * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam id_type          Type of the seqan3::field::ID output; must satisfy seqan3::output_range_concept
+ * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam bpp_type         Type of the seqan3::field::BPP output; must satisfy seqan3::output_range_concept
+ * \tparam bpp_type         Type of the seqan3::field::BPP output; must satisfy std::ranges::OutputRange
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
- * \tparam structure_type   Type of the seqan3::field::STRUCTURE output; must satisfy seqan3::output_range_concept
+ * \tparam structure_type   Type of the seqan3::field::STRUCTURE output; must satisfy std::ranges::OutputRange
  * over a seqan3::rna_structure_concept.
  * \tparam energy_type      Type of the seqan3::field::ENERGY output; must satisfy std::is_floating_point.
  * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR output;
  * must satisfy std::is_floating_point.
- * \tparam comment_type     Type of the seqan3::field::COMMENT output; must satisfy seqan3::output_range_concept
+ * \tparam comment_type     Type of the seqan3::field::COMMENT output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
  * \tparam offset_type      Type of the seqan3::field::OFFSET output; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The output stream to write into.

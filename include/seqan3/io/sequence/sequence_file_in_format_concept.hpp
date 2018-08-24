@@ -92,11 +92,11 @@ concept bool sequence_file_in_format_concept = requires (t                      
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \memberof seqan3::sequence_file_in_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy seqan3::output_range_concept
+ * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam id_type          Type of the seqan3::field::ID input; must satisfy seqan3::output_range_concept
+ * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy seqan3::output_range_concept
+ * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy std::ranges::OutputRange
  * over a seqan3::quality_concept.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.

@@ -42,11 +42,11 @@
 #include <iostream>
 
 #include <seqan3/core/concept/cereal.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/alphabet/adaptation/pre.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
-#include <seqan3/std/concept/object_regular.hpp>
-#include <seqan3/std/concept/comparison.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3
 {
@@ -54,10 +54,10 @@ namespace seqan3
 /*!\interface seqan3::semi_alphabet_concept <>
  * \brief The basis for seqan3::alphabet_concept, but requires only rank interface (not char).
  * \ingroup alphabet
- * \extends seqan3::regular_concept
+ * \extends std::Regular
  * \extends seqan3::standard_layout_concept
  * \extends seqan3::trivial_concept
- * \extends seqan3::totally_ordered_concept
+ * \extends std::StrictTotallyOrdered
  *
  * This concept represents "one half" of the seqan3::alphabet_concept, it requires no
  * `char` representation and corresponding interfaces. It is mostly used internally and
@@ -66,9 +66,9 @@ namespace seqan3
  * Beyond the requirements stated below, the type needs to satisfy the following standard library
  * concepts:
  *
- *   * seqan3::regular_concept ("copyable and default-constructible")
+ *   * std::Regular ("copyable and default-constructible")
  *   * seqan3::standard_layout_concept and seqan3::trivial_concept ("plain-old-datatype")
- *   * seqan3::totally_ordered_concept ("has all comparison operators")
+ *   * std::StrictTotallyOrdered ("has all comparison operators")
  *
  * For the purpose of concept checking the types `t &` and `t &&` are also considered to satisfy
  * seqan3::semi_alphabet_concept if the type `t` satisfies it.
@@ -89,10 +89,10 @@ namespace seqan3
 // in order to get rid of the remove_reference_t within the concept, after the ICE
 // get's fixed. See issue #228
 template <typename t>
-concept bool semi_alphabet_concept = regular_concept<std::remove_reference_t<t>> &&
+concept bool semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
                                      standard_layout_concept<std::remove_reference_t<t>> &&
                                      trivial_concept<std::remove_reference_t<t>> &&
-                                     strict_totally_ordered_concept<t> &&
+                                     std::StrictTotallyOrdered<t> &&
                                      requires (t t1, t t2)
 {
 
