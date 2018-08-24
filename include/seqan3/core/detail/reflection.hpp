@@ -117,25 +117,7 @@ constexpr size_t get_display_name_size_v = get_display_name_size<type>::value;
  * ### Example
  *
  * The following snippet demonstrates the usage:
- * ```cpp
- * #include <iostream>
- *
- * #include <seqan3/core/detail/reflection.hpp>
- *
- * namespace foo
- * {
- *
- * template <typename ...type>
- * struct bar
- * {};
- *
- * } // namespace foo
- *
- * int main()
- * {
- *     std::cout << detail::get_display_name_v<foo::bar<char, double>>.string() << std::endl; // prints: foo::bar<char, double> >
- * }
- * ```
+ * \snippet test/snippet/core/detail/reflection.cpp usage
  */
 template <typename type>
 struct get_display_name

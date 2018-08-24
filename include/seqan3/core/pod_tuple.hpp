@@ -74,19 +74,7 @@ struct pod_tuple
  * [structured bindings](http://en.cppreference.com/w/cpp/language/declarations#Structured_binding_declaration)
  * to access the elements in the tuple.
  *
- * ~~~~~~~~~~~~~~~{.cpp}
- *
- * pod_tuple<int, float> t{3, 4.7};
- * static_assert(std::is_pod_v<pod_tuple<int, float>>);
- *
- * // template parameters are automatically deduced:
- * pod_tuple t2{17, 3.7f, 19l};
- *
- * std::cout << std::get<0>(t2) << '\n'; // 17
- *
- * auto [ i, f, l ] = t2; // creates an int i with value 17, float f...
- *
- * ~~~~~~~~~~~~~~~
+ * \snippet test/snippet/core/pod_tuple.cpp usage
  *
  */
 template <typename type0, typename ...types>
