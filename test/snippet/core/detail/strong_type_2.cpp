@@ -19,13 +19,20 @@ struct window_size : detail::strong_type<unsigned, window_size>
 //! [error_window]
 
 using namespace seqan3::literal;
+
+namespace seqan3::detail
+{
+template <forward_range_concept fwd_rng_type>
+    bool do_find(fwd_rng_type &, int const, int const) { return true; }
+}  // namespace seqan3::detail
+
 std::vector<dna4> my_range = "ACGTT"_dna4;
 //! [new_usage]
 template <forward_range_concept fwd_rng_type>
-    bool search(fwd_rng_type & SEQAN3_DOXYGEN_ONLY(rng), window_size const SEQAN3_DOXYGEN_ONLY(w), error const SEQAN3_DOXYGEN_ONLY(e))
+    bool search(fwd_rng_type & rng, window_size const w, error const e)
 {
     // do something
-    return true;
+    return detail::do_find(rng, w.get(), e.get());
 }
 
 int main()

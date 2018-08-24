@@ -5,15 +5,23 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 using namespace seqan3;
+
 using namespace seqan3::literal;
 
 std::vector<dna4> my_range = "ACGTT"_dna4;
+
+namespace seqan3::detail
+{
+    template <forward_range_concept fwd_rng_type>
+        bool do_find(fwd_rng_type &, int const, int const) { return true; }
+}  // namespace seqan3::detail
+
 //! [usage]
 template <forward_range_concept fwd_rng_type>
-bool search(fwd_rng_type & SEQAN3_DOXYGEN_ONLY(rng), unsigned const SEQAN3_DOXYGEN_ONLY(w), unsigned const SEQAN3_DOXYGEN_ONLY(e))
+bool search(fwd_rng_type & rng, unsigned const w, unsigned const e)
 {
     // do something
-    return true;
+    return detail::do_find(rng, w, e);
 }
 
 int main()
