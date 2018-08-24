@@ -63,7 +63,7 @@ concept bool same_concept =                         static_cast<bool>(ranges::Sa
  * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/DerivedFrom
  */
 template <typename t, typename u>
-concept bool derived_from_conept =                  static_cast<bool>(ranges::DerivedFrom<t, u>());
+concept bool derived_from_concept =                 static_cast<bool>(ranges::DerivedFrom<t, u>());
 
 //!\brief Resolves to `ranges::ImplicitlyConvertibleTo<type1, type2>()`
 template <typename t, typename u>
