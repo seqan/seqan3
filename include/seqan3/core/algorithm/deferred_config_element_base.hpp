@@ -57,28 +57,7 @@ namespace seqan3::detail
  * config type with it's static counter part after resolving the runtime information to a static type or value.
  * The following example demonstrates the usage of this base class with a simple example:
  *
- * ```cpp
- * template <size_t I>
- * struct my_config
- * {
- *     size_t value{I};  // Has to be named `value`.
- * };
- *
- * struct my_deferred_config
- * {
- *      template <typename fn_t, typename configuration_t>
- *      constexpr auto invoke(fn_t && fn, configuration_t && config) const
- *          requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
- *      {
- *          if (value == 0)
- *              return fn(std::forward<configuration_t>(cfg).replace_with(my_deferred_config{}, my_config<0>{}));
- *          else
- *              return fn(std::forward<configuration_t>(cfg).replace_with(my_deferred_config{}, my_config<1>{}));
- *      }
- *
- *     int value{0};  // Has to be named `value`.
- * };
- * ```
+ * \snippet test/snippet/core/algorithm/deferred_config_element_base.cpp usage
  *
  * The configuration class must provide a member variable with the name `value`.
  * For a dynamic dispatching of configurations, that should be translated to a static configuration for the

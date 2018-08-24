@@ -106,9 +106,7 @@ class configuration_fn_base;
  * Consider the following example, where we assume that the config element `bar` and the configuration adaptor
  * `with_foo` are already given:
  *
- * ```cpp
- * auto my_cfg = configuration<bar>{} | with_foo;  // my_cfg is now of type configuration<foo, bar>
- * ```
+ * \snippet test/snippet/core/algorithm/configuration.cpp combine
  * The `with_foo` adaptor captures the `configuration<bar>` object and returns a new configuration with the added
  * `foo`-config.
 
@@ -119,9 +117,7 @@ class configuration_fn_base;
  * within the configuration.
  * Considering the example from above one can get the value of the bar-config as:
  *
- * ```cpp
- * auto bar_value = std::get<1>(my_cfg);
- * ```
+ * \snippet test/snippet/core/algorithm/configuration.cpp access
  * Note, that the type based get should be used with caution. In the typical usage scenario, the user of the
  * configuration works with config adaptor types. Only these adaptors know what exact type was added to the
  * configuration.
@@ -176,9 +172,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * detail::configuration cfg = my_cfg(1, 2, 3);
-     * ```
+     * \snippet test/snippet/core/algorithm/configuration.cpp constructor
      * In the above example, we assume, that `my_cfg` is a variable of type seqan3::detail::configuration_fn_base.
      */
     template <typename cfg_fn_t>
@@ -450,19 +444,7 @@ constexpr auto operator|(configuration_t && cfg,
  *
  * ### Example
  *
- * ```cpp
- * // case 1: adaptor with adaptor
- * auto cfg1 = my_config1 | my_config2;
- *
- * // case 2: adaptor with proxy
- * auto cfg2 = my_config1 | my_config2(2);
- *
- * // case 3: proxy with adaptor
- * auto cfg3 = my_config1(1) | my_config2;
- *
- * // case 4: proxy with proxy
- * auto cfg4 = my_config1(1) | my_config2(2);
- * ```
+ * \snippet test/snippet/core/algorithm/configuration.cpp combine_2
  */
 template <typename lhs_fn_t,
           typename rhs_fn_t>

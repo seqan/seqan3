@@ -56,23 +56,7 @@ namespace seqan3
  *
  * ### Example
  *
- * ```cpp
- *
- * enum class my_enum
- * {
- *     VAL1 = 1,
- *     VAL2 = 2,
- *     COMB = 3
- * };
- *
- * template <>
- * constexpr bool seqan3::add_enum_bitwise_operators<my_enum> = true;
- *
- * my_enum e = my_enum::VAL1;
- * my_enum e2 = e | my_enum::VAL2;
- *
- * // e2 == my_enum::COMB;
- * ```
+ * \snippet test/snippet/core/add_enum_bitwise_operators.cpp usage
  */
 template <typename t>
 constexpr bool add_enum_bitwise_operators = false;
