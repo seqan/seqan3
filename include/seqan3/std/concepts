@@ -1,0 +1,607 @@
+// ============================================================================
+//                 SeqAn - The Library for Sequence Analysis
+// ============================================================================
+//
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
+//       its contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+// DAMAGE.
+//
+// ============================================================================
+
+/*!\file
+ * \brief The Concepts library.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
+#pragma once
+
+#if __has_include(<concepts>) // C++20 concepts available
+#include <concepts>
+#else                         // use range-v3 to emulate
+
+#include <functional>
+#include <type_traits>
+
+#include <range/v3/utility/common_type.hpp>
+
+/*!\defgroup std std
+ * \brief A subset of the C++20 standard library, either aliased directly from the standard library or
+ *        (if not available) implemented via the range-v3 library.
+ */
+
+namespace std
+{
+
+/*!\defgroup concepts concepts
+ * \ingroup std
+ * \brief The \<concepts\> header from C++20's standard library.
+ */
+
+//!\addtogroup concepts
+//!\{
+
+// ============================================================================
+//  Core language concepts
+// ============================================================================
+
+/*!\interface std::Same <>
+ * \brief The concept `std::Same<T, U>` is satisfied if and only if T and U denote the same type.
+ * \sa https://en.cppreference.com/w/cpp/concepts/Same
+ */
+//!\cond
+template <class T, class U>
+concept bool Same = std::is_same_v<T, U>;
+//!\endcond
+
+/*!\interface std::DerivedFrom <>
+ * \brief The concept `std::DerivedFrom<Derived, Base>` is satisfied if and only if Base is a class type that is either
+ *        Derived or a public and unambiguous base of Derived, ignoring cv-qualifiers.
+ * \sa https://en.cppreference.com/w/cpp/concepts/DerivedFrom
+ */
+//!\cond
+template <class Derived, class Base >
+concept bool DerivedFrom =
+    std::is_base_of_v<Base, Derived> &&
+    std::is_convertible_v<const volatile Derived*, const volatile Base*>;
+//!\endcond
+
+/*!\interface std::ConvertibleTo
+ * \brief The concept `std::ConvertibleTo<From, To>` specifies that an expression of the type and value category
+ *        specified by From can be implicitly and explicitly converted to the type To, and the two forms of conversion
+ *        are equivalent.
+ * \sa https://en.cppreference.com/w/cpp/concepts/ConvertibleTo
+ */
+//!\cond
+template <class From, class To>
+concept bool ConvertibleTo =
+    std::is_convertible_v<From, To> &&
+    requires(From (&f)())
+    {
+        static_cast<To>(f());
+    };
+//!\endcond
+
+/*!\interface std::CommonReference
+ * \brief The concept `std::CommonReference<T, U>` specifies that two types T and U share a common reference type
+ *        (as computed by std::common_reference_t) to which both can be converted.
+ * \sa https://en.cppreference.com/w/cpp/concepts/CommonReference
+ */
+//!\cond
+template <class T, class U >
+concept bool CommonReference =
+  Same<::ranges::common_reference_t<T, U>, ::ranges::common_reference_t<U, T>> &&
+  ConvertibleTo<T, ::ranges::common_reference_t<T, U>> &&
+  ConvertibleTo<U, ::ranges::common_reference_t<T, U>>;
+//!\endcond
+
+/*!\interface std::Common
+ * \brief The concept `std::Common<T, U>` specifies that two types T and U share a common type (as computed by
+ *        std::common_type_t) to which both can be converted.
+ * \sa https://en.cppreference.com/w/cpp/concepts/Common
+ */
+//!\cond
+template <class T, class U>
+concept bool Common =
+    Same<::ranges::common_type_t<T, U>, ::ranges::common_type_t<U, T>> &&
+    ConvertibleTo<T, ::ranges::common_type_t<T, U>> &&
+    ConvertibleTo<U, ::ranges::common_type_t<T, U>> &&
+    CommonReference<std::add_lvalue_reference_t<const T>, std::add_lvalue_reference_t<const U>> &&
+    CommonReference<std::add_lvalue_reference_t<::ranges::common_type_t<T, U>>,
+                    ::ranges::common_reference_t<std::add_lvalue_reference_t<const T>,
+                                                 std::add_lvalue_reference_t<const U>>>;
+//!\endcond
+
+/*!\interface std::Integral
+ * \brief The concept Integral is satisfied if and only if T is an integral type.
+ * \sa https://en.cppreference.com/w/cpp/concepts/Integral
+ */
+//!\cond
+template <class T>
+concept bool Integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
+//!\endcond
+
+/*!\interface std::SignedIntegral
+ * \extends std::Integral
+ * \brief The concept std::SignedIntegral is satisfied if and only if T is an integral type and std::is_signed_v<T>
+ *        is true.
+ * \sa https://en.cppreference.com/w/cpp/concepts/SignedIntegral
+ */
+//!\cond
+template <class T>
+concept bool SignedIntegral = Integral<T> && std::is_signed_v<T>;
+//!\endcond
+
+/*!\interface std::UnsignedIntegral
+ * \extends std::Integral
+ * \brief The concept std::UnsignedIntegral is satisfied if and only if T is an integral type and
+ *        std::is_signed_v<T> is false.
+ * \sa https://en.cppreference.com/w/cpp/concepts/UnsignedIntegral
+ */
+//!\cond
+template <class T>
+concept bool UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
+//!\endcond
+
+/*!\interface std::Assignable <>
+ * \brief The concept `std::Assignable<LHS, RHS>` specifies that an expression of the type and value category specified
+ *        by RHS can be assigned to an lvalue expression whose type is specified by LHS.
+ * \sa https://en.cppreference.com/w/cpp/concepts/Assignable
+ */
+/*!\fn          t & operator=(t1 const & rhs)
+ * \brief       Assignment operator.
+ * \memberof    std::Assignable
+ * \param rhs   Right hand side parameter to assign.
+ * \returns     Reference to self.
+ *
+ * \details
+ * \attention This is a concept bool requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
+ */
+//!\cond
+template <class LHS, class RHS>
+concept bool Assignable =
+    std::is_lvalue_reference_v<LHS> &&
+    CommonReference<std::remove_reference_t<LHS> const &, std::remove_reference_t<RHS> const&> &&
+    requires(LHS lhs, RHS&& rhs)
+    {
+        lhs = std::forward<RHS>(rhs);
+        requires Same<decltype(lhs = std::forward<RHS>(rhs)), LHS>;
+    };
+//!\endcond
+
+/*!\interface std::Swappable <>
+ * \brief       The concept std::Swappable specifies that lvalues of type T are swappable.
+ * \sa https://en.cppreference.com/w/cpp/concepts/Swappable
+ */
+/*!\name Requirements for std::Swappable
+ * \brief You can expect these functions on all types that implement std::Swappable.
+ * \{
+ */
+/*!\fn          void swap(t & lhs, t & rhs)
+ * \brief       Swaps the contents of two objects.
+ * \relates     std::Swappable
+ * \param lhs   Left hand side parameter to swap.
+ * \param rhs   Right hand side parameter to swap.
+ */
+//!\}
+//!\cond
+template <class T>
+concept bool Swappable = std::is_swappable_v<T>;
+//!\endcond
+
+/*!\interface std::SwappableWith <>
+ * \brief The concept `std::SwappableWith<T, U>` specifies that expressions of the type and value category encoded by T and U
+ *        are swappable with each other.
+ * \sa https://en.cppreference.com/w/cpp/concepts/Swappable
+ */
+//!\cond
+template <class T, class U>
+concept bool SwappableWith =
+    std::is_swappable_with_v<T, T> &&
+    std::is_swappable_with_v<U, U> &&
+    CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
+    std::is_swappable_with_v<T, U> &&
+    std::is_swappable_with_v<U, T>;
+//!\endcond
+
+/*!\interface   std::Destructible <>
+ * \brief       The concept std::Destructible specifies the concept of all types whose instances can safely be destroyed at
+ *              the end of their lifetime (including reference types).
+ * \sa          https://en.cppreference.com/w/cpp/concepts/Destructible
+ */
+//!\cond
+template < class T >
+concept bool Destructible = std::is_nothrow_destructible_v<T>;
+//!\endcond
+
+/*!\interface   std::Constructible <>
+ * \extends     std::Destructible
+ * \brief       The std::Constructible concept specifies that a variable of type T can be initialized with the given set of
+ *              argument types Args....
+ * \sa          https://en.cppreference.com/w/cpp/concepts/Constructible
+ */
+//!\cond
+template < class T, class... Args >
+concept bool Constructible = Destructible<T> && std::is_constructible_v<T, Args...>;
+//!\endcond
+
+/*!\interface   std::DefaultConstructible <>
+ * \extends     std::Constructible
+ * \brief       The std::DefaultConstructible concept provides a shorthand for the common case when the question is whether
+ *              a type can be constructed with no arguments.
+ * \sa          https://en.cppreference.com/w/cpp/concepts/DefaultConstructible
+ */
+//!\cond
+template < class T >
+concept bool DefaultConstructible = Constructible<T>;
+//!\endcond
+
+/*!\interface   std::MoveConstructible <>
+ * \extends     std::Constructible
+ * \extends     std::ConvertibleTo
+ * \brief       The concept std::MoveConstructible is satisfied if T is a reference type, or if it is an object type where
+ *              an object of that type can constructed from an rvalue of that type in both direct- and
+ *              copy-initialization contexts, with the usual semantics.
+ * \sa          https://en.cppreference.com/w/cpp/concepts/MoveConstructible
+ */
+//!\cond
+template< class T >
+concept bool MoveConstructible = Constructible<T, T> && ConvertibleTo<T, T>;
+//!\endcond
+
+/*!\interface   std::CopyConstructible <>
+ * \extends     std::MoveConstructible
+ * \brief       The concept std::CopyConstructible is satisfied if T is an lvalue reference type, or if it is a
+ *              MoveConstructible object type where an object of that type can constructed from a (possibly const)
+ *              lvalue or const rvalue of that type in both direct- and copy-initialization contexts with the usual
+ *              semantics (a copy is constructed with the source unchanged).
+ * \sa          https://en.cppreference.com/w/cpp/concepts/CopyConstructible
+ */
+//!\cond
+template <class T>
+concept bool CopyConstructible =
+  MoveConstructible<T> &&
+  Constructible<T, T&>       && ConvertibleTo<T&, T> &&
+  Constructible<T, const T&> && ConvertibleTo<const T&, T> &&
+  Constructible<T, const T>  && ConvertibleTo<const T, T>;
+//!\endcond
+
+// ============================================================================
+//  Object concepts part 1
+// ============================================================================
+
+/*!\interface   std::Movable
+ * \brief       Subsumes std::Object, std::MoveConstructible, std::Swappable bool and
+ *              requires that the type be std::Assignable bool from a value of itself.
+ * \extends     std::MoveConstructible
+ * \extends     std::Assignable
+ * \extends     std::Swappable
+ *
+ * \sa http://en.cppreference.com/w/cpp/concepts/Movable
+ */
+//!\cond
+template < class T >
+concept bool Movable = std::is_object_v<T> && MoveConstructible<T> && Assignable<T&, T> && Swappable<T>;
+//!\endcond
+
+// ============================================================================
+//  Comparison concepts
+// ============================================================================
+
+/*!\interface   std::Boolean <>
+ * \extends     std::Movable
+ * \brief       Specifies that a type can be used in Boolean contexts.
+ * \sa          https://en.cppreference.com/w/cpp/concepts/Boolean
+ */
+//!\cond
+template <class B>
+concept bool Boolean =
+    Movable<::ranges::uncvref_t<B>> &&
+    requires(std::remove_reference_t<B> const & b1,
+             std::remove_reference_t<B> const & b2, bool const a)
+    {
+        requires ConvertibleTo<const std::remove_reference_t<B>&, bool>;
+        !b1;      requires ConvertibleTo<decltype(!b1), bool>;
+        b1 && a;  requires Same<decltype(b1 && a), bool>;
+        b1 || a;  requires Same<decltype(b1 || a), bool>;
+        b1 && b2; requires Same<decltype(b1 && b2), bool>;
+        a && b2;  requires Same<decltype(a && b2), bool>;
+        b1 || b2; requires Same<decltype(b1 || b2), bool>;
+        a || b2;  requires Same<decltype(a || b2), bool>;
+        b1 == b2; requires ConvertibleTo<decltype(b1 == b2), bool>;
+        b1 == a;  requires ConvertibleTo<decltype(b1 == a), bool>;
+        a == b2;  requires ConvertibleTo<decltype(a == b2), bool>;
+        b1 != b2; requires ConvertibleTo<decltype(b1 != b2), bool>;
+        b1 != a;  requires ConvertibleTo<decltype(b1 != a), bool>;
+        a != b2;  requires ConvertibleTo<decltype(a != b2), bool>;
+  };
+//!\endcond
+
+} // namespace std
+
+namespace std::detail
+{
+
+/*!\interface   std::detail::WeaklyEqualityComparableWith <>
+ * \tparam t1   The first type to compare.
+ * \tparam t2   The second type to compare.
+ * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/WeaklyEqualityComparableWith
+ */
+//!\cond
+template <class T, class U>
+concept bool WeaklyEqualityComparableWith =
+    requires(std::remove_reference_t<T> const & t,
+             std::remove_reference_t<U> const & u)
+    {
+        t == u; requires Boolean<decltype(t == u)>;
+        t != u; requires Boolean<decltype(t != u)>;
+        u == t; requires Boolean<decltype(u == t)>;
+        u != t; requires Boolean<decltype(u != t)>;
+    };
+//!\endcond
+} // namespace std::detail
+
+namespace std
+{
+
+/*!\interface   std::EqualityComparable <>
+ * \brief       The same as std::WeaklyEqualityComparableWith<t,t>.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/EqualityComparable
+ */
+/*!\name Requirements for std::EqualityComparable
+ * \brief You can expect these functions on all types that implement std::Equality_comparable.
+ * \{
+ */
+/*!\fn          bool operator==(type const & lhs, type const & rhs)
+ * \brief       (In-)Equality comparison.
+ * \relates     std::EqualityComparable
+ * \param[in]   lhs Left hand side parameter to compare.
+ * \param[in]   rhs Right hand side parameter to compare.
+ * \returns     `true` or `false`, depending of the outcome of the comparison.
+ *
+ * \details
+ * \attention This is a concept bool requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
+ */
+/*!\fn      bool operator!=(type const & lhs, type const & rhs)
+ * \relates std::EqualityComparable
+ * \copydoc std::EqualityComparable::operator==
+ */
+//!\}
+//!\cond
+template < class T >
+concept bool EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
+//!\endcond
+
+/*!\interface   std::EqualityComparableWith <>
+ * \extends     std::detail::WeaklyEqualityComparableWith
+ * \brief       Requires std::detail::WeaklyEqualityComparableWitht<t1,t2>, but also that t1 and t2, as well as
+ *              their common_reference_t satisfy std::Equality_comparable.
+ * \tparam t1   The first type to compare.
+ * \tparam t2   The second type to compare.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/EqualityComparable
+ */
+//!\cond
+template <class T, class U>
+concept bool EqualityComparableWith =
+    EqualityComparable<T> &&
+    EqualityComparable<U> &&
+    CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
+    EqualityComparable<::ranges::common_reference_t<std::remove_reference_t<T> const &,
+                                               std::remove_reference_t<U> const &>> &&
+    detail::WeaklyEqualityComparableWith<T, U>;
+//!\endcond
+
+/*!\interface   std::StrictTotallyOrdered
+ * \extends     std::Equality_comparable
+ * \brief       Requires weak order and std::Equality_comparable.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/StrictTotallyOrdered
+ */
+/*!\name Requirements for std::StrictTotallyOrdered
+ * \brief You can expect these functions on all types that implement std::StrictTotallyOrdered.
+ * \{
+ */
+/*!\fn          bool operator<(type const & lhs, type const & rhs)
+ * \brief       Less-than, greater-than and -or-equal comparisons.
+ * \relates     std::StrictTotallyOrdered
+ * \param[in]   lhs Left hand side parameter to compare.
+ * \param[in]   rhs Right hand side parameter to compare.
+ * \returns     `true` or `false`, depending of the outcome of the comparison.
+ *
+ * \details
+ * \attention This is a concept bool requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
+ */
+/*!\fn      bool operator<=(type const & lhs, type const & rhs)
+ * \relates std::StrictTotallyOrdered
+ * \copydoc std::StrictTotallyOrdered::operator<
+ */
+/*!\fn      bool operator>(type const & lhs, type const & rhs)
+ * \relates std::StrictTotallyOrdered
+ * \copydoc std::StrictTotallyOrdered::operator<
+ */
+/*!\fn      bool operator>=(type const & lhs, type const & rhs)
+ * \relates std::StrictTotallyOrdered
+ * \copydoc std::StrictTotallyOrdered::operator<
+ */
+//!\}
+//!\cond
+template <class T>
+concept bool StrictTotallyOrdered =
+    EqualityComparable<T> &&
+    requires(std::remove_reference_t<T> const & a,
+             std::remove_reference_t<T> const & b)
+    {
+        a < b;  requires Boolean<decltype(a < b)>;
+        a > b;  requires Boolean<decltype(a > b)>;
+        a <= b; requires Boolean<decltype(a <= b)>;
+        a >= b; requires Boolean<decltype(a >= b)>;
+    };
+//!\endcond
+
+/*!\interface   std::StrictTotallyOrderedWith
+ * \extends     std::EqualityComparableWith
+ * \brief       Requires std::Weakly_ordered bool and std::Equality_comparable.
+ * \tparam t1   The first type to compare.
+ * \tparam t2   The second type to compare.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/StrictTotallyOrdered
+ */
+//!\cond
+template <class T, class U>
+concept bool StrictTotallyOrderedWith =
+    StrictTotallyOrdered<T> &&
+    StrictTotallyOrdered<U> &&
+    CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
+    StrictTotallyOrdered<::ranges::common_reference_t<std::remove_reference_t<T> const &,
+                                                 std::remove_reference_t<U> const &>> &&
+    EqualityComparableWith<T, U> &&
+    requires(std::remove_reference_t<T> const & t,
+             std::remove_reference_t<U> const & u)
+    {
+        t < u;  requires Boolean<decltype(t < u)>;
+        t > u;  requires Boolean<decltype(t > u)>;
+        t <= u; requires Boolean<decltype(t <= u)>;
+        t >= u; requires Boolean<decltype(t >= u)>;
+        u < t;  requires Boolean<decltype(u < t)>;
+        u > t;  requires Boolean<decltype(u > t)>;
+        u <= t; requires Boolean<decltype(u <= t)>;
+        u >= t; requires Boolean<decltype(u >= t)>;
+    };
+//!\endcond
+
+// ============================================================================
+//  Object concepts  part2
+// ============================================================================
+
+/*!\interface   std::Copyable
+ * \brief       Subsumes std::Movable, std::Copy_constructible, and
+ *              requires that the type be std::Assignable bool from a `const &` of itself.
+ * \extends     std::Movable
+ * \extends     std::CopyConstructible
+ * \sa          http://en.cppreference.com/w/cpp/concepts/Copyable
+ */
+//!\cond
+template <class T>
+concept bool Copyable = CopyConstructible<T> && Movable<T> && Assignable<T&, const T&>;
+//!\endcond
+
+/*!\interface   std::Semiregular
+ * \brief       Subsumes std::Copyable and std::DefaultConstructible.
+ * \extends     std::Copyable
+ * \extends     std::DefaultConstructible
+ * \sa          http://en.cppreference.com/w/cpp/concepts/Semiregular
+ */
+//!\cond
+template <class T>
+concept bool Semiregular = Copyable<T> && DefaultConstructible<T>;
+//!\endcond
+
+/*!\interface   std::Regular
+ * \brief       Subsumes std::Semi_regular bool and std::Equality_comparable.
+ * \extends     std::Semiregular
+ * \extends     std::EqualityComparable
+ * \sa          http://en.cppreference.com/w/cpp/concepts/Regular
+ */
+//!\cond
+template <class T>
+concept bool Regular = Semiregular<T> && EqualityComparable<T>;
+//!\endcond
+
+// ============================================================================
+//  Callable concepts
+// ============================================================================
+
+/*!\interface   std::Invocable <>
+ * \brief       Specifies whether the given callable is invocable with the given arguments.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/Invocable
+ */
+//!\cond
+template< class F, class... Args >
+concept bool Invocable =
+    requires(F&& f, Args&&... args)
+    {
+        std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+        /* not required to be equality preserving */
+    };
+//!\endcond
+
+/*!\interface   std::RegularInvocable <>
+ * \extends     std::Invocable
+ * \brief       Specifies whether the given callable is invocable with the given arguments and equality preserving
+ *              (invocations change neither the callable, nor the arguments).
+ * \sa          http://en.cppreference.com/w/cpp/concepts/RegularInvocable
+ */
+//!\cond
+template< class F, class... Args >
+concept bool RegularInvocable = Invocable<F, Args...>;
+//!\endcond
+
+/*!\interface   std::Predicate <>
+ * \extends     std::RegularInvocable
+ * \brief       Specifies whether the given callable is std::RegularInvocable and returns bool.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/Predicate
+ */
+//!\cond
+template < class F, class... Args >
+concept bool Predicate = RegularInvocable<F, Args...> && Boolean<std::invoke_result_t<F, Args...>>;
+//!\endcond
+
+/*!\interface   std::Relation <>
+ * \extends     std::Predicate
+ * \brief       Specifies that R defines a binary relation over the set of expressions whose type and value category
+ *              are those encoded by either t or u.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/Relation
+ */
+//!\cond
+template <class R, class T, class U>
+concept bool Relation =
+    Predicate<R, T, T> &&
+    Predicate<R, U, U> &&
+    CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
+    Predicate<R,
+        ::ranges::common_reference_t<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &>,
+        ::ranges::common_reference_t<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &>> &&
+    Predicate<R, T, U> &&
+    Predicate<R, U, T>;
+//!\endcond
+
+/*!\interface   std::StrictWeakOrder <>
+ * \extends     std::Relation
+ * \brief       The concept StrictWeakOrder<R, T, U> specifies that the Relation R imposes a strict weak ordering
+ *              on its arguments.
+ * \sa          http://en.cppreference.com/w/cpp/concepts/Relation
+ */
+//!\cond
+template < class R, class T, class U >
+concept bool StrictWeakOrder = Relation<R, T, U>;
+//!\endcond
+//!\}
+
+} // namespace std
+
+#endif // not __has_include(<concepts>)

@@ -33,31 +33,21 @@
 // ============================================================================
 
 /*!\file
- * \brief Adaptions of core language concepts.
+ * \brief  Meta-include for custom concepts.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/std/concept/comparison.hpp>
-#include <seqan3/std/concept/object.hpp>
+#include <seqan3/std/core/cereal.hpp>
+#include <seqan3/std/core/core_language.hpp>
+#include <seqan3/std/core/tuple.hpp>
 
-namespace seqan3
-{
-
-/*!\addtogroup concept
- * \{
+/*!\defgroup concept Concept
+ * \ingroup core
+ * \brief Additional concepts that are not specific to a SeqAn3 module.
+ *
+ * \details
+ *
+ * \todo write me.
  */
-
-/*!\interface   seqan3::regular_concept
- * \brief       Subsumes seqan3::semi_regular_concept and seqan3::equality_comparable_concept.
- * \extends     seqan3::semi_regular_concept
- * \extends     seqan3::equality_comparable_concept
- * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Regular
- */
-//!\cond
-template <typename t>
-concept bool regular_concept = semi_regular_concept<t> && equality_comparable_concept<t>;
-//!\endcond
-//!\}
-}  // namespace seqan3
