@@ -32,11 +32,6 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Provides global alignment configurations.
- * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- */
-
 #include <gtest/gtest.h>
 
 #include <functional>
@@ -75,42 +70,26 @@ TEST(align_config_global, align_config_type_to_id)
 
 TEST(align_config_global, invoke)
 {
-    {
-        auto cfg = std::invoke(align_cfg::global, detail::configuration<>{});
+    auto cfg = std::invoke(align_cfg::global, detail::configuration<>{});
 
-        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
-                                    detail::configuration<detail::align_config_global>>));
-    }
+    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                detail::configuration<detail::align_config_global>>));
 }
 
 TEST(align_config_global, get_by_enum)
 {
+    detail::configuration cfg = align_cfg::global;
+    auto const c_cfg = detail::configuration{align_cfg::global};
 
-    {
-        detail::configuration cfg = align_cfg::global;
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(cfg)),
+                                bool &>));
 
-        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(cfg)),
-                                    bool &>));
-    }
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(c_cfg)),
+                                bool const &>));
 
-    {
-        auto const c_cfg = detail::configuration{align_cfg::global};
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(std::move(cfg))),
+                                bool &&>));
 
-        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(c_cfg)),
-                                    bool const &>));
-    }
-
-    {
-        detail::configuration cfg = align_cfg::global;
-
-        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(std::move(cfg))),
-                                    bool &&>));
-    }
-
-    {
-        auto const c_cfg = detail::configuration{align_cfg::global};
-
-        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(std::move(c_cfg))),
-                                    bool const &&>));
-    }
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(std::move(c_cfg))),
+                                bool const &&>));
 }

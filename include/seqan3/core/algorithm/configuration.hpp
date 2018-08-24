@@ -120,7 +120,8 @@ class configuration_fn_base;
  * Considering the example from above one can get the value of the bar-config as:
  *
  * ```cpp
- * auto bar_value = std::get<1>(my_cfg); * ```
+ * auto bar_value = std::get<1>(my_cfg);
+ * ```
  * Note, that the type based get should be used with caution. In the typical usage scenario, the user of the
  * configuration works with config adaptor types. Only these adaptors know what exact type was added to the
  * configuration.

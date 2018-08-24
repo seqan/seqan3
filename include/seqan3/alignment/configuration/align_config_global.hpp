@@ -51,6 +51,7 @@ namespace seqan3::detail
  */
 struct align_config_global
 {
+    //!\brief The value of align_config_global, true by default.
     bool value{true};
 };
 
@@ -62,6 +63,8 @@ struct align_config_global_adaptor : public configuration_fn_base<align_config_g
 
     /*!\brief Adds to the configuration a global alignment configuration element.
      * \param[in] cfg  The configuration to be extended.
+     * \tparam configuration_t The type of the underlying configuration scheme.
+     *                         Is required to fulfill the seqan3::detail::is_algorithm_configuration requirement.
      * \returns A new configuration containing the global alignment configuration element.
      */
     template <typename configuration_t>
@@ -84,8 +87,7 @@ struct on_align_config<align_cfg::id::global>
 {
     //!\brief Type alias used by meta::find_if
     template <config_element_concept t>
-    using invoke = typename std::is_same<t, align_config_global>::type; ///////////////////////////////////
-    //using invoke = typename std::is_same<t, align_config_global>; ///////////////////////////////////
+    using invoke = typename std::is_same<t, align_config_global>::type;
 };
 
 //!\brief Mapping from the detail::align_config_global type to it's corresponding seqan3::align_cfg::id.
