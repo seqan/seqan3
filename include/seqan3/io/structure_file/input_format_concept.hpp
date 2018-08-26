@@ -115,18 +115,18 @@ concept bool structure_file_input_format_concept = requires(t & v,
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \memberof seqan3::structure_file_input_format_concept
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy seqan3::output_range_concept
+ * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam id_type          Type of the seqan3::field::ID input; must satisfy seqan3::output_range_concept
+ * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam bpp_type         Type of the seqan3::field::BPP input; must satisfy seqan3::output_range_concept
+ * \tparam bpp_type         Type of the seqan3::field::BPP input; must satisfy std::ranges::OutputRange
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
- * \tparam structure_type   Type of the seqan3::field::STRUCTURE input; must satisfy seqan3::output_range_concept
+ * \tparam structure_type   Type of the seqan3::field::STRUCTURE input; must satisfy std::ranges::OutputRange
  * over a seqan3::rna_structure_concept.
  * \tparam energy_type      Type of the seqan3::field::ENERGY input; must satisfy std::is_floating_point.
  * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR input;
  * must satisfy std::is_floating_point.
- * \tparam comment_type     Type of the seqan3::field::COMMENT input; must satisfy seqan3::output_range_concept
+ * \tparam comment_type     Type of the seqan3::field::COMMENT input; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
  * \tparam offset_type      Type of the seqan3::field::OFFSET input; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The input stream to read from.

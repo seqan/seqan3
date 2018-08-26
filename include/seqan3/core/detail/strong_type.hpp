@@ -43,7 +43,7 @@
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -105,7 +105,7 @@ namespace seqan3::detail
  * The following snippet shows a typical interface:
  *
  * ```cpp
- * template <forward_range_concept fwd_rng_type>
+ * template <std::ranges::ForwardRange fwd_rng_type>
  * bool search(fwd_rng_type & rng, unsigned const w, unsigned const e)
  * {
  *  ...
@@ -141,7 +141,7 @@ namespace seqan3::detail
  * Our interface could now be changed to:
  *
  * ```cpp
- * template <forward_range_concept fwd_rng_type>
+ * template <std::ranges::ForwardRange fwd_rng_type>
  * bool search(fwd_rng_type & rng, window_size const w, error const e)
  * {
  *  ...
@@ -353,7 +353,7 @@ public:
     }
 
     //!\brief Adds bitwise left shift operator to the strong type.
-    constexpr derived_t operator<<(integral_concept const shift)
+    constexpr derived_t operator<<(std::Integral const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_lshift) != strong_type_skill::none)
         //!\endcond
@@ -371,7 +371,7 @@ public:
     }
 
     //!\brief Adds bitwise right shift operator to the strong type.
-    constexpr derived_t operator>>(integral_concept const shift)
+    constexpr derived_t operator>>(std::Integral const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_rshift) != strong_type_skill::none)
         //!\endcond

@@ -60,19 +60,19 @@
  *
  * ### Iterator capabilities
  *
- * All ranges in SeqAn are either \link seqan3::input_range_concept input ranges \endlink (they can be read from) or
- * \link seqan3::output_range_concept output ranges \endlink (they can be written to) or both. E.g. an
+ * All ranges in SeqAn are either \link std::ranges::InputRange input ranges \endlink (they can be read from) or
+ * \link std::ranges::OutputRange output ranges \endlink (they can be written to) or both. E.g. an
  * `std::vector<int>` is both, but a `std::vector<int> const` would only be an input range.
  *
- * \link seqan3::input_range_concept Input ranges \endlink have different *strengths* that are realised through more
+ * \link std::ranges::InputRange Input ranges \endlink have different *strengths* that are realised through more
  * refined concepts:
  *
- * seqan3::input_range_concept < seqan3::forward_range_concept < seqan3::bidirectional_range_concept < seqan3::random_access_range_concept
+ * std::ranges::InputRange < std::ranges::ForwardRange < std::ranges::BidirectionalRange < std::ranges::RandomAccessRange
  *
  * (Click on the respective concepts to learn the exact definitions)
  *
- * Independent of input or output, a range can also be \link seqan3::sized_range_concept sized \endlink and/or
- * \link seqan3::common_range_concept  common \endlink.
+ * Independent of input or output, a range can also be \link std::ranges::SizedRange sized \endlink and/or
+ * \link std::ranges::CommonRange  common \endlink.
  *
  * ### Storage behaviour
  *
@@ -94,15 +94,15 @@
  * views as "underlying range + algorithm".
  *
  * The storage behaviour is orthogonal to the range concepts defined by the iterators mentioned above, i.e. you
- * can have a container that satisfies seqan3::random_access_range_concept (e.g. `std::vector` does, but `std::list`
+ * can have a container that satisfies std::ranges::RandomAccessRange (e.g. `std::vector` does, but `std::list`
  * does not) and you can have views or decorators that do so or don't. For some combinations of iterator capabilities
  * and storage behaviour there are extra concept definitions, e.g. seqan3::random_access_container_concept.
  *
  * \attention
  *
  * There are ranges in SeqAn that fit neither of these storage categories, e.g. all the files are
- * \link seqan3::input_range_concept input ranges \endlink (if they are input files) and
- * \link seqan3::output_range_concept output ranges \endlink (if they are output files), but they are neither
+ * \link std::ranges::InputRange input ranges \endlink (if they are input files) and
+ * \link std::ranges::OutputRange output ranges \endlink (if they are output files), but they are neither
  * containers, decorators nor views.
  *
  * \sa range.hpp

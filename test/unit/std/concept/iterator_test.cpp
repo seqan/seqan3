@@ -98,131 +98,131 @@ TEST(iterator_concept, basic)
     EXPECT_TRUE((iterator_concept<random_access_iterator_const>));
 }
 
-TEST(sentinel_concept, basic)
+TEST(std::Sentinel, basic)
 {
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           input_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           output_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           forward_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           forward_iterator_const>));
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           bidirectional_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           bidirectional_iterator_const>));
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           random_access_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           random_access_iterator_const>));
 
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           input_iterator>,
                                           input_iterator>));
     EXPECT_TRUE((std::is_same_v<char, value_type_t<ranges::ostream_iterator<char>>>));
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           output_iterator>,
                                           output_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           forward_iterator>,
                                           forward_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           forward_iterator_const>,
                                           forward_iterator_const>));
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           bidirectional_iterator>,
                                           bidirectional_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           bidirectional_iterator_const>,
                                           bidirectional_iterator_const>));
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           random_access_iterator>,
                                           random_access_iterator>));
-    EXPECT_TRUE((sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::Sentinel<test_sized_sentinel<
                                           random_access_iterator_const>,
                                           random_access_iterator_const>));
 }
 
-TEST(sized_sentinel_concept, basic)
+TEST(std::SizedSentinel, basic)
 {
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  input_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  output_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  forward_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  forward_iterator_const>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  bidirectional_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  bidirectional_iterator_const>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  random_access_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sentinel<char>,
+    EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  random_access_iterator_const>));
 
-    EXPECT_TRUE((!sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((!std::SizedSentinel<test_sized_sentinel<
                                                  input_iterator>,
                                                  input_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((!std::SizedSentinel<test_sized_sentinel<
                                                  output_iterator>,
                                                  output_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((!std::SizedSentinel<test_sized_sentinel<
                                                  forward_iterator>,
                                                  forward_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((!std::SizedSentinel<test_sized_sentinel<
                                                  forward_iterator_const>,
                                                  forward_iterator_const>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((!std::SizedSentinel<test_sized_sentinel<
                                                  bidirectional_iterator>,
                                                  bidirectional_iterator>));
-    EXPECT_TRUE((!sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((!std::SizedSentinel<test_sized_sentinel<
                                                  bidirectional_iterator_const>,
                                                  bidirectional_iterator_const>));
-    EXPECT_TRUE((sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::SizedSentinel<test_sized_sentinel<
                                                 random_access_iterator>,
                                                 random_access_iterator>));
-    EXPECT_TRUE((sized_sentinel_concept<test_sized_sentinel<
+    EXPECT_TRUE((std::SizedSentinel<test_sized_sentinel<
                                                 random_access_iterator_const>,
                                                 random_access_iterator_const>));
 }
 
-TEST(output_iterator_concept, basic)
+TEST(std::OutputIterator, basic)
 {
-    EXPECT_TRUE((!output_iterator_concept<input_iterator, char>));
-    EXPECT_TRUE((output_iterator_concept<output_iterator, char>));
-    EXPECT_TRUE((output_iterator_concept<forward_iterator, char>));
-    EXPECT_TRUE((!output_iterator_concept<forward_iterator_const, char>));
-    EXPECT_TRUE((output_iterator_concept<bidirectional_iterator, char>));
-    EXPECT_TRUE((!output_iterator_concept<bidirectional_iterator_const, char>));
-    EXPECT_TRUE((output_iterator_concept<random_access_iterator, char>));
-    EXPECT_TRUE((!output_iterator_concept<random_access_iterator_const, char>));
+    EXPECT_TRUE((!std::OutputIterator<input_iterator, char>));
+    EXPECT_TRUE((std::OutputIterator<output_iterator, char>));
+    EXPECT_TRUE((std::OutputIterator<forward_iterator, char>));
+    EXPECT_TRUE((!std::OutputIterator<forward_iterator_const, char>));
+    EXPECT_TRUE((std::OutputIterator<bidirectional_iterator, char>));
+    EXPECT_TRUE((!std::OutputIterator<bidirectional_iterator_const, char>));
+    EXPECT_TRUE((std::OutputIterator<random_access_iterator, char>));
+    EXPECT_TRUE((!std::OutputIterator<random_access_iterator_const, char>));
 }
 
-TEST(input_iterator_concept, basic)
+TEST(std::InputIterator, basic)
 {
-    EXPECT_TRUE((input_iterator_concept<input_iterator>));
-    EXPECT_TRUE((!input_iterator_concept<output_iterator>));
-    EXPECT_TRUE((input_iterator_concept<forward_iterator>));
-    EXPECT_TRUE((input_iterator_concept<forward_iterator_const>));
-    EXPECT_TRUE((input_iterator_concept<bidirectional_iterator>));
-    EXPECT_TRUE((input_iterator_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((input_iterator_concept<random_access_iterator>));
-    EXPECT_TRUE((input_iterator_concept<random_access_iterator_const>));
+    EXPECT_TRUE((std::InputIterator<input_iterator>));
+    EXPECT_TRUE((!std::InputIterator<output_iterator>));
+    EXPECT_TRUE((std::InputIterator<forward_iterator>));
+    EXPECT_TRUE((std::InputIterator<forward_iterator_const>));
+    EXPECT_TRUE((std::InputIterator<bidirectional_iterator>));
+    EXPECT_TRUE((std::InputIterator<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::InputIterator<random_access_iterator>));
+    EXPECT_TRUE((std::InputIterator<random_access_iterator_const>));
 }
 
-TEST(forward_iterator_concept, basic)
+TEST(std::ForwardIterator, basic)
 {
-    EXPECT_TRUE((!forward_iterator_concept<input_iterator>));
-    EXPECT_TRUE((!forward_iterator_concept<output_iterator>));
-    EXPECT_TRUE((forward_iterator_concept<forward_iterator>));
-    EXPECT_TRUE((forward_iterator_concept<forward_iterator_const>));
-    EXPECT_TRUE((forward_iterator_concept<bidirectional_iterator>));
-    EXPECT_TRUE((forward_iterator_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((forward_iterator_concept<random_access_iterator>));
-    EXPECT_TRUE((forward_iterator_concept<random_access_iterator_const>));
+    EXPECT_TRUE((!std::ForwardIterator<input_iterator>));
+    EXPECT_TRUE((!std::ForwardIterator<output_iterator>));
+    EXPECT_TRUE((std::ForwardIterator<forward_iterator>));
+    EXPECT_TRUE((std::ForwardIterator<forward_iterator_const>));
+    EXPECT_TRUE((std::ForwardIterator<bidirectional_iterator>));
+    EXPECT_TRUE((std::ForwardIterator<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::ForwardIterator<random_access_iterator>));
+    EXPECT_TRUE((std::ForwardIterator<random_access_iterator_const>));
 }
 
 TEST(bidirectional_iterator_concept, basic)
@@ -237,14 +237,14 @@ TEST(bidirectional_iterator_concept, basic)
     EXPECT_TRUE((bidirectional_iterator_concept<random_access_iterator_const>));
 }
 
-TEST(random_access_iterator_concept, basic)
+TEST(std::RandomAccessIterator, basic)
 {
-    EXPECT_TRUE((!random_access_iterator_concept<input_iterator>));
-    EXPECT_TRUE((!random_access_iterator_concept<output_iterator>));
-    EXPECT_TRUE((!random_access_iterator_concept<forward_iterator>));
-    EXPECT_TRUE((!random_access_iterator_concept<forward_iterator_const>));
-    EXPECT_TRUE((!random_access_iterator_concept<bidirectional_iterator>));
-    EXPECT_TRUE((!random_access_iterator_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((random_access_iterator_concept<random_access_iterator>));
-    EXPECT_TRUE((random_access_iterator_concept<random_access_iterator_const>));
+    EXPECT_TRUE((!std::RandomAccessIterator<input_iterator>));
+    EXPECT_TRUE((!std::RandomAccessIterator<output_iterator>));
+    EXPECT_TRUE((!std::RandomAccessIterator<forward_iterator>));
+    EXPECT_TRUE((!std::RandomAccessIterator<forward_iterator_const>));
+    EXPECT_TRUE((!std::RandomAccessIterator<bidirectional_iterator>));
+    EXPECT_TRUE((!std::RandomAccessIterator<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::RandomAccessIterator<random_access_iterator>));
+    EXPECT_TRUE((std::RandomAccessIterator<random_access_iterator_const>));
 }

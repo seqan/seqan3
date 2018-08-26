@@ -486,6 +486,7 @@ TYPED_TEST(cartesian_composition_test, custom_assignment_subtype)
     EXPECT_NE(get<0>(t1), TestFixture::value_1());
     EXPECT_NE(get<1>(t1), TestFixture::value_2());
 
+#if 0 // TODO(h-2) temporarily disabled
     t1 = TestFixture::assignable_to_value_1();
 
     EXPECT_NE(get<0>(t1), get<0>(t_d));
@@ -547,6 +548,7 @@ TYPED_TEST(cartesian_composition_test, custom_assignment_subtype)
     EXPECT_EQ(get<1>(t4), TestFixture::value_2());
     EXPECT_EQ(get<0>(t4), std::get<4>(TestFixture::values_to_cmp()));
     EXPECT_NE(get<1>(t4), std::get<5>(TestFixture::values_to_cmp()));
+#endif
 }
 
 // std::tuple_element

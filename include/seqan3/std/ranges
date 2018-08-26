@@ -1,0 +1,179 @@
+// ============================================================================
+// SeqAn - The Library for Sequence Analysis
+// ============================================================================
+//
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
+//       its contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+// DAMAGE.
+//
+// ============================================================================
+
+/*!\file
+ * \brief Adaptations of concepts from the Ranges TS
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
+#pragma once
+
+#if __has_include(<ranges>) // C++20 ranges available
+#include <iterator>
+#else // implement via range-v3
+
+#include <range/v3/range_concepts.hpp>
+#include <seqan3/core/platform.hpp>
+
+/*!\defgroup ranges ranges
+ * \ingroup std
+ * \brief The \<ranges\> header from C++20's standard library.
+ */
+
+namespace std::ranges
+{
+/*!\addtogroup ranges
+ * \{
+ */
+/*!\interface std::ranges::Range <>
+ * \brief Defines the requirements of a type that allows iteration over its elements by providing a begin iterator
+ * and an end sentinel.
+ * \sa http://en.cppreference.com/w/cpp/ranges/Range
+ */
+//!\cond
+template <typename type>
+concept bool Range = (bool)::ranges::Range<type>();
+//!\endcond
+
+/*!\interface std::ranges::SizedRange <>
+ * \extends std::ranges::Range
+ * \brief Specifies the requirements of a Range type that knows its size in constant time with the size function.
+ * \sa http://en.cppreference.com/w/cpp/ranges/SizedRange
+ */
+//!\cond
+template <typename type>
+concept bool SizedRange = Range<type> && (bool)::ranges::SizedRange<type>();
+//!\endcond
+
+/*!\interface std::ranges::CommonRange  <>
+ * \extends std::ranges::Range
+ * \brief Specifies requirements of a Range type for which `begin` and `end` return objects of the same type.
+ * \sa http://en.cppreference.com/w/cpp/ranges/BoundedRange
+ */
+//!\cond
+template <typename type>
+concept bool CommonRange = Range<type> && (bool)::ranges::BoundedRange<type>();
+//!\endcond
+
+/*!\interface std::ranges::OutputRange <>
+ * \extends std::ranges::Range
+ * \brief Specifies requirements of a Range type for which `begin` returns a type that models
+ * std::OutputIterator.
+ * \sa http://en.cppreference.com/w/cpp/ranges/OutputRange
+ */
+//!\cond
+template <typename type, typename out_type>
+concept bool OutputRange = Range<type> && (bool)::ranges::OutputRange<type, out_type>();
+//!\endcond
+
+/*!\interface std::ranges::InputRange <>
+ * \extends std::ranges::Range
+ * \brief Specifies requirements of a Range type for which `begin` returns a type that models
+ * std::InputIterator.
+ * \sa http://en.cppreference.com/w/cpp/ranges/InputRange
+ */
+//!\cond
+template <typename type>
+concept bool InputRange = Range<type> && (bool)::ranges::InputRange<type>();
+//!\endcond
+
+/*!\interface std::ranges::ForwardRange <>
+ * \extends std::ranges::InputRange
+ * \brief Specifies requirements of a Range type for which `begin` returns a type that models
+ * std::ForwardIterator.
+ * \sa http://en.cppreference.com/w/cpp/ranges/ForwardRange
+ */
+//!\cond
+template <typename type>
+concept bool ForwardRange = InputRange<type> && (bool)::ranges::ForwardRange<type>();
+//!\endcond
+
+/*!\interface std::ranges::BidirectionalRange <>
+ * \extends std::ranges::ForwardRange
+ * \brief Specifies requirements of a Range type for which `begin` returns a type that models
+ * std::BidirectionalIterator.
+ * \sa http://en.cppreference.com/w/cpp/ranges/BidirectionalRange
+ */
+//!\cond
+template <typename type>
+concept bool BidirectionalRange = ForwardRange<type> && (bool)::ranges::BidirectionalRange<type>();
+//!\endcond
+
+/*!\interface std::ranges::RandomAccessRange <>
+ * \extends std::ranges::BidirectionalRange
+ * \brief Specifies requirements of a Range type for which `begin` returns a type that models
+ * std::RandomAccessIterator.
+ * \sa http://en.cppreference.com/w/cpp/ranges/RandomAccessRange
+ */
+//!\cond
+template <typename type>
+concept bool RandomAccessRange = BidirectionalRange<type> && (bool)::ranges::RandomAccessRange<type>();
+//!\endcond
+
+/*!\interface std::ranges::ContiguousRange <>
+ * \extends std::ranges::RandomAccessRange
+ * \brief Specifies requirements of a Range type whose elements occupy adjacent locations in memory.
+ */
+//!\cond
+template <typename type>
+concept bool ContiguousRange = RandomAccessRange<type> && (bool)::ranges::ContiguousRange<type>();
+//!\endcond
+
+/*!\interface std::ranges::View <>
+ * \extends std::ranges::Semiregular
+ * \extends std::ranges::ViewableRange
+ * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
+ * \sa \ref view
+ * \sa http://en.cppreference.com/w/cpp/ranges/View
+ */
+//!\cond
+template <typename type>
+concept bool View = Range<type> && (bool)::ranges::View<type>();
+//!\endcond
+
+/*!\interface std::ranges::ViewableRange <>
+ * \extends std::ranges::Range
+ * \brief Specifies the requirements of a Range type that is either a std::ranges::View or an lvalue-reference.
+ * \sa \ref view
+ */
+//!\cond
+template <typename type>
+concept bool ViewableRange = Range<type> && (std::is_lvalue_reference_v<type> || View<type>);
+//!\endcond
+
+//!\}
+
+} // namespace std::ranges
+
+#endif // no standard header

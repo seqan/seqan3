@@ -39,17 +39,17 @@
 
 #pragma once
 
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
 
 /*!\brief Iterate over a range (consumes single-pass input ranges).
  * \ingroup range
- * \tparam rng_t Type of the range; must satisfy seqan3::input_range_concept.
+ * \tparam rng_t Type of the range; must satisfy std::ranges::InputRange.
  * \param rng The range.
  */
-template <input_range_concept rng_t>
+template <std::ranges::InputRange rng_t>
 constexpr void consume(rng_t && rng)
 {
     auto it = ranges::begin(rng);
@@ -60,10 +60,10 @@ constexpr void consume(rng_t && rng)
 
 /*!\brief Iterate over a range (NO-OP for forward ranges).
  * \ingroup range
- * \tparam rng_t Type of the range; must satisfy seqan3::forward_range_concept.
+ * \tparam rng_t Type of the range; must satisfy std::ranges::ForwardRange.
  * \param rng The range.
  */
-template <forward_range_concept rng_t>
+template <std::ranges::ForwardRange rng_t>
 constexpr void consume(rng_t &&)
 {}
 

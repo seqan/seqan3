@@ -35,8 +35,8 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/range/container/constexpr_string.hpp>
-#include <seqan3/std/concept/container.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/ranges>
 
 #include <utility>
 #include <string>
@@ -67,7 +67,7 @@ TEST(constexpr_string, standard_construction)
 TEST(constexpr_string, container_concept)
 {
     EXPECT_TRUE(container_concept<constexpr_string<4>>);
-    EXPECT_TRUE(random_access_range_concept<constexpr_string<4>>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<constexpr_string<4>>);
 }
 
 // construction from literal.

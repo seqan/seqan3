@@ -1,0 +1,220 @@
+// ============================================================================
+//                 SeqAn - The Library for Sequence Analysis
+// ============================================================================
+//
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
+//       its contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+// DAMAGE.
+//
+// ============================================================================
+
+/*!\file
+ * \brief Adaptions of Iterator concepts from the Ranges TS.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
+#pragma once
+
+#if 0 //TODO add check for C++20 iterator library
+#include <iterator>
+#else // implement via range-v3
+
+#include <range/v3/utility/iterator.hpp>
+
+#include <seqan3/std/concepts>
+
+/*!\defgroup iterator iterator
+ * \ingroup std
+ * \brief The \<iterator\> header from C++20's standard library.
+ */
+
+namespace std
+{
+
+//!\addtogroup iterator
+//!\{
+
+/*!\interface std::Readable <>
+ * \brief The concept Readable is satisfied by types that are readable by applying operator*, such as pointers, smart
+ *        pointers, and iterators.
+ * \sa https://en.cppreference.com/w/cpp/iterator/Readable
+ */
+//!\cond
+template <typename t>
+concept bool Readable = static_cast<bool>(::ranges::Readable<t>());
+//!\endcond
+
+/*!\interface std::Writable <>
+ * \brief The concept `Writable<Out, T>` specifies the requirements for writing a value whose type and value category
+ *        are encoded by T into an iterator Out's referenced object.
+ * \sa https://en.cppreference.com/w/cpp/iterator/Writable
+ */
+//!\cond
+template <typename out, typename t>
+concept bool Writable = static_cast<bool>(::ranges::Writable<out, t>());
+//!\endcond
+
+/*!\interface std::WeaklyIncrementable <>
+ * \extends std::Semiregular
+ * \brief The concept WeaklyIncrementable specifies the requirements on a type that can be incremented (with the
+ *        pre- and post-increment operators). The increment operations need not be equality-preserving, and the type
+ *        need not be std::EqualityComparable.
+ * \sa https://en.cppreference.com/w/cpp/iterator/WeaklyIncrementable
+ */
+//!\cond
+template <typename t>
+concept bool WeaklyIncrementable = Semiregular<t> &&
+                                   requires (t v)
+{
+    typename ::ranges::difference_type_t<t>;
+    requires SignedIntegral<::ranges::difference_type_t<t>>;
+    { ++v } -> t &; /* not required to be equality preserving */
+    v++; /* not required to be equality preserving */
+};
+//!\endcond
+
+/*!\interface std::Incrementable <>
+ * \extends std::WeaklyIncrementable
+ * \extends std::Regular
+ * \brief The concept Incrementable specifies the requirements on a type that can be incremented (with the pre-
+ *        and post-increment operators). The increment operations (including those required by std::WeaklyIncrementable)
+ *        are required to be equality-preserving, and the type is required to be std::EqualityComparable.
+ * \sa https://en.cppreference.com/w/cpp/iterator/Incrementable
+ */
+//!\cond
+template <typename i>
+concept bool Incrementable = Regular<i> && WeaklyIncrementable<i> && static_cast<bool>(::ranges::Incrementable<i>());
+//!\endcond
+
+/*!\interface std::Iterator <>
+ * \extends std::WeaklyIncrementable
+ * \brief The Iterator concept forms the basis of the iterator concept taxonomy; every iterator satisfies the Iterator
+ *        requirements.
+ * \sa https://en.cppreference.com/w/cpp/iterator/Iterator
+ */
+//!\cond
+template <typename i>
+concept bool Iterator = WeaklyIncrementable<i> && static_cast<bool>(::ranges::Iterator<i>());
+//!\endcond
+
+/*!\interface std::Sentinel <>
+ * \extends std::Semiregular
+ * \extends std::Iterator
+ * \brief The Sentinel concept specifies the relationship between an std::Iterator type and a std::Semiregular type
+ *        whose values denote a range.
+ * \sa https://en.cppreference.com/w/cpp/iterator/Sentinel
+ */
+//!\cond
+template <typename s, typename i>
+concept bool Sentinel = Semiregular<s> && Iterator<i> && static_cast<bool>(::ranges::Sentinel<s, i>());
+//!\endcond
+
+/*!\interface std::SizedSentinel <>
+ * \extends std::Sentinel
+ * \brief The SizedSentinel concept specifies that an object of the iterator type I and an object of the
+ *        sentinel type S can be subtracted to compute the distance between them in constant time.
+ * \sa https://en.cppreference.com/w/cpp/iterator/SizedSentinel
+ */
+//!\cond
+template <typename s, typename i>
+concept bool SizedSentinel = Sentinel<s, i> && static_cast<bool>(::ranges::SizedSentinel<s, i>());
+//!\endcond
+
+/*!\interface std::OutputIterator <>
+ * \extends std::Iterator
+ * \extends std::Writable
+ * \brief The OutputIterator concept is a refinement of std::Iterator, adding the requirement that it can be used
+ *        to write values of values of type and value category encoded by T (via std::Writable).
+ *        std::EqualityComparable is not required.
+ * \sa https://en.cppreference.com/w/cpp/iterator/OutputIterator
+ */
+//!\cond
+template <typename out, typename t>
+concept bool OutputIterator = Iterator<out> && Writable<out, t> && static_cast<bool>(::ranges::OutputIterator<out, t>());
+//!\endcond
+
+/*!\interface std::InputIterator <>
+ * \extends std::Iterator
+ * \extends std::Readable
+ * \brief The InputIterator concept is a refinement of std::Iterator, adding the requirement that the referenced
+ *        values can be read (via std::Readable) and the requirement that the iterator category tag be present.
+ * \sa https://en.cppreference.com/w/cpp/iterator/InputIterator
+ */
+//!\cond
+template <typename i>
+concept bool InputIterator = Iterator<i> && Readable<i> && static_cast<bool>(::ranges::InputIterator<i>());
+//!\endcond
+
+/*!\interface std::ForwardIterator <>
+ * \extends std::InputIterator
+ * \extends std::Incrementable
+ * \extends std::Sentinel
+ * \brief The InputIterator concept is a refinement of std::Iterator, adding the requirement that the referenced
+ *        values can be read (via std::Readable) and the requirement that the iterator category tag be present.
+ * \sa https://en.cppreference.com/w/cpp/iterator/ForwardIterator
+ */
+//!\cond
+template <typename i>
+concept bool ForwardIterator = InputIterator<i> &&
+                               Incrementable<i> &&
+                               Sentinel<i, i> &&
+                               static_cast<bool>(::ranges::ForwardIterator<i>());
+//!\endcond
+
+/*!\interface std::BidirectionalIterator <>
+ * \extends std::ForwardIterator
+ * \brief The concept BidirectionalIterator refines std::ForwardIterator by adding the ability to move an iterator
+ *        backward.
+ * \sa https://en.cppreference.com/w/cpp/iterator/BidirectionalIterator
+ */
+//!\cond
+template <typename i>
+concept bool BidirectionalIterator = ForwardIterator<i> && static_cast<bool>(::ranges::BidirectionalIterator<i>());
+//!\endcond
+
+/*!\interface std::RandomAccessIterator <>
+ * \extends std::BidirectionalIterator
+ * \extends std::SizedSentinel
+ * \extends std::StrictTotallyOrdered
+ * \brief The concept RandomAccessIterator refines std::BidirectionalIterator by adding support for constant
+ *        time advancement with the +=, +, -=, and - operators, constant time computation of distance with -,
+ *        and array notation with subscripting.
+ * \sa https://en.cppreference.com/w/cpp/iterator/BidirectionalIterator
+ */
+//!\cond
+template <typename i>
+concept bool RandomAccessIterator = BidirectionalIterator<i> &&
+                                    StrictTotallyOrdered<i> &&
+                                    SizedSentinel<i, i> &&
+                                    static_cast<bool>(::ranges::RandomAccessIterator<i>());
+//!\endcond
+
+//!\} // Iterator Concepts.
+
+}  // namespace std
+
+#endif

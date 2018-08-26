@@ -193,8 +193,8 @@ public:
     template <arithmetic_concept score_arg_t>
     constexpr void set_simple_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     {
-        std::conditional_t<integral_concept<score_t>, int64_t, double> i_ms = static_cast<score_arg_t>(ms);
-        std::conditional_t<integral_concept<score_t>, int64_t, double> i_mms = static_cast<score_arg_t>(mms);
+        std::conditional_t<std::Integral<score_t>, int64_t, double> i_ms = static_cast<score_arg_t>(ms);
+        std::conditional_t<std::Integral<score_t>, int64_t, double> i_mms = static_cast<score_arg_t>(mms);
         if ((i_ms  < std::numeric_limits<score_t>::lowest() || i_ms  > std::numeric_limits<score_t>::max()) ||
             (i_mms < std::numeric_limits<score_t>::lowest() || i_mms > std::numeric_limits<score_t>::max()))
         {

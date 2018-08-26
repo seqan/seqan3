@@ -92,11 +92,11 @@ concept bool sequence_file_out_format_concept = requires (t                     
  * \brief Write the given fields to the specified stream.
  * \memberof seqan3::sequence_file_out_format_concept
  * \tparam stream_type      Output stream, must satisfy seqan3::ostream_concept with `char`.
- * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy seqan3::output_range_concept
+ * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam id_type          Type of the seqan3::field::ID output; must satisfy seqan3::output_range_concept
+ * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
- * \tparam qual_type        Type of the seqan3::field::QUAL output; must satisfy seqan3::output_range_concept
+ * \tparam qual_type        Type of the seqan3::field::QUAL output; must satisfy std::ranges::OutputRange
  * over a seqan3::quality_concept.
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.

@@ -43,7 +43,7 @@
 
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/range/view/deep.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -64,7 +64,7 @@ struct trim_fn
     auto operator()(irng_t && irange,
                     underlying_phred_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return ranges::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
@@ -82,7 +82,7 @@ struct trim_fn
     auto operator()(irng_t && irange,
                     std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return (*this)(std::forward<irng_t>(irange), to_phred(threshold));
@@ -148,7 +148,7 @@ struct trim_fn
     template <typename irng_t,
               typename threshold_t>
     //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>> &&
+        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>> &&
                  (std::is_same_v<std::decay_t<threshold_t>,
                                  std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>> ||
                   std::is_convertible_v<std::decay_t<threshold_t>,
@@ -188,20 +188,20 @@ namespace seqan3::view
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
- * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
- * |-------------------------------------|:-------------------------------------:|:-------------------------------:|
- * | seqan3::input_range_concept         | *required*                            | *preserved*                     |
- * | seqan3::forward_range_concept       |                                       | *preserved*                     |
- * | seqan3::bidirectional_range_concept |                                       | *preserved*                     |
- * | seqan3::random_access_range_concept |                                       | *preserved*                     |
- * |                                     |                                       |                                 |
- * | seqan3::view_concept                |                                       | *guaranteed*                    |
- * | seqan3::sized_range_concept         |                                       | *lost*                          |
- * | seqan3::common_range_concept        |                                       | *lost*                          |
- * | seqan3::output_range_concept        |                                       | *preserved*                     |
- * | seqan3::const_iterable_concept      |                                       | *preserved*                     |
- * |                                     |                                       |                                 |
- * | seqan3::reference_t                 | seqan3::quality_concept               | seqan3::reference_t<urng_t>     |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |---------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                     |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                     |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                     |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                     |
+ * |                                 |                                       |                                 |
+ * | std::ranges::View               |                                       | *guaranteed*                    |
+ * | std::ranges::SizedRange         |                                       | *lost*                          |
+ * | std::ranges::CommonRange        |                                       | *lost*                          |
+ * | std::ranges::OutputRange        |                                       | *preserved*                     |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                     |
+ * |                                 |                                       |                                 |
+ * | seqan3::reference_t             | seqan3::quality_concept               | seqan3::reference_t<urng_t>     |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

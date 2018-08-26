@@ -62,7 +62,7 @@
 #include <seqan3/io/sequence/sequence_file_out_format_concept.hpp>
 #include <seqan3/io/sequence/sequence_file_out_options.hpp>
 #include <seqan3/range/view/convert.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -592,7 +592,7 @@ public:
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::output_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::outputRange and have a reference type that
      *                   satisfies seqan3::tuple_like_concept.
      * \param[in] range  The range to write.
      *
@@ -623,16 +623,16 @@ public:
      * fout = range; // will iterate over the records and write them
      * ```
      */
-    template <typename rng_t>
+    template <std::ranges::InputRange rng_t>
     sequence_file_out & operator=(rng_t && range)
-        requires input_range_concept<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires tuple_like_concept<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
-     * \tparam rng_t     Type of the range, must satisfy seqan3::input_range_concept and have a reference type that
+     * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
      *                   satisfies seqan3::tuple_like_concept.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
@@ -676,18 +676,18 @@ public:
      *                                 | sequence_file_out{"output.fasta"};
      * ```
      */
-    template <typename rng_t>
+    template <std::ranges::InputRange rng_t>
     friend sequence_file_out & operator|(rng_t && range, sequence_file_out & f)
-        requires input_range_concept<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires tuple_like_concept<reference_t<rng_t>>
     {
         f = range;
         return f;
     }
 
     //!\overload
-    template <typename rng_t>
+    template <std::ranges::InputRange rng_t>
     friend sequence_file_out operator|(rng_t && range, sequence_file_out && f)
-        requires input_range_concept<rng_t> && tuple_like_concept<reference_t<rng_t>>
+        requires tuple_like_concept<reference_t<rng_t>>
     {
         f = range;
         return std::move(f);
@@ -847,10 +847,10 @@ protected:
     }
 
     //!\brief Write columns to file format, only tag-dispatch once.
-    template <input_range_concept seqs_t,
-              input_range_concept ids_t,
-              input_range_concept quals_t,
-              input_range_concept seq_quals_t>
+    template <std::ranges::InputRange seqs_t,
+              std::ranges::InputRange ids_t,
+              std::ranges::InputRange quals_t,
+              std::ranges::InputRange seq_quals_t>
     void write_columns(seqs_t       && seqs,
                        ids_t        && ids,
                        quals_t      && quals,

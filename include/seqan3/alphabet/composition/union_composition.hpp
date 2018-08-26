@@ -49,8 +49,8 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/std/concept/core_language.hpp> // implicitly_convertible_to_concept
-#include <seqan3/std/concept/object.hpp>        // constructible_concept
+#include <seqan3/std/concepts> // implicitly_convertible_to_concept
+#include <seqan3/std/concepts>        // constructible_concept
 
 namespace seqan3
 {
@@ -154,7 +154,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool, assignable_concept<type, T>>;
+        using invoke = std::integral_constant<bool, std::Assignable<type, T>>;
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -165,7 +165,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool, weakly_equality_comparable_with_concept<type, T>>;
+        using invoke = std::integral_constant<bool, std::detail::WeaklyEqualityComparableWith<type, T>>;
     };
 
     /*!\brief 'Is set to `true` if one composite type in `composites` evaluates

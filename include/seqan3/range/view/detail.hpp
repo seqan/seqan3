@@ -45,7 +45,7 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -109,7 +109,7 @@ public:
      *
      * ```cpp
      * template <typename urng_t>
-     *     requires seqan3::input_range_concept<urng_t> // or more/stricter requirements
+     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
      * struct view_foo
      * {
      *     // your implementation
@@ -133,9 +133,8 @@ public:
      * // in both cases v is now of type view_foo<std::vector<int>>
      * ```
      */
-    template <typename urng_t, typename ...arg_types>
+    template <std::ranges::InputRange urng_t, typename ...arg_types>
     auto operator()(urng_t && urange, arg_types && ...args) const
-        requires input_range_concept<urng_t>
     {
         return static_cast<derived_type const *>(this)->impl(std::forward<urng_t>(urange),
                                                              std::forward<arg_types>(args)...);
@@ -164,14 +163,14 @@ public:
          * \tparam urng_t Type of the underlying range.
          * \param[in] urange The underlying range.
          */
-        template <input_range_concept urng_t>
+        template <std::ranges::InputRange urng_t>
         auto operator()(urng_t && urange)
         {
             return explode(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(arg_types)>{});
         }
 
         //!\overload
-        template <input_range_concept urng_t>
+        template <std::ranges::InputRange urng_t>
         auto operator()(urng_t && urange) const
         {
             return explode(std::forward<urng_t>(urange), std::make_index_sequence<sizeof...(arg_types)>{});
@@ -225,7 +224,7 @@ public:
      *
      * ```cpp
      * template <typename urng_t>
-     *     requires seqan3::input_range_concept<urng_t> // or more/stricter requirements
+     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
      * struct view_foo
      * {
      *     // your implementation
@@ -273,7 +272,7 @@ public:
      *
      * ```cpp
      * template <typename urng_t>
-     *     requires seqan3::input_range_concept<urng_t> // or more/stricter requirements
+     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
      * struct view_foo
      * {
      *     // your implementation
@@ -297,7 +296,7 @@ public:
      * //     this operator           the intermediate operator() that returns a bound functor
      * ```
      */
-    template <input_range_concept urng_t, typename ...arg_types>
+    template <std::ranges::InputRange urng_t, typename ...arg_types>
     friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> & bound_functor)
         requires (sizeof...(arg_types) > 0)
     {
@@ -305,7 +304,7 @@ public:
     }
 
     //!\overload
-    template <input_range_concept urng_t, typename ...arg_types>
+    template <std::ranges::InputRange urng_t, typename ...arg_types>
     friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> const & bound_functor)
         requires (sizeof...(arg_types) > 0)
     {
@@ -313,7 +312,7 @@ public:
     }
 
     //!\overload
-    template <input_range_concept urng_t, typename ...arg_types>
+    template <std::ranges::InputRange urng_t, typename ...arg_types>
     friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> && bound_functor)
         requires (sizeof...(arg_types) > 0)
     {
@@ -335,7 +334,7 @@ public:
      *
      * ```cpp
      * template <typename urng_t>
-     *     requires seqan3::input_range_concept<urng_t> // or more/stricter requirements
+     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
      * struct view_foo
      * {
      *     // your implementation
@@ -357,10 +356,9 @@ public:
      * auto v = container | view::foo; // v is now of type view_foo<std::vector<int>
      * ```
      */
-    template <typename urng_t>
+    template <std::ranges::InputRange urng_t>
     friend auto operator|(urng_t && urange,
                           derived_type const & fn)
-        requires input_range_concept<urng_t>
     {
         return fn(std::forward<urng_t>(urange));
     }
@@ -405,7 +403,7 @@ private:
  * ```cpp
  * // 1.
  * template <typename urng_t>
- *     requires seqan3::input_range_concept<urng_t> // or more/stricter requirements
+ *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
  * struct view_foo
  * {
  *     // your implementation

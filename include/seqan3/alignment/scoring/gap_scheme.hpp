@@ -40,7 +40,9 @@
 #pragma once
 
 #include <seqan3/core/concept/cereal.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3
 {
@@ -162,8 +164,8 @@ public:
     template <arithmetic_concept score_arg_t>
     constexpr void set_affine(gap_score<score_arg_t> const g, gap_open_score<score_arg_t> const go)
     {
-        std::conditional_t<integral_concept<score_t>, int64_t, double> i_g = static_cast<score_arg_t>(g);
-        std::conditional_t<integral_concept<score_t>, int64_t, double> i_go = static_cast<score_arg_t>(go);
+        std::conditional_t<std::Integral<score_t>, int64_t, double> i_g = static_cast<score_arg_t>(g);
+        std::conditional_t<std::Integral<score_t>, int64_t, double> i_go = static_cast<score_arg_t>(go);
         if ((i_g  < std::numeric_limits<score_t>::lowest() || i_g  > std::numeric_limits<score_t>::max()) ||
             (i_go < std::numeric_limits<score_t>::lowest() || i_go > std::numeric_limits<score_t>::max()))
         {

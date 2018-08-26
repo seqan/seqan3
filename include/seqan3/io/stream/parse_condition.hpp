@@ -43,13 +43,13 @@
 #include <stdexcept>
 #include <string>
 
+#include <seqan3/std/concepts>
+
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/callable.hpp>
 
 namespace seqan3::detail
 {
@@ -97,7 +97,7 @@ class parse_condition;
 template <typename condition_t>
 concept bool parse_condition_concept = requires
 {
-    requires predicate_concept<std::remove_reference_t<condition_t>, char>;
+    requires std::Predicate<std::remove_reference_t<condition_t>, char>;
     requires std::is_base_of_v<parse_condition<remove_cvref_t<condition_t>>,
                                remove_cvref_t<condition_t>>;
 

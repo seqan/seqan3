@@ -50,7 +50,7 @@ namespace seqan3::detail
 
 /*!\brief Output iterator necessary for providing a range-like interface in output file.
  * \tparam file_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
- * \implements seqan3::output_iterator_concept
+ * \implements std::output_Iterator
  * \ingroup io
  *
  * This iterator is a single-pass output iterator for output files. All associated types

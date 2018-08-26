@@ -107,5 +107,5 @@ TEST(inherited_iterator_base, minimal)
 
 TEST(inherited_iterator_base, concept)
 {
-    EXPECT_TRUE(random_access_iterator_concept<skip_odd_numbers_it>);
+    EXPECT_TRUE(std::RandomAccessIterator<skip_odd_numbers_it>);
 }

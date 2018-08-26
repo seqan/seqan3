@@ -48,7 +48,7 @@
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/std/concept/comparison.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3
 {
@@ -134,7 +134,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool,assignable_concept<type, T>>;
+        using invoke = std::integral_constant<bool, std::Assignable<type, T>>;
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -145,7 +145,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool, weakly_equality_comparable_with_concept<type, T>>;
+        using invoke = std::integral_constant<bool, std::detail::WeaklyEqualityComparableWith<type, T>>;
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -156,7 +156,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool, detail::weakly_ordered_with_concept<type, T>>;
+        using invoke = std::integral_constant<bool, weakly_ordered_with_concept<type, T>>;
     };
 
     //!\brief Is set to `true` if the one composite type fulfils the FUN callable with `subtype`.

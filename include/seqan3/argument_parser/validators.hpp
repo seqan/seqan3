@@ -44,9 +44,8 @@
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/callable.hpp>
-#include <seqan3/std/concept/container.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3
@@ -63,7 +62,7 @@ namespace seqan3
  */
 //!\cond
 template <typename validator_type>
-concept bool validator_concept = invocable_concept<validator_type, typename validator_type::value_type> &&
+concept bool validator_concept = std::Invocable<validator_type, typename validator_type::value_type> &&
                                  requires(validator_type validator,
                                           typename validator_type::value_type value)
 {
@@ -121,7 +120,7 @@ class integral_range_validator;
  *     }
  *```
  */
-template <integral_concept option_value_type>
+template <std::Integral option_value_type>
 class integral_range_validator<option_value_type>
 {
 public:
@@ -163,7 +162,7 @@ private:
 
 template <container_concept option_value_type>
 //!\cond
-    requires integral_concept<typename option_value_type::value_type>
+    requires std::Integral<typename option_value_type::value_type>
 //!\endcond
 class integral_range_validator<option_value_type>
 {

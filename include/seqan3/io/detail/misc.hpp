@@ -39,18 +39,18 @@
 
 #pragma once
 
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 
 namespace seqan3::detail
 {
 
 /*!\brief Write `"\n"` or `"\r\n"` to the stream iterator, depending on arguments.
- * \tparam  it_t Type of the iterator; must satisfy seqan3::output_iterator_concept with `char`.
+ * \tparam  it_t Type of the iterator; must satisfy std::output_Iterator with `char`.
  * \param     it The iterator.
  * \param add_cr Whether to add carriage return, too.
  * \ingroup io
  */
-template <output_iterator_concept<char> it_t>
+template <std::OutputIterator<char> it_t>
 constexpr void write_eol(it_t & it, bool const add_cr)
 {
     if (add_cr)

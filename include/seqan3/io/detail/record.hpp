@@ -45,7 +45,7 @@
 
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/record.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -193,8 +193,8 @@ auto const & get_or_ignore(std::tuple<types...> const & t)
 // range_wrap_ignore
 // ----------------------------------------------------------------------------
 
-//!\brief Pass through the reference to the argument in case the argument satisfies seqan3::input_range_concept.
-template <input_range_concept rng_t>
+//!\brief Pass through the reference to the argument in case the argument satisfies std::ranges::InputRange.
+template <std::ranges::InputRange rng_t>
 inline auto & range_wrap_ignore(rng_t & range)
 {
     return range;

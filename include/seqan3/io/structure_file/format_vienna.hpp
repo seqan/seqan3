@@ -69,7 +69,7 @@
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
 

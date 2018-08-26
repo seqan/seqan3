@@ -45,9 +45,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/std/concept/callable.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/object.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -65,7 +63,7 @@ class config_element_base;
  * \brief Concept for an algorithm configuration.
  * \ingroup algorithm
  *
- * \extends seqan3::semi_regular_concept
+ * \extends std::Semiregular
  */
 
 /*!\name Requirements for seqan3::detail::config_element_concept
@@ -80,7 +78,7 @@ class config_element_base;
 //!\}
 //!\cond
 template <typename config_t>
-concept bool config_element_concept = semi_regular_concept<std::remove_reference_t<config_t>> &&
+concept bool config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
     { c.value }

@@ -48,8 +48,7 @@
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/std/concept/callable.hpp>
-#include <seqan3/std/concept/core_language.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -591,7 +590,7 @@ template <typename fn_t, typename config_t>
 constexpr auto apply_deferred_configs(fn_t & fn,
                                       config_t && config)
     requires is_algorithm_configuration_v<remove_cvref_t<config_t>> &&
-             invocable_concept<std::remove_reference_t<fn_t>, std::remove_reference_t<config_t>>
+             std::Invocable<std::remove_reference_t<fn_t>, std::remove_reference_t<config_t>>
 {
     using type_list_t = detail::tuple_type_list_t<typename std::remove_reference_t<config_t>::base_type>;
     return apply_deferred_configs<meta::size<type_list_t>::value>(std::forward<fn_t>(fn),

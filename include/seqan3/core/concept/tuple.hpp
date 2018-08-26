@@ -45,9 +45,9 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/std/concept/comparison.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/object.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/concepts>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -85,20 +85,20 @@ concept bool tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
 };
 //!\endcond
 
-/*!\brief   Helper type trait function to check for seqan3::strict_totally_ordered_concept on all elements of
+/*!\brief   Helper type trait function to check for std::StrictTotallyOrdered on all elements of
  *          the given tuple type.
  * \ingroup core
  * \tparam  state_t   The last state of the fold operation.
  * \tparam  element_t The current processed element by the meta::fold operation.
  *
- * \returns std::true_type if strict_totally_ordered_concept<element_t> and state_t::value evaluate to `true`,
+ * \returns std::true_type if std::StrictTotallyOrdered<element_t> and state_t::value evaluate to `true`,
  *          std::false_type otherwise.
  */
 template <typename state_t, typename element_t>
-struct satisfies_strict_totally_ordered_concept
+struct models_strict_totally_ordered
 {
     //!\brief The resulting type definition.
-    using type =  std::conditional_t<state_t::value && strict_totally_ordered_concept<element_t>,
+    using type =  std::conditional_t<state_t::value && std::StrictTotallyOrdered<element_t>,
                                     std::true_type,
                                     std::false_type>;
 };
@@ -144,14 +144,14 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\interface   seqan3::tuple_like_concept
- * \extends     seqan3::strict_totally_ordered_concept
+ * \extends     std::StrictTotallyOrdered
  * \ingroup     core
  * \brief       Whether a type behaves like a tuple.
  *
  * \details
  *
  * Types that meet this concept are for example std::tuple, std::pair, std::array, seqan3::pod_tuple, seqan3::record.
- * The seqan3::strict_totally_ordered_concept will only be required if all types contained in the tuple like
+ * The std::StrictTotallyOrdered will only be required if all types contained in the tuple like
  * data structure are them selfs strict totally ordered.
  */
 /*!\name Requirements for seqan3::tuple_like_concept
@@ -197,16 +197,16 @@ concept bool tuple_like_concept = detail::tuple_size_concept<std::remove_referen
 {
     typename detail::tuple_type_list<remove_cvref_t<t>>::type;
 
-    // NOTE(rrahn): To check the full tuple_concept including the get interface and the strict_totally_ordered_concept
+    // NOTE(rrahn): To check the full tuple_concept including the get interface and the std::StrictTotallyOrdered
     //              we need to make some assumptions. In general these checks can only be executed if the tuple is not
-    //              empty. Furthermore, the strict_totally_ordered_concept can only be checked if all elements in the
+    //              empty. Furthermore, the std::StrictTotallyOrdered can only be checked if all elements in the
     //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
     requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
                 detail::tuple_get_concept<remove_cvref_t<t>> &&
                 (!meta::fold<detail::tuple_type_list_t<remove_cvref_t<t>>,
                              std::true_type,
-                             meta::quote_trait<detail::satisfies_strict_totally_ordered_concept>>::value ||
-                strict_totally_ordered_concept<remove_cvref_t<t>>);
+                             meta::quote_trait<detail::models_strict_totally_ordered>>::value ||
+                std::StrictTotallyOrdered<remove_cvref_t<t>>);
 };
 //!\endcond
 

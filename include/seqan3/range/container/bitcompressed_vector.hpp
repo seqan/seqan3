@@ -50,9 +50,9 @@
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/range/view/convert.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/iterator.hpp>
-#include <seqan3/std/concept/range.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -215,7 +215,7 @@ private:
         }
         //!\}
 
-        static_assert(!weakly_incrementable_concept<alphabet_type>,
+        static_assert(!std::WeaklyIncrementable<alphabet_type>,
                       "TODO: bitcompressed_vector::reference_proxy_type needs to be adapted to also be incrementable.");
     };
 
@@ -259,8 +259,8 @@ public:
     ~bitcompressed_vector() = default;
 
     /*!\brief Construct from a different range.
-     * \tparam other_range_t The type of range to construct from; must satisfy seqan3::input_range_concept and
-     *                       seqan3::common_reference_concept<value_type_t<other_range_t>, value_type>.
+     * \tparam other_range_t The type of range to construct from; must satisfy std::ranges::InputRange and
+     *                       std::CommonReference<value_type_t<other_range_t>, value_type>.
      * \param[in]      range The sequences to construct/assign from.
      *
      * ### Complexity
@@ -271,7 +271,7 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <input_range_concept other_range_t>
+    template <std::ranges::InputRange other_range_t>
     //!\cond
         requires has_same_value_type_v<other_range_t>
     //!\endcond
@@ -296,9 +296,9 @@ public:
     {}
 
     /*!\brief Construct from pair of iterators.
-     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and
-     *                             seqan3::common_reference_concept<value_type_t<begin_iterator_type>, value_type>.
-     * \tparam   end_iterator_type Must satisfy seqan3::sentinel_concept.
+     * \tparam begin_iterator_type Must model std::ForwardIterator and
+     *                             std::CommonReference<value_type_t<begin_iterator_type>, value_type>.
+     * \tparam   end_iterator_type Must model std::Sentinel.
      * \param[in]         begin_it Begin of range to construct/assign from.
      * \param[in]           end_it End of range to construct/assign from.
      *
@@ -310,10 +310,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <forward_iterator_concept begin_iterator_type, sentinel_concept<begin_iterator_type> end_iterator_type>
+    template <std::ForwardIterator begin_iterator_type, std::Sentinel<begin_iterator_type> end_iterator_type>
     bitcompressed_vector(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires common_reference_concept<value_type_t<begin_iterator_type>, value_type>
+        requires std::CommonReference<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         insert(cend(), begin_it, end_it);
@@ -352,8 +352,8 @@ public:
     }
 
     /*!\brief Assign from a different range.
-     * \tparam other_range_t The type of range to be inserted; must satisfy seqan3::input_range_concept and
-     *                       seqan3::common_reference_concept<value_type_t<other_range_t>, value_type>.
+     * \tparam other_range_t The type of range to be inserted; must satisfy std::ranges::InputRange and
+     *                       std::CommonReference<value_type_t<other_range_t>, value_type>.
      * \param[in]      range The sequences to construct/assign from.
      *
      * ### Complexity
@@ -364,10 +364,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <input_range_concept other_range_t>
+    template <std::ranges::InputRange other_range_t>
     void assign(other_range_t && range)
     //!\cond
-        requires common_reference_concept<value_type_t<other_range_t>, value_type>
+        requires std::CommonReference<value_type_t<other_range_t>, value_type>
     //!\endcond
     {
         bitcompressed_vector rhs{std::forward<other_range_t>(range)};
@@ -393,9 +393,9 @@ public:
     }
 
     /*!\brief Assign from pair of iterators.
-     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and
-     *                             seqan3::common_reference_concept<value_type_t<begin_iterator_type>, value_type>.
-     * \tparam   end_iterator_type Must satisfy seqan3::sentinel_concept.
+     * \tparam begin_iterator_type Must satisfy std::ForwardIterator and
+     *                             std::CommonReference<value_type_t<begin_iterator_type>, value_type>.
+     * \tparam   end_iterator_type Must satisfy std::Sentinel.
      * \param[in]         begin_it Begin of range to construct/assign from.
      * \param[in]           end_it End of range to construct/assign from.
      *
@@ -407,10 +407,10 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    template <forward_iterator_concept begin_iterator_type, sentinel_concept<begin_iterator_type> end_iterator_type>
+    template <std::ForwardIterator begin_iterator_type, std::Sentinel<begin_iterator_type> end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires common_reference_concept<value_type_t<begin_iterator_type>, value_type>
+        requires std::CommonReference<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         bitcompressed_vector rhs{begin_it, end_it};
@@ -803,9 +803,9 @@ public:
     }
 
     /*!\brief Inserts elements from range `[begin_it, end_it)` before position in the container.
-     * \tparam begin_iterator_type Must satisfy seqan3::forward_iterator_concept and
-     *                             seqan3::common_reference_concept<value_type_t<begin_iterator_type>, value_type>.
-     * \tparam   end_iterator_type Must satisfy seqan3::sentinel_concept.
+     * \tparam begin_iterator_type Must satisfy std::ForwardIterator and
+     *                             std::CommonReference<value_type_t<begin_iterator_type>, value_type>.
+     * \tparam   end_iterator_type Must satisfy std::Sentinel.
      * \param[in]              pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
      * \param[in]         begin_it Begin of range to construct/assign from.
      * \param[in]           end_it End of range to construct/assign from.
@@ -826,10 +826,10 @@ public:
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
      */
-    template <forward_iterator_concept begin_iterator_type, sentinel_concept<begin_iterator_type> end_iterator_type>
+    template <std::ForwardIterator begin_iterator_type, std::Sentinel<begin_iterator_type> end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
-        requires common_reference_concept<value_type_t<begin_iterator_type>, value_type>
+        requires std::CommonReference<value_type_t<begin_iterator_type>, value_type>
     //!\endcond
     {
         auto const pos_as_num = std::distance(cbegin(), pos);

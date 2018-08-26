@@ -49,7 +49,7 @@ namespace seqan3
  * \ingroup container
  * \tparam N The size of the constexpr string.
  * \implements seqan3::container_concept
- * \implements seqan3::random_access_range_concept
+ * \implements std::ranges::RandomAccessRange
  *
  * This class provides a string type that can be constructed, evaluated and operated on at compile time.
  * The stored string can be accessed as either a std::string or a c-style string through the respective member functions.

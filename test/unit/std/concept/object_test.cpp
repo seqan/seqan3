@@ -36,7 +36,7 @@
 
 #include <random>
 
-#include <seqan3/std/concept/object.hpp>
+#include <seqan3/std/concepts>
 #include <seqan3/std/concept/object_regular.hpp>
 
 #include "auxiliary.hpp"
