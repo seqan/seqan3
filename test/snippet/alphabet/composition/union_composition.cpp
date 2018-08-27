@@ -95,6 +95,19 @@ letter1 = rna4::A;
 }
 
 {
+//! [conversion]
+union_composition<dna4, gap> letter1{rna4::C};
+//! [conversion]
+}
+
+{
+//! [subtype_construction]
+union_composition<dna4, gap> letter1{};
+letter1 = rna4::C;
+//! [subtype_construction]
+}
+
+{
 // TODO: Make the partial_sum_sizes accessible.
 //! [partial_sum]
 // constexpr std::array partial_sum = union_composition<dna4, gap, dna5>::partial_sum_sizes; // not working; is protected

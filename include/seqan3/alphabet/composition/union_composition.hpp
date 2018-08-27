@@ -230,10 +230,8 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
      * \param  rhs The value that should be assigned.
      *
-     * ```cpp
-     *     union_composition<dna5, gap> letter1{rna5::C};
-     * ```
-     * \attention When selecting the alternative, types which require only implicit conversion
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp conversion
+     * \attention When selecting the composite alphabet types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
     template <typename indirect_alternative_t>
@@ -259,7 +257,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
      * \param  rhs The value of an alternative.
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp assign by base
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp subtype_construction
      */
     template <typename indirect_alternative_t>
     //!\cond
