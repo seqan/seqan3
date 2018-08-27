@@ -150,4 +150,126 @@ concept aligned_sequence_concept =
     };
 //!\endcond
 
+// -----------------------------------------------------------------------------
+// Functions that make sequence containers model aligned_sequence_concept
+// -----------------------------------------------------------------------------
+
+/*!\name Aligned sequence interface for containers
+ * \brief Enables containers to model seqan3::aligned_sequence_concept if they
+ * model seqan3::sequence_container_concept and have a reference type assignable
+ * from seqan3::gap (e.g. std::vector<seqan3::gapped<seqan3::dna4>>).
+ * \{
+ */
+/*!\brief An implementation of seqan3::aligned_sequence_concept::insert_gap for sequence containers.
+ * \tparam        seq_type Type of the container to modify; must model
+ *                         seqan3::sequence_container_concept; the reference type
+ *                         (seqan3::reference_t<seq_type>) must be assignable from
+ *                         seqan3::gap.
+ * \param[in,out] seq      The container to modify.
+ * \param[in]     pos_it   The iterator pointing to the position where to insert a gap.
+ *
+ * \relates seqan3::aligned_sequence_concept
+ *
+ * \details
+ *
+ * This function delegates to the member function `insert(iterator, value)` of
+ * the container.
+ */
+template <sequence_container_concept seq_type>
+//!\cond
+    requires std::Assignable<reference_t<seq_type>, gap const &>
+//!\endcond
+inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type::const_iterator pos_it)
+{
+    return seq.insert(pos_it, value_type_t<seq_type>{gap::GAP});
+}
+
+/*!\brief An implementation of seqan3::aligned_sequence_concept::insert_gap for sequence containers.
+ * \tparam        seq_type Type of the container to modify; must model
+ *                         seqan3::sequence_container_concept; the reference type
+ *                         (seqan3::reference_t<seq_type>) must be assignable from
+ *                         seqan3::gap.
+ * \param[in,out] seq      The container to modify.
+ * \param[in]     pos_it   The iterator pointing to the position where to insert gaps.
+ * \param[in]     count    The number of gaps to insert.
+ *
+ * \relates seqan3::aligned_sequence_concept
+ *
+ * \details
+ *
+ * This function delegates to the member function `insert(iterator, count, value)`
+ * of the container.
+ */
+template <sequence_container_concept seq_type>
+//!\cond
+    requires std::Assignable<reference_t<seq_type>, gap const &>
+//!\endcond
+inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type::const_iterator pos_it, typename seq_type::size_type count)
+{
+    return seq.insert(pos_it, count, value_type_t<seq_type>{gap::GAP});
+}
+
+/*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for sequence containers.
+ * \tparam        seq_type Type of the container to modify; must model
+ *                         seqan3::sequence_container_concept; the reference type
+ *                         (seqan3::reference_t<seq_type>) must be assignable from
+ *                         seqan3::gap.
+ * \param[in,out] seq      The container to modify.
+ * \param[in]     pos_it   The iterator pointing to the position where to erase a gap.
+ *
+ * \throws seqan3::gap_erase_failure if there is no seqan3::gap at \p pos_it.
+ *
+ * \relates seqan3::aligned_sequence_concept
+ *
+ * \details
+ *
+ * This function delegates to the member function `erase(iterator)` of the
+ * container. Before delegating, the function checks if the position pointed to
+ * by \p pos_it is an actual seqan3::gap and throws an exception if not.
+ */
+template <sequence_container_concept seq_type>
+//!\cond
+    requires std::Assignable<reference_t<seq_type>, gap const &>
+//!\endcond
+inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::const_iterator pos_it)
+{
+    if (*pos_it != gap::GAP) // [[unlikely]]
+        throw gap_erase_failure("The position to be erased does not contain a gap.");
+
+    return seq.erase(pos_it);
+}
+
+/*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for sequence containers.
+ * \tparam        seq_type Type of the container to modify; must model
+ *                         seqan3::sequence_container_concept; the reference type
+ *                         (seqan3::reference_t<seq_type>) must be assignable from
+ *                         seqan3::gap.
+ * \param[in,out] seq      The container to modify.
+ * \param[in]     first    The iterator pointing to the position where to start erasing gaps.
+ * \param[in]     last     The iterator pointing to the position where to stop erasing gaps.
+ *
+ * \throws seqan3::gap_erase_failure if one of the characters in [\p first, \p last) no seqan3::gap.
+ *
+ * \relates seqan3::aligned_sequence_concept
+ *
+ * \details
+ *
+ * This function delegates to the member function `erase(iterator, iterator)` of
+ * the container. Before delegating, the function checks if the range
+ * [\p first, \p last) contains only seqan3::gap symbols.
+ */
+template <sequence_container_concept seq_type>
+//!\cond
+    requires std::Assignable<reference_t<seq_type>, gap const &>
+//!\endcond
+inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::const_iterator first, typename seq_type::const_iterator last)
+{
+    for (auto it = first; it != last; ++it)
+        if (*it != gap::GAP) // [[unlikely]]
+            throw gap_erase_failure("The range to be erased contains at least one non-gap character.");
+
+    return seq.erase(first, last);
+}
+//!\}
+
 } // namespace seqan
