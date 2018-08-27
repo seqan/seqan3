@@ -91,17 +91,11 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * ```cpp
- * structure_file_out fout{"/tmp/my.dbn"}; // Vienna format detected, std::ofstream opened for file
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp temp_param_deduc
  *
  * Writing to std::cout:
- * ```cpp
- * structure_file_out fout{std::cout, structure_file_format_vienna{}};
- * //               ^ no need to specify the template arguments
  *
- * fout.emplace_back("example_id", "ACGTN"_dna5);
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp write_std_out
  *
  * Note that this is not the same as writing `structure_file_out<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -112,22 +106,7 @@ namespace seqan3
  *
  * You can iterate over this file record-wise:
  *
- * ```cpp
- * structure_file_out fout{"/tmp/my.dbn"};
- *
- * for // ...
- * {
- *     std::string id;
- *     rna5_vector seq;
- *     std::vector<wuss51> structure;
- *
- *     // ...
- *
- *     fout.emplace_back(seq, id, structure);        // as individual variables
- *     // or:
- *     fout.push_back(std::tie(seq, id, structure)); // as a tuple
- * }
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp iter_by_rec
  *
  * The easiest way to write to a sequence file is to use the push_back() or emplace_back() member functions. These
  * work similarly to how they work on an std::vector. If you pass a tuple to push_back() or give arguments to
@@ -148,76 +127,30 @@ namespace seqan3
  *
  * The following snippets demonstrates the usage of such a fields trait object.
  *
- * ```cpp
- * structure_file_out fout{"/tmp/my.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
- *
- * for // ...
- * {
- *     std::string id;
- *     std::vector<structured_rna<rna5, wuss51>> structured_seq; // vector of combined data structure
- *
- *     // ...
- *
- *     fout.emplace_back(id, structured_seq); // note also that the order the argumets is now different, because
- *     // or:                                    you specified that ID should be first in the fields template argument
- *     fout.push_back(std::tie(id, structured_seq));
- * }
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp write_fields
  *
  * A different way of passing custom fields to the file is to pass a seqan3::record – instead of a tuple – to
  * push_back(). The seqan3::record clearly indicates which of its elements has which seqan3::field ID so the file will
  * use that information instead of the template argument. This is especially handy when reading from one file and
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
- * ```cpp
- * structure_file_in  fin{"input.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
- * structure_file_out fout{"output.dbn"}; // doesn't have to match the configuration
- *
- * for (auto & r : fin)
- * {
- *     if // r fulfills some criterium
- *     {
- *         fout.push_back(r);
- *     }
- * }
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp pass_rec
  *
  * ### Writing record-wise in batches
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * ```cpp
- * structure_file_out fout{"/tmp/my.dbn"};
- *
- * std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
- * {
- *     { "ACGT"_rna5, "First", "...."_wuss51 },
- *     { "NATA"_rna5, "2nd",   "...."_wuss51 },
- *     { "GATA"_rna5, "Third", "...."_wuss51 }
- * }; // a range of "records"
- *
- * fout = range; // will iterate over the records and write them
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp mult_rec
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn:
  *
- * ```cpp
- * // file format conversion in one line:
- * structure_file_out fout{"output.dbn"} = structure_file_in{"input.dbn"};
- *
- * // or in pipe notation:
- * structure_file_in{"input.dbn"} | structure_file_out{"output.dbn"};
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp file_conv
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * ```cpp
- * structure_file_in{"input.dbn"} | view::minimum_sequence_length_filter(50)
- *                                | ranges::view::take(5)
- *                                | structure_file_out{"output.dbn"};
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp pipeline
  *
  * ### Column-based writing
  *
@@ -226,23 +159,8 @@ namespace seqan3
  *
  * You can use column-based writing in that case, it uses operator=() :
  *
- * ```cpp
- *
- * struct data_storage_t
- * {
- *     concatenated_sequences<rna5_vector>         sequences;
- *     concatenated_sequences<std::string>         ids;
- *     concatenated_sequences<std::vector<wuss51>> structures;
- * };
- *
- * data_storage_t data_storage; // a global or globally used variable in your program
- *
- * // ... in your file writing function:
- *
- * structure_file_out fout{"/tmp/my.dbn"};
- *
- * fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structures);
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp data_storage
+ * \snippet test/snippet/io/structure_file/structure_file_output.cpp col_based
  *
  * ### Formats
  *
@@ -422,25 +340,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * structure_file_out fout{"/tmp/my.dbn"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     std::string id;
-     *     rna5_vector seq;
-     *     std::vector<wuss51> structure;
-     *
-     *     // ...
-     *
-     *     // assign to iterator
-     *     *it = std::tie(seq, id, structure);
-     *     // is the same as:
-     *     fout.push_back(std::tie(seq, id, structure));
-     * }
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp push_back
      */
     iterator begin() noexcept
     {
@@ -520,22 +420,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * structure_file_out fout{"/tmp/my.dbn"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     std::string id;
-     *     rna5_vector seq;
-     *     std::vector<wuss51> structure;
-     *
-     *     // ...
-     *
-     *     fout.push_back(std::tie(seq, id, structure));
-     * }
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp push_back_2
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
@@ -575,22 +460,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * structure_file_out fout{"/tmp/my.dbn"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     std::string id;
-     *     rna5_vector seq;
-     *     std::vector<wuss51> structure;
-     *
-     *     // ...
-     *
-     *     fout.emplace_back(seq, id, structure);
-     * }
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp emplace_back
      */
     template <typename arg_t, typename ... arg_types>
     void emplace_back(arg_t && arg, arg_types && ... args)
@@ -617,18 +487,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * structure_file_out fout{"/tmp/my.dbn"};
-     *
-     * std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
-     * {
-     *     { "ACGT"_rna5, "First", "...."_wuss51 },
-     *     { "NATA"_rna5, "2nd",   "...."_wuss51 },
-     *     { "GATA"_rna5, "Third", "...."_wuss51 }
-     * }; // a range of "records"
-     *
-     * fout = range; // will iterate over the records and write them
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp equal
      */
     template <std::ranges::InputRange rng_t>
     structure_file_out & operator=(rng_t && range)
@@ -660,28 +519,11 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * structure_file_out fout{"/tmp/my.dbn"};
-     *
-     * std::vector<std::tuple<rna5_vector, std::string, std::vector<wuss51>>> range
-     * {
-     *     { "ACGT"_rna5, "First", "...."_wuss51 },
-     *     { "NATA"_rna5, "2nd",   "...."_wuss51 },
-     *     { "GATA"_rna5, "Third", "...."_wuss51 }
-     * }; // a range of "records"
-     *
-     * range | fout;
-     * // the same as:
-     * fout = range;
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp pipe_func
      *
      * This is especially useful in combination with file-based filters:
      *
-     * ```cpp
-     * structure_file_in{"input.dbn"} | view::minimum_sequence_length_filter(50)
-     *                                | ranges::view::take(5)
-     *                                | structure_file_out{"output.dbn"};
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp pipeline
      */
     template <std::ranges::InputRange rng_t>
     friend structure_file_out & operator|(rng_t && range, structure_file_out & f)
@@ -725,23 +567,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     *
-     * struct data_storage_t
-     * {
-     *     concatenated_sequences<rna5_vector>         sequences;
-     *     concatenated_sequences<std::string>         ids;
-     *     concatenated_sequences<std::vector<wuss51>> structures;
-     * };
-     *
-     * data_storage_t data_storage; // a global or globally used variable in your program
-     *
-     * // ... in your file writing function:
-     *
-     * structure_file_out fout{"/tmp/my.dbn"};
-     *
-     * fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structures);
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp col_based
      */
     template <typename typelist, typename field_ids>
     structure_file_out & operator=(record<typelist, field_ids> const & r)
@@ -778,23 +604,8 @@ public:
      *
      * ### Example
      *
-     * ```cpp
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp col_based
      *
-     * struct data_storage_t
-     * {
-     *     concatenated_sequences<rna5_vector>         sequences;
-     *     concatenated_sequences<std::string>         ids;
-     *     concatenated_sequences<std::vector<wuss51>> structures;
-     * };
-     *
-     * data_storage_t data_storage; // a global or globally used variable in your program
-     *
-     * // ... in your file writing function:
-     *
-     * structure_file_out fout{"/tmp/my.dbn"};
-     *
-     * fout = std::tie(data_storage.sequences, data_storage.ids, data_storage.structures);
-     * ```
      */
     template <typename ... arg_types>
     structure_file_out & operator=(std::tuple<arg_types...> const & t)
