@@ -36,26 +36,27 @@
 
 #include <random>
 
-#include <seqan3/std/concept/comparison.hpp>
+#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/std/concepts>
 
 #include "auxiliary.hpp"
 
 using namespace seqan3;
 
-TEST(weakly_equality_comparable_with_concept, basic)
+TEST(comparison_concepts, WeaklyEqualityComparableWith)
 {
-    EXPECT_TRUE((weakly_equality_comparable_with_concept<type_a, type_b>));
-    EXPECT_TRUE((!weakly_equality_comparable_with_concept<type_a, type_c>));
+    EXPECT_TRUE((std::detail::WeaklyEqualityComparableWith<type_a, type_b>));
+    EXPECT_TRUE((!std::detail::WeaklyEqualityComparableWith<type_a, type_c>));
 }
 
-TEST(equality_comparable_with_concept, basic)
+TEST(comparison_concepts, EqualityComparableWith)
 {
-    EXPECT_TRUE((!equality_comparable_with_concept<type_a, type_b>));
-    EXPECT_TRUE((equality_comparable_with_concept<type_b, type_d>));
+    EXPECT_TRUE((!std::EqualityComparableWith<type_a, type_b>));
+    EXPECT_TRUE((std::EqualityComparableWith<type_b, type_d>));
 }
 
-TEST(strict_totally_ordered_with_concept, basic)
+TEST(comparison_concepts, StrictTotallyOrderedWith)
 {
-    EXPECT_TRUE((!strict_totally_ordered_with_concept<type_a, type_b>));
-    EXPECT_TRUE((strict_totally_ordered_with_concept<type_b, type_d>));
+    EXPECT_TRUE((!std::StrictTotallyOrderedWith<type_a, type_b>));
+    EXPECT_TRUE((std::StrictTotallyOrderedWith<type_b, type_d>));
 }

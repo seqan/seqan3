@@ -45,9 +45,7 @@
 
 #include <sdsl/int_vector.hpp>
 
-#include <seqan3/std/concept/range.hpp>
-
-using namespace seqan3;
+#include <seqan3/std/ranges>
 
 TEST(range_concepts, Range)
 {

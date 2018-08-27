@@ -41,8 +41,6 @@
 
 #include <seqan3/std/iterator>
 
-using namespace seqan3;
-
 using input_iterator               = std::istream_iterator<char>;
 using output_iterator              = ranges::ostream_iterator<char>;
 using forward_iterator             = std::forward_list<char>::iterator;
