@@ -199,28 +199,28 @@ public:
     /*!\name Accessors
      * \{
      */
-    /*!\brief Return the gap extend score.
+    /*!\brief Return the gap score.
      */
-    constexpr score_t & get_score_gap() noexcept
+    constexpr score_t & get_gap_score() noexcept
     {
         return gap;
     }
 
-    //!\copydoc gap_open_score
-    constexpr score_t get_score_gap() const noexcept
+    //!\copydoc seqan3::gap_score
+    constexpr score_t get_gap_score() const noexcept
     {
         return gap;
     }
 
     /*!\brief Return the gap open score.
      */
-    constexpr score_t & get_score_gap_open() noexcept
+    constexpr score_t & get_gap_open_score() noexcept
     {
         return gap_open;
     }
 
-    //!\copydoc gap_open_score
-    constexpr score_t get_score_gap_open() const noexcept
+    //!\copydoc seqan3::gap_open_score
+    constexpr score_t get_gap_open_score() const noexcept
     {
         return gap_open;
     }

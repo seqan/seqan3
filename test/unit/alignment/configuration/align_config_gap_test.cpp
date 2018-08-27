@@ -32,6 +32,11 @@
 //
 // ============================================================================
 
+/*!\file
+ * \brief Provides tests for seqan3::align_config_gap.
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ */
+
 #include <gtest/gtest.h>
 
 #include <functional>
@@ -82,17 +87,17 @@ TEST(align_config_gap, align_config_type_to_id)
 TEST(align_config_gap, invoke_linear)
 {
     {
-        auto cfg = std::invoke(align_cfg::gap_linear(gap_cost{4}), detail::configuration<>{});
+        auto cfg = std::invoke(align_cfg::gap_linear(gap_score{-4}), detail::configuration<>{});
 
-        EXPECT_EQ(std::get<0>(cfg).value.gap_cost, 4);
+        EXPECT_EQ(std::get<0>(cfg).value.scheme.get_gap_score(), -4);
         EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
                                     detail::configuration<detail::align_config_gap<gap_linear<int32_t>>>>));
     }
 
     {
-        detail::configuration cfg = align_cfg::gap_linear(gap_cost{4.1});
+        detail::configuration cfg = align_cfg::gap_linear(gap_score{-4.1});
 
-        EXPECT_DOUBLE_EQ(std::get<0>(cfg).value.gap_cost, 4.1);
+        EXPECT_DOUBLE_EQ(std::get<0>(cfg).value.scheme.get_gap_score(), -4.1);
         EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
                                     detail::configuration<detail::align_config_gap<gap_linear<double>>>>));
     }
@@ -101,19 +106,19 @@ TEST(align_config_gap, invoke_linear)
 TEST(align_config_gap, invoke_affine)
 {
     {
-        auto cfg = std::invoke(align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2}), detail::configuration<>{});
+        auto cfg = std::invoke(align_cfg::gap_affine(gap_score{-2}, gap_open_score{-4}), detail::configuration<>{});
 
-        EXPECT_EQ(get<0>(cfg).gap_open_cost, 4);
-        EXPECT_EQ(get<0>(cfg).gap_extend_cost, 2);
+        EXPECT_EQ(get<0>(cfg).value.scheme.get_gap_score(), -2);
+        EXPECT_EQ(get<0>(cfg).value.scheme.get_gap_open_score(), -4);
         EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
                                     detail::configuration<detail::align_config_gap<gap_affine<int32_t>>>>));
     }
 
     {
-        detail::configuration cfg = align_cfg::gap_affine(gap_open_cost{4.1}, gap_extend_cost{2.2});
+        detail::configuration cfg = align_cfg::gap_affine(gap_score{-2.2}, gap_open_score{-4.1});
 
-        EXPECT_DOUBLE_EQ(get<0>(cfg).gap_open_cost, 4.1);
-        EXPECT_DOUBLE_EQ(get<0>(cfg).gap_extend_cost, 2.2);
+        EXPECT_DOUBLE_EQ(get<0>(cfg).value.scheme.get_gap_score(), -2.2);
+        EXPECT_DOUBLE_EQ(get<0>(cfg).value.scheme.get_gap_open_score(), -4.1);
         EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
                                     detail::configuration<detail::align_config_gap<gap_affine<double>>>>));
     }
@@ -121,37 +126,36 @@ TEST(align_config_gap, invoke_affine)
 
 TEST(align_config_gap, get_by_enum_linear)
 {
-
     {
-        detail::configuration cfg = align_cfg::gap_linear(gap_cost{4});
+        detail::configuration cfg = align_cfg::gap_linear(gap_score{-4});
 
-        EXPECT_EQ(get<align_cfg::id::gap>(cfg).gap_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(cfg).scheme.get_gap_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(cfg)),
                                     gap_linear<int> &>));
     }
 
     { // TODO(rrahn): Investigate why not deduction guide. See #314
         detail::configuration<detail::align_config_gap<gap_linear<int>>> const c_cfg =
-            detail::configuration{align_cfg::gap_linear(gap_cost{4})};
+            detail::configuration{align_cfg::gap_linear(gap_score{-4})};
 
-        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).gap_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).scheme.get_gap_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(c_cfg)),
                                     gap_linear<int> const &>));
     }
 
     {
-        detail::configuration cfg = align_cfg::gap_linear(gap_cost{4});
+        detail::configuration cfg = align_cfg::gap_linear(gap_score{-4});
 
-        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).gap_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).scheme.get_gap_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(cfg))),
                                     gap_linear<int> &&>));
     }
 
     {
         detail::configuration<detail::align_config_gap<gap_linear<int>>> const c_cfg =
-            detail::configuration{align_cfg::gap_linear(gap_cost{4})};
+            detail::configuration{align_cfg::gap_linear(gap_score{-4})};
 
-        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).gap_cost, 4);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).scheme.get_gap_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
                                     gap_linear<int> const &&>));
     }
@@ -159,41 +163,40 @@ TEST(align_config_gap, get_by_enum_linear)
 
 TEST(align_config_gap, get_by_enum_affine)
 {
-
     {
-        detail::configuration cfg = align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2});
+        detail::configuration cfg = align_cfg::gap_affine(gap_score{-2}, gap_open_score{-4});
 
-        EXPECT_EQ(get<align_cfg::id::gap>(cfg).gap_open_cost, 4);
-        EXPECT_EQ(get<align_cfg::id::gap>(cfg).gap_extend_cost, 2);
+        EXPECT_EQ(get<align_cfg::id::gap>(cfg).scheme.get_gap_score(), -2);
+        EXPECT_EQ(get<align_cfg::id::gap>(cfg).scheme.get_gap_open_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(cfg)),
                                     gap_affine<int> &>));
     }
 
     {
         detail::configuration<detail::align_config_gap<gap_affine<int>>> const c_cfg =
-            detail::configuration{align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2})};
+            detail::configuration{align_cfg::gap_affine(gap_score{-2}, gap_open_score{-4})};
 
-        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).gap_open_cost, 4);
-        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).gap_extend_cost, 2);
+        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).scheme.get_gap_score(), -2);
+        EXPECT_EQ(get<align_cfg::id::gap>(c_cfg).scheme.get_gap_open_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(c_cfg)),
                                     gap_affine<int> const &>));
     }
 
     {
-        detail::configuration cfg = align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2});
+        detail::configuration cfg = align_cfg::gap_affine(gap_score{-2}, gap_open_score{-4});
 
-        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).gap_open_cost, 4);
-        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).gap_extend_cost, 2);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).scheme.get_gap_score(), -2);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(cfg)).scheme.get_gap_open_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(cfg))),
                                     gap_affine<int> &&>));
     }
 
     {
         detail::configuration<detail::align_config_gap<gap_affine<int>>> const c_cfg =
-            detail::configuration{align_cfg::gap_affine(gap_open_cost{4}, gap_extend_cost{2})};
+            detail::configuration{align_cfg::gap_affine(gap_score{-2}, gap_open_score{-4})};
 
-        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).gap_open_cost, 4);
-        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).gap_extend_cost, 2);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).scheme.get_gap_score(), -2);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).scheme.get_gap_open_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
                                     gap_affine<int> const &&>));
     }

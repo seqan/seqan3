@@ -35,42 +35,23 @@
 /*!\file
  * \brief Provides seqan3::align::gap_linear.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/alignment/gap/detail.hpp>
+#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 
 namespace seqan3
 {
 
-/*!\brief Type for gap costs.
- *\ingroup alignment
- */
-template <typename value_t>
-struct gap_cost : detail::strong_type<value_t, gap_cost<value_t>>
-{
-    //!\brief Inheriting constructors from base class.
-    using detail::strong_type<value_t, gap_cost<value_t>>::strong_type;
-};
-
-/*!\name Deduction guides
- * \brief Deduces template parameter from the argument.
- * \relates seqan3::gap_cost
- * \{
- */
-
-template <typename value_t>
-gap_cost(value_t) -> gap_cost<value_t>;
-//!\}
-
-
 /*!\brief Data structure for linear gaps
  * \ingroup alignment
- * \tparam value_t The value type for the costs.
+ * \tparam value_type The value type for the gap score.
  */
-template <typename value_t>
+template <arithmetic_concept value_type>
 struct gap_linear
 {
 
@@ -84,15 +65,15 @@ struct gap_linear
     gap_linear & operator=(gap_linear &&)      = default;
     ~gap_linear()                              = default;
 
-    //!\brief Construction from seqan3::gap_cost.
-    template <typename inner_value_t>
-    constexpr gap_linear(gap_cost<inner_value_t> const cost) noexcept : gap_cost{std::move(cost.get())}
+    //!\brief Construction from seqan3::gap_score.
+    template <arithmetic_concept inner_value_type>
+    constexpr gap_linear(gap_score<inner_value_type> const gs) noexcept : scheme{std::move(gs)}
     {}
     //!}
 
     //!\privatesection
-    //!\brief The data member storing the gap cost.
-    value_t gap_cost{-1};
+    //!\brief The data member storing the score.
+    gap_scheme<value_type> scheme;
 };
 
 /*!\name Deduction guides
@@ -100,18 +81,19 @@ struct gap_linear
  * \relates seqan3::gap_linear
  * \{
  */
-template <typename value_t>
-gap_linear(gap_cost<value_t>) -> gap_linear<value_t>;
+template <arithmetic_concept value_type>
+gap_linear(gap_score<value_type>) -> gap_linear<value_type>;
 //!\}
 
-} // namespace seqan3::align
+} // namespace seqan3
 
 namespace seqan3::detail
 {
 
 //!\cond
-template <typename value_t>
-struct is_gap_config<gap_linear<value_t>> : public std::true_type
+template <arithmetic_concept value_type>
+struct is_gap_config<gap_linear<value_type>> : public std::true_type
 {};
 //!\endcond
+
 } // namespace seqan3::detail

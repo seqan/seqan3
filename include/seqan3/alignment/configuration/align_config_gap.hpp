@@ -35,6 +35,7 @@
 /*!\file
  * \brief Provides gap configurations.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
 #pragma once
@@ -51,67 +52,65 @@ namespace seqan3::detail
 /*!\brief A configuration element for gaps.
  * \ingroup configuration
  *
- * \tparam gap_t The underlying gap class.
+ * \tparam gap_type The underlying gap class.
  */
-template <typename gap_t>
+template <typename gap_type>
 struct align_config_gap
 {
     //!\brief The actual value.
-    gap_t value;
+    gap_type value;
 };
 
 /*!\brief The gap adaptor enabling pipe notation.
  * \ingroup configuration
  *
- * \tparam gap_t A template-template class specifying the actual gap implementation.
+ * \tparam gap_type A template-template class specifying the actual gap implementation.
  */
-template <template <typename ...> typename gap_t>
+template <template <typename ...> typename gap_type>
 //!\cond
-    requires is_gap_config_v<gap_t<int>>
+    requires is_gap_config_v<gap_type<int>>
 //!\endcond
-struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_adaptor<gap_t>>
+struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_adaptor<gap_type>>
 {
 
     /*!\brief Adds to the configuration a linear gap configuration element.
      * \param[in] cfg  The configuration to be extended.
-     * \param[in] cost The gap cost used to for the algorithm.
+     * \param[in] gs The gap score for the algorithm (usually negative).
      * \returns A new configuration containing the gap configuration element.
      */
-    template <typename configuration_t,
-              typename value_t>
+    template <typename configuration_type,
+              arithmetic_concept value_type>
     //!\cond
-        requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+        requires is_algorithm_configuration_v<remove_cvref_t<configuration_type>>
     //!\endcond
-    constexpr auto invoke(configuration_t && cfg,
-                          gap_cost<value_t> const cost) const
+    constexpr auto invoke(configuration_type && cfg,
+                          gap_score<value_type> const gs) const
     {
-        static_assert(is_valid_alignment_configuration_v<align_cfg::id::gap, remove_cvref_t<configuration_t>>,
+        static_assert(is_valid_alignment_configuration_v<align_cfg::id::gap, remove_cvref_t<configuration_type>>,
                       SEQAN3_INVALID_CONFIG(align_cfg::id::gap));
 
-        return std::forward<configuration_t>(cfg).push_front(align_config_gap<gap_t<value_t>>{cost});
+        return std::forward<configuration_type>(cfg).push_front(align_config_gap<gap_type<value_type>>{{gs}});
     }
 
     /*!\brief Adds to the configuration an affine gap configuration element.
      * \param[in] cfg  The configuration to be extended.
-     * \param[in] open_cost The gap open cost used to for the algorithm.
-     * \param[in] extend_cost The gap extend cost used to for the algorithm.
+     * \param[in] gs The gap score for the algorithm (usually negative).
+     * \param[in] gos The gap open score for the algorithm (usually negative).
      * \returns A new configuration containing the gap configuration element.
      */
-    template <typename configuration_t,
-              typename value_t>
+    template <typename configuration_type,
+              arithmetic_concept value_type>
     //!\cond
-        requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+        requires is_algorithm_configuration_v<remove_cvref_t<configuration_type>>
     //!\endcond
-    constexpr auto invoke(configuration_t && cfg,
-                          gap_open_cost<value_t> const open_cost,
-                          gap_extend_cost<value_t> const extend_cost) const
+    constexpr auto invoke(configuration_type && cfg,
+                          gap_score<value_type> const gs,
+                          gap_open_score<value_type> const gos) const
     {
-        static_assert(is_valid_alignment_configuration_v<align_cfg::id::gap, remove_cvref_t<configuration_t>>,
+        static_assert(is_valid_alignment_configuration_v<align_cfg::id::gap, remove_cvref_t<configuration_type>>,
                       SEQAN3_INVALID_CONFIG(align_cfg::id::gap));
 
-        align_config_gap<gap_t<value_t>> tmp;
-        tmp.get() = gap_t<value_t>{open_cost, extend_cost};
-        return std::forward<configuration_t>(cfg).push_front(std::move(tmp));
+        return std::forward<configuration_type>(cfg).push_front(align_config_gap<gap_type<value_type>>{{gs, gos}});
     }
 };
 
@@ -125,10 +124,10 @@ struct on_align_config<align_cfg::id::gap>
     using invoke = typename is_type_specialisation_of<t, align_config_gap>::type;
 };
 
-//!\brief Mapping from the detail::align_config_gap type to it's corresponding seqan3::align_cfg::id.
+//!\brief Mapping from the detail::align_config_gap type to its corresponding seqan3::align_cfg::id.
 //!\ingroup configuration
-template <typename value_t>
-struct align_config_type_to_id<align_config_gap<value_t>>
+template <typename value_type>
+struct align_config_type_to_id<align_config_gap<value_type>>
 {
     //!\brief The associated seqan3::align_cfg::id.
     static constexpr align_cfg::id value = align_cfg::id::gap;
