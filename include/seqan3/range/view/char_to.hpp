@@ -85,11 +85,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * ```cpp
- * std::string s{"ACTTTGATAN"};
- * auto v1 = s | view::char_to<dna4>; // == "ACTTTGATAA"_dna4
- * auto v2 = s | view::char_to<dna5>; // == "ACTTTGATAN"_dna5
- * ```
+ * \snippet test/snippet/range/view/rank_char.cpp char_to
  * \hideinitializer
  */
 template <alphabet_concept alphabet_type>

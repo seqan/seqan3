@@ -95,23 +95,11 @@ namespace seqan3::view
  *
  * ### Example
  *
- * ```cpp
- * std::string vec{"foobar"};
- * auto v = vec | view::take_exactly(3);        // or view::take_exactly_or_throw
- * std::cout << v << '\n';                      // [f,o,o]
- * std::cout << ranges::size(v) << v << '\n';   // 3
- * ```
+ * \snippet test/snippet/range/view/take_exactly.cpp usage
  *
  * The behaviour differs when the underlying sequence is shorter:
  *
- * ```cpp
- * std::string vec{"foo"};
- * auto v = vec | view::take_exactly(4);
- * std::cout << v << '\n';                          // [f,o,o]
- * std::cout << ranges::size(v) << v << '\n';       // 4 <- here be dragons!
- *
- * auto v2 = vec | view::take_exactly_or_throw(4);  // throws immediately on construction
- * ```
+ * \snippet test/snippet/range/view/take_exactly.cpp shorter_sequence
  *
  * \hideinitializer
  */

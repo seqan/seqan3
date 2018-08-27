@@ -500,14 +500,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * ```cpp
- * std::string vec{"foobar"};
- * auto v = vec | view::take(3);
- * std::cout << v << '\n'; // [f,o,o]
- *
- * auto v2 = vec | view::reverse | view::take(3) | view::reverse;
- * std::cout << v2 << '\n'; // [b,a,r]
- * ```
+ * \snippet test/snippet/range/view/take.cpp usage
  *
  * \hideinitializer
  */

@@ -357,14 +357,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * ```cpp
- * std::string str{"hello"};
- * auto v = str | view::single_pass_input;
- * std::cout << *++v.begin() << std::endl;  // prints 'e'
- * std::cout << *++v.begin() << std::endl;  // prints 'l'
- * std::cout << *++v.begin() << std::endl;  // prints 'l'
- * std::cout << *++v.begin() << std::endl;  // prints 'o'
- * ```
+ * \snippet test/snippet/range/view/single_pass_input.cpp usage
  * \hideinitializer
  */
 inline constexpr auto single_pass_input = detail::generic_pipable_view_adaptor<detail::single_pass_input_view>{};
