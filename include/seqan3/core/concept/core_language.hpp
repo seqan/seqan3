@@ -47,6 +47,41 @@
 #include <seqan3/core/platform.hpp>
 #include <seqan3/std/concepts>
 
+namespace seqan3::detail
+{
+
+/*!\addtogroup concept
+ * \{
+ */
+
+/*!\interface   seqan3::detail::weakly_equality_comparable_by_members_with_concept <>
+ * \brief       Like std::detail::WeaklyEqualityComparableWith, but considers only member operators of the LHS.
+ */
+//!\cond
+template <typename lhs_t, typename rhs_t>
+concept bool weakly_equality_comparable_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
+{
+    lhs.operator==(rhs); std::Boolean<decltype(lhs.operator==(rhs))>;
+    lhs.operator!=(rhs); std::Boolean<decltype(lhs.operator!=(rhs))>;
+};
+//!\endcond
+/*!\interface   seqan3::detail::weakly_ordered_by_members_with_concept <>
+ * \brief       Like seqan3::weakly_ordered_with_concept, but considers only member operators of the LHS.
+ */
+//!\cond
+template <typename lhs_t, typename rhs_t>
+concept bool weakly_ordered_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
+{
+    lhs.operator< (rhs); std::Boolean<decltype(lhs.operator< (rhs))>;
+    lhs.operator> (rhs); std::Boolean<decltype(lhs.operator> (rhs))>;
+    lhs.operator<=(rhs); std::Boolean<decltype(lhs.operator<=(rhs))>;
+    lhs.operator>=(rhs); std::Boolean<decltype(lhs.operator>=(rhs))>;
+};
+//!\endcond
+//!\}
+
+} // seqan3::detail
+
 namespace seqan3
 {
 
