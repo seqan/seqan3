@@ -56,10 +56,8 @@ class alphabet : public ::testing::Test
 
 // add all alphabets here
 using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
-                                        aa27,
-                                        union_composition<dna4>,
+                                        aa20, aa27,
                                         union_composition<dna4, gap>,
-                                        union_composition<dna5, dna5>,
                                         union_composition<dna4, dna5, gap>,
                                         union_composition<char, gap>,
                                         qualified<dna4, phred42>,

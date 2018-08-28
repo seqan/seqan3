@@ -138,29 +138,6 @@ TEST(union_composition_test, initialise_from_component_alphabet_subtype)
     EXPECT_EQ(letter8.to_rank(), 8);
 }
 
-TEST(union_composition_test, initialise_from_same_component_alphabet)
-{
-    using alphabet_t = union_composition<dna4, dna4>;
-
-    constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
-    constexpr alphabet_t letter1{std::in_place_index_t<0>{}, dna4::C};
-    constexpr alphabet_t letter2{std::in_place_index_t<0>{}, dna4::G};
-    constexpr alphabet_t letter3{std::in_place_index_t<0>{}, dna4::T};
-    constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
-    constexpr alphabet_t letter5{std::in_place_index_t<1>{}, dna4::C};
-    constexpr alphabet_t letter6{std::in_place_index_t<1>{}, dna4::G};
-    constexpr alphabet_t letter7{std::in_place_index_t<1>{}, dna4::T};
-
-    EXPECT_EQ(letter0.to_rank(), 0);
-    EXPECT_EQ(letter1.to_rank(), 1);
-    EXPECT_EQ(letter2.to_rank(), 2);
-    EXPECT_EQ(letter3.to_rank(), 3);
-    EXPECT_EQ(letter4.to_rank(), 4);
-    EXPECT_EQ(letter5.to_rank(), 5);
-    EXPECT_EQ(letter6.to_rank(), 6);
-    EXPECT_EQ(letter7.to_rank(), 7);
-}
-
 TEST(union_composition_test, assign_from_component_alphabet)
 {
     using alphabet_t = union_composition<dna4, dna5, gap>;
@@ -280,34 +257,74 @@ TEST(union_composition_test, compare_to_component_alphabet_subtype)
 
 TEST(union_composition_test, fulfills_concepts)
 {
-    EXPECT_TRUE((std::is_pod_v<union_composition<dna5, dna5>>));
-    EXPECT_TRUE((std::is_trivial_v<union_composition<dna5, dna5>>));
-    EXPECT_TRUE((std::is_trivially_copyable_v<union_composition<dna5, dna5>>));
-    EXPECT_TRUE((std::is_standard_layout_v<union_composition<dna5, dna5>>));
+    EXPECT_TRUE((alphabet_concept<union_composition<dna5, gap>>));
 }
 
 TEST(union_composition_test, rank_type)
 {
     using alphabet1_t = union_composition<dna4, dna5, gap>;
     using alphabet2_t = union_composition<gap, dna5, dna4>;
-    using alphabet3_t = union_composition<gap>;
+    using alphabet3_t = union_composition<char, gap>;
 
     EXPECT_TRUE((std::is_same_v<alphabet1_t::rank_type, uint8_t>));
     EXPECT_TRUE((std::is_same_v<alphabet2_t::rank_type, uint8_t>));
-    EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, bool>));
+    EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, uint16_t>));
 }
 
 TEST(union_composition_test, value_size)
 {
     using alphabet1_t = union_composition<dna4, dna5, gap>;
     using alphabet2_t = union_composition<gap, dna5, dna4>;
-    using alphabet3_t = union_composition<gap>;
+    using alphabet3_t = union_composition<char, gap>;
 
     EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::value_size), const uint8_t>));
     EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::value_size), const uint8_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::value_size), const bool>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::value_size), const uint16_t>));
 
     EXPECT_EQ(alphabet1_t::value_size, 10);
     EXPECT_EQ(alphabet2_t::value_size, 10);
-    EXPECT_EQ(alphabet3_t::value_size, 1);
+    EXPECT_EQ(alphabet3_t::value_size, 257);
+}
+
+TEST(union_composition_test, convert_by_index)
+{
+    union_composition<dna4, dna5, gap> u;
+    u = dna5::C;
+
+    EXPECT_FALSE(u.is_alternative<0>());
+    EXPECT_TRUE(u.is_alternative<1>());
+    EXPECT_FALSE(u.is_alternative<2>());
+
+    EXPECT_THROW(u.convert_to<0>(), std::bad_variant_access);
+    EXPECT_NO_THROW(u.convert_to<1>());
+    EXPECT_THROW(u.convert_to<2>(), std::bad_variant_access);
+
+    dna5 out = u.convert_to<1>();
+    EXPECT_EQ(out, dna5::C);
+
+    u = gap::GAP;
+
+    gap g = u.convert_unsafely_to<2>();
+    EXPECT_EQ(g, gap::GAP);
+}
+
+TEST(union_composition_test, convert_by_type)
+{
+    union_composition<dna4, dna5, gap> u;
+    u = dna5::C;
+
+    EXPECT_FALSE(u.is_alternative<dna4>());
+    EXPECT_TRUE(u.is_alternative<dna5>());
+    EXPECT_FALSE(u.is_alternative<gap>());
+
+    EXPECT_THROW(u.convert_to<dna4>(), std::bad_variant_access);
+    EXPECT_NO_THROW(u.convert_to<dna5>());
+    EXPECT_THROW(u.convert_to<gap>(), std::bad_variant_access);
+
+    dna5 out = u.convert_to<dna5>();
+    EXPECT_EQ(out, dna5::C);
+
+    u = gap::GAP;
+    gap g = u.convert_unsafely_to<gap>();
+    EXPECT_EQ(g, gap::GAP);
 }
