@@ -361,7 +361,7 @@ constexpr auto const && get(detail::configuration<cfg_elements_t...> const && cf
     static_assert(pos < meta::size<type_list_t>::value,
                   "The specified config element is not contained in the configuration.");
 
-    return get<pos>(std::move(cfg)).value;
+    return std::move(get<pos>(cfg).value); // TODO remove std::move when g++7 is fixed
 }
 //!\}
 } // namespace seqan3
