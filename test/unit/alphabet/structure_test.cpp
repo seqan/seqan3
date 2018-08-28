@@ -164,8 +164,17 @@ TYPED_TEST(structure, concept_check)
 
 TYPED_TEST(structure, rna_structure_concept)
 {
-    EXPECT_TRUE(rna_structure_concept<dot_bracket3>);
-    EXPECT_TRUE(rna_structure_concept<wuss51>);
+    if constexpr (!std::is_same_v<TypeParam, dssp9>)
+    {
+        EXPECT_TRUE(rna_structure_concept<TypeParam>);
+        EXPECT_NE(pseudoknot_support_v<TypeParam>, 0);
+    }
+    else
+    {
+        EXPECT_FALSE(rna_structure_concept<TypeParam>);
+    }
+
+    // additional wuss test
     EXPECT_TRUE(rna_structure_concept<wuss<>>);  // also wuss51
     EXPECT_TRUE(rna_structure_concept<wuss<67>>);
 }
@@ -261,6 +270,7 @@ TEST(rna_structure, wuss)
         EXPECT_FALSE(vec[idx].is_unpaired());
         EXPECT_FALSE(vec[idx].is_pair_close());
         EXPECT_TRUE(vec[idx].pseudoknot_id());
+        EXPECT_EQ(vec[idx].pseudoknot_id(), std::optional<uint8_t>{(idx - 7) / 2});
     }
     for (unsigned idx = 8; idx <= 22; idx+=2)
     {
@@ -268,6 +278,7 @@ TEST(rna_structure, wuss)
         EXPECT_FALSE(vec[idx].is_unpaired());
         EXPECT_FALSE(vec[idx].is_pair_open());
         EXPECT_TRUE(vec[idx].pseudoknot_id());
+        EXPECT_EQ(vec[idx].pseudoknot_id(), std::optional<uint8_t>{(idx - 8) / 2});
     }
 }
 
@@ -586,9 +597,9 @@ TEST(structured_rna, complement)
 TEST(structured_rna, rna_structure_concept)
 {
     using type = structured_rna<rna5, wuss51>;
-    type t0{rna5::A, wuss51::PAIR_OPEN};
+    type t0{rna5::A, wuss51::PAIR_OPEN2};
     type t1{rna5::N, wuss51::UNPAIRED};
-    type t2{rna5::U, wuss51::PAIR_CLOSE};
+    type t2{rna5::U, wuss51::PAIR_CLOSE2};
 
     EXPECT_TRUE (t0.is_pair_open());
     EXPECT_FALSE(t1.is_pair_open());
@@ -603,12 +614,28 @@ TEST(structured_rna, rna_structure_concept)
     EXPECT_TRUE (t0.pseudoknot_id());
     EXPECT_FALSE(t1.pseudoknot_id());
     EXPECT_TRUE (t2.pseudoknot_id());
-    EXPECT_EQ   (t0.pseudoknot_id().value(), 0);
+    EXPECT_EQ   (t0.pseudoknot_id(), std::optional<uint8_t>{2});
     EXPECT_THROW(t1.pseudoknot_id().value(), std::bad_optional_access);
     EXPECT_EQ   (t2.pseudoknot_id().value(), *t0.pseudoknot_id());
 
     EXPECT_EQ((structured_rna<rna5, wuss51>::pseudoknot_support), 22);
     EXPECT_EQ((structured_rna<rna4, dot_bracket3>::pseudoknot_support), 1);
+}
+
+TEST(structured_rna, pseudoknot_id_without_pseudoknot_support)
+{
+    using type = structured_rna<rna5, dot_bracket3>;
+    EXPECT_EQ(type::pseudoknot_support, 1); // max bracket depth 1
+    type t0{rna5::A, dot_bracket3::PAIR_OPEN};
+    type t1{rna5::N, dot_bracket3::UNPAIRED};
+    type t2{rna5::U, dot_bracket3::PAIR_CLOSE};
+
+    EXPECT_TRUE (t0.pseudoknot_id());
+    EXPECT_FALSE(t1.pseudoknot_id());
+    EXPECT_TRUE (t2.pseudoknot_id());
+    EXPECT_EQ   (t0.pseudoknot_id(), std::optional<uint8_t>{0});
+    EXPECT_THROW(t1.pseudoknot_id().value(), std::bad_optional_access);
+    EXPECT_EQ   (t2.pseudoknot_id().value(), *t0.pseudoknot_id());
 }
 
 // ------------------------------------------------------------------

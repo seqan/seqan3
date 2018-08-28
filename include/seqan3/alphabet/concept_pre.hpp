@@ -246,6 +246,9 @@ struct pseudoknot_support{};
  * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
  */
 template<typename alphabet_type>
+//!\cond
+    requires requires (alphabet_type alph) { pseudoknot_support<alphabet_type>::value; }
+//!\endcond
 constexpr uint8_t pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
 //!\}
 

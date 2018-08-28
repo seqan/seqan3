@@ -188,7 +188,7 @@ public:
     {
         if constexpr (structure_alphabet_type::pseudoknot_support > 1)
             return get<1>(*this).pseudoknot_id();
-        else if constexpr (is_pair_open() || is_pair_close())
+        else if (is_pair_open() || is_pair_close())
             return 0;
         else
             return std::nullopt;
