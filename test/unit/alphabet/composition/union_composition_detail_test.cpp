@@ -54,11 +54,6 @@ public:
 
 TEST(union_composition_detail_test, partial_sum_sizes)
 {
-    constexpr std::array partial_sum1 = detail_union_composition<dna4>::partial_sum_sizes;
-    EXPECT_EQ(partial_sum1.size(), 2u);
-    EXPECT_EQ(partial_sum1[0], 0);
-    EXPECT_EQ(partial_sum1[1], 4);
-
     constexpr std::array partial_sum2 = detail_union_composition<dna4, gap>::partial_sum_sizes;
     EXPECT_EQ(partial_sum2.size(), 3u);
     EXPECT_EQ(partial_sum2[0], 0);
@@ -82,13 +77,6 @@ TEST(union_composition_detail_test, partial_sum_sizes)
 
 TEST(union_composition_detail_test, value_to_char)
 {
-    constexpr std::array value_to_char1 = detail_union_composition<dna4>::value_to_char;
-    EXPECT_EQ(value_to_char1.size(), 4u);
-    EXPECT_EQ(value_to_char1[0], 'A');
-    EXPECT_EQ(value_to_char1[1], 'C');
-    EXPECT_EQ(value_to_char1[2], 'G');
-    EXPECT_EQ(value_to_char1[3], 'T');
-
     constexpr std::array value_to_char2 = detail_union_composition<dna4, gap>::value_to_char;
     EXPECT_EQ(value_to_char2.size(), 5u);
     EXPECT_EQ(value_to_char2[0], 'A');
@@ -126,13 +114,6 @@ TEST(union_composition_detail_test, value_to_char)
 
 TEST(union_composition_detail_test, char_to_value)
 {
-    constexpr std::array char_to_value1 = detail_union_composition<dna4>::char_to_value;
-    EXPECT_EQ(char_to_value1.size(), 256u);
-    EXPECT_EQ(char_to_value1['A'], 0);
-    EXPECT_EQ(char_to_value1['C'], 1);
-    EXPECT_EQ(char_to_value1['G'], 2);
-    EXPECT_EQ(char_to_value1['T'], 3);
-
     constexpr std::array char_to_value2 = detail_union_composition<dna4, gap>::char_to_value;
     EXPECT_EQ(char_to_value2.size(), 256u);
     EXPECT_EQ(char_to_value2['A'], 0);

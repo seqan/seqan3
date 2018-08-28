@@ -40,89 +40,74 @@
 
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <utility>
 #include <cassert>
-#include <algorithm>
+#include <variant>
 
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/std/concepts> // implicitly_convertible_to_concept
-#include <seqan3/std/concepts>        // constructible_concept
+#include <seqan3/std/concepts>
 
 namespace seqan3
 {
 
-/*!\brief A composition that merges different regular components into a single component.
+/*!\brief A combined alphabet that can hold values of either of its alternatives.
  * \ingroup composition
- * \tparam ...component_types Types of further letters; must satisfy seqan3::alphabet_concept, e.g. dna4.
+ * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::alphabet_concept and be
+ *                              unique.
  * \implements seqan3::alphabet_concept
  *
- * The union component represents the union of two or more components (e.g. the
- * four letter DNA component + the gap component). Note that you cannot assign
- * regular characters, but additional functions for this are available.
+ * \details
  *
- * This class has a similar behavior as std::variant.
+ * The union_composition represents the union of two or more alternative alphabets (e.g. the
+ * four letter DNA alternative + the gap alternative). It behaves similar to a
+ * [union](https://en.cppreference.com/w/cpp/language/union) or std::variant, but it preserves the
+ * seqan3::alphabet_concept.
  *
- * ```cpp
- *     union_composition<dna4, gap> my_letter{};
- *     union_composition<dna4, gap> converted_letter{dna4::C};
- *     // doesn't work:
- *     // union_composition<dna4, gap> my_letter{'A'};
+ * Short description:
+ *   * combines multiple different alphabets in an "either-or"-fashion;
+ *   * is itself a seqan3::alphabet_concept;
+ *   * its alphabet size is the sum of the individual sizes;
+ *   * default initialises to the the first alternative's default (no empty state like std::variant);
+ *   * constructible, assignable and (in-)equality-comparable with each alternative type and also all types that
+ *     these are constructible/assignable/equality-comparable with;
+ *   * only convertible to its alternatives through the member function convert_to() (which can throw!)
  *
- *     union_composition<dna4, gap>{}.assign_char('C'); // <- this does!
- *     union_composition<dna4, gap>{}.assign_char('-'); // gap character
- *     union_composition<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
- *                                                   // character of the first component type (i.e. A of dna4)
- *     if (my_letter.to_char() == 'A')
- *        std::cout << "yeah\n"; // "yeah";
- * ```
- *
- * The union component can also be constructed directly from one of the base
- * components.
+ * ### Example
  *
  * ```cpp
- * using component_t = union_composition<dna4, dna5, gap>;
+ * union_composition<dna5, gap> letter{};         // implicitly dna5::A
+ * union_composition<dna5, gap> letter2{dna5::C}; // constructed from alternative (== dna5::C)
+ * union_composition<dna5, gap> letter2{rna5::U}; // constructed from type that alternative is constructable from (== dna5::T)
  *
- * constexpr component_t letter0{dna4::A};
- * constexpr component_t letter1 = dna4::C;
- * constexpr component_t letter2 = {dna4::G};
- * constexpr component_t letter3 = static_cast<component_t>(dna4::T);
+ * letter2.assign_char('T');                      // == dna5::T
+ * letter2.assign_char('-');                      // == gap::GAP
+ * letter2.assign_char('K');                      // unknown characters map to the default/unknown
+ *                                                // character of the first alternative type (== dna5::N)
  *
- * assert(letter0.to_rank() == 0);
- * assert(letter1.to_rank() == 1);
- * assert(letter2.to_rank() == 2);
- * assert(letter3.to_rank() == 3);
- * ```
+ * letter2 = gap::GAP;                            // assigned from alternative (== gap::GAP)
+ * letter2 = rna5::U;                             // assigned from type that alternative is assignable from (== dna5::T)
  *
- * Or can be assigned by one of the base components.
- *
- * ```cpp
- * using component_t = union_composition<dna4, dna5, gap>;
- *
- * component_t letter;
- *
- * letter = dna5::A;
- * assert(letter.to_rank() == 4);
- *
- * letter = {dna5::C};
- * assert(letter.to_rank() == 5);
- *
- * letter = static_cast<component_t>(dna5::G);
- * assert(letter.to_rank() == 6);
+ * dna5 letter3 = letter2.convert_to<dna5>();     // this works
+ * gap letter4  = letter2.convert_to<gap>();      // this throws an exception, because the set value was dna5::T
  * ```
  */
-template <typename ...component_types>
+template <typename ...alternative_types>
 //!\cond
-    requires (alphabet_concept<component_types> && ... && (sizeof...(component_types) >= 1))
+    requires (alphabet_concept<alternative_types> && ... && (sizeof...(alternative_types) >= 2))
 //!\endcond
 class union_composition
 {
 private:
-    //!\brief A meta::list The types of each component in the composition
-    using components = meta::list<component_types...>;
+    //!\brief A meta::list of the types of each alternative in the composition
+    using alternatives = meta::list<alternative_types...>;
+
+    static_assert(std::Same<alternatives, meta::unique<alternatives>>,
+                  "All types in a union_composition must be distinct.");
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
       * Returns an std::true_type if the `type` is constructable from `T`.
@@ -136,8 +121,8 @@ private:
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
-      * Returns an std::true_type if the `T` is implicitly convertible to `type`.
-      */
+     * Returns an std::true_type if the `T` is implicitly convertible to `type`.
+     */
     template <typename T>
     struct implicitely_convertible_from
     {
@@ -147,8 +132,8 @@ private:
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
-      * Returns an std::true_type if the `type` is assignable from `T`.
-      */
+     * Returns an std::true_type if the `type` is assignable from `T`.
+     */
     template <typename T>
     struct assignable_from
     {
@@ -158,8 +143,8 @@ private:
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
-      * Returns an std::true_type if the `type` is weakly equality comparable to `T`.
-      */
+     * Returns an std::true_type if the `type` is weakly equality comparable to `T`.
+     */
     template <typename T>
     struct weakly_equality_comparable_with
     {
@@ -168,43 +153,54 @@ private:
         using invoke = std::integral_constant<bool, std::detail::WeaklyEqualityComparableWith<type, T>>;
     };
 
-    /*!\brief 'Is set to `true` if one component type in `components` evaluates
-     * to true when invoked with `subtype` by FUN.
-     */
-    template <template <typename> typename FUN, typename subtype>
-    static constexpr bool one_component_is =
-         !std::is_same_v<subtype, union_composition> &&
-         !meta::in<components, subtype>::value &&
-         !meta::empty<meta::find_if<components, FUN<subtype>>>::value;
-
-public:
-    /*!\brief Returns true if component_t is one of the given component types.
-     * \tparam component_t The type to check.
-     *
-     * ```cpp
-     * using union_t = union_composition<dna4, gap>;
-     *
-     * static_assert(union_t::has_alternative<dna4>(), "should be true");
-     * static_assert(union_t::has_alternative<gap>(), "should be true");
-     * static_assert(!union_t::has_alternative<dna5>(), "should be false");
-     * ```
-     */
-    template <typename component_t>
-    static constexpr bool has_alternative() noexcept
+    //!\brief Ridiculously verbose helper, because we don't have local concept definitions or template specialisations.
+    template <template <typename> typename fun_t, typename indirect_alternative_t>
+    constexpr static bool one_alternative_is_helper()
     {
-        return meta::in<components, component_t>::value;
+        // filter out this and "direct" alternatives
+        if constexpr (std::is_same_v<indirect_alternative_t, union_composition> ||
+                      meta::in<alternatives, indirect_alternative_t>::value)
+        {
+            return false;
+        }
+        else // make the second term only be instantiated if the prior condition is not met to prevent recursions
+        {
+            return !meta::empty<meta::find_if<alternatives, fun_t<indirect_alternative_t>>>::value;
+        }
     }
 
-    //!\brief The size of the component, i.e. the number of different values it can take.
+    /*!\brief 'Is set to `true` if one alternative type in `alternatives` evaluates
+     * to true when invoked with `indirect_alternative_t` by fun_t.
+     */
+    template <template <typename> typename fun_t, typename indirect_alternative_t>
+    static constexpr bool one_alternative_is = one_alternative_is_helper<fun_t, indirect_alternative_t>();
+
+public:
+    /*!\brief Returns true if alternative_t is one of the given alternative types.
+     * \tparam alternative_t The type to check.
+     *
+     * ```cpp
+     * using union_t = union_composition<dna5, gap>;
+     *
+     * static_assert(union_t::holds_alternative<dna5>(), "should be true");
+     * static_assert(union_t::holds_alternative<gap>(), "should be true");
+     * static_assert(!union_t::holds_alternative<dna5>(), "should be false");
+     * ```
+     */
+    template <typename alternative_t>
+    static constexpr bool holds_alternative() noexcept
+    {
+        return meta::in<alternatives, alternative_t>::value;
+    }
+
+    //!\brief The size of the alternative, i.e. the number of different values it can take.
     static constexpr auto value_size =
-        detail::min_viable_uint_v<
-            (static_cast<size_t>(alphabet_size_v<component_types>) + ... + static_cast<size_t>(0))
-        >;
+        detail::min_viable_uint_v<(static_cast<size_t>(alphabet_size_v<alternative_types>) + ...)>;
 
-    //!\brief The type of the component when converted to char (e.g. via \link to_char \endlink).
-    using char_type = underlying_char_t<meta::front<components>>;
+    //!\brief The type of the alternative when converted to char (e.g. via \link to_char \endlink).
+    using char_type = underlying_char_t<meta::front<alternatives>>;
 
-    //!\brief The type of the component when represented as a number (e.g. via \link to_rank \endlink).
+    //!\brief The type of the alternative when represented as a number (e.g. via \link to_rank \endlink).
     using rank_type = detail::min_viable_uint_t<value_size>;
 
     /*!\name Constructors, destructor and assignment
@@ -216,93 +212,70 @@ public:
     constexpr union_composition & operator=(union_composition const &) = default;
     constexpr union_composition & operator=(union_composition &&) = default;
 
-    /*!\brief Construction via a value of a component component.
-     * \tparam component_t One of the component component types.
-     * \param  component   The value of a component component that should be assigned.
+    /*!\brief Construction via the value of an alternative.
+     * \tparam alternative_t One of the alternative types.
+     * \param  alternative   The value of a alternative that should be assigned.
      *
      * ```cpp
-     *     union_composition<dna4, gap> letter1{dna4::C}; // or
-     *     union_composition<dna4, gap> letter2 = gap::GAP;
+     *     union_composition<dna5, gap> letter1{dna5::C}; // or
+     *     union_composition<dna5, gap> letter2 = gap::GAP;
      * ```
      */
-    template <typename component_t>
+    template <typename alternative_t>
     //!\cond
-        requires has_alternative<component_t>()
+        requires holds_alternative<alternative_t>()
     //!\endcond
-    constexpr union_composition(component_t const & component) noexcept :
-        _value{rank_by_type_(component)}
+    constexpr union_composition(alternative_t const & alternative) noexcept :
+        _value{rank_by_type_(alternative)}
     {}
 
-    /*!\brief Construction via a value of reoccurring components.
-     * \tparam I The index of the i-th component component.
-     * \tparam component_t The i-th given component component type.
-     * \param component The value of a component component that should be assigned.
+    /*!\brief Construction via the value of a type that an alternative type is constructible from.
+     * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
+     * \param  rhs The value that should be assigned.
      *
      * ```cpp
-     * using component_t = union_composition<dna4, dna4>;
-     *
-     * constexpr component_t letter0{std::in_place_index_t<0>{}, dna4::A};
-     * constexpr component_t letter4{std::in_place_index_t<1>{}, dna4::A};
-     *
-     * EXPECT_EQ(letter0.to_rank(), 0);
-     * EXPECT_EQ(letter4.to_rank(), 4);
+     *     union_composition<dna5, gap> letter1{rna5::C};
      * ```
-     */
-    template <size_t I, typename component_t>
-    //!\cond
-        requires has_alternative<component_t>()
-    //!\endcond
-    constexpr union_composition(std::in_place_index_t<I>, component_t const & component) noexcept :
-        _value{rank_by_index_<I>(component)}
-    {}
-
-    /*!\brief Construction via a value that one of the component components is constructible from.
-     * \tparam component_subt A type that one of the component component types is constructible from.
-     * \param  subcomponent   The value that should be assigned.
-     *
-     * ```cpp
-     *     union_composition<dna4, gap> letter1{rna4::C};
-     * ```
-     * \attention When selecting the component component types which require only implicit conversion
+     * \attention When selecting the alternative, types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
-    template <typename component_subt>
+    template <typename indirect_alternative_t>
     //!\cond
-        requires !has_alternative<component_subt>() &&
-                 !one_component_is<implicitely_convertible_from, component_subt> &&
-                 one_component_is<constructible_from, component_subt>
+        requires !one_alternative_is<implicitely_convertible_from, indirect_alternative_t> &&
+                 one_alternative_is<constructible_from, indirect_alternative_t>
     //!\endcond
-    constexpr union_composition(component_subt const & subcomponent) noexcept :
-        _value{rank_by_type_(meta::front<meta::find_if<components, constructible_from<component_subt>>>(subcomponent))}
+    constexpr union_composition(indirect_alternative_t const & rhs) noexcept :
+        _value{rank_by_type_(meta::front<meta::find_if<alternatives,
+                                                       constructible_from<indirect_alternative_t>>>(rhs))}
     {}
 
     //!\cond
-    template <typename component_subt>
-        requires !has_alternative<component_subt>() &&
-                 one_component_is<implicitely_convertible_from, component_subt>
-    constexpr union_composition(component_subt const & subcomponent) noexcept :
-        _value{rank_by_type_(meta::front<meta::find_if<components, implicitely_convertible_from<component_subt>>>(subcomponent))}
+    template <typename indirect_alternative_t>
+        requires one_alternative_is<implicitely_convertible_from, indirect_alternative_t>
+    constexpr union_composition(indirect_alternative_t const & rhs) noexcept :
+        _value{rank_by_type_(meta::front<meta::find_if<alternatives,
+                                                       implicitely_convertible_from<indirect_alternative_t>>>(rhs))}
     {}
     //!\endcond
 
-    /*!\brief Assignment via a value that one of the component components is constructible from.
-     * \tparam component_subt Type that one of the component components is constructible from.
-     * \param  subcomponent   The value of a component component that should be assigned.
+    /*!\brief Assignment via a value that one of the alternative types is assignable from.
+     * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
+     * \param  rhs The value of an alternative.
      *
      * ```cpp
-     *     union_composition<dna4, gap> letter1{};
-     *     letter1 = rna4::C;
+     * union_composition<dna5, gap> letter1{};
+     * letter1 = rna5::C;
      * ```
      */
-    template <typename component_subt>
+    template <typename indirect_alternative_t>
     //!\cond
-        requires !has_alternative<component_subt>() && one_component_is<assignable_from, component_subt>
+        requires one_alternative_is<assignable_from, indirect_alternative_t>
     //!\endcond
-    constexpr union_composition & operator=(component_subt const & subcomponent) noexcept
+    constexpr union_composition & operator=(indirect_alternative_t const & rhs) noexcept
     {
-        using component_t = meta::front<meta::find_if<components, assignable_from<component_subt>>>;
-        component_t component = subcomponent;
-        _value = rank_by_type_(component);
+        using alternative_t = meta::front<meta::find_if<alternatives, assignable_from<indirect_alternative_t>>>;
+        alternative_t alternative = rhs;
+        _value = rank_by_type_(alternative);
         return *this;
     }
     //!\}
@@ -316,7 +289,7 @@ public:
         return value_to_char[_value];
     }
 
-    //!\brief Return the letter's numeric value or rank in the component.
+    //!\brief Return the letter's numeric value or rank in the alternative.
     constexpr rank_type to_rank() const noexcept
     {
         return _value;
@@ -337,18 +310,87 @@ public:
 
     //!\brief Assign from a numeric value.
     //!\param i The rank of a character to assign to.
-    constexpr union_composition & assign_rank(rank_type const i) /*noexcept*/
+    constexpr union_composition & assign_rank(rank_type const i) noexcept
     {
-        // TODO(marehr): mark function noexcept if assert is replaced
-        // https://github.com/seqan/seqan3/issues/85
         assert(i < value_size);
         _value = i;
         return *this;
     }
     //!\}
 
-    //!\name Comparison operators
-    //!\{
+    /*!\name Conversion (by index)
+     * \{
+     */
+    //!\brief Whether the union alphabet currently holds a value of the given alternative.
+    //!\tparam index Index of the alternative to check for.
+    template <size_t index>
+    constexpr bool is_alternative() const noexcept
+    {
+        static_assert(index < value_size, "The union_composition contains less alternatives than you are checking.");
+        return (to_rank() >= partial_sum_sizes[index]) && (to_rank() < partial_sum_sizes[index + 1]);
+    }
+
+    /*!\brief Convert to the specified alphabet (throws if is_alternative() would be false).
+     * \tparam index Index of the alternative to check for.
+     * \throws std::bad_variant_access If the union_alphabet currently holds the value of a different alternative.
+     */
+    template <size_t index>
+    constexpr auto convert_to() const
+    {
+        return convert_impl<index, true>();
+    }
+
+    /*!\brief Convert to the specified alphabet (**undefined behaviour** if is_alternative() would be false).
+     * \tparam index Index of the alternative to check for.
+     */
+    template <size_t index>
+    constexpr auto convert_unsafely_to() const noexcept
+    {
+        return convert_impl<index, false>();
+    }
+    //!\}
+
+    /*!\name Conversion (by type)
+     * \{
+     */
+    /*!\copybrief is_alternative()
+     * \tparam alternative_t The type of the alternative that you wish to check for.
+     */
+    template <typename alternative_t>
+    constexpr bool is_alternative() const noexcept
+        requires holds_alternative<alternative_t>()
+    {
+        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        return is_alternative<index>();
+    }
+
+    /*!\copybrief convert_to()
+     * \tparam alternative_t The type of the alternative that you wish to check for.
+     * \throws std::bad_variant_access If the union_alphabet currently holds the value of a different alternative.
+     */
+    template <typename alternative_t>
+    constexpr alternative_t convert_to() const
+        requires holds_alternative<alternative_t>()
+    {
+        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        return convert_impl<index, true>();
+    }
+
+    /*!\copybrief convert_unsafely_to()
+     * \tparam alternative_t The type of the alternative that you wish to check for.
+     */
+    template <typename alternative_t>
+    constexpr alternative_t convert_unsafely_to() const noexcept
+        requires holds_alternative<alternative_t>()
+    {
+        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        return convert_impl<index, false>();
+    }
+    //!\}
+
+    /*!\name Comparison operators (against self)
+     * \{
+     */
     constexpr bool operator==(union_composition const & rhs) const noexcept
     {
         return _value == rhs._value;
@@ -378,6 +420,56 @@ public:
     {
         return _value >= rhs._value;
     }
+    //!\}
+
+    /*!\name Comparison operators (against alternatives)
+     * \brief Defines comparison against alternatives, e.g. `union_composition<dna5, gap>{gap::GAP} == dna5::C`. Only
+     *        (in-)equality comparison is explicitly defined, because it would be difficult to argue about e.g.
+     *        `union_composition<dna5, gap>{gap::GAP} < dna5::C`.
+     * \{
+     */
+    template <typename alternative_t>
+    constexpr bool operator==(alternative_t const & rhs) const noexcept
+        requires holds_alternative<alternative_t>()
+    {
+        return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
+    }
+
+    template <typename alternative_t>
+    constexpr bool operator!=(alternative_t const & rhs) const noexcept
+        requires holds_alternative<alternative_t>()
+    {
+        return !operator==(rhs);
+    }
+    //!\}
+
+    /*!\name Comparison operators (against indirect alternatives)
+     * \brief Defines comparison against types that are comparable with alternatives, e.g.
+     *        `union_composition<dna5, gap>{dna5::C} == rna5::C`. Only (in-)equality comparison is explicitly defined,
+     *        because it would be difficult to argue about e.g.
+     *        `union_composition<dna5, gap>{gap::GAP} < rna5::C`.
+     * \{
+     */
+    template <typename indirect_alternative_type>
+    constexpr bool operator==(indirect_alternative_type const & rhs) const noexcept
+    //!\cond
+        requires one_alternative_is<weakly_equality_comparable_with, indirect_alternative_type>
+    //!\endcond
+    {
+        using alternative_t =
+            meta::front<meta::find_if<alternatives, weakly_equality_comparable_with<indirect_alternative_type>>>;
+        return is_alternative<alternative_t>() && (convert_unsafely_to<alternative_t>() == rhs);
+    }
+
+    template <typename indirect_alternative_type>
+    constexpr bool operator!=(indirect_alternative_type const & rhs) const noexcept
+    //!\cond
+        requires one_alternative_is<weakly_equality_comparable_with, indirect_alternative_type>
+    //!\endcond
+    {
+        return !operator==(rhs);
+    }
+    //!\}
 
     //!\privatesection
     //!\brief The data member.
@@ -387,14 +479,36 @@ public:
 protected:
     //!\privatesection
 
+    /*!\brief Implementation function for convert_to() and convert_unsafely_to().
+     * \tparam index  Index of the alternative to convert to.
+     * \tparam throws Whether to perform checks (and throw) or not.
+     */
+    template <size_t index, bool throws>
+    constexpr auto convert_impl() const noexcept(!throws) -> meta::at_c<alternatives, index>
+    {
+        static_assert(index < value_size, "The union_composition contains less alternatives than you are checking.");
+        using alternative_t = meta::at_c<alternatives, index>;
+
+        if constexpr (throws)
+        {
+            if (!is_alternative<index>()) // [[unlikely]]
+            {
+                throw std::bad_variant_access{};
+            }
+        }
+
+        using seqan3::assign_rank;
+        return assign_rank(alternative_t{}, to_rank() - partial_sum_sizes[index]);
+    }
+
     /*!\brief Compile-time generated lookup table which contains the partial
-     * sum up to the position of each component.
+     * sum up to the position of each alternative.
      *
      * An array which contains the prefix sum over all
-     * component_types::value_size's.
+     * alternative_types::value_size's.
      *
      * ```cpp
-     * constexpr std::array partial_sum = union_composition<dna4, gap, dna5>::partial_sum_sizes; // not working; is protected
+     * constexpr std::array partial_sum = union_composition<dna5, gap, dna5>::partial_sum_sizes; // not working; is protected
      * assert(partial_sum.size() == 4);
      * assert(partial_sum[0] == 0);
      * assert(partial_sum[1] == 4);
@@ -404,9 +518,9 @@ protected:
      */
     static constexpr std::array partial_sum_sizes = []() constexpr
     {
-        constexpr size_t N = sizeof...(component_types) + 1;
+        constexpr size_t N = sizeof...(alternative_types) + 1;
 
-        std::array<rank_type, N> partial_sum{0, alphabet_size_v<component_types>...};
+        std::array<rank_type, N> partial_sum{0, alphabet_size_v<alternative_types>...};
         for (size_t i = 1u; i < N; ++i)
             partial_sum[i] += partial_sum[i-1];
 
@@ -416,11 +530,11 @@ protected:
     /*!\brief Compile-time generated lookup table which maps the rank to char.
      *
      * A map generated at compile time where the key is the rank of the union
-     * of all components and the value is the corresponding char of that rank
-     * and component.
+     * of all alternatives and the value is the corresponding char of that rank
+     * and alternative.
      *
      * ```cpp
-     * constexpr std::array value_to_char = union_composition<char, dna4, gap, dna5>::value_to_char; // not working; is protected
+     * constexpr std::array value_to_char = union_composition<char, dna5, gap, dna5>::value_to_char; // not working; is protected
      * assert(value_to_char.size() == 10);
      * assert(value_to_char[0] == 'A');
      * assert(value_to_char[1] == 'C');
@@ -437,16 +551,16 @@ protected:
         // Explicitly writing assign_rank_to_char within assign_value_to_char
         // causes this bug (g++-7 and g++-8):
         // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84684
-        auto assign_rank_to_char = [](auto component, size_t rank) constexpr
+        auto assign_rank_to_char = [](auto alternative, size_t rank) constexpr
         {
-            return seqan3::to_char(seqan3::assign_rank(component, rank));
+            return seqan3::to_char(seqan3::assign_rank(alternative, rank));
         };
 
-        auto assign_value_to_char = [assign_rank_to_char] (auto component, auto & value_to_char, auto & value) constexpr
+        auto assign_value_to_char = [assign_rank_to_char] (auto alternative, auto & value_to_char, auto & value) constexpr
         {
-            using component_t = std::decay_t<decltype(component)>;
-            for (size_t i = 0u; i < alphabet_size_v<component_t>; ++i, ++value)
-                value_to_char[value] = assign_rank_to_char(component, i);
+            using alternative_t = std::decay_t<decltype(alternative)>;
+            for (size_t i = 0u; i < alphabet_size_v<alternative_t>; ++i, ++value)
+                value_to_char[value] = assign_rank_to_char(alternative, i);
         };
 
         unsigned value = 0u;
@@ -454,9 +568,9 @@ protected:
 
         // initializer lists guarantee sequencing;
         // the following expression behaves as:
-        // for(auto component: component_types)
-        //    assign_value_to_char(component, value_to_char, value);
-        ((assign_value_to_char(component_types{}, value_to_char, value)),...);
+        // for(auto alternative: alternative_types)
+        //    assign_value_to_char(alternative, value_to_char, value);
+        ((assign_value_to_char(alternative_types{}, value_to_char, value)),...);
 
         return value_to_char;
     }();
@@ -464,11 +578,11 @@ protected:
     /*!\brief Compile-time generated lookup table which maps the char to rank.
      *
      * An map generated at compile time where the key is the char of one of the
-     * components and the value is the corresponding rank over all components (by
+     * alternatives and the value is the corresponding rank over all alternatives (by
      * conflict will default to the first).
      *
      * ```cpp
-     * constexpr std::array char_to_value = char_to_value_table<char, dna4, gap, dna5>();
+     * constexpr std::array char_to_value = char_to_value_table<char, dna5, gap, dna5>();
      * assert(char_to_value.size() == 256);
      * assert(char_to_value['A'] == 0);
      * assert(char_to_value['C'] == 1);
@@ -499,54 +613,55 @@ protected:
         return char_to_value;
     }();
 
-    //!\brief Converts an object of one of the given components into the internal representation.
-    //!\tparam index The position of `component_t` in the template pack `component_types`.
-    //!\tparam component_t One of the base component types.
-    //!\param component The value of a base component that should be assigned.
-    template <size_t index, typename component_t>
+    //!\brief Converts an object of one of the given alternatives into the internal representation.
+    //!\tparam index The position of `alternative_t` in the template pack `alternative_types`.
+    //!\tparam alternative_t One of the alternative types.
+    //!\param alternative The value of a alternative.
+    template <size_t index, typename alternative_t>
     //!\cond
-        requires has_alternative<component_t>()
+        requires holds_alternative<alternative_t>()
     //!\endcond
-    static constexpr rank_type rank_by_index_(component_t const & component) noexcept
+    static constexpr rank_type rank_by_index_(alternative_t const & alternative) noexcept
     {
-        return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(component));
+        return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(alternative));
     }
 
-    //!\brief Converts an object of one of the given components into the internal representation.
-    //!\details Finds the index of component_t in the given types.
-    //!\tparam component_t One of the base component types.
-    //!\param component The value of a base component that should be assigned.
-    template <typename component_t>
+    //!\brief Converts an object of one of the given alternatives into the internal representation.
+    //!\details Finds the index of alternative_t in the given types.
+    //!\tparam alternative_t One of the alternative types.
+    //!\param alternative The value of a alternative.
+    template <typename alternative_t>
     //!\cond
-        requires has_alternative<component_t>()
+        requires holds_alternative<alternative_t>()
     //!\endcond
-    static constexpr rank_type rank_by_type_(component_t const & component) noexcept
+    static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
     {
-        constexpr size_t index = meta::find_index<components, component_t>::value;
-        return rank_by_index_<index>(component);
+        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        return rank_by_index_<index>(alternative);
     }
 };
 
-//!\name Conversion equality comparison operators
-//!\{
-/*!\brief This enables the comparison of the union_composition with a
- * component type. Note that the member comparison operators exist through
- * implicit conversion.
- * We intentionally do not overload the comparison
- * of <,<=,>,>= of a union composition with their component component type,
- * because a definition of such is not trivial and depends on the components
- * (e.g. how to define union_composition<dna4,dna5>{dna4::T} < dna5::A?).
+/*!\name Comparison operators
+ * \relates union_composition
+ * \brief Free function (in-)equality comparison operators that forward to member operators (for types != self).
+ *\{
  */
-template <typename component_t, typename ...component_types>
-    requires (implicitly_convertible_to_concept<component_t, component_types> || ...)
-constexpr bool operator==(component_t const & lhs, union_composition<component_types...> const & rhs) noexcept
+template <typename lhs_t, typename ...alternative_types>
+constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
+//!\cond
+    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
+             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+//!\endcond
 {
     return rhs == lhs;
 }
 
-template <typename component_t, typename ...component_types>
-    requires (implicitly_convertible_to_concept<component_t, component_types> || ...)
-constexpr bool operator!=(component_t const & lhs, union_composition<component_types...> const & rhs) noexcept
+template <typename lhs_t, typename ...alternative_types>
+constexpr bool operator!=(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
+//!\cond
+    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
+             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+//!\endcond
 {
     return rhs != lhs;
 }

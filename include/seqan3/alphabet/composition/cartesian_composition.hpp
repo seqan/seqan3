@@ -53,25 +53,31 @@
 namespace seqan3
 {
 
-/*!\brief The CRTP base of alphabets that contain multiple (different) letters at one position.
+/*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composition
  * \implements seqan3::semi_alphabet_concept
  * \tparam first_component_type Type of the first letter; must model seqan3::semi_alphabet_concept.
  * \tparam component_types      Types of further letters (up to 4); must model seqan3::semi_alphabet_concept.
  *
  * This data structure is CRTP base class for combined alphabets, where the different
- * alphabet letters exist independently, similar to a tuple. In fact this class
- * provides a tuple-like interface with `get<0>(t)` and objects can be brace-initialized
- * with the individual members.
+ * alphabet letters exist independently as components, similar to a tuple.
+ *
+ * Short description:
+ *   * combines multiple alphabets as independent components, similar to a tuple;
+ *   * models seqan3::tuple_like_concept, i.e. provides a std::get interface to its components;
+ *   * is itself a seqan3::semi_alphabet_concept, but most derived types implement the full seqan3::alphabet_concept;
+ *   * its alphabet size is the product of the individual sizes;
+ *   * constructible, assignable and comparable with each component type and also all types that
+ *     these are constructible/assignable/comparable with;
+ *   * explicitly convertible to each of its component types
  *
  * \attention
  * This is a "pure base class", you cannot instantiate it, you can only inherit from it.
- * Most likely you are interested in using one of it's descendants like quality_composition.
+ * Most likely you are interested in using one of it's descendants like seqan3::qualified or seqan3::masked.
  * \cond DEV
  * To make a derived class "complete", you should add at least the following:
  *   * .to_char() member
  *   * .assign_char() member
- *   * .operator=() members for all element types
  *   * a type deduction guide
  * \endcond
  *
@@ -177,6 +183,10 @@ private:
     constexpr cartesian_composition & operator=(cartesian_composition &&) = default;
     ~cartesian_composition() = default;
     //!\}
+
+    //!\brief befriend the derived type so that it can instantiate
+    //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
+    friend derived_type;
 
 public:
     //!\brief The type of value_size and `alphabet_size_v<cartesian_composition<...>>`
@@ -362,10 +372,6 @@ public:
     }
     //!\}
 
-    //!\brief befriend the derived type so that it can instantiate
-    //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
-    friend derived_type;
-
     // Inherit default comparators explicitly from base class
     using base_t::operator==;
     using base_t::operator!=;
@@ -374,14 +380,8 @@ public:
     using base_t::operator<=;
     using base_t::operator>=;
 
-    /*!\name Member comparison operators with one of its component type or subtype.
-     * \brief This enables the comparison of a cartesian composition value against
-     * a value of the inner **alphabet type** while ignoring the other values.
-     * The operators delegate to the comparison operators of the alphabet type
-     * by retrieving the comparable element via `std::get<component_type>`.
-     * It either takes a type that is itself a component type contained the
-     * cartesian composition, or a subtype that is comparable to one of the
-     * component types.
+    /*!\name Comparison operators (against components)
+     * \brief `*this` is cast to the component type before comparison.
      * \{
      */
     template <typename component_type>
@@ -437,50 +437,68 @@ public:
     {
         return std::get<component_type>(*this) >= rhs;
     }
+    //!\}
 
+    /*!\name Comparison operators (against indirect components)
+     * \brief `*this` is cast to the component type before comparison. (These overloads enable comparison for all types
+     *        that a component type is comparable with).
+     * \{
+     */
     template <typename indirect_component_type>
-        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
     constexpr bool operator==(indirect_component_type const rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
+    //!\endcond
     {
         using component_type = meta::front<meta::find_if<components, weakly_equality_comparable_with<indirect_component_type>>>;
         return get<component_type>(*this) == rhs;
     }
 
     template <typename indirect_component_type>
-        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
     constexpr bool operator!=(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
+    //!\endcond
     {
         using component_type = meta::front<meta::find_if<components, weakly_equality_comparable_with<indirect_component_type>>>;
         return get<component_type>(*this) != rhs;
     }
 
     template <typename indirect_component_type>
-        requires one_component_is<weakly_ordered_with, indirect_component_type>
     constexpr bool operator<(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
     {
         using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
         return get<component_type>(*this) < rhs;
     }
 
     template <typename indirect_component_type>
-        requires one_component_is<weakly_ordered_with, indirect_component_type>
     constexpr bool operator>(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
     {
         using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
         return get<component_type>(*this) > rhs;
     }
 
     template <typename indirect_component_type>
-        requires one_component_is<weakly_ordered_with, indirect_component_type>
     constexpr bool operator<=(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
     {
         using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
         return get<component_type>(*this) <= rhs;
     }
 
     template <typename indirect_component_type>
-        requires one_component_is<weakly_ordered_with, indirect_component_type>
     constexpr bool operator>=(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
     {
         using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
         return get<component_type>(*this) >= rhs;
@@ -549,15 +567,16 @@ private:
     }
 };
 
-/*!\name Friend comparison operators with one of its component alphabet types
+/*!\name Comparison operators
+ * \relates seqan3::cartesian_composition
  * \{
- * \brief Enables the comparison of a cartesian composition type on the right
- * hand side by delegating to the member function.
+ * \brief Free function comparison operators that forward to member operators (for types != self).
  */
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
-    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
-             (std::detail::WeaklyEqualityComparableWith<component_type, first_component_type> ||
-             (std::detail::WeaklyEqualityComparableWith<component_type, component_types> || ...))
+//!\cond
+    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_equality_comparable_by_members_with_concept<component_type, derived_type>
+//!\endcond
 constexpr bool operator==(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
 {
@@ -565,9 +584,10 @@ constexpr bool operator==(component_type const & lhs,
 }
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
-    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
-             (std::detail::WeaklyEqualityComparableWith<component_type, first_component_type> ||
-             (std::detail::WeaklyEqualityComparableWith<component_type, component_types> || ...))
+//!\cond
+    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_equality_comparable_by_members_with_concept<component_type, derived_type>
+//!\endcond
 constexpr bool operator!=(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
 {
@@ -575,9 +595,10 @@ constexpr bool operator!=(component_type const & lhs,
 }
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
-    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
-             (weakly_ordered_with_concept<component_type, first_component_type> ||
-             (weakly_ordered_with_concept<component_type, component_types> || ...))
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
 constexpr bool operator<(component_type const & lhs,
                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
 {
@@ -585,9 +606,10 @@ constexpr bool operator<(component_type const & lhs,
 }
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
-    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
-             (weakly_ordered_with_concept<component_type, first_component_type> ||
-             (weakly_ordered_with_concept<component_type, component_types> || ...))
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
 constexpr bool operator>(component_type const & lhs,
                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
 {
@@ -595,9 +617,10 @@ constexpr bool operator>(component_type const & lhs,
 }
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
-    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
-             (weakly_ordered_with_concept<component_type, first_component_type> ||
-             (weakly_ordered_with_concept<component_type, component_types> || ...))
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
 constexpr bool operator<=(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
 {
@@ -605,9 +628,10 @@ constexpr bool operator<=(component_type const & lhs,
 }
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
-    requires !std::Same<component_type, cartesian_composition<derived_type, first_component_type, component_types...>> &&
-             (weakly_ordered_with_concept<component_type, first_component_type> ||
-             (weakly_ordered_with_concept<component_type, component_types> || ...))
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
 constexpr bool operator>=(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
 {

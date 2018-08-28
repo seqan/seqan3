@@ -285,7 +285,7 @@ TEST(composition_constexpr, custom_assignment)
     [[maybe_unused]] constexpr bool foo = do_assignment();
 }
 
-TEST(composition, custom_ccomparison)
+TEST(composition, custom_comparison)
 {
     qualified<dna4, phred42> t11{dna4::C, phred42{3}};
     EXPECT_EQ(t11, dna4::C);
@@ -347,30 +347,16 @@ TEST(composition, custom_ccomparison)
     EXPECT_NE(gap::GAP,   t61);
     EXPECT_NE(phred42{0}, t61);
 
-    // TODO Comparisons that should work but currently do not
-    // ======================================================
+    EXPECT_EQ(t41, dna4::C);
+    EXPECT_EQ(t41, rna4::C);
+    EXPECT_EQ(t41, phred42{3});
+    EXPECT_EQ(t41, (qualified<dna4, phred42>{dna4::C, phred42{3}}));
 
-    // Consider t41 with type gapped<qualified<dna4, phred42>>
-    // -------------------------------------------------------
-    // the following builds but does not compare correctly because
-    // the union composition does not delegate to the operator of
-    // the underlying type but implicitly casts the value with
-    // results in a different rank.
-    //
-    // EXPECT_EQ(t41, dna4::C);
-    // EXPECT_EQ(t41, rna4::C);
-    // EXPECT_EQ(t41, phred42{3});
-    // EXPECT_EQ(t41, (qualified<dna4, phred42>{dna4::C, phred42{3}}));
+    EXPECT_EQ(dna4::C,                                         t41);
+    EXPECT_EQ(rna4::C,                                         t41);
+    EXPECT_EQ(phred42{3},                                      t41);
+    EXPECT_EQ((qualified<dna4, phred42>{dna4::C, phred42{3}}), t41);
 
-    // EXPECT_EQ(dna4::C,                                         t41);
-    // EXPECT_EQ(rna4::C,                                         t41);
-    // EXPECT_EQ(phred42{3},                                      t41);
-    // EXPECT_EQ((qualified<dna4, phred42>{dna4::C, phred42{3}}), t41);
-
-    // Consider t51 with type qualified<qualified<gapped<dna4>, phred42>, phred42>
-    // -----------------------------------------------------------
-    // The following does not compile because of ambiguous operators.
-    //
-    // EXPECT_EQ(t51, (qualified<gapped<dna4>, phred42>{dna4::C, phred42{3}}));
-    // EXPECT_EQ((qualified<dna4, phred42>{dna4::C, phred42{3}}), t51);
+    EXPECT_EQ(t51, (qualified<gapped<dna4>, phred42>{dna4::C, phred42{3}}));
+    EXPECT_EQ((qualified<dna4, phred42>{dna4::C, phred42{3}}), t51);
 }
