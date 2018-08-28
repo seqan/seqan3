@@ -8,16 +8,16 @@ int main()
 
 {
 //! [assign_char]
-auto l = assign_char(dna5{}, 'G');  // l is of type dna5
+auto my_letter = assign_char(dna5{}, 'G');  // my_letter is of type dna5 and == dna5::G
 //! [assign_char]
-(void) l;
+(void) my_letter;
 }
 
 {
 //! [assign_rank]
-auto l = assign_rank(dna5{}, 1);  // l is of type dna5 and == dna5::C
+auto my_letter = assign_rank(dna5{}, 1);  // my_letter is of type dna5 and == dna5::C
 //! [assign_rank]
-(void) l;
+(void) my_letter;
 }
 
 }

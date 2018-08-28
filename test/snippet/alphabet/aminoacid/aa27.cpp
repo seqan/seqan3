@@ -13,7 +13,7 @@ aa27 my_letter{aa27::A};
 
 my_letter.assign_char('C'); // <- this does!
 
-my_letter.assign_char('?'); // converted to X internally
+my_letter.assign_char('?'); // all unknown characters are converted to aa27::X implicitly
 if (my_letter.to_char() == 'X')
     std::cout << "yeah\n"; // "yeah";
 //! [construction]

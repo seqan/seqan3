@@ -13,7 +13,7 @@ aa20 my_letter{aa20::A};
 
 my_letter.assign_char('C'); // <- this does!
 
-my_letter.assign_char('?'); // converted to A internally
+my_letter.assign_char('?'); // all unknown characters are converted to aa20::A implicitly
 
 if (my_letter.to_char() == 'A')
     std::cout << "yeah\n"; // "yeah";

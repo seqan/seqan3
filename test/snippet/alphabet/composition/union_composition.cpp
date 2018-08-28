@@ -18,7 +18,7 @@ union_composition<dna4, gap> converted_letter{dna4::C};
 union_composition<dna4, gap>{}.assign_char('C'); // <- this does!
 union_composition<dna4, gap>{}.assign_char('-'); // gap character
 union_composition<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
-                                           // character of the first alphabet type (i.e. A of dna4)
+                                                 // character of the first alphabet type (i.e. A of dna4)
 if (my_letter.to_char() == 'A')
 std::cout << "yeah\n"; // "yeah";
 //! [variant]
@@ -28,13 +28,13 @@ std::cout << "yeah\n"; // "yeah";
 //! [construct base]
 using alphabet_t = union_composition<dna4, dna5, gap>;
 
-constexpr alphabet_t letter0{dna4::A};
-constexpr alphabet_t letter1 = dna4::C;
+constexpr alphabet_t letter0{gap::GAP};
+constexpr alphabet_t letter1 = dna5::C;
 constexpr alphabet_t letter2 = {dna4::G};
 constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
 
-assert(letter0.to_rank() == 0);
-assert(letter1.to_rank() == 1);
+assert(letter0.to_rank() == 9);
+assert(letter1.to_rank() == 5);
 assert(letter2.to_rank() == 2);
 assert(letter3.to_rank() == 3);
 //! [construct base]
@@ -105,52 +105,6 @@ union_composition<dna4, gap> letter1{rna4::C};
 union_composition<dna4, gap> letter1{};
 letter1 = rna4::C;
 //! [subtype_construction]
-}
-
-{
-// TODO: Make the partial_sum_sizes accessible.
-//! [partial_sum]
-// constexpr std::array partial_sum = union_composition<dna4, gap, dna5>::partial_sum_sizes; // not working; is protected
-// assert(partial_sum.size() == 4);
-// assert(partial_sum[0] == 0);
-// assert(partial_sum[1] == 4);
-// assert(partial_sum[2] == 5);
-// assert(partial_sum[3] == 10);
-//! [partial_sum]
-}
-
-{
-// TODO: Make the value_to_char accessible.
-//![value_to_char]
-// constexpr std::array value_to_char = union_composition<char, dna4, gap, dna5>::value_to_char; // not working; is protected
-// assert(value_to_char.size() == 10);
-// assert(value_to_char[0] == 'A');
-// assert(value_to_char[1] == 'C');
-// assert(value_to_char[2] == 'G');
-// assert(value_to_char[3] == 'T');
-// assert(value_to_char[4] == '-');
-// assert(value_to_char[5] == 'A');
-// assert(value_to_char[6] == 'C');
-//! [value_to_char]
-}
-
-{
-// TODO: Make the char_to_value accessible.
-//! [char_to_value]
-// constexpr std::array char_to_value = union_composition<char, dna4, gap, dna5>::char_to_value;
-// assert(char_to_value.size() == 256);
-// assert(char_to_value['A'] == 0);
-// assert(char_to_value['C'] == 1);
-// assert(char_to_value['G'] == 2);
-// assert(char_to_value['T'] == 3);
-// assert(char_to_value['-'] == 4);
-// assert(char_to_value['A'] == 0);
-// assert(char_to_value['C'] == 1);
-// assert(char_to_value['G'] == 2);
-// assert(char_to_value['T'] == 3);
-// assert(char_to_value['N'] == 9);
-// assert(char_to_value['*'] == 0); // every other character defaults to 0
-//! [char_to_value]
 }
 
 }

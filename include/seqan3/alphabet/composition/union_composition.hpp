@@ -499,7 +499,6 @@ protected:
      * An array which contains the prefix sum over all
      * alternative_types::value_size's.
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp partial_sum
      */
     static constexpr std::array partial_sum_sizes = []() constexpr
     {
@@ -518,7 +517,6 @@ protected:
      * of all alternatives and the value is the corresponding char of that rank
      * and alternative.
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp value_to_char
      */
     static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
     {
@@ -555,7 +553,6 @@ protected:
      * alternatives and the value is the corresponding rank over all alternatives (by
      * conflict will default to the first).
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp char_to_value
      */
     static constexpr std::array char_to_value = []() constexpr
     {

@@ -14,6 +14,5 @@ another_mask.assign_rank(0); // will also assign another_mask the value mask::UN
 
 if (my_mask.to_rank() == another_mask.to_rank())
     std::cout << "Both are UNMASKED!\n";
-
 //! [general]
 }
