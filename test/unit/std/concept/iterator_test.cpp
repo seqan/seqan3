@@ -36,69 +36,67 @@
 
 #include "auxiliary_iterator.hpp"
 
-using namespace seqan3;
-
-TEST(readable_concept, basic)
+TEST(iterator_concepts, Readable)
 {
-    EXPECT_TRUE((readable_concept<input_iterator>));
-    EXPECT_TRUE((!readable_concept<output_iterator>));
-    EXPECT_TRUE((readable_concept<forward_iterator>));
-    EXPECT_TRUE((readable_concept<bidirectional_iterator>));
-    EXPECT_TRUE((readable_concept<random_access_iterator>));
-    EXPECT_TRUE((readable_concept<forward_iterator_const>));
-    EXPECT_TRUE((readable_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((readable_concept<random_access_iterator_const>));
+    EXPECT_TRUE((std::Readable<input_iterator>));
+    EXPECT_TRUE((!std::Readable<output_iterator>));
+    EXPECT_TRUE((std::Readable<forward_iterator>));
+    EXPECT_TRUE((std::Readable<bidirectional_iterator>));
+    EXPECT_TRUE((std::Readable<random_access_iterator>));
+    EXPECT_TRUE((std::Readable<forward_iterator_const>));
+    EXPECT_TRUE((std::Readable<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::Readable<random_access_iterator_const>));
 }
 
-TEST(writable_concept, basic)
+TEST(iterator_concepts, Writable)
 {
-    EXPECT_TRUE((!writable_concept<input_iterator, char>));
-    EXPECT_TRUE((writable_concept<output_iterator, char>));
-    EXPECT_TRUE((writable_concept<forward_iterator, char>));
-    EXPECT_TRUE((!writable_concept<forward_iterator_const, char>));
-    EXPECT_TRUE((writable_concept<bidirectional_iterator, char>));
-    EXPECT_TRUE((!writable_concept<bidirectional_iterator_const, char>));
-    EXPECT_TRUE((writable_concept<random_access_iterator, char>));
-    EXPECT_TRUE((!writable_concept<random_access_iterator_const, char>));
+    EXPECT_TRUE((!std::Writable<input_iterator, char>));
+    EXPECT_TRUE((std::Writable<output_iterator, char>));
+    EXPECT_TRUE((std::Writable<forward_iterator, char>));
+    EXPECT_TRUE((!std::Writable<forward_iterator_const, char>));
+    EXPECT_TRUE((std::Writable<bidirectional_iterator, char>));
+    EXPECT_TRUE((!std::Writable<bidirectional_iterator_const, char>));
+    EXPECT_TRUE((std::Writable<random_access_iterator, char>));
+    EXPECT_TRUE((!std::Writable<random_access_iterator_const, char>));
 }
 
-TEST(weakly_incrementable_concept, basic)
+TEST(iterator_concepts, WeaklyIncrementable)
 {
-    EXPECT_TRUE((weakly_incrementable_concept<input_iterator>));
-    EXPECT_TRUE((weakly_incrementable_concept<output_iterator>));
-    EXPECT_TRUE((weakly_incrementable_concept<forward_iterator>));
-    EXPECT_TRUE((weakly_incrementable_concept<forward_iterator_const>));
-    EXPECT_TRUE((weakly_incrementable_concept<bidirectional_iterator>));
-    EXPECT_TRUE((weakly_incrementable_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((weakly_incrementable_concept<random_access_iterator>));
-    EXPECT_TRUE((weakly_incrementable_concept<random_access_iterator_const>));
+    EXPECT_TRUE((std::WeaklyIncrementable<input_iterator>));
+    EXPECT_TRUE((std::WeaklyIncrementable<output_iterator>));
+    EXPECT_TRUE((std::WeaklyIncrementable<forward_iterator>));
+    EXPECT_TRUE((std::WeaklyIncrementable<forward_iterator_const>));
+    EXPECT_TRUE((std::WeaklyIncrementable<bidirectional_iterator>));
+    EXPECT_TRUE((std::WeaklyIncrementable<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::WeaklyIncrementable<random_access_iterator>));
+    EXPECT_TRUE((std::WeaklyIncrementable<random_access_iterator_const>));
 }
 
-TEST(incrementable_concept, basic)
+TEST(iterator_concepts, Incrementable)
 {
-    EXPECT_TRUE((incrementable_concept<input_iterator>));
-    EXPECT_TRUE((!incrementable_concept<output_iterator>));
-    EXPECT_TRUE((incrementable_concept<forward_iterator>));
-    EXPECT_TRUE((incrementable_concept<forward_iterator_const>));
-    EXPECT_TRUE((incrementable_concept<bidirectional_iterator>));
-    EXPECT_TRUE((incrementable_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((incrementable_concept<random_access_iterator>));
-    EXPECT_TRUE((incrementable_concept<random_access_iterator_const>));
+    EXPECT_TRUE((std::Incrementable<input_iterator>));
+    EXPECT_TRUE((!std::Incrementable<output_iterator>));
+    EXPECT_TRUE((std::Incrementable<forward_iterator>));
+    EXPECT_TRUE((std::Incrementable<forward_iterator_const>));
+    EXPECT_TRUE((std::Incrementable<bidirectional_iterator>));
+    EXPECT_TRUE((std::Incrementable<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::Incrementable<random_access_iterator>));
+    EXPECT_TRUE((std::Incrementable<random_access_iterator_const>));
 }
 
-TEST(iterator_concept, basic)
+TEST(iterator_concepts, Iterator)
 {
-    EXPECT_TRUE((iterator_concept<input_iterator>));
-    EXPECT_TRUE((iterator_concept<output_iterator>));
-    EXPECT_TRUE((iterator_concept<forward_iterator>));
-    EXPECT_TRUE((iterator_concept<forward_iterator_const>));
-    EXPECT_TRUE((iterator_concept<bidirectional_iterator>));
-    EXPECT_TRUE((iterator_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((iterator_concept<random_access_iterator>));
-    EXPECT_TRUE((iterator_concept<random_access_iterator_const>));
+    EXPECT_TRUE((std::Iterator<input_iterator>));
+    EXPECT_TRUE((std::Iterator<output_iterator>));
+    EXPECT_TRUE((std::Iterator<forward_iterator>));
+    EXPECT_TRUE((std::Iterator<forward_iterator_const>));
+    EXPECT_TRUE((std::Iterator<bidirectional_iterator>));
+    EXPECT_TRUE((std::Iterator<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::Iterator<random_access_iterator>));
+    EXPECT_TRUE((std::Iterator<random_access_iterator_const>));
 }
 
-TEST(std::Sentinel, basic)
+TEST(iterator_concepts, Sentinel)
 {
     EXPECT_TRUE((std::Sentinel<test_sentinel<char>,
                                           input_iterator>));
@@ -144,7 +142,7 @@ TEST(std::Sentinel, basic)
                                           random_access_iterator_const>));
 }
 
-TEST(std::SizedSentinel, basic)
+TEST(iterator_concepts, SizedSentinel)
 {
     EXPECT_TRUE((!std::SizedSentinel<test_sentinel<char>,
                                                  input_iterator>));
@@ -189,7 +187,7 @@ TEST(std::SizedSentinel, basic)
                                                 random_access_iterator_const>));
 }
 
-TEST(std::OutputIterator, basic)
+TEST(iterator_concepts, OutputIterator)
 {
     EXPECT_TRUE((!std::OutputIterator<input_iterator, char>));
     EXPECT_TRUE((std::OutputIterator<output_iterator, char>));
@@ -201,7 +199,7 @@ TEST(std::OutputIterator, basic)
     EXPECT_TRUE((!std::OutputIterator<random_access_iterator_const, char>));
 }
 
-TEST(std::InputIterator, basic)
+TEST(iterator_concepts, InputIterator)
 {
     EXPECT_TRUE((std::InputIterator<input_iterator>));
     EXPECT_TRUE((!std::InputIterator<output_iterator>));
@@ -213,7 +211,7 @@ TEST(std::InputIterator, basic)
     EXPECT_TRUE((std::InputIterator<random_access_iterator_const>));
 }
 
-TEST(std::ForwardIterator, basic)
+TEST(iterator_concepts, ForwardIterator)
 {
     EXPECT_TRUE((!std::ForwardIterator<input_iterator>));
     EXPECT_TRUE((!std::ForwardIterator<output_iterator>));
@@ -225,19 +223,19 @@ TEST(std::ForwardIterator, basic)
     EXPECT_TRUE((std::ForwardIterator<random_access_iterator_const>));
 }
 
-TEST(bidirectional_iterator_concept, basic)
+TEST(iterator_concepts, BidirectionalIterator)
 {
-    EXPECT_TRUE((!bidirectional_iterator_concept<input_iterator>));
-    EXPECT_TRUE((!bidirectional_iterator_concept<output_iterator>));
-    EXPECT_TRUE((!bidirectional_iterator_concept<forward_iterator>));
-    EXPECT_TRUE((!bidirectional_iterator_concept<forward_iterator_const>));
-    EXPECT_TRUE((bidirectional_iterator_concept<bidirectional_iterator>));
-    EXPECT_TRUE((bidirectional_iterator_concept<bidirectional_iterator_const>));
-    EXPECT_TRUE((bidirectional_iterator_concept<random_access_iterator>));
-    EXPECT_TRUE((bidirectional_iterator_concept<random_access_iterator_const>));
+    EXPECT_TRUE((!std::BidirectionalIterator<input_iterator>));
+    EXPECT_TRUE((!std::BidirectionalIterator<output_iterator>));
+    EXPECT_TRUE((!std::BidirectionalIterator<forward_iterator>));
+    EXPECT_TRUE((!std::BidirectionalIterator<forward_iterator_const>));
+    EXPECT_TRUE((std::BidirectionalIterator<bidirectional_iterator>));
+    EXPECT_TRUE((std::BidirectionalIterator<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::BidirectionalIterator<random_access_iterator>));
+    EXPECT_TRUE((std::BidirectionalIterator<random_access_iterator_const>));
 }
 
-TEST(std::RandomAccessIterator, basic)
+TEST(iterator_concepts, RandomAccessIterator)
 {
     EXPECT_TRUE((!std::RandomAccessIterator<input_iterator>));
     EXPECT_TRUE((!std::RandomAccessIterator<output_iterator>));

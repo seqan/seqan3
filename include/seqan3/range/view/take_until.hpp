@@ -407,7 +407,7 @@ namespace seqan3::view
  * | std::ranges::View               |                                       | *guaranteed*                                       |
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
- * | std::ranges::outputRange        |                                       | *preserved*                                        |
+ * | std::ranges::OutputRange        |                                       | *preserved*                                        |
  * | seqan3::const_iterable_concept  |                                       | depends on functor (see below)                     |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |

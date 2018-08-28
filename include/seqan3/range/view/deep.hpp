@@ -92,7 +92,7 @@ namespace seqan3::view
  * | std::ranges::View               |                                       | *guaranteed*                                       |
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
- * | std::ranges::outputRange        |                                       | *lost*                                             |
+ * | std::ranges::OutputRange        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             | std::ranges::InputRange           | std::ranges::InputRange + std::ranges::View |

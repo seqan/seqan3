@@ -40,10 +40,11 @@
 #pragma once
 
 #if __has_include(<ranges>) // C++20 ranges available
-#include <iterator>
+#include <ranges>
 #else // implement via range-v3
 
 #include <range/v3/range_concepts.hpp>
+
 #include <seqan3/core/platform.hpp>
 
 /*!\defgroup ranges ranges
@@ -151,7 +152,7 @@ concept bool ContiguousRange = RandomAccessRange<type> && (bool)::ranges::Contig
 //!\endcond
 
 /*!\interface std::ranges::View <>
- * \extends std::ranges::Semiregular
+ * \extends std::Semiregular
  * \extends std::ranges::ViewableRange
  * \brief Specifies the requirements of a Range type that has constant time copy, move and assignment operators.
  * \sa \ref view

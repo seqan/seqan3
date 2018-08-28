@@ -36,108 +36,91 @@
 
 #include <random>
 
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/std/iterator>
 
 #include "auxiliary.hpp"
 
 using namespace seqan3;
 
-TEST(std::Same, basic)
+TEST(core_language_concepts, Same)
 {
-    EXPECT_TRUE((std::Same<int, int, int>));
-    EXPECT_TRUE((!std::Same<int, char, int>));
+    EXPECT_TRUE((std::Same<int, int>));
+    EXPECT_TRUE((!std::Same<int, char>));
 }
 
-TEST(derived_from_conept, basic)
+TEST(core_language_concepts, DerivedFrom)
 {
-    EXPECT_TRUE((derived_from_conept<type_b,
-                                     type_a>));
-    EXPECT_TRUE((!derived_from_conept<type_a,
-                                      type_b>));
+    EXPECT_TRUE((std::DerivedFrom<type_b, type_a>));
+    EXPECT_TRUE((!std::DerivedFrom<type_a, type_b>));
 }
 
 TEST(implicitly_convertible_to_concept, basic)
 {
-    EXPECT_TRUE((implicitly_convertible_to_concept<type_b,
-                                                   type_c>));
-    EXPECT_TRUE((!implicitly_convertible_to_concept<type_c,
-                                                    type_b>));
-    EXPECT_TRUE((!implicitly_convertible_to_concept<type_a,
-                                                    type_c>));
+    EXPECT_TRUE((implicitly_convertible_to_concept<type_b, type_c>));
+    EXPECT_TRUE((!implicitly_convertible_to_concept<type_c, type_b>));
+    EXPECT_TRUE((!implicitly_convertible_to_concept<type_a, type_c>));
 }
 
 TEST(explicitly_convertible_to_concept, basic)
 {
-    EXPECT_TRUE((explicitly_convertible_to_concept<type_b,
-                                                   type_c>));
-    EXPECT_TRUE((!explicitly_convertible_to_concept<type_c,
-                                                    type_b>));
-    EXPECT_TRUE((explicitly_convertible_to_concept<type_a,
-                                                   type_c>));
+    EXPECT_TRUE((explicitly_convertible_to_concept<type_b, type_c>));
+    EXPECT_TRUE((!explicitly_convertible_to_concept<type_c, type_b>));
+    EXPECT_TRUE((explicitly_convertible_to_concept<type_a, type_c>));
 }
 
-TEST(convertible_to_concept, basic)
+TEST(core_language_concepts, ConvertibleTo)
 {
-    EXPECT_TRUE((convertible_to_concept<type_b,
-                                        type_c>));
-    EXPECT_TRUE((!convertible_to_concept<type_c,
-                                         type_b>));
-    EXPECT_TRUE((!convertible_to_concept<type_a,
-                                         type_c>));
+    EXPECT_TRUE((std::ConvertibleTo<type_b, type_c>));
+    EXPECT_TRUE((!std::ConvertibleTo<type_c, type_b>));
+    EXPECT_TRUE((!std::ConvertibleTo<type_a, type_c>));
 }
 
-TEST(common_reference_concept, basic)
+TEST(core_language_concepts, CommonReference)
 {
-    EXPECT_TRUE((common_reference_concept<int32_t, int16_t, int8_t>));
-    EXPECT_TRUE((!common_reference_concept<int32_t, int16_t, type_c>));
+    EXPECT_TRUE((std::CommonReference<int32_t, int16_t>));
+    EXPECT_TRUE((!std::CommonReference<int32_t, type_c>));
 }
 
-TEST(common_concept, basic)
+TEST(core_language_concepts, Common)
 {
-    EXPECT_TRUE((common_concept<type_a,
-                                type_b>));
-    EXPECT_TRUE((!common_reference_concept<type_a,
-                                           type_c>));
+    EXPECT_TRUE((std::Common<type_a, type_b>));
+    EXPECT_TRUE((!std::Common<type_a, type_c>));
 }
 
-TEST(integral_concept, basic)
+TEST(core_language_concepts, Integral)
 {
-    EXPECT_TRUE((integral_concept<int>));
-    EXPECT_TRUE((!integral_concept<float>));
+    EXPECT_TRUE((std::Integral<int>));
+    EXPECT_TRUE((!std::Integral<float>));
 }
 
-TEST(signed_integral_concept, basic)
+TEST(core_language_concepts, SignedIntegral)
 {
-    EXPECT_TRUE((signed_integral_concept<int>));
-    EXPECT_TRUE((!signed_integral_concept<unsigned>));
+    EXPECT_TRUE((std::SignedIntegral<int>));
+    EXPECT_TRUE((!std::SignedIntegral<unsigned>));
 }
 
-TEST(unsigned_integral_concept, basic)
+TEST(core_language_concepts, UnsignedIntegral)
 {
-    EXPECT_TRUE((!unsigned_integral_concept<int>));
-    EXPECT_TRUE((unsigned_integral_concept<unsigned>));
+    EXPECT_TRUE((!std::UnsignedIntegral<int>));
+    EXPECT_TRUE((std::UnsignedIntegral<unsigned>));
 }
 
-TEST(assignable_concept, basic)
+TEST(core_language_concepts, Assignable)
 {
-    EXPECT_TRUE((assignable_concept<type_a&,
-                                    type_a const &>));
-    EXPECT_TRUE((assignable_concept<type_c&,
-                                    type_b const &>));
-    EXPECT_TRUE((!assignable_concept<type_a&,
-                                     type_c&>));
+    EXPECT_TRUE((std::Assignable<type_a &, type_a const &>));
+    EXPECT_TRUE((std::Assignable<type_c &, type_b const &>));
+    EXPECT_TRUE((!std::Assignable<type_a &, type_c &>));
 }
 
-TEST(swappable_concept, basic)
+TEST(core_language_concepts, Swappable)
 {
-    EXPECT_TRUE((swappable_concept<type_a>));
-    EXPECT_TRUE((swappable_concept<type_b>));
+    EXPECT_TRUE((std::Swappable<type_a>));
+    EXPECT_TRUE((std::Swappable<type_b>));
 }
 
-TEST(swappable_with_concept, basic)
+TEST(core_language_concepts, SwappableWith)
 {
-    EXPECT_TRUE((swappable_with_concept<type_a&,
-                                        type_a&>));
-    EXPECT_TRUE((!swappable_with_concept<type_b,
-                                         type_c>));
+    EXPECT_TRUE((std::SwappableWith<type_a &, type_a &>));
+    EXPECT_TRUE((!std::SwappableWith<type_b, type_c>));
 }

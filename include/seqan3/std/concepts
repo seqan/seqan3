@@ -401,7 +401,7 @@ concept bool EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
 /*!\interface   std::EqualityComparableWith <>
  * \extends     std::detail::WeaklyEqualityComparableWith
  * \brief       Requires std::detail::WeaklyEqualityComparableWitht<t1,t2>, but also that t1 and t2, as well as
- *              their common_reference_t satisfy std::Equality_comparable.
+ *              their common_reference_t satisfy std::EqualityComparable.
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \sa          http://en.cppreference.com/w/cpp/concepts/EqualityComparable
@@ -418,8 +418,8 @@ concept bool EqualityComparableWith =
 //!\endcond
 
 /*!\interface   std::StrictTotallyOrdered
- * \extends     std::Equality_comparable
- * \brief       Requires weak order and std::Equality_comparable.
+ * \extends     std::EqualityComparable
+ * \brief       Requires std::EqualityComparable and all remaing comparison operators (`<`, `<=`, `>`, `>=`).
  * \sa          http://en.cppreference.com/w/cpp/concepts/StrictTotallyOrdered
  */
 /*!\name Requirements for std::StrictTotallyOrdered
@@ -466,7 +466,7 @@ concept bool StrictTotallyOrdered =
 
 /*!\interface   std::StrictTotallyOrderedWith
  * \extends     std::EqualityComparableWith
- * \brief       Requires std::Weakly_ordered bool and std::Equality_comparable.
+ * \brief       Requires std::EqualityComparable and all remaing comparison operators (`<`, `<=`, `>`, `>=`).
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \sa          http://en.cppreference.com/w/cpp/concepts/StrictTotallyOrdered
@@ -499,7 +499,7 @@ concept bool StrictTotallyOrderedWith =
 // ============================================================================
 
 /*!\interface   std::Copyable
- * \brief       Subsumes std::Movable, std::Copy_constructible, and
+ * \brief       Subsumes std::Movable, std::CopyConstructible, and
  *              requires that the type be std::Assignable bool from a `const &` of itself.
  * \extends     std::Movable
  * \extends     std::CopyConstructible
@@ -522,7 +522,7 @@ concept bool Semiregular = Copyable<T> && DefaultConstructible<T>;
 //!\endcond
 
 /*!\interface   std::Regular
- * \brief       Subsumes std::Semi_regular bool and std::Equality_comparable.
+ * \brief       Subsumes std::Semiregular and std::EqualityComparable.
  * \extends     std::Semiregular
  * \extends     std::EqualityComparable
  * \sa          http://en.cppreference.com/w/cpp/concepts/Regular
