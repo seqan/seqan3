@@ -86,7 +86,7 @@ using output_value_types = ::testing::Types<std::tuple<ranges::ostream_iterator<
 
 TYPED_TEST_CASE(oiter_conversion_adaptor, output_value_types);
 
-TYPED_TEST(oiter_conversion_adaptor, concept)
+TYPED_TEST(oiter_conversion_adaptor, concept_check)
 {
     using adaptor_type = typename TestFixture::output_iterator_adaptor;
 

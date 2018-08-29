@@ -158,7 +158,7 @@ TYPED_TEST(aminoacid, stream_operator)
     }
 }
 
-TYPED_TEST(aminoacid, concept)
+TYPED_TEST(aminoacid, concept_check)
 {
     EXPECT_TRUE(aminoacid_concept<TypeParam>);
     EXPECT_TRUE(aminoacid_concept<TypeParam &>);

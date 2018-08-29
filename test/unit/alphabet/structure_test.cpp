@@ -157,7 +157,7 @@ TYPED_TEST(structure, to_char)
 // concepts
 // ------------------------------------------------------------------
 
-TYPED_TEST(structure, concept)
+TYPED_TEST(structure, concept_check)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
 }

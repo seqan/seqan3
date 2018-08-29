@@ -43,7 +43,7 @@ using namespace seqan3;
 
 /************** ALPHABET and QUALITY concept **********************/
 
-TEST(qualified, concept)
+TEST(qualified, concept_check)
 {
     // if the first template argument is a nucleotide, qualified models the nucleotide concept
     EXPECT_TRUE((nucleotide_concept<qualified<dna4, phred42>>));

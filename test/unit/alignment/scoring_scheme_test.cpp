@@ -135,7 +135,7 @@ TEST(aminoacid_scoring_scheme, template_argument_deduction)
 // generic test
 // ------------------------------------------------------------------
 
-TYPED_TEST(generic, concept)
+TYPED_TEST(generic, concept_check)
 {
     using alph_t = typename TestFixture::alph_t;
     EXPECT_TRUE((scoring_scheme_concept<TypeParam, alph_t>));

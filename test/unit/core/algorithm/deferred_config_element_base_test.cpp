@@ -61,7 +61,7 @@ struct bar : public detail::deferred_config_element_base<bar>
     int value{1};
 };
 
-TEST(deferred_config_element_base, concept)
+TEST(deferred_config_element_base, concept_check)
 {
     EXPECT_TRUE(detail::deferred_config_element_concept<bar>);
     EXPECT_FALSE(detail::deferred_config_element_concept<int>);
