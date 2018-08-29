@@ -42,3 +42,6 @@
  * \ingroup io
  * \todo write me!
  */
+
+#include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/stream/parse_condition.hpp>
