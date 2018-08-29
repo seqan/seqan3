@@ -10,7 +10,10 @@ using tl = type_list<int, char, double>;
 using t = detail::transfer_template_args_onto_t<tl, std::tuple>;
 // t is std::tuple<int, char, double>
 //! [usage]
+
+// suppresses the warning that the type t is unused
 [[maybe_unused]] t test;
+
 //! [usage_2]
 using my_type = std::vector<int>;
 

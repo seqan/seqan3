@@ -40,5 +40,6 @@ int main()
     // do something
     search(my_range, window_size{4}, error{2});
     // do something
+    return 0;
 }
 //! [new_usage]
