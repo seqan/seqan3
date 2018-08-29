@@ -78,7 +78,7 @@ class config_element_base;
 //!\}
 //!\cond
 template <typename config_t>
-concept bool config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
+concept config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
     { c.value }
@@ -112,7 +112,7 @@ class deferred_config_element_base;
  */
 //!\cond
 template <typename config_t>
-concept bool deferred_config_element_concept = config_element_concept<config_t> &&
+concept deferred_config_element_concept = config_element_concept<config_t> &&
     std::is_base_of_v<deferred_config_element_base<std::remove_reference_t<config_t>>,
                                                    std::remove_reference_t<config_t>>;
 //!\endcond

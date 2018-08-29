@@ -41,7 +41,7 @@
 using namespace seqan3;
 using namespace std::literals;
 
-TEST(ignore_output_iterator, concept)
+TEST(ignore_output_iterator, concept_check)
 {
     EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, char>));
     EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, int>));

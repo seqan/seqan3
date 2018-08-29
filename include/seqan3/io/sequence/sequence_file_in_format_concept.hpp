@@ -65,7 +65,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept bool sequence_file_in_format_concept = requires (t                                     & v,
+concept sequence_file_in_format_concept = requires (t                                     & v,
                                                          std::ifstream                         & f,
                                                          sequence_file_in_options<dna5, false> & options,
                                                          dna5_vector                           & seq,
@@ -149,6 +149,6 @@ constexpr bool is_type_list_of_sequence_file_in_formats_v<type_list<ts...>> =
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-concept bool type_list_of_sequence_file_in_formats_concept = is_type_list_of_sequence_file_in_formats_v<t>;
+concept type_list_of_sequence_file_in_formats_concept = is_type_list_of_sequence_file_in_formats_v<t>;
 
 } // namespace seqan3::detail

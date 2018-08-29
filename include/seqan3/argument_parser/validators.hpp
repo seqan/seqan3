@@ -62,7 +62,7 @@ namespace seqan3
  */
 //!\cond
 template <typename validator_type>
-concept bool validator_concept = std::Invocable<validator_type, typename validator_type::value_type> &&
+concept validator_concept = std::Invocable<validator_type, typename validator_type::value_type> &&
                                  requires(validator_type validator,
                                           typename validator_type::value_type value)
 {

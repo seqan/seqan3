@@ -48,7 +48,7 @@ struct bax
     float value{2.2};
 };
 
-TEST(configuration, concept)
+TEST(configuration, concept_check)
 {
     EXPECT_TRUE(detail::config_element_concept<bar>);
     EXPECT_FALSE(detail::config_element_concept<int>);

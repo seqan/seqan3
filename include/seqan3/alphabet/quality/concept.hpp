@@ -93,7 +93,7 @@ using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
  */
 template <typename alphabet_type>
 //!\cond
-    requires requires (alphabet_type v) { { v.assign_phred('c') } }
+    requires requires (alphabet_type v) { { v.assign_phred('c') }; }
 //!\endcond
 constexpr alphabet_type assign_phred(alphabet_type & chr, char const in)
 {
@@ -109,7 +109,7 @@ constexpr alphabet_type assign_phred(alphabet_type & chr, char const in)
  */
 template <typename alphabet_type>
 //!\cond
-    requires requires (alphabet_type v) { { v.to_phred() } }
+    requires requires (alphabet_type v) { { v.to_phred() }; }
 //!\endcond
 constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
 {
@@ -137,7 +137,7 @@ constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
  */
 //!\cond
 template<typename q>
-concept bool quality_concept = requires(q quality)
+concept quality_concept = requires(q quality)
 {
     requires alphabet_concept<q>;
 

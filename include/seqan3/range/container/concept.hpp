@@ -87,7 +87,7 @@ constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
  */
 //!\cond
 template <typename type>
-concept bool sequence_container_concept_modified_by_const_iterator = requires (type val, type val2)
+concept sequence_container_concept_modified_by_const_iterator = requires (type val, type val2)
 {
     { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
     { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
@@ -148,7 +148,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool container_concept = requires (type val, type val2, type const cval, typename type::iterator it)
+concept container_concept = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
@@ -213,7 +213,7 @@ concept bool container_concept = requires (type val, type val2, type const cval,
  */
 //!\cond
 template <typename type>
-concept bool sequence_container_concept = requires (type val, type val2, type const cval)
+concept sequence_container_concept = requires (type val, type val2, type const cval)
 {
     requires container_concept<type>;
 
@@ -277,7 +277,7 @@ concept bool sequence_container_concept = requires (type val, type val2, type co
  */
 //!\cond
 template <typename type>
-concept bool random_access_container_concept = requires (type val)
+concept random_access_container_concept = requires (type val)
 {
     requires sequence_container_concept<type>;
 
@@ -303,7 +303,7 @@ concept bool random_access_container_concept = requires (type val)
  */
 //!\cond
 template <typename type>
-concept bool reservable_container_concept = requires (type val)
+concept reservable_container_concept = requires (type val)
 {
     requires random_access_container_concept<type>;
 

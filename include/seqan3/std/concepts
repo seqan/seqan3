@@ -48,6 +48,8 @@
 
 #include <range/v3/utility/common_type.hpp>
 
+#include <seqan3/core/platform.hpp>
+
 /*!\defgroup std std
  * \brief A subset of the C++20 standard library, either aliased directly from the standard library or
  *        (if not available) implemented via the range-v3 library.
@@ -74,7 +76,7 @@ namespace std
  */
 //!\cond
 template <class T, class U>
-concept bool Same = std::is_same_v<T, U>;
+concept Same = std::is_same_v<T, U>;
 //!\endcond
 
 /*!\interface std::DerivedFrom <>
@@ -84,7 +86,7 @@ concept bool Same = std::is_same_v<T, U>;
  */
 //!\cond
 template <class Derived, class Base >
-concept bool DerivedFrom =
+concept DerivedFrom =
     std::is_base_of_v<Base, Derived> &&
     std::is_convertible_v<const volatile Derived*, const volatile Base*>;
 //!\endcond
@@ -97,7 +99,7 @@ concept bool DerivedFrom =
  */
 //!\cond
 template <class From, class To>
-concept bool ConvertibleTo =
+concept ConvertibleTo =
     std::is_convertible_v<From, To> &&
     requires(From (&f)())
     {
@@ -112,7 +114,7 @@ concept bool ConvertibleTo =
  */
 //!\cond
 template <class T, class U >
-concept bool CommonReference =
+concept CommonReference =
   Same<::ranges::common_reference_t<T, U>, ::ranges::common_reference_t<U, T>> &&
   ConvertibleTo<T, ::ranges::common_reference_t<T, U>> &&
   ConvertibleTo<U, ::ranges::common_reference_t<T, U>>;
@@ -125,7 +127,7 @@ concept bool CommonReference =
  */
 //!\cond
 template <class T, class U>
-concept bool Common =
+concept Common =
     Same<::ranges::common_type_t<T, U>, ::ranges::common_type_t<U, T>> &&
     ConvertibleTo<T, ::ranges::common_type_t<T, U>> &&
     ConvertibleTo<U, ::ranges::common_type_t<T, U>> &&
@@ -141,7 +143,7 @@ concept bool Common =
  */
 //!\cond
 template <class T>
-concept bool Integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
+concept Integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
 //!\endcond
 
 /*!\interface std::SignedIntegral
@@ -152,7 +154,7 @@ concept bool Integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
  */
 //!\cond
 template <class T>
-concept bool SignedIntegral = Integral<T> && std::is_signed_v<T>;
+concept SignedIntegral = Integral<T> && std::is_signed_v<T>;
 //!\endcond
 
 /*!\interface std::UnsignedIntegral
@@ -163,7 +165,7 @@ concept bool SignedIntegral = Integral<T> && std::is_signed_v<T>;
  */
 //!\cond
 template <class T>
-concept bool UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
+concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
 //!\endcond
 
 /*!\interface std::Assignable <>
@@ -178,12 +180,12 @@ concept bool UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
  * \returns     Reference to self.
  *
  * \details
- * \attention This is a concept bool requirement, not an actual function (however types satisfying this concept
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
  * will provide an implementation).
  */
 //!\cond
 template <class LHS, class RHS>
-concept bool Assignable =
+concept Assignable =
     std::is_lvalue_reference_v<LHS> &&
     CommonReference<std::remove_reference_t<LHS> const &, std::remove_reference_t<RHS> const&> &&
     requires(LHS lhs, RHS&& rhs)
@@ -210,7 +212,7 @@ concept bool Assignable =
 //!\}
 //!\cond
 template <class T>
-concept bool Swappable = std::is_swappable_v<T>;
+concept Swappable = std::is_swappable_v<T>;
 //!\endcond
 
 /*!\interface std::SwappableWith <>
@@ -220,7 +222,7 @@ concept bool Swappable = std::is_swappable_v<T>;
  */
 //!\cond
 template <class T, class U>
-concept bool SwappableWith =
+concept SwappableWith =
     std::is_swappable_with_v<T, T> &&
     std::is_swappable_with_v<U, U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -235,7 +237,7 @@ concept bool SwappableWith =
  */
 //!\cond
 template < class T >
-concept bool Destructible = std::is_nothrow_destructible_v<T>;
+concept Destructible = std::is_nothrow_destructible_v<T>;
 //!\endcond
 
 /*!\interface   std::Constructible <>
@@ -246,7 +248,7 @@ concept bool Destructible = std::is_nothrow_destructible_v<T>;
  */
 //!\cond
 template < class T, class... Args >
-concept bool Constructible = Destructible<T> && std::is_constructible_v<T, Args...>;
+concept Constructible = Destructible<T> && std::is_constructible_v<T, Args...>;
 //!\endcond
 
 /*!\interface   std::DefaultConstructible <>
@@ -257,7 +259,7 @@ concept bool Constructible = Destructible<T> && std::is_constructible_v<T, Args.
  */
 //!\cond
 template < class T >
-concept bool DefaultConstructible = Constructible<T>;
+concept DefaultConstructible = Constructible<T>;
 //!\endcond
 
 /*!\interface   std::MoveConstructible <>
@@ -270,7 +272,7 @@ concept bool DefaultConstructible = Constructible<T>;
  */
 //!\cond
 template< class T >
-concept bool MoveConstructible = Constructible<T, T> && ConvertibleTo<T, T>;
+concept MoveConstructible = Constructible<T, T> && ConvertibleTo<T, T>;
 //!\endcond
 
 /*!\interface   std::CopyConstructible <>
@@ -283,7 +285,7 @@ concept bool MoveConstructible = Constructible<T, T> && ConvertibleTo<T, T>;
  */
 //!\cond
 template <class T>
-concept bool CopyConstructible =
+concept CopyConstructible =
   MoveConstructible<T> &&
   Constructible<T, T&>       && ConvertibleTo<T&, T> &&
   Constructible<T, const T&> && ConvertibleTo<const T&, T> &&
@@ -305,7 +307,7 @@ concept bool CopyConstructible =
  */
 //!\cond
 template < class T >
-concept bool Movable = std::is_object_v<T> && MoveConstructible<T> && Assignable<T&, T> && Swappable<T>;
+concept Movable = std::is_object_v<T> && MoveConstructible<T> && Assignable<T&, T> && Swappable<T>;
 //!\endcond
 
 // ============================================================================
@@ -319,7 +321,7 @@ concept bool Movable = std::is_object_v<T> && MoveConstructible<T> && Assignable
  */
 //!\cond
 template <class B>
-concept bool Boolean =
+concept Boolean =
     Movable<::ranges::uncvref_t<B>> &&
     requires(std::remove_reference_t<B> const & b1,
              std::remove_reference_t<B> const & b2, bool const a)
@@ -354,7 +356,7 @@ namespace std::detail
  */
 //!\cond
 template <class T, class U>
-concept bool WeaklyEqualityComparableWith =
+concept WeaklyEqualityComparableWith =
     requires(std::remove_reference_t<T> const & t,
              std::remove_reference_t<U> const & u)
     {
@@ -385,7 +387,7 @@ namespace std
  * \returns     `true` or `false`, depending of the outcome of the comparison.
  *
  * \details
- * \attention This is a concept bool requirement, not an actual function (however types satisfying this concept
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
  * will provide an implementation).
  */
 /*!\fn      bool operator!=(type const & lhs, type const & rhs)
@@ -395,7 +397,7 @@ namespace std
 //!\}
 //!\cond
 template < class T >
-concept bool EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
+concept EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
 //!\endcond
 
 /*!\interface   std::EqualityComparableWith <>
@@ -408,7 +410,7 @@ concept bool EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
  */
 //!\cond
 template <class T, class U>
-concept bool EqualityComparableWith =
+concept EqualityComparableWith =
     EqualityComparable<T> &&
     EqualityComparable<U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -434,7 +436,7 @@ concept bool EqualityComparableWith =
  * \returns     `true` or `false`, depending of the outcome of the comparison.
  *
  * \details
- * \attention This is a concept bool requirement, not an actual function (however types satisfying this concept
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
  * will provide an implementation).
  */
 /*!\fn      bool operator<=(type const & lhs, type const & rhs)
@@ -452,7 +454,7 @@ concept bool EqualityComparableWith =
 //!\}
 //!\cond
 template <class T>
-concept bool StrictTotallyOrdered =
+concept StrictTotallyOrdered =
     EqualityComparable<T> &&
     requires(std::remove_reference_t<T> const & a,
              std::remove_reference_t<T> const & b)
@@ -473,7 +475,7 @@ concept bool StrictTotallyOrdered =
  */
 //!\cond
 template <class T, class U>
-concept bool StrictTotallyOrderedWith =
+concept StrictTotallyOrderedWith =
     StrictTotallyOrdered<T> &&
     StrictTotallyOrdered<U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -507,7 +509,7 @@ concept bool StrictTotallyOrderedWith =
  */
 //!\cond
 template <class T>
-concept bool Copyable = CopyConstructible<T> && Movable<T> && Assignable<T&, const T&>;
+concept Copyable = CopyConstructible<T> && Movable<T> && Assignable<T&, const T&>;
 //!\endcond
 
 /*!\interface   std::Semiregular
@@ -518,7 +520,7 @@ concept bool Copyable = CopyConstructible<T> && Movable<T> && Assignable<T&, con
  */
 //!\cond
 template <class T>
-concept bool Semiregular = Copyable<T> && DefaultConstructible<T>;
+concept Semiregular = Copyable<T> && DefaultConstructible<T>;
 //!\endcond
 
 /*!\interface   std::Regular
@@ -529,7 +531,7 @@ concept bool Semiregular = Copyable<T> && DefaultConstructible<T>;
  */
 //!\cond
 template <class T>
-concept bool Regular = Semiregular<T> && EqualityComparable<T>;
+concept Regular = Semiregular<T> && EqualityComparable<T>;
 //!\endcond
 
 // ============================================================================
@@ -542,7 +544,7 @@ concept bool Regular = Semiregular<T> && EqualityComparable<T>;
  */
 //!\cond
 template< class F, class... Args >
-concept bool Invocable =
+concept Invocable =
     requires(F&& f, Args&&... args)
     {
         std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -558,7 +560,7 @@ concept bool Invocable =
  */
 //!\cond
 template< class F, class... Args >
-concept bool RegularInvocable = Invocable<F, Args...>;
+concept RegularInvocable = Invocable<F, Args...>;
 //!\endcond
 
 /*!\interface   std::Predicate <>
@@ -568,7 +570,7 @@ concept bool RegularInvocable = Invocable<F, Args...>;
  */
 //!\cond
 template < class F, class... Args >
-concept bool Predicate = RegularInvocable<F, Args...> && Boolean<std::invoke_result_t<F, Args...>>;
+concept Predicate = RegularInvocable<F, Args...> && Boolean<std::invoke_result_t<F, Args...>>;
 //!\endcond
 
 /*!\interface   std::Relation <>
@@ -579,7 +581,7 @@ concept bool Predicate = RegularInvocable<F, Args...> && Boolean<std::invoke_res
  */
 //!\cond
 template <class R, class T, class U>
-concept bool Relation =
+concept Relation =
     Predicate<R, T, T> &&
     Predicate<R, U, U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -598,7 +600,7 @@ concept bool Relation =
  */
 //!\cond
 template < class R, class T, class U >
-concept bool StrictWeakOrder = Relation<R, T, U>;
+concept StrictWeakOrder = Relation<R, T, U>;
 //!\endcond
 //!\}
 

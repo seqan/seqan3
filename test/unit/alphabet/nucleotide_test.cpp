@@ -167,7 +167,7 @@ TYPED_TEST(nucleotide, stream_operator)
     EXPECT_EQ(ss.str(), "ACG");
 }
 
-TYPED_TEST(nucleotide, concept)
+TYPED_TEST(nucleotide, concept_check)
 {
     EXPECT_TRUE(nucleotide_concept<TypeParam>);
     EXPECT_TRUE(nucleotide_concept<TypeParam &>);

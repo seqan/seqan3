@@ -222,7 +222,7 @@ namespace seqan3
 //!\}
 //!\cond
 template<typename t>
-concept bool structure_file_input_traits_concept = requires(t v)
+concept structure_file_input_traits_concept = requires(t v)
 {
     // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
     // sequence

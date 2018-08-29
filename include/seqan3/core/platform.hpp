@@ -58,7 +58,11 @@
 
 // Concepts TS [required]
 #ifdef __cpp_concepts
-    static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
+#   if __cpp_concepts == 201507 // GCC and Concepts TS
+#       define concept concept bool
+#   else
+        static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
+#   endif
 #else
 #   error "SeqAn3 requires the Concepts TS, make sure that you have set -fconcepts (not all compilers support this)."
 #endif

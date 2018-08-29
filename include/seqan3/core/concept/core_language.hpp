@@ -59,7 +59,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename lhs_t, typename rhs_t>
-concept bool weakly_equality_comparable_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
+concept weakly_equality_comparable_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
 {
     lhs.operator==(rhs); std::Boolean<decltype(lhs.operator==(rhs))>;
     lhs.operator!=(rhs); std::Boolean<decltype(lhs.operator!=(rhs))>;
@@ -70,7 +70,7 @@ concept bool weakly_equality_comparable_by_members_with_concept = requires (lhs_
  */
 //!\cond
 template <typename lhs_t, typename rhs_t>
-concept bool weakly_ordered_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
+concept weakly_ordered_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
 {
     lhs.operator< (rhs); std::Boolean<decltype(lhs.operator< (rhs))>;
     lhs.operator> (rhs); std::Boolean<decltype(lhs.operator> (rhs))>;
@@ -97,7 +97,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t1, typename t2>
-concept bool weakly_ordered_with_concept = requires (std::remove_reference_t<t1> const & v1,
+concept weakly_ordered_with_concept = requires (std::remove_reference_t<t1> const & v1,
                                                      std::remove_reference_t<t2> const & v2)
 {
     { v1 <  v2 } -> bool &&;
@@ -112,7 +112,7 @@ concept bool weakly_ordered_with_concept = requires (std::remove_reference_t<t1>
  */
 //!\cond
 template <typename t, typename u>
-concept bool implicitly_convertible_to_concept = static_cast<bool>(ranges::ImplicitlyConvertibleTo<t, u>());
+concept implicitly_convertible_to_concept = static_cast<bool>(ranges::ImplicitlyConvertibleTo<t, u>());
 //!\endcond
 
 /*!\interface   seqan3::explicitly_convertible_to_concept <>
@@ -120,7 +120,7 @@ concept bool implicitly_convertible_to_concept = static_cast<bool>(ranges::Impli
  */
 //!\cond
 template <typename t, typename u>
-concept bool explicitly_convertible_to_concept = static_cast<bool>(ranges::ExplicitlyConvertibleTo<t, u>());
+concept explicitly_convertible_to_concept = static_cast<bool>(ranges::ExplicitlyConvertibleTo<t, u>());
 //!\endcond
 
 /*!\interface   seqan3::arithmetic_concept <>
@@ -129,7 +129,7 @@ concept bool explicitly_convertible_to_concept = static_cast<bool>(ranges::Expli
  */
 //!\cond
 template <typename t>
-concept bool arithmetic_concept = std::is_arithmetic_v<t>;
+concept arithmetic_concept = std::is_arithmetic_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::floating_point_concept <>
@@ -139,7 +139,7 @@ concept bool arithmetic_concept = std::is_arithmetic_v<t>;
  */
 //!\cond
 template <typename t>
-concept bool floating_point_concept = arithmetic_concept<t> && std::is_floating_point_v<t>;
+concept floating_point_concept = arithmetic_concept<t> && std::is_floating_point_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::trivially_destructible_concept <>
@@ -149,7 +149,7 @@ concept bool floating_point_concept = arithmetic_concept<t> && std::is_floating_
  */
 //!\cond
 template <typename t>
-concept bool trivially_destructible_concept = std::Destructible<t> && std::is_trivially_destructible_v<t>;
+concept trivially_destructible_concept = std::Destructible<t> && std::is_trivially_destructible_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::trivially_copyable_concept
@@ -159,7 +159,7 @@ concept bool trivially_destructible_concept = std::Destructible<t> && std::is_tr
  */
 //!\cond
 template <typename t>
-concept bool trivially_copyable_concept = std::Copyable<t> && std::is_trivially_copyable_v<t>;
+concept trivially_copyable_concept = std::Copyable<t> && std::is_trivially_copyable_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::trivial_concept
@@ -170,7 +170,7 @@ concept bool trivially_copyable_concept = std::Copyable<t> && std::is_trivially_
  */
 //!\cond
 template <typename t>
-concept bool trivial_concept = trivially_copyable_concept<t> && trivially_destructible_concept<t>;
+concept trivial_concept = trivially_copyable_concept<t> && trivially_destructible_concept<t>;
 //!\endcond
 
 /*!\interface   seqan3::standard_layout_concept
@@ -179,7 +179,7 @@ concept bool trivial_concept = trivially_copyable_concept<t> && trivially_destru
  */
 //!\cond
 template <typename t>
-concept bool standard_layout_concept = std::is_standard_layout_v<t>;
+concept standard_layout_concept = std::is_standard_layout_v<t>;
 //!\endcond
 
 }  // namespace seqan3

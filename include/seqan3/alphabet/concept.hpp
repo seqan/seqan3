@@ -89,7 +89,7 @@ namespace seqan3
 // in order to get rid of the remove_reference_t within the concept, after the ICE
 // get's fixed. See issue #228
 template <typename t>
-concept bool semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
+concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
                                      standard_layout_concept<std::remove_reference_t<t>> &&
                                      trivial_concept<std::remove_reference_t<t>> &&
                                      std::StrictTotallyOrdered<t> &&
@@ -139,7 +139,7 @@ concept bool semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
 // in order to get rid of the remove_reference_t within the concept, after the ICE
 // get's fixed. See issue #228
 template <typename t>
-concept bool alphabet_concept = requires (t t1, t t2)
+concept alphabet_concept = requires (t t1, t t2)
 {
     requires semi_alphabet_concept<t>;
 

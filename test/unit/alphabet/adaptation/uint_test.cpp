@@ -48,7 +48,7 @@ using uint_types = ::testing::Types<uint8_t, uint16_t, uint32_t>;
 
 TYPED_TEST_CASE(uint_adaptation, uint_types);
 
-TYPED_TEST(uint_adaptation, concept)
+TYPED_TEST(uint_adaptation, concept_check)
 {
     EXPECT_TRUE(uint_adaptation_concept<TypeParam>);
     // NOTE: Using intermediate concept notation with forwarding references cause the concept type

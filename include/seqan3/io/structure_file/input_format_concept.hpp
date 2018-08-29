@@ -65,7 +65,7 @@ namespace seqan3
  */
 //!\cond
 template<typename t>
-concept bool structure_file_input_format_concept = requires(t & v,
+concept structure_file_input_format_concept = requires(t & v,
                                                             std::ifstream & f,
                                                             structure_file_input_options<rna5, false> & options,
                                                             rna5_vector & seq,
@@ -186,6 +186,6 @@ constexpr bool is_type_list_of_structure_file_input_formats_v<type_list<ts...>>
  * \see seqan3::is_type_list_of_structure_file_formats_v
  */
 template<typename t>
-concept bool type_list_of_structure_file_input_formats_concept = is_type_list_of_structure_file_input_formats_v<t>;
+concept type_list_of_structure_file_input_formats_concept = is_type_list_of_structure_file_input_formats_v<t>;
 
 } // namespace seqan3::detail

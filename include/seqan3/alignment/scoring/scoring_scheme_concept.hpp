@@ -84,7 +84,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t, alphabet_concept alphabet_t, alphabet_concept alphabet2_t = alphabet_t>
-concept bool scoring_scheme_concept = requires (t scheme,
+concept scoring_scheme_concept = requires (t scheme,
                                                 alphabet_t const alph1,
                                                 alphabet2_t const alph2)
 {

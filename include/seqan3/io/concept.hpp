@@ -44,6 +44,8 @@
 
 #include <range/v3/utility/associated_types.hpp>
 
+#include <seqan3/core/platform.hpp>
+
 namespace seqan3
 {
 
@@ -60,7 +62,7 @@ namespace seqan3
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept bool ostream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
+concept ostream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
                                requires (stream_type & os, value_type & val)
 {
     typename stream_type::char_type;
@@ -127,7 +129,7 @@ concept bool ostream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept bool istream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
+concept istream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
                                requires (stream_type & os, value_type & val)
 {
     typename stream_type::char_type;
@@ -195,7 +197,7 @@ concept bool istream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept bool stream_concept = ostream_concept<stream_type, value_type> &&
+concept stream_concept = ostream_concept<stream_type, value_type> &&
                               istream_concept<stream_type, value_type>;
 //!\endcond
 

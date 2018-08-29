@@ -239,7 +239,7 @@ TYPED_TEST(alphabet, comparison_operators)
     }
 }
 
-TYPED_TEST(alphabet, concept)
+TYPED_TEST(alphabet, concept_check)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
 }
