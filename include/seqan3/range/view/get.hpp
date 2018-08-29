@@ -60,7 +60,6 @@ namespace seqan3::view
  *
  * ### View properties
  *
- *
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                          |
  * |---------------------------------|:-------------------------------------:|:-------------------------------------------------------:|
  * | std::ranges::InputRange         | *required*                            | *preserved*                                             |
