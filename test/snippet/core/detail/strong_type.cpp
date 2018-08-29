@@ -12,8 +12,8 @@ std::vector<dna4> my_range = "ACGTT"_dna4;
 
 namespace seqan3::detail
 {
-    template <std::ranges::ForwardRange fwd_rng_type>
-        bool do_find(fwd_rng_type &, int const, int const) { return true; }
+template <std::ranges::ForwardRange fwd_rng_type>
+    bool do_find(fwd_rng_type &, int const, int const) { return true; }
 }  // namespace seqan3::detail
 
 //! [usage]
@@ -29,6 +29,7 @@ int main()
     // do something
     search(my_range, 4, 2);
     // do something
+    return 0;
 }
 //! [usage]
 

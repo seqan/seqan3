@@ -16,6 +16,8 @@ std::cout << std::get<0>(t2) << '\n'; // 17
 
 auto [ i, f, l ] = t2; // creates an int i with value 17, float f...
 //! [usage]
+
+// suppresses the warning that the variables are unused
 (void) t;
 (void) i;
 (void) f;
