@@ -22,8 +22,12 @@ std::string vec{"foo"};
 auto v = vec | view::take_exactly(4);
 std::cout << v << '\n';                          // [f,o,o]
 std::cout << ranges::size(v) << v << '\n';       // 4 <- here be dragons!
-
-auto v2 = vec | view::take_exactly_or_throw(4);  // throws immediately on construction
+try
+{
+    auto v2 = vec | view::take_exactly_or_throw(4);  // throws immediately on construction
+}
+catch (std::invalid_argument &)
+{}
 //! [shorter_sequence]
 }
 }
