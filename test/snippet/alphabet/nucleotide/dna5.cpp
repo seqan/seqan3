@@ -13,7 +13,7 @@ dna5 my_letter{dna5::A};
 
 my_letter.assign_char('C'); // <- this does!
 
-my_letter.assign_char('F'); // converted to N internally
+my_letter.assign_char('F'); // unknown characters are implicitly converted to N.
 if (my_letter.to_char() == 'N')
     std::cout << "yeah\n"; // "yeah";
 //! [code]

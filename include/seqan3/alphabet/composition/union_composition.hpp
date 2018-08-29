@@ -210,7 +210,7 @@ public:
      * \param  rhs The value that should be assigned.
      *
      * \snippet test/snippet/alphabet/composition/union_composition.cpp conversion
-     * \attention When selecting the composite alphabet types which require only implicit conversion
+     * \attention When selecting the alternative alphabet types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
     template <typename indirect_alternative_t>
