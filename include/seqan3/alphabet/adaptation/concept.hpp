@@ -71,7 +71,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool char_adaptation_concept = alphabet_concept<type> &&
+concept char_adaptation_concept = alphabet_concept<type> &&
                                        detail::is_char_adaptation_v<std::remove_reference_t<type>>;
 //!\endcond
 
@@ -101,7 +101,7 @@ concept bool char_adaptation_concept = alphabet_concept<type> &&
  */
 //!\cond
 template <typename type>
-concept bool uint_adaptation_concept = alphabet_concept<type> &&
+concept uint_adaptation_concept = alphabet_concept<type> &&
                                        detail::is_uint_adaptation_v<std::remove_reference_t<type>>;
 //!\endcond
 

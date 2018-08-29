@@ -278,7 +278,7 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  */
 //!\cond
 template <typename t1, typename t2>
-concept bool compatible_concept = requires (t1, t2)
+concept compatible_concept = requires (t1, t2)
 {
     requires (dimension_v<t1> == dimension_v<t2>);
 

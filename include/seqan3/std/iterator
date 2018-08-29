@@ -65,7 +65,7 @@ namespace std
  */
 //!\cond
 template <typename t>
-concept bool Readable = static_cast<bool>(::ranges::Readable<t>());
+concept Readable = static_cast<bool>(::ranges::Readable<t>());
 //!\endcond
 
 /*!\interface std::Writable <>
@@ -75,7 +75,7 @@ concept bool Readable = static_cast<bool>(::ranges::Readable<t>());
  */
 //!\cond
 template <typename out, typename t>
-concept bool Writable = static_cast<bool>(::ranges::Writable<out, t>());
+concept Writable = static_cast<bool>(::ranges::Writable<out, t>());
 //!\endcond
 
 /*!\interface std::WeaklyIncrementable <>
@@ -87,7 +87,7 @@ concept bool Writable = static_cast<bool>(::ranges::Writable<out, t>());
  */
 //!\cond
 template <typename t>
-concept bool WeaklyIncrementable = Semiregular<t> &&
+concept WeaklyIncrementable = Semiregular<t> &&
                                    requires (t v)
 {
     typename ::ranges::difference_type_t<t>;
@@ -107,7 +107,7 @@ concept bool WeaklyIncrementable = Semiregular<t> &&
  */
 //!\cond
 template <typename i>
-concept bool Incrementable = Regular<i> && WeaklyIncrementable<i> && static_cast<bool>(::ranges::Incrementable<i>());
+concept Incrementable = Regular<i> && WeaklyIncrementable<i> && static_cast<bool>(::ranges::Incrementable<i>());
 //!\endcond
 
 /*!\interface std::Iterator <>
@@ -118,7 +118,7 @@ concept bool Incrementable = Regular<i> && WeaklyIncrementable<i> && static_cast
  */
 //!\cond
 template <typename i>
-concept bool Iterator = WeaklyIncrementable<i> && static_cast<bool>(::ranges::Iterator<i>());
+concept Iterator = WeaklyIncrementable<i> && static_cast<bool>(::ranges::Iterator<i>());
 //!\endcond
 
 /*!\interface std::Sentinel <>
@@ -130,7 +130,7 @@ concept bool Iterator = WeaklyIncrementable<i> && static_cast<bool>(::ranges::It
  */
 //!\cond
 template <typename s, typename i>
-concept bool Sentinel = Semiregular<s> && Iterator<i> && static_cast<bool>(::ranges::Sentinel<s, i>());
+concept Sentinel = Semiregular<s> && Iterator<i> && static_cast<bool>(::ranges::Sentinel<s, i>());
 //!\endcond
 
 /*!\interface std::SizedSentinel <>
@@ -141,7 +141,7 @@ concept bool Sentinel = Semiregular<s> && Iterator<i> && static_cast<bool>(::ran
  */
 //!\cond
 template <typename s, typename i>
-concept bool SizedSentinel = Sentinel<s, i> && static_cast<bool>(::ranges::SizedSentinel<s, i>());
+concept SizedSentinel = Sentinel<s, i> && static_cast<bool>(::ranges::SizedSentinel<s, i>());
 //!\endcond
 
 /*!\interface std::OutputIterator <>
@@ -154,7 +154,7 @@ concept bool SizedSentinel = Sentinel<s, i> && static_cast<bool>(::ranges::Sized
  */
 //!\cond
 template <typename out, typename t>
-concept bool OutputIterator = Iterator<out> && Writable<out, t> && static_cast<bool>(::ranges::OutputIterator<out, t>());
+concept OutputIterator = Iterator<out> && Writable<out, t> && static_cast<bool>(::ranges::OutputIterator<out, t>());
 //!\endcond
 
 /*!\interface std::InputIterator <>
@@ -166,7 +166,7 @@ concept bool OutputIterator = Iterator<out> && Writable<out, t> && static_cast<b
  */
 //!\cond
 template <typename i>
-concept bool InputIterator = Iterator<i> && Readable<i> && static_cast<bool>(::ranges::InputIterator<i>());
+concept InputIterator = Iterator<i> && Readable<i> && static_cast<bool>(::ranges::InputIterator<i>());
 //!\endcond
 
 /*!\interface std::ForwardIterator <>
@@ -179,7 +179,7 @@ concept bool InputIterator = Iterator<i> && Readable<i> && static_cast<bool>(::r
  */
 //!\cond
 template <typename i>
-concept bool ForwardIterator = InputIterator<i> &&
+concept ForwardIterator = InputIterator<i> &&
                                Incrementable<i> &&
                                Sentinel<i, i> &&
                                static_cast<bool>(::ranges::ForwardIterator<i>());
@@ -193,7 +193,7 @@ concept bool ForwardIterator = InputIterator<i> &&
  */
 //!\cond
 template <typename i>
-concept bool BidirectionalIterator = ForwardIterator<i> && static_cast<bool>(::ranges::BidirectionalIterator<i>());
+concept BidirectionalIterator = ForwardIterator<i> && static_cast<bool>(::ranges::BidirectionalIterator<i>());
 //!\endcond
 
 /*!\interface std::RandomAccessIterator <>
@@ -207,7 +207,7 @@ concept bool BidirectionalIterator = ForwardIterator<i> && static_cast<bool>(::r
  */
 //!\cond
 template <typename i>
-concept bool RandomAccessIterator = BidirectionalIterator<i> &&
+concept RandomAccessIterator = BidirectionalIterator<i> &&
                                     StrictTotallyOrdered<i> &&
                                     SizedSentinel<i, i> &&
                                     static_cast<bool>(::ranges::RandomAccessIterator<i>());

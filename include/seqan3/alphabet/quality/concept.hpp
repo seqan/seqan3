@@ -137,7 +137,7 @@ constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
  */
 //!\cond
 template<typename q>
-concept bool quality_concept = requires(q quality)
+concept quality_concept = requires(q quality)
 {
     requires alphabet_concept<q>;
 

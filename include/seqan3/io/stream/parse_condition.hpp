@@ -95,7 +95,7 @@ class parse_condition;
  */
 //!\cond
 template <typename condition_t>
-concept bool parse_condition_concept = requires
+concept parse_condition_concept = requires
 {
     requires std::Predicate<std::remove_reference_t<condition_t>, char>;
     requires std::is_base_of_v<parse_condition<remove_cvref_t<condition_t>>,

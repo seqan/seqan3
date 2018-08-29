@@ -64,7 +64,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool aminoacid_concept = requires (type v)
+concept aminoacid_concept = requires (type v)
 {
     requires alphabet_concept<type>;
     { std::remove_reference_t<type>::A } -> std::remove_reference_t<type>;

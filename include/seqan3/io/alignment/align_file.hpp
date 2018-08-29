@@ -16,7 +16,7 @@ namespace seqan3
 // ==================================================================
 
 template <typename t>
-concept bool align_file_traits_concept = requires (t v)
+concept align_file_traits_concept = requires (t v)
 {
     t::stream_type;
     t::valid_formats;
