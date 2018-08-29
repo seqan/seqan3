@@ -1,7 +1,5 @@
 #include <seqan3/alphabet/composition/union_composition.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <gtest/gtest.h>
 
@@ -10,61 +8,33 @@ int main()
 {
 
 {
-//! [variant]
-union_composition<dna4, gap> my_letter{};
-union_composition<dna4, gap> converted_letter{dna4::C};
-// doesn't work:
-// union_composition<dna4, gap> my_letter{'A'};
-union_composition<dna4, gap>{}.assign_char('C'); // <- this does!
-union_composition<dna4, gap>{}.assign_char('-'); // gap character
-union_composition<dna4, gap>{}.assign_char('K'); // unknown characters map to the default/unknown
-                                                 // character of the first alphabet type (i.e. A of dna4)
-if (my_letter.to_char() == 'A')
-std::cout << "yeah\n"; // "yeah";
-//! [variant]
+//! [usage]
+union_composition<dna5, gap> letter{};         // implicitly dna5::A
+union_composition<dna5, gap> letter2{dna5::C}; // constructed from alternative (== dna5::C)
+union_composition<dna5, gap> letter3{rna5::U}; // constructed from type that alternative is constructable from (== dna5::T)
+
+letter2.assign_char('T');                      // == dna5::T
+letter2.assign_char('-');                      // == gap::GAP
+letter2.assign_char('K');                      // unknown characters map to the default/unknown
+                                               // character of the first alternative type (== dna5::N)
+
+letter2 = gap::GAP;                            // assigned from alternative (== gap::GAP)
+letter2 = rna5::U;                             // assigned from type that alternative is assignable from (== dna5::T)
+
+dna5 letter4 = letter2.convert_to<dna5>();     // this works
+// gap letter5  = letter2.convert_to<gap>();   // this throws an exception, because the set value was dna5::T
+//! [usage]
+(void) letter4;
 }
 
 {
-//! [construct base]
-using alphabet_t = union_composition<dna4, dna5, gap>;
+//! [holds_alternative]
+using union_t = union_composition<dna5, gap>;
 
-constexpr alphabet_t letter0{gap::GAP};
-constexpr alphabet_t letter1 = dna5::C;
-constexpr alphabet_t letter2 = {dna4::G};
-constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
-
-assert(letter0.to_rank() == 9);
-assert(letter1.to_rank() == 5);
-assert(letter2.to_rank() == 2);
-assert(letter3.to_rank() == 3);
-//! [construct base]
-}
-
-{
-//! [assign base]
-using alphabet_t = union_composition<dna4, dna5, gap>;
-
-alphabet_t letter;
-
-letter = dna5::A;
-assert(letter.to_rank() == 4);
-
-letter = {dna5::C};
-assert(letter.to_rank() == 5);
-
-letter = static_cast<alphabet_t>(dna5::G);
-assert(letter.to_rank() == 6);
-//! [assign base]
-}
-
-{
-//! [has_alternative]
-using union_t = union_composition<dna4, gap>;
-
-static_assert(union_t::has_alternative<dna4>(), "should be true");
-static_assert(union_t::has_alternative<gap>(), "should be true");
-static_assert(!union_t::has_alternative<dna5>(), "should be false");
-//! [has_alternative]
+static_assert(union_t::holds_alternative<dna5>(), "dna5 is an alternative of union_t");
+static_assert(!union_t::holds_alternative<dna4>(), "dna4 is not an alternative of union_t");
+static_assert(union_t::holds_alternative<gap>(), "gap is an alternative of union_t");
+//! [holds_alternative]
 }
 
 {
@@ -72,32 +42,15 @@ static_assert(!union_t::has_alternative<dna5>(), "should be false");
 union_composition<dna4, gap> letter1{dna4::C}; // or
 union_composition<dna4, gap> letter2 = gap::GAP;
 //! [value construction]
+(void) letter1;
 (void) letter2;
-}
-
-{
-//! [reoccurring construction]
-using alphabet_t = union_composition<dna4, dna4>;
-
-constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
-constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
-
-EXPECT_EQ(letter0.to_rank(), 0);
-EXPECT_EQ(letter4.to_rank(), 4);
-//! [reoccurring construction]
-}
-
-{
-//! [assign by base]
-union_composition<dna4, gap> letter1{};
-letter1 = rna4::A;
-//! [assign by base]
 }
 
 {
 //! [conversion]
 union_composition<dna4, gap> letter1{rna4::C};
 //! [conversion]
+(void) letter1;
 }
 
 {

@@ -79,22 +79,7 @@ namespace seqan3
  *
  * ### Example
  *
- * ```cpp
- * union_composition<dna5, gap> letter{};         // implicitly dna5::A
- * union_composition<dna5, gap> letter2{dna5::C}; // constructed from alternative (== dna5::C)
- * union_composition<dna5, gap> letter2{rna5::U}; // constructed from type that alternative is constructable from (== dna5::T)
- *
- * letter2.assign_char('T');                      // == dna5::T
- * letter2.assign_char('-');                      // == gap::GAP
- * letter2.assign_char('K');                      // unknown characters map to the default/unknown
- *                                                // character of the first alternative type (== dna5::N)
- *
- * letter2 = gap::GAP;                            // assigned from alternative (== gap::GAP)
- * letter2 = rna5::U;                             // assigned from type that alternative is assignable from (== dna5::T)
- *
- * dna5 letter3 = letter2.convert_to<dna5>();     // this works
- * gap letter4  = letter2.convert_to<gap>();      // this throws an exception, because the set value was dna5::T
- * ```
+ * \snippet test/snippet/alphabet/composition/union_composition.cpp usage
  */
 template <typename ...alternative_types>
 //!\cond
@@ -179,13 +164,7 @@ public:
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
-     * ```cpp
-     * using union_t = union_composition<dna5, gap>;
-     *
-     * static_assert(union_t::holds_alternative<dna5>(), "should be true");
-     * static_assert(union_t::holds_alternative<gap>(), "should be true");
-     * static_assert(!union_t::holds_alternative<dna5>(), "should be false");
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp holds_alternative
      */
     template <typename alternative_t>
     static constexpr bool holds_alternative() noexcept

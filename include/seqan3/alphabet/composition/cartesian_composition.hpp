@@ -214,6 +214,8 @@ public:
                               list of the composition.
      * \param  alph           The value of a component that should be assigned.
      *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
      * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_construction
      */
     template <typename component_type>
@@ -234,6 +236,8 @@ public:
      * the `assignable_concept<T, indirect_component_type>`, regardless if other types are also
      * fit for assignment.
      *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
      * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_construction
      */
     template <typename indirect_component_type>
@@ -264,6 +268,8 @@ public:
      *                        contained in the type list of the composition.
      * \param  alph           The value of a component that should be assigned.
      *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
      * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_assignment
      */
     template <typename component_type>
@@ -281,6 +287,8 @@ public:
      *                                 one of the component types.
      * \param  alph                    The value of a component that should be assigned.
      *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
      * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_assignment
      */
     template <typename indirect_component_type>
