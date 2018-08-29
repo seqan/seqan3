@@ -42,6 +42,10 @@ matrix:
     env:
       - BUILD=header
       - BUILD_TYPE=Release
+  - << : *linux-gcc-7
+    env:
+      - BUILD=snippet
+      - BUILD_TYPE=Release
 
 install:
   - ccache --version
@@ -53,7 +57,7 @@ before_script:
   - cd ../seqan3-build
   - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
   - |
-    if test unit = "${BUILD}" || test header = "${BUILD}"; then
+    if test unit = "${BUILD}" || test header = "${BUILD}" || test snippet = "${BUILD}"; then
       make gtest_project
     fi
   - |
