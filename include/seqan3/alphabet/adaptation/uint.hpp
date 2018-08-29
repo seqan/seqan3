@@ -201,9 +201,7 @@ constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type
  * \returns The assignment result as a temporary.
  * \details
  * Use this e.g. to newly create alphabet letters from uint:
- * ```cpp
- * auto l = assign_char(dna5{}, 'G');  // l is of type dna5
- * ```
+ * \snippet test/snippet/alphabet/adaptation/uint.cpp assign_char
  */
 template <typename uint_type>
 constexpr uint_type && assign_char(uint_type && intgr, underlying_char_t<uint_type> const chr)
@@ -232,9 +230,7 @@ constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type
  * \returns The assignment result as a temporary.
  * \details
  * Use this e.g. to newly create alphabet letters from rank:
- * ```cpp
- * auto l = assign_rank(dna5{}, 1);  // l is of type dna5 and == dna5::C
- * ```
+ * \snippet test/snippet/alphabet/adaptation/uint.cpp assign_rank
  */
 template <typename uint_type>
 constexpr uint_type && assign_rank(uint_type && intgr, underlying_rank_t<uint_type> const intgr2)

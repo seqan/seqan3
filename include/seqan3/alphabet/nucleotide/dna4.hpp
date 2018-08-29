@@ -62,17 +62,7 @@ namespace seqan3
  * Note that you can assign 'U' as a character to dna4 and it will silently
  * be converted to 'T'.
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     dna4 my_letter{dna4::A};
- *     // doesn't work:
- *     // dna4 my_letter{'A'};
- *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('F'); // converted to A internally
- *     if (my_letter.to_char() == 'A')
- *        std::cout << "yeah\n"; // "yeah";
- *~~~~~~~~~~~~~~~
+ * \snippet test/snippet/alphabet/nucleotide/dna4.cpp code
  */
 
 struct dna4
@@ -381,17 +371,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to dna4_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // dna4_vector foo{"ACGTTA"};
- *     // dna4_vector bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     dna4_vector foo{"ACGTTA"_dna4};
- *     dna4_vector bar = "ACGTTA"_dna4;
- *     auto bax = "ACGTTA"_dna4;
- *~~~~~~~~~~~~~~~
+ * \snippet test/snippet/alphabet/nucleotide/dna4.cpp operator""_dna4
  *
  * \attention
  * All user-defined literals are in the namespace seqan3::literal!

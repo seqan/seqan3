@@ -61,18 +61,7 @@ namespace seqan3
  * [0..62] mapped to the ASCII range ['!' .. '~']. It represents the Sanger and
  * Illumina 1.8+ standard beyond the typical range of raw reads (0 to 41).
  *
- *```cpp
- * phred63 phred;
- * phred = 2;
- * std::cout << phred.to_phred() << "\n";  // 2
- * std::cout << phred.to_char() << "\n";  // '#'
- * std::cout << phred.to_rank() << "\n";  // 2
- * phred = 49;
- * std::cout << phred.to_phred() << "\n";  // 49
- * // phred = 75; // <- throws assertion
- * // this doesn't work:
- * // phred63{4};
- *```
+ * \snippet test/snippet/alphabet/quality/phred63.cpp general
  */
 struct phred63
 {

@@ -62,16 +62,7 @@ namespace seqan3
  * [-5..62] mapped to the ASCII range [';' .. '~']. It represents the Solexa and
  * the Illumina [1.0;1.8[ standard.
  *
- *```cpp
- * phred68legacy phred;
- * phred = -2;
- * std::cout << phred.to_phred() << "\n";  // -2
- * std::cout << phred.to_char() << "\n";  // '>'
- * std::cout << phred.to_rank() << "\n";  // 3
- * // this doesn't work:
- * // phred68legacy{4};
- * // phred = 75; // <- throws assertion
- *```
+ * \snippet test/snippet/alphabet/quality/phred68legacy.cpp general
  */
 struct phred68legacy
 {

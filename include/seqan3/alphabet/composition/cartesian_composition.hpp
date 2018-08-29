@@ -214,10 +214,9 @@ public:
                               list of the composition.
      * \param  alph           The value of a component that should be assigned.
      *
-     * ```cpp
-     *     cartesian_composition<dna4, aa27> letter1{dna4::C}; // creates {dna4::C, aa27::A}
-     *     cartesian_composition<dna4, aa27> letter2{aa27::K}; // creates {dna4::A, aa27::K}
-     * ```
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_construction
      */
     template <typename component_type>
     //!\cond
@@ -237,14 +236,9 @@ public:
      * the `assignable_concept<T, indirect_component_type>`, regardless if other types are also
      * fit for assignment.
      *
-     * ```cpp
-     *     // The following creates {dna4::C, aa27::A}
-     *     cartesian_composition<gapped<dna4>, aa27> letter1{dna4::C};
-     *     // The following creates {dna4::A, dna4::C}, since dna4 is also a type in the list
-     *     cartesian_composition<gapped<dna4>, dna4> letter2{dna4::C};
-     *     // The following creates {dna5::C, dna15::A}, since dna5 is the first type assignable to dna4
-     *     cartesian_composition<dna5, dna15> letter2{dna4::C};
-     * ```
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_construction
      */
     template <typename indirect_component_type>
     //!\cond
@@ -274,12 +268,9 @@ public:
      *                        contained in the type list of the composition.
      * \param  alph           The value of a component that should be assigned.
      *
-     * ```cpp
-     *     cartesian_composition<dna4, aa27> letter1{dna4::T, aa27::K};
-     *
-     *     letter1 = dna4::C // yields {dna4::C, aa27::K}
-     *     letter1 = aa27::F // yields {dna4::C, aa27::F}
-     * ```
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_assignment
      */
     template <typename component_type>
     //!\cond
@@ -296,11 +287,9 @@ public:
      *                                 one of the component types.
      * \param  alph                    The value of a component that should be assigned.
      *
-     * ```cpp
-     *     cartesian_composition<dna4, aa27> letter1{dna4::T, aa27::K};
-     *
-     *     letter1 = rna4::C; // yields {dna4::C, aa27::K}
-     * ```
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_assignment
      */
     template <typename indirect_component_type>
     //!\cond

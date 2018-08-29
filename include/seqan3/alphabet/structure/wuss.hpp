@@ -71,14 +71,7 @@ namespace seqan3
  *
  * \par Usage
  * The following code example creates a wuss vector, modifies it, and prints the result to stdout.
- * ```cpp
- *     // create vector
- *     std::vector<wuss51> vec{wuss51::UNPAIRED, wuss51::PAIR_CLOSE, wuss51::PAIR_CLOSE};
- *     // modify and print
- *     vec[1] = wuss51::PAIR_OPEN;
- *     for (wuss51 chr : vec)
- *         std::cout << chr;  // .<>
- * ```
+ * \snippet test/snippet/alphabet/structure/wuss.cpp general
  */
 template <uint8_t SIZE = 51>
 struct wuss

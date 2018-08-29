@@ -79,22 +79,7 @@ namespace seqan3
  *
  * ### Example
  *
- * ```cpp
- * union_composition<dna5, gap> letter{};         // implicitly dna5::A
- * union_composition<dna5, gap> letter2{dna5::C}; // constructed from alternative (== dna5::C)
- * union_composition<dna5, gap> letter2{rna5::U}; // constructed from type that alternative is constructable from (== dna5::T)
- *
- * letter2.assign_char('T');                      // == dna5::T
- * letter2.assign_char('-');                      // == gap::GAP
- * letter2.assign_char('K');                      // unknown characters map to the default/unknown
- *                                                // character of the first alternative type (== dna5::N)
- *
- * letter2 = gap::GAP;                            // assigned from alternative (== gap::GAP)
- * letter2 = rna5::U;                             // assigned from type that alternative is assignable from (== dna5::T)
- *
- * dna5 letter3 = letter2.convert_to<dna5>();     // this works
- * gap letter4  = letter2.convert_to<gap>();      // this throws an exception, because the set value was dna5::T
- * ```
+ * \snippet test/snippet/alphabet/composition/union_composition.cpp usage
  */
 template <typename ...alternative_types>
 //!\cond
@@ -179,13 +164,7 @@ public:
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
-     * ```cpp
-     * using union_t = union_composition<dna5, gap>;
-     *
-     * static_assert(union_t::holds_alternative<dna5>(), "should be true");
-     * static_assert(union_t::holds_alternative<gap>(), "should be true");
-     * static_assert(!union_t::holds_alternative<dna5>(), "should be false");
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp holds_alternative
      */
     template <typename alternative_t>
     static constexpr bool holds_alternative() noexcept
@@ -216,10 +195,7 @@ public:
      * \tparam alternative_t One of the alternative types.
      * \param  alternative   The value of a alternative that should be assigned.
      *
-     * ```cpp
-     *     union_composition<dna5, gap> letter1{dna5::C}; // or
-     *     union_composition<dna5, gap> letter2 = gap::GAP;
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp value construction
      */
     template <typename alternative_t>
     //!\cond
@@ -233,10 +209,8 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
      * \param  rhs The value that should be assigned.
      *
-     * ```cpp
-     *     union_composition<dna5, gap> letter1{rna5::C};
-     * ```
-     * \attention When selecting the alternative, types which require only implicit conversion
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp conversion
+     * \attention When selecting the alternative alphabet types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
     template <typename indirect_alternative_t>
@@ -262,10 +236,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
      * \param  rhs The value of an alternative.
      *
-     * ```cpp
-     * union_composition<dna5, gap> letter1{};
-     * letter1 = rna5::C;
-     * ```
+     * \snippet test/snippet/alphabet/composition/union_composition.cpp subtype_construction
      */
     template <typename indirect_alternative_t>
     //!\cond
@@ -507,14 +478,6 @@ protected:
      * An array which contains the prefix sum over all
      * alternative_types::value_size's.
      *
-     * ```cpp
-     * constexpr std::array partial_sum = union_composition<dna5, gap, dna5>::partial_sum_sizes; // not working; is protected
-     * assert(partial_sum.size() == 4);
-     * assert(partial_sum[0] == 0);
-     * assert(partial_sum[1] == 4);
-     * assert(partial_sum[2] == 5);
-     * assert(partial_sum[3] == 10);
-     * ```
      */
     static constexpr std::array partial_sum_sizes = []() constexpr
     {
@@ -533,18 +496,6 @@ protected:
      * of all alternatives and the value is the corresponding char of that rank
      * and alternative.
      *
-     * ```cpp
-     * constexpr std::array value_to_char = union_composition<char, dna5, gap, dna5>::value_to_char; // not working; is protected
-     * assert(value_to_char.size() == 10);
-     * assert(value_to_char[0] == 'A');
-     * assert(value_to_char[1] == 'C');
-     * assert(value_to_char[2] == 'G');
-     * assert(value_to_char[3] == 'T');
-     * assert(value_to_char[4] == '-');
-     * assert(value_to_char[5] == 'A');
-     * assert(value_to_char[6] == 'C');
-     * // and so on
-     * ```
      */
     static constexpr std::array<char_type, value_size> value_to_char = []() constexpr
     {
@@ -581,21 +532,6 @@ protected:
      * alternatives and the value is the corresponding rank over all alternatives (by
      * conflict will default to the first).
      *
-     * ```cpp
-     * constexpr std::array char_to_value = char_to_value_table<char, dna5, gap, dna5>();
-     * assert(char_to_value.size() == 256);
-     * assert(char_to_value['A'] == 0);
-     * assert(char_to_value['C'] == 1);
-     * assert(char_to_value['G'] == 2);
-     * assert(char_to_value['T'] == 3);
-     * assert(char_to_value['-'] == 4);
-     * assert(char_to_value['A'] == 0);
-     * assert(char_to_value['C'] == 1);
-     * assert(char_to_value['G'] == 2);
-     * assert(char_to_value['T'] == 3);
-     * assert(char_to_value['N'] == 9);
-     * assert(char_to_value['*'] == 0); // every other character defaults to 0
-     * ```
      */
     static constexpr std::array char_to_value = []() constexpr
     {

@@ -66,26 +66,7 @@ namespace seqan3
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
- * ~~~~~~~~~~~~~~~{.cpp}
- *
- * structured_rna<rna4, dot_bracket3> l{rna4::G, dot_bracket3::PAIR_OPEN};
- * std::cout << int(to_rank(l)) << ' '
- *           << int(to_rank(get<0>(l))) << ' '
- *           << int(to_rank(get<1>(l))) << '\n';
- * // 6 2 1
- *
- * std::cout << to_char(l) << ' '
- *           << to_char(get<0>(l)) << ' '
- *           << to_char(get<1>(l)) << '\n';
- * // G G (
- *
- * // modify via structured bindings and references:
- * auto & [ seq_l, structure_l ] = l;
- * seq_l = rna4::U;
- * std::cout << to_char(l) << '\n';
- * // U
- *
- * ~~~~~~~~~~~~~~~
+ * \snippet test/snippet/alphabet/structure/structured_rna.cpp general
  *
  * This seqan3::cartesian_composition itself models both seqan3::nucleotide_concept and seqan3::rna_structure_concept.
  */

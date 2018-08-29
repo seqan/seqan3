@@ -62,17 +62,7 @@ namespace seqan3
  * Note that you can assign 'U' as a character to dna5 and it will silently
  * be converted to 'T'.
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     dna5 my_letter{dna5::A};
- *     // doesn't work:
- *     // dna5 my_letter{'A'};
- *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('F'); // converted to N internally
- *     if (my_letter.to_char() == 'N')
- *        std::cout << "yeah\n"; // "yeah";
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/dna5.cpp code
  */
 
 struct dna5
@@ -302,17 +292,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to dna5_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // dna5_vector foo{"ACGTTA"};
- *     // dna5_vector bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     dna5_vector foo{"ACGTTA"_dna5};
- *     dna5_vector bar = "ACGTTA"_dna5;
- *     auto bax = "ACGTTA"_dna5;
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/dna5.cpp operator""_dna5
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!

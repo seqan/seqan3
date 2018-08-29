@@ -51,6 +51,8 @@ namespace seqan3
  * \details
  * This alphabet is not usually used directly, but instead via seqan3::masked.
  * For more information see the \link mask Mask submodule \endlink.
+ * 
+ * \snippet test/snippet/alphabet/mask/mask.cpp general
  */
 struct mask
 {

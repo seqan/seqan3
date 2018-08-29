@@ -62,17 +62,7 @@ namespace seqan3
  * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You assign
  * between values of seqan3::dna4 and seqan3::rna4.
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     rna4 my_letter{rna4::A};
- *     // doesn't work:
- *     // rna4 my_letter{'A'};
- *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('F'); // converted to A internally
- *     if (my_letter.to_char() == 'A')
- *        std::cout << "yeah\n"; // "yeah";
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/rna4.cpp code
  */
 
 struct rna4 : public dna4
@@ -198,17 +188,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to rna4_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // rna4_vector foo{"ACGTTA"};
- *     // rna4_vector bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     rna4_vector foo{"ACGTTA"_rna4};
- *     rna4_vector bar = "ACGTTA"_rna4;
- *     auto bax = "ACGTTA"_rna4;
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/rna4.cpp operator""_rna4
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!

@@ -64,19 +64,7 @@ namespace seqan3
  * intend to use phred scores exceeding 41, use the larger score type, namely
  * seqan3::phred63, otherwise on construction exceeding scores are mapped to 41.
  *
- *```cpp
- * phred42 phred;
- * phred = 2;
- * std::cout << phred.to_phred() << "\n";  // 2
- * std::cout << phred.to_char() << "\n";  // '#'
- * std::cout << phred.to_rank() << "\n";  // 2
- * phred = 49;
- * std::cout << phred.to_phred() << "\n";  // converted down to 41
- * // this works
- * phred42 phred{4};
- * // doesn't work:
- * // phred42{4};
- *```
+ * \snippet test/snippet/alphabet/quality/phred42.cpp general
  */
 struct phred42
 {

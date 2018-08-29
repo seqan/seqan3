@@ -60,17 +60,7 @@ namespace seqan3
  * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
  * regular characters, but additional functions for this are available.
  *
- *```cpp
- *     aa27 my_letter{aa27::A};
- *     // doesn't work:
- *     // aa27 my_letter{'A'};
- *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('?'); // converted to X internally
- *     if (my_letter.to_char() == 'X')
- *        std::cout << "yeah\n"; // "yeah";
- *```
+ * \snippet test/snippet/alphabet/aminoacid/aa27.cpp construction
  */
 
 struct aa27
@@ -382,17 +372,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to aa27_vector:
  *
- *```cpp
- *     // these don't work:
- *     // aa27_vector foo{"ABFUYR"};
- *     // aa27_vector bar = "ABFUYR";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     aa27_vector foo{"ABFUYR"_aa27};
- *     aa27_vector bar = "ABFUYR"_aa27;
- *     auto bax = "ABFUYR"_aa27;
- *```
+ * \snippet test/snippet/alphabet/aminoacid/aa27.cpp literal
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!
