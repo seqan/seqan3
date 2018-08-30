@@ -241,12 +241,12 @@ struct wuss
      *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
      */
     // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
-    static constexpr uint8_t pseudoknot_support{(value_size - 7) / 2};
+    static constexpr uint8_t max_pseudoknot_depth{(value_size - 7) / 2};
 
     /*!\brief Get an identifier for a pseudoknotted interaction.
      * Opening and closing brackets of the same type have the same id.
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
-     * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+     * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
      */
     constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {

@@ -178,20 +178,22 @@ public:
     };
 
     //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions.
-    static constexpr uint8_t pseudoknot_support{structure_alphabet_t::pseudoknot_support};
+    static constexpr uint8_t max_pseudoknot_depth{structure_alphabet_t::max_pseudoknot_depth};
 
     /*!\brief Get an identifier for a pseudoknotted interaction.
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
-     * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+     * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
      */
     constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {
-        if constexpr (structure_alphabet_type::pseudoknot_support > 1)
+        if constexpr (structure_alphabet_type::max_pseudoknot_depth > 1)
+        {
             return get<1>(*this).pseudoknot_id();
-        else if (is_pair_open() || is_pair_close())
-            return 0;
+        }
         else
-            return std::nullopt;
+        {
+            return (is_pair_open() || is_pair_close()) ? std::optional<uint8_t>(0) : std::nullopt;
+        }
     };
     //!\}
 };

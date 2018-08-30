@@ -292,19 +292,19 @@ constexpr bool is_unpaired(structure_type const alph)
     return alph.is_unpaired();
 }
 
-/*!\brief Specialisation of seqan3::pseudoknot_support that delegates to structure_type::pseudoknot_support.
+/*!\brief Specialisation of seqan3::max_pseudoknot_depth that delegates to structure_type::max_pseudoknot_depth.
  * \relates seqan3::rna_structure_concept
- * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static uint8_t pseudoknot_support` member variable.
+ * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static uint8_t max_pseudoknot_depth` member variable.
  */
 template <typename alphabet_type_with_pseudoknot_attribute>
 //!\cond
     requires requires (alphabet_type_with_pseudoknot_attribute)
-    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> uint8_t; }
+    { { alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth } -> uint8_t; }
 //!\endcond
-struct pseudoknot_support<alphabet_type_with_pseudoknot_attribute>
+struct max_pseudoknot_depth<alphabet_type_with_pseudoknot_attribute>
 {
-    //!\brief The forwarded pseudoknot support.
-    static constexpr uint8_t value = alphabet_type_with_pseudoknot_attribute::pseudoknot_support;
+    //!\brief The forwarded maximum pseudoknot depth.
+    static constexpr uint8_t value = alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth;
 };
 
 /*!\brief Implementation of seqan3::rna_structure_concept::pseudoknot_id() that delegates to a member function.
@@ -313,16 +313,16 @@ struct pseudoknot_support<alphabet_type_with_pseudoknot_attribute>
  * member function, otherwise it can be omitted.
  * \param alph The alphabet letter which is checked for the pseudoknot id.
  * \returns The pseudoknot id, if alph represents an interaction, and no value otherwise.
- * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+ * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
  */
 template<typename alphabet_type_with_pseudoknot_attribute>
 constexpr std::optional<uint8_t> pseudoknot_id(alphabet_type_with_pseudoknot_attribute const alph)
 //!\cond
     requires requires(alphabet_type_with_pseudoknot_attribute)
-    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> uint8_t; }
+    { { alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth } -> uint8_t; }
 //!\endcond
 {
-    if constexpr (alphabet_type_with_pseudoknot_attribute::pseudoknot_support > 1)
+    if constexpr (alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth > 1)
         return alph.pseudoknot_id();
     else if (is_pair_open(alph) || is_pair_close(alph))
         return 0;
