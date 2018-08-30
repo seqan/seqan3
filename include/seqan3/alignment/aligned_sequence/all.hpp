@@ -33,20 +33,15 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-header for the \link alignment alignment module \endlink.
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \brief Meta-header for the aligned sequence in the \link alignment alignment module \endlink.
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/alignment/aligned_sequence/all.hpp>
-#include <seqan3/alignment/exception.hpp>
+#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 
-/*!\defgroup alignment Alignment
- * \brief Contains alignment functionality.
- *
- * The alignment module contains concepts, functions and classes that are related to the computation of
- * pairwise and multiple sequence alignments.
- *
- * \todo Write detailed landing page.
+/*!\defgroup aligned_sequence Aligned Sequence
+ * \brief Provides seqan3::aligned_sequence_concept, as well as various ranges
+ * that model it.
  */
