@@ -48,11 +48,6 @@
 
 namespace seqan3
 {
-
-/*addtogroup stream
- * \{
- */
-
 /*!\interface seqan3::ostream_concept <>
  * \ingroup stream
  * \brief Concept for output streams.
@@ -203,7 +198,5 @@ template <typename stream_type, typename value_type>
 concept stream_concept = ostream_concept<stream_type, value_type> &&
                               istream_concept<stream_type, value_type>;
 //!\endcond
-
-//\}
 
 } // namespace seqan3

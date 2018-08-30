@@ -43,5 +43,7 @@
  * \todo write me!
  */
 
+#pragma once
+
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
