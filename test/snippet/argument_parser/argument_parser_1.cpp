@@ -28,11 +28,11 @@ int main(int argc, const char ** argv)
     }
 
     if (bonus)
-    grades.push_back(1.0); // extra good grade
+        grades.push_back(1.0); // extra good grade
 
     double avg{0};
     for (auto g : grades)
-    avg += g;
+        avg += g;
 
     avg = avg / grades.size();
 
