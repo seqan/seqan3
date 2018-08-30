@@ -162,7 +162,7 @@ public:
                            { std::istreambuf_iterator<char>{stream}, std::istreambuf_iterator<char>{} };
 
         // READ ID (if present)
-        auto const is_id = is_char<'>'>{};
+        auto constexpr is_id = is_char<'>'>;
         if (is_id(*ranges::begin(stream_view)))
         {
             if constexpr (!detail::decays_to_ignore_v<id_type>)
@@ -188,7 +188,7 @@ public:
         }
         else if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            is_in_alphabet<seq_legal_alph_type> const is_legal_seq;
+            auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
             if (!is_legal_seq(*ranges::begin(stream_view))) // if neither id nor seq found: throw
             {
                 throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} +
@@ -200,7 +200,7 @@ public:
         // READ SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            is_in_alphabet<seq_legal_alph_type> const is_legal_seq;
+            auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
             ranges::copy(stream_view | view::take_line_or_throw                      // until end of line
                                      | ranges::view::remove_if(is_space || is_digit) // ignore whitespace and numbers
                                      | ranges::view::transform([is_legal_seq](char const c)
@@ -264,7 +264,7 @@ public:
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
             std::string e_str = stream_view | view::take_line
-                                            | ranges::view::remove_if(is_space || is_char<'('>{} || is_char<')'>{});
+                                            | ranges::view::remove_if(is_space || is_char<'('> || is_char<')'>);
             if (!e_str.empty())
             {
                 size_t num_processed;
@@ -392,7 +392,7 @@ private:
     template <typename alph_type, typename stream_view_type>
     auto read_structure(stream_view_type & stream_view)
     {
-        is_in_alphabet<alph_type> const is_legal_structure;
+        auto constexpr is_legal_structure = is_in_alphabet<alph_type>;
         return stream_view | view::take_until(is_space) // until whitespace
                            | ranges::view::transform([is_legal_structure](char const c)
                              {
