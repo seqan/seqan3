@@ -276,13 +276,29 @@ private:
  */
 gap_scheme() -> gap_scheme<int8_t>;
 
-/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
+/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `float`
+ * for floating point types.
+ * To use a larger type, specify the template argument manually.
+ */
+template <floating_point_concept score_arg_type>
+gap_scheme(gap_score<score_arg_type>, gap_open_score<score_arg_type>) -> gap_scheme<float>;
+
+/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `float`
+ * for floating point types.
+ * To use a larger type, specify the template argument manually.
+ */
+template <floating_point_concept score_arg_type>
+gap_scheme(gap_score<score_arg_type>) -> gap_scheme<float>;
+
+/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`
+ * for integer types.
  * To use a larger type, specify the template argument manually.
  */
 template <arithmetic_concept score_arg_type>
 gap_scheme(gap_score<score_arg_type>, gap_open_score<score_arg_type>) -> gap_scheme<int8_t>;
 
-/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
+/*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`
+ * for integer types.
  * To use a larger type, specify the template argument manually.
  */
 template <arithmetic_concept score_arg_type>

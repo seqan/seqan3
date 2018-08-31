@@ -75,6 +75,16 @@ TEST(gap_scheme, constructors_and_type_deduction_guides)
         gap_scheme scheme{gap_score{-2}};
         EXPECT_TRUE((std::is_same_v<decltype(scheme), gap_scheme<int8_t>>));
     }
+
+    {
+        gap_scheme scheme{gap_score{-2.}, gap_open_score{-4.}};
+        EXPECT_TRUE((std::is_same_v<decltype(scheme), gap_scheme<float>>));
+    }
+
+    {
+        gap_scheme scheme{gap_score{-2.}};
+        EXPECT_TRUE((std::is_same_v<decltype(scheme), gap_scheme<float>>));
+    }
 }
 
 TEST(gap_scheme, member_types)
