@@ -53,7 +53,7 @@ static void memcpy_benchmark(benchmark::State& state) {
         memcpy(dst, src, size);
 
     int64_t bytes = int64_t(state.iterations()) * int64_t(size);
-    state.SetBytesProcessed(bytes);
+    state.counters["bytes_processed"] = bytes;
     delete[] src;
     delete[] dst;
 }
@@ -68,7 +68,7 @@ static void copy_benchmark(benchmark::State& state) {
         std::copy_n(src, size, dst);
 
     int64_t bytes = int64_t(state.iterations()) * int64_t(size);
-    state.SetBytesProcessed(bytes);
+    state.counters["bytes_processed"] = bytes;
     delete[] src;
     delete[] dst;
 }
