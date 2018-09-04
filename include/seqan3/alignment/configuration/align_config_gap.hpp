@@ -57,6 +57,7 @@ namespace seqan3::detail
 template <typename gap_scheme_t>
 struct align_config_gap
 {
+    //! \brief Holds the actual gap scores in a gap scheme.
     gap_scheme_t value;
 };
 
@@ -84,7 +85,8 @@ struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_
         static_assert(is_valid_alignment_configuration_v<align_cfg::id::gap, remove_cvref_t<configuration_type>>,
                       SEQAN3_INVALID_CONFIG(align_cfg::id::gap));
 
-        return std::forward<configuration_type>(cfg).push_front(align_config_gap<decltype(scheme)>{std::move(scheme)});
+        return std::forward<configuration_type>(cfg).push_front(align_config_gap<gap_scheme<value_type>>
+                                                                {std::move(scheme)});
     }
 
     /*!\brief Adds to the configuration a linear gap configuration element.

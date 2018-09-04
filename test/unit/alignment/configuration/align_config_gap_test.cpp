@@ -77,7 +77,7 @@ TEST(align_config_gap, align_config_type_to_id)
 
 TEST(align_config_gap, invoke_linear)
 {
-    {
+    { // score type: int
         auto cfg = std::invoke(align_cfg::gap(gap_score{-4}), detail::configuration<>{});
 
         EXPECT_EQ(std::get<0>(cfg).value.get_gap_score(), -4);
@@ -85,8 +85,26 @@ TEST(align_config_gap, invoke_linear)
                                     detail::configuration<detail::align_config_gap<gap_scheme<int32_t>>>>));
     }
 
-    {
+    { // score type: double
         detail::configuration cfg = align_cfg::gap(gap_score{-4.1});
+
+        EXPECT_DOUBLE_EQ(std::get<0>(cfg).value.get_gap_score(), -4.1);
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                    detail::configuration<detail::align_config_gap<gap_scheme<double>>>>));
+    }
+
+    { // gap_scheme<int> explicit
+        gap_scheme<int> scheme{gap_score{-4}};
+        detail::configuration cfg = align_cfg::gap(scheme);
+
+        EXPECT_EQ(std::get<0>(cfg).value.get_gap_score(), -4);
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                    detail::configuration<detail::align_config_gap<gap_scheme<int32_t>>>>));
+    }
+
+    { // gap_scheme<double> explicit
+        gap_scheme<double> scheme{gap_score{-4.1}};
+        detail::configuration cfg = align_cfg::gap(scheme);
 
         EXPECT_DOUBLE_EQ(std::get<0>(cfg).value.get_gap_score(), -4.1);
         EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
@@ -96,7 +114,7 @@ TEST(align_config_gap, invoke_linear)
 
 TEST(align_config_gap, invoke_affine)
 {
-    {
+    { // score type: int
         auto cfg = std::invoke(align_cfg::gap(gap_score{-2}, gap_open_score{-4}), detail::configuration<>{});
 
         EXPECT_EQ(get<0>(cfg).value.get_gap_score(), -2);
@@ -105,8 +123,28 @@ TEST(align_config_gap, invoke_affine)
                                     detail::configuration<detail::align_config_gap<gap_scheme<int32_t>>>>));
     }
 
-    {
+    { // score type: float
         detail::configuration cfg = align_cfg::gap(gap_score{-2.2f}, gap_open_score{-4.1f});
+
+        EXPECT_FLOAT_EQ(get<0>(cfg).value.get_gap_score(), -2.2f);
+        EXPECT_FLOAT_EQ(get<0>(cfg).value.get_gap_open_score(), -4.1f);
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                    detail::configuration<detail::align_config_gap<gap_scheme<float>>>>));
+    }
+
+    { // gap_scheme<int8_t>
+        gap_scheme scheme{gap_score{-2}, gap_open_score{-4}}; // int is converted to int8_t
+        auto cfg = std::invoke(align_cfg::gap(scheme), detail::configuration<>{});
+
+        EXPECT_EQ(get<0>(cfg).value.get_gap_score(), static_cast<int8_t>(-2));
+        EXPECT_EQ(get<0>(cfg).value.get_gap_open_score(), static_cast<int8_t>(-4));
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                    detail::configuration<detail::align_config_gap<gap_scheme<int8_t>>>>));
+    }
+
+    { // gap_scheme<float>
+        gap_scheme scheme{gap_score{-2.2}, gap_open_score{-4.1}}; // double is converted to float
+        detail::configuration cfg = align_cfg::gap(scheme);
 
         EXPECT_FLOAT_EQ(get<0>(cfg).value.get_gap_score(), -2.2f);
         EXPECT_FLOAT_EQ(get<0>(cfg).value.get_gap_open_score(), -4.1f);
@@ -146,6 +184,17 @@ TEST(align_config_gap, get_by_enum_linear)
         // The type of gap_score is not deduced here: must be int8_t, because of explicit configuration type.
         detail::configuration<detail::align_config_gap<gap_scheme<int8_t>>> const c_cfg =
             detail::configuration{align_cfg::gap(gap_score{ static_cast<int8_t>(-4) })};
+
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).get_gap_score(), static_cast<int8_t>(-4));
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
+                                    gap_scheme<int8_t> const &&>));
+    }
+
+    {
+        // The same test with gap_scheme<int8_t>.
+        gap_scheme scheme{gap_score{-4}};
+        detail::configuration<detail::align_config_gap<gap_scheme<int8_t>>> const c_cfg =
+            detail::configuration{align_cfg::gap(scheme)};
 
         EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).get_gap_score(), static_cast<int8_t>(-4));
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
@@ -191,5 +240,16 @@ TEST(align_config_gap, get_by_enum_affine)
         EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).get_gap_open_score(), -4);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
                                     gap_scheme<int32_t> const &&>));
+    }
+
+    { // The same test with gap_scheme<float>.
+        gap_scheme scheme{gap_score{-2.2}, gap_open_score{-4.1}}; // implicitly converted to float
+        detail::configuration<detail::align_config_gap<gap_scheme<float>>> const c_cfg =
+            detail::configuration{align_cfg::gap(scheme)};
+
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).get_gap_score(), -2.2f);
+        EXPECT_EQ(get<align_cfg::id::gap>(std::move(c_cfg)).get_gap_open_score(), -4.1f);
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::gap>(std::move(c_cfg))),
+                                    gap_scheme<float> const &&>));
     }
 }
