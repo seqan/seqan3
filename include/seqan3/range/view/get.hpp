@@ -85,10 +85,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <size_t index>
-inline auto const get = view::transform([] (auto && in)
-    -> std::conditional_t<std::is_lvalue_reference_v<decltype(in)> && !std::is_const_v<decltype(in)>,
-                          std::tuple_element_t<index, remove_cvref_t<decltype(in)>> &,
-                          std::tuple_element_t<index, remove_cvref_t<decltype(in)>>>
+inline auto const get = view::transform([] (auto && in) -> auto &&
 {
     using std::get;
     static_assert(tuple_like_concept<decltype(in)>,
