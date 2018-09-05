@@ -75,7 +75,9 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         dot_bracket3, dssp9, wuss<>, wuss<65>,
                                         structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                         structured_aa<aa27, dssp9>,
-                                        masked<dna5>>;
+                                        masked<dna5>,
+                                        cigar_op // cigar, too slow
+                                        >;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);
 

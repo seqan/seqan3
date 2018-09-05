@@ -201,10 +201,47 @@ public:
     }
 };
 
+template <>
+class cartesian_composition_test<cigar<>>: public ::testing::Test
+{
+public:
+    using T = cigar<>;
+
+    T instance = T{value_1(), value_2()};
+    T zero_instance = T{decltype(value_1()){}, decltype(value_2()){}};
+    size_t tup_size{2};
+
+    // cigar
+    // -------------------------------------------------------------------------
+    cigar_op value_1()
+    {
+        return cigar_op::D;
+    }
+    cigar_op assignable_to_value_1()
+    {
+        return cigar_op::D; // replace if assignable subtype becomes available
+    }
+    uint32_t value_2()
+    {
+        return 200u;
+    }
+    uint32_t assignable_to_value_2()
+    {
+        return uint8_t(200); // replace if assignable subtype becomes available
+    }
+    auto values_to_cmp()
+    {
+        return std::make_tuple(/*low */cigar_op::M,  (uint32_t)1u,
+                               /*mid */cigar_op::X,  (uint32_t)100u,
+                               /*high*/cigar_op::EQ, (uint32_t)1000u);
+    }
+};
+
 using composition_types = ::testing::Types<test_composition<dna4, dna5>,
                                            structured_rna<rna4, dot_bracket3>,
                                            structured_aa<aa27, dssp9>,
-                                           qualified<dna4, phred42>>;
+                                           qualified<dna4, phred42>,
+                                           cigar<>>;
 
 TYPED_TEST_CASE(cartesian_composition_test, composition_types);
 
