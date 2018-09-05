@@ -33,20 +33,23 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-header for the \link alignment alignment module \endlink.
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \brief Includes customized exception types for the \link alignment alignment module \endlink.
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/alignment/aligned_sequence/all.hpp>
-#include <seqan3/alignment/exception.hpp>
+namespace seqan3
+{
 
-/*!\defgroup alignment Alignment
- * \brief Contains alignment functionality.
- *
- * The alignment module contains concepts, functions and classes that are related to the computation of
- * pairwise and multiple sequence alignments.
- *
- * \todo Write detailed landing page.
- */
+//!\brief Thrown in function seqan3::erase_gap, if a position does not contain a gap.
+class gap_erase_failure : public std::logic_error
+{
+public:
+    /*!\brief The constructor.
+     * \param[in] s The error message.
+     */
+    gap_erase_failure(std::string const & s) : std::logic_error{s} {}
+};
+
+} // namespace seqan3
