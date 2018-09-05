@@ -75,6 +75,16 @@ TEST(gap_scheme, constructors_and_type_deduction_guides)
         gap_scheme scheme{gap_score{-2}};
         EXPECT_TRUE((std::is_same_v<decltype(scheme), gap_scheme<int8_t>>));
     }
+
+    {
+        gap_scheme scheme{gap_score{-2.}, gap_open_score{-4.}};
+        EXPECT_TRUE((std::is_same_v<decltype(scheme), gap_scheme<float>>));
+    }
+
+    {
+        gap_scheme scheme{gap_score{-2.}};
+        EXPECT_TRUE((std::is_same_v<decltype(scheme), gap_scheme<float>>));
+    }
 }
 
 TEST(gap_scheme, member_types)
@@ -85,56 +95,56 @@ TEST(gap_scheme, member_types)
     EXPECT_TRUE((std::is_same_v<score_t, int8_t>));
 }
 
-TEST(gap_scheme, get_score_gap)
+TEST(gap_scheme, get_gap_score)
 {
     gap_scheme scheme{};
-    EXPECT_EQ(scheme.get_score_gap(), 0);
-    EXPECT_TRUE((std::is_same_v<typename decltype(scheme)::score_type &, decltype(scheme.get_score_gap())>));
+    EXPECT_EQ(scheme.get_gap_score(), 0);
+    EXPECT_TRUE((std::is_same_v<typename decltype(scheme)::score_type &, decltype(scheme.get_gap_score())>));
 }
 
 TEST(gap_scheme, set_score_gap)
 {
     gap_scheme scheme{};
-    EXPECT_EQ(scheme.get_score_gap(), 0);
-    scheme.get_score_gap() = -2;
-    EXPECT_EQ(scheme.get_score_gap(), -2);
+    EXPECT_EQ(scheme.get_gap_score(), 0);
+    scheme.get_gap_score() = -2;
+    EXPECT_EQ(scheme.get_gap_score(), -2);
 }
 
-TEST(gap_scheme, get_score_gap_open)
+TEST(gap_scheme, get_gap_open_score)
 {
     gap_scheme scheme{};
-    EXPECT_EQ(scheme.get_score_gap_open(), 0);
-    EXPECT_TRUE((std::is_same_v<typename decltype(scheme)::score_type &, decltype(scheme.get_score_gap_open())>));
+    EXPECT_EQ(scheme.get_gap_open_score(), 0);
+    EXPECT_TRUE((std::is_same_v<typename decltype(scheme)::score_type &, decltype(scheme.get_gap_open_score())>));
 }
 
 TEST(gap_scheme, set_score_gap_open)
 {
     gap_scheme scheme{};
-    EXPECT_EQ(scheme.get_score_gap_open(), 0);
-    scheme.get_score_gap_open() = -2;
-    EXPECT_EQ(scheme.get_score_gap_open(), -2);
+    EXPECT_EQ(scheme.get_gap_open_score(), 0);
+    scheme.get_gap_open_score() = -2;
+    EXPECT_EQ(scheme.get_gap_open_score(), -2);
 }
 
 TEST(gap_scheme, set_linear)
 {
     gap_scheme scheme{gap_score{-2}};
-    EXPECT_EQ(scheme.get_score_gap(), -2);
-    EXPECT_EQ(scheme.get_score_gap_open(), 0);
+    EXPECT_EQ(scheme.get_gap_score(), -2);
+    EXPECT_EQ(scheme.get_gap_open_score(), 0);
 
     scheme.set_linear(gap_score{-3});
-    EXPECT_EQ(scheme.get_score_gap(), -3);
-    EXPECT_EQ(scheme.get_score_gap_open(), 0);
+    EXPECT_EQ(scheme.get_gap_score(), -3);
+    EXPECT_EQ(scheme.get_gap_open_score(), 0);
 }
 
 TEST(gap_scheme, set_affine)
 {
     gap_scheme scheme{gap_score{-2}, gap_open_score{-4}};
-    EXPECT_EQ(scheme.get_score_gap(), -2);
-    EXPECT_EQ(scheme.get_score_gap_open(), -4);
+    EXPECT_EQ(scheme.get_gap_score(), -2);
+    EXPECT_EQ(scheme.get_gap_open_score(), -4);
 
     scheme.set_affine(gap_score{-3}, gap_open_score{-6});
-    EXPECT_EQ(scheme.get_score_gap(), -3);
-    EXPECT_EQ(scheme.get_score_gap_open(), -6);
+    EXPECT_EQ(scheme.get_gap_score(), -3);
+    EXPECT_EQ(scheme.get_gap_open_score(), -6);
 }
 
 TEST(gap_scheme, score)
