@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/std/view/transform.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
 
 namespace seqan3::view
 {
@@ -86,12 +87,11 @@ namespace seqan3::view
  */
 template <size_t index>
 inline auto const get = view::transform([] (auto && in)
+    -> std::conditional_t<std::is_lvalue_reference_v<decltype(in)> && !std::is_const_v<decltype(in)>,
+                          std::tuple_element_t<index, remove_cvref_t<decltype(in)>> &,
+                          std::tuple_element_t<index, remove_cvref_t<decltype(in)>>>
 {
     using std::get;
-    // if constexpr (std::is_lvalue_reference_v<decltype(in)>)
-        // return static_cast<std::tuple_element_t<remove_cvref_t<decltype(in)>, index> &>(get<index>(std::forward<decltype(in)>(in)));
-    // else
-    // TODO: Currently does not return a reference.
     return get<index>(std::forward<decltype(in)>(in));
 });
 

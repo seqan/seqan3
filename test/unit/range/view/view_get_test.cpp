@@ -74,6 +74,11 @@ TEST(view_get, basic)
     std::string cmp3{"TGCA"};
     std::string to_char_test = comp | view::to_char;
     EXPECT_EQ(cmp3, to_char_test);
+
+    // reference return check
+    functor1[0] = phred42{4};
+    std::vector<phred42> cmp4{phred42{4}, phred42{1}, phred42{2}, phred42{3}};
+    EXPECT_EQ(cmp4, functor1);
 }
 
 TEST(view_get, advanced)
@@ -116,6 +121,39 @@ TEST(view_get, advanced)
     std::vector<dna4> cmprev2{dna4::T, dna4::G, dna4::C, dna4::A};
     std::vector<dna4> revtest2 = t | view::get<0> | view::get<0> | view::reverse;
     EXPECT_EQ(cmprev2, revtest2);
+
+    // reference check
+    functor0[0] = masked<dna4>{dna4::T, mask::UNMASKED};
+    std::vector<masked<dna4>> cmpref{{dna4::T, mask::UNMASKED}, {dna4::C, mask::UNMASKED},
+                                     {dna4::G, mask::MASKED}, {dna4::T, mask::UNMASKED}};
+    EXPECT_EQ(cmpref, functor0);
+}
+
+TEST(view_get, tuple_pair)
+{
+    std::vector<std::pair<int, int>> pair_test{{0, 1}, {1, 2}, {2, 3}, {3, 4}};
+    std::vector<std::tuple<int, int>> tuple_test{{0, 1}, {1, 2}, {2, 3}, {3, 4}};
+
+    // functor notation
+    std::vector<int> cmp{0, 1, 2, 3};
+    std::vector<int> pair_func = view::get<0>(pair_test);
+    std::vector<int> tuple_func = view::get<0>(tuple_test);
+    EXPECT_EQ(cmp, pair_func);
+    EXPECT_EQ(cmp, tuple_func);
+
+    // reference test
+    cmp[0] = 4;
+    pair_func[0] = 4;
+    tuple_func[0] = 4;
+    EXPECT_EQ(cmp, pair_func);
+    EXPECT_EQ(cmp, tuple_func);
+
+    // pipe notation
+    cmp[0] = 0;
+    std::vector<int> pair_pipe = pair_test | view::get<0>;
+    std::vector<int> tuple_pipe = tuple_test | view::get<0>;
+    EXPECT_EQ(cmp, pair_pipe);
+    EXPECT_EQ(cmp, tuple_pipe);
 }
 
 TEST(view_get, concepts)
@@ -132,8 +170,6 @@ TEST(view_get, concepts)
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), std::tuple<int, int>>));
 
     auto v1 = vec | view::get<0>;
-    // Should work, but needs to be fixed.
-    // v1[2] = 3;
     EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
@@ -143,5 +179,5 @@ TEST(view_get, concepts)
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), std::tuple<int, int>>));
-    // EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
 }
