@@ -81,13 +81,13 @@
  * ### Example
  *
  * Functional and pipe notations:
- * \snippet test/snippet/range/view/all.cpp notation
+ * \snippet test/snippet/range/view/range_view_all.cpp notation
  *
  * Re-transform into a distinct container:
- * \snippet test/snippet/range/view/all.cpp retransform
+ * \snippet test/snippet/range/view/range_view_all.cpp retransform
  *
  * Composability:
- * \snippet test/snippet/range/view/all.cpp composability
+ * \snippet test/snippet/range/view/range_view_all.cpp composability
  *
  * ### Views vs view adaptors
  *
