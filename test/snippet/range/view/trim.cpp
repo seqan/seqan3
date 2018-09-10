@@ -47,8 +47,11 @@ auto v2 = vec | view::trim(dna5q{dna5::C, phred42{20}});
 assert(std::vector<dna5q>(v2) == cmp);
 
 // combinability
-std::string v4 = view::trim(vec, 20u) | view::to_char;
-EXPECT_EQ("AGGA", v4);
+std::string v3 = view::trim(vec, 20u) | view::to_char;
+EXPECT_EQ("AGGA", v3);
 //! [dna5q]
+(void) v1;
+(void) v2;
 }
+
 }
