@@ -26,8 +26,7 @@ std::cout << "Hamming distance between T and T: " << (int) scheme.score(aa27::T,
 
 {
 //! [edit matrix]
-aminoacid_scoring_scheme scheme;
-scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
+aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM80};
 std::cout << "BLOSUM80 score between T and S: " << (int) scheme.score(aa27::T, aa27::S) << "\n"; // == 2
 auto & cell = scheme.score(aa27::T, aa27::S);
 cell = 3;
