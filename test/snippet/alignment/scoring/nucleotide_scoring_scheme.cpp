@@ -12,12 +12,12 @@ int main()
 {
 //! [two letters]
 nucleotide_scoring_scheme scheme; // hamming is default
-std::cout << "Score between DNA5 A and G: " << (int) scheme.get_score(dna5::A, dna5::G) << "\n"; // == -1
-std::cout << "Score between DNA5 A and A: " << (int) scheme.get_score(dna5::A, dna5::A) << "\n"; // == 0
+std::cout << "Score between DNA5 A and G: " << (int) scheme.score(dna5::A, dna5::G) << "\n"; // == -1
+std::cout << "Score between DNA5 A and A: " << (int) scheme.score(dna5::A, dna5::A) << "\n"; // == 0
 
 scheme.set_simple_scheme(match_score{3}, mismatch_score{-2});
-std::cout << "Score between DNA5 A and RNA15 G: " << (int) scheme.get_score(dna5::A, rna15::G) << "\n"; // == -2
-std::cout << "Score between DNA5 A and RNA15 A: " << (int) scheme.get_score(dna5::A, rna15::A) << "\n"; // == 3
+std::cout << "Score between DNA5 A and RNA15 G: " << (int) scheme.score(dna5::A, rna15::G) << "\n"; // == -2
+std::cout << "Score between DNA5 A and RNA15 A: " << (int) scheme.score(dna5::A, rna15::A) << "\n"; // == 3
 // you can score differenct nucleotides  ^
 //! [two letters]
 }
@@ -26,9 +26,9 @@ std::cout << "Score between DNA5 A and RNA15 A: " << (int) scheme.get_score(dna5
 //! [edit matrix]
 nucleotide_scoring_scheme scheme; // hamming distance is default
 std::cout << "Score between DNA A and G before edit: "
-          << (int) scheme.get_score(dna15::A, dna15::G) << "\n"; // == -1
-scheme.get_score(dna15::A, dna15::G) = 3;
-std::cout << "Score after editing: " << (int) scheme.get_score(dna15::A, dna15::G) << "\n"; // == 3
+          << (int) scheme.score(dna15::A, dna15::G) << "\n"; // == -1
+scheme.score(dna15::A, dna15::G) = 3;
+std::cout << "Score after editing: " << (int) scheme.score(dna15::A, dna15::G) << "\n"; // == 3
 //! [edit matrix]
 }
 
@@ -41,7 +41,7 @@ nucleotide_scoring_scheme scheme; // hamming distance is default
 
 int score = 0;
 for (auto pair : ranges::view::zip(one, two))
-    score += scheme.get_score(std::get<0>(pair), std::get<1>(pair));
+    score += scheme.score(std::get<0>(pair), std::get<1>(pair));
 std::cout << "Score: " << score << "\n"; // == 0 - 1 + 0 - 1 + 0 + 0 = -2
 //! [score sequences]
 }
