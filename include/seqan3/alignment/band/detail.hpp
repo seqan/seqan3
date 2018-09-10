@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides utility functions for alignment band configuration.
+ * \brief Provides utility functions for the alignment band configuration.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -49,6 +49,8 @@ namespace seqan3::detail
 /*!\brief Tests whether the passed type can be used in a band configuration element. Defaults to `std::false_type`.
  * \ingroup alignment
  * \see seqan3::detail::is_band_config_v
+ *
+ * \tparam object_t The type which is tested for being a band configurator.
  */
 template <typename object_t>
 struct is_band_config : public std::false_type
@@ -56,6 +58,9 @@ struct is_band_config : public std::false_type
 
 /*!\brief Helper variable template for seqan3::detail::is_band_config.
  * \ingroup alignment
+ * \sa seqan3::detail::is_band_config
+ *
+ * \tparam object_t The type which is tested for being a band configurator.
  */
 template <typename object_t>
 inline constexpr bool is_band_config_v = is_band_config<object_t>::value;

@@ -32,7 +32,7 @@
 //
 // ============================================================================
 
-/*!\file
+/* \file
  * \brief Provides tests for alignment band configuration.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
@@ -44,7 +44,6 @@
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/band/static.hpp>
-#include <seqan3/core/detail/reflection.hpp>
 
 using namespace seqan3;
 
@@ -75,17 +74,7 @@ TEST(align_config_band, align_config_type_to_id)
     EXPECT_EQ(detail::align_config_type_to_id_v<band_config_t>, align_cfg::id::band);
 }
 
-TEST(align_config_band, invoke_int)
-{
-    auto cfg = std::invoke(align_cfg::band_static(lower_bound{4}, upper_bound{5}), detail::configuration<>{});
-
-    EXPECT_EQ(get<0>(cfg).value.lower_bound, 4);
-    EXPECT_EQ(get<0>(cfg).value.upper_bound, 5);
-    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
-                                detail::configuration<detail::align_config_band<band_static<int>>>>));
-}
-
-TEST(align_config_band, invoke_uint)
+TEST(align_config_band, invoke_unsigned)
 {
     auto cfg = std::invoke(align_cfg::band_static(lower_bound{4u}, upper_bound{5u}), detail::configuration<>{});
 
@@ -95,24 +84,33 @@ TEST(align_config_band, invoke_uint)
                                 detail::configuration<detail::align_config_band<band_static<unsigned>>>>));
 }
 
+TEST(align_config_band, invoke_int)
+{
+    auto cfg = std::invoke(align_cfg::band_static(lower_bound{4}, upper_bound{5}), detail::configuration<>{});
+
+    EXPECT_EQ(get<0>(cfg).value.lower_bound, 4u);
+    EXPECT_EQ(get<0>(cfg).value.upper_bound, 5u);
+    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                detail::configuration<detail::align_config_band<band_static<unsigned>>>>));
+}
+
 TEST(align_config_band, get_by_enum)
 {
-
     {
-        detail::configuration cfg = align_cfg::band_static(lower_bound{4}, upper_bound{5});
+        detail::configuration cfg = align_cfg::band_static(lower_bound{4u}, upper_bound{5u});
 
-        EXPECT_EQ(get<align_cfg::id::band>(cfg).lower_bound, 4);
-        EXPECT_EQ(get<align_cfg::id::band>(cfg).upper_bound, 5);
+        EXPECT_EQ(get<align_cfg::id::band>(cfg).lower_bound, 4u);
+        EXPECT_EQ(get<align_cfg::id::band>(cfg).upper_bound, 5u);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::band>(cfg)),
-                                    band_static<int> &>));
+                                    band_static<unsigned> &>));
     }
 
     {
         detail::configuration<detail::align_config_band<band_static<uint32_t>>> const c_cfg =
             detail::configuration{align_cfg::band_static(lower_bound{4u}, upper_bound{5u})};
 
-        EXPECT_EQ(get<align_cfg::id::band>(c_cfg).lower_bound, 4);
-        EXPECT_EQ(get<align_cfg::id::band>(c_cfg).upper_bound, 5);
+        EXPECT_EQ(get<align_cfg::id::band>(c_cfg).lower_bound, 4u);
+        EXPECT_EQ(get<align_cfg::id::band>(c_cfg).upper_bound, 5u);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::band>(c_cfg)),
                                     band_static<uint32_t> const &>));
     }
@@ -120,19 +118,30 @@ TEST(align_config_band, get_by_enum)
     {
         detail::configuration cfg = align_cfg::band_static(lower_bound{4}, upper_bound{5});
 
-        EXPECT_EQ(get<align_cfg::id::band>(std::move(cfg)).lower_bound, 4);
-        EXPECT_EQ(get<align_cfg::id::band>(std::move(cfg)).upper_bound, 5);
+        EXPECT_EQ(get<align_cfg::id::band>(std::move(cfg)).lower_bound, 4u);
+        EXPECT_EQ(get<align_cfg::id::band>(std::move(cfg)).upper_bound, 5u);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::band>(std::move(cfg))),
-                                    band_static<int> &&>));
+                                    band_static<unsigned> &&>));
     }
 
     {
         detail::configuration<detail::align_config_band<band_static<uint32_t>>> const c_cfg =
             detail::configuration{align_cfg::band_static(lower_bound{4u}, upper_bound{5u})};
 
-        EXPECT_EQ(get<align_cfg::id::band>(std::move(c_cfg)).lower_bound, 4);
-        EXPECT_EQ(get<align_cfg::id::band>(std::move(c_cfg)).upper_bound, 5);
+        EXPECT_EQ(get<align_cfg::id::band>(std::move(c_cfg)).lower_bound, 4u);
+        EXPECT_EQ(get<align_cfg::id::band>(std::move(c_cfg)).upper_bound, 5u);
         EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::band>(std::move(c_cfg))),
                                     band_static<uint32_t> const &&>));
     }
+}
+
+TEST(align_config_band, negative_values)
+{
+    band_static bs{lower_bound{-2}, upper_bound{2}};
+    EXPECT_EQ(bs.lower_bound, 2);
+    EXPECT_EQ(bs.upper_bound, 2);
+
+    auto cfg = std::invoke(align_cfg::band_static(lower_bound{-2}, upper_bound{2}), detail::configuration<>{});
+    EXPECT_EQ(get<0>(cfg).value.lower_bound, 2);
+    EXPECT_EQ(get<0>(cfg).value.upper_bound, 2);
 }

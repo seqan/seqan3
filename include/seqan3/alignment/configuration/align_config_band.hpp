@@ -44,6 +44,7 @@
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -51,9 +52,12 @@ namespace seqan3::detail
 /*!\brief A configuration element for alignment bands.
  * \ingroup configuration
  *
- * \tparam band_t The underlying band class.
+ * \tparam band_t The underlying band class; must model seqan3::is_band_config.
  */
 template <typename band_t>
+//!\cond
+    requires is_band_config_v<band_t>
+//!\endcond
 struct align_config_band
 {
     //!\brief Holds the actual band.
@@ -72,13 +76,14 @@ template <template <typename ...> typename band_t>
 struct align_config_band_adaptor : public configuration_fn_base<align_config_band_adaptor<band_t>>
 {
     /*!\brief Adds to the configuration a band configuration element.
+     * \tparam configuration_t The type of the configuration to be extended.
+     * \tparam value_t The type for the lower and upper diagonal indices; must be integral.
      * \param[in] cfg  The configuration to be extended.
-     * \param[in] lower_bound The lower diagonal for the banded algorithm.
-     * \param[in] upper_bound The upper diagonal for the banded algorithm.
+     * \param[in] lower The lower diagonal to define the band for the banded algorithm.
+     * \param[in] upper The upper diagonal to define the band for the banded algorithm.
      * \returns A new configuration containing the band configuration element.
      */
-    template <typename configuration_t,
-              typename value_t>
+    template <typename configuration_t, std::Integral value_t>
     //!\cond
         requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
     //!\endcond
@@ -89,12 +94,12 @@ struct align_config_band_adaptor : public configuration_fn_base<align_config_ban
         static_assert(is_valid_alignment_configuration_v<align_cfg::id::band, remove_cvref_t<configuration_t>>,
                       SEQAN3_INVALID_CONFIG(align_cfg::id::band));
 
-        band_t<value_t> band{lower, upper};
-        return std::forward<configuration_t>(cfg).push_front(align_config_band<band_t<value_t>>{std::move(band)});
+        typedef align_config_band<band_t<typename std::make_unsigned_t<value_t>>> new_cfg_type;
+        return std::forward<configuration_t>(cfg).push_front(new_cfg_type{{lower, upper}});
     }
 };
 
-//!\brief Helper template meta-function associated with detail::align_config_band.
+//!\brief Helper template meta-function associated with seqan3::detail::align_config_band.
 //!\ingroup configuration
 template <>
 struct on_align_config<align_cfg::id::band>
@@ -104,10 +109,14 @@ struct on_align_config<align_cfg::id::band>
     using invoke = typename is_type_specialisation_of<t, align_config_band>::type;
 };
 
-//!\brief Mapping from the detail::align_config_band type to it's corresponding seqan3::align_cfg::id.
-//!\ingroup configuration
-template <typename value_t>
-struct align_config_type_to_id<align_config_band<value_t>>
+/*!
+ * \brief Mapping from the seqan3::detail::align_config_band type to it's corresponding seqan3::align_cfg::id.
+ * \ingroup configuration
+ *
+ * \tparam band_t The underlying band class.
+ */
+template <typename band_t>
+struct align_config_type_to_id<align_config_band<band_t>>
 {
     //!\brief The associated seqan3::align_cfg::id.
     static constexpr align_cfg::id value = align_cfg::id::band;
