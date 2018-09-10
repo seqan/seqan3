@@ -12,19 +12,19 @@ int main()
 {
 //! [two letters]
 nucleotide_scoring_scheme scheme; // hamming is default
-std::cout << "Score between DNA A and G: " << (int) scheme.get_score(dna5::A, dna5::G) << "\n"; // == -1
-std::cout << "Score between DNA A and A: " << (int) scheme.get_score(dna5::A, dna5::A) << "\n"; // == 0
+std::cout << "Score between DNA5 A and G: " << (int) scheme.get_score(dna5::A, dna5::G) << "\n"; // == -1
+std::cout << "Score between DNA5 A and A: " << (int) scheme.get_score(dna5::A, dna5::A) << "\n"; // == 0
 
 scheme.set_simple_scheme(match_score{3}, mismatch_score{-2});
-std::cout << "Score between DNA A and RNA G: " << (int) scheme.get_score(dna5::A, rna15::G) << "\n"; // == -2
-std::cout << "Score between DNA A and RNA A: " << (int) scheme.get_score(dna5::A, rna15::A) << "\n"; // == 3
+std::cout << "Score between DNA5 A and RNA15 G: " << (int) scheme.get_score(dna5::A, rna15::G) << "\n"; // == -2
+std::cout << "Score between DNA5 A and RNA15 A: " << (int) scheme.get_score(dna5::A, rna15::A) << "\n"; // == 3
 // you can score differenct nucleotides  ^
 //! [two letters]
 }
 
 {
 //! [edit matrix]
-nucleotide_scoring_scheme scheme; // hamming is default
+nucleotide_scoring_scheme scheme; // hamming distance is default
 std::cout << "Score between DNA A and G before edit: "
           << (int) scheme.get_score(dna15::A, dna15::G) << "\n"; // == -1
 scheme.get_score(dna15::A, dna15::G) = 3;
