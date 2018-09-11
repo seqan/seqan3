@@ -234,8 +234,8 @@ public:
      *                        value. Must satisfy seqan3::validator_concept.
      *
      * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. `'a'`).
-     * \param[in]  long_id   The long identifier for the option (e.g. `"age"`).
+     * \param[in]  short_id  The short identifier for the option (e.g. 'a').
+     * \param[in]  long_id   The long identifier for the option (e.g. "age").
      * \param[in]  desc      The description of the option to be shown in the help page.
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
@@ -270,8 +270,8 @@ public:
     /*!\brief Adds a flag to the seqan3::argument_parser.
      *
      * \param[out] value    The variable in which to store the given command line argument.
-     * \param[in]  short_id The short identifier for the flag (e.g. `'i'`).
-     * \param[in]  long_id  The long identifier for the flag (e.g. `"integer"`).
+     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
+     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      * \param[in]  desc     The description of the flag to be shown in the help page.
      * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
      *

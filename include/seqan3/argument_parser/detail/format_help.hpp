@@ -91,8 +91,8 @@ public:
      * \tparam validator_type The type of validator applied to the value after parsing.
      *
      * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. `'i'`).
-     * \param[in]  long_id   The long identifier for the option (e.g. `"integer"`).
+     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
+     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
      * \param[in]  desc      The description of the option.
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
@@ -115,8 +115,8 @@ public:
 
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
      *
-     * \param[in]  short_id The short identifier for the flag (e.g. `'i'`).
-     * \param[in]  long_id  The long identifier for the flag (e.g. `"integer"`).
+     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
+     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      * \param[in]  desc     The description of the flag.
      * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
      */
@@ -709,8 +709,8 @@ public:
      * \tparam validator_type The type of validator applied to the value after parsing.
      *
      * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. `'i'`).
-     * \param[in]  long_id   The long identifier for the option (e.g. `"integer"`).
+     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
+     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
      * \param[in]  desc      The description of the option.
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
@@ -735,8 +735,8 @@ public:
      *
      * \param[out] value    The variable in which to store the given command line argument
      *                      (which is only needed for the interface here).
-     * \param[in]  short_id The short identifier for the flag (e.g. `'i'`).
-     * \param[in]  long_id  The long identifier for the flag (e.g. `"integer"`).
+     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
+     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      * \param[in]  desc     The description of the flag.
      * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
      */

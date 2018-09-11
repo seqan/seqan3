@@ -105,8 +105,8 @@ public:
      * \tparam validator_type The type of validator applied to the value after parsing.
      *
      * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. `'i'`).
-     * \param[in]  long_id   The long identifier for the option (e.g. `"integer"`).
+     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
+     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
@@ -129,8 +129,8 @@ public:
     /*!\brief Adds a get_flag call to be evaluated later on.
      *
      * \param[out] value    The variable in which to store the given command line argument.
-     * \param[in]  short_id The short identifier for the flag (e.g. `'i'`).
-     * \param[in]  long_id  The long identifier for the flag (e.g. `"integer"`).
+     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
+     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      *
      * \throws seqan3::parser_design_error
      */
@@ -584,8 +584,8 @@ private:
     /*!\brief Handles command line option retrieval.
      *
      * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. `'i'`).
-     * \param[in]  long_id   The long identifier for the option (e.g. `"integer"`).
+     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
+     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
@@ -641,8 +641,8 @@ private:
     /*!\brief Handles command line flags, whether they are set or not.
      *
      * \param[out] value    The variable in which to store the given command line argument.
-     * \param[in]  short_id The short identifier for the flag (e.g. `'i'`).
-     * \param[in]  long_id  The long identifier for the flag (e.g. `"integer"`).
+     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
+     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      *
      */
     void get_flag(bool & value,
