@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,20 +30,64 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
+// ==========================================================================
 
-/*!\file
- * \brief Meta-header for all stream related functionality.
- * \author René Rahn <rene.rahn AT fu-berlin.de>
- */
+#include <algorithm>
+#include <cctype>
+#include <cstring>
 
-/*!\defgroup stream Stream
- * \brief The stream sub-module contains data structures and functions for streaming and tokenization.
- * \ingroup io
- * \todo write me!
- */
+#include <benchmark/benchmark.h>
 
-#pragma once
-
-#include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
+
+using namespace seqan3;
+
+constexpr std::array<char, 1 << 20> arr{};
+
+template <bool stl>
+static void simple(benchmark::State& state)
+{
+    size_t sum = 0;
+    size_t i = 0;
+
+    for (auto _ : state)
+    {
+        i = (i + 1) % (1 << 20);
+        if constexpr (stl)
+            sum += std::isupper(arr[i]);
+        else
+            sum += is_upper(arr[i]);
+    }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile size_t fin = sum;
+}
+
+BENCHMARK_TEMPLATE(simple, true);
+BENCHMARK_TEMPLATE(simple, false);
+
+template <bool stl>
+static void combined(benchmark::State& state)
+{
+    size_t sum = 0;
+    size_t i = 0;
+
+    [[maybe_unused]] auto constexpr mycheck = is_punct || is_upper || is_digit;
+
+    for (auto _ : state)
+    {
+        i = (i + 1) % (1 << 20);
+        if constexpr (stl)
+            sum += std::ispunct(arr[i]) || std::isupper(arr[i]) || std::isdigit(arr[i]);
+        else
+            sum += mycheck(arr[i]);
+    }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile size_t fin = sum;
+}
+
+BENCHMARK_TEMPLATE(combined, true);
+BENCHMARK_TEMPLATE(combined, false);
+
+BENCHMARK_MAIN();

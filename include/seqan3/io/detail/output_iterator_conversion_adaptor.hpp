@@ -44,7 +44,7 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/io/concept.hpp>
+#include <seqan3/io/stream/concept.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concepts>

@@ -48,12 +48,8 @@
 
 namespace seqan3
 {
-
-/*!\addtogroup io
- * \{
- */
-
 /*!\interface seqan3::ostream_concept <>
+ * \ingroup stream
  * \brief Concept for output streams.
  *
  * An object is an output stream if it inherits from the [std::ios_base](http://en.cppreference.com/w/cpp/io/ios_base)
@@ -82,7 +78,7 @@ concept ostream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
  */
 /*!\fn      std::basic_ostream<char_type, traits_type> & operator<<(value_type val);
  * \brief   (un)-formatted output operator for the respective type on the underlying stream.
- * \ingroup io
+ * \relates seqan3::ostream_concept
  * \param   val The value to write into the stream.
  * \returns A reference to a std::basic_ostream<char_type, traits_type>.
  *
@@ -121,6 +117,7 @@ concept ostream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
 //!\}
 
 /*!\interface seqan3::istream_concept <>
+ * \ingroup stream
  * \brief Concept for input streams.
  *
  * An object is an input stream if it inherits from the [std::ios_base](http://en.cppreference.com/w/cpp/io/ios_base)
@@ -149,7 +146,7 @@ concept istream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
  */
 /*!\fn      std::basic_istream<char_type, traits_type> & operator>>(value_type val);
  * \brief   (un)-formatted input operator for the respective type on the underlying stream.
- * \ingroup io
+ * \relates seqan3::istream_concept
  * \param   val The value to read from the stream.
  * \returns A reference to a std::basic_istream<char_type, traits_type>.
  *
@@ -191,6 +188,7 @@ concept istream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
  * \extends seqan3::istream_concept
  * \extends seqan3::ostream_concept
  * \brief Concept for i/o streams permitting both directions.
+ * \ingroup stream
  *
  * An object satisfying the requirements of a stream concept can be used to stream in both (input and output)
  * directions.
@@ -200,7 +198,5 @@ template <typename stream_type, typename value_type>
 concept stream_concept = ostream_concept<stream_type, value_type> &&
                               istream_concept<stream_type, value_type>;
 //!\endcond
-
-//!\}
 
 } // namespace seqan3

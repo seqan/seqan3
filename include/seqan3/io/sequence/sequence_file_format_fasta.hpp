@@ -211,7 +211,7 @@ protected:
                  sequence_file_in_options<seq_legal_alph_type, seq_qual_combined> const & options,
                  id_type                                                                & id)
     {
-        auto const is_id = is_char<'>'>{} || is_char<';'>{};
+        auto const is_id = is_char<'>'> || is_char<';'>;
 
         if (!is_id(*ranges::begin(stream_view)))
             throw parse_error{std::string{"Expected to be on beginning of ID, but "} + is_id.msg.string() +
@@ -243,11 +243,11 @@ protected:
                   sequence_file_in_options<seq_legal_alph_type, seq_qual_combined> const &,
                   seq_type                                                               & seq)
     {
-        auto const is_id = is_char<'>'>{} || is_char<';'>{};
+        auto constexpr is_id = is_char<'>'> || is_char<';'>;
 
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
+            auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
             ranges::copy(stream_view | view::take_until(is_id)                      // until next header (or end)
                                      | ranges::view::remove_if(is_space || is_digit)// ignore whitespace and numbers
                                      | view::transform([is_legal_alph] (char const c)

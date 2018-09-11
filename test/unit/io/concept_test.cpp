@@ -41,7 +41,7 @@
 #include <vector>
 #include <string>
 
-#include <seqan3/io/concept.hpp>
+#include <seqan3/io/stream/concept.hpp>
 
 using namespace seqan3;
 
