@@ -100,13 +100,12 @@ requires std::is_arithmetic_v<value_t>
 upper_bound(value_t) -> upper_bound<value_t>;
 //!\}
 
-
 /*!\brief Data structure for a static band.
  * \ingroup alignment
  *
- * \tparam value_t The value type for the diagonal indices; must be integral and unsigned.
+ * \tparam value_t The value type for the boundaries; must be integral.
  */
-template <std::UnsignedIntegral value_t>
+template <std::Integral value_t>
 struct band_static
 {
     /*!\name Constructors, destructor and assignment
@@ -120,26 +119,32 @@ struct band_static
     ~band_static()                               = default;
 
     /*!\brief Construction from seqan3::lower_bound and seqan3::upper_bound.
-     * \tparam input_value_t The input type of the lower and upper diagonal indices.
-     * \param lower The lower diagonal that defines the band; must be integral.
-     * \param upper The upper diagonal that defines the band; must be integral.
+     * \tparam input_value_t The input type of the lower and upper band boundaries.
+     * \param lower The lower boundary of the band; must be integral.
+     * \param upper The upper boundary of the band; must be integral.
      *
-     * \attention The lower diagonal index is a positive number that defines the lower boundary of the band
-     * in south direction from the origin. Negative values are converted to their absolute value.
-     * Analogously, the upper diagonal index is a positive number that defines the upper boundary of the band
-     * in east direction from the origin.
+     * \throws std::invalid_argument if upper < lower.
+     *
+     * \details
+     * The boundaries denote the maximum allowed inbalance of insertions and deletions in the alignment.
+     * For a symmetric band, choose lower = -upper. The upper boundary must not be smaller than the lower boundary.
      */
     template <std::Integral input_value_t>
-    constexpr band_static(lower_bound<input_value_t> const lower, upper_bound<input_value_t> const upper) noexcept
-        : lower_bound{lower.get() >= 0 ? lower.get() : -lower.get()},
-          upper_bound{upper.get() >= 0 ? upper.get() : -upper.get()}
-    {}
+    constexpr band_static(lower_bound<input_value_t> const lower, upper_bound<input_value_t> const upper)
+        : lower_bound{lower.get()}, upper_bound{upper.get()}
+    {
+        if (lower.get() > upper.get())
+        {
+            throw std::invalid_argument("An error occurred in the static band configuration: "
+                                        "The upper boundary must not be smaller than the lower boundary.");
+        }
+    }
     //!}
 
     //!\privatesection
-    //!\brief The data member storing the lower diagonal index.
+    //!\brief The data member storing the lower boundary of the band.
     value_t lower_bound{std::numeric_limits<value_t>::max()};
-    //!\brief The data member storing the upper diagonal index.
+    //!\brief The data member storing the upper boundary of the band.
     value_t upper_bound{std::numeric_limits<value_t>::max()};
 };
 
@@ -150,10 +155,10 @@ struct band_static
  */
 /*!
  * \brief Deduces the band type.
- * \tparam value_t The underlying type of the diagonal indices; must be integral and gets converted to unsigned.
+ * \tparam value_t The underlying type of the boundaries; must be integral.
  */
 template <std::Integral value_t>
-band_static(lower_bound<value_t>, upper_bound<value_t>) -> band_static<typename std::make_unsigned_t<value_t>>;
+band_static(lower_bound<value_t>, upper_bound<value_t>) -> band_static<value_t>;
 //!\}
 
 } // namespace seqan3
