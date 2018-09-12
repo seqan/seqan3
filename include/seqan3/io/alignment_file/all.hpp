@@ -45,3 +45,4 @@
  */
 
 #include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
