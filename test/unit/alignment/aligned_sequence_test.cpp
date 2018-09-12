@@ -36,7 +36,7 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/io/alignment/detail.hpp>
+#include <seqan3/io/alignment_file/detail.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
