@@ -44,4 +44,4 @@
  * \brief \todo document at a later point in time
  */
 
-#include <seqan3/io/alignment/detail.hpp>
+#include <seqan3/io/alignment_file/detail.hpp>
