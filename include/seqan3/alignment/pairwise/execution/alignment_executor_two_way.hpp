@@ -71,31 +71,31 @@ class alignment_executor_two_way
      * \{
      */
     //!\brief The iterator over the resource.
-    using resource_iterator = iterator_t<std::remove_reference_t<align_instance_rng_t>>;
+    using resource_iterator   = iterator_t<std::remove_reference_t<align_instance_rng_t>>;
     //!\brief The sentinel over the resource.
-    using resource_sentinel = sentinel_t<std::remove_reference_t<align_instance_rng_t>>;
+    using resource_sentinel   = sentinel_t<std::remove_reference_t<align_instance_rng_t>>;
     //!\brief The value type of the resource.
-    using resource_value_type     = std::remove_reference_t<decltype(*std::declval<resource_iterator>())>;
+    using resource_value_type = std::remove_reference_t<decltype(*std::declval<resource_iterator>())>;
     //!\}
 
     /*!\name Buffer
      * \{
      */
     //!\brief The result of invoking the alignment instance.
-    using buffer_value_type       = std::invoke_result_t<resource_value_type>;
+    using buffer_value_type = std::invoke_result_t<resource_value_type>;
     //!\brief The internal buffer.
-    using buffer_type             = std::vector<buffer_value_type>;
+    using buffer_type       = std::vector<buffer_value_type>;
     //!\brief The pointer type of the buffer.
-    using buffer_pointer         = iterator_t<buffer_type>;
+    using buffer_pointer    = iterator_t<buffer_type>;
     //!\}
 public:
 
     //!\brief The result type of invoking the alignment instance.
-    using value_type = buffer_value_type;
+    using value_type      = buffer_value_type;
     //!\brief A reference to the alignment result.
-    using reference  = std::add_lvalue_reference_t<value_type>;
-    //!\brief The offset type for the buffer.
-    using off_type   = typename buffer_type::difference_type;
+    using reference       = std::add_lvalue_reference_t<value_type>;
+    //!\brief The difference type for the buffer.
+    using difference_type = typename buffer_type::difference_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -118,7 +118,7 @@ public:
     }
     //!}
 
-    //!\brief Returns a seqan3::detail::alignment_istream_range over the invoked alignment instances.
+    //!\brief Returns a seqan3::detail::alignment_range over the invoked alignment instances.
     alignment_range<this_t> range()
     {
         return alignment_range<this_t>{*this};
@@ -171,9 +171,10 @@ protected:
         // Apply the alignment execution.
         // TODO: Adapt for async behavior for parallel execution handler.
         std::transform(resource_iter, resource_iter + in_avail(), gptr,
-            [this](auto && align_instance){
+            [this](auto & align_instance){
                 value_type tmp;
-                exec_handler.execute(align_instance, [&](auto && res){ tmp = std::move(res); });
+                std::function<value_type()> f = std::ref(align_instance);
+                exec_handler.execute(std::move(f), [&tmp](value_type && res){ tmp = std::move(res); });
                 return tmp;
             });
         // Advance the resource.
@@ -185,7 +186,6 @@ protected:
     /*!\name Miscellaneous
      * \{
      */
-
     //!\brief Checks whether the end of the input resource was reached.
     bool is_eof() const noexcept
     {
@@ -199,7 +199,7 @@ private:
     static constexpr size_t eof{-1};
 
     //!\brief The execution policy.
-    execution_handler_t  exec_handler{};
+    execution_handler_t exec_handler{};
 
     //!\brief The underlying resource containing the alignment instances.
     align_instance_rng_t resource;  // view or lvalue ref
@@ -209,14 +209,15 @@ private:
     resource_sentinel resource_end{};
 
     //!\brief The buffer storing the alignment results.
-    buffer_type    buffer;
+    buffer_type buffer;
     //!\brief The get pointer in the buffer.
     buffer_pointer gptr;
     //!\brief The end get pointer in the buffer.
     buffer_pointer egptr;
 };
 
-/*!\name Type deduction guide
+/*!\name Type deduction guides
+ * \relates seqan3::detail::alignment_executor_two_way
  * \{
  */
 template <std::ranges::ViewableRange resource_rng_t>

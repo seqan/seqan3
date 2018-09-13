@@ -67,12 +67,11 @@ public:
      * \{
      */
     //!\brief Invokes the passed alignment instance in a blocking manner.
-    template <typename alignment_instance_t,
-              typename delegate_t>
-    void execute(alignment_instance_t && alignment,
-                 delegate_t && delegate)
+    template <typename func_result_t>
+    void execute(std::function<func_result_t()> func,
+                 std::function<void(decltype(func()))> delegate)
     {
-        delegate(std::invoke(alignment));
+        delegate(func());
     }
     //!\}
 };

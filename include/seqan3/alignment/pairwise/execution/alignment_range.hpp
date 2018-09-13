@@ -46,17 +46,17 @@ namespace seqan3::detail
 
 /*!\brief The alignment
  * \ingroup execution
- * \tparam stream_buffer_t The buffer type for the alignment stream.
+ * \tparam range_buffer_t The buffer type for the alignment stream.
  *
  * \details
  *
  * Provides a stream-like range interface over the alignments instances that are computed in a
  * seqan3::detail::alignment_executor_two_way executor.
  */
-template <typename stream_buffer_t>
+template <typename range_buffer_t>
 class alignment_range
 {
-    static_assert(!std::is_const_v<stream_buffer_t>,
+    static_assert(!std::is_const_v<range_buffer_t>,
                   "Cannot create an alignment stream over a const buffer.");
 
     //!\brief The iterator of seqan3::detail::alignment_range.
@@ -64,7 +64,7 @@ class alignment_range
     {
     public:
         //!\brief Type for distances between iterators.
-        using difference_type = typename alignment_range::off_type;
+        using difference_type = typename alignment_range::difference_type;
         //!\brief Value type of container elements.
         using value_type = typename alignment_range::value_type;
         //!\brief Use reference type defined by container.
@@ -159,11 +159,11 @@ class alignment_range
 public:
 
     //!\brief The offset type.
-    using off_type        = typename stream_buffer_t::off_type;
+    using difference_type = typename range_buffer_t::difference_type;
     //!\brief The alignment result type.
-    using value_type      = typename stream_buffer_t::value_type;
+    using value_type      = typename range_buffer_t::value_type;
     //!\brief The reference type.
-    using reference       = typename stream_buffer_t::reference;
+    using reference       = typename range_buffer_t::reference;
     //!\brief The iterator type.
     using iterator        = iterator_type;
     //!\brief The sentinel type.
@@ -179,7 +179,7 @@ public:
     alignment_range & operator=(alignment_range &&)      = default;
     ~alignment_range()                                   = default;
 
-    alignment_range(stream_buffer_t & _stream_buffer) : executor_buffer{_stream_buffer}
+    alignment_range(range_buffer_t & _stream_buffer) : executor_buffer{_stream_buffer}
     {}
     //!}
 
@@ -233,7 +233,7 @@ protected:
 
 private:
     //!\brief The underlying executor buffer.
-    stream_buffer_t & executor_buffer;
+    range_buffer_t & executor_buffer;
     //!\brief Stores last read element.
     value_type      * cache{};
     //!\brief Indicates whether the stream has reached its end.
