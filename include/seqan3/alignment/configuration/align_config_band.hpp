@@ -39,8 +39,8 @@
 
 #pragma once
 
+#include <seqan3/alignment/configuration/align_config_band_static.hpp>
 #include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/alignment/band/static.hpp>
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
@@ -48,6 +48,25 @@
 
 namespace seqan3::detail
 {
+
+/*!\brief Tests whether the passed type can be used in a band configuration element. Defaults to `std::false_type`.
+ * \ingroup alignment
+ * \see seqan3::detail::is_band_config_v
+ *
+ * \tparam object_t The type which is tested for being a band configurator.
+ */
+template <typename object_t>
+struct is_band_config : public std::false_type
+{};
+
+/*!\brief Helper variable template for seqan3::detail::is_band_config.
+ * \ingroup alignment
+ * \sa seqan3::detail::is_band_config
+ *
+ * \tparam object_t The type which is tested for being a band configurator.
+ */
+template <typename object_t>
+inline constexpr bool is_band_config_v = is_band_config<object_t>::value;
 
 /*!\brief A configuration element for alignment bands.
  * \ingroup configuration
@@ -77,7 +96,7 @@ struct align_config_band_adaptor : public configuration_fn_base<align_config_ban
 {
     /*!\brief Adds to the configuration a band configuration element.
      * \tparam configuration_t The type of the configuration to be extended.
-     * \tparam value_t The type for the lower and upper band boundaries; must be integral.
+     * \tparam value_t The type for the lower and upper band boundaries; must model std::Integral.
      * \param[in] cfg  The configuration to be extended.
      * \param[in] lower The lower boundary of the band for the banded algorithm.
      * \param[in] upper The upper boundary of the band for the banded algorithm.
@@ -120,6 +139,12 @@ struct align_config_type_to_id<align_config_band<band_t>>
     //!\brief The associated seqan3::align_cfg::id.
     static constexpr align_cfg::id value = align_cfg::id::band;
 };
+
+//!\cond
+template <std::Integral value_t>
+struct is_band_config<band_static<value_t>> : public std::true_type
+{};
+//!\endcond
 
 } // namespace seqan3::detail
 

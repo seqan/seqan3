@@ -43,7 +43,6 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/band/static.hpp>
 
 using namespace seqan3;
 

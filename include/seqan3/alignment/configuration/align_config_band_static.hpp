@@ -39,7 +39,7 @@
 
 #pragma once
 
-#include <seqan3/alignment/band/detail.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/std/concepts>
 
@@ -48,12 +48,9 @@ namespace seqan3
 
 /*!\brief Type for a lower boundary.
  * \ingroup alignment
- * \tparam value_t The underlying type of the lower bound; must be an arithmetic type.
+ * \tparam value_t The underlying type of the lower bound; must model seqan3::arithmetic_concept.
  */
-template <typename value_t>
-//!\cond
-requires std::is_arithmetic_v<value_t>
-//!\endcond
+template <seqan3::arithmetic_concept value_t>
 struct lower_bound : detail::strong_type<value_t, lower_bound<value_t>>
 {
     //!\brief Inheriting constructors from base class.
@@ -62,12 +59,9 @@ struct lower_bound : detail::strong_type<value_t, lower_bound<value_t>>
 
 /*!\brief Type for an upper boundary.
  * \ingroup alignment
- * \tparam value_t The underlying type of the upper bound; must be an arithmetic type.
+ * \tparam value_t The underlying type of the upper bound; must model seqan3::arithmetic_concept.
  */
-template <typename value_t>
-//!\cond
-requires std::is_arithmetic_v<value_t>
-//!\endcond
+template <seqan3::arithmetic_concept value_t>
 struct upper_bound : detail::strong_type<value_t, upper_bound<value_t>>
 {
     //!\brief Inheriting constructors from base class.
@@ -80,23 +74,17 @@ struct upper_bound : detail::strong_type<value_t, upper_bound<value_t>>
  */
 /*!\brief Deduces the underlying lower boundary type.
  * \relates seqan3::lower_bound
- * \tparam value_t The underlying type of the lower bound; must be an arithmetic type.
+ * \tparam value_t The underlying type of the lower bound; must model seqan3::arithmetic_concept.
  */
-template <typename value_t>
-//!\cond
-requires std::is_arithmetic_v<value_t>
-//!\endcond
+template <seqan3::arithmetic_concept value_t>
 lower_bound(value_t) -> lower_bound<value_t>;
 
 /*!
  * \brief Deduces the underlying upper boundary type.
  * \relates seqan3::upper_bound
- * \tparam value_t The underlying type of the upper bound; must be an arithmetic type.
+ * \tparam value_t The underlying type of the upper bound; must model seqan3::arithmetic_concept.
  */
-template <typename value_t>
-//!\cond
-requires std::is_arithmetic_v<value_t>
-//!\endcond
+template <seqan3::arithmetic_concept value_t>
 upper_bound(value_t) -> upper_bound<value_t>;
 //!\}
 
@@ -162,14 +150,3 @@ band_static(lower_bound<value_t>, upper_bound<value_t>) -> band_static<value_t>;
 //!\}
 
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-//!\cond
-template <typename value_t>
-struct is_band_config<band_static<value_t>> : public std::true_type
-{};
-//!\endcond
-
-} // namespace seqan3::detail
