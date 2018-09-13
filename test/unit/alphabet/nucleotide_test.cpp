@@ -160,13 +160,6 @@ TYPED_TEST(nucleotide, complement)
     }
 }
 
-TYPED_TEST(nucleotide, stream_operator)
-{
-    std::stringstream ss;
-    ss << TypeParam::A << TypeParam::C << TypeParam::G;
-    EXPECT_EQ(ss.str(), "ACG");
-}
-
 TYPED_TEST(nucleotide, concept_check)
 {
     EXPECT_TRUE(nucleotide_concept<TypeParam>);

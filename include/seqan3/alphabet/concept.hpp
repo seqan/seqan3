@@ -145,7 +145,6 @@ concept alphabet_concept = requires (t t1, t t2)
 
     // conversion to char
     { to_char(t1) } -> underlying_char_t<std::remove_reference_t<t>>;
-    { std::cout << t1 };
 
     // assignment from char
     { assign_char(t1,  0) }                          -> std::remove_reference_t<t> &;

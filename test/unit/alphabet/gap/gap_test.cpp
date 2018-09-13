@@ -66,13 +66,6 @@ TEST(gap_test, relations)
     EXPECT_GE(gap{}, gap{});
 }
 
-TEST(gap_test, stream_operator)
-{
-    std::stringstream ss;
-    ss << gap{} << gap{} << gap{};
-    EXPECT_EQ(ss.str(), "---");
-}
-
 TEST(gap_test, assign_char)
 {
     EXPECT_EQ(gap{}.assign_char('-'), gap{});

@@ -1,5 +1,6 @@
-#include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/range/container/concatenated_sequences.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -12,7 +13,7 @@ std::vector<dna4> vector_of_length1000;
 bool not_full = false;
 //! [usage]
 concatenated_sequences<dna4_vector> concat1{"ACGT"_dna4, "GAGGA"_dna4};
-std::cout << concat1[0] << '\n'; // "[A,C,G,T]"
+debug_stream << concat1[0] << '\n'; // "ACGT"
 
 std::vector<dna4_vector> concat2{"ACTA"_dna4, "AGGA"_dna4};
 
@@ -22,7 +23,7 @@ concat2[0] = "ATTA"_dna4;        // this works for vector of vector
 //concat1[0] = "ATTA"_dna4;      // but not on concatenated_sequences
 
 concat1[0][1] = dna4::T;         // this, however, does
-std::cout << concat1[0] << '\n'; // "[A,T,T,A]"
+debug_stream << concat1[0] << '\n'; // "ATTA"
 
 
 // if you know that you will be adding a thousand vectors of length thousand:
@@ -40,7 +41,7 @@ while (not_full)
 //! [insert]
 concatenated_sequences<dna4_vector> foobar;
 foobar.insert(foobar.end(), "ACGT"_dna4);
-std::cout << foobar[0] << '\n'; // [A, C, G, T]
+debug_stream << foobar[0] << '\n'; // "ACGT"
 //! [insert]
 }
 
@@ -48,8 +49,8 @@ std::cout << foobar[0] << '\n'; // [A, C, G, T]
 //! [insert2]
 concatenated_sequences<dna4_vector> foobar;
 foobar.insert(foobar.end(), 2, "ACGT"_dna4);
-std::cout << foobar[0] << '\n'; // [A, C, G, T]
-std::cout << foobar[1] << '\n'; // [A, C, G, T]
+debug_stream << foobar[0] << '\n'; // "ACGT"
+debug_stream << foobar[1] << '\n'; // "ACGT"
 //! [insert2]
 }
 }

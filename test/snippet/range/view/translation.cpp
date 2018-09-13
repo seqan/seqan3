@@ -1,7 +1,8 @@
 #include <iostream>
 
-#include <seqan3/range/view/translation.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/range/view/translation.hpp>
 #include <seqan3/range/view/complement.hpp>
 
 using namespace seqan3;
@@ -14,7 +15,7 @@ dna5_vector vec{"ACGTACGTACGTA"_dna5};
 
 // Default (first forward frame)
 auto v1 = vec | view::translate_single;                                                           // == [T,Y,V,R]
-std::cout << v1[1] << std::endl;
+debug_stream << v1[1] << '\n';
 
 // First forward frame
 auto v2 = vec | view::translate_single(translation_frames::FWD_FRAME_0);                          // == [T,Y,V,R]

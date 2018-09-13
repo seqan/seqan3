@@ -37,6 +37,7 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
@@ -355,6 +356,24 @@ TYPED_TEST(container_of_container, swap)
     t0.swap(t1);
     EXPECT_TRUE((t0 == TypeParam{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4}));
     EXPECT_TRUE((t1 == TypeParam{}));
+}
+
+TYPED_TEST(container_of_container, streamable)
+{
+    TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+
+    std::ostringstream o;
+    debug_stream.set_underlying_stream(o);
+
+    debug_stream << TypeParam{};
+
+    o.flush();
+    EXPECT_EQ(o.str(), "[]");
+
+    debug_stream << ", " << t1;
+
+    o.flush();
+    EXPECT_EQ(o.str(), "[], [ACGT,ACGT,GAGGA]");
 }
 
 #if SEQAN3_WITH_CEREAL

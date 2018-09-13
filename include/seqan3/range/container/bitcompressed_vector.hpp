@@ -48,6 +48,7 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/concepts>
@@ -56,6 +57,9 @@
 
 namespace seqan3
 {
+
+// forward
+class debug_stream_type;
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
  * \tparam alphabet_type The value type of the container, must satisfy seqan3::alphabet_concept and not be `&`.
@@ -211,6 +215,12 @@ private:
             return !(static_cast<alphabet_type>(*this) < rhs);
         }
         //!\}
+
+        //!\brief Convert to alphabet type when streamed.
+        friend debug_stream_type & operator<<(debug_stream_type & s, reference_proxy_type const l)
+        {
+            return s << static_cast<alphabet_type>(l);
+        }
 
         static_assert(!std::WeaklyIncrementable<alphabet_type>,
                       "TODO: bitcompressed_vector::reference_proxy_type needs to be adapted to also be incrementable.");
@@ -1094,6 +1104,18 @@ public:
         archive(data); //TODO: data not yet serialisable
     }
     //!\endcond
+
+    //!\brief When printing to stream, make sure the reference_proxies are converted for proper overload selection.
+    friend debug_stream_type & operator<<(debug_stream_type & s, bitcompressed_vector & rhs)
+    {
+        return s << (rhs | view::convert<alphabet_type>);
+    }
+
+    //!\overload
+    friend debug_stream_type & operator<<(debug_stream_type & s, bitcompressed_vector && rhs)
+    {
+        return s << (rhs | view::convert<alphabet_type>);
+    }
 };
 
 } // namespace seqan3

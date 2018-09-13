@@ -39,6 +39,7 @@
 #include <range/v3/view/take.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/convert.hpp>
 
@@ -326,6 +327,24 @@ TYPED_TEST(container, swap)
     t0.swap(t1);
     EXPECT_EQ(t0, (TypeParam{dna4::A, dna4::C, dna4::C, dna4::G, dna4::T}));
     EXPECT_EQ(t1, (TypeParam{}));
+}
+
+TYPED_TEST(container, streamable)
+{
+    TypeParam t1{dna4::A, dna4::C, dna4::C, dna4::G, dna4::T};
+
+    std::ostringstream o;
+    debug_stream.set_underlying_stream(o);
+
+    debug_stream << TypeParam{};
+
+    o.flush();
+    EXPECT_EQ(o.str(), "");
+
+    debug_stream << t1;
+
+    o.flush();
+    EXPECT_EQ(o.str(), "ACCGT");
 }
 
 #if 0 // SEQAN3_WITH_CEREAL

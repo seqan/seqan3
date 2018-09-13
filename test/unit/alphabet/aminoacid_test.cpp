@@ -142,22 +142,6 @@ TYPED_TEST(aminoacid, to_char)
     }
 }
 
-TYPED_TEST(aminoacid, stream_operator)
-{
-    std::stringstream ss;
-    ss << TypeParam::A << TypeParam::C << TypeParam::G << TypeParam::B << TypeParam::J
-       << TypeParam::O << TypeParam::U << TypeParam::X << TypeParam::Z;
-
-    if constexpr (std::is_same_v<TypeParam, aa27>)
-    {
-        EXPECT_EQ(ss.str(), "ACGBJOUXZ");
-    }
-    else if constexpr (std::is_same_v<TypeParam, aa20>)
-    {
-        EXPECT_EQ(ss.str(), "ACGDLLCSE");
-    }
-}
-
 TYPED_TEST(aminoacid, concept_check)
 {
     EXPECT_TRUE(aminoacid_concept<TypeParam>);

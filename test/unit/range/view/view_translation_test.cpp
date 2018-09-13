@@ -218,7 +218,7 @@ TYPED_TEST(nucleotide, view_translate_container_conversion)
         EXPECT_EQ(std::vector<std::vector<aa27> >(v1), cmp1);
 
     for (unsigned i = 0; i < v1.size(); i++)
-        EXPECT_EQ(concatenated_sequences<std::vector<aa27> >(v1), cmp1);
+        EXPECT_TRUE(concatenated_sequences<std::vector<aa27> >(v1) == cmp1);
 }
 
 TYPED_TEST(nucleotide, view_translate_single_concepts)
