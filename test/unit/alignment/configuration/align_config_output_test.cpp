@@ -32,27 +32,62 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
+#include <gtest/gtest.h>
 
- #pragma once
+#include <type_traits>
 
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
- */
-
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/align_config_score.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_output.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
- */
+using namespace seqan3;
+
+struct bar
+{
+    int value;
+};
+
+TEST(align_config_output, constructor)
+{
+    EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_output<align_result_key::end>>));
+}
+
+TEST(align_config_output, on_align_config)
+{
+    using output_config_t = detail::align_config_output<align_result_key::trace>;
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::output>::invoke<output_config_t>,
+                 std::true_type>));
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::output>::invoke<bar>,
+                 std::false_type>));
+}
+
+TEST(align_config_output, align_config_type_to_id)
+{
+    using output_config_t = detail::align_config_output<align_result_key::begin>;
+    EXPECT_EQ(detail::align_config_type_to_id<output_config_t>::value, align_cfg::id::output);
+    EXPECT_EQ(detail::align_config_type_to_id_v<output_config_t>, align_cfg::id::output);
+}
+
+TEST(align_config_output, invoke)
+{
+    detail::configuration cfg = align_cfg::output<align_result_key::score>;
+
+    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                detail::configuration<detail::align_config_output<align_result_key::score>>>));
+}
+
+TEST(align_config_output, get_by_enum)
+{
+    detail::configuration cfg = align_cfg::output<align_result_key::score>;
+    auto const c_cfg = detail::configuration{align_cfg::output<align_result_key::score>};
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(cfg)),
+                                align_result_key &>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(c_cfg)),
+                                align_result_key const &>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(std::move(cfg))),
+                                align_result_key &&>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(std::move(c_cfg))),
+                                align_result_key const &&>));
+}

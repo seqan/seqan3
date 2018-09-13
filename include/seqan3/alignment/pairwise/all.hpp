@@ -32,27 +32,16 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
-
- #pragma once
-
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
+/*!\file
+ * \brief Meta-header for the \link pairwise pairwise submodule \endlink.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/align_config_score.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
-#include <seqan3/alignment/configuration/align_config_output.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
+#pragma once
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
+#include <seqan3/alignment/pairwise/align_result.hpp>
+
+/*!\defgroup pairwise Pairwise
+ * \ingroup alignment
+ * \brief Provides the algorithmic components for the computation of pairwise alignments.
  */
