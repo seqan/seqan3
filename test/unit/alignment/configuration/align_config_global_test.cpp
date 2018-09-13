@@ -32,24 +32,64 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
+#include <gtest/gtest.h>
 
- #pragma once
+#include <functional>
+#include <type_traits>
 
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
- */
-
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
+#include <seqan3/core/detail/reflection.hpp>
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
- */
+using namespace seqan3;
+
+struct bar
+{
+    int value;
+};
+
+TEST(align_config_global, constructor)
+{
+    EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_global>));
+}
+
+TEST(align_config_global, on_align_config)
+{
+    using global_config_t = detail::align_config_global;
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::global>::invoke<global_config_t>,
+                 std::true_type>));
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::global>::invoke<bar>,
+                 std::false_type>));
+}
+
+TEST(align_config_global, align_config_type_to_id)
+{
+    using global_config_t = detail::align_config_global;
+    EXPECT_EQ(detail::align_config_type_to_id<global_config_t>::value, align_cfg::id::global);
+    EXPECT_EQ(detail::align_config_type_to_id_v<global_config_t>, align_cfg::id::global);
+}
+
+TEST(align_config_global, invoke)
+{
+    auto cfg = std::invoke(align_cfg::global, detail::configuration<>{});
+
+    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                detail::configuration<detail::align_config_global>>));
+}
+
+TEST(align_config_global, get_by_enum)
+{
+    detail::configuration cfg = align_cfg::global;
+    auto const c_cfg = detail::configuration{align_cfg::global};
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(cfg)),
+                                bool &>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(c_cfg)),
+                                bool const &>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(std::move(cfg))),
+                                bool &&>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::global>(std::move(c_cfg))),
+                                bool const &&>));
+}
