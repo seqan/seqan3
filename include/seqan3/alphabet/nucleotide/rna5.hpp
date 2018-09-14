@@ -62,6 +62,10 @@ namespace seqan3
  * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You assign
  * between values of seqan3::dna5 and seqan3::rna5.
  *
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::rna5::assign_char().
+ *
  *\snippet test/snippet/alphabet/nucleotide/rna5.cpp code
  */
 

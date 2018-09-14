@@ -53,8 +53,10 @@ namespace seqan3
  *
  * The gapped alphabet represents the union of a given alphabet and the
  * seqan3::gap alphabet (e.g. the four letter DNA alphabet + a gap character).
- * Note that you cannot assign regular characters, but additional functions for
- * this are available.
+ *
+ * The gapped alphabet may be brace initialized from the static letter members of the underlying alphabet and the
+ * seqan3::gap alphabet. Note that you cannot assign the alphabet by using letters of type `char`, but you instead have
+ * to use the function assign_char() of the underlying alphabet or seqan3::gap::assign_char().
  *
  * \snippet test/snippet/alphabet/gap/gapped.cpp general
  *

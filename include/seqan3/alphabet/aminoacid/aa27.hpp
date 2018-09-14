@@ -57,8 +57,9 @@ namespace seqan3
  * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
  * Y, Z, *
  *
- * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
- * regular characters, but additional functions for this are available.
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::aa27::assign_char().
  *
  * \snippet test/snippet/alphabet/aminoacid/aa27.cpp construction
  */

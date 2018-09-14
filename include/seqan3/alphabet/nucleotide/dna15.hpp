@@ -61,6 +61,10 @@ namespace seqan3
  * Note that you can assign 'U' as a character to dna15 and it will silently
  * be converted to 'T'.
  *
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::dna15::assign_char().
+ *
  *\snippet test/snippet/alphabet/nucleotide/dna15.cpp code
  */
 
