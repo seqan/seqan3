@@ -39,7 +39,7 @@
 
 #pragma once
 
-/*!\defgroup structure Structure
+/*!\defgroup structure_file Structure
  * \ingroup io
  * \brief \todo document at a later point in time
  */
