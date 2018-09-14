@@ -86,4 +86,18 @@ struct unexpected_end_of_input : std::runtime_error
     {}
 };
 
+// ----------------------------------------------------------------------------
+// write exceptions
+// ----------------------------------------------------------------------------
+
+//!\brief Thrown if information given to output format didn't match expectations.
+struct format_error : std::invalid_argument
+{
+    //!\brief Constructor that forwards the exception string.
+    format_error(std::string const & s) : std::invalid_argument{s}
+    {}
+};
+
+
 }
+
