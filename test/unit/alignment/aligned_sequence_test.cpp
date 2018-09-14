@@ -55,7 +55,7 @@ void initialize_typed_test_container(container_type & container, std::string con
 {
     for (auto & val : target)
     {
-        typename container_type::value_type cval;
+        typename container_type::value_type cval{};
         assign_char(cval, val);
         container.push_back(cval);
     }
