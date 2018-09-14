@@ -97,50 +97,7 @@ namespace seqan3
  * the value from the command line and enable every other mechanism you need
  * to call the seqan3::argument_parser::parse function in the end.
  *
- * ```cpp
- * #include <seqan3/argument_parser/all.hpp>
- * #include <vector>
- *
- * int main(int argc, char ** argv)
- * {
- *     seqan3::argument_parser myparser("Grade-Average", argc, argv); // initialize
- *
- *     std::string name{"Max Muster"}; // define default values directly in the variable.
- *     bool bonus{false};
- *     std::vector<double> grades{};   // you can also specify a vector that is treated as a list option.
- *
- *     myparser.add_option(name, 'n', "name", "Please specify your name.");
- *     myparser.add_flag(bonus, 'b', "bonus", "Please specify if you got the bonus.");
- *     myparser.add_positional_option(grades, "Please specify your grades.");
- *
- *     try
- *     {
- *          myparser.parse();
- *     }
- *     catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
- *     {
- *          std::cerr << "[PARSER ERROR] " << ext.what(); // customize your error message
- *          return -1;
- *     }
- *     catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
- *     {
- *          return 0;
- *     }
- *
- *     if (bonus)
- *         grades.push_back(1.0); // extra good grade
- *
- *     double avg{0};
- *     for (auto g : grades)
- *         avg += g;
- *
- *     avg = avg / grades.size();
- *
- *     std::cout << name << " has an average grade of " << avg << std::endl;
- *
- *     return 0;
- * }
- * ```
+ * \snippet test/snippet/argument_parser/argument_parser_1.cpp usage
  *
  * Now you can call your application via the command line:
  *
@@ -368,36 +325,7 @@ public:
      * You should therefore enclose this function into a try catch block,
      * customizing the behaviour of your application parser:
      *
-     *```cpp
-     * #include <seqan3/argument_parser/all.hpp>
-     *
-     * int main(int argc, char ** argv)
-     * {
-     *     seqan3::argument_parser myparser("The-Age-App", argc, argv); // initialize
-     *
-     *     int age{30}; // define default values directly in the variable
-     *
-     *     myparser.add_option(age, 'a', "user-age", "Please specify your age.");
-     *
-     *     try
-     *     {
-     *          myparser.parse();
-     *     }
-     *     catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
-     *     {
-     *          std::cerr << "The-Age-App - [PARSER ERROR] " << ext.what(); // customize your error message
-     *          return -1;
-     *     }
-     *     catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
-     *     {
-     *          std::cout << std::endl << "Thanks for using The-Age-App!" << std::endl; // customize
-     *          return 0;
-     *     }
-     *
-     *     std::cout << "integer given by user: " << age << std::endl;
-     *     return 0;
-     * }
-     *```
+     * \snippet test/snippet/argument_parser/argument_parser_2.cpp usage
      *
      * For example a help call gives the following output:
      * ```console
@@ -500,53 +428,7 @@ public:
      * You can access the members directly:
      * (see seqan3::argument_parser_meta_data for a list of the info members)
      *
-     *```cpp
-     * #include <seqan3/argument_parser/all.hpp>
-     * #include <vector>
-     * #include <string>
-     *
-     * int main(int argc, char ** argv)
-     * {
-     *      seqan3::argument_parser myparser("Penguin_Parade", argc, argv); // initialize
-     *
-     *     myparser.info.version = "2.0.0";
-     *     myparser.info.date = "12.01.2017";
-     *     myparser.info.short_description = "Organize your penguin parade";
-     *     myparser.info.description.push_back("First Paragraph.");
-     *     myparser.info.description.push_back("Second Paragraph.");
-     *     myparser.info.examples.push_back("./penguin_parade Skipper Kowalski Rico Private -d 10 -m 02 -y 2017");
-     *
-     *     int d{01};   // day
-     *     int m{01};   // month
-     *     int y{2050}; // year
-     *
-     *     myparser.add_option(d, 'd', "day", "Please specify your preferred day.");
-     *     myparser.add_option(m, 'm', "month", "Please specify your preferred month.");
-     *     myparser.add_option(y, 'y', "year", "Please specify your preferred year.");
-     *
-     *     std::vector<std::string> penguin_names;
-     *
-     *     myparser.add_positional_option(penguin_names, "Specify the names of the penguins.");
-     *
-     *     try
-     *     {
-     *          myparser.parse();
-     *     }
-     *     catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
-     *     {
-     *          std::cerr << ext.what();
-     *          return -1;
-     *     }
-     *     catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
-     *     {
-     *          return 0;
-     *     }
-     *
-     *     // organize ...
-     *
-     *     return 0;
-     * }
-     *```
+     * \snippet test/snippet/argument_parser/argument_parser_3.cpp usage
      *
      * This will produce a nice help page when the user calls `-h` or `--help`:
      *
