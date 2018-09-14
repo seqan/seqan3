@@ -267,11 +267,7 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  *
  * \details
  *
- * ```cpp
- * // these evaluate to true:
- * static_assert(seqan3::compatible_concept<std::string,              std::vector<char>>);
- * static_assert(seqan3::compatible_concept<std::vector<std::string>, std::vector<std::vector<char>>>);
- * ```
+ * \snippet test/snippet/core/metafunction/range.cpp usage
  *
  * Attention, this metafunction implicitly removes cv-qualifiers and reference from the types it recurses on and
  * compares.

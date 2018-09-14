@@ -69,11 +69,7 @@ namespace seqan3::detail
  *
  * ### Example
  *
- * ```cpp
- * using tl = type_list<int, char, double>;
- * using t = detail::transfer_template_args_onto_t<tl, std::tuple>;
- * // t is std::tuple<int, char, double>
- * ```
+ * \snippet test/snippet/core/metafunction/template_inspection.cpp usage
  */
 template <typename source_type, template <typename ...> typename target_template>
 struct transfer_template_args_onto
@@ -177,14 +173,7 @@ using transfer_template_vargs_onto_t = typename transfer_template_vargs_onto<sou
  *
  * ### Example
  *
- * ```cpp
- * using my_type = std::vector<int>;
- *
- * if constexpr (detail::is_type_specialisation_of_v<my_type, std::vector>) // std::vector has no <> !
- * {
- *     // ...
- * }
- * ```
+ * \snippet test/snippet/core/metafunction/template_inspection.cpp usage_2
  */
 template <typename source_t, template <typename ...> typename target_template>
 struct is_type_specialisation_of :

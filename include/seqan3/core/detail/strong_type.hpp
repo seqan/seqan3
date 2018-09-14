@@ -104,20 +104,7 @@ namespace seqan3::detail
  * possible hits in a region of interest, then both values might be given in form of an unsigned integer.
  * The following snippet shows a typical interface:
  *
- * ```cpp
- * template <std::ranges::ForwardRange fwd_rng_type>
- * bool search(fwd_rng_type & rng, unsigned const w, unsigned const e)
- * {
- *  ...
- * };
- *
- * main()
- * {
- *      ...
- *      search(my_range, 4, 2);
- *      ...
- * }
- * ```
+ * \snippet test/snippet/core/detail/strong_type.cpp usage
  *
  * The first parameter is the window size and the last parameter defines the error threshold.
  * But, what happens if the user accidentally switches the `window_size` with the `error` parameter?
@@ -127,33 +114,10 @@ namespace seqan3::detail
  * A strong type is expressive in what it actually represents as a value.
  * In our toy example we could define two strong types as follows:
  *
- * ```cpp
- * struct error : detail::strong_type<unsigned, error>
- * {
- *      using detail::strong_type<unsigned, error>::strong_type;
- * };
- *
- * using window_size : detail::strong_type<unsigned, window_size>;
- * {
- *      using detail::strong_type<unsigned, window_size>::strong_type;
- * };
- * ```
+ * \snippet test/snippet/core/detail/strong_type_2.cpp error_window
  * Our interface could now be changed to:
  *
- * ```cpp
- * template <std::ranges::ForwardRange fwd_rng_type>
- * bool search(fwd_rng_type & rng, window_size const w, error const e)
- * {
- *  ...
- * };
- *
- * main()
- * {
- *      ...
- *      search(my_range, window_size{4}, error{2});
- *      ...
- * }
- * ```
+ * \snippet test/snippet/core/detail/strong_type_2.cpp new_usage
  *
  * Now the user is forced to pass the parameters as their named type. If the parameter order is mixed up by accident
  * the compiler would emit an error message, since the `error` type is not convertible to the `window_size` type and
@@ -172,18 +136,7 @@ namespace seqan3::detail
  * operations from the seqan3::detail::strong_type_skill enum.
  * For example, we could further specify our error type to support increment and decrement operations.
  *
- * ```cpp
- * struct error : detail::strong_type<unsigned, error, detail::strong_type_skill::decrement |
- *                                                     detail::strong_type_skill::increment>
- * {
- *      using detail::strong_type<unsigned, error, detail::strong_type_skill::decrement |
- *                                                 detail::strong_type_skill::increment>::strong_type;
- * };
- *
- * error e{4};
- * --e;
- * ++e;
- * ```
+ * \snippet test/snippet/core/detail/strong_type.cpp adding_skills
  */
 template <typename value_t, typename derived_t, strong_type_skill skills = strong_type_skill::none>
 class strong_type
