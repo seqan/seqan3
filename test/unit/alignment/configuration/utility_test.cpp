@@ -42,7 +42,7 @@ using namespace seqan3;
 TEST(utility, align_cfg_id)
 {
     // NOTE(rrahn): You must update this test if you add a new value to align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(align_cfg::id::SIZE), 2);
+    EXPECT_EQ(static_cast<uint8_t>(align_cfg::id::SIZE), 5);
 }
 
 struct bar

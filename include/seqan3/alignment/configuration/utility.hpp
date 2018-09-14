@@ -67,8 +67,14 @@ enum struct id : uint8_t
 {
     //!\brief Identifier for gap configuration.
     gap,
+    //!\brief Identifier for free ends configuration.
+    sequence_ends,
+    //!\brief Identifier for score configuration.
+    score,
     //!\brief Identifier for global alignment configuration.
-    global
+    global,
+    //!\brief Identifier for output configuration.
+    output
     //!\cond
     // ATTENTION: Must always be the last item; will be used to determine the number of ids.
     ,SIZE
@@ -167,9 +173,12 @@ inline constexpr align_cfg::id align_config_type_to_id_v = align_config_type_to_
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_cfg::id::SIZE)>,
                             static_cast<uint8_t>(align_cfg::id::SIZE)> align_config_validation_matrix =
 {
-    //  gap   global
-    { { false, true },  // gap
-      { true, false } } // global
+    //  gap    s_ends score  global output
+    { { false, true,  true,  true,  true  },  // gap
+      { true,  false, true,  true,  true  },  // sequence_ends
+      { true,  true,  false, true,  true  },  // score
+      { true,  true,  true,  false, true  },  // global
+      { true,  true,  true,  true,  false } } // output
 };
 
 /*!\brief Determines the first type in reverse order of the given detail::configuration that is not combinable with
