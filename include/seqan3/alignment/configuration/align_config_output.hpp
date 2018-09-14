@@ -95,7 +95,7 @@ struct on_align_config<align_cfg::id::output>
     using invoke = typename is_value_specialisation_of<t, align_config_output>::type;
 };
 
-//!\brief Mapping from the seqan3::detail::align_config_output type to it's corresponding seqan3::align_cfg::id.
+//!\brief Mapping from the seqan3::detail::align_config_output type to its corresponding seqan3::align_cfg::id.
 //!\ingroup configuration
 template <align_result_key e>
 struct align_config_type_to_id<align_config_output<e>>

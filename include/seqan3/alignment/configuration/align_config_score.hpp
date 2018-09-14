@@ -41,6 +41,7 @@
 
 #include <seqan3/alignment/configuration/utility.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 
@@ -83,7 +84,7 @@ struct align_config_score_adaptor : public configuration_fn_base<align_config_sc
     }
 };
 
-/*!\brief Helper template meta-function associated with detail::align_config_score.
+/*!\brief Helper template meta-function associated with seqan3::detail::align_config_score.
  * \ingroup configuration
  */
 template <>

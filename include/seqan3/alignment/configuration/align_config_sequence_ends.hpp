@@ -217,7 +217,7 @@ struct align_config_sequence_ends_adaptor : public configuration_fn_base<align_c
     }
 };
 
-//!\brief Helper template meta-function associated with detail::align_config_sequence_ends.
+//!\brief Helper template meta-function associated with seqan3::detail::align_config_sequence_ends.
 //!\ingroup configuration
 template <>
 struct on_align_config<align_cfg::id::sequence_ends>
