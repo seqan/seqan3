@@ -85,18 +85,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * ```cpp
- *  dna5_vector foo{"ACGTA"_dna5};
- *
- *  // pipe notation
- *  auto v = foo | view::complement;                                  // == "TGCAT"
- *
- *  // function notation
- *  dna5_vector v2(view::complement(foo));                            // == "TGCAT"
- *
- *  // generate the reverse complement:
- *  dna5_vector v3 = foo | view::complement | view::reverse;  // == "TACGT"
- * ```
+ * \snippet test/snippet/range/view/complement.cpp usage
  * \hideinitializer
  */
 

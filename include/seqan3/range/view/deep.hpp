@@ -101,41 +101,11 @@ namespace seqan3::view
  *
  * Wrapping an adaptor that takes no parameters:
  *
- * ```cpp
- * std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
- *
- * auto r = foo | view::reverse;             // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
- *
- * auto d = foo | view::deep{view::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
- *
- * // You can also create a permanent alias:
- * namespace view
- * {
- * inline auto const deep_reverse = deep{view::reverse};
- * }
- *
- * auto e = foo | view::deep_reverse;                // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
- * ```
+ * \snippet test/snippet/range/view/deep.cpp no_param
  *
  * Wrapping an adaptor that takes parameters:
  *
- * ```cpp
- *
- * std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
- *
- * auto t = foo | ranges::view::take(1);             // == [ [A,A,A,T,T,T] ]
- *
- * auto d = foo | view::deep{ranges::view::take}(1); // == [ [A], [C] ]
- * // constructor arguments passed via {} and arguments to underlying view passed via ()
- *
- * // In this case especially, an alias improves readability:
- * namespace view
- * {
- * inline auto const deep_take = deep{ranges::view::take};
- * }
- *
- * auto e = foo | view::deep_take(1);                // == [ [A], [C] ]
- * ```
+ * \snippet test/snippet/range/view/deep.cpp with_param
  *
  * The above example illustrates that view::deep has two sets of arguments, the **arguments to construct** this adaptor,
  * and the arguments passed to the underlying adaptor when **calling** this adaptor. You can use `()` for both, but
@@ -145,30 +115,11 @@ namespace seqan3::view
  * of the underlying adaptor if they are temporaries. This is no problem for small objects like the integer above,
  * but might be expensive for larger ones. To avoid this, pass in references to external objects instead of temporaries:
  *
- * ```cpp
- * int i = 7;
- * auto e = foo | view::deep_take(i);
- * ```
+ * \snippet test/snippet/range/view/deep.cpp pass_ref
  *
  * Wrapping an adaptor including its arguments:
  *
- * ```cpp
- *
- * std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
- *
- * auto t = foo | ranges::view::take(1);             // == [ [A,A,A,T,T,T] ]
- *
- * auto d = foo | view::deep{ranges::view::take(1)}; // == [ [A], [C] ]
- * // constructor arguments passed via {} and arguments to underlying view hardcoded inside
- *
- * // Or with an alias
- * namespace view
- * {
- * inline auto const deep_take1 = deep{ranges::view::take(1)};
- * }
- *
- * auto e = foo | view::deep_take1;                  // == [ [A], [C] ]
- * ```
+ * \snippet test/snippet/range/view/deep.cpp wrap_args
  * In the above example the argument to the underlying adaptor is hardcoded and can't be changed at the call-site. It
  * is less flexible, but does not require workarounds for arguments that are expensive (or impossible) to copy.
  *

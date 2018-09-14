@@ -73,10 +73,7 @@ namespace seqan3
  *
  * ### Example
  *
- * ```cpp
- * std::vector<dna4>          v0{"ACGT"_dna4}; // data occupies 4 bytes in memory
- * bitcompressed_vector<dna4> v1{"ACGT"_dna4}; // data occupies 1 byte in memory
- * ```
+ * \snippet test/snippet/range/container/bitcompressed_vector.cpp usage
  *
  * ### Thread safety
  *

@@ -402,9 +402,7 @@ namespace seqan3::view
  *
  * This adaptor returns a single line **excluding** the end-line character(s), *but moving the cursor behind them
  * for single-pass ranges.* I.e. for all ranges that satisfy std::ranges::ForwardRange this is the same as calling
- * ```cpp
- * ranges::view::take_while([] (auto const & l) { return (l != '\r') && (l != '\n'); })
- * ```
+ * \snippet test/snippet/range/view/take_line.cpp adaptor_def
  * but for *single pass input ranges* this means that the endline is also consumed.
  *
  * ### View properties
@@ -431,23 +429,10 @@ namespace seqan3::view
  * ### Example
  *
  * Behaviour on std::ranges::ForwardRange:
- * ```cpp
- * std::string vec{"foo\nbar"};
- * auto v = vec | view::take_line;
- * std::cout << v << '\n'; // [f,o,o]
- *
- * auto v2 = vec | view::reverse | view::take_line | view::reverse;
- * std::cout << v2 << '\n'; // [b,a,r]
- * std::cout << v2 << '\n'; // [b,a,r] (parsing it again gives us the same result)
- * ```
+ * \snippet test/snippet/range/view/take_line.cpp behaviour
  *
  * On single pass std::ranges::InputRange it can be used to tokenise the input stream line-wise:
- * ```cpp
- * std::string vec{"foo\nbar"};
- * auto v = vec | view::single_pass_input | view::take_line;
- * std::cout << v << '\n'; // [f,o,o]
- * std::cout << v << '\n'; // [b,a,r] (parsing it again gives us the next line)
- * ```
+ * \snippet test/snippet/range/view/take_line.cpp tokenise
  *
  * \hideinitializer
  */

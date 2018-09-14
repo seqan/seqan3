@@ -208,41 +208,10 @@ namespace seqan3::view
  * \par Example
  *
  * Operating on a range of seqan3::phred42:
- * ```cpp
- * std::vector<phred42> vec{phred42{40}, phred42{40}, phred42{30}, phred42{20}, phred42{10}};
- *
- * // trim by phred_value
- * auto v1 = vec | view::trim(20u);                        // == ['I','I','?','5']
- *
- * // trim by quality character
- * auto v2 = vec | view::trim(phred42{40});             // == ['I','I']
- *
- * // function syntax
- * auto v3 = view::trim(vec, 20u);                         // == ['I','I','?','5']
- *
- * // combinability
- * std::string v4 = view::trim(vec, 20u) | view::to_char;  // == "II?5"
- * ```
+ * \snippet test/snippet/range/view/trim.cpp phred42
  *
  * Or operating on a range of seqan3::dna5q:
- * ```cpp
- * std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
- *                        {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
- * std::vector<dna5q> cmp{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
- *                        {dna5::A, phred42{20}}};
- *
- * // trim by phred_value
- * auto v1 = vec | view::trim(20u);
- * assert(std::vector<dna5q>(v1) == cmp);
- *
- * // trim by quality character; in this case the nucleotide part of the character is irrelevant
- * auto v2 = vec | view::trim(dna5q{dna5::C, phred42{20}});
- * assert(std::vector<dna5q>(v2) == cmp);
- *
- * // combinability
- * std::string v4 = view::trim(vec, 20u) | view::to_char;
- * EXPECT_EQ("AGGA", v4);
- * ```
+ * \snippet test/snippet/range/view/trim.cpp dna5q
  * \hideinitializer
  */
 

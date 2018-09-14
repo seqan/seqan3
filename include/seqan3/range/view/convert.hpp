@@ -79,25 +79,10 @@ namespace seqan3::view
  * ### Example
  *
  * Convert from `int` to `bool`:
- * ```cpp
- *   // convert from int to bool
- *   std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
- *
- *   // pipe notation
- *   auto v = vec | view::convert<bool>; // == [1, 1, 0, 1, 0, 0, 1, 1, 1];
- *
- *   // function notation and immediate conversion to vector again
- *   std::vector<bool> v2(view::convert<bool>(vec));
- *
- *   // combinability
- *   auto v3 = vec | view::convert<bool> | view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
- * ```
+ * \snippet test/snippet/range/view/convert.cpp int_to_bool
  *
  * Convert from seqan3::dna15 to seqan3::dna5:
- * ```cpp
- *   dna15_vector vec2{"ACYGTN"_dna15};
- *   auto v4 = vec2 | view::convert<dna5>; // == "ACNGTN"_dna5
- * ```
+ * \snippet test/snippet/range/view/convert.cpp 15_to_5
  * \hideinitializer
  */
 template <typename out_t>

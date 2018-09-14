@@ -83,11 +83,7 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \par Example
- * ```cpp
- * std::vector<int> vec{0, 1, 3, 3, 3, 2, 0, 3, 0};
- * auto v1 = vec | view::rank_to<dna4>; // == "ACTTTGATA"_dna4
- * auto v2 = vec | view::rank_to<dna5>; // == "ACTTTGATA"_dna5
- * ```
+ * \snippet test/snippet/range/view/rank_char.cpp rank_to
  * \hideinitializer
  */
 template <typename alphabet_type>

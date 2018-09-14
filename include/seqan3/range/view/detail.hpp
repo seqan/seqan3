@@ -107,31 +107,11 @@ public:
      *
      * Given:
      *
-     * ```cpp
-     * template <typename urng_t>
-     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
-     * struct view_foo
-     * {
-     *     // your implementation
-     * };
-     *
-     * using foo_fn = generic_pipable_view_adaptor<view_foo>;
-     *
-     * namespace view
-     * {
-     * inline constexpr foo_fn foo;
-     * }
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp usage
      *
      * This operator enables the function call syntax of the adaptor:
      *
-     * ```cpp
-     * std::vector<int> container{1, 2, 3};
-     *
-     * auto v = view::foo(container);    // if the view takes no constructor args beyond urange
-     * auto v = view::foo(container, 7); // if the view takes e.g. an extra int argument
-     * // in both cases v is now of type view_foo<std::vector<int>>
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp function_call
      */
     template <std::ranges::InputRange urng_t, typename ...arg_types>
     auto operator()(urng_t && urange, arg_types && ...args) const
@@ -222,32 +202,11 @@ public:
      *
      * Given:
      *
-     * ```cpp
-     * template <typename urng_t>
-     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
-     * struct view_foo
-     * {
-     *     // your implementation
-     * };
-     *
-     * using foo_fn = generic_pipable_view_adaptor<view_foo>;
-     *
-     * namespace view
-     * {
-     * inline constexpr foo_fn foo;
-     * }
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp usage
      *
      * This functor enables the function call syntax, without the actual underlying range:
      *
-     * ```cpp
-     * std::vector<int> container{1, 2, 3};
-     *
-     * auto v = view::foo(7); // v is NOT OF TYPE view_foo<std::vector<int>>
-     *
-     * // it's usually not used like above, instead use it inside a pipe:
-     * auto v = container | view::foo(7);
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp function_call_2
      */
     template <typename ...arg_types>
     auxiliary_functor_t<arg_types...> operator()(arg_types && ...args) const
@@ -270,31 +229,11 @@ public:
      *
      * Given:
      *
-     * ```cpp
-     * template <typename urng_t>
-     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
-     * struct view_foo
-     * {
-     *     // your implementation
-     * };
-     *
-     * using foo_fn = generic_pipable_view_adaptor<view_foo>;
-     *
-     * namespace view
-     * {
-     * inline constexpr foo_fn foo;
-     * }
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp usage
      *
      * This functor enables the pipe syntax:
      *
-     * ```cpp
-     * std::vector<int> container{1, 2, 3};
-     *
-     * auto v = container | view::foo(7);
-     * //                 ^           ^
-     * //     this operator           the intermediate operator() that returns a bound functor
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp pipe_syntax
      */
     template <std::ranges::InputRange urng_t, typename ...arg_types>
     friend auto operator|(urng_t && urange, auxiliary_functor_t<arg_types...> & bound_functor)
@@ -332,29 +271,11 @@ public:
      *
      * Given:
      *
-     * ```cpp
-     * template <typename urng_t>
-     *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
-     * struct view_foo
-     * {
-     *     // your implementation
-     * };
-     *
-     * using foo_fn = generic_pipable_view_adaptor<view_foo>;
-     *
-     * namespace view
-     * {
-     * inline constexpr foo_fn foo;
-     * }
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp usage
      *
      * This functor enables the pipe syntax:
      *
-     * ```cpp
-     * std::vector<int> container{1, 2, 3};
-     *
-     * auto v = container | view::foo; // v is now of type view_foo<std::vector<int>
-     * ```
+     * \snippet test/snippet/range/view/detail.cpp pipe_syntax_2
      */
     template <std::ranges::InputRange urng_t>
     friend auto operator|(urng_t && urange,
@@ -400,24 +321,7 @@ private:
  *
  * This template generates the adaptor for you:
  *
- * ```cpp
- * // 1.
- * template <typename urng_t>
- *     requires std::ranges::InputRange<urng_t> // or more/stricter requirements
- * struct view_foo
- * {
- *     // your implementation
- * };
- *
- * // 2. this is sufficient to declare the adaptor type:
- * using foo_fn = detail::generic_pipable_view_adaptor<view_foo>;
- *
- * namespace view
- * {
- * // 3. the adaptor instance
- * inline constexpr foo_fn foo;
- * }
- * ```
+ * \snippet test/snippet/range/view/detail.cpp adaptor_template
  */
 template <template <typename, typename...> class view_type>
 class generic_pipable_view_adaptor : public pipable_adaptor_base<generic_pipable_view_adaptor<view_type>>

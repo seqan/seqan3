@@ -372,46 +372,7 @@ namespace seqan3::view
  * ### Example
  *
  * Operating on a range of seqan3::dna5:
- * ```cpp
- * dna5_vector vec{"ACGTACGTACGTA"_dna5};
- *
- * // Default (first forward frame)
- * auto v1 = vec | view::translate_single;                                                           // == [T,Y,V,R]
- *
- * // Default (first forward frame)
- * auto v2 = vec | view::translate_single();                                                         // == [T,Y,V,R]
- *
- * // First forward frame
- * auto v3 = vec | view::translate_single(translation_frames::FWD_FRAME_0);                          // == [T,Y,V,R]
- *
- * // First reverse frame
- * auto v4 = vec | view::translate_single(translation_frames::REV_FRAME_0);                          // == [Y,V,R,T]
- *
- * // Second forward frame
- * auto v5 = vec | view::translate_single(translation_frames::FWD_FRAME_1);                          // == [R,T,Y,V]
- *
- * // Second reverse frame
- * auto v6 = vec | view::translate_single(translation_frames::REV_FRAME_1);                          // == [T,Y,V,R]
- *
- * // Third forward frame
- * auto v7 = vec | view::translate_single(translation_frames::FWD_FRAME_2);                            // == [V,R,T]
- *
- * // Third reverse frame
- * auto v8 = vec | view::translate_single(translation_frames::REV_FRAME_w);                            // == [R,T,Y]
- *
- * // function syntax
- * auto v9 = view::translate_single(vec, translation_frames::FWD_FRAME_0);                           // == [T,Y,V,R]
- *
- * // combinability
- * auto v10 = vec | view::complement | view::translate_single(translation_frames::REV_FRAME_0);      // == [M,H,A,C]
- *
- * // combinability with default parameter
- * auto v11 = vec | view::complement | view::translate_single;                                       // == [C,M,H,A]
- *
- * // combinability with default parameter
- * auto v12 = vec | view::complement | view::translate_single();                                     // == [C,M,H,A]
- *
- * ```
+ * \snippet test/snippet/range/view/translation.cpp dna5
  * \hideinitializer
  */
 inline constexpr auto translate_single =deep{detail::generic_pipable_view_adaptor<detail::view_translate_single>{}};
@@ -692,33 +653,7 @@ namespace seqan3::view
  * ### Example
  *
  * Operating on a range of seqan3::dna5:
- * ```cpp
- * dna5_vector vec{"ACGTACGTACGTA"_dna5};
- *
- * // default frame translation
- * auto v1 = vec | view::translate;                                  // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
- *
- * // default frame translation
- * auto v2 = vec | view::translate();                                // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
- *
- * // single frame translation
- * auto v3 = vec | view::translate(translation_frames::FWD_FRAME_0);                                               // == [[T,Y,V,R]]
- *
- * // reverse translation
- * auto v4 = vec | view::translate(translation_frames::FWD_REV_0);                                       // == [[T,Y,V,R],[Y,V,R,T]]
- *
- * // forward frames translation
- * auto v5 = vec | view::translate(translation_frames::FWD);                                     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T]]
- *
- * // six frame translation
- * auto v6 = vec | view::translate(translation_frames::SIX_FRAME);   // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
-
- * // function syntax
- * auto v7 = view::translate(vec, translation_frames::FWD_REV_0);                                        // == [[T,Y,V,R],[Y,V,R,T]]
- *
- * // combinability
- * auto v8 = vec | view::complement | view::translate(translation_frames::FWD_REV_0);                    // == [[C,M,H,A],[M,H,A,C]]
- * ```
+ * \snippet test/snippet/range/view/translation.cpp usage
  * \hideinitializer
  */
 inline constexpr auto translate = deep{detail::generic_pipable_view_adaptor<detail::view_translate>{}};

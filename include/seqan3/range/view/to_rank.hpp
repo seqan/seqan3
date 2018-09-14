@@ -82,19 +82,7 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \par Example
- * ```cpp
- * dna4_vector vec = "ACTTTGATA"_dna4;
- * auto v = vec | view::to_rank | view::convert<unsigned>;
- * std::cout << v << '\n'; // [0,1,3,3,3,2,0,3,0]
- *
- * std::vector<phred42> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
- * auto v3 = qvec | view::to_rank | view::convert<unsigned>;
- * std::cout << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
- *
- * std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4}, {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
- * auto v4 = qcvec | view::to_rank | view::convert<unsigned>;
- * std::cout << v4 << '\n'; // [1,28,22,15,30,16,121,67,92]
- * ```
+ * \snippet test/snippet/range/view/rank_char.cpp to_rank
  * We also convert to unsigned here, because the seqan3::underlying_rank_t is often `uint8_t` which is
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer

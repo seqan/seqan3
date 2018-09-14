@@ -82,19 +82,7 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
- * ```cpp
- * dna4_vector vec = "ACTTTGATA"_dna4;
- * auto v = vec | view::to_char;
- * std::cout << v << '\n'; // [A,C,T,T,T,G,A,T,A]
- *
- * std::vector<phred42> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
- * auto v3 = qvec | view::to_char;
- * std::cout << v3 << '\n'; // [!,(,&,$,(,%,?,1,8]
- *
- * std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4}, {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
- * auto v4 = qcvec | view::to_char;
- * std::cout << v4 << '\n'; // [C,A,G,T,G,A,C,T,A]
- * ```
+ * \snippet test/snippet/range/view/rank_char.cpp to_char
  * \hideinitializer
  */
 inline auto const to_char = deep{view::transform([] (alphabet_concept const in)
