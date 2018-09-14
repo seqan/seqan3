@@ -132,7 +132,7 @@ struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_
     }
 };
 
-//!\brief Helper template meta-function associated with detail::align_config_gap.
+//!\brief Helper template meta-function associated with seqan3::detail::align_config_gap.
 //!\ingroup configuration
 template <>
 struct on_align_config<align_cfg::id::gap>
@@ -142,7 +142,7 @@ struct on_align_config<align_cfg::id::gap>
     using invoke = typename is_type_specialisation_of<t, align_config_gap>::type;
 };
 
-//!\brief Mapping from the detail::align_config_gap type to its corresponding seqan3::align_cfg::id.
+//!\brief Mapping from the seqan3::detail::align_config_gap type to its corresponding seqan3::align_cfg::id.
 //!\ingroup configuration
 template <typename value_type>
 struct align_config_type_to_id<align_config_gap<value_type>>

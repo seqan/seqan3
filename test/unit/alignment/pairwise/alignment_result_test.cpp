@@ -1,0 +1,219 @@
+// ==========================================================================
+//                 SeqAn - The Library for Sequence Analysis
+// ==========================================================================
+//
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
+//       its contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+// DAMAGE.
+//
+// ==========================================================================
+
+#include <gtest/gtest.h>
+
+#include <type_traits>
+#include <utility>
+
+#include <meta/meta.hpp>
+
+#include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/alphabet/gap/gapped.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/view/to_char.hpp>
+
+using namespace seqan3;
+
+template <typename T>
+class generic : public ::testing::Test
+{
+public:
+
+    using res_t   = align_result<T>;
+    using id_t    = meta::at_c<T, 0>;
+    using score_t = meta::at_c<T, 1>;
+    using end_t   = meta::at_c<T, 2>;
+    using begin_t = meta::at_c<T, 3>;
+    using trace_t = meta::at_c<T, 4>;
+    using seq_t   = std::tuple_element_t<0, trace_t>;
+};
+
+using aligned_seq = std::vector<gapped<dna4>>;
+// add all alphabets here
+using generic_types = ::testing::Types<type_list<uint32_t,
+                                                 int32_t,
+                                                 std::pair<size_t, size_t>,
+                                                 std::pair<size_t, size_t>,
+                                                 std::pair<aligned_seq, aligned_seq>>>;
+
+TYPED_TEST_CASE(generic, generic_types);
+
+TYPED_TEST(generic, constructor)
+{
+    using res_t = typename TestFixture::res_t;
+    EXPECT_TRUE((std::is_default_constructible_v<res_t>));
+    EXPECT_TRUE((std::is_copy_constructible_v<res_t>));
+    EXPECT_TRUE((std::is_move_constructible_v<res_t>));
+    EXPECT_TRUE((std::is_destructible_v<res_t>));
+}
+
+TYPED_TEST(generic, tuple_concept)
+{
+    EXPECT_TRUE((tuple_like_concept<typename TestFixture::res_t>));
+}
+
+TYPED_TEST(generic, tuple_element)
+{
+    using res_t = typename TestFixture::res_t;
+    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, res_t>, typename TestFixture::id_t>));
+    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<4, res_t>, typename TestFixture::trace_t>));
+}
+
+TYPED_TEST(generic, tuple_size)
+{
+    using res_t = typename TestFixture::res_t;
+    EXPECT_EQ(std::tuple_size_v<res_t>, 5);
+}
+
+TYPED_TEST(generic, std_position_get)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(std::get<0>(tmp), 1);
+        EXPECT_EQ(std::string{std::get<0>(std::get<4>(tmp)) | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<0>(tmp)), typename TestFixture::id_t &>));
+    }
+
+    {
+        res_t const tmp{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(std::get<0>(tmp), 1);
+        EXPECT_EQ(std::string{std::get<0>(std::get<4>(tmp)) | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<0>(tmp)), typename TestFixture::id_t const &>));
+    }
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(std::get<0>(std::move(tmp)), 1);
+        res_t tmp2{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(std::string{view::persist(std::get<0>(std::get<4>(std::move(tmp2)))) | view::to_char},
+                  std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<0>(std::move(tmp))), typename TestFixture::id_t &&>));
+    }
+
+    {
+        res_t const tmp{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(std::get<0>(std::move(tmp)), 1);
+        res_t const tmp2{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(std::string{view::persist(std::get<0>(std::get<4>(std::move(tmp2)))) | view::to_char},
+                  std::string{"AT-C--A"});
+        // TODO: enable if gcc-7 is fixed.
+        // EXPECT_TRUE((std::is_same_v<decltype(std::get<0>(std::move(tmp))), typename TestFixture::id_t const &&>));
+    }
+}
+
+TYPED_TEST(generic, seqan3_pos_get)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(get<0>(tmp), 1);
+        EXPECT_EQ(std::string{std::get<0>(get<4>(tmp)) | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(get<0>(tmp)), typename TestFixture::id_t &>));
+    }
+
+    {
+        res_t const tmp{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(get<0>(tmp), 1);
+        EXPECT_EQ(std::string{std::get<0>(get<4>(tmp)) | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(get<0>(tmp)), typename TestFixture::id_t const &>));
+    }
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(get<0>(std::move(tmp)), 1);
+        res_t tmp2{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(std::string{view::persist(std::get<0>(get<4>(std::move(tmp2)))) | view::to_char},
+                  std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(get<0>(std::move(tmp))), typename TestFixture::id_t &&>));
+    }
+
+    {
+        res_t const tmp{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(get<0>(std::move(tmp)), 1);
+        res_t const tmp2{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(std::string{view::persist(std::get<0>(get<4>(std::move(tmp2)))) | view::to_char},
+                  std::string{"AT-C--A"});
+        // TODO: enable if gcc-7 is fixed.
+        // EXPECT_TRUE((std::is_same_v<decltype(get<0>(std::move(tmp))), typename TestFixture::id_t const &&>));
+    }
+}
+
+TYPED_TEST(generic, seqan3_enum_get)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(get<align_result_key::id>(tmp), 1);
+        EXPECT_EQ(std::string{std::get<0>(get<align_result_key::trace>(tmp)) | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_result_key::id>(tmp)), typename TestFixture::id_t &>));
+    }
+
+    {
+        res_t const tmp{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(get<align_result_key::id>(tmp), 1);
+        EXPECT_EQ(std::string{std::get<0>(get<align_result_key::trace>(tmp)) | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_result_key::id>(tmp)), typename TestFixture::id_t const &>));
+    }
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(get<align_result_key::id>(std::move(tmp)), 1);
+        res_t tmp2{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(std::string{view::persist(std::get<0>(get<align_result_key::trace>(std::move(tmp2)))) | view::to_char},
+                  std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_result_key::id>(std::move(tmp))), typename TestFixture::id_t &&>));
+    }
+
+    {
+        res_t const tmp{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(get<align_result_key::id>(std::move(tmp)), 1);
+        res_t const tmp2{res_t{1, 0, {10, 10}, {0, 0}, {seq, seq}}};
+        EXPECT_EQ(std::string{view::persist(std::get<0>(get<align_result_key::trace>(std::move(tmp2)))) | view::to_char},
+                  std::string{"AT-C--A"});
+        EXPECT_TRUE((std::is_same_v<decltype(get<align_result_key::id>(std::move(tmp))), typename TestFixture::id_t const &&>));
+    }
+}

@@ -33,87 +33,83 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides scoring configurations.
- * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ * \brief Provides configuration for alignment output.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alignment/pairwise/align_result.hpp>
 #include <seqan3/core/algorithm/all.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 
 namespace seqan3::detail
 {
-/*!\brief A configuration element for alignment scoring.
+/*!\brief A configuration element for global alignment.
  * \ingroup configuration
- * \tparam scoring_scheme_type The type of the underlying scoring scheme.
  */
-template <typename scoring_scheme_type>
-struct align_config_score
+template <align_result_key e>
+struct align_config_output
 {
-    //!\brief Holds the actual scoring scheme.
-    scoring_scheme_type value;
+    //!\brief The value of align_config_output.
+    align_result_key value{e};
 };
 
-/*!\brief The score adaptor enabling pipe notation.
+/*!\brief The output adaptor enabling pipe notation.
  * \ingroup configuration
  */
-struct align_config_score_adaptor : public configuration_fn_base<align_config_score_adaptor>
+template <align_result_key e>
+struct align_config_output_adaptor : public configuration_fn_base<align_config_output_adaptor<e>>
 {
-    /*!\brief Adds to the configuration a score configuration element.
-     * \tparam configuration_type The type of the configuration to be extended.
-     * \tparam scoring_scheme_type The type of the scoring scheme that is included in the new configuration.
+    static_assert(e != align_result_key::id,
+                  "The id field is only usable to recover the id of the alignment within the alignment result. "
+                  "You need to at least use align_result_key::score for the alignment configuration.");
+    /*!\brief Adds to the configuration an output configuration element.
      * \param[in] cfg  The configuration to be extended.
-     * \param[in] scheme The scoring scheme for the algorithm.
-     * \returns A new configuration containing the score configuration element.
+     * \tparam configuration_t The type of the underlying configuration scheme.
+     *                         Is required to fulfill the seqan3::detail::is_algorithm_configuration requirement.
+     * \returns A new configuration containing the output configuration element.
      */
-    template <typename configuration_type, typename scoring_scheme_type>
+    template <typename configuration_t>
     //!\cond
-        requires is_algorithm_configuration_v<remove_cvref_t<configuration_type>>
+        requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
     //!\endcond
-    constexpr auto invoke(configuration_type && cfg, scoring_scheme_type const scheme) const
+    constexpr auto invoke(configuration_t && cfg) const
     {
-        static_assert(is_valid_alignment_configuration_v<align_cfg::id::score, remove_cvref_t<configuration_type>>,
-                      SEQAN3_INVALID_CONFIG(align_cfg::id::score));
+        static_assert(is_valid_alignment_configuration_v<align_cfg::id::output, remove_cvref_t<configuration_t>>,
+                      SEQAN3_INVALID_CONFIG(align_cfg::id::output));
 
-        return std::forward<configuration_type>(cfg).push_front(align_config_score<scoring_scheme_type>
-                                                                {std::move(scheme)});
+        return std::forward<configuration_t>(cfg).push_front(align_config_output<e>{});
     }
 };
 
-/*!\brief Helper template meta-function associated with seqan3::detail::align_config_score.
- * \ingroup configuration
- */
+//!\brief Helper template meta-function associated with seqan3::detail::align_config_output.
+//!\ingroup configuration
 template <>
-struct on_align_config<align_cfg::id::score>
+struct on_align_config<align_cfg::id::output>
 {
     //!\brief Type alias used by meta::find_if
     template <config_element_concept t>
-    using invoke = typename is_type_specialisation_of<t, align_config_score>::type;
+    using invoke = typename is_value_specialisation_of<t, align_config_output>::type;
 };
 
-/*!\brief Mapping from the seqan3::detail::align_config_score type to its corresponding seqan3::align_cfg::id.
- * \tparam scoring_scheme_type The type of the scoring scheme in the configuration element.
- * \ingroup configuration
- */
-template <typename scoring_scheme_type>
-struct align_config_type_to_id<align_config_score<scoring_scheme_type>>
+//!\brief Mapping from the seqan3::detail::align_config_output type to its corresponding seqan3::align_cfg::id.
+//!\ingroup configuration
+template <align_result_key e>
+struct align_config_type_to_id<align_config_output<e>>
 {
     //!\brief The associated seqan3::align_cfg::id.
-    static constexpr align_cfg::id value = align_cfg::id::score;
+    static constexpr align_cfg::id value = align_cfg::id::output;
 };
-
 } // namespace seqan3::detail
 
 namespace seqan3::align_cfg
 {
-
-/*!\brief A configuration adaptor for alignment scoring.
+/*!\brief A configuration adaptor for alignment output.
  * \ingroup configuration
  */
-inline constexpr detail::align_config_score_adaptor score;
-
+template <align_result_key e>
+inline constexpr detail::align_config_output_adaptor<e> output;
 } // namespace seqan3::align_cfg

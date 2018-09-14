@@ -80,7 +80,7 @@ struct align_config_global_adaptor : public configuration_fn_base<align_config_g
     }
 };
 
-//!\brief Helper template meta-function associated with detail::align_config_global.
+//!\brief Helper template meta-function associated with seqan3::detail::align_config_global.
 //!\ingroup configuration
 template <>
 struct on_align_config<align_cfg::id::global>
@@ -90,7 +90,7 @@ struct on_align_config<align_cfg::id::global>
     using invoke = typename std::is_same<t, align_config_global>::type;
 };
 
-//!\brief Mapping from the detail::align_config_global type to it's corresponding seqan3::align_cfg::id.
+//!\brief Mapping from the seqan3::detail::align_config_global type to its corresponding seqan3::align_cfg::id.
 //!\ingroup configuration
 template <>
 struct align_config_type_to_id<align_config_global>
