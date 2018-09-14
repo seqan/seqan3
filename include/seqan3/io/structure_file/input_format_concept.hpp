@@ -55,7 +55,7 @@ namespace seqan3
 {
 /*!\interface seqan3::structure_file_input_format_concept <>
  * \brief The generic concept for structure file in formats.
- * \ingroup structure
+ * \ingroup structure_file
  *
  * \details
  *

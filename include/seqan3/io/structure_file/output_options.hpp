@@ -42,7 +42,9 @@
 namespace seqan3
 {
 
-//!\brief The options type defines various option members that influence the behaviour of all or some formats.
+/*!\brief The options type defines various option members that influence the behaviour of all or some formats.
+ * \ingroup structure_file
+ */
 struct structure_file_output_options
 {
     /*!\brief The default plain text line-ending is "\n", but on Windows an additional carriage return is

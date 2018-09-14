@@ -53,7 +53,7 @@ namespace seqan3
 
 /*!\interface seqan3::structure_file_output_format_concept <>
  * \brief The generic concept for sequence file out formats.
- * \ingroup structure
+ * \ingroup structure_file
  *
  * \details
  *

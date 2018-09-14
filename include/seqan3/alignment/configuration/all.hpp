@@ -49,6 +49,7 @@
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_global.hpp>
 #include <seqan3/alignment/configuration/align_config_score.hpp>
+#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
 #include <seqan3/alignment/configuration/utility.hpp>
 
 /*!\namespace seqan3::align_cfg
