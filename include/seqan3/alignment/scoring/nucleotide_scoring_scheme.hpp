@@ -59,37 +59,13 @@ namespace seqan3
  * ### Example
  *
  * Score two letters:
- * ```cpp
- * nucleotide_scoring_scheme scheme; // hamming is default
- * std::cout << scheme.score(dna5::A, dna5::G); // == -1
- * std::cout << scheme.score(dna5::A, dna5::A); // == 0
- *
- * scheme.set_scheme_simple(match_score{3}, mismatch_score{-2});
- * std::cout << scheme.score(dna5::A, rna15::G); // == -2
- * std::cout << scheme.score(dna5::A, rna15::A); // == 3
- * // you can score different nucleotides  ^
- * ```
+ * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp two letters
  *
  * You can "edit" a given matrix directly:
- * ```cpp
- * scheme.set_scheme_similarity_matrix;
- * std::cout << scheme.score(aa27::T, aa27::S); // == 2
- * scheme.score(aa27::T, aa27::S) = 3;
- * std::cout << scheme.score(aa27::T, aa27::S); // == 3
- * ```
+ * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp edit matrix
  *
  * Score two sequences:
- * ```cpp
- * std::vector<dna15> one = "AGAATA"_dna5;
- * std::vector<dna15> two = "ATACTA"_dna5;
- *
- * nucleotide_scoring_scheme scheme; // haming distance is default
- * int score = 0;
- * for (auto pair : ranges::view::zip(one, two))
- *     score += scheme.score(std::get<0>(pair), std::get<1>(pair));
- * std::cout << score; // == 1 - 1 + 1 - 1 + 1 + 1 == 2
- *
- * ```
+ * \snippet test/snippet/alignment/scoring/nucleotide_scoring_scheme.cpp score sequences
  */
 template <arithmetic_concept score_type = int8_t>
 class nucleotide_scoring_scheme : public scoring_scheme_base<nucleotide_scoring_scheme<score_type>, dna15, score_type>
