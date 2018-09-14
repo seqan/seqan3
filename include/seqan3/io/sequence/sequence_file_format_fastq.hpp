@@ -169,11 +169,11 @@ public:
         }
 
         /* Sequence */
-        auto seq_view = stream_view | view::take_until_or_throw(is_char<'+'>{})    // until 2nd ID line
+        auto seq_view = stream_view | view::take_until_or_throw(is_char<'+'>)    // until 2nd ID line
                                     | ranges::view::remove_if(is_space);           // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            is_in_alphabet<seq_legal_alph_type> const is_legal_alph;
+            auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
             ranges::copy(seq_view | view::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                     {
                                         if (!is_legal_alph(c))

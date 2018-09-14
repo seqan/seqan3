@@ -51,7 +51,10 @@ macro (seqan3_snippet target_cpp snippet_full_path)
 
     add_executable (${target} ${source_path}/${target_cpp})
     target_link_libraries (${target} seqan3::test::unit)
-    # target_compile_options(${target} PUBLIC --disable-werror)
+    set_target_properties(${target}
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${source_path}"
+    )
 
     add_test (NAME "${test_path}/${target}" COMMAND ${target})
 

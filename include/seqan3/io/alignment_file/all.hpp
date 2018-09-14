@@ -32,24 +32,17 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
-
- #pragma once
-
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
+/*!\file
+ * \brief Meta-include for the alignment IO submodule.
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
+#pragma once
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
+/*!\defgroup alignment_io Alignment
+ * \ingroup io
+ * \brief \todo document at a later point in time
  */
+
+#include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>

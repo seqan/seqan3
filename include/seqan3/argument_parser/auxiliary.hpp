@@ -42,9 +42,7 @@
 #include <sstream>
 #include <vector>
 
-#include <seqan3/io/concept.hpp>
-#include <vector>
-#include <sstream>
+#include <seqan3/io/stream/concept.hpp>
 
 namespace seqan3
 {

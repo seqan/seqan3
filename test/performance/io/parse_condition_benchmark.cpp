@@ -1,8 +1,8 @@
-// ============================================================================
+// ==========================================================================
 //                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
+// ==========================================================================
 //
-// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
@@ -30,26 +30,64 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 //
-// ============================================================================
+// ==========================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
+#include <algorithm>
+#include <cctype>
+#include <cstring>
 
- #pragma once
+#include <benchmark/benchmark.h>
 
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
- */
+#include <seqan3/io/stream/parse_condition.hpp>
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
+using namespace seqan3;
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
- */
+constexpr std::array<char, 1 << 20> arr{};
+
+template <bool stl>
+static void simple(benchmark::State& state)
+{
+    size_t sum = 0;
+    size_t i = 0;
+
+    for (auto _ : state)
+    {
+        i = (i + 1) % (1 << 20);
+        if constexpr (stl)
+            sum += std::isupper(arr[i]);
+        else
+            sum += is_upper(arr[i]);
+    }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile size_t fin = sum;
+}
+
+BENCHMARK_TEMPLATE(simple, true);
+BENCHMARK_TEMPLATE(simple, false);
+
+template <bool stl>
+static void combined(benchmark::State& state)
+{
+    size_t sum = 0;
+    size_t i = 0;
+
+    [[maybe_unused]] auto constexpr mycheck = is_punct || is_upper || is_digit;
+
+    for (auto _ : state)
+    {
+        i = (i + 1) % (1 << 20);
+        if constexpr (stl)
+            sum += std::ispunct(arr[i]) || std::isupper(arr[i]) || std::isdigit(arr[i]);
+        else
+            sum += mycheck(arr[i]);
+    }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile size_t fin = sum;
+}
+
+BENCHMARK_TEMPLATE(combined, true);
+BENCHMARK_TEMPLATE(combined, false);
+
+BENCHMARK_MAIN();

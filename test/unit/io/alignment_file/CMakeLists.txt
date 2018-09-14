@@ -1,0 +1,1 @@
+seqan3_test(sam_tag_dictionary_test.cpp)

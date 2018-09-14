@@ -130,6 +130,7 @@ macro (seqan3_require_benchmark)
         gbenchmark_project
         PREFIX gbenchmark_project
         GIT_REPOSITORY "https://github.com/google/benchmark.git"
+        GIT_TAG "v1.4.1"
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
         UPDATE_DISCONNECTED yes
@@ -150,7 +151,6 @@ macro (seqan3_require_test)
     enable_testing ()
 
     set (gtest_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
-    list (APPEND gtest_project_args "-DBUILD_GTEST=1")
     list (APPEND gtest_project_args "-DBUILD_GMOCK=0")
 
     # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
@@ -161,7 +161,7 @@ macro (seqan3_require_test)
         gtest_project
         PREFIX gtest_project
         GIT_REPOSITORY "https://github.com/google/googletest.git"
-        GIT_TAG "15392f1a38fa0b8c3f13a9732e94b209069efa1c"
+        GIT_TAG "release-1.8.1"
         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${gtest_project_args}"
         UPDATE_DISCONNECTED yes

@@ -53,7 +53,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/io/concept.hpp>
+#include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/filesystem.hpp>
 #include <seqan3/io/record.hpp>
