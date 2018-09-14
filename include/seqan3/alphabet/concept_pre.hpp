@@ -233,20 +233,23 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * \snippet test/snippet/alphabet/concept_pre.cpp pseudoknot value retrieval
  *
  * \par Helper variable template
- *   seqan3::pseudoknot_support_v as a shorthand for `seqan3::pseudoknot_support<alphabet_type>::%value`
+ *   seqan3::max_pseudoknot_depth_v as a shorthand for `seqan3::max_pseudoknot_depth<alphabet_type>::%value`
  *
  * \attention This is the base template, it needs to be specialised.
  */
 template<typename alphabet_type>
-struct pseudoknot_support{};
+struct max_pseudoknot_depth{};
 
 /*!\brief The pseudoknot ability of the alphabet. [value metafunction shortcut]
  * \ingroup alphabet
  *
- * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
+ * \attention Do not specialise this shortcut, instead specialise seqan3::max_pseudoknot_depth.
  */
 template<typename alphabet_type>
-constexpr uint8_t pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
+//!\cond
+    requires requires (alphabet_type alph) { max_pseudoknot_depth<alphabet_type>::value; }
+//!\endcond
+constexpr uint8_t max_pseudoknot_depth_v = max_pseudoknot_depth<alphabet_type>::value;
 //!\}
 
 } // namespace seqan3

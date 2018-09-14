@@ -200,7 +200,7 @@ struct dot_bracket3
      * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
      * pseudoknot support.
      */
-    static constexpr uint8_t pseudoknot_support{1};
+    static constexpr uint8_t max_pseudoknot_depth{1};
     //!\}
 
 protected:

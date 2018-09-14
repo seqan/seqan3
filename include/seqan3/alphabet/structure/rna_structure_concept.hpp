@@ -81,10 +81,13 @@ namespace seqan3
  * \relates seqan3::rna_structure_concept
  * \param alph The alphabet letter which is checked for the pseudoknot id.
  * \returns The pseudoknot id, if alph represents an interaction, and no value otherwise.
- * It is guaranteed to be smaller than seqan3::pseudoknot_support.
+ * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
  */
-/*!\struct pseudoknot_support<structure_type>
- * \brief The pseudoknot ability of the structure_type.
+/*!\struct max_pseudoknot_depth<structure_type>
+ * \brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
+ * \relates seqan3::rna_structure_concept
+ * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
+ * pseudoknot support; any higher number gives the maximum nestedness. Value 0 is not allowed.
  */
 //!\cond
 template <typename structure_type>
@@ -99,8 +102,9 @@ concept rna_structure_concept = requires(structure_type val)
     { is_unpaired(val) } -> bool;
     { pseudoknot_id(val) } -> std::optional<uint8_t>;
 
-    // this is delegated to a static class variable
-    { pseudoknot_support_v<structure_type> } -> uint8_t;
+    // this is delegated to a static class variable, which must not be 0
+    requires max_pseudoknot_depth<std::remove_reference_t<structure_type>>::value > 0;
+    requires max_pseudoknot_depth_v<std::remove_reference_t<structure_type>> > 0;
 };
 //!\endcond
 

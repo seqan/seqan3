@@ -68,7 +68,7 @@ void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, do
     if constexpr (std::ranges::SizedRange<structure_type>)
         bpp.reserve(ranges::size(structure));
 
-    std::stack<size_t> brackets[pseudoknot_support_v<structure_alph_type>];
+    std::stack<size_t> brackets[max_pseudoknot_depth_v<structure_alph_type>];
     size_t pos = 0ul;
     for (structure_alph_type symbol : structure)
     {
@@ -96,7 +96,7 @@ void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, do
         // no actions for unpaired
         ++pos;
     }
-    for (uint8_t id = 0u; id < pseudoknot_support_v<structure_alph_type>; ++id)
+    for (uint8_t id = 0u; id < max_pseudoknot_depth_v<structure_alph_type>; ++id)
     {
         if (!brackets[id].empty())
         {

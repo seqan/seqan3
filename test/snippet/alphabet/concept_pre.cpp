@@ -32,9 +32,9 @@ auto j = seqan3::alphabet_size_v<alphabet_type>;
 {
 //! [pseudoknot value retrieval]
 using alphabet_type = structured_rna<rna4, dot_bracket3>;
-uint8_t pk_support = seqan3::pseudoknot_support<alphabet_type>::value;
+uint8_t pk_support = seqan3::max_pseudoknot_depth<alphabet_type>::value;
 // or
-uint8_t pk_support_2 = seqan3::pseudoknot_support_v<alphabet_type>;
+uint8_t pk_support_2 = seqan3::max_pseudoknot_depth_v<alphabet_type>;
 //! [pseudoknot value retrieval]
 (void) pk_support;
 (void) pk_support_2;
