@@ -75,7 +75,7 @@ namespace seqan3
 
 /*!\interface seqan3::structure_file_input_traits_concept <>
  * \brief The requirements a traits_type for seqan3::structure_file_in must meet.
- * \ingroup structure
+ * \ingroup structure_file
  */
 /*!\name Requirements for seqan3::structure_file_input_traits_concept
  * \brief You can expect these **member types** of all types that satisfy seqan3::structure_file_input_traits_concept.
@@ -323,7 +323,7 @@ concept structure_file_input_traits_concept = requires(t v)
 
 /*!\brief The default traits for seqan3::structure_file_in
  * \implements structure_file_input_traits_concept
- * \ingroup structure
+ * \ingroup structure_file
  *
  * \details
  *
@@ -410,7 +410,7 @@ struct structure_file_input_default_traits_rna
 };
 
 //!\brief A traits type that specifies input as amino acids.
-//!\ingroup structure
+//!\ingroup structure_file
 struct structure_file_input_default_traits_aa : structure_file_input_default_traits_rna
 {
     /*!\name Member types
@@ -430,7 +430,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for reading structured sequence files, e.g. Stockholm, Connect, Vienna, ViennaRNA bpp matrix ...
- * \ingroup structure
+ * \ingroup structure_file
  * \tparam traits_type        An auxiliary type that defines certain member types and constants, must satisfy
  *                            seqan3::structure_file_input_traits_concept.
  * \tparam selected_field_ids A seqan3::fields type with the list and order of desired record entries; all fields
