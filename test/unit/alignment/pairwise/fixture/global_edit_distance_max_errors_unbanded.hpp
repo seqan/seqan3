@@ -30,6 +30,7 @@ static auto dna4_01_e255 = []()
         8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
+        alignment_coordinate{15, 8},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -76,6 +77,7 @@ static auto dna4_01T_e255 = []()
         8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
+        alignment_coordinate{8, 15},
         std::vector
         {
         //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
@@ -121,6 +123,53 @@ static auto dna4_01T_e255 = []()
     };
 }();
 
+static auto dna4_02_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 8 (7 insertions, 1 substitutions)
+        // alignment:
+        // AACCGGTAAACCGGTT
+        // | | | || | | |
+        // A-C-G-TA--C-G-TA
+        "AACCGGTAAACCGGTT"_dna4,
+        "ACGTACGTA"_dna4,
+        align_config,
+        8,
+        "AACCGGTAAACCGGTT",
+        "A-C-G-TA--C-G-TA",
+        alignment_coordinate{15, 8},
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
+        /*e*/  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+        /*A*/  1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
+        /*C*/  2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+        /*G*/  3,  2,  2,  2,  2,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
+        /*T*/  4,  3,  3,  3,  3,  3,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+        /*A*/  5,  4,  3,  4,  4,  4,  4,  4,  3,  4,  5,  6,  7,  8,  9, 10, 11,
+        /*C*/  6,  5,  4,  3,  4,  5,  5,  5,  4,  4,  5,  5,  6,  7,  8,  9, 10,
+        /*G*/  7,  6,  5,  4,  4,  4,  5,  6,  5,  5,  5,  6,  6,  6,  7,  8,  9,
+        /*T*/  8,  7,  6,  5,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7,  8,
+        /*A*/  9,  8,  7,  6,  6,  6,  6,  6,  5,  6,  6,  7,  7,  8,  8,  8,  8
+        },
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
+        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
+        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
+        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,U  ,D  ,DL ,D  ,DL ,L  ,L  ,L  ,L  ,
+        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,U  ,DU ,D  ,DUL,D  ,D  ,DL ,L  ,L  ,
+        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,UL ,DU ,DU ,D  ,DUL,DU ,D  ,D  ,DL ,
+        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,DL ,D  ,DUL,D  ,DUL,DU ,DU ,D
+        }
+    };
+}();
+
 static auto aa27_01_e255 = []()
 {
     return alignment_fixture
@@ -136,6 +185,7 @@ static auto aa27_01_e255 = []()
         8,
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
+        alignment_coordinate{15, 8},
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
@@ -182,6 +232,7 @@ static auto aa27_01T_e255 = []()
         8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
+        alignment_coordinate{8, 15},
         std::vector
         {
         //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U

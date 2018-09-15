@@ -87,6 +87,17 @@ namespace seqan3::detail
 template <typename ...>
 struct alignment_trace_matrix;
 
+/*!\brief Represents the begin/end of the pairwise alignment in the respective sequences.
+ * This class can for example be used to represent the coordinate where the best alignment score is located.
+ */
+struct alignment_coordinate
+{
+    //!\brief The position in the first sequence.
+    size_t seq1_pos;
+    //!\brief The position in the second sequence.
+    size_t seq2_pos;
+};
+
 /*!\brief Compute the trace from a trace matrix
  * \ingroup alignment_matrix
  * \tparam    database_t     The type of the database sequence.
@@ -95,6 +106,7 @@ struct alignment_trace_matrix;
  * \param[in] database       The database sequence.
  * \param[in] query          The query sequence.
  * \param[in] matrix         The trace matrix.
+ * \param[in] end_coordinate Where the trace in the matrix ends.
  */
 template <
     typename database_t,
@@ -107,14 +119,17 @@ template <
              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
 //!\endcond
 inline std::pair<std::list<gapped_database_t>, std::list<gapped_query_t>>
-alignment_trace(database_t && database, query_t && query, trace_matrix_t && matrix)
+alignment_trace(database_t && database, query_t && query, trace_matrix_t && matrix, alignment_coordinate const end_coordinate)
 {
     constexpr auto N = trace_directions::none;
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    int row = matrix.rows()-1;
-    int col = matrix.cols()-1;
+    size_t col = end_coordinate.seq1_pos + 1;
+    size_t row = end_coordinate.seq2_pos + 1;
+
+    assert(col <= database.size());
+    assert(row <= query.size());
 
     std::list<gapped_database_t> gapped_database{};
     std::list<gapped_query_t> gapped_query{};

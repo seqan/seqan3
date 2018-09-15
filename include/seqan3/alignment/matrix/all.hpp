@@ -32,19 +32,23 @@
 //
 // ============================================================================
 
+//!\cond DEV
 /*!\file
  * \brief Meta-header for the \link alignment_matrix Matrix sub-module \endlink.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
+//!\endcond
 
 #pragma once
 
+//!\cond DEV
 /*!\defgroup alignment_matrix Matrix
  * \brief Provides the data structures used for representing alignments as a matrix.
  * \ingroup alignment
  *
  * \todo Write detailed landing page.
  */
+//!\endcond
 
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_matrix_formatter.hpp>

@@ -12,6 +12,7 @@ namespace seqan3::literal
 namespace seqan3::fixture
 {
 using namespace seqan3::literal;
+using detail::alignment_coordinate;
 
 static constexpr auto INF = std::numeric_limits<int>::max();
 
@@ -35,6 +36,7 @@ struct alignment_fixture
         score_t _score,
         std::string _gapped_sequence1,
         std::string _gapped_sequence2,
+        alignment_coordinate _end_coordinate,
         std::vector<score_t> _score_vector,
         std::vector<trace_t> _trace_vector
     ) : sequence1{_sequence1},
@@ -43,6 +45,7 @@ struct alignment_fixture
         score{_score},
         gapped_sequence1{_gapped_sequence1},
         gapped_sequence2{_gapped_sequence2},
+        end_coordinate{_end_coordinate},
         score_matrix{std::move(_score_vector), sequence2.size()+1, sequence1.size()+1},
         trace_matrix{std::move(_trace_vector), sequence2.size()+1, sequence1.size()+1}
     {
@@ -57,6 +60,7 @@ struct alignment_fixture
     std::string gapped_sequence1;
     std::string gapped_sequence2;
 
+    alignment_coordinate end_coordinate;
     score_matrix_t score_matrix;
     trace_matrix_t trace_matrix;
 
@@ -70,6 +74,7 @@ alignment_fixture(
     score_t _score,
     std::string _gapped_sequence1,
     std::string _gapped_sequence2,
+    alignment_coordinate _end_coordinate,
     std::vector<score_t> _score_vector,
     std::vector<trace_t> _trace_vector
 )

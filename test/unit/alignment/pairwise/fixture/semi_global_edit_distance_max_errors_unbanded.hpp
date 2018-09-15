@@ -24,15 +24,16 @@ static auto dna4_01_e255 = []()
     {
         // score: 5 (3 deletions, 1 insertion, 1 substitutions)
         // alignment:
-        // AACCGGTTAC---CGGTT
-        //         ||   || ||
-        // --------ACGTACG-TA
+        // AACCGGTTAAC---CGGTT
+        //          ||   || ||
+        // ---------ACGTACG-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
         align_config,
         5,
         "AC---CGGTT",
         "ACGTACG-TA",
+        alignment_coordinate{15, 8},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -79,6 +80,7 @@ static auto dna4_01T_e255 = []()
         8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
+        alignment_coordinate{8, 15},
         std::vector
         {
         //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
@@ -124,21 +126,69 @@ static auto dna4_01T_e255 = []()
     };
 }();
 
+static auto dna4_02_e255 = []()
+{
+    return alignment_fixture
+    {
+        // score: 4 (3 deletions, 1 insertion)
+        // alignment:
+        // AAC---CGGTAAAC---CGGTT
+        //  ||   || ||
+        // -ACGTACG-TA-----------
+        "AACCGGTAAACCGGTT"_dna4,
+        "ACGTACGTA"_dna4,
+        align_config,
+        4,
+        "AC---CGGTA",
+        "ACGTACG-TA",
+        alignment_coordinate{7, 8},
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
+        /*e*/  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+        /*A*/  1,  0,  0,  1,  1,  1,  1,  1,  0,  0,  0,  1,  1,  1,  1,  1,  1,
+        /*C*/  2,  1,  1,  0,  1,  2,  2,  2,  1,  1,  1,  0,  1,  2,  2,  2,  2,
+        /*G*/  3,  2,  2,  1,  1,  1,  2,  3,  2,  2,  2,  1,  1,  1,  2,  3,  3,
+        /*T*/  4,  3,  3,  2,  2,  2,  2,  2,  3,  3,  3,  2,  2,  2,  2,  2,  3,
+        /*A*/  5,  4,  3,  3,  3,  3,  3,  3,  2,  3,  3,  3,  3,  3,  3,  3,  3,
+        /*C*/  6,  5,  4,  3,  3,  4,  4,  4,  3,  3,  4,  3,  3,  4,  4,  4,  4,
+        /*G*/  7,  6,  5,  4,  4,  3,  4,  5,  4,  4,  4,  4,  4,  3,  4,  5,  5,
+        /*T*/  8,  7,  6,  5,  5,  4,  4,  4,  5,  5,  5,  5,  5,  4,  4,  4,  5,
+        /*A*/  9,  8,  7,  6,  6,  5,  5,  5,  4,  5,  5,  6,  6,  5,  5,  5,  5
+        },
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,NON,
+        /*A*/U  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,D  ,DUL,DU ,DU ,DU ,DU ,DU ,
+        /*C*/U  ,U  ,DU ,D  ,DL ,DUL,DU ,DU ,U  ,DU ,DU ,D  ,DL ,DUL,DU ,DU ,DU ,
+        /*G*/U  ,U  ,DU ,U  ,D  ,D  ,DL ,DUL,U  ,DU ,DU ,U  ,D  ,D  ,DL ,DUL,DU ,
+        /*T*/U  ,U  ,DU ,U  ,DU ,DU ,D  ,D  ,UL ,DU ,DU ,U  ,DU ,DU ,D  ,D  ,DL ,
+        /*A*/U  ,DU ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,DL ,D  ,U  ,DU ,DU ,DU ,DU ,D  ,
+        /*C*/U  ,U  ,U  ,D  ,D  ,DUL,DU ,DU ,U  ,D  ,DUL,D  ,D  ,DUL,DU ,DU ,DU ,
+        /*G*/U  ,U  ,U  ,U  ,DU ,D  ,DL ,DUL,U  ,DU ,D  ,U  ,DU ,D  ,DL ,DUL,DU ,
+        /*T*/U  ,U  ,U  ,U  ,DU ,U  ,D  ,D  ,UL ,DU ,DU ,DU ,DU ,U  ,D  ,D  ,DL ,
+        /*A*/U  ,DU ,DU ,U  ,DU ,U  ,DU ,DU ,D  ,DL ,D  ,DUL,DU ,U  ,DU ,DU ,D
+        }
+    };
+}();
+
 static auto aa27_01_e255 = []()
 {
     return alignment_fixture
     {
         // score: 5 (3 deletions, 1 insertion, 1 substitutions)
         // alignment:
-        // UUWWRRIIUW---WRRII
-        //         ||   || ||
-        // --------UWRIUWR-IU
+        // UUWWRRIIUUW---WRRII
+        //          ||   || ||
+        // ---------UWRIUWR-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
         align_config,
         5,
         "UW---WRRII",
         "UWRIUWR-IU",
+        alignment_coordinate{15, 8},
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
@@ -185,6 +235,7 @@ static auto aa27_01T_e255 = []()
         8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
+        alignment_coordinate{8, 15},
         std::vector
         {
         //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U
