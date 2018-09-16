@@ -46,9 +46,6 @@
 
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/io/stream/concept.hpp>
 
 namespace seqan3::detail
 {
@@ -101,15 +98,6 @@ struct alignment_matrix_format
      *
      */
     char const * trace_dir[8]{};
-
-    //!\brief how many bytes needs the epsilon symbol (necessary when using utf-8)
-    uint8_t epsilon_bytes{1};
-
-    /*!\brief how many bytes needs every trace_dir symbol (necessary when using utf-8)
-     * \attention A restriction is that every symbol needs the same amount of
-     * bytes to represent one char.
-     */
-    uint8_t trace_dir_bytes{1};
 
     /*!\brief The CSV format that makes it easy to export the matrix
      * \sa https://en.wikipedia.org/wiki/Comma-separated_values
@@ -181,28 +169,25 @@ constexpr alignment_matrix_format alignment_matrix_format::csv
 constexpr alignment_matrix_format alignment_matrix_format::ascii
 {
     " ", "|", "-", "/",
-    {" ","D","U","DU","L","DL","UL","DUL"} // 1byte per char
+    {" ","D","U","DU","L","DL","UL","DUL"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_block
 {
     u8"ε", u8"║", u8"═", u8"╬",
-    {u8"█",u8"▘",u8"▝",u8"▀",u8"▖",u8"▌",u8"▞",u8"▛"}, // 3bytes per char
-    2, 3
+    {u8"█",u8"▘",u8"▝",u8"▀",u8"▖",u8"▌",u8"▞",u8"▛"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_braille
 {
     u8"ε", u8"║", u8"═", u8"╬",
-    {u8"⠀",u8"⠁",u8"⠈",u8"⠉",u8"⠄",u8"⠅",u8"⠌",u8"⠍"}, // 3bytes per char
-    2, 3
+    {u8"⠀",u8"⠁",u8"⠈",u8"⠉",u8"⠄",u8"⠅",u8"⠌",u8"⠍"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
 {
     u8"ε", u8"║", u8"═", u8"╬",
-    {u8"↺",u8"↖",u8"↑",u8"↖↑",u8"←",u8"↖←",u8"↑←",u8"↖↑←"}, // 3bytes per char
-    2, 3
+    {u8"↺",u8"↖",u8"↑",u8"↖↑",u8"←",u8"↖←",u8"↑←",u8"↖↑←"}
 };
 
 /*!\brief Formats and prints trace and score matrices that satisfy the
@@ -254,13 +239,11 @@ public:
     {}
     //!\}
 
+    //!\brief \copydoc seqan3::detail::matrix_concept::entry_type
+    using entry_type = typename alignment_matrix_type::entry_type;
+
     //!\brief Whether #alignment_matrix_type is a traceback matrix.
-    //!\hideinitializer
-    static constexpr bool is_traceback_matrix = []
-    {
-        using entry_type = typename alignment_matrix_type::entry_type;
-        return std::is_same_v<entry_type, trace_directions>;
-    }();
+    static constexpr bool is_traceback_matrix = std::is_same_v<entry_type, trace_directions>;
 
     //!\brief Determines the largest width of all entries in the #matrix,
     //!       e.g. `-152` has width 4.
@@ -296,14 +279,12 @@ public:
     {
         size_t const _column_width = column_width.has_value() ? column_width.value() : auto_width();
 
-        auto print_cell = [&](std::string const symbol, std::optional<size_t> const symbol_bytes = std::nullopt)
+        auto print_cell = [&](std::string const & symbol)
         {
             // deal with unicode chars that mess up std::setw
-            size_t const bytes = symbol_bytes.value_or(
-                is_traceback_matrix ? symbols.trace_dir_bytes : 1u);
-            size_t const length_bytes = unicode_str_length_bytes(symbol);
-            size_t const length = length_bytes / bytes;
-            size_t const offset = length_bytes - length;
+            std::size_t const length_bytes = unicode_str_length_bytes(symbol);
+            std::size_t const length = unicode_str_length(symbol);
+            std::size_t const offset = length_bytes - length;
 
             cout << std::left
                  << std::setw(_column_width + offset)
@@ -311,28 +292,19 @@ public:
                  << symbols.col_sep;
         };
 
-        auto print_first_cell = [&](auto && symbol)
+        auto print_first_cell = [&](std::string const & symbol)
         {
-            if constexpr (alphabet_concept<remove_cvref_t<decltype(symbol)>> &&
-                          !ostream_concept<std::stringstream, decltype(symbol)>)
-            {
-                cout << to_char(symbol);
-            }
-            else
-            {
-                cout << symbol;
-            }
-            cout << symbols.col_sep;
+            cout << symbol << symbols.col_sep;
         };
 
         // |_|d|a|t|a|b|a|s|e|
         auto print_first_row = [&]
         {
             print_first_cell(" ");
-            print_cell(symbols.epsilon, symbols.epsilon_bytes);
+            print_cell(symbols.epsilon);
 
             for (size_t col = 0; col < matrix.cols() - 1; ++col)
-                print_cell(as_string(database[col]), 1);
+                print_cell(as_string(database[col]));
             cout << "\n";
         };
 
@@ -359,7 +331,7 @@ public:
             if (row == 0)
                 print_first_cell(symbols.epsilon);
             else
-                print_first_cell(query[row - 1]);
+                print_first_cell(as_string(query[row - 1]));
             for (size_t col = 0; col < matrix.cols(); ++col)
                 print_cell(entry_at(row, col));
             cout << "\n";
@@ -367,7 +339,6 @@ public:
     }
 
 private:
-
     //!\brief Same as #matrix\.at(*row*, *col*), but converts the value to
     //!       a trace symbol (alignment_matrix_format::trace_dir) if the
     //!       #matrix is a traceback matrix.
@@ -376,42 +347,52 @@ private:
         if constexpr(is_traceback_matrix)
         {
             trace_directions direction = matrix.at(row, col);
-            return std::string{symbols.trace_dir[(size_t)(direction) % 8u]};
-        } else
+            return symbols.trace_dir[(size_t)(direction) % 8u];
+        }
+        else
         {
-            return as_string(matrix.at(row, col));
+            entry_type entry = matrix.at(row, col);
+            return as_string(entry);
         }
     }
 
     //!\brief Convert a matrix entry into a std::string
-    std::string as_string(auto && entry) const noexcept
+    static std::string as_string(auto && entry) noexcept
     {
         std::stringstream stream;
-        if constexpr (alphabet_concept<remove_cvref_t<decltype(entry)>> &&
-                      !ostream_concept<std::stringstream, decltype(entry)>)
-        {
+        if constexpr (alphabet_concept<remove_cvref_t<decltype(entry)>>)
             stream << to_char(entry);
-        }
         else
-        {
             stream << entry;
-        }
         return stream.str();
     }
 
     //!\brief The length of the *str* (traceback symbols are unicode aware)
-    size_t unicode_str_length(std::string const & str) const noexcept
+    //!\sa https://en.wikipedia.org/wiki/UTF-8 for encoding details
+    static size_t unicode_str_length(std::string const & str) noexcept
     {
-        if constexpr(is_traceback_matrix)
-            return unicode_str_length_bytes(str) / symbols.trace_dir_bytes;
-        return unicode_str_length_bytes(str);
+        size_t length = 0u;
+        for(auto it = str.cbegin(), it_end = str.cend(); it < it_end; ++it, ++length)
+        {
+            uint8_t v = *it;
+            if((v & 0b11100000) == 0b11000000)
+                ++it;
+            else if((v & 0b11110000) == 0b11100000)
+                it += 2;
+            else if((v & 0b11111000) == 0b11110000)
+                it += 3;
+        }
+        return length;
     }
 
     //!\brief The number of bytes the *str* uses
-    size_t unicode_str_length_bytes(std::string const & str) const noexcept
+    static size_t unicode_str_length_bytes(std::string const & str) noexcept
     {
         return str.length();
     }
+
+    //!\brief Befriend test case
+    friend class matrix_formatter_test;
 };
 
 /*!\name Type deduction guides
