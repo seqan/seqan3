@@ -76,6 +76,40 @@ struct t2
     static constexpr auto c = _c;
 };
 
+enum struct e1
+{
+    foo
+};
+
+template <e1 v>
+struct foo
+{};
+
+enum struct e2
+{
+    bar
+};
+
+template <e2 v>
+struct bar
+{};
+
+template <e2 v>
+struct bar2
+{};
+
+TEST(template_inspect, transfer_template_vargs_onto_enum)
+{
+    using ta = detail::transfer_template_vargs_onto<bar<e2::bar>, foo>::type;
+    EXPECT_TRUE((std::is_same_v<ta, void>));
+
+    using ta2 = detail::transfer_template_vargs_onto<bar<e2::bar>, bar>::type;
+    EXPECT_TRUE((std::is_same_v<ta2, bar<e2::bar>>));
+
+    using ta3 = detail::transfer_template_vargs_onto<bar<e2::bar>, bar2>::type;
+    EXPECT_TRUE((std::is_same_v<ta3, bar2<e2::bar>>));
+}
+
 TEST(template_inspect, transfer_template_vargs_onto_t)
 {
     using tl = t1<1, 'a'>;
