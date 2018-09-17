@@ -222,6 +222,8 @@ private:
 public:
 
     /*!\name Constructors, destructor and assignment
+     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
+     * and destructor are implicitly defined.
      * \{
      */
      pairwise_alignment_edit_distance_unbanded() = delete;
@@ -590,6 +592,17 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
 
     static constexpr size_t word_size = sizeof(word_type)*8;
 
+    /*!\name Constructors, destructor and assignment
+     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
+     * and destructor are implicitly defined.
+     * \{
+     */
+    alignment_score_matrix() = default;
+    alignment_score_matrix(alignment_score_matrix const &) = default;
+    alignment_score_matrix(alignment_score_matrix &&) = default;
+    alignment_score_matrix & operator=(alignment_score_matrix const &) = default;
+    alignment_score_matrix & operator=(alignment_score_matrix &&) = default;
+
     alignment_score_matrix(alignment_type const & alignment) :
         base_score_matrix_type
         {
@@ -634,6 +647,7 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
         }
     {
     }
+    //\}
 };
 
 template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
@@ -644,10 +658,22 @@ struct alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded<database
     using score_matrix_type = alignment_score_matrix<alignment_type>;
     using base_trace_matrix_type = alignment_trace_matrix<database_t const &, query_t const &, align_config_t, score_matrix_type>;
 
+    /*!\name Constructors, destructor and assignment
+     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
+     * and destructor are implicitly defined.
+     * \{
+     */
+    alignment_trace_matrix() = default;
+    alignment_trace_matrix(alignment_trace_matrix const &) = default;
+    alignment_trace_matrix(alignment_trace_matrix &&) = default;
+    alignment_trace_matrix & operator=(alignment_trace_matrix const &) = default;
+    alignment_trace_matrix & operator=(alignment_trace_matrix &&) = default;
+
     alignment_trace_matrix(alignment_type const & alignment) :
         base_trace_matrix_type{alignment.database, alignment.query, alignment.config, score_matrix_type{alignment}}
     {
     }
+    //!\}
 };
 
 //!\endcond
