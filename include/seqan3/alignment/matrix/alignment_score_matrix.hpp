@@ -39,8 +39,8 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
 #include <seqan3/alignment/matrix/row_wise_matrix.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
