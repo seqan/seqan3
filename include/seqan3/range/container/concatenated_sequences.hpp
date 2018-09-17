@@ -42,7 +42,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <range/v3/view/bounded.hpp>
 #include <range/v3/view/const.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/repeat_n.hpp>
@@ -53,6 +52,8 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
+#include <seqan3/std/view/common.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/vector.hpp>
@@ -909,12 +910,14 @@ public:
         if (count == 0)
             return begin() + pos_as_num;
 
-        auto concatenated = ranges::view::repeat_n(value, count)
-                          | ranges::view::join
-                          | ranges::view::bounded;
-
-        // we could call insert(pos, concatenated.cbegin(), concatenated.cend()) here
-        // if view::join didn't strip the view of its random access and sized properties
+        /* TODO implement view::flat_repeat_n that is like
+         *  ranges::view::repeat_n(value, count) | ranges::view::join | ranges::view::bounded;
+         * but preserves random access and size.
+         *
+         * then do
+         *  auto concatenated = ranges::view::flat_repeat_n(value, count);
+         *  insert(pos, concatenated.cbegin(), concatenated.cend())
+         */
 
         size_type value_len = 0;
         if constexpr (std::ranges::SizedRange<rng_type>)
@@ -923,9 +926,18 @@ public:
             value_len = std::distance(ranges::begin(value), ranges::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
+        auto placeholder = ranges::view::repeat_n(value_type_t<rng_type>{}, count * value_len)
+                         | view::common;
+        // insert placeholder so the tail is moved once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
-                           ranges::begin(concatenated),
-                           ranges::end(concatenated));
+                           ranges::begin(placeholder),
+                           ranges::end(placeholder));
+
+        // assign the actual values to the placeholder:
+        size_t i = data_delimiters[pos_as_num];
+        for (size_t j = 0; j < count; ++j)
+            for (auto && v : value)
+                data_values[i++] = v;
 
         data_delimiters.reserve(data_values.size() + count);
         data_delimiters.insert(data_delimiters.begin() + pos_as_num,
@@ -1002,11 +1014,19 @@ public:
         }
 
         // adapt values of inserted region
-        auto concatenated = ilist | ranges::view::join | ranges::view::bounded;
-        data_values.reserve(data_values.size() + full_len);
+        auto placeholder = ranges::view::repeat_n(value_type_t<value_type>{}, full_len)
+                         | view::common;
+        // insert placeholder so the tail is moved only once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
-                           ranges::begin(concatenated),
-                           ranges::end(concatenated));
+                           ranges::begin(placeholder),
+                           ranges::end(placeholder));
+
+        // assign the actual values to the placeholder:
+        size_t i = data_delimiters[pos_as_num];
+        for (auto && v0 : ilist)
+            for (auto && v1 : v0)
+                data_values[i++] = v1;
+
 
         // adapt delimiters behind inserted region
         // TODO parallel execution policy or vectorization?
