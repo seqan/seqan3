@@ -582,9 +582,11 @@ pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && que
 
 //!\cond
 template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
-struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
+class alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
     : public alignment_score_matrix<std::vector<typename pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::score_type>>
 {
+public:
+
     using alignment_type = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
     using score_type = typename alignment_type::score_type;
     using base_score_matrix_type = alignment_score_matrix<std::vector<score_type>>;
@@ -651,9 +653,11 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
 };
 
 template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
-struct alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
+class alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
     : public alignment_trace_matrix<database_t const &, query_t const &, align_config_t, alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>>
 {
+public:
+
     using alignment_type = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
     using score_matrix_type = alignment_score_matrix<alignment_type>;
     using base_trace_matrix_type = alignment_trace_matrix<database_t const &, query_t const &, align_config_t, score_matrix_type>;
