@@ -264,9 +264,9 @@ alignment_trace(database_t && database,
  */
 template <>
 struct alignment_trace_matrix<std::vector<trace_directions>>
-    : public rowwise_matrix<trace_directions>
+    : public row_wise_matrix<trace_directions>
 {
-    using rowwise_matrix<trace_directions>::rowwise_matrix;
+    using row_wise_matrix<trace_directions>::row_wise_matrix;
 };
 
 /*!\brief A trace matrix that uses an underlying seqan3::detail::alignment_score_matrix

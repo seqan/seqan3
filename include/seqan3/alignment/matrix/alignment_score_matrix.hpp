@@ -40,7 +40,7 @@
 #pragma once
 
 #include <seqan3/std/concepts>
-#include <seqan3/alignment/matrix/rowwise_matrix.hpp>
+#include <seqan3/alignment/matrix/row_wise_matrix.hpp>
 
 namespace seqan3::detail
 {
@@ -71,9 +71,9 @@ struct alignment_score_matrix;
  */
 template <std::Integral score_t>
 struct alignment_score_matrix<std::vector<score_t>>
-    : public rowwise_matrix<score_t>
+    : public row_wise_matrix<score_t>
 {
-    using rowwise_matrix<score_t>::rowwise_matrix;
+    using row_wise_matrix<score_t>::row_wise_matrix;
 };
 
 /*!\name Type deduction guides

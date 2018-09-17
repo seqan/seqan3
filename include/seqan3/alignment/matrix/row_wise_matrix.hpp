@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains seqan3::detail::rowwise_matrix.
+ * \brief Contains seqan3::detail::row_wise_matrix.
  */
 
 #pragma once
@@ -48,7 +48,7 @@ namespace seqan3::detail
 /*!\brief A matrix represented in a one-dimensional std::vector
  * \ingroup alignment_matrix
  * \implements seqan3::detail::matrix_concept
- * \tparam entry_t \copydoc seqan3::detail::rowwise_matrix::entry_type
+ * \tparam entry_t \copydoc seqan3::detail::row_wise_matrix::entry_type
  *
  * \details
  *
@@ -57,8 +57,9 @@ namespace seqan3::detail
  * continuously.
  */
 template <typename entry_t>
-struct rowwise_matrix
+class row_wise_matrix
 {
+public:
     //!\brief The type of the entry.
     using entry_type = entry_t;
 
@@ -67,18 +68,18 @@ struct rowwise_matrix
      * and destructor are implicitly defined.
      * \{
      */
-     rowwise_matrix() = default;
-     rowwise_matrix(rowwise_matrix const &) = default;
-     rowwise_matrix(rowwise_matrix &&) = default;
-     rowwise_matrix & operator=(rowwise_matrix const &) = default;
-     rowwise_matrix & operator=(rowwise_matrix &&) = default;
+     row_wise_matrix() = default;
+     row_wise_matrix(row_wise_matrix const &) = default;
+     row_wise_matrix(row_wise_matrix &&) = default;
+     row_wise_matrix & operator=(row_wise_matrix const &) = default;
+     row_wise_matrix & operator=(row_wise_matrix &&) = default;
     /*!\brief Construct the matrix out of the *entries*, the *rows*,
      *        and the *cols*.
      * \param entries The entry values as a flat std::vector <#entry_type>.
      * \param rows    The number of rows.
      * \param cols    The number of columns.
      */
-    rowwise_matrix(std::vector<entry_type> entries, size_t rows, size_t cols)
+    row_wise_matrix(std::vector<entry_type> entries, size_t rows, size_t cols)
         : _entries{std::move(entries)}, _rows{rows}, _cols{cols}
     {}
     //!\}
