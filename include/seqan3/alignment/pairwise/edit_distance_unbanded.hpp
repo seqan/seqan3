@@ -361,7 +361,7 @@ private:
         while (!(_score <= max_errors))
         {
             advance_score(vn[last_block], vp[last_block], score_mask);
-            if(!prev_last_active_cell())
+            if (!prev_last_active_cell())
                 break;
         }
 
@@ -495,7 +495,7 @@ template <typename database_t, typename query_t, typename align_config_t, typena
 bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::small_patterns()
 {
     // computing the blocks
-    while(database_it != database_it_end)
+    while (database_it != database_it_end)
     {
         word_type hn, hp, _;
 
@@ -521,7 +521,7 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
 bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::large_patterns()
 {
-    while(database_it != database_it_end)
+    while (database_it != database_it_end)
     {
         word_type hn, hp;
         word_type carry_d0{0}, carry_hp{hp0}, carry_hn{0};
@@ -550,7 +550,7 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
             }
 
             // updating the last active cell
-            if(update_last_active_cell())
+            if (update_last_active_cell())
             {
                 add_state();
                 ++database_it;
@@ -600,7 +600,7 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
                 scores.reserve(_cols * _rows);
 
                 // init first row with 0, 1, 2, 3, ...
-                for(size_t col=0; col < _cols; ++col)
+                for (size_t col=0; col < _cols; ++col)
                     scores[col] = alignment_type::is_global ? col : 0;
 
                 auto deltas = [&](size_t col)
@@ -620,10 +620,10 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
                     };
                 };
 
-                for(size_t col=0; col < _cols; ++col)
+                for (size_t col=0; col < _cols; ++col)
                 {
                     auto delta = deltas(col);
-                    for(size_t row=1; row < _rows; ++row)
+                    for (size_t row=1; row < _rows; ++row)
                         scores[row * _cols + col] = scores[(row-1) * _cols + col] + delta(row-1);
                 }
 
