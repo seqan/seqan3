@@ -230,7 +230,27 @@ public:
     alignment_matrix_type const & matrix;
 
     //!\brief The actual format used by the formatter.
-    alignment_matrix_format symbols{alignment_matrix_format::unicode_arrows};
+    alignment_matrix_format symbols;
+
+    /*!\name Constructors, destructor and assignment
+     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
+     * and destructor are implicitly defined.
+     * \{
+     */
+     alignment_matrix_formatter() = delete;
+     alignment_matrix_formatter(alignment_matrix_formatter const &) = default;
+     alignment_matrix_formatter(alignment_matrix_formatter &&) = default;
+     alignment_matrix_formatter & operator=(alignment_matrix_formatter const &) = default;
+     alignment_matrix_formatter & operator=(alignment_matrix_formatter &&) = default;
+    /*!\brief Construct the matrix out of the *entries*, the *rows*,
+     *        and the *cols*.
+     * \param _matrix  \copydoc matrix
+     * \param _symbols \copydoc symbols
+     */
+    alignment_matrix_formatter(alignment_matrix_type const & _matrix, alignment_matrix_format _symbols = alignment_matrix_format::unicode_arrows)
+        : matrix{_matrix}, symbols{_symbols}
+    {}
+    //!\}
 
     //!\brief Whether #alignment_matrix_type is a traceback matrix.
     //!\hideinitializer
