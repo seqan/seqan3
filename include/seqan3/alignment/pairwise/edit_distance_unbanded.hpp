@@ -90,11 +90,6 @@ struct default_edit_distance_trait_type
     using word_type = uint64_t;
 };
 
-} // namespase seqan3::detail
-
-namespace seqan3::detail
-{
-
 /*!\brief This calculates an alignment using the edit distance and without a band.
  * \ingroup pairwise
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
@@ -394,10 +389,10 @@ private:
 
     //!\brief Pattern is small enough that it fits into one machine word. Use
     //!faster computation with less overhead.
-    bool small_patterns();
+    inline bool small_patterns();
 
     //!\brief Pattern is larger than one machine word. Use overflow aware computation.
-    bool large_patterns();
+    inline bool large_patterns();
 
     //!\brief Compute the alignment.
     void _compute()
@@ -583,12 +578,7 @@ pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && que
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
 //!\}
 
-} // namespace seqan3::detail
-
 //!\cond
-namespace seqan3::detail
-{
-
 template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
 struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
     : public alignment_score_matrix<std::vector<typename pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::score_type>>
