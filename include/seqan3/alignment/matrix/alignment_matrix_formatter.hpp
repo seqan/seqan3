@@ -56,6 +56,7 @@ namespace seqan3::detail
 /*!\brief Format used by seqan3::detail::alignment_matrix_formatter
  * \ingroup alignment_matrix
  *
+ * \details
  *
  * With seqan3::detail::alignment_matrix_format you can style:
  *  * the epsilon symbol (alignment_matrix_format::epsilon)
@@ -209,6 +210,7 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  * \ingroup alignment_matrix
  * \tparam alignment_matrix_t The matrix class which satisfies the seqan3::detail::matrix_concept
  *
+ * \details
  *
  * ## Example
  *
@@ -218,8 +220,9 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  * \include test/snippet/alignment/matrix/alignment_score_matrix.out
  */
 template <matrix_concept alignment_matrix_t>
-struct alignment_matrix_formatter
+class alignment_matrix_formatter
 {
+public:
     //!\brief The type of the #matrix
     using alignment_matrix_type = alignment_matrix_t;
 
