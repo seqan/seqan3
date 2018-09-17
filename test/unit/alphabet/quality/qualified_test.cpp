@@ -152,17 +152,6 @@ TEST(qualified, assign_phred)
     EXPECT_EQ(to_char(t0), schar);
 }
 
-TEST(qualified, outstream)
-{
-    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
-    std::stringstream s;
-    s << t0;
-    t0 = dna4::A;
-    s << t0;
-
-    EXPECT_EQ(s.str(), "CA");
-}
-
 TEST(qualified, complement)
 {
     qualified<dna4, phred42> t0{dna4::A, phred42{8}};

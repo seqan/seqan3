@@ -196,19 +196,6 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  */
 // just implement the interface
 
-/*!\fn std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
- * \brief Ostream operator for the alphabet.
- * \ingroup alphabet
- * \param os The output stream you are printing to.
- * \param alph The alphabet letter that you wish to convert to char.
- * \returns A reference to the output stream.
- *
- * \details
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
- */
-// just implement the interface
-
 //!\}
 
 // ------------------------------------------------------------------

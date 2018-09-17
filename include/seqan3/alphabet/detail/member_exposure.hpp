@@ -169,22 +169,6 @@ constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph)
     return alph.to_char();
 }
 
-/*!\brief Implementation of seqan3::alphabet_concept::operator<<() that delegates to `alph.to_char()`.
- * \tparam alphabet_type Must provide a `.to_char()` member function.
- * \param os The output stream you are printing to.
- * \param alph The alphabet letter that you wish to print.
- * \returns A reference to the output stream.
- */
-template <typename alphabet_type>
-std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
-//!\cond
-    requires requires (alphabet_type alph) { { alph.to_char() } -> underlying_char_t<alphabet_type>; }
-//!\endcond
-{
-    os << alph.to_char();
-    return os;
-}
-
 /*!\brief Implementation of seqan3::alphabet_concept::assign_char() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_char()` member function.
  * \param alph The alphabet letter that you wish to assign to.

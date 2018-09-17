@@ -103,18 +103,3 @@ TEST(gapped_test, fulfills_concepts)
     EXPECT_TRUE((std::is_trivially_copyable_v<alphabet_t>));
     EXPECT_TRUE((std::is_standard_layout_v<alphabet_t>));
 }
-
-TEST(gapped_test, stream_operator)
-{
-    using alphabet_t = gapped<dna4>;
-
-    auto letterA = alphabet_t{dna4::A};
-    auto letterC = alphabet_t{dna4::C};
-    auto letterG = alphabet_t{dna4::G};
-    auto letterT = alphabet_t{dna4::T};
-    auto letterGAP = alphabet_t{gap::GAP};
-
-    std::stringstream ss;
-    ss << letterA << letterT << letterG << letterGAP << letterC;
-    EXPECT_EQ(ss.str(), "ATG-C");
-}

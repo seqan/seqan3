@@ -180,31 +180,6 @@ TYPED_TEST(structure, rna_structure_concept)
 }
 
 // ------------------------------------------------------------------
-// stream operator
-// ------------------------------------------------------------------
-
-TEST(structure_stream_operator, dot_bracket3)
-{
-    std::stringstream ss;
-    ss << dot_bracket3::PAIR_OPEN << dot_bracket3::PAIR_CLOSE << dot_bracket3::UNPAIRED;
-    EXPECT_EQ(ss.str(), "().");
-}
-
-TEST(structure_stream_operator, wuss)
-{
-    std::stringstream ss;
-    ss << wuss51::PAIR_OPEN << wuss51::PAIR_CLOSE << wuss51::UNPAIRED;
-    EXPECT_EQ(ss.str(), "<>.");
-}
-
-TEST(structure_stream_operator, dssp9)
-{
-    std::stringstream ss;
-    ss << dssp9::E << dssp9::H << dssp9::C;
-    EXPECT_EQ(ss.str(), "EHC");
-}
-
-// ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
 
@@ -552,18 +527,6 @@ TEST(structured_rna, assign_char)
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
 }
 
-// alphabet_concept: stream
-TEST(structured_rna, outstream)
-{
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
-    std::stringstream s;
-    s << t0;
-    t0 = rna4::A;
-    s << t0;
-
-    EXPECT_EQ(s.str(), "CA");
-}
-
 // nucleotide concept: complement
 TEST(structured_rna, complement)
 {
@@ -906,16 +869,4 @@ TEST(structured_aa, assign_char)
     assign_char(t0, 'X');
     EXPECT_EQ(to_char(t0), 'X');
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
-}
-
-// alphabet_concept: stream
-TEST(structured_aa, outstream)
-{
-    structured_aa<aa27, dssp9> t0{aa27::C, dssp9::T};
-    std::stringstream s;
-    s << t0;
-    t0 = aa27::A;
-    s << t0;
-
-    EXPECT_EQ(s.str(), "CA");
 }

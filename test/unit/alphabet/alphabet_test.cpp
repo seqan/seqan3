@@ -35,6 +35,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <seqan3/test/tmp_filename.hpp>
@@ -242,6 +243,17 @@ TYPED_TEST(alphabet, comparison_operators)
 TYPED_TEST(alphabet, concept_check)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
+}
+
+TYPED_TEST(alphabet, debug_streaming)
+{
+    std::ostringstream o;
+    debug_stream.set_underlying_stream(o);
+
+    debug_stream << TypeParam{};
+
+    o.flush();
+    EXPECT_EQ(o.str().size(), 1);
 }
 
 #if SEQAN3_WITH_CEREAL

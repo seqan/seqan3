@@ -46,7 +46,9 @@
 
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/io/stream/concept.hpp>
 
 namespace seqan3::detail
 {
@@ -286,7 +288,16 @@ struct alignment_matrix_formatter
 
         auto print_first_cell = [&](auto && symbol)
         {
-            cout << symbol << symbols.col_sep;
+            if constexpr (alphabet_concept<remove_cvref_t<decltype(symbol)>> &&
+                          !ostream_concept<std::stringstream, decltype(symbol)>)
+            {
+                cout << to_char(symbol);
+            }
+            else
+            {
+                cout << symbol;
+            }
+            cout << symbols.col_sep;
         };
 
         // |_|d|a|t|a|b|a|s|e|
@@ -351,7 +362,15 @@ private:
     std::string as_string(auto && entry) const noexcept
     {
         std::stringstream stream;
-        stream << entry;
+        if constexpr (alphabet_concept<remove_cvref_t<decltype(entry)>> &&
+                      !ostream_concept<std::stringstream, decltype(entry)>)
+        {
+            stream << to_char(entry);
+        }
+        else
+        {
+            stream << entry;
+        }
         return stream.str();
     }
 
