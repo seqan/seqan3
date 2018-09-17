@@ -48,7 +48,10 @@ template <typename T>
 class fm_index_test : public ::testing::Test
 {};
 
-using fm_index_types = ::testing::Types<fm_index<std::vector<dna4>>>;
+using fm_index_types = ::testing::Types<fm_index<std::vector<dna4>>,
+                                        bi_fm_index<std::vector<dna4>>,
+                                        bi_fm_index<std::vector<aa27>>,
+                                        bi_fm_index<std::vector<char>>>;
 
 TYPED_TEST_CASE(fm_index_test, fm_index_types);
 
