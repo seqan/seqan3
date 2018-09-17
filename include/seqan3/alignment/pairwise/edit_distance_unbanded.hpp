@@ -105,9 +105,8 @@ template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
           edit_distance_trait_concept traits_t = default_edit_distance_trait_type>
-struct pairwise_alignment_edit_distance_unbanded
+class pairwise_alignment_edit_distance_unbanded
 {
-private:
     /*!\name Befriended classes
      * \{
      */
@@ -215,8 +214,10 @@ private:
         //!\copydoc pairwise_alignment_edit_distance_unbanded::vn
         std::vector<word_type> vn{};
     };
+
     //!\brief The collection of each computation step.
     std::vector<state_type> states{};
+
     //!\brief Add a computation step
     void add_state()
     {
@@ -225,26 +226,29 @@ private:
 
 public:
 
-    /*!\name Constructors
+    /*!\name Constructors, destructor and assignment
      * \{
      */
+     pairwise_alignment_edit_distance_unbanded() = delete;
+     pairwise_alignment_edit_distance_unbanded(pairwise_alignment_edit_distance_unbanded const &) = default;
+     pairwise_alignment_edit_distance_unbanded(pairwise_alignment_edit_distance_unbanded &&) = default;
+     pairwise_alignment_edit_distance_unbanded & operator=(pairwise_alignment_edit_distance_unbanded const &) = default;
+     pairwise_alignment_edit_distance_unbanded & operator=(pairwise_alignment_edit_distance_unbanded &&) = default;
+
     /*!\brief Constructor
      * \param[in] _database \copydoc database
      * \param[in] _query    \copydoc query
      * \param[in] _config   \copydoc config
      */
-    pairwise_alignment_edit_distance_unbanded(
-        database_t && _database,
-        query_t && _query,
-        align_config_t _config)
-        : database{std::forward<database_t>(_database)},
-          query{std::forward<query_t>(_query)},
-          config{std::forward<align_config_t>(_config)},
-          _score{query.size()},
-          _best_score{query.size()},
-          _best_score_col{begin(database)},
-          database_it{begin(database)},
-          database_it_end{end(database)}
+    pairwise_alignment_edit_distance_unbanded(database_t && _database, query_t && _query, align_config_t _config) :
+        database{std::forward<database_t>(_database)},
+        query{std::forward<query_t>(_query)},
+        config{std::forward<align_config_t>(_config)},
+        _score{query.size()},
+        _best_score{query.size()},
+        _best_score_col{ranges::begin(database)},
+        database_it{ranges::begin(database)},
+        database_it_end{ranges::end(database)}
     {
         static constexpr std::size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
 
