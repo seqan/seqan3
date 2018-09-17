@@ -431,7 +431,7 @@ public:
     //!\}
 private:
     //!\brief The underlying value, which is wrapped as a strong type.
-    value_t value;
+    value_t value{};
 };
 
 } // namespace seqan3::detail
