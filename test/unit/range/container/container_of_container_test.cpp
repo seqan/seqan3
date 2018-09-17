@@ -61,14 +61,19 @@ class container_of_container : public ::testing::Test
 {};
 
 using container_of_container_types = ::testing::Types<std::vector<std::vector<dna4>>,
-                                                      concatenated_sequences<std::vector<dna4>>>;
+                                                      concatenated_sequences<std::vector<dna4>>,
+                                                      concatenated_sequences<bitcompressed_vector<dna4>>>;
 
 TYPED_TEST_CASE(container_of_container, container_of_container_types);
+
+using In = iterator_t<seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4> > >;
+
+static_assert(std::Readable<In>);
 
 TYPED_TEST(container_of_container, concepts)
 {
     EXPECT_TRUE(container_concept<TypeParam>);
-    EXPECT_TRUE(container_concept<ranges::range_value_type_t<TypeParam>>);
+    EXPECT_TRUE(container_concept<value_type_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)
@@ -400,11 +405,14 @@ void do_serialisation(TypeParam const l)
 
 TYPED_TEST(container_of_container, serialisation)
 {
-    TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+    if constexpr (!std::Same<TypeParam, concatenated_sequences<bitcompressed_vector<dna4>>>) // not serialisable, yet
+    {
+        TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
-    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (t1);
-    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(t1);
-    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (t1);
-    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (t1);
+        do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (t1);
+        do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(t1);
+        do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (t1);
+        do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (t1);
+    }
 }
 #endif // SEQAN3_WITH_CEREAL
