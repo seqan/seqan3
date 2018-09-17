@@ -264,6 +264,17 @@ public:
 
         add_state();
     }
+
+    pairwise_alignment_edit_distance_unbanded(
+        database_t _database,
+        query_t _query,
+        align_config_t _config,
+        traits_t /*_traits*/) :
+            pairwise_alignment_edit_distance_unbanded(std::forward<database_t>(_database),
+                                                      std::forward<query_t>(_query),
+                                                      std::forward<align_config_t>(_config))
+    {}
+
     //!\}
 
 private:
@@ -526,6 +537,10 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 template<typename database_t, typename query_t, typename config_t>
 pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config)
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t>;
+
+template<typename database_t, typename query_t, typename config_t, typename traits_t>
+pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config, traits_t)
+    -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
 //!\}
 
 } // namespace seqan3::detail
