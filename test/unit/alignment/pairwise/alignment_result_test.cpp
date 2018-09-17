@@ -49,7 +49,7 @@
 using namespace seqan3;
 
 template <typename T>
-class generic : public ::testing::Test
+class align_result_test : public ::testing::Test
 {
 public:
 
@@ -64,15 +64,15 @@ public:
 
 using aligned_seq = std::vector<gapped<dna4>>;
 // add all alphabets here
-using generic_types = ::testing::Types<type_list<uint32_t,
+using align_result_test_types = ::testing::Types<type_list<uint32_t,
                                                  int32_t,
                                                  std::pair<size_t, size_t>,
                                                  std::pair<size_t, size_t>,
-                                                 std::pair<aligned_seq, aligned_seq>>>;
+                                                 std::tuple<aligned_seq, aligned_seq>>>;
 
-TYPED_TEST_CASE(generic, generic_types);
+TYPED_TEST_CASE(align_result_test, align_result_test_types);
 
-TYPED_TEST(generic, constructor)
+TYPED_TEST(align_result_test, constructor)
 {
     using res_t = typename TestFixture::res_t;
     EXPECT_TRUE((std::is_default_constructible_v<res_t>));
@@ -81,25 +81,25 @@ TYPED_TEST(generic, constructor)
     EXPECT_TRUE((std::is_destructible_v<res_t>));
 }
 
-TYPED_TEST(generic, tuple_concept)
+TYPED_TEST(align_result_test, tuple_concept)
 {
     EXPECT_TRUE((tuple_like_concept<typename TestFixture::res_t>));
 }
 
-TYPED_TEST(generic, tuple_element)
+TYPED_TEST(align_result_test, tuple_element)
 {
     using res_t = typename TestFixture::res_t;
     EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, res_t>, typename TestFixture::id_t>));
     EXPECT_TRUE((std::is_same_v<std::tuple_element_t<4, res_t>, typename TestFixture::trace_t>));
 }
 
-TYPED_TEST(generic, tuple_size)
+TYPED_TEST(align_result_test, tuple_size)
 {
     using res_t = typename TestFixture::res_t;
     EXPECT_EQ(std::tuple_size_v<res_t>, 5);
 }
 
-TYPED_TEST(generic, std_position_get)
+TYPED_TEST(align_result_test, std_position_get)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
@@ -139,7 +139,7 @@ TYPED_TEST(generic, std_position_get)
     }
 }
 
-TYPED_TEST(generic, seqan3_pos_get)
+TYPED_TEST(align_result_test, seqan3_pos_get)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
@@ -179,7 +179,7 @@ TYPED_TEST(generic, seqan3_pos_get)
     }
 }
 
-TYPED_TEST(generic, seqan3_enum_get)
+TYPED_TEST(align_result_test, seqan3_enum_get)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
@@ -215,5 +215,106 @@ TYPED_TEST(generic, seqan3_enum_get)
         EXPECT_EQ(std::string{view::persist(std::get<0>(get<align_result_key::trace>(std::move(tmp2)))) | view::to_char},
                   std::string{"AT-C--A"});
         EXPECT_TRUE((std::is_same_v<decltype(get<align_result_key::id>(std::move(tmp))), typename TestFixture::id_t const &&>));
+    }
+}
+
+TYPED_TEST(align_result_test, id)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+    EXPECT_EQ(tmp.id(), 1);
+}
+
+TYPED_TEST(align_result_test, score)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+    EXPECT_EQ(tmp.score(), 0);
+}
+
+TYPED_TEST(align_result_test, end_coordinate)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(tmp.end_coordinate(), (std::pair{10lu, 10lu}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.end_coordinate()),
+                                    std::pair<size_t, size_t> const &>));
+    }
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_TRUE(std::move(tmp).end_coordinate() == (std::pair{10lu, 10lu}));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).end_coordinate()),
+                                    std::pair<size_t, size_t> const &&>));
+    }
+
+    {
+        align_result<type_list<uint32_t, int32_t>> tmp{1, 0};
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(tmp.end_coordinate())>,
+                                    remove_cvref_t<decltype(std::ignore)>>));
+    }
+}
+
+TYPED_TEST(align_result_test, begin_coordinate)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(tmp.begin_coordinate(), (std::pair{0lu, 0lu}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.begin_coordinate()),
+                                    std::pair<size_t, size_t> const &>));
+    }
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_TRUE(std::move(tmp).begin_coordinate() == (std::pair{0lu, 0lu}));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).begin_coordinate()),
+                                    std::pair<size_t, size_t> const &&>));
+    }
+
+    {
+        align_result<type_list<uint32_t, int32_t>> tmp{1, 0};
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(tmp.begin_coordinate())>,
+                                    remove_cvref_t<decltype(std::ignore)>>));
+    }
+}
+
+TYPED_TEST(align_result_test, trace)
+{
+    using res_t = typename TestFixture::res_t;
+    using seq_t = typename TestFixture::seq_t;
+    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_EQ(tmp.trace(), (std::tuple{seq, seq}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.trace()),
+                                    std::tuple<seq_t, seq_t> const &>));
+    }
+
+    {
+        res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
+        EXPECT_TRUE(std::move(tmp).trace() == (std::tuple{seq, seq}));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).trace()),
+                                    std::tuple<seq_t, seq_t> const &&>));
+    }
+
+    {
+        align_result<type_list<uint32_t, int32_t>> tmp{1, 0};
+        EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(tmp.trace())>,
+                                    remove_cvref_t<decltype(std::ignore)>>));
     }
 }
