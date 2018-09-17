@@ -40,9 +40,9 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/quality/all.hpp>
-#include <seqan3/io/sequence/sequence_file_in_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_out_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
+#include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/range/view/convert.hpp>
 
 using namespace seqan3;
@@ -54,8 +54,8 @@ using namespace seqan3::literal;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((sequence_file_in_format_concept<sequence_file_format_fasta>));
-    EXPECT_TRUE((sequence_file_out_format_concept<sequence_file_format_fasta>));
+    EXPECT_TRUE((sequence_file_input_format_concept<sequence_file_format_fasta>));
+    EXPECT_TRUE((sequence_file_output_format_concept<sequence_file_format_fasta>));
 }
 
 // ----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ struct read : public ::testing::Test
 
     sequence_file_format_fasta format;
 
-    sequence_file_in_options<dna5, false> options;
+    sequence_file_input_options<dna5, false> options;
 
     std::string id;
     dna5_vector seq;
@@ -285,7 +285,7 @@ TEST_F(read, seq_qual)
     };
 
     std::stringstream istream{input};
-    sequence_file_in_options<dna5, true> options2;
+    sequence_file_input_options<dna5, true> options2;
 
     std::vector<qualified<dna5, phred42>> seq_qual;
 
@@ -359,7 +359,7 @@ struct write : public ::testing::Test
 
     sequence_file_format_fasta format;
 
-    sequence_file_out_options options;
+    sequence_file_output_options options;
 
     std::ostringstream ostream;
 

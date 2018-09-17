@@ -39,8 +39,8 @@
 #include <range/v3/view/zip.hpp>
 #include <range/v3/view/filter.hpp>
 
-#include <seqan3/io/sequence/sequence_file_out.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
+#include <seqan3/io/sequence_file/output.hpp>
+#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -49,10 +49,10 @@
 using namespace seqan3;
 using namespace seqan3::literal;
 
-TEST(sequence_file_out_iterator, concepts)
+TEST(sequence_file_output_iterator, concepts)
 {
-    using it_t = typename sequence_file_out<>::iterator;
-    using sen_t = typename sequence_file_out<>::sentinel;
+    using it_t = typename sequence_file_output<>::iterator;
+    using sen_t = typename sequence_file_output<>::sentinel;
 
     EXPECT_TRUE((std::OutputIterator<it_t, std::tuple<std::string, std::string>>));
     EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
@@ -89,10 +89,10 @@ std::string const output_comp
 
 TEST(general, concepts)
 {
-    using t = sequence_file_out<>;
+    using t = sequence_file_output<>;
     EXPECT_TRUE((std::ranges::OutputRange<t, std::tuple<std::string, std::string>>));
 
-    using ct = sequence_file_out<> const;
+    using ct = sequence_file_output<> const;
     // not const-iterable
     EXPECT_FALSE((std::ranges::OutputRange<ct, std::tuple<std::string, std::string>>));
 }
@@ -101,22 +101,22 @@ TEST(general, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_filename filename{"sequence_file_out_constructor.fasta"};
-        EXPECT_NO_THROW( sequence_file_out<>{filename.get_path()} );
+        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        EXPECT_NO_THROW( sequence_file_output<>{filename.get_path()} );
     }
 
     /* wrong extension */
     {
-        test::tmp_filename filename{"sequence_file_out_constructor.xyz"};
+        test::tmp_filename filename{"sequence_file_output_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW( sequence_file_out<>{filename.get_path()} ,
+        EXPECT_THROW( sequence_file_output<>{filename.get_path()} ,
                       unhandled_extension_error );
     }
 
     /* filename + fields */
     {
-        test::tmp_filename filename{"sequence_file_out_constructor.fasta"};
-        EXPECT_NO_THROW(( sequence_file_out<fields<field::SEQ>,
+        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
+        EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ>,
                                             type_list<sequence_file_format_fasta>,
                                             std::ofstream>{filename.get_path(), fields<field::SEQ>{}} ));
     }
@@ -125,14 +125,14 @@ TEST(general, construct_by_filename)
 TEST(general, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW(( sequence_file_out<fields<field::SEQ, field::ID, field::QUAL>,
+    EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ, field::ID, field::QUAL>,
                                         type_list<sequence_file_format_fasta>,
                                         std::ostringstream>{std::ostringstream{},
                                                             sequence_file_format_fasta{}} ));
 
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( sequence_file_out<fields<field::SEQ, field::ID, field::QUAL>,
+    EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ, field::ID, field::QUAL>,
                                         type_list<sequence_file_format_fasta>,
                                         std::ostringstream>{std::ostringstream{},
                                                             sequence_file_format_fasta{},
@@ -147,7 +147,7 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* default template args */
     {
-        using t = sequence_file_out<>;
+        using t = sequence_file_output<>;
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_type,        comp3>));
@@ -155,9 +155,9 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        test::tmp_filename filename{"sequence_file_out_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
 
-        sequence_file_out fout{filename.get_path()};
+        sequence_file_output fout{filename.get_path()};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
@@ -167,9 +167,9 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        test::tmp_filename filename{"sequence_file_out_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
 
-        sequence_file_out fout{filename.get_path(), fields<field::SEQ>{}};
+        sequence_file_output fout{filename.get_path(), fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
@@ -179,7 +179,7 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided stream constructor */
     {
-        sequence_file_out fout{std::ostringstream{}, sequence_file_format_fasta{}};
+        sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
@@ -190,7 +190,7 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided stream constructor + custom fields */
     {
-        sequence_file_out fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ>{}};
+        sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
@@ -206,7 +206,7 @@ TEST(general, default_template_args_and_deduction_guides)
 template <typename fn_t>
 void row_wise_impl(fn_t fn)
 {
-    sequence_file_out fout{std::ostringstream{}, sequence_file_format_fasta{}};
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
@@ -219,7 +219,7 @@ void row_wise_impl(fn_t fn)
 template <typename source_t>
 void assign_impl(source_t && source)
 {
-    sequence_file_out fout{std::ostringstream{}, sequence_file_format_fasta{}};
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}};
     fout.options.fasta_letters_per_line = 0;
 
     fout = source;
@@ -341,7 +341,7 @@ TEST(row, different_fields_in_record_and_file)
     record<type_list<std::vector<phred42>, std::string, dna5_vector>,
            fields<field::QUAL, field::ID, field::SEQ>> rec{qual, ids[1], seqs[1]};
 
-    sequence_file_out fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ, field::ID>{}};
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::SEQ, field::ID>{}};
     fout.push_back(rec);
     fout.get_stream().flush();
 
@@ -388,7 +388,7 @@ TEST(rows, assign_range_of_tuples)
     assign_impl(range);
 }
 
-TEST(rows, assign_sequence_file_in)
+TEST(rows, assign_sequence_file_input)
 {
     std::string const input // differs from output above by formatting
     {
@@ -400,7 +400,7 @@ TEST(rows, assign_sequence_file_in)
         "GGAGTATAATATATATATATATAT\n"
     };
 
-    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
     assign_impl(fin);
 }
@@ -418,12 +418,12 @@ TEST(rows, assign_sequence_file_pipes)
     };
 
     // valid without assignment?
-    sequence_file_in{std::istringstream{input}, sequence_file_format_fasta{}} |
-        sequence_file_out{std::ostringstream{}, sequence_file_format_fasta{}};
+    sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}} |
+        sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
 
     // valid with assignment and check contents
-    auto fout = sequence_file_in{std::istringstream{input}, sequence_file_format_fasta{}} |
-                sequence_file_out{std::ostringstream{}, sequence_file_format_fasta{}};
+    auto fout = sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}} |
+                sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
 
     fout.get_stream().flush();
     EXPECT_EQ(fout.get_stream().str(), input);
@@ -451,8 +451,8 @@ TEST(rows, convert_fastq_to_fasta)
         "TATTA\n"
     };
 
-    auto fout = sequence_file_in{std::istringstream{fastq_in}, sequence_file_format_fastq{}} |
-                sequence_file_out{std::ostringstream{}, sequence_file_format_fasta{}};
+    auto fout = sequence_file_input{std::istringstream{fastq_in}, sequence_file_format_fastq{}} |
+                sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
     fout.get_stream().flush();
     EXPECT_EQ(fout.get_stream().str(), fasta_out);
 }

@@ -33,19 +33,26 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-include for the sequence IO submodule.
+ * \brief Provides seqan3::sequence_file_input_options.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup sequence Sequence
- * \ingroup io
- * \brief \todo document at a later point in time
- */
+#include <seqan3/core/platform.hpp>
 
-#include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
-#include <seqan3/io/sequence/sequence_file_in_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_in.hpp>
-#include <seqan3/io/sequence/sequence_file_out_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_out.hpp>
+namespace seqan3
+{
+/*!\brief The options type defines various option members that influence the behaviour of all or some formats.
+ * \tparam sequence_legal_alphabet_ The sequence legal alphabet exposed as type trait to the format.
+ * \tparam seq_qual_combined Trait that exposes to the format whether seq and qual arguments are actually the
+ * same/combined.
+ */
+template <typename sequence_legal_alphabet, bool seq_qual_combined>
+struct sequence_file_input_options
+{
+    //!\brief Read the ID string only up until the first whitespace character.
+    bool truncate_ids = false;
+};
+
+} // namespace seqan3

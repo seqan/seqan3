@@ -56,8 +56,8 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/detail/misc.hpp>
-#include <seqan3/io/sequence/sequence_file_in_options.hpp>
-#include <seqan3/io/sequence/sequence_file_out_options.hpp>
+#include <seqan3/io/sequence_file/input_options.hpp>
+#include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
@@ -93,7 +93,7 @@ namespace seqan3
  *
  * All documented encodings for the quality string are supported (see the article above), but they are **not detected**
  * from the file. Instead, when reading the file, you have to set the respective alphabet via a traits type (see
- * seqan3::sequence_file_in_traits_concept and the quality submodule \todo link).
+ * seqan3::sequence_file_input_traits_concept and the quality submodule \todo link).
  *
  * ### Implementation notes
  *
@@ -124,14 +124,14 @@ public:
         { "fq"    }
     };
 
-    //!\copydoc sequence_file_in_format_concept::read
+    //!\copydoc sequence_file_input_format_concept::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
     void read(stream_type                                                            & stream,
-              sequence_file_in_options<seq_legal_alph_type, seq_qual_combined> const & options,
+              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
               seq_type                                                               & sequence,
               id_type                                                                & id,
               qual_type                                                              & qualities)
@@ -236,13 +236,13 @@ public:
         }
     }
 
-    //!\copydoc sequence_file_out_format_concept::write
+    //!\copydoc sequence_file_output_format_concept::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
     void write(stream_type                     & stream,
-               sequence_file_out_options const & options,
+               sequence_file_output_options const & options,
                seq_type                       && sequence,
                id_type                        && id,
                qual_type                      && qualities)

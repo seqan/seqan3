@@ -38,7 +38,7 @@
 
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/io/sequence/sequence_file_in.hpp>
+#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/iterator>
@@ -48,16 +48,16 @@
 using namespace seqan3;
 using namespace seqan3::literal;
 
-TEST(sequence_file_in_iterator, concepts)
+TEST(sequence_file_input_iterator, concepts)
 {
-    using it_t = typename sequence_file_in<>::iterator;
-    using sen_t = typename sequence_file_in<>::sentinel;
+    using it_t = typename sequence_file_input<>::iterator;
+    using sen_t = typename sequence_file_input<>::sentinel;
 
     EXPECT_TRUE((std::InputIterator<it_t>));
     EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
 }
 
-struct sequence_file_in_f : public ::testing::Test
+struct sequence_file_input_f : public ::testing::Test
 {
     std::string input
     {
@@ -84,66 +84,66 @@ struct sequence_file_in_f : public ::testing::Test
     };
 };
 
-TEST_F(sequence_file_in_f, concepts)
+TEST_F(sequence_file_input_f, concepts)
 {
-    using t = sequence_file_in<>;
+    using t = sequence_file_input<>;
     EXPECT_TRUE((std::ranges::InputRange<t>));
 
-    using ct = sequence_file_in<> const;
+    using ct = sequence_file_input<> const;
     // not const-iterable
     EXPECT_FALSE((std::ranges::InputRange<ct>));
 }
 
-TEST_F(sequence_file_in_f, construct_by_filename)
+TEST_F(sequence_file_input_f, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
-        EXPECT_NO_THROW( sequence_file_in<>{filename.get_path()} );
+        EXPECT_NO_THROW( sequence_file_input<>{filename.get_path()} );
     }
 
     // correct format check is done by tests of that format
 
     /* wrong extension */
     {
-        test::tmp_filename filename{"sequence_file_in_constructor.xyz"};
+        test::tmp_filename filename{"sequence_file_input_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW( sequence_file_in<>{filename.get_path()} ,
+        EXPECT_THROW( sequence_file_input<>{filename.get_path()} ,
                       unhandled_extension_error );
     }
 
     /* non-existent file*/
     {
-        EXPECT_THROW( sequence_file_in<>{"/dev/nonexistant/foobarOOO"},
+        EXPECT_THROW( sequence_file_input<>{"/dev/nonexistant/foobarOOO"},
                       file_open_error);
     }
 
     /* filename + fields */
     {
-        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
-        EXPECT_NO_THROW(( sequence_file_in<sequence_file_in_default_traits_dna,
+        EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                            fields<field::SEQ>,
                                            type_list<sequence_file_format_fasta>,
                                            std::ifstream>{filename.get_path(), fields<field::SEQ>{}} ));
     }
 }
 
-TEST_F(sequence_file_in_f, construct_from_stream)
+TEST_F(sequence_file_input_f, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW(( sequence_file_in<sequence_file_in_default_traits_dna,
+    EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                        fields<field::SEQ, field::ID, field::QUAL>,
                                        type_list<sequence_file_format_fasta>,
                                        std::istringstream>{std::istringstream{input},
@@ -151,7 +151,7 @@ TEST_F(sequence_file_in_f, construct_from_stream)
 
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( sequence_file_in<sequence_file_in_default_traits_dna,
+    EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
                                        fields<field::SEQ, field::ID, field::QUAL>,
                                        type_list<sequence_file_format_fasta>,
                                        std::istringstream>{std::istringstream{input},
@@ -159,16 +159,16 @@ TEST_F(sequence_file_in_f, construct_from_stream)
                                                            fields<field::SEQ, field::ID, field::QUAL>{}} ));
 }
 
-TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
+TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 {
-    using comp0 = sequence_file_in_default_traits_dna;
+    using comp0 = sequence_file_input_default_traits_dna;
     using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
     using comp2 = type_list<sequence_file_format_fasta, sequence_file_format_fastq>;
     using comp3 = std::ifstream;
 
     /* default template args */
     {
-        using t = sequence_file_in<>;
+        using t = sequence_file_input<>;
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
@@ -177,14 +177,14 @@ TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
-        sequence_file_in fin{filename.get_path()};
+        sequence_file_input fin{filename.get_path()};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -195,14 +195,14 @@ TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        test::tmp_filename filename{"sequence_file_in_constructor.fasta"};
+        test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
-        sequence_file_in fin{filename.get_path(), fields<field::SEQ>{}};
+        sequence_file_input fin{filename.get_path(), fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -213,7 +213,7 @@ TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided stream constructor */
     {
-        sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+        sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -225,7 +225,7 @@ TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
 
     /* guided stream constructor + custom fields */
     {
-        sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}, fields<field::SEQ>{}};
+        sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}, fields<field::SEQ>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -235,10 +235,10 @@ TEST_F(sequence_file_in_f, default_template_args_and_deduction_guides)
     }
 }
 
-TEST_F(sequence_file_in_f, record_reading)
+TEST_F(sequence_file_input_f, record_reading)
 {
     /* record based reading */
-    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
     size_t counter = 0;
     for (auto & rec : fin)
@@ -253,10 +253,10 @@ TEST_F(sequence_file_in_f, record_reading)
     EXPECT_EQ(counter, 3u);
 }
 
-TEST_F(sequence_file_in_f, record_reading_struct_bind)
+TEST_F(sequence_file_input_f, record_reading_struct_bind)
 {
     /* record based reading */
-    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
     size_t counter = 0;
     for (auto & [ seq, id, qual ] : fin)
@@ -271,10 +271,10 @@ TEST_F(sequence_file_in_f, record_reading_struct_bind)
     EXPECT_EQ(counter, 3u);
 }
 
-TEST_F(sequence_file_in_f, record_reading_custom_fields)
+TEST_F(sequence_file_input_f, record_reading_custom_fields)
 {
     /* record based reading */
-    sequence_file_in fin{std::istringstream{input},
+    sequence_file_input fin{std::istringstream{input},
                          sequence_file_format_fasta{},
                          fields<field::ID, field::SEQ_QUAL>{}};
 
@@ -290,9 +290,9 @@ TEST_F(sequence_file_in_f, record_reading_custom_fields)
     EXPECT_EQ(counter, 3u);
 }
 
-TEST_F(sequence_file_in_f, file_view)
+TEST_F(sequence_file_input_f, file_view)
 {
-    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
     auto minimum_length_filter = view::filter([] (auto const & rec)
     {
@@ -312,9 +312,9 @@ TEST_F(sequence_file_in_f, file_view)
     EXPECT_EQ(counter, 3u);
 }
 
-TEST_F(sequence_file_in_f, column_reading)
+TEST_F(sequence_file_input_f, column_reading)
 {
-    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
     auto & seqs  = get<field::SEQ>(fin);                                    // by field
     auto & ids   = get<1>(fin);                                             // by index
@@ -332,11 +332,11 @@ TEST_F(sequence_file_in_f, column_reading)
     }
 }
 
-TEST_F(sequence_file_in_f, column_reading_temporary)
+TEST_F(sequence_file_input_f, column_reading_temporary)
 {
-    sequence_file_in{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}};
 
-    auto seqs = get<field::SEQ>(sequence_file_in{std::istringstream{input}, sequence_file_format_fasta{}});
+    auto seqs = get<field::SEQ>(sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}});
 
     ASSERT_EQ(seqs.size(), 3ul);
 
@@ -346,9 +346,9 @@ TEST_F(sequence_file_in_f, column_reading_temporary)
     }
 }
 
-TEST_F(sequence_file_in_f, column_reading_decomposed)
+TEST_F(sequence_file_input_f, column_reading_decomposed)
 {
-    sequence_file_in fin{std::istringstream{input}, sequence_file_format_fasta{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
 
     auto & [ seqs, ids , quals ] = fin;
 
@@ -364,9 +364,9 @@ TEST_F(sequence_file_in_f, column_reading_decomposed)
     }
 }
 
-TEST_F(sequence_file_in_f, column_reading_decomposed_temporary)
+TEST_F(sequence_file_input_f, column_reading_decomposed_temporary)
 {
-    auto && [ seqs, ids , quals ] = sequence_file_in{std::istringstream{input}, sequence_file_format_fasta{}};
+    auto && [ seqs, ids , quals ] = sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}};
 
     ASSERT_EQ(seqs.size(), 3ul);
     ASSERT_EQ(ids.size(), 3ul);
