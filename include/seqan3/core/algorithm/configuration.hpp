@@ -148,7 +148,7 @@ public:
     constexpr configuration(configuration &&)                  = default;
     constexpr configuration & operator=(configuration const &) = default;
     constexpr configuration & operator=(configuration &&)      = default;
-    ~configuration()                                 = default;
+    ~configuration()                                           = default;
 
     //!\brief Constructs from std::tuple.
     constexpr configuration(std::tuple<configs_t...> const & cfg) : base_type{cfg}

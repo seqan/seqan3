@@ -91,7 +91,7 @@ template <free_ends_at val = free_ends_at::none>
 struct align_config_sequence_ends
 {
     //!\brief Holds the actual setting.
-    static constexpr free_ends_at value = val;
+    static constexpr free_ends_at value{val};
 };
 
 /*!\brief A deferred configuration element for gaps at the sequence ends.
