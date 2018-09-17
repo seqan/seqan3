@@ -264,11 +264,11 @@ public:
 
     //!\brief Determines the largest width of all entries in the #matrix,
     //!       e.g. `-152` has width 4.
-    std::size_t auto_width() const noexcept
+    size_t auto_width() const noexcept
     {
-        std::size_t col_width = 1;
-        for (unsigned row = 0; row < matrix.rows(); ++row)
-            for (unsigned col = 0; col < matrix.cols(); ++col)
+        size_t col_width = 1;
+        for (size_t row = 0; row < matrix.rows(); ++row)
+            for (size_t col = 0; col < matrix.cols(); ++col)
                 col_width = std::max(col_width, unicode_str_length(entry_at(row, col)));
         return col_width;
     }
@@ -278,7 +278,7 @@ public:
     //!\param[in]  query           the query sequence
     //!\param[in]  column_width    width of each cell, std::nullopt defaults to auto_width()
     template <typename database_t, typename query_t>
-    void format(database_t && database, query_t && query, std::optional<std::size_t> column_width = std::nullopt) const noexcept
+    void format(database_t && database, query_t && query, std::optional<size_t> column_width = std::nullopt) const noexcept
     {
         format(std::forward<database_t>(database), std::forward<query_t>(query), std::cout, column_width);
     }
@@ -292,18 +292,18 @@ public:
      * \param[in]      column_width    width of each cell, std::nullopt defaults to auto_width()
      */
     template <typename database_t, typename query_t, typename char_t, typename traits_t>
-    void format(database_t && database, query_t && query, std::basic_ostream<char_t, traits_t> & cout, std::optional<std::size_t> column_width) const noexcept
+    void format(database_t && database, query_t && query, std::basic_ostream<char_t, traits_t> & cout, std::optional<size_t> const column_width) const noexcept
     {
-        std::size_t _column_width = column_width.has_value() ? column_width.value() : auto_width();
+        size_t const _column_width = column_width.has_value() ? column_width.value() : auto_width();
 
-        auto print_cell = [&](std::string symbol, std::optional<std::size_t> symbol_bytes = std::nullopt)
+        auto print_cell = [&](std::string const symbol, std::optional<size_t> const symbol_bytes = std::nullopt)
         {
             // deal with unicode chars that mess up std::setw
-            std::size_t bytes = symbol_bytes.value_or(
+            size_t const bytes = symbol_bytes.value_or(
                 is_traceback_matrix ? symbols.trace_dir_bytes : 1u);
-            std::size_t length_bytes = unicode_str_length_bytes(symbol);
-            std::size_t length = length_bytes / bytes;
-            std::size_t offset = length_bytes - length;
+            size_t const length_bytes = unicode_str_length_bytes(symbol);
+            size_t const length = length_bytes / bytes;
+            size_t const offset = length_bytes - length;
 
             cout << std::left
                  << std::setw(_column_width + offset)
@@ -331,7 +331,7 @@ public:
             print_first_cell(" ");
             print_cell(symbols.epsilon, symbols.epsilon_bytes);
 
-            for (unsigned col = 0; col < matrix.cols()-1; ++col)
+            for (size_t col = 0; col < matrix.cols() - 1; ++col)
                 print_cell(as_string(database[col]), 1);
             cout << "\n";
         };
@@ -340,9 +340,9 @@ public:
         auto print_divider = [&]
         {
             cout << " " << symbols.row_col_sep;
-            for (unsigned col = 0; col < matrix.cols(); ++col)
+            for (size_t col = 0; col < matrix.cols(); ++col)
             {
-                for (unsigned i = 0; i < _column_width; ++i)
+                for (size_t i = 0; i < _column_width; ++i)
                     cout << symbols.row_sep;
                 cout << symbols.row_col_sep;
             }
@@ -350,7 +350,7 @@ public:
         };
 
         print_first_row();
-        for (unsigned row = 0; row < matrix.rows(); ++row)
+        for (size_t row = 0; row < matrix.rows(); ++row)
         {
             if (symbols.row_sep[0] != '\0')
                 print_divider();
@@ -359,8 +359,8 @@ public:
             if (row == 0)
                 print_first_cell(symbols.epsilon);
             else
-                print_first_cell(query[row-1]);
-            for (unsigned col = 0; col < matrix.cols(); ++col)
+                print_first_cell(query[row - 1]);
+            for (size_t col = 0; col < matrix.cols(); ++col)
                 print_cell(entry_at(row, col));
             cout << "\n";
         }
@@ -371,12 +371,12 @@ private:
     //!\brief Same as #matrix\.at(*row*, *col*), but converts the value to
     //!       a trace symbol (alignment_matrix_format::trace_dir) if the
     //!       #matrix is a traceback matrix.
-    std::string entry_at(unsigned row, unsigned col) const noexcept
+    std::string entry_at(size_t const row, size_t const col) const noexcept
     {
         if constexpr(is_traceback_matrix)
         {
             trace_directions direction = matrix.at(row, col);
-            return std::string{symbols.trace_dir[(unsigned)(direction) % 8u]};
+            return std::string{symbols.trace_dir[(size_t)(direction) % 8u]};
         } else
         {
             return as_string(matrix.at(row, col));
@@ -400,7 +400,7 @@ private:
     }
 
     //!\brief The length of the *str* (traceback symbols are unicode aware)
-    std::size_t unicode_str_length(std::string str) const noexcept
+    size_t unicode_str_length(std::string const & str) const noexcept
     {
         if constexpr(is_traceback_matrix)
             return unicode_str_length_bytes(str) / symbols.trace_dir_bytes;
@@ -408,7 +408,7 @@ private:
     }
 
     //!\brief The number of bytes the *str* uses
-    std::size_t unicode_str_length_bytes(std::string str) const noexcept
+    size_t unicode_str_length_bytes(std::string const & str) const noexcept
     {
         return str.length();
     }
