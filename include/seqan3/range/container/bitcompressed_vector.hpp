@@ -45,6 +45,7 @@
 
 #include <sdsl/int_vector.hpp>
 
+#include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
@@ -112,7 +113,8 @@ private:
     {
     private:
         //!\brief The proxy of the underlying data type.
-        sdsl::int_vector_reference<data_type> internal_proxy;
+        ranges::semiregular_t<sdsl::int_vector_reference<data_type>> internal_proxy;
+
     public:
         /*!\name Constructors, destructor and assignment
          * \brief All are explicitly defaulted.
@@ -136,16 +138,50 @@ private:
          */
         //!\brief Implicitly convertible to alphabet_type.
         constexpr operator alphabet_type() const
-            noexcept(noexcept(assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy))))
+            noexcept(noexcept(assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy.get()))))
         {
-            return assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy));
+            using seqan3::assign_rank;
+            return assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy.get()));
         }
 
         //!\brief Assignable from alphabet_type.
         constexpr reference_proxy_type & operator=(alphabet_type const a)
-            noexcept(noexcept(internal_proxy = to_rank(a)))
+            noexcept(noexcept(internal_proxy.get() = to_rank(a)))
         {
-            internal_proxy = to_rank(a);
+            using seqan3::to_rank;
+            internal_proxy.get() = to_rank(a);
+            return *this;
+        }
+        //!\}
+
+        /*!\name Alphabet members
+         * \brief Member functions and types that delegate to `alphabet_type`.
+         * \{
+         */
+        using rank_type = underlying_rank_t<alphabet_type>;
+        using char_type = underlying_char_t<alphabet_type>;
+        static auto constexpr value_size = alphabet_size_v<alphabet_type>;
+
+        constexpr char_type to_char() const
+        {
+            using seqan3::to_char;
+            return to_char(static_cast<alphabet_type>(*this));
+        }
+
+        constexpr rank_type to_rank() const
+        {
+            return internal_proxy.get();
+        }
+
+        constexpr reference_proxy_type & assign_char(char_type const c)
+        {
+            using seqan3::assign_char;
+            return operator=(assign_char(alphabet_type{}, c));
+        }
+
+        constexpr reference_proxy_type & assign_rank(rank_type const c)
+        {
+            internal_proxy.get() = c;
             return *this;
         }
         //!\}
@@ -154,32 +190,32 @@ private:
         //!\{
         constexpr bool operator==(reference_proxy_type const & rhs) const noexcept
         {
-            return internal_proxy == rhs.internal_proxy;
+            return internal_proxy.get() == rhs.internal_proxy.get();
         }
 
         constexpr bool operator!=(reference_proxy_type const & rhs) const noexcept
         {
-            return !(internal_proxy == rhs.internal_proxy);
+            return !(internal_proxy.get() == rhs.internal_proxy.get());
         }
 
         constexpr bool operator<(reference_proxy_type const & rhs) const noexcept
         {
-            return internal_proxy < rhs.internal_proxy;
+            return internal_proxy.get() < rhs.internal_proxy.get();
         }
 
         constexpr bool operator>(reference_proxy_type const & rhs) const noexcept
         {
-            return !(internal_proxy <= rhs.internal_proxy);
+            return !(internal_proxy.get() <= rhs.internal_proxy.get());
         }
 
         constexpr bool operator<=(reference_proxy_type const & rhs) const noexcept
         {
-            return internal_proxy == rhs.internal_proxy || internal_proxy < rhs.internal_proxy;
+            return internal_proxy.get() == rhs.internal_proxy.get() || internal_proxy.get() < rhs.internal_proxy.get();
         }
 
         constexpr bool operator>=(reference_proxy_type const & rhs) const noexcept
         {
-            return !(internal_proxy < rhs.internal_proxy);
+            return !(internal_proxy.get() < rhs.internal_proxy.get());
         }
         //!\}
 
@@ -216,16 +252,11 @@ private:
         }
         //!\}
 
-        //!\brief Convert to alphabet type when streamed.
-        friend debug_stream_type & operator<<(debug_stream_type & s, reference_proxy_type const l)
-        {
-            return s << static_cast<alphabet_type>(l);
-        }
-
         static_assert(!std::WeaklyIncrementable<alphabet_type>,
                       "TODO: bitcompressed_vector::reference_proxy_type needs to be adapted to also be incrementable.");
     };
 
+    static_assert(alphabet_concept<reference_proxy_type>);
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>
@@ -1104,18 +1135,6 @@ public:
         archive(data); //TODO: data not yet serialisable
     }
     //!\endcond
-
-    //!\brief When printing to stream, make sure the reference_proxies are converted for proper overload selection.
-    friend debug_stream_type & operator<<(debug_stream_type & s, bitcompressed_vector & rhs)
-    {
-        return s << (rhs | view::convert<alphabet_type>);
-    }
-
-    //!\overload
-    friend debug_stream_type & operator<<(debug_stream_type & s, bitcompressed_vector && rhs)
-    {
-        return s << (rhs | view::convert<alphabet_type>);
-    }
 };
 
 } // namespace seqan3
