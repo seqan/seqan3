@@ -226,9 +226,11 @@ public:
     //!\brief The type of the #matrix
     using alignment_matrix_type = alignment_matrix_t;
 
+private:
     //!\brief The matrix to format.
     alignment_matrix_type const & matrix;
 
+public:
     //!\brief The actual format used by the formatter.
     alignment_matrix_format symbols;
 
