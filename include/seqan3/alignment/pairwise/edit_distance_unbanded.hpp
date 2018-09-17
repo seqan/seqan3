@@ -639,7 +639,7 @@ public:
                 for (size_t col = 0; col < _cols; ++col)
                 {
                     auto delta = deltas(col);
-                    for (size_t row= 1; row < _rows; ++row)
+                    for (size_t row = 1; row < _rows; ++row)
                         scores[row * _cols + col] = scores[(row - 1) * _cols + col] + delta(row - 1);
                 }
 
