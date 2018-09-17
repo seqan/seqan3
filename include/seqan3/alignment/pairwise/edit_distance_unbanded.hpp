@@ -139,12 +139,12 @@ private:
     //!\brief The type of an iterator of the database sequence.
     using database_iterator = std::ranges::iterator_t<database_type>;
     //!\brief The alphabet type of the query sequence.
-    using query_alphabet_type = std::remove_reference_t<decltype(query[0])>;
+    using query_alphabet_type = std::remove_reference_t<reference_t<query_type>>;
 
     //TODO Make it dynamic.
     // using result_type = align_result<type_list<uint32_t, int>>;
 
-    //!\brief true - uses the ukkonen trick with the last active cell and bounds the error to config.max_errors.
+    //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
     static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
     //!\brief Whether the alignment is a semi-global alignment or not.
     static constexpr bool is_semi_global = detail::semi_global_config_concept<align_config_t>;
@@ -189,9 +189,9 @@ private:
      * \{
      */
     //!\brief Which score value is considered as a hit?
-    unsigned max_errors{255};
+    size_t max_errors{255};
     //!\brief The block containing the last active cell.
-    unsigned last_block{0};
+    size_t last_block{0};
     //!\brief A mask with a bit set on the position of the last row.
     word_type last_score_mask{};
     //!\}
@@ -250,7 +250,7 @@ public:
         if constexpr(use_max_errors)
             max_errors = get<align_cfg::id::max_error>(config);
 
-        unsigned block_count = (query.size() - 1 + word_size) / word_size;
+        size_t block_count = (query.size() - 1 + word_size) / word_size;
         score_mask = (word_type)1 << ((query.size() - 1 + word_size) % word_size);
         last_score_mask = score_mask;
         last_block = block_count - 1;
@@ -259,7 +259,7 @@ public:
         {
             // localMaxErrors either stores the maximal number of _score (me.max_errors) or the needle size minus one.
             // It is used for the mask computation and setting the initial score (the minus one is there because of the Ukkonen trick).
-            unsigned localMaxErrors = std::min<unsigned>(max_errors, query.size() - 1);
+            size_t localMaxErrors = std::min<size_t>(max_errors, query.size() - 1);
             score_mask = (word_type)1 << (localMaxErrors % word_size);
             last_block = std::min(localMaxErrors / word_size, block_count - 1);
             _score = localMaxErrors + 1;
@@ -274,9 +274,9 @@ public:
         bit_masks.resize((alphabet_size + 1) * block_count, 0);
 
         // encoding the letters as bit-vectors
-        for (unsigned j = 0; j < query.size(); j++)
+        for (size_t j = 0; j < query.size(); j++)
         {
-            unsigned i = block_count * to_rank(query[j]) + j / word_size;
+            size_t i = block_count * to_rank(query[j]) + j / word_size;
             bit_masks[i] |= (word_type)1 << (j % word_size);
         }
 
@@ -336,7 +336,7 @@ private:
             return true;
 
         last_block--;
-        if (is_global && last_block == (unsigned)-1)
+        if (is_global && last_block == (size_t)-1)
             return false;
 
         score_mask = (word_type)1 << (word_size - 1);
@@ -477,7 +477,7 @@ public:
     //!\brief Return the end position of the alignment
     alignment_coordinate end_coordinate() const noexcept
     {
-        unsigned col = database.size() - 1;
+        size_t col = database.size() - 1;
         if constexpr(is_semi_global)
             col = std::distance(begin(database), _best_score_col);
 
@@ -525,10 +525,10 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
     {
         word_type hn, hp;
         word_type carry_d0{0}, carry_hp{hp0}, carry_hn{0};
-        unsigned block_offset = vp.size() * to_rank((query_alphabet_type) *database_it);
+        size_t block_offset = vp.size() * to_rank((query_alphabet_type) *database_it);
 
         // computing the necessary blocks, carries between blocks following one another are stored
-        for (unsigned current_block = 0; current_block <= last_block; current_block++)
+        for (size_t current_block = 0; current_block <= last_block; current_block++)
         {
             word_type b = bit_masks[block_offset + current_block];
             compute_step<true>(b, hp, hn, vp[current_block], vn[current_block], carry_d0, carry_hp, carry_hn);
@@ -544,7 +544,7 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 
             if (additional_block)
             {
-                unsigned current_block = last_block + 1;
+                size_t current_block = last_block + 1;
                 word_type b = bit_masks[block_offset + current_block];
                 compute_step<false>(b, hp, hn, vp[current_block], vn[current_block], carry_d0, carry_hp, carry_hn);
             }
@@ -596,16 +596,16 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
             [&]{
                 size_t _cols = alignment.database.size() + 1;
                 size_t _rows = alignment.query.size() + 1;
-                std::vector<int> scores{};
+                std::vector<score_type> scores{};
                 scores.reserve(_cols * _rows);
 
                 // init first row with 0, 1, 2, 3, ...
                 for(size_t col=0; col < _cols; ++col)
                     scores[col] = alignment_type::is_global ? col : 0;
 
-                auto deltas = [&](unsigned col)
+                auto deltas = [&](size_t col)
                 {
-                    return [state = alignment.states[col]](unsigned row)
+                    return [state = alignment.states[col]](size_t row)
                     {
                         using bitset = std::bitset<word_size>;
 
