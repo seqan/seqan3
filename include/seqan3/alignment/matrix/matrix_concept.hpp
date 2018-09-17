@@ -89,7 +89,10 @@ concept matrix_concept = requires(matrix_t m)
 //!\endcond
 //!\}
 
-/*!\brief `true`, if two alignment matrices are equal.
+/*!\name Comparison operators
+ * \{
+ */
+/*!\brief Whether two alignment matrices are equal.
  * \relates matrix_concept
  * \tparam    matrix1_t The type of the left hand side matrix.
  * \tparam    matrix2_t The type of the right hand side matrix.
@@ -119,7 +122,7 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs)
     return true;
 }
 
-/*!\brief `true`, if two alignment matrices are unequal.
+/*!\brief Whether two alignment matrices are equal.
  * \relates matrix_concept
  * \tparam    matrix1_t The type of the left hand side matrix.
  * \tparam    matrix2_t The type of the right hand side matrix.
@@ -128,14 +131,12 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs)
  */
 template <matrix_concept matrix1_t, matrix_concept matrix2_t>
 //!\cond
-    requires std::EqualityComparableWith<
-                typename matrix1_t::entry_type,
-                typename matrix2_t::entry_type
-             >
+    requires std::EqualityComparableWith<typename matrix1_t::entry_type, typename matrix2_t::entry_type>
 //!\endcond
 inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs)
 {
     return !(lhs == rhs);
 }
+//!\}
 
 } // namespace seqan3

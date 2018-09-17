@@ -342,13 +342,13 @@ struct alignment_trace_matrix<database_type, query_type, align_config_type, alig
     {
         entry_type direction{};
 
-        if(is_trace_diagonal(row, col))
+        if (is_trace_diagonal(row, col))
             direction |= entry_type::diagonal;
 
-        if(is_trace_up(row, col))
+        if (is_trace_up(row, col))
             direction |= entry_type::up;
 
-        if(is_trace_left(row, col))
+        if (is_trace_left(row, col))
             direction |= entry_type::left;
 
         return direction;
