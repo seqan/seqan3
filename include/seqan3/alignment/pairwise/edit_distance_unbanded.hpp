@@ -293,7 +293,7 @@ private:
 
     //!\brief One compute step in one column.
     template <bool with_overflow_check>
-    inline void compute_step(word_type b, word_type & hp, word_type & hn, word_type & vp, word_type & vn, word_type & carry_d0, word_type & carry_hp, word_type & carry_hn)
+    void compute_step(word_type b, word_type & hp, word_type & hn, word_type & vp, word_type & vn, word_type & carry_d0, word_type & carry_hp, word_type & carry_hn)
     {
         word_type x, d0, t;
 
@@ -319,7 +319,7 @@ private:
     }
 
     //!\brief Increase or decrease the score.
-    inline void advance_score(word_type P, word_type N, word_type mask)
+    void advance_score(word_type P, word_type N, word_type mask)
     {
         if ((P & mask) != (word_type)0)
             _score++;
@@ -334,7 +334,7 @@ private:
     }
 
     //!\brief Decrement the last active cell position.
-    inline bool prev_last_active_cell()
+    bool prev_last_active_cell()
     {
         score_mask >>= 1;
         if (score_mask != (word_type)0)
@@ -349,7 +349,7 @@ private:
     }
 
     //!\brief Increment the last active cell position.
-    inline void next_last_active_cell()
+    void next_last_active_cell()
     {
         score_mask <<= 1;
         if (score_mask)
@@ -360,7 +360,7 @@ private:
     }
 
     //!\brief Use the ukkonen trick and update the last active cell.
-    inline bool update_last_active_cell()
+    bool update_last_active_cell()
     {
         // updating the last active cell
         while (!(_score <= max_errors))
@@ -382,7 +382,7 @@ private:
     }
 
     //!\brief Will be called if a hit was found (e.g., score < max_errors).
-    inline bool on_hit()
+    bool on_hit()
     {
         // _setFinderEnd(finder);
         //
