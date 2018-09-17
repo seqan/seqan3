@@ -267,8 +267,8 @@ public:
     std::size_t auto_width() const noexcept
     {
         std::size_t col_width = 1;
-        for(unsigned row = 0; row < matrix.rows(); ++row)
-            for(unsigned col = 0; col < matrix.cols(); ++col)
+        for (unsigned row = 0; row < matrix.rows(); ++row)
+            for (unsigned col = 0; col < matrix.cols(); ++col)
                 col_width = std::max(col_width, unicode_str_length(entry_at(row, col)));
         return col_width;
     }
@@ -331,7 +331,7 @@ public:
             print_first_cell(" ");
             print_cell(symbols.epsilon, symbols.epsilon_bytes);
 
-            for(unsigned col = 0; col < matrix.cols()-1; ++col)
+            for (unsigned col = 0; col < matrix.cols()-1; ++col)
                 print_cell(as_string(database[col]), 1);
             cout << "\n";
         };
@@ -340,9 +340,9 @@ public:
         auto print_divider = [&]
         {
             cout << " " << symbols.row_col_sep;
-            for(unsigned col = 0; col < matrix.cols(); ++col)
+            for (unsigned col = 0; col < matrix.cols(); ++col)
             {
-                for(unsigned i = 0; i < _column_width; ++i)
+                for (unsigned i = 0; i < _column_width; ++i)
                     cout << symbols.row_sep;
                 cout << symbols.row_col_sep;
             }
@@ -350,7 +350,7 @@ public:
         };
 
         print_first_row();
-        for(unsigned row = 0; row < matrix.rows(); ++row)
+        for (unsigned row = 0; row < matrix.rows(); ++row)
         {
             if (symbols.row_sep[0] != '\0')
                 print_divider();
@@ -360,7 +360,7 @@ public:
                 print_first_cell(symbols.epsilon);
             else
                 print_first_cell(query[row-1]);
-            for(unsigned col = 0; col < matrix.cols(); ++col)
+            for (unsigned col = 0; col < matrix.cols(); ++col)
                 print_cell(entry_at(row, col));
             cout << "\n";
         }
