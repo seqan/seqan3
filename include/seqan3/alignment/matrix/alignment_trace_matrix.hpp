@@ -293,7 +293,7 @@ struct alignment_trace_matrix<std::vector<trace_directions>>
 template <typename database_type, typename query_type, typename align_config_type, typename ...score_matrix_params_t>
 //!\cond
     requires matrix_concept<alignment_score_matrix<score_matrix_params_t...>> &&
-             std::is_integral_v<typename alignment_score_matrix<score_matrix_params_t...>::entry_type>
+             std::Integral<typename alignment_score_matrix<score_matrix_params_t...>::entry_type>
 //!\endcond
 struct alignment_trace_matrix<database_type, query_type, align_config_type, alignment_score_matrix<score_matrix_params_t...>>
     : public alignment_score_matrix<score_matrix_params_t...>
@@ -338,7 +338,7 @@ struct alignment_trace_matrix<database_type, query_type, align_config_type, alig
     using score_matrix_type::cols;
 
     //!\brief The trace directions of the matrix at position (*row*, *col*).
-    inline entry_type at(unsigned row, unsigned col) const noexcept
+    inline entry_type at(size_t const row, size_t const col) const noexcept
     {
         entry_type direction{};
 
@@ -363,7 +363,7 @@ struct alignment_trace_matrix<database_type, query_type, align_config_type, alig
 private:
 
     //!\brief Does the trace come from the above entry?
-    inline bool is_trace_up(unsigned row, unsigned col) const noexcept
+    inline bool is_trace_up(size_t const row, size_t const col) const noexcept
     {
         // TODO: use the alignment_config to calculate the score
         score_type gap = 1;
@@ -374,7 +374,7 @@ private:
     }
 
     //!\brief Does the trace come from the left entry?
-    inline bool is_trace_left(unsigned row, unsigned col) const noexcept
+    inline bool is_trace_left(size_t const row, size_t const col) const noexcept
     {
         // TODO: use the alignment_config to calculate the score
         score_type gap = 1;
@@ -385,7 +385,7 @@ private:
     }
 
     //!\brief Does the trace come from the diagonal entry?
-    inline bool is_trace_diagonal(unsigned row, unsigned col) const noexcept
+    inline bool is_trace_diagonal(size_t const row, size_t const col) const noexcept
     {
         // TODO: use the alignment_config to calculate the score
         score_type match = 0;
