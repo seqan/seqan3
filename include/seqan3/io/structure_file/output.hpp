@@ -368,36 +368,15 @@ public:
      * defining all the template parameters.
      */
     structure_file_out(filesystem::path const & _file_name,
-                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
+                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
     {
         // open stream
         stream.open(_file_name, std::ios_base::out | std::ios::binary);
         if (!stream.is_open())
             throw file_open_error{"Could not open file for writing."};
 
-        // initialise format handler
-        bool format_found = false;
-        std::string extension = _file_name.extension().string();
-        if (extension.size() > 1)
-        {
-            extension = extension.substr(1); // drop leading "."
-            meta::for_each(valid_formats{}, [&] (auto && fmt)
-            {
-                using fmt_type = remove_cvref_t<decltype(fmt)>;
-
-                for (auto const & ext : fmt_type::file_extensions)
-                {
-                    if (ranges::equal(ext, extension))
-                    {
-                        format = fmt_type{};
-                        format_found = true;
-                        return;
-                    }
-                }
-            });
-        }
-        if (!format_found)
-            throw unhandled_extension_error("No valid format found for this extension.");
+        // initialise format handler or throw if format is not found
+        detail::set_format(format, _file_name);
     }
 
     /*!\brief Construct from an existing stream and with specified format.
