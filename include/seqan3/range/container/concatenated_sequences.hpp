@@ -156,6 +156,11 @@ public:
     using size_type = ranges::size_type_t<data_delimiters_type>;
     //!\}
 
+    //!\cond
+    // this signals to range-v3 that something is a container :|
+    using allocator_type    = void;
+    //!\endcond
+
 protected:
     /*!\name Compatibility
      * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible_concept (which doesn't work for types during their definition).
