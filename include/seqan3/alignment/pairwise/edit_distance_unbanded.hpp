@@ -167,7 +167,7 @@ private:
     //!\brief The machine words which stores the negative vertical differences.
     std::vector<word_type> vn{};
     //!\brief The machine words which translate a letter of the query into a bit mask.
-    //!\details Each bit position which is true (=1) corresponds to a match of a letter in the query at this position.
+    //!\details Each bit position which is true (= 1) corresponds to a match of a letter in the query at this position.
     std::vector<word_type> bit_masks{};
     /*!\brief The best score of the alignment in the last row
      * (if is_semi_global = true) or the last entry in the
@@ -336,7 +336,7 @@ private:
             return true;
 
         last_block--;
-        if (is_global && last_block == (size_t)-1)
+        if (is_global && last_block == (size_t) - 1)
             return false;
 
         score_mask = (word_type)1 << (word_size - 1);
@@ -539,7 +539,7 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
         {
             // if the active cell is the last of it's block, one additional block has to be calculated
             bool additional_block = score_mask >> (word_size - 1);
-            if (last_block+1 == vp.size())
+            if (last_block + 1 == vp.size())
                 additional_block = false;
 
             if (additional_block)
@@ -600,7 +600,7 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
                 scores.reserve(_cols * _rows);
 
                 // init first row with 0, 1, 2, 3, ...
-                for (size_t col=0; col < _cols; ++col)
+                for (size_t col = 0; col < _cols; ++col)
                     scores[col] = alignment_type::is_global ? col : 0;
 
                 auto deltas = [&](size_t col)
@@ -620,17 +620,17 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
                     };
                 };
 
-                for (size_t col=0; col < _cols; ++col)
+                for (size_t col = 0; col < _cols; ++col)
                 {
                     auto delta = deltas(col);
-                    for (size_t row=1; row < _rows; ++row)
-                        scores[row * _cols + col] = scores[(row-1) * _cols + col] + delta(row-1);
+                    for (size_t row= 1; row < _rows; ++row)
+                        scores[row * _cols + col] = scores[(row - 1) * _cols + col] + delta(row - 1);
                 }
 
                 return scores;
             }(),
-            alignment.query.size()+1,
-            alignment.database.size()+1
+            alignment.query.size() + 1,
+            alignment.database.size() + 1
         }
     {
     }
