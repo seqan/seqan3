@@ -32,28 +32,24 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
-
- #pragma once
-
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
+/*!\file
+ * \brief Provides seqan3::align_cfg::edit.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#include <seqan3/alignment/configuration/align_config_edit.hpp>
+#pragma once
+
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_global.hpp>
 #include <seqan3/alignment/configuration/align_config_score.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
-#include <seqan3/alignment/configuration/align_config_output.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
+#include <seqan3/alignment/scoring/all.hpp>
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
- */
+namespace seqan3::align_cfg
+{
+
+//!\brief Shortcut for edit distance configuration.
+inline constexpr detail::configuration edit = global |
+                                              score(nucleotide_scoring_scheme{}) |
+                                              gap(gap_scheme{gap_score{1}});
+
+} // namespace seqan3
