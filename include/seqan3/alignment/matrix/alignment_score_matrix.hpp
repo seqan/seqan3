@@ -51,7 +51,7 @@ namespace seqan3::detail
 //!\ingroup alignment_matrix
 //!\implements seqan3::detail::matrix_concept
 template <typename ...>
-struct alignment_score_matrix;
+class alignment_score_matrix;
 
 /*!\brief A score matrix represented in a one-dimensional std::vector
  * \ingroup alignment_matrix
@@ -70,9 +70,10 @@ struct alignment_score_matrix;
  * \include test/snippet/alignment/matrix/alignment_score_matrix.out
  */
 template <std::Integral score_t>
-struct alignment_score_matrix<std::vector<score_t>>
+class alignment_score_matrix<std::vector<score_t>>
     : public row_wise_matrix<score_t>
 {
+public:
     using row_wise_matrix<score_t>::row_wise_matrix;
 };
 
