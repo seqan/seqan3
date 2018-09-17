@@ -97,7 +97,7 @@ public:
     }
 
     //!\copydoc seqan3::detail::matrix_concept::at
-    inline entry_type at(unsigned row, unsigned col) const noexcept
+    inline entry_type at(size_t const row, size_t const col) const noexcept
     {
         return _entries[row * cols() + col];
     }
