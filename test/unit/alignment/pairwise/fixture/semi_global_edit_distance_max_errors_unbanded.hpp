@@ -3,20 +3,22 @@
 
 #include <vector>
 
-#include "config_unbanded.hpp"
-#include "config_semi_global.hpp"
 #include "alignment_fixture.hpp"
 
+#include <seqan3/alignment/configuration/align_config_edit.hpp>
+#include <seqan3/alignment/configuration/align_config_max_error.hpp>
+#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
-namespace seqan3::fixture::semi_global::edit_distance::unbanded
+namespace seqan3::fixture::semi_global::edit_distance::max_errors::unbanded
 {
 
-struct align_config : public config_semi_global, config_unbanded
-{};
+inline constexpr auto align_config = align_cfg::edit |
+                                     align_cfg::sequence_ends<free_ends_at::seq1> |
+                                     align_cfg::max_error(255);
 
-static auto dna4_01 = []()
+static auto dna4_01_e255 = []()
 {
     return alignment_fixture
     {
@@ -27,7 +29,7 @@ static auto dna4_01 = []()
         // --------ACGTACG-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config{},
+        align_config,
         5,
         "AC---CGGTT",
         "ACGTACG-TA",
@@ -62,7 +64,7 @@ static auto dna4_01 = []()
     };
 }();
 
-static auto dna4_01T = []()
+static auto dna4_01T_e255 = []()
 {
     return alignment_fixture
     {
@@ -73,7 +75,7 @@ static auto dna4_01T = []()
         // AACCGGTTAACCGGTT
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        align_config{},
+        align_config,
         8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
@@ -122,7 +124,7 @@ static auto dna4_01T = []()
     };
 }();
 
-static auto aa27_01 = []()
+static auto aa27_01_e255 = []()
 {
     return alignment_fixture
     {
@@ -133,7 +135,7 @@ static auto aa27_01 = []()
         // --------UWRIUWR-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
-        align_config{},
+        align_config,
         5,
         "UW---WRRII",
         "UWRIUWR-IU",
@@ -168,7 +170,7 @@ static auto aa27_01 = []()
     };
 }();
 
-static auto aa27_01T = []()
+static auto aa27_01T_e255 = []()
 {
     return alignment_fixture
     {
@@ -179,7 +181,7 @@ static auto aa27_01T = []()
         // UUWWRRIIUUWWRRII
         "UWRIUWRIU"_aa27,
         "UUWWRRIIUUWWRRII"_aa27,
-        align_config{},
+        align_config,
         8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",

@@ -42,43 +42,68 @@
 #include <algorithm>
 #include <bitset>
 #include <utility>
+
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/utility/iterator.hpp>
+
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 
+#include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/alignment/pairwise/align_result.hpp>
 
 namespace seqan3::detail
 {
 //!\cond
 template <typename align_config_t>
-concept semi_global_config_concept = requires()
+concept semi_global_config_concept = requires (align_config_t & cfg)
 {
-    {align_config_t::is_semi_global} -> bool;
+    requires get<align_cfg::id::sequence_ends>(cfg) == free_ends_at::seq1;
 };
+
 template <typename align_config_t>
-concept global_config_concept = requires()
-{
-    {align_config_t::is_global} -> bool;
-};
+concept global_config_concept = has_align_cfg_v<align_cfg::id::global, std::remove_reference_t<align_config_t>>;
+
 template <typename align_config_t>
-concept max_errors_concept = requires(align_config_t cfg)
-{
-    {cfg.max_errors};
-};
+concept max_errors_concept = has_align_cfg_v<align_cfg::id::max_error, std::remove_reference_t<align_config_t>>;
 //!\endcond
+
+/*!\todo Document me
+ * \ingroup pairwise
+ */
+template <typename traits_type>
+concept edit_distance_trait_concept = requires
+{
+    typename std::remove_reference_t<traits_type>::word_type;
+};
+
+/*!\brief The default traits type for the edit distance algorithm.
+ * \ingroup pairwise
+ */
+struct default_edit_distance_trait_type
+{
+    //!\brief The default word type.
+    using word_type = uint64_t;
+};
+
 } // namespase seqan3::detail
 
 namespace seqan3::detail
 {
+
 /*!\brief This calculates an alignment using the edit distance and without a band.
  * \ingroup alignment
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
  * \tparam query_t        \copydoc pairwise_alignment_edit_distance_unbanded::query_type
  * \tparam align_config_t The type of the alignment config.
  */
-template <std::ranges::ViewableRange database_t, std::ranges::ViewableRange query_t, typename align_config_t>
+template <std::ranges::ViewableRange database_t,
+          std::ranges::ViewableRange query_t,
+          typename align_config_t,
+          edit_distance_trait_concept traits_t = default_edit_distance_trait_type>
 struct pairwise_alignment_edit_distance_unbanded
 {
 private:
@@ -100,7 +125,7 @@ private:
 
 public:
     //!\brief The type of one machine word.
-    using word_type = typename align_config_t::word_type;
+    using word_type = typename std::remove_reference_t<traits_t>::word_type;
     //!\brief The type of the score.
     using score_type = int;
     //!\brief The type of the database sequence.
@@ -121,12 +146,15 @@ private:
     //!\brief The alphabet type of the query sequence.
     using query_alphabet_type = std::remove_reference_t<decltype(query[0])>;
 
+    //TODO Make it dynamic.
+    // using result_type = align_result<type_list<uint32_t, int>>;
+
     //!\brief true - uses the ukkonen trick with the last active cell and bounds the error to config.max_errors.
     static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
-    //!\brief Whether the alignment is a global alignment or not.
-    static constexpr bool is_global = detail::global_config_concept<align_config_t>;
     //!\brief Whether the alignment is a semi-global alignment or not.
     static constexpr bool is_semi_global = detail::semi_global_config_concept<align_config_t>;
+    //!\brief Whether the alignment is a global alignment or not.
+    static constexpr bool is_global = detail::global_config_concept<align_config_t> && !is_semi_global;
 
     //!\brief How to pre-initialize hp.
     static constexpr word_type hp0 = is_global ? 1 : 0;
@@ -190,8 +218,8 @@ public:
      * \param[in] _config   \copydoc config
      */
     pairwise_alignment_edit_distance_unbanded(
-        database_t _database,
-        query_t _query,
+        database_t && _database,
+        query_t && _query,
         align_config_t _config)
         : database{std::forward<database_t>(_database)},
           query{std::forward<query_t>(_query)},
@@ -203,7 +231,7 @@ public:
         static constexpr std::size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
 
         if constexpr(use_max_errors)
-            max_errors = config.max_errors;
+            max_errors = get<align_cfg::id::max_error>(config);
 
         unsigned block_count = (query.size() - 1 + word_size) / word_size;
         score_mask = (word_type)1 << ((query.size() - 1 + word_size) % word_size);
@@ -343,8 +371,42 @@ private:
     bool large_patterns();
 
 public:
+
+    /*!\brief Generic invocable interface.
+     * \param[in,out] res The alignment result to fill.
+     * \returns A reference to the filled alignment result.
+     */
+    template <typename result_type>
+    result_type & operator()(result_type & res)
+    {
+        run();
+        if constexpr (std::tuple_size_v<result_type> == 2)
+        {
+            get<align_result_key::score>(res) = score();
+        }
+        else if constexpr (std::tuple_size_v<result_type> == 3)
+        {
+            throw std::invalid_argument{"The current output setting is not supported!"};
+        }
+        else if constexpr (std::tuple_size_v<result_type> == 4)
+        {
+            throw std::invalid_argument{"The current output setting is not supported!"};
+        }
+        else if constexpr (std::tuple_size_v<result_type> == 5)
+        {
+            //TODO:
+            auto trace = alignment_trace(database, query, trace_matrix());
+            ranges::copy(std::get<0>(trace), ranges::back_inserter(std::get<0>(get<align_result_key::trace>(res))));
+            ranges::copy(std::get<1>(trace), ranges::back_inserter(std::get<1>(get<align_result_key::trace>(res))));
+            // TODO: Compute the end coordinate
+            // TODO: Compute the begin coordinate
+            get<align_result_key::score>(res) = score();
+        }
+        return res;
+    }
+
     //!\brief Compute the alignment.
-    pairwise_alignment_edit_distance_unbanded& run()
+    decltype(auto) run()
     {
         // limit search width for prefix search
         if constexpr(use_max_errors && is_global)
@@ -383,8 +445,8 @@ public:
     }
 };
 
-template <typename database_t, typename query_t, typename align_config_t>
-bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t>::small_patterns()
+template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
+bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::small_patterns()
 {
     // computing the blocks
     while(database_it != database_it_end)
@@ -410,8 +472,8 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
     return false;
 }
 
-template <typename database_t, typename query_t, typename align_config_t>
-bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t>::large_patterns()
+template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
+bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::large_patterns()
 {
     while(database_it != database_it_end)
     {
@@ -472,11 +534,11 @@ pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && que
 namespace seqan3::detail
 {
 
-template<typename database_t, typename query_t, typename align_config_t>
-struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t>>
+template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
+struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
     : public alignment_score_matrix<std::vector<int>>
 {
-    using alignment_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t>;
+    using alignment_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
     using base_score_matrix_t = alignment_score_matrix<std::vector<int>>;
     using score_t = int;
 
@@ -529,11 +591,11 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
     }
 };
 
-template<typename database_t, typename query_t, typename align_config_t>
-struct alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t>>
-    : public alignment_trace_matrix<database_t const &, query_t const &, align_config_t, alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t>>>
+template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
+struct alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
+    : public alignment_trace_matrix<database_t const &, query_t const &, align_config_t, alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>>
 {
-    using alignment_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t>;
+    using alignment_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
     using score_matrix_t = alignment_score_matrix<alignment_t>;
     using base_trace_matrix_t = alignment_trace_matrix<database_t const &, query_t const &, align_config_t, score_matrix_t>;
 
