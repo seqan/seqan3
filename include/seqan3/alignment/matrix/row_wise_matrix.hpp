@@ -85,20 +85,21 @@ public:
     //!\}
 
     //!\copydoc seqan3::detail::matrix_concept::rows
-    inline size_t rows() const noexcept
+    size_t rows() const noexcept
     {
         return _rows;
     }
 
     //!\copydoc seqan3::detail::matrix_concept::cols
-    inline size_t cols() const noexcept
+    size_t cols() const noexcept
     {
         return _cols;
     }
 
     //!\copydoc seqan3::detail::matrix_concept::at
-    inline entry_type at(size_t const row, size_t const col) const noexcept
+    entry_type at(size_t const row, size_t const col) const noexcept
     {
+        assert(row < rows() && col < cols());
         return _entries[row * cols() + col];
     }
 
