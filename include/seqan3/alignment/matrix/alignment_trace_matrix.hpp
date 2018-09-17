@@ -369,7 +369,7 @@ private:
         score_type gap = 1;
 
         score_type curr = score_matrix().at(row, col);
-        score_type up = row == 0 ? col : score_matrix().at(row-1, col);
+        score_type up = row == 0 ? col : score_matrix().at(row - 1, col);
         return curr == up + gap;
     }
 
@@ -380,7 +380,7 @@ private:
         score_type gap = 1;
 
         score_type curr = score_matrix().at(row, col);
-        score_type left = col == 0 ? row : score_matrix().at(row, col-1);
+        score_type left = col == 0 ? row : score_matrix().at(row, col - 1);
         return curr == left + gap;
     }
 
@@ -395,8 +395,8 @@ private:
         if (col == 0 || row == 0)
             return false;
 
-        score_type diag = score_matrix().at(row-1, col-1);
-        bool is_match = _query[row-1] == _database[col-1];
+        score_type diag = score_matrix().at(row - 1, col - 1);
+        bool is_match = _query[row - 1] == _database[col - 1];
 
         return (is_match && curr == diag + match) ||
               (!is_match && curr == diag + mismatch);
