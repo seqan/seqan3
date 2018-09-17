@@ -79,19 +79,19 @@ public:
      * \param rows    The number of rows.
      * \param cols    The number of columns.
      */
-    row_wise_matrix(std::vector<entry_type> entries, size_t rows, size_t cols)
+    row_wise_matrix(std::vector<entry_type> entries, size_t const rows, size_t const cols)
         : _entries{std::move(entries)}, _rows{rows}, _cols{cols}
     {}
     //!\}
 
     //!\copydoc seqan3::detail::matrix_concept::rows
-    inline std::size_t rows() const noexcept
+    inline size_t rows() const noexcept
     {
         return _rows;
     }
 
     //!\copydoc seqan3::detail::matrix_concept::cols
-    inline std::size_t cols() const noexcept
+    inline size_t cols() const noexcept
     {
         return _cols;
     }
@@ -108,10 +108,10 @@ private:
     std::vector<entry_type> _entries;
 
     //!\copydoc seqan3::detail::matrix_concept::rows
-    size_t _rows;
+    size_t const _rows;
 
     //!\copydoc seqan3::detail::matrix_concept::cols
-    size_t _cols;
+    size_t const _cols;
 };
 
 } // namespace seqan3::detail
