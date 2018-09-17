@@ -113,7 +113,7 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 
     for (size_t row = 0u; row < lhs.rows(); ++row)
         for (size_t col = 0u; col < lhs.cols(); ++col)
-            if (!(lhs.at(row, col) == rhs.at(row, col)))
+            if (lhs.at(row, col) != rhs.at(row, col))
                 return false;
 
     return true;

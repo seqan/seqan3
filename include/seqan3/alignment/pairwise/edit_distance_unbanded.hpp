@@ -381,6 +381,7 @@ private:
     //!\brief Will be called if a hit was found (e.g., score < max_errors).
     bool on_hit()
     {
+        assert(_score <= max_errors);
         // _setFinderEnd(finder);
         //
         // if constexpr(is_global)
