@@ -79,11 +79,11 @@ concept matrix_concept = requires(matrix_t m)
      */
     { m.rows() } -> std::size_t;
 
-    /*!\fn entry_type at(unsigned row, unsigned col) const noexcept;
+    /*!\fn entry_type at(size_t row, size_t col) const noexcept;
      * \brief The entry of the matrix at position (\a row, \a col), e.g. `matrix[row][col]`.
      * \memberof seqan3::detail::matrix_concept
      */
-    { m.at(0u, 0u) } -> typename matrix_t::entry_type;
+    { m.at(size_t{0u}, size_t{0u}) } -> typename matrix_t::entry_type;
 //!\cond
 };
 //!\endcond
@@ -101,12 +101,9 @@ concept matrix_concept = requires(matrix_t m)
  */
 template <matrix_concept matrix1_t, matrix_concept matrix2_t>
 //!\cond
-    requires std::EqualityComparableWith<
-                typename matrix1_t::entry_type,
-                typename matrix2_t::entry_type
-             >
+    requires std::EqualityComparableWith<typename matrix1_t::entry_type, typename matrix2_t::entry_type>
 //!\endcond
-inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs)
+inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
     if (lhs.rows() != rhs.rows())
         return false;
@@ -114,8 +111,8 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs)
     if (lhs.cols() != rhs.cols())
         return false;
 
-    for (unsigned row = 0u; row < lhs.rows(); ++row)
-        for (unsigned col = 0u; col < lhs.cols(); ++col)
+    for (size_t row = 0u; row < lhs.rows(); ++row)
+        for (size_t col = 0u; col < lhs.cols(); ++col)
             if (!(lhs.at(row, col) == rhs.at(row, col)))
                 return false;
 
@@ -133,7 +130,7 @@ template <matrix_concept matrix1_t, matrix_concept matrix2_t>
 //!\cond
     requires std::EqualityComparableWith<typename matrix1_t::entry_type, typename matrix2_t::entry_type>
 //!\endcond
-inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs)
+inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
     return !(lhs == rhs);
 }
