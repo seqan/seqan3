@@ -41,7 +41,9 @@
 
 #include <range/v3/utility/iterator.hpp>
 
-namespace seqan3::detail
+#include <seqan3/std/concepts>
+
+namespace seqan3
 {
 
 /*!\brief The alignment
@@ -179,7 +181,19 @@ public:
     alignment_range & operator=(alignment_range &&)      = default;
     ~alignment_range()                                   = default;
 
-    alignment_range(range_buffer_t & _stream_buffer) : executor_buffer{_stream_buffer}
+    explicit alignment_range(range_buffer_t & _range_buffer) :
+        range_buffer{&_range_buffer, [](auto ptr) { /*no-op*/ }}
+    {}
+
+    // Construct from resource.
+    template <typename resource_t,
+              typename selector_t>
+    //!\cond
+        requires std::is_constructible_v<range_buffer_t, resource_t, selector_t>
+    //!\endcond
+    explicit alignment_range(resource_t _range_buffer_resource,
+                             selector_t _selector) :
+        range_buffer{std::make_shared<range_buffer_t>(std::forward<resource_t>(_range_buffer_resource), _selector)}
     {}
     //!}
 
@@ -204,7 +218,7 @@ protected:
     void next()
     {
         assert(!eof());
-        if (auto opt = executor_buffer.bump(); opt.has_value())
+        if (auto opt = range_buffer->bump(); opt.has_value())
             cache = &(*opt).get();
         else
             eof_flag = true;
@@ -233,9 +247,9 @@ protected:
 
 private:
     //!\brief The underlying executor buffer.
-    range_buffer_t & executor_buffer;
+    std::shared_ptr<range_buffer_t> range_buffer;
     //!\brief Stores last read element.
-    value_type      * cache{};
+    value_type * cache{};
     //!\brief Indicates whether the stream has reached its end.
     bool eof_flag{false};
 };

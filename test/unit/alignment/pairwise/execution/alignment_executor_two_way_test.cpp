@@ -48,9 +48,21 @@ struct foo
 {
     int i;
 
-    std::string operator()() const
+    std::string operator()(std::string & /*ignore*/) const
     {
         return std::string{"my_test_"} + std::to_string(i);
+    }
+};
+
+struct foo_selector
+{
+    using result_type = std::string;
+
+    template <typename task_t>
+    auto select(task_t && t)
+    {
+        std::function<result_type(result_type &)> f = t;
+        return f;
     }
 };
 
@@ -59,7 +71,7 @@ TEST(alignment_excecutor_two_way, stream_integration)
 {
     std::vector<foo> resource_rng{foo{0}, foo{1}, foo{2}, foo{3}, foo{4}, foo{0}, foo{1}, foo{2}, foo{3}, foo{4}};
 
-    detail::alignment_executor_two_way exec{resource_rng};
+    detail::alignment_executor_two_way exec{resource_rng, foo_selector{}};
 
     int c = 0;
     for (auto res : exec.range())

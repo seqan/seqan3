@@ -53,27 +53,31 @@ namespace seqan3::detail
 
 /*!\brief A two way executor for pairwise alignments.
  * \ingroup execution
- * \tparam align_instance_rng_t A bounded range over the alignment instances to compute.
- * \tparam execution_handler_t  The execution handler managing the execution of the alignment instances.
+ * \tparam align_instance_rng_t  A bounded range over the alignment instances to compute.
+ * \tparam alignment_seclector_t Selects the alignment to execute.
+ * \tparam execution_handler_t   The execution handler managing the execution of the alignment instances.
  */
 template <std::ranges::ViewableRange align_instance_rng_t,
+          typename alignment_selector_t,
           typename execution_handler_t = execution_handler_sequential>
 class alignment_executor_two_way
 {
     //!\brief Shortcut declaration for this class.
-    using this_t = alignment_executor_two_way<align_instance_rng_t, execution_handler_t>;
+    using this_t = alignment_executor_two_way<align_instance_rng_t, alignment_selector_t, execution_handler_t>;
 
     //!\brief Grants alignment_range access to the protected/private member of this class.
     template <typename executor_t>
-    friend class alignment_range;
+    friend class seqan3::alignment_range;
 
     /*!\name Resource
      * \{
      */
+    //!\brief The resource type
+    using resource_type       = std::remove_reference_t<align_instance_rng_t>;
     //!\brief The iterator over the resource.
-    using resource_iterator   = iterator_t<std::remove_reference_t<align_instance_rng_t>>;
+    using resource_iterator   = iterator_t<resource_type>;
     //!\brief The sentinel over the resource.
-    using resource_sentinel   = sentinel_t<std::remove_reference_t<align_instance_rng_t>>;
+    using resource_sentinel   = sentinel_t<resource_type>;
     //!\brief The value type of the resource.
     using resource_value_type = std::remove_reference_t<decltype(*std::declval<resource_iterator>())>;
     //!\}
@@ -82,14 +86,13 @@ class alignment_executor_two_way
      * \{
      */
     //!\brief The result of invoking the alignment instance.
-    using buffer_value_type = std::invoke_result_t<resource_value_type>;
+    using buffer_value_type = typename std::remove_reference_t<alignment_selector_t>::result_type;
     //!\brief The internal buffer.
     using buffer_type       = std::vector<buffer_value_type>;
     //!\brief The pointer type of the buffer.
     using buffer_pointer    = iterator_t<buffer_type>;
     //!\}
 public:
-
     //!\brief The result type of invoking the alignment instance.
     using value_type      = buffer_value_type;
     //!\brief A reference to the alignment result.
@@ -108,8 +111,10 @@ public:
     ~alignment_executor_two_way()                                              = default;
 
     //!\brief Constructs this executor with the passed range of alignment instances.
-    alignment_executor_two_way(align_instance_rng_t _resource) :
-        resource{_resource},
+    alignment_executor_two_way(align_instance_rng_t _resource,
+                               alignment_selector_t _selector) :
+        resource{std::forward<align_instance_rng_t>(_resource)},
+        selector{std::forward<alignment_selector_t>(_selector)},
         resource_iter{ranges::begin(resource)},
         resource_end{ranges::end(resource)}
     {
@@ -171,10 +176,11 @@ protected:
         // Apply the alignment execution.
         // TODO: Adapt for async behavior for parallel execution handler.
         std::transform(resource_iter, resource_iter + in_avail(), gptr,
-            [this](auto & align_instance){
+            [this](auto && align_instance){
+                // value_type tmp;
+                auto f = selector.select(std::forward<decltype(align_instance)>(align_instance));
                 value_type tmp;
-                std::function<value_type()> f = std::ref(align_instance);
-                exec_handler.execute(std::move(f), [&tmp](value_type && res){ tmp = std::move(res); });
+                exec_handler.execute(std::move(f), tmp, [&tmp](auto && res){ tmp = std::move(res); });
                 return tmp;
             });
         // Advance the resource.
@@ -201,6 +207,9 @@ private:
     //!\brief The execution policy.
     execution_handler_t exec_handler{};
 
+    //!\brief Selects the correct alignment to execute.
+    alignment_selector_t selector;
+
     //!\brief The underlying resource containing the alignment instances.
     align_instance_rng_t resource;  // view or lvalue ref
     //!\brief Points to the current element in the resource.
@@ -220,9 +229,9 @@ private:
  * \relates seqan3::detail::alignment_executor_two_way
  * \{
  */
-template <std::ranges::ViewableRange resource_rng_t>
-alignment_executor_two_way(resource_rng_t && res) ->
-    alignment_executor_two_way<resource_rng_t, execution_handler_sequential>;
+template <std::ranges::ViewableRange resource_rng_t, typename selector_t>
+alignment_executor_two_way(resource_rng_t && , selector_t &&) ->
+    alignment_executor_two_way<resource_rng_t, selector_t, execution_handler_sequential>;
 
 //!\}
 } // namespace seqan3::detail

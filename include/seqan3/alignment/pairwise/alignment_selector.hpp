@@ -51,6 +51,7 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/type_list.hpp>
+#include <seqan3/range/view/persist.hpp>
 
 namespace seqan3::detail
 {
@@ -136,8 +137,8 @@ struct alignment_selector
     {
         //TODO Currently we only support edit_distance. We need would actually need real checks for this.
         std::function<result_type(result_type &)> func =
-            pairwise_alignment_edit_distance_unbanded{std::get<0>(std::forward<_seq_tuple_t>(seq)),
-                                                      std::get<1>(std::forward<_seq_tuple_t>(seq)),
+            pairwise_alignment_edit_distance_unbanded{std::get<0>(std::forward<_seq_tuple_t>(seq)) | view::persist,
+                                                      std::get<1>(std::forward<_seq_tuple_t>(seq)) | view::persist,
                                                       config};
         return func;
     }
