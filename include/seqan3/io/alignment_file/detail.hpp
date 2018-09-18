@@ -43,6 +43,8 @@
 #include <sstream>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 
 #include <range/v3/view/zip.hpp>
 
@@ -50,7 +52,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Compares two aligned sequence values and returns their CIGAR operation.
- * \ingroup alignment_io
+ * \ingroup alignment_file
  * \relatesalso seqan3::aligned_sequence_concept
  * \tparam reference_char_type Must be equality comparable to seqan3::gap.
  * \tparam query_char_type     Must be equality comparable to seqan3::gap.
@@ -116,7 +118,7 @@ char compare_aligned_values(reference_char_type const reference_char,
 
 /*!\brief Transforms an alignment represented by two aligned sequences into the
  *        corresponding CIGAR string.
- * \ingroup alignment_io
+ * \ingroup alignment_file
  * \relatesalso seqan3::aligned_sequence_concept
  * \tparam ref_seq_type    Must model seqan3::aligned_sequence_concept.
  * \tparam query_seq_type  Must model seqan3::aligned_sequence_concept.
@@ -151,7 +153,11 @@ char compare_aligned_values(reference_char_type const reference_char,
  * The following cigar string when printed: "4M2I5M2D1M". The extended cigar
  * string would look like this: "3=1X2I3=1X1=2D1=".
  */
-template<aligned_sequence_concept ref_seq_type, aligned_sequence_concept query_seq_type>
+template<std::ranges::ForwardRange ref_seq_type, std::ranges::ForwardRange query_seq_type>
+//\!cond
+    requires std::EqualityComparableWith<gap, value_type_t<ref_seq_type>> &&
+             std::EqualityComparableWith<gap, value_type_t<query_seq_type>>
+//\!endcond
 std::string get_cigar_string(std::pair<ref_seq_type, query_seq_type> const & alignment,
                              uint32_t query_start_pos = 0,
                              uint32_t query_end_pos = 0,
