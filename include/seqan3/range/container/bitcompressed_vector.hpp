@@ -108,12 +108,21 @@ private:
     //!\brief The data storage.
     data_type data;
 
-    //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element.
+    //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element unless the alphabet_type
+    //!       is uint8_t, uint16_t, uint32_t or uint64_t (in which case a regular & is returned).
     class reference_proxy_type
     {
     private:
-        //!\brief The proxy of the underlying data type.
-        ranges::semiregular_t<sdsl::int_vector_reference<data_type>> internal_proxy;
+        //!\brief For certain sizes sdsl::int_vector doesn't return a proxy and sdsl::int_vector_reference
+        //!       would be invalid; ranges::semiregular_t triggers this so we workaround here.
+        static uint8_t constexpr safe_bits_per_letter = (bits_per_letter ==  8 ||
+                                                         bits_per_letter == 16 ||
+                                                         bits_per_letter == 32) ? 64 : bits_per_letter;
+
+        //!\brief Type of the the internal proxy
+        using internal_proxy_type = sdsl::int_vector_reference<sdsl::int_vector<safe_bits_per_letter>>;
+        //!\brief The proxy of the underlying data type; wrapped in semiregular_t, because it isn't semiregular itself.
+        ranges::semiregular_t<internal_proxy_type> internal_proxy;
 
     public:
         /*!\name Constructors, destructor and assignment
@@ -128,7 +137,7 @@ private:
         ~reference_proxy_type() = default;
 
         //!\brief Initialise from internal proxy type.
-        reference_proxy_type(sdsl::int_vector_reference<data_type> const & internal) :
+        reference_proxy_type(internal_proxy_type const & internal) :
             internal_proxy{internal}
         {}
         //!\}
@@ -251,9 +260,6 @@ private:
             return !(static_cast<alphabet_type>(*this) < rhs);
         }
         //!\}
-
-        static_assert(!std::WeaklyIncrementable<alphabet_type>,
-                      "TODO: bitcompressed_vector::reference_proxy_type needs to be adapted to also be incrementable.");
     };
 
     static_assert(alphabet_concept<reference_proxy_type>);
