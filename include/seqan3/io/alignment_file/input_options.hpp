@@ -33,22 +33,21 @@
 // ============================================================================
 
 /*!\file
- * \brief Meta-include for the alignment IO submodule.
+ * \brief Provides seqan3::alignment_file_in_options.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup alignment_file Alignment File
- * \ingroup io
- * \brief \todo document at a later point in time
- */
+#include <seqan3/core/platform.hpp>
 
-#include <seqan3/io/alignment_file/detail.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
-#include <seqan3/io/alignment_file/header.hpp>
-#include <seqan3/io/alignment_file/input_options.hpp>
-#include <seqan3/io/alignment_file/output.hpp>
-#include <seqan3/io/alignment_file/output_format_concept.hpp>
-#include <seqan3/io/alignment_file/output_options.hpp>
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+namespace seqan3
+{
+
+//!\brief The options type defines various option members that influence the behaviour of all or some formats.
+struct alignment_file_in_options
+{
+    // options to define
+};
+
+} // namespace seqan3

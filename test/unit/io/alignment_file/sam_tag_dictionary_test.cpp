@@ -130,11 +130,8 @@ TEST(sam_tag_dictionary, get_function_known_tag)
 
 TEST(sam_tag_dictionary, get_function_unknown_tag)
 {
-    using variant_type = std::variant<char, int32_t, float, std::string,
-                                      std::vector<uint8_t>, std::vector<int8_t>,
-                                      std::vector<uint16_t>, std::vector<int16_t>,
-                                      std::vector<uint32_t>, std::vector<int32_t>,
-                                      std::vector<float>>;
+    using variant_type = sam_tag_dictionary::variant_type;
+
     sam_tag_dictionary dict{};
 
     dict["nm"_tag] = 'a'; // lower case nm tag type is NOT defined so it can be either type
