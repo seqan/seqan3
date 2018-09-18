@@ -64,5 +64,5 @@ TEST(align_cfg_edit, is_simple_gap)
 {
     EXPECT_TRUE((detail::has_align_cfg_v<align_cfg::id::gap, decltype(align_cfg::edit)>));
     auto scheme = get<align_cfg::id::gap>(align_cfg::edit);
-    EXPECT_EQ(scheme.get_gap_score(), 1);
+    EXPECT_EQ(scheme.get_gap_score(), -1);
 }
