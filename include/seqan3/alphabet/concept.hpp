@@ -91,7 +91,7 @@ namespace seqan3
 template <typename t>
 concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
                                      standard_layout_concept<std::remove_reference_t<t>> &&
-                                     trivial_concept<std::remove_reference_t<t>> &&
+//                                      trivial_concept<std::remove_reference_t<t>> &&
                                      std::StrictTotallyOrdered<t> &&
                                      requires (t t1, t t2)
 {
@@ -203,3 +203,4 @@ void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
  */
 
 } // namespace seqan3
+

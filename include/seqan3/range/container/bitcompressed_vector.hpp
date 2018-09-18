@@ -45,6 +45,7 @@
 
 #include <sdsl/int_vector.hpp>
 
+#include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
@@ -107,12 +108,22 @@ private:
     //!\brief The data storage.
     data_type data;
 
-    //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element.
+    //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element unless the alphabet_type
+    //!       is uint8_t, uint16_t, uint32_t or uint64_t (in which case a regular & is returned).
     class reference_proxy_type
     {
     private:
-        //!\brief The proxy of the underlying data type.
-        sdsl::int_vector_reference<data_type> internal_proxy;
+        //!\brief For certain sizes sdsl::int_vector doesn't return a proxy and sdsl::int_vector_reference
+        //!       would be invalid; ranges::semiregular_t triggers this so we workaround here.
+        static uint8_t constexpr safe_bits_per_letter = (bits_per_letter ==  8 ||
+                                                         bits_per_letter == 16 ||
+                                                         bits_per_letter == 32) ? 64 : bits_per_letter;
+
+        //!\brief Type of the the internal proxy
+        using internal_proxy_type = sdsl::int_vector_reference<sdsl::int_vector<safe_bits_per_letter>>;
+        //!\brief The proxy of the underlying data type; wrapped in semiregular_t, because it isn't semiregular itself.
+        ranges::semiregular_t<internal_proxy_type> internal_proxy;
+
     public:
         /*!\name Constructors, destructor and assignment
          * \brief All are explicitly defaulted.
@@ -126,7 +137,7 @@ private:
         ~reference_proxy_type() = default;
 
         //!\brief Initialise from internal proxy type.
-        reference_proxy_type(sdsl::int_vector_reference<data_type> const & internal) :
+        reference_proxy_type(internal_proxy_type const & internal) :
             internal_proxy{internal}
         {}
         //!\}
@@ -136,16 +147,50 @@ private:
          */
         //!\brief Implicitly convertible to alphabet_type.
         constexpr operator alphabet_type() const
-            noexcept(noexcept(assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy))))
+            noexcept(noexcept(assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy.get()))))
         {
-            return assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy));
+            using seqan3::assign_rank;
+            return assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy.get()));
         }
 
         //!\brief Assignable from alphabet_type.
         constexpr reference_proxy_type & operator=(alphabet_type const a)
-            noexcept(noexcept(internal_proxy = to_rank(a)))
+            noexcept(noexcept(internal_proxy.get() = to_rank(a)))
         {
-            internal_proxy = to_rank(a);
+            using seqan3::to_rank;
+            internal_proxy.get() = to_rank(a);
+            return *this;
+        }
+        //!\}
+
+        /*!\name Alphabet members
+         * \brief Member functions and types that delegate to `alphabet_type`.
+         * \{
+         */
+        using rank_type = underlying_rank_t<alphabet_type>;
+        using char_type = underlying_char_t<alphabet_type>;
+        static auto constexpr value_size = alphabet_size_v<alphabet_type>;
+
+        constexpr char_type to_char() const
+        {
+            using seqan3::to_char;
+            return to_char(static_cast<alphabet_type>(*this));
+        }
+
+        constexpr rank_type to_rank() const
+        {
+            return internal_proxy.get();
+        }
+
+        constexpr reference_proxy_type & assign_char(char_type const c)
+        {
+            using seqan3::assign_char;
+            return operator=(assign_char(alphabet_type{}, c));
+        }
+
+        constexpr reference_proxy_type & assign_rank(rank_type const c)
+        {
+            internal_proxy.get() = c;
             return *this;
         }
         //!\}
@@ -154,32 +199,32 @@ private:
         //!\{
         constexpr bool operator==(reference_proxy_type const & rhs) const noexcept
         {
-            return internal_proxy == rhs.internal_proxy;
+            return internal_proxy.get() == rhs.internal_proxy.get();
         }
 
         constexpr bool operator!=(reference_proxy_type const & rhs) const noexcept
         {
-            return !(internal_proxy == rhs.internal_proxy);
+            return !(internal_proxy.get() == rhs.internal_proxy.get());
         }
 
         constexpr bool operator<(reference_proxy_type const & rhs) const noexcept
         {
-            return internal_proxy < rhs.internal_proxy;
+            return internal_proxy.get() < rhs.internal_proxy.get();
         }
 
         constexpr bool operator>(reference_proxy_type const & rhs) const noexcept
         {
-            return !(internal_proxy <= rhs.internal_proxy);
+            return !(internal_proxy.get() <= rhs.internal_proxy.get());
         }
 
         constexpr bool operator<=(reference_proxy_type const & rhs) const noexcept
         {
-            return internal_proxy == rhs.internal_proxy || internal_proxy < rhs.internal_proxy;
+            return internal_proxy.get() == rhs.internal_proxy.get() || internal_proxy.get() < rhs.internal_proxy.get();
         }
 
         constexpr bool operator>=(reference_proxy_type const & rhs) const noexcept
         {
-            return !(internal_proxy < rhs.internal_proxy);
+            return !(internal_proxy.get() < rhs.internal_proxy.get());
         }
         //!\}
 
@@ -215,17 +260,9 @@ private:
             return !(static_cast<alphabet_type>(*this) < rhs);
         }
         //!\}
-
-        //!\brief Convert to alphabet type when streamed.
-        friend debug_stream_type & operator<<(debug_stream_type & s, reference_proxy_type const l)
-        {
-            return s << static_cast<alphabet_type>(l);
-        }
-
-        static_assert(!std::WeaklyIncrementable<alphabet_type>,
-                      "TODO: bitcompressed_vector::reference_proxy_type needs to be adapted to also be incrementable.");
     };
 
+    static_assert(alphabet_concept<reference_proxy_type>);
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>
@@ -254,6 +291,11 @@ public:
     //!\brief An unsigned integer type (usually std::size_t)
     using size_type         = ranges::size_type_t<data_type>;
     //!\}
+
+    //!\cond
+    // this signals to range-v3 that something is a container :|
+    using allocator_type    = void;
+    //!\endcond
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -1104,18 +1146,6 @@ public:
         archive(data); //TODO: data not yet serialisable
     }
     //!\endcond
-
-    //!\brief When printing to stream, make sure the reference_proxies are converted for proper overload selection.
-    friend debug_stream_type & operator<<(debug_stream_type & s, bitcompressed_vector & rhs)
-    {
-        return s << (rhs | view::convert<alphabet_type>);
-    }
-
-    //!\overload
-    friend debug_stream_type & operator<<(debug_stream_type & s, bitcompressed_vector && rhs)
-    {
-        return s << (rhs | view::convert<alphabet_type>);
-    }
 };
 
 } // namespace seqan3
