@@ -418,20 +418,6 @@ private:
 
 public:
 
-    //!\brief \copydoc _compute
-    pairwise_alignment_edit_distance_unbanded run() &&
-    {
-        _compute();
-        return std::move(*this);
-    }
-
-    //!\brief \copydoc _compute
-    pairwise_alignment_edit_distance_unbanded const & run() &
-    {
-        _compute();
-        return *this;
-    }
-
     /*!\brief Generic invocable interface.
      * \param[in,out] res The alignment result to fill.
      * \returns A reference to the filled alignment result.
@@ -439,7 +425,7 @@ public:
     template <typename result_type>
     result_type & operator()(result_type & res)
     {
-        run();
+        _compute();
         if constexpr (std::tuple_size_v<result_type> == 2)
         {
             get<align_result_key::score>(res) = score();
