@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::sequence_file_out_options.
+ * \brief Provides seqan3::sequence_file_output_options.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -45,7 +45,7 @@ namespace seqan3
 {
 
 //!\brief The options type defines various option members that influence the behaviour of all or some formats.
-struct sequence_file_out_options
+struct sequence_file_output_options
 {
     //!\brief Begin the ID line with ";" instead of ">" (not recommended).
     bool        fasta_legacy_id_marker  = false;

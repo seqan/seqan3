@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::sequence_file_out and corresponding traits classes.
+ * \brief Provides seqan3::sequence_file_output and corresponding traits classes.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -57,10 +57,10 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
-#include <seqan3/io/sequence/sequence_file_format_fasta.hpp>
-#include <seqan3/io/sequence/sequence_file_format_fastq.hpp>
-#include <seqan3/io/sequence/sequence_file_out_format_concept.hpp>
-#include <seqan3/io/sequence/sequence_file_out_options.hpp>
+#include <seqan3/io/sequence_file/format_fasta.hpp>
+#include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
+#include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/ranges>
 
@@ -68,7 +68,7 @@ namespace seqan3
 {
 
 // ----------------------------------------------------------------------------
-// sequence_file_out
+// sequence_file_output
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for writing sequence files, e.g. FASTA, FASTQ ...
@@ -76,7 +76,7 @@ namespace seqan3
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of fields IDs; only relevant if these
  * can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::sequence_file_out_format_concept).
+ * seqan3::sequence_file_output_format_concept).
  * \tparam stream_type          The type of the stream, must satisfy seqan3::ostream_concept.
  * \details
  *
@@ -107,21 +107,21 @@ namespace seqan3
  * In most cases the template parameters are deduced completely automatically:
  *
  * ```cpp
- * sequence_file_out fout{"/tmp/my.fasta"}; // FastA format detected, std::ofstream opened for file
+ * sequence_file_output fout{"/tmp/my.fasta"}; // FastA format detected, std::ofstream opened for file
  * ```
  *
  * Writing to std::cout:
  * ```cpp
- * sequence_file_out fout{std::move(std::cout), sequence_file_format_fasta{}};
+ * sequence_file_output fout{std::move(std::cout), sequence_file_format_fasta{}};
  * //              ^ no need to specify the template arguments
  *
  * fout.emplace_back("example_id", "ACGTN"_dna5);
  * ```
  *
- * Note that this is not the same as writing `sequence_file_out<>` (with angle brackets). In the latter case they are
+ * Note that this is not the same as writing `sequence_file_output<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
  * [automatic deduction](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
- * chooses different parameters depending on the constructor arguments. For opening from file, `sequence_file_out<>`
+ * chooses different parameters depending on the constructor arguments. For opening from file, `sequence_file_output<>`
  * would have also worked, but for opening from stream it would not have.
  *
  * ### Writing record-wise
@@ -129,7 +129,7 @@ namespace seqan3
  * You can iterate over this file record-wise:
  *
  * ```cpp
- * sequence_file_out fout{"/tmp/my.fasta"};
+ * sequence_file_output fout{"/tmp/my.fasta"};
  *
  * for // ...
  * {
@@ -159,12 +159,12 @@ namespace seqan3
  *
  * If you want to pass a combined object for SEQ and QUAL fields to push_back() / emplace_back(), or if you want
  * to change the order of the parameters, you can pass a non-empty fields trait object to the
- * sequence_file_out constructor to select the fields that are used for interpreting the arguments.
+ * sequence_file_output constructor to select the fields that are used for interpreting the arguments.
  *
  * The following snippets demonstrates the usage of such a fields trait object.
  *
  * ```cpp
- * sequence_file_out fout{"/tmp/my.fastq", fields<field::ID, field::SEQ_QUAL>{}};
+ * sequence_file_output fout{"/tmp/my.fastq", fields<field::ID, field::SEQ_QUAL>{}};
  *
  * for // ...
  * {
@@ -185,8 +185,8 @@ namespace seqan3
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
  * ```cpp
- * sequence_file_in   fin{"input.fasta", fields<field::ID, field::SEQ_QUAL>{}};
- * sequence_file_out fout{"output.fasta"}; // doesn't have to match the configuration
+ * sequence_file_input   fin{"input.fasta", fields<field::ID, field::SEQ_QUAL>{}};
+ * sequence_file_output fout{"output.fasta"}; // doesn't have to match the configuration
  *
  * for (auto & r : fin)
  * {
@@ -202,7 +202,7 @@ namespace seqan3
  * You can write multiple records at once, by assigning to the file:
  *
  * ```cpp
- * sequence_file_out fout{"/tmp/my.fasta"};
+ * sequence_file_output fout{"/tmp/my.fasta"};
  *
  * std::vector<std::tuple<dna5_vector, std::string>> range
  * {
@@ -220,19 +220,19 @@ namespace seqan3
  *
  * ```cpp
  * // file format conversion in one line:
- * sequence_file_out fout{"output.fasta"} = sequence_file_in{"input.fastq"};
+ * sequence_file_output fout{"output.fasta"} = sequence_file_input{"input.fastq"};
  *
  * // or in pipe notation:
- * sequence_file_in{"input.fastq"} | sequence_file_out{"output.fasta"};
+ * sequence_file_input{"input.fastq"} | sequence_file_output{"output.fasta"};
  * ```
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
  * ```cpp
- * sequence_file_in{"input.fastq"} | view::minimum_average_quality_filter(20)
+ * sequence_file_input{"input.fastq"} | view::minimum_average_quality_filter(20)
  *                                 | view::minimum_sequence_length_filter(50)
  *                                 | ranges::view::take(5)
- *                                 | sequence_file_out{"output.fasta"};
+ *                                 | sequence_file_output{"output.fasta"};
  * ```
  *
  * ### Column-based writing
@@ -254,7 +254,7 @@ namespace seqan3
  *
  * // ... in your file writing function:
  *
- * sequence_file_out fout{"/tmp/my.fasta"};
+ * sequence_file_output fout{"/tmp/my.fasta"};
  *
  * fout = std::tie(data_storage.sequences, data_storage.ids);
  * ```
@@ -265,10 +265,10 @@ namespace seqan3
  */
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
-          detail::type_list_of_sequence_file_out_formats_concept valid_formats_ =
+          detail::type_list_of_sequence_file_output_formats_concept valid_formats_ =
               type_list<sequence_file_format_fasta, sequence_file_format_fastq>,
           ostream_concept<char> stream_type_ = std::ofstream>
-class sequence_file_out
+class sequence_file_output
 {
 public:
     /*!\name Template arguments
@@ -294,7 +294,7 @@ public:
                       return true;
                   }(),
                   "You selected a field that is not valid for sequence files, please refer to the documentation "
-                  "of sequence_file_out::field_ids for the accepted values.");
+                  "of sequence_file_output::field_ids for the accepted values.");
 
     static_assert([] () constexpr
                   {
@@ -315,7 +315,7 @@ public:
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
     //!\brief The iterator type of this view (an output iterator).
-    using iterator          = detail::out_file_iterator<sequence_file_out>;
+    using iterator          = detail::out_file_iterator<sequence_file_output>;
     //!\brief The const iterator type is void, because files are not const-iterable.
     using const_iterator    = void;
     //!\brief The type returned by end().
@@ -326,17 +326,17 @@ public:
      * \{
      */
     //!\brief Default constructor is explicitly deleted, you need to give a stream or file name.
-    sequence_file_out() = delete;
+    sequence_file_output() = delete;
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_out(sequence_file_out const &) = delete;
+    sequence_file_output(sequence_file_output const &) = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    sequence_file_out & operator=(sequence_file_out const &) = delete;
+    sequence_file_output & operator=(sequence_file_output const &) = delete;
     //!\brief Move construction is defaulted.
-    sequence_file_out(sequence_file_out &&) = default;
+    sequence_file_output(sequence_file_output &&) = default;
     //!\brief Move assignment is defaulted.
-    sequence_file_out & operator=(sequence_file_out &&) = default;
+    sequence_file_output & operator=(sequence_file_output &&) = default;
     //!\brief Destructor is defaulted.
-    ~sequence_file_out() = default;
+    ~sequence_file_output() = default;
 
     /*!\brief Construct from filename.
      * \param[in] _file_name    Path to the file you wish to open.
@@ -347,7 +347,7 @@ public:
      * In addition to the file name, you may specify a custom seqan3::fields type which may be easier than
      * defining all the template parameters.
      */
-    sequence_file_out(filesystem::path const & _file_name,
+    sequence_file_output(filesystem::path const & _file_name,
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
     {
         // open stream
@@ -381,13 +381,13 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_out_format_concept.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_output_format_concept.
      * \param[in] _stream    The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      */
-    template <sequence_file_out_format_concept file_format>
-    sequence_file_out(stream_type             && _stream,
+    template <sequence_file_output_format_concept file_format>
+    sequence_file_output(stream_type             && _stream,
                       file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         stream{std::move(_stream)}, format{file_format{}}
@@ -417,7 +417,7 @@ public:
      * ### Example
      *
      * ```cpp
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * auto it = fout.begin();
      *
@@ -476,7 +476,7 @@ public:
      * ### Example
      *
      * ```cpp
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * auto it = fout.begin();
      *
@@ -522,7 +522,7 @@ public:
      * ### Example
      *
      * ```cpp
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * auto it = fout.begin();
      *
@@ -570,7 +570,7 @@ public:
      * ### Example
      *
      * ```cpp
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * auto it = fout.begin();
      *
@@ -611,7 +611,7 @@ public:
      * ### Example
      *
      * ```cpp
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * std::vector<std::tuple<dna5_vector, std::string>> range
      * {
@@ -624,7 +624,7 @@ public:
      * ```
      */
     template <std::ranges::InputRange rng_t>
-    sequence_file_out & operator=(rng_t && range)
+    sequence_file_output & operator=(rng_t && range)
         requires tuple_like_concept<reference_t<rng_t>>
     {
         for (auto && record : range)
@@ -639,7 +639,7 @@ public:
      *
      * \details
      *
-     * This operator enables sequence_file_out to be at the end of a piping operation. It just calls
+     * This operator enables sequence_file_output to be at the end of a piping operation. It just calls
      * operator=() internally.
      *
      * ### Complexity
@@ -653,7 +653,7 @@ public:
      * ### Example
      *
      * ```cpp
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * std::vector<std::tuple<dna5_vector, std::string>> range
      * {
@@ -670,14 +670,14 @@ public:
      * This is especially useful in combination with file-based filters:
      *
      * ```cpp
-     * sequence_file_in{"input.fastq"} | view::minimum_average_quality_filter(20)
+     * sequence_file_input{"input.fastq"} | view::minimum_average_quality_filter(20)
      *                                 | view::minimum_sequence_length_filter(50)
      *                                 | ranges::view::take(5)
-     *                                 | sequence_file_out{"output.fasta"};
+     *                                 | sequence_file_output{"output.fasta"};
      * ```
      */
     template <std::ranges::InputRange rng_t>
-    friend sequence_file_out & operator|(rng_t && range, sequence_file_out & f)
+    friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
         requires tuple_like_concept<reference_t<rng_t>>
     {
         f = range;
@@ -686,7 +686,7 @@ public:
 
     //!\overload
     template <std::ranges::InputRange rng_t>
-    friend sequence_file_out operator|(rng_t && range, sequence_file_out && f)
+    friend sequence_file_output operator|(rng_t && range, sequence_file_output && f)
         requires tuple_like_concept<reference_t<rng_t>>
     {
         f = range;
@@ -730,13 +730,13 @@ public:
      *
      * // ... in your file writing function:
      *
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * fout = std::tie(data_storage.sequences, data_storage.ids);
      * ```
      */
     template <typename typelist, typename field_ids>
-    sequence_file_out & operator=(record<typelist, field_ids> const & r)
+    sequence_file_output & operator=(record<typelist, field_ids> const & r)
     {
         write_columns(detail::range_wrap_ignore(detail::get_or_ignore<field::SEQ>(r)),
                       detail::range_wrap_ignore(detail::get_or_ignore<field::ID>(r)),
@@ -775,13 +775,13 @@ public:
      *
      * // ... in your file writing function:
      *
-     * sequence_file_out fout{"/tmp/my.fasta"};
+     * sequence_file_output fout{"/tmp/my.fasta"};
      *
      * fout = std::tie(data_storage.sequences, data_storage.ids);
      * ```
      */
     template <typename ... arg_types>
-    sequence_file_out & operator=(std::tuple<arg_types...> const & t)
+    sequence_file_output & operator=(std::tuple<arg_types...> const & t)
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_columns(
@@ -793,7 +793,7 @@ public:
     //!\}
 
     //!\brief The options are public and its members can be set directly.
-    sequence_file_out_options options;
+    sequence_file_output_options options;
 
     /*!\cond DEV
      * \brief Expose a reference to the underlying stream object. [public, but not documented as part of the API]
@@ -896,14 +896,14 @@ protected:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::sequence_file_out
+ * \relates seqan3::sequence_file_output
  * \{
  */
 template <ostream_concept<char>             stream_type,
-          sequence_file_out_format_concept  file_format,
+          sequence_file_output_format_concept  file_format,
           detail::fields_concept            selected_field_ids>
-sequence_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
-    -> sequence_file_out<selected_field_ids,
+sequence_file_output(stream_type && _stream, file_format const &, selected_field_ids const &)
+    -> sequence_file_output<selected_field_ids,
                          type_list<file_format>,
                          std::remove_reference_t<stream_type>>;
 //!\}

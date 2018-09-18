@@ -47,12 +47,12 @@
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/io/sequence/sequence_file_out_options.hpp>
+#include <seqan3/io/sequence_file/output_options.hpp>
 
 namespace seqan3
 {
 
-/*!\interface seqan3::sequence_file_out_format_concept <>
+/*!\interface seqan3::sequence_file_output_format_concept <>
  * \brief The generic concept for sequence file out formats.
  * \ingroup sequence
  *
@@ -64,9 +64,9 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept sequence_file_out_format_concept = requires (t                         & v,
+concept sequence_file_output_format_concept = requires (t                         & v,
                                                           std::ofstream             & f,
-                                                          sequence_file_out_options & options,
+                                                          sequence_file_output_options & options,
                                                           dna5_vector               & seq,
                                                           std::string               & id,
                                                           std::vector<phred42>   & qual,
@@ -81,16 +81,16 @@ concept sequence_file_out_format_concept = requires (t                         &
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::sequence_file_out_format_concept
- * \brief You can expect these **members** on all types that implement seqan3::sequence_file_out_format_concept.
- * \memberof seqan3::sequence_file_out_format_concept
+/*!\name Requirements for seqan3::sequence_file_output_format_concept
+ * \brief You can expect these **members** on all types that implement seqan3::sequence_file_output_format_concept.
+ * \memberof seqan3::sequence_file_output_format_concept
  * \{
  */
 
-/*!\fn void write(stream_type & stream, seqan3::sequence_file_out_options const & options, seq_type && sequence,
+/*!\fn void write(stream_type & stream, seqan3::sequence_file_output_options const & options, seq_type && sequence,
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::sequence_file_out_format_concept
+ * \memberof seqan3::sequence_file_output_format_concept
  * \tparam stream_type      Output stream, must satisfy seqan3::ostream_concept with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
@@ -110,10 +110,10 @@ concept sequence_file_out_format_concept = requires (t                         &
  *
  *   * The format must also accept std::ignore as parameter for any of the fields, however it shall throw an exception
  * if one of the fields required for writing the format is marked as such. [this shall be checked inside the function]
- *   * The format does not handle seqan3::field::SEQ_QUAL, instead seqan3::sequence_file_out splits it into two views
+ *   * The format does not handle seqan3::field::SEQ_QUAL, instead seqan3::sequence_file_output splits it into two views
  *     and passes it to the format as if they were separate.
  */
-/*!\var static inline std::vector<std::string> seqan3::sequence_file_out_format_concept::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::sequence_file_output_format_concept::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 
@@ -125,26 +125,26 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_out_format_concept [default is false].
+ * seqan3::sequence_file_output_format_concept [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_sequence_file_out_formats_concept
+ * \see seqan3::type_list_of_sequence_file_output_formats_concept
  */
 template <typename t>
-constexpr bool is_type_list_of_sequence_file_out_formats_v = false;
+constexpr bool is_type_list_of_sequence_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_out_format_concept [overload].
+ * seqan3::sequence_file_output_format_concept [overload].
  * \ingroup core
-  * \see seqan3::type_list_of_sequence_file_out_formats_concept
+  * \see seqan3::type_list_of_sequence_file_output_formats_concept
  */
 template <typename ... ts>
-constexpr bool is_type_list_of_sequence_file_out_formats_v<type_list<ts...>> =
-    (sequence_file_out_format_concept<ts> && ...);
+constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> =
+    (sequence_file_output_format_concept<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet seqan3::sequence_file_format_concept.
  * \ingroup core
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-concept type_list_of_sequence_file_out_formats_concept = is_type_list_of_sequence_file_out_formats_v<t>;
+concept type_list_of_sequence_file_output_formats_concept = is_type_list_of_sequence_file_output_formats_v<t>;
 } // namespace seqan3::detail

@@ -105,7 +105,7 @@ enum class field
  *
  * ```cpp
  * // specify custom field combination/order to file:
- * sequence_file_in fin{"/tmp/my.fasta", fields<field::ID, field::SEQ>{}};
+ * sequence_file_input fin{"/tmp/my.fasta", fields<field::ID, field::SEQ>{}};
  *
  * auto record = fin.front(); // get current record, in this case the first
  *
