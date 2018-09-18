@@ -30,6 +30,7 @@ static auto dna4_01 = []()
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
+        alignment_coordinate{8, 0},
         alignment_coordinate{15, 8},
         std::vector
         {
@@ -77,6 +78,7 @@ static auto dna4_01T = []()
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
+        alignment_coordinate{0, 0},
         alignment_coordinate{8, 15},
         std::vector
         {
@@ -138,6 +140,7 @@ static auto dna4_02 = []()
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
+        alignment_coordinate{0, 0},
         alignment_coordinate{7, 8},
         std::vector
         {
@@ -185,6 +188,7 @@ static auto aa27_01 = []()
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
+        alignment_coordinate{8, 0},
         alignment_coordinate{15, 8},
         std::vector
         {
@@ -232,6 +236,7 @@ static auto aa27_01T = []()
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
+        alignment_coordinate{0, 0},
         alignment_coordinate{8, 15},
         std::vector
         {
