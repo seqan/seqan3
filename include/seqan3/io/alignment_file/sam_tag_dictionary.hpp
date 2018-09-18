@@ -57,7 +57,9 @@ namespace seqan3::detail
                                          std::vector<int32_t>, std::vector<uint32_t>,
                                          std::vector<float>>;
 
+    //!\brief Each SAM tag type char identifier. Index corresponds to the seqan3::detail::sam_tag_variant types.
     char constexpr sam_tag_type_char[11]       = {'A',  'i',  'f',  'Z',  'B', 'B', 'B', 'B', 'B', 'B', 'B'};
+    //!\brief Each types SAM tag type extra char id. Index corresponds to the seqan3::detail::sam_tag_variant types.
     char constexpr sam_tag_type_char_extra[11] = {'\0', '\0', '\0', '\0', 'c', 'C', 's', 'S', 'i', 'I', 'f'};
 }
 
