@@ -52,8 +52,8 @@
 namespace seqan3
 {
 
-/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores
-* (typical range).
+/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (typical range).
+ * \implements seqan3::quality_concept
  * \ingroup quality
  *
  * \details

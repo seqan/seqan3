@@ -51,7 +51,7 @@ namespace seqan3
 {
 /*!\brief The twenty-seven letter amino acid alphabet.
  * \ingroup aminoacid
- * \implements seqan3::alphabet_concept
+ * \implements seqan3::aminoacid_concept
  *
  * \details
  * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
