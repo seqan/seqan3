@@ -45,12 +45,14 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/type_list.hpp>
+#include <seqan3/range/view/persist.hpp>
 
 namespace seqan3::detail
 {
@@ -77,19 +79,19 @@ struct determine_result_type
                                align_result_key::end)
                 return align_result<type_list<uint32_t,
                                               score_type,
-                                              std::pair<size_t, size_t>>>{};
+                                              alignment_coordinate>>{};
             else if constexpr (get<align_cfg::id::output>(configuration_t{}) ==
                                align_result_key::begin)
                 return align_result<type_list<uint32_t,
                                               score_type,
-                                              std::pair<size_t, size_t>,
-                                              std::pair<size_t, size_t>>>{};
+                                              alignment_coordinate,
+                                              alignment_coordinate>>{};
             else if constexpr (get<align_cfg::id::output>(configuration_t{}) ==
                                align_result_key::trace)
                 return align_result<type_list<uint32_t,
                                               score_type,
-                                              std::pair<size_t, size_t>,
-                                              std::pair<size_t, size_t>,
+                                              alignment_coordinate,
+                                              alignment_coordinate,
                                               std::tuple<std::vector<gapped<seq1_value_type>>,
                                                          std::vector<gapped<seq2_value_type>>>>>{};
             else
@@ -136,8 +138,8 @@ struct alignment_selector
     {
         //TODO Currently we only support edit_distance. We need would actually need real checks for this.
         std::function<result_type(result_type &)> func =
-            pairwise_alignment_edit_distance_unbanded{std::get<0>(std::forward<_seq_tuple_t>(seq)),
-                                                      std::get<1>(std::forward<_seq_tuple_t>(seq)),
+            pairwise_alignment_edit_distance_unbanded{std::get<0>(std::forward<_seq_tuple_t>(seq)) | view::persist,
+                                                      std::get<1>(std::forward<_seq_tuple_t>(seq)) | view::persist,
                                                       config};
         return func;
     }

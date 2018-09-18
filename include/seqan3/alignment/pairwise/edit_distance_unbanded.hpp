@@ -426,27 +426,24 @@ public:
     result_type & operator()(result_type & res)
     {
         _compute();
-        if constexpr (std::tuple_size_v<result_type> == 2)
+        if constexpr (std::tuple_size_v<result_type> >= 2)
         {
             get<align_result_key::score>(res) = score();
         }
-        else if constexpr (std::tuple_size_v<result_type> == 3)
+        if constexpr (std::tuple_size_v<result_type> >= 3)
         {
-            throw std::invalid_argument{"The current output setting is not supported!"};
+            get<align_result_key::end>(res) = end_coordinate();
         }
-        else if constexpr (std::tuple_size_v<result_type> == 4)
+        // if constexpr (std::tuple_size_v<result_type> >= 4)
+        // { TODO
+        //     throw std::invalid_argument{"The current output setting is not supported!"};
+        // }
+        if constexpr (std::tuple_size_v<result_type> == 5)
         {
-            throw std::invalid_argument{"The current output setting is not supported!"};
-        }
-        else if constexpr (std::tuple_size_v<result_type> == 5)
-        {
-            //TODO:
-            auto trace = alignment_trace(database, query, trace_matrix());
-            ranges::copy(std::get<0>(trace), ranges::back_inserter(std::get<0>(get<align_result_key::trace>(res))));
-            ranges::copy(std::get<1>(trace), ranges::back_inserter(std::get<1>(get<align_result_key::trace>(res))));
-            // TODO: Compute the end coordinate
-            // TODO: Compute the begin coordinate
-            get<align_result_key::score>(res) = score();
+            auto && [seq1_trace, seq2_trace] = alignment_trace(database, query, trace_matrix(), end_coordinate());
+            auto & [in1, in2] = get<align_result_key::trace>(res);
+            ranges::copy(seq1_trace, ranges::back_inserter(in1));
+            ranges::copy(seq2_trace, ranges::back_inserter(in2));
         }
         return res;
     }

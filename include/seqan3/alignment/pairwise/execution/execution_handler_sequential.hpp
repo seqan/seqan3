@@ -68,10 +68,11 @@ public:
      */
     //!\brief Invokes the passed alignment instance in a blocking manner.
     template <typename func_result_t>
-    void execute(std::function<func_result_t()> func,
-                 std::function<void(decltype(func()))> delegate)
+    void execute(std::function<func_result_t(func_result_t &)> func,
+                 func_result_t & res,
+                 std::function<void(decltype(func(res)))> delegate)
     {
-        delegate(func());
+        delegate(func(res));
     }
     //!\}
 };

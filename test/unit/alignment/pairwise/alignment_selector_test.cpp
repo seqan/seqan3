@@ -85,8 +85,8 @@ TEST(alignment_selector, determine_result_type)
         EXPECT_EQ(std::tuple_size_v<_t>, 5);
         EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, _t>, uint32_t>));
         EXPECT_TRUE((std::is_same_v<std::tuple_element_t<1, _t>, int32_t>));
-        EXPECT_TRUE((std::is_same_v<std::tuple_element_t<2, _t>, std::pair<size_t, size_t>>));
-        EXPECT_TRUE((std::is_same_v<std::tuple_element_t<3, _t>, std::pair<size_t, size_t>>));
+        EXPECT_TRUE((std::is_same_v<std::tuple_element_t<2, _t>, detail::alignment_coordinate>));
+        EXPECT_TRUE((std::is_same_v<std::tuple_element_t<3, _t>, detail::alignment_coordinate>));
         EXPECT_TRUE((std::is_same_v<std::tuple_element_t<4, _t>, std::tuple<gapped_seq1_t, gapped_seq2_t>>));
     }
 }
