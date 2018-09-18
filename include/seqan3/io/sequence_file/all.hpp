@@ -39,7 +39,7 @@
 
 #pragma once
 
-/*!\defgroup sequence Sequence
+/*!\defgroup sequence Sequence File
  * \ingroup io
  * \brief \todo document at a later point in time
  */

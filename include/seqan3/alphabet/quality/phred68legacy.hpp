@@ -54,6 +54,7 @@ namespace seqan3
 {
 
 /*!\brief Quality type for Solexa and deprecated Illumina formats.
+ * \implements seqan3::quality_concept
  * \ingroup quality
  *
  * \details

@@ -51,9 +51,9 @@ namespace seqan3
 // Member exposure for the seqan3::quality_concept
 // ------------------------------------------------------------------
 
-/*!\name Helpers for seqan3::semi_alphabet_concept
+/*!\name Helpers for seqan3::quality_concept
  * \brief These functions and metafunctions expose member variables and types so
- * that the type can model the seqan3::semi_alphabet_concept.
+ * that the type can model the seqan3::quality_concept.
  * \ingroup quality
  * \{
  */
