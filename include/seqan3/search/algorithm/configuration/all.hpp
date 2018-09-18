@@ -33,32 +33,25 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides a simple function that sorts a vector and returns it to allow the use of EXCEPT_EQ() for
- *        vectors of arbitrary order while keeping the detailed output for test failures.
+ * \brief Meta-header for the \link search_configuration search configuration module \endlink.
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <algorithm>
-#include <vector>
+/*!\defgroup search_configuration Configuration
+ * \brief Data structures and utility functions for configuring search algorithm.
+ * \ingroup search
+ *
+ * \todo Write detailed landing page.
+ */
 
-namespace seqan3
-{
+#include <seqan3/search/algorithm/configuration/max_error.hpp>
+#include <seqan3/search/algorithm/configuration/max_error_rate.hpp>
+#include <seqan3/search/algorithm/configuration/mode.hpp>
+#include <seqan3/search/algorithm/configuration/output.hpp>
+#include <seqan3/search/algorithm/configuration/utility.hpp>
 
-template <typename T>
-std::vector<T> sort(std::vector<T> v)
-{
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end()); // TODO: remove once duplicates are filtered
-    return v;
-}
-
-template <typename T>
-std::vector<std::vector<T>> sort(std::vector<std::vector<T>> v)
-{
-    std::for_each(v.begin(), v.end(), [](auto & hits) { sort(hits); } );
-    return v;
-}
-
-} // namespace std
+/*!\namespace seqan3::search_cfg
+ * \brief A special sub namespace for the search configurations.
+ */
