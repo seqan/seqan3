@@ -39,9 +39,9 @@
 
 #pragma once
 
-/*!\defgroup structure_file Structure
+/*!\defgroup structure_file Structure File
  * \ingroup io
- * \brief \todo document at a later point in time
+ * \brief Provides reading and writing of files that contain structured sequences in various formats.
  */
 
 #include <seqan3/io/structure_file/format_vienna.hpp>
