@@ -45,6 +45,7 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
@@ -78,19 +79,19 @@ struct determine_result_type
                                align_result_key::end)
                 return align_result<type_list<uint32_t,
                                               score_type,
-                                              std::pair<size_t, size_t>>>{};
+                                              alignment_coordinate>>{};
             else if constexpr (get<align_cfg::id::output>(configuration_t{}) ==
                                align_result_key::begin)
                 return align_result<type_list<uint32_t,
                                               score_type,
-                                              std::pair<size_t, size_t>,
-                                              std::pair<size_t, size_t>>>{};
+                                              alignment_coordinate,
+                                              alignment_coordinate>>{};
             else if constexpr (get<align_cfg::id::output>(configuration_t{}) ==
                                align_result_key::trace)
                 return align_result<type_list<uint32_t,
                                               score_type,
-                                              std::pair<size_t, size_t>,
-                                              std::pair<size_t, size_t>,
+                                              alignment_coordinate,
+                                              alignment_coordinate,
                                               std::tuple<std::vector<gapped<seq1_value_type>>,
                                                          std::vector<gapped<seq2_value_type>>>>>{};
             else

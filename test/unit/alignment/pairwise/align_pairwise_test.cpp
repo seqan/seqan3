@@ -64,7 +64,7 @@ TEST(align_pairwise, single_rng_lvalue)
                                     align_cfg::output<align_result_key::score>;
         for (auto && res : align_pairwise(p, cfg))
         {
-            EXPECT_EQ(res.score(), 4);
+            EXPECT_EQ(res.score(), -4);
         }
     }
 
@@ -73,7 +73,9 @@ TEST(align_pairwise, single_rng_lvalue)
                                     align_cfg::output<align_result_key::trace>;
         for (auto && res : align_pairwise(p, cfg))
         {
-            EXPECT_EQ(res.score(), 4);
+            EXPECT_EQ(res.score(), -4);
+            auto [cmp1, cmp2] = res.end_coordinate();
+            EXPECT_EQ((std::tie(cmp1, cmp2)), (std::tuple{7, 8}));
             auto && [gap1, gap2] = res.trace();
             EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
             EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
@@ -96,7 +98,7 @@ TEST(align_pairwise, single_view_lvalue)
                                     align_cfg::output<align_result_key::score>;
         for (auto && res : align_pairwise(v, cfg))
         {
-            EXPECT_EQ(res.score(), 4);
+            EXPECT_EQ(res.score(), -4);
         }
     }
     {  // the trace
@@ -104,7 +106,7 @@ TEST(align_pairwise, single_view_lvalue)
                                     align_cfg::output<align_result_key::trace>;
         for (auto && res : align_pairwise(v, cfg))
         {
-            EXPECT_EQ(res.score(), 4);
+            EXPECT_EQ(res.score(), -4);
             auto && [gap1, gap2] = res.trace();
             EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
             EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
@@ -125,7 +127,7 @@ TEST(align_pairwise, multiple_rng_lvalue)
     detail::configuration cfg = align_cfg::edit | align_cfg::output<align_result_key::trace>;
     for (auto && res : align_pairwise(vec, cfg))
     {
-        EXPECT_EQ(res.score(), 4);
+        EXPECT_EQ(res.score(), -4);
         auto && [gap1, gap2] = res.trace();
         EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
         EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
