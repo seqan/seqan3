@@ -95,7 +95,7 @@ namespace seqan3::detail
 {
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
- * \ingroup alignment
+ * \ingroup pairwise
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
  * \tparam query_t        \copydoc pairwise_alignment_edit_distance_unbanded::query_type
  * \tparam align_config_t The type of the alignment config.
@@ -162,7 +162,7 @@ private:
     static_assert(8 * sizeof(word_type) <= 64, "we assume at most uint64_t as word_type");
     static_assert((is_global && !is_semi_global) || (!is_global && is_semi_global), "Either set global or semi-global");
 
-    //!\brief The score of the alignment.
+    //!\brief The score of the current column.
     score_type _score{};
     //!\brief The mask with a bit set at the position where the score change.
     //!\details If #use_max_errors is true this corresponds to the last active cell.
@@ -174,6 +174,21 @@ private:
     //!\brief The machine words which translate a letter of the query into a bit mask.
     //!\details Each bit position which is true (=1) corresponds to a match of a letter in the query at this position.
     std::vector<word_type> bit_masks{};
+    /*!\brief The best score of the alignment in the last row
+     * (if is_semi_global = true) or the last entry in the
+     * score matrix (if is_global = true).
+     */
+    score_type _best_score{};
+    /*!\brief In which column the best score of the alignment is
+     * located. Will only be tracked if is_semi_global is true.
+     *
+     * \details
+     *
+     * If is_global is true this is always at the last entry in
+     * the score matrix, i.e. at position (`|query|`,
+     * `|database|`).
+     */
+    database_iterator _best_score_col{};
 
     /*!\name Only used when use_max_errors is true
      * \{
@@ -225,6 +240,8 @@ public:
           query{std::forward<query_t>(_query)},
           config{std::forward<align_config_t>(_config)},
           _score{query.size()},
+          _best_score{query.size()},
+          _best_score_col{ranges::begin(database)},
           database_it{ranges::begin(database)},
           database_it_end{ranges::end(database)}
     {
@@ -246,6 +263,7 @@ public:
             score_mask = (word_type)1 << (localMaxErrors % word_size);
             last_block = std::min(localMaxErrors / word_size, block_count - 1);
             _score = localMaxErrors + 1;
+            _best_score = _score;
         }
 
         word_type vp0{~static_cast<word_type>(0)};
@@ -264,17 +282,6 @@ public:
 
         add_state();
     }
-
-    pairwise_alignment_edit_distance_unbanded(
-        database_t _database,
-        query_t _query,
-        align_config_t _config,
-        traits_t /*_traits*/) :
-            pairwise_alignment_edit_distance_unbanded(std::forward<database_t>(_database),
-                                                      std::forward<query_t>(_query),
-                                                      std::forward<align_config_t>(_config))
-    {}
-
     //!\}
 
 private:
@@ -313,6 +320,12 @@ private:
             _score++;
         else if ((N & mask) != (word_type)0)
             _score--;
+
+        if constexpr(is_semi_global)
+        {
+            _best_score_col = (_score <= _best_score) ? database_it : _best_score_col;
+            _best_score     = (_score <= _best_score) ? _score : _best_score;
+        }
     }
 
     //!\brief Decrement the last active cell position.
@@ -347,7 +360,7 @@ private:
         // updating the last active cell
         while (!(_score <= max_errors))
         {
-            advance_score(vp[last_block], vn[last_block], score_mask);
+            advance_score(vn[last_block], vp[last_block], score_mask);
             if(!prev_last_active_cell())
                 break;
         }
@@ -381,6 +394,28 @@ private:
     //!\brief Pattern is larger than one machine word. Use overflow aware computation.
     bool large_patterns();
 
+    //!\brief Compute the alignment.
+    void _compute()
+    {
+        // limit search width for prefix search
+        if constexpr(use_max_errors && is_global)
+        {
+            std::size_t max_length = query.size() + max_errors + 1;
+            std::size_t haystack_length = std::min(database.size(), max_length);
+            database_it_end -= database.size() - haystack_length;
+        }
+
+        // distinguish between the version for needles not longer than
+        // one machine word and the version for longer needles
+        if (vp.size() <= 1)
+            small_patterns();
+        else
+            large_patterns();
+
+        if constexpr(is_global)
+            _best_score = _score;
+    }
+
 public:
 
     /*!\brief Generic invocable interface.
@@ -390,7 +425,7 @@ public:
     template <typename result_type>
     result_type & operator()(result_type & res)
     {
-        run();
+        _compute();
         if constexpr (std::tuple_size_v<result_type> == 2)
         {
             get<align_result_key::score>(res) = score();
@@ -416,43 +451,38 @@ public:
         return res;
     }
 
-    //!\brief Compute the alignment.
-    decltype(auto) run()
-    {
-        // limit search width for prefix search
-        if constexpr(use_max_errors && is_global)
-        {
-            std::size_t max_length = query.size() + max_errors + 1;
-            std::size_t haystack_length = std::min(database.size(), max_length);
-            database_it_end += database.size() - haystack_length;
-        }
-
-        // distinguish between the version for needles not longer than
-        // one machine word and the version for longer needles
-        if (vp.size() <= 1)
-            small_patterns();
-        else
-            large_patterns();
-
-        return *this;
-    }
-
     //!\brief Return the score of the alignment.
-    int score()
+    score_type score() const noexcept
     {
-        return _score;
+        return -_best_score;
     }
 
     //!\brief Return the score matrix of the alignment.
-    score_matrix_type score_matrix()
+    score_matrix_type score_matrix() const noexcept
     {
         return score_matrix_type{*this};
     }
 
     //!\brief Return the trace matrix of the alignment.
-    trace_matrix_type trace_matrix()
+    trace_matrix_type trace_matrix() const noexcept
     {
         return trace_matrix_type{*this};
+    }
+
+    //!\brief Return the end position of the alignment
+    alignment_coordinate end_coordinate() const noexcept
+    {
+        unsigned col = database.size() - 1;
+        if constexpr(is_semi_global)
+            col = std::distance(ranges::begin(database), _best_score_col);
+
+        return {col, query.size() - 1};
+    }
+
+    //!\brief Return the trace of the alignment
+    auto trace() const noexcept
+    {
+        return alignment_trace(database, query, trace_matrix(), end_coordinate());
     }
 };
 
@@ -551,27 +581,27 @@ namespace seqan3::detail
 
 template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
 struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
-    : public alignment_score_matrix<std::vector<int>>
+    : public alignment_score_matrix<std::vector<typename pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::score_type>>
 {
-    using alignment_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
-    using base_score_matrix_t = alignment_score_matrix<std::vector<int>>;
-    using score_t = int;
+    using alignment_type = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
+    using score_type = typename alignment_type::score_type;
+    using base_score_matrix_type = alignment_score_matrix<std::vector<score_type>>;
+    using word_type = typename alignment_type::word_type;
 
-    alignment_score_matrix(alignment_t const & alignment) :
-        base_score_matrix_t
+    static constexpr size_t word_size = sizeof(word_type)*8;
+
+    alignment_score_matrix(alignment_type const & alignment) :
+        base_score_matrix_type
         {
             [&]{
-                using word_t = typename alignment_t::word_type;
-                constexpr size_t word_size = sizeof(word_t)*8;
-
-                std::size_t _cols = alignment.database.size() + 1;
-                std::size_t _rows = alignment.query.size() + 1;
+                size_t _cols = alignment.database.size() + 1;
+                size_t _rows = alignment.query.size() + 1;
                 std::vector<int> scores{};
                 scores.reserve(_cols * _rows);
 
                 // init first row with 0, 1, 2, 3, ...
-                for(unsigned col=0; col < _cols; ++col)
-                    scores[col] = alignment_t::is_global ? col : 0;
+                for(size_t col=0; col < _cols; ++col)
+                    scores[col] = alignment_type::is_global ? col : 0;
 
                 auto deltas = [&](unsigned col)
                 {
@@ -581,11 +611,11 @@ struct alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database
 
                         size_t chunk = row / word_size;
                         size_t row_in_chunk = row % word_size;
-                        auto vp = state.vp[chunk];
-                        auto vn = state.vn[chunk];
+                        word_type vp = state.vp[chunk];
+                        word_type vn = state.vn[chunk];
 
-                        int p = bitset(vp)[row_in_chunk] ? 1 : 0;
-                        int n = bitset(vn)[row_in_chunk] ? 1 : 0;
+                        int8_t p = bitset(vp)[row_in_chunk] ? 1 : 0;
+                        int8_t n = bitset(vn)[row_in_chunk] ? 1 : 0;
                         return p - n;
                     };
                 };
@@ -610,12 +640,12 @@ template<typename database_t, typename query_t, typename align_config_t, typenam
 struct alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
     : public alignment_trace_matrix<database_t const &, query_t const &, align_config_t, alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>>
 {
-    using alignment_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
-    using score_matrix_t = alignment_score_matrix<alignment_t>;
-    using base_trace_matrix_t = alignment_trace_matrix<database_t const &, query_t const &, align_config_t, score_matrix_t>;
+    using alignment_type = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
+    using score_matrix_type = alignment_score_matrix<alignment_type>;
+    using base_trace_matrix_type = alignment_trace_matrix<database_t const &, query_t const &, align_config_t, score_matrix_type>;
 
-    alignment_trace_matrix(alignment_t const & alignment) :
-        base_trace_matrix_t{alignment.database, alignment.query, alignment.config, score_matrix_t{alignment}}
+    alignment_trace_matrix(alignment_type const & alignment) :
+        base_trace_matrix_type{alignment.database, alignment.query, alignment.config, score_matrix_type{alignment}}
     {
     }
 };
