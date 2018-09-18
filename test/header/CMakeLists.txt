@@ -69,7 +69,7 @@ macro (seqan3_header_test component header_base_path)
          "${header_relative_base_path}/*.h")
 
     # filter out headers which are implementation detail
-    list (FILTER header_files EXCLUDE REGEX "detail|/bits/")
+    list (FILTER header_files EXCLUDE REGEX "detail|/bits/|search")
 
     file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/header_test_src")
 
