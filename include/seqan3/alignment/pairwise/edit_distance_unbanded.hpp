@@ -468,7 +468,7 @@ public:
     //!\brief Return the score of the alignment.
     score_type score() const noexcept
     {
-        return _best_score;
+        return -_best_score;
     }
 
     //!\brief Return the score matrix of the alignment.
