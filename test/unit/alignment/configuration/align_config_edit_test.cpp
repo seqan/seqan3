@@ -32,28 +32,37 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
-
- #pragma once
-
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
- */
+#include <gtest/gtest.h>
 
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/align_config_score.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
-#include <seqan3/alignment/configuration/align_config_output.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
- */
+using namespace seqan3;
+
+TEST(align_cfg_edit, is_global)
+{
+    EXPECT_TRUE((detail::has_align_cfg_v<align_cfg::id::global, decltype(align_cfg::edit)>));
+}
+
+TEST(align_cfg_edit, is_hamming)
+{
+    EXPECT_TRUE((detail::has_align_cfg_v<align_cfg::id::score, decltype(align_cfg::edit)>));
+
+    auto scheme = get<align_cfg::id::score>(align_cfg::edit);
+    for (unsigned i = 0; i < decltype(scheme)::matrix_size; ++i)
+    {
+        for (unsigned j = 0; j < decltype(scheme)::matrix_size; ++j)
+        {
+            if (i == j)
+                EXPECT_EQ((scheme.score(assign_rank(dna15{}, i), assign_rank(dna15{}, j))), 0);
+            else
+                EXPECT_EQ((scheme.score(assign_rank(dna15{}, i), assign_rank(dna15{}, j))), -1);
+        }
+    }
+}
+
+TEST(align_cfg_edit, is_simple_gap)
+{
+    EXPECT_TRUE((detail::has_align_cfg_v<align_cfg::id::gap, decltype(align_cfg::edit)>));
+    auto scheme = get<align_cfg::id::gap>(align_cfg::edit);
+    EXPECT_EQ(scheme.get_gap_score(), 1);
+}

@@ -143,12 +143,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    configuration()                                  = default;
-    configuration(configuration const &)             = default;
-    configuration(configuration &&)                  = default;
-    configuration & operator=(configuration const &) = default;
-    configuration & operator=(configuration &&)      = default;
-    ~configuration()                                 = default;
+    constexpr configuration()                                  = default;
+    constexpr configuration(configuration const &)             = default;
+    constexpr configuration(configuration &&)                  = default;
+    constexpr configuration & operator=(configuration const &) = default;
+    constexpr configuration & operator=(configuration &&)      = default;
+    ~configuration()                                           = default;
 
     //!\brief Constructs from std::tuple.
     constexpr configuration(std::tuple<configs_t...> const & cfg) : base_type{cfg}
@@ -456,7 +456,7 @@ constexpr auto operator|(lhs_fn_t && lhs_fn,
     requires is_configuration_combinable_with_v<rhs_fn_t, lhs_fn_t>
 //!\endcond
 {
-    return rhs_fn(std::invoke(std::forward<lhs_fn_t>(lhs_fn), configuration<>{}));
+    return rhs_fn(std::forward<lhs_fn_t>(lhs_fn)(configuration<>{}));
 }
 //!\}
 
@@ -487,7 +487,7 @@ protected:
     friend class configuration_fn_base;
 
     //!\brief Constructs this proxy while forwarding arguments.
-    configuration_fn_proxy(args_t && ... args) : args_cache{std::forward<args_t>(args)...}
+    constexpr configuration_fn_proxy(args_t && ... args) : args_cache{std::forward<args_t>(args)...}
     {}
 
     /*!\name Auxiliary functions

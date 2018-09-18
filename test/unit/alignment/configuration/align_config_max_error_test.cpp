@@ -34,29 +34,62 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <functional>
+#include <type_traits>
+
+#include <seqan3/alignment/configuration/align_config_max_error.hpp>
 
 using namespace seqan3;
-
-TEST(utility, align_cfg_id)
-{
-    // NOTE(rrahn): You must update this test if you add a new value to align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(align_cfg::id::SIZE), 6);
-}
 
 struct bar
 {
     int value;
 };
 
-TEST(utility, on_align_config)
+TEST(align_config_max_error, constructor)
 {
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::SIZE>::invoke<bar>, std::false_type>));
+    EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_max_error>));
 }
 
-TEST(utility, align_config_type_to_id)
+TEST(align_config_max_error, on_align_config)
 {
-    EXPECT_EQ(detail::align_config_type_to_id<bar>::value, align_cfg::id::SIZE);
-    EXPECT_EQ(detail::align_config_type_to_id_v<bar>, align_cfg::id::SIZE);
+    using global_config_t = detail::align_config_max_error;
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::max_error>::invoke<global_config_t>,
+                 std::true_type>));
+    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::max_error>::invoke<bar>,
+                 std::false_type>));
+}
+
+TEST(align_config_max_error, align_config_type_to_id)
+{
+    using global_config_t = detail::align_config_max_error;
+    EXPECT_EQ(detail::align_config_type_to_id<global_config_t>::value, align_cfg::id::max_error);
+    EXPECT_EQ(detail::align_config_type_to_id_v<global_config_t>, align_cfg::id::max_error);
+}
+
+TEST(align_config_max_error, invoke)
+{
+    detail::configuration cfg = align_cfg::max_error(10);
+
+    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+                                detail::configuration<detail::align_config_max_error>>));
+}
+
+TEST(align_config_max_error, get_by_enum)
+{
+    detail::configuration cfg = align_cfg::max_error(10);
+    auto const c_cfg = detail::configuration{align_cfg::max_error(10)};
+
+    EXPECT_EQ(get<align_cfg::id::max_error>(cfg), 10);
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(cfg)),
+                                uint32_t &>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(c_cfg)),
+                                uint32_t const &>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(std::move(cfg))),
+                                uint32_t &&>));
+
+    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(std::move(c_cfg))),
+                                uint32_t const &&>));
 }

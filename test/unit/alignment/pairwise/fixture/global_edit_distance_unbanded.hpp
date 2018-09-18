@@ -3,18 +3,14 @@
 
 #include <vector>
 
-#include "config_unbanded.hpp"
-#include "config_global.hpp"
 #include "alignment_fixture.hpp"
 
+#include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 namespace seqan3::fixture::global::edit_distance::unbanded
 {
-
-struct align_config : public config_global, config_unbanded
-{};
 
 static auto dna4_01 = []()
 {
@@ -27,7 +23,7 @@ static auto dna4_01 = []()
         // A-C-G-T-A-C-G-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config{},
+        align_cfg::edit,
         8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
@@ -73,7 +69,7 @@ static auto dna4_01T = []()
         // AACCGGTTAACCGGTT
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        align_config{},
+        align_cfg::edit,
         8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
@@ -133,7 +129,7 @@ static auto aa27_01 = []()
         // U-W-R-I-U-W-R-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
-        align_config{},
+        align_cfg::edit,
         8,
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
@@ -179,7 +175,7 @@ static auto aa27_01T = []()
         // UUWWRRIIUUWWRRII
         "UWRIUWRIU"_aa27,
         "UUWWRRIIUUWWRRII"_aa27,
-        align_config{},
+        align_cfg::edit,
         8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",

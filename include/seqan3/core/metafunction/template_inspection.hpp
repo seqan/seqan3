@@ -147,8 +147,24 @@ template <template <auto ...> typename source_template,
           auto ... source_varg_types>
 struct transfer_template_vargs_onto<source_template<source_varg_types...>, target_template>
 {
+    /*!\brief Returns the target type.
+     * \tparam target The target type substituted with the vargs from `source_template`.
+     * \tparam args   vargs from the `source_template`.
+     * \returns The target type substituted with the vargs from `source_template` if the expression `target<args...>`
+     *          is not ill-formed, otherwise `void`.
+     */
+    template <template <auto ...> typename target,
+              auto ... args,
+              typename = decltype(target<args...>{})>
+    static constexpr target<args...> if_valid_expression(int *);
+
+    //!\overload
+    template <template <auto ...> typename target,
+              auto ... args>
+    static constexpr void if_valid_expression(...);
+
     //!\brief The return type: the target type specialised by the unpacked types in the list.
-    using type = target_template<source_varg_types...>;
+    using type = decltype(if_valid_expression<target_template, source_varg_types...>(nullptr));
 };
 
 /*!\brief Type metafunction shortcut for seqan3::detail::transfer_template_vargs_onto.

@@ -74,11 +74,13 @@ enum struct id : uint8_t
     //!\brief Identifier for global alignment configuration.
     global,
     //!\brief Identifier for output configuration.
-    output
-    //!\cond
-    // ATTENTION: Must always be the last item; will be used to determine the number of ids.
+    output,
+    //!\brief Identifier for max_error configuration.
+    max_error
+    //!\cond DEV
+    //!\brief Must always be the last item; will be used to determine the number of ids.
     ,SIZE
-    //!\endcond
+    //!\endcond DEV
 };
 
 } // namespace seqan3::align_cfg
@@ -173,12 +175,13 @@ inline constexpr align_cfg::id align_config_type_to_id_v = align_config_type_to_
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_cfg::id::SIZE)>,
                             static_cast<uint8_t>(align_cfg::id::SIZE)> align_config_validation_matrix =
 {
-    //  gap    s_ends score  global output
-    { { false, true,  true,  true,  true  },  // gap
-      { true,  false, true,  true,  true  },  // sequence_ends
-      { true,  true,  false, true,  true  },  // score
-      { true,  true,  true,  false, true  },  // global
-      { true,  true,  true,  true,  false } } // output
+    //  gap    s_ends score  global output  m_err
+    { { false, true,  true,  true,  true , true },  // gap
+      { true,  false, true,  true,  true , true },  // sequence_ends
+      { true,  true,  false, true,  true , true },  // score
+      { true,  true,  true,  false, true , true },  // global
+      { true,  true,  true,  true,  false, true },  // output
+      { true,  true,  true,  true,  true,  false} } // max_error
 };
 
 /*!\brief Determines the first type in reverse order of the given detail::configuration that is not combinable with
@@ -268,6 +271,49 @@ template <align_cfg::id query, typename configuration_t>
 inline constexpr bool is_valid_alignment_configuration_v =
     is_valid_alignment_configuration<query, configuration_t>::value;
 
+/*!\brief Tests wether a configuration element exists for the given seqan3::align_cfg::id.
+ * \ingroup configuration
+ * \tparam e               The seqan3::align_cfg::id.
+ * \tparam configuration_t The configuration type to test. Must be a seqan3::detail::configuration object.
+ * \returns std::true_type if contained, otherwise std::false_type.
+ * \see seqan3::detail::has_align_cfg_v
+ */
+template <align_cfg::id e, typename configuration_t>
+//!\cond
+    requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+//!\endcond
+struct has_align_cfg
+{
+protected:
+    //!\brief seqan3::type_list alias for the types contained in `configuration_t`.
+    using target_list_t = tuple_type_list_t<typename remove_cvref_t<configuration_t>::base_type>;
+    //!\brief seqan3::type_list alias for tail list returned by meta::find_if.
+    using tail_list_t   = meta::find_if<target_list_t, on_align_config<e>>;
+
+public:
+
+    /*!\brief std::true_type if a configuration element for `e` is contained in `configuration_t`,
+     *        std::false_type otherwise.
+     */
+    using type = std::conditional_t<(meta::size<tail_list_t>::value > 0),
+                                    std::true_type,
+                                    std::false_type>;
+    //!\brief `true` if a configuration element for `e` is contained in `configuration_t`, `false` otherwise.
+    static constexpr bool value = type::value;
+};
+
+/*!\brief Helper variable template for seqan3::detail::has_align_cfg.
+ * \ingroup configuration
+ * \tparam e               The seqan3::align_cfg::id.
+ * \tparam configuration_t The configuration type to test. Must be a seqan3::detail::configuration object.
+ * \returns `true` if contained, otherwise `false`.
+ */
+template <align_cfg::id e, typename configuration_t>
+//!\cond
+    requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+//!\endcond
+inline constexpr bool has_align_cfg_v = has_align_cfg<e, configuration_t>::value;
+
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -289,6 +335,9 @@ namespace seqan3
  * \returns The stored configuration value associated with seqan3::align_cfg::id `e`.
  */
 template <align_cfg::id e, typename ... cfg_elements_t>
+//!\cond
+    requires detail::has_align_cfg_v<e, detail::configuration<cfg_elements_t...>>
+//!\endcond
 constexpr auto & get(detail::configuration<cfg_elements_t...> & cfg) noexcept
 {
     using type_list_t = detail::tuple_type_list_t<typename detail::configuration<cfg_elements_t...>::base_type>;
@@ -304,16 +353,11 @@ constexpr auto & get(detail::configuration<cfg_elements_t...> & cfg) noexcept
     return get<pos>(cfg).value;
 }
 
-/*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
- * \relates seqan3::detail::configuration
- *
- * \tparam e                 The seqan3::align_cfg::id to get the stored configuration value for.
- * \tparam cfg_elements_t... The configuration elements stored in detail::alignment_configuration.
- *
- * \param[in] cfg            The configuration for which to get the configuration element.
- * \returns The stored configuration value associated with seqan3::align_cfg::id `e`.
- */
+//!\overload
 template <align_cfg::id e, typename ... cfg_elements_t>
+//!\cond
+    requires detail::has_align_cfg_v<e, detail::configuration<cfg_elements_t...>>
+//!\endcond
 constexpr auto const & get(detail::configuration<cfg_elements_t...> const & cfg) noexcept
 {
     using type_list_t = detail::tuple_type_list_t<typename detail::configuration<cfg_elements_t...>::base_type>;
@@ -328,16 +372,11 @@ constexpr auto const & get(detail::configuration<cfg_elements_t...> const & cfg)
     return get<pos>(cfg).value;
 }
 
-/*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
- * \relates seqan3::detail::configuration
- *
- * \tparam e                 The seqan3::align_cfg::id to get the stored configuration value for.
- * \tparam cfg_elements_t... The configuration elements stored in detail::alignment_configuration.
- *
- * \param[in] cfg            The configuration for which to get the configuration element.
- * \returns The stored configuration value associated with seqan3::align_cfg::id `e`.
- */
+//!\overload
 template <align_cfg::id e, typename ... cfg_elements_t>
+//!\cond
+    requires detail::has_align_cfg_v<e, detail::configuration<cfg_elements_t...>>
+//!\endcond
 constexpr auto && get(detail::configuration<cfg_elements_t...> && cfg) noexcept
 {
     using type_list_t = detail::tuple_type_list_t<typename detail::configuration<cfg_elements_t...>::base_type>;
@@ -352,16 +391,11 @@ constexpr auto && get(detail::configuration<cfg_elements_t...> && cfg) noexcept
     return get<pos>(std::move(cfg)).value;
 }
 
-/*!\brief Access the value of the alignment configuration element identified by seqan3::align_cfg::id.
- * \relates seqan3::detail::configuration
- *
- * \tparam e                 The seqan3::align_cfg::id to get the stored configuration value for.
- * \tparam cfg_elements_t... The configuration elements stored in detail::alignment_configuration.
- *
- * \param[in] cfg            The configuration for which to get the configuration element.
- * \returns The stored configuration value associated with seqan3::align_cfg::id `e`.
- */
+//!\overload
 template <align_cfg::id e, typename ... cfg_elements_t>
+//!\cond
+    requires detail::has_align_cfg_v<e, detail::configuration<cfg_elements_t...>>
+//!\endcond
 constexpr auto const && get(detail::configuration<cfg_elements_t...> const && cfg) noexcept
 {
     using type_list_t = detail::tuple_type_list_t<typename detail::configuration<cfg_elements_t...>::base_type>;

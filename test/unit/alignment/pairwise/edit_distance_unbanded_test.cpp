@@ -3,7 +3,7 @@
 
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/alignment/pairwise_alignment_edit_distance_unbanded.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 
 #include <seqan3/range/view/to_char.hpp>
 
@@ -12,13 +12,12 @@
 #include "fixture/semi_global_edit_distance_unbanded.hpp"
 #include "fixture/semi_global_edit_distance_max_errors_unbanded.hpp"
 
-
 using namespace seqan3;
 using namespace seqan3::detail;
 using namespace seqan3::fixture;
 
-template <typename base_align_config, typename word_t = unsigned long>
-struct align_config : public base_align_config
+template <typename word_t = uint64_t>
+struct test_traits_type
 {
     using word_type = word_t;
 };
@@ -135,26 +134,37 @@ using semi_global_edit_distance_max_errors_unbanded_types
 TYPED_TEST_P(edit_distance_unbanded, score)
 {
     using word_type = typename TypeParam::word_type;
+    using traits_t = test_traits_type<word_type>;
     auto const & fixture = this->fixture();
-    auto align_cfg = align_config<decltype(fixture.config), word_type>{fixture.config};
+    auto align_cfg = fixture.config;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    auto alignment = pairwise_alignment_edit_distance_unbanded{database, query, align_cfg}.run();
+    using algo_t = pairwise_alignment_edit_distance_unbanded<decltype(database) &,
+                                                             decltype(query) &,
+                                                             decltype(align_cfg),
+                                                             traits_t>;
+
+    auto alignment = algo_t{database, query, align_cfg}.run();
     EXPECT_EQ(alignment.score(), fixture.score);
 }
 
 TYPED_TEST_P(edit_distance_unbanded, score_matrix)
 {
     using word_type = typename TypeParam::word_type;
+    using traits_t = test_traits_type<word_type>;
     auto const & fixture = this->fixture();
-    auto align_cfg = align_config<decltype(fixture.config), word_type>{fixture.config};
+    auto align_cfg = fixture.config;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    auto alignment = pairwise_alignment_edit_distance_unbanded{database, query, align_cfg}.run();
+    using algo_t = pairwise_alignment_edit_distance_unbanded<decltype(database) &,
+                                                             decltype(query) &,
+                                                             decltype(align_cfg),
+                                                             traits_t>;
+    auto alignment = algo_t{database, query, align_cfg}.run();
     auto score_matrix = alignment.score_matrix();
 
     EXPECT_EQ(score_matrix.cols(), database.size()+1);
@@ -166,13 +176,19 @@ TYPED_TEST_P(edit_distance_unbanded, score_matrix)
 TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
 {
     using word_type = typename TypeParam::word_type;
+    using traits_t = test_traits_type<word_type>;
     auto const & fixture = this->fixture();
-    auto align_cfg = align_config<decltype(fixture.config), word_type>{fixture.config};
+    auto align_cfg = fixture.config;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    auto alignment = pairwise_alignment_edit_distance_unbanded{database, query, align_cfg}.run();
+    using algo_t = pairwise_alignment_edit_distance_unbanded<decltype(database) &,
+                                                             decltype(query) &,
+                                                             decltype(align_cfg),
+                                                             traits_t>;
+
+    auto alignment = algo_t{database, query, align_cfg}.run();
     auto trace_matrix = alignment.trace_matrix();
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);

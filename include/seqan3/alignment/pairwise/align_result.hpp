@@ -39,6 +39,8 @@
 
 #pragma once
 
+#include <functional>
+#include <optional>
 #include <tuple>
 
 #include <seqan3/core/metafunction/template_inspection.hpp>
@@ -59,17 +61,103 @@ enum struct align_result_key : uint8_t
 };
 
 /*!\brief Stores the alignment results and offers a tuple-like interface.
+ * \extends std::tuple
  * \ingroup pairwise
  * \tparam output_type_list_t seqan3::type_list over the contained results.
  */
 template <typename output_type_list_t>
-struct align_result : public detail::transfer_template_args_onto_t<output_type_list_t, std::tuple>
+struct align_result //!\cond
+    : public detail::transfer_template_args_onto_t<output_type_list_t, std::tuple>
+    //!\endcond
 {
+
+    static_assert(meta::size<output_type_list_t>::value >= 2,
+                  "Logic error: This class requires at least a type list with two template arguments "
+                  "for the id and the alignment score");
+
     //!\brief The base tuple type.
     using base_type = detail::transfer_template_args_onto_t<output_type_list_t, std::tuple>;
 
     //!\brief Inheriting the constructors of the base type.
     using base_type::base_type;
+
+    /*!\name Access functions
+     * \brief Convenience helper functions to access elements of the alignment result type.
+     * \{
+     */
+
+    //!\brief Returns the id.
+    constexpr std::tuple_element_t<0, base_type> id() const noexcept
+    {
+        return std::get<0>(*this);
+    }
+
+    //!\brief Returns the score.
+    constexpr std::tuple_element_t<1, base_type> score() const noexcept
+    {
+        return std::get<1>(*this);
+    }
+
+    /*!\brief Returns the end coordinate of the alignment if requested by the algorithm configuration,
+     *        otherwise `std::ignore`.
+     */
+    constexpr decltype(auto) end_coordinate() const & noexcept
+    {
+        if constexpr (std::tuple_size_v<base_type> < 3)
+            return std::ignore;
+        else
+            return std::get<2>(*this);
+    }
+
+    //!\overload
+    constexpr decltype(auto) end_coordinate() const && noexcept
+    {
+        if constexpr (std::tuple_size_v<base_type> < 3)
+            return std::ignore;
+        else //TODO Fix outer move after gcc-7
+            return std::move(std::get<2>(std::move(*this)));
+    }
+
+    /*!\brief Returns the begin coordinate of the alignment if requested by the algorithm configuration,
+     *        otherwise `std::ignore`.
+     */
+    constexpr decltype(auto) begin_coordinate() const & noexcept
+    {
+        if constexpr (std::tuple_size_v<base_type> < 4)
+            return std::ignore;
+        else
+            return std::get<3>(*this);
+    }
+
+    //!\overload
+    constexpr decltype(auto) begin_coordinate() const && noexcept
+    {
+        if constexpr (std::tuple_size_v<base_type> < 4)
+            return std::ignore;
+        else //TODO Fix outer move after gcc-7 fix
+            return std::move(std::get<3>(std::move(*this)));
+    }
+
+    /*!\brief Returns the traceback of the alignment if requested by the algorithm configuration,
+     *        otherwise `std::ignore`.
+     */
+    constexpr decltype(auto) trace() const & noexcept
+    {
+        if constexpr (std::tuple_size_v<base_type> < 5)
+            return std::ignore;
+        else
+            return std::get<4>(*this);
+    }
+
+    //!\overload
+    constexpr decltype(auto) trace() const && noexcept
+    {
+        if constexpr (std::tuple_size_v<base_type> < 5)
+            return std::ignore;
+        else //TODO Fix outer move after gcc-7 fix
+            return std::move(std::get<4>(std::move(*this)));
+    }
+     //!\}
 };
 
 /*!\name Tuple-like get interface
@@ -77,43 +165,52 @@ struct align_result : public detail::transfer_template_args_onto_t<output_type_l
  * \relates seqan3::align_result
  * \{
  */
+
+/*!\brief Returns the specified element using seqan3::align_result_key as specifier.
+ * \tparam    e         The enum value of seqan3::align_result_key.
+ * \param[in] align_res The seqan3::align_result to get the specified value for.
+ * \returns The value associated with the enum value `e`.
+ */
 template <align_result_key e, typename output_type_list_t>
 constexpr auto & get(align_result<output_type_list_t> & align_res) noexcept
 {
     constexpr size_t index = static_cast<uint8_t>(e);
 
     static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access violation: out of range.");
+                  "Element access error: index out of range.");
     return std::get<index>(align_res);
 }
 
+//!\overload
 template <align_result_key e, typename output_type_list_t>
 constexpr auto const & get(align_result<output_type_list_t> const & align_res) noexcept
 {
     constexpr size_t index = static_cast<uint8_t>(e);
 
     static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access violation: out of range.");
+                  "Element access error: index out of range.");
     return std::get<index>(align_res);
 }
 
+//!\overload
 template <align_result_key e, typename output_type_list_t>
 constexpr auto && get(align_result<output_type_list_t> && align_res) noexcept
 {
     constexpr size_t index = static_cast<uint8_t>(e);
 
     static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access violation: out of range.");
+                  "Element access error: index out of range.");
     return std::get<index>(std::move(align_res));
 }
 
+//!\overload
 template <align_result_key e, typename output_type_list_t>
 constexpr auto const && get(align_result<output_type_list_t> const && align_res) noexcept
 {
     constexpr size_t index = static_cast<uint8_t>(e);
 
     static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access violation: out of range.");
+                  "Element access error: index of range.");
 
     // TODO Remove superfluous outer move after fixed in gcc-7
     return std::move(std::get<index>(std::move(align_res)));

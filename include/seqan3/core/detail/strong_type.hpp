@@ -421,7 +421,7 @@ public:
      */
 
     //!\brief Adds explicit conversion to it's underlying type.
-    explicit operator value_t() const
+    explicit constexpr operator value_t() const
         //!\cond
         requires ((skills & strong_type_skill::convert) != strong_type_skill::none)
         //!\endcond

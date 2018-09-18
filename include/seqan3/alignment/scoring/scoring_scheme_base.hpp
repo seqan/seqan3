@@ -273,7 +273,7 @@ public:
 
 private:
     //!\brief The actual data member.
-    matrix_type matrix;
+    matrix_type matrix{};
 };
 
 } // namespace seqan3
