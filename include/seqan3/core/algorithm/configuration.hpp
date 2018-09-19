@@ -317,6 +317,9 @@ configuration(cfg_fn_t &&) ->
  * \see seqan3::detail::is_configuration_combinable_with_v.
  */
 template <typename target_t, typename query_t>
+//!\cond
+    requires !is_algorithm_configuration_v<std::remove_reference_t<target_t>>
+//!\endcond
 struct is_configuration_combinable_with
 {
     //!\brief The result of the test expression.
@@ -331,6 +334,9 @@ struct is_configuration_combinable_with
 //!\brief Helper variable template for seqan3::detail::is_configuration_combinable_with.
 //!\ingroup algorithm
 template <typename target_t, typename query_t>
+//!\cond
+    requires !is_algorithm_configuration_v<std::remove_reference_t<target_t>>
+//!\endcond
 inline constexpr bool is_configuration_combinable_with_v = is_configuration_combinable_with<target_t, query_t>::value;
 
 // ----------------------------------------------------------------------------
@@ -453,7 +459,7 @@ template <typename lhs_fn_t,
 constexpr auto operator|(lhs_fn_t && lhs_fn,
                          rhs_fn_t && rhs_fn)
 //!\cond
-    requires is_configuration_combinable_with_v<rhs_fn_t, lhs_fn_t>
+    requires is_configuration_combinable_with_v<lhs_fn_t, rhs_fn_t>
 //!\endcond
 {
     return rhs_fn(std::forward<lhs_fn_t>(lhs_fn)(configuration<>{}));
