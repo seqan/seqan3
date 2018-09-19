@@ -149,7 +149,7 @@ public:
      */
     //!\brief Forwards to the underlying stream object.
     template <typename t>
-    debug_stream_type & operator<<(t const & v)
+    debug_stream_type & operator<<(t && v)
     {
         *stream << v;
         return *this;
