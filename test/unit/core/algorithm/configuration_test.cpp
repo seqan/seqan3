@@ -344,3 +344,10 @@ TEST(configuration_fn, pipable_proxy_proxy)
     EXPECT_EQ(std::get<1>(cfg).value, 2);
     EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 3.0);
 }
+
+TEST(configuration_fn, pipeable_w_empty_config)
+{
+    detail::configuration cfg;
+    auto cfg2 = cfg | bar_fn_impl{}(2);
+    EXPECT_EQ(std::get<0>(cfg2).value, 2);
+}
