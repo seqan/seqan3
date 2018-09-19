@@ -680,6 +680,8 @@ public:
      */
     void parse(argument_parser_meta_data const & parser_meta)
     {
+        meta = parser_meta;
+
         print_header();
 
         if (!parser_meta.synopsis.empty())
