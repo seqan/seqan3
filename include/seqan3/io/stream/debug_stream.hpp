@@ -149,9 +149,16 @@ public:
      */
     //!\brief Forwards to the underlying stream object.
     template <typename t>
-    debug_stream_type & operator<<(t const & v)
+    debug_stream_type & operator<<(t && v)
     {
         *stream << v;
+        return *this;
+    }
+
+    //!\brief This overloads enables forwarding std::endl and other manipulators.
+    debug_stream_type & operator<<(std::ostream&(*fp)(std::ostream&))
+    {
+        *stream << fp;
         return *this;
     }
 
@@ -304,11 +311,14 @@ inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
 template <std::ranges::InputRange rng_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
 //!\cond
-    requires requires (reference_t<rng_t> l) { { debug_stream << l }; }
+    requires requires (reference_t<remove_cvref_t<rng_t>> l) { { debug_stream << l }; } &&
+             // exclude null-terminated strings:
+             !(std::is_pointer_v<std::decay_t<rng_t>> &&
+               std::Same<remove_cvref_t<reference_t<std::remove_const_t<rng_t>>>, char>)
 //!\endcond
 {
-    if constexpr (alphabet_concept<reference_t<rng_t>> &&
-                  !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
+    if constexpr (alphabet_concept<reference_t<remove_cvref_t<rng_t>>> &&
+                  !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<remove_cvref_t<rng_t>>>>)
     {
         for (auto && l : r)
             s << l;
