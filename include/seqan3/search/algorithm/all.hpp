@@ -32,33 +32,31 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Provides a simple function that sorts a vector and returns it to allow the use of EXCEPT_EQ() for
- *        vectors of arbitrary order while keeping the detailed output for test failures.
- * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- */
+ /*!\file
+  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
+  * \brief Meta-header for the Search Algorithm module.
+  *
+  * \defgroup submodule_search_algorithm Algorithm
+  * \ingroup search
+  *
+  * ## Search Algorithms
+  *
+  * The Search module offers a simple unified interface that allows searching SeqAn3 indices such as FM indices or k-mer
+  * indices and choosing the best algorithm based on the index at hand.
+  *
+  * ## FM Indices
+  *
+  * The search algorithms for FM indices currently only implement a trivial backtracking approach which will soon been
+  * replaced by Optimum Search Schemes (TODO: cite), 01*0 patterns and algorithmic improvements such as in-text
+  * verification.
+  *
+  * ## K-mer Indices
+  *
+  * \todo Rewrite landing page.
+  *
+  */
 
 #pragma once
 
-#include <algorithm>
-#include <vector>
-
-namespace seqan3
-{
-
-template <typename T>
-std::vector<T> sort(std::vector<T> v)
-{
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end()); // TODO: remove once duplicates are filtered
-    return v;
-}
-
-template <typename T>
-std::vector<std::vector<T>> sort(std::vector<std::vector<T>> v)
-{
-    std::for_each(v.begin(), v.end(), [](auto & hits) { sort(hits); } );
-    return v;
-}
-
-} // namespace std
+#include <seqan3/search/algorithm/configuration/all.hpp>
+#include <seqan3/search/algorithm/search.hpp>

@@ -60,4 +60,5 @@
 
 #pragma once
 
+#include <seqan3/search/algorithm/all.hpp>
 #include <seqan3/search/fm_index/all.hpp>
