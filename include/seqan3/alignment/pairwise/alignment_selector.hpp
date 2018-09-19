@@ -92,8 +92,8 @@ struct determine_result_type
                                               score_type,
                                               alignment_coordinate,
                                               alignment_coordinate,
-                                              std::tuple<std::vector<gapped<seq1_value_type>>,
-                                                         std::vector<gapped<seq2_value_type>>>>>{};
+                                              std::pair<std::vector<gapped<seq1_value_type>>,
+                                                        std::vector<gapped<seq2_value_type>>>>>{};
             else
                 return align_result<type_list<uint32_t,
                                               score_type>>{};
