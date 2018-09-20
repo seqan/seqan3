@@ -87,3 +87,19 @@ TEST(parse_test, parser_design_error)
     parser7.add_positional_option(option_value, "desc.");
     EXPECT_THROW(parser7.parse(), parser_design_error);
 }
+
+TEST(parse_test, parse_called_twice)
+{
+    std::string option_value;
+
+    const char * argv[] = {"./argument_parser_test", "-s", "option_string"};
+    argument_parser parser("test_parser", 3, argv);
+    parser.add_option(option_value, 's', "string-option", "this is a string option.");
+
+    testing::internal::CaptureStderr();
+    EXPECT_NO_THROW(parser.parse());
+    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+    EXPECT_EQ(option_value, "option_string");
+
+    EXPECT_THROW(parser.parse(), parser_design_error);
+}

@@ -367,7 +367,11 @@ public:
      */
     void parse()
     {
+        if (parse_was_called)
+            throw parser_design_error("The function parse() must only be called once!");
+
         std::visit([this] (auto & f) { f.parse(info); }, format);
+        parse_was_called = true;
     }
 
     //!\name Structuring the Help Page
@@ -483,6 +487,9 @@ public:
 //     std::future<bool> appVersionCheckFuture;
 
 private:
+    //!\brief Keeps track of whether the parse function has been called already.
+    bool parse_was_called{false};
+
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *
      * \param[in] argc     The number of command line arguments.
