@@ -2,8 +2,13 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
+<<<<<<< HEAD
 // Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+=======
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -52,6 +57,23 @@ TEST(template_inspect, transfer_template_args_onto_t)
     EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
 }
 
+<<<<<<< HEAD
+=======
+TEST(template_inspect, is_type_specialisation_of)
+{
+    using tl = type_list<int, char, double>;
+    EXPECT_TRUE((detail::is_type_specialisation_of<tl, type_list>::value));
+    EXPECT_FALSE((detail::is_type_specialisation_of<int, type_list>::value));
+}
+
+TEST(template_inspect, is_type_specialisation_of_v)
+{
+    using tl = type_list<int, char, double>;
+    EXPECT_TRUE((detail::is_type_specialisation_of_v<tl, type_list>));
+    EXPECT_FALSE((detail::is_type_specialisation_of_v<int, type_list>));
+}
+
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 template <int i, char c>
 struct t1 {};
 
@@ -62,6 +84,43 @@ struct t2
     static constexpr auto c = _c;
 };
 
+<<<<<<< HEAD
+=======
+enum struct e1
+{
+    foo
+};
+
+template <e1 v>
+struct foo
+{};
+
+enum struct e2
+{
+    bar
+};
+
+template <e2 v>
+struct bar
+{};
+
+template <e2 v>
+struct bar2
+{};
+
+TEST(template_inspect, transfer_template_vargs_onto_enum)
+{
+    using ta = detail::transfer_template_vargs_onto<bar<e2::bar>, foo>::type;
+    EXPECT_TRUE((std::is_same_v<ta, void>));
+
+    using ta2 = detail::transfer_template_vargs_onto<bar<e2::bar>, bar>::type;
+    EXPECT_TRUE((std::is_same_v<ta2, bar<e2::bar>>));
+
+    using ta3 = detail::transfer_template_vargs_onto<bar<e2::bar>, bar2>::type;
+    EXPECT_TRUE((std::is_same_v<ta3, bar2<e2::bar>>));
+}
+
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 TEST(template_inspect, transfer_template_vargs_onto_t)
 {
     using tl = t1<1, 'a'>;
@@ -74,3 +133,22 @@ TEST(template_inspect, transfer_template_vargs_onto_t)
     EXPECT_EQ(1,   ta2::i);
     EXPECT_EQ('a', ta2::c);
 }
+<<<<<<< HEAD
+=======
+
+TEST(template_inspect, is_value_specialisation_of)
+{
+    using tl = t1<1, 'a'>;
+
+    EXPECT_TRUE((detail::is_value_specialisation_of<tl, t1>::value));
+    EXPECT_FALSE((detail::is_value_specialisation_of<int, t1>::value));
+}
+
+TEST(template_inspect, is_value_specialisation_of_v)
+{
+    using tl = t1<1, 'a'>;
+
+    EXPECT_TRUE((detail::is_value_specialisation_of_v<tl, t1>));
+    EXPECT_FALSE((detail::is_value_specialisation_of_v<int, t1>));
+}
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,8 +41,9 @@
 
 #include <range/v3/view/take_while.hpp>
 
-#include <seqan3/alphabet/quality/quality_composition.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/alphabet/quality/qualified.hpp>
+#include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -63,7 +64,7 @@ struct trim_fn
     auto operator()(irng_t && irange,
                     underlying_phred_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return ranges::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
@@ -81,7 +82,7 @@ struct trim_fn
     auto operator()(irng_t && irange,
                     std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return (*this)(std::forward<irng_t>(irange), to_phred(threshold));
@@ -147,7 +148,7 @@ struct trim_fn
     template <typename irng_t,
               typename threshold_t>
     //!\cond
-        requires input_range_concept<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>> &&
+        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>> &&
                  (std::is_same_v<std::decay_t<threshold_t>,
                                  std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>> ||
                   std::is_convertible_v<std::decay_t<threshold_t>,
@@ -183,6 +184,7 @@ namespace seqan3::view
  * This view can be used to do easy quality based trimming of sequences.
  *
  * ### View properties
+<<<<<<< HEAD
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
@@ -205,46 +207,42 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \par Example
+=======
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
- * Operating on a range of seqan3::illumina18:
- * ```cpp
- * std::vector<illumina18> vec{illumina18{40}, illumina18{40}, illumina18{30}, illumina18{20}, illumina18{10}};
+ * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
+ * the transformation on the innermost range (instead of the outermost range).
  *
- * // trim by phred_value
- * auto v1 = vec | view::trim(20u);                        // == ['I','I','?','5']
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |---------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                     |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                     |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                     |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                     |
+ * |                                 |                                       |                                 |
+ * | std::ranges::View               |                                       | *guaranteed*                    |
+ * | std::ranges::SizedRange         |                                       | *lost*                          |
+ * | std::ranges::CommonRange        |                                       | *lost*                          |
+ * | std::ranges::OutputRange        |                                       | *preserved*                     |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                     |
+ * |                                 |                                       |                                 |
+ * | seqan3::reference_t             | seqan3::quality_concept               | seqan3::reference_t<urng_t>     |
  *
- * // trim by quality character
- * auto v2 = vec | view::trim(illumina18{40});             // == ['I','I']
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * // function syntax
- * auto v3 = view::trim(vec, 20u);                         // == ['I','I','?','5']
+ * \par Example
  *
- * // combinability
- * std::string v4 = view::trim(vec, 20u) | view::to_char;  // == "II?5"
- * ```
+ * Operating on a range of seqan3::phred42:
+ * \snippet test/snippet/range/view/trim.cpp phred42
  *
  * Or operating on a range of seqan3::dna5q:
- * ```cpp
- * std::vector<dna5q> vec{{dna5::A, illumina18{40}}, {dna5::G, illumina18{40}}, {dna5::G, illumina18{30}},
- *                        {dna5::A, illumina18{20}}, {dna5::T, illumina18{10}}};
- * std::vector<dna5q> cmp{{dna5::A, illumina18{40}}, {dna5::G, illumina18{40}}, {dna5::G, illumina18{30}},
- *                        {dna5::A, illumina18{20}}};
- *
- * // trim by phred_value
- * auto v1 = vec | view::trim(20u);
- * assert(std::vector<dna5q>(v1) == cmp);
- *
- * // trim by quality character; in this case the nucleotide part of the character is irrelevant
- * auto v2 = vec | view::trim(dna5q{dna5::C, illumina18{20}});
- * assert(std::vector<dna5q>(v2) == cmp);
- *
- * // combinability
- * std::string v4 = view::trim(vec, 20u) | view::to_char;
- * EXPECT_EQ("AGGA", v4);
- * ```
+ * \snippet test/snippet/range/view/trim.cpp dna5q
+ * \hideinitializer
  */
 
-seqan3::detail::trim_fn const trim;
+inline constexpr auto trim = deep{seqan3::detail::trim_fn{}};
+
+//!\}
 
 //!\}
 

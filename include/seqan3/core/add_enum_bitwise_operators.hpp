@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -56,23 +56,7 @@ namespace seqan3
  *
  * ### Example
  *
- * ```cpp
- *
- * enum class my_enum
- * {
- *     VAL1 = 1,
- *     VAL2 = 2,
- *     COMB = 3
- * };
- *
- * template <>
- * constexpr bool seqan3::add_enum_bitwise_operators<my_enum> = true;
- *
- * my_enum e = my_enum::VAL1;
- * my_enum e2 = e | my_enum::VAL2;
- *
- * // e2 == my_enum::COMB;
- * ```
+ * \snippet test/snippet/core/add_enum_bitwise_operators.cpp usage
  */
 template <typename t>
 constexpr bool add_enum_bitwise_operators = false;

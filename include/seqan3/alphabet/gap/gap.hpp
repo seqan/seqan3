@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -53,14 +53,7 @@ namespace seqan3
  *
  * The alphabet always has the same value ('-').
  *
- * ```cpp
- *     gap my_gap = gap::GAP;
- *     gap another_gap{}.assign_char('A'); // setting this does not change anything
- *
- *     std::cout << my_gap.to_char(); // outputs '-'
- *     if (my_gap.to_char() == another_gap.to_char())
- *        std::cout << "Both gaps are the same!";
- * ```
+ * \snippet test/snippet/alphabet/gap/gap.cpp general
  */
 
 struct gap
@@ -69,6 +62,10 @@ struct gap
     using char_type = char;
     //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
     using rank_type = bool;
+
+    //!\cond
+    bool _bug_workaround; // See GCC Bug-Report: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
+    //!\endcond
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,8 +45,11 @@
 // ============================================================================
 
 #include <seqan3/core/detail/all.hpp>
-#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/core/platform.hpp>
+#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/core/tuple_utility.hpp>
+#include <seqan3/core/type_list.hpp>
 
 /*!\defgroup core Core
  * \brief Contains core functionality used by multiple modules.
@@ -86,6 +89,7 @@
 /*!\namespace std
  * \brief SeqAn specific customisations in the standard namespace.
  */
+
 /*!\mainpage SeqAn3 API documentation
  *
  * This is the API documentation for the SeqAn3 library.

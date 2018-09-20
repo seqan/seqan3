@@ -65,17 +65,18 @@ namespace seqan3::detail
  * This metafunction works for templates that have **only type-arguments**. See
  * seqan3::detail::transfer_template_vargs_onto for a metafunction that transfers non-type arguments. There is
  * no metafunction that can handle a combination of type and non-type arguments.
+ * If the `source_type` is a not a template class, e.g. an `int`, the return type defaults to `void`.
  *
  * ### Example
  *
- * ```cpp
- * using tl = type_list<int, char, double>;
- * using t = detail::transfer_template_args_onto_t<tl, std::tuple>;
- * // t is std::tuple<int, char, double>
- * ```
+ * \snippet test/snippet/core/metafunction/template_inspection.cpp usage
  */
 template <typename source_type, template <typename ...> typename target_template>
-struct transfer_template_args_onto;
+struct transfer_template_args_onto
+{
+    //!\brief The return type: set to void for non template types.
+    using type = void;
+};
 
 /*!\brief Type metafunction that extracts a type template's **type** arguments and specialises another template
  * with them [metafunction definition].
@@ -120,10 +121,15 @@ using transfer_template_args_onto_t = typename transfer_template_args_onto<sourc
  * This metafunction works for templates that have **only non-type-arguments**. See
  * seqan3::detail::transfer_template_args_onto for a metafunction that transfers type arguments. There is
  * no metafunction that can handle a combination of type and non-type arguments.
+ * If the `source_type` is a not a template class, e.g. an `int`, the return type defaults to `void`.
  */
 
 template <typename source_type, template <auto ...> typename target_template>
-struct transfer_template_vargs_onto;
+struct transfer_template_vargs_onto
+{
+    //!\brief The return type: set to void for non template types.
+    using type = void;
+};
 
 /*!\brief Type metafunction that extracts a type template's **non-type** arguments and specialises another template
  * with them [metafunction definition].
@@ -141,8 +147,24 @@ template <template <auto ...> typename source_template,
           auto ... source_varg_types>
 struct transfer_template_vargs_onto<source_template<source_varg_types...>, target_template>
 {
+    /*!\brief Returns the target type.
+     * \tparam target The target type substituted with the vargs from `source_template`.
+     * \tparam args   vargs from the `source_template`.
+     * \returns The target type substituted with the vargs from `source_template` if the expression `target<args...>`
+     *          is not ill-formed, otherwise `void`.
+     */
+    template <template <auto ...> typename target,
+              auto ... args,
+              typename = decltype(target<args...>{})>
+    static constexpr target<args...> if_valid_expression(int *);
+
+    //!\overload
+    template <template <auto ...> typename target,
+              auto ... args>
+    static constexpr void if_valid_expression(...);
+
     //!\brief The return type: the target type specialised by the unpacked types in the list.
-    using type = target_template<source_varg_types...>;
+    using type = decltype(if_valid_expression<target_template, source_varg_types...>(nullptr));
 };
 
 /*!\brief Type metafunction shortcut for seqan3::detail::transfer_template_vargs_onto.
@@ -160,24 +182,27 @@ using transfer_template_vargs_onto_t = typename transfer_template_vargs_onto<sou
  * \tparam source_type      The source type.
  * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
  * \ingroup metafunction
- * \see seqan3::detail::is_value_specialisation_of_v
+ * \see seqan3::detail::is_value_specialisation_of
+ * \see seqan3::detail::is_type_specialisation_of_v
  *
  * \details
  *
  * ### Example
  *
- * ```cpp
- * using my_type = std::vector<int>;
- *
- * if constexpr (detail::is_type_specialisation_of_v<my_type, std::vector>) // std::vector has no <> !
- * {
- *     // ...
- * }
- * ```
+ * \snippet test/snippet/core/metafunction/template_inspection.cpp usage_2
  */
 template <typename source_t, template <typename ...> typename target_template>
-constexpr bool is_type_specialisation_of_v =
-    std::is_same_v<source_t, transfer_template_args_onto_t<source_t, target_template>>;
+struct is_type_specialisation_of :
+    std::is_same<source_t, transfer_template_args_onto_t<source_t, target_template>>
+{};
+
+/*!\brief Helper variable template for seqan3::detail::is_type_specialisation_of.
+ * \tparam source_type      The source type.
+ * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
+ * \ingroup metafunction
+ */
+template <typename source_t, template <typename ...> typename target_template>
+inline constexpr bool is_type_specialisation_of_v = is_type_specialisation_of<source_t, target_template>::value;
 
 // ----------------------------------------------------------------------------
 // is_value_specialisation_of_v
@@ -188,10 +213,20 @@ constexpr bool is_type_specialisation_of_v =
  * \tparam target_template  The type template you wish to compare against (must take only non-types as template
  * arguments).
  * \ingroup metafunction
- * \see seqan3::detail::is_type_specialisation_of_v
+ * \see seqan3::detail::is_type_specialisation_of
+ * \see seqan3::detail::is_value_specialisation_of_v
  */
 template <typename source_t, template <auto ...> typename target_template>
-constexpr bool is_value_specialisation_of_v =
-    std::is_same_v<source_t, transfer_template_vargs_onto_t<source_t, target_template>>;
+struct is_value_specialisation_of :
+    std::is_same<source_t, transfer_template_vargs_onto_t<source_t, target_template>>
+{};
+
+/*!\brief Helper variable template for seqan3::detail::is_value_specialisation_of.
+ * \tparam source_type      The source type.
+ * \tparam target_template  The type template you wish to compare against (must take only types as template arguments).
+ * \ingroup metafunction
+ */
+template <typename source_t, template <auto ...> typename target_template>
+inline constexpr bool is_value_specialisation_of_v = is_value_specialisation_of<source_t, target_template>::value;
 
 } // namespace seqan3::detail

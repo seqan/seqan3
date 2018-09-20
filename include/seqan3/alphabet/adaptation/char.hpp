@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -48,8 +48,6 @@
  * \attention
  *   * Note that `signed char` and `unsigned char` are absent from the list, because of
  * their type ambiguity with `int8_t` and `uint8_t`.
- *   * Note that `wchar_t` is absent from the list for its notorious brokenness (different sizes and signedness
- * between platforms); use `char16_t` or `char32_t` instead.
  */
 
 #pragma once
@@ -69,10 +67,13 @@ namespace seqan3::detail
 //!\brief The list of types that are defined as char adaptations.
 using char_adaptations            = meta::list<char,
                                                char16_t,
-                                               char32_t>;
+                                               char32_t,
+                                               wchar_t>;
+// TODO Windows adaption requires different handling of wchar_t, in Windows it is 16 bits and holds UTF-16 code units
 //!\brief The corresponding list of rank types
 using char_adaptations_rank_types = meta::list<std::uint_least8_t,
                                                std::uint_least16_t,
+                                               std::uint_least32_t,
                                                std::uint_least32_t>;
 
 //!\brief Metafunction overload for types that are in seqan3::detail::char_adaptations.
@@ -98,7 +99,7 @@ namespace seqan3
 // ------------------------------------------------------------------
 
 /*!\brief Specialisation of seqan3::underlying_char for char types.
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \relates seqan3::char_adaptation_concept
  * \sa seqan3::underlying_char_t
  */
@@ -113,7 +114,7 @@ struct underlying_char<char_type>
 };
 
 /*!\brief Specialisation of seqan3::underlying_rank for char types.
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \relates seqan3::char_adaptation_concept
  * \sa seqan3::underlying_rank_t
  */
@@ -133,7 +134,7 @@ struct underlying_rank<char_type>
 // ------------------------------------------------------------------
 
 /*!\brief Specialisation of seqan3::alphabet_size that delegates for char types.
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \relates seqan3::char_adaptation_concept
  * \sa seqan3::alphabet_size_v
  */
@@ -162,7 +163,7 @@ struct alphabet_size<char_type>
  * \{
  */
 /*!\brief Converting char to char is no-op (it will just return the value you pass in).
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \param chr The alphabet letter that you wish to convert to char.
  * \returns The letter's value in the alphabet's rank type (usually `char`).
  */
@@ -174,7 +175,7 @@ constexpr underlying_char_t<char_type> to_char(char_type const chr)
 }
 
 /*!\brief Convert char to rank by casting to an unsigned integral type of same size.
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \param chr The alphabet letter that you wish to convert to rank.
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
@@ -186,7 +187,7 @@ constexpr underlying_rank_t<char_type> to_rank(char_type const chr)
 }
 
 /*!\brief Assign a char to the char type (same as calling `=`).
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \param chr The alphabet letter that you wish to assign to.
  * \param chr2 The `char` value you wish to assign.
  * \returns A reference to the alphabet letter you passed in.
@@ -199,7 +200,7 @@ constexpr char_type & assign_char(char_type & chr, underlying_char_t<char_type> 
 }
 
 /*!\brief Assign a char to the char type (same as calling `=`).
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \param chr An alphabet letter temporary.
  * \param chr2 The `char` value you wish to assign.
  * \returns The assignment result as a temporary.
@@ -212,7 +213,7 @@ constexpr char_type && assign_char(char_type && chr, underlying_char_t<char_type
 }
 
 /*!\brief Assigning a rank to a char is the same as assigning it a numeric value.
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \param chr The alphabet letter that you wish to assign to.
  * \param rank The `rank` value you wish to assign.
  * \returns A reference to the alphabet letter you passed in.
@@ -225,7 +226,7 @@ constexpr char_type & assign_rank(char_type & chr, underlying_rank_t<char_type> 
 }
 
 /*!\brief Assigning a rank to a char is the same as assigning it a numeric value.
- * \tparam char_type One of `char`, `char16_t` or `char32_t`.
+ * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \param chr An alphabet letter temporary.
  * \param rank The `rank` value you wish to assign.
  * \returns The assignment result as a temporary.

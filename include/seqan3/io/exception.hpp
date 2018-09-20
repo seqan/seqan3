@@ -74,4 +74,34 @@ struct parse_error : std::runtime_error
     {}
 };
 
+<<<<<<< HEAD
 }
+=======
+// ----------------------------------------------------------------------------
+// parse exceptions
+// ----------------------------------------------------------------------------
+
+//!\brief Thrown if I/O was expecting more input (e.g. a delimiter or a new line), but the end of input was reached.
+struct unexpected_end_of_input : std::runtime_error
+{
+    //!\brief Constructor that forwards the exception string.
+    unexpected_end_of_input(std::string const & s) : std::runtime_error{s}
+    {}
+};
+
+// ----------------------------------------------------------------------------
+// write exceptions
+// ----------------------------------------------------------------------------
+
+//!\brief Thrown if information given to output format didn't match expectations.
+struct format_error : std::invalid_argument
+{
+    //!\brief Constructor that forwards the exception string.
+    format_error(std::string const & s) : std::invalid_argument{s}
+    {}
+};
+
+
+}
+
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6

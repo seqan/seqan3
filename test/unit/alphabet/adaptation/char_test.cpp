@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,15 @@ template <typename T>
 class char_adaptation : public ::testing::Test
 {};
 
-using char_types = ::testing::Types<char, char16_t, char32_t>;
+using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
 TYPED_TEST_CASE(char_adaptation, char_types);
 
+<<<<<<< HEAD
 TYPED_TEST(char_adaptation, concept)
+=======
+TYPED_TEST(char_adaptation, concept_check)
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 {
     EXPECT_TRUE(char_adaptation_concept<TypeParam>);
     // NOTE: Using intermediate concept notation with forwarding references cause the concept type

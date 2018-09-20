@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -71,7 +71,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept bool char_adaptation_concept = alphabet_concept<type> &&
+concept char_adaptation_concept = alphabet_concept<type> &&
                                        detail::is_char_adaptation_v<std::remove_reference_t<type>>;
 //!\endcond
 
@@ -101,7 +101,7 @@ concept bool char_adaptation_concept = alphabet_concept<type> &&
  */
 //!\cond
 template <typename type>
-concept bool uint_adaptation_concept = alphabet_concept<type> &&
+concept uint_adaptation_concept = alphabet_concept<type> &&
                                        detail::is_uint_adaptation_v<std::remove_reference_t<type>>;
 //!\endcond
 

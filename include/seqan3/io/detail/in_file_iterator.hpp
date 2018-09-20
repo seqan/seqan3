@@ -50,7 +50,11 @@ namespace seqan3::detail
 
 /*!\brief Input iterator necessary for providing a range-like interface in input file.
  * \tparam file_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
+<<<<<<< HEAD
  * \implements seqan3::input_iterator_concept
+=======
+ * \implements std::input_Iterator
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup io
  *
  * This iterator is a single-pass input iterator for input files. All member types are resolved

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,10 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -59,6 +60,7 @@ namespace seqan3::view
  * \ingroup view
  *
  * ### View properties
+<<<<<<< HEAD
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
@@ -91,9 +93,46 @@ namespace seqan3::view
  */
 template <alphabet_concept alphabet_type>
 auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type> const in) -> alphabet_type
+=======
+ *
+ * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
+ * the transformation on the innermost range (instead of the outermost range).
+ *
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
+ * |                                 |                                       |                                                    |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::View               |                                       | *guaranteed*                                       |
+ * | std::ranges::SizedRange         |                                       | *preserved*                                        |
+ * | std::ranges::CommonRange        |                                       | *preserved*                                        |
+ * | std::ranges::OutputRange        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * |                                 |                                       |                                                    |
+ * | seqan3::reference_t             | seqan3::underlying_char_t<alphabet_t> | `alphabet_t`                                       |
+ *
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ *
+ * ### Example
+ *
+ * \snippet test/snippet/range/view/rank_char.cpp char_to
+ * \hideinitializer
+ */
+template <alphabet_concept alphabet_type>
+inline auto const char_to = deep{view::transform([] (auto && in)
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 {
+    static_assert(std::is_same_v<remove_cvref_t<decltype(in)>, remove_cvref_t<underlying_char_t<alphabet_type>>>,
+                    "The innermost value type must be the underlying char type of alphabet_type.");
+    // call element-wise assign_char from the alphabet_concept
     return assign_char(alphabet_type{}, in);
-});
+})};
+
+//!\}
 
 //!\}
 

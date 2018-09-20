@@ -62,11 +62,45 @@ namespace seqan3
  */
 enum class field
 {
+<<<<<<< HEAD
+=======
+    // Fields used in multiple contexts ........................................
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
     SEQ,            //!< The "sequence", usually a range of nucleotides or amino acids.
     ID,             //!< The identifier, usually a string.
     QUAL,           //!< The qualities, usually in phred-score notation.
     SEQ_QUAL,       //!< Sequence and qualities combined in one range.
+<<<<<<< HEAD
     // ...
+=======
+    OFFSET,         //!< Sequence (SEQ) relative start position (0-based), unsigned value.
+
+    // Fields unique to structure io ...........................................
+    BPP,            //!< Base pair probability matrix of interactions, usually a matrix of float numbers.
+    STRUCTURE,      //!< Fixed interactions, usually a string of structure alphabet characters.
+    STRUCTURED_SEQ, //!< Sequence and fixed interactions combined in one range.
+    ENERGY,         //!< Energy of a folded sequence, represented by one float number.
+    REACT,          //!< Reactivity values of the sequence characters given in a vector of float numbers.
+    REACT_ERR,      //!< Reactivity error values given in a vector corresponding to REACT.
+    COMMENT,        //!< Comment field of arbitrary content, usually a string.
+
+    // Fields unique to alignment io ...........................................
+    ALIGNMENT,      //!< The (pairwise) alignment stored in an seqan3::alignment object.
+    REF_ID,         //!< The identifier of the (reference) sequence that SEQ was aligned to.
+    REF_SEQ,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
+    REF_OFFSET,     //!< Sequence (REF_SEQ) relative start position (0-based), unsigned value.
+    HEADER_PTR,     //!< A pointer to the seqan3::alignment_file_header object storing header information.
+
+    FLAG,           //!< The alignment flag (bit information), `uint16_t` value.
+    MATE,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.
+    MAPQ,           //!< The mapping quality of the SEQ alignment, usually a ohred-scaled score.
+    TAGS,           //!< The optional tags in the SAM format, stored in a dictionary.
+
+    BIT_SCORE,      //!< The bit score (statistical significance indicator), unsigned value.
+    EVALUE,         //!< The e-value (length normalized bit score), `double` value.
+
+    // User defined field aliases .. ...........................................
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
     USER_DEFINED_0, //!< Identifier for user defined file formats and specialisations.
     USER_DEFINED_1, //!< Identifier for user defined file formats and specialisations.
     USER_DEFINED_2, //!< Identifier for user defined file formats and specialisations.
@@ -95,7 +129,11 @@ enum class field
  *
  * ```cpp
  * // specify custom field combination/order to file:
+<<<<<<< HEAD
  * sequence_file_in fin{"/tmp/my.fasta", fields<field::ID, field::SEQ>{}};
+=======
+ * sequence_file_input fin{"/tmp/my.fasta", fields<field::ID, field::SEQ>{}};
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * auto record = fin.front(); // get current record, in this case the first
  *
@@ -147,6 +185,10 @@ struct fields
 
 /*!\brief The class template that file records are based on; behaves like an std::tuple.
  * \ingroup io
+<<<<<<< HEAD
+=======
+ * \implements seqan3::tuple_like_concept
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids   A seqan3::fields type with seqan3::field IDs corresponding to field_types.
  *
@@ -171,7 +213,11 @@ struct fields
  * // record_type now mimics std::tuple<std::string, dna4_vector, std::vector<phred42>>, the order also depends on selected_ids
  *
  * record_type my_record;
+<<<<<<< HEAD
  * get<0>(my_record) = "the most important sequence in the database";   // access via index
+=======
+ * get<1>(my_record) = "the most important sequence in the database";   // access via index
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * get<field::SEQ>(my_record) = "ACGT"_dna4;                            // access via seqan3::field
  * get<std::string>(my_record) = "the least important sequence in the database";   // access via type
  * ```
@@ -183,8 +229,24 @@ public:
     //!\brief A specialisation of std::tuple.
     using base_type = detail::transfer_template_args_onto_t<field_types, std::tuple>;
 
+<<<<<<< HEAD
     //!\brief Inherit base constructors.
     using base_type::base_type;
+=======
+    /*!\name Constructors, destructor and assignment
+     * \brief Rule of five explicitly defaulted.
+     * \{
+     */
+    record() = default;
+    record(record const &) = default;
+    record & operator=(record const &) = default;
+    record(record &&) = default;
+    record & operator=(record &&) = default;
+
+    //!\brief Inherit std::tuple's constructors.
+    using base_type::base_type;
+    //!\}
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
     static_assert(field_types::size() == field_ids::as_array.size(),
                   "You must give as many IDs as types to seqan3::record.");

@@ -43,7 +43,11 @@
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
+<<<<<<< HEAD
 #include <seqan3/std/concept/core_language.hpp>
+=======
+#include <seqan3/std/concepts>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 namespace seqan3::detail
 {
@@ -104,6 +108,7 @@ namespace seqan3::detail
  * possible hits in a region of interest, then both values might be given in form of an unsigned integer.
  * The following snippet shows a typical interface:
  *
+<<<<<<< HEAD
  * ```cpp
  * template <forward_range_concept fwd_rng_type>
  * bool search(fwd_rng_type & rng, unsigned const w, unsigned const e)
@@ -118,6 +123,9 @@ namespace seqan3::detail
  *      ...
  * }
  * ```
+=======
+ * \snippet test/snippet/core/detail/strong_type.cpp usage
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * The first parameter is the window size and the last parameter defines the error threshold.
  * But, what happens if the user accidentally switches the `window_size` with the `error` parameter?
@@ -127,6 +135,7 @@ namespace seqan3::detail
  * A strong type is expressive in what it actually represents as a value.
  * In our toy example we could define two strong types as follows:
  *
+<<<<<<< HEAD
  * ```cpp
  * struct error : detail::strong_type<unsigned, error>
  * {
@@ -154,6 +163,12 @@ namespace seqan3::detail
  *      ...
  * }
  * ```
+=======
+ * \snippet test/snippet/core/detail/strong_type_2.cpp error_window
+ * Our interface could now be changed to:
+ *
+ * \snippet test/snippet/core/detail/strong_type_2.cpp new_usage
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * Now the user is forced to pass the parameters as their named type. If the parameter order is mixed up by accident
  * the compiler would emit an error message, since the `error` type is not convertible to the `window_size` type and
@@ -172,6 +187,7 @@ namespace seqan3::detail
  * operations from the seqan3::detail::strong_type_skill enum.
  * For example, we could further specify our error type to support increment and decrement operations.
  *
+<<<<<<< HEAD
  * ```cpp
  * struct error : detail::strong_type<unsigned, error, detail::strong_type_skill::decrement |
  *                                                     detail::strong_type_skill::increment>
@@ -184,6 +200,9 @@ namespace seqan3::detail
  * --e;
  * ++e;
  * ```
+=======
+ * \snippet test/snippet/core/detail/strong_type.cpp adding_skills
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  */
 template <typename value_t, typename derived_t, strong_type_skill skills = strong_type_skill::none>
 class strong_type
@@ -353,7 +372,11 @@ public:
     }
 
     //!\brief Adds bitwise left shift operator to the strong type.
+<<<<<<< HEAD
     constexpr derived_t operator<<(integral_concept const shift)
+=======
+    constexpr derived_t operator<<(std::Integral const shift)
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
         //!\cond
         requires ((skills & strong_type_skill::bitwise_lshift) != strong_type_skill::none)
         //!\endcond
@@ -371,7 +394,11 @@ public:
     }
 
     //!\brief Adds bitwise right shift operator to the strong type.
+<<<<<<< HEAD
     constexpr derived_t operator>>(integral_concept const shift)
+=======
+    constexpr derived_t operator>>(std::Integral const shift)
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
         //!\cond
         requires ((skills & strong_type_skill::bitwise_rshift) != strong_type_skill::none)
         //!\endcond
@@ -468,7 +495,11 @@ public:
      */
 
     //!\brief Adds explicit conversion to it's underlying type.
+<<<<<<< HEAD
     explicit operator value_t() const
+=======
+    explicit constexpr operator value_t() const
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
         //!\cond
         requires ((skills & strong_type_skill::convert) != strong_type_skill::none)
         //!\endcond

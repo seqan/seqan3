@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,11 +36,15 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/reverse.hpp>
-
 #include <seqan3/alphabet/nucleotide/all.hpp>
+<<<<<<< HEAD
 #include <seqan3/range/view/concept.hpp>
+=======
+#include <seqan3/range/concept.hpp>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -60,7 +64,7 @@ TEST(view_convert, basic)
 
     // combinability
     std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
-    std::vector<bool> v3 = vec | view::convert<bool> | ranges::view::reverse;
+    std::vector<bool> v3 = vec | view::convert<bool> | view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 
@@ -79,13 +83,14 @@ TEST(view_convert, explicit_conversion)
 
     // combinability
     dna4_vector cmp2{"AGGATAGCA"_dna4};
-    dna4_vector v3 = vec | view::convert<dna4> | ranges::view::reverse;
+    dna4_vector v3 = vec | view::convert<dna4> | view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 
 TEST(view_convert, concepts)
 {
     dna5_vector vec{"ACGNTNGGN"_dna5};
+<<<<<<< HEAD
     EXPECT_TRUE(input_range_concept<decltype(vec)>);
     EXPECT_TRUE(forward_range_concept<decltype(vec)>);
     EXPECT_TRUE(bidirectional_range_concept<decltype(vec)>);
@@ -107,4 +112,27 @@ TEST(view_convert, concepts)
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((output_range_concept<decltype(v1), dna5>));
     EXPECT_FALSE((output_range_concept<decltype(v1), dna4>));
+=======
+    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
+    EXPECT_FALSE(std::ranges::View<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
+    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5>));
+
+    auto v1 = vec | view::convert<dna4>;
+    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
+    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
+    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna4>));
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

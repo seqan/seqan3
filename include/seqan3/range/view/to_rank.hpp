@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,9 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -58,6 +58,7 @@ namespace seqan3::view
  * \ingroup view
  *
  * ### View properties
+<<<<<<< HEAD
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
@@ -78,26 +79,43 @@ namespace seqan3::view
  * | seqan3::reference_t                 | seqan3::alphabet_concept              | seqan3::underlying_rank_t<seqan3::value_type_t<urng_t>> |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+=======
+ *
+ * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
+ * the transformation on the innermost range (instead of the outermost range).
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
+ *
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
+ * |                                 |                                       |                                                    |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::View               |                                       | *guaranteed*                                       |
+ * | std::ranges::SizedRange         |                                       | *preserved*                                        |
+ * | std::ranges::CommonRange        |                                       | *preserved*                                        |
+ * | std::ranges::OutputRange        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * |                                 |                                       |                                                    |
+ * | seqan3::reference_t             | seqan3::alphabet_concept              | seqan3::underlying_rank_t<seqan3::value_type_t<urng_t>> |
+ *
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \par Example
- * ```cpp
- * dna4_vector vec = "ACTTTGATA"_dna4;
- * auto v = vec | view::to_rank | view::convert<unsigned>;
- * std::cout << v << '\n'; // [0,1,3,3,3,2,0,3,0]
- *
- * std::vector<illumina18> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
- * auto v3 = qvec | view::to_rank | view::convert<unsigned>;
- * std::cout << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
- *
- * std::vector<dna4q> qcvec{{dna4::C, 0}, {dna4::A, 7}, {dna4::G, 5}, {dna4::T, 3}, {dna4::G, 7}, {dna4::A, 4}, {dna4::C, 30}, {dna4::T, 16}, {dna4::A, 23}};
- * auto v4 = qcvec | view::to_rank | view::convert<unsigned>;
- * std::cout << v4 << '\n'; // [1,28,22,15,30,16,121,67,92]
- * ```
+ * \snippet test/snippet/range/view/rank_char.cpp to_rank
  * We also convert to unsigned here, because the seqan3::underlying_rank_t is often `uint8_t` which is
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-auto const to_rank = ranges::view::transform([] (alphabet_concept const in) { return seqan3::to_rank(in); });
+inline auto const to_rank = deep{view::transform([] (alphabet_concept const in)
+{
+    return seqan3::to_rank(in);
+})};
+
+//!\}
 
 //!\}
 

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -72,8 +72,8 @@ protected:
 
 TEST(random_access_iterator_test, concept_checks)
 {
-    EXPECT_TRUE((seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int>>>));
-    EXPECT_TRUE((seqan3::random_access_iterator_concept<seqan3::detail::random_access_iterator<std::vector<int> const>>));
+    EXPECT_TRUE((std::RandomAccessIterator<seqan3::detail::random_access_iterator<std::vector<int>>>));
+    EXPECT_TRUE((std::RandomAccessIterator<seqan3::detail::random_access_iterator<std::vector<int> const>>));
 }
 
 // default constructor

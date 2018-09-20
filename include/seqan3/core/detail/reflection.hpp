@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,7 @@ struct get_display_name_size
 {
 private:
     //!\brief Helper function to extract the size of the display name.
-    static constexpr auto get_size = [] ()
+    static constexpr auto get_size()
     {
         // __PRETTY_FUNCTION__ exposes the signature of the class including the name of the template instance as
         // a static const char[]. The following code, extracts the part that displays the template name.
@@ -117,32 +117,14 @@ constexpr size_t get_display_name_size_v = get_display_name_size<type>::value;
  * ### Example
  *
  * The following snippet demonstrates the usage:
- * ```cpp
- * #include <iostream>
- *
- * #include <seqan3/core/detail/reflection.hpp>
- *
- * namespace foo
- * {
- *
- * template <typename ...type>
- * struct bar
- * {};
- *
- * } // namespace foo
- *
- * int main()
- * {
- *     std::cout << detail::get_display_name_v<foo::bar<char, double>>.string() << std::endl; // prints: foo::bar<char, double> >
- * }
- * ```
+ * \snippet test/snippet/core/detail/reflection.cpp usage
  */
 template <typename type>
 struct get_display_name
 {
 private:
     //!\brief Helper function to get the display name.
-    static constexpr auto get_display_name_fn = [] () constexpr
+    static constexpr auto get_display_name_fn()
     {
         // Use a helper function to extract the size of the requested type.
         constexpr_string<get_display_name_size_v<type>> tmp{};

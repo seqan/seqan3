@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -102,19 +102,4 @@ TEST(gapped_test, fulfills_concepts)
     EXPECT_TRUE((std::is_trivial_v<alphabet_t>));
     EXPECT_TRUE((std::is_trivially_copyable_v<alphabet_t>));
     EXPECT_TRUE((std::is_standard_layout_v<alphabet_t>));
-}
-
-TEST(gapped_test, stream_operator)
-{
-    using alphabet_t = gapped<dna4>;
-
-    auto letterA = alphabet_t{dna4::A};
-    auto letterC = alphabet_t{dna4::C};
-    auto letterG = alphabet_t{dna4::G};
-    auto letterT = alphabet_t{dna4::T};
-    auto letterGAP = alphabet_t{gap::GAP};
-
-    std::stringstream ss;
-    ss << letterA << letterT << letterG << letterGAP << letterC;
-    EXPECT_EQ(ss.str(), "ATG-C");
 }

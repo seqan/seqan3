@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -62,17 +62,11 @@ namespace seqan3
  * Note that you can assign 'U' as a character to dna4 and it will silently
  * be converted to 'T'.
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     dna4 my_letter{dna4::A};
- *     // doesn't work:
- *     // dna4 my_letter{'A'};
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::dna4::assign_char().
  *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('F'); // converted to A internally
- *     if (my_letter.to_char() == 'A')
- *        std::cout << "yeah\n"; // "yeah";
- *~~~~~~~~~~~~~~~
+ * \snippet test/snippet/alphabet/nucleotide/dna4.cpp code
  */
 
 struct dna4
@@ -177,7 +171,8 @@ struct dna4
      */
     constexpr dna4 & assign_char(char_type const c) noexcept
     {
-        _value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 
@@ -380,17 +375,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to dna4_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // dna4_vector foo{"ACGTTA"};
- *     // dna4_vector bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     dna4_vector foo{"ACGTTA"_dna4};
- *     dna4_vector bar = "ACGTTA"_dna4;
- *     auto bax = "ACGTTA"_dna4;
- *~~~~~~~~~~~~~~~
+ * \snippet test/snippet/alphabet/nucleotide/dna4.cpp operator""_dna4
  *
  * \attention
  * All user-defined literals are in the namespace seqan3::literal!

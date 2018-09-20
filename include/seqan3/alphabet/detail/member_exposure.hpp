@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (chr) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (chr) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (chr) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (chr) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@
 #pragma once
 
 #include <iostream>
+#include <optional>
 
 #include <seqan3/alphabet/concept_pre.hpp>
 
@@ -168,22 +169,6 @@ constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph)
     return alph.to_char();
 }
 
-/*!\brief Implementation of seqan3::alphabet_concept::operator<<() that delegates to `alph.to_char()`.
- * \tparam alphabet_type Must provide a `.to_char()` member function.
- * \param os The output stream you are printing to.
- * \param alph The alphabet letter that you wish to print.
- * \returns A reference to the output stream.
- */
-template <typename alphabet_type>
-std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
-//!\cond
-    requires requires (alphabet_type alph) { { alph.to_char() } -> underlying_char_t<alphabet_type>; }
-//!\endcond
-{
-    os << alph.to_char();
-    return os;
-}
-
 /*!\brief Implementation of seqan3::alphabet_concept::assign_char() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_char()` member function.
  * \param alph The alphabet letter that you wish to assign to.
@@ -291,20 +276,43 @@ constexpr bool is_unpaired(structure_type const alph)
     return alph.is_unpaired();
 }
 
-/*!\brief Specialisation of seqan3::pseudoknot_support that delegates to structure_type::pseudoknot_support.
+/*!\brief Specialisation of seqan3::max_pseudoknot_depth that delegates to structure_type::max_pseudoknot_depth.
  * \relates seqan3::rna_structure_concept
- * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static bool pseudoknot_support` member variable.
+ * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static uint8_t max_pseudoknot_depth` member variable.
  */
 template <typename alphabet_type_with_pseudoknot_attribute>
 //!\cond
     requires requires (alphabet_type_with_pseudoknot_attribute)
-    { { alphabet_type_with_pseudoknot_attribute::pseudoknot_support } -> bool; }
+    { { alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth } -> uint8_t; }
 //!\endcond
-struct pseudoknot_support<alphabet_type_with_pseudoknot_attribute>
+struct max_pseudoknot_depth<alphabet_type_with_pseudoknot_attribute>
 {
-    //!\brief The forwarded pseudoknot support.
-    static constexpr bool value = alphabet_type_with_pseudoknot_attribute::pseudoknot_support;
+    //!\brief The forwarded maximum pseudoknot depth.
+    static constexpr uint8_t value = alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth;
 };
+
+/*!\brief Implementation of seqan3::rna_structure_concept::pseudoknot_id() that delegates to a member function.
+ * \relates seqan3::rna_structure_concept
+ * \tparam alphabet_type_with_pseudoknot_attribute If it supports pseudoknots, it must provide a `.pseudoknot_id()`
+ * member function, otherwise it can be omitted.
+ * \param alph The alphabet letter which is checked for the pseudoknot id.
+ * \returns The pseudoknot id, if alph represents an interaction, and no value otherwise.
+ * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
+ */
+template<typename alphabet_type_with_pseudoknot_attribute>
+constexpr std::optional<uint8_t> pseudoknot_id(alphabet_type_with_pseudoknot_attribute const alph)
+//!\cond
+    requires requires(alphabet_type_with_pseudoknot_attribute)
+    { { alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth } -> uint8_t; }
+//!\endcond
+{
+    if constexpr (alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth > 1)
+        return alph.pseudoknot_id();
+    else if (is_pair_open(alph) || is_pair_close(alph))
+        return 0;
+    else
+        return std::nullopt;
+}
 //!\}
 
 } // namespace seqan3

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,31 +44,24 @@
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/alphabet/detail/convert.hpp>
+#include <seqan3/alphabet/aminoacid/concept.hpp>
 
 namespace seqan3
 {
-/*!\brief The twenty-seven letter amino acid alphabet
+/*!\brief The twenty-seven letter amino acid alphabet.
  * \ingroup aminoacid
- * \implements seqan3::alphabet_concept
+ * \implements seqan3::aminoacid_concept
  *
  * \details
  * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
  * Y, Z, *
  *
- * The alphabet may be brace initialized from the static letter members (see above). Note that you cannot assign
- * regular characters, but additional functions for this are available.
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::aa27::assign_char().
  *
- *```cpp
- *     aa27 my_letter{aa27::A};
- *     // doesn't work:
- *     // aa27 my_letter{'A'};
- *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('?'); // converted to X internally
- *     if (my_letter.to_char() == 'X')
- *        std::cout << "yeah\n"; // "yeah";
- *```
+ * \snippet test/snippet/alphabet/aminoacid/aa27.cpp construction
  */
 
 struct aa27
@@ -137,7 +130,8 @@ struct aa27
     //!\brief Assign from a character.
     constexpr aa27 & assign_char(char_type const c) noexcept
     {
-        _value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 
@@ -152,6 +146,21 @@ struct aa27
 
     //!\brief The size of the alphabet, i.e. the number of different values it can take.
     static constexpr rank_type value_size{27};
+
+    /*!\name Conversion operators
+     * \{
+     */
+    //!\brief Explicit conversion to any other amino acid alphabet (via char representation).
+    //!\tparam other_aa_type The type to convert to; must satisfy seqan3::aminoacid_concept.
+    template <typename other_aa_type>
+    //!\cond
+        requires aminoacid_concept<other_aa_type>
+    //!\endcond
+    explicit constexpr operator other_aa_type() const noexcept
+    {
+        return detail::convert_through_char_representation<other_aa_type, std::decay_t<decltype(*this)>>[to_rank()];
+    }
+    //!\}
 
     //!\name Comparison operators
     //!\{
@@ -186,7 +195,7 @@ struct aa27
     }
     //!\}
 
-    protected:
+protected:
     //!\privatesection
     /*!\brief The internal type is a strictly typed enum.
      *
@@ -364,17 +373,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to aa27_vector:
  *
- *```cpp
- *     // these don't work:
- *     // aa27_vector foo{"ABFUYR"};
- *     // aa27_vector bar = "ABFUYR";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     aa27_vector foo{"ABFUYR"_aa27};
- *     aa27_vector bar = "ABFUYR"_aa27;
- *     auto bax = "ABFUYR"_aa27;
- *```
+ * \snippet test/snippet/alphabet/aminoacid/aa27.cpp literal
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!

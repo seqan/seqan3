@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -160,14 +160,7 @@ TYPED_TEST(nucleotide, complement)
     }
 }
 
-TYPED_TEST(nucleotide, stream_operator)
-{
-    std::stringstream ss;
-    ss << TypeParam::A << TypeParam::C << TypeParam::G;
-    EXPECT_EQ(ss.str(), "ACG");
-}
-
-TYPED_TEST(nucleotide, concept)
+TYPED_TEST(nucleotide, concept_check)
 {
     EXPECT_TRUE(nucleotide_concept<TypeParam>);
     EXPECT_TRUE(nucleotide_concept<TypeParam &>);

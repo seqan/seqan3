@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -48,50 +48,275 @@
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/detail/int_types.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3
 {
 
-/*!\brief The CRTP base of alphabets that contain multiple (different) letters at one position.
+/*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composition
- * \tparam first_alphabet_type Type of the first letter; must satisfy alphabet_concept.
- * \tparam alphabet_types Types of further letters (up to 4); must satisfy alphabet_concept.
+ * \implements seqan3::semi_alphabet_concept
+ * \tparam first_component_type Type of the first letter; must model seqan3::semi_alphabet_concept.
+ * \tparam component_types      Types of further letters (up to 4); must model seqan3::semi_alphabet_concept.
  *
  * This data structure is CRTP base class for combined alphabets, where the different
- * alphabet letters exist independently, similar to a tuple. In fact this class
- * provides a tuple-like interface with `get<0>(t)` and objects can be brace-initialized
- * with the individual members.
+ * alphabet letters exist independently as components, similar to a tuple.
+ *
+ * Short description:
+ *   * combines multiple alphabets as independent components, similar to a tuple;
+ *   * models seqan3::tuple_like_concept, i.e. provides a std::get interface to its components;
+ *   * is itself a seqan3::semi_alphabet_concept, but most derived types implement the full seqan3::alphabet_concept;
+ *   * its alphabet size is the product of the individual sizes;
+ *   * constructible, assignable and comparable with each component type and also all types that
+ *     these are constructible/assignable/comparable with;
+ *   * explicitly convertible to each of its component types
  *
  * \attention
  * This is a "pure base class", you cannot instantiate it, you can only inherit from it.
- * Most likely you are interested in using one of it's descendents like quality_composition.
+ * Most likely you are interested in using one of it's descendants like seqan3::qualified or seqan3::masked.
  * \cond DEV
  * To make a derived class "complete", you should add at least the following:
  *   * .to_char() member
  *   * .assign_char() member
- *   * .operator=() members for all element types
  *   * a type deduction guide
  * \endcond
  *
- * \sa quality_composition
- * \sa mask_composition
+ * \sa qualified
+ * \sa masked
  */
-
 template <typename derived_type,
-          typename first_alphabet_type,
-          typename ...alphabet_types>
-      requires alphabet_concept<first_alphabet_type> && (alphabet_concept<alphabet_types> && ...)
-struct cartesian_composition :
-    public pod_tuple<first_alphabet_type, alphabet_types...>
+          typename first_component_type,
+          typename ...component_types>
+//!\cond
+    requires semi_alphabet_concept<first_component_type> && (semi_alphabet_concept<component_types> && ...)
+//!\endcond
+class cartesian_composition : public pod_tuple<first_component_type, component_types...>
 {
+private:
+    //!\brief The base type of this class.
+    using base_t = pod_tuple<first_component_type, component_types...>;
+
+    //!\brief A meta::list The types of each component in the composition
+    using components = meta::list<first_component_type, component_types...>;
+
+    //!\brief Is set to `true` if the type is contained in the type list.
+    template <typename type>
+    static constexpr bool is_component =
+        meta::in<components, type>::value;
+
+    //!\brief Is set to `true` if the type is uniquely contained in the type list.
+    template <typename type>
+    static constexpr bool is_unique_component =
+        is_component<type> &&
+        (meta::find_index<components, type>::value == meta::reverse_find_index<components, type>::value);
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `type` is constructable from `T`.
+      */
+    template <typename T>
+    struct constructible_from
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, std::is_constructible_v<type, T>>;
+    };
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `T` is implicitly convertible to `type`.
+      */
+    template <typename T>
+    struct implicitely_convertible_from
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, implicitly_convertible_to_concept<T, type>>;
+    };
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `type` is assignable from `T`.
+      */
+    template <typename T>
+    struct assignable_from
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, std::Assignable<type, T>>;
+    };
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `type` is weakly equality comparable to `T`.
+      */
+    template <typename T>
+    struct weakly_equality_comparable_with
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, std::detail::WeaklyEqualityComparableWith<type, T>>;
+    };
+
+    /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+      * Returns an std::true_type if the `type` is comparable via <,<=,>,>= to `T`.
+      */
+    template <typename T>
+    struct weakly_ordered_with
+    {
+        //!\brief The returned type when invoked.
+        template <typename type>
+        using invoke = std::integral_constant<bool, weakly_ordered_with_concept<type, T>>;
+    };
+
+    //!\brief Is set to `true` if the one component type fulfils the FUN callable with `subtype`.
+    template <template <typename> typename FUN, typename subtype>
+    static constexpr bool one_component_is =
+         !std::is_same_v<subtype, cartesian_composition> &&
+         !std::is_same_v<subtype, derived_type> &&
+         !is_component<subtype> &&
+         !meta::empty<meta::find_if<components, FUN<subtype>>>::value;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    cartesian_composition() = default;
+    constexpr cartesian_composition(cartesian_composition const &) = default;
+    constexpr cartesian_composition(cartesian_composition &&) = default;
+    constexpr cartesian_composition & operator=(cartesian_composition const &) = default;
+    constexpr cartesian_composition & operator=(cartesian_composition &&) = default;
+    ~cartesian_composition() = default;
+    //!\}
+
+    //!\brief befriend the derived type so that it can instantiate
+    //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
+    friend derived_type;
+
 public:
     //!\brief The type of value_size and `alphabet_size_v<cartesian_composition<...>>`
-    using rank_type = detail::min_viable_uint_t<(alphabet_size_v<first_alphabet_type> * ... *
-                                                     alphabet_size_v<alphabet_types>)>;
+    using rank_type = detail::min_viable_uint_t<(alphabet_size_v<first_component_type> * ... *
+                                                     alphabet_size_v<component_types>)>;
 
     //!\brief The product of the sizes of the individual alphabets.
-    static constexpr rank_type value_size{(alphabet_size_v<first_alphabet_type> * ... *
-                                               alphabet_size_v<alphabet_types>)};
+    static constexpr rank_type value_size{(alphabet_size_v<first_component_type> * ... *
+                                               alphabet_size_v<component_types>)};
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     * \attention Please do not directly use the CRTP base class. The functions
+     *            are only public for the usage in their derived classes (e.g.
+     *            seqan3::qualified, seqan3::masked, seqan3::structure_rna and
+     *            seqan3::structure_aa).
+     */
+    //!\brief Construction from initialiser-list.
+    constexpr cartesian_composition(first_component_type first, component_types ... others) :
+        base_t{first, others...}
+    {}
+
+    /*!\brief Construction via a value of one of the components.
+     * \tparam component_type Must be one uniquely contained in the type
+                              list of the composition.
+     * \param  alph           The value of a component that should be assigned.
+     *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_construction
+     */
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr cartesian_composition(component_type const alph) : cartesian_composition{}
+    {
+        get<component_type>(*this) = alph;
+    }
+
+    /*!\brief Construction via a value of a subtype that is assignable to one of the components.
+     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     *                                 one of the component types.
+     * \param  alph                    The value that should be assigned.
+     *
+     * Note that the value will be assigned to the **FIRST** type T that fulfils
+     * the `assignable_concept<T, indirect_component_type>`, regardless if other types are also
+     * fit for assignment.
+     *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_construction
+     */
+    template <typename indirect_component_type>
+    //!\cond
+       requires one_component_is<implicitely_convertible_from, indirect_component_type>
+    //!\endcond
+    constexpr cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
+    {
+       using component_type = meta::front<meta::find_if<components, implicitely_convertible_from<indirect_component_type>>>;
+       component_type tmp(alph); // delegate construction
+       get<component_type>(*this) = tmp;
+    }
+
+    //!\cond
+    template <typename indirect_component_type>
+       requires !one_component_is<implicitely_convertible_from, indirect_component_type> &&
+                 one_component_is<constructible_from, indirect_component_type>
+    constexpr cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
+    {
+       using component_type = meta::front<meta::find_if<components, constructible_from<indirect_component_type>>>;
+       component_type tmp(alph); // delegate construction
+       get<component_type>(*this) = tmp;
+    }
+    //!\endcond
+
+    /*!\brief Assignment via a value of one of the components.
+     * \tparam component_type One of the component types. Must be uniquely
+     *                        contained in the type list of the composition.
+     * \param  alph           The value of a component that should be assigned.
+     *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_assignment
+     */
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr derived_type & operator=(component_type const alph)
+    {
+        get<component_type>(*this) = alph;
+        return static_cast<derived_type &>(*this);
+    }
+
+    /*!\brief Assignment via a value of a subtype that is assignable to one of the components.
+     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     *                                 one of the component types.
+     * \param  alph                    The value of a component that should be assigned.
+     *
+     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * with one of its derived classes (seqan3::qualified).
+     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_assignment
+     */
+    template <typename indirect_component_type>
+    //!\cond
+        requires one_component_is<assignable_from, indirect_component_type>
+    //!\endcond
+    constexpr derived_type & operator=(indirect_component_type const alph)
+    {
+        using component_type = meta::front<meta::find_if<components, assignable_from<indirect_component_type>>>;
+        get<component_type>(*this) = alph; // delegate assignment
+        return static_cast<derived_type &>(*this);
+    }
+    //!\cond
+    // If not assignable but implicit convertible, convert first and assign afterwards
+    template <typename indirect_component_type>
+    //!\cond
+        requires !one_component_is<assignable_from, indirect_component_type> &&
+                 one_component_is<implicitely_convertible_from, indirect_component_type>
+    //!\endcond
+    constexpr derived_type & operator=(indirect_component_type const alph)
+    {
+        using component_type = meta::front<meta::find_if<components, implicitely_convertible_from<indirect_component_type>>>;
+        component_type tmp(alph);
+        get<component_type>(*this) = tmp;
+        return static_cast<derived_type &>(*this);
+    }
+    //!\endcond
+    //!\}
 
     /*!\name Read functions
      * \{
@@ -111,9 +336,9 @@ public:
      */
     template <typename type>
     constexpr explicit operator type() const
-        requires meta::in<meta::list<first_alphabet_type, alphabet_types...>, type>::value &&
-                 (meta::find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value ==
-                  meta::reverse_find_index<meta::list<first_alphabet_type, alphabet_types...>, type>::value)
+    //!\cond
+        requires is_unique_component<type>
+    //!\endcond
     {
         return get<type>(*this);
     }
@@ -124,7 +349,7 @@ public:
      */
     /*!\brief Assign from a numeric value.
      * \par Complexity
-     * Linear in the number of alpahabets.
+     * Linear in the number of alphabets.
      * \par Exceptions
      * Asserts that the parameter is smaller than value_size [only in debug mode].
      */
@@ -136,32 +361,149 @@ public:
     }
     //!\}
 
+    // Inherit default comparators explicitly from base class
+    using base_t::operator==;
+    using base_t::operator!=;
+    using base_t::operator<;
+    using base_t::operator>;
+    using base_t::operator<=;
+    using base_t::operator>=;
+
+    /*!\name Comparison operators (against components)
+     * \brief `*this` is cast to the component type before comparison.
+     * \{
+     */
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr bool operator==(component_type const & rhs) const noexcept
+    {
+        return std::get<component_type>(*this) == rhs;
+    }
+
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr bool operator!=(component_type const & rhs) const noexcept
+    {
+        return std::get<component_type>(*this) != rhs;
+    }
+
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr bool operator<(component_type const & rhs) const noexcept
+    {
+        return std::get<component_type>(*this) < rhs;
+    }
+
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr bool operator>(component_type const & rhs) const noexcept
+    {
+        return std::get<component_type>(*this) > rhs;
+    }
+
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr bool operator<=(component_type const & rhs) const noexcept
+    {
+        return std::get<component_type>(*this) <= rhs;
+    }
+
+    template <typename component_type>
+    //!\cond
+        requires is_unique_component<component_type>
+    //!\endcond
+    constexpr bool operator>=(component_type const & rhs) const noexcept
+    {
+        return std::get<component_type>(*this) >= rhs;
+    }
+    //!\}
+
+    /*!\name Comparison operators (against indirect components)
+     * \brief `*this` is cast to the component type before comparison. (These overloads enable comparison for all types
+     *        that a component type is comparable with).
+     * \{
+     */
+    template <typename indirect_component_type>
+    constexpr bool operator==(indirect_component_type const rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
+    //!\endcond
+    {
+        using component_type = meta::front<meta::find_if<components, weakly_equality_comparable_with<indirect_component_type>>>;
+        return get<component_type>(*this) == rhs;
+    }
+
+    template <typename indirect_component_type>
+    constexpr bool operator!=(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_equality_comparable_with, indirect_component_type>
+    //!\endcond
+    {
+        using component_type = meta::front<meta::find_if<components, weakly_equality_comparable_with<indirect_component_type>>>;
+        return get<component_type>(*this) != rhs;
+    }
+
+    template <typename indirect_component_type>
+    constexpr bool operator<(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
+    {
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) < rhs;
+    }
+
+    template <typename indirect_component_type>
+    constexpr bool operator>(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
+    {
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) > rhs;
+    }
+
+    template <typename indirect_component_type>
+    constexpr bool operator<=(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
+    {
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) <= rhs;
+    }
+
+    template <typename indirect_component_type>
+    constexpr bool operator>=(indirect_component_type const & rhs) const noexcept
+    //!\cond
+        requires one_component_is<weakly_ordered_with, indirect_component_type>
+    //!\endcond
+    {
+        using component_type = meta::front<meta::find_if<components, weakly_ordered_with<indirect_component_type>>>;
+        return get<component_type>(*this) >= rhs;
+    }
+    //!\}
+
 private:
-    //!\brief declared private to prevent direct use of the CRTP base
-    cartesian_composition() = default;
-    //!\brief declared private to prevent direct use of the CRTP base
-    constexpr cartesian_composition(cartesian_composition const &) = default;
-    //!\brief declared private to prevent direct use of the CRTP base
-    constexpr cartesian_composition(cartesian_composition &&) = default;
-    //!\brief declared private to prevent direct use of the CRTP base
-    constexpr cartesian_composition & operator =(cartesian_composition const &) = default;
-    //!\brief declared private to prevent direct use of the CRTP base
-    constexpr cartesian_composition & operator =(cartesian_composition &&) = default;
-    //!\brief declared private to prevent direct use of the CRTP base
-    ~cartesian_composition() = default;
 
-    //!\brief befriend the derived type so that it can instantiate
-    //!\sa https://isocpp.org/blog/2017/04/quick-q-prevent-user-from-derive-from-incorrect-crtp-base
-    friend derived_type;
-
-    //!\brief the cummulative alphabet size products (first, first*second, first*second*third...) are cached
-    static constexpr std::array<rank_type, sizeof...(alphabet_types) + 1> cummulative_alph_sizes
+    //!\brief the cumulative alphabet size products (first, first*second, first*second*third...) are cached
+    static constexpr std::array<rank_type, sizeof...(component_types) + 1> cummulative_alph_sizes
     {
         [] () constexpr
         {
-            std::array<rank_type, sizeof...(alphabet_types) + 1> ret{};
+            std::array<rank_type, sizeof...(component_types) + 1> ret{};
             size_t count = 0;
-            meta::for_each(meta::list<first_alphabet_type, alphabet_types...>{}, [&] (auto && alph) constexpr
+            meta::for_each(meta::list<first_component_type, component_types...>{}, [&] (auto && alph) constexpr
             {
                 ret[count] = static_cast<rank_type>(
                     alphabet_size_v<std::decay_t<decltype(alph)>> * (count > 0 ? ret[count - 1] : 1));
@@ -173,7 +515,7 @@ private:
     };
 
     //!\brief An index sequence up to the number of contained letters.
-    static constexpr auto positions = std::make_index_sequence<sizeof...(alphabet_types)>{};
+    static constexpr auto positions = std::make_index_sequence<sizeof...(component_types)>{};
 
     //!\brief Implementation of to_rank().
     template <std::size_t ...idx>
@@ -201,17 +543,89 @@ private:
         if constexpr (j == 0)
         {
             assign_rank(get<j>(*this),
-                          i % alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+                          i % alphabet_size_v<meta::at_c<meta::list<first_component_type, component_types...>, j>>);
         } else
         {
             assign_rank(get<j>(*this),
                           (i / cummulative_alph_sizes[j - 1]) %
-                          alphabet_size_v<meta::at_c<meta::list<first_alphabet_type, alphabet_types...>, j>>);
+                          alphabet_size_v<meta::at_c<meta::list<first_component_type, component_types...>, j>>);
         }
 
-        if constexpr (j < sizeof...(alphabet_types))
+        if constexpr (j < sizeof...(component_types))
             assign_rank_impl<j + 1>(i);
     }
 };
+
+/*!\name Comparison operators
+ * \relates seqan3::cartesian_composition
+ * \{
+ * \brief Free function comparison operators that forward to member operators (for types != self).
+ */
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+//!\cond
+    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_equality_comparable_by_members_with_concept<component_type, derived_type>
+//!\endcond
+constexpr bool operator==(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs == lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+//!\cond
+    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_equality_comparable_by_members_with_concept<component_type, derived_type>
+//!\endcond
+constexpr bool operator!=(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs != lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
+constexpr bool operator<(component_type const & lhs,
+                         cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs > lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
+constexpr bool operator>(component_type const & lhs,
+                         cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs < lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
+constexpr bool operator<=(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs >= lhs;
+}
+
+template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
+//!\cond
+    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
+             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+//!\endcond
+constexpr bool operator>=(component_type const & lhs,
+                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
+{
+    return rhs <= lhs;
+}
+//!\}
 
 } // namespace seqan3

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -104,13 +104,7 @@
  *
  * This leads to ambiguity when assigning and retrieving values:
  *
- * ```cpp
- * // WRONG EXAMPLE:
- * dna4 my_letter{0};      // we want to set the default, an A
- * dna4 my_letter{'A'};    // we also want to set an A, but we are setting value 65
- *
- * std::cout << my_letter; // you expect 'A', but how would you access the number?
- * ```
+ * \snippet test/snippet/alphabet/all.cpp ambiguity
  *
  * To solve this problem, every alphabet defines two interfaces:
  *
@@ -128,16 +122,7 @@
  * To prevent the aforementioned ambiguity, you can neither assign from rank or char representation via `operator=`,
  * nor can you cast the alphabet to either of it's representation forms, **you need to explicitly use the
  * interfaces**:
- * ```cpp
- * dna4 my_letter;
- * assign_rank(my_letter, 0);       // assign an A via rank interface
- * assign_char(my_letter, 'A');     // assign an A via char interface
- * my_letter = dna4::A;             // some alphabets(BUT NOT ALL!) also provide an enum-like interface
- *
- * std::cout << to_char(my_letter);            // prints 'A'
- * std::cout << (unsigned)to_rank(my_letter);  // prints 0
- * // we have to add the cast here, because uint8_t is also treated as a char type by default :(
- * ```
+ * \snippet test/snippet/alphabet/all.cpp nonambiguous
  *
  * For efficiency, the representation saved internally is normally the rank representation, and the character
  * representation
@@ -186,3 +171,4 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/alphabet/composition/all.hpp>
+#include <seqan3/alphabet/mask/all.hpp>

@@ -42,3 +42,11 @@
  * \ingroup io
  * \todo write me!
  */
+<<<<<<< HEAD
+=======
+
+#pragma once
+
+#include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/stream/parse_condition.hpp>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -42,13 +42,7 @@
  * \attention
  *
  * Note that you need to strictly follow this include order:
- * ```cpp
- * #include <alphabet/concept_pre.hpp>
- *
- * // your custom alphabet
- *
- * #include <alphabet/concept.hpp>
- * ```
+ * \snippet test/snippet/alphabet/concept_pre.cpp include order
  *
  * If you include `concept.hpp` before your definitions, than your type will
  * not be resolved as satisfying seqan3::alphabet_concept.
@@ -98,11 +92,7 @@ using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
  * \ingroup alphabet
  *
  * This is the expression to retrieve the value:
- * ```cpp
- * auto i = seqan3::alphabet_size<alphabet_type>::value;
- * // or
- * auto i = seqan3::alphabet_size_v<alphabet_type>;
- * ```
+ * \snippet test/snippet/alphabet/concept_pre.cpp value retrieval
  * The type of the variable is seqan3::underlying_rank_t<alphabet_type>.
  *
  * \par Helper variable template
@@ -206,19 +196,6 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  */
 // just implement the interface
 
-/*!\fn std::ostream & operator<<(std::ostream & os, alphabet_type const alph)
- * \brief Ostream operator for the alphabet.
- * \ingroup alphabet
- * \param os The output stream you are printing to.
- * \param alph The alphabet letter that you wish to convert to char.
- * \returns A reference to the output stream.
- *
- * \details
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
- */
-// just implement the interface
-
 //!\}
 
 // ------------------------------------------------------------------
@@ -230,32 +207,36 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * \relates seqan3::rna_structure_concept
  * \{
  */
-/*!\brief Metafunction that indicates whether an alphabet can handle pseudoknots. [value metafunction base template]
+/*!\brief Metafunction that indicates to what extent an alphabet can handle pseudoknots.
+ * [value metafunction base template]
  * \tparam alphabet_type The alphabet type whose pseudoknot ability is queried.
  * \ingroup alphabet
+ * \details The value is the maximum allowed depth of pseudoknots.
+ * A value of 1 denotes no pseudoknots `((....))`,
+ * while higher values denote the maximum allowed complexity of
+ * crossing interactions, e.g. depth 2 `(({....))}` or depth 3 `({[....)}]`.
  *
  * This is the expression to retrieve the value:
- * ```cpp
- * bool has_pk_support = seqan3::pseudoknot_support<alphabet_type>::value;
- * // or
- * bool has_pk_support = seqan3::pseudoknot_support_v<alphabet_type>;
- * ```
+ * \snippet test/snippet/alphabet/concept_pre.cpp pseudoknot value retrieval
  *
  * \par Helper variable template
- *   seqan3::pseudoknot_support_v as a shorthand for `seqan3::pseudoknot_support<alphabet_type>::%value`
+ *   seqan3::max_pseudoknot_depth_v as a shorthand for `seqan3::max_pseudoknot_depth<alphabet_type>::%value`
  *
  * \attention This is the base template, it needs to be specialised.
  */
 template<typename alphabet_type>
-struct pseudoknot_support{};
+struct max_pseudoknot_depth{};
 
 /*!\brief The pseudoknot ability of the alphabet. [value metafunction shortcut]
  * \ingroup alphabet
  *
- * \attention Do not specialise this shortcut, instead specialise seqan3::pseudoknot_support.
+ * \attention Do not specialise this shortcut, instead specialise seqan3::max_pseudoknot_depth.
  */
 template<typename alphabet_type>
-constexpr bool pseudoknot_support_v = pseudoknot_support<alphabet_type>::value;
+//!\cond
+    requires requires (alphabet_type alph) { max_pseudoknot_depth<alphabet_type>::value; }
+//!\endcond
+constexpr uint8_t max_pseudoknot_depth_v = max_pseudoknot_depth<alphabet_type>::value;
 //!\}
 
 } // namespace seqan3

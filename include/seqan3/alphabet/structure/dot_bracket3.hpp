@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -66,14 +66,7 @@ namespace seqan3
  *
  * \par Usage
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stdout.
- * ```cpp
- *     // create vector
- *     std::vector<dot_bracket3> vec{dot_bracket3::UNPAIRED, dot_bracket3::PAIR_CLOSE, dot_bracket3::PAIR_CLOSE};
- *     // modify and print
- *     vec[1] = dot_bracket3::PAIR_OPEN;
- *     for (dot_bracket3 chr : vec)
- *         std::cout << chr;  // .()
- * ```
+ * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp general
  */
 
 struct dot_bracket3
@@ -123,7 +116,8 @@ struct dot_bracket3
      */
     constexpr dot_bracket3 & assign_char(char_type const chr) noexcept
     {
-        _value = char_to_value[chr];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(chr)];
         return *this;
     }
 
@@ -202,8 +196,11 @@ struct dot_bracket3
         return _value == internal_type::UNPAIRED;
     }
 
-    //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: False.
-    static constexpr bool pseudoknot_support{false};
+    /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
+     * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
+     * pseudoknot support.
+     */
+    static constexpr uint8_t max_pseudoknot_depth{1};
     //!\}
 
 protected:

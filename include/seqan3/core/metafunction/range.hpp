@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -48,8 +48,8 @@
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/range/concept.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/std/iterator>
 
 // TODO(h-2): add innermost_reference instead of or addition to innermost_value_type?
 
@@ -70,7 +70,7 @@ namespace seqan3
 /*!\brief For a seqan3::range return its iterator type. [Type metafunction].
  * \tparam t The type to operate on.
  */
-template <range_concept rng_t>
+template <std::ranges::Range rng_t>
 using iterator_t = ranges::iterator_t<rng_t>;
 
 // ----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ using iterator_t = ranges::iterator_t<rng_t>;
 /*!\brief For a seqan3::range return its sentinel type. [Type metafunction].
  * \tparam t The type to operate on.
  */
-template <range_concept rng_t>
+template <std::ranges::Range rng_t>
 using sentinel_t = ranges::sentinel_t<rng_t>;
 
 // ----------------------------------------------------------------------------
@@ -88,11 +88,11 @@ using sentinel_t = ranges::sentinel_t<rng_t>;
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `value_type` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy seqan3::input_range_concept.
+ * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
  */
-template <input_range_concept rng_t>
+template <std::ranges::InputRange rng_t>
 //!\cond
-    requires !iterator_concept<rng_t>
+    requires !std::Iterator<rng_t>
 //!\endcond
 struct value_type<rng_t>
 {
@@ -105,11 +105,11 @@ struct value_type<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `reference` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy seqan3::input_range_concept.
+ * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
  */
-template <input_range_concept rng_t>
+template <std::ranges::InputRange rng_t>
 //!\cond
-    requires !iterator_concept<rng_t>
+    requires !std::Iterator<rng_t>
 //!\endcond
 struct reference<rng_t>
 {
@@ -122,11 +122,11 @@ struct reference<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `rvalue_reference` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy seqan3::input_range_concept.
+ * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
  */
-template <input_range_concept rng_t>
+template <std::ranges::InputRange rng_t>
 //!\cond
-    requires !iterator_concept<rng_t>
+    requires !std::Iterator<rng_t>
 //!\endcond
 struct rvalue_reference<rng_t>
 {
@@ -139,11 +139,11 @@ struct rvalue_reference<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `const_reference` of another type [specialisation for input ranges].
- * \tparam t The type you wish to query; must satisfy seqan3::input_range_concept.
+ * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
  */
-template <input_range_concept rng_t>
+template <std::ranges::InputRange rng_t>
 //!\cond
-    requires !iterator_concept<rng_t>
+    requires !std::Iterator<rng_t>
 //!\endcond
 struct const_reference<rng_t>
 {
@@ -156,11 +156,11 @@ struct const_reference<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `difference_type` of another type [specialisation for ranges].
- * \tparam t The type you wish to query; must satisfy seqan3::input_range_concept.
+ * \tparam t The type you wish to query; must satisfy std::ranges::InputRange.
  */
-template <range_concept rng_t>
+template <std::ranges::Range rng_t>
 //!\cond
-    requires !iterator_concept<rng_t>
+    requires !std::Iterator<rng_t>
 //!\endcond
 struct difference_type<rng_t>
 {
@@ -173,11 +173,11 @@ struct difference_type<rng_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `size_type` of another type [specialisation for sized ranges].
- * \tparam t The type you wish to query; must satisfy seqan3::sized_range_concept.
+ * \tparam t The type you wish to query; must satisfy std::ranges::SizedRange.
  */
-template <sized_range_concept rng_t>
+template <std::ranges::SizedRange rng_t>
 //!\cond
-    requires !iterator_concept<rng_t>
+    requires !std::Iterator<rng_t>
 //!\endcond
 struct size_type<rng_t>
 {
@@ -267,18 +267,14 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  *
  * \details
  *
- * ```cpp
- * // these evaluate to true:
- * static_assert(seqan3::compatible_concept<std::string,              std::vector<char>>);
- * static_assert(seqan3::compatible_concept<std::vector<std::string>, std::vector<std::vector<char>>>);
- * ```
+ * \snippet test/snippet/core/metafunction/range.cpp usage
  *
  * Attention, this metafunction implicitly removes cv-qualifiers and reference from the types it recurses on and
  * compares.
  */
 //!\cond
 template <typename t1, typename t2>
-concept bool compatible_concept = requires (t1, t2)
+concept compatible_concept = requires (t1, t2)
 {
     requires (dimension_v<t1> == dimension_v<t2>);
 

@@ -44,11 +44,19 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/all.hpp>
+<<<<<<< HEAD
 #include <seqan3/io/concept.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concept/core_language.hpp>
 #include <seqan3/std/concept/iterator.hpp>
+=======
+#include <seqan3/io/stream/concept.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 namespace seqan3::detail
 {
@@ -84,7 +92,11 @@ namespace seqan3::detail
  */
 template <typename oiter_type, alphabet_concept alpha_type = char>
 //!\cond
+<<<<<<< HEAD
     requires output_iterator_concept<oiter_type, alpha_type>
+=======
+    requires std::OutputIterator<oiter_type, alpha_type>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 //!\endcond
 class output_iterator_conversion_adaptor
 {
@@ -136,7 +148,11 @@ public:
     //!\brief Inserts an object into the associated writable object from char.
     constexpr output_iterator_conversion_adaptor & operator= (char const c)
     //!\cond
+<<<<<<< HEAD
         requires !same_concept<alpha_type, char>
+=======
+        requires !std::Same<alpha_type, char>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
     //!\endcond
     {  // Explicit conversion through char conversion.
         *oiter = assign_char(alpha_type{}, c);
@@ -169,13 +185,21 @@ public:
  */
 /*!\brief     A convenience function template that constructs a seqan3::detail::output_iterator_conversion_adaptor for
  *            the container `c` with the type deduced from the type of the argument.
+<<<<<<< HEAD
  * \tparam    container_type Any type that satisfies the seqan3::sequence_concept.
+=======
+ * \tparam    container_type Any type that satisfies the seqan3::sequence_container_concept.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \param[in] c The instance to construct a push back iterator for.
  * \returns   seqan3::detail::output_iterator_conversion_adaptor over the output container.
  * \ingroup   io
  * \relates   output_iterator_conversion_adaptor
  */
+<<<<<<< HEAD
 template <sequence_concept container_type>
+=======
+template <sequence_container_concept container_type>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 //!\cond
     requires !std::is_const_v<container_type>
 //!\endcond

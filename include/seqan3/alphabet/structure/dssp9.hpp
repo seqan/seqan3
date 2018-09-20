@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -74,14 +74,7 @@ namespace seqan3
  *
  * \par Usage
  * The following code example creates a dssp9 vector, modifies it, and prints the result to stdout.
- * ```cpp
- *     // create vector
- *     std::vector<dssp9> vec{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
- *     // modify and print
- *     vec[1] = dssp9::C;
- *     for (dssp9 chr : vec)
- *         std::cout << chr;  // ECHHTG
- * ```
+ * \snippet test/snippet/alphabet/structure/dssp9.cpp general
  */
 
 struct dssp9
@@ -136,7 +129,8 @@ struct dssp9
      */
     constexpr dssp9 & assign_char(char_type const chr) noexcept
     {
-        _value = char_to_value[chr];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(chr)];
         return *this;
     }
 

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ namespace seqan3
  * \ingroup container
  * \tparam N The size of the constexpr string.
  * \implements seqan3::container_concept
- * \implements seqan3::random_access_range_concept
+ * \implements std::ranges::RandomAccessRange
  *
  * This class provides a string type that can be constructed, evaluated and operated on at compile time.
  * The stored string can be accessed as either a std::string or a c-style string through the respective member functions.
@@ -67,7 +67,7 @@ protected:
     using data_type = std::array<char, N + 1>;
 
     //!\brief Gives access to the merge constructor to constexpr_string with different size.
-    template <size_t _N>
+    template <size_t N2>
     friend class constexpr_string;
 
     //!\brief The internal string stored as array including \0-byte as last character.
@@ -105,6 +105,11 @@ public:
     using difference_type = typename data_type::difference_type;
     using size_type       = typename data_type::size_type;
     //!\}
+
+    //!\cond
+    // this signals to range-v3 that something is a container :|
+    using allocator_type    = void;
+    //!\endcond
 
     /*!\name Constructors, destructor and assignment
      * \{

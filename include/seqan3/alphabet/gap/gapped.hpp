@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -53,20 +53,12 @@ namespace seqan3
  *
  * The gapped alphabet represents the union of a given alphabet and the
  * seqan3::gap alphabet (e.g. the four letter DNA alphabet + a gap character).
- * Note that you cannot assign regular characters, but additional functions for
- * this are available.
  *
- * ```cpp
- * gapped<dna4> gapped_letter{};
- * gapped<dna4> converted_letter{dna4::C};
- * // doesn't work:
- * // gapped<dna4> my_letter{'A'};
+ * The gapped alphabet may be brace initialized from the static letter members of the underlying alphabet and the
+ * seqan3::gap alphabet. Note that you cannot assign the alphabet by using letters of type `char`, but you instead have
+ * to use the function assign_char() of the underlying alphabet or seqan3::gap::assign_char().
  *
- * gapped<dna4>{}.assign_char('C'); // <- this does!
- * gapped<dna4>{}.assign_char('-'); // gap character
- * gapped<dna4>{}.assign_char('K'); // unknown characters map to the default/unknown
- *                                  // character of the given alphabet type (i.e. A of dna4)
- * ```
+ * \snippet test/snippet/alphabet/gap/gapped.cpp general
  *
  * \sa For more details see union_composition, which is the base class and more general than the gapped alphabet.
  */
@@ -74,34 +66,6 @@ template <typename alphabet_t>
 //!\cond
     requires alphabet_concept<alphabet_t>
 //!\endcond
-struct gapped : public union_composition<alphabet_t, gap>
-{
-    using union_composition<alphabet_t, gap>::_value;
-    using union_composition<alphabet_t, gap>::value_size;
-
-    using union_composition<alphabet_t, gap>::union_composition;
-
-    using typename union_composition<alphabet_t, gap>::rank_type;
-    using typename union_composition<alphabet_t, gap>::char_type;
-
-    //!\copydoc union_composition::assign_char
-    constexpr gapped & assign_char(char_type const c) noexcept
-    {
-        // We can't just use `using union_composition<alphabet_t, gap>::assign_char;` and need to explicitly forward
-        // `assign_char`, because otherwise the return type would be `union_composition` and not `gapped`, which is
-        // required by the `alphabet_concept`.
-        union_composition<alphabet_t, gap>::assign_char(c);
-        return *this;
-    }
-
-    //!\copydoc union_composition::assign_rank
-    constexpr gapped & assign_rank(rank_type const i) /*noexcept*/
-    {
-        // TODO(marehr): mark function noexcept if assert (within union_composition) is replaced
-        // https://github.com/seqan/seqan3/issues/85
-        union_composition<alphabet_t, gap>::assign_rank(i);
-        return *this;
-    }
-};
+using gapped = union_composition<alphabet_t, gap>;
 
 } // namespace seqan3

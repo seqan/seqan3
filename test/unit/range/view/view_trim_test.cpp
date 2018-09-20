@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,53 +36,57 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/reverse.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
+<<<<<<< HEAD
 #include <seqan3/range/view/concept.hpp>
+=======
+#include <seqan3/range/concept.hpp>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/trim.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 using namespace seqan3::view;
 
 TEST(view_trim, standalone)
 {
-    std::vector<illumina18> vec{ illumina18{40}, illumina18{40}, illumina18{30}, illumina18{20}, illumina18{10}};
-    std::vector<illumina18> cmp1{illumina18{40}, illumina18{40}, illumina18{30}, illumina18{20}};
-    std::vector<illumina18> cmp2{illumina18{40}, illumina18{40}};
+    std::vector<phred42> vec{ phred42{40}, phred42{40}, phred42{30}, phred42{20}, phred42{10}};
+    std::vector<phred42> cmp1{phred42{40}, phred42{40}, phred42{30}, phred42{20}};
+    std::vector<phred42> cmp2{phred42{40}, phred42{40}};
 
     // trim by phred_value
     auto v1 = vec | view::trim(20u);                        // == ['I','I','?','5']
-    EXPECT_EQ(std::vector<illumina18>(v1), cmp1);
+    EXPECT_EQ(std::vector<phred42>(v1), cmp1);
 
     // trim by quality character
-    auto v2 = vec | view::trim(illumina18{40});             // == ['I','I']
-    EXPECT_EQ(std::vector<illumina18>(v2), cmp2);
+    auto v2 = vec | view::trim(phred42{40});             // == ['I','I']
+    EXPECT_EQ(std::vector<phred42>(v2), cmp2);
 
     // function syntax
     auto v3 = view::trim(vec, 20u);                         // == ['I','I','?','5']
-    EXPECT_EQ(std::vector<illumina18>(v3), cmp1);
+    EXPECT_EQ(std::vector<phred42>(v3), cmp1);
 
     // combinability
     std::string v4 = view::trim(vec, 20u) | view::to_char;  // == "II?5"
     EXPECT_EQ("II?5", v4);
 }
 
-TEST(view_trim, quality_composition)
+TEST(view_trim, qualified)
 {
-    std::vector<dna5q> vec{{dna5::A, illumina18{40}}, {dna5::G, illumina18{40}}, {dna5::G, illumina18{30}},
-                           {dna5::A, illumina18{20}}, {dna5::T, illumina18{10}}};
-    std::vector<dna5q> cmp1{{dna5::A, illumina18{40}}, {dna5::G, illumina18{40}}, {dna5::G, illumina18{30}},
-                            {dna5::A, illumina18{20}}};
-    std::vector<dna5q> cmp2{{dna5::A, illumina18{40}}, {dna5::G, illumina18{40}}};
+    std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
+                           {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
+    std::vector<dna5q> cmp1{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
+                            {dna5::A, phred42{20}}};
+    std::vector<dna5q> cmp2{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}};
 
     // trim by phred_value
     auto v1 = vec | view::trim(20u);
     EXPECT_EQ(std::vector<dna5q>(v1), cmp1);
 
     // trim by quality character
-    auto v2 = vec | view::trim(dna5q{dna5::C, 40});
+    auto v2 = vec | view::trim(dna5q{dna5::C, phred42{40}});
     EXPECT_EQ(std::vector<dna5q>(v2), cmp2);
 
     // function syntax
@@ -96,6 +100,7 @@ TEST(view_trim, quality_composition)
 
 TEST(view_trim, concepts)
 {
+<<<<<<< HEAD
     std::vector<dna5q> vec{{dna5::A, 40}, {dna5::G, 40}, {dna5::G, 30}, {dna5::A, 20}, {dna5::T, 10}};
     EXPECT_TRUE(input_range_concept<decltype(vec)>);
     EXPECT_TRUE(forward_range_concept<decltype(vec)>);
@@ -117,4 +122,21 @@ TEST(view_trim, concepts)
     EXPECT_FALSE(bounded_range_concept<decltype(v1)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_TRUE((output_range_concept<decltype(v1), dna5q>));
+=======
+    std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}}, {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
+    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5q>));
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
+
+    auto v1 = vec | view::trim(20u);
+    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), dna5q>));
+    EXPECT_TRUE(!std::ranges::SizedRange<decltype(v1)>);
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

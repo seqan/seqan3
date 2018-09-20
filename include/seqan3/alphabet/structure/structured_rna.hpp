@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@
 #pragma once
 
 #include <iostream>
+#include <optional>
 #include <string>
 #include <utility>
 
@@ -52,6 +53,7 @@ namespace seqan3
 
 /*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with an RNA structure alphabet.
  * \ingroup structure
+ * \implements seqan3::rna_structure_concept
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
  * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::rna_structure_concept.
  *
@@ -64,36 +66,23 @@ namespace seqan3
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
- * ~~~~~~~~~~~~~~~{.cpp}
+ * \snippet test/snippet/alphabet/structure/structured_rna.cpp general
  *
- * structured_rna<rna4, dot_bracket3> l{rna4::G, dot_bracket3::PAIR_OPEN};
- * std::cout << int(to_rank(l)) << ' '
- *           << int(to_rank(get<0>(l))) << ' '
- *           << int(to_rank(get<1>(l))) << '\n';
- * // 6 2 1
- *
- * std::cout << to_char(l) << ' '
- *           << to_char(get<0>(l)) << ' '
- *           << to_char(get<1>(l)) << '\n';
- * // G G (
- *
- * // modify via structured bindings and references:
- * auto & [ seq_l, structure_l ] = l;
- * seq_l = rna4::U;
- * std::cout << to_char(l) << '\n';
- * // U
- *
- * ~~~~~~~~~~~~~~~
- *
- * This seqan3::cartesian_composition itself fulfills both seqan3::nucleotide_concept and seqan3::rna_structure_concept.
+ * This seqan3::cartesian_composition itself models both seqan3::nucleotide_concept and seqan3::rna_structure_concept.
  */
-
 template <typename sequence_alphabet_t, typename structure_alphabet_t>
+//!\cond
     requires nucleotide_concept<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t>
-struct structured_rna :
+//!\endcond
+class structured_rna :
     public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
 {
+private:
+    //!\brief The base type.
+    using base_type = cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
+                                            sequence_alphabet_t, structure_alphabet_t>;
+public:
     //!\brief First template parameter as member type.
     using sequence_alphabet_type = sequence_alphabet_t;
     //!\brief Second template parameter as member type.
@@ -102,23 +91,32 @@ struct structured_rna :
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
 
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    structured_rna() = default;
+    constexpr structured_rna(structured_rna const &) = default;
+    constexpr structured_rna(structured_rna &&) = default;
+    constexpr structured_rna & operator =(structured_rna const &) = default;
+    constexpr structured_rna & operator =(structured_rna &&) = default;
+    ~structured_rna() = default;
+
+    using base_type::base_type; // Inherit non-default constructors
+
+    using base_type::operator=; // Inherit non-default assignment operators
+
+    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(indirect_component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(component_type const alph) {} ))
+    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(indirect_component_type const alph) {} ))
+    //!\}
+
     //!\name Write functions
     //!\{
-
-    //!\brief Directly assign the sequence character.
-    constexpr structured_rna & operator=(sequence_alphabet_type const l) noexcept
-    {
-        get<0>(*this) = l;
-        return *this;
-    }
-
-    //!\brief Directly assign the structure character.
-    constexpr structured_rna & operator=(structure_alphabet_type const l) noexcept
-    {
-        get<1>(*this) = l;
-        return *this;
-    }
-
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
     constexpr structured_rna & assign_char(char_type const c)
     {
@@ -180,7 +178,23 @@ struct structured_rna :
     };
 
     //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions.
-    static constexpr bool pseudoknot_support{structure_alphabet_t::pseudoknot_support};
+    static constexpr uint8_t max_pseudoknot_depth{structure_alphabet_t::max_pseudoknot_depth};
+
+    /*!\brief Get an identifier for a pseudoknotted interaction.
+     * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
+     * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
+     */
+    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
+    {
+        if constexpr (structure_alphabet_type::max_pseudoknot_depth > 1)
+        {
+            return get<1>(*this).pseudoknot_id();
+        }
+        else
+        {
+            return (is_pair_open() || is_pair_close()) ? std::optional<uint8_t>(0) : std::nullopt;
+        }
+    };
     //!\}
 };
 

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@
 #include <range/v3/range_traits.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
@@ -60,14 +61,19 @@ class container_of_container : public ::testing::Test
 {};
 
 using container_of_container_types = ::testing::Types<std::vector<std::vector<dna4>>,
-                                                      concatenated_sequences<std::vector<dna4>>>;
+                                                      concatenated_sequences<std::vector<dna4>>,
+                                                      concatenated_sequences<bitcompressed_vector<dna4>>>;
 
 TYPED_TEST_CASE(container_of_container, container_of_container_types);
+
+using In = iterator_t<seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4> > >;
+
+static_assert(std::Readable<In>);
 
 TYPED_TEST(container_of_container, concepts)
 {
     EXPECT_TRUE(container_concept<TypeParam>);
-    EXPECT_TRUE(container_concept<ranges::range_value_type_t<TypeParam>>);
+    EXPECT_TRUE(container_concept<value_type_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)
@@ -357,13 +363,31 @@ TYPED_TEST(container_of_container, swap)
     EXPECT_TRUE((t1 == TypeParam{}));
 }
 
+TYPED_TEST(container_of_container, streamable)
+{
+    TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+
+    std::ostringstream o;
+    debug_stream.set_underlying_stream(o);
+
+    debug_stream << TypeParam{};
+
+    o.flush();
+    EXPECT_EQ(o.str(), "[]");
+
+    debug_stream << ", " << t1;
+
+    o.flush();
+    EXPECT_EQ(o.str(), "[], [ACGT,ACGT,GAGGA]");
+}
+
 #if SEQAN3_WITH_CEREAL
 template <typename in_archive_t, typename out_archive_t, typename TypeParam>
 void do_serialisation(TypeParam const l)
 {
     // This makes sure the file is also deleted if an exception is thrown in one of the tests below
     // Generate unique file name.
-    test::tmp_file_name filename{"container_cereal_test"};
+    test::tmp_filename filename{"container_cereal_test"};
     {
         std::ofstream os{filename.get_path(), std::ios::binary};
         out_archive_t oarchive{os};
@@ -381,11 +405,14 @@ void do_serialisation(TypeParam const l)
 
 TYPED_TEST(container_of_container, serialisation)
 {
-    TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
+    if constexpr (!std::Same<TypeParam, concatenated_sequences<bitcompressed_vector<dna4>>>) // not serialisable, yet
+    {
+        TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
-    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (t1);
-    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(t1);
-    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (t1);
-    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (t1);
+        do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (t1);
+        do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(t1);
+        do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (t1);
+        do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (t1);
+    }
 }
 #endif // SEQAN3_WITH_CEREAL

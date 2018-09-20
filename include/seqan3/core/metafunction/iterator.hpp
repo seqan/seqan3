@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/std/concept/iterator.hpp>
+#include <seqan3/std/iterator>
 
 namespace seqan3
 {
@@ -59,9 +59,9 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `value_type` of another type [specialisation for input iterators].
- * \tparam it_t The type you wish to query; must satisfy seqan3::input_iterator_concept.
+ * \tparam it_t The type you wish to query; must satisfy std::input_Iterator.
  */
-template <input_iterator_concept it_t>
+template <std::InputIterator it_t>
 struct value_type<it_t>
 {
     //!\brief Return the member type as return type.
@@ -75,9 +75,9 @@ struct value_type<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `reference` of another type [specialisation for input iterators].
- * \tparam it_t The type you wish to query; must satisfy seqan3::input_iterator_concept.
+ * \tparam it_t The type you wish to query; must satisfy std::input_Iterator.
  */
-template <input_iterator_concept it_t>
+template <std::InputIterator it_t>
 struct reference<it_t>
 {
     //!\brief Return the member type as return type.
@@ -91,9 +91,9 @@ struct reference<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `rvalue_reference` of another type [specialisation for input iterators].
- * \tparam it_t The type you wish to query; must satisfy seqan3::input_iterator_concept.
+ * \tparam it_t The type you wish to query; must satisfy std::input_Iterator.
  */
-template <input_iterator_concept it_t>
+template <std::InputIterator it_t>
 struct rvalue_reference<it_t>
 {
     //!\brief Return the member type as return type.
@@ -113,9 +113,9 @@ struct rvalue_reference<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `difference_type` of another type [specialisation for iterators].
- * \tparam it_t The type you wish to query; must satisfy seqan3::weakly_incrementable_concept.
+ * \tparam it_t The type you wish to query; must satisfy std::WeaklyIncrementable.
  */
-template <weakly_incrementable_concept it_t>
+template <std::WeaklyIncrementable it_t>
 struct difference_type<it_t>
 {
     //!\brief Return the member type as return type.
@@ -129,9 +129,9 @@ struct difference_type<it_t>
 // ----------------------------------------------------------------------------
 
 /*!\brief Type metafunction that returns the `size_type` of another type [specialisation for iterators].
- * \tparam it_t The type you wish to query; must satisfy seqan3::weakly_incrementable_concept.
+ * \tparam it_t The type you wish to query; must satisfy std::WeaklyIncrementable.
  */
-template <weakly_incrementable_concept it_t>
+template <std::WeaklyIncrementable it_t>
 struct size_type<it_t>
 {
     //!\brief Return the member type as return type.

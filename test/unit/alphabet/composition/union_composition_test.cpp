@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,8 +38,7 @@
 
 #include <seqan3/alphabet/composition/union_composition.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 
 using namespace seqan3;
 
@@ -49,6 +48,8 @@ using namespace seqan3;
 
 TEST(union_composition_test, initialise_from_component_alphabet)
 {
+    dna5 l(rna5::A);
+
     using alphabet_t = union_composition<dna4, dna5, gap>;
     using variant_t = std::variant<dna4, dna5, gap>;
 
@@ -94,18 +95,37 @@ TEST(union_composition_test, initialise_from_component_alphabet)
     EXPECT_EQ(letter9.to_rank(), 9);
 }
 
-TEST(union_composition_test, initialise_from_same_component_alphabet)
+TEST(union_composition_test, initialise_from_component_alphabet_subtype)
 {
-    using alphabet_t = union_composition<dna4, dna4>;
+    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using variant_t = std::variant<dna4, dna5, gap>;
 
-    constexpr alphabet_t letter0{std::in_place_index_t<0>{}, dna4::A};
-    constexpr alphabet_t letter1{std::in_place_index_t<0>{}, dna4::C};
-    constexpr alphabet_t letter2{std::in_place_index_t<0>{}, dna4::G};
-    constexpr alphabet_t letter3{std::in_place_index_t<0>{}, dna4::T};
-    constexpr alphabet_t letter4{std::in_place_index_t<1>{}, dna4::A};
-    constexpr alphabet_t letter5{std::in_place_index_t<1>{}, dna4::C};
-    constexpr alphabet_t letter6{std::in_place_index_t<1>{}, dna4::G};
-    constexpr alphabet_t letter7{std::in_place_index_t<1>{}, dna4::T};
+    variant_t variant0{rna4::A};
+    alphabet_t letter0{rna4::A};
+
+    variant_t variant1 = rna4::C;
+    alphabet_t letter1 = rna4::C;
+
+    variant_t variant2 = {rna4::G};
+    alphabet_t letter2 = {rna4::G};
+
+    variant_t variant3 = static_cast<variant_t>(rna4::T);
+    alphabet_t letter3 = static_cast<alphabet_t>(rna4::T);
+
+    variant_t variant4 = {static_cast<variant_t>(rna5::A)};
+    alphabet_t letter4 = {static_cast<alphabet_t>(rna5::A)};
+
+    variant_t variant5{rna5::C};
+    alphabet_t letter5{rna5::C};
+
+    variant_t variant6 = rna5::G;
+    alphabet_t letter6 = rna5::G;
+
+    variant_t variant7 = {rna5::T};
+    alphabet_t letter7 = {rna5::T};
+
+    variant_t variant8 = static_cast<variant_t>(rna5::N);
+    alphabet_t letter8 = static_cast<alphabet_t>(rna5::N);
 
     EXPECT_EQ(letter0.to_rank(), 0);
     EXPECT_EQ(letter1.to_rank(), 1);
@@ -115,6 +135,7 @@ TEST(union_composition_test, initialise_from_same_component_alphabet)
     EXPECT_EQ(letter5.to_rank(), 5);
     EXPECT_EQ(letter6.to_rank(), 6);
     EXPECT_EQ(letter7.to_rank(), 7);
+    EXPECT_EQ(letter8.to_rank(), 8);
 }
 
 TEST(union_composition_test, assign_from_component_alphabet)
@@ -162,36 +183,148 @@ TEST(union_composition_test, assign_from_component_alphabet)
     EXPECT_EQ(letter.to_rank(), 9);
 }
 
+TEST(union_composition_test, assign_from_component_alphabet_subtype)
+{
+    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using variant_t = std::variant<dna4, dna5, gap>;
+    alphabet_t letter{};
+    variant_t variant{};
+
+    variant = rna4::A;
+    letter = rna4::A;
+    EXPECT_EQ(variant.index(), 0u);
+    EXPECT_EQ(letter.to_rank(), 0);
+
+    variant = {rna4::C};
+    letter = {rna4::C};
+    EXPECT_EQ(variant.index(), 0u);
+    EXPECT_EQ(letter.to_rank(), 1);
+
+    variant = static_cast<variant_t>(rna4::G);
+    letter = static_cast<alphabet_t>(rna4::G);
+    EXPECT_EQ(variant.index(), 0u);
+    EXPECT_EQ(letter.to_rank(), 2);
+
+    variant = {static_cast<variant_t>(rna4::T)};
+    letter = {static_cast<alphabet_t>(rna4::T)};
+    EXPECT_EQ(letter.to_rank(), 3);
+
+    letter = rna5::A;
+    EXPECT_EQ(letter.to_rank(), 4);
+
+    letter = rna5::C;
+    EXPECT_EQ(letter.to_rank(), 5);
+
+    letter = rna5::G;
+    EXPECT_EQ(letter.to_rank(), 6);
+
+    letter = rna5::T;
+    EXPECT_EQ(letter.to_rank(), 7);
+
+    letter = rna5::N;
+    EXPECT_EQ(letter.to_rank(), 8);
+}
+
+TEST(union_composition_test, compare_to_component_alphabet)
+{
+    using alphabet_t = union_composition<dna4, dna5>;
+
+    constexpr alphabet_t letter0{dna4::G};
+
+    EXPECT_EQ(letter0, dna4::G);
+    EXPECT_NE(letter0, dna4::A);
+    EXPECT_NE(letter0, dna5::A);
+
+    EXPECT_EQ(dna4::G, letter0);
+    EXPECT_NE(dna4::A, letter0);
+    EXPECT_NE(dna5::A, letter0);
+}
+
+TEST(union_composition_test, compare_to_component_alphabet_subtype)
+{
+    using alphabet_t = union_composition<dna4, dna5>;
+
+    constexpr alphabet_t letter0{dna4::G};
+
+    EXPECT_EQ(letter0, rna4::G);
+    EXPECT_NE(letter0, rna4::A);
+    EXPECT_NE(letter0, rna5::A);
+
+    EXPECT_EQ(rna4::G, letter0);
+    EXPECT_NE(rna4::A, letter0);
+    EXPECT_NE(rna5::A, letter0);
+}
+
 TEST(union_composition_test, fulfills_concepts)
 {
-    EXPECT_TRUE((std::is_pod_v<union_composition<dna5, dna5>>));
-    EXPECT_TRUE((std::is_trivial_v<union_composition<dna5, dna5>>));
-    EXPECT_TRUE((std::is_trivially_copyable_v<union_composition<dna5, dna5>>));
-    EXPECT_TRUE((std::is_standard_layout_v<union_composition<dna5, dna5>>));
+    EXPECT_TRUE((alphabet_concept<union_composition<dna5, gap>>));
 }
 
 TEST(union_composition_test, rank_type)
 {
     using alphabet1_t = union_composition<dna4, dna5, gap>;
     using alphabet2_t = union_composition<gap, dna5, dna4>;
-    using alphabet3_t = union_composition<gap>;
+    using alphabet3_t = union_composition<char, gap>;
 
     EXPECT_TRUE((std::is_same_v<alphabet1_t::rank_type, uint8_t>));
     EXPECT_TRUE((std::is_same_v<alphabet2_t::rank_type, uint8_t>));
-    EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, bool>));
+    EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, uint16_t>));
 }
 
 TEST(union_composition_test, value_size)
 {
     using alphabet1_t = union_composition<dna4, dna5, gap>;
     using alphabet2_t = union_composition<gap, dna5, dna4>;
-    using alphabet3_t = union_composition<gap>;
+    using alphabet3_t = union_composition<char, gap>;
 
     EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::value_size), const uint8_t>));
     EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::value_size), const uint8_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::value_size), const bool>));
+    EXPECT_TRUE((std::is_same_v<decltype(alphabet3_t::value_size), const uint16_t>));
 
     EXPECT_EQ(alphabet1_t::value_size, 10);
     EXPECT_EQ(alphabet2_t::value_size, 10);
-    EXPECT_EQ(alphabet3_t::value_size, 1);
+    EXPECT_EQ(alphabet3_t::value_size, 257);
+}
+
+TEST(union_composition_test, convert_by_index)
+{
+    union_composition<dna4, dna5, gap> u;
+    u = dna5::C;
+
+    EXPECT_FALSE(u.is_alternative<0>());
+    EXPECT_TRUE(u.is_alternative<1>());
+    EXPECT_FALSE(u.is_alternative<2>());
+
+    EXPECT_THROW(u.convert_to<0>(), std::bad_variant_access);
+    EXPECT_NO_THROW(u.convert_to<1>());
+    EXPECT_THROW(u.convert_to<2>(), std::bad_variant_access);
+
+    dna5 out = u.convert_to<1>();
+    EXPECT_EQ(out, dna5::C);
+
+    u = gap::GAP;
+
+    gap g = u.convert_unsafely_to<2>();
+    EXPECT_EQ(g, gap::GAP);
+}
+
+TEST(union_composition_test, convert_by_type)
+{
+    union_composition<dna4, dna5, gap> u;
+    u = dna5::C;
+
+    EXPECT_FALSE(u.is_alternative<dna4>());
+    EXPECT_TRUE(u.is_alternative<dna5>());
+    EXPECT_FALSE(u.is_alternative<gap>());
+
+    EXPECT_THROW(u.convert_to<dna4>(), std::bad_variant_access);
+    EXPECT_NO_THROW(u.convert_to<dna5>());
+    EXPECT_THROW(u.convert_to<gap>(), std::bad_variant_access);
+
+    dna5 out = u.convert_to<dna5>();
+    EXPECT_EQ(out, dna5::C);
+
+    u = gap::GAP;
+    gap g = u.convert_unsafely_to<gap>();
+    EXPECT_EQ(g, gap::GAP);
 }

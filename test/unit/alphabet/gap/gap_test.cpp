@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -64,13 +64,6 @@ TEST(gap_test, relations)
     EXPECT_EQ(gap{}, gap{});
     EXPECT_LE(gap{}, gap{});
     EXPECT_GE(gap{}, gap{});
-}
-
-TEST(gap_test, stream_operator)
-{
-    std::stringstream ss;
-    ss << gap{} << gap{} << gap{};
-    EXPECT_EQ(ss.str(), "---");
 }
 
 TEST(gap_test, assign_char)

@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,15 @@
 
 #pragma once
 
+<<<<<<< HEAD
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/std/concept/core_language.hpp>
+=======
+#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/view/transform.hpp>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 namespace seqan3::view
 {
@@ -59,6 +65,7 @@ namespace seqan3::view
  *
  * ### View properties
  *
+<<<<<<< HEAD
  * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
  * |-------------------------------------|:-------------------------------------:|:-------------------------------:|
  * | seqan3::input_range_concept         | *required*                            | *preserved*                     |
@@ -73,35 +80,36 @@ namespace seqan3::view
  * | seqan3::const_iterable_concept      |                                       | *preserved*                     |
  * |                                     |                                       |                                 |
  * | seqan3::reference_t                 | seqan3::convertible_to_concept<out_t> | `out_t`                         |
+=======
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |---------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                     |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                     |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                     |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                     |
+ * |                                 |                                       |                                 |
+ * | std::ranges::View               |                                       | *guaranteed*                    |
+ * | std::ranges::SizedRange         |                                       | *preserved*                     |
+ * | std::ranges::CommonRange        |                                       | *preserved*                     |
+ * | std::ranges::OutputRange        |                                       | *lost*                          |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                     |
+ * |                                 |                                       |                                 |
+ * | seqan3::reference_t             | seqan3::convertible_to_concept<out_t> | `out_t`                         |
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *
  * Convert from `int` to `bool`:
- * ```cpp
- *   // convert from int to bool
- *   std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
- *
- *   // pipe notation
- *   auto v = vec | view::convert<bool>; // == [1, 1, 0, 1, 0, 0, 1, 1, 1];
- *
- *   // function notation and immediate conversion to vector again
- *   std::vector<bool> v2(view::convert<bool>(vec));
- *
- *   // combinability
- *   auto v3 = vec | view::convert<bool> | ranges::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
- * ```
+ * \snippet test/snippet/range/view/convert.cpp int_to_bool
  *
  * Convert from seqan3::dna15 to seqan3::dna5:
- * ```cpp
- *   dna15_vector vec2{"ACYGTN"_dna15};
- *   auto v4 = vec2 | view::convert<dna5>; // == "ACNGTN"_dna5
- * ```
+ * \snippet test/snippet/range/view/convert.cpp 15_to_5
  * \hideinitializer
  */
 template <typename out_t>
-auto const convert = ranges::view::transform([] (auto const & in) -> out_t
+auto const convert = view::transform([] (auto const & in) -> out_t
 {
     if constexpr (implicitly_convertible_to_concept<std::remove_reference_t<decltype(in)>, out_t>)
         return in;

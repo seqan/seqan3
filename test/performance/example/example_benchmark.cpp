@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ static void memcpy_benchmark(benchmark::State& state) {
         memcpy(dst, src, size);
 
     int64_t bytes = int64_t(state.iterations()) * int64_t(size);
-    state.SetBytesProcessed(bytes);
+    state.counters["bytes_processed"] = bytes;
     delete[] src;
     delete[] dst;
 }
@@ -68,7 +68,7 @@ static void copy_benchmark(benchmark::State& state) {
         std::copy_n(src, size, dst);
 
     int64_t bytes = int64_t(state.iterations()) * int64_t(size);
-    state.SetBytesProcessed(bytes);
+    state.counters["bytes_processed"] = bytes;
     delete[] src;
     delete[] dst;
 }

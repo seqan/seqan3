@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -157,42 +157,26 @@ TYPED_TEST(structure, to_char)
 // concepts
 // ------------------------------------------------------------------
 
-TYPED_TEST(structure, concept)
+TYPED_TEST(structure, concept_check)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
 }
 
 TYPED_TEST(structure, rna_structure_concept)
 {
-    EXPECT_TRUE(rna_structure_concept<dot_bracket3>);
-    EXPECT_TRUE(rna_structure_concept<wuss51>);
+    if constexpr (!std::is_same_v<TypeParam, dssp9>)
+    {
+        EXPECT_TRUE(rna_structure_concept<TypeParam>);
+        EXPECT_NE(max_pseudoknot_depth_v<TypeParam>, 0);
+    }
+    else
+    {
+        EXPECT_FALSE(rna_structure_concept<TypeParam>);
+    }
+
+    // additional wuss test
     EXPECT_TRUE(rna_structure_concept<wuss<>>);  // also wuss51
     EXPECT_TRUE(rna_structure_concept<wuss<67>>);
-}
-
-// ------------------------------------------------------------------
-// stream operator
-// ------------------------------------------------------------------
-
-TEST(structure_stream_operator, dot_bracket3)
-{
-    std::stringstream ss;
-    ss << dot_bracket3::PAIR_OPEN << dot_bracket3::PAIR_CLOSE << dot_bracket3::UNPAIRED;
-    EXPECT_EQ(ss.str(), "().");
-}
-
-TEST(structure_stream_operator, wuss)
-{
-    std::stringstream ss;
-    ss << wuss51::PAIR_OPEN << wuss51::PAIR_CLOSE << wuss51::UNPAIRED;
-    EXPECT_EQ(ss.str(), "<>.");
-}
-
-TEST(structure_stream_operator, dssp9)
-{
-    std::stringstream ss;
-    ss << dssp9::E << dssp9::H << dssp9::C;
-    EXPECT_EQ(ss.str(), "EHC");
 }
 
 // ------------------------------------------------------------------
@@ -237,7 +221,7 @@ TEST(dssp9_literals, vector)
 
 TEST(rna_structure, dot_bracket3)
 {
-    EXPECT_FALSE(dot_bracket3::pseudoknot_support);
+    EXPECT_EQ(dot_bracket3::max_pseudoknot_depth, 1);
     EXPECT_TRUE(dot_bracket3::UNPAIRED.is_unpaired());
     EXPECT_TRUE(dot_bracket3::PAIR_OPEN.is_pair_open());
     EXPECT_TRUE(dot_bracket3::PAIR_CLOSE.is_pair_close());
@@ -246,25 +230,30 @@ TEST(rna_structure, dot_bracket3)
 
 TEST(rna_structure, wuss)
 {
-    EXPECT_TRUE(wuss51::pseudoknot_support);
+    EXPECT_EQ(wuss51::max_pseudoknot_depth, 22);
     std::vector<wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss51;
     for (unsigned idx = 0; idx <= 6; ++idx)
     {
         EXPECT_TRUE(vec[idx].is_unpaired());
         EXPECT_FALSE(vec[idx].is_pair_open());
         EXPECT_FALSE(vec[idx].is_pair_close());
+        EXPECT_FALSE(vec[idx].pseudoknot_id());
     }
     for (unsigned idx = 7; idx <= 21; idx+=2)
     {
         EXPECT_TRUE(vec[idx].is_pair_open());
         EXPECT_FALSE(vec[idx].is_unpaired());
         EXPECT_FALSE(vec[idx].is_pair_close());
+        EXPECT_TRUE(vec[idx].pseudoknot_id());
+        EXPECT_EQ(vec[idx].pseudoknot_id(), std::optional<uint8_t>{(idx - 7) / 2});
     }
     for (unsigned idx = 8; idx <= 22; idx+=2)
     {
         EXPECT_TRUE(vec[idx].is_pair_close());
         EXPECT_FALSE(vec[idx].is_unpaired());
         EXPECT_FALSE(vec[idx].is_pair_open());
+        EXPECT_TRUE(vec[idx].pseudoknot_id());
+        EXPECT_EQ(vec[idx].pseudoknot_id(), std::optional<uint8_t>{(idx - 8) / 2});
     }
 }
 
@@ -538,18 +527,6 @@ TEST(structured_rna, assign_char)
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
 }
 
-// alphabet_concept: stream
-TEST(structured_rna, outstream)
-{
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
-    std::stringstream s;
-    s << t0;
-    t0 = rna4::A;
-    s << t0;
-
-    EXPECT_EQ(s.str(), "CA");
-}
-
 // nucleotide concept: complement
 TEST(structured_rna, complement)
 {
@@ -577,6 +554,51 @@ TEST(structured_rna, complement)
     // complement combinations
     EXPECT_EQ(complement(complement(tU)), tU);
     EXPECT_EQ(complement(tU), complement(tU));
+}
+
+// rna_structure concept
+TEST(structured_rna, rna_structure_concept)
+{
+    using type = structured_rna<rna5, wuss51>;
+    type t0{rna5::A, wuss51::PAIR_OPEN2};
+    type t1{rna5::N, wuss51::UNPAIRED};
+    type t2{rna5::U, wuss51::PAIR_CLOSE2};
+
+    EXPECT_TRUE (t0.is_pair_open());
+    EXPECT_FALSE(t1.is_pair_open());
+    EXPECT_FALSE(t2.is_pair_open());
+    EXPECT_FALSE(t0.is_unpaired());
+    EXPECT_TRUE (t1.is_unpaired());
+    EXPECT_FALSE(t2.is_unpaired());
+    EXPECT_FALSE(t0.is_pair_close());
+    EXPECT_FALSE(t1.is_pair_close());
+    EXPECT_TRUE (t2.is_pair_close());
+
+    EXPECT_TRUE (t0.pseudoknot_id());
+    EXPECT_FALSE(t1.pseudoknot_id());
+    EXPECT_TRUE (t2.pseudoknot_id());
+    EXPECT_EQ   (t0.pseudoknot_id(), std::optional<uint8_t>{2});
+    EXPECT_THROW(t1.pseudoknot_id().value(), std::bad_optional_access);
+    EXPECT_EQ   (t2.pseudoknot_id().value(), *t0.pseudoknot_id());
+
+    EXPECT_EQ((structured_rna<rna5, wuss51>::max_pseudoknot_depth), 22);
+    EXPECT_EQ((structured_rna<rna4, dot_bracket3>::max_pseudoknot_depth), 1);
+}
+
+TEST(structured_rna, pseudoknot_id_without_pseudoknot_support)
+{
+    using type = structured_rna<rna5, dot_bracket3>;
+    EXPECT_EQ(type::max_pseudoknot_depth, 1); // format does not support pseudoknots
+    type t0{rna5::A, dot_bracket3::PAIR_OPEN};
+    type t1{rna5::N, dot_bracket3::UNPAIRED};
+    type t2{rna5::U, dot_bracket3::PAIR_CLOSE};
+
+    EXPECT_TRUE (t0.pseudoknot_id());
+    EXPECT_FALSE(t1.pseudoknot_id());
+    EXPECT_TRUE (t2.pseudoknot_id());
+    EXPECT_EQ   (t0.pseudoknot_id(), std::optional<uint8_t>{0});
+    EXPECT_THROW(t1.pseudoknot_id().value(), std::bad_optional_access);
+    EXPECT_EQ   (t2.pseudoknot_id().value(), *t0.pseudoknot_id());
 }
 
 // ------------------------------------------------------------------
@@ -847,16 +869,4 @@ TEST(structured_aa, assign_char)
     assign_char(t0, 'X');
     EXPECT_EQ(to_char(t0), 'X');
     EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
-}
-
-// alphabet_concept: stream
-TEST(structured_aa, outstream)
-{
-    structured_aa<aa27, dssp9> t0{aa27::C, dssp9::T};
-    std::stringstream s;
-    s << t0;
-    t0 = aa27::A;
-    s << t0;
-
-    EXPECT_EQ(s.str(), "CA");
 }

@@ -1,0 +1,116 @@
+import hudson.triggers.TimerTrigger;
+
+// Checks whether the current build was triggered by cron job.
+// We need this to check, whether we want to trigger a deployment
+// step for a stable nightly build.
+def isTriggeredByCron()
+{
+    for (cause in currentBuild.rawBuild.getCauses())
+    {
+        if (cause instanceof TimerTrigger.TimerTriggerCause)
+            return "cron"
+
+        return "other"
+    }
+}
+
+// Start the pipeline.
+pipeline {
+    agent any
+    triggers {  // Additional trigger to build nightly only on master.
+        cron(BRANCH_NAME == 'master' ? "H 1 * * *" : "")
+    }
+    environment {  // Prepare environment for build.
+        BUILD_TRIGGER = "${isTriggeredByCron()}"
+    }
+    stages {
+        stage ('Configure') { // TODO(rrahn): Check if really needed.
+            steps {
+                script {
+                    echo "The pushed branch: ${BRANCH_NAME}"
+                }
+            }
+        }
+        stage ('Test') { // Perform CI tests.
+            parallel {
+                stage ('unit') {
+                    agent none
+                    steps {
+                        build job: 'pipeline_unit_tests_unix', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+                    }
+                }
+                stage ('doc') {
+                    agent none
+                    steps {
+                        build job: 'pipeline_doc_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+                    }
+                }
+                stage ('header') {
+                    agent none
+                    steps {
+                        build job: 'pipeline_header_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+                    }
+                }
+                stage ('memory') {
+                    steps {
+                        echo "TODO: Perform memory tests."
+                    }
+                }
+                stage ('coverage') {
+                    steps {
+                        echo "TODO: Perform coverage tests."
+                    }
+                }
+                stage ('performance') {
+                    agent none
+                    steps {
+                        build job: 'pipeline_performance_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+                    }
+                }
+            }
+        }
+        stage ('Deploy') { // conditional deploy step.
+            agent none
+            when { // only execute if nightly build on 'master' branch or if seqan was tagged with a new release.
+                beforeAgent true
+                anyOf {
+                    allOf {
+                        branch 'master'
+                        environment name: 'BUILD_TRIGGER', value: 'cron'
+                    }
+                    // tag "seqan-*"  // TODO: Currently breaks the pipeline: see https://issues.jenkins-ci.org/browse/JENKINS-52554
+                }
+            }
+            stages {
+                stage ('package nightly stable') {
+                    when {
+                        beforeAgent true
+                        branch 'master'
+                        environment name: 'BUILD_TRIGGER', value: 'cron'
+                    }
+                    steps {
+                        script {
+                            build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'ON')], quietPeriod: 0
+                        }
+                    }
+                }
+                // stage ('package release') {
+                    // when {
+                        // beforeAgent true
+                        // tag "seqan-*"
+                    // }
+                    // steps {
+                        // script {
+                            // build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'OFF')], quietPeriod: 0
+                        // }
+                    // }
+                // }
+                stage ('acceptance test') {
+                    steps {
+                        echo "TODO: perform acceptance test"
+                    }
+                }
+            }
+        }
+    }
+}

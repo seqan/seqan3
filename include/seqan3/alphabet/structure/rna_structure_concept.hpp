@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@
 
 #pragma once
 
+#include <optional>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/concept.hpp>
 
@@ -48,7 +49,6 @@
 
 namespace seqan3
 {
-
 /*!\interface seqan3::rna_structure_concept
  * \brief A concept that indicates whether an alphabet represents RNA structure.
  * \implements alphabet_concept
@@ -76,12 +76,22 @@ namespace seqan3
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents an unpaired site, False otherwise.
  */
-/*!\struct pseudoknot_support<structure_type>
- * \brief The pseudoknot ability of the structure_type.
+/*!\fn std::optional<uint8_t> pseudoknot_id(structure_type const alph)
+ * \brief Get an identifier for a pseudoknotted interaction.
+ * \relates seqan3::rna_structure_concept
+ * \param alph The alphabet letter which is checked for the pseudoknot id.
+ * \returns The pseudoknot id, if alph represents an interaction, and no value otherwise.
+ * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
+ */
+/*!\struct max_pseudoknot_depth<structure_type>
+ * \brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
+ * \relates seqan3::rna_structure_concept
+ * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
+ * pseudoknot support; any higher number gives the maximum nestedness. Value 0 is not allowed.
  */
 //!\cond
 template <typename structure_type>
-concept bool rna_structure_concept = requires(structure_type val)
+concept rna_structure_concept = requires(structure_type val)
 {
     // requires fulfillment of alphabet concept
     requires alphabet_concept<structure_type>;
@@ -90,9 +100,11 @@ concept bool rna_structure_concept = requires(structure_type val)
     { is_pair_open(val) } -> bool;
     { is_pair_close(val) } -> bool;
     { is_unpaired(val) } -> bool;
+    { pseudoknot_id(val) } -> std::optional<uint8_t>;
 
-    // this is delegated to a static class variable
-    { pseudoknot_support_v<structure_type> } -> bool;
+    // this is delegated to a static class variable, which must not be 0
+    requires max_pseudoknot_depth<std::remove_reference_t<structure_type>>::value > 0;
+    requires max_pseudoknot_depth_v<std::remove_reference_t<structure_type>> > 0;
 };
 //!\endcond
 

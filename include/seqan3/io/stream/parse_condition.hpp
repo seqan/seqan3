@@ -35,10 +35,15 @@
 /*!\file
  * \brief Provides parse conditions for tokenization.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+<<<<<<< HEAD
+=======
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  */
 
 #pragma once
 
+<<<<<<< HEAD
 #include <cctype>
 #include <stdexcept>
 #include <string>
@@ -527,6 +532,88 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
  */
 
 /*!\brief Checks wether `c` is a control character.
+=======
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/io/stream/parse_condition_detail.hpp>
+
+// ----------------------------------------------------------------------------
+// General Purpose Parse Conditions
+// ----------------------------------------------------------------------------
+
+namespace seqan3
+{
+
+/*!\name Parse conditions
+ * \brief A set of function objects to check if a character from an input source fulfills certain characteristics.
+ * \ingroup stream
+ * \{
+ */
+
+/*!\brief Checks whether a given letter is in the specified interval.
+ * \tparam interval_first The first character for which to return true.
+ * \tparam interval_last  The last character (inclusive) for which to return true.
+ * \ingroup stream
+ *
+ * \details
+ *
+ * This function like object returns true for all characters in the given range, false otherwise.
+ *
+ * ### Example
+ *
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_in_interval
+ *
+ */
+template <uint8_t interval_first, uint8_t interval_last>
+//!\cond
+    requires interval_first <= interval_last
+//!\endcond
+inline detail::is_in_interval_type<interval_first, interval_last> constexpr is_in_interval{};
+
+/*!\brief Checks whether a given letter is valid for the specified seqan3::alphabet_concept.
+ * \tparam alphabet_t The alphabet to check; must model seqan3::alphabet_concept.
+ * \ingroup stream
+ *
+ * \details
+ *
+ * This function like object returns true for all characters of the alphabet, false otherwise.
+ * The actual check being performed is whether assigning and then reading a letter results in the original input
+ * (but case is ignored).
+ *
+ * ### Example
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_in_alphabet
+ */
+template <alphabet_concept alphabet_t>
+inline detail::is_in_alphabet_type<alphabet_t> constexpr is_in_alphabet{};
+
+/*!\brief Checks whether a given letter is the same as the template non-type argument.
+ * \tparam char_v The letter to compare against.
+ * \ingroup stream
+ *
+ * \details
+ *
+ * This function like object returns true if the argument is the same as the template argument, false otherwise.
+ *
+ * ### Example
+ *
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_char
+ */
+template <int char_v>
+inline detail::is_char_type<char_v> constexpr is_char;
+
+/*!\brief Checks whether a given letter is equal to the EOF constant defined in `<cstdio>`.
+ *
+ * \details
+ *
+ * This function like object returns true if the argument is equal to EOF, false otherwise.
+ *
+ * ### Example
+ *
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_eof
+ */
+inline auto constexpr is_eof = is_char<EOF>;
+
+/*!\brief Checks whether `c` is a control character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -537,6 +624,7 @@ struct is_char : public detail::parse_condition<is_char<char_v>>
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_cntrl('\0');  // returns true.
  * ```
@@ -545,6 +633,14 @@ constexpr detail::parse_condition_combiner<is_in_interval<'\0', static_cast<char
                                            is_char<static_cast<char>(127)>> is_cntrl;
 
 /*!\brief Checks wether `c` is a printable character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_cntrl
+ */
+inline auto constexpr is_cntrl = is_in_interval<'\0', static_cast<char>(31)> ||
+                                 is_char<static_cast<char>(127)>;
+
+/*!\brief Checks whether `c` is a printable character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -554,6 +650,7 @@ constexpr detail::parse_condition_combiner<is_in_interval<'\0', static_cast<char
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_print(' ');  // returns true.
  * ```
@@ -561,6 +658,13 @@ constexpr detail::parse_condition_combiner<is_in_interval<'\0', static_cast<char
 constexpr is_in_interval<' ', '~'> is_print;
 
 /*!\brief Checks wether `c` is a space character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_print
+ */
+inline auto constexpr is_print = is_in_interval<' ', '~'> ;
+
+/*!\brief Checks whether `c` is a space character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -577,6 +681,7 @@ constexpr is_in_interval<' ', '~'> is_print;
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_space('\n');  // returns true.
  * ```
@@ -584,6 +689,13 @@ constexpr is_in_interval<' ', '~'> is_print;
 constexpr detail::parse_condition_combiner<is_in_interval<'\t', '\r'>, is_char<' '>> is_space;
 
 /*!\brief Checks wether `c` is a blank character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_space
+ */
+inline auto constexpr is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
+
+/*!\brief Checks whether `c` is a blank character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -596,6 +708,7 @@ constexpr detail::parse_condition_combiner<is_in_interval<'\t', '\r'>, is_char<'
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_blank('\t');  // returns true.
  * ```
@@ -603,6 +716,13 @@ constexpr detail::parse_condition_combiner<is_in_interval<'\t', '\r'>, is_char<'
 constexpr detail::parse_condition_combiner<is_char<'\t'>, is_char<' '>> is_blank;
 
 /*!\brief Checks wether `c` is a graphic character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_blank
+ */
+inline auto constexpr is_blank = is_char<'\t'> || is_char<' '>;
+
+/*!\brief Checks whether `c` is a graphic character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -618,6 +738,7 @@ constexpr detail::parse_condition_combiner<is_char<'\t'>, is_char<' '>> is_blank
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_graph('%');  // returns true.
  * ```
@@ -625,6 +746,13 @@ constexpr detail::parse_condition_combiner<is_char<'\t'>, is_char<' '>> is_blank
 constexpr is_in_interval<'!', '~'> is_graph;
 
 /*!\brief Checks wether `c` is a punctuation character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_graph
+ */
+inline auto constexpr is_graph = is_in_interval<'!', '~'>;
+
+/*!\brief Checks whether `c` is a punctuation character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -636,6 +764,7 @@ constexpr is_in_interval<'!', '~'> is_graph;
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_punct(':');  // returns true.
  * ```
@@ -644,6 +773,16 @@ constexpr detail::parse_condition_combiner<is_in_interval<'!', '/'>, is_in_inter
                                            is_in_interval<'[', '`'>, is_in_interval<'{', '~'>> is_punct;
 
 /*!\brief Checks wether `c` is a alphanumeric character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_punct
+ */
+inline auto constexpr is_punct = is_in_interval<'!', '/'> ||
+                                 is_in_interval<':', '@'> ||
+                                 is_in_interval<'[', '`'> ||
+                                 is_in_interval<'{', '~'>;
+
+/*!\brief Checks whether `c` is a alphanumeric character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -657,6 +796,7 @@ constexpr detail::parse_condition_combiner<is_in_interval<'!', '/'>, is_in_inter
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_alnum('9');  // returns true.
  * ```
@@ -664,6 +804,15 @@ constexpr detail::parse_condition_combiner<is_in_interval<'!', '/'>, is_in_inter
 constexpr detail::parse_condition_combiner<is_in_interval<'0','9'>, is_in_interval<'A','Z'>, is_in_interval<'a','z'>> is_alnum;
 
 /*!\brief Checks wether `c` is a alphabetical character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_alnum
+ */
+inline auto constexpr is_alnum = is_in_interval<'0','9'> ||
+                                 is_in_interval<'A','Z'> ||
+                                 is_in_interval<'a','z'>;
+
+/*!\brief Checks whether `c` is a alphabetical character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -676,6 +825,7 @@ constexpr detail::parse_condition_combiner<is_in_interval<'0','9'>, is_in_interv
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_alpha('z');  // returns true.
  * ```
@@ -683,6 +833,13 @@ constexpr detail::parse_condition_combiner<is_in_interval<'0','9'>, is_in_interv
 constexpr detail::parse_condition_combiner<is_in_interval<'A', 'Z'>, is_in_interval<'a', 'z'>> is_alpha;
 
 /*!\brief Checks wether `c` is a upper case character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_alpha
+ */
+inline auto constexpr is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>;
+
+/*!\brief Checks whether `c` is a upper case character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -694,6 +851,7 @@ constexpr detail::parse_condition_combiner<is_in_interval<'A', 'Z'>, is_in_inter
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_upper('K');  // returns true.
  * ```
@@ -701,6 +859,13 @@ constexpr detail::parse_condition_combiner<is_in_interval<'A', 'Z'>, is_in_inter
 constexpr is_in_interval<'A', 'Z'> is_upper;
 
 /*!\brief Checks wether `c` is a lower case character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_upper
+ */
+inline auto constexpr is_upper = is_in_interval<'A', 'Z'>;
+
+/*!\brief Checks whether `c` is a lower case character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -712,6 +877,7 @@ constexpr is_in_interval<'A', 'Z'> is_upper;
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_lower('a');  // returns true.
  * ```
@@ -719,6 +885,13 @@ constexpr is_in_interval<'A', 'Z'> is_upper;
 constexpr is_in_interval<'a', 'z'> is_lower;
 
 /*!\brief Checks wether `c` is a digital character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_lower
+ */
+inline auto constexpr is_lower = is_in_interval<'a', 'z'>;
+
+/*!\brief Checks whether `c` is a digital character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -730,6 +903,7 @@ constexpr is_in_interval<'a', 'z'> is_lower;
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_digit('1');  // returns true.
  * ```
@@ -737,6 +911,13 @@ constexpr is_in_interval<'a', 'z'> is_lower;
 constexpr is_in_interval<'0', '9'> is_digit;
 
 /*!\brief Checks wether `c` is a hexadecimal character.
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_digit
+ */
+inline auto constexpr is_digit = is_in_interval<'0', '9'>;
+
+/*!\brief Checks whether `c` is a hexadecimal character.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup stream
  *
  * \details
@@ -750,18 +931,30 @@ constexpr is_in_interval<'0', '9'> is_digit;
  *
  * ### Example
  *
+<<<<<<< HEAD
  * ```cpp
  * seqan3::is_xdigit('e');  // returns true.
  * ```
  */
 constexpr detail::parse_condition_combiner<is_in_interval<'0', '9'>, is_in_interval<'A', 'F'>,
                                            is_in_interval<'a', 'f'>> is_xdigit;
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp is_xdigit
+ */
+inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
+                                  is_in_interval<'A', 'F'> ||
+                                  is_in_interval<'a', 'f'>;
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 //!\}
 
 /*!\brief A condition checker, that wraps a parse condition and throws a specified exception if the condition was not
  *        met.
  * \ingroup stream
+<<<<<<< HEAD
  * \tparam condition_type The wrapped parse condition type to be use for testing
+=======
+ * \tparam condition_type The wrapped parse condition type to be use for testing.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * \details
  *
@@ -770,6 +963,7 @@ constexpr detail::parse_condition_combiner<is_in_interval<'0', '9'>, is_in_inter
  * but the actual data contained in the file is based on amino acids.
  * Thus, the condition would not be satisfied, causing the exception to be thrown.
  *
+<<<<<<< HEAD
  * ```cpp
  * using namespace seqan3;
  *
@@ -794,12 +988,22 @@ constexpr detail::parse_condition_combiner<is_in_interval<'0', '9'>, is_in_inter
  * ```cpp
  * parse_asserter asserter{is_alnum};
  * ```
+=======
+ * \snippet test/snippet/io/stream/parse_condition.cpp parse_asserter
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  */
 template <typename condition_type>
 struct parse_asserter
 {
     //!\brief Stores an instance of the stateless condition.
+<<<<<<< HEAD
     condition_type cond;
+=======
+    static condition_type constexpr cond{};
+
+    //!\brief Allow type deduction from constructor argument.
+    constexpr parse_asserter(condition_type const &) noexcept {}
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
     /*!\brief Checks if the given character satisfies the associated parse condition.
      * \param[in] c The character to be checked. Must satisfy the seqan3::char_adaptation_concept.
@@ -832,6 +1036,7 @@ struct parse_asserter
     }
 };
 
+<<<<<<< HEAD
 /*!\name Deduction Guide
  * \brief Deduction guide for parse_asserter.
  * \ingroup stream
@@ -871,6 +1076,43 @@ parse_asserter(parse_cond_type) -> parse_asserter<parse_cond_type>;
  * ### General Purpose Parse Conditions
  *
  * There are 12 predefined parse conditions that are all compositions of the previously mentioned parse conditions.
+=======
+/*!\name Parse conditions
+ * \ingroup stream
+ * \details
+ *
+ * Parse conditions are function like objects that can be used to check if a character `c` fulfills certain
+ * constraints. SeqAn3 implements all parse condition also available in the standard library and some more.
+ *
+ * ### Disjunction and Negation
+ *
+ * In contrast to the standard library (where the checks are implemented as functions), the functors in SeqAn3 can be
+ * joined efficiently, maintaining constant-time evaluation independent of the number of checks. Functors can be
+ * combined with the `||-operator` or negated via the `!-operator`:
+ *
+ * ```cpp
+ * auto constexpr my_cond = is_char<'%'> || is_digit;
+ * bool is_percent = my_cond(*example_it);
+ * ```
+ *
+ * Defining complex combinations and using them in e.g. input/output can increase speed significantly over checking
+ * multiple functions: we measured speed-ups of 10x for a single check and speed-ups of
+ * over 20x for complex combinations.
+ *
+ * ### Custom conditions
+ *
+ * * seqan3::is_in_alphabet: Checks if the given character is part of the specified alphabet.
+ * * seqan3::is_in_interval: Checks if the given character is within specified range of ASCII characters.
+ * * seqan3::is_char: Checks if the character is equal to the specified ASCII character.
+ * * seqan3::is_eof: Checks if a character is the end-of-file marker.
+ *
+ * ### Standard library conditions
+ *
+ * SeqAn offers the 12 conditions exactly
+ * [as defined in the standard library](https://en.cppreference.com/w/cpp/string/byte) except that we have introduced
+ * an underscore in the name to be consistent with our other naming.
+ *
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * The following table lists the predefined parse conditions and which constraints are associated with them.
  *
  *<table class="wikitable" style="background-color:#ededed;font-size:85%;text-align:center;border: 1px solid black;border-collapse: collapse">

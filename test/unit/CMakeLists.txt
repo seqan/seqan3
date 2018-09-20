@@ -32,13 +32,11 @@
 # ============================================================================
 
 cmake_minimum_required (VERSION 3.2)
-project (seqan3_unit_test CXX)
+project (seqan3_test_unit CXX)
 
 include (../seqan3-test.cmake)
 
 macro (seqan3_test target_cpp)
-    separate_arguments (cxx_flags_list UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
-
     # $target_cpp = "pod_tuple_test.cpp"
     #   * will register the global TARGET name "pod_tuple_test" and
     #   * will register the test case name "core_pod_tuple" if
@@ -51,14 +49,9 @@ macro (seqan3_test target_cpp)
     set (target "${target_name}_test")
 
     add_executable (${target} ${target_cpp})
-    target_compile_options (${target} PRIVATE ${cxx_flags_list} ${SEQAN3_TEST_CXX_FLAGS})
-    target_compile_definitions (${target} PRIVATE ${SEQAN3_DEFINITIONS} ${SEQAN3_TEST_DEFINITIONS})
-    target_include_directories (${target} PRIVATE ${SEQAN3_INCLUDE_DIRS} ${SEQAN3_TEST_INCLUDE_DIRS})
-    target_link_libraries (${target} ${SEQAN3_LIBRARIES} ${SEQAN3_TEST_LIBRARIES})
+    target_link_libraries (${target} seqan3::test::unit)
     add_test (NAME "${test_path}/${target}" COMMAND ${target})
-    add_dependencies (${target} gtest)
 
-    unset (cxx_flags_list)
     unset (target_name)
     unset (test_path)
     unset (target)

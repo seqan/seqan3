@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,9 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -64,6 +64,7 @@ namespace seqan3::view
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
+<<<<<<< HEAD
  * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
  * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
  * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
@@ -82,28 +83,43 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
+=======
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
+ * |                                 |                                       |                                                    |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::View               |                                       | *guaranteed*                                       |
+ * | std::ranges::SizedRange         |                                       | *preserved*                                        |
+ * | std::ranges::CommonRange        |                                       | *preserved*                                        |
+ * | std::ranges::OutputRange        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * |                                 |                                       |                                                    |
+ * | seqan3::reference_t             | seqan3::nucleotide_concept            | std::remove_reference_t<seqan3::reference_t<urng_t>> |
  *
- * ```cpp
- *  dna5_vector foo{"ACGTA"_dna5};
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
- *  // pipe notation
- *  auto v = foo | view::complement;                                  // == "TGCAT"
+ * ### Example
  *
- *  // function notation
- *  dna5_vector v2(view::complement(foo));                            // == "TGCAT"
- *
- *  // generate the reverse complement:
- *  dna5_vector v3 = foo | view::complement | ranges::view::reverse;  // == "TACGT"
- * ```
+ * \snippet test/snippet/range/view/complement.cpp usage
  * \hideinitializer
  */
 
-//TODO enforce nucleotide_concept via c++2a and/or terse concept syntax
-auto const complement = ranges::view::transform([] (auto const & in)
+inline auto const complement = deep{view::transform([] (auto && in)
 {
+    static_assert(nucleotide_concept<std::remove_const_t<decltype(in)>>,
+                  "The innermost value type must satisfy the nucleotide_concept.");
+    // call element-wise complement from the nucleotide_concept
     using seqan3::complement;
     return complement(in);
-});
+})};
+
+//!\}
 
 //!\}
 

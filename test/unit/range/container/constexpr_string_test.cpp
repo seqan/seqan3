@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
 
 #include <seqan3/range/container/constexpr_string.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/std/ranges>
 
 #include <utility>
 #include <string>
@@ -67,7 +67,7 @@ TEST(constexpr_string, standard_construction)
 TEST(constexpr_string, container_concept)
 {
     EXPECT_TRUE(container_concept<constexpr_string<4>>);
-    EXPECT_TRUE(random_access_range_concept<constexpr_string<4>>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<constexpr_string<4>>);
 }
 
 // construction from literal.
@@ -89,14 +89,13 @@ TEST(constexpr_string, construct_from_array)
                                  decltype(constexpr_string{std::array{'h','e','l','l','o'}})>));
 }
 
-using c_foo = const size_t;
-
 TEST(constexpr_string, size)
 {
     constexpr_string em{"hello"};
 
     EXPECT_EQ(em.size(), 5u);
-    EXPECT_EQ(c_foo(em.size()), 5u);
+    constexpr auto size = em.size();
+    EXPECT_EQ(size, 5u);
 }
 
 TEST(constexpr_string, max_size)
@@ -104,7 +103,8 @@ TEST(constexpr_string, max_size)
     constexpr_string em{"hello"};
 
     EXPECT_EQ(em.max_size(), 5u);
-    EXPECT_EQ(c_foo(em.size()), 5u);
+    constexpr auto size = em.size();
+    EXPECT_EQ(size, 5u);
 }
 
 TEST(constexpr_string, c_str)
@@ -132,7 +132,9 @@ TEST(constexpr_string, concat)
         constexpr_string em = constexpr_string{"hello"} +
                               constexpr_string{' '} +
                               constexpr_string{"world"};
-        EXPECT_EQ(c_foo(em.size()), 11u);
+        constexpr auto size = em.size();
+
+        EXPECT_EQ(size, 11u);
         EXPECT_EQ(em.string(), "hello world"s);
     }
 
@@ -141,8 +143,10 @@ TEST(constexpr_string, concat)
         static constexpr char const b[] = " ";
         static constexpr char const c[] = "world";
         auto em = constexpr_string{a} + constexpr_string{b} + constexpr_string{c};
+        constexpr auto size = em.size();
+
+        EXPECT_EQ(size, 11u);
         EXPECT_EQ(em.string(), "hello world"s);
-        EXPECT_EQ(c_foo(em.size()), 11u);
     }
 }
 
@@ -200,54 +204,82 @@ TEST(constexpr_string, swap)
     }
 }
 
-using c_bool = const bool;
-
 TEST(constexpr_string, equality)
 {
-    EXPECT_TRUE(c_bool(constexpr_string{"hello"}  == constexpr_string{"hello"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hello"} == constexpr_string{"hell"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hell"}  == constexpr_string{"hello"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hella"} == constexpr_string{"hello"}));
+    constexpr bool cmp1 = constexpr_string{"hello"} == constexpr_string{"hello"};
+    constexpr bool cmp2 = constexpr_string{"hello"} == constexpr_string{"hell"};
+    constexpr bool cmp3 = constexpr_string{"hell"}  == constexpr_string{"hello"};
+    constexpr bool cmp4 = constexpr_string{"hella"} == constexpr_string{"hello"};
+
+    EXPECT_TRUE(cmp1);
+    EXPECT_FALSE(cmp2);
+    EXPECT_FALSE(cmp3);
+    EXPECT_FALSE(cmp4);
 }
 
 TEST(constexpr_string, inequality)
 {
-    EXPECT_FALSE(c_bool(constexpr_string{"hello"} != constexpr_string{"hello"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hello"}  != constexpr_string{"hell"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hell"}   != constexpr_string{"hello"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hella"}  != constexpr_string{"hello"}));
+    constexpr bool cmp1 = constexpr_string{"hello"} != constexpr_string{"hello"};
+    constexpr bool cmp2 = constexpr_string{"hello"} != constexpr_string{"hell"};
+    constexpr bool cmp3 = constexpr_string{"hell"}  != constexpr_string{"hello"};
+    constexpr bool cmp4 = constexpr_string{"hella"} != constexpr_string{"hello"};
+
+    EXPECT_FALSE(cmp1);
+    EXPECT_TRUE(cmp2);
+    EXPECT_TRUE(cmp3);
+    EXPECT_TRUE(cmp4);
 }
 
 TEST(constexpr_string, less)
 {
-    EXPECT_FALSE(c_bool(constexpr_string{"hello"} < constexpr_string{"hello"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hello"} < constexpr_string{"hell"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hell"}   < constexpr_string{"hello"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hella"}  < constexpr_string{"hello"}));
+    constexpr bool cmp1 = constexpr_string{"hello"} < constexpr_string{"hello"};
+    constexpr bool cmp2 = constexpr_string{"hello"} < constexpr_string{"hell"};
+    constexpr bool cmp3 = constexpr_string{"hell"}  < constexpr_string{"hello"};
+    constexpr bool cmp4 = constexpr_string{"hella"} < constexpr_string{"hello"};
+
+    EXPECT_FALSE(cmp1);
+    EXPECT_FALSE(cmp2);
+    EXPECT_TRUE(cmp3);
+    EXPECT_TRUE(cmp4);
 }
 
 TEST(constexpr_string, less_equal)
 {
-    EXPECT_TRUE(c_bool(constexpr_string{"hello"}  <= constexpr_string{"hello"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hello"} <= constexpr_string{"hell"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hell"}   <= constexpr_string{"hello"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hella"}  <= constexpr_string{"hello"}));
+    constexpr bool cmp1 = constexpr_string{"hello"} <= constexpr_string{"hello"};
+    constexpr bool cmp2 = constexpr_string{"hello"} <= constexpr_string{"hell"};
+    constexpr bool cmp3 = constexpr_string{"hell"}  <= constexpr_string{"hello"};
+    constexpr bool cmp4 = constexpr_string{"hella"} <= constexpr_string{"hello"};
+
+    EXPECT_TRUE(cmp1);
+    EXPECT_FALSE(cmp2);
+    EXPECT_TRUE(cmp3);
+    EXPECT_TRUE(cmp4);
 }
 
 TEST(constexpr_string, greater)
 {
-    EXPECT_FALSE(c_bool(constexpr_string{"hello"} > constexpr_string{"hello"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hello"}  > constexpr_string{"hell"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hell"}  > constexpr_string{"hello"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hella"} > constexpr_string{"hello"}));
+    constexpr bool cmp1 = constexpr_string{"hello"} > constexpr_string{"hello"};
+    constexpr bool cmp2 = constexpr_string{"hello"} > constexpr_string{"hell"};
+    constexpr bool cmp3 = constexpr_string{"hell"}  > constexpr_string{"hello"};
+    constexpr bool cmp4 = constexpr_string{"hella"} > constexpr_string{"hello"};
+
+    EXPECT_FALSE(cmp1);
+    EXPECT_TRUE(cmp2);
+    EXPECT_FALSE(cmp3);
+    EXPECT_FALSE(cmp4);
 }
 
 TEST(constexpr_string, greater_equal)
 {
-    EXPECT_TRUE(c_bool(constexpr_string{"hello"}  >= constexpr_string{"hello"}));
-    EXPECT_TRUE(c_bool(constexpr_string{"hello"}  >= constexpr_string{"hell"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hell"}  >= constexpr_string{"hello"}));
-    EXPECT_FALSE(c_bool(constexpr_string{"hella"} >= constexpr_string{"hello"}));
+    constexpr bool cmp1 = constexpr_string{"hello"} >= constexpr_string{"hello"};
+    constexpr bool cmp2 = constexpr_string{"hello"} >= constexpr_string{"hell"};
+    constexpr bool cmp3 = constexpr_string{"hell"}  >= constexpr_string{"hello"};
+    constexpr bool cmp4 = constexpr_string{"hella"} >= constexpr_string{"hello"};
+
+    EXPECT_TRUE(cmp1);
+    EXPECT_TRUE(cmp2);
+    EXPECT_FALSE(cmp3);
+    EXPECT_FALSE(cmp4);
 }
 
 template <std::size_t N>
@@ -262,5 +294,6 @@ constexpr constexpr_string<N> fill_constexpr_string(constexpr_string<N> s, char 
 
 TEST(constexpr_string, compile_time_fill)
 {
-    EXPECT_TRUE(c_bool(fill_constexpr_string(constexpr_string<4>{}, 'x') == constexpr_string{"xxxx"}));
+    constexpr bool cmp = fill_constexpr_string(constexpr_string<4>{}, 'x') == constexpr_string{"xxxx"};
+    EXPECT_TRUE(cmp);
 }

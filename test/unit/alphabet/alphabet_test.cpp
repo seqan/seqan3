@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <seqan3/test/tmp_filename.hpp>
@@ -56,22 +57,26 @@ class alphabet : public ::testing::Test
 
 // add all alphabets here
 using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
-                                        aa27,
-                                        union_composition<dna4>,
+                                        aa20, aa27,
                                         union_composition<dna4, gap>,
-                                        union_composition<dna5, dna5>,
                                         union_composition<dna4, dna5, gap>,
                                         union_composition<char, gap>,
+                                        qualified<dna4, phred42>,
+                                        qualified<dna4, phred63>,
+                                        qualified<aa27, phred42>,
+                                        qualified<gapped<dna4>, phred42>,
+                                        gapped<qualified<dna4, phred42>>,
                                         gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
-                                        gapped<illumina18>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
-                                        illumina18, dna4q,
+                                        dna4q,
+                                        phred42, phred63, phred68legacy,
                                         dot_bracket3, dssp9, wuss<>, wuss<65>,
                                         structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
-                                        structured_aa<aa27, dssp9>>;
+                                        structured_aa<aa27, dssp9>,
+                                        masked<dna5>>;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);
 
@@ -181,9 +186,19 @@ TYPED_TEST(alphabet, swap)
 TYPED_TEST(alphabet, assign_char)
 {
     using char_t = underlying_char_t<TypeParam>;
+    char_t i = std::numeric_limits<char_t>::min();
+    char_t j = std::numeric_limits<char_t>::max();
+    if (std::is_same_v<TypeParam, phred42> || std::is_same_v<TypeParam, phred63> || std::is_same_v<TypeParam, phred68legacy>)
+    {
+        // specification details documented in alphabet/quality/all.hpp
+        i = (!std::is_same_v<TypeParam, phred68legacy>) ? '!' : ';';
+        j = (std::is_same_v<TypeParam, phred42>) ? 'J' : ((std::is_same_v<TypeParam, phred63>) ? '_' : '~');
+    }
+
     TypeParam t0;
-    for (char_t i = std::numeric_limits<char_t>::min(); i < std::numeric_limits<char_t>::max(); ++i)
+    for (; i < j; ++i){
         assign_char(t0, i);
+    }
 
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(t0, 0)), TypeParam &>));
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{}, 0)), TypeParam &&>));
@@ -195,6 +210,7 @@ TYPED_TEST(alphabet, to_char)
     EXPECT_TRUE((std::is_same_v<decltype(to_char(t0)), underlying_char_t<TypeParam>>));
 
     // more elaborate tests are done in specific alphabets
+
 }
 
 TYPED_TEST(alphabet, comparison_operators)
@@ -224,7 +240,7 @@ TYPED_TEST(alphabet, comparison_operators)
     }
 }
 
-TYPED_TEST(alphabet, concept)
+TYPED_TEST(alphabet, concept_check)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
     // NOTE: Using intermediate concept notation with forwarding references cause the concept type
@@ -240,12 +256,23 @@ TYPED_TEST(alphabet, concept_semi)
     EXPECT_TRUE(semi_alphabet_concept<TypeParam &>);
 }
 
+TYPED_TEST(alphabet, debug_streaming)
+{
+    std::ostringstream o;
+    debug_stream.set_underlying_stream(o);
+
+    debug_stream << TypeParam{};
+
+    o.flush();
+    EXPECT_EQ(o.str().size(), 1);
+}
+
 #if SEQAN3_WITH_CEREAL
 template <typename in_archive_t, typename out_archive_t, typename TypeParam>
 void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
 {
     // Generate unique file name.
-    test::tmp_file_name filename{"alphabet_cereal_test"};
+    test::tmp_filename filename{"alphabet_cereal_test"};
     {
         std::ofstream os{filename.get_path(), std::ios::binary};
         out_archive_t oarchive{os};
@@ -293,18 +320,7 @@ class alphabet_constexpr : public ::testing::Test
 {};
 
 // add all alphabets here
-using alphabet_constexpr_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
-                                                  /*aa27,*/
-                                                  union_composition<dna4>,
-                                                  union_composition<dna4, gap>,
-                                                  union_composition<dna4, dna5, gap>,
-                                                  char, char16_t, char32_t,
-                                                  uint8_t, uint16_t, uint32_t,
-                                                  /*gap, gapped<nucl16>, */
-                                                  illumina18, dna4q,
-                                                  dot_bracket3, dssp9, wuss<>, wuss<65>,
-                                                  structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
-                                                  structured_aa<aa27, dssp9>>;
+using alphabet_constexpr_types = alphabet_types;
 
 TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 

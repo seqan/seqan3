@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -62,17 +62,11 @@ namespace seqan3
  * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You assign
  * between values of seqan3::dna5 and seqan3::rna5.
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     rna5 my_letter{rna5::A};
- *     // doesn't work:
- *     // rna5 my_letter{'A'};
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::rna5::assign_char().
  *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('F'); // converted to A internally
- *     if (my_letter.to_char() == 'A')
- *        std::cout << "yeah\n"; // "yeah";
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/rna5.cpp code
  */
 
 struct rna5 : public dna5
@@ -113,7 +107,8 @@ struct rna5 : public dna5
     //!\copydoc seqan3::dna4::assign_char
     constexpr rna5 & assign_char(char_type const c) noexcept
     {
-        _value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 
@@ -200,17 +195,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to rna5_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // rna5_vector foo{"ACGTTA"};
- *     // rna5_vector bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     rna5_vector foo{"ACGTTA"_rna5};
- *     rna5_vector bar = "ACGTTA"_rna5;
- *     auto bax = "ACGTTA"_rna5;
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/rna5.cpp operator""_rna5
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!

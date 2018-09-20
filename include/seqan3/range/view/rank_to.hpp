@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,9 +39,9 @@
 
 #pragma once
 
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/range/view/deep.hpp>
+#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3::view
 {
@@ -63,6 +63,7 @@ namespace seqan3::view
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
+<<<<<<< HEAD
  * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
  * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
  * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
@@ -77,25 +78,42 @@ namespace seqan3::view
  * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
  * |                                     |                                       |                                                    |
  * | seqan3::reference_t                 | seqan3::underlying_rank_t<alphabet_t> | `alphabet_t`                                       |
+=======
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
+ * | std::ranges::ForwardRange       |                                       | *preserved*                                        |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
+ * |                                 |                                       |                                                    |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::View               |                                       | *guaranteed*                                       |
+ * | std::ranges::SizedRange         |                                       | *preserved*                                        |
+ * | std::ranges::CommonRange        |                                       | *preserved*                                        |
+ * | std::ranges::OutputRange        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * |                                 |                                       |                                                    |
+ * | seqan3::reference_t             | seqan3::underlying_rank_t<alphabet_t> | `alphabet_t`                                       |
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * \par Example
- * ```cpp
- * std::vector<int> vec{0, 1, 3, 3, 3, 2, 0, 3, 0};
- * auto v1 = vec | view::rank_to<dna4>; // == "ACTTTGATA"_dna4
- * auto v2 = vec | view::rank_to<dna5>; // == "ACTTTGATA"_dna5
- * ```
+ * \snippet test/snippet/range/view/rank_char.cpp rank_to
  * \hideinitializer
  */
 template <typename alphabet_type>
 //!\cond
     requires alphabet_concept<alphabet_type>
 //!\endcond
-auto const rank_to = ranges::view::transform([] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
+inline auto const rank_to = deep{view::transform(
+[] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
 {
     return assign_rank(alphabet_type{}, in);
-});
+})};
+
+//!\}
 
 //!\}
 

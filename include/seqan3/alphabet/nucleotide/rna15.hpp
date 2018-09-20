@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -63,17 +63,11 @@ namespace seqan3
  * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You can implicitly
  * convert between values of seqan3::dna15 and seqan3::rna15.
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     rna15 my_letter{rna15::A};
- *     // doesn't work:
- *     // rna15 my_letter{'A'};
+ * The alphabet may be brace initialized from the static letter members. Note that you cannot
+ * assign the alphabet by using letters of type `char`, but you instead have to use the
+ * function seqan3::rna15::assign_char().
  *
- *     my_letter.assign_char('C'); // <- this does!
- *
- *     my_letter.assign_char('F'); // converted to N internally
- *     if (my_letter.to_char() == 'N')
- *        std::cout << "yeah\n"; // "yeah";
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/rna15.cpp code
  */
 
 struct rna15 : public dna15
@@ -124,7 +118,8 @@ struct rna15 : public dna15
     //!\copydoc seqan3::dna4::assign_char
     constexpr rna15 & assign_char(char_type const c) noexcept
     {
-        _value = char_to_value[c];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(c)];
         return *this;
     }
 
@@ -232,17 +227,7 @@ namespace seqan3::literal
  *
  * You can use this string literal to easily assign to rna15_vector:
  *
- *~~~~~~~~~~~~~~~{.cpp}
- *     // these don't work:
- *     // rna15_vector foo{"ACGTTA"};
- *     // rna15_vector bar = "ACGTTA";
- *
- *     // but these do:
- *     using namespace seqan3::literal;
- *     rna15_vector foo{"ACGTTA"_rna15};
- *     rna15_vector bar = "ACGTTA"_rna15;
- *     auto bax = "ACGTTA"_rna15;
- *~~~~~~~~~~~~~~~
+ *\snippet test/snippet/alphabet/nucleotide/rna15.cpp operator""_rna15
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3::literal!

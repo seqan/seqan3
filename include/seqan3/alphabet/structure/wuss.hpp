@@ -40,6 +40,7 @@
 #pragma once
 
 #include <cassert>
+#include <cmath>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
@@ -70,14 +71,7 @@ namespace seqan3
  *
  * \par Usage
  * The following code example creates a wuss vector, modifies it, and prints the result to stdout.
- * ```cpp
- *     // create vector
- *     std::vector<wuss51> vec{wuss51::UNPAIRED, wuss51::PAIR_CLOSE, wuss51::PAIR_CLOSE};
- *     // modify and print
- *     vec[1] = wuss51::PAIR_OPEN;
- *     for (wuss51 chr : vec)
- *         std::cout << chr;  // .<>
- * ```
+ * \snippet test/snippet/alphabet/structure/wuss.cpp general
  */
 template <uint8_t SIZE = 51>
 struct wuss
@@ -163,7 +157,8 @@ struct wuss
      */
     constexpr wuss & assign_char(char_type const chr) noexcept
     {
-        _value = char_to_value[chr];
+        using index_t = std::make_unsigned_t<char_type>;
+        _value = char_to_value[static_cast<index_t>(chr)];
         return *this;
     }
 
@@ -223,7 +218,7 @@ struct wuss
      */
     constexpr bool is_pair_open() const noexcept
     {
-        return interaction_tab[to_rank()] == 2;
+        return interaction_tab[to_rank()] < 0;
     }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
@@ -231,7 +226,7 @@ struct wuss
      */
     constexpr bool is_pair_close() const noexcept
     {
-        return interaction_tab[to_rank()] == 3;
+        return interaction_tab[to_rank()] > 0;
     }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
@@ -239,11 +234,27 @@ struct wuss
      */
     constexpr bool is_unpaired() const noexcept
     {
-        return interaction_tab[to_rank()] == 1;
+        return interaction_tab[to_rank()] == 0;
     }
 
-    //!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions: True.
-    static constexpr bool pseudoknot_support{true};
+    /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
+     *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
+     */
+    // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
+    static constexpr uint8_t max_pseudoknot_depth{(value_size - 7) / 2};
+
+    /*!\brief Get an identifier for a pseudoknotted interaction.
+     * Opening and closing brackets of the same type have the same id.
+     * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
+     * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
+     */
+    constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
+    {
+        if (interaction_tab[to_rank()] != 0)
+            return std::abs(interaction_tab[to_rank()]) - 1;
+        else
+            return std::nullopt;
+    }
     //!\}
 
 protected:
@@ -314,37 +325,39 @@ protected:
     };
 
     //!\brief Lookup table for interactions: unpaired (1), pair-open (2), pair-close (3).
-    static constexpr std::array<unsigned char, value_size> interaction_tab
+    static constexpr std::array<int8_t, value_size> interaction_tab
     {
         [] () constexpr
         {
-            std::array<unsigned char, value_size> interaction_table{};
+            std::array<int8_t, value_size> interaction_table{};
+            int cnt_open = 0;
+            int cnt_close = 0;
 
             for (rank_type rnk = static_cast<rank_type>(internal_type::UNPAIRED);
                  rnk <= static_cast<rank_type>(internal_type::UNPAIRED6);
                  ++rnk)
             {
-                interaction_table[rnk] = 1;
+                interaction_table[rnk] = 0;
             }
 
             for (rank_type rnk = static_cast<rank_type>(internal_type::PAIR_OPEN);
                  rnk <= static_cast<rank_type>(internal_type::PAIR_OPEN3);
                  ++rnk)
             {
-                interaction_table[rnk] = 2;
+                interaction_table[rnk] = --cnt_open;
             }
 
             for (rank_type rnk = static_cast<rank_type>(internal_type::PAIR_CLOSE);
                  rnk <= static_cast<rank_type>(internal_type::PAIR_CLOSE3);
                  ++rnk)
             {
-                interaction_table[rnk] = 3;
+                interaction_table[rnk] = ++cnt_close;
             }
 
             for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u)
             {
-                interaction_table[rnk] = 2;
-                interaction_table[rnk + 1] = 3;
+                interaction_table[rnk]     = --cnt_open;
+                interaction_table[rnk + 1] = ++cnt_close;
             }
 
             return interaction_table;

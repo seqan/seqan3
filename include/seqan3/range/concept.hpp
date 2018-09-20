@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,40 +33,52 @@
 // ============================================================================
 
 /*!\file
- * \brief Adaptations of concepts from the Ranges TS
+ * \brief Additional non-standard concepts for ranges.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
+<<<<<<< HEAD
 #include <range/v3/range_concepts.hpp>
+=======
+#include <seqan3/std/ranges>
+
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 #include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {
-/*!\addtogroup range
- * \{
- */
-/*!\interface seqan3::range_concept <>
- * \brief Defines the requirements of a type that allows iteration over its elements by providing a begin iterator
- * and an end sentinel.
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/Range
+
+/*!\interface seqan3::const_iterable_concept <>
+ * \extends std::InputRange
+ * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
+ * same strength input range concept as the non-const version.
+ *
+ * \details
+ *
+ * For a type `t` it usually holds that if `t` is a range, `t const` is also a range with similar properties, but
+ * there are cases where this does not hold:
+ *
+ *   * a `const` range is usually not writable so std::OutputRange is lost; pure output ranges
+ * (those that are not also input ranges) are therefore not `const`-iterable;
+ *   * single-pass input ranges, like SeqAn files, are not `const`-iterable, because "single-pass-ness" implies that
+ * there is something in the range that changes on every iterator increment (and `const` ranges can't change);
+ *   * certain views store a state with their algorithm that also changes when `begin()` is called or an
+ * iterator is incremented; these may be not be `const`-iterable, because the standard library
+ * (and also SeqAn3) guarantees that it is safe to call `const`-qualified functions concurrently.
  */
 //!\cond
 template <typename type>
-concept bool range_concept               = (bool)ranges::Range<type>();
+concept const_iterable_concept =
+    std::ranges::InputRange<std::remove_const_t<type>> &&
+    std::ranges::InputRange<type const> &&
+    (std::ranges::ForwardRange<std::remove_const_t<type>>       == std::ranges::ForwardRange<type const>) &&
+    (std::ranges::BidirectionalRange<std::remove_const_t<type>> == std::ranges::BidirectionalRange<type const>) &&
+    (std::ranges::RandomAccessRange<std::remove_const_t<type>>  == std::ranges::RandomAccessRange<type const>);
 //!\endcond
 
-/*!\interface seqan3::sized_range_concept <>
- * \extends seqan3::range_concept
- * \brief Specifies the requirements of a Range type that knows its size in constant time with the size function.
- * \sa http://en.cppreference.com/w/cpp/experimental/ranges/iterator/SizedRange
- */
-//!\cond
-template <typename type>
-concept bool sized_range_concept         = range_concept<type> && (bool)ranges::SizedRange<type>();
-//!\endcond
-
+<<<<<<< HEAD
 /*!\interface seqan3::bounded_range_concept <>
  * \extends seqan3::range_concept
  * \brief Specifies requirements of a Range type for which `begin` and `end` return objects of the same type.
@@ -161,61 +173,6 @@ concept bool const_iterable_concept =
 //!\endcond
 
 //!\}
+=======
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 } // namespace seqan3
-
-#ifndef NDEBUG
-/* Check the STL containers */
-
-#include <vector>
-#include <array>
-#include <list>
-#include <forward_list>
-#include <deque>
-#include <string>
-
-// no fwd list
-static_assert(seqan3::sized_range_concept<std::list<char>>);
-static_assert(seqan3::sized_range_concept<std::array<char, 2>>);
-static_assert(seqan3::sized_range_concept<std::vector<char>>);
-static_assert(seqan3::sized_range_concept<std::deque<char>>);
-static_assert(seqan3::sized_range_concept<std::string>);
-
-static_assert(seqan3::bounded_range_concept<std::forward_list<char>>);
-static_assert(seqan3::bounded_range_concept<std::list<char>>);
-static_assert(seqan3::bounded_range_concept<std::array<char, 2>>);
-static_assert(seqan3::bounded_range_concept<std::vector<char>>);
-static_assert(seqan3::bounded_range_concept<std::deque<char>>);
-static_assert(seqan3::bounded_range_concept<std::string>);
-
-static_assert(seqan3::output_range_concept<std::forward_list<char>, char>);
-static_assert(seqan3::output_range_concept<std::list<char>, char>);
-static_assert(seqan3::output_range_concept<std::array<char, 2>, char>);
-static_assert(seqan3::output_range_concept<std::vector<char>, char>);
-static_assert(seqan3::output_range_concept<std::deque<char>, char>);
-static_assert(seqan3::output_range_concept<std::string, char>);
-
-static_assert(seqan3::forward_range_concept<std::forward_list<char>>);
-static_assert(seqan3::bidirectional_range_concept<std::list<char>>);
-static_assert(seqan3::random_access_range_concept<std::array<char, 2>>);
-static_assert(seqan3::random_access_range_concept<std::vector<char>>);
-static_assert(seqan3::random_access_range_concept<std::deque<char>>);
-static_assert(seqan3::random_access_range_concept<std::string>);
-
-/* Check the SDSL containers */
-#include <sdsl/int_vector.hpp>
-static_assert(seqan3::sized_range_concept<sdsl::int_vector<>>);
-static_assert(seqan3::bounded_range_concept<sdsl::int_vector<>>);
-// doesn't work?
-// static_assert(seqan3::output_range_concept<sdsl::int_vector<>, int>);
-static_assert(seqan3::random_access_range_concept<sdsl::int_vector<>>);
-
-/* Check range-v3 containers */
-#include <range/v3/view/any_view.hpp>
-
-static_assert(seqan3::range_concept<ranges::any_view<char, ranges::category::random_access>>);
-// static_assert(seqan3::sized_range_concept<ranges::any_view<char, ranges::category::random_access>>);
-static_assert(seqan3::random_access_range_concept<ranges::any_view<char, ranges::category::random_access>>);
-
-/* Check our containers */
-//TODO
-#endif

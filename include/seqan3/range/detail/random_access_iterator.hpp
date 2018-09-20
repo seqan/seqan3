@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,8 +45,13 @@
 #include <range/v3/utility/iterator_traits.hpp>
 #include <range/v3/range_traits.hpp>
 
+<<<<<<< HEAD
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/concept/iterator.hpp>
+=======
+#include <seqan3/std/ranges>
+#include <seqan3/std/iterator>
+>>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 namespace seqan3::detail
 {
@@ -54,32 +59,20 @@ namespace seqan3::detail
 /*!\brief A CRTP base template for creating random access iterators.
  * \tparam range_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
  * \tparam derived_t_template The derived type template, see below.
- * \implements seqan3::random_access_iterator_concept
+ * \implements std::RandomAccessIterator
  * \ingroup range
  *
  * The iterator makes certain assumptions on the `range_type`, but does not formally require
- * it to satisfy the seqan3::random_access_range_concept, because the iterator itself may be
+ * it to satisfy the std::ranges::RandomAccessRange, because the iterator itself may be
  * a requirement for this.
  *
  * Actual functionality of this iterator is realised via the host range's [] operator and member type definitions, i.e.
  * you need to implement these in the range before you can make use of this iterator.
  *
  * Since the CRTP parameter is in fact a template template, CRTP instantiation looks a little different, e.g.:
- * ```cpp
- * template <typename range_type>
- * class random_access_iterator : public random_access_iterator_base<range_type, random_access_iterator>
- * {
- * //...
- * };
- * ```
+ * \snippet test/snippet/range/detail/random_access_iterator.cpp usage
  * and not:
- * ```cpp
- * template <typename range_type>
- * class random_access_iterator : public random_access_iterator_base<range_type, random_access_iterator<range_type>>
- * {
- * //...
- * };
- * ```
+ * \snippet test/snippet/range/detail/random_access_iterator.cpp not_usage
  */
 template <typename range_type, template <typename...> typename derived_t_template>
 class random_access_iterator_base
@@ -108,7 +101,7 @@ public:
     //!\brief Type for distances between iterators.
     using difference_type = typename range_type::difference_type; // TODO should be range_ but is broken in ranges
     //!\brief Value type of container elements.
-    using value_type = ranges::v3::value_type_t<range_type>;
+    using value_type = typename range_type::value_type;
     //!\brief Use reference type defined by container.
     using reference = std::conditional_t<std::is_const_v<range_type>,
                                          typename range_type::const_reference,
@@ -338,7 +331,7 @@ private:
  * \ingroup range
  *
  * The iterator makes certain assumptions on the `range_type`, but does not formally require
- * it to satisfy the seqan3::random_access_range_concept, because the iterator itself may be
+ * it to satisfy the std::ranges::RandomAccessRange, because the iterator itself may be
  * a requirement for this.
  */
 template <typename range_type>

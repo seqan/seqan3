@@ -2,8 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -62,6 +62,6 @@ namespace seqan3::detail
  * \ingroup core
  */
 template <typename t>
-concept bool type_list_concept = is_type_specialisation_of_v<t, type_list>;
+concept type_list_concept = is_type_specialisation_of_v<t, type_list>;
 
 } // namespace seqan3::detail

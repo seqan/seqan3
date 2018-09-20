@@ -82,9 +82,22 @@
 #   SEQAN3_DEFINITIONS      -- to be passed to add_definitions ()
 #   SEQAN3_CXX_FLAGS        -- to be added to CMAKE_CXX_FLAGS
 #
+# Additionally, the following [IMPORTED][IMPORTED] targets are defined:
+#
+#   seqan3::seqan3          -- interface target where
+#                                  target_link_libraries(target seqan3::seqan3)
+#                              automatically sets
+#                                  target_include_directories(target $SEQAN3_INCLUDE_DIRS),
+#                                  target_link_libraries(target $SEQAN3_LIBRARIES),
+#                                  target_compile_definitions(target $SEQAN3_DEFINITIONS) and
+#                                  target_compile_options(target $SEQAN3_CXX_FLAGS)
+#                              for a target.
+#
+#   [IMPORTED]: https://cmake.org/cmake/help/v3.10/prop_tgt/IMPORTED.html#prop_tgt:IMPORTED
+#
 # ============================================================================
 
-cmake_minimum_required (VERSION 3.2)
+cmake_minimum_required (VERSION 3.2...3.12)
 
 # ----------------------------------------------------------------------------
 # Set initial variables
@@ -367,11 +380,13 @@ else ()
     seqan3_config_error ("The range-v3 library is required, but wasn't found. Get it from https://github.com/ericniebler/range-v3/")
 endif ()
 
-# TODO: Doesn't have a version file, yet
-# check_include_file_cxx (sdsl-lite/version.hpp _SEQAN3_HAVE_SDSL)
-# if (NOT _SEQAN3_HAVE_SDSL)
-#     seqan3_config_error ("The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
-# endif ()
+check_include_file_cxx (sdsl/version.hpp _SEQAN3_HAVE_SDSL)
+
+if (_SEQAN3_HAVE_SDSL)
+    seqan3_config_print ("Required dependency:        SDSL found.")
+else ()
+    seqan3_config_error ("The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
+endif ()
 
 # ----------------------------------------------------------------------------
 # Cereal dependency is optional, but may set as required
@@ -598,6 +613,15 @@ set (SeqAn3_FOUND TRUE)
 if (NOT ${FIND_NAME}_FIND_QUIETLY)
     message (STATUS "${ColourBold}Found SeqAn3:${ColourReset} ${SEQAN3_BASEDIR}/seqan3 (found version \"${SEQAN3_VERSION_STRING}\")")
 endif ()
+
+separate_arguments (SEQAN3_CXX_FLAGS_LIST UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
+string(REGEX REPLACE ";( )*[-/]D" ";" SEQAN3_DEFINITIONS_LIST ";${SEQAN3_DEFINITIONS};")
+
+add_library (seqan3::seqan3 INTERFACE IMPORTED)
+set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS_LIST})
+set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_COMPILE_OPTIONS ${SEQAN3_CXX_FLAGS_LIST})
+set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_LINK_LIBRARIES "${SEQAN3_LIBRARIES}")
+set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_INCLUDE_DIRS}")
 
 if (SEQAN3_FIND_DEBUG)
   message ("Result for ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
