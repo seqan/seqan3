@@ -644,6 +644,8 @@ public:
     }
 
 protected:
+    //!\privatesection
+
     //!\brief The file header object.
     std::unique_ptr<alignment_file_header> header_ptr{nullptr};
 
