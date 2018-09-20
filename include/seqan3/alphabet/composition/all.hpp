@@ -36,6 +36,7 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Meta-header for the composition submodule; includes all headers from alphabet/composition/.
  */
+#pragma once
 
 #include <seqan3/alphabet/composition/cartesian_composition.hpp>
 #include <seqan3/alphabet/composition/union_composition.hpp>

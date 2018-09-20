@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/argument_parser/argument_parser.hpp>
+#include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
 
