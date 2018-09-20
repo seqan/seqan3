@@ -710,3 +710,55 @@ TEST(parse_test, required_option_missing)
 
     EXPECT_THROW(parser.parse(), required_option_missing);
 }
+
+TEST(parse_test, argv_const_combinations)
+{
+    bool flag_value{false};
+
+    char arg1[]{"./argument_parser"};
+    char arg2[]{"-f"};
+    char * argv[] = {arg1, arg2};
+
+    // all const*
+    char const * const * const argv_all_const{argv};
+    argument_parser parser("test_parser", 2, argv_all_const);
+    parser.add_flag(flag_value, 'f', "flag", "this is a flag.");
+
+    EXPECT_NO_THROW(parser.parse());
+    EXPECT_TRUE(flag_value);
+
+    // none const
+    flag_value = false;
+    parser = argument_parser("test_parser", 2, argv);
+    parser.add_flag(flag_value, 'f', "flag", "this is a flag.");
+
+    EXPECT_NO_THROW(parser.parse());
+    EXPECT_TRUE(flag_value);
+
+    // const 1
+    flag_value = false;
+    char const * argv_const1[] = {"./argument_parser_test", "-f"};
+    parser = argument_parser("test_parser", 2, argv_const1);
+    parser.add_flag(flag_value, 'f', "flag", "this is a flag.");
+
+    EXPECT_NO_THROW(parser.parse());
+    EXPECT_TRUE(flag_value);
+
+    // const 2
+    flag_value = false;
+    char * const argv_const2[] = {arg1, arg2};
+    parser = argument_parser("test_parser", 2, argv_const2);
+    parser.add_flag(flag_value, 'f', "flag", "this is a flag.");
+
+    EXPECT_NO_THROW(parser.parse());
+    EXPECT_TRUE(flag_value);
+
+    // const 12
+    flag_value = false;
+    char const * const argv_const12[] = {arg1, arg2};
+    parser = argument_parser("test_parser", 2, argv_const12);
+    parser.add_flag(flag_value, 'f', "flag", "this is a flag.");
+
+    EXPECT_NO_THROW(parser.parse());
+    EXPECT_TRUE(flag_value);
+}

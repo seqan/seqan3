@@ -1,7 +1,7 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
 
-int main(int argc, const char ** argv)
+int main(int argc, char ** argv)
 {
     seqan3::argument_parser myparser("Penguin_Parade", argc, argv); // initialize
 
