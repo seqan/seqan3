@@ -293,7 +293,16 @@ public:
      * \attention The function must be called at the very end of all parser
      * related code and should be enclosed in a try catch block.
      *
-     * \throws seqan3::parser_interruption
+     * \throws seqan3::option_declared_multiple_times if an option that is not a list was declared multiple times.
+     * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
+     *                                              converted into the expected type.
+     * \throws seqan3::parser_interruption on special user request (e.g. --help or --version).
+     * \throws seqan3::parser_invalid_argument if the user provided wrong arguments.
+     * \throws seqan3::required_option_missing if the user did not provide a required option.
+     * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
+     * \throws seqan3::too_few_arguments if the command line call contained too few arguments than expected.
+     * \throws seqan3::type_conversion_failed if the argument value could not be converted into the expected type.
+     * \throws seqan3::validation_failed if the argument was not excepted by the provided validator.
      *
      * \details
      *
