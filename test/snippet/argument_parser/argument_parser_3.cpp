@@ -30,7 +30,7 @@ int main(int argc, const char ** argv)
     }
     catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
     {
-        std::cerr << ext.what();
+        std::cerr << ext.what() << "\n";
         return -1;
     }
     catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
