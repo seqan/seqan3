@@ -47,5 +47,7 @@
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/input_format_concept.hpp>
+#include <seqan3/io/structure_file/input_options.hpp>
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/io/structure_file/output_format_concept.hpp>
+#include <seqan3/io/structure_file/output_options.hpp>

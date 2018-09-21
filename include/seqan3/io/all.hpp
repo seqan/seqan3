@@ -46,3 +46,13 @@
 /*!\page serialisation Serialisation in SeqAn3
  * \todo write me!
  */
+
+#pragma once
+
+#include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/io/exception.hpp>
+#include <seqan3/io/filesystem.hpp>
+#include <seqan3/io/record.hpp>
+#include <seqan3/io/sequence_file/all.hpp>
+#include <seqan3/io/stream/all.hpp>
+#include <seqan3/io/structure_file/all.hpp>

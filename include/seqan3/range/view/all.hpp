@@ -43,12 +43,18 @@
 #include <seqan3/range/view/complement.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/range/view/get.hpp>
+#include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/rank_to.hpp>
+#include <seqan3/range/view/single_pass_input.hpp>
+#include <seqan3/range/view/take.hpp>
+#include <seqan3/range/view/take_exactly.hpp>
+#include <seqan3/range/view/take_line.hpp>
+#include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/range/view/translation.hpp>
 #include <seqan3/range/view/trim.hpp>
-#include <seqan3/range/view/single_pass_input.hpp>
 
 /*!\defgroup view View
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.

@@ -159,7 +159,7 @@ concept fm_index_concept = std::Semiregular<t> && requires (t index)
     // NOTE: circular dependency
     // requires fm_index_iterator_concept<typename t::iterator_type>;
 
-    requires requires (t index, std::vector<dna4> const text)
+    requires requires (t index, std::vector<typename t::char_type> const text)
     {
         { t(text) };
         { index.construct(text) } -> void;
