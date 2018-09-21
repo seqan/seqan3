@@ -46,8 +46,7 @@
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/iterator.hpp>
+#include <seqan3/core/metafunction/range.hpp>
 
 namespace seqan3::detail
 {
