@@ -51,7 +51,7 @@
 
 // C++ standard [required]
 #ifdef __cplusplus
-    static_assert(__cplusplus >= 201500, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
+    static_assert(__cplusplus >= 201703, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
 #else
 #   error "This is not a C++ compiler."
 #endif
