@@ -47,6 +47,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/metafunction/iterator.hpp>
 
 namespace seqan3::detail
 {
@@ -104,6 +105,7 @@ struct alignment_coordinate
  * \tparam    trace_matrix_t The type of the trace matrix.
  * \param[in] matrix         The trace matrix.
  * \param[in] end_coordinate Where the trace in the matrix ends.
+ * \return Returns the begin coordinate.
  */
  template <typename trace_matrix_t>
  //!\cond
@@ -148,6 +150,7 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
             throw std::logic_error{"Trace not found"};
         }
     }
+
     return
     {
         std::max<signed_size_t>(col - 1, 0),
@@ -168,13 +171,14 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
  * \param[in] query                      The query sequence.
  * \param[in] matrix                     The trace matrix.
  * \param[in] end_coordinate             Where the trace in the matrix ends.
+ * \return Returns a seqan3::aligned_sequence.
  */
 template <
     typename database_t,
     typename query_t,
     typename trace_matrix_t,
-    typename gapped_database_alphabet_t = gapped<std::decay_t<decltype(std::declval<database_t>()[0])>>,
-    typename gapped_query_alphabet_t = gapped<std::decay_t<decltype(std::declval<query_t>()[0])>>>
+    typename gapped_database_alphabet_t = gapped<value_type_t<database_t>>,
+    typename gapped_query_alphabet_t = gapped<value_type_t<query_t>>>
 //!\cond
     requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
