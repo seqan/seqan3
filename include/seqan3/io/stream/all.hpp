@@ -46,4 +46,5 @@
 #pragma once
 
 #include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>

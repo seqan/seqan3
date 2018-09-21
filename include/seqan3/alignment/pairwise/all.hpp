@@ -39,7 +39,11 @@
 
 #pragma once
 
+#include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/alignment/pairwise/alignment_selector.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
+#include <seqan3/alignment/pairwise/execution/all.hpp>
 
 /*!\defgroup pairwise Pairwise
  * \ingroup alignment
