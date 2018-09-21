@@ -133,15 +133,9 @@ namespace seqan3
  * \{
  */
 /*!\interface seqan3::container_concept <>
-<<<<<<< HEAD
- * \extends seqan3::forward_range_concept
- * \extends seqan3::sized_range_concept
- * \extends seqan3::bounded_range_concept
-=======
  * \extends std::ranges::ForwardRange
  * \extends std::ranges::SizedRange
  * \extends std::ranges::CommonRange
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \extends seqan3::const_iterable_concept
  * \brief The (most general) container concept as defined by the standard library.
  * \details

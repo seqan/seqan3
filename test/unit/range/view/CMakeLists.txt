@@ -15,7 +15,4 @@ seqan3_test(view_to_rank_test.cpp)
 seqan3_test(view_translation_test.cpp)
 seqan3_test(view_trim_test.cpp)
 seqan3_test(view_single_pass_input_test.cpp)
-<<<<<<< HEAD
-=======
 seqan3_test(view_get_test.cpp)
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6

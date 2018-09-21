@@ -41,11 +41,7 @@
 #include <vector>
 #include <string>
 
-<<<<<<< HEAD
-#include <seqan3/io/concept.hpp>
-=======
 #include <seqan3/io/stream/concept.hpp>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 using namespace seqan3;
 

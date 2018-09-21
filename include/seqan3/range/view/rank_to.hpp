@@ -63,22 +63,6 @@ namespace seqan3::view
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
-<<<<<<< HEAD
- * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
- * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
- * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
- * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
- * |                                     |                                       |                                                    |
- * | seqan3::view_concept                |                                       | *guaranteed*                                       |
- * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::bounded_range_concept       |                                       | *preserved*                                        |
- * | seqan3::output_range_concept        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
- * |                                     |                                       |                                                    |
- * | seqan3::reference_t                 | seqan3::underlying_rank_t<alphabet_t> | `alphabet_t`                                       |
-=======
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
  * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
  * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
@@ -95,7 +79,6 @@ namespace seqan3::view
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             | seqan3::underlying_rank_t<alphabet_t> | `alphabet_t`                                       |
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

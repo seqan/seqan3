@@ -41,15 +41,11 @@
 
 #pragma once
 
-<<<<<<< HEAD
-#include <seqan3/io/record.hpp>
-=======
 #include <range/v3/view/repeat.hpp>
 
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/std/ranges>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 namespace seqan3::detail
 {
@@ -63,11 +59,7 @@ namespace seqan3::detail
  * \relates seqan3::fields
  */
 template <typename t>
-<<<<<<< HEAD
-concept bool fields_concept = is_value_specialisation_of_v<t, fields>;
-=======
 concept fields_concept = is_value_specialisation_of_v<t, fields>;
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 // ----------------------------------------------------------------------------
 // select_types_with_ids
@@ -91,20 +83,12 @@ concept fields_concept = is_value_specialisation_of_v<t, fields>;
  * ### Example
  *
  * ```cpp
-<<<<<<< HEAD
- * using types         = type_list<std::string, dna4_vector, std::vector<illumina18>>;
-=======
  * using types         = type_list<std::string, dna4_vector, std::vector<phred42>>;
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * using types_as_ids  = fields<field::ID,      field::SEQ,  field::QUAL>;
  * using selected_ids  = fields<field::QUAL, field::ID>;
  *
  * using selected_types = detail::select_types_with_ids_t<types, types_as_ids, selected_ids>;
-<<<<<<< HEAD
- * // resolves to type_list<std::vector<illumina18>, std::string>>
-=======
  * // resolves to type_list<std::vector<phred42>, std::string>>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * ```
  */
 template <typename field_types,
@@ -161,16 +145,10 @@ struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids
 // get_or_ignore
 // ----------------------------------------------------------------------------
 
-<<<<<<< HEAD
-/*!\brief Perform a get-by-field on the record and return reference to std::ignore if record doesn't have field.
- * \ingroup core
- */
-=======
 /*!\addtogroup io
  *!\{
  */
 //!\brief Access an element in a std::tuple or seqan3::record; return reference to std::ignore if not contained.
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 template <field f, typename field_types, typename field_ids>
 auto & get_or_ignore(record<field_types, field_ids> & r)
 {
@@ -180,8 +158,6 @@ auto & get_or_ignore(record<field_types, field_ids> & r)
         return std::ignore;
 }
 
-<<<<<<< HEAD
-=======
 //!\copydoc seqan3::detail::get_or_ignore
 template <field f, typename field_types, typename field_ids>
 auto const & get_or_ignore(record<field_types, field_ids> const & r)
@@ -284,5 +260,4 @@ inline auto range_wrap_ignore(ignore_t const &)
     return ranges::view::repeat(std::ignore);
 }
 
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 } // namespace seqan3::detail

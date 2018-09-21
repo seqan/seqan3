@@ -2,13 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-<<<<<<< HEAD
-// Copyright (c) 2006-2017, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
-=======
 // Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
 // Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -57,8 +52,6 @@ TEST(template_inspect, transfer_template_args_onto_t)
     EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
 }
 
-<<<<<<< HEAD
-=======
 TEST(template_inspect, is_type_specialisation_of)
 {
     using tl = type_list<int, char, double>;
@@ -73,7 +66,6 @@ TEST(template_inspect, is_type_specialisation_of_v)
     EXPECT_FALSE((detail::is_type_specialisation_of_v<int, type_list>));
 }
 
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 template <int i, char c>
 struct t1 {};
 
@@ -84,8 +76,6 @@ struct t2
     static constexpr auto c = _c;
 };
 
-<<<<<<< HEAD
-=======
 enum struct e1
 {
     foo
@@ -120,7 +110,6 @@ TEST(template_inspect, transfer_template_vargs_onto_enum)
     EXPECT_TRUE((std::is_same_v<ta3, bar2<e2::bar>>));
 }
 
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 TEST(template_inspect, transfer_template_vargs_onto_t)
 {
     using tl = t1<1, 'a'>;
@@ -133,8 +122,6 @@ TEST(template_inspect, transfer_template_vargs_onto_t)
     EXPECT_EQ(1,   ta2::i);
     EXPECT_EQ('a', ta2::c);
 }
-<<<<<<< HEAD
-=======
 
 TEST(template_inspect, is_value_specialisation_of)
 {
@@ -151,4 +138,3 @@ TEST(template_inspect, is_value_specialisation_of_v)
     EXPECT_TRUE((detail::is_value_specialisation_of_v<tl, t1>));
     EXPECT_FALSE((detail::is_value_specialisation_of_v<int, t1>));
 }
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6

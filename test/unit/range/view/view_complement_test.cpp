@@ -41,12 +41,8 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/complement.hpp>
-<<<<<<< HEAD
-#include <seqan3/range/view/concept.hpp>
-=======
 #include <seqan3/std/ranges>
 #include <seqan3/std/view/reverse.hpp>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -68,32 +64,6 @@ TEST(view_complement, basic)
     EXPECT_EQ(v3, "TACGT"_dna5);
 }
 
-<<<<<<< HEAD
-TEST(view_complement, concepts)
-{
-    dna5_vector vec{"ACGTA"_dna5};
-    EXPECT_TRUE(input_range_concept<decltype(vec)>);
-    EXPECT_TRUE(forward_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bidirectional_range_concept<decltype(vec)>);
-    EXPECT_TRUE(random_access_range_concept<decltype(vec)>);
-    EXPECT_FALSE(view_concept<decltype(vec)>);
-    EXPECT_TRUE(sized_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
-    EXPECT_TRUE((output_range_concept<decltype(vec), dna5>));
-
-    auto v1 = vec | view::complement;
-    EXPECT_TRUE(input_range_concept<decltype(v1)>);
-    EXPECT_TRUE(forward_range_concept<decltype(v1)>);
-    EXPECT_TRUE(bidirectional_range_concept<decltype(v1)>);
-    EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
-    EXPECT_TRUE(view_concept<decltype(v1)>);
-    EXPECT_TRUE(sized_range_concept<decltype(v1)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
-    EXPECT_FALSE((output_range_concept<decltype(v1), dna5>));
-    EXPECT_FALSE((output_range_concept<decltype(v1), char>));
-=======
 TEST(view_complement, deep_view)
 {
     std::vector<dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5};
@@ -129,5 +99,4 @@ TEST(view_complement, concepts)
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), char>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

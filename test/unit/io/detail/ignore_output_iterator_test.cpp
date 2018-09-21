@@ -34,30 +34,18 @@
 
 #include <gtest/gtest.h>
 
-<<<<<<< HEAD
-#include <seqan3/std/concept/iterator.hpp>
-=======
 #include <seqan3/std/iterator>
 
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 
 using namespace seqan3;
 using namespace std::literals;
 
-<<<<<<< HEAD
-TEST(ignore_output_iterator, concept)
-{
-    EXPECT_TRUE((output_iterator_concept<detail::ignore_output_iterator, char>));
-    EXPECT_TRUE((output_iterator_concept<detail::ignore_output_iterator, int>));
-    EXPECT_FALSE((input_iterator_concept<detail::ignore_output_iterator>));
-=======
 TEST(ignore_output_iterator, concept_check)
 {
     EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, char>));
     EXPECT_TRUE((std::OutputIterator<detail::ignore_output_iterator, int>));
     EXPECT_FALSE((std::InputIterator<detail::ignore_output_iterator>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TEST(ignore_output_iterator, assign)

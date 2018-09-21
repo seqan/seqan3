@@ -45,13 +45,8 @@
 #include <range/v3/utility/iterator_traits.hpp>
 #include <range/v3/range_traits.hpp>
 
-<<<<<<< HEAD
-#include <seqan3/range/concept.hpp>
-#include <seqan3/std/concept/iterator.hpp>
-=======
 #include <seqan3/std/ranges>
 #include <seqan3/std/iterator>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 namespace seqan3::detail
 {

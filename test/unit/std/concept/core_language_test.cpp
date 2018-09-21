@@ -36,31 +36,13 @@
 
 #include <random>
 
-<<<<<<< HEAD
-#include <seqan3/std/concept/core_language.hpp>
-=======
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/std/iterator>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 #include "auxiliary.hpp"
 
 using namespace seqan3;
 
-<<<<<<< HEAD
-TEST(same_concept, basic)
-{
-    EXPECT_TRUE((same_concept<int, int, int>));
-    EXPECT_TRUE((!same_concept<int, char, int>));
-}
-
-TEST(derived_from_conept, basic)
-{
-    EXPECT_TRUE((derived_from_conept<type_b,
-                                     type_a>));
-    EXPECT_TRUE((!derived_from_conept<type_a,
-                                      type_b>));
-=======
 TEST(core_language_concepts, Same)
 {
     EXPECT_TRUE((std::Same<int, int>));
@@ -71,101 +53,17 @@ TEST(core_language_concepts, DerivedFrom)
 {
     EXPECT_TRUE((std::DerivedFrom<type_b, type_a>));
     EXPECT_TRUE((!std::DerivedFrom<type_a, type_b>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TEST(implicitly_convertible_to_concept, basic)
 {
-<<<<<<< HEAD
-    EXPECT_TRUE((implicitly_convertible_to_concept<type_b,
-                                                   type_c>));
-    EXPECT_TRUE((!implicitly_convertible_to_concept<type_c,
-                                                    type_b>));
-    EXPECT_TRUE((!implicitly_convertible_to_concept<type_a,
-                                                    type_c>));
-=======
     EXPECT_TRUE((implicitly_convertible_to_concept<type_b, type_c>));
     EXPECT_TRUE((!implicitly_convertible_to_concept<type_c, type_b>));
     EXPECT_TRUE((!implicitly_convertible_to_concept<type_a, type_c>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TEST(explicitly_convertible_to_concept, basic)
 {
-<<<<<<< HEAD
-    EXPECT_TRUE((explicitly_convertible_to_concept<type_b,
-                                                   type_c>));
-    EXPECT_TRUE((!explicitly_convertible_to_concept<type_c,
-                                                    type_b>));
-    EXPECT_TRUE((explicitly_convertible_to_concept<type_a,
-                                                   type_c>));
-}
-
-TEST(convertible_to_concept, basic)
-{
-    EXPECT_TRUE((convertible_to_concept<type_b,
-                                        type_c>));
-    EXPECT_TRUE((!convertible_to_concept<type_c,
-                                         type_b>));
-    EXPECT_TRUE((!convertible_to_concept<type_a,
-                                         type_c>));
-}
-
-TEST(common_reference_concept, basic)
-{
-    EXPECT_TRUE((common_reference_concept<int32_t, int16_t, int8_t>));
-    EXPECT_TRUE((!common_reference_concept<int32_t, int16_t, type_c>));
-}
-
-TEST(common_concept, basic)
-{
-    EXPECT_TRUE((common_concept<type_a,
-                                type_b>));
-    EXPECT_TRUE((!common_reference_concept<type_a,
-                                           type_c>));
-}
-
-TEST(integral_concept, basic)
-{
-    EXPECT_TRUE((integral_concept<int>));
-    EXPECT_TRUE((!integral_concept<float>));
-}
-
-TEST(signed_integral_concept, basic)
-{
-    EXPECT_TRUE((signed_integral_concept<int>));
-    EXPECT_TRUE((!signed_integral_concept<unsigned>));
-}
-
-TEST(unsigned_integral_concept, basic)
-{
-    EXPECT_TRUE((!unsigned_integral_concept<int>));
-    EXPECT_TRUE((unsigned_integral_concept<unsigned>));
-}
-
-TEST(assignable_concept, basic)
-{
-    EXPECT_TRUE((assignable_concept<type_a&,
-                                    type_a const &>));
-    EXPECT_TRUE((assignable_concept<type_c&,
-                                    type_b const &>));
-    EXPECT_TRUE((!assignable_concept<type_a&,
-                                     type_c&>));
-}
-
-TEST(swappable_concept, basic)
-{
-    EXPECT_TRUE((swappable_concept<type_a>));
-    EXPECT_TRUE((swappable_concept<type_b>));
-}
-
-TEST(swappable_with_concept, basic)
-{
-    EXPECT_TRUE((swappable_with_concept<type_a&,
-                                        type_a&>));
-    EXPECT_TRUE((!swappable_with_concept<type_b,
-                                         type_c>));
-=======
     EXPECT_TRUE((explicitly_convertible_to_concept<type_b, type_c>));
     EXPECT_TRUE((!explicitly_convertible_to_concept<type_c, type_b>));
     EXPECT_TRUE((explicitly_convertible_to_concept<type_a, type_c>));
@@ -225,5 +123,4 @@ TEST(core_language_concepts, SwappableWith)
 {
     EXPECT_TRUE((std::SwappableWith<type_a &, type_a &>));
     EXPECT_TRUE((!std::SwappableWith<type_b, type_c>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

@@ -48,11 +48,7 @@ using char_types = ::testing::Types<char, char16_t, char32_t, wchar_t>;
 
 TYPED_TEST_CASE(char_adaptation, char_types);
 
-<<<<<<< HEAD
-TYPED_TEST(char_adaptation, concept)
-=======
 TYPED_TEST(char_adaptation, concept_check)
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 {
     EXPECT_TRUE(char_adaptation_concept<TypeParam>);
     // NOTE: Using intermediate concept notation with forwarding references cause the concept type

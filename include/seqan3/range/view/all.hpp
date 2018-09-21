@@ -109,37 +109,10 @@
  * whether `view::foo` is the adaptor that returns the "foo type" or whether `view::foo` is the "foo type".
  * </sub>
  *
-<<<<<<< HEAD
- * ### Views vs view adaptors
- *
- * When talking about views, two different entities are often conflated:
- *
- *   1. the view (this is the type that is a range and meets seqan3::view_concept; it is what we refer to with
- * `auto vec_view` above)
- *   2. the view adaptor (this is the functor that returns the actual view based on it's parameters, including the
- * underlying range; in the above example `ranges::view::reverse` and `view::complement` are view adaptors)
- *
- * The view adaptor also facilitates the piping behaviour. It is the only entity that is publicly documented and
- * the actual view type (the range type returned by the adaptor) is considered implementation defined.
- * The *properties* of the returned range are however specified and documented as part of the adaptor, see below.
- *
- * <sub>
- * An exception to this rule are views that don't work on an underlying range and can only be
- * placed at the beginning of a pipe of operations; they do not need an adaptor, because their constructor is
- * sufficient. This is not relevant for the documention, though, we always document `view::foo`, independent of
- * whether `view::foo` is the adaptor that returns the "foo type" or whether `view::foo` is the "foo type".
- * </sub>
- *
  * ### View properties
  *
  * There are three view properties that are documented for a view, **only if that view fulfills them:**
  *
-=======
- * ### View properties
- *
- * There are three view properties that are documented for a view, **only if that view fulfills them:**
- *
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * **Source-only views:** Most views operate on an underlying range and return a (modified) range, i.e. they can be placed
  * at the beginning, middle or end of a "pipe" of view operations. However, some views are limited to being at
  * the front ("source"), e.g. `ranges::view::single`, `ranges::view::concat` and `ranges::view::ints`. These views
@@ -150,39 +123,6 @@
  *
  * **Deep views:** Some views are declared as "deeps views". This means, that in case they are given a range-of-range
  * as input (as opposed to just a range), they will apply their transformation on the innermost range (instead of
-<<<<<<< HEAD
- * the outermost range which would be default). This is handy especially for alphabet-based transformations that you
- * wish to apply to a collection of sequences.
- *
- * **For all views the following are documented:**
- *
- * | range concepts and reference_t      | `urng_t` (underlying range type) | `rrng_t` (returned range type)                     |
- * |-------------------------------------|----------------------------------|----------------------------------------------------|
- * | seqan3::input_range_concept         | [required] <i>(usually)</i>      | [preserved\|lost\|guaranteed] (usually preserved)  |
- * | seqan3::forward_range_concept       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::bidirectional_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::random_access_range_concept | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * |                                     |                                  |                                                    |
- * | seqan3::view_concept                | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed] (usually guaranteed) |
- * | seqan3::sized_range_concept         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::bounded_range_concept       | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::output_range_concept        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::const_iterable_concept      | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
- * |                                     |                                  |                                                    |
- * | seqan3::reference_t                 | optionally a type or concept     | optionally a type or concept                       |
- *
- * **Underlying range requirements:** All view adaptors that are not *source-only* make certain assumptions about their
- * underlying range.
- * The most basic assumption is that the range satisfies `seqan3::input_range_concept`, but some views require
- * stronger properties, e.g. `seqan3::random_access_range_concept`. *Note that these being* requirements *means that
- * they are the minimal set of properties assumed. Views may very well make use of stronger properties if available.*
- *
- * **Return range guarantees:** All view adaptors that are not *sink-only* return a range that meets at least
- * `seqan3::input_range_concept` and also `seqan3::view_concept`. Most views also preserve stronger
- * properties, e.g. `seqan3::random_access_range_concept`, but this depends on the view. Some views also add
- * properties not present on the input range, e.g. the range returned by `ranges::view::take_exactly` meets
- * `seqan3::sized_range_concept`, independent of whether this was met by the input range.
-=======
  * the outermost range which would be default). Most alphabet-based transformations are defined as deep, but
  * you can use seqan3::view::deep to make any view (adaptor) deep. See seqan3::view::deep for more details.
  *
@@ -221,7 +161,6 @@
  * properties, e.g. `std::ranges::RandomAccessRange`, but this depends on the view. Some views also add
  * properties not present on the input range, e.g. the range returned by `ranges::view::take_exactly` meets
  * `std::ranges::SizedRange`, independent of whether this was met by the input range.
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *   * *preserved* in this context means that the returned range satisfies this concept if it is also satisfied by the
  * underlying range.
  *   * *lost* means that this concept is never satisfied by the returned range, independent of whether the underlying
@@ -242,21 +181,12 @@
  * nucleotides and of course also returns nucleotides and "seqan3::reference_t<urng_t>" would imply that
  * the reference type is the same. However, and this is important to note, the reference type
  * of seqan3::view::complement has any actual `&` removed from the underlying ranges' reference type (if originally present),
-<<<<<<< HEAD
- * this goes hand-in-hand with seqan3::output_range_concept being lost → original elements cannot be written to through
- * this view.
- * This is because *new elements* are being generated. Other views like `ranges::view::reverse` also preserve the
- * `&` (if originally present), because the elements in the return view still point to the elements in the original
- * range (just in different order). This has the effect that through some combinations of views you can modify the
- * elements in the original range (if all views in the pipe preserve seqan3::output_range_concept), but through others
-=======
  * this goes hand-in-hand with std::ranges::OutputRange being lost → original elements cannot be written to through
  * this view.
  * This is because *new elements* are being generated. Other views like `view::reverse` also preserve the
  * `&` (if originally present), because the elements in the return view still point to the elements in the original
  * range (just in different order). This has the effect that through some combinations of views you can modify the
  * elements in the original range (if all views in the pipe preserve std::ranges::OutputRange), but through others
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * you can't.
  *
  * \sa https://ericniebler.github.io/range-v3/index.html#range-views

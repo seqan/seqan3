@@ -48,11 +48,7 @@ struct type_b : type_a
     type_b & operator=(type_b &&) noexcept = default;
 
     template <typename ...args>
-<<<<<<< HEAD
-    bool operator()(args &&...);
-=======
     bool operator()(args &&...) const;
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 };
 
 //! \brief Helper struct for testing core concepts.
@@ -65,11 +61,7 @@ struct type_c
     {}
 
     template <typename ...args>
-<<<<<<< HEAD
-    void operator()(args &&... );
-=======
     void operator()(args &&... ) const;
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 };
 
 //! \brief Helper struct for testing core concepts.
@@ -85,17 +77,10 @@ struct type_d: type_b
     ~type_d() = delete;
 
     template <typename t1, typename t2>
-<<<<<<< HEAD
-    void operator()(t1 &&, t2 &&);
-
-    template <typename t>
-    bool operator()(t &&, t &&);
-=======
     void operator()(t1 &&, t2 &&) const;
 
     template <typename t>
     bool operator()(t &&, t &&) const;
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 };
 
 // Operator overloads for testing core concepts.

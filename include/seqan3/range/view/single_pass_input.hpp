@@ -40,17 +40,10 @@
 #pragma once
 
 #include <seqan3/core/metafunction/all.hpp>
-<<<<<<< HEAD
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/view/detail.hpp>
-#include <seqan3/std/concept/core_language.hpp>
-#include <seqan3/std/concept/iterator.hpp>
-=======
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 //-----------------------------------------------------------------------------
 // Implementation of single pass input view.
@@ -65,17 +58,10 @@ class single_pass_input_iterator;
 
 /*!\brief Adds single_pass_input behavior to the underlying range.
  * \tparam urng_t The underlying range type.
-<<<<<<< HEAD
- * \implements input_range_concept
- * \ingroup view
- */
-template <input_range_concept urng_t>
-=======
  * \implements std::ranges::InputRange
  * \ingroup view
  */
 template <std::ranges::InputRange urng_t>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 class single_pass_input_view : public detail::view_base
 {
 private:
@@ -176,11 +162,7 @@ public:
  * \{
  */
 //!\brief Deduces the single_pass_input_view from the underlying range.
-<<<<<<< HEAD
-template <input_range_concept urng_t>
-=======
 template <std::ranges::InputRange urng_t>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 single_pass_input_view(urng_t &&) -> single_pass_input_view<urng_t>;
 //!\}
 } // seqan3::detail
@@ -192,11 +174,7 @@ single_pass_input_view(urng_t &&) -> single_pass_input_view<urng_t>;
 namespace seqan3::detail
 {
 /*!\brief An input_iterator over the associated range.
-<<<<<<< HEAD
- * \implements input_iterator_concept
-=======
  * \implements std::InputIterator
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  * \ingroup view
  * \tparam view_type The type of the associated type.
  *
@@ -217,13 +195,8 @@ class single_pass_input_iterator<single_pass_input_view<view_type>>
     template <typename input_view_type>
     friend class single_pass_input_iterator;
 
-<<<<<<< HEAD
-    //!\brief Test that the sentinel fulfills the sentinel_concept for the underlying iterator.
-    static_assert(sentinel_concept<sentinel_type, base_iterator_type>);
-=======
     //!\brief Test that the sentinel fulfills the std::Sentinel for the underlying iterator.
     static_assert(std::Sentinel<sentinel_type, base_iterator_type>);
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 public:
 
@@ -338,13 +311,10 @@ protected:
 
 namespace seqan3::view
 {
-<<<<<<< HEAD
-=======
 /*!\name General purpose views
  * \{
  */
 
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 /*!\brief               A view adapter that decays most of the range properties and adds single pass behavior.
  * \tparam urng_t       The type of the range being processed. See below for requirements.
  * \param[in] urange    The range being processed.
@@ -362,22 +332,6 @@ namespace seqan3::view
  * ### View properties
  *
  *
-<<<<<<< HEAD
- * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
- * | seqan3::forward_range_concept       |                                       | *lost*                                             |
- * | seqan3::bidirectional_range_concept |                                       | *lost*                                             |
- * | seqan3::random_access_range_concept |                                       | *lost*                                             |
- * |                                     |                                       |                                                    |
- * | seqan3::view_concept                |                                       | *guaranteed*                                       |
- * | seqan3::sized_range_concept         |                                       | *lost*                                             |
- * | seqan3::bounded_range_concept       |                                       | *lost*                                             |
- * | seqan3::output_range_concept        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept      |                                       | *lost*                                             |
- * |                                     |                                       |                                                    |
- * | seqan3::reference_t                 |                                       | seqan3::reference_t<urng_t>                        |
-=======
  * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
  * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
  * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
@@ -394,7 +348,6 @@ namespace seqan3::view
  * | seqan3::const_iterable_concept  |                                       | *lost*                                             |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -404,24 +357,10 @@ namespace seqan3::view
  *
  * ### Example
  *
-<<<<<<< HEAD
- * ```cpp
- * std::string str{"hello"};
- * auto v = str | view::single_pass_input;
- * std::cout << *++v.begin() << std::endl;  // prints 'e'
- * std::cout << *++v.begin() << std::endl;  // prints 'l'
- * std::cout << *++v.begin() << std::endl;  // prints 'l'
- * std::cout << *++v.begin() << std::endl;  // prints 'o'
- * ```
- */
-detail::declare_view_functor_type<detail::single_pass_input_view> const single_pass_input;
-
-=======
  * \snippet test/snippet/range/view/single_pass_input.cpp usage
  * \hideinitializer
  */
 inline constexpr auto single_pass_input = detail::generic_pipable_view_adaptor<detail::single_pass_input_view>{};
 
 //!\}
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 } // namespace seqan3::view

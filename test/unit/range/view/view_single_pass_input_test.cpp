@@ -2,13 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-<<<<<<< HEAD
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
-=======
 // Copyright (c) 2006-2018, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,13 +34,6 @@
 
 #include <gtest/gtest.h>
 
-<<<<<<< HEAD
-#include <seqan3/range/view/single_pass_input.hpp>
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/view/concept.hpp>
-
-=======
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 #include <vector>
 #include <type_traits>
 
@@ -53,12 +41,9 @@
 #include <range/v3/view/take.hpp>
 #include <range/v3/istream_range.hpp>
 
-<<<<<<< HEAD
-=======
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/std/ranges>
 
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 template <typename rng_type>
 class single_pass_input : public ::testing::Test
 {
@@ -104,28 +89,16 @@ TYPED_TEST_CASE(single_pass_input, underlying_range_types);
 
 using namespace seqan3;
 
-<<<<<<< HEAD
-TYPED_TEST(single_pass_input, view_concepts)
-=======
 TYPED_TEST(single_pass_input, view_concept)
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 {
     using view_t = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
     EXPECT_TRUE((std::is_base_of_v<ranges::view_base, view_t>));
 
-<<<<<<< HEAD
-    EXPECT_TRUE((sentinel_concept<sentinel_t<view_t>, iterator_t<view_t>>));
-    EXPECT_TRUE(range_concept<view_t>);
-    EXPECT_TRUE(view_concept<view_t>);
-    EXPECT_TRUE(input_range_concept<view_t>);
-    EXPECT_FALSE(forward_range_concept<view_t>);
-=======
     EXPECT_TRUE((std::Sentinel<sentinel_t<view_t>, iterator_t<view_t>>));
     EXPECT_TRUE(std::ranges::Range<view_t>);
     EXPECT_TRUE(std::ranges::View<view_t>);
     EXPECT_TRUE(std::ranges::InputRange<view_t>);
     EXPECT_FALSE(std::ranges::ForwardRange<view_t>);
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TYPED_TEST(single_pass_input, view_construction)
@@ -197,13 +170,8 @@ TYPED_TEST(single_pass_input, view_iterate)
 TYPED_TEST(single_pass_input, iterator_concepts)
 {
     using view_type = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
-<<<<<<< HEAD
-    EXPECT_TRUE((input_iterator_concept<ranges::iterator_t<view_type>>));
-    EXPECT_FALSE((forward_iterator_concept<ranges::iterator_t<view_type>>));
-=======
     EXPECT_TRUE((std::InputIterator<ranges::iterator_t<view_type>>));
     EXPECT_FALSE((std::ForwardIterator<ranges::iterator_t<view_type>>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TYPED_TEST(single_pass_input, iterator_construction)
@@ -250,11 +218,7 @@ TYPED_TEST(single_pass_input, iterator_post_increment)
     detail::single_pass_input_view view{p};
 
     auto it = view.begin();
-<<<<<<< HEAD
-    EXPECT_TRUE((same_concept<decltype(it++), void>));
-=======
     EXPECT_TRUE((std::Same<decltype(it++), void>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
     if constexpr (std::is_same_v<ranges::range_value_type_t<TypeParam>, char>)
     {
@@ -322,13 +286,8 @@ TYPED_TEST(single_pass_input, sentinel_concepts)
     using iterator_type = iterator_t<view_type>;
     using sentinel_type = sentinel_t<view_type>;
 
-<<<<<<< HEAD
-    EXPECT_TRUE((sentinel_concept<sentinel_type, iterator_type>));
-    EXPECT_FALSE((sized_sentinel_concept<sentinel_type, iterator_type>));
-=======
     EXPECT_TRUE((std::Sentinel<sentinel_type, iterator_type>));
     EXPECT_FALSE((std::SizedSentinel<sentinel_type, iterator_type>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TYPED_TEST(single_pass_input, sentinel_eq_comparison)

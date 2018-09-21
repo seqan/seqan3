@@ -39,16 +39,10 @@
 #include <range/v3/algorithm/equal.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-<<<<<<< HEAD
-#include <seqan3/alphabet/quality/illumina18.hpp>
-#include <seqan3/io/record.hpp>
-#include <seqan3/io/detail/record.hpp>
-=======
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/core/concept/tuple.hpp>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
@@ -95,11 +89,8 @@ TEST_F(record_, definition_tuple_traits)
     EXPECT_TRUE((std::is_same_v<std::tuple_element_t<1, record_type>,
                                 dna4_vector>));
     EXPECT_EQ(std::tuple_size_v<record_type>, 2ul);
-<<<<<<< HEAD
-=======
 
     EXPECT_TRUE(tuple_like_concept<record_type>);
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TEST_F(record_, construction)
@@ -137,20 +128,12 @@ TEST_F(record_, get_by_field)
 
 TEST(detail, select_types_with_ids)
 {
-<<<<<<< HEAD
-    using types         = type_list<std::string, dna4_vector, std::vector<illumina18>>;
-=======
     using types         = type_list<std::string, dna4_vector, std::vector<phred42>>;
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
     using types_as_ids  = fields<field::ID, field::SEQ, field::QUAL>;
     using selected_ids  = fields<field::QUAL, field::ID>;
 
     using selected_types = typename detail::select_types_with_ids<types, types_as_ids, selected_ids>::type;
 
     EXPECT_TRUE((std::is_same_v<selected_types,
-<<<<<<< HEAD
-                                type_list<std::vector<illumina18>, std::string>>));
-=======
                                 type_list<std::vector<phred42>, std::string>>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

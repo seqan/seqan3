@@ -39,13 +39,7 @@
 #include <forward_list>
 #include <vector>
 
-<<<<<<< HEAD
-#include <seqan3/std/concept/iterator.hpp>
-
-using namespace seqan3;
-=======
 #include <seqan3/std/iterator>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 using input_iterator               = std::istream_iterator<char>;
 using output_iterator              = ranges::ostream_iterator<char>;
@@ -118,11 +112,7 @@ struct test_sized_sentinel : public test_sentinel<value_type_t<iterator_type>>
 };
 
 template <typename iterator_t>
-<<<<<<< HEAD
-    requires random_access_iterator_concept<iterator_t>
-=======
     requires std::RandomAccessIterator<iterator_t>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(test_sized_sentinel<iterator_t> const & s,
           iterator_t const & i)
@@ -131,11 +121,7 @@ operator-(test_sized_sentinel<iterator_t> const & s,
 }
 
 template <typename iterator_t>
-<<<<<<< HEAD
-    requires random_access_iterator_concept<iterator_t>
-=======
     requires std::RandomAccessIterator<iterator_t>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(iterator_t const & i,
           test_sized_sentinel<iterator_t> const & s)

@@ -42,19 +42,11 @@
 #include <iostream>
 
 #include <seqan3/core/concept/cereal.hpp>
-<<<<<<< HEAD
-#include <seqan3/alphabet/adaptation/pre.hpp>
-#include <seqan3/alphabet/concept_pre.hpp>
-#include <seqan3/alphabet/detail/member_exposure.hpp>
-#include <seqan3/std/concept/object.hpp>
-#include <seqan3/std/concept/comparison.hpp>
-=======
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/alphabet/adaptation/pre.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/std/concepts>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 namespace seqan3
 {
@@ -153,10 +145,6 @@ concept alphabet_concept = requires (t t1, t t2)
 
     // conversion to char
     { to_char(t1) } -> underlying_char_t<std::remove_reference_t<t>>;
-<<<<<<< HEAD
-    { std::cout << t1 };
-=======
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
     // assignment from char
     { assign_char(t1,  0) }                          -> std::remove_reference_t<t> &;

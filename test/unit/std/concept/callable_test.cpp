@@ -36,45 +36,6 @@
 
 #include <random>
 
-<<<<<<< HEAD
-#include <seqan3/std/concept/callable.hpp>
-
-#include "auxiliary.hpp"
-
-using namespace seqan3;
-
-TEST(invocable_concept, basic)
-{
-    EXPECT_TRUE((!invocable_concept<type_a, int, double,
-                                    type_b>));
-    EXPECT_TRUE((invocable_concept<std::random_device>));
-    EXPECT_TRUE((invocable_concept<type_c, int, double,
-                                   type_b>));
-}
-
-TEST(regular_invocable_concept, basic)
-{
-    EXPECT_TRUE((!regular_invocable_concept<type_a, int, double,
-                                            type_b>));
-//TODO(rrahn): Should not meet the regular_invocable_concept
-//    EXPECT_TRUE((!regular_invocable_concept<std::random_device>));
-    EXPECT_TRUE((regular_invocable_concept<type_c, int, double,
-                                           type_b>));
-}
-
-TEST(predicate_concept, basic)
-{
-    EXPECT_TRUE((!predicate_concept<type_c, int, double,
-                                    type_b>));
-    EXPECT_TRUE((predicate_concept<type_b, int, double,
-                                   type_b>));
-}
-
-TEST(relation_concept, basic)
-{
-    EXPECT_TRUE((!relation_concept<type_d, int, double>));
-    EXPECT_TRUE((relation_concept<type_d, int, int>));
-=======
 #include <seqan3/std/concepts>
 
 #include "auxiliary.hpp"
@@ -104,5 +65,4 @@ TEST(callable_concepts, Relation)
 {
     EXPECT_TRUE((!std::Relation<type_d, int, double>));
     EXPECT_TRUE((std::Relation<type_d, int, int>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

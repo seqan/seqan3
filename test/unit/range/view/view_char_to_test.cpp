@@ -41,12 +41,8 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/char_to.hpp>
-<<<<<<< HEAD
-#include <seqan3/range/view/concept.hpp>
-=======
 #include <seqan3/std/ranges>
 #include <seqan3/std/view/reverse.hpp>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 using namespace seqan3;
 using namespace seqan3::literal;
@@ -70,32 +66,6 @@ TEST(view_char_to, basic)
     EXPECT_EQ(cmp2, v3);
 }
 
-<<<<<<< HEAD
-TEST(view_char_to, concepts)
-{
-    std::string vec{"ACTTTGATA"};
-    EXPECT_TRUE(input_range_concept<decltype(vec)>);
-    EXPECT_TRUE(forward_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bidirectional_range_concept<decltype(vec)>);
-    EXPECT_TRUE(random_access_range_concept<decltype(vec)>);
-    EXPECT_FALSE(view_concept<decltype(vec)>);
-    EXPECT_TRUE(sized_range_concept<decltype(vec)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
-    EXPECT_TRUE((output_range_concept<decltype(vec), char>));
-
-    auto v1 = vec | view::char_to<dna5>;
-    EXPECT_TRUE(input_range_concept<decltype(v1)>);
-    EXPECT_TRUE(forward_range_concept<decltype(v1)>);
-    EXPECT_TRUE(bidirectional_range_concept<decltype(v1)>);
-    EXPECT_TRUE(random_access_range_concept<decltype(v1)>);
-    EXPECT_TRUE(view_concept<decltype(v1)>);
-    EXPECT_TRUE(sized_range_concept<decltype(v1)>);
-    EXPECT_TRUE(bounded_range_concept<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
-    EXPECT_FALSE((output_range_concept<decltype(v1), dna5>));
-    EXPECT_FALSE((output_range_concept<decltype(v1), char>));
-=======
 TEST(view_char_to, deep_view)
 {
     std::vector<std::string> foo{"ACGTA", "TGCAT"};
@@ -131,5 +101,4 @@ TEST(view_char_to, concepts)
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), char>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

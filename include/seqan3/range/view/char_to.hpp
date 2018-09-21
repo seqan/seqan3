@@ -60,40 +60,6 @@ namespace seqan3::view
  * \ingroup view
  *
  * ### View properties
-<<<<<<< HEAD
- *
- * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
- * the transformation on the innermost range (instead of the outermost range).
- *
- * | range concepts and reference_t      | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |-------------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | seqan3::input_range_concept         | *required*                            | *preserved*                                        |
- * | seqan3::forward_range_concept       |                                       | *preserved*                                        |
- * | seqan3::bidirectional_range_concept |                                       | *preserved*                                        |
- * | seqan3::random_access_range_concept |                                       | *preserved*                                        |
- * |                                     |                                       |                                                    |
- * | seqan3::view_concept                |                                       | *guaranteed*                                       |
- * | seqan3::sized_range_concept         |                                       | *preserved*                                        |
- * | seqan3::bounded_range_concept       |                                       | *preserved*                                        |
- * | seqan3::output_range_concept        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept      |                                       | *preserved*                                        |
- * |                                     |                                       |                                                    |
- * | seqan3::reference_t                 | seqan3::underlying_char_t<alphabet_t> | `alphabet_t`                                       |
- *
- * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
- *
- * ### Example
- *
- * ```cpp
- * std::string s{"ACTTTGATAN"};
- * auto v1 = s | view::char_to<dna4>; // == "ACTTTGATAA"_dna4
- * auto v2 = s | view::char_to<dna5>; // == "ACTTTGATAN"_dna5
- * ```
- * \hideinitializer
- */
-template <alphabet_concept alphabet_type>
-auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type> const in) -> alphabet_type
-=======
  *
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
@@ -124,7 +90,6 @@ auto const char_to = ranges::view::transform([] (underlying_char_t<alphabet_type
  */
 template <alphabet_concept alphabet_type>
 inline auto const char_to = deep{view::transform([] (auto && in)
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 {
     static_assert(std::is_same_v<remove_cvref_t<decltype(in)>, remove_cvref_t<underlying_char_t<alphabet_type>>>,
                     "The innermost value type must be the underlying char type of alphabet_type.");

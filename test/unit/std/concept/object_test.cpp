@@ -2,13 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ============================================================================
 //
-<<<<<<< HEAD
-// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-=======
 // Copyright (C) 2006-2018, Knut Reinert & Freie Universitaet Berlin
 // Copyright (C) 2016-2018, Knut Reinert & MPI Molekulare Genetik
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,79 +36,13 @@
 
 #include <random>
 
-<<<<<<< HEAD
-#include <seqan3/std/concept/object.hpp>
-=======
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/std/concepts>
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 
 #include "auxiliary.hpp"
 
 using namespace seqan3;
 
-<<<<<<< HEAD
-TEST(destructible_concept, basic)
-{
-    EXPECT_TRUE((destructible_concept<type_a>));
-    EXPECT_TRUE((!destructible_concept<type_d>));
-}
-
-TEST(constructible_concept, basic)
-{
-    EXPECT_TRUE((constructible_concept<type_a>));
-    EXPECT_TRUE((constructible_concept<type_c,
-                                       type_a>));
-    EXPECT_TRUE((!constructible_concept<type_c,
-                                        type_a,
-                                        type_b>));
-}
-
-TEST(default_constructible_concept, basic)
-{
-    EXPECT_TRUE((default_constructible_concept<type_a>));
-    EXPECT_TRUE((!default_constructible_concept<type_d>));
-}
-
-TEST(move_constructible_concept, basic)
-{
-    EXPECT_TRUE((move_constructible_concept<type_b>));
-    EXPECT_TRUE((!move_constructible_concept<type_d>));
-}
-
-TEST(copy_constructible_concept, basic)
-{
-    EXPECT_TRUE((copy_constructible_concept<type_a>));
-    EXPECT_TRUE((!copy_constructible_concept<type_b>));
-}
-
-TEST(movable_concept, basic)
-{
-    EXPECT_TRUE((movable_concept<type_b>));
-    EXPECT_TRUE((!movable_concept<type_d>));
-}
-
-TEST(copyable_concept, basic)
-{
-    EXPECT_TRUE((copyable_concept<type_a>));
-    EXPECT_TRUE((!copyable_concept<type_b>));
-}
-
-TEST(semi_regular_concept, basic)
-{
-    EXPECT_TRUE((semi_regular_concept<type_a>));
-    EXPECT_TRUE((semi_regular_concept<type_c>));
-    EXPECT_TRUE((!semi_regular_concept<type_b>));
-    EXPECT_TRUE((!semi_regular_concept<type_d>));
-}
-
-TEST(regular_concept, basic)
-{
-    EXPECT_TRUE((!regular_concept<type_a>));
-    EXPECT_TRUE((!regular_concept<type_b>));
-    EXPECT_TRUE((regular_concept<type_c>));
-    EXPECT_TRUE((!regular_concept<type_d>));
-=======
 TEST(object_concepts, Destructible)
 {
     EXPECT_TRUE((std::Destructible<type_a>));
@@ -171,5 +100,4 @@ TEST(object_concepts, Regular)
     EXPECT_TRUE((!std::Regular<type_b>));
     EXPECT_TRUE((std::Regular<type_c>));
     EXPECT_TRUE((!std::Regular<type_d>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }

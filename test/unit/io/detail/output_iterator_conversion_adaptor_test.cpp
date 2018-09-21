@@ -2,13 +2,8 @@
 //                 SeqAn - The Library for Sequence Analysis
 // ==========================================================================
 //
-<<<<<<< HEAD
-// Copyright (c) 2006-2017, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2017, Knut Reinert & MPI Molekulare Genetik
-=======
 // Copyright (c) 2006-2018, Knut Reinert, FU Berlin
 // Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -91,21 +86,12 @@ using output_value_types = ::testing::Types<std::tuple<ranges::ostream_iterator<
 
 TYPED_TEST_CASE(oiter_conversion_adaptor, output_value_types);
 
-<<<<<<< HEAD
-TYPED_TEST(oiter_conversion_adaptor, concept)
-{
-    using adaptor_type = typename TestFixture::output_iterator_adaptor;
-
-    EXPECT_TRUE((output_iterator_concept<adaptor_type, char>));
-    EXPECT_FALSE((input_iterator_concept<adaptor_type>));
-=======
 TYPED_TEST(oiter_conversion_adaptor, concept_check)
 {
     using adaptor_type = typename TestFixture::output_iterator_adaptor;
 
     EXPECT_TRUE((std::OutputIterator<adaptor_type, char>));
     EXPECT_FALSE((std::InputIterator<adaptor_type>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TYPED_TEST(oiter_conversion_adaptor, assign)
@@ -126,11 +112,7 @@ TYPED_TEST(oiter_conversion_adaptor, pre_increment)
 
     [[maybe_unused]] adaptor_type it{this->inner_it};
 
-<<<<<<< HEAD
-    EXPECT_TRUE((same_concept<std::remove_reference_t<decltype(++it)>, adaptor_type>));
-=======
     EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(++it)>, adaptor_type>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TYPED_TEST(oiter_conversion_adaptor, post_increment)
@@ -139,11 +121,7 @@ TYPED_TEST(oiter_conversion_adaptor, post_increment)
 
     [[maybe_unused]] adaptor_type it{this->inner_it};
 
-<<<<<<< HEAD
-    EXPECT_TRUE((same_concept<std::remove_reference_t<decltype(it++)>, adaptor_type>));
-=======
     EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(it++)>, adaptor_type>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TYPED_TEST(oiter_conversion_adaptor, dereference)
@@ -152,11 +130,7 @@ TYPED_TEST(oiter_conversion_adaptor, dereference)
 
     [[maybe_unused]] adaptor_type it{this->inner_it};
 
-<<<<<<< HEAD
-    EXPECT_TRUE((same_concept<std::remove_reference_t<decltype(*it)>, adaptor_type>));
-=======
     EXPECT_TRUE((std::Same<std::remove_reference_t<decltype(*it)>, adaptor_type>));
->>>>>>> 41b42cc5d45c544a427ed079af957ad4366ea9e6
 }
 
 TEST(output_iterator, vector)
