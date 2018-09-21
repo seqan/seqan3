@@ -110,8 +110,8 @@ struct alignment_coordinate
      requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
               std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
  //!\endcond
-inline alignment_coordinate
-alignment_begin_coordinate(trace_matrix_t && matrix, alignment_coordinate const end_coordinate)
+inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
+                                                       alignment_coordinate const end_coordinate)
 {
     using signed_size_t = std::make_signed_t<size_t>;
 
@@ -125,7 +125,7 @@ alignment_begin_coordinate(trace_matrix_t && matrix, alignment_coordinate const 
     assert(row < matrix.rows());
     assert(col < matrix.cols());
 
-    while(true)
+    while (true)
     {
         trace_directions dir = matrix.at(row, col);
         if ((dir & L) == L)
@@ -205,7 +205,7 @@ alignment_trace(database_t && database,
     if (matrix.at(0, 0) != N)
         throw std::logic_error{"End trace must be NONE"};
 
-    while(true)
+    while (true)
     {
         trace_directions dir = matrix.at(row, col);
         if ((dir & L) == L)
