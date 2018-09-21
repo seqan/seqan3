@@ -53,7 +53,7 @@
  * with arbitrary pattern lengths and error numbers / positions.
  *
  * SeqAn3 currently supports very fast FM indices. For more details visit the \ref submodule_fm_index
- * "FM index submodule".
+ * "FM Index submodule".
  *
  * \todo k-mer indices are coming soon. Stay tuned!
  */

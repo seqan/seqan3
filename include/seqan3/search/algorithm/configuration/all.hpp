@@ -41,7 +41,7 @@
 
 /*!\defgroup search_configuration Configuration
  * \brief Data structures and utility functions for configuring search algorithm.
- * \ingroup search
+ * \ingroup submodule_search_algorithm
  *
  * \todo Write detailed landing page.
  */
