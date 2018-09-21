@@ -57,6 +57,7 @@ namespace seqan3
 /*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
  * \ingroup nucleotide
  * \implements seqan3::nucleotide_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  *
  * \details
  * Note that you can assign 'U' as a character to dna5 and it will silently

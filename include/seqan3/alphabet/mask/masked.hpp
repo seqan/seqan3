@@ -48,6 +48,7 @@ namespace seqan3
  * with a mask.
  * \ingroup mask
  * \implements seqan3::alphabet_concept
+ * \implements seqan3::detail::semi_constexpr_alphabet_concept
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_alphabet_concept.
  * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept, defaults to seqan3::mask.
  *

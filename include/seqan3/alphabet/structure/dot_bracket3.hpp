@@ -53,6 +53,7 @@ namespace seqan3
 
 /*!\brief The three letter RNA structure alphabet of the characters ".()".
  * \implements seqan3::rna_structure_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  * \ingroup structure
  *
  * \details

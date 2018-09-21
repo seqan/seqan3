@@ -60,6 +60,7 @@ namespace seqan3
  * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::alphabet_concept and be
  *                              unique.
  * \implements seqan3::alphabet_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  *
  * \details
  *
@@ -83,7 +84,7 @@ namespace seqan3
  */
 template <typename ...alternative_types>
 //!\cond
-    requires (alphabet_concept<alternative_types> && ... && (sizeof...(alternative_types) >= 2))
+    requires (detail::constexpr_alphabet_concept<alternative_types> && ... && (sizeof...(alternative_types) >= 2))
 //!\endcond
 class union_composition
 {

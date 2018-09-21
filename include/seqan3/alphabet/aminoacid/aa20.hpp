@@ -51,6 +51,7 @@ namespace seqan3
 /*!\brief The canonical amino acid alphabet.
  * \ingroup aminoacid
  * \implements seqan3::aminoacid_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  *
  * \details
  * The alphabet consists of letters A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y

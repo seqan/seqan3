@@ -56,6 +56,7 @@ namespace seqan3
 /*!\brief The 15 letter DNA alphabet, containing all IUPAC smybols minus the gap.
  * \ingroup nucleotide
  * \implements seqan3::nucleotide_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  *
  * \details
  * Note that you can assign 'U' as a character to dna15 and it will silently
