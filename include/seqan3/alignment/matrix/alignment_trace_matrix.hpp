@@ -145,17 +145,15 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
         }
         else
         {
-            if (row == 0 || col == 0)
-                break;
-            throw std::logic_error{"Trace not found"};
+#ifndef NDEBUG
+            if (!(row == 0 || col == 0))
+                throw std::logic_error{"Unkown seqan3::trace_direction in an inner cell of the trace matrix."};
+#endif
+            break;
         }
     }
 
-    return
-    {
-        std::max<signed_size_t>(col - 1, 0),
-        std::max<signed_size_t>(row - 1, 0)
-    };
+    return {std::max<signed_size_t>(col - 1, 0), std::max<signed_size_t>(row - 1, 0)};
 }
 
 /*!\brief Compute the trace from a trace matrix.
@@ -233,9 +231,11 @@ alignment_trace(database_t && database,
         }
         else
         {
-            if (row == 0 || col == 0)
-                break;
-            throw std::logic_error{"Trace not found"};
+#ifndef NDEBUG
+            if (!(row == 0 || col == 0))
+                throw std::logic_error{"Unkown seqan3::trace_direction in an inner cell of the trace matrix."};
+#endif
+            break;
         }
 
     }
