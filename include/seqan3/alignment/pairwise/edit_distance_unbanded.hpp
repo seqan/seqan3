@@ -431,22 +431,20 @@ public:
             get<align_result_key::score>(res) = score();
         }
 
-        alignment_coordinate end;
         if constexpr (std::tuple_size_v<result_type> >= 3)
         {
-            end = end_coordinate();
-            get<align_result_key::end>(res) = end;
+            get<align_result_key::end>(res) = end_coordinate();
         }
 
         [[maybe_unused]] alignment_trace_matrix matrix = trace_matrix();
         if constexpr (std::tuple_size_v<result_type> >= 4)
         {
-            get<align_result_key::begin>(res) = alignment_begin_coordinate(matrix, end);
+            get<align_result_key::begin>(res) = alignment_begin_coordinate(matrix, get<align_result_key::end>(res));
         }
 
         if constexpr (std::tuple_size_v<result_type> >= 5)
         {
-            get<align_result_key::trace>(res) = alignment_trace(database, query, matrix, end);
+            get<align_result_key::trace>(res) = alignment_trace(database, query, matrix, get<align_result_key::end>(res));
         }
         return res;
     }
