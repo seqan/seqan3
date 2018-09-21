@@ -43,6 +43,7 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/metafunction/function.hpp>
 #include <seqan3/alphabet/adaptation/pre.hpp>
 #include <seqan3/alphabet/concept_pre.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
@@ -204,3 +205,54 @@ void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
 
 } // namespace seqan3
 
+namespace seqan3::detail
+{
+/*!\interface seqan3::detail::constexpr_semi_alphabet_concept <>
+ * \brief A seqan3::semi_alphabet_concept that has a constexpr default constructor and constexpr accessors.
+ * \ingroup alphabet
+ * \extends seqan3::semi_alphabet_concept
+ *
+ * The same as seqan3::semi_alphabet_concept, except that all required functions are also required to be
+ * `constexpr`-qualified.
+ *
+ * \par Concepts and doxygen
+ *
+ * The requirements for this concept are given as related functions and metafunctions.
+ * Types that satisfy this concept are shown as "implementing this interface".
+ */
+//!\cond
+template <typename t>
+concept constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && requires
+{
+    // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
+    requires SEQAN3_IS_CONSTEXPR(to_rank(std::remove_reference_t<t>{}));
+    requires SEQAN3_IS_CONSTEXPR(assign_rank(std::remove_reference_t<t>{}, 0));
+};
+//!\endcond
+
+/*!\interface seqan3::detail::constexpr_alphabet_concept <>
+ * \brief A seqan3::alphabet_concept that has constexpr accessors.
+ * \ingroup alphabet
+ * \extends seqan3::detail::constexpr_semi_alphabet_concept
+ * \extends seqan3::alphabet_concept
+ *
+ * The same as seqan3::alphabet_concept, except that all required functions are also required to be
+ * `constexpr`-qualified.
+ *
+ * \par Concepts and doxygen
+ *
+ * The requirements for this concept are given as related functions and metafunctions.
+ * Types that satisfy this concept are shown as "implementing this interface".
+ */
+//!\cond
+template <typename t>
+concept constexpr_alphabet_concept = constexpr_semi_alphabet_concept<t> && requires
+{
+    // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
+    requires SEQAN3_IS_CONSTEXPR(to_char(std::remove_reference_t<t>{}));
+    requires SEQAN3_IS_CONSTEXPR(assign_char(std::remove_reference_t<t>{},
+                                             underlying_char_t<std::remove_reference_t<t>>{}));
+};
+//!\endcond
+
+} // namespace seqan3::detail

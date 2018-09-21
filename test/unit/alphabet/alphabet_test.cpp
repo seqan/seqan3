@@ -313,6 +313,11 @@ using alphabet_constexpr_types = alphabet_types;
 
 TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 
+TYPED_TEST(alphabet_constexpr, concept_check)
+{
+    EXPECT_TRUE(detail::constexpr_alphabet_concept<TypeParam>);
+}
+
 TYPED_TEST(alphabet_constexpr, default_value_constructor)
 {
     [[maybe_unused]] constexpr TypeParam t0{};
