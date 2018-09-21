@@ -49,7 +49,6 @@ include (../seqan3-test.cmake)
 # https://github.com/openmicroscopy/bioformats/blob/d3bb33eeda23e81f78fd25f658bfc14a4363805f/cpp/cmake/HeaderTest.cmake#L81-L113
 macro (seqan3_header_test component header_base_path)
     set (target "${component}_header_test")
-
     file (RELATIVE_PATH header_relative_base_path "${CMAKE_SOURCE_DIR}" "${header_base_path}")
 
     # finding all *.hpp files relative from the current directory (e.g. /test/)

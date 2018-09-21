@@ -99,4 +99,6 @@ inline auto const char_to = deep{view::transform([] (auto && in)
 
 //!\}
 
+//!\}
+
 } // namespace seqan3::view

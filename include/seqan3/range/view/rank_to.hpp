@@ -98,4 +98,6 @@ inline auto const rank_to = deep{view::transform(
 
 //!\}
 
+//!\}
+
 } // namespace seqan3::view

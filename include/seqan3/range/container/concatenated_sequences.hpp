@@ -1032,7 +1032,6 @@ public:
             for (auto && v1 : v0)
                 data_values[i++] = v1;
 
-
         // adapt delimiters behind inserted region
         // TODO parallel execution policy or vectorization?
         std::for_each(data_delimiters.begin() + pos_as_num + ilist.size() + 1,

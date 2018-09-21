@@ -203,4 +203,3 @@ void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
  */
 
 } // namespace seqan3
-

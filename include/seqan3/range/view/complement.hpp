@@ -100,4 +100,6 @@ inline auto const complement = deep{view::transform([] (auto && in)
 
 //!\}
 
+//!\}
+
 } // namespace seqan3::view

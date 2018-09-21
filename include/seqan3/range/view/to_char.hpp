@@ -92,4 +92,6 @@ inline auto const to_char = deep{view::transform([] (alphabet_concept const in)
 
 //!\}
 
+//!\}
+
 } // namespace seqan3::view

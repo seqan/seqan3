@@ -33,44 +33,47 @@
 // ============================================================================
 
 /*!\file
- * \brief Additional non-standard concepts for ranges.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Adaptions of core concepts from the Ranges TS.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/std/ranges>
-#include <seqan3/core/platform.hpp>
+#include <range/v3/range_concepts.hpp>
+#include <range/v3/utility/functional.hpp>
 
 namespace seqan3
 {
 
-/*!\interface seqan3::const_iterable_concept <>
- * \extends std::InputRange
- * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
- * same strength input range concept as the non-const version.
- *
- * \details
- *
- * For a type `t` it usually holds that if `t` is a range, `t const` is also a range with similar properties, but
- * there are cases where this does not hold:
- *
- *   * a `const` range is usually not writable so std::OutputRange is lost; pure output ranges
- * (those that are not also input ranges) are therefore not `const`-iterable;
- *   * single-pass input ranges, like SeqAn files, are not `const`-iterable, because "single-pass-ness" implies that
- * there is something in the range that changes on every iterator increment (and `const` ranges can't change);
- *   * certain views store a state with their algorithm that also changes when `begin()` is called or an
- * iterator is incremented; these may be not be `const`-iterable, because the standard library
- * (and also SeqAn3) guarantees that it is safe to call `const`-qualified functions concurrently.
+/*!\addtogroup concept
+ * \{
  */
-//!\cond
-template <typename type>
-concept const_iterable_concept =
-    std::ranges::InputRange<std::remove_const_t<type>> &&
-    std::ranges::InputRange<type const> &&
-    (std::ranges::ForwardRange<std::remove_const_t<type>>       == std::ranges::ForwardRange<type const>) &&
-    (std::ranges::BidirectionalRange<std::remove_const_t<type>> == std::ranges::BidirectionalRange<type const>) &&
-    (std::ranges::RandomAccessRange<std::remove_const_t<type>>  == std::ranges::RandomAccessRange<type const>);
-//!\endcond
 
-} // namespace seqan3
+/*!\brief Resolves to `ranges::Invocable<func, ...args>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Invocable
+ */
+template <typename f, typename ...args>
+concept bool invocable_concept =                    static_cast<bool>(ranges::Invocable<f, args...>());
+
+/*!\brief Resolves to `ranges::RegularInvocable<func, ...args>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/RegularInvocable
+ */
+template <typename f, typename ...args>
+concept bool regular_invocable_concept =            invocable_concept<f, args...> &&
+                                                    static_cast<bool>(ranges::RegularInvocable<f, args...>());
+
+/*!\brief Resolves to `ranges::Predicate<func, ...args>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Predicate
+ */
+template <typename f, typename ...args>
+concept bool predicate_concept =                    regular_invocable_concept<f, args...> &&
+                                                    static_cast<bool>(ranges::Predicate<f, args...>());
+
+/*!\brief Resolves to `ranges::Relation<func, type1, type2>()`
+ * \sa http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Relation
+ */
+template <typename f, typename t, typename u>
+concept bool relation_concept =                     static_cast<bool>(ranges::Relation<f, t, u>());
+
+//!\}
+}  // namespace seqan3

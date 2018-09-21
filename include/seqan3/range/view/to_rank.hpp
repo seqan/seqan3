@@ -94,4 +94,6 @@ inline auto const to_rank = deep{view::transform([] (alphabet_concept const in)
 
 //!\}
 
+//!\}
+
 } // namespace seqan3::view

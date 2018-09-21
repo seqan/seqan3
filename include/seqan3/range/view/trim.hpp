@@ -219,4 +219,6 @@ inline constexpr auto trim = deep{seqan3::detail::trim_fn{}};
 
 //!\}
 
+//!\}
+
 } // namespace seqan3::view
