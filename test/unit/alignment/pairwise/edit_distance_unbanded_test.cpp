@@ -207,10 +207,13 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
 
     auto alignment = edit_distance<word_type>(database, query, align_cfg);
     auto trace_matrix = alignment.trace_matrix();
+    auto begin_coordinate = alignment.begin_coordinate();
     auto end_coordinate = alignment.end_coordinate();
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);
     EXPECT_EQ(trace_matrix.rows(), query.size()+1);
+    EXPECT_EQ(begin_coordinate.seq1_pos, fixture.begin_coordinate.seq1_pos);
+    EXPECT_EQ(begin_coordinate.seq2_pos, fixture.begin_coordinate.seq2_pos);
     EXPECT_EQ(end_coordinate.seq1_pos, fixture.end_coordinate.seq1_pos);
     EXPECT_EQ(end_coordinate.seq2_pos, fixture.end_coordinate.seq2_pos);
     EXPECT_EQ(trace_matrix, fixture.trace_matrix);

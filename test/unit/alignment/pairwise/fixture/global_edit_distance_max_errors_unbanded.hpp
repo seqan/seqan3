@@ -30,6 +30,7 @@ static auto dna4_01_e255 = []()
         -8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
+        alignment_coordinate{0, 0},
         alignment_coordinate{15, 8},
         std::vector
         {
@@ -77,6 +78,7 @@ static auto dna4_01T_e255 = []()
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
+        alignment_coordinate{0, 0},
         alignment_coordinate{8, 15},
         std::vector
         {
@@ -138,6 +140,7 @@ static auto dna4_02_e255 = []()
         -8,
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
+        alignment_coordinate{0, 0},
         alignment_coordinate{15, 8},
         std::vector
         {
@@ -185,6 +188,7 @@ static auto aa27_01_e255 = []()
         -8,
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
+        alignment_coordinate{0, 0},
         alignment_coordinate{15, 8},
         std::vector
         {
@@ -232,6 +236,7 @@ static auto aa27_01T_e255 = []()
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
+        alignment_coordinate{0, 0},
         alignment_coordinate{8, 15},
         std::vector
         {

@@ -430,20 +430,21 @@ public:
         {
             get<align_result_key::score>(res) = score();
         }
+
         if constexpr (std::tuple_size_v<result_type> >= 3)
         {
             get<align_result_key::end>(res) = end_coordinate();
         }
-        // if constexpr (std::tuple_size_v<result_type> >= 4)
-        // { TODO
-        //     throw std::invalid_argument{"The current output setting is not supported!"};
-        // }
-        if constexpr (std::tuple_size_v<result_type> == 5)
+
+        [[maybe_unused]] alignment_trace_matrix matrix = trace_matrix();
+        if constexpr (std::tuple_size_v<result_type> >= 4)
         {
-            auto && [seq1_trace, seq2_trace] = alignment_trace(database, query, trace_matrix(), end_coordinate());
-            auto & [in1, in2] = get<align_result_key::trace>(res);
-            ranges::copy(seq1_trace, ranges::back_inserter(in1));
-            ranges::copy(seq2_trace, ranges::back_inserter(in2));
+            get<align_result_key::begin>(res) = alignment_begin_coordinate(matrix, get<align_result_key::end>(res));
+        }
+
+        if constexpr (std::tuple_size_v<result_type> >= 5)
+        {
+            get<align_result_key::trace>(res) = alignment_trace(database, query, matrix, get<align_result_key::end>(res));
         }
         return res;
     }
@@ -464,6 +465,13 @@ public:
     trace_matrix_type trace_matrix() const noexcept
     {
         return trace_matrix_type{*this};
+    }
+
+    //!\brief Return the begin position of the alignment
+    alignment_coordinate begin_coordinate() const noexcept
+    {
+        alignment_coordinate end = end_coordinate();
+        return alignment_begin_coordinate(trace_matrix(), end);
     }
 
     //!\brief Return the end position of the alignment

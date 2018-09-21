@@ -39,13 +39,14 @@
 
 #pragma once
 
-#include <list>
-#include <seqan3/alphabet/gap/gapped.hpp>
+#include <deque>
+#include <vector>
 
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
+#include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/core/metafunction/range.hpp>
 
 namespace seqan3::detail
 {
@@ -98,75 +99,151 @@ struct alignment_coordinate
     size_t seq2_pos;
 };
 
-/*!\brief Compute the trace from a trace matrix
+/*!\brief Compute the begin coordinate.
  * \ingroup alignment_matrix
- * \tparam    database_t     The type of the database sequence.
- * \tparam    query_t        The type of the query sequence.
  * \tparam    trace_matrix_t The type of the trace matrix.
- * \param[in] database       The database sequence.
- * \param[in] query          The query sequence.
  * \param[in] matrix         The trace matrix.
  * \param[in] end_coordinate Where the trace in the matrix ends.
+ * \returns Returns the begin coordinate.
+ */
+ template <typename trace_matrix_t>
+ //!\cond
+     requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
+              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
+ //!\endcond
+inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
+                                                       alignment_coordinate const end_coordinate)
+{
+    using signed_size_t = std::make_signed_t<size_t>;
+
+    constexpr auto N = trace_directions::none;
+    constexpr auto D = trace_directions::diagonal;
+    constexpr auto L = trace_directions::left;
+    constexpr auto U = trace_directions::up;
+    signed_size_t row = end_coordinate.seq2_pos + 1;
+    signed_size_t col = end_coordinate.seq1_pos + 1;
+
+    assert(row < matrix.rows());
+    assert(col < matrix.cols());
+
+    while (true)
+    {
+        trace_directions dir = matrix.at(row, col);
+        if ((dir & L) == L)
+        {
+            col = std::max<signed_size_t>(col - 1, 0);
+        }
+        else if ((dir & U) == U)
+        {
+            row = std::max<signed_size_t>(row - 1, 0);
+        }
+        else if ((dir & D) == D)
+        {
+            row = std::max<signed_size_t>(row - 1, 0);
+            col = std::max<signed_size_t>(col - 1, 0);
+        }
+        else
+        {
+#ifndef NDEBUG
+            if (!(row == 0 || col == 0))
+                throw std::logic_error{"Unkown seqan3::trace_direction in an inner cell of the trace matrix."};
+#endif
+            break;
+        }
+    }
+
+    return {std::max<signed_size_t>(col - 1, 0), std::max<signed_size_t>(row - 1, 0)};
+}
+
+/*!\brief Compute the trace from a trace matrix.
+ * \ingroup alignment_matrix
+ * \tparam    database_t                 The type of the database sequence.
+ * \tparam    query_t                    The type of the query sequence.
+ * \tparam    trace_matrix_t             The type of the trace matrix.
+ * \cond DEV
+ * \tparam    gapped_database_alphabet_t The alphabet type of the gapped database sequence.
+ * \tparam    gapped_query_alphabet_t    The alphabet type of the gapped query sequence.
+ * \endcond
+ * \param[in] database                   The database sequence.
+ * \param[in] query                      The query sequence.
+ * \param[in] matrix                     The trace matrix.
+ * \param[in] end_coordinate             Where the trace in the matrix ends.
+ * \returns Returns a seqan3::aligned_sequence.
  */
 template <
     typename database_t,
     typename query_t,
     typename trace_matrix_t,
-    typename gapped_database_t = gapped<std::decay_t<decltype(std::declval<database_t>()[0])>>,
-    typename gapped_query_t = gapped<std::decay_t<decltype(std::declval<query_t>()[0])>>>
+    typename gapped_database_alphabet_t = gapped<value_type_t<database_t>>,
+    typename gapped_query_alphabet_t = gapped<value_type_t<query_t>>>
 //!\cond
     requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
 //!\endcond
-inline std::pair<std::list<gapped_database_t>, std::list<gapped_query_t>>
-alignment_trace(database_t && database, query_t && query, trace_matrix_t && matrix, alignment_coordinate const end_coordinate)
+inline std::pair<std::vector<gapped_database_alphabet_t>, std::vector<gapped_query_alphabet_t>>
+alignment_trace(database_t && database,
+                query_t && query,
+                trace_matrix_t && matrix,
+                alignment_coordinate const end_coordinate)
 {
+    using signed_size_t = std::make_signed_t<size_t>;
+
     constexpr auto N = trace_directions::none;
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    size_t col = end_coordinate.seq1_pos + 1;
-    size_t row = end_coordinate.seq2_pos + 1;
+    signed_size_t col = end_coordinate.seq1_pos + 1;
+    signed_size_t row = end_coordinate.seq2_pos + 1;
 
-    assert(col <= database.size());
     assert(row <= query.size());
+    assert(col <= database.size());
+    assert(row < matrix.rows());
+    assert(col < matrix.cols());
 
-    std::list<gapped_database_t> gapped_database{};
-    std::list<gapped_query_t> gapped_query{};
+    std::deque<gapped_database_alphabet_t> gapped_database{};
+    std::deque<gapped_query_alphabet_t> gapped_query{};
 
     if (matrix.at(0, 0) != N)
-        throw std::runtime_error{"End trace must be NONE"};
+        throw std::logic_error{"End trace must be NONE"};
 
-    while(row >= 0 && col >= 0)
+    while (true)
     {
         trace_directions dir = matrix.at(row, col);
         if ((dir & L) == L)
         {
-            col = std::max<int>(col - 1, 0);
+            col = std::max<signed_size_t>(col - 1, 0);
             gapped_database.push_front(database[col]);
             gapped_query.push_front(gap::GAP);
         }
         else if ((dir & U) == U)
         {
-            row = std::max<int>(row - 1, 0);
+            row = std::max<signed_size_t>(row - 1, 0);
             gapped_database.push_front(gap::GAP);
             gapped_query.push_front(query[row]);
         }
         else if ((dir & D) == D)
         {
-            row = std::max<int>(row - 1, 0);
-            col = std::max<int>(col - 1, 0);
+            row = std::max<signed_size_t>(row - 1, 0);
+            col = std::max<signed_size_t>(col - 1, 0);
             gapped_database.push_front(database[col]);
             gapped_query.push_front(query[row]);
         }
         else
         {
-            if (row == 0 || col == 0)
-                break;
-            throw std::runtime_error{"Trace not found"};
+#ifndef NDEBUG
+            if (!(row == 0 || col == 0))
+                throw std::logic_error{"Unkown seqan3::trace_direction in an inner cell of the trace matrix."};
+#endif
+            break;
         }
+
     }
-    return {gapped_database, gapped_query};
+
+    return
+    {
+        {std::begin(gapped_database), std::end(gapped_database)},
+        {std::begin(gapped_query), std::end(gapped_query)}
+    };
 }
 
 /*!\brief A trace matrix represented in a one-dimensional std::vector
