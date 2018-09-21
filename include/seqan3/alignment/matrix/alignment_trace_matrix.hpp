@@ -157,13 +157,17 @@ alignment_begin_coordinate(trace_matrix_t && matrix, alignment_coordinate const 
 
 /*!\brief Compute the trace from a trace matrix.
  * \ingroup alignment_matrix
- * \tparam    database_t           The type of the database sequence.
- * \tparam    query_t              The type of the query sequence.
- * \tparam    trace_matrix_t       The type of the trace matrix.
- * \param[in] database             The database sequence.
- * \param[in] query                The query sequence.
- * \param[in] matrix               The trace matrix.
- * \param[in] end_coordinate       Where the trace in the matrix ends.
+ * \tparam    database_t                 The type of the database sequence.
+ * \tparam    query_t                    The type of the query sequence.
+ * \tparam    trace_matrix_t             The type of the trace matrix.
+ * \cond DEV
+ * \tparam    gapped_database_alphabet_t The alphabet type of the gapped database sequence.
+ * \tparam    gapped_query_alphabet_t    The alphabet type of the gapped query sequence.
+ * \endcond
+ * \param[in] database                   The database sequence.
+ * \param[in] query                      The query sequence.
+ * \param[in] matrix                     The trace matrix.
+ * \param[in] end_coordinate             Where the trace in the matrix ends.
  */
 template <
     typename database_t,
@@ -176,11 +180,10 @@ template <
              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
 //!\endcond
 inline std::pair<std::vector<gapped_database_alphabet_t>, std::vector<gapped_query_alphabet_t>>
-alignment_trace(
-    database_t && database,
-    query_t && query,
-    trace_matrix_t && matrix,
-    alignment_coordinate const end_coordinate)
+alignment_trace(database_t && database,
+                query_t && query,
+                trace_matrix_t && matrix,
+                alignment_coordinate const end_coordinate)
 {
     using signed_size_t = std::make_signed_t<size_t>;
 
