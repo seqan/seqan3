@@ -79,8 +79,7 @@ struct upper_bound : detail::strong_type<value_t, upper_bound<value_t>>
 template <seqan3::arithmetic_concept value_t>
 lower_bound(value_t) -> lower_bound<value_t>;
 
-/*!
- * \brief Deduces the underlying upper boundary type.
+/*!\brief Deduces the underlying upper boundary type.
  * \relates seqan3::upper_bound
  * \tparam value_t The underlying type of the upper bound; must model seqan3::arithmetic_concept.
  */
@@ -91,7 +90,7 @@ upper_bound(value_t) -> upper_bound<value_t>;
 /*!\brief Data structure for a static band.
  * \ingroup alignment
  *
- * \tparam value_t The value type for the boundaries; must be integral.
+ * \tparam value_t The value type for the boundaries; must model std::integral.
  */
 template <std::Integral value_t>
 struct band_static
@@ -108,8 +107,8 @@ struct band_static
 
     /*!\brief Construction from seqan3::lower_bound and seqan3::upper_bound.
      * \tparam input_value_t The input type of the lower and upper band boundaries.
-     * \param lower The lower boundary of the band; must be integral.
-     * \param upper The upper boundary of the band; must be integral.
+     * \param lower The lower boundary of the band; must model std::integral.
+     * \param upper The upper boundary of the band; must model std::integral.
      *
      * \throws std::invalid_argument if upper < lower.
      *
@@ -143,7 +142,7 @@ struct band_static
  */
 /*!
  * \brief Deduces the band type.
- * \tparam value_t The underlying type of the boundaries; must be integral.
+ * \tparam value_t The underlying type of the boundaries; must model std::integral.
  */
 template <std::Integral value_t>
 band_static(lower_bound<value_t>, upper_bound<value_t>) -> band_static<value_t>;
