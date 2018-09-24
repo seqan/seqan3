@@ -56,6 +56,27 @@ template <typename index_t, typename queries_t, typename config_t>
 //!\endcond
 inline auto search(index_t const & index, queries_t const & queries, config_t const & cfg)
 {
+    if constexpr (contains<search_cfg::id::max_error>(cfg))
+    {
+        auto & [total, subs, ins, del] = get<search_cfg::id::max_error>(cfg);
+        if (subs > total)
+            throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
+        if (ins > total)
+            throw std::invalid_argument("The insertion error threshold is higher than the total error threshold.");
+        if (del > total)
+            throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
+    }
+    else if constexpr (contains<search_cfg::id::max_error_rate>(cfg))
+    {
+        auto & [total, subs, ins, del] = get<search_cfg::id::max_error_rate>(cfg);
+        if (subs > total)
+            throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
+        if (ins > total)
+            throw std::invalid_argument("The insertion error threshold is higher than the total error threshold.");
+        if (del > total)
+            throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
+    }
+
     // TODO: replace enumeration of all code paths to set all required configuration objects
     if constexpr (contains<search_cfg::id::mode>(cfg))
     {
