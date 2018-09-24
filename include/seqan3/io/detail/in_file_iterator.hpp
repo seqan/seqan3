@@ -79,6 +79,7 @@ public:
     using const_reference   = typename file_type::reference;
     using size_type         = typename file_type::size_type;
     using difference_type   = typename file_type::difference_type;
+    using pointer           = typename file_type::value_type *;
     //!\brief Tag this class as an input iterator.
     using iterator_category = std::input_iterator_tag;
     //!\}

@@ -85,6 +85,7 @@ public:
     using const_reference   = void;
     using size_type         = void;
     using difference_type   = std::ptrdiff_t;
+    using pointer           = void *;
     //!\brief Tag this class as an input access iterator.
     using iterator_category = std::output_iterator_tag;
     //!\}
