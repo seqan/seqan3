@@ -61,6 +61,26 @@ struct view_base : public ranges::view_base
 {};
 
 // ============================================================================
+//  size_type_t_or_void
+// ============================================================================
+
+//!\brief Transformation trait that resolves to seqan3::size_type_t if possible and void otherwise. [Default Overload]
+template <typename t>
+struct size_type_t_or_void
+{
+    //!\brief The default is to expose `void`.
+    using type = void;
+};
+
+//!\brief Transformation trait that resolves to seqan3::size_type_t if possible and void otherwise. [Specialisation]
+template <std::ranges::SizedRange t>
+struct size_type_t_or_void<t>
+{
+    //!\brief For sized ranges the seqan3::size_type_t is exposed.
+    using type = size_type_t<t>;
+};
+
+// ============================================================================
 //  pipable_adaptor_base
 // ============================================================================
 
