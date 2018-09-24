@@ -173,9 +173,8 @@ struct phred42
      *
      * Constant.
      */
-    constexpr phred42 & assign_char(char_type const c)
+    constexpr phred42 & assign_char(char_type const c) noexcept
     {
-        assert(c >= offset_char && c < offset_char + max_value_size);
         _value = char_to_value[c];
         return *this;
     }
@@ -190,7 +189,7 @@ struct phred42
      *
      * Constant.
      */
-    constexpr phred42 & assign_phred(phred_type const p)
+    constexpr phred42 & assign_phred(phred_type const p) noexcept
     {
         // p >= 0 is implicitly always true
         assert(p < max_value_size);
@@ -213,7 +212,7 @@ struct phred42
      *
      * Guaranteed not to throw.
      */
-    constexpr phred42 & assign_rank(phred_type const p)
+    constexpr phred42 & assign_rank(phred_type const p) noexcept
     {
         return assign_phred(p);
     }
@@ -223,7 +222,7 @@ struct phred42
     //!\tparam other_qual_type The type to convert to; must satisfy seqan3::quality_concept.
     //
     template <quality_concept other_qual_type>
-    explicit constexpr operator other_qual_type() const //noexcept
+    explicit constexpr operator other_qual_type() const noexcept
     {
         return detail::convert_through_phred_representation<other_qual_type, std::decay_t<decltype(*this)>>[to_phred()];
     }
