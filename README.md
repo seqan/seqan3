@@ -59,8 +59,8 @@ g++-7 -std=c++17 -fconcepts -I /path/to/seqan3/include -I /path/to/seqan3/submod
 
 ### Users of the library
 
-  * [API documentation](https://seqan3-api.readthedocs.org)
-  * [Manual and tutorials](https://seqan3-manual.readthedocs.org)
+  * [API documentation](http://docs.seqan.de/seqan/3.0.0-master-user/)
+  * Manual and tutorials (coming soon)
 
 
 ### Developers of the library
