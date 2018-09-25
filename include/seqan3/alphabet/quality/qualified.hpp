@@ -54,6 +54,7 @@ namespace seqan3
  * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::alphabet_concept.
  * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::quality_concept.
  * \implements seqan3::quality_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  *
  * This composition pairs an arbitrary alphabet with a quality alphabet, where
  * each alphabet character is stored together with its quality score in a

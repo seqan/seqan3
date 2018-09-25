@@ -54,6 +54,7 @@ namespace seqan3
 
 /*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (full range).
  * \implements seqan3::quality_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  * \ingroup quality
  *
  * \details
@@ -167,9 +168,8 @@ struct phred63
       *
       * Constant.
       */
-    constexpr phred63 & assign_char(char_type const c)
+    constexpr phred63 & assign_char(char_type const c) noexcept
     {
-        assert(c >= offset_char && c < offset_char + value_size);
         _value = char_to_value[c];
         return *this;
     }
@@ -184,7 +184,7 @@ struct phred63
      *
      * Constant.
      */
-    constexpr phred63 & assign_phred(phred_type const p)
+    constexpr phred63 & assign_phred(phred_type const p) noexcept
     {
         // p >= 0 is implicitly always true
         assert(p < value_size);
@@ -206,7 +206,7 @@ struct phred63
      *
      * Guaranteed not to throw.
      */
-    constexpr phred63 & assign_rank(phred_type const p)
+    constexpr phred63 & assign_rank(phred_type const p) noexcept
     {
         return assign_phred(p);
     }
@@ -215,7 +215,7 @@ struct phred63
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
     //!\tparam other_nucl_type The type to convert to; must model seqan3::quality_concept.
     template <quality_concept other_qual_type>
-    explicit constexpr operator other_qual_type() const //noexcept
+    explicit constexpr operator other_qual_type() const noexcept
     {
         return detail::convert_through_phred_representation<other_qual_type, std::decay_t<decltype(*this)>>[to_phred()];
     }

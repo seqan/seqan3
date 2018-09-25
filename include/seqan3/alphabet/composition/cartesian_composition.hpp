@@ -56,6 +56,7 @@ namespace seqan3
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composition
  * \implements seqan3::semi_alphabet_concept
+ * \implements seqan3::detail::constexpr_semi_alphabet_concept
  * \tparam first_component_type Type of the first letter; must model seqan3::semi_alphabet_concept.
  * \tparam component_types      Types of further letters (up to 4); must model seqan3::semi_alphabet_concept.
  *
@@ -88,7 +89,8 @@ template <typename derived_type,
           typename first_component_type,
           typename ...component_types>
 //!\cond
-    requires semi_alphabet_concept<first_component_type> && (semi_alphabet_concept<component_types> && ...)
+    requires detail::constexpr_semi_alphabet_concept<first_component_type> &&
+             (detail::constexpr_semi_alphabet_concept<component_types> && ...)
 //!\endcond
 class cartesian_composition : public pod_tuple<first_component_type, component_types...>
 {

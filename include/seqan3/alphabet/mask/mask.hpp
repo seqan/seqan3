@@ -47,11 +47,12 @@ namespace seqan3
 /*!\brief Implementation of a masked alphabet to be used for cartesian compositions.
  * \ingroup mask
  * \implements seqan3::semi_alphabet_concept
+ * \implements seqan3::detail::semi_constexpr_alphabet_concept
  *
  * \details
  * This alphabet is not usually used directly, but instead via seqan3::masked.
  * For more information see the \link mask Mask submodule \endlink.
- * 
+ *
  * \snippet test/snippet/alphabet/mask/mask.cpp general
  */
 struct mask

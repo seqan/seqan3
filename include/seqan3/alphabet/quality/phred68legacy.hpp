@@ -55,6 +55,7 @@ namespace seqan3
 
 /*!\brief Quality type for Solexa and deprecated Illumina formats.
  * \implements seqan3::quality_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
  * \ingroup quality
  *
  * \details
@@ -171,9 +172,8 @@ struct phred68legacy
       *
       * Constant.
       */
-    constexpr phred68legacy & assign_char(char_type const c)
+    constexpr phred68legacy & assign_char(char_type const c) noexcept
     {
-        assert(c >= offset_char && c < offset_char + value_size);
         _value = char_to_value[c];
         return *this;
     }
@@ -188,7 +188,7 @@ struct phred68legacy
      *
      * Constant.
      */
-    constexpr phred68legacy & assign_phred(phred_type const p)
+    constexpr phred68legacy & assign_phred(phred_type const p) noexcept
     {
         // p >= 0 is implicitly always true
         assert((p >= offset_phred) && (p < value_size + offset_phred));
@@ -206,7 +206,7 @@ struct phred68legacy
      *
      * Constant.
      */
-    constexpr phred68legacy & assign_rank(rank_type const p)
+    constexpr phred68legacy & assign_rank(rank_type const p) noexcept
     {
         // p implicitly always true due to unsignedness of p
         assert(p < value_size);
