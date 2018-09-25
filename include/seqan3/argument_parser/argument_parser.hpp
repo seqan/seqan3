@@ -166,7 +166,7 @@ public:
      * \param[in] argc     The number of command line arguments.
      * \param[in] argv     The command line arguments to parse.
      */
-    argument_parser(std::string const app_name, int const argc, const char ** argv)
+    argument_parser(std::string const app_name, int const argc, char const * const * const  argv)
     {
         info.app_name = std::move(app_name);
         init(argc, argv);
@@ -511,7 +511,7 @@ private:
      * If `-export-help` is specified with a value other than html/man or ctd
      * a parser_invalid_argument is thrown.
      */
-    void init(int const argc, const char ** argv)
+    void init(int const argc, char const * const * const  argv)
     {
         if (argc <= 1) // no arguments provided
         {

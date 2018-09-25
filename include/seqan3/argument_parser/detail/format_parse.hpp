@@ -90,7 +90,7 @@ public:
      * \param[in] argc_ The number of command line arguments.
      * \param[in] argv_ The command line arguments to parse.
      */
-    format_parse(int const argc_, const char ** argv_) :
+    format_parse(int const argc_, char const * const * const  argv_) :
         argc(argc_ - 1)
     {
         init(argc_, argv_);
@@ -209,7 +209,7 @@ private:
      * Adds all command line arguments to the member format_parse::argv,
      * but splits all values (options) containing an equality sign.
      */
-    void init(int argc_, const char ** argv_)
+    void init(int argc_, char const * const * const  argv_)
     {
         argv.resize(argc_ - 1); // -1 because of the binary name
 
