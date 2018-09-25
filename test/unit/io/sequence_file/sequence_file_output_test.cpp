@@ -40,7 +40,6 @@
 #include <range/v3/view/filter.hpp>
 
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -57,7 +56,6 @@ TEST(sequence_file_output_iterator, concepts)
     EXPECT_TRUE((std::OutputIterator<it_t, std::tuple<std::string, std::string>>));
     EXPECT_TRUE((std::Sentinel<sen_t, it_t>));
 }
-
 
 std::vector<dna5_vector> seqs
 {
@@ -386,75 +384,6 @@ TEST(rows, assign_range_of_tuples)
         range.emplace_back(seqs[i], ids[i]);
 
     assign_impl(range);
-}
-
-TEST(rows, assign_sequence_file_input)
-{
-    std::string const input // differs from output above by formatting
-    {
-        ">TEST 1\n"
-        "ACGT\n"
-        "> Test2\n"
-        "AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN\n\n"
-        "> Test3\n"
-        "GGAGTATAATATATATATATATAT\n"
-    };
-
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_fasta{}};
-
-    assign_impl(fin);
-}
-
-TEST(rows, assign_sequence_file_pipes)
-{
-    std::string const input
-    {
-        "> TEST1\n"
-        "ACGT\n"
-        "> Test2\n"
-        "AGGCTGNAGGCTGAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
-        "> Test3\n"
-        "GGAGTATAATATATATATATATAT\n"
-    };
-
-    // valid without assignment?
-    sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}} |
-        sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
-
-    // valid with assignment and check contents
-    auto fout = sequence_file_input{std::istringstream{input}, sequence_file_format_fasta{}} |
-                sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
-
-    fout.get_stream().flush();
-    EXPECT_EQ(fout.get_stream().str(), input);
-}
-
-TEST(rows, convert_fastq_to_fasta)
-{
-    std::string const fastq_in
-    {
-    "@ID1\n"
-    "ACGTT\n"
-    "+\n"
-    "!##$%\n"
-    "@ID2\n"
-    "TATTA\n"
-    "+\n"
-    ",BDEB\n"
-    };
-
-    std::string const fasta_out
-    {
-        "> ID1\n"
-        "ACGTT\n"
-        "> ID2\n"
-        "TATTA\n"
-    };
-
-    auto fout = sequence_file_input{std::istringstream{fastq_in}, sequence_file_format_fastq{}} |
-                sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
-    fout.get_stream().flush();
-    EXPECT_EQ(fout.get_stream().str(), fasta_out);
 }
 
 // ----------------------------------------------------------------------------

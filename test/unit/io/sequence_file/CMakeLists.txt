@@ -1,4 +1,5 @@
 seqan3_test(sequence_file_input_test.cpp)
+seqan3_test(sequence_file_integration_test.cpp)
 seqan3_test(sequence_file_output_test.cpp)
 seqan3_test(sequence_file_format_fasta_test.cpp)
 seqan3_test(sequence_file_format_fastq_test.cpp)
