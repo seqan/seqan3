@@ -367,7 +367,8 @@ public:
     }
 
 protected:
-    //!/brief The format version string.
+    //!\privatesection
+    //!\brief The format version string.
     static constexpr char format_version[4] = "1.6";
 
     //!\brief A variable that tracks whether the header_ptr as been written or not.
@@ -381,7 +382,9 @@ protected:
      * \param[in]     field_value The value to print.
      */
     template <typename stream_it_t, typename field_type>
+    //!\cond
         requires std::ranges::ForwardRange<field_type>
+    //!\endcond
     void write_range(stream_it_t & stream_it, field_type && field_value)
     {
         if (ranges::empty(field_value))
