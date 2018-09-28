@@ -72,9 +72,3 @@ TEST(ignore_output_iterator, dereference)
     detail::ignore_output_iterator it;
     EXPECT_EQ(std::addressof(*it), std::addressof(it));
 }
-
-TEST(ignore_output_iterator, make_conversion_output_iterator)
-{
-    auto it = detail::make_conversion_output_iterator(std::ignore);
-    EXPECT_TRUE((std::is_same_v<decltype(it), detail::ignore_output_iterator>));
-}

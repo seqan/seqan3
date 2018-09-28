@@ -113,20 +113,4 @@ public:
     //!\}
 };
 
-/*!\name Convenience functions
- * \{
- */
-/*!\brief     A convenience function that constructs a seqan3::detail::ignore_output_iterator if the input type
- *            is std::ignore.
- * \param[in] v A value of type `decltype(std::ignore)`.
- * \returns   seqan3::detail::ignore_output_iterator.
- * \ingroup   io
- * \relates   ignore_output_iterator
- */
-inline ignore_output_iterator make_conversion_output_iterator(decltype(std::ignore) const SEQAN3_DOXYGEN_ONLY(v))
-{
-    return ignore_output_iterator{};
-}
-//!/}
-
 } // namespace seqan3::detail
