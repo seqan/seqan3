@@ -55,7 +55,6 @@
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
-#include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/view/char_to.hpp>

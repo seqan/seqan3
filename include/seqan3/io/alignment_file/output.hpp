@@ -49,7 +49,6 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
-
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
@@ -59,6 +58,7 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/filesystem.hpp>
 #include <seqan3/io/record.hpp>
+#include <seqan3/io/stream/concept.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3

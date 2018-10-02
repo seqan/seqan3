@@ -54,7 +54,6 @@
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
-#include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
@@ -156,16 +155,26 @@ public:
                               detail::make_printable(*stream_it)};
         }
         ++stream_it; // skip '@'
-        if (options.truncate_ids)
+
+        if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                         detail::make_conversion_output_iterator(id));
-            detail::consume(stream_view | view::take_line_or_throw);
+            if (options.truncate_ids)
+            {
+                ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank)
+                                         | view::char_to<value_type_t<id_type>>,
+                             ranges::back_insert_iterator{id});
+                detail::consume(stream_view | view::take_line_or_throw);
+            }
+            else
+            {
+                ranges::copy(stream_view | view::take_line_or_throw
+                                         | view::char_to<value_type_t<id_type>>,
+                             ranges::back_insert_iterator{id});
+            }
         }
         else
         {
-            ranges::copy(stream_view | view::take_line_or_throw,
-                         detail::make_conversion_output_iterator(id));
+            detail::consume(stream_view | view::take_line_or_throw);
         }
 
         /* Sequence */
@@ -186,7 +195,7 @@ public:
                                         return c;
                                     })
                                   | view::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
-                         ranges::back_inserter(sequence));
+                         ranges::back_insert_iterator{sequence});
             sequence_size_after = ranges::size(sequence);
         }
         else // consume, but count
@@ -221,7 +230,7 @@ public:
         else if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
             ranges::copy(qview | view::char_to<value_type_t<qual_type>>,
-                         ranges::back_inserter(qualities));
+                         ranges::back_insert_iterator{qualities});
         }
         else
         {

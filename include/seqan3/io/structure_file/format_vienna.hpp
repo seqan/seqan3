@@ -56,8 +56,6 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/io/detail/ignore_output_iterator.hpp>
-#include <seqan3/io/detail/output_iterator_conversion_adaptor.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/io/structure_file/detail.hpp>
@@ -170,15 +168,17 @@ public:
                 if (options.truncate_ids)
                 {
                     ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
-                                             | view::take_until_or_throw(is_cntrl || is_blank),
-                                 detail::make_conversion_output_iterator(id));
+                                             | view::take_until_or_throw(is_cntrl || is_blank)
+                                             | view::char_to<value_type_t<id_type>>,
+                                 ranges::back_insert_iterator{id});
                     detail::consume(stream_view | view::take_line_or_throw);
                 }
                 else
                 {
                     ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
-                                             | view::take_line_or_throw,
-                                 detail::make_conversion_output_iterator(id));
+                                             | view::take_line_or_throw
+                                             | view::char_to<value_type_t<id_type>>,
+                                 ranges::back_insert_iterator{id});
                 }
             }
             else
@@ -215,7 +215,7 @@ public:
                                          return c;
                                        })
                                      | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
-                         detail::make_conversion_output_iterator(seq));
+                         ranges::back_insert_iterator{seq});
         }
         else
         {
@@ -237,8 +237,7 @@ public:
             else
             {
                 using alph_type = value_type_t<structure_type>;
-                ranges::copy(read_structure<alph_type>(stream_view),
-                             detail::make_conversion_output_iterator(structure));
+                ranges::copy(read_structure<alph_type>(stream_view), ranges::back_insert_iterator{structure});
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
                     detail::bpp_from_rna_structure<alph_type>(bpp, structure);
