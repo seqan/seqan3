@@ -1,0 +1,285 @@
+// ============================================================================
+//                 SeqAn - The Library for Sequence Analysis
+// ============================================================================
+//
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
+//       its contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+// DAMAGE.
+//
+// ============================================================================
+
+/*!\file
+ * \brief Provides std::from_chars and std::to_chars if not defined in the stl \<charconv\> header.
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
+ */
+
+#pragma once
+
+#if __has_include(<version>)
+#include <version> // from C++20 all feature macros should be defined here
+#endif
+
+#include <utility> // __cpp_lib_to_chars may be defined here as currently documented
+
+#if __cpp_lib_to_chars >= 201611
+#include <charconv>
+#else // else include our own implementation below
+
+/*!\defgroup charconv charconv
+ * \ingroup std
+ * \brief The \<charconv\> header from C++17's standard library.
+ */
+
+// -----------------------------------------------------------------------------
+// structs: to_chars_result, from_chars_result and chars_format
+// -----------------------------------------------------------------------------
+
+namespace std
+{
+
+//!\brief Result type of std::to_chars
+//!\ingroup charconv
+struct to_chars_result
+{
+    char * ptr;  //!< A pointer to the output string.
+    errc ec;    //!< The error code.
+};
+
+//!\brief Result type of std::from_chars
+//!\ingroup charconv
+struct from_chars_result
+{
+    char const * ptr;  //!< A pointer to the input string.
+    errc ec;          //!< The error code.
+};
+
+//!\brief A BitmaskType used to specify floating-point formatting for std::to_chars and std::from_chars.
+//!\ingroup charconv
+enum class chars_format
+{
+    scientific = 0x1,             //!< Scientific notation, e.g. 3.991E-0003.
+    fixed = 0x2,                  //!< Fixed number of digits for precision.
+    hex = 0x4,                    //!< Hexadecimal notation. Ff specified in from_chars, prefix 0x,0X,x is not allowed.
+    general = fixed | scientific  //!< General use case.
+};
+
+} // namespace std
+
+#include <seqan3/std/charconv_detail.hpp> // structs definitions above are needed in this header
+
+namespace std
+{
+//!\cond
+// implementation detail taken from LLVM
+void to_chars(char *, char *, bool, int = 10) = delete;
+void from_chars(char const *, char const *, bool, int = 10) = delete;
+//!\endcond
+
+// -----------------------------------------------------------------------------
+// to_chars for integral types
+// -----------------------------------------------------------------------------
+
+/*!\brief Convert an integral into a char sequence.
+ * \ingroup charconv
+ * \tparam value_type The type to convert to a char sequence; Must model std::Integral.
+ * \param[in]      first The start of the range to fill.
+ * \param[in]      last  The end of the range to fill.
+ * \param[in, out] value The value to store the parsed result in.
+ * \param[in]      base  The integer base of the format of the string to parse.
+ *                       Must be a value between 2 and 36 (inclusive).
+ * \returns A std::to_char_result. See detail section return value for more information.
+ *
+ * \details
+ *
+ * Converts value into a character string by successively filling the range
+ * [first, last), where [first, last) is required to be a valid range.
+ *
+ * value is converted to a string of digits in the given base (with no redundant
+ * leading zeroes). Digits in the range 10..35 (inclusive) are represented as
+ * lowercase characters a..z. If value is less than zero, the representation
+ * starts with a minus sign. The library provides overloads for all signed and
+ * unsigned integer types and for the type char as the type of the parameter value.
+ *
+ * ### Return value
+ * On success, returns a value of type to_chars_result such that ec equals
+ * value-initialized std::errc and ptr is the one-past-the-end pointer of the
+ * characters written. Note that the string is not NUL-terminated.
+ *
+ * On error, returns a value of type to_chars_result holding
+ * std::errc::value_too_large in ec, a copy of the value last in ptr, and leaves
+ * the contents of the range [first, last) in unspecified state.
+ *
+ * \sa https://en.cppreference.com/w/cpp/utility/to_chars
+ */
+template <std::Integral value_type>
+inline std::to_chars_result to_chars(char * first, char * last, value_type value, int base)
+{
+    assert(2 <= base && base <= 36);
+    return seqan3::detail::to_chars_integral(first, last, value, base, is_signed<value_type>());
+}
+
+//!\brief std::to_chars overload with default base = 10.
+//!\ingroup charconv
+template <std::Integral value_type>
+inline std::to_chars_result to_chars(char * first, char * last, value_type value)
+{
+    return seqan3::detail::to_chars_itoa(first, last, value, is_signed<value_type>());
+}
+
+// -----------------------------------------------------------------------------
+// from_chars for integral types
+// -----------------------------------------------------------------------------
+
+/*!\brief Parse a char sequence into an integral.
+ * \ingroup charconv
+ * \tparam value_type The type to parse the string into; Must model std::Integral.
+ * \param[in]      first The start of the string to parse.
+ * \param[in]      last  The end of the string to parse.
+ * \param[in, out] value The value to store the parsed result in.
+ * \param[in]      base  The integer base of the format of the string to parse.
+ *                       Must be a value between 2 and 36 (inclusive).
+ * \returns A std::from_char_result. See detail section return value for more information.
+ *
+ * \details
+ *
+ * Analyzes the character sequence [first,last) for a pattern described below.
+ * If no characters match the pattern or if the value obtained by parsing the
+ * matched characters is not representable in the type of value, value is
+ * unmodified, otherwise the characters matching the pattern are interpreted as
+ * a text representation of an arithmetic value, which is stored in value.
+ *
+ * Expects the pattern identical to the one used by std::strtol in the default
+ * ("C") locale and the given non-zero numeric base, except that "0x" or "0X"
+ * prefixes are not recognized for base 16, and that only the minus sign is
+ * recognized (not the plus sign), and only for signed integer types of value.
+ * Digits in the range 10..35 (inclusive) are represented as lowercase or
+ * uppercase characters a..z/A...Z. The library provides overloads for all
+ * signed and unsigned integer types and char as the referenced type of the
+ * parameter value.
+ *
+ * ### Return value
+ * On success, returns a value of type from_chars_result such that ptr points at
+ * the first character not matching the pattern, or has the value equal to last
+ * if all characters match and ec is value-initialized.
+ *
+ * If there is no pattern match, returns a value of type from_chars_result such
+ * that ptr equals first and ec equals std::errc::invalid_argument. value is
+ * unmodified.
+ *
+ * If the pattern was matched, but the parsed value is not in the range
+ * representable by the type of value, returns value of type from_chars_result
+ * such that ec equals std::errc::result_out_of_range and ptr points at the first
+ * character not matching the pattern. value is unmodified.
+ *
+ * \sa https://en.cppreference.com/w/cpp/utility/from_chars
+ */
+template <std::Integral value_type>
+inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value, int base)
+{
+    assert(2 <= base && base <= 36);
+    return seqan3::detail::from_chars_integral(first, last, value, base);
+}
+
+//!\brief std::from_chars overload for integrals with default base = 10.
+//!\ingroup charconv
+template <std::Integral value_type>
+inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value) // base 10 default
+{
+    return seqan3::detail::from_chars_atoi(first, last, value);
+}
+
+// -----------------------------------------------------------------------------
+// from_chars for floating point types
+// -----------------------------------------------------------------------------
+
+/*!\brief Parse a char sequence into an floating point value.
+ * \ingroup charconv
+ * \tparam value_type The type to parse the string into; Must model std::Integral.
+ * \param[in]      first The start of the string to parse.
+ * \param[in]      last  The end of the string to parse.
+ * \param[in, out] value The value to store the parsed result in.
+ * \param[in]      fmt   The std::chars_format that alters the behaviour of parsing.
+ * \returns A std::from_char_result. See detail section return value for more information.
+ *
+ * \details
+ *
+ * Analyzes the character sequence [first,last) for a pattern described below.
+ * If no characters match the pattern or if the value obtained by parsing the
+ * matched characters is not representable in the type of value, value is
+ * unmodified, otherwise the characters matching the pattern are interpreted as
+ * a text representation of an arithmetic value, which is stored in value.
+ *
+ * Floating-point parsers: Expects the pattern identical to the one used by
+ * std::strtod in the default ("C") locale, except that:
+ *
+ * - the plus sign is not recognized outside of the exponent (only the minus
+ *   sign is permitted at the beginning)
+ * - if fmt has std::chars_format::scientific set but not std::chars_format::fixed,
+ *   the exponent part is required (otherwise it is optional)
+ * - if fmt has std::chars_format::fixed set but not std::chars_format::scientific,
+ *   the optional exponent is not permitted
+ * - if fmt is std::chars_format::hex, the prefix "0x" or "0X" is not permitted
+ *   (the string "0x123" parses as the value "0" with unparsed remainder "x123").
+ *
+ * \attention This implementation is a workaround until the function is supported
+ *            by the compiler. It falls back to use the functions strto[d/f/ld]
+ *            before checking the above limitations
+ *
+ * ### Return value
+ * This function is workaround until the function is supported
+ * by the compiler. It falls back to use the functions strto[d/f/ld] so the
+ * return value is NOT as documented here https://en.cppreference.com/w/cpp/utility/from_chars
+ * but:
+ *
+ * On success, std::from_chars_result::ec is value-initialized. On error,
+ * std::from_chars_result::ec is either an
+ * std::errc::invalid_argument if an illegal character or format has been
+ * encountered, or std::errc::out_of_range if parsing the value would cause an
+ * overflow. The std::from_chars_result::ptr value is always set to last.
+ *
+ * ### The locale issue
+ * std::from_chars is documented to be locale independent. The accepted patterns
+ * are identical to the one used by strtod in the defailt ("C") locale.
+ *
+ * The functions strto[d/f/ld] used here are locale dependent but
+ * setting the locale manually by std::setlocale is not thread safe.
+ * So for the time being this workaround is locale dependent.
+ *
+ * \sa https://en.cppreference.com/w/cpp/utility/from_chars
+ */
+template <seqan3::floating_point_concept floating_point_type>
+inline std::from_chars_result from_chars(char const * first,
+                                         char const * last,
+                                         floating_point_type & value,
+                                         std::chars_format fmt = std::chars_format::general)
+{
+    return seqan3::detail::from_chars_floating_point(first, last, value, fmt);
+}
+
+} // namespace std
+
+#endif // __cpp_lib_to_chars >= 201611
