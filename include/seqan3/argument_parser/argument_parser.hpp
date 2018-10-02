@@ -131,10 +131,15 @@ namespace seqan3
  *
  * ### Errors that are caught by the argument_parser
  *
- * - When misusing the argument_parser,
- *   a seqan3::parser_design_error is thrown.
- * - When the user provides wrong arguments on the command line,
- *   a seqan3::parser_invalid_argument is thrown.
+ * There are two different kinds of errors: Developer errors and user errors.
+ *
+ * Developer errors are those that violate the seqan3::argument_parser design
+ * (e.g. calling the seqan3::argument_parser::parse function twice or specifying
+ * two different options with the same identifier.)
+ * In this case, a  seqan3::parser_design_error is thrown.
+ *
+ * The second kind are user errors, due to invalid command line calls. In this
+ * case a seqan3::parser_invalid_argument is thrown.
  *
  * For example:
  *
@@ -143,7 +148,7 @@ namespace seqan3
  * [PARSER ERROR] Value cast failed for positional option 2: Argument abc could not be casted to type DOUBLE.
  * ```
  *
- * See the corresponding exception description for a detailed list of
+ * See the seqan3::argument_parser::parse documentation for a detailed list of
  * which exceptions are caught.
  */
 class argument_parser

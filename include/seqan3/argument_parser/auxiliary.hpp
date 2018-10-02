@@ -65,11 +65,11 @@ enum option_spec
                    * If the option is missing, the argument_parser will automatically
                    * detect this and throw a invalid_argument exception.
                    */
-    ADVANCED = 2, /* Set an option/flag to advanced if you do not want the option to
+    ADVANCED = 2, /*!< Set an option/flag to advanced if you do not want the option to
                    * be displayed in the normal help page (`-h/--help`). Instead, the
                    * advanced options are only displayed when calling `-hh/--advanced-help`
                    */
-    HIDDEN   = 4, /* Set an option/flag to hidden, if you want to completely hide it from
+    HIDDEN   = 4, /*!< Set an option/flag to hidden, if you want to completely hide it from
                    * the user. It will never appear on the help page nor any export format.
                    * For example, this can be useful for debugging reasons.
                    * (e.g. "A tool for mapping reads to the genome").

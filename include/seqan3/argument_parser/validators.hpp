@@ -130,10 +130,9 @@ private:
     value_type max{};
 };
 
-template <container_concept option_value_type>
 //!\cond
+template <container_concept option_value_type>
     requires std::Integral<typename option_value_type::value_type>
-//!\endcond
 class integral_range_validator<option_value_type>
 {
 public:
@@ -178,6 +177,7 @@ private:
     //!\brief Maximum of the range to test.
     inner_value_type max{};
 };
+//!\endcond
 
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
