@@ -285,19 +285,24 @@ set (CXXSTD_TEST_SOURCE
 
 check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_BUILTIN)
 
+set(CONCEPTS_FLAG_STD_CPP20 "-std=c++20")
+set(CONCEPTS_FLAG_STD_CPP2a "-std=c++2a")
+set(CONCEPTS_FLAG_GCC "-fconcepts")
+set(CONCEPTS_FLAG_CLANG "-std=c++2a -Xclang -fconcepts-ts")
+
 if (CONCEPTS_BUILTIN)
     seqan3_config_print ("C++ Concepts support:       builtin")
 else ()
     set (CONCEPTS_FLAG "")
 
-    foreach (_FLAG -std=c++20 -std=c++2a -fconcepts)
-        set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_ORIGINAL} ${_FLAG}")
+    foreach (_FLAG STD_CPP20 STD_CPP2a GCC CLANG)
+        set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_ORIGINAL} ${CONCEPTS_FLAG_${_FLAG}}")
 
-        check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_FLAG${_FLAG})
+        check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_FLAG_${_FLAG}_SUCCESS)
 
-        if (CONCEPTS_FLAG${_FLAG})
-            set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} ${_FLAG}")
-            set (CONCEPTS_FLAG ${_FLAG})
+        if (CONCEPTS_FLAG_${_FLAG}_SUCCESS)
+            set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} ${CONCEPTS_FLAG_${_FLAG}}")
+            set (CONCEPTS_FLAG ${CONCEPTS_FLAG_${_FLAG}})
             break ()
         endif ()
     endforeach ()
