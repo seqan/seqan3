@@ -1,20 +1,15 @@
 
 #pragma once
 
-#include <limits>
-
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 
-namespace seqan3
-{}
-
 namespace seqan3::test::alignment::fixture
 {
 
-static constexpr auto INF = std::numeric_limits<int>::max();
+static constexpr auto INF = detail::matrix_inf<int>;
 
 static constexpr auto NON = detail::trace_directions::none;
 static constexpr auto D = detail::trace_directions::diagonal;

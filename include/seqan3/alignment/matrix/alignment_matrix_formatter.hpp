@@ -52,6 +52,8 @@ struct alignment_matrix_format
     char const * row_sep{};
     //!\brief row separator symbol (a single symbol)
     char const * row_col_sep{};
+    //!\brief infinity symbol (a single symbol)
+    char const * inf{};
 
     /*!\brief Eight symbols for each combination of directions a trace can have (each entry can have multiple symbols).
      *
@@ -136,31 +138,31 @@ struct alignment_matrix_format
 
 constexpr alignment_matrix_format alignment_matrix_format::csv
 {
-    " ", ";", "", "",
+    " ", ";", "", "", "",
     {"N","D","U","DU","L","DL","UL","DUL"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::ascii
 {
-    " ", "|", "-", "/",
+    " ", "|", "-", "/", "INF",
     {" ","D","U","DU","L","DL","UL","DUL"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_block
 {
-    "ε", "║", "═", "╬",
+    "ε", "║", "═", "╬", "∞",
     {"█","▘","▝","▀","▖","▌","▞","▛"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_braille
 {
-    "ε", "║", "═", "╬",
+    "ε", "║", "═", "╬", "∞",
     {"⠀","⠁","⠈","⠉","⠄","⠅","⠌","⠍"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
 {
-    "ε", "║", "═", "╬",
+    "ε", "║", "═", "╬", "∞",
     {"↺","↖","↑","↖↑","←","↖←","↑←","↖↑←"}
 };
 
@@ -326,6 +328,8 @@ private:
         else
         {
             entry_type entry = matrix.at(row, col);
+            if (entry == matrix_inf<entry_type>)
+                return as_string(symbols.inf);
             return as_string(entry);
         }
     }

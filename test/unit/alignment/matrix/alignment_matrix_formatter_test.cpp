@@ -242,7 +242,7 @@ TEST_F(matrix_formatter_test, trace_matrix_from_score_matrix_unicode)
     {
         matrix,
         {
-            "ε", "|", "═", "/",
+            "ε", "|", "═", "/", "-",
             {"█","▘","↑","⠉","▖","⠅","▞","▛"}
         }
     };

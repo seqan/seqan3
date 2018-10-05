@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cstddef>
+#include <limits>
 
 #include <seqan3/std/concepts>
 
@@ -108,5 +109,9 @@ inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
     return !(lhs == rhs);
 }
 //!\}
+
+//!\brief A special score which represents infinity.
+template <typename score_type>
+constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
 
 } // namespace seqan3
