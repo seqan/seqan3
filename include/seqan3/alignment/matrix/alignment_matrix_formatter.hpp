@@ -46,6 +46,7 @@
 
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 namespace seqan3::detail
 {
@@ -359,12 +360,10 @@ private:
     //!\brief Convert a matrix entry into a std::string
     static std::string as_string(auto && entry) noexcept
     {
-        std::stringstream stream;
-        if constexpr (alphabet_concept<remove_cvref_t<decltype(entry)>>)
-            stream << to_char(entry);
-        else
-            stream << entry;
-        return stream.str();
+        std::stringstream strstream;
+        debug_stream_type stream{strstream};
+        stream << entry;
+        return strstream.str();
     }
 
     //!\brief The length of the *str* (traceback symbols are unicode aware)
