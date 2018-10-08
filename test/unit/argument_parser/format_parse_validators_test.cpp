@@ -53,10 +53,10 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(validator_concept<file_ext_validator>);
 }
 
-TEST(no_file, no_file2)
+TEST(validator_test, no_file)
 {
   filesystem::path p{"./sandbox.fasta"};
-  file_ext_validator my_validator{p};
+  file_existance_validator my_validator{p};
   EXPECT_THROW(my_validator(p), parser_invalid_argument);
 }
 
