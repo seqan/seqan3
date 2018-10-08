@@ -44,6 +44,7 @@
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
+#include <seqan3/io/filesystem.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/view/view_all.hpp>
@@ -322,17 +323,21 @@ public:
         extensions{v}
     {}
 
-    /*!\brief Tests whether cmp lies inside extensions.
-     * \param cmp The input value to check.
+    /*!\brief Tests whether p lies inside extensions.
+     * \param p The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(std::string const & cmp) const
+    void operator()(filesystem::path const & p) const
     {
-        std::string ext{cmp.substr(cmp.find_last_of('.') + 1)};
+      if (!(filesystem::exists(p)))
+        throw parser_invalid_argument(detail::to_string("File ", p, " does not exist."));
 
-        if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
-            throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
+      std::string cmp = p.string();
+      std::string ext{cmp.substr(cmp.find_last_of('.') + 1)};
+      if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
+          throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
                                                             view::all(extensions), "."));
+
     }
 
     //!\brief Tests whether every value of v lies inside extensions.

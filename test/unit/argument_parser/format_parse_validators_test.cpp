@@ -36,6 +36,7 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/io/filesystem.hpp>
 
 using namespace seqan3;
 
@@ -50,6 +51,13 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(validator_concept<integral_range_validator<std::vector<int>>>);
     EXPECT_TRUE(validator_concept<value_list_validator<std::vector<int>>>);
     EXPECT_TRUE(validator_concept<file_ext_validator>);
+}
+
+TEST(no_file, no_file2)
+{
+  filesystem::path p{"./sandbox.fasta"};
+  file_ext_validator my_validator{p};
+  EXPECT_THROW(my_validator(p), parser_invalid_argument);
 }
 
 TEST(validator_test, integral_range_validator_success)
