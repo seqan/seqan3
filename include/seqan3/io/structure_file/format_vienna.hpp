@@ -61,6 +61,7 @@
 #include <seqan3/io/structure_file/detail.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -161,24 +162,24 @@ public:
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;
-        if (is_id(*ranges::begin(stream_view)))
+        if (is_id(*begin(stream_view)))
         {
             if constexpr (!detail::decays_to_ignore_v<id_type>)
             {
                 if (options.truncate_ids)
                 {
-                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
-                                             | view::take_until_or_throw(is_cntrl || is_blank)
-                                             | view::char_to<value_type_t<id_type>>,
-                                 std::back_inserter(id));
+                    std::ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
+                                                  | view::take_until_or_throw(is_cntrl || is_blank)
+                                                  | view::char_to<value_type_t<id_type>>,
+                                      std::back_inserter(id));
                     detail::consume(stream_view | view::take_line_or_throw);
                 }
                 else
                 {
-                    ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
-                                             | view::take_line_or_throw
-                                             | view::char_to<value_type_t<id_type>>,
-                                 std::back_inserter(id));
+                    std::ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
+                                                  | view::take_line_or_throw
+                                                  | view::char_to<value_type_t<id_type>>,
+                                      std::back_inserter(id));
                 }
             }
             else
@@ -189,11 +190,11 @@ public:
         else if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
             auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
-            if (!is_legal_seq(*ranges::begin(stream_view))) // if neither id nor seq found: throw
+            if (!is_legal_seq(*begin(stream_view))) // if neither id nor seq found: throw
             {
                 throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} +
                                   is_id.msg.string() + " and " + is_legal_seq.msg.string() +
-                                  " evaluated to false on " + detail::make_printable(*ranges::begin(stream_view))};
+                                  " evaluated to false on " + detail::make_printable(*begin(stream_view))};
             }
         }
 
@@ -201,21 +202,21 @@ public:
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
-            ranges::copy(stream_view | view::take_line_or_throw                      // until end of line
-                                     | ranges::view::remove_if(is_space || is_digit) // ignore whitespace and numbers
-                                     | ranges::view::transform([is_legal_seq](char const c)
-                                       {
-                                           if (!is_legal_seq(c))                    // enforce legal alphabet
-                                           {
-                                               throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                 is_legal_seq.msg.string() +
-                                                                 " evaluated to false on " +
-                                                                 detail::make_printable(c)};
-                                           }
-                                         return c;
-                                       })
-                                     | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
-                         std::back_inserter(seq));
+            std::ranges::copy(stream_view | view::take_line_or_throw                      // until end of line
+                                          | ranges::view::remove_if(is_space || is_digit) // ignore whitespace and numbers
+                                          | ranges::view::transform([is_legal_seq](char const c)
+                                            {
+                                                if (!is_legal_seq(c))                    // enforce legal alphabet
+                                                {
+                                                    throw parse_error{std::string{"Encountered an unexpected letter: "} +
+                                                                      is_legal_seq.msg.string() +
+                                                                      " evaluated to false on " +
+                                                                      detail::make_printable(c)};
+                                                }
+                                              return c;
+                                            })
+                                          | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
+                              std::back_inserter(seq));
         }
         else
         {
@@ -229,7 +230,7 @@ public:
             {
                 assert(std::addressof(seq) == std::addressof(structure));
                 using alph_type = typename value_type_t<structure_type>::structure_alphabet_type;
-                ranges::copy(read_structure<alph_type>(stream_view), ranges::begin(structure));
+                std::ranges::copy(read_structure<alph_type>(stream_view), begin(structure));
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
                     detail::bpp_from_rna_structure<alph_type>(bpp, structure);
@@ -237,13 +238,13 @@ public:
             else
             {
                 using alph_type = value_type_t<structure_type>;
-                ranges::copy(read_structure<alph_type>(stream_view), std::back_inserter(structure));
+                std::ranges::copy(read_structure<alph_type>(stream_view), std::back_inserter(structure));
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
                     detail::bpp_from_rna_structure<alph_type>(bpp, structure);
             }
             if constexpr (!detail::decays_to_ignore_v<seq_type>)
-                if (ranges::size(seq) != ranges::size(structure))
+                if (size(seq) != size(structure))
                     throw parse_error{"Found sequence and associated structure of different length."};
         }
         else if constexpr (!detail::decays_to_ignore_v<bpp_type>)
@@ -251,7 +252,7 @@ public:
             detail::bpp_from_rna_structure<wuss51>(bpp, read_structure<wuss51>(stream_view));
 
             if constexpr (!detail::decays_to_ignore_v<seq_type>)
-                if (ranges::size(seq) != ranges::size(bpp))
+                if (size(seq) != size(bpp))
                     throw parse_error{"Found sequence and associated structure of different length."};
         }
         else
@@ -309,16 +310,16 @@ public:
                comment_type && SEQAN3_DOXYGEN_ONLY(comment),
                offset_type && SEQAN3_DOXYGEN_ONLY(offset))
     {
-        ranges::ostreambuf_iterator stream_it{stream};
+        std::ranges::ostreambuf_iterator stream_it{stream};
 
         // WRITE ID (optional)
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            if (!ranges::empty(id))
+            if (!empty(id))
             {
                 stream_it = '>';
                 stream_it = ' ';
-                ranges::copy(id, stream_it);
+                std::ranges::copy(id, stream_it);
                 detail::write_eol(stream_it, options.add_carriage_return);
             }
         }
@@ -326,10 +327,10 @@ public:
         // WRITE SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            if (ranges::empty(seq)) //[[unlikely]]
+            if (empty(seq)) //[[unlikely]]
                 throw std::runtime_error{"The SEQ field may not be empty when writing Vienna files."};
 
-            ranges::copy(seq | view::to_char, stream_it);
+            std::ranges::copy(seq | view::to_char, stream_it);
             detail::write_eol(stream_it, options.add_carriage_return);
         }
         else
@@ -341,8 +342,8 @@ public:
         // WRITE STRUCTURE (optional)
         if constexpr (!detail::decays_to_ignore_v<structure_type>)
         {
-            if (!ranges::empty(structure))
-                ranges::copy(structure | view::to_char, stream_it);
+            if (!empty(structure))
+                std::ranges::copy(structure | view::to_char, stream_it);
 
             // WRITE ENERGY (optional)
             if constexpr (!detail::decays_to_ignore_v<energy_type>)
@@ -356,7 +357,7 @@ public:
 //                                                      std::chars_format::fixed,
 //                                                      options.precision);
 //                    if (ec == std::errc())
-//                        ranges::copy(str.data(), endptr, stream_it);
+//                        std::ranges::copy(str.data(), endptr, stream_it);
 //                    else
 //                        throw std::runtime_error{"The energy could not be transformed into a string."};
 
@@ -367,7 +368,7 @@ public:
                     int len = std::snprintf(str.data(), 100, "%.*f", options.precision, energy);
                     if (len < 0 || len >= 100)
                         throw std::runtime_error{"The energy could not be transformed into a string."};
-                    ranges::copy(str.data(), str.data() + len, stream_it);
+                    std::ranges::copy(str.data(), str.data() + len, stream_it);
 
                     stream_it = ')';
                 }

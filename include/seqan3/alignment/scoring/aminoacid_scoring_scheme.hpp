@@ -44,6 +44,8 @@
 
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/range/shortcuts.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -154,10 +156,10 @@ public:
     {
         switch (matrix_id)
         {
-            case aminoacid_similarity_matrix::BLOSUM30: ranges::copy(blosum30, ranges::begin(matrix)); break;
-            case aminoacid_similarity_matrix::BLOSUM45: ranges::copy(blosum45, ranges::begin(matrix)); break;
-            case aminoacid_similarity_matrix::BLOSUM62: ranges::copy(blosum62, ranges::begin(matrix)); break;
-            case aminoacid_similarity_matrix::BLOSUM80: ranges::copy(blosum80, ranges::begin(matrix)); break;
+            case aminoacid_similarity_matrix::BLOSUM30: std::ranges::copy(blosum30, begin(matrix)); break;
+            case aminoacid_similarity_matrix::BLOSUM45: std::ranges::copy(blosum45, begin(matrix)); break;
+            case aminoacid_similarity_matrix::BLOSUM62: std::ranges::copy(blosum62, begin(matrix)); break;
+            case aminoacid_similarity_matrix::BLOSUM80: std::ranges::copy(blosum80, begin(matrix)); break;
             default:
                 throw std::invalid_argument{"ERROR in set_similarity_matrix(), matrix_id has no matrix."};
         }

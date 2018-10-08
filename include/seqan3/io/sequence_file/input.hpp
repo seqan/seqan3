@@ -579,7 +579,7 @@ public:
     //!\brief The const iterator type is void, because files are not const-iterable.
     using const_iterator    = void;
     //!\brief The type returned by end().
-    using sentinel          = ranges::default_sentinel;
+    using sentinel          = std::ranges::default_sentinel;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -627,7 +627,7 @@ public:
 
                 for (auto const & ext : fmt_type::file_extensions)
                 {
-                    if (ranges::equal(ext, extension))
+                    if (std::ranges::equal(ext, extension))
                     {
                         format = fmt_type{};
                         format_found = true;

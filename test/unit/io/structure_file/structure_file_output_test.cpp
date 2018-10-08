@@ -51,6 +51,7 @@
 
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/io/structure_file/input.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/iterator>
@@ -240,7 +241,7 @@ TEST_F(structure_file_output_row, assign_to_iterator)
     {
         record<type_list<rna5_vector, std::string, std::vector<wuss51>>,
                fields<field::SEQ, field::ID, field::STRUCTURE>> r{seqs[i], ids[i], structures[i]};
-        ranges::begin(file) = r;
+        begin(file) = r;
     });
 }
 

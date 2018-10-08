@@ -200,7 +200,7 @@ TYPED_TEST(bi_fm_index_iterator_test, to_fwd_iterator)
         auto fwd_it = it.to_fwd_iterator();
         EXPECT_TRUE(fwd_it.cycle_back()); // "GTAGG"
         EXPECT_EQ(sort(fwd_it.locate()), (std::vector<uint64_t>{3}));
-        EXPECT_TRUE(ranges::equal(*fwd_it, "GTAGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGG"_dna4));
         EXPECT_FALSE(fwd_it.cycle_back());
     }
 
@@ -215,10 +215,10 @@ TYPED_TEST(bi_fm_index_iterator_test, to_fwd_iterator)
     #endif
         EXPECT_TRUE(fwd_it.extend_right());
         EXPECT_EQ(sort(fwd_it.locate()), (std::vector<uint64_t>{10}));
-        EXPECT_TRUE(ranges::equal(*fwd_it, "GTAGC"_dna4));
+        EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGC"_dna4));
         EXPECT_TRUE(fwd_it.cycle_back());
         EXPECT_EQ(sort(fwd_it.locate()), (std::vector<uint64_t>{3}));
-        EXPECT_TRUE(ranges::equal(*fwd_it, "GTAGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGG"_dna4));
     }
 }
 
@@ -234,10 +234,10 @@ TYPED_TEST(bi_fm_index_iterator_test, to_rev_iterator)
 
         auto rev_it = it.to_rev_iterator(); // text "CGATGCAGGATGGCA"
         EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{1}));
-        EXPECT_TRUE(ranges::equal(*rev_it, "GATGC"_dna4));
+        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGC"_dna4));
         EXPECT_TRUE(rev_it.cycle_back()); // "GATGG"
         EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{8}));
-        EXPECT_TRUE(ranges::equal(*rev_it, "GATGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGG"_dna4));
         EXPECT_FALSE(rev_it.cycle_back());
     }
 
@@ -252,9 +252,9 @@ TYPED_TEST(bi_fm_index_iterator_test, to_rev_iterator)
     #endif
         EXPECT_TRUE(rev_it.extend_right()); // "CGTAG" resp. "GATGC"
         EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{1}));
-        EXPECT_TRUE(ranges::equal(*rev_it, "GATGC"_dna4));
+        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGC"_dna4));
         EXPECT_TRUE(rev_it.cycle_back()); // "GGTAG" resp. "GATGG"
         EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{8}));
-        EXPECT_TRUE(ranges::equal(*rev_it, "GATGG"_dna4));
+        EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGG"_dna4));
     }
 }

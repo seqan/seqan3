@@ -40,6 +40,7 @@
 #include <range/v3/view/filter.hpp>
 
 #include <seqan3/io/sequence_file/output.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -236,7 +237,7 @@ TEST(row, assign_to_iterator)
     {
         record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r{seqs[i], ids[i]};
 
-        ranges::begin(file) = r;
+        begin(file) = r;
     });
 }
 

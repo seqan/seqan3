@@ -48,7 +48,8 @@
 #include <range/v3/view/slice.hpp>
 
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/std/iterator>
@@ -111,7 +112,7 @@ template <typename inner_type,
 //!\cond
     requires reservable_container_concept<std::remove_reference_t<inner_type>> &&
              reservable_container_concept<std::remove_reference_t<data_delimiters_type>> &&
-             std::is_same_v<ranges::size_type_t<inner_type>, ranges::value_type_t<data_delimiters_type>>
+             std::is_same_v<size_type_t<inner_type>, value_type_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
 {
@@ -149,11 +150,11 @@ public:
 
     //!\brief A signed integer type (usually std::ptrdiff_t)
     //!\hideinitializer
-    using difference_type = ranges::difference_type_t<data_delimiters_type>;
+    using difference_type = difference_type_t<data_delimiters_type>;
 
     //!\brief An unsigned integer type (usually std::size_t)
     //!\hideinitializer
-    using size_type = ranges::size_type_t<data_delimiters_type>;
+    using size_type = size_type_t<data_delimiters_type>;
     //!\}
 
     //!\cond
@@ -229,7 +230,7 @@ public:
     //!\endcond
     {
         if constexpr (std::ranges::SizedRange<rng_of_rng_type>)
-            data_delimiters.reserve(ranges::size(rng_of_rng) + 1);
+            data_delimiters.reserve(seqan3::size(rng_of_rng) + 1);
 
         for (auto && val : rng_of_rng)
         {
@@ -926,17 +927,17 @@ public:
 
         size_type value_len = 0;
         if constexpr (std::ranges::SizedRange<rng_type>)
-            value_len = ranges::size(value);
+            value_len = seqan3::size(value);
         else
-            value_len = std::distance(ranges::begin(value), ranges::end(value));
+            value_len = std::distance(seqan3::begin(value), seqan3::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
         auto placeholder = ranges::view::repeat_n(value_type_t<rng_type>{}, count * value_len)
                          | view::common;
         // insert placeholder so the tail is moved once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
-                           ranges::begin(placeholder),
-                           ranges::end(placeholder));
+                           seqan3::begin(placeholder),
+                           seqan3::end(placeholder));
 
         // assign the actual values to the placeholder:
         size_t i = data_delimiters[pos_as_num];
@@ -997,7 +998,7 @@ public:
         if (last - first == 0)
             return begin() + pos_as_num;
 
-        auto const ilist = ranges::make_iterator_range(first, last, std::distance(first, last));
+        auto const ilist = std::ranges::make_iterator_range(first, last, std::distance(first, last));
 
         data_delimiters.reserve(data_values.size() + ilist.size());
         data_delimiters.insert(data_delimiters.begin() + pos_as_num,
@@ -1011,9 +1012,9 @@ public:
         {
             // constant for sized ranges and/or random access ranges, linear otherwise
             if constexpr (std::ranges::SizedRange<std::decay_t<decltype(*first)>>)
-                full_len += ranges::size(*first);
+                full_len += seqan3::size(*first);
             else
-                full_len += std::distance(ranges::begin(*first), ranges::end(*first));
+                full_len += std::distance(seqan3::begin(*first), seqan3::end(*first));
 
             data_delimiters[pos_as_num + 1 + i] += full_len;
         }
@@ -1023,8 +1024,8 @@ public:
                          | view::common;
         // insert placeholder so the tail is moved only once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
-                           ranges::begin(placeholder),
-                           ranges::end(placeholder));
+                           seqan3::begin(placeholder),
+                           seqan3::end(placeholder));
 
         // assign the actual values to the placeholder:
         size_t i = data_delimiters[pos_as_num];
@@ -1098,7 +1099,7 @@ public:
         // we need to scan once over the input
         size_type sum_size{0};
         for (; first != last; ++first)
-            sum_size += ranges::size(*first);
+            sum_size += seqan3::size(*first);
 
         data_values.erase(data_values.begin() + data_delimiters[distf],
                           data_values.begin() + data_delimiters[dist]);
@@ -1157,8 +1158,8 @@ public:
     void push_back(rng_type && value)
         requires is_compatible_value<rng_type>
     {
-        data_values.insert(data_values.end(), ranges::begin(value), ranges::end(value));
-        data_delimiters.push_back(data_delimiters.back() + ranges::size(value));
+        data_values.insert(data_values.end(), seqan3::begin(value), seqan3::end(value));
+        data_delimiters.push_back(data_delimiters.back() + seqan3::size(value));
     }
 
     /*!\brief Removes the last element of the container.
@@ -1228,7 +1229,7 @@ public:
         requires is_compatible_value<rng_type>
     {
         assert(count < max_size());
-        assert(concat_size() + count * ranges::size(value) < data_values.max_size());
+        assert(concat_size() + count * seqan3::size(value) < data_values.max_size());
 
         if (count < size())
             resize(count);

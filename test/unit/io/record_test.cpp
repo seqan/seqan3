@@ -58,7 +58,7 @@ TEST(fields, usage)
     using fields_t = fields<field::SEQ, field::ID, field::QUAL>;
     std::array comp{field::SEQ, field::ID, field::QUAL};
 
-    EXPECT_TRUE(ranges::equal(fields_t::as_array, comp));
+    EXPECT_TRUE(std::ranges::equal(fields_t::as_array, comp));
     EXPECT_TRUE(fields_t::contains(field::SEQ));
     EXPECT_TRUE(fields_t::contains(field::ID));
     EXPECT_TRUE(fields_t::contains(field::QUAL));
@@ -103,7 +103,7 @@ TEST_F(record_, get_by_index)
     record_type r{"MY ID", "ACGT"_dna4};
 
     EXPECT_EQ(get<0>(r), "MY ID");
-    EXPECT_TRUE(ranges::equal(get<1>(r), "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(get<1>(r), "ACGT"_dna4));
 }
 
 TEST_F(record_, get_by_type)
@@ -111,7 +111,7 @@ TEST_F(record_, get_by_type)
     record_type r{"MY ID", "ACGT"_dna4};
 
     EXPECT_EQ(get<std::string>(r), "MY ID");
-    EXPECT_TRUE(ranges::equal(get<dna4_vector>(r), "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(get<dna4_vector>(r), "ACGT"_dna4));
 }
 
 TEST_F(record_, get_by_field)
@@ -119,7 +119,7 @@ TEST_F(record_, get_by_field)
     record_type r{"MY ID", "ACGT"_dna4};
 
     EXPECT_EQ(get<field::ID>(r), "MY ID");
-    EXPECT_TRUE(ranges::equal(get<field::SEQ>(r), "ACGT"_dna4));
+    EXPECT_TRUE(std::ranges::equal(get<field::SEQ>(r), "ACGT"_dna4));
 }
 
 // ----------------------------------------------------------------------------

@@ -243,8 +243,8 @@ TEST_F(sequence_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((ranges::equal(get<field::ID>(rec),  id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec),  id_comp[counter])));
         EXPECT_TRUE(empty(get<field::QUAL>(rec)));
 
         counter++;
@@ -261,8 +261,8 @@ TEST_F(sequence_file_input_f, record_reading_struct_bind)
     size_t counter = 0;
     for (auto & [ seq, id, qual ] : fin)
     {
-        EXPECT_TRUE((ranges::equal(seq, seq_comp[counter])));
-        EXPECT_TRUE((ranges::equal(id,  id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seq, seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
         EXPECT_TRUE(empty(qual));
 
         counter++;
@@ -281,8 +281,8 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
     size_t counter = 0;
     for (auto & [ id, seq_qual ] : fin)
     {
-        EXPECT_TRUE((ranges::equal(seq_qual | view::convert<dna5>, seq_comp[counter])));
-        EXPECT_TRUE((ranges::equal(id,  id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<dna5>, seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
 
         counter++;
     }
@@ -302,8 +302,8 @@ TEST_F(sequence_file_input_f, file_view)
     size_t counter = 1; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
-        EXPECT_TRUE((ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
-        EXPECT_TRUE((ranges::equal(get<field::ID>(rec),  id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::SEQ>(rec), seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(get<field::ID>(rec),  id_comp[counter])));
         EXPECT_TRUE(empty(get<field::QUAL>(rec)));
 
         counter++;
@@ -326,8 +326,8 @@ TEST_F(sequence_file_input_f, column_reading)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        EXPECT_TRUE((ranges::equal(seqs[i], seq_comp[i])));
-        EXPECT_TRUE((ranges::equal(ids[i],  id_comp[i])));
+        EXPECT_TRUE((std::ranges::equal(seqs[i], seq_comp[i])));
+        EXPECT_TRUE((std::ranges::equal(ids[i],  id_comp[i])));
         EXPECT_TRUE(empty(quals[i]));
     }
 }
@@ -342,7 +342,7 @@ TEST_F(sequence_file_input_f, column_reading_temporary)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        EXPECT_TRUE((ranges::equal(seqs[i], seq_comp[i])));
+        EXPECT_TRUE((std::ranges::equal(seqs[i], seq_comp[i])));
     }
 }
 
@@ -358,8 +358,8 @@ TEST_F(sequence_file_input_f, column_reading_decomposed)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        EXPECT_TRUE((ranges::equal(seqs[i], seq_comp[i])));
-        EXPECT_TRUE((ranges::equal(ids[i],  id_comp[i])));
+        EXPECT_TRUE((std::ranges::equal(seqs[i], seq_comp[i])));
+        EXPECT_TRUE((std::ranges::equal(ids[i],  id_comp[i])));
         EXPECT_TRUE(empty(quals[i]));
     }
 }
@@ -374,8 +374,8 @@ TEST_F(sequence_file_input_f, column_reading_decomposed_temporary)
 
     for (size_t i = 0; i < 3; ++i)
     {
-        EXPECT_TRUE((ranges::equal(seqs[i], seq_comp[i])));
-        EXPECT_TRUE((ranges::equal(ids[i],  id_comp[i])));
+        EXPECT_TRUE((std::ranges::equal(seqs[i], seq_comp[i])));
+        EXPECT_TRUE((std::ranges::equal(ids[i],  id_comp[i])));
         EXPECT_TRUE(empty(quals[i]));
     }
 }

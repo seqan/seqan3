@@ -278,8 +278,8 @@ TYPED_TEST(fm_index_iterator_test, query)
     // query()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("ACG"_dna4));
-    EXPECT_TRUE(ranges::equal(*it, "ACG"_dna4));
-    EXPECT_TRUE(ranges::equal(it.query(), "ACG"_dna4));
+    EXPECT_TRUE(std::ranges::equal(*it, "ACG"_dna4));
+    EXPECT_TRUE(std::ranges::equal(it.query(), "ACG"_dna4));
 }
 
 // TODO: test last_char()
@@ -317,7 +317,7 @@ TYPED_TEST(fm_index_iterator_test, incomplete_alphabet)
 
         EXPECT_TRUE(it.extend_right(dna4::A));
         EXPECT_TRUE(it.cycle_back());
-        EXPECT_TRUE(ranges::equal(it.query(), "T"_dna4));
+        EXPECT_TRUE(std::ranges::equal(it.query(), "T"_dna4));
     }
 }
 
@@ -329,7 +329,7 @@ TYPED_TEST(fm_index_iterator_test, lazy_locate)
     TypeParam it = TypeParam(fm);
     it.extend_right("ACG"_dna4);
 
-    EXPECT_TRUE(ranges::equal(it.locate(), it.lazy_locate()));
+    EXPECT_TRUE(std::ranges::equal(it.locate(), it.lazy_locate()));
 }
 
 TEST(fm_index, concepts)

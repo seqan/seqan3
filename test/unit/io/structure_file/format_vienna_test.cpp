@@ -163,9 +163,9 @@ struct read : public ::testing::Test
             EXPECT_NO_THROW(( format.read(istream, options, seq, id, bpp, structure, energy, ig, ig, ig, ig) ));
 
             EXPECT_EQ(check_energy, energy.has_value());
-            if (check_seq)       { EXPECT_TRUE(( ranges::equal(seq, expected_seq[idx]) )); }
-            if (check_id)        { EXPECT_TRUE(( ranges::equal(id, expected_id[idx]) )); }
-            if (check_structure) { EXPECT_TRUE(( ranges::equal(structure, expected_structure[idx]) )); }
+            if (check_seq)       { EXPECT_TRUE(( std::ranges::equal(seq, expected_seq[idx]) )); }
+            if (check_id)        { EXPECT_TRUE(( std::ranges::equal(id, expected_id[idx]) )); }
+            if (check_structure) { EXPECT_TRUE(( std::ranges::equal(structure, expected_structure[idx]) )); }
             if (check_structure) { bpp_test(expected_interactions[idx]); }
             if (check_energy)    { EXPECT_DOUBLE_EQ(*energy, expected_energy[idx]); }
         }
@@ -274,7 +274,7 @@ TEST_F(read_fields, only_seq)
     {
         EXPECT_NO_THROW(( format.read(istream, options, seq, ig, ig, ig, ig, ig, ig, ig, ig) ));
 
-        EXPECT_TRUE(ranges::equal(seq, expected_seq[idx]));
+        EXPECT_TRUE(std::ranges::equal(seq, expected_seq[idx]));
         seq.clear();
     }
 }
@@ -286,7 +286,7 @@ TEST_F(read_fields, only_id)
     {
         EXPECT_NO_THROW(( format.read(istream, options, ig, id, ig, ig, ig, ig, ig, ig, ig) ));
 
-        EXPECT_TRUE(ranges::equal(id, expected_id[idx]));
+        EXPECT_TRUE(std::ranges::equal(id, expected_id[idx]));
         id.clear();
     }
 }
@@ -298,7 +298,7 @@ TEST_F(read_fields, only_structure)
     {
         EXPECT_NO_THROW(( format.read(istream, options, ig, ig, ig, structure, ig, ig, ig, ig, ig) ));
 
-        EXPECT_TRUE(ranges::equal(structure, expected_structure[idx]));
+        EXPECT_TRUE(std::ranges::equal(structure, expected_structure[idx]));
         structure.clear();
     }
 }
@@ -324,8 +324,8 @@ TEST_F(read_fields, structured_seq)
     {
         EXPECT_NO_THROW(( format.read(istream, opt, structured_seq, ig, ig, structured_seq, ig, ig, ig, ig, ig) ));
 
-        EXPECT_TRUE(ranges::equal(structured_seq | view::convert<rna4>, expected_seq[idx]));
-        EXPECT_TRUE(ranges::equal(structured_seq | view::convert<dot_bracket3>, expected_structure[idx]));
+        EXPECT_TRUE(std::ranges::equal(structured_seq | view::convert<rna4>, expected_seq[idx]));
+        EXPECT_TRUE(std::ranges::equal(structured_seq | view::convert<dot_bracket3>, expected_structure[idx]));
         structured_seq.clear();
     }
 }

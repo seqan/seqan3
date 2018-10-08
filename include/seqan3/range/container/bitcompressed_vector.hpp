@@ -47,7 +47,8 @@
 
 #include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/to_rank.hpp>
@@ -287,9 +288,9 @@ public:
     //!\brief The const_iterator type of this container (a random access iterator).
     using const_iterator    = detail::random_access_iterator<bitcompressed_vector const>;
     //!\brief A signed integer type (usually std::ptrdiff_t)
-    using difference_type   = ranges::difference_type_t<data_type>;
+    using difference_type   = difference_type_t<data_type>;
     //!\brief An unsigned integer type (usually std::size_t)
-    using size_type         = ranges::size_type_t<data_type>;
+    using size_type         = size_type_t<data_type>;
     //!\}
 
     //!\cond
@@ -325,7 +326,7 @@ public:
         requires has_same_value_type_v<other_range_t>
     //!\endcond
     explicit bitcompressed_vector(other_range_t && range) :
-        bitcompressed_vector{ranges::begin(range), ranges::end(range)}
+        bitcompressed_vector{seqan3::begin(range), seqan3::end(range)}
     {}
 
     /*!\brief Construct with `count` times `value`.
@@ -883,8 +884,8 @@ public:
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
 
-        auto v = ranges::iterator_range{begin_it, end_it} | seqan3::view::convert<value_type> | seqan3::view::to_rank;
-        data.insert(data.begin() + pos_as_num, ranges::begin(v), ranges::end(v));
+        auto v = std::ranges::iterator_range{begin_it, end_it} | seqan3::view::convert<value_type> | seqan3::view::to_rank;
+        data.insert(data.begin() + pos_as_num, seqan3::begin(v), seqan3::end(v));
 
         return begin() + pos_as_num;
     }

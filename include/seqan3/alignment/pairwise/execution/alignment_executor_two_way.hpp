@@ -46,6 +46,7 @@
 #include <seqan3/alignment/pairwise/execution/alignment_range.hpp>
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -75,9 +76,9 @@ class alignment_executor_two_way
     //!\brief The resource type
     using resource_type       = std::remove_reference_t<align_instance_rng_t>;
     //!\brief The iterator over the resource.
-    using resource_iterator   = iterator_t<resource_type>;
+    using resource_iterator   = std::ranges::iterator_t<resource_type>;
     //!\brief The sentinel over the resource.
-    using resource_sentinel   = sentinel_t<resource_type>;
+    using resource_sentinel   = std::ranges::sentinel_t<resource_type>;
     //!\brief The value type of the resource.
     using resource_value_type = std::remove_reference_t<decltype(*std::declval<resource_iterator>())>;
     //!\}
@@ -90,7 +91,7 @@ class alignment_executor_two_way
     //!\brief The internal buffer.
     using buffer_type       = std::vector<buffer_value_type>;
     //!\brief The pointer type of the buffer.
-    using buffer_pointer    = iterator_t<buffer_type>;
+    using buffer_pointer    = std::ranges::iterator_t<buffer_type>;
     //!\}
 public:
     //!\brief The result type of invoking the alignment instance.
@@ -115,11 +116,11 @@ public:
                                alignment_selector_t _selector) :
         resource{std::forward<align_instance_rng_t>(_resource)},
         selector{std::forward<alignment_selector_t>(_selector)},
-        resource_iter{ranges::begin(resource)},
-        resource_end{ranges::end(resource)}
+        resource_iter{begin(resource)},
+        resource_end{end(resource)}
     {
         buffer.resize(1);
-        setg(ranges::end(buffer), ranges::end(buffer));
+        setg(end(buffer), end(buffer));
     }
     //!}
 
@@ -170,7 +171,7 @@ protected:
             return eof;
 
         // Reset the get pointer.
-        setg(ranges::begin(buffer), ranges::begin(buffer) +
+        setg(begin(buffer), begin(buffer) +
             std::min(static_cast<size_t>(resource_end - resource_iter), buffer.size()));
 
         // Apply the alignment execution.

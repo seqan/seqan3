@@ -10,7 +10,7 @@ int main()
 {
 //! [usage]
 // This does not work:
-//std::cout << dna5::C;
+// std::cout << dna5::C;
 // because the alphabet needs to be converted to char explicitly:
 std::cout << to_char(dna5::C);  // prints 'C'
 

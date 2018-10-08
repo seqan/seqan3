@@ -45,6 +45,8 @@
 
 #include <seqan3/core/platform.hpp>
 
+#include <seqan3/std/ranges>
+
 namespace seqan3::detail
 {
 
@@ -61,14 +63,14 @@ namespace seqan3::detail
  * specific file's constraints and is not checked by the iterator.
  *
  * The increment operations are no-ops (perform nothing) and comparisons against
- * ranges::default_sentinel always return false (there is no end in an output file).
+ * std::ranges::default_sentinel always return false (there is no end in an output file).
  *
  * If any of these characteristics seem unusual to you, please refer to the [standard library's
  * documentation on output iterators](http://en.cppreference.com/w/cpp/concept/OutputIterator).
  *
  * This class template differs from std::back_insert_iterator only in that it performs
  * no checks itself on the assigned values and that it allows comparisons against
- * ranges::default_sentinel.
+ * std::ranges::default_sentinel.
  */
 template <typename file_type>
 class out_file_iterator
@@ -151,26 +153,26 @@ public:
      * \brief This iterator never equals its sentinel.
      * \{
      */
-    constexpr bool operator==(ranges::default_sentinel const &) const noexcept
+    constexpr bool operator==(std::ranges::default_sentinel const &) const noexcept
     {
         return false;
     }
 
-    constexpr bool operator!=(ranges::default_sentinel const &) const noexcept
+    constexpr bool operator!=(std::ranges::default_sentinel const &) const noexcept
     {
         return true;
     }
 
-    constexpr friend bool operator==(ranges::default_sentinel const &,
+    constexpr friend bool operator==(std::ranges::default_sentinel const &,
                                      out_file_iterator const & it) noexcept
     {
-        return (it == ranges::default_sentinel{});
+        return (it == std::ranges::default_sentinel{});
     }
 
-    constexpr friend bool operator!=(ranges::default_sentinel const &,
+    constexpr friend bool operator!=(std::ranges::default_sentinel const &,
                                      out_file_iterator const & it) noexcept
     {
-        return (it != ranges::default_sentinel{});
+        return (it != std::ranges::default_sentinel{});
     }
     //!\}
 

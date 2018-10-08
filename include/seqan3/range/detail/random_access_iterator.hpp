@@ -45,7 +45,6 @@
 #include <range/v3/utility/iterator_traits.hpp>
 #include <range/v3/range_traits.hpp>
 
-#include <seqan3/std/ranges>
 #include <seqan3/std/iterator>
 
 namespace seqan3::detail
@@ -76,7 +75,7 @@ protected:
     //!\brief Iterator stores pointer to underlying container structure.
     typename std::add_pointer_t<range_type> host{nullptr};
     //!\brief Use container's size_type as a position.
-    using position_type =  ranges::v3::size_type_t<range_type>;
+    using position_type = typename range_type::size_type;
     //!\brief Store position index for container.
     position_type pos{static_cast<position_type>(0)};
 

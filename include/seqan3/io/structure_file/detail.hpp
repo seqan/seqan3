@@ -67,7 +67,7 @@ void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, do
 
     bpp.clear();
     if constexpr (std::ranges::SizedRange<structure_type>)
-        bpp.reserve(ranges::size(structure));
+        bpp.reserve(size(structure));
 
     std::stack<size_t> brackets[max_pseudoknot_depth_v<structure_alph_type>];
     size_t pos = 0ul;

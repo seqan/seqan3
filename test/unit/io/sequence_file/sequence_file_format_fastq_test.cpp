@@ -133,9 +133,9 @@ struct read : public ::testing::Test
 
             EXPECT_NO_THROW(( format.read(istream, options, seq, id, qual) ));
 
-            EXPECT_TRUE((ranges::equal(seq, expected_seqs[i])));
-            EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
-            EXPECT_TRUE((ranges::equal(qual, expected_quals[i])));
+            EXPECT_TRUE((std::ranges::equal(seq, expected_seqs[i])));
+            EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
+            EXPECT_TRUE((std::ranges::equal(qual, expected_quals[i])));
         }
     }
 };
@@ -260,7 +260,7 @@ TEST_F(read, only_seq)
 
         format.read(istream, options, seq, std::ignore, std::ignore);
 
-        EXPECT_TRUE((ranges::equal(seq, expected_seqs[i])));
+        EXPECT_TRUE((std::ranges::equal(seq, expected_seqs[i])));
     }
 }
 
@@ -276,7 +276,7 @@ TEST_F(read, only_id)
 
         format.read(istream, options, std::ignore, id, std::ignore);
 
-        EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
+        EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
     }
 }
 
@@ -292,7 +292,7 @@ TEST_F(read, only_qual)
 
         format.read(istream, options, std::ignore, std::ignore, qual);
 
-        EXPECT_TRUE((ranges::equal(qual, expected_quals[i])));
+        EXPECT_TRUE((std::ranges::equal(qual, expected_quals[i])));
     }
 }
 
@@ -310,9 +310,9 @@ TEST_F(read, seq_qual)
 
         format.read(istream, options2, seq_qual, id, seq_qual);
 
-        EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
-        EXPECT_TRUE((ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
-        EXPECT_TRUE((ranges::equal(seq_qual | view::convert<phred42>, expected_quals[i])));
+        EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<phred42>, expected_quals[i])));
     }
 }
 

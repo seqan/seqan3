@@ -33,39 +33,22 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides various utility functions.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Contains various shortcuts for common std::ranges functions.
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
-namespace seqan3::detail
+namespace seqan3
 {
 
-/*!\brief Iterate over a range (consumes single-pass input ranges).
- * \ingroup range
- * \tparam rng_t Type of the range; must satisfy std::ranges::InputRange.
- * \param rng The range.
- */
-template <std::ranges::InputRange rng_t>
-constexpr void consume(rng_t && rng)
-{
-    auto it = begin(rng);
-    auto it_end = end(rng);
-    while (it != it_end)
-        ++it;
-}
+using std::ranges::begin;
+using std::ranges::end;
 
-/*!\brief Iterate over a range (NO-OP for forward ranges).
- * \ingroup range
- * \tparam rng_t Type of the range; must satisfy std::ranges::ForwardRange.
- * \param rng The range.
- */
-template <std::ranges::ForwardRange rng_t>
-constexpr void consume(rng_t &&)
-{}
+using std::ranges::cbegin;
+using std::ranges::cend;
 
-} // namespace seqan3::detail
+using std::ranges::size;
+using std::ranges::empty;
+
+} // namespace seqan3

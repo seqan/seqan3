@@ -46,14 +46,15 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/utility/iterator.hpp>
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/range/shortcuts.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -142,7 +143,7 @@ public:
 
 private:
     //!\brief The type of an iterator of the database sequence.
-    using database_iterator = iterator_t<database_type>;
+    using database_iterator = std::ranges::iterator_t<database_type>;
     //!\brief The alphabet type of the query sequence.
     using query_alphabet_type = std::remove_reference_t<decltype(query[0])>;
 
@@ -241,9 +242,9 @@ public:
           config{std::forward<align_config_t>(_config)},
           _score{query.size()},
           _best_score{query.size()},
-          _best_score_col{ranges::begin(database)},
-          database_it{ranges::begin(database)},
-          database_it_end{ranges::end(database)}
+          _best_score_col{begin(database)},
+          database_it{begin(database)},
+          database_it_end{end(database)}
     {
         static constexpr std::size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
 
@@ -479,7 +480,7 @@ public:
     {
         unsigned col = database.size() - 1;
         if constexpr(is_semi_global)
-            col = std::distance(ranges::begin(database), _best_score_col);
+            col = std::distance(begin(database), _best_score_col);
 
         return {col, query.size() - 1};
     }

@@ -160,7 +160,7 @@ TEST(view_take_exactly, underlying_is_shorter)
     EXPECT_EQ("foo", v);
 
     auto v2 = vec | view::single_pass_input | view::take_exactly(4);
-    EXPECT_EQ(ranges::size(v2), 4); // here be dragons
+    EXPECT_EQ(size(v2), 4); // here be dragons
 }
 
 // ============================================================================

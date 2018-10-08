@@ -42,6 +42,7 @@
 #include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/quality/qualified.hpp>
+#include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/std/ranges>
 
@@ -62,9 +63,9 @@ struct trim_fn
      */
     template <typename irng_t>
     auto operator()(irng_t && irange,
-                    underlying_phred_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
+                    underlying_phred_t<value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && quality_concept<value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return ranges::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
@@ -80,9 +81,9 @@ struct trim_fn
      */
     template <typename irng_t>
     auto operator()(irng_t && irange,
-                    std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>> const threshold) const
+                    std::decay_t<value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && quality_concept<value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return (*this)(std::forward<irng_t>(irange), to_phred(threshold));
@@ -148,11 +149,11 @@ struct trim_fn
     template <typename irng_t,
               typename threshold_t>
     //!\cond
-        requires std::ranges::InputRange<irng_t> && quality_concept<ranges::value_type_t<std::decay_t<irng_t>>> &&
+        requires std::ranges::InputRange<irng_t> && quality_concept<value_type_t<std::decay_t<irng_t>>> &&
                  (std::is_same_v<std::decay_t<threshold_t>,
-                                 std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>> ||
+                                 std::decay_t<value_type_t<std::decay_t<irng_t>>>> ||
                   std::is_convertible_v<std::decay_t<threshold_t>,
-                                        underlying_phred_t<std::decay_t<ranges::value_type_t<std::decay_t<irng_t>>>>>)
+                                        underlying_phred_t<std::decay_t<value_type_t<std::decay_t<irng_t>>>>>)
     //!\endcond
     friend auto operator|(irng_t && irange,
                           seqan3::detail::trim_fn::delegate<threshold_t> const & bound_view)

@@ -76,27 +76,27 @@ TYPED_TEST(nucleotide, view_translate_single)
     // default parameter translation_frames
     auto v1 = vec | view::translate_single;
     // == [T,Y,V,R]
-    EXPECT_TRUE((ranges::equal(v1, cmp1)));
+    EXPECT_TRUE((std::ranges::equal(v1, cmp1)));
 
     // default parameter translation_frames
 //     auto v2 = vec | view::translate_single();
     // == [T,Y,V,R]
-//     EXPECT_TRUE((ranges::equal(v2, cmp1));
+//     EXPECT_TRUE((std::ranges::equal(v2, cmp1));
 
     // single frame translation
     auto v3 = vec | view::translate_single(translation_frames::FWD_FRAME_0);
     // == [T,Y,V,R]
-    EXPECT_TRUE((ranges::equal(v3, cmp1)));
+    EXPECT_TRUE((std::ranges::equal(v3, cmp1)));
 
     // function syntax
     auto v4 = view::translate_single(vec, translation_frames::FWD_FRAME_0);
     // == [T,Y,V,R]
-    EXPECT_TRUE((ranges::equal(v4, cmp1)));
+    EXPECT_TRUE((std::ranges::equal(v4, cmp1)));
 
     // combinability
     auto v5 = vec | view::complement | view::translate_single(translation_frames::FWD_FRAME_0);
     // == [C,M,H,A]
-    EXPECT_TRUE((ranges::equal(v5, cmp2)));
+    EXPECT_TRUE((std::ranges::equal(v5, cmp2)));
 }
 
 TYPED_TEST(nucleotide, view_translate)
@@ -117,77 +117,77 @@ TYPED_TEST(nucleotide, view_translate)
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
     EXPECT_EQ(v1.size(), cmp4.size());
     for (unsigned i = 0; i < v1.size(); i++)
-        EXPECT_TRUE((ranges::equal(v1[i], cmp4[i])));
+        EXPECT_TRUE((std::ranges::equal(v1[i], cmp4[i])));
 
     // default parameter translation_frames
 //     auto v2 = vec | view::translate();
     // == [[T,Y,V,R]]
 //     EXPECT_EQ(v2.size(), cmp4.size());
 //     for (unsigned i = 0; i < v2.size(); i++)
-//         EXPECT_TRUE((ranges::equal(v2[i], cmp4[i])));
+//         EXPECT_TRUE((std::ranges::equal(v2[i], cmp4[i])));
 
     // single frame translation
     auto v3 = vec | view::translate(translation_frames::FWD_FRAME_0);
     // == [[T,Y,V,R]]
     EXPECT_EQ(v3.size(), cmp1.size());
     for (unsigned i = 0; i < v3.size(); i++)
-        EXPECT_TRUE((ranges::equal(v3[i], cmp1[i])));
+        EXPECT_TRUE((std::ranges::equal(v3[i], cmp1[i])));
 
     // reverse translation
     auto v4 = vec | view::translate(translation_frames::FWD_REV_0);
     // == [[T,Y,V,R],[Y,V,R,T]]
     EXPECT_EQ(v4.size(), cmp2.size());
     for (unsigned i = 0; i < v4.size(); i++)
-        EXPECT_TRUE((ranges::equal(v4[i], cmp2[i])));
+        EXPECT_TRUE((std::ranges::equal(v4[i], cmp2[i])));
 
     // forward frames translation
     auto v5 = vec | view::translate(translation_frames::FWD);
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T]]
     EXPECT_EQ(v5.size(), cmp3.size());
     for (unsigned i = 0; i < v5.size(); i++)
-        EXPECT_TRUE((ranges::equal(v5[i], cmp3[i])));
+        EXPECT_TRUE((std::ranges::equal(v5[i], cmp3[i])));
 
     // six frame translation
     auto v6 = vec | view::translate(translation_frames::SIX_FRAME);
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y]]
     EXPECT_EQ(v6.size(), cmp4.size());
     for (unsigned i = 0; i < v6.size(); i++)
-        EXPECT_TRUE((ranges::equal(v6[i], cmp4[i])));
+        EXPECT_TRUE((std::ranges::equal(v6[i], cmp4[i])));
 
     // user-defined frame combination
     auto v7 = vec | view::translate(translation_frames::FWD_FRAME_0 | translation_frames::FWD_FRAME_2);
     // == [[T,Y,V,R],[V,R,T]]
     EXPECT_EQ(v7.size(), cmp5.size());
     for (unsigned i = 0; i < v7.size(); i++)
-        EXPECT_TRUE((ranges::equal(v7[i], cmp5[i])));
+        EXPECT_TRUE((std::ranges::equal(v7[i], cmp5[i])));
 
     // function syntax
     auto v8 = view::translate(vec, translation_frames::FWD_REV_0);
     // == [[T,Y,V,R],[Y,V,R,T]]
     EXPECT_EQ(v8.size(), cmp2.size());
     for (unsigned i = 0; i < v8.size(); i++)
-        EXPECT_TRUE((ranges::equal(v8[i], cmp2[i])));
+        EXPECT_TRUE((std::ranges::equal(v8[i], cmp2[i])));
 
     // combinability
     auto v9 = vec | view::complement | view::translate(translation_frames::FWD_REV_0);
     // == [[C,M,H,A],[M,H,A,C]]
     EXPECT_EQ(v9.size(), cmp6.size());
     for (unsigned i = 0; i < v9.size(); i++)
-        EXPECT_TRUE((ranges::equal(v9[i], cmp6[i])));
+        EXPECT_TRUE((std::ranges::equal(v9[i], cmp6[i])));
 
     // combinability
     auto v10 = vec | view::complement | view::translate(translation_frames::FWD_REV_0) | ranges::view::take(1);
     // == [[C,M,H,A]]
     EXPECT_EQ(v10.size(), cmp7.size());
     for (unsigned i = 0; i < v10.size(); i++)
-        EXPECT_TRUE((ranges::equal(v10[i], cmp7[i])));
+        EXPECT_TRUE((std::ranges::equal(v10[i], cmp7[i])));
 
     // combinability and function syntax
     auto v11 = detail::view_translate(view::complement(vec), translation_frames::FWD_REV_0);
     // == [[T,Y,V,R],[Y,V,R,T]]
     EXPECT_EQ(v11.size(), cmp6.size());
     for (unsigned i = 0; i < v11.size(); i++)
-        EXPECT_TRUE((ranges::equal(v11[i], cmp6[i])));
+        EXPECT_TRUE((std::ranges::equal(v11[i], cmp6[i])));
 }
 
 TYPED_TEST(nucleotide, view_translate_single_container_conversion)
