@@ -110,7 +110,7 @@ private:
      * Returns an std::true_type if the `T` is implicitly convertible to `type`.
      */
     template <typename T>
-    struct implicitely_convertible_from
+    struct implicitly_convertible_from
     {
         //!\brief The returned type when invoked.
         template <typename type>
@@ -216,7 +216,7 @@ public:
      */
     template <typename indirect_alternative_t>
     //!\cond
-        requires !one_alternative_is<implicitely_convertible_from, indirect_alternative_t> &&
+        requires !one_alternative_is<implicitly_convertible_from, indirect_alternative_t> &&
                  one_alternative_is<constructible_from, indirect_alternative_t>
     //!\endcond
     constexpr union_composition(indirect_alternative_t const & rhs) noexcept :
@@ -226,10 +226,10 @@ public:
 
     //!\cond
     template <typename indirect_alternative_t>
-        requires one_alternative_is<implicitely_convertible_from, indirect_alternative_t>
+        requires one_alternative_is<implicitly_convertible_from, indirect_alternative_t>
     constexpr union_composition(indirect_alternative_t const & rhs) noexcept :
         _value{rank_by_type_(meta::front<meta::find_if<alternatives,
-                                                       implicitely_convertible_from<indirect_alternative_t>>>(rhs))}
+                                                       implicitly_convertible_from<indirect_alternative_t>>>(rhs))}
     {}
     //!\endcond
 
