@@ -608,6 +608,7 @@ public:
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
+        return *this;
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
@@ -721,6 +722,7 @@ public:
                       detail::range_wrap_ignore(detail::get_or_ignore<field::ID>(r)),
                       detail::range_wrap_ignore(detail::get_or_ignore<field::QUAL>(r)),
                       detail::range_wrap_ignore(detail::get_or_ignore<field::SEQ_QUAL>(r)));
+        return *this;
     }
 
     /*!\brief            Write columns (wrapped in a std::tuple) to the file.
@@ -768,6 +770,7 @@ public:
             detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::ID)>(t)),
             detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::QUAL)>(t)),
             detail::range_wrap_ignore(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ_QUAL)>(t)));
+        return *this;
     }
     //!\}
 

@@ -559,6 +559,7 @@ public:
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
+        return *this;
     }
 
     /*!\brief            Write a range of records (or tuples) to the file.
