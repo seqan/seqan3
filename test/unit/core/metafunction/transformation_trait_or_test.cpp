@@ -32,48 +32,36 @@
 //
 // ============================================================================
 
-/*!\file
- * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Provides seqan3::detail::default_type.
- */
+#include <gtest/gtest.h>
 
-#pragma once
+#include <seqan3/core/metafunction/transformation_trait_or.hpp>
 
-#include <type_traits>
+using namespace seqan3;
 
-#include <meta/meta.hpp>
-
-namespace seqan3::detail
+struct A
 {
+    using type = int;
+};
 
-/*!\brief This gives a fallback type if *type_t::type* is not defined.
- * \ingroup metafunction
- * \tparam type_t    The type to use if *type_t::type* is defined.
- * \tparam default_t The type to use otherwise.
- *
- * \details
- *
- * Gives *type_t* back if *T::type* is a member type, otherwise *struct{using type = default_t}*.
- *
- * \include test/snippet/core/metafunction/default_type.cpp
- *
- * \attention This might get removed if one of our used libraries offers the same
- * functionality.
- *
- * \par Helper types
- *   seqan3::detail::default_type_t as a shorthand for *seqan3::detail::default_type::type*
- */
-template <typename type_t, typename default_t>
-using default_type = std::conditional_t<meta::is_trait<type_t>::value,  // check if type_t::type exists
-                                        type_t, // if yes, return type_t
-                                        // otherwise return struct{using type = default_t};
-                                        std::enable_if<true, default_t>>;
+struct B;
 
-/*!\brief Helper type of seqan3::detail::default_type
- * \ingroup metafunction
- * \relates default_type
- */
-template <typename type_t, typename default_t>
-using default_type_t = typename default_type<type_t, default_t>::type;
+struct C
+{};
 
-} // namespace seqan3::detail
+struct D
+{
+    static constexpr int type = 6;
+};
+
+TEST(transformation_trait_or, transformation_trait_or)
+{
+    using a_type = detail::transformation_trait_or_t<A, void>;
+    using b_transformation_trait_or = detail::transformation_trait_or_t<B, void>;
+    using c_transformation_trait_or = detail::transformation_trait_or_t<C, double>;
+    using d_transformation_trait_or = detail::transformation_trait_or<D, B>::type;
+
+    EXPECT_TRUE((std::is_same_v<a_type, int>));
+    EXPECT_TRUE((std::is_same_v<b_transformation_trait_or, void>));
+    EXPECT_TRUE((std::is_same_v<c_transformation_trait_or, double>));
+    EXPECT_TRUE((std::is_same_v<d_transformation_trait_or, B>));
+}

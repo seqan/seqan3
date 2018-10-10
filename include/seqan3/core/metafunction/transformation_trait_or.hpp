@@ -32,36 +32,48 @@
 //
 // ============================================================================
 
-#include <gtest/gtest.h>
+/*!\file
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \brief Provides seqan3::detail::transformation_trait_or.
+ */
 
-#include <seqan3/core/metafunction/default_type.hpp>
+#pragma once
 
-using namespace seqan3;
+#include <type_traits>
 
-struct A
+#include <meta/meta.hpp>
+
+namespace seqan3::detail
 {
-    using type = int;
-};
 
-struct B;
+/*!\brief This gives a fallback type if *type_t::type* is not defined.
+ * \ingroup metafunction
+ * \tparam type_t    The type to use if *type_t::type* is defined.
+ * \tparam default_t The type to use otherwise.
+ *
+ * \details
+ *
+ * Gives *type_t* back if *T::type* is a member type, otherwise *struct{using type = default_t}*.
+ *
+ * \include test/snippet/core/metafunction/transformation_trait_or.cpp
+ *
+ * \attention This might get removed if one of our used libraries offers the same
+ * functionality.
+ *
+ * \par Helper types
+ *   seqan3::detail::transformation_trait_or_t as a shorthand for *seqan3::detail::transformation_trait_or::type*
+ */
+template <typename type_t, typename default_t>
+using transformation_trait_or = std::conditional_t<meta::is_trait<type_t>::value,  // check if type_t::type exists
+                                        type_t, // if yes, return type_t
+                                        // otherwise return struct{using type = default_t};
+                                        std::enable_if<true, default_t>>;
 
-struct C
-{};
+/*!\brief Helper type of seqan3::detail::transformation_trait_or
+ * \ingroup metafunction
+ * \relates transformation_trait_or
+ */
+template <typename type_t, typename default_t>
+using transformation_trait_or_t = typename transformation_trait_or<type_t, default_t>::type;
 
-struct D
-{
-    static constexpr int type = 6;
-};
-
-TEST(default_type, default_type)
-{
-    using a_type = detail::default_type_t<A, void>;
-    using b_default_type = detail::default_type_t<B, void>;
-    using c_default_type = detail::default_type_t<C, double>;
-    using d_default_type = detail::default_type<D, B>::type;
-
-    EXPECT_TRUE((std::is_same_v<a_type, int>));
-    EXPECT_TRUE((std::is_same_v<b_default_type, void>));
-    EXPECT_TRUE((std::is_same_v<c_default_type, double>));
-    EXPECT_TRUE((std::is_same_v<d_default_type, B>));
-}
+} // namespace seqan3::detail
