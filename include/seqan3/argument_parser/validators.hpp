@@ -303,7 +303,7 @@ private:
  *
  * \snippet test/snippet/argument_parser/validators_3.cpp usage
  */
-class file_ext_validator // TODO AFTER INITIAL MERGE: Check if file exists, also allow filepath
+class file_ext_validator
 {
 public:
     //!\brief Type of values that are tested by validator
@@ -353,36 +353,21 @@ private:
     std::vector<std::string> extensions;
 };
 
-/*!\brief A validator that checks if a filenames has one of the valid extensions and also exits.
+/*!\brief A validator that checks if a file exits.
  * \ingroup argument_parser
  *
  * \details
  *
- * On construction, the validator must receive a list (vector) of valid file extensions.
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
- * exception whenever a given filename (string) is not in the given extension list.
+ * exception whenever a given filename (string) does not exist.
  *
  * \snippet test/snippet/argument_parser/validators_3.cpp usage
  */
-class file_existance_validator // TODO AFTER INITIAL MERGE: Check if file exists, also allow filepath
+class file_existance_validator
 {
 public:
     //!\brief Type of values that are tested by validator
     using value_type = std::string;
-
-    /*!\brief Constructing from a vector.
-     * \param[in] v The vector of valid file extensions to test (e.g. {"fa", "fasta"}).
-     */
-    file_existance_validator(std::vector<std::string> const & v) :
-        extensions{v}
-    {}
-
-    /*!\brief Constructing from an initializer_list.
-     * \param[in] v The initializer_list of valid file extensions to test (e.g. {"fa", "fasta"}).
-     */
-    file_existance_validator(std::initializer_list<std::string> const & v) :
-        extensions{v}
-    {}
 
     /*!\brief Tests whether path lies inside extensions.
      * \param path The input value to check.
@@ -392,13 +377,6 @@ public:
     {
       if (!(filesystem::exists(path)))
         throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
-
-      std::string cmp = path.string();
-      std::string ext{cmp.substr(cmp.find_last_of('.') + 1)};
-      if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
-          throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
-                                                            view::all(extensions), "."));
-
     }
 
     //!\brief Tests whether every value of v lies inside extensions.
@@ -406,16 +384,6 @@ public:
     {
         std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
     }
-
-    //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
-    {
-        return detail::to_string("File name extension must be one of ", view::all(extensions), ".");
-    }
-
-private:
-    //!\brief Stores valid file extensions.
-    std::vector<std::string> extensions;
 };
 
 //!\cond
