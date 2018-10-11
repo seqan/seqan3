@@ -55,17 +55,22 @@ TEST(validator_test, fullfill_concept)
 
 TEST(validator_test, no_file)
 {
-  filesystem::path p{"./sandbox.fasta"};
-  file_existance_validator my_validator{};
-  EXPECT_THROW(my_validator(p), parser_invalid_argument);
+    filesystem::path p{"./sandbox.fasta"};
+    std::string s{"./stonebox.fasta"};
+    file_existance_validator my_validator{};
+    EXPECT_THROW(my_validator(p), parser_invalid_argument);
+    EXPECT_THROW(my_validator(s), parser_invalid_argument);
 }
 
 TEST(validator_test, file_exists)
 {
-  filesystem::path p{"./"};
-  file_existance_validator my_validator{};
-  for (auto & file : filesystem::directory_iterator(p))
-       EXPECT_NO_THROW(my_validator(file));
+    filesystem::path p{"./"};
+    std::string s{"./"};
+    file_existance_validator my_validator{};
+    for (auto & file : filesystem::directory_iterator(p))
+        EXPECT_NO_THROW(my_validator(file));
+    for (auto & file : filesystem::directory_iterator(s))
+          EXPECT_NO_THROW(my_validator(file));
 }
 
 TEST(validator_test, integral_range_validator_success)
