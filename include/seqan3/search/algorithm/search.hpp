@@ -54,7 +54,7 @@ template <typename index_t, typename queries_t, typename config_t>
             (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
         detail::is_algorithm_configuration_v<remove_cvref_t<config_t>>
 //!\endcond
-inline auto search(index_t const & index, queries_t const & queries, config_t const & cfg)
+inline auto search(index_t const & index, queries_t && queries, config_t const & cfg)
 {
     if constexpr (contains<search_cfg::id::max_error>(cfg))
     {
@@ -81,9 +81,9 @@ inline auto search(index_t const & index, queries_t const & queries, config_t co
     if constexpr (contains<search_cfg::id::mode>(cfg))
     {
         if constexpr (contains<search_cfg::id::output>(cfg))
-            return detail::_search(index, queries, cfg);
+            return detail::search_all(index, queries, cfg);
         else
-            return detail::_search(index, queries, cfg | search_cfg::output(search_cfg::text_position));
+            return detail::search_all(index, queries, cfg | search_cfg::output(search_cfg::text_position));
     }
     else
     {
@@ -92,22 +92,21 @@ inline auto search(index_t const & index, queries_t const & queries, config_t co
         {
             detail::configuration const cfg2 = search_cfg::mode(search_cfg::all);
             if constexpr (contains<search_cfg::id::output>(cfg))
-                return detail::_search(index, queries, cfg2);
+                return detail::search_all(index, queries, cfg2);
             else
-                return detail::_search(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
+                return detail::search_all(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
         }
         else
         {
             detail::configuration const cfg2 = cfg | search_cfg::mode(search_cfg::all);
             if constexpr (contains<search_cfg::id::output>(cfg))
-                return detail::_search(index, queries, cfg2);
+                return detail::search_all(index, queries, cfg2);
             else
-                return detail::_search(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
+                return detail::search_all(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
         }
     }
 }
 
-// TODO: const &, &&, etc.: use forwarding references and add a view::persist
 // DOC: insertion/deletion are with resp. to the query. i.e. an insertion is the insertion of a base into the query
 // that does not occur in the text at the position
 //!\brief \todo Document!
@@ -116,15 +115,13 @@ template <typename index_t, typename queries_t>
     requires std::ranges::RandomAccessRange<queries_t> ||
              (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
 //!\endcond
-inline auto search(index_t const & index, queries_t const & queries)
+inline auto search(index_t const & index, queries_t && queries)
 {
-    // TODO: auto const queries_lvalue = queries | view::persist;
-
     detail::configuration const default_cfg = search_cfg::max_error(search_cfg::total{0}, search_cfg::substitution{0},
-                                                            search_cfg::insertion{0}, search_cfg::deletion{0})
+                                                                    search_cfg::insertion{0}, search_cfg::deletion{0})
                                             | search_cfg::output(search_cfg::text_position)
                                             | search_cfg::mode(search_cfg::all);
-    return search(index, queries/*_lvalue*/, default_cfg);
+    return search(index, queries, default_cfg);
 }
 
 } // namespace seqan3
