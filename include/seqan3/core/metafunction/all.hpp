@@ -41,10 +41,10 @@
 
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/core/metafunction/iterator.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/metafunction/transformation_trait_or.hpp>
 
 /*!\defgroup metafunction Metafunction
  * \brief Provide various metafunctions.
