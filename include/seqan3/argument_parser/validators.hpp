@@ -329,8 +329,8 @@ public:
      */
     void operator()(filesystem::path const & path) const
     {
-      std::string cmp = path.string();
-      std::string ext{cmp.substr(cmp.find_last_of('.') + 1)};
+      std::string ext{path.extension().string()};
+      ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
       if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
           throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
                                                             view::all(extensions), "."));
@@ -369,20 +369,20 @@ public:
     //!\brief Type of values that are tested by validator
     using value_type = std::string;
 
-    /*!\brief Tests whether path lies inside extensions.
+    /*!\brief Tests whether path exists.
      * \param path The input value to check.
      * \throws parser_invalid_argument
      */
     void operator()(filesystem::path const & path) const
     {
-      if (!(filesystem::exists(path)))
-        throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
+        if (!(filesystem::exists(path)))
+            throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
     }
 
-    //!\brief Tests whether every value of v lies inside extensions.
+    //!\brief Tests whether every filename in list v exists.
     void operator()(std::vector<std::string> const & v) const
     {
-        std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
+         std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
     }
 };
 
