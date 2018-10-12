@@ -65,9 +65,9 @@ namespace seqan3::detail
  */
 template <typename type_t, typename default_t>
 using transformation_trait_or = std::conditional_t<meta::is_trait<type_t>::value,  // check if type_t::type exists
-                                        type_t, // if yes, return type_t
-                                        // otherwise return struct{using type = default_t};
-                                        std::enable_if<true, default_t>>;
+                                                   type_t, // if yes, return type_t
+                                                   // otherwise return struct{using type = default_t};
+                                                   std::enable_if<true, default_t>>;
 
 /*!\brief Helper type of seqan3::detail::transformation_trait_or
  * \ingroup metafunction
