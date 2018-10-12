@@ -110,7 +110,7 @@ public:
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     template <typename option_type, typename validator_type>
     void add_option(option_type & value,
@@ -132,7 +132,7 @@ public:
      * \param[in]  short_id The short identifier for the flag (e.g. 'i').
      * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     void add_flag(bool & value,
                   char const short_id,
@@ -154,7 +154,7 @@ public:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     template <typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
@@ -307,7 +307,7 @@ private:
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
      *
-     * \throws seqan3::parser_invalid_argument
+     * \throws seqan3::parser_exception
      */
     template <typename option_t>
     //!\cond
@@ -398,7 +398,7 @@ private:
      * \param[in]  option_it The iterator where the option identifier was found.
      * \param[in]  id        The option identifier supplied on the command line.
      *
-     * \throws seqan3::parser_invalid_argument
+     * \throws seqan3::parser_exception
      *
      * \details
      *
@@ -423,7 +423,7 @@ private:
                 if ((*option_it)[id_size] == '=') // -key=value
                 {
                     if ((*option_it).size() == id_size + 1) // malformed because no value follows '-i='
-                        throw parser_invalid_argument("Value cast failed for option " +
+                        throw parser_exception("Value cast failed for option " +
                                                       prepend_dash(id) +
                                                       ": No value was provided.");
                     input_value = (*option_it).substr(id_size + 1);
@@ -440,7 +440,7 @@ private:
                 *option_it = ""; // remove used identifier
                 ++option_it;
                 if (option_it == end_of_options_it) // should not happen
-                    throw parser_invalid_argument("Value cast failed for option " +
+                    throw parser_exception("Value cast failed for option " +
                                                   prepend_dash(id) +
                                                   ": No value was provided.");
                 input_value = *option_it;
@@ -451,9 +451,9 @@ private:
             {
                 retrieve_value(value, input_value);
             }
-            catch (parser_invalid_argument const & ex)
+            catch (parser_exception const & ex)
             {
-                throw parser_invalid_argument("Value cast failed for option " + prepend_dash(id) + ": " + ex.what());
+                throw parser_exception("Value cast failed for option " + prepend_dash(id) + ": " + ex.what());
             }
 
             return true;
@@ -657,10 +657,10 @@ private:
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_invalid_argument
+     * \throws seqan3::parser_exception
      * \throws seqan3::too_few_arguments
      * \throws seqan3::validation_failed
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      *
      * \details
      *
@@ -691,7 +691,7 @@ private:
         if (sequence_container_concept<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
         {
             if (positional_option_count != (positional_option_calls.size()))
-                throw parser_design_error("Lists are only allowed as the last positional option!");
+                throw design_error("Lists are only allowed as the last positional option!");
 
             while (it != argv.end())
             {
@@ -699,9 +699,9 @@ private:
                 {
                     retrieve_value(value, *it);
                 }
-                catch (parser_invalid_argument const & ex)
+                catch (parser_exception const & ex)
                 {
-                    throw parser_invalid_argument("Value cast failed for positional option " +
+                    throw parser_exception("Value cast failed for positional option " +
                                                   std::to_string(positional_option_count) + ": " + ex.what());
                 }
 
@@ -716,9 +716,9 @@ private:
             {
                 retrieve_value(value, *it);
             }
-            catch (parser_invalid_argument const & ex)
+            catch (parser_exception const & ex)
             {
-                throw parser_invalid_argument("Value cast failed for positional option " +
+                throw parser_exception("Value cast failed for positional option " +
                                               std::to_string(positional_option_count) + ": " + ex.what());
             }
 

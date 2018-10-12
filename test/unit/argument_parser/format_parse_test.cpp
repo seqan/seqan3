@@ -408,28 +408,28 @@ TEST(parse_test, empty_value_error)
     argument_parser parser("test_parser", 2, argv);
     parser.add_option(option_value, 'i', "long", "this is a int option.");
 
-    EXPECT_THROW(parser.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser.parse(), parser_exception);
 
     // long option
     const char * argv2[] = {"./argument_parser_test", "--long"};
     argument_parser parser2("test_parser", 2, argv2);
     parser2.add_option(option_value, 'i', "long", "this is an int option.");
 
-    EXPECT_THROW(parser2.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser2.parse(), parser_exception);
 
     // short option
     const char * argv3[] = {"./argument_parser_test", "-i="};
     argument_parser parser3("test_parser", 2, argv3);
     parser3.add_option(option_value, 'i', "long", "this is an int option.");
 
-    EXPECT_THROW(parser3.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser3.parse(), parser_exception);
 
     // short option
     const char * argv4[] = {"./argument_parser_test", "--long="};
     argument_parser parser4("test_parser", 2, argv4);
     parser4.add_option(option_value, 'i', "long", "this is an int option.");
 
-    EXPECT_THROW(parser4.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser4.parse(), parser_exception);
 }
 
 TEST(parse_type_test, parse_success_bool_option)
@@ -508,14 +508,14 @@ TEST(parse_type_test, parse_error_bool_option)
     argument_parser parser("test_parser", 3, argv);
     parser.add_option(option_value, 'b', "bool-option", "this is a bool option.");
 
-    EXPECT_THROW(parser.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser.parse(), parser_exception);
 
     // fail on number input expect 0 and 1
     const char * argv2[] = {"./argument_parser_test", "-b", "124"};
     argument_parser parser2("test_parser", 3, argv2);
     parser2.add_option(option_value, 'b', "bool-option", "this is a bool option.");
 
-    EXPECT_THROW(parser2.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser2.parse(), parser_exception);
 }
 
 TEST(parse_type_test, parse_error_int_option)
@@ -527,21 +527,21 @@ TEST(parse_type_test, parse_error_int_option)
     argument_parser parser("test_parser", 3, argv);
     parser.add_option(option_value, 'i', "int-option", "this is a int option.");
 
-    EXPECT_THROW(parser.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser.parse(), parser_exception);
 
     // fail on number followed by character
     const char * argv2[] = {"./argument_parser_test", "-i", "2abc"};
     argument_parser parser2("test_parser", 3, argv2);
     parser2.add_option(option_value, 'i', "int-option", "this is a int option.");
 
-    EXPECT_THROW(parser2.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser2.parse(), parser_exception);
 
     // fail on double
     const char * argv3[] = {"./argument_parser_test", "-i", "3.12"};
     argument_parser parser3("test_parser", 3, argv3);
     parser3.add_option(option_value, 'i', "int-option", "this is a int option.");
 
-    EXPECT_THROW(parser3.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser3.parse(), parser_exception);
 
     // fail on negative number for unsigned
     unsigned option_value_u;
@@ -549,7 +549,7 @@ TEST(parse_type_test, parse_error_int_option)
     argument_parser parser4("test_parser", 3, argv4);
     parser4.add_option(option_value_u, 'i', "int-option", "this is a int option.");
 
-    EXPECT_THROW(parser4.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser4.parse(), parser_exception);
 
     // fail on overflow
     int8_t option_value_int8;
@@ -557,14 +557,14 @@ TEST(parse_type_test, parse_error_int_option)
     argument_parser parser5("test_parser", 3, argv5);
     parser5.add_option(option_value_int8, 'i', "int-option", "this is a int option.");
 
-    EXPECT_THROW(parser5.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser5.parse(), parser_exception);
 
     uint8_t option_value_uint8;
     const char * argv6[] = {"./argument_parser_test", "-i", "267"};
     argument_parser parser6("test_parser", 3, argv6);
     parser6.add_option(option_value_uint8, 'i', "int-option", "this is a int option.");
 
-    EXPECT_THROW(parser6.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser6.parse(), parser_exception);
 }
 
 TEST(parse_type_test, parse_error_double_option)
@@ -576,14 +576,14 @@ TEST(parse_type_test, parse_error_double_option)
     argument_parser parser("test_parser", 3, argv);
     parser.add_option(option_value, 'd', "double-option", "this is a double option.");
 
-    EXPECT_THROW(parser.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser.parse(), parser_exception);
 
     // fail on number followed by character
     const char * argv2[] = {"./argument_parser_test", "-d", "12.457a"};
     argument_parser parser2("test_parser", 3, argv2);
     parser2.add_option(option_value, 'd', "double-option", "this is a double option.");
 
-    EXPECT_THROW(parser2.parse(), parser_invalid_argument);
+    EXPECT_THROW(parser2.parse(), parser_exception);
 }
 
 

@@ -61,93 +61,108 @@ namespace seqan3
  * - Type conversion failed
  * - Validation failed (as defined by the developer)
  */
-class parser_invalid_argument : public std::invalid_argument
+class parser_exception : public std::logic_error
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    parser_invalid_argument(std::string const & s) : std::invalid_argument(s) {}
+    parser_exception(std::string const & s) : std::logic_error(s) {}
 };
 
-//!\brief Argument parser exception thrown when encountering unknown option.
-class unknown_option : public parser_invalid_argument
+//!\brief Argument parser exception thrown when encountering invalid arguments.
+class invalid_argument : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    unknown_option(std::string const & s) : parser_invalid_argument(s) {}
+    invalid_argument(std::string const & s) : parser_exception(s) {}
+};
+
+<<<<<<< HEAD
+//!\brief Argument parser exception thrown when encountering unknown option.
+class unknown_option : public parser_invalid_argument
+=======
+//!\brief Argument parser exception thrown when encountering unkown option.
+class unknown_option : public parser_exception
+>>>>>>> Added parser_exception, what to do with parser_interruption?
+{
+public:
+    /*!\brief The constructor.
+     * \param[in] s The error message.
+     */
+    unknown_option(std::string const & s) : parser_exception(s) {}
 };
 
 //!\brief Argument parser exception thrown when too many arguments are provided.
-class too_many_arguments : public parser_invalid_argument
+class too_many_arguments : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    too_many_arguments(std::string const & s) : parser_invalid_argument(s) {}
+    too_many_arguments(std::string const & s) : parser_exception(s) {}
 };
 
 //!\brief Argument parser exception thrown when too few arguments are provided.
-class too_few_arguments : public parser_invalid_argument
+class too_few_arguments : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    too_few_arguments(std::string const & s) : parser_invalid_argument(s) {}
+    too_few_arguments(std::string const & s) : parser_exception(s) {}
 };
 
 //!\brief Argument parser exception thrown when a required option is missing.
-class required_option_missing : public parser_invalid_argument
+class required_option_missing : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    required_option_missing(std::string const & s) : parser_invalid_argument(s) {}
+    required_option_missing(std::string const & s) : parser_exception(s) {}
 };
 
 //!\brief Argument parser exception thrown when a non-list option is declared multiple times.
-class option_declared_multiple_times : public parser_invalid_argument
+class option_declared_multiple_times : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    option_declared_multiple_times(std::string const & s) : parser_invalid_argument(s) {}
+    option_declared_multiple_times(std::string const & s) : parser_exception(s) {}
 };
 
 //!\brief Argument parser exception thrown when an argument could not be casted to the according type.
-class type_conversion_failed : public parser_invalid_argument
+class type_conversion_failed : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    type_conversion_failed(std::string const & s) : parser_invalid_argument(s) {}
+    type_conversion_failed(std::string const & s) : parser_exception(s) {}
 };
 
 //!\brief Argument parser exception thrown when an argument could not be casted to the according type.
-class overflow_error_on_conversion : public parser_invalid_argument
+class overflow_error_on_conversion : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    overflow_error_on_conversion(std::string const & s) : parser_invalid_argument(s) {}
+    overflow_error_on_conversion(std::string const & s) : parser_exception(s) {}
 };
 
 //!\brief Argument parser exception thrown when an argument could not be casted to the according type.
-class validation_failed : public parser_invalid_argument
+class validation_failed : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    validation_failed(std::string const & s) : parser_invalid_argument(s) {}
+    validation_failed(std::string const & s) : parser_exception(s) {}
 };
 
 /*!\brief Argument parser exception that is thrown whenever there is an design
@@ -160,13 +175,13 @@ public:
  * - Reuse of a short or long identifier (must be unique)
  * - Both identifiers must not be empty (one is ok)
  */
-class parser_design_error : public std::logic_error
+class design_error : public parser_exception
 {
 public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    parser_design_error(std::string const & s) : std::logic_error(s) {}
+    design_error(std::string const & s) : parser_exception(s) {}
 };
 
 /*!\brief This exception is not an error but expected behavior that shall

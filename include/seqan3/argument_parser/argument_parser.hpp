@@ -136,10 +136,10 @@ namespace seqan3
  * Developer errors are those that violate the seqan3::argument_parser design
  * (e.g. calling the seqan3::argument_parser::parse function twice or specifying
  * two different options with the same identifier.)
- * In this case, a  seqan3::parser_design_error is thrown.
+ * In this case, a  seqan3::design_error is thrown.
  *
  * The second kind are user errors, due to invalid command line calls. In this
- * case a seqan3::parser_invalid_argument is thrown.
+ * case a seqan3::parser_exception is thrown.
  *
  * For example:
  *
@@ -202,7 +202,7 @@ public:
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
     //!\cond
@@ -218,11 +218,11 @@ public:
                     validator_type validator = validator_type{}) // copy to bind rvalues
     {
         if (id_exists(short_id))
-            throw parser_design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
+            throw design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
         if (id_exists(long_id))
-            throw parser_design_error("Option Identifier '" + long_id + "' was already used before.");
+            throw design_error("Option Identifier '" + long_id + "' was already used before.");
         if (short_id == '\0' && long_id.empty())
-            throw parser_design_error("Option Identifiers cannot both be empty.");
+            throw design_error("Option Identifiers cannot both be empty.");
 
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
@@ -237,7 +237,7 @@ public:
      * \param[in]  desc     The description of the flag to be shown in the help page.
      * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      */
     void add_flag(bool & value,
                   char const short_id,
@@ -246,11 +246,11 @@ public:
                   option_spec const & spec = option_spec::DEFAULT)
     {
         if (id_exists(short_id))
-            throw parser_design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
+            throw design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
         if (id_exists(long_id))
-            throw parser_design_error("Option Identifier '" + long_id + "' was already used before.");
+            throw design_error("Option Identifier '" + long_id + "' was already used before.");
         if (short_id == '\0' && long_id.empty())
-            throw parser_design_error("Option Identifiers cannot both be empty.");
+            throw design_error("Option Identifiers cannot both be empty.");
 
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
@@ -271,7 +271,7 @@ public:
      * \param[in]  desc      The description of the positional option to be shown in the help page.
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
-     * \throws seqan3::parser_design_error
+     * \throws seqan3::design_error
      *
      * \details
      *
@@ -302,7 +302,7 @@ public:
      * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
      *                                              converted into the expected type.
      * \throws seqan3::parser_interruption on special user request (e.g. --help or --version).
-     * \throws seqan3::parser_invalid_argument if the user provided wrong arguments.
+     * \throws seqan3::parser_exception if the user provided wrong arguments.
      * \throws seqan3::required_option_missing if the user did not provide a required option.
      * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
      * \throws seqan3::too_few_arguments if the command line call contained too few arguments than expected.
@@ -373,7 +373,7 @@ public:
     void parse()
     {
         if (parse_was_called)
-            throw parser_design_error("The function parse() must only be called once!");
+            throw design_error("The function parse() must only be called once!");
 
         std::visit([this] (auto & f) { f.parse(info); }, format);
         parse_was_called = true;
@@ -500,7 +500,7 @@ private:
      * \param[in] argc     The number of command line arguments.
      * \param[in] argv     The command line arguments.
      *
-     * \throws seqan3::parser_invalid_argument
+     * \throws seqan3::parser_exception
      *
      * \details
      *
@@ -521,7 +521,7 @@ private:
      * - else the format is that to seqan3::detail::format_parse
      *
      * If `-export-help` is specified with a value other than html/man or ctd
-     * a parser_invalid_argument is thrown.
+     * a parser_exception is thrown.
      */
     void init(int const argc, char const * const * const  argv)
     {

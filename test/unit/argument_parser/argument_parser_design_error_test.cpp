@@ -38,7 +38,7 @@
 
 using namespace seqan3;
 
-TEST(parse_test, parser_design_error)
+TEST(parse_test, design_error)
 {
     int option_value;
 
@@ -47,18 +47,18 @@ TEST(parse_test, parser_design_error)
     argument_parser parser("test_parser", 1, argv);
     parser.add_option(option_value, 'i', "int", "this is a int option.");
     EXPECT_THROW(parser.add_option(option_value, 'i', "aint", "oh oh same id."),
-                 parser_design_error);
+                 design_error);
 
     // long option
     argument_parser parser2("test_parser", 1, argv);
     parser2.add_option(option_value, 'i', "int", "this is an int option.");
     EXPECT_THROW(parser2.add_option(option_value, 'a', "int", "oh oh another id."),
-                 parser_design_error);
+                 design_error);
 
     // empty identifier
     argument_parser parser3("test_parser", 1, argv);
     EXPECT_THROW(parser3.add_option(option_value, '\0', "", "oh oh all is empty."),
-                 parser_design_error);
+                 design_error);
 
     bool flag_value;
 
@@ -66,18 +66,18 @@ TEST(parse_test, parser_design_error)
     argument_parser parser4("test_parser", 1, argv);
     parser4.add_flag(flag_value, 'i', "int1", "this is an int option.");
     EXPECT_THROW(parser4.add_flag(flag_value, 'i', "int2", "oh oh another id."),
-                 parser_design_error);
+                 design_error);
 
     // long flag
     argument_parser parser5("test_parser", 1, argv);
     parser5.add_flag(flag_value, 'i', "int", "this is an int option.");
     EXPECT_THROW(parser5.add_flag(flag_value, 'a', "int", "oh oh another id."),
-                 parser_design_error);
+                 design_error);
 
     // empty identifier
     argument_parser parser6("test_parser", 1, argv);
     EXPECT_THROW(parser6.add_flag(flag_value, '\0', "", "oh oh another id."),
-                 parser_design_error);
+                 design_error);
 
     // positional option not at the end
     const char * argv2[] = {"./argument_parser_test", "arg1", "arg2", "arg3"};
@@ -85,7 +85,7 @@ TEST(parse_test, parser_design_error)
     argument_parser parser7("test_parser", 4, argv2);
     parser7.add_positional_option(vec, "oh oh list not at the end.");
     parser7.add_positional_option(option_value, "desc.");
-    EXPECT_THROW(parser7.parse(), parser_design_error);
+    EXPECT_THROW(parser7.parse(), design_error);
 }
 
 TEST(parse_test, parse_called_twice)
@@ -101,5 +101,5 @@ TEST(parse_test, parse_called_twice)
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
     EXPECT_EQ(option_value, "option_string");
 
-    EXPECT_THROW(parser.parse(), parser_design_error);
+    EXPECT_THROW(parser.parse(), design_error);
 }
