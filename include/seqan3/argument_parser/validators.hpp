@@ -329,10 +329,10 @@ public:
      */
     void operator()(filesystem::path const & path) const
     {
-      std::string ext{path.extension().string()};
-      ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
-      if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
-          throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
+        std::string ext{path.extension().string()};
+        ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
+        if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
+            throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
                                                             view::all(extensions), "."));
     }
 
@@ -353,12 +353,12 @@ private:
     std::vector<std::string> extensions;
 };
 
-/*!\brief A validator that checks if a file exits.
+/*!\brief A validator that checks if a file exists.
  * \ingroup argument_parser
  *
  * \details
  *
- * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
+ * The struct then acts as a functor that throws a seqan3::parser_invalid_argument
  * exception whenever a given filename (string) does not exist.
  *
  * \snippet test/snippet/argument_parser/validators_3.cpp usage
