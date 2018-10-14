@@ -163,9 +163,9 @@ struct simd_traits<ume_simd_t>
     static constexpr auto length = detail::min_viable_uint_v<ume_simd_t::length()>;
     //!\copydoc seqan3::simd_traits::max_length
     static constexpr auto max_length = sizeof(scalar_type) * length;
-    //!\copydoc seqan3::simd_traits::mask_t
+    //!\copydoc seqan3::simd_traits::mask_type
     using mask_type = typename UME::SIMD::SIMDTraits<ume_simd_t>::MASK_T;
-    //!\copydoc seqan3::simd_traits::swizzle_t
+    //!\copydoc seqan3::simd_traits::swizzle_type
     using swizzle_type = typename UME::SIMD::SIMDTraits<ume_simd_t>::SWIZZLE_T;
 };
 
