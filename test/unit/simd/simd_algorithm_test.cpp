@@ -44,24 +44,24 @@ using namespace seqan3;
 
 TEST(simd_algorithm, simd_fill)
 {
-    using simd = simd_t<int16_t, 8>;
+    using simd_type = simd_t<int16_t, 8>;
 
-    simd expect{};
-    for (size_t i = 0; i < simd_traits<simd>::length; ++i)
+    simd_type expect{};
+    for (size_t i = 0; i < simd_traits<simd_type>::length; ++i)
         expect[i] = 4;
 
-    constexpr simd result = simd_fill<simd>(4);
+    constexpr simd_type result = simd_fill<simd_type>(4);
     SIMD_EQ(result, expect);
 }
 
 TEST(simd_algorithm, simd_iota)
 {
-    using simd = simd_t<int16_t, 8>;
+    using simd_type = simd_t<int16_t, 8>;
 
-    simd expect{};
-    for (size_t i = 0; i < simd_traits<simd>::length; ++i)
+    simd_type expect{};
+    for (size_t i = 0; i < simd_traits<simd_type>::length; ++i)
         expect[i] = i;
 
-    constexpr simd result = simd_iota<simd>(0);
+    constexpr simd_type result = simd_iota<simd_type>(0);
     SIMD_EQ(result, expect);
 }

@@ -44,11 +44,11 @@ using namespace seqan3;
 
 TEST(debug_stream, simd)
 {
-    using simd = simd_t<int16_t, 8>;
+    using simd_type = simd_t<int16_t, 8>;
 
     std::stringstream strstream;
     debug_stream_type stream{strstream};
 
-    stream << simd_fill<simd>(4);
+    stream << simd_fill<simd_type>(4);
     EXPECT_EQ(strstream.str(), "(4,4,4,4,4,4,4,4)");
 }
