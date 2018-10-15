@@ -32,21 +32,36 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Provides various metafunctions.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
+#include <gtest/gtest.h>
 
-#pragma once
-
-#include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/iterator.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 
-/*!\defgroup metafunction Metafunction
- * \brief Provide various metafunctions.
- * \ingroup core
- */
+using namespace seqan3;
+
+struct A
+{
+    using type = int;
+};
+
+struct B;
+
+struct C
+{};
+
+struct D
+{
+    static constexpr int type = 6;
+};
+
+TEST(transformation_trait_or, transformation_trait_or)
+{
+    using a_type = detail::transformation_trait_or_t<A, void>;
+    using b_transformation_trait_or = detail::transformation_trait_or_t<B, void>;
+    using c_transformation_trait_or = detail::transformation_trait_or_t<C, double>;
+    using d_transformation_trait_or = detail::transformation_trait_or<D, B>::type;
+
+    EXPECT_TRUE((std::is_same_v<a_type, int>));
+    EXPECT_TRUE((std::is_same_v<b_transformation_trait_or, void>));
+    EXPECT_TRUE((std::is_same_v<c_transformation_trait_or, double>));
+    EXPECT_TRUE((std::is_same_v<d_transformation_trait_or, B>));
+}
