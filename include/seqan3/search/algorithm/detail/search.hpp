@@ -47,8 +47,8 @@ namespace seqan3::detail
 {
 
 //!\brief \todo Docs missing
-template <typename index_t, typename query_t, typename config_t>
-inline auto _search_single(index_t const & index, query_t const & query, config_t const & cfg)
+template <typename index_t>
+inline auto search_single(index_t const & index, auto & query, auto const & cfg)
 {
     // retrieve error numbers / rates
     detail::search_params max_error{0, 0, 0, 0};
@@ -141,7 +141,7 @@ inline auto _search_single(index_t const & index, query_t const & query, config_
             // only one iterator is reported but it might contain more than one text position
             if (!internal_hits.empty())
             {
-                auto const & text_pos = internal_hits[0].lazy_locate();
+                auto text_pos = internal_hits[0].lazy_locate();
                 hits.push_back(text_pos[0]);
             }
         }
@@ -160,12 +160,8 @@ inline auto _search_single(index_t const & index, query_t const & query, config_
 }
 
 //!\brief \todo Docs missing
-template <typename index_t, typename queries_t, typename config_t>
-    requires
-        (std::ranges::RandomAccessRange<queries_t> ||
-            (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
-        detail::is_algorithm_configuration_v<remove_cvref_t<config_t>>
-inline auto _search(index_t const & index, queries_t const & queries, config_t const & cfg)
+template <typename index_t, typename queries_t>
+inline auto search_all(index_t const & index, queries_t & queries, auto const & cfg)
 {
     // return type: for each query: a vector of text_position (or iterators) and number of errors spent
     // delegate params: text_position (or iterator), number of errors spent and query id. (TODO: or return vector)
@@ -183,14 +179,14 @@ inline auto _search(index_t const & index, queries_t const & queries, config_t c
         hits.reserve(queries.size());
         for (auto const query : queries)
         {
-            hits.push_back(_search_single(index, query, cfg));
+            hits.push_back(search_single(index, query, cfg));
         }
         return hits;
     }
     else // std::ranges::RandomAccessRange<queries_t>
     {
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
-        return _search_single(index, queries, cfg);
+        return search_single(index, queries, cfg);
     }
 }
 

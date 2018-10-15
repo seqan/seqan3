@@ -84,8 +84,7 @@ namespace seqan3::detail
 {
 
 template <bool abort_on_hit>
-auto _search_trivial(auto it, auto const & query, uint64_t const query_pos, search_params error_left,
-                     auto && delegate)
+bool search_trivial(auto it, auto & query, uint64_t const query_pos, search_params error_left, auto && delegate)
 {
     // Exact case
     if (query_pos == query.size() || error_left.total == 0)
@@ -93,10 +92,7 @@ auto _search_trivial(auto it, auto const & query, uint64_t const query_pos, sear
         if (query_pos == query.size() || it.extend_right(ranges::view::drop_exactly(query, query_pos)))
         {
             delegate(it/*, error_left.total*/);
-            if constexpr (abort_on_hit)
-                return true;
-            else
-                return; // specify return type "void" before recursive calls
+            return true;
         }
     }
     // Approximate case
@@ -110,15 +106,10 @@ auto _search_trivial(auto it, auto const & query, uint64_t const query_pos, sear
             error_left2.total--;
 
             // do not allow deletion in the next step
-            if constexpr (abort_on_hit)
-            {
-                if (_search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate))
-                    return true;
-            }
-            else
-            {
-                _search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate);
-            }
+            // always perform a recursive call. Abort recursion if and only if recursive call found a hit and
+            // abort_on_hit is set to true.
+            if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate) && abort_on_hit)
+                return true;
         }
 
         if (((query_pos > 0 && error_left.deletion > 0) || error_left.substitution > 0) && it.extend_right())
@@ -133,15 +124,8 @@ auto _search_trivial(auto it, auto const & query, uint64_t const query_pos, sear
                     error_left2.total -= delta;
                     error_left2.substitution -= delta;
 
-                    if constexpr (abort_on_hit)
-                    {
-                        if (_search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate))
-                            return true;
-                    }
-                    else
-                    {
-                        _search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate);
-                    }
+                    if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate) && abort_on_hit)
+                        return true;
                 }
 
                 // Deletion
@@ -150,14 +134,10 @@ auto _search_trivial(auto it, auto const & query, uint64_t const query_pos, sear
                     // Match
                     if (error_left.substitution == 0 && it.last_char() == query[query_pos])
                     {
-                        if constexpr (abort_on_hit)
+                        if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate) &&
+                            abort_on_hit)
                         {
-                            if (_search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate))
-                                return true;
-                        }
-                        else
-                        {
-                            _search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate);
+                            return true;
                         }
                     }
 
@@ -168,15 +148,8 @@ auto _search_trivial(auto it, auto const & query, uint64_t const query_pos, sear
                         error_left2.deletion--;
 
                         // do not allow deletion in the next step
-                        if constexpr (abort_on_hit)
-                        {
-                            if (_search_trivial<abort_on_hit>(it, query, query_pos, error_left2, delegate))
-                                return true;
-                        }
-                        else
-                        {
-                            _search_trivial<abort_on_hit>(it, query, query_pos, error_left2, delegate);
-                        }
+                        if (search_trivial<abort_on_hit>(it, query, query_pos, error_left2, delegate) && abort_on_hit)
+                            return true;
                     }
                 }
             }
@@ -187,25 +160,20 @@ auto _search_trivial(auto it, auto const & query, uint64_t const query_pos, sear
             // Match
             if (it.extend_right(query[query_pos]))
             {
-                if constexpr (abort_on_hit)
-                {
-                    if (_search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate))
-                        return true;
-                }
-                else
-                {
-                    _search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate);
-                }
+                if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate) && abort_on_hit)
+                    return true;
             }
         }
     }
+
+    return false;
 }
 
-template <bool abort_on_hit, typename TIndex, typename TQuery, typename TDelegate>
-inline void search_trivial(TIndex const & index, TQuery const & query, search_params error_left, TDelegate && delegate)
+template <bool abort_on_hit>
+inline void search_trivial(auto const & index, auto & query, search_params error_left, auto && delegate)
 {
     // <abort_on_hit>
-    _search_trivial<abort_on_hit>(index.begin(), query, 0, error_left, delegate);
+    search_trivial<abort_on_hit>(index.begin(), query, 0, error_left, delegate);
 }
 
 }

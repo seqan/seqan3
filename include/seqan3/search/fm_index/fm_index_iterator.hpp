@@ -131,6 +131,7 @@ protected:
     //!\brief Helper function to recompute text positions since the indexed text is reversed.
     size_type offset() const noexcept
     {
+        assert(index->index.size() > query_length());
         return index->index.size() - query_length() - 1; // since the string is reversed during construction
     }
 
