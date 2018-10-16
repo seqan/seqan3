@@ -39,9 +39,9 @@
 
 #pragma once
 
-#if 0 //TODO add check for C++20 iterator library
 #include <iterator>
-#else // implement via range-v3
+
+#if __cplusplus <= 201703L // TODO feature_test_macro if available
 
 #include <range/v3/utility/iterator.hpp>
 
@@ -57,6 +57,33 @@ namespace std
 
 //!\addtogroup iterator
 //!\{
+
+// ------------------------------------------------------------------
+// auxiliary functions
+// ------------------------------------------------------------------
+
+/*!\brief Create a std::back_insert_iterator for the argument.
+ * \tparam container_t  Type of the parameter; must have a `push_back()` member function.
+ * \param container     The container on which to create the iterator.
+ * \returns The respective back insert iterator.
+ *
+ * \details
+ *
+ * This function delegates to ranges::back_inserter from range-v3; it is more constrained than a possibly
+ * outdated one from the standard library.
+ */
+template <typename container_t>
+//!\cond
+    requires requires (container_t & v) { { v.push_back(*v.begin()) }; }
+//!\endcond
+constexpr auto back_inserter(container_t & container)
+{
+    return ::ranges::back_inserter(container);
+}
+
+// ------------------------------------------------------------------
+// Concepts
+// ------------------------------------------------------------------
 
 /*!\interface std::Readable <>
  * \brief The concept Readable is satisfied by types that are readable by applying operator*, such as pointers, smart
@@ -217,4 +244,4 @@ concept RandomAccessIterator = BidirectionalIterator<i> &&
 
 }  // namespace std
 
-#endif
+#endif // C++17

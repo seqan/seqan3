@@ -170,7 +170,7 @@ public:
                     ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
                                              | view::take_until_or_throw(is_cntrl || is_blank)
                                              | view::char_to<value_type_t<id_type>>,
-                                 ranges::back_insert_iterator{id});
+                                 std::back_inserter(id));
                     detail::consume(stream_view | view::take_line_or_throw);
                 }
                 else
@@ -178,7 +178,7 @@ public:
                     ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
                                              | view::take_line_or_throw
                                              | view::char_to<value_type_t<id_type>>,
-                                 ranges::back_insert_iterator{id});
+                                 std::back_inserter(id));
                 }
             }
             else
@@ -215,7 +215,7 @@ public:
                                          return c;
                                        })
                                      | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
-                         ranges::back_insert_iterator{seq});
+                         std::back_inserter(seq));
         }
         else
         {
@@ -237,7 +237,7 @@ public:
             else
             {
                 using alph_type = value_type_t<structure_type>;
-                ranges::copy(read_structure<alph_type>(stream_view), ranges::back_insert_iterator{structure});
+                ranges::copy(read_structure<alph_type>(stream_view), std::back_inserter(structure));
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)
                     detail::bpp_from_rna_structure<alph_type>(bpp, structure);

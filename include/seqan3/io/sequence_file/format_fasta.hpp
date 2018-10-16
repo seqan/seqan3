@@ -225,7 +225,7 @@ protected:
                 ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)     // skip leading >
                                          | view::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
                                          | view::char_to<value_type_t<id_type>>,
-                             ranges::back_insert_iterator{id});                                   // … ^A is old delimiter
+                             std::back_inserter(id));                                      // … ^A is old delimiter
 
                 // consume rest of line
                 detail::consume(stream_view | view::take_line_or_throw);
@@ -235,7 +235,7 @@ protected:
                 ranges::copy(stream_view | view::take_line_or_throw                                        // read line
                                          | ranges::view::drop_while(is_id || is_blank)                     // skip leading >
                                          | view::char_to<value_type_t<id_type>>,
-                             ranges::back_insert_iterator{id});
+                             std::back_inserter(id));
             }
         }
         else
@@ -271,7 +271,7 @@ protected:
                                            return c;
                                        })                                           // enforce legal alphabet
                                      | view::char_to<value_type_t<seq_type>>,       // convert to actual target alphabet
-                         ranges::back_insert_iterator{seq});
+                         std::back_inserter(seq));
         }
         else
         {
