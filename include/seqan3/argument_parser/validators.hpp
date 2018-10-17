@@ -122,7 +122,7 @@ class integral_range_validator;
  * \details
  *
  * On construction, the validator must receive a maximum and a minimum number.
- * The struct than acts as a functor, that throws a seqan3::parser_exception
+ * The struct than acts as a functor, that throws a seqan3::invalid_argument
  * exception whenever a given value does not lie inside the given min/max range.
  *
  * \snippet test/snippet/argument_parser/validators_1.cpp usage
@@ -144,12 +144,12 @@ public:
 
     /*!\brief Tests whether cmp lies inside [min,max].
      * \param cmp The input value to check.
-     * \throws parser_exception
+     * \throws argument_parser_exception
      */
     void operator()(value_type const & cmp) const
     {
         if (!((cmp <= max) && (cmp >= min)))
-            throw parser_exception(detail::to_string("Validation Failed - Value ", cmp,
+            throw argument_parser_exception(detail::to_string("Validation Failed - Value ", cmp,
                                                             " is not in range [", min, ",", max, "]."));
     }
 
@@ -189,14 +189,14 @@ public:
 
     /*!\brief Tests whether cmp lies inside [min,max].
      * \param cmp The input value to check.
-     * \throws parser_exception
+     * \throws invalid_argument
      */
     void operator()(value_type const & cmp) const
     {
         std::for_each(cmp.begin(), cmp.end(), [&] (auto cmp_v)
             {
                 if (!((cmp_v <= max) && (cmp_v >= min)))
-                    throw parser_exception(detail::to_string("Validation Failed - Value ", cmp_v,
+                    throw invalid_argument(detail::to_string("Validation Failed - Value ", cmp_v,
                                                                     " is not in range [", min, ",", max, "]."));
             });
     }
@@ -223,7 +223,7 @@ private:
  * \details
  *
  * On construction, the validator must receive a list (vector) of valid values.
- * The struct than acts as a functor, that throws a seqan3::parser_exception
+ * The struct than acts as a functor, that throws a seqan3::argument_invalid_argument
  * exception whenever a given value is not in the given list.
  *
  * \snippet test/snippet/argument_parser/validators_2.cpp usage
@@ -251,12 +251,12 @@ public:
 
     /*!\brief Tests whether cmp lies inside values.
      * \param cmp The input value to check.
-     * \throws parser_exception
+     * \throws argument_invalid_argument
      */
     void operator()(option_value_type const & cmp) const
     {
         if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
-            throw parser_exception(detail::to_string("Value ", cmp, " is not one of ", view::all(values), "."));
+            throw invalid_argument(detail::to_string("Value ", cmp, " is not one of ", view::all(values), "."));
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -306,14 +306,14 @@ public:
 
     /*!\brief Tests whether cmp lies inside values.
      * \param cmp The input value to check.
-     * \throws parser_exception
+     * \throws invalid_argument
      */
     void operator()(value_type const & cmp) const
     {
         std::for_each(cmp.begin(), cmp.end(), [&] (auto cmp_v)
             {
                 if (!(std::find(values.begin(), values.end(), cmp_v) != values.end()))
-                    throw parser_exception(detail::to_string("Value ", cmp_v, " is not one of ",
+                    throw invalid_argument(detail::to_string("Value ", cmp_v, " is not one of ",
                                                                 view::all(values), "."));
             });
     }
@@ -337,7 +337,7 @@ private:
  * \details
  *
  * On construction, the validator must receive a list (vector) of valid file extensions.
- * The struct than acts as a functor, that throws a seqan3::parser_exception
+ * The struct than acts as a functor, that throws a seqan3::invalid_argument
  * exception whenever a given filename (string) is not in the given extension list.
  *
  * \snippet test/snippet/argument_parser/validators_3.cpp usage
@@ -371,7 +371,7 @@ public:
         std::string ext{path.extension().string()};
         ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
         if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
-            throw parser_exception(detail::to_string("Extension ", ext, " is not one of ",
+            throw invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
                                                             view::all(extensions), "."));
     }
 
@@ -447,7 +447,7 @@ class regex_validator;
  * validator will call std::regex_match on the command line argument.
  * Note: A regex_match will only return true if the strings matches the pattern
  * completely (in contrast to regex_search which also matches substrings).
- * The struct than acts as a functor, that throws a seqan3::parser_exception
+ * The struct than acts as a functor, that throws a seqan3::invalid_argument
  * exception whenever a given filename (string) is not in the given extension list.
  *
  * \snippet test/snippet/argument_parser/validators_4.cpp usage
@@ -468,13 +468,13 @@ public:
 
     /*!\brief Tests whether cmp lies inside values.
      * \param[in] cmp The value to validate.
-     * \throws parser_exception
+     * \throws invalid_argument
      */
     void operator()(value_type const & cmp) const
     {
         std::regex rgx(pattern);
         if (!std::regex_match(cmp, rgx))
-            throw parser_exception(detail::to_string("Value ", cmp, " did not match the pattern ", pattern, "."));
+            throw invalid_argument(detail::to_string("Value ", cmp, " did not match the pattern ", pattern, "."));
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -508,14 +508,14 @@ public:
 
     /*!\brief Tests whether cmp lies inside values.
      * \param[in] cmp The value to validate.
-     * \throws parser_exception
+     * \throws invalid_argument
      */
     void operator()(value_type const & cmp) const
     {
         std::regex rgx(pattern);
         for (auto const & cmp_v : cmp)
             if (!std::regex_match(cmp_v, rgx))
-                throw parser_exception(detail::to_string("Value ", cmp_v, " did not match the pattern ", pattern, "."));
+                throw invalid_argument(detail::to_string("Value ", cmp_v, " did not match the pattern ", pattern, "."));
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.

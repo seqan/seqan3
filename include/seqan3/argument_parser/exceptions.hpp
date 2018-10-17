@@ -80,13 +80,8 @@ public:
     invalid_argument(std::string const & s) : parser_exception(s) {}
 };
 
-<<<<<<< HEAD
-//!\brief Argument parser exception thrown when encountering unknown option.
-class unknown_option : public parser_invalid_argument
-=======
 //!\brief Argument parser exception thrown when encountering unkown option.
 class unknown_option : public parser_exception
->>>>>>> Added parser_exception, what to do with parser_interruption?
 {
 public:
     /*!\brief The constructor.

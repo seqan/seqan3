@@ -139,7 +139,7 @@ namespace seqan3
  * In this case, a  seqan3::design_error is thrown.
  *
  * The second kind are user errors, due to invalid command line calls. In this
- * case a seqan3::parser_exception is thrown.
+ * case a seqan3::invalid_argument is thrown.
  *
  * For example:
  *
@@ -302,7 +302,7 @@ public:
      * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
      *                                              converted into the expected type.
      * \throws seqan3::parser_interruption on special user request (e.g. --help or --version).
-     * \throws seqan3::parser_exception if the user provided wrong arguments.
+     * \throws seqan3::invalid_argument if the user provided wrong arguments.
      * \throws seqan3::required_option_missing if the user did not provide a required option.
      * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
      * \throws seqan3::too_few_arguments if the command line call contained too few arguments than expected.
@@ -500,7 +500,7 @@ private:
      * \param[in] argc     The number of command line arguments.
      * \param[in] argv     The command line arguments.
      *
-     * \throws seqan3::parser_exception
+     * \throws seqan3::argument_parser_exception
      *
      * \details
      *
@@ -521,7 +521,7 @@ private:
      * - else the format is that to seqan3::detail::format_parse
      *
      * If `-export-help` is specified with a value other than html/man or ctd
-     * a parser_exception is thrown.
+     * a argument_parser_exception is thrown.
      */
     void init(int const argc, char const * const * const  argv)
     {
