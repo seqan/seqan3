@@ -359,7 +359,7 @@ public:
         filesystem::path path_rev{path};
         path_fwd += filesystem::path{".fwd"};
         path_rev += filesystem::path{".rev"};
-        return fwd_fm.load(path_fwd) && rev_fm.load(path_rev);
+        return fwd_fm.load(path_fwd.string()) && rev_fm.load(path_rev.string());
     }
 
     /*!\brief Stores the index to disk. Temporary function until cereal is supported.
@@ -380,7 +380,7 @@ public:
         filesystem::path path_rev{path};
         path_fwd += filesystem::path{".fwd"};
         path_rev += filesystem::path{".rev"};
-        return fwd_fm.store(path_fwd) && rev_fm.store(path_rev);
+        return fwd_fm.store(path_fwd.string()) && rev_fm.store(path_rev.string());
     }
 
 };

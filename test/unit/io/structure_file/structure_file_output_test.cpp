@@ -104,7 +104,7 @@ TEST(structure_file_output_class, construct_by_filename)
         EXPECT_NO_THROW((structure_file_out<fields<field::SEQ>,
                                             type_list<structure_file_format_vienna>,
                                             std::ofstream>
-                                            {filename.get_path(), fields<field::SEQ>{}}));
+                                            {filename.get_path().string(), fields<field::SEQ>{}}));
     }
 }
 

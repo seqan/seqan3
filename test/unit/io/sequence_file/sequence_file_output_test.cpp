@@ -106,7 +106,7 @@ TEST(general, construct_by_filename)
     /* wrong extension */
     {
         test::tmp_filename filename{"sequence_file_output_constructor.xyz"};
-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
         EXPECT_THROW( sequence_file_output<>{filename.get_path()} ,
                       unhandled_extension_error );
     }
@@ -116,7 +116,7 @@ TEST(general, construct_by_filename)
         test::tmp_filename filename{"sequence_file_output_constructor.fasta"};
         EXPECT_NO_THROW(( sequence_file_output<fields<field::SEQ>,
                                             type_list<sequence_file_format_fasta>,
-                                            std::ofstream>{filename.get_path(), fields<field::SEQ>{}} ));
+                                            std::ofstream>{filename.get_path().string(), fields<field::SEQ>{}} ));
     }
 }
 

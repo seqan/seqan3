@@ -104,7 +104,7 @@ TEST(general, construct_by_filename)
     /* wrong extension */
     {
         test::tmp_filename filename{"alignment_file_output_constructor.xyz"};
-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        std::ofstream filecreator{filename.get_path().generic_string(), std::ios::out | std::ios::binary};
         EXPECT_THROW( alignment_file_output<>{filename.get_path()} ,
                       unhandled_extension_error );
     }
@@ -114,7 +114,7 @@ TEST(general, construct_by_filename)
         test::tmp_filename filename{"alignment_file_output_constructor.sam"};
         EXPECT_NO_THROW(( alignment_file_output<fields<field::SEQ>,
                                                 type_list<alignment_file_format_sam>,
-                                                std::ofstream>{filename.get_path(), fields<field::SEQ>{}} ));
+                                                std::ofstream>{filename.get_path().string(), fields<field::SEQ>{}} ));
     }
 }
 

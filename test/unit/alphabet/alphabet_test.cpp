@@ -263,7 +263,7 @@ void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
     // Generate unique file name.
     test::tmp_filename filename{"alphabet_cereal_test"};
     {
-        std::ofstream os{filename.get_path(), std::ios::binary};
+        std::ofstream os{filename.get_path().string(), std::ios::binary};
         out_archive_t oarchive{os};
         oarchive(l);
         oarchive(vec);
@@ -273,7 +273,7 @@ void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
         TypeParam in_l{};
         std::vector<TypeParam> in_vec;
 
-        std::ifstream is{filename.get_path(), std::ios::binary};
+        std::ifstream is{filename.get_path().string(), std::ios::binary};
         in_archive_t iarchive{is};
         iarchive(in_l);
         iarchive(in_vec);

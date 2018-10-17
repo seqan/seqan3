@@ -101,7 +101,7 @@ TEST_F(sequence_file_input_f, construct_by_filename)
         test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
@@ -113,7 +113,7 @@ TEST_F(sequence_file_input_f, construct_by_filename)
     /* wrong extension */
     {
         test::tmp_filename filename{"sequence_file_input_constructor.xyz"};
-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
         EXPECT_THROW( sequence_file_input<>{filename.get_path()} ,
                       unhandled_extension_error );
     }
@@ -129,7 +129,7 @@ TEST_F(sequence_file_input_f, construct_by_filename)
         test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
@@ -180,7 +180,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
@@ -198,7 +198,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
             filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 

@@ -123,10 +123,10 @@ TYPED_TEST(fm_index_test, serialization)
     test::tmp_filename filename{"fm_index"};
     auto const & path = filename.get_path();
 
-    EXPECT_TRUE(fm0.store(path));
+    EXPECT_TRUE(fm0.store(path.string()));
 
     TypeParam fm1{};
-    EXPECT_TRUE(fm1.load(path));
+    EXPECT_TRUE(fm1.load(path.string()));
 
     EXPECT_EQ(fm1.size(), 9);
 }

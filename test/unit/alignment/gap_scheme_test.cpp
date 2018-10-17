@@ -169,14 +169,15 @@ void do_serialisation(TypeParam const l)
     test::tmp_filename filename{"scoring_scheme_cereal_test"};
 
     {
-        std::ofstream os{filename.get_path(), std::ios::binary};
+        std::ofstream os{filename.get_path().string(), std::ios::binary};
+        //std::cout << "\n ***** File created (tmp_filename): " << filename.get_path().string() << std::endl;
         out_archive_t oarchive{os};
         oarchive(l);
     }
 
     {
         TypeParam in_l{};
-        std::ifstream is{filename.get_path(), std::ios::binary};
+        std::ifstream is{filename.get_path().string(), std::ios::binary};
         in_archive_t iarchive{is};
         iarchive(in_l);
         EXPECT_EQ(l, in_l);

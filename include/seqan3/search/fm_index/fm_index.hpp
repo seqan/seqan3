@@ -327,7 +327,7 @@ public:
     bool load(filesystem::path const & path)
     {
         sdsl_index_type tmp;
-        if (sdsl::load_from_file(tmp, path))
+        if (sdsl::load_from_file(tmp, path.string()))
         {
             std::swap(this->index, tmp);
             return true;
@@ -349,7 +349,7 @@ public:
      */
     bool store(filesystem::path const & path) const
     {
-        return sdsl::store_to_file(index, path);
+        return sdsl::store_to_file(index, path.string());
     }
 
 };

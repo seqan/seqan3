@@ -389,14 +389,14 @@ void do_serialisation(TypeParam const l)
     // Generate unique file name.
     test::tmp_filename filename{"container_cereal_test"};
     {
-        std::ofstream os{filename.get_path(), std::ios::binary};
+        std::ofstream os{filename.get_path().string(), std::ios::binary};
         out_archive_t oarchive{os};
         oarchive(l);
     }
 
     {
         TypeParam in_l{};
-        std::ifstream is{filename.get_path(), std::ios::binary};
+        std::ifstream is{filename.get_path().string(), std::ios::binary};
         in_archive_t iarchive{is};
         iarchive(in_l);
         EXPECT_TRUE(l == in_l);

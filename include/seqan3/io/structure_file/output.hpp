@@ -371,7 +371,7 @@ public:
                        selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
     {
         // open stream
-        stream.open(_file_name, std::ios_base::out | std::ios::binary);
+        stream.open(_file_name.string(), std::ios_base::out | std::ios::binary);
         if (!stream.is_open())
             throw file_open_error{"Could not open file for writing."};
 

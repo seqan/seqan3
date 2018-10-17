@@ -85,7 +85,7 @@ TEST(tmp_filename_dtr, dtr)
 {
     auto t1 = std::make_unique<tmp_filename>("delete_test");
     auto path = t1->get_path();
-    std::ofstream os{path, std::ios::out};
+    std::ofstream os{path.string(), std::ios::out};
     os << "delete_test";
     os.close();
     EXPECT_TRUE(fs::exists(path));

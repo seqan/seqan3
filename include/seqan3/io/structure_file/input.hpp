@@ -846,8 +846,8 @@ public:
     structure_file_in(filesystem::path const & _file_name,
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
     {
-        // open stream
-        stream.open(_file_name, std::ios_base::in | std::ios::binary);
+        // open stream  todo: revert .string() when fstream will take a path with the def system CharT type not only char
+        stream.open(_file_name.string(), std::ios_base::in | std::ios::binary);
         if (!stream.is_open())
             throw file_open_error{"Could not open file for reading."};
 

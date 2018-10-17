@@ -77,7 +77,7 @@ struct structure_file_input_class : public ::testing::Test
     {
         test::tmp_filename filename{"structure_file_input_constructor.dbn"};
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
             filecreator << contents; // must contain at least one record
         }
         return std::move(filename);
@@ -107,7 +107,7 @@ TEST_F(structure_file_input_class, construct_by_filename)
     /* wrong extension */
     {
         test::tmp_filename filename{"structure_file_input_constructor.xyz"};
-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        std::ofstream filecreator{filename.get_path().string(), std::ios::out | std::ios::binary};
         EXPECT_THROW(structure_file_in<>{filename.get_path()}, unhandled_extension_error);
     }
 
@@ -122,7 +122,7 @@ TEST_F(structure_file_input_class, construct_by_filename)
         EXPECT_NO_THROW((structure_file_in<structure_file_input_default_traits_rna,
                                            fields<field::SEQ>,
                                            type_list<structure_file_format_vienna>,
-                                           std::ifstream>{filename.get_path(), fields<field::SEQ>{}}));
+                                           std::ifstream>{filename.get_path().string(), fields<field::SEQ>{}}));
     }
 }
 
