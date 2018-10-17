@@ -84,7 +84,7 @@ inline bool is_terminal()
  */
 inline unsigned get_terminal_width()
 {
-#ifdef linux
+#ifndef _WIN32
 
     struct winsize w;
     w.ws_row = 0;
