@@ -41,8 +41,8 @@
 
 #pragma once
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
 #include <seqan3/core/detail/terminal.hpp>

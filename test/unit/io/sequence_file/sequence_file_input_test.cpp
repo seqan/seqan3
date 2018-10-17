@@ -118,7 +118,7 @@ TEST_F(sequence_file_input_f, construct_by_filename)
                       unhandled_extension_error );
     }
 
-    /* non-existent file   ??*/
+    /* non-existent file */
     {
         EXPECT_THROW( sequence_file_input<>{"/dev/nonexistant/foobarOOO"},
                       file_open_error);
