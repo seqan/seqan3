@@ -37,6 +37,7 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/io/filesystem.hpp>
+#include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
 
@@ -64,6 +65,7 @@ TEST(validator_test, no_file)
 
 TEST(validator_test, file_exists)
 {
+    test::tmp_filename("./sandbox2.fasta");
     filesystem::path p{"./"};
     std::string s{"./"};
     file_existance_validator my_validator{};

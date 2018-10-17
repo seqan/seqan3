@@ -380,7 +380,7 @@ public:
     }
 
     //!\brief Tests whether every filename in list v exists.
-    void operator()(std::vector<std::string> const & v) const
+    void operator()(std::vector<filesystem::path> const & v) const
     {
          std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
     }
