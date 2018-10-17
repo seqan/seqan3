@@ -312,10 +312,23 @@ endif ()
 # ----------------------------------------------------------------------------
 # Require C++ Filesystem
 # ----------------------------------------------------------------------------
+option(SEQAN3_CMAKE_FIND_BOOST_FILESYSTEM "Search: Is Boost filesystem available?" OFF)
+option(SEQAN3_CMAKE_BOOST_FILESYSTEM_FORCE "Force use of Boost filesystem if available (over STD)?" OFF)
+if (SEQAN3_CMAKE_BOOST_FILESYSTEM_FORCE)
+    add_compile_definitions(BOOST_FILESYSTEM_FORCE)
+    find_package(Boost REQUIRED COMPONENTS filesystem)
+    set (CXXSTD_TEST_SOURCE
+            "#error FORCE_BOOST_FS
+             int main()  { }")
+elseif(SEQAN3_CMAKE_FIND_BOOST_FILESYSTEM)
+    find_package(Boost COMPONENTS filesystem)
+endif()
 
 # find the correct header
-check_include_file_cxx (filesystem _SEQAN3_HAVE_FILESYSTEM)
-check_include_file_cxx (experimental/filesystem _SEQAN3_HAVE_EXP_FILESYSTEM)
+if (NOT SEQAN3_CMAKE_BOOST_FILESYSTEM_FORCE)
+    check_include_file_cxx (filesystem _SEQAN3_HAVE_FILESYSTEM)
+    check_include_file_cxx (experimental/filesystem _SEQAN3_HAVE_EXP_FILESYSTEM)
+endif()
 
 if (_SEQAN3_HAVE_FILESYSTEM)
     seqan3_config_print ("C++ Filesystem header:      <filesystem>")
@@ -335,6 +348,10 @@ elseif (_SEQAN3_HAVE_EXP_FILESYSTEM)
         {
             std::experimental::filesystem::path p{\"/tmp/\"};
         }")
+elseif(Boost_FOUND)
+    seqan3_config_print ("C++ Filesystem header:      <boost/filesystem.hpp>")
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_STATIC_RUNTIME ON)
 else ()
     seqan3_config_error ("SeqAn3 requires C++17 filesystem support, but the filesystem header was not found.")
 endif ()
@@ -361,6 +378,17 @@ else ()
         endif ()
         set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_ORIGINAL})
     endforeach ()
+
+    if (NOT C++17FS_LIB)
+        if(Boost_FOUND)
+         set (SEQAN3_LIBRARIES    ${SEQAN3_LIBRARIES}    ${Boost_LIBRARIES}) # SYSTEM shuld avoid warning, but not
+         set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
+         set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_LIBRARIES})
+         set (CMAKE_REQUIRED_INCLUDES  ${CMAKE_REQUIRED_INCLUDES}  ${Boost_LIBRARIES})
+         set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
+         set (C++17FS_LIB         ${Boost_LIBRARIES})
+        endif ()
+    endif()
 
     if (C++17FS_LIB)
         seqan3_config_print ("C++ Filesystem library:     via -l${C++17FS_LIB}")

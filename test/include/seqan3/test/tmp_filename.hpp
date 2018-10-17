@@ -110,9 +110,15 @@ public:
     explicit tmp_filename(const char * f_name)
     {
         if (f_name == nullptr)
-            throw filesystem::filesystem_error("Empty file name!", std::make_error_code(std::errc::invalid_argument)); 
-
+#ifndef BOOST_FILESYSTEM_FORCE
+            throw filesystem::filesystem_error("Empty file name!", std::make_error_code(std::errc::invalid_argument));
+#else
+            throw filesystem::filesystem_error("Empty file name!",
+                    boost::system::errc::make_error_code(boost::system::errc::invalid_argument));
+#endif
         auto tmp_base_dir = filesystem::temp_directory_path();
+
+#ifndef BOOST_FILESYSTEM_FORCE
         tmp_base_dir /= filesystem::path{"seqan_test_XXXXXXXX"};
         // We have to use mkdtemp, which is not deprecated. We place it into the dedicated tmp_dir
         // returned by temp_directory_path. Within this path we can safely create files, that would be
@@ -127,6 +133,17 @@ public:
         throw filesystem::filesystem_error("Could not create temporary directory with mkdtemp!",
                                            tmp_base_dir,
                                            std::make_error_code(std::errc::bad_file_descriptor));
+#else
+        auto tmp_dir   = filesystem::unique_path(tmp_base_dir / "seqan_test_%%%%%%%%");
+        if (filesystem::create_directory(tmp_dir))
+        {
+            file_path = tmp_dir / filesystem::path{f_name};
+            return;
+        }
+        throw filesystem::filesystem_error("Could not create temporary directory!",
+                                           tmp_dir,
+                                           boost::system::errc::make_error_code(boost::system::errc::bad_file_descriptor));
+#endif
     }
 
     /*!\brief Destructs the temporary file path.
@@ -134,7 +151,11 @@ public:
      */
     ~tmp_filename()
     {
+#ifndef BOOST_FILESYSTEM_FORCE
         [[maybe_unused]] std::error_code ec;
+#else
+        [[maybe_unused]] boost::system::error_code ec;
+#endif
         filesystem::remove_all(file_path.parent_path(), ec);
     }
     //!\}

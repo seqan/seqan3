@@ -101,7 +101,7 @@ TEST(Header, ${header_source_test_name}) {}")
             # is not possible for OBJECT libraries
             target_compile_options (${target_library} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_OPTIONS>)
             target_compile_definitions (${target_library} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_DEFINITIONS>)
-            target_include_directories (${target_library} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_INCLUDE_DIRECTORIES>)
+            target_include_directories (${target_library} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_INCLUDE_DIRECTORIES> "C:/MinGW/include")
             add_dependencies (${target_library} gtest)
 
             target_sources (${target} PRIVATE $<TARGET_OBJECTS:${target_library}>)
