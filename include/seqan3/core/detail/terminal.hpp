@@ -40,7 +40,10 @@
 
 #pragma once
 
-#include <sys/ioctl.h>
+#ifndef _WIN32
+#   include <sys/ioctl.h>
+#endif
+
 #include <unistd.h>
 
 #include <cstdio>
@@ -59,7 +62,11 @@ namespace seqan3::detail
  */
 inline bool is_terminal()
 {
+#ifndef _WIN32
     return isatty(STDOUT_FILENO);
+#else
+    return false;
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -77,6 +84,8 @@ inline bool is_terminal()
  */
 inline unsigned get_terminal_width()
 {
+#ifdef linux
+
     struct winsize w;
     w.ws_row = 0;
     w.ws_col = 0;
@@ -84,6 +93,9 @@ inline unsigned get_terminal_width()
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
     return w.ws_col;
+#else
+        return 80;    // ??
+#endif
 }
 
 }  // namespace seqan::detail

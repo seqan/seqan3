@@ -55,6 +55,9 @@ set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
 # ----------------------------------------------------------------------------
 # Interface targets for the different test modules in seqan3.
 # ----------------------------------------------------------------------------
+if (WIN32)
+    set(AHLWAPI shlwapi.lib)
+endif()
 
 # seqan3::test exposes a base set of required flags, includes, definitions and
 # libraries which are in common for **all** seqan3 tests
@@ -66,7 +69,7 @@ set_property (TARGET seqan3::test APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES 
 # seqan3::test::performance specifies required flags, includes and libraries
 # needed for performance test cases in seqan3/test/performance
 add_library (seqan3::test::performance INTERFACE IMPORTED)
-set_property (TARGET seqan3::test::performance APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test" "gbenchmark")
+set_property (TARGET seqan3::test::performance APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test" "gbenchmark" "${AHLWAPI}")
 set_property (TARGET seqan3::test::performance APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
 file(MAKE_DIRECTORY ${SEQAN3_BENCHMARK_CLONE_DIR}/include/) # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
 

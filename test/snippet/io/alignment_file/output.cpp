@@ -10,20 +10,20 @@ int main()
 
 {
 //! [filename_construction]
-alignment_file_output fout{"/tmp/my.sam"}; // SAM format detected, std::ofstream opened for file
+alignment_file_output fout{filesystem::temp_directory_path()/"my.sam"}; // SAM format detected, std::ofstream opened for file
 //! [filename_construction]
 }
 
 {
 //! [format_construction]
 // no need to specify the template arguments <...> for format specialization:
-alignment_file_output fout{"/tmp/my.sam", fields<field::MAPQ>{}};
+alignment_file_output fout{filesystem::temp_directory_path()/"my.sam", fields<field::MAPQ>{}};
 //! [format_construction]
 }
 
 {
 //! [write_range]
-alignment_file_output fout{"/tmp/my.sam"};
+alignment_file_output fout{filesystem::temp_directory_path()/"my.sam"};
 
 std::vector<std::tuple<dna5_vector, std::string>> range
 {
@@ -38,7 +38,7 @@ fout = range; // will iterate over the records and write them
 
 {
 //! [set_header]
-alignment_file_output fout{"/tmp/my.sam"};
+alignment_file_output fout{filesystem::temp_directory_path()/"my.sam"};
 
 // add information to the header of the file.
 fout.header().comments.push_back("This is a comment");
