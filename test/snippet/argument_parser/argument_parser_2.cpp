@@ -14,7 +14,7 @@ int main(int argc, char ** argv)
     {
         myparser.parse();
     }
-    catch (seqan3::parser_invalid_argument const & ext) // the user did something wrong
+    catch (seqan3::invalid_argument const & ext) // the user did something wrong
     {
         std::cerr << "The-Age-App - [PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
