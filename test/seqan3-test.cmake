@@ -34,6 +34,9 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
 # ----------------------------------------------------------------------------
 # Interface targets for the different test modules in seqan3.
 # ----------------------------------------------------------------------------
+if (WIN32)
+    set(AHLWAPI shlwapi.lib)
+endif()
 
 # seqan3::test exposes a base set of required flags, includes, definitions and
 # libraries which are in common for **all** seqan3 tests
@@ -46,7 +49,7 @@ add_library (seqan3::test ALIAS seqan3_test)
 # seqan3::test::performance specifies required flags, includes and libraries
 # needed for performance test cases in seqan3/test/performance
 add_library (seqan3_test_performance INTERFACE)
-target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
+target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark" "${AHLWAPI}")
 target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
 add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 
