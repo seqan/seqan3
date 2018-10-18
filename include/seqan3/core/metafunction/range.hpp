@@ -71,7 +71,7 @@ namespace seqan3
  * \tparam t The type to operate on.
  */
 template <std::ranges::Range rng_t>
-using iterator_t = ranges::iterator_t<rng_t>;
+using iterator_t = decltype(ranges::begin(std::declval<rng_t &>()));
 
 // ----------------------------------------------------------------------------
 // sentinel
@@ -81,7 +81,7 @@ using iterator_t = ranges::iterator_t<rng_t>;
  * \tparam t The type to operate on.
  */
 template <std::ranges::Range rng_t>
-using sentinel_t = ranges::sentinel_t<rng_t>;
+using sentinel_t = decltype(ranges::end(std::declval<rng_t &>()));
 
 // ----------------------------------------------------------------------------
 // value_type
@@ -181,8 +181,8 @@ template <std::ranges::SizedRange rng_t>
 //!\endcond
 struct size_type<rng_t>
 {
-    //!\brief Return the size_type member definition from the queried type's iterator.
-    using type = size_type_t<iterator_t<rng_t>>;
+    //!\brief Return the size_type as returned by the size function.
+    using type = decltype(ranges::size(std::declval<rng_t &>()));
 };
 
 // ----------------------------------------------------------------------------

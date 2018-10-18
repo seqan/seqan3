@@ -39,6 +39,7 @@
 
 #pragma once
 
+#include <iterator>
 #include <type_traits>
 
 #include <range/v3/utility/iterator_traits.hpp>
@@ -65,7 +66,7 @@ template <std::InputIterator it_t>
 struct value_type<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = ranges::value_type_t<it_t>;
+    using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::value_type;
 };
 
 // see specialisation for ranges in core/metafunction/range.hpp
@@ -81,7 +82,7 @@ template <std::InputIterator it_t>
 struct reference<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = ranges::reference_t<it_t>;
+    using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::reference;
 };
 
 // see specialisation for ranges in core/metafunction/range.hpp
@@ -97,7 +98,7 @@ template <std::InputIterator it_t>
 struct rvalue_reference<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = ranges::rvalue_reference_t<it_t>;
+    using type = decltype(ranges::iter_move(std::declval<it_t &>()));
 };
 
 // see specialisation for ranges in core/metafunction/range.hpp
@@ -119,7 +120,7 @@ template <std::WeaklyIncrementable it_t>
 struct difference_type<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = ranges::difference_type_t<it_t>;
+    using type = typename std::iterator_traits<std::remove_reference_t<it_t>>::difference_type;
 };
 
 // see specialisation for ranges in core/metafunction/range.hpp
@@ -135,7 +136,7 @@ template <std::WeaklyIncrementable it_t>
 struct size_type<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = ranges::size_type_t<it_t>;
+    using type = std::make_unsigned_t<difference_type_t<it_t>>;
 };
 
 // see specialisation for ranges in core/metafunction/range.hpp
