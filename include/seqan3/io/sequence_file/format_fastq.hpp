@@ -162,14 +162,14 @@ public:
             {
                 ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank)
                                          | view::char_to<value_type_t<id_type>>,
-                             ranges::back_insert_iterator{id});
+                             std::back_inserter(id));
                 detail::consume(stream_view | view::take_line_or_throw);
             }
             else
             {
                 ranges::copy(stream_view | view::take_line_or_throw
                                          | view::char_to<value_type_t<id_type>>,
-                             ranges::back_insert_iterator{id});
+                             std::back_inserter(id));
             }
         }
         else
@@ -195,7 +195,7 @@ public:
                                         return c;
                                     })
                                   | view::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
-                         ranges::back_insert_iterator{sequence});
+                         std::back_inserter(sequence));
             sequence_size_after = ranges::size(sequence);
         }
         else // consume, but count
@@ -230,7 +230,7 @@ public:
         else if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
             ranges::copy(qview | view::char_to<value_type_t<qual_type>>,
-                         ranges::back_insert_iterator{qualities});
+                         std::back_inserter(qualities));
         }
         else
         {
