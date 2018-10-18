@@ -105,7 +105,7 @@ private:
         ~iterator_type() = default;
 
         //!\brief Constructor that delegates to the CRTP layer.
-        iterator_type(base_base_t it) : base_t{it} {}
+        iterator_type(base_base_t const & it) : base_t{it} {}
         //!\}
 
         /*!\name Associated types
