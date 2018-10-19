@@ -33,48 +33,40 @@
 // ============================================================================
 
 /*!\file
- * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Provides seqan3::detail::transformation_trait_or.
+ * \brief Provides C++20 additions to the type_traits header.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <type_traits>
 
-#include <meta/meta.hpp>
+#if __cplusplus <= 201810L // TODO feature_test_macro if available
 
-#include <seqan3/std/type_traits>
-
-namespace seqan3::detail
+namespace std
 {
 
-/*!\brief This gives a fallback type if *type_t::type* is not defined.
- * \ingroup metafunction
- * \tparam type_t    The type to use if *type_t::type* is defined.
- * \tparam default_t The type to use otherwise.
- *
- * \details
- *
- * Gives *type_t* back if *T::type* is a member type, otherwise *struct{using type = default_t}*.
- *
- * \include test/snippet/core/metafunction/transformation_trait_or.cpp
- *
- * \attention This might get removed if one of our used libraries offers the same
- * functionality.
- *
- * \par Helper types
- *   seqan3::detail::transformation_trait_or_t as a shorthand for *seqan3::detail::transformation_trait_or::type*
+/*!\defgroup type_traits type_traits
+ * \ingroup std
+ * \brief The \<concepts\> header from C++20's standard library.
  */
-template <typename type_t, typename default_t>
-using transformation_trait_or = std::conditional_t<meta::is_trait<type_t>::value,   // check if type_t::type exists
-                                                   type_t,                          // if yes, return type_t
-                                                   std::type_identity<default_t>>;  // else return default_t as trait
 
-/*!\brief Helper type of seqan3::detail::transformation_trait_or
- * \ingroup metafunction
- * \relates transformation_trait_or
+/*!\brief The identity transformation (a TransformationTrait that returns the input).
+ * \see https://en.cppreference.com/w/cpp/types/type_identity
+ * \ingroup type_traits
  */
-template <typename type_t, typename default_t>
-using transformation_trait_or_t = typename transformation_trait_or<type_t, default_t>::type;
+template <typename t>
+struct type_identity
+{
+    //!\brief The return type (which is the argument).
+    using type = t;
+};
 
-} // namespace seqan3::detail
+//!\brief A shortcut for std::type_identity.
+//!\ingroup type_traits
+template <typename t>
+using type_identity_t = typename type_identity<t>::type;
+
+} // namespace std
+
+#endif // C++17
