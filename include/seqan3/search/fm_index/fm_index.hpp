@@ -232,7 +232,11 @@ public:
         // * sdsl construction currently only works for int_vector, std::string and char *, not ranges in general
         // uint8_t largest_char = 0;
         sdsl::int_vector<8> tmp_text(text.size());
-        ranges::copy(text | view::reverse | view::to_rank | view::transform([] (uint8_t const r) { return r + 1; }),
+
+        //TODO view::reverse is broken and can't be chained right now
+        std::vector<value_type_t<text_t>> another_copy = text | view::reverse;
+
+        ranges::copy(another_copy | view::to_rank | view::transform([] (uint8_t const r) { return r + 1; }),
                      ranges::begin(tmp_text)); // reverse and increase rank by one
 
         sdsl::construct_im(index, tmp_text, 0);

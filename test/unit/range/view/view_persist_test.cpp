@@ -39,9 +39,11 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/unique.hpp>
 
+#include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/view/filter.hpp>
 #include <seqan3/std/view/reverse.hpp>
 #include <seqan3/std/view/common.hpp>
 
@@ -83,8 +85,8 @@ TEST(view_persist, wrap_temporary)
     // combinability
     auto v3 = std::string{"foo"} | view::persist | ranges::view::unique;
     EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = std::string{"foo"} | view::persist | view::reverse | ranges::view::unique;
-    EXPECT_EQ("of", v3b);
+    std::string v3b = std::string{"foo"} | view::persist | view::filter(is_char<'o'>) | ranges::view::unique;
+    EXPECT_EQ("o", v3b);
 }
 
 TEST(view_persist, const_)
