@@ -33,38 +33,58 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd types.
+ * \brief Contains seqan3::simd_traits
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/core/platform.hpp>
 
-//!\cond DEV
-/*!\brief #SIMD_EQ checks if the sizes and the content of two given
- * seqan3::simd variables matches. It is like  #EXPECT_EQ, but for seqan3::simd
- * types.
+namespace seqan3
+{
+
+/*!\brief seqan3::simd_traits is the trait class that provides uniform interface
+ * to the properties of simd_t types.
  * \ingroup simd
- * \param  left  of type seqan3::simd
- * \param  right of type seqan3::simd
+ * \tparam simd_t The simd type that satisfies seqan3::simd_concept.
  *
- * \attention
- * This macro can handle multiple "," which is normally a limitation of macros.
+ * The class defines the following member variables and types:
+ * * scalar_type - the underlying type of a simd vector
+ * * length - the number of packed values in a simd vector
+ * * max_length - the maximum number of packable values in a simd vector, if the underlying type would be [u]int8_t
+ * * mask_type - the type returned by comparison operators
+ * * swizzle_type - the type used to define how to swizzle a simd vector
  *
- * \par Example
- *
- * \include test/snippet/core/simd/simd_test_utility.cpp
+ * \include test/snippet/core/simd/simd_traits.cpp
  */
-#define SIMD_EQ(...) do { \
-    auto [left, right] = std::make_tuple(__VA_ARGS__); \
-    static_assert(seqan3::simd_concept<decltype(left)>, "The left argument of SIMD_EQ is not a simd_type"); \
-    static_assert(seqan3::simd_concept<decltype(right)>, "The right argument of SIMD_EQ is not a simd_type"); \
-    static_assert(std::is_same_v<decltype(left), decltype(right)>, "The left and right argument of SIMD_EQ don't have the same type."); \
-    using _simd_traits_t = seqan3::simd_traits<decltype(left)>; \
-    std::vector<typename _simd_traits_t::scalar_type> left_simd(_simd_traits_t::length), right_simd(_simd_traits_t::length); \
-    for (size_t i = 0; i < _simd_traits_t::length; ++i) \
-    std::tie(left_simd[i], right_simd[i]) = {left[i], right[i]}; \
-    EXPECT_EQ(left_simd, right_simd); \
-} while (false)
-//!\endcond
+template <typename simd_t>
+struct simd_traits
+#if SEQAN3_DOXYGEN_ONLY(1)0
+{
+    /*!\brief The underlying type of a simd vector (is not defined if *simd_t*
+     * does not satisfies *seqan3::simd_concept*)
+     */
+    using scalar_type = IMPLEMENTATION_DEFINED;
+    /*!\brief The number of packed values in a simd vector (is not defined if
+     * *simd_t* does not satisfies *seqan3::simd_concept*)
+     */
+    static constexpr auto length = IMPLEMENTATION_DEFINED;
+    /*!\brief The maximum number of packable values in a simd vector, if the
+     * underlying type would be *[u]int8_t* (is not defined if *simd_t* does not
+     * satisfies *seqan3::simd_concept*)
+     */
+    static constexpr auto max_length = IMPLEMENTATION_DEFINED;
+    /*!\brief The type returned by comparison operators (is not defined if
+     * *simd_t* does not satisfies *seqan3::simd_concept*)
+     */
+    using mask_type = IMPLEMENTATION_DEFINED;
+    /*!\brief The type used to define how to swizzle a simd vector (is not
+     * defined if *simd_t* does not satisfies *seqan3::simd_concept*)
+     */
+    using swizzle_type = IMPLEMENTATION_DEFINED;
+}
+#endif
+;
+
+} // namespace seqan3

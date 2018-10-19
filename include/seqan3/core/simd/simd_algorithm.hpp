@@ -33,38 +33,72 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd types.
+ * \brief Contains algorithms to modify seqan3::simd.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/core/simd/simd_traits.hpp>
 
-//!\cond DEV
-/*!\brief #SIMD_EQ checks if the sizes and the content of two given
- * seqan3::simd variables matches. It is like  #EXPECT_EQ, but for seqan3::simd
- * types.
+#include <utility>
+
+namespace seqan3::detail
+{
+
+//!\brief Helper function for seqan3::simd_fill.
+//!\ingroup simd
+template <simd_concept simd_t, size_t... I>
+constexpr simd_t simd_fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
+{
+    return simd_t{((void)I, scalar)...};
+}
+
+//!\brief Helper function for seqan3::simd_iota.
+//!\ingroup simd
+template <simd_concept simd_t, typename scalar_t, scalar_t... I>
+constexpr simd_t simd_iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
+{
+    return simd_t{(offset + I)...};
+}
+
+} // namespace seqan3::detail
+
+namespace seqan3
+{
+
+/*!\brief Fills a seqan3::simd vector with a scalar value.
+ * \tparam    simd_t The simd type which satisfies seqan3::simd_concept.
+ * \param[in] scalar The scalar value to fill the seqan3::simd vector.
  * \ingroup simd
- * \param  left  of type seqan3::simd
- * \param  right of type seqan3::simd
  *
- * \attention
- * This macro can handle multiple "," which is normally a limitation of macros.
+ * \details
  *
- * \par Example
- *
- * \include test/snippet/core/simd/simd_test_utility.cpp
+ * \include test/snippet/core/simd/simd_fill.cpp
  */
-#define SIMD_EQ(...) do { \
-    auto [left, right] = std::make_tuple(__VA_ARGS__); \
-    static_assert(seqan3::simd_concept<decltype(left)>, "The left argument of SIMD_EQ is not a simd_type"); \
-    static_assert(seqan3::simd_concept<decltype(right)>, "The right argument of SIMD_EQ is not a simd_type"); \
-    static_assert(std::is_same_v<decltype(left), decltype(right)>, "The left and right argument of SIMD_EQ don't have the same type."); \
-    using _simd_traits_t = seqan3::simd_traits<decltype(left)>; \
-    std::vector<typename _simd_traits_t::scalar_type> left_simd(_simd_traits_t::length), right_simd(_simd_traits_t::length); \
-    for (size_t i = 0; i < _simd_traits_t::length; ++i) \
-    std::tie(left_simd[i], right_simd[i]) = {left[i], right[i]}; \
-    EXPECT_EQ(left_simd, right_simd); \
-} while (false)
-//!\endcond
+template <simd_concept simd_t>
+constexpr simd_t simd_fill(typename simd_traits<simd_t>::scalar_type const scalar)
+{
+    constexpr size_t length = simd_traits<simd_t>::length;
+    return detail::simd_fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
+}
+
+/*!\brief Fills a seqan3::simd vector with the scalar values offset, offset+1, offset+2, ...
+ * \tparam    simd_t The simd type which satisfies seqan3::simd_concept.
+ * \param[in] offset The scalar offset to fill the seqan3::simd vector.
+ * \ingroup simd
+ *
+ * \details
+ *
+ * \include test/snippet/core/simd/simd_iota.cpp
+ */
+template <simd_concept simd_t>
+constexpr simd_t simd_iota(typename simd_traits<simd_t>::scalar_type const offset)
+{
+    constexpr size_t length = simd_traits<simd_t>::length;
+    using scalar_type = typename simd_traits<simd_t>::scalar_type;
+    return detail::simd_iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
+}
+
+} // namespace seqan3

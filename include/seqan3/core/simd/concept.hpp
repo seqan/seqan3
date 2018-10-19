@@ -33,38 +33,60 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd types.
+ * \brief Contains seqan3::simd_concept
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/simd/all.hpp>
+#include <type_traits>
 
-//!\cond DEV
-/*!\brief #SIMD_EQ checks if the sizes and the content of two given
- * seqan3::simd variables matches. It is like  #EXPECT_EQ, but for seqan3::simd
- * types.
+#include <seqan3/core/simd/simd_traits.hpp>
+
+namespace seqan3
+{
+
+/*!\interface seqan3::simd_concept <>
+ * \brief The generic simd concept.
  * \ingroup simd
- * \param  left  of type seqan3::simd
- * \param  right of type seqan3::simd
  *
- * \attention
- * This macro can handle multiple "," which is normally a limitation of macros.
- *
- * \par Example
- *
- * \include test/snippet/core/simd/simd_test_utility.cpp
+ * seqan3::simd_concept checks whether a given type is simd type. One of the prerequisites is
+ * that seqan3::simd_traits is defined for this type.
  */
-#define SIMD_EQ(...) do { \
-    auto [left, right] = std::make_tuple(__VA_ARGS__); \
-    static_assert(seqan3::simd_concept<decltype(left)>, "The left argument of SIMD_EQ is not a simd_type"); \
-    static_assert(seqan3::simd_concept<decltype(right)>, "The right argument of SIMD_EQ is not a simd_type"); \
-    static_assert(std::is_same_v<decltype(left), decltype(right)>, "The left and right argument of SIMD_EQ don't have the same type."); \
-    using _simd_traits_t = seqan3::simd_traits<decltype(left)>; \
-    std::vector<typename _simd_traits_t::scalar_type> left_simd(_simd_traits_t::length), right_simd(_simd_traits_t::length); \
-    for (size_t i = 0; i < _simd_traits_t::length; ++i) \
-    std::tie(left_simd[i], right_simd[i]) = {left[i], right[i]}; \
-    EXPECT_EQ(left_simd, right_simd); \
-} while (false)
+//!\cond
+template <typename simd_t>
+concept simd_concept = requires (simd_t a, simd_t b)
+{
+    typename simd_traits<simd_t>::scalar_type;
+    typename simd_traits<simd_t>::mask_type;
+    typename simd_traits<simd_t>::swizzle_type;
+
+    // require that static member variables are defined
+    { simd_traits<simd_t>::length }
+    { simd_traits<simd_t>::max_length }
+
+    // assume array access that returns a scalar_type type
+    { a[0] };
+    requires std::is_convertible_v<decltype(a[0]), typename simd_traits<simd_t>::scalar_type>;
+
+    // require comparison operators
+    { a == b } -> typename simd_traits<simd_t>::mask_type;
+    { a != b } -> typename simd_traits<simd_t>::mask_type;
+    { a <  b } -> typename simd_traits<simd_t>::mask_type;
+    { a >  b } -> typename simd_traits<simd_t>::mask_type;
+    { a <= b } -> typename simd_traits<simd_t>::mask_type;
+    { a >= b } -> typename simd_traits<simd_t>::mask_type;
+
+    // require arithmetic operators
+    { a + b } -> simd_t;
+    { a - b } -> simd_t;
+    { a * b } -> simd_t;
+    { a / b } -> simd_t;
+    { a += b } -> simd_t;
+    { a -= b } -> simd_t;
+    { a *= b } -> simd_t;
+    { a /= b } -> simd_t;
+};
 //!\endcond
+
+} // namespace seqan3

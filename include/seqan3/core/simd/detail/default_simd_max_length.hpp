@@ -33,38 +33,28 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd types.
+ * \brief Contains seqan3::detail::default_simd_max_length
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/core/detail/int_types.hpp>
 
-//!\cond DEV
-/*!\brief #SIMD_EQ checks if the sizes and the content of two given
- * seqan3::simd variables matches. It is like  #EXPECT_EQ, but for seqan3::simd
- * types.
+namespace seqan3::detail
+{
+
+/*!\brief seqan3 auto-detects the maximum number of packable `[u]int8_t` types.
  * \ingroup simd
- * \param  left  of type seqan3::simd
- * \param  right of type seqan3::simd
+ * \tparam simd_backend_t The name of the simd backend.
  *
- * \attention
- * This macro can handle multiple "," which is normally a limitation of macros.
+ * \include test/snippet/core/simd/detail/default_simd_max_length.cpp
  *
- * \par Example
- *
- * \include test/snippet/core/simd/simd_test_utility.cpp
+ * This value is influenced by compiler flags like `-march=native`, `-msse4`,
+ * `-mavx2`, etc and sets this value accordingly.
+ * \sa https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/x86-Options.html#x86-Options
+ * for simd instruction sets and their flags.
  */
-#define SIMD_EQ(...) do { \
-    auto [left, right] = std::make_tuple(__VA_ARGS__); \
-    static_assert(seqan3::simd_concept<decltype(left)>, "The left argument of SIMD_EQ is not a simd_type"); \
-    static_assert(seqan3::simd_concept<decltype(right)>, "The right argument of SIMD_EQ is not a simd_type"); \
-    static_assert(std::is_same_v<decltype(left), decltype(right)>, "The left and right argument of SIMD_EQ don't have the same type."); \
-    using _simd_traits_t = seqan3::simd_traits<decltype(left)>; \
-    std::vector<typename _simd_traits_t::scalar_type> left_simd(_simd_traits_t::length), right_simd(_simd_traits_t::length); \
-    for (size_t i = 0; i < _simd_traits_t::length; ++i) \
-    std::tie(left_simd[i], right_simd[i]) = {left[i], right[i]}; \
-    EXPECT_EQ(left_simd, right_simd); \
-} while (false)
-//!\endcond
+template <template<typename, size_t> typename simd_backend_t>
+constexpr auto default_simd_max_length = 0u;
+} // namespace seqan3::detail

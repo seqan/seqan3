@@ -33,38 +33,55 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd types.
+ * \brief Contains seqan3::simd
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/core/simd/detail/default_simd_backend.hpp>
+#include <seqan3/core/simd/detail/default_simd_length.hpp>
 
-//!\cond DEV
-/*!\brief #SIMD_EQ checks if the sizes and the content of two given
- * seqan3::simd variables matches. It is like  #EXPECT_EQ, but for seqan3::simd
- * types.
+namespace seqan3
+{
+
+/*!\brief seqan3::simd encapsulates simd vector types, which can be manipulated
+ * by simd operations.
  * \ingroup simd
- * \param  left  of type seqan3::simd
- * \param  right of type seqan3::simd
+ * \tparam scalar_t The underlying type of a simd vector
+ * \tparam length The number of packed values in a simd vector
+ * \tparam simd_backend The simd backend to use, e.g.
+ * seqan3::detail::builtin_simd or seqan3::detail::ume_simd
  *
+ * \include test/snippet/core/simd/simd.cpp
  * \attention
- * This macro can handle multiple "," which is normally a limitation of macros.
+ * seqan3::simd may not support *float* types depending on the selected backend,
+ * but *seqan3::detail::ume_simd* does support *float* and *double*.
  *
- * \par Example
+ * All implementations support *[u]intX_t* types, e.g. *uint8_t*.
  *
- * \include test/snippet/core/simd/simd_test_utility.cpp
+ * \par Helper types
+ *   seqan3::simd_t as a shorthand for seqan3::simd::type
+ * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
+ * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
+ * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html Underlying technique of *seqan3::detail::builtin_simd types*.
+ * \sa https://github.com/edanor/umesimd Underlying library of *seqan3::detail::ume_simd* types.
+ * \sa https://software.intel.com/sites/landingpage/IntrinsicsGuide Instruction sets and their low-level intrinsics.
  */
-#define SIMD_EQ(...) do { \
-    auto [left, right] = std::make_tuple(__VA_ARGS__); \
-    static_assert(seqan3::simd_concept<decltype(left)>, "The left argument of SIMD_EQ is not a simd_type"); \
-    static_assert(seqan3::simd_concept<decltype(right)>, "The right argument of SIMD_EQ is not a simd_type"); \
-    static_assert(std::is_same_v<decltype(left), decltype(right)>, "The left and right argument of SIMD_EQ don't have the same type."); \
-    using _simd_traits_t = seqan3::simd_traits<decltype(left)>; \
-    std::vector<typename _simd_traits_t::scalar_type> left_simd(_simd_traits_t::length), right_simd(_simd_traits_t::length); \
-    for (size_t i = 0; i < _simd_traits_t::length; ++i) \
-    std::tie(left_simd[i], right_simd[i]) = {left[i], right[i]}; \
-    EXPECT_EQ(left_simd, right_simd); \
-} while (false)
-//!\endcond
+template <typename scalar_t,
+          size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
+          typename simd_backend = detail::default_simd_backend<scalar_t, length>>
+struct simd : simd_backend
+{
+    //!\brief The actual simd type.
+    using type = typename simd_backend::type;
+};
+
+//!\brief Helper type of seqan3::simd
+//!\ingroup simd
+template <typename scalar_t,
+          size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
+          typename simd_backend = detail::default_simd_backend<scalar_t, length>>
+using simd_t = typename simd<scalar_t, length, simd_backend>::type;
+
+}
