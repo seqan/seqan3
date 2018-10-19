@@ -67,7 +67,7 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("foo", v2);
 
     // combinability
-    auto v3 = vec | adaptor(3) | ranges::view::unique;
+    auto v3 = vec | adaptor(3) | adaptor(3) | ranges::view::unique;
     EXPECT_EQ("fo", std::string(v3));
     std::string v3b = vec | view::reverse | adaptor(3) | ranges::view::unique;
     EXPECT_EQ("rab", v3b);

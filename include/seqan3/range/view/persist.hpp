@@ -46,7 +46,6 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/detail/inherited_iterator_base.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/view/view_all.hpp>
