@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Adaptions of Iterator concepts from the Ranges TS.
+ * \brief Provides C++20 additions to the \<iterator\> header.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -41,7 +41,7 @@
 
 #include <iterator>
 
-#if __cplusplus <= 201703L // TODO feature_test_macro if available
+#ifndef __cpp_lib_ranges
 
 #include <range/v3/utility/iterator.hpp>
 
