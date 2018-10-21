@@ -40,7 +40,7 @@
 
 #include <iostream>
 
-using namespace seqan3;
+using namespace seqan3::simd;
 
 TEST(simd_algorithm, simd_fill)
 {

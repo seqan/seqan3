@@ -44,8 +44,10 @@
 
 #include <utility>
 
-namespace seqan3::detail
+namespace seqan3::detail::simd
 {
+
+using namespace seqan3::simd;
 
 //!\brief Helper function for seqan3::simd::simd_fill.
 //!\ingroup simd
@@ -68,7 +70,7 @@ constexpr simd_t simd_iota_impl(scalar_t const offset, std::integer_sequence<sca
 namespace seqan3
 {
 
-inline namespace simd
+namespace simd
 {
 
 /*!\brief Fills a seqan3::simd::simd vector with a scalar value.
@@ -84,7 +86,7 @@ template <simd_concept simd_t>
 constexpr simd_t simd_fill(typename simd_traits<simd_t>::scalar_type const scalar)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
-    return detail::simd_fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
+    return detail::simd::simd_fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
 }
 
 /*!\brief Fills a seqan3::simd::simd vector with the scalar values offset, offset+1, offset+2, ...
@@ -101,9 +103,9 @@ constexpr simd_t simd_iota(typename simd_traits<simd_t>::scalar_type const offse
 {
     constexpr size_t length = simd_traits<simd_t>::length;
     using scalar_type = typename simd_traits<simd_t>::scalar_type;
-    return detail::simd_iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
+    return detail::simd::simd_iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
 }
 
-} // inline namespace simd
+} // namespace simd
 
 } // namespace seqan3

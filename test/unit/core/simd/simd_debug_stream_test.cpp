@@ -41,6 +41,7 @@
 #include <sstream>
 
 using namespace seqan3;
+using namespace seqan3::simd;
 
 TEST(debug_stream, simd)
 {

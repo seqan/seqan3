@@ -43,6 +43,7 @@
 
 using namespace seqan3;
 using namespace seqan3::detail;
+using namespace seqan3::simd;
 
 using int16x8_t = UME::SIMD::SIMDVec<int16_t, 8u>;
 using int32x4_t = UME::SIMD::SIMDVec<int32_t, 4u>;

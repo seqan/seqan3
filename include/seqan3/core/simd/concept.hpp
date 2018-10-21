@@ -46,7 +46,7 @@
 namespace seqan3
 {
 
-inline namespace simd
+namespace simd
 {
 
 /*!\interface seqan3::simd::simd_concept <>
@@ -94,6 +94,6 @@ concept simd_concept = requires (simd_t a, simd_t b)
 };
 //!\endcond
 
-} // inline namespace simd
+} // namespace simd
 
 } // namespace seqan3

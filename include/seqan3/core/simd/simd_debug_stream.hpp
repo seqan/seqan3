@@ -49,7 +49,7 @@ namespace seqan3
 /*!\brief Overload for debug_stream for simd types.
  * \ingroup simd
  */
-template <simd_concept simd_t>
+template <simd::simd_concept simd_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, simd_t simd)
 {
     s << '(';

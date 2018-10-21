@@ -44,7 +44,7 @@
 namespace seqan3
 {
 
-inline namespace simd
+namespace simd
 {
 
 /*!\brief seqan3::simd::simd_traits is the trait class that provides uniform interface
@@ -90,6 +90,6 @@ struct simd_traits
 #endif
 ;
 
-} // inline namespace simd
+} // namespace simd
 
 } // namespace seqan3

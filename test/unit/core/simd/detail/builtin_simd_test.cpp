@@ -42,6 +42,7 @@
 
 using namespace seqan3;
 using namespace seqan3::detail;
+using namespace seqan3::simd;
 
 using uint8x16_t = uint8_t __attribute__((__vector_size__(16)));
 using int16x8_t = int16_t __attribute__((__vector_size__(16)));

@@ -188,7 +188,7 @@ constexpr auto default_simd_max_length<builtin_simd> = []()
 
 } // namespace seqan3::detail
 
-namespace seqan3
+namespace seqan3::simd
 {
 
 /*!\brief This class specializes seqan3::simd::simd_traits for seqan3::detail::builtin_simd types
@@ -216,4 +216,4 @@ struct simd_traits<builtin_simd_t>
     using swizzle_type = typename detail::builtin_simd<uint8_t, max_length>::type;
 };
 
-} // namespace seqan3
+} // namespace seqan3::simd

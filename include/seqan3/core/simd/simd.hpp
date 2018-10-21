@@ -45,7 +45,7 @@
 namespace seqan3
 {
 
-inline namespace simd
+namespace simd
 {
 
 /*!\brief seqan3::simd::simd encapsulates simd vector types, which can be manipulated
@@ -87,6 +87,6 @@ template <typename scalar_t,
           typename simd_backend = detail::default_simd_backend<scalar_t, length>>
 using simd_t = typename simd<scalar_t, length, simd_backend>::type;
 
-} // inline namespace simd
+} // namespace simd
 
 } // namespace seqan3

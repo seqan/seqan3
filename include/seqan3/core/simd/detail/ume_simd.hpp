@@ -143,7 +143,7 @@ constexpr auto default_simd_max_length<ume_simd> = []()
 
 } // namespace seqan3::detail
 
-namespace seqan3
+namespace seqan3::simd
 {
 
 /*!\brief This class specializes seqan3::simd::simd_traits for seqan3::detail::ume_simd types
@@ -169,4 +169,4 @@ struct simd_traits<ume_simd_t>
     using swizzle_type = typename UME::SIMD::SIMDTraits<ume_simd_t>::SWIZZLE_T;
 };
 
-} // namespace seqan3
+} // namespace seqan3::simd

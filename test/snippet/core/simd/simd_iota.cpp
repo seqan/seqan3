@@ -1,6 +1,7 @@
 #include <seqan3/core/simd/all.hpp>
 
 using namespace seqan3;
+using namespace seqan3::simd;
 
 using uint8x16_t = simd_t<uint16_t, 8>;
 
