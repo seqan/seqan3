@@ -6,25 +6,25 @@ using namespace seqan3;
 
 #if defined(__SSE4_2__) || defined(__AVX2__) || defined(__AVX512F__)
 
-using simd_type = seqan3::simd<int16_t>::type;
+using simd_type = seqan3::simd::simd<int16_t>::type;
 
 TEST(simd, auto_length)
 {
     if constexpr(simd_traits<simd_type>::max_length == 64)
     {
-        using int16x32_t = seqan3::simd<int16_t, 32>::type; // avx512 512bit
+        using int16x32_t = seqan3::simd::simd<int16_t, 32>::type; // avx512 512bit
         EXPECT_TRUE((std::is_same_v<simd_type, int16x32_t>));
         EXPECT_EQ(simd_traits<simd_type>::length, 32);
     }
     else if constexpr(simd_traits<simd_type>::max_length == 32)
     {
-        using int16x16_t = seqan3::simd<int16_t, 16>::type; // avx2 256bit
+        using int16x16_t = seqan3::simd::simd<int16_t, 16>::type; // avx2 256bit
         EXPECT_TRUE((std::is_same_v<simd_type, int16x16_t>));
         EXPECT_EQ(simd_traits<simd_type>::length, 16);
     }
     else if constexpr(simd_traits<simd_type>::max_length == 16)
     {
-        using int16x8_t = seqan3::simd<int16_t, 8>::type; // sse4 128bit
+        using int16x8_t = seqan3::simd::simd<int16_t, 8>::type; // sse4 128bit
         EXPECT_TRUE((std::is_same_v<simd_type, int16x8_t>));
         EXPECT_EQ(simd_traits<simd_type>::length, 8);
     }

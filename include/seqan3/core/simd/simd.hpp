@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains seqan3::simd
+ * \brief Contains seqan3::simd::simd
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -45,7 +45,10 @@
 namespace seqan3
 {
 
-/*!\brief seqan3::simd encapsulates simd vector types, which can be manipulated
+inline namespace simd
+{
+
+/*!\brief seqan3::simd::simd encapsulates simd vector types, which can be manipulated
  * by simd operations.
  * \ingroup simd
  * \tparam scalar_t The underlying type of a simd vector
@@ -55,13 +58,13 @@ namespace seqan3
  *
  * \include test/snippet/core/simd/simd.cpp
  * \attention
- * seqan3::simd may not support *float* types depending on the selected backend,
+ * seqan3::simd::simd may not support *float* types depending on the selected backend,
  * but *seqan3::detail::ume_simd* does support *float* and *double*.
  *
  * All implementations support *[u]intX_t* types, e.g. *uint8_t*.
  *
  * \par Helper types
- *   seqan3::simd_t as a shorthand for seqan3::simd::type
+ *   seqan3::simd::simd_t as a shorthand for seqan3::simd::simd::type
  * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html Underlying technique of *seqan3::detail::builtin_simd types*.
@@ -77,11 +80,13 @@ struct simd : simd_backend
     using type = typename simd_backend::type;
 };
 
-//!\brief Helper type of seqan3::simd
+//!\brief Helper type of seqan3::simd::simd
 //!\ingroup simd
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
           typename simd_backend = detail::default_simd_backend<scalar_t, length>>
 using simd_t = typename simd<scalar_t, length, simd_backend>::type;
 
-}
+} // inline namespace simd
+
+} // namespace seqan3

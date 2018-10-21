@@ -45,7 +45,7 @@ namespace seqan3::detail
 {
 
 /*!\brief seqan3::default_simd_length returns the default *length* depending
- * on the given *scalar_t* type, which is used in seqan3::simd.
+ * on the given *scalar_t* type, which is used in seqan3::simd::simd.
  * \ingroup simd
  * \tparam scalar_t The underlying type of a simd vector
  * \tparam simd_backend_t The name of the simd backend.

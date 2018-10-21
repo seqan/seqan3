@@ -35,7 +35,7 @@
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Provides seqan3::detail::builtin_simd, seqan3::detail::is_builtin_simd
- * and seqan3::simd_traits<builtin_simd_t>.
+ * and seqan3::simd::simd_traits<builtin_simd_t>.
  */
 
 #pragma once
@@ -96,9 +96,9 @@ struct builtin_simd
 /*!\brief #SEQAN3_BUILTIN_SIMD_CLASS defines seqan3::detail::builtin_simd for
  * `[u]intX_t` types. Will be undefined immediately.
  * \ingroup simd
- * \param  scalar_t   same as seqan3::simd_traits<builtin_simd_t>::scalar_t
- * \param  length     same as seqan3::simd_traits<builtin_simd_t>::length
- * \param  max_length same as seqan3::simd_traits<builtin_simd_t>::max_length
+ * \param  scalar_t   same as seqan3::simd::simd_traits<builtin_simd_t>::scalar_t
+ * \param  length     same as seqan3::simd::simd_traits<builtin_simd_t>::length
+ * \param  max_length same as seqan3::simd::simd_traits<builtin_simd_t>::max_length
  * \param  simd_t     the type of the vector extension,
  * e.g. `scalar_t __attribute__ ((__vector_size__(max_length)))`
  */
@@ -129,8 +129,8 @@ template <typename builtin_simd_t>
 struct _is_builtin_simd<builtin_simd_t>
 {
 protected:
-    //!\brief seqan3::simd_traits<builtin_simd_t> should be able to access *scalar_type* and *length*.
-    friend class seqan3::simd_traits<builtin_simd_t>;
+    //!\brief seqan3::simd::simd_traits<builtin_simd_t> should be able to access *scalar_type* and *length*.
+    friend class seqan3::simd::simd_traits<builtin_simd_t>;
 
     //!\brief The scalar type of builtin_simd_t
     using scalar_type = std::remove_reference_t<decltype(std::declval<builtin_simd_t>()[0])>;
@@ -161,7 +161,7 @@ struct is_builtin_simd : std::bool_constant<_is_builtin_simd<builtin_simd_t>::va
  * \ingroup simd
  *
  * The redefinition of *default_simd_max_length* influences the default
- * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd for
+ * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd::simd for
  * seqan3::detail::builtin_simd types.
  *
  * \attention
@@ -191,10 +191,10 @@ constexpr auto default_simd_max_length<builtin_simd> = []()
 namespace seqan3
 {
 
-/*!\brief This class specializes seqan3::simd_traits for seqan3::detail::builtin_simd types
+/*!\brief This class specializes seqan3::simd::simd_traits for seqan3::detail::builtin_simd types
  * \tparam builtin_simd_t A simd type that satisfies seqan3::detail::is_builtin_simd_v<builtin_simd_t>.
  * \ingroup simd
- * \sa seqan3::simd_traits for more information
+ * \sa seqan3::simd::simd_traits for more information
  */
 template <typename builtin_simd_t>
 // \cond
@@ -202,17 +202,17 @@ template <typename builtin_simd_t>
 // \endcond
 struct simd_traits<builtin_simd_t>
 {
-    //!\copydoc seqan3::simd_traits::scalar_type
+    //!\copydoc seqan3::simd::simd_traits::scalar_type
     using scalar_type = typename detail::_is_builtin_simd<builtin_simd_t>::scalar_type;
-    //!\copydoc seqan3::simd_traits::length
+    //!\copydoc seqan3::simd::simd_traits::length
     static constexpr auto length = detail::_is_builtin_simd<builtin_simd_t>::length;
-    //!\copydoc seqan3::simd_traits::max_length
+    //!\copydoc seqan3::simd::simd_traits::max_length
     static constexpr auto max_length = length == 1u ? length : sizeof(scalar_type) * length;
 
     static_assert(std::is_integral_v<scalar_type>, "For now we assume that builtin simd can only be integers");
-    //!\copydoc seqan3::simd_traits::mask_type
+    //!\copydoc seqan3::simd::simd_traits::mask_type
     using mask_type = typename detail::builtin_simd<std::make_signed_t<scalar_type>, length>::type;
-    //!\copydoc seqan3::simd_traits::swizzle_type
+    //!\copydoc seqan3::simd::simd_traits::swizzle_type
     using swizzle_type = typename detail::builtin_simd<uint8_t, max_length>::type;
 };
 

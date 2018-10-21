@@ -45,7 +45,7 @@
  * \ingroup core
  *
  * There are different simd implementations (backends), which is being auto
- * selected by seqan3::simd_t.
+ * selected by seqan3::simd::simd_t.
  * \cond DEV
  * Namely seqan3::detail::builtin_simd and seqan3::detail::ume_simd.
  * \endcond
@@ -58,3 +58,9 @@
 #include <seqan3/core/simd/simd_debug_stream.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
+
+/*!\namespace seqan3::simd
+ * \brief The SeqAn3 namespace for simd data types, algorithms and meta functions.
+ * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
+ * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
+ */

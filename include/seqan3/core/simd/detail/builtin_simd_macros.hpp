@@ -49,13 +49,13 @@
  * types.
  * \ingroup simd
  * \param  class_definition the macro to call
- * \param  scalar_t   same as seqan3::simd_traits<builtin_simd_t>::scalar_t
- * \param  max_length same as seqan3::simd_traits<builtin_simd_t>::max_length
+ * \param  scalar_t   same as seqan3::simd::simd_traits<builtin_simd_t>::scalar_t
+ * \param  max_length same as seqan3::simd::simd_traits<builtin_simd_t>::max_length
  *
  * Calls *class_definition* with the following parameters:
- * \li *scalar_t*   same as seqan3::simd_traits<builtin_simd_t>::scalar_t
- * \li *length*     same as seqan3::simd_traits<builtin_simd_t>::length
- * \li *max_length* same as seqan3::simd_traits<builtin_simd_t>::max_length
+ * \li *scalar_t*   same as seqan3::simd::simd_traits<builtin_simd_t>::scalar_t
+ * \li *length*     same as seqan3::simd::simd_traits<builtin_simd_t>::length
+ * \li *max_length* same as seqan3::simd::simd_traits<builtin_simd_t>::max_length
  * \li *simd_t*     the type of the [vector extension]
  *                  (https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html),
  *                  e.g. `scalar_t __attribute__ ((__vector_size__(max_length)))`
@@ -71,7 +71,7 @@
  * `[u]intX_t` types for a given *max_length*
  * \ingroup simd
  * \param  class_definition the macro to call
- * \param  max_length same as seqan3::simd_traits<builtin_simd_t>::max_length
+ * \param  max_length same as seqan3::simd::simd_traits<builtin_simd_t>::max_length
  *
  * \par Called by
  * #SEQAN3_BUILTIN_SIMD_PARTIAL_TEMPLATE_SPECIALIZATION
@@ -93,9 +93,9 @@
  * \param  class_definition the macro to call
  *
  * Calls *class_definition* with the following parameters:
- * \li *scalar_t*   same as seqan3::simd_traits<builtin_simd_t>::scalar_t
- * \li *length*     same as seqan3::simd_traits<builtin_simd_t>::length
- * \li *max_*length same as seqan3::simd_traits<builtin_simd_t>::max_length
+ * \li *scalar_t*   same as seqan3::simd::simd_traits<builtin_simd_t>::scalar_t
+ * \li *length*     same as seqan3::simd::simd_traits<builtin_simd_t>::length
+ * \li *max_*length same as seqan3::simd::simd_traits<builtin_simd_t>::max_length
  * \li *simd_t*     the type of the [vector extension]
  * (https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html),
  * e.g. `scalar_t __attribute__ ((__vector_size__(max_length)))`

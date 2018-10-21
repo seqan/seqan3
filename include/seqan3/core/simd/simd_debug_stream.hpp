@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::debug_stream overload for seqan3::simd.
+ * \brief Provides seqan3::debug_stream overload for seqan3::simd::simd.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -54,7 +54,7 @@ inline debug_stream_type & operator<<(debug_stream_type & s, simd_t simd)
 {
     s << '(';
     s << simd[0];
-    for (size_t i = 1; i < simd_traits<simd_t>::length; ++i)
+    for (size_t i = 1; i < simd::simd_traits<simd_t>::length; ++i)
     {
         s << ',';
         s << simd[i];

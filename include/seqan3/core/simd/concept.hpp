@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains seqan3::simd_concept
+ * \brief Contains seqan3::simd::simd_concept
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -46,12 +46,17 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::simd_concept <>
+inline namespace simd
+{
+
+/*!\interface seqan3::simd::simd_concept <>
  * \brief The generic simd concept.
  * \ingroup simd
  *
- * seqan3::simd_concept checks whether a given type is simd type. One of the prerequisites is
- * that seqan3::simd_traits is defined for this type.
+ * \details
+ *
+ * seqan3::simd::simd_concept checks whether a given type is a simd type. One of the prerequisites is
+ * that seqan3::simd::simd_traits is defined for this type.
  */
 //!\cond
 template <typename simd_t>
@@ -88,5 +93,7 @@ concept simd_concept = requires (simd_t a, simd_t b)
     { a /= b } -> simd_t;
 };
 //!\endcond
+
+} // inline namespace simd
 
 } // namespace seqan3

@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Provides seqan3::detail::ume_simd, seqan3::detail::is_ume_simd and seqan3::simd_traits<ume_simd_t>
+ * \brief Provides seqan3::detail::ume_simd, seqan3::detail::is_ume_simd and seqan3::simd::simd_traits<ume_simd_t>
  */
 
 #pragma once
@@ -120,7 +120,7 @@ struct is_ume_simd : std::bool_constant<_is_ume_simd<ume_simd_t>>
  * \ingroup simd
  *
  * The redefinition of seqan3::detail::default_simd_max_length influences the default
- * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd for
+ * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd::simd for
  * seqan3::detail::ume_simd types.
  */
 template <>
@@ -146,10 +146,10 @@ constexpr auto default_simd_max_length<ume_simd> = []()
 namespace seqan3
 {
 
-/*!\brief This class specializes seqan3::simd_traits for seqan3::detail::ume_simd types
+/*!\brief This class specializes seqan3::simd::simd_traits for seqan3::detail::ume_simd types
  * \tparam ume_simd_t A simd type that satisfies seqan3::detail::is_ume_simd<ume_simd_t>.
  * \ingroup simd
- * \sa seqan3::simd_traits for more information
+ * \sa seqan3::simd::simd_traits for more information
  */
 template <typename ume_simd_t>
 // \cond
@@ -157,15 +157,15 @@ template <typename ume_simd_t>
 // \endcond
 struct simd_traits<ume_simd_t>
 {
-    //!\copydoc seqan3::simd_traits::scalar_type
+    //!\copydoc seqan3::simd::simd_traits::scalar_type
     using scalar_type = typename UME::SIMD::SIMDTraits<ume_simd_t>::SCALAR_T;
-    //!\copydoc seqan3::simd_traits::length
+    //!\copydoc seqan3::simd::simd_traits::length
     static constexpr auto length = detail::min_viable_uint_v<ume_simd_t::length()>;
-    //!\copydoc seqan3::simd_traits::max_length
+    //!\copydoc seqan3::simd::simd_traits::max_length
     static constexpr auto max_length = sizeof(scalar_type) * length;
-    //!\copydoc seqan3::simd_traits::mask_type
+    //!\copydoc seqan3::simd::simd_traits::mask_type
     using mask_type = typename UME::SIMD::SIMDTraits<ume_simd_t>::MASK_T;
-    //!\copydoc seqan3::simd_traits::swizzle_type
+    //!\copydoc seqan3::simd::simd_traits::swizzle_type
     using swizzle_type = typename UME::SIMD::SIMDTraits<ume_simd_t>::SWIZZLE_T;
 };
 
