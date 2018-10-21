@@ -50,6 +50,6 @@ TEST(debug_stream, simd)
     std::stringstream strstream;
     debug_stream_type stream{strstream};
 
-    stream << simd_fill<simd_type>(4);
+    stream << fill<simd_type>(4);
     EXPECT_EQ(strstream.str(), "(4,4,4,4,4,4,4,4)");
 }

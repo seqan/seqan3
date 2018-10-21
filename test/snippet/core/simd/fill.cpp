@@ -7,7 +7,7 @@ using uint8x16_t = simd_t<uint16_t, 8>;
 
 int main()
 {
-    uint8x16_t a = simd_iota<uint8x16_t>(1);
-    debug_stream << a << "\n"; // (1,2,3,4,5,6,7,8)
+    uint8x16_t a = fill<uint8x16_t>(4);
+    debug_stream << a << "\n"; // (4,4,4,4,4,4,4,4)
     return 0;
 }

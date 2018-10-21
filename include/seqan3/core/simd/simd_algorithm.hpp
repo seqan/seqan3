@@ -49,18 +49,18 @@ namespace seqan3::detail::simd
 
 using namespace seqan3::simd;
 
-//!\brief Helper function for seqan3::simd::simd_fill.
+//!\brief Helper function for seqan3::simd::fill.
 //!\ingroup simd
 template <simd_concept simd_t, size_t... I>
-constexpr simd_t simd_fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
+constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>)
 {
     return simd_t{((void)I, scalar)...};
 }
 
-//!\brief Helper function for seqan3::simd::simd_iota.
+//!\brief Helper function for seqan3::simd::iota.
 //!\ingroup simd
 template <simd_concept simd_t, typename scalar_t, scalar_t... I>
-constexpr simd_t simd_iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
+constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
 {
     return simd_t{(offset + I)...};
 }
@@ -80,13 +80,13 @@ namespace simd
  *
  * \details
  *
- * \include test/snippet/core/simd/simd_fill.cpp
+ * \include test/snippet/core/simd/fill.cpp
  */
 template <simd_concept simd_t>
-constexpr simd_t simd_fill(typename simd_traits<simd_t>::scalar_type const scalar)
+constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
-    return detail::simd::simd_fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
+    return detail::simd::fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
 }
 
 /*!\brief Fills a seqan3::simd::simd vector with the scalar values offset, offset+1, offset+2, ...
@@ -96,14 +96,14 @@ constexpr simd_t simd_fill(typename simd_traits<simd_t>::scalar_type const scala
  *
  * \details
  *
- * \include test/snippet/core/simd/simd_iota.cpp
+ * \include test/snippet/core/simd/iota.cpp
  */
 template <simd_concept simd_t>
-constexpr simd_t simd_iota(typename simd_traits<simd_t>::scalar_type const offset)
+constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
     using scalar_type = typename simd_traits<simd_t>::scalar_type;
-    return detail::simd::simd_iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
+    return detail::simd::iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
 }
 
 } // namespace simd
