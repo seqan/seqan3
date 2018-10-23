@@ -43,11 +43,13 @@
 
 #include <seqan3/core/metafunction/iterator.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
 #include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3::detail
@@ -85,8 +87,8 @@ public:
     using const_reference   = std::conditional_t<const_iterable_concept<urng_t>, reference, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
-    //!\brief The size_type is `size_t` if the the view is exact, otherwise void.
-    using size_type         = typename detail::size_type_t_or_void<urng_t>::type;
+    //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
+    using size_type         = detail::transformation_trait_or_t<seqan3::size_type<urng_t>, void>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = difference_type_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
@@ -193,7 +195,7 @@ public:
     //!\endcond
     {
         container_t ret;
-        ranges::copy(begin(), end(), ranges::back_inserter(ret));
+        ranges::copy(begin(), end(), std::back_inserter(ret));
         return ret;
     }
 
@@ -201,12 +203,11 @@ public:
     template <sequence_container_concept container_t>
     operator container_t() const
     //!\cond
-        requires std::CommonReference<reference_t<container_t>, reference> &&
-                 const_iterable_concept<urng_t>
+        requires std::CommonReference<reference_t<container_t>, reference> && const_iterable_concept<urng_t>
     //!\endcond
     {
         container_t ret;
-        ranges::copy(begin(), end(), ranges::back_inserter(ret));
+        ranges::copy(begin(), end(), std::back_inserter(ret));
         return ret;
     }
 };

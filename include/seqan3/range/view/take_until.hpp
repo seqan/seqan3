@@ -44,12 +44,15 @@
 
 #include <seqan3/core/metafunction/iterator.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
-#include <seqan3/std/concepts>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
+#include <seqan3/std/type_traits>
 #include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3::detail
@@ -96,16 +99,18 @@ private:
     using sentinel_type = sentinel_t<urng_t>;
 
     //!\brief The iterator type inherits from the underlying type, but overwrites several operators.
-    class iterator_type : public inherited_iterator_base<iterator_type, iterator_t<urng_t>>
+    //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
+    template <typename rng_t>
+    class iterator_type : public inherited_iterator_base<iterator_type<rng_t>, iterator_t<rng_t>>
     {
     private:
         //!\brief The iterator type of the underlying range.
-        using base_base_t = iterator_t<urng_t>;
+        using base_base_t = iterator_t<rng_t>;
         //!\brief The CRTP wrapper type.
-        using base_t      = inherited_iterator_base<iterator_type, iterator_t<urng_t>>;
+        using base_t      = inherited_iterator_base<iterator_type, iterator_t<rng_t>>;
 
         //!\brief Auxiliary type.
-        using fun_ref_t = std::conditional_t<const_iterable,
+        using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
                                              std::remove_reference_t<fun_t> const &,
                                              std::remove_reference_t<fun_t> &>;
         //!\brief Reference to the functor stored in the view.
@@ -194,7 +199,7 @@ public:
     //!\brief The reference_type.
     using reference         = reference_t<urng_t>;
     //!\brief The const_reference type is equal to the reference type if the underlying range is const-iterable.
-    using const_reference   = std::conditional_t<const_iterable, reference, void>;
+    using const_reference   = detail::transformation_trait_or_t<seqan3::reference<urng_t const>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
     //!\brief The size_type is void, because this range is never sized.
@@ -202,9 +207,9 @@ public:
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = difference_type_t<urng_t>;
     //!\brief The iterator type of this view (a random access iterator).
-    using iterator          = iterator_type;
+    using iterator          = iterator_type<urng_t>;
     //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.
-    using const_iterator    = std::conditional_t<const_iterable, iterator, void>;
+    using const_iterator    = detail::transformation_trait_or_t<std::type_identity<iterator_type<urng_t const>>, void>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -295,18 +300,30 @@ public:
     //!\}
 
     /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must model seqan3::container_concept and it's
+     * \tparam container_t Type of the container to convert to; must model seqan3::sequence_container_concept and it's
      *                     seqan3::reference_t must model std::CommonReference with `reference`.
      * \returns This view converted to container_t.
      */
-    template <container_concept container_t>
+    template <sequence_container_concept container_t>
     operator container_t()
     //!\cond
         requires std::CommonReference<reference_t<container_t>, reference>
     //!\endcond
     {
         container_t ret;
-        ranges::copy(begin(), end(), ranges::back_inserter(ret));
+        ranges::copy(begin(), end(), std::back_inserter(ret));
+        return ret;
+    }
+
+    //!\overload
+    template <sequence_container_concept container_t>
+    operator container_t() const
+    //!\cond
+        requires std::CommonReference<reference_t<container_t>, reference> && const_iterable_concept<urng_t>
+    //!\endcond
+    {
+        container_t ret;
+        ranges::copy(cbegin(), cend(), std::back_inserter(ret));
         return ret;
     }
 };
