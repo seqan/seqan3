@@ -120,7 +120,7 @@ struct is_ume_simd : std::bool_constant<_is_ume_simd<ume_simd_t>>
  * \ingroup simd
  *
  * The redefinition of seqan3::detail::default_simd_max_length influences the default
- * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd::simd for
+ * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd::simd_type for
  * seqan3::detail::ume_simd types.
  */
 template <>

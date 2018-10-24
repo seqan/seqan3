@@ -161,7 +161,7 @@ struct is_builtin_simd : std::bool_constant<_is_builtin_simd<builtin_simd_t>::va
  * \ingroup simd
  *
  * The redefinition of *default_simd_max_length* influences the default
- * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd::simd for
+ * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd::simd_type for
  * seqan3::detail::builtin_simd types.
  *
  * \attention

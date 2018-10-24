@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains test utilities for seqan3::simd::simd types.
+ * \brief Contains test utilities for seqan3::simd::simd_type types.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -43,11 +43,11 @@
 
 //!\cond DEV
 /*!\brief #SIMD_EQ checks if the sizes and the content of two given
- * seqan3::simd::simd variables matches. It is like  #EXPECT_EQ, but for seqan3::simd::simd
+ * seqan3::simd::simd_type variables matches. It is like  #EXPECT_EQ, but for seqan3::simd::simd_type
  * types.
  * \ingroup simd
- * \param  left  of type seqan3::simd::simd
- * \param  right of type seqan3::simd::simd
+ * \param  left  of type seqan3::simd::simd_type
+ * \param  right of type seqan3::simd::simd_type
  *
  * \attention
  * This macro can handle multiple "," which is normally a limitation of macros.

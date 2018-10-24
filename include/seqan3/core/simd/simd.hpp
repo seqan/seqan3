@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains seqan3::simd::simd
+ * \brief Contains seqan3::simd::simd_type
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -45,10 +45,10 @@
 namespace seqan3
 {
 
-namespace simd
+inline namespace simd
 {
 
-/*!\brief seqan3::simd::simd encapsulates simd vector types, which can be manipulated
+/*!\brief seqan3::simd::simd_type encapsulates simd vector types, which can be manipulated
  * by simd operations.
  * \ingroup simd
  * \tparam scalar_t The underlying type of a simd vector
@@ -58,13 +58,13 @@ namespace simd
  *
  * \include test/snippet/core/simd/simd.cpp
  * \attention
- * seqan3::simd::simd may not support *float* types depending on the selected backend,
+ * seqan3::simd::simd_type may not support *float* types depending on the selected backend,
  * but *seqan3::detail::ume_simd* does support *float* and *double*.
  *
  * All implementations support *[u]intX_t* types, e.g. *uint8_t*.
  *
  * \par Helper types
- *   seqan3::simd::simd_t as a shorthand for seqan3::simd::simd::type
+ *   seqan3::simd::simd_t as a shorthand for seqan3::simd::simd_type::type
  * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html Underlying technique of *seqan3::detail::builtin_simd types*.
@@ -74,19 +74,19 @@ namespace simd
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
           typename simd_backend = detail::default_simd_backend<scalar_t, length>>
-struct simd : simd_backend
+struct simd_type : simd_backend
 {
     //!\brief The actual simd type.
     using type = typename simd_backend::type;
 };
 
-//!\brief Helper type of seqan3::simd::simd
+//!\brief Helper type of seqan3::simd::simd_type
 //!\ingroup simd
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
           typename simd_backend = detail::default_simd_backend<scalar_t, length>>
-using simd_t = typename simd<scalar_t, length, simd_backend>::type;
+using simd_t = typename simd_type<scalar_t, length, simd_backend>::type;
 
-} // namespace simd
+} // inline namespace simd
 
 } // namespace seqan3

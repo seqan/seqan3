@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Contains algorithms to modify seqan3::simd::simd.
+ * \brief Contains algorithms to modify seqan3::simd::simd_type.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -70,12 +70,12 @@ constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t
 namespace seqan3
 {
 
-namespace simd
+inline namespace simd
 {
 
-/*!\brief Fills a seqan3::simd::simd vector with a scalar value.
+/*!\brief Fills a seqan3::simd::simd_type vector with a scalar value.
  * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
- * \param[in] scalar The scalar value to fill the seqan3::simd::simd vector.
+ * \param[in] scalar The scalar value to fill the seqan3::simd::simd_type vector.
  * \ingroup simd
  *
  * \details
@@ -89,9 +89,9 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
     return detail::simd::fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
 }
 
-/*!\brief Fills a seqan3::simd::simd vector with the scalar values offset, offset+1, offset+2, ...
+/*!\brief Fills a seqan3::simd::simd_type vector with the scalar values offset, offset+1, offset+2, ...
  * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
- * \param[in] offset The scalar offset to fill the seqan3::simd::simd vector.
+ * \param[in] offset The scalar offset to fill the seqan3::simd::simd_type vector.
  * \ingroup simd
  *
  * \details
@@ -106,6 +106,6 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
     return detail::simd::iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
 }
 
-} // namespace simd
+} // inline namespace simd
 
 } // namespace seqan3

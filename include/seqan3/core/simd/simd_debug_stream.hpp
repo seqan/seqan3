@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::debug_stream overload for seqan3::simd::simd.
+ * \brief Provides seqan3::debug_stream overload for seqan3::simd::simd_type.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
