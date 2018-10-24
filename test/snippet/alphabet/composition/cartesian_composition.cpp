@@ -3,6 +3,7 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 using namespace seqan3;
 
@@ -24,7 +25,7 @@ qualified<dna4, phred42> letter1{dna4::C};
 qualified<dna4, phred42> letter2{rna4::C};
 
 if (letter1 == letter2)
-    std::cout << "yeah\n"; // yeah
+    debug_stream << "yeah\n"; // yeah
 //! [subtype_construction]
 }
 

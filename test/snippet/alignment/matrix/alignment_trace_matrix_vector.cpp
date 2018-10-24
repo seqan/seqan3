@@ -3,6 +3,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alignment/matrix/alignment_matrix_formatter.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
 int main()
@@ -35,11 +36,11 @@ alignment_trace_matrix trace_matrix
     9u
 };
 
-std::cout << "database:\t" << (database | view::to_char) << std::endl;
-std::cout << "query:\t\t" << (query | view::to_char) << std::endl;
-std::cout << std::endl;
+debug_stream << "database:\t" << (database | view::to_char) << std::endl;
+debug_stream << "query:\t\t" << (query | view::to_char) << std::endl;
+debug_stream << std::endl;
 
-std::cout << "trace_matrix: " << trace_matrix.cols() << " columns and "
+debug_stream << "trace_matrix: " << trace_matrix.cols() << " columns and "
           << trace_matrix.rows() << " rows" << std::endl;
 
 // Print out the matrix.
@@ -49,18 +50,18 @@ for(unsigned row = 0u; row < trace_matrix.rows(); ++row)
     {
         trace_directions dir = trace_matrix.at(row, col);
         if (dir == N)
-            std::cout << "N";
+            debug_stream << "N";
         if ((dir & D) == D)
-            std::cout << "D";
+            debug_stream << "D";
         if ((dir & U) == U)
-            std::cout << "U";
+            debug_stream << "U";
         if ((dir & L) == L)
-            std::cout << "L";
-        std::cout << ", ";
+            debug_stream << "L";
+        debug_stream << ", ";
     }
-    std::cout << std::endl;
+    debug_stream << std::endl;
 }
-std::cout << std::endl;
+debug_stream << std::endl;
 
 // Prints out the matrix in a convenient way
 alignment_matrix_formatter{trace_matrix}.format(database, query);

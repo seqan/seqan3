@@ -12,14 +12,14 @@ int main()
 // This does not work:
 // std::cout << dna5::C;
 // because the alphabet needs to be converted to char explicitly:
-std::cout << to_char(dna5::C);  // prints 'C'
+debug_stream << to_char(dna5::C);  // prints 'C'
 
 // The debug_stream, on the other hand, does this automatically:
 debug_stream << dna5::C;        // prints 'C'
 
-// Vectors are also not printable to std::cout:
+// Vectors are also not printable to debug_stream:
 std::vector<dna5> vec{"ACGT"_dna5};
-//std::cout << vec;
+//debug_stream << vec;
 // but all types that model std::ranges::InputRange are printable to the debug_stream:
 debug_stream << vec;            // prints "ACGT"
 
@@ -46,7 +46,7 @@ debug_stream << fmtflags2::small_int_as_number << '\'' << i << "'\n";   // print
     debug_stream << "ACGT"_dna5;
 
     o.flush();
-    std::cout << o.str(); // prints the string stream's buffer: "ACGT"
+    debug_stream << o.str(); // prints the string stream's buffer: "ACGT"
 }
 
 // this is UNDEFINED BEHAVIOUR, because the underlying stream went out-of-scope:
@@ -61,7 +61,7 @@ debug_stream << fmtflags2::small_int_as_number << '\'' << i << "'\n";   // print
     my_stream << "ACGT"_dna5;
 
     o.flush();
-    std::cout << o.str(); // prints the string stream's buffer: "ACGT"
+    debug_stream << o.str(); // prints the string stream's buffer: "ACGT"
 }
 // now your custom debug stream went out of scope with its underlying stream
 //! [set_underlying_stream2]

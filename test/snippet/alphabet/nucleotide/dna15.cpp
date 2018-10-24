@@ -1,4 +1,5 @@
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 using namespace seqan3;
 
@@ -15,7 +16,7 @@ my_letter.assign_char('C'); // <- this does!
 
 my_letter.assign_char('F'); // unknown characters are implicitly converted to N.
 if (my_letter.to_char() == 'N')
-    std::cout << "yeah\n"; // "yeah";
+    debug_stream << "yeah\n"; // "yeah";
 //! [code]
 }
 

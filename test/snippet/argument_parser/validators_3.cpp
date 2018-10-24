@@ -1,5 +1,6 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 int main(int argc, const char ** argv)
 {
@@ -27,7 +28,7 @@ int main(int argc, const char ** argv)
         return 0;
     }
 
-    std::cout << "filename given by user passed validation: " << myfile << "\n";
+    seqan3::debug_stream << "filename given by user passed validation: " << myfile << "\n";
     return 0;
 }
 //! [usage]

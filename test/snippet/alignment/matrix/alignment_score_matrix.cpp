@@ -3,6 +3,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alignment/matrix/alignment_matrix_formatter.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
 int main()
@@ -30,21 +31,21 @@ alignment_score_matrix score_matrix
     9u
 };
 
-std::cout << "database:\t" << (database | view::to_char) << std::endl;
-std::cout << "query:\t\t" << (query | view::to_char) << std::endl;
-std::cout << std::endl;
+debug_stream << "database:\t" << (database | view::to_char) << std::endl;
+debug_stream << "query:\t\t" << (query | view::to_char) << std::endl;
+debug_stream << std::endl;
 
-std::cout << "score_matrix: " << score_matrix.cols() << " columns and "
+debug_stream << "score_matrix: " << score_matrix.cols() << " columns and "
           << score_matrix.rows() << " rows" << std::endl;
 
 // Print out the matrix.
 for(unsigned row = 0u; row < score_matrix.rows(); ++row)
 {
     for(unsigned col = 0u; col < score_matrix.cols(); ++col)
-        std::cout << score_matrix.at(row, col) << ", ";
-    std::cout << std::endl;
+        debug_stream << score_matrix.at(row, col) << ", ";
+    debug_stream << std::endl;
 }
-std::cout << std::endl;
+debug_stream << std::endl;
 
 // Prints out the matrix in a convenient way
 alignment_matrix_formatter{score_matrix}.format(database, query);

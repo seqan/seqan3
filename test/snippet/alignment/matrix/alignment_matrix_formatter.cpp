@@ -1,6 +1,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alignment/matrix/alignment_matrix_formatter.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 int main()
 {
@@ -30,7 +31,7 @@ int main()
 
     alignment_trace_matrix trace_matrix{database, query, no_config{}, score_matrix};
 
-    std::cout << "//! [alignment_matrix_format::out]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::out]" << std::endl;
 //! [alignment_matrix_format]
 using namespace seqan3;
 
@@ -45,47 +46,47 @@ alignment_matrix_format format
 
 alignment_matrix_formatter{trace_matrix, format}.format(database, query);
 //! [alignment_matrix_format]
-    std::cout << "//! [alignment_matrix_format::out]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::out]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::ascii#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::ascii#score]" << std::endl;
     alignment_matrix_formatter{score_matrix, alignment_matrix_format::ascii}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::ascii#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::ascii#score]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::ascii#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::ascii#trace]" << std::endl;
     alignment_matrix_formatter{trace_matrix, alignment_matrix_format::ascii}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::ascii#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::ascii#trace]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::csv#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::csv#score]" << std::endl;
     alignment_matrix_formatter{score_matrix, alignment_matrix_format::csv}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::csv#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::csv#score]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::csv#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::csv#trace]" << std::endl;
     alignment_matrix_formatter{trace_matrix, alignment_matrix_format::csv}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::csv#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::csv#trace]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::unicode_block#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_block#score]" << std::endl;
     alignment_matrix_formatter{score_matrix, alignment_matrix_format::unicode_block}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::unicode_block#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_block#score]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::unicode_block#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_block#trace]" << std::endl;
     alignment_matrix_formatter{trace_matrix, alignment_matrix_format::unicode_block}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::unicode_block#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_block#trace]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::unicode_braille#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_braille#score]" << std::endl;
     alignment_matrix_formatter{score_matrix, alignment_matrix_format::unicode_braille}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::unicode_braille#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_braille#score]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::unicode_braille#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_braille#trace]" << std::endl;
     alignment_matrix_formatter{trace_matrix, alignment_matrix_format::unicode_braille}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::unicode_braille#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_braille#trace]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::unicode_arrows#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_arrows#score]" << std::endl;
     alignment_matrix_formatter{score_matrix, alignment_matrix_format::unicode_arrows}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::unicode_arrows#score]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_arrows#score]" << std::endl;
 
-    std::cout << "//! [alignment_matrix_format::unicode_arrows#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_arrows#trace]" << std::endl;
     alignment_matrix_formatter{trace_matrix, alignment_matrix_format::unicode_arrows}.format(database, query);
-    std::cout << "//! [alignment_matrix_format::unicode_arrows#trace]" << std::endl;
+    debug_stream << "//! [alignment_matrix_format::unicode_arrows#trace]" << std::endl;
 
     return 0;
 }

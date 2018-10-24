@@ -1,4 +1,5 @@
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 using namespace seqan3;
 
@@ -16,7 +17,7 @@ my_letter.assign_char('C'); // <- this does!
 my_letter.assign_char('?'); // all unknown characters are converted to aa20::A implicitly
 
 if (my_letter.to_char() == 'A')
-    std::cout << "yeah\n"; // "yeah";
+    debug_stream << "yeah\n"; // "yeah";
 //! [construction]
 }
 

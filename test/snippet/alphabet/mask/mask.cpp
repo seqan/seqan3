@@ -1,5 +1,6 @@
 #include <iostream>
 #include <seqan3/alphabet/mask/mask.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 using namespace seqan3;
 
@@ -13,6 +14,6 @@ my_mask.assign_rank(false);  // will assign my_mask the value mask::UNMASKED
 another_mask.assign_rank(0); // will also assign another_mask the value mask::UNMASKED
 
 if (my_mask.to_rank() == another_mask.to_rank())
-    std::cout << "Both are UNMASKED!\n";
+    debug_stream << "Both are UNMASKED!\n";
 //! [general]
 }

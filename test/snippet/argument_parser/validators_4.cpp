@@ -1,5 +1,6 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 int main(int argc, const char ** argv)
 {
@@ -27,7 +28,7 @@ int main(int argc, const char ** argv)
         return 0;
     }
 
-    std::cout << "email address given by user passed validation: " << my_string << "\n";
+    seqan3::debug_stream << "email address given by user passed validation: " << my_string << "\n";
     return 0;
 }
 //! [usage]

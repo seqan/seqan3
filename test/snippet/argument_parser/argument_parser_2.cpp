@@ -1,5 +1,6 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 int main(int argc, char ** argv)
 {
@@ -20,11 +21,11 @@ int main(int argc, char ** argv)
     }
     catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
     {
-        std::cout << std::endl << "Thanks for using The-Age-App!" << std::endl; // customize
+        seqan3::debug_stream << std::endl << "Thanks for using The-Age-App!" << std::endl; // customize
         return 0;
     }
 
-    std::cout << "integer given by user: " << age << std::endl;
+    seqan3::debug_stream << "integer given by user: " << age << std::endl;
     return 0;
 }
 //! [usage]
