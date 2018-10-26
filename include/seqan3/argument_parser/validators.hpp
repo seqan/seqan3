@@ -149,7 +149,7 @@ public:
     void operator()(value_type const & cmp) const
     {
         if (!((cmp <= max) && (cmp >= min)))
-            throw argument_parser_exception(detail::to_string("Validation Failed - Value ", cmp,
+            throw validation_failed(detail::to_string("Validation Failed - Value ", cmp,
                                                             " is not in range [", min, ",", max, "]."));
     }
 
@@ -196,7 +196,7 @@ public:
         std::for_each(cmp.begin(), cmp.end(), [&] (auto cmp_v)
             {
                 if (!((cmp_v <= max) && (cmp_v >= min)))
-                    throw invalid_argument(detail::to_string("Validation Failed - Value ", cmp_v,
+                    throw validation_failed(detail::to_string("Validation Failed - Value ", cmp_v,
                                                                     " is not in range [", min, ",", max, "]."));
             });
     }
@@ -223,7 +223,7 @@ private:
  * \details
  *
  * On construction, the validator must receive a list (vector) of valid values.
- * The struct than acts as a functor, that throws a seqan3::argument_invalid_argument
+ * The struct than acts as a functor, that throws a seqan3::invalid_argument
  * exception whenever a given value is not in the given list.
  *
  * \snippet test/snippet/argument_parser/validators_2.cpp usage
@@ -251,7 +251,7 @@ public:
 
     /*!\brief Tests whether cmp lies inside values.
      * \param cmp The input value to check.
-     * \throws argument_invalid_argument
+     * \throws invalid_argument
      */
     void operator()(option_value_type const & cmp) const
     {
