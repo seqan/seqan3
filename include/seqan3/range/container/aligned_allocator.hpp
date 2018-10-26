@@ -39,9 +39,9 @@
 
 #pragma once
 
+#include <limits>
 #include <memory>
 #include <type_traits>
-#include <limits>
 
 namespace seqan3
 {
@@ -49,11 +49,11 @@ namespace seqan3
 /*!\brief Allocates uninitialized storage whose memory-alignment is specified by *alignment*.
  * \tparam value_t     \copydoc aligned_allocator::value_type
  * \tparam alignment_v \copydoc aligned_allocator::alignment
- * \ingroup memory
+ * \ingroup container
  *
  * \details
  *
- * \include test/snippet/memory/aligned_allocator.cpp
+ * \include test/snippet/range/container/aligned_allocator.cpp
  *
  * Will output something like:
  * ```console

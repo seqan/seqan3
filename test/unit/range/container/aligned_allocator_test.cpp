@@ -34,7 +34,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/memory/aligned_allocator.hpp>
+#include <seqan3/range/container/aligned_allocator.hpp>
 
 #include <deque>
 #include <list>
