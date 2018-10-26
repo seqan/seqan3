@@ -51,8 +51,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief seqan3::detail::builtin_simd is the class that holds the type of a
- * simd implementation called [vector extension]
+/*!\brief A class that holds the type of a simd implementation called [vector extension]
  * (https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html)
  * (formerly known as "seqan simd" in seqan2).
  * \ingroup simd
@@ -93,8 +92,8 @@ struct builtin_simd
 #endif
 ;
 
-/*!\brief #SEQAN3_BUILTIN_SIMD_CLASS defines seqan3::detail::builtin_simd for
- * `[u]intX_t` types. Will be undefined immediately.
+/*!\brief A macro that defines seqan3::detail::builtin_simd for
+ * `[u]intX_t` types. Will be undefined immediately and thus not exposed outside this file.
  * \ingroup simd
  * \param  scalar_t   same as seqan3::simd::simd_traits<builtin_simd_t>::scalar_t
  * \param  length     same as seqan3::simd::simd_traits<builtin_simd_t>::length
@@ -143,7 +142,7 @@ public:
     static constexpr bool value = std::is_same_v<builtin_simd_t, transformation_trait_or_t<builtin_simd<scalar_type, length>, void>>;
 };
 
-/*!\brief seqan3::detail::is_builtin_simd is std::true_type, **iff**
+/*!\brief This class inherits from std::true_type, **iff**
  * seqan3::detail::builtin_simd<scalar_t, length>::type is a builtin simd type.
  * \ingroup simd
  * \tparam scalar_type The underlying type of a simd vector
