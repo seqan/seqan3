@@ -87,23 +87,11 @@ inline auto search(index_t const & index, queries_t && queries, config_t const &
     }
     else
     {
-        // TODO: overload pipe operator for empty config object
-        if constexpr (std::Same<remove_cvref_t<decltype(cfg)>, detail::configuration<>>)
-        {
-            detail::configuration const cfg2 = search_cfg::mode(search_cfg::all);
-            if constexpr (contains<search_cfg::id::output>(cfg))
-                return detail::search_all(index, queries, cfg2);
-            else
-                return detail::search_all(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
-        }
+        detail::configuration const cfg2 = cfg | search_cfg::mode(search_cfg::all);
+        if constexpr (contains<search_cfg::id::output>(cfg))
+            return detail::search_all(index, queries, cfg2);
         else
-        {
-            detail::configuration const cfg2 = cfg | search_cfg::mode(search_cfg::all);
-            if constexpr (contains<search_cfg::id::output>(cfg))
-                return detail::search_all(index, queries, cfg2);
-            else
-                return detail::search_all(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
-        }
+            return detail::search_all(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
     }
 }
 

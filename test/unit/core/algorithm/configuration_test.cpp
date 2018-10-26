@@ -347,7 +347,15 @@ TEST(configuration_fn, pipable_proxy_proxy)
 
 TEST(configuration_fn, pipeable_w_empty_config)
 {
-    detail::configuration cfg;
-    auto cfg2 = cfg | bar_fn_impl{}(2);
-    EXPECT_EQ(std::get<0>(cfg2).value, 2);
+    {
+        detail::configuration cfg;
+        auto cfg2 = cfg | bar_fn_impl{}(2);
+        EXPECT_EQ(std::get<0>(cfg2).value, 2);
+    }
+
+    {
+        detail::configuration const cfg;
+        auto cfg2 = cfg | bar_fn_impl{}(2);
+        EXPECT_EQ(std::get<0>(cfg2).value, 2);
+    }
 }
