@@ -44,8 +44,7 @@
  * \see https://en.wikipedia.org/wiki/SIMD
  * \ingroup core
  *
- * There are different simd implementations (backends), which is being auto
- * selected by seqan3::simd::simd_t.
+ * There are different simd implementations (backends), which are auto-selected by seqan3::simd::simd_t.
  * \cond DEV
  * Namely seqan3::detail::builtin_simd.
  * \endcond
