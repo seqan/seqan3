@@ -33,6 +33,7 @@
 // ============================================================================
 
 #include <gtest/gtest.h>
+#include <fstream>
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
@@ -65,13 +66,12 @@ TEST(validator_test, no_file)
 
 TEST(validator_test, file_exists)
 {
-    test::tmp_filename("./sandbox2.fasta");
-    filesystem::path p{"./"};
-    std::string s{"./"};
+    test::tmp_filename tmp_file_name{""};
+    std::ofstream tmp_file(tmp_file_name.get_path());
     file_existance_validator my_validator{};
-    for (auto & file : filesystem::directory_iterator(p))
+    for (auto & file : filesystem::directory_iterator(tmp_file_name.get_path()))
         EXPECT_NO_THROW(my_validator(file));
-    for (auto & file : filesystem::directory_iterator(s))
+    for (auto & file : filesystem::directory_iterator(tmp_file_name.get_path()))
           EXPECT_NO_THROW(my_validator(file));
 }
 
