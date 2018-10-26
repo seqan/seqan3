@@ -71,8 +71,6 @@ TEST(validator_test, file_exists)
     file_existance_validator my_validator{};
     for (auto & file : filesystem::directory_iterator(tmp_file_name.get_path()))
         EXPECT_NO_THROW(my_validator(file));
-    for (auto & file : filesystem::directory_iterator(tmp_file_name.get_path()))
-          EXPECT_NO_THROW(my_validator(file));
 }
 
 TEST(validator_test, integral_range_validator_success)
