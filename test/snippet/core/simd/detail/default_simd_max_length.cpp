@@ -6,7 +6,7 @@ using namespace seqan3::simd;
 int main()
 {
     constexpr auto max_length = detail::default_simd_max_length<detail::default_simd_backend>;
-    using uint8_simd_t = simd_t<uint8_t, max_length>;
+    using uint8_simd_t = simd_type_t<uint8_t, max_length>;
 
     uint8_simd_t a = fill<uint8_simd_t>(4);
     uint8_simd_t b = fill<uint8_simd_t>(5);

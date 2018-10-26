@@ -63,7 +63,7 @@ inline namespace simd
  * All implementations support *[u]intX_t* types, e.g. *uint8_t*.
  *
  * \par Helper types
- *   seqan3::simd::simd_t as a shorthand for seqan3::simd::simd_type::type
+ *   seqan3::simd::simd_type_t as a shorthand for seqan3::simd::simd_type::type
  * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html Underlying technique of *seqan3::detail::builtin_simd types*.
@@ -84,7 +84,7 @@ struct simd_type : simd_backend
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
           typename simd_backend = detail::default_simd_backend<scalar_t, length>>
-using simd_t = typename simd_type<scalar_t, length, simd_backend>::type;
+using simd_type_t = typename simd_type<scalar_t, length, simd_backend>::type;
 
 } // inline namespace simd
 

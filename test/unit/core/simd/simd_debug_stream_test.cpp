@@ -45,7 +45,7 @@ using namespace seqan3::simd;
 
 TEST(debug_stream, simd)
 {
-    using simd_type = simd_t<int16_t, 8>;
+    using simd_type = simd_type_t<int16_t, 8>;
 
     std::stringstream strstream;
     debug_stream_type stream{strstream};

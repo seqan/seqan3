@@ -3,7 +3,7 @@
 using namespace seqan3;
 using namespace seqan3::simd;
 
-using uint8x16_t = simd_t<uint16_t, 8>;
+using uint8x16_t = simd_type_t<uint16_t, 8>;
 
 int main()
 {

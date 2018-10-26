@@ -44,7 +44,7 @@ using namespace seqan3::simd;
 
 TEST(simd_algorithm, fill)
 {
-    using simd_type = simd_t<int16_t, 8>;
+    using simd_type = simd_type_t<int16_t, 8>;
 
     simd_type expect{};
     for (size_t i = 0; i < simd_traits<simd_type>::length; ++i)
@@ -56,7 +56,7 @@ TEST(simd_algorithm, fill)
 
 TEST(simd_algorithm, iota)
 {
-    using simd_type = simd_t<int16_t, 8>;
+    using simd_type = simd_type_t<int16_t, 8>;
 
     simd_type expect{};
     for (size_t i = 0; i < simd_traits<simd_type>::length; ++i)
