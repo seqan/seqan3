@@ -47,7 +47,7 @@
  * There are different simd implementations (backends), which is being auto
  * selected by seqan3::simd::simd_t.
  * \cond DEV
- * Namely seqan3::detail::builtin_simd and seqan3::detail::ume_simd.
+ * Namely seqan3::detail::builtin_simd.
  * \endcond
  *
  * \todo more details.

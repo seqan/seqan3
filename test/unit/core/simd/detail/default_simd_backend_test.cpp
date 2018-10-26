@@ -37,7 +37,6 @@
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
 #include <seqan3/core/simd/detail/default_simd_backend.hpp>
-#include <seqan3/core/simd/detail/ume_simd.hpp>
 
 #include <iostream>
 #include <type_traits>
@@ -47,9 +46,5 @@ using namespace seqan3::detail;
 
 TEST(default_simd_backend, test)
 {
-#ifndef SEQAN3_UME_SIMD
     EXPECT_TRUE((std::is_same_v<default_simd_backend<int16_t, 8>, builtin_simd<int16_t, 8>>));
-#else
-    EXPECT_TRUE((std::is_same_v<default_simd_backend<int16_t, 8>, ume_simd<int16_t, 8>>));
-#endif
 }

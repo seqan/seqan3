@@ -54,12 +54,11 @@ inline namespace simd
  * \tparam scalar_t The underlying type of a simd vector
  * \tparam length The number of packed values in a simd vector
  * \tparam simd_backend The simd backend to use, e.g.
- * seqan3::detail::builtin_simd or seqan3::detail::ume_simd
+ * seqan3::detail::builtin_simd
  *
  * \include test/snippet/core/simd/simd.cpp
  * \attention
- * seqan3::simd::simd_type may not support *float* types depending on the selected backend,
- * but *seqan3::detail::ume_simd* does support *float* and *double*.
+ * seqan3::simd::simd_type may not support *float* types depending on the selected backend.
  *
  * All implementations support *[u]intX_t* types, e.g. *uint8_t*.
  *

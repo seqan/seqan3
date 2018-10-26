@@ -40,7 +40,6 @@
 #pragma once
 
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
-#include <seqan3/core/simd/detail/ume_simd.hpp>
 
 namespace seqan3::detail
 {
@@ -52,10 +51,5 @@ namespace seqan3::detail
  * \tparam length The number of packed values in a simd vector
  */
 template <typename scalar_t, size_t length>
-using default_simd_backend
-#ifndef SEQAN3_UME_SIMD
-    = builtin_simd<scalar_t, length>;
-#else
-    = ume_simd<scalar_t, length>;
-#endif
+using default_simd_backend = builtin_simd<scalar_t, length>;
 } // namespace seqan3::detail
