@@ -44,9 +44,9 @@
 
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
-#include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/detail/builtin_simd_macros.hpp>
 #include <seqan3/core/simd/detail/default_simd_max_length.hpp>
+#include <seqan3/core/simd/simd_traits.hpp>
 
 namespace seqan3::detail
 {
