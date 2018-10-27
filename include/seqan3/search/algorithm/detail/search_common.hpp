@@ -32,31 +32,29 @@
 //
 // ============================================================================
 
- /*!\file
-  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
-  * \brief Meta-header for the Search Algorithm module.
-  *
-  * \defgroup submodule_search_algorithm Algorithm
-  * \ingroup search
-  *
-  * ## Search Algorithms
-  *
-  * The Search module offers a simple unified interface that allows searching SeqAn3 indices such as FM indices or k-mer
-  * indices and choosing the best algorithm based on the index at hand.
-  *
-  * ## FM Indices
-  *
-  * The search algorithms for FM indices implement either a trivial backtracking approach or an optimum search scheme.
-  * Latter are currently only available for searches with up to and including three errors using bidirectional indices.
-  * The optimum search schemes will be improved in the future to handle unidirectional indices and higher error counts.
-  *
-  * ## K-mer Indices
-  *
-  * \todo Rewrite landing page.
-  *
-  */
+/*!\file
+ * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
+ * \brief Provides data structures used by different search algorithms.
+ */
 
 #pragma once
 
-#include <seqan3/search/algorithm/configuration/all.hpp>
-#include <seqan3/search/algorithm/search.hpp>
+#include <type_traits>
+
+namespace seqan3::detail
+{
+
+//!\brief Object grouping numbers of errors for different kind of error types.
+struct search_param
+{
+    //!\brief Total number of errors (upper bound over all error types).
+    uint8_t total;
+    //!\brief Total number of substitution errors.
+    uint8_t substitution;
+    //!\brief Total number of insertion errors.
+    uint8_t insertion;
+    //!\brief Total number of deletion errors.
+    uint8_t deletion;
+};
+
+} // namespace seqan3::detail

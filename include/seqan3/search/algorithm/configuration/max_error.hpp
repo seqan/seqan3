@@ -156,7 +156,10 @@ struct search_config_type_to_id<search_config_max_error>
 namespace seqan3::search_cfg
 {
 /*!\brief A configuration element for the maximum number of errors across all error types (mismatches, insertions,
-          deletions). This is an upper bound of errors independent from error numbers or rates of specific error types.
+ *        deletions). This is an upper bound of errors independent from error numbers of specific error types.
+ * \details An insertion corresponds to a base inserted into the query that does not occur in the text at the position,
+ *          a deletion corresponds to a base deleted from the query sequence that does occur in the indexed text.
+ *          Deletions at the beginning and at the end of the sequence are not considered during a search.
  * \ingroup search_configuration
  */
 inline constexpr detail::search_config_max_error_adaptor max_error;
