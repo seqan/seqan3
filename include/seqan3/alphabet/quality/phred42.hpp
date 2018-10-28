@@ -44,6 +44,7 @@
 
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
+#include <seqan3/std/concepts>
 
 // ------------------------------------------------------------------
 // phred42
@@ -221,7 +222,10 @@ struct phred42
     //!\brief Explicit conversion to any other quality alphabet (via char representation).
     //!\tparam other_qual_type The type to convert to; must satisfy seqan3::quality_concept.
     //
-    template <quality_concept other_qual_type>
+    template <typename other_qual_type>
+    //!\cond
+        requires !std::Same<phred42, other_qual_type> && quality_concept<other_qual_type>
+    //!\endcond
     explicit constexpr operator other_qual_type() const noexcept
     {
         return detail::convert_through_phred_representation<other_qual_type, std::decay_t<decltype(*this)>>[to_phred()];

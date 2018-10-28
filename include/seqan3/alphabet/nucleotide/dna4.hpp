@@ -209,7 +209,7 @@ struct dna4
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+        requires !std::Same<dna4, other_nucl_type> && nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
     //!\endcond
     constexpr operator other_nucl_type() const noexcept
     {
@@ -220,7 +220,7 @@ struct dna4
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type>
+        requires !std::Same<dna4, other_nucl_type> && nucleotide_concept<other_nucl_type>
     //!\endcond
     explicit constexpr operator other_nucl_type() const noexcept
     {

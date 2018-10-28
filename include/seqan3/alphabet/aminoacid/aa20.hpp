@@ -172,7 +172,7 @@ struct aa20
     //!\tparam other_aa_type The type to convert to; must satisfy seqan3::aminoacid_concept.
     template <typename other_aa_type>
     //!\cond
-        requires aminoacid_concept<other_aa_type>
+        requires !std::Same<aa20, other_aa_type> && aminoacid_concept<other_aa_type>
     //!\endcond
     explicit constexpr operator other_aa_type() const noexcept
     {

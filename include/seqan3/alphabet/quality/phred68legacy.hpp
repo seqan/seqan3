@@ -45,6 +45,7 @@
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/core/platform.hpp>
+#include <seqan3/std/concepts>
 
 // ------------------------------------------------------------------
 // phred68legacy
@@ -221,7 +222,10 @@ struct phred68legacy
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::quality_concept.
     //  phred scores below 0 will be truncated, i.e. mapped to phred64::phred_type = 0.
-    template <quality_concept other_qual_type>
+    template <typename other_qual_type>
+    //!\cond
+        requires !std::Same<phred68legacy, other_qual_type> && quality_concept<other_qual_type>
+    //!\endcond
     explicit constexpr operator other_qual_type() const //noexcept
     {
         return detail::convert_through_phred_representation<other_qual_type, std::decay_t<decltype(*this)>>[std::max<phred_type>(0, to_phred())];
