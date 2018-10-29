@@ -91,8 +91,8 @@ namespace seqan3
  *
  * ### Implementation notes
  *
- * When reading the ID-line the ID is read until it encounters a ';'. Unless, the option truncate_ids is set to true,
- * than the id is read until it either sees a blank, ';' or a new line.
+ * When reading the ID-line, the ID is read until it encounters a ';'. Unless, the option truncate_ids is set to true,
+ * then the id is read until it either sees a blank, ';' or a new line.
  *
  * When writing the ID-line, the sequence length is appended.
  *
@@ -146,56 +146,59 @@ public:
         std::string identifier;
         ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
                      std::back_inserter(identifier));
-        // Jump over header
-        while (identifier != "ID")
-        {
-            detail::consume(stream_view | view::take_until(is_cntrl));
-            ++stream_it;
-            identifier.clear();
-            ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                         std::back_inserter(identifier));
-        }
+        if (identifier != "ID")
+            throw parse_error{"An entry has to start with the code word ID."};
 
-        // ID
-        detail::consume(stream_view | ranges::view::take_while(is_blank));
-
-        // read id
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            if (options.truncate_ids)
+            if (options.complete_header)
             {
-                ranges::copy(stream_view | view::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
-                                         | view::char_to<value_type_t<id_type>>,
-                             std::back_inserter(id));
-                detail::consume(stream_view | view::take_line_or_throw);
+                ranges::copy(identifier | view::char_to<value_type_t<id_type>>, std::back_inserter(id));
+                do
+                {
+                    ranges::copy(stream_view | view::take_until_or_throw(is_char<'S'>)
+                                             | view::char_to<value_type_t<id_type>>,
+                                 std::back_inserter(id));
+                    id.push_back(*stream_it);
+                    ++stream_it;
+                } while (*stream_it != 'Q');
+                id.pop_back(); // remove 'S' from id
+                identifier = "SQ";
             }
             else
             {
-                ranges::copy(stream_view | view::take_until_or_throw(is_char<';'>)
-                                         | view::char_to<value_type_t<id_type>>,
-                             std::back_inserter(id));
-                detail::consume(stream_view | view::take_line_or_throw);
+                // ID
+                detail::consume(stream_view | ranges::view::take_while(is_blank));
+
+                // read id
+                if (options.truncate_ids)
+                {
+                    ranges::copy(stream_view | view::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
+                                             | view::char_to<value_type_t<id_type>>,
+                                 std::back_inserter(id));
+                }
+                else
+                {
+                    ranges::copy(stream_view | view::take_until_or_throw(is_char<';'>)
+                                             | view::char_to<value_type_t<id_type>>,
+                                 std::back_inserter(id));
+                }
             }
+
         }
-        else
-        {
-            detail::consume(stream_view | view::take_line_or_throw);
-        }
+
         // Jump to sequence
-        identifier.clear();
-        ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                     std::back_inserter(identifier));
+        detail::consume(stream_view | view::take_line_or_throw);
         while (identifier != "SQ")
         {
-            detail::consume(stream_view | view::take_until(is_cntrl));
-            ++stream_it;
             identifier.clear();
             ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
                          std::back_inserter(identifier));
+            detail::consume(stream_view | view::take_until(is_cntrl));
+            ++stream_it;
         }
 
         // Sequence
-        detail::consume(stream_view | view::take_line_or_throw);
         auto constexpr is_end = is_char<'/'> ;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
@@ -226,7 +229,6 @@ public:
         detail::consume(stream_view | view::take_until(is_cntrl));
         ++stream_it;
 
-
         // make sure "buffer at end" implies "stream at end"
         if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
             (!stream.eof()))
@@ -240,11 +242,11 @@ public:
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write(stream_type                     & stream,
-               sequence_file_output_options const & options,
-               seq_type                       && sequence,
-               id_type                        && id,
-               qual_type                      && SEQAN3_DOXYGEN_ONLY(qualities))
+    void write(stream_type                          & stream,
+               sequence_file_output_options const   & options,
+               seq_type                             && sequence,
+               id_type                              && id,
+               qual_type                            && SEQAN3_DOXYGEN_ONLY(qualities))
     {
 
         ranges::ostreambuf_iterator stream_it{stream};
@@ -262,20 +264,29 @@ public:
             if (ranges::empty(id)) //[[unlikely]]
                 throw std::runtime_error{"The ID field may not be empty when writing embl files."};
 
-            stream_it = 'I';
-            stream_it = 'D';
-            stream_it = ' ';
-            ranges::copy(id, stream_it);
-            stream_it = ';';
-            stream_it = ' ';
-            ranges::copy(std::to_string(sequence_size), stream_it);
-            ranges::copy(std::string_view{" BP.\nXX\n"}, stream_it);
+            if (options.complete_header)
+            {
+                ranges::copy(id, stream_it);
+            }
+            else
+            {
+                stream_it = 'I';
+                stream_it = 'D';
+                stream_it = ' ';
+                ranges::copy(id, stream_it);
+                stream_it = ';';
+                stream_it = ' ';
+                ranges::copy(std::to_string(sequence_size), stream_it);
+                ranges::copy(std::string_view{" BP.\n"}, stream_it);
+            }
+
         }
 
         // Sequence
         if constexpr (detail::decays_to_ignore_v<seq_type>) // sequence
         {
-            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing embl files."};
+            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing "
+            "embl files."};
         }
         else
         {
@@ -297,21 +308,10 @@ public:
                 bp = std::min(sequence_size, bp + 60);
                 ++i;
                 stream_it = ' ';
-                if (bp % 60 > 0)
-                {
-                    for(int j = bp; j < (60 * i); j++)
-                    {
-                        stream_it = ' ';
-                        if (j % 10 == 0)
-                            stream_it = ' ';
-                    }
-                    ranges::copy(std::to_string(bp), stream_it);
-
-                }
-                else
-                {
-                    ranges::copy(std::to_string(bp), stream_it);
-                }
+                uint8_t num_blanks = 60 * i - bp;  // for sequence characters
+                num_blanks += num_blanks / 10;     // additional chunk separators
+                ranges::copy(std::string(num_blanks, ' '), stream_it);
+                ranges::copy(std::to_string(bp), stream_it);
                 stream_it = '\n';
             }
             ranges::copy(std::string_view{"//"}, stream_it);

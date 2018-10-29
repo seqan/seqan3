@@ -46,7 +46,6 @@
 #include <seqan3/range/view/convert.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 // ----------------------------------------------------------------------------
 // general
@@ -95,7 +94,8 @@ struct read : public ::testing::Test
             seq.clear();
 
             EXPECT_NO_THROW(( format.read(istream, options, seq, id, std::ignore) ));
-
+            EXPECT_EQ(id, expected_ids[i]);
+            EXPECT_EQ(seq, expected_seqs[i]);
             EXPECT_TRUE((ranges::equal(seq, expected_seqs[i])));
             EXPECT_TRUE((ranges::equal(id, expected_ids[i])));
         }
@@ -145,6 +145,29 @@ TEST_F(read, whitespace_in_seq)
     do_read_test(input);
 }
 
+TEST_F(read, no_id)
+{
+    std::string input
+    {
+        "IK ID1;\tstuff\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT\nTTTTTTTT        18\n"
+        "//\n"
+        "ID ID2;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT\nTTTTTTTTTT\nTTTTTTTTTT\vTTTTTTTTTT\tTTTTTTTTTT TTTTTTTTTT 60\n"
+        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
+        "//\n"
+        "ID ID3 lala;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTA        7\n"
+        "//\n"
+    };
+
+    std::stringstream istream{input};
+    EXPECT_THROW(( format.read(istream, options, seq, id, std::ignore)), parse_error );
+}
+
 TEST_F(read, other_lines)
 {
     std::string input
@@ -192,11 +215,105 @@ TEST_F(read, options_truncate_ids)
     do_read_test(input);
 }
 
+TEST_F(read, complete_header)
+{
+    std::string input
+    {
+        "ID ID1;\tstuff\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTT        18\n"
+        "//\n"
+        "ID ID2;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
+        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
+        "//\n"
+        "ID ID3 lala;\n"
+        "XX\n"
+        "AC   AB000263;\n"
+        "XX\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTA        7\n"
+        "//\n"
+    };
+
+    options.complete_header = true;
+    expected_ids[0] = "ID ID1;\tstuff\n";
+    expected_ids[1] = "ID ID2;\n";
+    expected_ids[2] = "ID ID3 lala;\nXX\nAC   AB000263;\nXX\n";
+    do_read_test(input);
+}
+
+TEST_F(read, complete_header2)
+{
+    std::string input
+    {
+        "ID ID1;\tstuff\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTT        18\n"
+        "//\n"
+        "ID ID2;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
+        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
+        "//\n"
+        "ID ID3 lala;\n"
+        "XX S\n"
+        "XX Q\n"
+        "AC   AB000263;\n"
+        "XX\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTA        7\n"
+        "//\n"
+    };
+
+    options.complete_header = true;
+    expected_ids[0] = "ID ID1;\tstuff\n";
+    expected_ids[1] = "ID ID2;\n";
+    expected_ids[2] = "ID ID3 lala;\nXX S\nXX Q\nAC   AB000263;\nXX\n";
+    do_read_test(input);
+}
+
 TEST_F(read, only_seq)
 {
     std::string input
     {
         "ID ID1;\tstuff\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTT        18\n"
+        "//\n"
+        "ID ID2;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
+        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
+        "//\n"
+        "ID ID3 lala;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTA        7\n"
+        "//\n"
+    };
+
+    std::stringstream istream{input};
+
+    for (unsigned i = 0; i < 3; ++i)
+    {
+        id.clear();
+        seq.clear();
+
+        format.read(istream, options, seq, std::ignore, std::ignore);
+
+        EXPECT_TRUE((ranges::equal(seq, expected_seqs[i])));
+    }
+}
+
+TEST_F(read, only_seq_multiple_lines_before)
+{
+    std::string input
+    {
+        "ID ID1;\tstuff\n"
+        "XX\n"
+        "XX\n"
+        "XX\n"
         "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
         "  ACGTTTTTTT TTTTTTTT        18\n"
         "//\n"
@@ -292,6 +409,19 @@ TEST_F(read, seq_qual)
     }
 }
 
+TEST_F(read, illegal_alphabet)
+{
+    std::string input
+    {
+        "ID ID1;\tstuff\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ARGTTTTTTT\nTTTTTTTT        18\n"
+        "//\n"
+    };
+
+    std::stringstream istream{input};
+    EXPECT_THROW(( format.read(istream, options, seq, id, std::ignore)), parse_error );
+}
 
 // ----------------------------------------------------------------------------
 // writing
@@ -357,18 +487,15 @@ TEST_F(write, default_options)
     std::string comp
     {
         "ID TEST 1; 4 BP.\n"
-        "XX\n"
         "SQ Sequence 4 BP;\n"
         "ACGT                                                              4\n"
         "//\n"
         "ID Test2; 91 BP.\n"
-        "XX\n"
         "SQ Sequence 91 BP;\n"
         "AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60\n"  // linebreak inserted after 60 char
         "TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91\n"
         "//\n"
         "ID Test3; 24 BP.\n"
-        "XX\n"
         "SQ Sequence 24 BP;\n"
         "GGAGTATAAT ATATATATAT ATAT                                        24\n"
         "//\n"
@@ -398,6 +525,28 @@ TEST_F(write, seq_qual)
     std::string comp
     {
         "ID TEST 1; 4 BP.\n"
+        "SQ Sequence 4 BP;\n"
+        "ACGT                                                              4\n"
+        "//\n"
+        "ID Test2; 91 BP.\n"
+        "SQ Sequence 91 BP;\n"
+        "AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60\n"  // linebreak inserted after 60 char
+        "TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91\n"
+        "//\n"
+        "ID Test3; 24 BP.\n"
+        "SQ Sequence 24 BP;\n"
+        "GGAGTATAAT ATATATATAT ATAT                                        24\n"
+        "//\n"
+    };
+
+    EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, complete_header)
+{
+    std::string comp
+    {
+        "ID TEST 1; 4 BP.\n"
         "XX\n"
         "SQ Sequence 4 BP;\n"
         "ACGT                                                              4\n"
@@ -414,6 +563,11 @@ TEST_F(write, seq_qual)
         "GGAGTATAAT ATATATATAT ATAT                                        24\n"
         "//\n"
     };
+    options.complete_header = true;
+    ids[0] = std::string{"ID TEST 1; 4 BP.\nXX\n"};
+    ids[1] = std::string{"ID Test2; 91 BP.\nXX\n"};
+    ids[2] = std::string{"ID Test3; 24 BP.\nXX\n"};
+    do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
 }
