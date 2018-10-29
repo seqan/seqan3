@@ -214,8 +214,9 @@ inline bool search_ss_deletion(auto it, auto & query, uint64_t const lb, uint64_
     }
 
     // Insert deletions into the current block as long as possible
-    if (!(search.pi[block_id] == 1 && !go_right) && max_error_left_in_block > 0 &&
-        error_left.total > 0 && error_left.deletion > 0 &&
+    if (!(search.pi[block_id] == 1 && !go_right) &&              // Do not allow deletions at the beginning of the leftmost block
+        !(search.pi[block_id] == search.blocks() && go_right) && // Do not allow deletions at the end of the rightmost block
+        max_error_left_in_block > 0 && error_left.total > 0 && error_left.deletion > 0 &&
         ((go_right && it.extend_right()) || (!go_right && it.extend_left())))
     {
         search_param error_left2{error_left};
@@ -268,8 +269,8 @@ inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_
             // skip if there are more min errors left in the current block than characters in the block
             // i.e. chars_left - 1 < min_error_left_in_block - delta
             // TODO: move that outside the if / do-while struct
-            // TODO: incorporate error_left.deletion into formula and simplify a bit
-            if (error_left.deletion == 0 && min_error_left_in_block > 0 && chars_left + delta < min_error_left_in_block + 1u)
+            // TODO: incorporate error_left.deletion into formula
+            if (error_left.deletion == 0 && chars_left + delta < min_error_left_in_block + 1u)
                 continue;
 
             if (!delta || error_left.substitution > 0)
@@ -315,7 +316,10 @@ inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_
             }
 
             // Deletion
-            if (error_left.deletion > 0)
+            // TODO: check whether the conditions for deletions at the beginning/end of the query are really necessary
+            if (error_left.deletion > 0 &&
+                !(go_right && (rb == 1 || rb == query.size() + 1)) && // No deletion at the beginning of the leftmost block.
+                !(!go_right && (lb == 0 || lb == query.size())))      // No deletion at the end of the rightmost block.
             {
                 search_param error_left3{error_left};
                 error_left3.total--;
