@@ -106,11 +106,11 @@ public:
      * \brief The standard functions are explicitly defaulted.
      * \{
      */
-    constexpr debug_stream_type() = default;
-    constexpr debug_stream_type(debug_stream_type const &) = default;
-    constexpr debug_stream_type(debug_stream_type &&) = default;
-    constexpr debug_stream_type & operator= (debug_stream_type const &) = default;
-    constexpr debug_stream_type & operator= (debug_stream_type &&) = default;
+    debug_stream_type() = default;
+    debug_stream_type(debug_stream_type const &) = default;
+    debug_stream_type(debug_stream_type &&) = default;
+    debug_stream_type & operator= (debug_stream_type const &) = default;
+    debug_stream_type & operator= (debug_stream_type &&) = default;
     ~debug_stream_type() = default;
 
     //!\brief Construction from an output stream.
