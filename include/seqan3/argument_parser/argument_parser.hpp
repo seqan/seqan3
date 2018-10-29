@@ -500,7 +500,7 @@ private:
      * \param[in] argc     The number of command line arguments.
      * \param[in] argv     The command line arguments.
      *
-     * \throws seqan3::argument_parser_exception
+     * \throws seqan3::validation_failed
      *
      * \details
      *
@@ -521,7 +521,7 @@ private:
      * - else the format is that to seqan3::detail::format_parse
      *
      * If `-export-help` is specified with a value other than html/man or ctd
-     * a argument_parser_exception is thrown.
+     * a validation_failed exception is thrown.
      */
     void init(int const argc, char const * const * const  argv)
     {

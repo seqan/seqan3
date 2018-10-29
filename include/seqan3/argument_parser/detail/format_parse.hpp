@@ -424,8 +424,8 @@ private:
                 {
                     if ((*option_it).size() == id_size + 1) // malformed because no value follows '-i='
                         throw invalid_argument("Value cast failed for option " +
-                                                      prepend_dash(id) +
-                                                      ": No value was provided.");
+                                               prepend_dash(id) +
+                                               ": No value was provided.");
                     input_value = (*option_it).substr(id_size + 1);
                 }
                 else // -kevValue
@@ -441,8 +441,8 @@ private:
                 ++option_it;
                 if (option_it == end_of_options_it) // should not happen
                     throw invalid_argument("Value cast failed for option " +
-                                                  prepend_dash(id) +
-                                                  ": No value was provided.");
+                                           prepend_dash(id) +
+                                           ": No value was provided.");
                 input_value = *option_it;
                 *option_it = ""; // remove value
             }
@@ -702,7 +702,7 @@ private:
                 catch (invalid_argument const & ex)
                 {
                     throw invalid_argument("Value cast failed for positional option " +
-                                                  std::to_string(positional_option_count) + ": " + ex.what());
+                                           std::to_string(positional_option_count) + ": " + ex.what());
                 }
 
                 *it = ""; // remove arg from argv
@@ -719,7 +719,7 @@ private:
             catch (invalid_argument const & ex)
             {
                 throw invalid_argument("Value cast failed for positional option " +
-                                              std::to_string(positional_option_count) + ": " + ex.what());
+                                       std::to_string(positional_option_count) + ": " + ex.what());
             }
 
             *it = ""; // remove arg from argv
