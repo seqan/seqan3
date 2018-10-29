@@ -49,18 +49,20 @@ namespace seqan3
 /*!\brief Overload for debug_stream for simd types.
  * \ingroup simd
  */
-template <simd::simd_concept simd_t>
-inline debug_stream_type & operator<<(debug_stream_type & s, simd_t simd)
+template <typename simd_t>
+    requires simd::simd_concept<remove_cvref_t<simd_t>>
+inline debug_stream_type & operator<<(debug_stream_type & s, simd_t && simd)
 {
+    using simd_type = remove_cvref_t<simd_t>;
+
     s << '(';
     s << simd[0];
-    for (size_t i = 1; i < simd::simd_traits<simd_t>::length; ++i)
+    for (size_t i = 1; i < simd::simd_traits<simd_type>::length; ++i)
     {
         s << ',';
         s << simd[i];
     }
     s << ')';
-
     return s;
 }
 
