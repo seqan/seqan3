@@ -22,11 +22,11 @@ int main()
     std::vector<int32_t, aligned_allocator<int32_t, 256u>> vec256{1,2,3,4,5};
 
     for (auto && x: vec128)
-        std::cout << "Item: " << x << " (" << &x << ", 128-byte aligned offset: " << memory_alignment(&x, 128u) << ")" << std::endl;
+        std::cout << "Item: " << x << " (" << &x << ", 128-byte aligned offset: " << memory_alignment(&x, 128u) << ")\n";
 
     for (auto && x: vec_unaligned)
-        std::cout << "Item: " << x << " (" << &x << ", unaligned start: " << memory_alignment(&x, 128u) << ")" << std::endl;
+        std::cout << "Item: " << x << " (" << &x << ", unaligned start: " << memory_alignment(&x, 128u) << ")\n";
 
     for (auto && x: vec256)
-        std::cout << "Item: " << x << " (" << &x << ", 256-byte aligned offset: " << memory_alignment(&x, 256u) << ")" << std::endl;
+        std::cout << "Item: " << x << " (" << &x << ", 256-byte aligned offset: " << memory_alignment(&x, 256u) << ")\n";
 }
