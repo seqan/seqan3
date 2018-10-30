@@ -42,7 +42,7 @@
 
 #include <cassert>
 
-#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <seqan3/alphabet/gap/gap.hpp>
 
 using namespace seqan3;
