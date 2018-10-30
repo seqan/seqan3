@@ -110,14 +110,14 @@ concept validator_concept = std::Copyable<remove_cvref_t<validator_type>> &&
 
 //!\cond
 template <typename option_value_type>
-class integral_range_validator;
+class arithmetic_range_validator;
 //!\endcond
 
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
  * \implements seqan3::validator_concept
  *
- * \tparam option_value_type Must be a (container of) integral type(s).
+ * \tparam option_value_type Must be a (container of) arithmetic type(s).
  *
  * \details
  *
@@ -127,8 +127,8 @@ class integral_range_validator;
  *
  * \snippet test/snippet/argument_parser/validators_1.cpp usage
  */
-template <std::Integral option_value_type>
-class integral_range_validator<option_value_type>
+template <arithmetic_concept option_value_type>
+class arithmetic_range_validator<option_value_type>
 {
 public:
     //!\brief The type of value that this validator invoked upon.
@@ -138,7 +138,7 @@ public:
      * \param[in] min_ Minimum set for the range to test.
      * \param[in] max_ Maximum set for the range to test.
      */
-    integral_range_validator(value_type const min_, value_type const max_) :
+    arithmetic_range_validator(value_type const min_, value_type const max_) :
         min{min_}, max{max_}
     {}
 
@@ -169,8 +169,8 @@ private:
 
 //!\cond
 template <container_concept option_value_type>
-    requires std::Integral<typename option_value_type::value_type>
-class integral_range_validator<option_value_type>
+    requires arithmetic_concept<typename option_value_type::value_type>
+class arithmetic_range_validator<option_value_type>
 {
 public:
     //!\brief Type of values that are tested by validator (container)
@@ -182,7 +182,7 @@ public:
      * \param[in] min_ Minimum set for the range to test.
      * \param[in] max_ Maximum set for the range to test.
      */
-    integral_range_validator(inner_value_type const min_,
+    arithmetic_range_validator(inner_value_type const min_,
                              inner_value_type const max_) :
         min{min_}, max{max_}
     {}
