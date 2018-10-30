@@ -81,4 +81,15 @@ static void is_power_of_two_seqan3(benchmark::State& state) {
 }
 BENCHMARK(is_power_of_two_seqan3);
 
+static void next_power_of_two_seqan3(benchmark::State& state) {
+    std::srand(0);
+    size_t n = 0;
+    for (auto _ : state)
+    {
+        n = std::rand();
+        benchmark::DoNotOptimize(seqan3::detail::next_power_of_two(n));
+    }
+}
+BENCHMARK(next_power_of_two_seqan3);
+
 BENCHMARK_MAIN();
