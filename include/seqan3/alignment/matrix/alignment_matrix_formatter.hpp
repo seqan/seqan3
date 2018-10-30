@@ -374,11 +374,11 @@ private:
         for(auto it = str.cbegin(), it_end = str.cend(); it < it_end; ++it, ++length)
         {
             uint8_t v = *it;
-            if((v & 0b11100000) == 0b11000000)
+            if ((v & 0b11100000) == 0b11000000)
                 ++it;
-            else if((v & 0b11110000) == 0b11100000)
+            else if ((v & 0b11110000) == 0b11100000)
                 it += 2;
-            else if((v & 0b11111000) == 0b11110000)
+            else if ((v & 0b11111000) == 0b11110000)
                 it += 3;
         }
         return length;
