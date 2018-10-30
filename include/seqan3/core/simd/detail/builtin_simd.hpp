@@ -66,7 +66,7 @@ namespace seqan3::detail
  * template <typename scalar_t, size_t length>
  * struct builtin_simd
  * {
- *    using type = scalar_t __attribute__ ((__vector_size__(length * sizeof(scalar_t))));
+ *    using type [[gnu::vector_size(sizeof(scalar_t) * length)]] = scalar_t;
  * };
  * ```
  *
