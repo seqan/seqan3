@@ -371,7 +371,7 @@ private:
     static size_t unicode_str_length(std::string const & str) noexcept
     {
         size_t length = 0u;
-        for(auto it = str.cbegin(), it_end = str.cend(); it < it_end; ++it, ++length)
+        for (auto it = str.cbegin(), it_end = str.cend(); it < it_end; ++it, ++length)
         {
             uint8_t v = *it;
             if ((v & 0b11100000) == 0b11000000)
