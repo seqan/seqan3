@@ -81,8 +81,8 @@ constexpr size_t next_power_of_two(size_t n)
     if (n == 0)
         return 0;
 
-    n--;
-    for(size_t shift = 1; !is_power_of_two(n + 1); shift <<= 1)
+    --n;
+    for (size_t shift = 1; !is_power_of_two(n + 1); shift <<= 1)
         n |= n >> shift;
 
     return n + 1;
