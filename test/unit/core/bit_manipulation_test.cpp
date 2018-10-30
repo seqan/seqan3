@@ -44,11 +44,14 @@ static constexpr size_t max_iterations = 1 << 15;
 
 TEST(bit_manipulation, is_power_of_two)
 {
-    EXPECT_FALSE(is_power_of_two(0));
-    EXPECT_TRUE(is_power_of_two(1));
-    EXPECT_TRUE(is_power_of_two(2));
-    EXPECT_FALSE(is_power_of_two(3));
-
+    constexpr bool is_power_of_two0 = is_power_of_two(0);
+    constexpr bool is_power_of_two1 = is_power_of_two(1);
+    constexpr bool is_power_of_two2 = is_power_of_two(2);
+    constexpr bool is_power_of_two3 = is_power_of_two(3);
+    EXPECT_FALSE(is_power_of_two0);
+    EXPECT_TRUE(is_power_of_two1);
+    EXPECT_TRUE(is_power_of_two2);
+    EXPECT_FALSE(is_power_of_two3);
 
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
@@ -64,10 +67,14 @@ TEST(bit_manipulation, is_power_of_two)
 
 TEST(bit_manipulation, next_power_of_two)
 {
-    EXPECT_EQ(next_power_of_two(0), 0);
-    EXPECT_EQ(next_power_of_two(1), 1);
-    EXPECT_EQ(next_power_of_two(2), 2);
-    EXPECT_EQ(next_power_of_two(3), 4);
+    constexpr size_t next_power_of_two0 = next_power_of_two(0);
+    constexpr size_t next_power_of_two1 = next_power_of_two(1);
+    constexpr size_t next_power_of_two2 = next_power_of_two(2);
+    constexpr size_t next_power_of_two3 = next_power_of_two(3);
+    EXPECT_EQ(next_power_of_two0, 0);
+    EXPECT_EQ(next_power_of_two1, 1);
+    EXPECT_EQ(next_power_of_two2, 2);
+    EXPECT_EQ(next_power_of_two3, 4);
 
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
