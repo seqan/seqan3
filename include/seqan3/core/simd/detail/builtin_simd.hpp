@@ -42,9 +42,9 @@
 
 #include <type_traits>
 
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
-#include <seqan3/core/simd/detail/builtin_simd_macros.hpp>
 #include <seqan3/core/simd/detail/default_simd_max_length.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 
@@ -83,31 +83,25 @@ namespace seqan3::detail
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
  */
 template <typename scalar_t, size_t length>
-struct builtin_simd
-#if SEQAN3_DOXYGEN_ONLY(1)0
+struct builtin_simd;
+
+template <typename scalar_t, size_t length>
+//!\cond
+    requires is_power_of_two(length)
+//!\endcond
+struct builtin_simd<scalar_t, length>
 {
-    //!\brief The type of the builtin simd.
-    using type = IMPLEMENTATION_DEFINED;
-}
+private:
+    static constexpr size_t next_length = next_power_of_two(length);
+#if defined(__clang__)
+    using simd_type = scalar_t __attribute__((ext_vector_type(length)));
+#else
+    using simd_type [[gnu::vector_size(sizeof(scalar_t) * next_length)]] = scalar_t;
 #endif
-;
-
-/*!\brief A macro that defines seqan3::detail::builtin_simd for
- * `[u]intX_t` types. Will be undefined immediately and thus not exposed outside this file.
- * \ingroup simd
- * \param  scalar_t   same as seqan3::simd::simd_traits<builtin_simd_t>::scalar_t
- * \param  length     same as seqan3::simd::simd_traits<builtin_simd_t>::length
- * \param  max_length same as seqan3::simd::simd_traits<builtin_simd_t>::max_length
- * \param  simd_t     the type of the vector extension,
- * e.g. `scalar_t __attribute__ ((__vector_size__(max_length)))`
- */
-#define SEQAN3_BUILTIN_SIMD_CLASS(scalar_t, length, max_length, simd_t) \
-template <> \
-struct builtin_simd<scalar_t, length> \
-{ using type = simd_t; };
-
-SEQAN3_BUILTIN_SIMD_PARTIAL_TEMPLATE_SPECIALIZATION(SEQAN3_BUILTIN_SIMD_CLASS)
-#undef SEQAN3_BUILTIN_SIMD_CLASS
+public:
+    //!\brief The type of the builtin simd.
+    using type = simd_type;
+};
 
 /*!\brief Helper struct for seqan3::detail::is_builtin_simd
  * \ingroup simd
@@ -123,7 +117,7 @@ struct _is_builtin_simd : std::false_type
  */
 template <typename builtin_simd_t>
 //!\cond
-    requires requires(builtin_simd_t simd){ {simd[0]} }
+    requires requires(builtin_simd_t simd){ {simd[0]}; }
 //!\endcond
 struct _is_builtin_simd<builtin_simd_t>
 {
@@ -139,7 +133,7 @@ protected:
 public:
     //!\brief Whether builtin_simd_t is a builtin type or not?
     //!\hideinitializer
-    static constexpr bool value = std::is_same_v<builtin_simd_t, transformation_trait_or_t<builtin_simd<scalar_type, length>, void>>;
+    static constexpr bool value = is_power_of_two(length) && std::is_same_v<builtin_simd_t, transformation_trait_or_t<builtin_simd<scalar_type, length>, void>>;
 };
 
 /*!\brief This class inherits from std::true_type, **iff**
@@ -187,7 +181,10 @@ constexpr auto default_simd_max_length<builtin_simd> = []()
 
 } // namespace seqan3::detail
 
-namespace seqan3::simd
+namespace seqan3
+{
+
+inline namespace simd
 {
 
 /*!\brief This class specializes seqan3::simd::simd_traits for seqan3::detail::builtin_simd types
@@ -215,4 +212,6 @@ struct simd_traits<builtin_simd_t>
     using swizzle_type = typename detail::builtin_simd<uint8_t, max_length>::type;
 };
 
-} // namespace seqan3::simd
+} // inline namespace simd
+
+} // namespace seqan3

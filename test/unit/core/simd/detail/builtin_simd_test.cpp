@@ -44,19 +44,35 @@ using namespace seqan3;
 using namespace seqan3::detail;
 using namespace seqan3::simd;
 
-using uint8x16_t = uint8_t __attribute__((__vector_size__(16)));
-using int16x8_t = int16_t __attribute__((__vector_size__(16)));
-using int32x4_t = int32_t __attribute__((__vector_size__(16)));
-using int64x2_t = int64_t __attribute__((__vector_size__(16)));
+#ifdef __clang__
+using uint8x16_t = uint8_t __attribute__((ext_vector_type(16)));
+using int16x8_t = int16_t __attribute__((ext_vector_type(8)));
+using int32x4_t = int32_t __attribute__((ext_vector_type(4)));
+using int64x2_t = int64_t __attribute__((ext_vector_type(2)));
 
-using int16x16_t = int16_t __attribute__((__vector_size__(32)));
-using int32x8_t = int32_t __attribute__((__vector_size__(32)));
-using int64x4_t = int64_t __attribute__((__vector_size__(32)));
+using int16x16_t = int16_t __attribute__((ext_vector_type(16)));
+using int32x8_t = int32_t __attribute__((ext_vector_type(8)));
+using int64x4_t = int64_t __attribute__((ext_vector_type(4)));
 
-using uint8x32_t = uint8_t __attribute__((__vector_size__(32)));
-using uint16x16_t = uint16_t __attribute__((__vector_size__(32)));
-using uint32x8_t = uint32_t __attribute__((__vector_size__(32)));
-using uint64x4_t = uint64_t __attribute__((__vector_size__(32)));
+using uint8x32_t = uint8_t __attribute__((ext_vector_type(32)));
+using uint16x16_t = uint16_t __attribute__((ext_vector_type(16)));
+using uint32x8_t = uint32_t __attribute__((ext_vector_type(8)));
+using uint64x4_t = uint64_t __attribute__((ext_vector_type(4)));
+#else
+using uint8x16_t [[gnu::vector_size(16)]] = uint8_t;
+using int16x8_t [[gnu::vector_size(16)]] = int16_t;
+using int32x4_t [[gnu::vector_size(16)]] = int32_t;
+using int64x2_t [[gnu::vector_size(16)]] = int64_t;
+
+using int16x16_t [[gnu::vector_size(32)]] = int16_t;
+using int32x8_t [[gnu::vector_size(32)]] = int32_t;
+using int64x4_t [[gnu::vector_size(32)]] = int64_t;
+
+using uint8x32_t [[gnu::vector_size(32)]] = uint8_t;
+using uint16x16_t [[gnu::vector_size(32)]] = uint16_t;
+using uint32x8_t [[gnu::vector_size(32)]] = uint32_t;
+using uint64x4_t [[gnu::vector_size(32)]] = uint64_t;
+#endif
 
 TEST(builtin_simd, builtin_simd)
 {
