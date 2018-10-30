@@ -5,7 +5,7 @@
 
 size_t memory_alignment(void * value, size_t alignment)
 {
-   return (((size_t)value) & (alignment-1));
+   return (reinterpret_cast<size_t>(value) & (alignment - 1));
 }
 
 int main()
