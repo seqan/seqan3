@@ -337,9 +337,10 @@ private:
         if (score_mask != (word_type)0)
             return true;
 
-        last_block--;
-        if (is_global && last_block == (size_t) - 1)
+        if (is_global && last_block == 0)
             return false;
+
+        last_block--;
 
         score_mask = (word_type)1 << (word_size - 1);
         return true;
