@@ -74,12 +74,6 @@ namespace seqan3::detail
  * (https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html) type,
  * which is offered by the compiler as a builtin type.
  *
- * But gcc doesn't allow attributes on template arguments as this warning illustrates:
- * >   ignoring attributes applied to dependent type ‘scalar_t’ without an
- * >   associated declaration [-Wattributes]
- *
- * We use the following macro hell to define this explicitly for `[u]intX_t` types:
- * \include test/snippet/core/simd/detail/builtin_simd_macro.cpp
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
  */
 template <typename scalar_t, size_t length>
