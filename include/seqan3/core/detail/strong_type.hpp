@@ -306,7 +306,8 @@ public:
     }
 
     //!\brief Adds bitwise left shift operator to the strong type.
-    constexpr derived_t operator<<(std::Integral const shift)
+    template <std::Integral integral_t>
+    constexpr derived_t operator<<(integral_t const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_lshift) != strong_type_skill::none)
         //!\endcond
@@ -324,7 +325,8 @@ public:
     }
 
     //!\brief Adds bitwise right shift operator to the strong type.
-    constexpr derived_t operator>>(std::Integral const shift)
+    template <std::Integral integral_t>
+    constexpr derived_t operator>>(integral_t const shift)
         //!\cond
         requires ((skills & strong_type_skill::bitwise_rshift) != strong_type_skill::none)
         //!\endcond
