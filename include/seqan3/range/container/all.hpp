@@ -39,6 +39,7 @@
 
 #pragma once
 
+#include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/container/concept.hpp>
