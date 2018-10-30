@@ -44,6 +44,7 @@
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/filesystem.hpp>
 #include <seqan3/range/container/concept.hpp>

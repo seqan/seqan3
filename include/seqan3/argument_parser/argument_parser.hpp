@@ -608,7 +608,8 @@ private:
                  detail::format_ctd*/> format{detail::format_help(0)};
 
     //!\brief List of option/flag identifiers that are already used.
-    std::set<std::string> used_option_ids;
+    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version"};
+
 };
 
 } // namespace seqan3

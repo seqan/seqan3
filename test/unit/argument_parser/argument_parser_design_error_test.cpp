@@ -86,6 +86,17 @@ TEST(parse_test, parser_design_error)
     parser7.add_positional_option(vec, "oh oh list not at the end.");
     parser7.add_positional_option(option_value, "desc.");
     EXPECT_THROW(parser7.parse(), parser_design_error);
+
+    // using h, help, advanced-help, and export-help
+    argument_parser parser8("test_parser", 1, argv);
+    EXPECT_THROW(parser8.add_option(option_value, 'h', "", "-h is bad."),
+                 parser_design_error);
+    EXPECT_THROW(parser8.add_option(option_value, '\0', "help", "help is bad."),
+                 parser_design_error);
+    EXPECT_THROW(parser8.add_option(option_value, '\0', "advanced-help",
+                 "advanced-help is bad"), parser_design_error);
+    EXPECT_THROW(parser8.add_option(option_value, '\0', "export-help",
+                 "export-help is bad"), parser_design_error);
 }
 
 TEST(parse_test, parse_called_twice)
