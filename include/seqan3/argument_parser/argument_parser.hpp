@@ -578,6 +578,8 @@ private:
     */
     bool id_exists(std::string const & long_id)
     {
+        if (long_id.empty())
+            return false;
         return(!(used_option_ids.insert(long_id)).second);
     }
 
@@ -588,6 +590,8 @@ private:
     */
     bool id_exists(char const short_id)
     {
+        if (short_id == '\0')
+            return false;
         return(!(used_option_ids.insert(std::string(1, short_id))).second);
     }
 

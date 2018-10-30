@@ -183,7 +183,7 @@ public:
      * \param[in] max_ Maximum set for the range to test.
      */
     arithmetic_range_validator(inner_value_type const min_,
-                             inner_value_type const max_) :
+                               inner_value_type const max_) :
         min{min_}, max{max_}
     {}
 
