@@ -72,6 +72,8 @@ constexpr bool is_power_of_two(size_t const n)
  *
  * \param[in] n A number.
  *
+ * \attention *n = 0* is a special case and returns 1.
+ *
  * \returns The next power of two of *n*. If *n* is already a power of two, returns *n*.
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
@@ -79,7 +81,7 @@ constexpr bool is_power_of_two(size_t const n)
 constexpr size_t next_power_of_two(size_t n)
 {
     if (n == 0)
-        return 0;
+        return 1;
 
     --n;
     for (size_t shift = 1; !is_power_of_two(n + 1); shift <<= 1)

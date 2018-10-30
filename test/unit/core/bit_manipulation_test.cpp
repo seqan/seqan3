@@ -71,7 +71,7 @@ TEST(bit_manipulation, next_power_of_two)
     constexpr size_t next_power_of_two1 = next_power_of_two(1);
     constexpr size_t next_power_of_two2 = next_power_of_two(2);
     constexpr size_t next_power_of_two3 = next_power_of_two(3);
-    EXPECT_EQ(next_power_of_two0, 0);
+    EXPECT_EQ(next_power_of_two0, 1);
     EXPECT_EQ(next_power_of_two1, 1);
     EXPECT_EQ(next_power_of_two2, 2);
     EXPECT_EQ(next_power_of_two3, 4);
