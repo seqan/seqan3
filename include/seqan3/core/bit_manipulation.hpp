@@ -62,7 +62,7 @@ namespace seqan3::detail
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
  */
-constexpr bool is_power_of_two(size_t n)
+constexpr bool is_power_of_two(size_t const n)
 {
     return n > 0 && (n & (n-1)) == 0;
 }
