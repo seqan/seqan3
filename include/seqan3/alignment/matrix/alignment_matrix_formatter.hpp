@@ -283,9 +283,9 @@ public:
         auto print_cell = [&](std::string const & symbol)
         {
             // deal with unicode chars that mess up std::setw
-            std::size_t const length_bytes = unicode_str_length_bytes(symbol);
-            std::size_t const length = unicode_str_length(symbol);
-            std::size_t const offset = length_bytes - length;
+            size_t const length_bytes = unicode_str_length_bytes(symbol);
+            size_t const length = unicode_str_length(symbol);
+            size_t const offset = length_bytes - length;
 
             cout << std::left
                  << std::setw(_column_width + offset)

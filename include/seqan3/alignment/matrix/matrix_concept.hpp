@@ -67,17 +67,17 @@ concept matrix_concept = requires(matrix_t m)
      */
     typename matrix_t::entry_type;
 
-    /*!\fn std::size_t cols() const noexcept;
+    /*!\fn size_t cols() const noexcept;
      * \brief The number of columns in the matrix.
      * \memberof seqan3::detail::matrix_concept
      */
-    { m.cols() } -> std::size_t;
+    { m.cols() } -> size_t;
 
-    /*!\fn std::size_t rows() const noexcept;
+    /*!\fn size_t rows() const noexcept;
      * \brief The number of rows in the matrix.
      * \memberof seqan3::detail::matrix_concept
      */
-    { m.rows() } -> std::size_t;
+    { m.rows() } -> size_t;
 
     /*!\fn entry_type at(size_t row, size_t col) const noexcept;
      * \brief The entry of the matrix at position (\a row, \a col), e.g. `matrix[row][col]`.

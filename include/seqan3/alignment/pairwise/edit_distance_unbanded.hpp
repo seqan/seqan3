@@ -247,7 +247,7 @@ public:
         database_it{ranges::begin(database)},
         database_it_end{ranges::end(database)}
     {
-        static constexpr std::size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
+        static constexpr size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
 
         if constexpr(use_max_errors)
             max_errors = get<align_cfg::id::max_error>(config);
@@ -403,8 +403,8 @@ private:
         // limit search width for prefix search
         if constexpr(use_max_errors && is_global)
         {
-            std::size_t max_length = query.size() + max_errors + 1;
-            std::size_t haystack_length = std::min(database.size(), max_length);
+            size_t max_length = query.size() + max_errors + 1;
+            size_t haystack_length = std::min(database.size(), max_length);
             database_it_end -= database.size() - haystack_length;
         }
 
