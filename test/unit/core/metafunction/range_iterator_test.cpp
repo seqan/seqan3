@@ -44,38 +44,39 @@
 
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/core/detail/reflection.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
 using namespace seqan3;
 
 TEST(range_and_iterator, iterator_)
 {
-    EXPECT_TRUE((std::is_same_v<iterator_t<std::vector<int>>,
+    EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<std::vector<int>>,
                                 typename std::vector<int>::iterator>));
-    EXPECT_TRUE((std::is_same_v<iterator_t<std::vector<int> const>,
+    EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<std::vector<int> const>,
                                 typename std::vector<int>::const_iterator>));
 
     auto v = ranges::view::ints(1);
-    EXPECT_TRUE((std::is_same_v<iterator_t<decltype(v)>,
-                                decltype(ranges::begin(v))>));
-    EXPECT_FALSE((std::is_same_v<iterator_t<decltype(v)>,
-                                 decltype(ranges::end(v))>));
+    EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
+                                decltype(begin(v))>));
+    EXPECT_FALSE((std::is_same_v<std::ranges::iterator_t<decltype(v)>,
+                                 decltype(end(v))>));
 }
 
 TEST(range_and_iterator, sentinel_)
 {
-    EXPECT_TRUE((std::is_same_v<sentinel_t<std::vector<int>>,
+    EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<std::vector<int>>,
                                 typename std::vector<int>::iterator>));
-    EXPECT_TRUE((std::is_same_v<sentinel_t<std::vector<int> const>,
+    EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<std::vector<int> const>,
                                 typename std::vector<int>::const_iterator>));
-    EXPECT_TRUE((std::is_same_v<sentinel_t<std::vector<int>>,
-                                iterator_t<std::vector<int>>>));
+    EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<std::vector<int>>,
+                                std::ranges::iterator_t<std::vector<int>>>));
 
     auto v = ranges::view::ints(1);
-    EXPECT_FALSE((std::is_same_v<sentinel_t<decltype(v)>,
-                                decltype(ranges::begin(v))>));
-    EXPECT_TRUE((std::is_same_v<sentinel_t<decltype(v)>,
-                                decltype(ranges::end(v))>));
+    EXPECT_FALSE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
+                                decltype(begin(v))>));
+    EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
+                                decltype(end(v))>));
 }
 
 template <typename list1, typename list2, size_t pos = 0>
@@ -101,7 +102,7 @@ TEST(range_and_iterator, value_type_)
                                  typename value_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::value_type,             // member type
                                  value_type_t<std::vector<int> const>,              // const container
-                                 value_type_t<iterator_t<std::vector<int>>>,        // iterator
+                                 value_type_t<std::ranges::iterator_t<std::vector<int>>>,        // iterator
                                  value_type_t<foreign_iterator>,                    // iterator2
                                  value_type_t<decltype(v)>>;                        // range, no member
     using comp_list = meta::list<int,
@@ -123,7 +124,7 @@ TEST(range_and_iterator, reference_)
                                  typename reference<std::vector<int>>::type,       // long
                                  typename std::vector<int>::reference,             // member type
                                  reference_t<std::vector<int> const>,              // const container
-                                 reference_t<iterator_t<std::vector<int>>>,        // iterator
+                                 reference_t<std::ranges::iterator_t<std::vector<int>>>,        // iterator
                                  reference_t<foreign_iterator>,                    // iterator2
                                  reference_t<decltype(v)>>;                        // range, no member
 
@@ -147,7 +148,7 @@ TEST(range_and_iterator, rvalue_reference_)
 // No types have member,yet:
 //                                  typename std::vector<int>::rvalue_reference,             // member type
                                  rvalue_reference_t<std::vector<int> const>,              // const container
-                                 rvalue_reference_t<iterator_t<std::vector<int>>>,        // iterator
+                                 rvalue_reference_t<std::ranges::iterator_t<std::vector<int>>>,        // iterator
                                  rvalue_reference_t<foreign_iterator>,                    // iterator2
                                  rvalue_reference_t<decltype(v)>>;                        // range, no member
 
@@ -171,7 +172,7 @@ TEST(range_and_iterator, const_reference_)
                                  typename std::vector<int>::const_reference,             // member type
                                  const_reference_t<std::vector<int> const>,              // const container
 // not defined on iterators
-//                                  const_reference_t<iterator_t<std::vector<int>>>,        // iterator
+//                                  const_reference_t<std::ranges::iterator_t<std::vector<int>>>,        // iterator
 //                                  const_reference_t<foreign_iterator>,                    // iterator2
                                  const_reference_t<decltype(v)>>;                        // range, no member
 
@@ -195,7 +196,7 @@ TEST(range_and_iterator, difference_type_)
                                  typename difference_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::difference_type,             // member type
                                  difference_type_t<std::vector<int> const>,              // const container
-                                 difference_type_t<iterator_t<std::vector<int>>>,        // iterator
+                                 difference_type_t<std::ranges::iterator_t<std::vector<int>>>,        // iterator
                                  difference_type_t<foreign_iterator>,                    // iterator2
                                  difference_type_t<decltype(v)>>;                        // range, no member
 
@@ -230,7 +231,7 @@ TEST(range_and_iterator, size_type_)
                                  typename size_type<std::vector<int>>::type,       // long
                                  typename std::vector<int>::size_type,             // member type
                                  size_type_t<std::vector<int> const>,              // const container
-                                 size_type_t<iterator_t<std::vector<int>>>,        // iterator
+                                 size_type_t<std::ranges::iterator_t<std::vector<int>>>,        // iterator
                                  size_type_t<foreign_iterator>,                    // iterator2
                                  size_type_t<decltype(v)>>;                        // range, no member
 
@@ -254,8 +255,8 @@ TEST(range_and_iterator, innermost_value_type_)
     using type_list = meta::list<typename innermost_value_type<std::vector<int>>::type,         // long
                                  innermost_value_type_t<std::vector<int>>,                      // short
                                  innermost_value_type_t<std::vector<std::vector<int>>>,         // two-level
-                                 innermost_value_type_t<iterator_t<std::vector<int>>>,          // iterator
-                                 innermost_value_type_t<iterator_t<std::vector<int> const>>>;   // const_iterator
+                                 innermost_value_type_t<std::ranges::iterator_t<std::vector<int>>>,          // iterator
+                                 innermost_value_type_t<std::ranges::iterator_t<std::vector<int> const>>>;   // const_iterator
 
     using comp_list = meta::list<int,
                                  int,
@@ -269,9 +270,9 @@ TEST(range_and_iterator, innermost_value_type_)
 TEST(range_and_iterator, dimension)
 {
     EXPECT_EQ(dimension_v<std::vector<int>>,                            1u);
-    EXPECT_EQ(dimension_v<iterator_t<std::vector<int>>>,                1u);
+    EXPECT_EQ(dimension_v<std::ranges::iterator_t<std::vector<int>>>,                1u);
     EXPECT_EQ(dimension_v<std::vector<std::vector<int>>>,               2u);
-    EXPECT_EQ(dimension_v<iterator_t<std::vector<std::vector<int>>>>,   2u);
+    EXPECT_EQ(dimension_v<std::ranges::iterator_t<std::vector<std::vector<int>>>>,   2u);
 }
 
 TEST(range_and_iterator, compatible)
@@ -279,16 +280,16 @@ TEST(range_and_iterator, compatible)
     EXPECT_TRUE((compatible_concept<std::vector<int>,
                                     std::list<int>>));
     EXPECT_TRUE((compatible_concept<std::vector<int>,
-                                    iterator_t<std::vector<int>>>));
+                                    std::ranges::iterator_t<std::vector<int>>>));
     EXPECT_TRUE((compatible_concept<std::vector<int>,
-                                    iterator_t<std::vector<int> const>>));
+                                    std::ranges::iterator_t<std::vector<int> const>>));
     EXPECT_TRUE((compatible_concept<std::list<std::vector<char>>,
-                                    iterator_t<std::vector<std::string>>>));
+                                    std::ranges::iterator_t<std::vector<std::string>>>));
 
     EXPECT_FALSE((compatible_concept<std::list<std::vector<char>>,
                                      std::string>));
     EXPECT_FALSE((compatible_concept<std::list<std::vector<char>>,
-                                     iterator_t<std::string>>));
+                                     std::ranges::iterator_t<std::string>>));
     EXPECT_FALSE((compatible_concept<std::list<int>,
                                      int>));
     EXPECT_FALSE((compatible_concept<std::vector<int>,

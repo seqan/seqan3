@@ -46,6 +46,7 @@
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -108,19 +109,19 @@ concept weakly_ordered_with_concept = requires (std::remove_reference_t<t1> cons
 //!\endcond
 
 /*!\interface   seqan3::implicitly_convertible_to_concept <>
- * \brief       Resolves to `ranges::ImplicitlyConvertibleTo<type1, type2>()`.
+ * \brief       Resolves to `std::ranges::ImplicitlyConvertibleTo<type1, type2>()`.
  */
 //!\cond
 template <typename t, typename u>
-concept implicitly_convertible_to_concept = static_cast<bool>(ranges::ImplicitlyConvertibleTo<t, u>());
+concept implicitly_convertible_to_concept = std::is_convertible_v<t, u>;
 //!\endcond
 
 /*!\interface   seqan3::explicitly_convertible_to_concept <>
- * \brief       Resolves to `ranges::ExplicitlyConvertibleTo<type1, type2>()`.
+ * \brief       Resolves to `std::ranges::ExplicitlyConvertibleTo<type1, type2>()`.
  */
 //!\cond
 template <typename t, typename u>
-concept explicitly_convertible_to_concept = static_cast<bool>(ranges::ExplicitlyConvertibleTo<t, u>());
+concept explicitly_convertible_to_concept = requires (t vt) { { static_cast<u>(vt)}; };
 //!\endcond
 
 /*!\interface   seqan3::arithmetic_concept <>

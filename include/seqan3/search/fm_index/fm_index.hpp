@@ -45,6 +45,7 @@
 
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/filesystem.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
@@ -52,6 +53,7 @@
 #include <seqan3/search/fm_index/fm_index_iterator.hpp>
 #include <seqan3/std/view/reverse.hpp>
 #include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -236,8 +238,8 @@ public:
         //TODO view::reverse is broken and can't be chained right now
         std::vector<value_type_t<text_t>> another_copy = text | view::reverse;
 
-        ranges::copy(another_copy | view::to_rank | view::transform([] (uint8_t const r) { return r + 1; }),
-                     ranges::begin(tmp_text)); // reverse and increase rank by one
+        std::ranges::copy(another_copy | view::to_rank | view::transform([] (uint8_t const r) { return r + 1; }),
+                          seqan3::begin(tmp_text)); // reverse and increase rank by one
 
         sdsl::construct_im(index, tmp_text, 0);
 

@@ -40,9 +40,10 @@
 #include <vector>
 
 #include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 
 using input_iterator               = std::istream_iterator<char>;
-using output_iterator              = ranges::ostream_iterator<char>;
+using output_iterator              = std::ranges::ostream_iterator<char>;
 using forward_iterator             = std::forward_list<char>::iterator;
 using bidirectional_iterator       = std::list<char>::iterator;
 using random_access_iterator       = std::vector<char>::iterator;
@@ -95,7 +96,7 @@ struct value
 };
 
 template <typename value_t, typename ...ts>
-struct value<ranges::ostream_iterator<value_t, ts...>>
+struct value<std::ranges::ostream_iterator<value_t, ts...>>
 {
     using type = value_t;
 };

@@ -44,6 +44,12 @@
 #else // implement via range-v3
 
 #include <range/v3/range_concepts.hpp>
+#include <range/v3/empty.hpp>
+#include <range/v3/iterator_range.hpp>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/equal.hpp>
+#include <range/v3/view/any_view.hpp>
+#include <range/v3/view/reverse.hpp>
 
 #include <seqan3/core/platform.hpp>
 
@@ -173,8 +179,91 @@ template <typename type>
 concept ViewableRange = Range<type> && (std::is_lvalue_reference_v<type> || View<type>);
 //!\endcond
 
-//!\}
+/*!\typedef std::ranges::begin;
+ * \brief Alias for ranges::begin. Returns an iterator to the beginning of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(begin =) ::ranges::begin;
 
+/*!\typedef std::ranges::end
+ * \brief Alias for ranges::end. Returns an iterator to the end of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(end =) ::ranges::end;
+
+/*!\typedef std::ranges::size
+ * \brief Alias for ranges::size. Obtains the size of a range whose size can be calculated in constant time.
+ */
+using SEQAN3_DOXYGEN_ONLY(size =) ::ranges::size;
+
+/*!\typedef std::ranges::copy
+ * \brief Alias for ranges::copy. Copies a range of elements to a new location.
+ */
+using SEQAN3_DOXYGEN_ONLY(copy =) ::ranges::copy;
+
+/*!\typedef std::ranges::empty
+ * \brief Alias for ranges::empty. Checks whether a range is empty.
+ */
+using SEQAN3_DOXYGEN_ONLY(empty =) ::ranges::empty;
+
+/*!\typedef std::ranges::equal
+* \brief Alias for ranges::equal. Determines if two sets of elements are the same.
+*/
+using SEQAN3_DOXYGEN_ONLY(equal =) ::ranges::equal;
+
+/*!\typedef std::ranges::default_sentinel
+* \brief Alias for ranges::default_sentinel. Empty sentinel type for use with iterator types that know the bound of their range.
+*/
+using SEQAN3_DOXYGEN_ONLY(default_sentinel =) ::ranges::default_sentinel;
+
+/*!\typedef std::ranges::sentinel_t
+* \brief Alias for ranges::sentinel_t. Obtains the sentinel type of a range.
+*/
+using SEQAN3_DOXYGEN_ONLY(sentinel_t =) ::ranges::sentinel_t;
+
+/*!\typedef std::ranges::iterator_t
+* \brief Alias for ranges::iterator_t. Obtains the iterator type of a range.
+*/
+using SEQAN3_DOXYGEN_ONLY(iterator_t =) ::ranges::iterator_t;
+
+/*!\typedef std::ranges::ostreambuf_iterator
+* \brief Alias for ranges::ostreambuf_iterator. Output iterator that writes to std::basic_streambuf.
+*/
+using SEQAN3_DOXYGEN_ONLY(ostreambuf_iterator =) ::ranges::ostreambuf_iterator;
+
+/*!\typedef std::ranges::iterator_range
+* \brief Alias for ranges::iterator_range. Iterator adaptor for a Range type.
+*/
+using SEQAN3_DOXYGEN_ONLY(iterator_range =) ::ranges::iterator_range;
+
+/*!\typedef std::ranges::make_iterator_range
+* \brief Alias for ranges::make_iterator_range. Makes the iterator adaptor.
+*/
+using SEQAN3_DOXYGEN_ONLY(make_iterator_range =) ::ranges::make_iterator_range;
+
+/*!\typedef std::ranges::cbegin
+* \brief Alias for ranges::cbegin. Returns an iterator to the beginning of a range.
+*/
+using SEQAN3_DOXYGEN_ONLY(cbegin =) ::ranges::cbegin;
+
+/*!\typedef std::ranges::cend
+* \brief Alias for ranges::cend. Returns an iterator to the end of a range.
+*/
+using SEQAN3_DOXYGEN_ONLY(cend =) ::ranges::cend;
+
+/*!\typedef std::ranges::istream_range
+* \brief Alias for ranges::istream_range. Istream adaptor for a Range type.
+*/
+using SEQAN3_DOXYGEN_ONLY(istream_range =) ::ranges::istream_range;
+
+/*!\typedef std::ranges::ostream_iterator
+* \brief Alias for ranges::ostream_iterator. Ostream adaptor for a Range type.
+*/
+using SEQAN3_DOXYGEN_ONLY(ostream_iterator =) ::ranges::ostream_iterator;
+
+/*!\typedef std::ranges::iter_move
+* \brief Alias for ranges::iter_move. Casts the result of dereferencing an object to its associated rvalue reference type/
+*/
+using SEQAN3_DOXYGEN_ONLY(iter_move =) ::ranges::iter_move;
+//!\}
 } // namespace std::ranges
 
 #endif // no standard header

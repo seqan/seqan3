@@ -117,8 +117,8 @@ template <typename t>
 concept WeaklyIncrementable = Semiregular<t> &&
                                    requires (t v)
 {
-    typename ::ranges::difference_type_t<t>;
-    requires SignedIntegral<::ranges::difference_type_t<t>>;
+    typename std::iterator_traits<std::remove_reference_t<t>>::difference_type;
+    requires SignedIntegral<typename std::iterator_traits<std::remove_reference_t<t>>::difference_type>;
     { ++v } -> t &; /* not required to be equality preserving */
     v++; /* not required to be equality preserving */
 };

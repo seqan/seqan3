@@ -72,9 +72,9 @@ TEST(view_char_to, deep_view)
 
     std::vector<dna5_vector> v = foo | view::char_to<dna5>;
 
-    ASSERT_EQ(ranges::size(v), 2);
-    EXPECT_TRUE((ranges::equal(v[0], "ACGTA"_dna5)));
-    EXPECT_TRUE((ranges::equal(v[1], "TGCAT"_dna5)));
+    ASSERT_EQ(size(v), 2);
+    EXPECT_TRUE((std::ranges::equal(v[0], "ACGTA"_dna5)));
+    EXPECT_TRUE((std::ranges::equal(v[1], "TGCAT"_dna5)));
 }
 
 TEST(view_char_to, concepts)

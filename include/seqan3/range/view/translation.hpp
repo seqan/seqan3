@@ -229,17 +229,17 @@ public:
             case translation_frames::FWD_FRAME_0:
                 [[fallthrough]];
             case translation_frames::REV_FRAME_0:
-                return ranges::size(data_members->urange) / 3;
+                return seqan3::size(data_members->urange) / 3;
                 break;
             case translation_frames::FWD_FRAME_1:
                 [[fallthrough]];
             case translation_frames::REV_FRAME_1:
-                return (ranges::size(data_members->urange) - 1) / 3;
+                return (seqan3::size(data_members->urange) - 1) / 3;
                 break;
             case translation_frames::FWD_FRAME_2:
                 [[fallthrough]];
             case translation_frames::REV_FRAME_2:
-                return (ranges::size(data_members->urange) - 2) / 3;
+                return (seqan3::size(data_members->urange) - 2) / 3;
                 break;
             default:
                 throw std::invalid_argument(multiple_frame_error.c_str());

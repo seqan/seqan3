@@ -1,5 +1,6 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 int main(int argc, char ** argv)
 {
@@ -36,7 +37,7 @@ int main(int argc, char ** argv)
 
     avg = avg / grades.size();
 
-    std::cout << name << " has an average grade of " << avg << std::endl;
+    seqan3::debug_stream << name << " has an average grade of " << avg << std::endl;
 
     return 0;
 }

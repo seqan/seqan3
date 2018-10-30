@@ -63,11 +63,11 @@ class single_pass_input : public ::testing::Test
         {
             return rng_type{1, 2, 3, 4, 5};
         }
-        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, ranges::v3::istream_range<char>>)
+        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::ranges::istream_range<char>>)
         {
             return std::istringstream{"12345"};
         }
-        else /*(std::is_same_v<rng_type, ranges::v3::istream_range<int>>)*/
+        else /*(std::is_same_v<rng_type, std::ranges::istream_range<int>>)*/
         {
             return std::istringstream{"1 2 3 4 5"};
         }
@@ -82,8 +82,8 @@ public:
 using underlying_range_types = ::testing::Types<std::vector<char>,
                                                 std::vector<int>,
                                                 std::vector<char> const,
-                                                ranges::istream_range<char>,
-                                                ranges::istream_range<int>>;
+                                                std::ranges::istream_range<char>,
+                                                std::ranges::istream_range<int>>;
 
 TYPED_TEST_CASE(single_pass_input, underlying_range_types);
 
@@ -94,7 +94,7 @@ TYPED_TEST(single_pass_input, view_concept)
     using view_t = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
     EXPECT_TRUE((std::is_base_of_v<ranges::view_base, view_t>));
 
-    EXPECT_TRUE((std::Sentinel<sentinel_t<view_t>, iterator_t<view_t>>));
+    EXPECT_TRUE((std::Sentinel<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
     EXPECT_TRUE(std::ranges::Range<view_t>);
     EXPECT_TRUE(std::ranges::View<view_t>);
     EXPECT_TRUE(std::ranges::InputRange<view_t>);
@@ -127,7 +127,7 @@ TYPED_TEST(single_pass_input, view_begin)
 
     detail::single_pass_input_view view{p};
 
-    using iterator_type = ranges::iterator_t<decltype(view)>;
+    using iterator_type = std::ranges::iterator_t<decltype(view)>;
 
     EXPECT_TRUE((std::is_same_v<decltype(view.begin()), iterator_type>));
     EXPECT_EQ(*view.begin(), *p.begin());
@@ -139,7 +139,7 @@ TYPED_TEST(single_pass_input, view_end)
 
     detail::single_pass_input_view view{p};
 
-    using sentinel_type = ranges::sentinel_t<decltype(view)>;
+    using sentinel_type = std::ranges::sentinel_t<decltype(view)>;
 
     EXPECT_TRUE((std::is_same_v<decltype(view.end()), sentinel_type>));
 }
@@ -170,14 +170,14 @@ TYPED_TEST(single_pass_input, view_iterate)
 TYPED_TEST(single_pass_input, iterator_concepts)
 {
     using view_type = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
-    EXPECT_TRUE((std::InputIterator<ranges::iterator_t<view_type>>));
-    EXPECT_FALSE((std::ForwardIterator<ranges::iterator_t<view_type>>));
+    EXPECT_TRUE((std::InputIterator<std::ranges::iterator_t<view_type>>));
+    EXPECT_FALSE((std::ForwardIterator<std::ranges::iterator_t<view_type>>));
 }
 
 TYPED_TEST(single_pass_input, iterator_construction)
 {
     using view_type = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
-    using iterator_type = ranges::iterator_t<view_type>;
+    using iterator_type = std::ranges::iterator_t<view_type>;
     EXPECT_TRUE(std::is_default_constructible_v<iterator_type>);
     EXPECT_TRUE(std::is_copy_constructible_v<iterator_type>);
     EXPECT_TRUE(std::is_move_constructible_v<iterator_type>);
@@ -193,7 +193,7 @@ TYPED_TEST(single_pass_input, iterator_pre_increment)
     detail::single_pass_input_view view{p};
 
     auto it = view.begin();
-    if constexpr (std::is_same_v<ranges::range_value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it,   '1');
         EXPECT_EQ(*++it, '2');
@@ -220,7 +220,7 @@ TYPED_TEST(single_pass_input, iterator_post_increment)
     auto it = view.begin();
     EXPECT_TRUE((std::Same<decltype(it++), void>));
 
-    if constexpr (std::is_same_v<ranges::range_value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it, '1');
         it++;
@@ -283,8 +283,8 @@ TYPED_TEST(single_pass_input, iterator_neq_comparison)
 TYPED_TEST(single_pass_input, sentinel_concepts)
 {
     using view_type     = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
-    using iterator_type = iterator_t<view_type>;
-    using sentinel_type = sentinel_t<view_type>;
+    using iterator_type = std::ranges::iterator_t<view_type>;
+    using sentinel_type = std::ranges::sentinel_t<view_type>;
 
     EXPECT_TRUE((std::Sentinel<sentinel_type, iterator_type>));
     EXPECT_FALSE((std::SizedSentinel<sentinel_type, iterator_type>));
@@ -332,7 +332,7 @@ TYPED_TEST(single_pass_input, fn_functional)
     auto view = ranges::view::take(view::single_pass_input(p), 3);
 
     auto it = view.begin();
-    if constexpr (std::is_same_v<ranges::range_value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it,   '1');
         EXPECT_EQ(*++it, '2');
@@ -354,7 +354,7 @@ TYPED_TEST(single_pass_input, fn_pipeable)
 
     auto view = p | view::single_pass_input | ranges::view::take(3);
     auto it = view.begin();
-    if constexpr (std::is_same_v<ranges::range_value_type_t<TypeParam>, char>)
+    if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it,   '1');
         EXPECT_EQ(*++it, '2');

@@ -46,6 +46,7 @@
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
@@ -125,13 +126,13 @@ template <genetic_code gc = genetic_code::CANONICAL, std::ranges::InputRange ran
     //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {
-    auto n1 = ranges::begin(input_range);
+    auto n1 = begin(input_range);
     auto n2 = ++n1;
     auto n3 = ++n2;
 
-    assert(n1 != ranges::end(input_range));
-    assert(n2 != ranges::end(input_range));
-    assert(n3 != ranges::end(input_range));
+    assert(n1 != end(input_range));
+    assert(n2 != end(input_range));
+    assert(n3 != end(input_range));
 
     return translate_triplet(*n1, *n2, *n3);
 }
@@ -159,9 +160,9 @@ template <genetic_code gc = genetic_code::CANONICAL, std::ranges::RandomAccessRa
 //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {
-    assert(input_range.begin() != ranges::end(input_range));
-    assert(input_range.begin() + 1 != ranges::end(input_range));
-    assert(input_range.begin() + 2 != ranges::end(input_range));
+    assert(input_range.begin() != end(input_range));
+    assert(input_range.begin() + 1 != end(input_range));
+    assert(input_range.begin() + 2 != end(input_range));
 
     return translate_triplet(input_range[0], input_range[1], input_range[2]);
 }

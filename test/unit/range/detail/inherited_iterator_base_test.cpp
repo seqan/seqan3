@@ -37,6 +37,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
 
 /* This class is extensively tested by the many views that use it, e.g. view::take_line */
@@ -91,7 +92,7 @@ TEST(inherited_iterator_base, minimal)
     //! [inherited_iterator_base desired]
     std::vector<int> vec{0,1,2,3,4,5,6,7,8,9};
 
-    skip_odd_numbers_it it = ranges::begin(vec);
+    skip_odd_numbers_it it = begin(vec);
 
     EXPECT_EQ(*it, 0);
     ++it;

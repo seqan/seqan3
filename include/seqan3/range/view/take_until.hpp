@@ -47,8 +47,11 @@
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
@@ -96,18 +99,18 @@ private:
                                            std::RegularInvocable<fun_t, reference_t<urng_t>>;
 
     //!\brief The sentinel type is identical to that of the underlying range.
-    using sentinel_type = sentinel_t<urng_t>;
+    using sentinel_type = std::ranges::sentinel_t<urng_t>;
 
     //!\brief The iterator type inherits from the underlying type, but overwrites several operators.
     //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
     template <typename rng_t>
-    class iterator_type : public inherited_iterator_base<iterator_type<rng_t>, iterator_t<rng_t>>
+    class iterator_type : public inherited_iterator_base<iterator_type<rng_t>, std::ranges::iterator_t<rng_t>>
     {
     private:
         //!\brief The iterator type of the underlying range.
-        using base_base_t = iterator_t<rng_t>;
+        using base_base_t = std::ranges::iterator_t<rng_t>;
         //!\brief The CRTP wrapper type.
-        using base_t      = inherited_iterator_base<iterator_type, iterator_t<rng_t>>;
+        using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
 
         //!\brief Auxiliary type.
         using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
@@ -249,21 +252,21 @@ public:
      */
     iterator begin() noexcept
     {
-        return {ranges::begin(urange), static_cast<fun_t &>(fun)};
+        return {seqan3::begin(urange), static_cast<fun_t &>(fun)};
     }
 
     //!\copydoc begin()
     const_iterator begin() const noexcept
         requires const_iterable
     {
-        return {ranges::cbegin(urange), static_cast<fun_t const &>(fun)};
+        return {seqan3::cbegin(urange), static_cast<fun_t const &>(fun)};
     }
 
     //!\copydoc begin()
     const_iterator cbegin() const noexcept
         requires const_iterable
     {
-        return {ranges::cbegin(urange), static_cast<fun_t const &>(fun)};
+        return {seqan3::cbegin(urange), static_cast<fun_t const &>(fun)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -281,21 +284,21 @@ public:
      */
     sentinel_type end() noexcept
     {
-        return {ranges::end(urange)};
+        return {seqan3::end(urange)};
     }
 
     //!\copydoc end()
     sentinel_type end() const noexcept
         requires const_iterable
     {
-        return {ranges::cend(urange)};
+        return {seqan3::cend(urange)};
     }
 
     //!\copydoc end()
     sentinel_type cend() const noexcept
         requires const_iterable
     {
-        return {ranges::cend(urange)};
+        return {seqan3::cend(urange)};
     }
     //!\}
 
@@ -311,7 +314,7 @@ public:
     //!\endcond
     {
         container_t ret;
-        ranges::copy(begin(), end(), std::back_inserter(ret));
+        std::ranges::copy(begin(), end(), std::back_inserter(ret));
         return ret;
     }
 
@@ -323,7 +326,7 @@ public:
     //!\endcond
     {
         container_t ret;
-        ranges::copy(cbegin(), cend(), std::back_inserter(ret));
+        std::ranges::copy(cbegin(), cend(), std::back_inserter(ret));
         return ret;
     }
 };

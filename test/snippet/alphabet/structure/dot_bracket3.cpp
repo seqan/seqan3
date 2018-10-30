@@ -1,4 +1,5 @@
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 using namespace seqan3;
 
@@ -10,7 +11,7 @@ std::vector<dot_bracket3> vec{dot_bracket3::UNPAIRED, dot_bracket3::PAIR_CLOSE, 
 // modify and print
 vec[1] = dot_bracket3::PAIR_OPEN;
 for (dot_bracket3 chr : vec)
-    std::cout << to_char(chr);  // .()
-std::cout << "\n";
+    debug_stream << to_char(chr);  // .()
+debug_stream << "\n";
 //! [general]
 }

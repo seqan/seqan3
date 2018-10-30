@@ -42,6 +42,7 @@
 #include <range/v3/utility/iterator.hpp>
 
 #include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -128,23 +129,23 @@ class alignment_range
          * \{
          */
 
-        constexpr bool operator==(ranges::default_sentinel const & rhs) const
+        constexpr bool operator==(std::ranges::default_sentinel const & rhs) const
         {
             return stream_ptr->eof();
         }
 
-        friend constexpr bool operator==(ranges::default_sentinel const & lhs,
+        friend constexpr bool operator==(std::ranges::default_sentinel const & lhs,
                                          iterator_type const & rhs)
         {
             return rhs == lhs;
         }
 
-        constexpr bool operator!=(ranges::default_sentinel const & rhs) const
+        constexpr bool operator!=(std::ranges::default_sentinel const & rhs) const
         {
             return !(*this == rhs);
         }
 
-        friend constexpr bool operator!=(ranges::default_sentinel const & lhs,
+        friend constexpr bool operator!=(std::ranges::default_sentinel const & lhs,
                                          iterator_type const & rhs)
         {
             return rhs != lhs;
@@ -169,7 +170,7 @@ public:
     //!\brief The iterator type.
     using iterator        = iterator_type;
     //!\brief The sentinel type.
-    using sentinel        = ranges::default_sentinel;
+    using sentinel        = std::ranges::default_sentinel;
 
     /*!\name Constructors, destructor and assignment
      * \{

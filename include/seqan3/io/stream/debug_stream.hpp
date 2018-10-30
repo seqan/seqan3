@@ -47,6 +47,7 @@
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/stream/concept.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -326,8 +327,8 @@ inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
     else
     {
         s << '[';
-        auto b = ranges::begin(r);
-        auto e = ranges::end(r);
+        auto b = begin(r);
+        auto e = end(r);
         if (b != e)
         {
             s << *b;

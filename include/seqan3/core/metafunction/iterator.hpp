@@ -47,6 +47,7 @@
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -98,7 +99,7 @@ template <std::InputIterator it_t>
 struct rvalue_reference<it_t>
 {
     //!\brief Return the member type as return type.
-    using type = decltype(ranges::iter_move(std::declval<it_t &>()));
+    using type = decltype(std::ranges::iter_move(std::declval<it_t &>()));
 };
 
 // see specialisation for ranges in core/metafunction/range.hpp

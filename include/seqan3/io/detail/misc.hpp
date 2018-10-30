@@ -92,7 +92,7 @@ void set_format(format_variant_type & format,
 
             for (auto const & ext : fmt_type::file_extensions)
             {
-                if (ranges::equal(ext, extension))
+                if (std::ranges::equal(ext, extension))
                 {
                     format = fmt_type{};
                     format_found = true;

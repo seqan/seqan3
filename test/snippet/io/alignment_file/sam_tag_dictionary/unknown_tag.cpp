@@ -2,6 +2,7 @@
 #include <variant> // for std::visit
 
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/concept.hpp> // for the seqan3::container_concept
 
 using namespace seqan3;
@@ -13,13 +14,13 @@ auto print_fn = [] (auto && arg)
 
     if constexpr (!container_concept<T>)     // If T is not a container,
     {
-        std::cout << arg << std::endl;       // just print arg directly.
+        debug_stream << arg << std::endl;       // just print arg directly.
     }
     else                                     // If T is a container,
     {
         for (auto const & arg_v : arg)       // print every value in arg.
-            std::cout << arg_v << ",";
-        std::cout << std::endl;
+            debug_stream << arg_v << ",";
+        debug_stream << std::endl;
     }
 };
 
@@ -38,7 +39,7 @@ int main()
     auto xz = dict["XZ"_tag]; // get SAM tag 'XZ' (type std::variant<...allowed SAM tag types...>)
 
     // ! you cannot print a std::variant directly !
-    // std::cout << nm << std::endl;
+    // debug_stream << nm << std::endl;
     // but you can use visit:
     std::visit(print_fn, xz); // prints 3
 }

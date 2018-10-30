@@ -282,11 +282,11 @@ public:
         // ---------------------------------------------------------------------
         // logical Requirements
         // ---------------------------------------------------------------------
-        if (!ranges::empty(get<1>(align)) && ranges::empty(seq))
+        if (!empty(get<1>(align)) && empty(seq))
             throw format_error("If you specify an align object you must also specify the seq object. "
                                "Hint: Check if offset needs to be set to if soft-clipping is present.");
 
-        if (options.sam_require_header && (header_ptr != nullptr) && !ranges::empty(ref_id))
+        if (options.sam_require_header && (header_ptr != nullptr) && !empty(ref_id))
         {
             if ((header_ptr->ref_dict).count(std::string(ref_id)) == 0) // no reference id matched
                 throw format_error(std::string("The ref_id '") + std::string(ref_id) +
@@ -305,7 +305,7 @@ public:
         // ---------------------------------------------------------------------
         // Writing the Record
         // ---------------------------------------------------------------------
-        ranges::ostreambuf_iterator stream_it{stream};
+        std::ranges::ostreambuf_iterator stream_it{stream};
         char const separator{'\t'};
 
         write_range(stream_it, std::forward<id_type>(id));
@@ -322,7 +322,7 @@ public:
 
         stream << std::forward<mapq_type>(mapq) << separator;
 
-        if (!ranges::empty(get<1>(align)))
+        if (!empty(get<1>(align)))
         {
             // compute possible distance from alignment end to sequence end
             // which indicates soft clipping at the end.
@@ -386,10 +386,10 @@ protected:
     //!\endcond
     void write_range(stream_it_t & stream_it, field_type && field_value)
     {
-        if (ranges::empty(field_value))
+        if (empty(field_value))
             stream_it = '*';
         else
-            ranges::copy(field_value | view::to_char | view::take_until(is_space), stream_it);
+            std::ranges::copy(field_value | view::to_char | view::take_until(is_space), stream_it);
     }
 
     /*!\brief Writes the optional fields of the seqan3::sam_tag_dictionary.
@@ -494,7 +494,7 @@ protected:
             // -----------------------------------------------------------------
             // Write Header
             // -----------------------------------------------------------------
-            ranges::ostreambuf_iterator stream_it{stream};
+            std::ranges::ostreambuf_iterator stream_it{stream};
 
             // (@HD) Write header_ptr line [required].
             stream << "@HD\tVN:";

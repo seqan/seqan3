@@ -148,7 +148,7 @@ TYPED_TEST(container, iterators)
 
     // mutability
     *t1.begin() = dna4::T;
-    EXPECT_TRUE((ranges::equal(t1, "TCCGT"_dna4)));
+    EXPECT_TRUE((std::ranges::equal(t1, "TCCGT"_dna4)));
 }
 
 TYPED_TEST(container, element_access)
@@ -176,13 +176,13 @@ TYPED_TEST(container, element_access)
 
     // mutability
     t1[0] = dna4::T;
-    EXPECT_TRUE((ranges::equal(t1, "TCCGT"_dna4)));
+    EXPECT_TRUE((std::ranges::equal(t1, "TCCGT"_dna4)));
 
     t1.front() = dna4::C;
-    EXPECT_TRUE((ranges::equal(t1, "CCCGT"_dna4)));
+    EXPECT_TRUE((std::ranges::equal(t1, "CCCGT"_dna4)));
 
     t1.back() = dna4::G;
-    EXPECT_TRUE((ranges::equal(t1, "CCCGG"_dna4)));
+    EXPECT_TRUE((std::ranges::equal(t1, "CCCGG"_dna4)));
 }
 
 TYPED_TEST(container, capacity)

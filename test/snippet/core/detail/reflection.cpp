@@ -2,6 +2,7 @@
 
 //! [usage]
 #include <seqan3/core/detail/reflection.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 namespace foo
 {
@@ -14,7 +15,7 @@ struct bar
 
 int main()
 {
-    std::cout << seqan3::detail::get_display_name_v<foo::bar<char, double>>.string() << std::endl; // prints: foo::bar<char, double> >
+    seqan3::debug_stream << seqan3::detail::get_display_name_v<foo::bar<char, double>>.string() << std::endl; // prints: foo::bar<char, double> >
     return 0;
 }
 //! [usage]

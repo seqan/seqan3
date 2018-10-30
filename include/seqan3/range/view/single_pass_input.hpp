@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/core/metafunction/all.hpp>
+#include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
@@ -69,7 +70,7 @@ private:
     //!\brief The pure range type without any reference type.
     using pure_range_type    = std::remove_reference_t<urng_t>;
     //!\brief The iterator type for the underlying range.
-    using urng_iterator_type = iterator_t<pure_range_type>;
+    using urng_iterator_type = std::ranges::iterator_t<pure_range_type>;
 
     //!\brief Friend declaration for seqan3::detail::single_pass_input_iterator.
     template <typename view_t>
@@ -96,7 +97,7 @@ public:
     //!\brief Const iterator type is `void`, as iterating over this view as `const` is explicitly forbidden.
     using const_iterator    = void;
     //!\brief The sentinel type.
-    using sentinel          = sentinel_t<pure_range_type>;
+    using sentinel          = std::ranges::sentinel_t<pure_range_type>;
     //!\brief Value type.
     using value_type        = typename iterator::value_type;
     //!\brief Always returns immutable reference type, since single_pass_input cannot change the underlying values.
@@ -118,7 +119,7 @@ public:
 
     //!\brief Construction from the underlying view.
     single_pass_input_view(urng_t && urng) :
-        view_state_ptr{new view_state{std::forward<urng_t>(urng), ranges::begin(urng)}}
+        view_state_ptr{new view_state{std::forward<urng_t>(urng), seqan3::begin(urng)}}
     {}
     //!\}
 
@@ -146,7 +147,7 @@ public:
     //!\brief Returns a sentinel.
     sentinel end()
     {
-        return {ranges::end(view_state_ptr->urng)};
+        return {seqan3::end(view_state_ptr->urng)};
     }
 
     //!\brief Const version of end is deleted, since the underlying view_state must be mutable.

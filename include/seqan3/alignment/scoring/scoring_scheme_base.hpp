@@ -45,6 +45,8 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/range/shortcuts.hpp>
+#include <seqan3/std/ranges>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/array.hpp>
@@ -214,7 +216,7 @@ public:
      */
     constexpr void set_custom_matrix(matrix_type const & _matrix) noexcept
     {
-        ranges::copy(_matrix, ranges::begin(matrix));
+        std::ranges::copy(_matrix, begin(matrix));
     }
     //!\}
 

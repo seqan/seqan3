@@ -66,7 +66,7 @@ using container_of_container_types = ::testing::Types<std::vector<std::vector<dn
 
 TYPED_TEST_CASE(container_of_container, container_of_container_types);
 
-using In = iterator_t<seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4> > >;
+using In = std::ranges::iterator_t<seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4> > >;
 
 static_assert(std::Readable<In>);
 
