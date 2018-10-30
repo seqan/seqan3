@@ -64,7 +64,7 @@
     using _simd_traits_t = seqan3::simd::simd_traits<decltype(left)>; \
     std::vector<typename _simd_traits_t::scalar_type> left_simd(_simd_traits_t::length), right_simd(_simd_traits_t::length); \
     for (size_t i = 0; i < _simd_traits_t::length; ++i) \
-    std::tie(left_simd[i], right_simd[i]) = {left[i], right[i]}; \
+    { left_simd[i] = left[i]; right_simd[i] = right[i]; } \
     EXPECT_EQ(left_simd, right_simd); \
 } while (false)
 //!\endcond
