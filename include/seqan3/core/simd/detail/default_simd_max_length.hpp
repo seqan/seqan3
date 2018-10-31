@@ -55,6 +55,6 @@ namespace seqan3::detail
  * \sa https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/x86-Options.html#x86-Options
  * for simd instruction sets and their flags.
  */
-template <template<typename, size_t> typename simd_backend_t>
+template <template <typename, size_t> typename simd_backend_t>
 constexpr auto default_simd_max_length = 0u;
 } // namespace seqan3::detail
