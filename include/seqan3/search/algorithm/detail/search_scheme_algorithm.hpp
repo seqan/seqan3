@@ -49,12 +49,12 @@
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
+namespace seqan3::detail
+{
+
 /*!\addtogroup search
  * \{
  */
-
-namespace seqan3::detail
-{
 
 /*!\brief Computes a (non-optimal) search scheme. Currently the generated search scheme represents trivial
  *        backtracking.
@@ -79,14 +79,16 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, uint
     using blocks_length_type = typename search_scheme_t::value_type::blocks_length_type;
 
     // Either store information in an array (for search schemes known at compile time) or in a vector otherwise.
-    using result_type = typename std::conditional_t<std::Same<search_scheme_t, search_scheme_dyn_type>,
-                                                    std::vector<std::tuple<blocks_length_type, uint64_t>>,
-                                                    std::array<std::tuple<blocks_length_type, uint64_t>,
-                                                               transformation_trait_or_t<std::tuple_size<search_scheme_t>,
-                                                                                         std::false_type>::value>>;
+    using result_type = std::conditional_t<std::Same<search_scheme_t, search_scheme_dyn_type>,
+                                           std::vector<std::tuple<blocks_length_type, uint64_t>>,
+                                           std::array<std::tuple<blocks_length_type, uint64_t>,
+                                                      transformation_trait_or_t<std::tuple_size<search_scheme_t>,
+                                                                                std::false_type>::value>>;
+
+    bool constexpr is_dyn_scheme = std::Same<result_type, std::vector<std::tuple<blocks_length_type, uint64_t>>>;
 
     result_type result;
-    if constexpr (std::Same<result_type, std::vector<std::tuple<blocks_length_type, uint64_t>>>)
+    if constexpr (is_dyn_scheme)
         result.resize(search_scheme.size());
 
     uint8_t  const blocks      {search_scheme[0].blocks()};
@@ -96,7 +98,7 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, uint
     blocks_length_type blocks_length;
     // set all blocks_length values to block_length
     // resp. block_length + 1 for the first `rest = block_length % blocks` values
-    if constexpr (std::Same<blocks_length_type, std::vector<uint64_t>>)
+    if constexpr (is_dyn_scheme)
         blocks_length.resize(blocks, block_length);
     else
         blocks_length.fill(block_length);
@@ -112,7 +114,7 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, uint
 
         // compute cumulative blocks_length and starting position
         start_pos = 0;
-        if constexpr (std::Same<blocks_length_type, std::vector<uint64_t>>)
+        if constexpr (is_dyn_scheme)
             search_blocks_length.resize(blocks);
         search_blocks_length[0] = blocks_length[search.pi[0] - 1];
         for (uint8_t i = 1; i < blocks; ++i)
@@ -136,26 +138,26 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
  *        Sub-function for searching the remaining part of the current block without any errors.
- * \tparam abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] it Iterator of a string index built on the text that will be searched.
- * \param[in] query Query sequence to be searched.
- * \param[in] lb Left bound of the infix of `query` already searched (exlusive).
- * \param[in] rb Right bound of the infix of `query` already searched (exlusive).
- * \param[in] errors_spent Number of errors spent while searching the infix of `query`.
- * \param[in] block_id Id of the block that infix is extended to next.
- * \param[in] go_right The infix will be extended to the right if the flag is set to true.
- * \param[in] search Search of a search scheme to be used for searching.
+ * \tparam    abort_on_hit  If the flag is set, the search aborts on the first hit.
+ * \param[in] it            Iterator of a string index built on the text that will be searched.
+ * \param[in] query         Query sequence to be searched.
+ * \param[in] lb            Left bound of the infix of `query` already searched (exclusive).
+ * \param[in] rb            Right bound of the infix of `query` already searched (exclusive).
+ * \param[in] errors_spent  Number of errors spent while searching the infix of `query`.
+ * \param[in] block_id      Id of the block that the infix is extended to next.
+ * \param[in] go_right      The infix will be extended to the right if the flag is set to true.
+ * \param[in] search        Search of a search scheme to be used for searching.
  * \param[in] blocks_length Cumulative block lengths of the search.
- * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
+ * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
 template <bool abort_on_hit>
 inline bool search_ss_exact(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                            uint8_t const block_id, bool const go_right, auto const & search, auto const & blocks_length,
-                            search_param const error_left, auto && delegate)
+                            uint8_t const block_id, bool const go_right, auto const & search,
+                            auto const & blocks_length, search_param const error_left, auto && delegate)
 {
     uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
-    bool const go_right2 = (block_id < search.blocks() - 1) && search.pi[block_id + 1] > search.pi[block_id];
+    bool const go_right2 = (block_id < search.blocks() - 1) && (search.pi[block_id + 1] > search.pi[block_id]);
 
     if (go_right)
     {
@@ -165,8 +167,8 @@ inline bool search_ss_exact(auto it, auto & query, uint64_t const lb, uint64_t c
         if (!it.extend_right(query | ranges::view::slice(infix_lb, infix_rb + 1)))
             return false;
 
-        if (search_ss<abort_on_hit>(it, query, lb, infix_rb + 2, errors_spent, block_id2, go_right2, search, blocks_length,
-                                    error_left, delegate) && abort_on_hit)
+        if (search_ss<abort_on_hit>(it, query, lb, infix_rb + 2, errors_spent, block_id2, go_right2, search,
+                                    blocks_length, error_left, delegate) && abort_on_hit)
         {
             return true;
         }
@@ -194,8 +196,8 @@ inline bool search_ss_exact(auto it, auto & query, uint64_t const lb, uint64_t c
  */
 template <bool abort_on_hit>
 inline bool search_ss_deletion(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                               uint8_t const block_id, bool const go_right, auto const & search, auto const & blocks_length,
-                               search_param const error_left, auto && delegate)
+                               uint8_t const block_id, bool const go_right, auto const & search,
+                               auto const & blocks_length, search_param const error_left, auto && delegate)
 {
     uint8_t const max_error_left_in_block = search.u[block_id] - errors_spent;
     uint8_t const min_error_left_in_block = std::max(search.l[block_id] - errors_spent, 0);
@@ -206,16 +208,18 @@ inline bool search_ss_deletion(auto it, auto & query, uint64_t const lb, uint64_
         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
         bool const go_right2 = search.pi[block_id2] > search.pi[block_id2 - 1];
 
-        if (search_ss<abort_on_hit>(it, query, lb, rb, errors_spent, block_id2, go_right2, search, blocks_length, error_left,
-                                    delegate) && abort_on_hit)
+        if (search_ss<abort_on_hit>(it, query, lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
+                                    error_left, delegate) && abort_on_hit)
         {
             return true;
         }
     }
 
     // Insert deletions into the current block as long as possible
-    if (!(search.pi[block_id] == 1 && !go_right) &&              // Do not allow deletions at the beginning of the leftmost block
-        !(search.pi[block_id] == search.blocks() && go_right) && // Do not allow deletions at the end of the rightmost block
+    // Do not allow deletions at the beginning of the leftmost block
+    // Do not allow deletions at the end of the rightmost block
+    if (!(search.pi[block_id] == 1 && !go_right) &&
+        !(search.pi[block_id] == search.blocks() && go_right) &&
         max_error_left_in_block > 0 && error_left.total > 0 && error_left.deletion > 0 &&
         ((go_right && it.extend_right()) || (!go_right && it.extend_left())))
     {
@@ -224,8 +228,8 @@ inline bool search_ss_deletion(auto it, auto & query, uint64_t const lb, uint64_
         error_left2.deletion--;
         do
         {
-            if (search_ss_deletion<abort_on_hit>(it, query, lb, rb, errors_spent + 1, block_id, go_right, search, blocks_length,
-                                                 error_left2, delegate) && abort_on_hit)
+            if (search_ss_deletion<abort_on_hit>(it, query, lb, rb, errors_spent + 1, block_id, go_right, search,
+                                                 blocks_length, error_left2, delegate) && abort_on_hit)
             {
                 return true;
             }
@@ -236,24 +240,25 @@ inline bool search_ss_deletion(auto it, auto & query, uint64_t const lb, uint64_
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
  *        Sub-function for approximate search step (iterating over all children in a conceptual suffix tree).
- * \tparam abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] it Iterator of a string index built on the text that will be searched.
- * \param[in] query Query sequence to be searched.
- * \param[in] lb Left bound of the infix of `query` already searched (exlusive).
- * \param[in] rb Right bound of the infix of `query` already searched (exlusive).
- * \param[in] errors_spent Number of errors spent while searching the infix of `query`.
- * \param[in] block_id Id of the block that infix is extended to next.
- * \param[in] go_right The infix will be extended to the right if the flag is set to true.
+ * \tparam    abort_on_hit            If the flag is set, the search aborts on the first hit.
+ * \param[in] it                      Iterator of a string index built on the text that will be searched.
+ * \param[in] query                   Query sequence to be searched.
+ * \param[in] lb                      Left bound of the infix of `query` already searched (exclusive).
+ * \param[in] rb                      Right bound of the infix of `query` already searched (exclusive).
+ * \param[in] errors_spent            Number of errors spent while searching the infix of `query`.
+ * \param[in] block_id                Id of the block that the infix is extended to next.
+ * \param[in] go_right                The infix will be extended to the right if the flag is set to true.
  * \param[in] min_error_left_in_block Number of remaining errors that need to be spent in the current block.
- * \param[in] search Search of a search scheme to be used for searching.
- * \param[in] blocks_length Cumulative block lengths of the search.
- * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \param[in] search                  Search of a search scheme to be used for searching.
+ * \param[in] blocks_length           Cumulative block lengths of the search.
+ * \param[in] error_left              Number of errors left for matching the remaining suffix of the query sequence.
+ * \param[in] delegate                Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
 template <bool abort_on_hit>
 inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
                                uint8_t const block_id, bool const go_right, uint8_t const min_error_left_in_block,
-                               auto const & search, auto const & blocks_length, search_param const error_left, auto && delegate)
+                               auto const & search, auto const & blocks_length, search_param const error_left,
+                               auto && delegate)
 {
     if ((go_right && it.extend_right()) || (!go_right && it.extend_left()))
     {
@@ -286,8 +291,9 @@ inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_
                     // Thus do not change the direction (go_right) yet.
                     if (error_left.deletion > 0)
                     {
-                        if (search_ss_deletion<abort_on_hit>(it, query, lb2, rb2, errors_spent + delta, block_id, go_right,
-                                                             search, blocks_length, error_left2, delegate) && abort_on_hit)
+                        if (search_ss_deletion<abort_on_hit>(it, query, lb2, rb2, errors_spent + delta, block_id,
+                                                             go_right, search, blocks_length, error_left2, delegate) &&
+                            abort_on_hit)
                         {
                             return true;
                         }
@@ -297,8 +303,8 @@ inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_
                         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
                         bool const go_right2 = search.pi[block_id2] > search.pi[block_id2 - 1];
 
-                        if (search_ss<abort_on_hit>(it, query, lb2, rb2, errors_spent + delta, block_id2, go_right2, search,
-                                                    blocks_length, error_left2, delegate) &&
+                        if (search_ss<abort_on_hit>(it, query, lb2, rb2, errors_spent + delta, block_id2, go_right2,
+                                                    search, blocks_length, error_left2, delegate) &&
                             abort_on_hit)
                         {
                             return true;
@@ -317,9 +323,11 @@ inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_
 
             // Deletion
             // TODO: check whether the conditions for deletions at the beginning/end of the query are really necessary
+            // No deletion at the beginning of the leftmost block.
+            // No deletion at the end of the rightmost block.
             if (error_left.deletion > 0 &&
-                !(go_right && (rb == 1 || rb == query.size() + 1)) && // No deletion at the beginning of the leftmost block.
-                !(!go_right && (lb == 0 || lb == query.size())))      // No deletion at the end of the rightmost block.
+                !(go_right && (rb == 1 || rb == query.size() + 1)) &&
+                !(!go_right && (lb == 0 || lb == query.size())))
             {
                 search_param error_left3{error_left};
                 error_left3.total--;
@@ -333,14 +341,12 @@ inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_
 }
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
- *        Kianfar, K., Pockrandt, C., Torkamandi, B., Luo, H., & Reinert, K. (2018).
- *        Optimum Search Schemes for Approximate String Matching Using Bidirectional FM-Index. bioRxiv, 301085.
  * \copydetails search_ss_exact
  */
 template <bool abort_on_hit>
 inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                      uint8_t const block_id, bool const go_right, auto const & search,
-                      auto const & blocks_length, search_param const error_left, auto && delegate)
+                      uint8_t const block_id, bool const go_right, auto const & search, auto const & blocks_length,
+                      search_param const error_left, auto && delegate)
 {
     uint8_t const max_error_left_in_block = search.u[block_id] - errors_spent;
     uint8_t const min_error_left_in_block = std::max(search.l[block_id] - errors_spent, 0); // NOTE: changed
@@ -352,7 +358,7 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
         return true;
     }
     // Exact search in current block.
-    else if (max_error_left_in_block == 0 && rb - lb - 1 != blocks_length[block_id] ||
+    else if ((max_error_left_in_block == 0) && (rb - lb - 1 != blocks_length[block_id]) ||
              (error_left.total == 0 && min_error_left_in_block == 0))
     {
         if (search_ss_exact<abort_on_hit>(it, query, lb, rb, errors_spent, block_id, go_right, search, blocks_length,
@@ -379,9 +385,9 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
             {
                 // Leave the possibility for one or multiple deletions at the end of a block.
                 // Thus do not change the direction (go_right) yet.
-                // TODO: benchmark the improvement on preventing insertions followed by a deletion and vice versa. Does it pay
-                // off the additional complexity and documentation for the user? (Note that the user might only allow for
-                // insertions and deletion and not for mismatches).
+                // TODO: benchmark the improvement on preventing insertions followed by a deletion and vice versa. Does
+                // it pay off the additional complexity and documentation for the user? (Note that the user might only
+                // allow for insertions and deletion and not for mismatches).
                 if (search_ss_deletion<abort_on_hit>(it, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
                                                      blocks_length, error_left2, delegate) && abort_on_hit)
                 {
@@ -390,15 +396,16 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
             }
             else
             {
-                if (search_ss<abort_on_hit>(it, query, lb2, rb2, errors_spent + 1, block_id, go_right, search, blocks_length,
-                                            error_left2, delegate) && abort_on_hit)
+                if (search_ss<abort_on_hit>(it, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
+                                            blocks_length, error_left2, delegate) && abort_on_hit)
                 {
                     return true;
                 }
             }
         }
-        if (search_ss_children<abort_on_hit>(it, query, lb, rb, errors_spent, block_id, go_right, min_error_left_in_block,
-                                             search, blocks_length, error_left, delegate) && abort_on_hit)
+        if (search_ss_children<abort_on_hit>(it, query, lb, rb, errors_spent, block_id, go_right,
+                                             min_error_left_in_block, search, blocks_length, error_left, delegate) &&
+            abort_on_hit)
         {
             return true;
         }
@@ -407,16 +414,19 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
 }
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
- * \tparam abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] index String index built on the text that will be searched.
- * \param[in] query Query sequence to be searched in the index.
- * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
+ * \details Reference:
+ *          Kianfar, K., Pockrandt, C., Torkamandi, B., Luo, H., & Reinert, K. (2018).
+ *          Optimum Search Schemes for Approximate String Matching Using Bidirectional FM-Index. bioRxiv, 301085.
+ * \tparam    abort_on_hit  If the flag is set, the search aborts on the first hit.
+ * \param[in] index         String index built on the text that will be searched.
+ * \param[in] query         Query sequence to be searched in the index.
+ * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] search_scheme Search scheme to be used for searching.
- * \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
 template <bool abort_on_hit>
-inline void search_ss(auto const & index, auto & query, search_param const error_left,
-                      auto const & search_scheme, auto && delegate)
+inline void search_ss(auto const & index, auto & query, search_param const error_left, auto const & search_scheme,
+                      auto && delegate)
 {
     // retrieve cumulative block lengths and starting position
     auto const block_info = search_scheme_block_info(search_scheme, query.size());
@@ -445,11 +455,11 @@ inline void search_ss(auto const & index, auto & query, search_param const error
 }
 
 /*!\brief Searches a query sequence in a bidirectional index.
- * \tparam abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] index String index built on the text that will be searched.
- * \param[in] query Query sequence to be searched in the index.
- * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \tparam    abort_on_hit If the flag is set, the search aborts on the first hit.
+ * \param[in] index        String index built on the text that will be searched.
+ * \param[in] query        Query sequence to be searched in the index.
+ * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
+ * \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
 template <bool abort_on_hit>
 inline void search_algo_bi(auto const & index, auto & query, search_param const error_left, auto && delegate)
@@ -476,11 +486,11 @@ inline void search_algo_bi(auto const & index, auto & query, search_param const 
 }
 
 /*!\brief Searches a query sequence in a unidirectional index.
- * \tparam abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] index String index built on the text that will be searched.
- * \param[in] query Query sequence to be searched in the index.
- * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \tparam    abort_on_hit If the flag is set, the search aborts on the first hit.
+ * \param[in] index        String index built on the text that will be searched.
+ * \param[in] query        Query sequence to be searched in the index.
+ * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
+ * \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
 template <bool abort_on_hit>
 inline void search_algo_uni(auto const & index, auto & query, search_param const error_left, auto && delegate)
@@ -489,11 +499,11 @@ inline void search_algo_uni(auto const & index, auto & query, search_param const
 }
 
 /*!\brief Searches a query sequence in an index.
- * \tparam abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] index String index built on the text that will be searched.
- * \param[in] query Query sequence to be searched in the index.
- * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \tparam    abort_on_hit If the flag is set, the search aborts on the first hit.
+ * \param[in] index        String index built on the text that will be searched.
+ * \param[in] query        Query sequence to be searched in the index.
+ * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
+ * \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
 template <bool abort_on_hit, typename index_t>
 inline void search_algo(index_t const & index, auto & query, search_param const error_left, auto && delegate)
@@ -504,6 +514,6 @@ inline void search_algo(index_t const & index, auto & query, search_param const 
         search_algo_uni<abort_on_hit>(index, query, error_left, delegate);
 }
 
-}
-
 //!\}
+
+} // namespace seqan3::detail

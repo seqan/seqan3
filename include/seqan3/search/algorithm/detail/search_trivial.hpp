@@ -51,12 +51,12 @@ namespace seqan3::detail
 {
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
- * \tparam abort_on_hit If the flag is set, the search algorithm aborts on the first hit.
- * \param[in] it Iterator of atring index built on the text that will be searched.
- * \param[in] query Query sequence to be searched with the iterator.
- * \param[in] query_pos Position in the query sequence indicating the prefix that has already been searched.
- * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \tparam    abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
+ * \param[in] it            Iterator of atring index built on the text that will be searched.
+ * \param[in] query         Query sequence to be searched with the iterator.
+ * \param[in] query_pos     Position in the query sequence indicating the prefix that has already been searched.
+ * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
+ * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
 template <bool abort_on_hit>
 inline bool search_trivial(auto it, auto & query, uint64_t const query_pos, search_param const error_left,
@@ -148,11 +148,11 @@ inline bool search_trivial(auto it, auto & query, uint64_t const query_pos, sear
 }
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
-* \tparam abort_on_hit If the flag is set, the search algorithm aborts on the first hit.
-* \param[in] index String index built on the text that will be searched.
-* \param[in] query Query sequence to be searched in the index.
-* \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
-* \param[in] delegate Function that is called on every hit. Takes `index::iterator_type` as argument.
+* \tparam    abort_on_hit If the flag is set, the search algorithm aborts on the first hit.
+* \param[in] index        String index built on the text that will be searched.
+* \param[in] query        Query sequence to be searched in the index.
+* \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
+* \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
 *
 * ### Complexity
 *
@@ -168,4 +168,4 @@ inline void search_trivial(auto const & index, auto & query, search_param const 
     search_trivial<abort_on_hit>(index.begin(), query, 0, error_left, delegate);
 }
 
-}
+} // namespace seqan3::detail

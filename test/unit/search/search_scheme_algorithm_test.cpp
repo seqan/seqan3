@@ -48,9 +48,9 @@
 #include <gtest/gtest.h>
 
 #ifdef NDEBUG
-#define ITERATIONS 1000
+#define SEQAN3_SEARCH_TEST_ITERATIONS 1000
 #else
-#define ITERATIONS 10
+#define SEQAN3_SEARCH_TEST_ITERATIONS 10
 #endif
 
 using namespace seqan3;
@@ -137,6 +137,7 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
                                      dna4_vector matched_seq = text | ranges::view::slice(hit, hit + query_length);
                                      return (matched_seq != orig_query);
                                  }), hits_ss.end());
+
     hits_trivial.erase(std::remove_if(hits_trivial.begin(), hits_trivial.end(),
                                       [&](uint64_t const hit)
                                       {
@@ -310,11 +311,16 @@ TEST(search_scheme_test, search_scheme_hamming)
     time_t seed = std::time(nullptr);
     std::srand(seed);
 
-    test_search_scheme_hamming(detail::optimum_search_scheme<0, 0>, seed, ITERATIONS);
-    test_search_scheme_hamming(detail::optimum_search_scheme<0, 1>, seed, ITERATIONS);
-    test_search_scheme_hamming(detail::optimum_search_scheme<1, 1>, seed, ITERATIONS);
-    test_search_scheme_hamming(detail::optimum_search_scheme<0, 2>, seed, ITERATIONS);
-    test_search_scheme_hamming(detail::optimum_search_scheme<0, 3>, seed, ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<0, 0>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<0, 1>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<1, 1>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<0, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<1, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<2, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<0, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<1, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_hamming(detail::optimum_search_scheme<2, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    // test_search_scheme_hamming(detail::optimum_search_scheme<3, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
 }
 
 TEST(search_scheme_test, search_scheme_edit)
@@ -322,8 +328,12 @@ TEST(search_scheme_test, search_scheme_edit)
     time_t seed = std::time(nullptr);
     std::srand(seed);
 
-    test_search_scheme_edit(detail::optimum_search_scheme<0, 0>, seed, ITERATIONS);
-    test_search_scheme_edit(detail::optimum_search_scheme<0, 1>, seed, ITERATIONS);
-    test_search_scheme_edit(detail::optimum_search_scheme<0, 2>, seed, ITERATIONS);
-    test_search_scheme_edit(detail::optimum_search_scheme<0, 3>, seed, ITERATIONS);
+    // TODO: test with lower bounds != 0.
+    // For that we need alignment statistics to know the number of errors spent in search_trivial
+    test_search_scheme_edit(detail::optimum_search_scheme<0, 0>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_edit(detail::optimum_search_scheme<0, 1>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_edit(detail::optimum_search_scheme<0, 2>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
+    test_search_scheme_edit(detail::optimum_search_scheme<0, 3>, seed, SEQAN3_SEARCH_TEST_ITERATIONS);
 }
+
+#undef SEQAN3_SEARCH_TEST_ITERATIONS

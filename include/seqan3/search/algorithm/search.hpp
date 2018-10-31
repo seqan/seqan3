@@ -47,9 +47,9 @@ namespace seqan3
 {
 
 /*!\brief Search a query or a range of queries in an index.
- * \param[in] index String index to be searched.
- * \param[in] queries A single query or a (forward) range of queries. A query must model
-                      std::ranges::RandomAccessRange.
+ * \param[in] index String index to be searched. Must model seqan3::fm_index_concept.
+ * \param[in] queries A single query or a range of queries. A query must model std::ranges::RandomAccessRange,
+                      a range of queries must model std::ranges::SizedRange.
  * \param[in] cfg A configuration object specifying the search parameters (e.g. number of errors, error types,
  *                output format, etc.).
  *
@@ -59,39 +59,36 @@ namespace seqan3
  *
  * ### Exceptions
  *
- * No-throw guarantee.
+ * Basic exception guarantee.
  */
-template <typename index_t, typename queries_t, typename config_t>
+template <typename queries_t, typename config_t>
 //!\cond
     requires
         (std::ranges::RandomAccessRange<queries_t> ||
-            (std::ranges::ForwardRange<queries_t> &&
-             std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
+            (std::ranges::SizedRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
         detail::is_algorithm_configuration_v<remove_cvref_t<config_t>>
 //!\endcond
-inline auto search(index_t const & index, queries_t && queries, config_t const & cfg)
+inline auto search(fm_index_concept const & index, queries_t && queries, config_t const & cfg)
 {
     if constexpr (contains<search_cfg::id::max_error>(cfg))
     {
         auto & [total, subs, ins, del] = get<search_cfg::id::max_error>(cfg);
         if (subs > total)
-            throw std::invalid_argument("Substitution error threshold is higher than the total error "
-                                        "threshold.");
+            throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
         if (ins > total)
-            throw std::invalid_argument("Insertion error threshold is higher than the total error threshold.");
+            throw std::invalid_argument("The insertion error threshold is higher than the total error threshold.");
         if (del > total)
-            throw std::invalid_argument("Deletion error threshold is higher than the total error threshold.");
+            throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
     }
     else if constexpr (contains<search_cfg::id::max_error_rate>(cfg))
     {
         auto & [total, subs, ins, del] = get<search_cfg::id::max_error_rate>(cfg);
         if (subs > total)
-            throw std::invalid_argument("Substitution error threshold is higher than the total error "
-                                        "threshold.");
+            throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
         if (ins > total)
-            throw std::invalid_argument("Insertion error threshold is higher than the total error threshold.");
+            throw std::invalid_argument("The insertion error threshold is higher than the total error threshold.");
         if (del > total)
-            throw std::invalid_argument("Deletion error threshold is higher than the total error threshold.");
+            throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
     }
 
     if constexpr (contains<search_cfg::id::mode>(cfg))
@@ -113,9 +110,9 @@ inline auto search(index_t const & index, queries_t && queries, config_t const &
 
 /*!\brief Search a query or a range of queries in an index.
  *        It will not allow for any errors and will output all matches as positions in the text.
- * \param[in] index String index to be searched.
- * \param[in] queries A single query or a (forward) range of queries. A query must model
-                      std::ranges::RandomAccessRange.
+ * \param[in] index String index to be searched. Must model seqan3::fm_index_concept.
+ * \param[in] queries A single query or a range of queries. A query must model std::ranges::RandomAccessRange,
+                      a range of queries must model std::ranges::SizedRange.
  *
  * ### Complexity
  *
@@ -123,14 +120,14 @@ inline auto search(index_t const & index, queries_t && queries, config_t const &
  *
  * ### Exceptions
  *
- * No-throw guarantee.
+ * Basic exception guarantee.
  */
-template <typename index_t, typename queries_t>
+template <typename queries_t>
 //!\cond
     requires std::ranges::RandomAccessRange<queries_t> ||
-             (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
+             (std::ranges::SizedRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
 //!\endcond
-inline auto search(index_t const & index, queries_t && queries)
+inline auto search(fm_index_concept const & index, queries_t && queries)
 {
     detail::configuration const default_cfg = search_cfg::max_error(search_cfg::total{0},
                                                                     search_cfg::substitution{0},

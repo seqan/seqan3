@@ -39,12 +39,12 @@
 
 #pragma once
 
+namespace seqan3::detail
+{
+
 /*!\addtogroup search
  * \{
  */
-
-namespace seqan3::detail
-{
 
 //!\brief Object storing information for a search (of a search scheme).
 //        Number of blocks have to be known at compile time.
@@ -163,12 +163,30 @@ inline search_scheme_type<4, 5> constexpr optimum_search_scheme<0, 3>
     {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
 }};
 
+template <>
+inline search_scheme_type<4, 5> constexpr optimum_search_scheme<1, 3>
+{{
+    {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 1}, {0, 0, 3, 3, 3}},
+    {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 1}, {0, 1, 1, 2, 3}},
+    {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
+    {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
+}};
+
+template <>
+inline search_scheme_type<4, 5> constexpr optimum_search_scheme<2, 3>
+{{
+    {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 2}, {0, 0, 3, 3, 3}},
+    {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 2}, {0, 1, 1, 2, 3}},
+    {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
+    {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
+}};
+
 // TODO: add the following missing optimum search schemes (computation has not finished yet)
-// optimum_search_scheme<i, 3>, 1 < i <= 3
+// optimum_search_scheme<3, 3>
 // optimum_search_scheme<i, 4>, 0 < i <= 4
 
 //!\endcond
 
-}
-
 //!\}
+
+} // namespace seqan3::detail

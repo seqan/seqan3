@@ -181,7 +181,7 @@ inline auto search_all(index_t const & index, queries_t & queries, auto const & 
                                      typename index_t::iterator_type,
                                      typename index_t::size_type>;
 
-    if constexpr (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
+    if constexpr (std::ranges::SizedRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
     {
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
         std::vector<std::vector<hit_t>> hits;
