@@ -167,8 +167,8 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
                                       }), hits_trivial.end());
 
     // Eliminate duplicates
-    hits_ss = sort(hits_ss);
-    hits_trivial = sort(hits_trivial);
+    hits_ss = uniquify(hits_ss);
+    hits_trivial = uniquify(hits_trivial);
 
     EXPECT_EQ(hits_ss, hits_trivial);
     if (hits_ss != hits_trivial)
@@ -287,8 +287,8 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, time_
                 detail::search_trivial<false>(index, query, error_left, delegate_trivial);
 
                 // Eliminate duplicates
-                hits_ss = sort(hits_ss);
-                hits_trivial = sort(hits_trivial);
+                hits_ss = uniquify(hits_ss);
+                hits_trivial = uniquify(hits_trivial);
 
                 EXPECT_EQ(hits_ss, hits_trivial);
                 if (hits_ss != hits_trivial)

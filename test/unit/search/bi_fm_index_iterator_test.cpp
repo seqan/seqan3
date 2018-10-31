@@ -69,8 +69,8 @@ TYPED_TEST(bi_fm_index_iterator_test, begin)
     fm_rev_t fm_rev{rev_text};
 
     TypeParam bi_it = bi_fm.begin();
-    EXPECT_EQ(sort(bi_it.locate()), sort(bi_fm.fwd_begin().locate()));
-    EXPECT_EQ(sort(bi_it.locate()), sort(bi_fm.rev_begin().locate()));
+    EXPECT_EQ(uniquify(bi_it.locate()), uniquify(bi_fm.fwd_begin().locate()));
+    EXPECT_EQ(uniquify(bi_it.locate()), uniquify(bi_fm.rev_begin().locate()));
 }
 
 TYPED_TEST(bi_fm_index_iterator_test, extend)
@@ -80,17 +80,17 @@ TYPED_TEST(bi_fm_index_iterator_test, extend)
 
     auto it = bi_fm.begin();
     EXPECT_TRUE(it.extend_right()); // "A"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 5, 8}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 5, 8}));
     EXPECT_TRUE(it.extend_left()); // "GA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{7}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{7}));
     EXPECT_TRUE(it.extend_right()); // "GAC"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{7}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{7}));
     EXPECT_TRUE(it.extend_right()); // "GACG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{7}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{7}));
     EXPECT_FALSE(it.extend_right()); // "GACG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{7}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{7}));
     EXPECT_TRUE(it.extend_left()); // "GGACG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{6}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{6}));
 }
 
 TYPED_TEST(bi_fm_index_iterator_test, extend_char)
@@ -100,25 +100,25 @@ TYPED_TEST(bi_fm_index_iterator_test, extend_char)
 
     auto it = bi_fm.begin();
     EXPECT_TRUE(it.extend_left(dna4::G)); // "G"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{2, 3, 6, 7, 10}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{2, 3, 6, 7, 10}));
     EXPECT_TRUE(it.extend_left(dna4::C)); // "CG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 9}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
     EXPECT_FALSE(it.extend_left(dna4::C)); // "CG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 9}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
     EXPECT_FALSE(it.extend_left(dna4::G)); // "CG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 9}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
     EXPECT_FALSE(it.extend_right(dna4::T)); // "CG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 9}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
     EXPECT_TRUE(it.extend_right(dna4::G)); // "CGG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
     EXPECT_TRUE(it.extend_right(dna4::T)); // "CGGT"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
     EXPECT_TRUE(it.extend_right(dna4::A)); // "CGGTA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
     EXPECT_TRUE(it.extend_left(dna4::A)); // "ACGGTA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0}));
     EXPECT_FALSE(it.extend_left(dna4::A)); // "ACGGTA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0}));
 }
 
 TYPED_TEST(bi_fm_index_iterator_test, extend_range)
@@ -129,15 +129,15 @@ TYPED_TEST(bi_fm_index_iterator_test, extend_range)
     auto it = bi_fm.begin();
     EXPECT_FALSE(it.extend_left("CAG"_dna4)); // ""
     // sentinel position included
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}));
     EXPECT_TRUE(it.extend_left("CG"_dna4)); // "CG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 9}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
     EXPECT_TRUE(it.extend_right("GTA"_dna4)); // "CGGTA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
     EXPECT_FALSE(it.extend_left("TA"_dna4)); // "CGGTA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
     EXPECT_TRUE(it.extend_left("A"_dna4)); // "ACGGTA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0}));
 }
 
 TYPED_TEST(bi_fm_index_iterator_test, extend_and_cycle)
@@ -151,14 +151,14 @@ TYPED_TEST(bi_fm_index_iterator_test, extend_and_cycle)
     EXPECT_DEATH(it.cycle_front(), "");
 #endif
     EXPECT_TRUE(it.extend_left()); // "GA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{7}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{7}));
 #ifndef NDEBUG
     EXPECT_DEATH(it.cycle_back(), "");
 #endif
     EXPECT_TRUE(it.cycle_front()); // "TA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{4}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{4}));
     EXPECT_FALSE(it.cycle_front()); // "TA"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{4}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{4}));
 }
 
 TYPED_TEST(bi_fm_index_iterator_test, extend_range_and_cycle)
@@ -168,23 +168,23 @@ TYPED_TEST(bi_fm_index_iterator_test, extend_range_and_cycle)
 
     auto it = bi_fm.begin();
     EXPECT_TRUE(it.extend_right("AC"_dna4)); // "AC"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 8}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 8}));
 #ifndef NDEBUG
     EXPECT_DEATH(it.cycle_front(), "");
 #endif
     EXPECT_TRUE(it.cycle_back()); // "AG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{5, 12}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{5, 12}));
 #ifndef NDEBUG
     EXPECT_DEATH(it.cycle_front(), "");
 #endif
     EXPECT_FALSE(it.extend_left("TT"_dna4)); // "AG"
     EXPECT_TRUE(it.extend_left("CGT"_dna4)); // "CGTAG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{9}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{9}));
 #ifndef NDEBUG
     EXPECT_DEATH(it.cycle_back(), "");
 #endif
     EXPECT_TRUE(it.cycle_front()); // "GGTAG"
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{2}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{2}));
 }
 
 TYPED_TEST(bi_fm_index_iterator_test, to_fwd_iterator)
@@ -195,11 +195,11 @@ TYPED_TEST(bi_fm_index_iterator_test, to_fwd_iterator)
     {
         auto it = bi_fm.begin();
         EXPECT_TRUE(it.extend_right("GTAGC"_dna4)); // "GTAGC"
-        EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{10}));
+        EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{10}));
 
         auto fwd_it = it.to_fwd_iterator();
         EXPECT_TRUE(fwd_it.cycle_back()); // "GTAGG"
-        EXPECT_EQ(sort(fwd_it.locate()), (std::vector<uint64_t>{3}));
+        EXPECT_EQ(uniquify(fwd_it.locate()), (std::vector<uint64_t>{3}));
         EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGG"_dna4));
         EXPECT_FALSE(fwd_it.cycle_back());
     }
@@ -207,17 +207,17 @@ TYPED_TEST(bi_fm_index_iterator_test, to_fwd_iterator)
     {
         auto it = bi_fm.begin();
         EXPECT_TRUE(it.extend_left("GTAG"_dna4)); // "GTAG"
-        EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{3, 10}));
+        EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{3, 10}));
 
         auto fwd_it = it.to_fwd_iterator();
     #ifndef NDEBUG
         EXPECT_DEATH(fwd_it.cycle_back(), "");
     #endif
         EXPECT_TRUE(fwd_it.extend_right());
-        EXPECT_EQ(sort(fwd_it.locate()), (std::vector<uint64_t>{10}));
+        EXPECT_EQ(uniquify(fwd_it.locate()), (std::vector<uint64_t>{10}));
         EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGC"_dna4));
         EXPECT_TRUE(fwd_it.cycle_back());
-        EXPECT_EQ(sort(fwd_it.locate()), (std::vector<uint64_t>{3}));
+        EXPECT_EQ(uniquify(fwd_it.locate()), (std::vector<uint64_t>{3}));
         EXPECT_TRUE(std::ranges::equal(*fwd_it, "GTAGG"_dna4));
     }
 }
@@ -230,13 +230,13 @@ TYPED_TEST(bi_fm_index_iterator_test, to_rev_iterator)
     {
         auto it = bi_fm.begin();
         EXPECT_TRUE(it.extend_left("CGTAG"_dna4)); // "CGTAG"
-        EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{9}));
+        EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{9}));
 
         auto rev_it = it.to_rev_iterator(); // text "CGATGCAGGATGGCA"
-        EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{1}));
+        EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{1}));
         EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGC"_dna4));
         EXPECT_TRUE(rev_it.cycle_back()); // "GATGG"
-        EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{8}));
+        EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{8}));
         EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGG"_dna4));
         EXPECT_FALSE(rev_it.cycle_back());
     }
@@ -244,17 +244,17 @@ TYPED_TEST(bi_fm_index_iterator_test, to_rev_iterator)
     {
         auto it = bi_fm.begin();
         EXPECT_TRUE(it.extend_right("GTAG"_dna4)); // "GTAG"
-        EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{3, 10}));
+        EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{3, 10}));
 
         auto rev_it = it.to_rev_iterator(); // text "CGATGCAGGATGGCA"
     #ifndef NDEBUG
         EXPECT_DEATH(rev_it.cycle_back(), "");
     #endif
         EXPECT_TRUE(rev_it.extend_right()); // "CGTAG" resp. "GATGC"
-        EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{1}));
+        EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{1}));
         EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGC"_dna4));
         EXPECT_TRUE(rev_it.cycle_back()); // "GGTAG" resp. "GATGG"
-        EXPECT_EQ(sort(rev_it.locate()), (std::vector<uint64_t>{8}));
+        EXPECT_EQ(uniquify(rev_it.locate()), (std::vector<uint64_t>{8}));
         EXPECT_TRUE(std::ranges::equal(*rev_it, "GATGG"_dna4));
     }
 }

@@ -32,11 +32,6 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Provides helper functions for testing the search modules.
- * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- */
-
 #pragma once
 
 #include <algorithm>
@@ -48,7 +43,7 @@ namespace seqan3
 {
 
 template <typename T>
-std::vector<T> sort(std::vector<T> v)
+std::vector<T> uniquify(std::vector<T> v)
 {
     std::sort(v.begin(), v.end());
     v.erase(std::unique(v.begin(), v.end()), v.end());
@@ -56,9 +51,9 @@ std::vector<T> sort(std::vector<T> v)
 }
 
 template <typename T>
-std::vector<std::vector<T>> sort(std::vector<std::vector<T>> v)
+std::vector<std::vector<T>> uniquify(std::vector<std::vector<T>> v)
 {
-    std::for_each(v.begin(), v.end(), [](auto & hits) { sort(hits); } );
+    std::for_each(v.begin(), v.end(), [](auto & hits) { uniquify(hits); } );
     return v;
 }
 

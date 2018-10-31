@@ -63,57 +63,57 @@ TYPED_TEST(search_test, error_free)
 
     {
         // successful and unsuccesful exact search without cfg
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search with empty cfg
         detail::configuration const cfg;
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using empty max_total_error
         detail::configuration const cfg = max_error();
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error
         detail::configuration const cfg = max_error(total{0});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using max_total_error
         detail::configuration const cfg = max_error(total{0}, substitution{0}, insertion{0}, deletion{0});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using empty max_total_error_rate
         detail::configuration const cfg = max_error_rate();
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using short version of max_total_error_rate
         detail::configuration const cfg = max_error_rate(total{.0});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
     }
 
     {
         // successful and unsuccesful exact search using max_total_error_rate
         detail::configuration const cfg = max_error_rate(total{.0}, substitution{.0}, insertion{.0}, deletion{.0});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
-        EXPECT_EQ(sort(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGG"_dna4, cfg)), (hits_result_t{}));
     }
 }
 
@@ -123,7 +123,7 @@ TYPED_TEST(search_test, multiple_queries)
     std::vector<std::vector<dna4>> const queries{{"GG"_dna4, "ACGTACGTACGT"_dna4, "ACGTA"_dna4}};
 
     detail::configuration const cfg = max_error_rate(total{.0}, substitution{.0}, insertion{.0}, deletion{.0});
-    EXPECT_EQ(sort(search(this->index, queries, cfg)), (hits_result_t{{}, {0}, {0, 4}})); // 0, 1 and 2 hits
+    EXPECT_EQ(uniquify(search(this->index, queries, cfg)), (hits_result_t{{}, {0}, {0, 4}})); // 0, 1 and 2 hits
 }
 
 TYPED_TEST(search_test, invalid_error_configuration)
@@ -139,41 +139,41 @@ TYPED_TEST(search_test, error_substitution)
     {
         detail::configuration const cfg = max_error_rate(total{.25}, substitution{.25});
 
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
-        EXPECT_EQ(sort(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{}));        // not enough mismatches
-        EXPECT_EQ(sort(search(this->index, "CGTC"_dna4    , cfg)), (hits_result_t{1, 5}));    // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "ACGGACGG"_dna4, cfg)), (hits_result_t{0, 4}));    // 2 mismatches
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
+        EXPECT_EQ(uniquify(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{}));        // not enough mismatches
+        EXPECT_EQ(uniquify(search(this->index, "CGTC"_dna4    , cfg)), (hits_result_t{1, 5}));    // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGGACGG"_dna4, cfg)), (hits_result_t{0, 4}));    // 2 mismatches
     }
 
     {
         detail::configuration const cfg = max_error_rate(total{.25}, substitution{.25}, insertion{.0}, deletion{.0});
 
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
-        EXPECT_EQ(sort(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{}));        // not enough mismatches
-        EXPECT_EQ(sort(search(this->index, "CGTC"_dna4    , cfg)), (hits_result_t{1, 5}));    // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "ACGGACGG"_dna4, cfg)), (hits_result_t{0, 4}));    // 2 mismatches
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
+        EXPECT_EQ(uniquify(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{}));        // not enough mismatches
+        EXPECT_EQ(uniquify(search(this->index, "CGTC"_dna4    , cfg)), (hits_result_t{1, 5}));    // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGGACGG"_dna4, cfg)), (hits_result_t{0, 4}));    // 2 mismatches
     }
 
     {
         detail::configuration const cfg = max_error(total{1}, substitution{1});
 
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
-        EXPECT_EQ(sort(search(this->index, "CGTTT"_dna4   , cfg)), (hits_result_t{}));        // not enough mismatches
-        EXPECT_EQ(sort(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{1, 5, 9})); // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "CGTCCGTA"_dna4, cfg)), (hits_result_t{1}));       // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
+        EXPECT_EQ(uniquify(search(this->index, "CGTTT"_dna4   , cfg)), (hits_result_t{}));        // not enough mismatches
+        EXPECT_EQ(uniquify(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{1, 5, 9})); // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "CGTCCGTA"_dna4, cfg)), (hits_result_t{1}));       // 1 mismatch
     }
 
     {
         detail::configuration const cfg = max_error(total{1}, substitution{1}, insertion{0}, deletion{0});
 
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
-        EXPECT_EQ(sort(search(this->index, "CGTTT"_dna4   , cfg)), (hits_result_t{}));        // not enough mismatches
-        EXPECT_EQ(sort(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{1, 5, 9})); // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
-        EXPECT_EQ(sort(search(this->index, "CGTCCGTA"_dna4, cfg)), (hits_result_t{1}));       // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8})); // exact match
+        EXPECT_EQ(uniquify(search(this->index, "CGTTT"_dna4   , cfg)), (hits_result_t{}));        // not enough mismatches
+        EXPECT_EQ(uniquify(search(this->index, "CGG"_dna4     , cfg)), (hits_result_t{1, 5, 9})); // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "ACGGACG"_dna4 , cfg)), (hits_result_t{0, 4}));    // 1 mismatch
+        EXPECT_EQ(uniquify(search(this->index, "CGTCCGTA"_dna4, cfg)), (hits_result_t{1}));       // 1 mismatch
     }
 }
 
@@ -184,12 +184,12 @@ TYPED_TEST(search_test, error_configuration_types)
     {
         uint8_t s = 1, t = 1;
         detail::configuration const cfg = max_error(total{t}, substitution{s});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
     }
 
     {
         detail::configuration const cfg = max_error(substitution{1});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
     }
 }
 
@@ -201,28 +201,28 @@ TYPED_TEST(search_test, error_insertion)
         detail::configuration const cfg = max_error_rate(total{.25}, insertion{.25});
 
         // exact match and insertion at the beginning of the query
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
         // 1 insertion
-        EXPECT_EQ(sort(search(this->index, "CCGT"_dna4    , cfg)), (hits_result_t{1, 5, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "CCGT"_dna4    , cfg)), (hits_result_t{1, 5, 9}));
         // 2 insertions
-        EXPECT_EQ(sort(search(this->index, "ACCGGTAC"_dna4, cfg)), (hits_result_t{0, 4}));
+        EXPECT_EQ(uniquify(search(this->index, "ACCGGTAC"_dna4, cfg)), (hits_result_t{0, 4}));
         // 2 insertions necessary, only 1 allowed
-        EXPECT_EQ(sort(search(this->index, "ACCGG"_dna4   , cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACCGG"_dna4   , cfg)), (hits_result_t{}));
         // deletion necessary, not allowed
-        EXPECT_EQ(sort(search(this->index, "ACTACGT"_dna4 , cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACTACGT"_dna4 , cfg)), (hits_result_t{}));
     }
 
     {
         detail::configuration const cfg = max_error(total{1}, insertion{1});
 
         // exact match and insertion at the beginning of the query
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
         // 1 insertion
-        EXPECT_EQ(sort(search(this->index, "CCGT"_dna4    , cfg)), (hits_result_t{1, 5, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "CCGT"_dna4    , cfg)), (hits_result_t{1, 5, 9}));
         // 2 insertions necessary, only 1 allowed
-        EXPECT_EQ(sort(search(this->index, "ACCGGTAC"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACCGGTAC"_dna4, cfg)), (hits_result_t{}));
         // deletion necessary, not allowed
-        EXPECT_EQ(sort(search(this->index, "ACTACGT"_dna4 , cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "ACTACGT"_dna4 , cfg)), (hits_result_t{}));
     }
 }
 
@@ -234,28 +234,28 @@ TYPED_TEST(search_test, error_deletion)
         detail::configuration const cfg = max_error_rate(total{.25}, deletion{.25});
 
         // exact match, no deletion
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8}));
         // not enough max errors
-        EXPECT_EQ(sort(search(this->index, "AGT"_dna4     , cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "AGT"_dna4     , cfg)), (hits_result_t{}));
         // one deletion (C)
-        EXPECT_EQ(sort(search(this->index, "AGTA"_dna4    , cfg)), (hits_result_t{0, 4}));
+        EXPECT_EQ(uniquify(search(this->index, "AGTA"_dna4    , cfg)), (hits_result_t{0, 4}));
         // two deletion (C)
-        EXPECT_EQ(sort(search(this->index, "AGTAGTAC"_dna4, cfg)), (hits_result_t{0}));
+        EXPECT_EQ(uniquify(search(this->index, "AGTAGTAC"_dna4, cfg)), (hits_result_t{0}));
         // no deletion at beginning. 0 and 4 cannot be reported
-        EXPECT_EQ(sort(search(this->index, "CGTACGT"_dna4 , cfg)), (hits_result_t{1, 5}));
+        EXPECT_EQ(uniquify(search(this->index, "CGTACGT"_dna4 , cfg)), (hits_result_t{1, 5}));
     }
 
     {
         detail::configuration const cfg = max_error(total{1}, deletion{1});
 
         // exact match, no deletion
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4    , cfg)), (hits_result_t{0, 4, 8}));
         // one deletion (C)
-        EXPECT_EQ(sort(search(this->index, "AGTA"_dna4    , cfg)), (hits_result_t{0, 4}));
+        EXPECT_EQ(uniquify(search(this->index, "AGTA"_dna4    , cfg)), (hits_result_t{0, 4}));
         // 2 deletions necessary, only 1 allowed
-        EXPECT_EQ(sort(search(this->index, "AGTAGTAC"_dna4, cfg)), (hits_result_t{}));
+        EXPECT_EQ(uniquify(search(this->index, "AGTAGTAC"_dna4, cfg)), (hits_result_t{}));
         // no deletion at beginning. 0 and 4 cannot be reported
-        EXPECT_EQ(sort(search(this->index, "CGTACGT"_dna4 , cfg)), (hits_result_t{1, 5}));
+        EXPECT_EQ(uniquify(search(this->index, "CGTACGT"_dna4 , cfg)), (hits_result_t{1, 5}));
     }
 }
 
@@ -265,12 +265,12 @@ TYPED_TEST(search_test, error_levenshtein)
 
     {
         detail::configuration const cfg = max_error(total{1});
-        EXPECT_EQ(sort(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
     }
 
     {
         detail::configuration const cfg = max_error(total{2});
-        EXPECT_EQ(sort(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
+        EXPECT_EQ(uniquify(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
     }
 }
 
@@ -280,12 +280,12 @@ TYPED_TEST(search_test, search_strategy_all)
 
     {
         detail::configuration const cfg = max_error(total{1});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
     }
 
     {
         detail::configuration const cfg = max_error(total{1}) | mode(all);
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
     }
 }
 
@@ -312,7 +312,7 @@ TYPED_TEST(search_test, search_strategy_all_best)
     {
         detail::configuration const cfg = max_error(total{1}) | mode(all_best);
 
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8})); // 1, 5, 9 are not best hits
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8})); // 1, 5, 9 are not best hits
 
         EXPECT_EQ(search(this->index, "AAAA"_dna4, cfg), (hits_result_t{})); // no hit
     }
@@ -324,12 +324,12 @@ TYPED_TEST(search_test, search_strategy_strata)
 
     {
         detail::configuration const cfg = max_error(total{1}) | mode(strata{0});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 4, 8}));
     }
 
     {
         detail::configuration const cfg = max_error(total{1}) | mode(strata{1});
-        EXPECT_EQ(sort(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
+        EXPECT_EQ(uniquify(search(this->index, "ACGT"_dna4, cfg)), (hits_result_t{0, 1, 4, 5, 8, 9}));
     }
 
     {
@@ -340,13 +340,13 @@ TYPED_TEST(search_test, search_strategy_strata)
     // {
     //     // best hit ACGT with 1 error, i.e. 1+1
     //     detail::configuration const cfg = max_total_error(1) | strategy_strata(1);
-    //     EXPECT_EQ(sort(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
+    //     EXPECT_EQ(uniquify(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
     // }
 
     // {
     //     // best hit ACGT with 1 error, i.e. 1+1
     //     detail::configuration const cfg = max_total_error(1) | strategy_strata(1);
-    //     EXPECT_EQ(sort(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
+    //     EXPECT_EQ(uniquify(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
     // }
 }
 

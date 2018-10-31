@@ -32,11 +32,6 @@
 //
 // ============================================================================
 
-/*!\file
- * \brief Provides helper functions for testing search schemes.
- * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- */
-
 #pragma once
 
 #include <algorithm>
@@ -48,7 +43,7 @@
 namespace seqan3
 {
 
-//!\brief Order the elements in a vector in the same order as `search.pi`.
+// Order the elements in a vector in the same order as `search.pi`.
 template <typename T>
 inline void order_search_vector(std::vector<T> & v, auto const & search)
 {
@@ -60,7 +55,7 @@ inline void order_search_vector(std::vector<T> & v, auto const & search)
     }
 }
 
-//!\brief Reorder the search and blocks_length s.t. all fields are in the order from left to right.
+// Reorder the search and blocks_length s.t. all fields are in the order from left to right.
 inline void get_ordered_search(auto const & search, auto const & blocks_length,
                                auto & ordered_search, auto & ordered_blocks_length)
 {
@@ -75,7 +70,7 @@ inline void get_ordered_search(auto const & search, auto const & blocks_length,
     }
 }
 
-//!\brief Helper function for search_error_distribution(res, search).
+// Helper function for search_error_distribution(res, search).
 inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, auto l, auto u, uint8_t const e)
 {
     if (l.size() == 0)
@@ -101,8 +96,8 @@ inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, 
     }
 }
 
-//!\brief Compute all possible error distributions given a search.
-//        The result is in the same order as the search (i.e. search.pi).
+// Compute all possible error distributions given a search.
+// The result is in the same order as the search (i.e. search.pi).
 inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, auto const & search)
 {
     res.clear();
@@ -111,7 +106,7 @@ inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, 
     search_error_distribution(res, l, u, 0u);
 }
 
-//!\brief Compute all possible error distributions for each search given a search scheme.
+// Compute all possible error distributions for each search given a search scheme.
 inline void search_scheme_error_distribution(std::vector<std::vector<uint8_t> > & res, auto const & search_scheme)
 {
     res.clear();
@@ -125,7 +120,7 @@ inline void search_scheme_error_distribution(std::vector<std::vector<uint8_t> > 
     }
 }
 
-//!\brief Construct a trivial search scheme with one search and a specified number of blocks.
+// Construct a trivial search scheme with one search and a specified number of blocks.
 inline detail::search_scheme_dyn_type trivial_search_scheme(uint8_t const min_error, uint8_t const max_error,
                                                             uint8_t const blocks)
 {
