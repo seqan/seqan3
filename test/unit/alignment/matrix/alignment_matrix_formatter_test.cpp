@@ -11,6 +11,8 @@ using namespace seqan3::literal;
 struct no_config
 {};
 
+namespace seqan3::detail
+{
 struct matrix_formatter_test : public ::testing::Test
 {
     std::vector<dna4> database = "AACACGTTAACCGGTT"_dna4;
@@ -46,7 +48,70 @@ struct matrix_formatter_test : public ::testing::Test
         U,  U,  U,  U,  D,  U,  D,  L,  L,  DUL,DU, DU, D,  D,  DL, L,  L,
         U,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
     };
+
+    auto unicode_str_length(std::string const & str)
+    {
+        detail::alignment_score_matrix matrix{scores, 9, 17};
+        detail::alignment_matrix_formatter formatter{matrix};
+        return decltype(formatter)::unicode_str_length(str);
+    }
 };
+} // namespace seqan3::detail
+
+using typename seqan3::detail::matrix_formatter_test;
+
+TEST_F(matrix_formatter_test, unicode_str_length)
+{
+    EXPECT_EQ(unicode_str_length(" "), 1);
+    EXPECT_EQ(unicode_str_length(";"), 1);
+    EXPECT_EQ(unicode_str_length(""), 0);
+    EXPECT_EQ(unicode_str_length("N"), 1);
+    EXPECT_EQ(unicode_str_length("D"), 1);
+    EXPECT_EQ(unicode_str_length("U"), 1);
+    EXPECT_EQ(unicode_str_length("DU"), 2);
+    EXPECT_EQ(unicode_str_length("L"), 1);
+    EXPECT_EQ(unicode_str_length("DL"), 2);
+    EXPECT_EQ(unicode_str_length("UL"), 2);
+    EXPECT_EQ(unicode_str_length("DUL"), 3);
+    EXPECT_EQ(unicode_str_length("|"), 1);
+    EXPECT_EQ(unicode_str_length("-"), 1);
+    EXPECT_EQ(unicode_str_length("/"), 1);
+    EXPECT_EQ(unicode_str_length("INF"), 3);
+
+    EXPECT_EQ(unicode_str_length(u8"ε"), 1);
+    EXPECT_EQ(unicode_str_length(u8"║"), 1);
+    EXPECT_EQ(unicode_str_length(u8"═"), 1);
+    EXPECT_EQ(unicode_str_length(u8"╬"), 1);
+    EXPECT_EQ(unicode_str_length(u8"∞"), 1);
+
+    EXPECT_EQ(unicode_str_length(u8"█"), 1);
+    EXPECT_EQ(unicode_str_length(u8"▘"), 1);
+    EXPECT_EQ(unicode_str_length(u8"▝"), 1);
+    EXPECT_EQ(unicode_str_length(u8"▀"), 1);
+    EXPECT_EQ(unicode_str_length(u8"▖"), 1);
+    EXPECT_EQ(unicode_str_length(u8"▌"), 1);
+    EXPECT_EQ(unicode_str_length(u8"▞"), 1);
+    EXPECT_EQ(unicode_str_length(u8"▛"), 1);
+    EXPECT_EQ(unicode_str_length(u8"∞"), 1);
+
+    EXPECT_EQ(unicode_str_length(u8"⠀"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠁"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠈"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠉"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠄"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠅"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠌"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠍"), 1);
+
+    EXPECT_EQ(unicode_str_length(u8"↺"), 1);
+    EXPECT_EQ(unicode_str_length(u8"↖"), 1);
+    EXPECT_EQ(unicode_str_length(u8"↑"), 1);
+    EXPECT_EQ(unicode_str_length(u8"↖↑"), 2);
+    EXPECT_EQ(unicode_str_length(u8"←"), 1);
+    EXPECT_EQ(unicode_str_length(u8"↖←"), 2);
+    EXPECT_EQ(unicode_str_length(u8"↑←"), 2);
+    EXPECT_EQ(unicode_str_length(u8"↖↑←"), 3);
+}
 
 TEST_F(matrix_formatter_test, score_matrix_ascii)
 {
@@ -179,8 +244,7 @@ TEST_F(matrix_formatter_test, trace_matrix_from_score_matrix_unicode)
         matrix,
         {
             u8"ε", u8"|", u8"═", u8"/",
-            {u8"█",u8"▘",u8"↑",u8"⠉",u8"▖",u8"⠅",u8"▞",u8"▛"}, // 3bytes per char
-            2, 3
+            {u8"█",u8"▘",u8"↑",u8"⠉",u8"▖",u8"⠅",u8"▞",u8"▛"}
         }
     };
 
