@@ -144,7 +144,7 @@ public:
 
     /*!\brief Tests whether cmp lies inside [min,max].
      * \param cmp The input value to check.
-     * \throws argument_parser_exception
+     * \throws validation_failed
      */
     void operator()(value_type const & cmp) const
     {
