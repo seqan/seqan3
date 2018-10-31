@@ -52,7 +52,7 @@ namespace seqan3::detail
  *
  * This value is influenced by compiler flags like `-march=native`, `-msse4`,
  * `-mavx2`, etc and sets this value accordingly.
- * \sa https://gcc.gnu.org/onlinedocs/gcc-7.2.0/gcc/x86-Options.html#x86-Options
+ * \sa https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#x86-Options
  * for simd instruction sets and their flags.
  */
 template <template <typename, size_t> typename simd_backend_t>
