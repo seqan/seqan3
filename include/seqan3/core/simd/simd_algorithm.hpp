@@ -44,10 +44,8 @@
 
 #include <utility>
 
-namespace seqan3::detail::simd
+namespace seqan3::detail
 {
-
-using namespace seqan3::simd;
 
 //!\brief Helper function for seqan3::simd::fill.
 //!\ingroup simd
@@ -86,7 +84,7 @@ template <simd_concept simd_t>
 constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
-    return detail::simd::fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
+    return detail::fill_impl<simd_t>(scalar, std::make_index_sequence<length>{});
 }
 
 /*!\brief Fills a seqan3::simd::simd_type vector with the scalar values offset, offset+1, offset+2, ...
@@ -103,7 +101,7 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
 {
     constexpr size_t length = simd_traits<simd_t>::length;
     using scalar_type = typename simd_traits<simd_t>::scalar_type;
-    return detail::simd::iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
+    return detail::iota_impl<simd_t>(offset, std::make_integer_sequence<scalar_type, length>{});
 }
 
 } // inline namespace simd
