@@ -102,7 +102,7 @@ public:
  * \sa seqan3::detail::is_builtin_simd
  */
 template <typename builtin_simd_t>
-struct _is_builtin_simd : std::false_type
+struct builtin_simd_traits_helper : std::false_type
 {};
 
 /*!\brief Helper struct for seqan3::detail::is_builtin_simd
@@ -111,20 +111,15 @@ struct _is_builtin_simd : std::false_type
  */
 template <typename builtin_simd_t>
 //!\cond
-    requires requires(builtin_simd_t simd){ {simd[0]}; }
+    requires requires (builtin_simd_t simd) { {simd[0]}; }
 //!\endcond
-struct _is_builtin_simd<builtin_simd_t>
+struct builtin_simd_traits_helper<builtin_simd_t>
 {
-protected:
-    //!\brief seqan3::simd::simd_traits<builtin_simd_t> should be able to access *scalar_type* and *length*.
-    friend class seqan3::simd::simd_traits<builtin_simd_t>;
-
     //!\brief The scalar type of builtin_simd_t
     using scalar_type = std::remove_reference_t<decltype(std::declval<builtin_simd_t>()[0])>;
     //!\brief The length of builtin_simd_t
-    static constexpr auto length = min_viable_uint_v<sizeof(builtin_simd_t)/sizeof(scalar_type)>;
+    static constexpr auto length = min_viable_uint_v<sizeof(builtin_simd_t) / sizeof(scalar_type)>;
 
-public:
     //!\brief Whether builtin_simd_t is a builtin type or not?
     //!\hideinitializer
     static constexpr bool value = is_power_of_two(length) && std::is_same_v<builtin_simd_t, transformation_trait_or_t<builtin_simd<scalar_type, length>, void>>;
@@ -140,7 +135,7 @@ public:
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
  */
 template <typename builtin_simd_t>
-struct is_builtin_simd : std::bool_constant<_is_builtin_simd<builtin_simd_t>::value>
+struct is_builtin_simd : std::bool_constant<builtin_simd_traits_helper<builtin_simd_t>::value>
 {};
 
 /*!\brief This function specializes seqan3::detail::default_simd_max_length for
@@ -189,9 +184,9 @@ template <typename builtin_simd_t>
 struct simd_traits<builtin_simd_t>
 {
     //!\copydoc seqan3::simd::simd_traits::scalar_type
-    using scalar_type = typename detail::_is_builtin_simd<builtin_simd_t>::scalar_type;
+    using scalar_type = typename detail::builtin_simd_traits_helper<builtin_simd_t>::scalar_type;
     //!\copydoc seqan3::simd::simd_traits::length
-    static constexpr auto length = detail::_is_builtin_simd<builtin_simd_t>::length;
+    static constexpr auto length = detail::builtin_simd_traits_helper<builtin_simd_t>::length;
     //!\copydoc seqan3::simd::simd_traits::max_length
     static constexpr auto max_length = length == 1u ? length : sizeof(scalar_type) * length;
 
