@@ -150,16 +150,12 @@ struct is_builtin_simd : std::bool_constant<_is_builtin_simd<builtin_simd_t>::va
  * The redefinition of *default_simd_max_length* influences the default
  * *length* (i.e., seqan3::detail::default_simd_length) of seqan3::simd::simd_type for
  * seqan3::detail::builtin_simd types.
- *
- * \attention
- * builtin_simd does not support *avx512* (64 * 8bit = 512bit) and
- * will fall back to *avx2* (32 * 8bit = 256bit).
  */
 template <>
 constexpr auto default_simd_max_length<builtin_simd> = []()
 {
 #if defined(__AVX512F__)
-    return min_viable_uint_v<32u>;
+    return min_viable_uint_v<64u>;
 #elif defined(__AVX2__)
     return min_viable_uint_v<32u>;
 #elif defined(__SSE4_1__) && defined(__SSE4_2__)
