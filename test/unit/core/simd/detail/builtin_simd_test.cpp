@@ -41,8 +41,6 @@
 #include <type_traits>
 
 using namespace seqan3;
-using namespace seqan3::detail;
-using namespace seqan3::simd;
 
 #ifdef __clang__
 using uint8x16_t = uint8_t __attribute__((ext_vector_type(16)));
@@ -76,29 +74,29 @@ using uint64x4_t [[gnu::vector_size(32)]] = uint64_t;
 
 TEST(builtin_simd, builtin_simd)
 {
-    EXPECT_TRUE((std::is_same_v<builtin_simd<int16_t, 8>::type, int16x8_t>));
-    EXPECT_TRUE((std::is_same_v<builtin_simd<int32_t, 4>::type, int32x4_t>));
-    EXPECT_TRUE((std::is_same_v<builtin_simd<int64_t, 2>::type, int64x2_t>));
+    EXPECT_TRUE((std::is_same_v<detail::builtin_simd<int16_t, 8>::type, int16x8_t>));
+    EXPECT_TRUE((std::is_same_v<detail::builtin_simd<int32_t, 4>::type, int32x4_t>));
+    EXPECT_TRUE((std::is_same_v<detail::builtin_simd<int64_t, 2>::type, int64x2_t>));
 
-    EXPECT_TRUE((std::is_same_v<builtin_simd<uint16_t, 16>::type, uint16x16_t>));
-    EXPECT_TRUE((std::is_same_v<builtin_simd<uint32_t, 8>::type, uint32x8_t>));
-    EXPECT_TRUE((std::is_same_v<builtin_simd<uint64_t, 4>::type, uint64x4_t>));
+    EXPECT_TRUE((std::is_same_v<detail::builtin_simd<uint16_t, 16>::type, uint16x16_t>));
+    EXPECT_TRUE((std::is_same_v<detail::builtin_simd<uint32_t, 8>::type, uint32x8_t>));
+    EXPECT_TRUE((std::is_same_v<detail::builtin_simd<uint64_t, 4>::type, uint64x4_t>));
 }
 
 TEST(builtin_simd, is_builtin_simd)
 {
-    EXPECT_FALSE(is_builtin_simd<short>::value);
-    EXPECT_FALSE(is_builtin_simd<int>::value);
-    EXPECT_FALSE(is_builtin_simd<int[15]>::value);
-    EXPECT_FALSE(is_builtin_simd<int*>::value);
+    EXPECT_FALSE(detail::is_builtin_simd<short>::value);
+    EXPECT_FALSE(detail::is_builtin_simd<int>::value);
+    EXPECT_FALSE(detail::is_builtin_simd<int[15]>::value);
+    EXPECT_FALSE(detail::is_builtin_simd<int*>::value);
 
-    EXPECT_TRUE(is_builtin_simd<int16x8_t>::value);
-    EXPECT_TRUE(is_builtin_simd<int32x4_t>::value);
-    EXPECT_TRUE(is_builtin_simd<int64x2_t>::value);
+    EXPECT_TRUE(detail::is_builtin_simd<int16x8_t>::value);
+    EXPECT_TRUE(detail::is_builtin_simd<int32x4_t>::value);
+    EXPECT_TRUE(detail::is_builtin_simd<int64x2_t>::value);
 
-    EXPECT_TRUE(is_builtin_simd<uint16x16_t>::value);
-    EXPECT_TRUE(is_builtin_simd<uint32x8_t>::value);
-    EXPECT_TRUE(is_builtin_simd<uint64x4_t>::value);
+    EXPECT_TRUE(detail::is_builtin_simd<uint16x16_t>::value);
+    EXPECT_TRUE(detail::is_builtin_simd<uint32x8_t>::value);
+    EXPECT_TRUE(detail::is_builtin_simd<uint64x4_t>::value);
 }
 
 TEST(builtin_simd, simd_traits)
@@ -148,7 +146,7 @@ TEST(builtin_simd, simd_traits)
 
 TEST(builtin_simd, default_simd_max_length)
 {
-    constexpr auto default_simd_max_length_v = default_simd_max_length<builtin_simd>;
+    constexpr auto default_simd_max_length_v = detail::default_simd_max_length<detail::builtin_simd>;
 #if defined(__AVX512F__)
     EXPECT_EQ(default_simd_max_length_v, 32u);
 #elif defined(__AVX2__)
