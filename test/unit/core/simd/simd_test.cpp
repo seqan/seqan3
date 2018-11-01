@@ -2,7 +2,7 @@
 
 #include <seqan3/core/simd/all.hpp>
 
-using namespace seqan3::simd;
+using namespace seqan3;
 
 using int16x_t = seqan3::simd::simd_type<int16_t>::type;
 

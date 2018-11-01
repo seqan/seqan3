@@ -40,7 +40,7 @@
 #include <iostream>
 #include <sstream>
 
-using namespace seqan3::simd;
+using namespace seqan3;
 
 TEST(debug_stream, simd_rvalue)
 {
