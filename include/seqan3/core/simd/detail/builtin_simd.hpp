@@ -85,16 +85,12 @@ template <typename scalar_t, size_t length>
 //!\endcond
 struct builtin_simd<scalar_t, length>
 {
-private:
-    static constexpr size_t next_length = next_power_of_two(length);
-#if defined(__clang__)
-    using simd_type = scalar_t __attribute__((ext_vector_type(length)));
-#else
-    using simd_type [[gnu::vector_size(sizeof(scalar_t) * next_length)]] = scalar_t;
-#endif
-public:
     //!\brief The type of the builtin simd.
-    using type = simd_type;
+#if defined(__clang__)
+    using type = scalar_t __attribute__((ext_vector_type(length)));
+#else
+    using type [[gnu::vector_size(sizeof(scalar_t) * length)]] = scalar_t;
+#endif
 };
 
 /*!\brief Helper struct for seqan3::detail::is_builtin_simd
