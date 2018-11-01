@@ -39,10 +39,10 @@
 
 #pragma once
 
+#include <utility>
+
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
-
-#include <utility>
 
 namespace seqan3::detail
 {
