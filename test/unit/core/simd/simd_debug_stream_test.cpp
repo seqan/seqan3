@@ -49,8 +49,8 @@ TEST(debug_stream, simd_rvalue)
     std::stringstream strstream;
     seqan3::debug_stream_type stream{strstream};
 
-    stream << fill<simd_type>(4);
-    EXPECT_EQ(strstream.str(), "[4,4,4,4,4,4,4,4]");
+    stream << iota<simd_type>(1);
+    EXPECT_EQ(strstream.str(), "[1,2,3,4,5,6,7,8]");
 }
 
 TEST(debug_stream, simd_lvalue)
@@ -60,7 +60,7 @@ TEST(debug_stream, simd_lvalue)
     std::stringstream strstream;
     seqan3::debug_stream_type stream{strstream};
 
-    simd_type simd = fill<simd_type>(4);
+    simd_type simd = iota<simd_type>(1);
     stream << simd;
-    EXPECT_EQ(strstream.str(), "[4,4,4,4,4,4,4,4]");
+    EXPECT_EQ(strstream.str(), "[1,2,3,4,5,6,7,8]");
 }

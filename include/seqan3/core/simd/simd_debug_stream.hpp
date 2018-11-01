@@ -56,15 +56,13 @@ template <typename simd_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, simd_t && simd)
 {
     using simd_type = remove_cvref_t<simd_t>;
+    constexpr size_t length = simd::simd_traits<simd_type>::length;
+    using scalar_type = typename simd::simd_traits<simd_type>::scalar_type;
 
-    s << '[';
-    s << simd[0];
-    for (size_t i = 1; i < simd::simd_traits<simd_type>::length; ++i)
-    {
-        s << ',';
-        s << simd[i];
-    }
-    s << ']';
+    std::array<scalar_type, length> array{};
+    for (size_t i = 0; i < length; ++i)
+        array[i] = simd[i];
+    s << array;
     return s;
 }
 
