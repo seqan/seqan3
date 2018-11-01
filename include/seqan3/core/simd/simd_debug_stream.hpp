@@ -50,7 +50,9 @@ namespace seqan3
  * \ingroup simd
  */
 template <typename simd_t>
+//!\cond
     requires simd::simd_concept<remove_cvref_t<simd_t>>
+//!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, simd_t && simd)
 {
     using simd_type = remove_cvref_t<simd_t>;
