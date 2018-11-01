@@ -11,6 +11,6 @@ int main()
     uint8x16_t b = fill<uint8x16_t>(5);
     uint8x16_t c = a + b;
 
-    debug_stream << c << "\n"; // (9,9,9,9,9,9,9,9)
+    debug_stream << c << "\n"; // [9,9,9,9,9,9,9,9]
     return 0;
 }

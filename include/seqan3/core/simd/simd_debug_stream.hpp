@@ -57,14 +57,14 @@ inline debug_stream_type & operator<<(debug_stream_type & s, simd_t && simd)
 {
     using simd_type = remove_cvref_t<simd_t>;
 
-    s << '(';
+    s << '[';
     s << simd[0];
     for (size_t i = 1; i < simd::simd_traits<simd_type>::length; ++i)
     {
         s << ',';
         s << simd[i];
     }
-    s << ')';
+    s << ']';
     return s;
 }
 

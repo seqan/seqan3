@@ -51,7 +51,7 @@ TEST(debug_stream, simd_rvalue)
     debug_stream_type stream{strstream};
 
     stream << fill<simd_type>(4);
-    EXPECT_EQ(strstream.str(), "(4,4,4,4,4,4,4,4)");
+    EXPECT_EQ(strstream.str(), "[4,4,4,4,4,4,4,4]");
 }
 
 TEST(debug_stream, simd_lvalue)
@@ -63,5 +63,5 @@ TEST(debug_stream, simd_lvalue)
 
     simd_type simd = fill<simd_type>(4);
     stream << simd;
-    EXPECT_EQ(strstream.str(), "(4,4,4,4,4,4,4,4)");
+    EXPECT_EQ(strstream.str(), "[4,4,4,4,4,4,4,4]");
 }

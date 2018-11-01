@@ -12,6 +12,6 @@ int main()
     uint8_simd_t b = fill<uint8_simd_t>(5);
     uint8_simd_t c = a + b;
 
-    debug_stream << c << "\n"; // (9,9,9,9,9,9,9,9)
+    debug_stream << c << "\n"; // [9,9,9,9,9,9,9,9]
     return 0;
 }
