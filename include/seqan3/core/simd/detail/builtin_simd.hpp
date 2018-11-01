@@ -79,6 +79,7 @@ namespace seqan3::detail
 template <typename scalar_t, size_t length>
 struct builtin_simd;
 
+//!\copydoc seqan3::detail::builtin_simd
 template <typename scalar_t, size_t length>
 //!\cond
     requires is_power_of_two(length)
