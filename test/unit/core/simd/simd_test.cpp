@@ -5,8 +5,6 @@
 using namespace seqan3;
 using namespace seqan3::simd;
 
-#if defined(__SSE4_2__) || defined(__AVX2__) || defined(__AVX512F__)
-
 using int16x_t = seqan3::simd::simd_type<int16_t>::type;
 
 TEST(simd, auto_length)
@@ -29,6 +27,16 @@ TEST(simd, auto_length)
         EXPECT_TRUE((std::is_same_v<int16x_t, int16x8_t>));
         EXPECT_EQ(simd_traits<int16x_t>::length, 8);
     }
+    else if constexpr(simd_traits<int16x_t>::max_length == 1)
+    {
+        using int16x1_t = seqan3::simd::simd_type<int16_t, 1>::type; // scalar fallback
+        EXPECT_TRUE((std::is_same_v<int16x_t, int16x1_t>));
+        EXPECT_EQ(simd_traits<int16x_t>::length, 1);
+    }
+    else
+    {
+        ADD_FAILURE() << "unknown max_length: " << simd_traits<int16x_t>::max_length;
+    }
 }
 
 TEST(simd, standard_construction)
@@ -40,6 +48,12 @@ TEST(simd, standard_construction)
     EXPECT_TRUE((std::is_nothrow_move_assignable_v<int16x_t>));
     EXPECT_TRUE((std::is_nothrow_destructible_v<int16x_t>));
     EXPECT_TRUE((std::is_nothrow_swappable_v<int16x_t>));
+}
+
+template <simd_concept simd_t>
+void construct_test(simd_t & simd, typename simd_traits<simd_t>::scalar_type a, std::integral_constant<size_t, 1>)
+{
+    simd = simd_t{a};
 }
 
 template <simd_concept simd_t>
@@ -78,5 +92,3 @@ TEST(simd, construct)
     for (unsigned i = 0u; i < simd_traits<int16x_t>::length; ++i)
         EXPECT_EQ(a[i], 4);
 }
-
-#endif
