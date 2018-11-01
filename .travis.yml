@@ -46,6 +46,12 @@ matrix:
     env:
       - BUILD=snippet
       - BUILD_TYPE=Release
+  - os: linux
+    addons:
+      apt:
+        packages: ['doxygen']
+    env:
+      - BUILD=documentation
 
 install:
   - ccache --version
