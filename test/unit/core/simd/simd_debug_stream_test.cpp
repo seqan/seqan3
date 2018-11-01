@@ -40,7 +40,6 @@
 #include <iostream>
 #include <sstream>
 
-using namespace seqan3;
 using namespace seqan3::simd;
 
 TEST(debug_stream, simd_rvalue)
@@ -48,7 +47,7 @@ TEST(debug_stream, simd_rvalue)
     using simd_type = simd_type_t<int16_t, 8>;
 
     std::stringstream strstream;
-    debug_stream_type stream{strstream};
+    seqan3::debug_stream_type stream{strstream};
 
     stream << fill<simd_type>(4);
     EXPECT_EQ(strstream.str(), "[4,4,4,4,4,4,4,4]");
@@ -59,7 +58,7 @@ TEST(debug_stream, simd_lvalue)
     using simd_type = simd_type_t<int16_t, 8>;
 
     std::stringstream strstream;
-    debug_stream_type stream{strstream};
+    seqan3::debug_stream_type stream{strstream};
 
     simd_type simd = fill<simd_type>(4);
     stream << simd;
