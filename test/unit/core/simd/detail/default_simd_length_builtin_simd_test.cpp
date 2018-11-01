@@ -42,19 +42,18 @@
 #include <type_traits>
 
 using namespace seqan3;
-using namespace seqan3::detail;
 
 TEST(default_simd_length, int8_t)
 {
     using scalar_t = int8_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 16 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 32 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 64 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 16 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 32 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 64 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
@@ -62,14 +61,14 @@ TEST(default_simd_length, int8_t)
 TEST(default_simd_length, int16_t)
 {
     using scalar_t = int16_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 8 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 16 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 32 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 8 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 16 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 32 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
@@ -77,14 +76,14 @@ TEST(default_simd_length, int16_t)
 TEST(default_simd_length, int32_t)
 {
     using scalar_t = int32_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 4 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 8 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 16 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 4 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 8 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 16 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
@@ -92,14 +91,14 @@ TEST(default_simd_length, int32_t)
 TEST(default_simd_length, int64_t)
 {
     using scalar_t = int64_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 2 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 4 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 8 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 2 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 4 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 8 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
@@ -107,14 +106,14 @@ TEST(default_simd_length, int64_t)
 TEST(default_simd_length, uint8_t)
 {
     using scalar_t = uint8_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 16 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 32 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 64 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 16 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 32 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 64 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
@@ -122,14 +121,14 @@ TEST(default_simd_length, uint8_t)
 TEST(default_simd_length, uint16_t)
 {
     using scalar_t = uint16_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 8 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 16 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 32 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 8 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 16 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 32 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
@@ -137,14 +136,14 @@ TEST(default_simd_length, uint16_t)
 TEST(default_simd_length, uint32_t)
 {
     using scalar_t = uint32_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 4 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 8 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 16 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 4 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 8 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 16 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
@@ -152,14 +151,14 @@ TEST(default_simd_length, uint32_t)
 TEST(default_simd_length, uint64_t)
 {
     using scalar_t = uint64_t;
-    constexpr size_t max_length = default_simd_max_length<builtin_simd>;
+    constexpr size_t max_length = detail::default_simd_max_length<detail::builtin_simd>;
 
     switch (max_length)
     {
-        case 0: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 1 ); break;
-        case 16: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 2 ); break;
-        case 32: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 4 ); break;
-        case 64: EXPECT_EQ((default_simd_length<scalar_t, builtin_simd>), 8 ); break;
+        case 0: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 1 ); break;
+        case 16: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 2 ); break;
+        case 32: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 4 ); break;
+        case 64: EXPECT_EQ((detail::default_simd_length<scalar_t, detail::builtin_simd>), 8 ); break;
         default: FAIL() << "Unsupported max_length";
     }
 }
