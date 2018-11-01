@@ -148,7 +148,7 @@ TEST(builtin_simd, default_simd_max_length)
 {
     constexpr auto default_simd_max_length_v = detail::default_simd_max_length<detail::builtin_simd>;
 #if defined(__AVX512F__)
-    EXPECT_EQ(default_simd_max_length_v, 32u);
+    EXPECT_EQ(default_simd_max_length_v, 64u);
 #elif defined(__AVX2__)
     EXPECT_EQ(default_simd_max_length_v, 32u);
 #elif defined(__SSE4_2__)
