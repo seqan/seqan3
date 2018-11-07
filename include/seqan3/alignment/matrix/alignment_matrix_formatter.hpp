@@ -358,7 +358,8 @@ private:
     }
 
     //!\brief Convert a matrix entry into a std::string
-    static std::string as_string(auto && entry) noexcept
+    template <typename entry_type>
+    static std::string as_string(entry_type && entry) noexcept
     {
         std::stringstream strstream;
         debug_stream_type stream{strstream};
