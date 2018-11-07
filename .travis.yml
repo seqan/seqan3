@@ -50,7 +50,7 @@ matrix:
     compiler: 'doxygen'
     addons:
       apt:
-        packages: ['texlive-font-utils'] # adds epstopdf
+        packages: ['texlive-font-utils', 'ghostscript'] # adds epstopdf, ghostscript
     env:
       - BUILD=documentation
     cache:
