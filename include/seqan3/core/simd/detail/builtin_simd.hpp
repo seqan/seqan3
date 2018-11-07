@@ -55,8 +55,8 @@ namespace seqan3::detail
  * (https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html)
  * (formerly known as "seqan simd" in seqan2).
  * \ingroup simd
- * \tparam scalar_type The underlying type of a simd vector
- * \tparam length_v    The number of packed values in a simd vector
+ * \tparam scalar_t The underlying type of a simd vector
+ * \tparam length   The number of packed values in a simd vector
  *
  * \include test/snippet/core/simd/detail/builtin_simd.cpp
  *
@@ -86,11 +86,10 @@ template <typename scalar_t, size_t length>
 //!\endcond
 struct builtin_simd<scalar_t, length>
 {
-#if defined(__clang__)
     //!\brief The type of the builtin simd.
+#if defined(__clang__)
     using type = scalar_t __attribute__((ext_vector_type(length)));
 #else
-    //!\brief The type of the builtin simd.
     using type [[gnu::vector_size(sizeof(scalar_t) * length)]] = scalar_t;
 #endif
 };
