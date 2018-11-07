@@ -391,7 +391,7 @@ private:
     }
 
     //!\brief Befriend test case
-    friend class matrix_formatter_test;
+    friend struct matrix_formatter_test;
 };
 
 /*!\name Type deduction guides
