@@ -154,10 +154,6 @@ constexpr auto default_simd_max_length<builtin_simd> = []()
 #elif defined(__SSE4_1__) && defined(__SSE4_2__)
     return min_viable_uint_v<16u>;
 #else
-    // static_assert(false, "Your code uses simd, but you didn't provide flags "
-    // "(like `-march=native`, `-msse4`, `-mavx2`, etc) to your compiler "
-    // "to build special binaries that make use of the special vector/simd "
-    // "registers.");
     return min_viable_uint_v<0u>;
 #endif
 }();
