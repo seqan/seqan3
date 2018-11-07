@@ -323,7 +323,7 @@ public:
         extensions{v}
     {}
 
-    /*!\brief Tests whether path lies inside extensions.
+    /*!\brief Tests whether the filepath \p path ends with a valid extension.
      * \param path The input value to check.
      * \throws parser_invalid_argument
      */
@@ -361,13 +361,13 @@ private:
  * The struct then acts as a functor that throws a seqan3::parser_invalid_argument
  * exception whenever a given filename (string) does not exist.
  *
- * \snippet test/snippet/argument_parser/validators_3.cpp usage
+ * \snippet test/snippet/argument_parser/validators_5.cpp usage
  */
 class file_existance_validator
 {
 public:
     //!\brief Type of values that are tested by validator
-    using value_type = std::string;
+    using value_type = filesystem::path;
 
     /*!\brief Tests whether path exists.
      * \param path The input value to check.
@@ -383,6 +383,12 @@ public:
     void operator()(std::vector<filesystem::path> const & v) const
     {
          std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
+    }
+
+    //!\brief Returns a message that can be appended to the (positional) options help page info.
+    std::string get_help_page_message() const
+    {
+        return detail::to_string("The file is checked for existence.");
     }
 };
 
