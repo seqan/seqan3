@@ -46,9 +46,7 @@
 
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 namespace seqan3::detail
 {
@@ -56,6 +54,7 @@ namespace seqan3::detail
 /*!\brief Format used by seqan3::detail::alignment_matrix_formatter
  * \ingroup alignment_matrix
  *
+ * \details
  *
  * With seqan3::detail::alignment_matrix_format you can style:
  *  * the epsilon symbol (alignment_matrix_format::epsilon)
@@ -100,15 +99,6 @@ struct alignment_matrix_format
      *
      */
     char const * trace_dir[8]{};
-
-    //!\brief how many bytes needs the epsilon symbol (necessary when using utf-8)
-    uint8_t epsilon_bytes{1};
-
-    /*!\brief how many bytes needs every trace_dir symbol (necessary when using utf-8)
-     * \attention A restriction is that every symbol needs the same amount of
-     * bytes to represent one char.
-     */
-    uint8_t trace_dir_bytes{1};
 
     /*!\brief The CSV format that makes it easy to export the matrix
      * \sa https://en.wikipedia.org/wiki/Comma-separated_values
@@ -180,28 +170,25 @@ constexpr alignment_matrix_format alignment_matrix_format::csv
 constexpr alignment_matrix_format alignment_matrix_format::ascii
 {
     " ", "|", "-", "/",
-    {" ","D","U","DU","L","DL","UL","DUL"} // 1byte per char
+    {" ","D","U","DU","L","DL","UL","DUL"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_block
 {
     u8"ε", u8"║", u8"═", u8"╬",
-    {u8"█",u8"▘",u8"▝",u8"▀",u8"▖",u8"▌",u8"▞",u8"▛"}, // 3bytes per char
-    2, 3
+    {u8"█",u8"▘",u8"▝",u8"▀",u8"▖",u8"▌",u8"▞",u8"▛"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_braille
 {
     u8"ε", u8"║", u8"═", u8"╬",
-    {u8"⠀",u8"⠁",u8"⠈",u8"⠉",u8"⠄",u8"⠅",u8"⠌",u8"⠍"}, // 3bytes per char
-    2, 3
+    {u8"⠀",u8"⠁",u8"⠈",u8"⠉",u8"⠄",u8"⠅",u8"⠌",u8"⠍"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
 {
     u8"ε", u8"║", u8"═", u8"╬",
-    {u8"↺",u8"↖",u8"↑",u8"↖↑",u8"←",u8"↖←",u8"↑←",u8"↖↑←"}, // 3bytes per char
-    2, 3
+    {u8"↺",u8"↖",u8"↑",u8"↖↑",u8"←",u8"↖←",u8"↑←",u8"↖↑←"}
 };
 
 /*!\brief Formats and prints trace and score matrices that satisfy the
@@ -209,6 +196,7 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  * \ingroup alignment_matrix
  * \tparam alignment_matrix_t The matrix class which satisfies the seqan3::detail::matrix_concept
  *
+ * \details
  *
  * ## Example
  *
@@ -218,32 +206,53 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  * \include test/snippet/alignment/matrix/alignment_score_matrix.out
  */
 template <matrix_concept alignment_matrix_t>
-struct alignment_matrix_formatter
+class alignment_matrix_formatter
 {
+public:
     //!\brief The type of the #matrix
     using alignment_matrix_type = alignment_matrix_t;
 
+private:
     //!\brief The matrix to format.
     alignment_matrix_type const & matrix;
 
+public:
     //!\brief The actual format used by the formatter.
-    alignment_matrix_format symbols{alignment_matrix_format::unicode_arrows};
+    alignment_matrix_format symbols;
+
+    /*!\name Constructors, destructor and assignment
+     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
+     * and destructor are implicitly defined.
+     * \{
+     */
+     alignment_matrix_formatter() = delete;
+     alignment_matrix_formatter(alignment_matrix_formatter const &) = default;
+     alignment_matrix_formatter(alignment_matrix_formatter &&) = default;
+     alignment_matrix_formatter & operator=(alignment_matrix_formatter const &) = default;
+     alignment_matrix_formatter & operator=(alignment_matrix_formatter &&) = default;
+    /*!\brief Construct the matrix out of the *entries*, the *rows*,
+     *        and the *cols*.
+     * \param _matrix  \copydoc matrix
+     * \param _symbols \copydoc symbols
+     */
+    alignment_matrix_formatter(alignment_matrix_type const & _matrix, alignment_matrix_format _symbols = alignment_matrix_format::unicode_arrows)
+        : matrix{_matrix}, symbols{_symbols}
+    {}
+    //!\}
+
+    //!\brief \copydoc seqan3::detail::matrix_concept::entry_type
+    using entry_type = typename alignment_matrix_type::entry_type;
 
     //!\brief Whether #alignment_matrix_type is a traceback matrix.
-    //!\hideinitializer
-    static constexpr bool is_traceback_matrix = []
-    {
-        using entry_type = typename alignment_matrix_type::entry_type;
-        return std::is_same_v<entry_type, trace_directions>;
-    }();
+    static constexpr bool is_traceback_matrix = std::is_same_v<entry_type, trace_directions>;
 
     //!\brief Determines the largest width of all entries in the #matrix,
     //!       e.g. `-152` has width 4.
-    std::size_t auto_width() const noexcept
+    size_t auto_width() const noexcept
     {
-        std::size_t col_width = 1;
-        for(unsigned row = 0; row < matrix.rows(); ++row)
-            for(unsigned col = 0; col < matrix.cols(); ++col)
+        size_t col_width = 1;
+        for (size_t row = 0; row < matrix.rows(); ++row)
+            for (size_t col = 0; col < matrix.cols(); ++col)
                 col_width = std::max(col_width, unicode_str_length(entry_at(row, col)));
         return col_width;
     }
@@ -253,7 +262,7 @@ struct alignment_matrix_formatter
     //!\param[in]  query           the query sequence
     //!\param[in]  column_width    width of each cell, std::nullopt defaults to auto_width()
     template <typename database_t, typename query_t>
-    void format(database_t && database, query_t && query, std::optional<std::size_t> column_width = std::nullopt) const noexcept
+    void format(database_t && database, query_t && query, std::optional<size_t> column_width = std::nullopt) const noexcept
     {
         format(std::forward<database_t>(database), std::forward<query_t>(query), std::cout, column_width);
     }
@@ -267,18 +276,16 @@ struct alignment_matrix_formatter
      * \param[in]      column_width    width of each cell, std::nullopt defaults to auto_width()
      */
     template <typename database_t, typename query_t, typename char_t, typename traits_t>
-    void format(database_t && database, query_t && query, std::basic_ostream<char_t, traits_t> & cout, std::optional<std::size_t> column_width) const noexcept
+    void format(database_t && database, query_t && query, std::basic_ostream<char_t, traits_t> & cout, std::optional<size_t> const column_width) const noexcept
     {
-        std::size_t _column_width = column_width.has_value() ? column_width.value() : auto_width();
+        size_t const _column_width = column_width.has_value() ? column_width.value() : auto_width();
 
-        auto print_cell = [&](std::string symbol, std::optional<std::size_t> symbol_bytes = std::nullopt)
+        auto print_cell = [&](std::string const & symbol)
         {
             // deal with unicode chars that mess up std::setw
-            std::size_t bytes = symbol_bytes.value_or(
-                is_traceback_matrix ? symbols.trace_dir_bytes : 1u);
-            std::size_t length_bytes = unicode_str_length_bytes(symbol);
-            std::size_t length = length_bytes / bytes;
-            std::size_t offset = length_bytes - length;
+            size_t const length_bytes = unicode_str_length_bytes(symbol);
+            size_t const length = unicode_str_length(symbol);
+            size_t const offset = length_bytes - length;
 
             cout << std::left
                  << std::setw(_column_width + offset)
@@ -286,28 +293,19 @@ struct alignment_matrix_formatter
                  << symbols.col_sep;
         };
 
-        auto print_first_cell = [&](auto && symbol)
+        auto print_first_cell = [&](std::string const & symbol)
         {
-            if constexpr (alphabet_concept<remove_cvref_t<decltype(symbol)>> &&
-                          !ostream_concept<std::stringstream, decltype(symbol)>)
-            {
-                cout << to_char(symbol);
-            }
-            else
-            {
-                cout << symbol;
-            }
-            cout << symbols.col_sep;
+            cout << symbol << symbols.col_sep;
         };
 
         // |_|d|a|t|a|b|a|s|e|
         auto print_first_row = [&]
         {
             print_first_cell(" ");
-            print_cell(symbols.epsilon, symbols.epsilon_bytes);
+            print_cell(symbols.epsilon);
 
-            for(unsigned col = 0; col < matrix.cols()-1; ++col)
-                print_cell(as_string(database[col]), 1);
+            for (size_t col = 0; col < matrix.cols() - 1; ++col)
+                print_cell(as_string(database[col]));
             cout << "\n";
         };
 
@@ -315,9 +313,9 @@ struct alignment_matrix_formatter
         auto print_divider = [&]
         {
             cout << " " << symbols.row_col_sep;
-            for(unsigned col = 0; col < matrix.cols(); ++col)
+            for (size_t col = 0; col < matrix.cols(); ++col)
             {
-                for(unsigned i = 0; i < _column_width; ++i)
+                for (size_t i = 0; i < _column_width; ++i)
                     cout << symbols.row_sep;
                 cout << symbols.row_col_sep;
             }
@@ -325,7 +323,7 @@ struct alignment_matrix_formatter
         };
 
         print_first_row();
-        for(unsigned row = 0; row < matrix.rows(); ++row)
+        for (size_t row = 0; row < matrix.rows(); ++row)
         {
             if (symbols.row_sep[0] != '\0')
                 print_divider();
@@ -334,59 +332,66 @@ struct alignment_matrix_formatter
             if (row == 0)
                 print_first_cell(symbols.epsilon);
             else
-                print_first_cell(query[row-1]);
-            for(unsigned col = 0; col < matrix.cols(); ++col)
+                print_first_cell(as_string(query[row - 1]));
+            for (size_t col = 0; col < matrix.cols(); ++col)
                 print_cell(entry_at(row, col));
             cout << "\n";
         }
     }
 
 private:
-
     //!\brief Same as #matrix\.at(*row*, *col*), but converts the value to
     //!       a trace symbol (alignment_matrix_format::trace_dir) if the
     //!       #matrix is a traceback matrix.
-    std::string entry_at(unsigned row, unsigned col) const noexcept
+    std::string entry_at(size_t const row, size_t const col) const noexcept
     {
         if constexpr(is_traceback_matrix)
         {
             trace_directions direction = matrix.at(row, col);
-            return std::string{symbols.trace_dir[(unsigned)(direction) % 8u]};
-        } else
+            return symbols.trace_dir[(size_t)(direction) % 8u];
+        }
+        else
         {
-            return as_string(matrix.at(row, col));
+            entry_type entry = matrix.at(row, col);
+            return as_string(entry);
         }
     }
 
     //!\brief Convert a matrix entry into a std::string
-    std::string as_string(auto && entry) const noexcept
+    static std::string as_string(auto && entry) noexcept
     {
-        std::stringstream stream;
-        if constexpr (alphabet_concept<remove_cvref_t<decltype(entry)>> &&
-                      !ostream_concept<std::stringstream, decltype(entry)>)
-        {
-            stream << to_char(entry);
-        }
-        else
-        {
-            stream << entry;
-        }
-        return stream.str();
+        std::stringstream strstream;
+        debug_stream_type stream{strstream};
+        stream << entry;
+        return strstream.str();
     }
 
     //!\brief The length of the *str* (traceback symbols are unicode aware)
-    std::size_t unicode_str_length(std::string str) const noexcept
+    //!\sa https://en.wikipedia.org/wiki/UTF-8 for encoding details
+    static size_t unicode_str_length(std::string const & str) noexcept
     {
-        if constexpr(is_traceback_matrix)
-            return unicode_str_length_bytes(str) / symbols.trace_dir_bytes;
-        return unicode_str_length_bytes(str);
+        size_t length = 0u;
+        for (auto it = str.cbegin(), it_end = str.cend(); it < it_end; ++it, ++length)
+        {
+            uint8_t v = *it;
+            if ((v & 0b11100000) == 0b11000000)
+                ++it;
+            else if ((v & 0b11110000) == 0b11100000)
+                it += 2;
+            else if ((v & 0b11111000) == 0b11110000)
+                it += 3;
+        }
+        return length;
     }
 
     //!\brief The number of bytes the *str* uses
-    std::size_t unicode_str_length_bytes(std::string str) const noexcept
+    static size_t unicode_str_length_bytes(std::string const & str) noexcept
     {
         return str.length();
     }
+
+    //!\brief Befriend test case
+    friend class matrix_formatter_test;
 };
 
 /*!\name Type deduction guides

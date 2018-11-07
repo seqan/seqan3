@@ -36,6 +36,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 
 using namespace seqan3;

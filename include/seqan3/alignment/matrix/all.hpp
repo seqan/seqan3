@@ -54,4 +54,4 @@
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
-#include <seqan3/alignment/matrix/rowwise_matrix.hpp>
+#include <seqan3/alignment/matrix/row_wise_matrix.hpp>
