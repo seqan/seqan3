@@ -46,6 +46,24 @@ matrix:
     env:
       - BUILD=snippet
       - BUILD_TYPE=Release
+  - os: linux
+    compiler: 'doxygen'
+    addons:
+      apt:
+        # adds epstopdf, ghostscript, latex
+        packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-base']
+    env:
+      - BUILD=documentation
+    cache:
+      directories:
+          - /tmp/doxygen-download
+    before_install:
+       - DOXYGEN_VER=doxygen-1.8.13
+       - mkdir -p /tmp/doxygen-download
+       - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ ftp://ftp.stack.nl/pub/users/dimitri/${DOXYGEN_VER}.linux.bin.tar.gz
+       - tar -C /tmp/ -zxvf /tmp/doxygen-download/${DOXYGEN_VER}.linux.bin.tar.gz
+       - PATH=$PATH:/tmp/${DOXYGEN_VER}/bin/
+       - doxygen --version
 
 install:
   - ccache --version
