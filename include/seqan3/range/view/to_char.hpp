@@ -87,7 +87,7 @@ namespace seqan3::view
  */
 inline auto const to_char = deep{view::transform([] (auto const in)
 {
-    static_assert(alphabet_concept<decltype(in)>, "value_type of seqan3::view::to_char should be an alphabet.");
+    static_assert(alphabet_concept<remove_cvref_t<decltype(in)>>, "value_type of seqan3::view::to_char should be an alphabet.");
     return seqan3::to_char(in);
 })};
 
