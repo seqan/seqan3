@@ -88,7 +88,9 @@ template <typename scalar_t, size_t length>
 struct builtin_simd<scalar_t, length>
 {
     //!\brief The type of the builtin simd.
-#if defined(__clang__)
+#if SEQAN3_DOXYGEN_ONLY(1)0
+    using type [[gnu::vector_size(...)]] = scalar_t;
+#elif defined(__clang__)
     using type = scalar_t __attribute__((ext_vector_type(length)));
 #else
     using type [[gnu::vector_size(sizeof(scalar_t) * length)]] = scalar_t;
