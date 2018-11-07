@@ -423,8 +423,10 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
+    //!\cond
         requires tuple_like_concept<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
+    //!\endcond
     {
         using default_align_t = std::pair<std::basic_string_view<gapped<char>>, std::basic_string_view<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, uint32_t, uint32_t>;
@@ -469,7 +471,9 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
+    //!\cond
         requires tuple_like_concept<tuple_t>
+    //!\endcond
     {
         using default_align_t = std::pair<std::basic_string_view<gapped<char>>, std::basic_string_view<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, uint32_t, uint32_t>;
@@ -555,7 +559,9 @@ public:
      */
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
+    //!\cond
         requires std::ranges::InputRange<rng_t> && tuple_like_concept<reference_t<rng_t>>
+    //!\endcond
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -598,7 +604,9 @@ public:
      */
     template <typename rng_t>
     friend alignment_file_output & operator|(rng_t && range, alignment_file_output & f)
+    //!\cond
         requires std::ranges::InputRange<rng_t> && tuple_like_concept<reference_t<rng_t>>
+    //!\endcond
     {
         f = range;
         return f;
@@ -607,7 +615,9 @@ public:
     //!\overload
     template <typename rng_t>
     friend alignment_file_output operator|(rng_t && range, alignment_file_output && f)
+    //!\cond
         requires std::ranges::InputRange<rng_t> && tuple_like_concept<reference_t<rng_t>>
+    //!\endcond
     {
         f = range;
         return std::move(f);
