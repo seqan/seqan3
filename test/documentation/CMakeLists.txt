@@ -25,9 +25,9 @@ find_package(PythonInterp REQUIRED)
 enable_testing()
 
 set (SEQAN3_DOXYGEN_TEST_SCRIPT "
-    output=\$(${DOXYGEN_EXECUTABLE} > /dev/null);
+    output=\$(${DOXYGEN_EXECUTABLE} 2>&1 > /dev/null);
     echo \$output;
-    test -z \$output && exit 1")
+    test -z \"\$output\"")
 
 if (SEQAN3_USER_DOC)
     message (STATUS "Add user doc test.")
