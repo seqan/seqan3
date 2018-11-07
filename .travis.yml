@@ -48,6 +48,9 @@ matrix:
       - BUILD_TYPE=Release
   - os: linux
     compiler: 'doxygen'
+    addons:
+      apt:
+        packages: ['texlive-font-utils']
     env:
       - BUILD=documentation
     cache:
