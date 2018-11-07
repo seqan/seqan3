@@ -89,7 +89,8 @@ struct builtin_simd<scalar_t, length>
 {
     //!\brief The type of the builtin simd.
 #if SEQAN3_DOXYGEN_ONLY(1)0
-    using type [[gnu::vector_size(...)]] = scalar_t;
+    using type = scalar_t __attribute__((vector_size(sizeof(scalar_t) * length))));
+    // doxygen 1.8.13 does not support c++11 attributes, thus this doxygen-only definition
 #elif defined(__clang__)
     using type = scalar_t __attribute__((ext_vector_type(length)));
 #else
