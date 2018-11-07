@@ -85,8 +85,9 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/rank_char.cpp to_char
  * \hideinitializer
  */
-inline auto const to_char = deep{view::transform([] (alphabet_concept const in)
+inline auto const to_char = deep{view::transform([] (auto const in)
 {
+    static_assert(alphabet_concept<decltype(in)>, "value_type of seqan3::view::to_char should be an alphabet.");
     return seqan3::to_char(in);
 })};
 
