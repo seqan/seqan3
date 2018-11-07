@@ -24,16 +24,21 @@ find_package(PythonInterp REQUIRED)
 ### Enable testing
 enable_testing()
 
+set (SEQAN3_DOXYGEN_TEST_SCRIPT "
+    output=\$(${DOXYGEN_EXECUTABLE} > /dev/null);
+    echo \$output;
+    test -z \$output && exit 1")
+
 if (SEQAN3_USER_DOC)
     message (STATUS "Add user doc test.")
-    add_test(NAME test_user_doc
-             COMMAND ${PYTHON_EXECUTABLE}
-             ${CMAKE_SOURCE_DIR}/doc_test.py "-e" ${DOXYGEN_EXECUTABLE} "-i" ${seqan3_doxyfile_user})
+    add_test(NAME doc_usr_test
+    COMMAND sh -c "${SEQAN3_DOXYGEN_TEST_SCRIPT}"
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_usr)
 endif ()
 
 if (SEQAN3_DEV_DOC)
     message (STATUS "Add dev doc test.")
-    add_test(NAME test_devel_doc
-             COMMAND ${PYTHON_EXECUTABLE}
-             ${CMAKE_SOURCE_DIR}/doc_test.py "-e" ${DOXYGEN_EXECUTABLE} "-i" ${seqan3_doxyfile_devel})
+    add_test(NAME doc_dev_test
+    COMMAND sh -c "${SEQAN3_DOXYGEN_TEST_SCRIPT}"
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/doc_dev)
 endif ()

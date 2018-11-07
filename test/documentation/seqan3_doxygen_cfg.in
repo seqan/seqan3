@@ -35,7 +35,7 @@ PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
 ## detect headers without extensions (in std module)
 EXTENSION_MAPPING      = .no_extension=C++
 FILE_PATTERNS          = *
-                         
+
 ## Developer VS user mode
 EXTRACT_PRIVATE        = ${SEQAN3_DOXYGEN_EXTRACT_PRIVATE}
 ENABLED_SECTIONS       = ${SEQAN3_DOXYGEN_ENABLED_SECTIONS}

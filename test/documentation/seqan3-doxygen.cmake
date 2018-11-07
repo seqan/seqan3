@@ -50,7 +50,7 @@ else ()
 endif ()
 
 ### Configure doc/developer targets.
-set(seqan3_doxyfile_in ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_doxygen_cfg.in)
+set(SEQAN3_DOXYFILE_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_doxygen_cfg.in)
 
 option(SEQAN3_USER_DOC "Create build target and test for user documentation." ON)
 option(SEQAN3_DEV_DOC "Create build target and test for developer documentation." ON)
@@ -58,39 +58,37 @@ option(SEQAN3_DEV_DOC "Create build target and test for developer documentation.
 if (SEQAN3_USER_DOC)
     message (STATUS "Configuring user doc.")
 
-    set (SEQAN3_DOXYGEN_OUTPUT_DIR "${PROJECT_BINARY_DIR}/user_doc")
+    set (SEQAN3_DOXYGEN_OUTPUT_DIR "${PROJECT_BINARY_DIR}/doc_usr")
     set (SEQAN3_DOXYGEN_INCLUDE_DIR "${SEQAN3_INCLUDE_DIR}")
     set (SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "detail") #/""
     set (SEQAN3_DOXYGEN_PREDEFINED_NDEBUG "-NDEBUG") #/""
     set (SEQAN3_DOXYGEN_ENABLED_SECTIONS "") #/"DEV"
     set (SEQAN3_DOXYGEN_EXTRACT_PRIVATE "NO") #/"YES":
-    set (seqan3_doxyfile_user ${PROJECT_BINARY_DIR}/seqan3_doxygen_cfg_user)
 
-    configure_file (${seqan3_doxyfile_in} ${seqan3_doxyfile_user})
+    configure_file (${SEQAN3_DOXYFILE_IN} ${SEQAN3_DOXYGEN_OUTPUT_DIR}/Doxyfile)
 
-    add_custom_target(doc_user
-                      COMMAND ${DOXYGEN_EXECUTABLE} ${seqan3_doxyfile_user}
-                      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    add_custom_target(doc_usr ALL
+                      COMMAND ${DOXYGEN_EXECUTABLE}
+                      WORKING_DIRECTORY ${SEQAN3_DOXYGEN_OUTPUT_DIR}
                       COMMENT "Generating user API documentation with Doxygen"
                       VERBATIM)
-endif (SEQAN3_USER_DOC)
+endif ()
 
 if (SEQAN3_DEV_DOC)
     message(STATUS "Configuring devel doc.")
 
-    set(SEQAN3_DOXYGEN_OUTPUT_DIR "${PROJECT_BINARY_DIR}/devel_doc")
+    set(SEQAN3_DOXYGEN_OUTPUT_DIR "${PROJECT_BINARY_DIR}/doc_dev")
     set(SEQAN3_DOXYGEN_INCLUDE_DIR "${SEQAN3_INCLUDE_DIR}")
     set(SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "")
     set(SEQAN3_DOXYGEN_PREDEFINED_NDEBUG "")
     set(SEQAN3_DOXYGEN_ENABLED_SECTIONS "DEV")
     set(SEQAN3_DOXYGEN_EXTRACT_PRIVATE "YES")
-    set(seqan3_doxyfile_devel ${PROJECT_BINARY_DIR}/seqan3_doxygen_cfg_devel)
 
-    configure_file(${seqan3_doxyfile_in} ${seqan3_doxyfile_devel})
+    configure_file(${SEQAN3_DOXYFILE_IN} ${SEQAN3_DOXYGEN_OUTPUT_DIR}/Doxyfile)
 
-    add_custom_target(doc_devel
-                      COMMAND ${DOXYGEN_EXECUTABLE} ${seqan3_doxyfile_devel}
-                      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    add_custom_target(doc_dev ALL
+                      COMMAND ${DOXYGEN_EXECUTABLE}
+                      WORKING_DIRECTORY ${SEQAN3_DOXYGEN_OUTPUT_DIR}
                       COMMENT "Generating developer API documentation with Doxygen"
                       VERBATIM)
                       message (STATUS "Add devel doc test.")
