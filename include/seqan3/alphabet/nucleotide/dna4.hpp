@@ -39,13 +39,10 @@
 
 #pragma once
 
-#include <cassert>
-
-#include <type_traits>
 #include <vector>
 
-#include <seqan3/alphabet/detail/convert.hpp>
-#include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
+#include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
 // dna4
@@ -54,10 +51,14 @@
 namespace seqan3
 {
 
+class rna4;
+
 /*!\brief The four letter DNA alphabet of A,C,G,T.
  * \ingroup nucleotide
  * \implements seqan3::nucleotide_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
  *
  * \details
  * Note that you can assign 'U' as a character to dna4 and it will silently
@@ -69,218 +70,46 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/nucleotide/dna4.cpp code
  */
-
-struct dna4
+class dna4 : public nucleotide_base<dna4, 4>
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = uint8_t;
+private:
+    //!\brief The base class.
+    using base_t = nucleotide_base<dna4, 4>;
 
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface. *Don't worry about the `internal_type`.*
-     */
-    //!\{
-    static const dna4 A;
-    static const dna4 C;
-    static const dna4 G;
-    static const dna4 T;
-    static const dna4 U;
-    static const dna4 UNKNOWN;
-    //!\}
-
-    /*!\name Read functions
-     * \{
-     */
-    /*!\brief Return the letter as a character of char_type.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
-
-    /*!\brief Return the letter's numeric value or rank in the alphabet.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::semi_alphabet_concept::to_rank() requirement via the seqan3::to_rank() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
-
-    /*!\brief Return the complement of the letter.
-     *
-     * \details
-     *
-     * See \ref nucleotide for the actual values.
-     *
-     * Satisfies the seqan3::nucleotide_concept::complement() requirement via the seqan3::complement() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr dna4 complement() const noexcept
-    {
-        return complement_table[to_rank()];
-    }
-    //!\}
-
-    /*!\name Write functions
-     * \{
-     */
-    /*!\brief Assign from a character.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr dna4 & assign_char(char_type const c) noexcept
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        _value = char_to_value[static_cast<index_t>(c)];
-        return *this;
-    }
-
-    /*!\brief Assign from a numeric value.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr dna4 & assign_rank(rank_type const c)
-    {
-        assert(c < value_size);
-        _value = static_cast<internal_type>(c);
-        return *this;
-    }
-    //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{4};
-
-    /*!\name Conversion operators
-     * \{
-     */
-    //!\brief Implicit conversion between dna* and rna* of the same size.
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
-    template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+    //!\brief Befriend seqan3::nucleotide_base.
+    friend base_t;
+    //!\cond \brief Befriend seqan3::alphabet_base.
+    friend base_t::base_t;
     //!\endcond
-    constexpr operator other_nucl_type() const noexcept
-    {
-        return other_nucl_type{_value};
-    }
+    //!\brief Befriend seqan3::rna4 so it can copy #char_to_rank.
+    friend rna4;
 
-    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
-    template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type>
-    //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
-    {
-        return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
-    }
-    //!\}
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr dna4() noexcept : base_t{} {}
+    constexpr dna4(dna4 const &) = default;
+    constexpr dna4(dna4 &&) = default;
+    constexpr dna4 & operator=(dna4 const &) = default;
+    constexpr dna4 & operator=(dna4 &&) = default;
+    ~dna4() = default;
 
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(dna4 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+    using base_t::base_t;
 
-    constexpr bool operator!=(dna4 const & rhs) const noexcept
+    //!\brief Allow implicit construction from dna/rna of the same size.
+    template <std::Same<rna4> t>    // Accept incomplete type
+    constexpr dna4(t const & r) noexcept
     {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(dna4 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(dna4 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(dna4 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(dna4 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
+        assign_rank(r.to_rank());
     }
     //!\}
 
 protected:
     //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        A,
-        C,
-        G,
-        T,
-        U = T,
-        UNKNOWN = A
-    };
 
     //!\brief Value to char conversion table.
-    static constexpr char_type value_to_char[value_size]
+    static constexpr char_type rank_to_char[value_size]
     {
         'A',
         'C',
@@ -289,35 +118,33 @@ protected:
     };
 
     //!\brief Char to value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
+    static constexpr std::array<rank_type, 256> char_to_rank
     {
         [] () constexpr
         {
-            using in_t = internal_type;
-            std::array<in_t, 256> ret{};
+            std::array<rank_type, 256> ret{};
 
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = in_t::UNKNOWN;
+            // reverse mapping for characters and their lowercase
+            for (size_t rnk = 0u; rnk < value_size; ++rnk)
+            {
+                ret[         rank_to_char[rnk] ] = rnk;
+                ret[to_lower(rank_to_char[rnk])] = rnk;
+            }
 
-            // canonical
-            ret['A'] = in_t::A; ret['a'] = in_t::A;
-            ret['C'] = in_t::C; ret['c'] = in_t::C;
-            ret['G'] = in_t::G; ret['g'] = in_t::G;
-            ret['T'] = in_t::T; ret['t'] = in_t::T;
-            ret['U'] = in_t::U; ret['u'] = in_t::U;
+            // set U equal to T
+            ret['U'] = ret['T']; ret['u'] = ret['t'];
 
             // iupac characters get special treatment, because there is no N
-            ret['R'] = in_t::A; ret['r'] = in_t::A; // or G
-            ret['Y'] = in_t::C; ret['y'] = in_t::C; // or T
-            ret['S'] = in_t::C; ret['s'] = in_t::C; // or G
-            ret['W'] = in_t::A; ret['w'] = in_t::A; // or T
-            ret['K'] = in_t::G; ret['k'] = in_t::G; // or T
-            ret['M'] = in_t::A; ret['m'] = in_t::A; // or T
-            ret['B'] = in_t::C; ret['b'] = in_t::C; // or G or T
-            ret['D'] = in_t::A; ret['d'] = in_t::A; // or G or T
-            ret['H'] = in_t::A; ret['h'] = in_t::A; // or C or T
-            ret['V'] = in_t::A; ret['v'] = in_t::A; // or C or G
+            ret['R'] = ret['A']; ret['r'] = ret['A']; // or G
+            ret['Y'] = ret['C']; ret['y'] = ret['C']; // or T
+            ret['S'] = ret['C']; ret['s'] = ret['C']; // or G
+            ret['W'] = ret['A']; ret['w'] = ret['A']; // or T
+            ret['K'] = ret['G']; ret['k'] = ret['G']; // or T
+            ret['M'] = ret['A']; ret['m'] = ret['A']; // or T
+            ret['B'] = ret['C']; ret['b'] = ret['C']; // or G or T
+            ret['D'] = ret['A']; ret['d'] = ret['A']; // or G or T
+            ret['H'] = ret['A']; ret['h'] = ret['A']; // or C or T
+            ret['V'] = ret['A']; ret['v'] = ret['A']; // or C or G
 
             return ret;
         }()
@@ -325,52 +152,34 @@ protected:
 
     //!\brief The complement table.
     static const std::array<dna4, value_size> complement_table;
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
 };
-
-constexpr dna4 dna4::A{internal_type::A};
-constexpr dna4 dna4::C{internal_type::C};
-constexpr dna4 dna4::G{internal_type::G};
-constexpr dna4 dna4::T{internal_type::T};
-constexpr dna4 dna4::U{dna4::T};
-constexpr dna4 dna4::UNKNOWN{dna4::A};
-
-constexpr std::array<dna4, dna4::value_size> dna4::complement_table
-{
-    dna4::T,    // complement of dna4::A
-    dna4::G,    // complement of dna4::C
-    dna4::C,    // complement of dna4::G
-    dna4::A     // complement of dna4::T
-};
-
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 
-namespace seqan3
-{
-
 //!\brief Alias for an std::vector of seqan3::dna4.
 //!\relates dna4
 using dna4_vector = std::vector<dna4>;
-
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
 
-namespace seqan3::literal
-{
+/*!\name Literals
+ * \{
+ */
 
-/*!\brief dna4 literal
+/*!\brief The seqan3::dna4 char literal.
+ * \relates seqan3::dna4
+ * \returns seqan3::dna4
+ */
+constexpr dna4 operator""_dna4(char const c) noexcept
+{
+    return dna4{}.assign_char(c);
+}
+
+/*!\brief The seqan3::dna4 string literal.
  * \relates seqan3::dna4
  * \returns seqan3::dna4_vector
  *
@@ -378,11 +187,8 @@ namespace seqan3::literal
  *
  * \snippet test/snippet/alphabet/nucleotide/dna4.cpp operator""_dna4
  *
- * \attention
- * All user-defined literals are in the namespace seqan3::literal!
  */
-
-inline dna4_vector operator""_dna4(const char * s, std::size_t n)
+inline dna4_vector operator""_dna4(char const * s, std::size_t n)
 {
     dna4_vector r;
     r.resize(n);
@@ -392,5 +198,18 @@ inline dna4_vector operator""_dna4(const char * s, std::size_t n)
 
     return r;
 }
+//!\}
 
-} // namespace seqan3::literal
+// ------------------------------------------------------------------
+// dna4 (deferred definition)
+// ------------------------------------------------------------------
+
+constexpr std::array<dna4, dna4::value_size> dna4::complement_table
+{
+    'T'_dna4,    // complement of 'A'_dna4
+    'G'_dna4,    // complement of 'C'_dna4
+    'C'_dna4,    // complement of 'G'_dna4
+    'A'_dna4     // complement of 'T'_dna4
+};
+
+} // namespace seqan3

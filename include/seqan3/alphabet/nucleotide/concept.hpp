@@ -65,7 +65,7 @@ namespace seqan3
 template <typename type>
 concept nucleotide_concept = alphabet_concept<type> && requires (type v, std::remove_reference_t<type> c)
 {
-    requires std::Same<decltype(complement(v)),        decltype(c)>;
+    requires std::Same<decltype(complement(v)), decltype(c)>;
 };
 //!\endcond
 

@@ -8,7 +8,7 @@ int main()
 
 {
 //! [code]
-rna5 my_letter{rna5::A};
+rna5 my_letter{'A'_rna5};
 // doesn't work:
 // rna5 my_letter{'A'};
 
@@ -27,7 +27,6 @@ if (my_letter.to_char() == 'N')
 // rna5_vector bar = "ACGTTA";
 
 // but these do:
-using namespace seqan3::literal;
 rna5_vector foo{"ACGTTA"_rna5};
 rna5_vector bar = "ACGTTA"_rna5;
 auto bax = "ACGTTA"_rna5;
