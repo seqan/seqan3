@@ -87,8 +87,9 @@ namespace seqan3::view
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-inline auto const to_rank = deep{view::transform([] (alphabet_concept const in)
+inline auto const to_rank = deep{view::transform([] (auto const in)
 {
+    static_assert(alphabet_concept<remove_cvref_t<decltype(in)>>, "value_type of seqan3::view::to_rank should be an alphabet.");
     return seqan3::to_rank(in);
 })};
 
