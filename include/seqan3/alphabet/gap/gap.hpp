@@ -51,6 +51,8 @@ namespace seqan3
  * \ingroup gap
  * \implements seqan3::alphabet_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
  *
  * The alphabet always has the same value ('-').
  *
@@ -103,10 +105,8 @@ struct gap
 
     //!\brief Assign from a numeric value (no-op, since gap has only one character).
     //!\param i not used, since gap has only one character
-    constexpr gap & assign_rank([[maybe_unused]] rank_type const i) /*noexcept*/
+    constexpr gap & assign_rank([[maybe_unused]] rank_type const i) noexcept
     {
-        // TODO(marehr): mark function noexcept if assert is replaced
-        // https://github.com/seqan/seqan3/issues/85
         assert(i == 0);
         return *this;
     }
@@ -117,32 +117,32 @@ struct gap
 
     //!\name Comparison operators
     //!\{
-    constexpr bool operator==(gap const &) const noexcept
+    friend constexpr bool operator==(gap const &, gap const &) noexcept
     {
         return true;
     }
 
-    constexpr bool operator!=(gap const &) const noexcept
+    friend constexpr bool operator!=(gap const &, gap const &) noexcept
     {
         return false;
     }
 
-    constexpr bool operator<(gap const &) const noexcept
+    friend constexpr bool operator<(gap const &, gap const &) noexcept
     {
         return false;
     }
 
-    constexpr bool operator>(gap const &) const noexcept
+    friend constexpr bool operator>(gap const &, gap const &) noexcept
     {
         return false;
     }
 
-    constexpr bool operator<=(gap const &) const noexcept
+    friend constexpr bool operator<=(gap const &, gap const &) noexcept
     {
         return true;
     }
 
-    constexpr bool operator>=(gap const &) const noexcept
+    friend constexpr bool operator>=(gap const &, gap const &) noexcept
     {
         return true;
     }
