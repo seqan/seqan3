@@ -50,7 +50,8 @@ using namespace seqan3::literal;
 
 TEST(view_get, basic)
 {
-    std::vector<dna4q> qv{{dna4::A, phred42{0}}, {dna4::C, phred42{1}}, {dna4::G, phred42{2}}, {dna4::T, phred42{3}}};
+    // TODO remove const-ness from input vector once alphabet_proxy's complement doesnt cause ICE
+    std::vector<dna4q> const qv{{dna4::A, phred42{0}}, {dna4::C, phred42{1}}, {dna4::G, phred42{2}}, {dna4::T, phred42{3}}};
     std::vector<dna4> cmp0{dna4::A, dna4::C, dna4::G, dna4::T};
     std::vector<phred42> cmp1{phred42{0}, phred42{1}, phred42{2}, phred42{3}};
 
@@ -83,7 +84,8 @@ TEST(view_get, basic)
 
 TEST(view_get, advanced)
 {
-    std::vector<qualified<masked<dna4>, phred42>> t{{{dna4::A, mask::MASKED}, phred42{0}},
+    // TODO remove const-ness from input vector once alphabet_proxy inherits it's alphabet
+    std::vector<qualified<masked<dna4>, phred42>> const t{{{dna4::A, mask::MASKED}, phred42{0}},
                                                     {{dna4::C, mask::UNMASKED}, phred42{1}},
                                                     {{dna4::G, mask::MASKED}, phred42{2}},
                                                     {{dna4::T, mask::UNMASKED}, phred42{3}}};
