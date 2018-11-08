@@ -129,7 +129,7 @@ template <config_element_concept ... configs_t>
 class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
-    template <typename ... _configs_t>
+    template <config_element_concept ... _configs_t>
     friend class configuration;
 
 public:
