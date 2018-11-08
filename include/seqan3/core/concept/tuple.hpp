@@ -76,11 +76,14 @@ concept tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
     requires std::tuple_size_v<tuple_t> > 0;
 
     typename std::tuple_element<0, tuple_t>::type;
-    { std::get<0>(v)              } -> typename std::tuple_element<0, tuple_t>::type &;
-    { std::get<0>(v_c)            } -> typename std::tuple_element<0, tuple_t>::type const &;
-    { std::get<0>(std::move(v))   } -> typename std::tuple_element<0, tuple_t>::type &&;
+    { get<0>(v)              } -> typename std::tuple_element<0, tuple_t>::type;
+//     requires weakly_assignable_concept<decltype(get<0>(v)), typename std::tuple_element<0, tuple_t>::type>;
+    //TODO check that the previous returns something that can be assigned to
+    // unfortunately std::Assignable requires lvalue-reference, but we want to accept xvalues too (returned proxies)
+    { get<0>(v_c)            } -> typename std::tuple_element<0, tuple_t>::type;
+    { get<0>(std::move(v))   } -> typename std::tuple_element<0, tuple_t>::type;
     // TODO: The return type for std::tuple is wrong until gcc-8.0, for gcc > 8.0 this is fixed.
-    { std::get<0>(std::move(v_c)) };// -> typename std::tuple_element<0, tuple_t>::type const &&;
+    { get<0>(std::move(v_c)) };// -> typename std::tuple_element<0, tuple_t>::type const &&;
 };
 //!\endcond
 
