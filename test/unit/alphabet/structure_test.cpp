@@ -47,7 +47,6 @@
 #include <seqan3/alphabet/structure/all.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 template <typename T>
 class structure : public ::testing::Test
@@ -270,13 +269,13 @@ TEST(structured_rna, ctr)
 // aggregate initialization
 TEST(structured_rna, aggr)
 {
-    [[maybe_unused]]  structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_CLOSE};
+    [[maybe_unused]]  structured_rna<rna4, dot_bracket3> t1{'C'_rna4, dot_bracket3::PAIR_CLOSE};
 }
 
 // zero initialization
 TEST(structured_rna, zro)
 {
-    structured_rna<rna4, dot_bracket3> t1{rna4::A, dot_bracket3::UNKNOWN};
+    structured_rna<rna4, dot_bracket3> t1{'A'_rna4, dot_bracket3::UNKNOWN};
     structured_rna<rna4, dot_bracket3> t2{};
 
     EXPECT_EQ(t1, t2);
@@ -285,7 +284,7 @@ TEST(structured_rna, zro)
 // copy construction
 TEST(structured_rna, cp_ctr)
 {
-    structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_OPEN};
+    structured_rna<rna4, dot_bracket3> t1{'C'_rna4, dot_bracket3::PAIR_OPEN};
     structured_rna<rna4, dot_bracket3> t2{t1};
     structured_rna<rna4, dot_bracket3> t3(t1);
     EXPECT_EQ(t1, t2);
@@ -295,8 +294,8 @@ TEST(structured_rna, cp_ctr)
 // move construction
 TEST(structured_rna, mv_ctr)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::UNPAIRED};
-    structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::UNPAIRED};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::UNPAIRED};
+    structured_rna<rna4, dot_bracket3> t1{'C'_rna4, dot_bracket3::UNPAIRED};
     structured_rna<rna4, dot_bracket3> t2{std::move(t1)};
     EXPECT_EQ(t2, t0);
     structured_rna<rna4, dot_bracket3> t3(std::move(t2));
@@ -306,7 +305,7 @@ TEST(structured_rna, mv_ctr)
 // copy assignment
 TEST(structured_rna, cp_assgn)
 {
-    structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::UNPAIRED};
+    structured_rna<rna4, dot_bracket3> t1{'C'_rna4, dot_bracket3::UNPAIRED};
     structured_rna<rna4, dot_bracket3> t2;
     structured_rna<rna4, dot_bracket3> t3;
 
@@ -319,8 +318,8 @@ TEST(structured_rna, cp_assgn)
 // move assignment
 TEST(structured_rna, mv_assgn)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::UNPAIRED};
-    structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::UNPAIRED};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::UNPAIRED};
+    structured_rna<rna4, dot_bracket3> t1{'C'_rna4, dot_bracket3::UNPAIRED};
     structured_rna<rna4, dot_bracket3> t2;
     structured_rna<rna4, dot_bracket3> t3;
     t2 = std::move(t1);
@@ -332,8 +331,8 @@ TEST(structured_rna, mv_assgn)
 // swap
 TEST(structured_rna, swap)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
-    structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_OPEN};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_OPEN};
+    structured_rna<rna4, dot_bracket3> t1{'C'_rna4, dot_bracket3::PAIR_OPEN};
     structured_rna<rna4, dot_bracket3> t2{};
     structured_rna<rna4, dot_bracket3> t3{};
 
@@ -342,59 +341,38 @@ TEST(structured_rna, swap)
     EXPECT_EQ(t1, t3);
 }
 
-// seqan3::get<1>
+// get<1>
 TEST(structured_rna, get_i)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_OPEN};
 
-    static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), rna4 &>);
-    static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), dot_bracket3 &>);
+//     static_assert(std::is_same_v<decltype(get<0>(t0)), rna4 &>);
+//     static_assert(std::is_same_v<decltype(get<1>(t0)), dot_bracket3 &>);
 
-    EXPECT_EQ(seqan3::get<0>(t0), rna4::C);
-    EXPECT_EQ(seqan3::get<1>(t0), dot_bracket3{dot_bracket3::PAIR_OPEN});
-}
-
-// std::get<1>
-TEST(structured_rna, stdget_i)
-{
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::UNPAIRED};
-
-    static_assert(std::is_same_v<decltype(std::get<0>(t0)), rna4 &>);
-    static_assert(std::is_same_v<decltype(std::get<1>(t0)), dot_bracket3 &>);
-
-    EXPECT_EQ(std::get<0>(t0), rna4::C);
-    EXPECT_EQ(std::get<1>(t0), dot_bracket3{dot_bracket3::UNPAIRED});
+    EXPECT_EQ(get<0>(t0), 'C'_rna4);
+    EXPECT_EQ(get<1>(t0), dot_bracket3{dot_bracket3::PAIR_OPEN});
 }
 
 // structured_rna bindings
 TEST(structured_rna, struct_binding)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_CLOSE};
     auto [ i, l ] = t0;
 
     static_assert(std::is_same_v<decltype(i), rna4>);
     static_assert(std::is_same_v<decltype(l), dot_bracket3>);
 
-    EXPECT_EQ(i, rna4::C);
+    EXPECT_EQ(i, 'C'_rna4);
     EXPECT_EQ(l, dot_bracket3{dot_bracket3::PAIR_CLOSE});
 }
 
-// seqan3::get<type>
+// get<type>
 TEST(structured_rna, get_type)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_CLOSE};
 
-    EXPECT_EQ(seqan3::get<rna4>(t0), rna4::C);
-    EXPECT_EQ(seqan3::get<dot_bracket3>(t0), dot_bracket3{dot_bracket3::PAIR_CLOSE});
-}
-
-// std::get<type>
-TEST(structured_rna, stdget_type)
-{
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
-
-    EXPECT_EQ(std::get<rna4>(t0), rna4::C);
-    EXPECT_EQ(std::get<dot_bracket3>(t0), dot_bracket3{dot_bracket3::PAIR_CLOSE});
+    EXPECT_EQ(get<rna4>(t0), 'C'_rna4);
+    EXPECT_EQ(get<dot_bracket3>(t0), dot_bracket3{dot_bracket3::PAIR_CLOSE});
 }
 
 // std::tuple_element
@@ -410,7 +388,7 @@ TEST(structured_rna, tuple_element)
 // type deduction
 TEST(structured_rna, type_deduce)
 {
-    structured_rna t0{rna4::C, dot_bracket3{dot_bracket3::PAIR_CLOSE}};
+    structured_rna t0{'C'_rna4, dot_bracket3{dot_bracket3::PAIR_CLOSE}};
     using pt = decltype(t0);
 
     static_assert(std::is_same_v<std::tuple_element_t<0, pt>, rna4>);
@@ -421,23 +399,23 @@ TEST(structured_rna, type_deduce)
 // explicit cast to element
 TEST(structured_rna, cast_to_element)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_CLOSE};
 
     auto d = static_cast<rna4>(t0);
     auto q = static_cast<dot_bracket3>(t0);
     static_assert(std::is_same_v<decltype(d), rna4>);
     static_assert(std::is_same_v<decltype(q), dot_bracket3>);
 
-    EXPECT_EQ(d, rna4::C);
+    EXPECT_EQ(d, 'C'_rna4);
     EXPECT_EQ(q, dot_bracket3{dot_bracket3::PAIR_CLOSE});
 }
 
 // comparison operators
 TEST(structured_rna, cmp)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_OPEN};
-    structured_rna<rna4, dot_bracket3> t1{rna4::C, dot_bracket3::PAIR_CLOSE};
-    structured_rna<rna4, dot_bracket3> t2{rna4::G, dot_bracket3::PAIR_CLOSE};
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_OPEN};
+    structured_rna<rna4, dot_bracket3> t1{'C'_rna4, dot_bracket3::PAIR_CLOSE};
+    structured_rna<rna4, dot_bracket3> t2{'G'_rna4, dot_bracket3::PAIR_CLOSE};
 
     EXPECT_LT(t0, t1);
     EXPECT_LE(t0, t1);
@@ -471,12 +449,12 @@ TEST(structured_rna, alphabet_size_v)
 // alphabet_concept: to_rank
 TEST(structured_rna, to_rank)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
-    EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
-    EXPECT_EQ(to_rank(std::get<1>(t0)), 2);
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_CLOSE};
+    EXPECT_EQ(to_rank(get<0>(t0)), 1);
+    EXPECT_EQ(to_rank(get<1>(t0)), 2);
     EXPECT_EQ(to_rank(t0),
-              to_rank(std::get<0>(t0)) +
-              alphabet_size_v<rna4> * to_rank(std::get<1>(t0)));
+              to_rank(get<1>(t0)) +
+              alphabet_size_v<dot_bracket3> * to_rank(get<0>(t0)));
 }
 
 // alphabet_concept: assign_rank
@@ -496,9 +474,9 @@ TEST(structured_rna, assign_rank)
 // alphabet_concept: to_char
 TEST(structured_rna, to_char)
 {
-    structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
-    EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
-    EXPECT_EQ(to_char(std::get<1>(t0)), ')');
+    structured_rna<rna4, dot_bracket3> t0{'C'_rna4, dot_bracket3::PAIR_CLOSE};
+    EXPECT_EQ(to_char(get<0>(t0)), 'C');
+    EXPECT_EQ(to_char(get<1>(t0)), ')');
     EXPECT_EQ(to_char(t0), 'C');
 }
 
@@ -507,36 +485,36 @@ TEST(structured_rna, assign_char)
 {
     using type = structured_rna<rna4, dot_bracket3>;
 
-    type t0{rna4::C, dot_bracket3::PAIR_OPEN};
-    char qchar = to_char(std::get<1>(t0));
+    type t0{'C'_rna4, dot_bracket3::PAIR_OPEN};
+    char qchar = to_char(get<1>(t0));
 
     assign_char(t0, 'A');
     EXPECT_EQ(to_char(t0), 'A');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'C');
     EXPECT_EQ(to_char(t0), 'C');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'G');
     EXPECT_EQ(to_char(t0), 'G');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'U');
     EXPECT_EQ(to_char(t0), 'U');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'N');
     EXPECT_EQ(to_char(t0), 'A');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
 }
 
 // nucleotide concept: complement
 TEST(structured_rna, complement)
 {
     using type = structured_rna<rna5, dot_bracket3>;
-    type tU{rna5::U, dot_bracket3::PAIR_OPEN};
-    type tG{rna5::G, dot_bracket3::PAIR_OPEN};
-    type tC{rna5::C, dot_bracket3::PAIR_OPEN};
-    type tA{rna5::A, dot_bracket3::PAIR_OPEN};
-    type tN{rna5::N, dot_bracket3::PAIR_OPEN};
-    type tt{rna5::A, dot_bracket3::PAIR_CLOSE};
+    type tU{'U'_rna5, dot_bracket3::PAIR_OPEN};
+    type tG{'G'_rna5, dot_bracket3::PAIR_OPEN};
+    type tC{'C'_rna5, dot_bracket3::PAIR_OPEN};
+    type tA{'A'_rna5, dot_bracket3::PAIR_OPEN};
+    type tN{'N'_rna5, dot_bracket3::PAIR_OPEN};
+    type tt{'A'_rna5, dot_bracket3::PAIR_CLOSE};
 
     // check whether characters are converted correctly
     EXPECT_EQ(to_char(complement(tU)), 'A');
@@ -560,9 +538,9 @@ TEST(structured_rna, complement)
 TEST(structured_rna, rna_structure_concept)
 {
     using type = structured_rna<rna5, wuss51>;
-    type t0{rna5::A, wuss51::PAIR_OPEN2};
-    type t1{rna5::N, wuss51::UNPAIRED};
-    type t2{rna5::U, wuss51::PAIR_CLOSE2};
+    type t0{'A'_rna5, wuss51::PAIR_OPEN2};
+    type t1{'N'_rna5, wuss51::UNPAIRED};
+    type t2{'U'_rna5, wuss51::PAIR_CLOSE2};
 
     EXPECT_TRUE (t0.is_pair_open());
     EXPECT_FALSE(t1.is_pair_open());
@@ -589,9 +567,9 @@ TEST(structured_rna, pseudoknot_id_without_pseudoknot_support)
 {
     using type = structured_rna<rna5, dot_bracket3>;
     EXPECT_EQ(type::max_pseudoknot_depth, 1); // format does not support pseudoknots
-    type t0{rna5::A, dot_bracket3::PAIR_OPEN};
-    type t1{rna5::N, dot_bracket3::UNPAIRED};
-    type t2{rna5::U, dot_bracket3::PAIR_CLOSE};
+    type t0{'A'_rna5, dot_bracket3::PAIR_OPEN};
+    type t1{'N'_rna5, dot_bracket3::UNPAIRED};
+    type t2{'U'_rna5, dot_bracket3::PAIR_CLOSE};
 
     EXPECT_TRUE (t0.pseudoknot_id());
     EXPECT_FALSE(t1.pseudoknot_id());
@@ -686,28 +664,16 @@ TEST(structured_aa, swap)
     EXPECT_EQ(t1, t3);
 }
 
-// seqan3::get<1>
+// get<1>
 TEST(structured_aa, get_i)
 {
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::E};
 
-    static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), aa27 &>);
-    static_assert(std::is_same_v<decltype(seqan3::get<1>(t0)), dssp9 &>);
+//     static_assert(std::is_same_v<decltype(get<0>(t0)), aa27 &>);
+//     static_assert(std::is_same_v<decltype(get<1>(t0)), dssp9 &>);
 
-    EXPECT_EQ(seqan3::get<0>(t0), aa27::C);
-    EXPECT_EQ(seqan3::get<1>(t0), dssp9::E);
-}
-
-// std::get<1>
-TEST(structured_aa, stdget_i)
-{
-    structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
-
-    static_assert(std::is_same_v<decltype(std::get<0>(t0)), aa27 &>);
-    static_assert(std::is_same_v<decltype(std::get<1>(t0)), dssp9 &>);
-
-    EXPECT_EQ(std::get<0>(t0), aa27::C);
-    EXPECT_EQ(std::get<1>(t0), dssp9::G);
+    EXPECT_EQ(get<0>(t0), aa27::C);
+    EXPECT_EQ(get<1>(t0), dssp9::E);
 }
 
 // structured_aa bindings
@@ -723,22 +689,13 @@ TEST(structured_aa, struct_binding)
     EXPECT_EQ(l, dssp9::G);
 }
 
-// seqan3::get<type>
+// get<type>
 TEST(structured_aa, get_type)
 {
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
 
-    EXPECT_EQ(seqan3::get<aa27>(t0), aa27::C);
-    EXPECT_EQ(seqan3::get<dssp9>(t0), dssp9::G);
-}
-
-// std::get<type>
-TEST(structured_aa, stdget_type)
-{
-    structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
-
-    EXPECT_EQ(std::get<aa27>(t0), aa27::C);
-    EXPECT_EQ(std::get<dssp9>(t0), dssp9::G);
+    EXPECT_EQ(get<aa27>(t0), aa27::C);
+    EXPECT_EQ(get<dssp9>(t0), dssp9::G);
 }
 
 // std::tuple_element
@@ -816,11 +773,11 @@ TEST(structured_aa, alphabet_size_v)
 TEST(structured_aa, to_rank)
 {
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
-    EXPECT_EQ(to_rank(std::get<0>(t0)), 2);
-    EXPECT_EQ(to_rank(std::get<1>(t0)), 3);
+    EXPECT_EQ(to_rank(get<0>(t0)), 2);
+    EXPECT_EQ(to_rank(get<1>(t0)), 3);
     EXPECT_EQ(to_rank(t0),
-              to_rank(std::get<0>(t0)) +
-              alphabet_size_v<aa27> * to_rank(std::get<1>(t0)));
+              to_rank(get<1>(t0)) +
+              alphabet_size_v<dssp9> * to_rank(get<0>(t0)));
 }
 
 // alphabet_concept: assign_rank
@@ -841,8 +798,8 @@ TEST(structured_aa, assign_rank)
 TEST(structured_aa, to_char)
 {
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
-    EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
-    EXPECT_EQ(to_char(std::get<1>(t0)), 'G');
+    EXPECT_EQ(to_char(get<0>(t0)), 'C');
+    EXPECT_EQ(to_char(get<1>(t0)), 'G');
     EXPECT_EQ(to_char(t0), 'C');
 }
 
@@ -852,21 +809,21 @@ TEST(structured_aa, assign_char)
     using type = structured_aa<aa27, dssp9>;
 
     type t0{aa27::C, dssp9::T};
-    char qchar = to_char(std::get<1>(t0));
+    char qchar = to_char(get<1>(t0));
 
     assign_char(t0, 'A');
     EXPECT_EQ(to_char(t0), 'A');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'Y');
     EXPECT_EQ(to_char(t0), 'Y');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'W');
     EXPECT_EQ(to_char(t0), 'W');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'D');
     EXPECT_EQ(to_char(t0), 'D');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'X');
     EXPECT_EQ(to_char(t0), 'X');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
 }
