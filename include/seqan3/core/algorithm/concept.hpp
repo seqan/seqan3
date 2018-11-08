@@ -81,7 +81,7 @@ template <typename config_t>
 concept config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
-    { c.value }
+    { c.value };
 };
 //!\endcond
 
