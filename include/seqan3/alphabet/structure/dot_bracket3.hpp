@@ -39,10 +39,11 @@
 
 #pragma once
 
-#include <cassert>
 #include <vector>
 
+#include <seqan3/alphabet/detail/alphabet_base.hpp>
 #include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
 // dot_bracket3
@@ -54,6 +55,9 @@ namespace seqan3
 /*!\brief The three letter RNA structure alphabet of the characters ".()".
  * \implements seqan3::rna_structure_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
+ *
  * \ingroup structure
  *
  * \details
@@ -69,13 +73,26 @@ namespace seqan3
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stdout.
  * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp general
  */
-
-struct dot_bracket3
+class dot_bracket3 : public alphabet_base<dot_bracket3, 3>
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = uint8_t;
+private:
+    //!\brief The base class.
+    using base_t = alphabet_base<dot_bracket3, 3>;
+
+    //!\brief Befriend seqan3::alphabet_base.
+    friend base_t;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr dot_bracket3() : base_t{} {}
+    constexpr dot_bracket3(dot_bracket3 const &) = default;
+    constexpr dot_bracket3(dot_bracket3 &&) = default;
+    constexpr dot_bracket3 & operator=(dot_bracket3 const &) = default;
+    constexpr dot_bracket3 & operator=(dot_bracket3 &&) = default;
+    ~dot_bracket3() = default;
+    //!\}
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
@@ -88,88 +105,6 @@ struct dot_bracket3
     static const dot_bracket3 UNKNOWN;
     //!\}
 
-    //!\name Read functions
-    //!\{
-
-    /*!\brief Get the letter as a character of char_type.
-     * \returns The character representation of this dot_bracket3 letter.
-     */
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
-
-    /*!\brief Get the letter's numeric value or rank in the alphabet.
-     * \returns The numeric representation of this dot_bracket3 letter.
-     */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
-    //!\}
-
-    //!\name Write functions
-    //!\{
-
-    /*!\brief Assign from a character.
-     * \param chr The character that is assigned.
-     * \returns The resulting dot_bracket3 character.
-     */
-    constexpr dot_bracket3 & assign_char(char_type const chr) noexcept
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        _value = char_to_value[static_cast<index_t>(chr)];
-        return *this;
-    }
-
-    /*!\brief Assign from a numeric value.
-     * \param rnk The rank value that is assigned.
-     * \returns The resulting dot_bracket3 character.
-     */
-    constexpr dot_bracket3 & assign_rank(rank_type const rnk)
-    {
-        assert(rnk < value_size);
-        _value = static_cast<internal_type>(rnk);
-        return *this;
-    }
-    //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{3};
-
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
-
-    constexpr bool operator!=(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(dot_bracket3 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
-    //!\}
-
     //!\name RNA structure properties
     //!\{
 
@@ -178,7 +113,7 @@ struct dot_bracket3
      */
     constexpr bool is_pair_open() const noexcept
     {
-        return _value == internal_type::PAIR_OPEN;
+        return *this == PAIR_OPEN;
     }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
@@ -186,7 +121,7 @@ struct dot_bracket3
      */
     constexpr bool is_pair_close() const noexcept
     {
-        return _value == internal_type::PAIR_CLOSE;
+        return *this == PAIR_CLOSE;
     }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
@@ -194,7 +129,7 @@ struct dot_bracket3
      */
     constexpr bool is_unpaired() const noexcept
     {
-        return _value == internal_type::UNPAIRED;
+        return *this == UNPAIRED;
     }
 
     /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
@@ -206,22 +141,9 @@ struct dot_bracket3
 
 protected:
     //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        UNPAIRED,
-        PAIR_OPEN,
-        PAIR_CLOSE,
-        UNKNOWN = UNPAIRED
-    };
 
     //!\brief Value-to-char conversion table.
-    static constexpr char_type value_to_char[value_size]
+    static constexpr char_type rank_to_char[value_size]
     {
         '.',
         '(',
@@ -229,36 +151,30 @@ protected:
     };
 
     //!\brief Char-to-value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
+    static constexpr std::array<rank_type, 256> char_to_rank
     {
         [] () constexpr
         {
-            std::array<internal_type, 256> rank_table{};
+            std::array<rank_type, 256> rank_table{};
 
             // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (internal_type & rnk : rank_table)
-                rnk = internal_type::UNKNOWN;
+            for (rank_type & rnk : rank_table)
+                rnk = 0;
 
             // canonical
-            rank_table['.'] = internal_type::UNPAIRED;
-            rank_table['('] = internal_type::PAIR_OPEN;
-            rank_table[')'] = internal_type::PAIR_CLOSE;
+            rank_table['.'] = 0;
+            rank_table['('] = 1;
+            rank_table[')'] = 2;
 
             return rank_table;
         } ()
     };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
 };
 
-constexpr dot_bracket3 dot_bracket3::UNPAIRED{internal_type::UNPAIRED};
-constexpr dot_bracket3 dot_bracket3::PAIR_OPEN{internal_type::PAIR_OPEN};
-constexpr dot_bracket3 dot_bracket3::PAIR_CLOSE{internal_type::PAIR_CLOSE};
-constexpr dot_bracket3 dot_bracket3::UNKNOWN{internal_type::UNKNOWN};
+constexpr dot_bracket3 dot_bracket3::UNPAIRED   = dot_bracket3{}.assign_char('.');
+constexpr dot_bracket3 dot_bracket3::PAIR_OPEN  = dot_bracket3{}.assign_char('(');
+constexpr dot_bracket3 dot_bracket3::PAIR_CLOSE = dot_bracket3{}.assign_char(')');
+constexpr dot_bracket3 dot_bracket3::UNKNOWN    = dot_bracket3::UNPAIRED;
 
 } // namespace seqan3
 
@@ -266,7 +182,7 @@ constexpr dot_bracket3 dot_bracket3::UNKNOWN{internal_type::UNKNOWN};
 // literals
 // ------------------------------------------------------------------
 
-namespace seqan3::literal
+namespace seqan3
 {
 
 /*!\brief dot_bracket3 literal
@@ -276,14 +192,10 @@ namespace seqan3::literal
  * You can use this string literal to easily assign to a vector of dot_bracket3 characters:
  *
  *```.cpp
- *     using namespace seqan3::literal;
  *     std::vector<dot_bracket3> foo{".(..)."_db3};
  *     std::vector<dot_bracket3> bar = ".(..)."_db3;
  *     auto bax = ".(..)."_db3;
  *```
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
  */
 inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t len)
 {
@@ -296,4 +208,4 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
     return vec;
 }
 
-} // namespace seqan3::literal
+} // namespace seqan3

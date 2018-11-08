@@ -55,6 +55,8 @@ namespace seqan3
  * \ingroup structure
  * \implements seqan3::rna_structure_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
  * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::rna_structure_concept.
  *
@@ -95,7 +97,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    structured_rna() = default;
+    constexpr structured_rna() : base_type{} {}
     constexpr structured_rna(structured_rna const &) = default;
     constexpr structured_rna(structured_rna &&) = default;
     constexpr structured_rna & operator =(structured_rna const &) = default;
@@ -103,8 +105,6 @@ public:
     ~structured_rna() = default;
 
     using base_type::base_type; // Inherit non-default constructors
-
-    using base_type::operator=; // Inherit non-default assignment operators
 
     //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(component_type const alph) {} ))
@@ -115,6 +115,15 @@ public:
     //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(indirect_component_type const alph) {} ))
     //!\}
+
+    // Inherit operators from base
+    using base_type::operator=;
+    using base_type::operator==;
+    using base_type::operator!=;
+    using base_type::operator>=;
+    using base_type::operator<=;
+    using base_type::operator<;
+    using base_type::operator>;
 
     //!\name Write functions
     //!\{
