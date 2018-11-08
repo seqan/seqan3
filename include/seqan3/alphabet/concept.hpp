@@ -52,12 +52,14 @@
 namespace seqan3
 {
 
+// ------------------------------------------------------------------
+// semi_alphabet_concept
+// ------------------------------------------------------------------
+
 /*!\interface seqan3::semi_alphabet_concept <>
  * \brief The basis for seqan3::alphabet_concept, but requires only rank interface (not char).
  * \ingroup alphabet
  * \extends std::Regular
- * \extends seqan3::standard_layout_concept
- * \extends seqan3::trivial_concept
  * \extends std::StrictTotallyOrdered
  *
  * This concept represents "one half" of the seqan3::alphabet_concept, it requires no
@@ -68,11 +70,13 @@ namespace seqan3
  * concepts:
  *
  *   * std::Regular ("copyable and default-constructible")
- *   * seqan3::standard_layout_concept and seqan3::trivial_concept ("plain-old-datatype")
  *   * std::StrictTotallyOrdered ("has all comparison operators")
  *
  * For the purpose of concept checking the types `t &` and `t &&` are also considered to satisfy
  * seqan3::semi_alphabet_concept if the type `t` satisfies it.
+ *
+ * It is recommended that alphabets also model seqan3::standard_layout_concept and seqan3::trivially_copyable_concept
+ * and all alphabets shipped with SeqAn3 do so.
  *
  * \par Serialisation
  *
@@ -91,10 +95,8 @@ namespace seqan3
 // get's fixed. See issue #228
 template <typename t>
 concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
-                                     standard_layout_concept<std::remove_reference_t<t>> &&
-//                                      trivial_concept<std::remove_reference_t<t>> &&
-                                     std::StrictTotallyOrdered<t> &&
-                                     requires (t t1, t t2)
+                                std::StrictTotallyOrdered<t> &&
+                                requires (t t1, t t2)
 {
 
     // static data members
@@ -109,6 +111,10 @@ concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
     { assign_rank(std::remove_reference_t<t>{}, 0) } -> std::remove_reference_t<t> &&;
 };
 //!\endcond
+
+// ------------------------------------------------------------------
+// alphabet_concept
+// ------------------------------------------------------------------
 
 /*!\interface seqan3::alphabet_concept <>
  * \extends seqan3::semi_alphabet_concept
@@ -140,10 +146,8 @@ concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
 // in order to get rid of the remove_reference_t within the concept, after the ICE
 // get's fixed. See issue #228
 template <typename t>
-concept alphabet_concept = requires (t t1, t t2)
+concept alphabet_concept = semi_alphabet_concept<t> && requires (t t1, t t2)
 {
-    requires semi_alphabet_concept<t>;
-
     // conversion to char
     { to_char(t1) } -> underlying_char_t<std::remove_reference_t<t>>;
 
@@ -152,6 +156,10 @@ concept alphabet_concept = requires (t t1, t t2)
     { assign_char(std::remove_reference_t<t>{}, 0) } -> std::remove_reference_t<t> &&;
 };
 //!\endcond
+
+// ------------------------------------------------------------------
+//  serialisation
+// ------------------------------------------------------------------
 
 /*!\cond DEV
  * \name Generic serialisation functions for all seqan3::semi_alphabet_concept
@@ -207,6 +215,10 @@ void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
 
 namespace seqan3::detail
 {
+// ------------------------------------------------------------------
+// constexpr_semi_alphabet_concept
+// ------------------------------------------------------------------
+
 /*!\interface seqan3::detail::constexpr_semi_alphabet_concept <>
  * \brief A seqan3::semi_alphabet_concept that has a constexpr default constructor and constexpr accessors.
  * \ingroup alphabet
@@ -230,6 +242,10 @@ concept constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && requires
 };
 //!\endcond
 
+// ------------------------------------------------------------------
+// constexpr_alphabet_concept
+// ------------------------------------------------------------------
+
 /*!\interface seqan3::detail::constexpr_alphabet_concept <>
  * \brief A seqan3::alphabet_concept that has constexpr accessors.
  * \ingroup alphabet
@@ -246,7 +262,9 @@ concept constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && requires
  */
 //!\cond
 template <typename t>
-concept constexpr_alphabet_concept = constexpr_semi_alphabet_concept<t> && requires
+concept constexpr_alphabet_concept = constexpr_semi_alphabet_concept<t> &&
+                                     alphabet_concept<t> &&
+                                     requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(to_char(std::remove_reference_t<t>{}));
