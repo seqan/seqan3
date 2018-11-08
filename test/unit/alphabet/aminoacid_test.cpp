@@ -44,7 +44,6 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 template <typename T>
 class aminoacid : public ::testing::Test
@@ -244,9 +243,9 @@ TYPED_TEST(aminoacid, comparators)
 
 TEST(translation, translate_triplets)
 {
-    dna15 n1{dna15::C};
-    dna15 n2{dna15::T};
-    dna15 n3{dna15::A};
+    dna15 n1{'C'_dna15};
+    dna15 n2{'T'_dna15};
+    dna15 n3{'A'_dna15};
     aa27 c{aa27::L};
 
     // Nucleotide interface
