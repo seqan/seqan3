@@ -65,13 +65,13 @@ TEST(aligned_allocator, standard_construction)
 
 TEST(aligned_allocator, constexpr_constructor)
 {
-    constexpr aligned_allocator<int, 16> alloc{};
+    [[maybe_unused]] constexpr aligned_allocator<int, 16> alloc{};
 }
 
 TEST(aligned_allocator, conversion_constructor)
 {
     aligned_allocator<int, 16> int_alloc{};
-    aligned_allocator<float, 16> float_alloc{int_alloc};
+    [[maybe_unused]] aligned_allocator<float, 16> float_alloc{int_alloc};
 }
 
 size_t memory_alignment(void * value, size_t alignment)
