@@ -35,6 +35,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
 
 #if SEQAN3_WITH_CEREAL
@@ -51,6 +52,24 @@
 
 using namespace seqan3;
 
+class alphabet_proxy_test : public alphabet_proxy<alphabet_proxy_test, dna4>
+{
+private:
+    using base_t = alphabet_proxy<alphabet_proxy_test, dna4>;
+    friend base_t;
+
+    constexpr void on_update() noexcept
+    {}
+
+public:
+    constexpr alphabet_proxy_test() noexcept : base_t{} {}
+    constexpr alphabet_proxy_test(alphabet_proxy_test const &) = default;
+    constexpr alphabet_proxy_test(alphabet_proxy_test &&) = default;
+    constexpr alphabet_proxy_test & operator=(alphabet_proxy_test const &) = default;
+    constexpr alphabet_proxy_test & operator=(alphabet_proxy_test &&) = default;
+    ~alphabet_proxy_test() = default;
+};
+
 template <typename T>
 class alphabet : public ::testing::Test
 {};
@@ -66,17 +85,18 @@ using alphabet_types = ::testing::Types<dna4, dna5, dna15, rna4, rna5, rna15,
                                         qualified<aa27, phred42>,
                                         qualified<gapped<dna4>, phred42>,
                                         gapped<qualified<dna4, phred42>>,
+                                        dna4q,
                                         gap,
                                         gapped<dna4>,
                                         gapped<dna15>,
                                         char, char16_t, // char32_t, too slow
                                         uint8_t, uint16_t, // uint32_t, too slow
-                                        dna4q,
                                         phred42, phred63, phred68legacy,
                                         dot_bracket3, dssp9, wuss<>, wuss<65>,
                                         structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>,
                                         structured_aa<aa27, dssp9>,
-                                        masked<dna5>>;
+                                        masked<dna4>,
+                                        alphabet_proxy_test>;
 
 TYPED_TEST_CASE(alphabet, alphabet_types);
 
@@ -196,9 +216,8 @@ TYPED_TEST(alphabet, assign_char)
     }
 
     TypeParam t0;
-    for (; i < j; ++i){
+    for (; i < j; ++i)
         assign_char(t0, i);
-    }
 
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(t0, 0)), TypeParam &>));
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{}, 0)), TypeParam &&>));
@@ -242,6 +261,8 @@ TYPED_TEST(alphabet, comparison_operators)
 
 TYPED_TEST(alphabet, concept_check)
 {
+    EXPECT_TRUE(trivially_copyable_concept<TypeParam>);
+    EXPECT_TRUE(standard_layout_concept<TypeParam>);
     EXPECT_TRUE(alphabet_concept<TypeParam>);
 }
 

@@ -45,6 +45,7 @@
 
 #include <sdsl/int_vector.hpp>
 
+#include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/alphabet/detail/member_exposure.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/metafunction/all.hpp>
@@ -111,9 +112,14 @@ private:
 
     //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element unless the alphabet_type
     //!       is uint8_t, uint16_t, uint32_t or uint64_t (in which case a regular & is returned).
-    class reference_proxy_type
+    class reference_proxy_type : public alphabet_proxy<reference_proxy_type, alphabet_type>
     {
     private:
+        //!\brief The base type.
+        using base_t = alphabet_proxy<reference_proxy_type, alphabet_type>;
+        //!\brief Befriend the base type so it can call our #impl().
+        friend base_t;
+
         //!\brief For certain sizes sdsl::int_vector doesn't return a proxy and sdsl::int_vector_reference
         //!       would be invalid; ranges::semiregular_t triggers this so we workaround here.
         static uint8_t constexpr safe_bits_per_letter = (bits_per_letter ==  8 ||
@@ -125,12 +131,21 @@ private:
         //!\brief The proxy of the underlying data type; wrapped in semiregular_t, because it isn't semiregular itself.
         ranges::semiregular_t<internal_proxy_type> internal_proxy;
 
+        //!\brief Update the sdsl-proxy.
+        constexpr void on_update() noexcept
+        {
+            internal_proxy.get() = static_cast<base_t &>(*this).to_rank();
+        }
+
     public:
+        // Import from base:
+        using base_t::operator=;
+
         /*!\name Constructors, destructor and assignment
          * \brief All are explicitly defaulted.
          * \{
          */
-        reference_proxy_type() = default;
+        constexpr reference_proxy_type() noexcept : base_t{} {}
         constexpr reference_proxy_type(reference_proxy_type const &) = default;
         constexpr reference_proxy_type(reference_proxy_type &&) = default;
         constexpr reference_proxy_type & operator=(reference_proxy_type const &) = default;
@@ -138,127 +153,10 @@ private:
         ~reference_proxy_type() = default;
 
         //!\brief Initialise from internal proxy type.
-        reference_proxy_type(internal_proxy_type const & internal) :
+        reference_proxy_type(internal_proxy_type const & internal) noexcept :
             internal_proxy{internal}
-        {}
-        //!\}
-
-        /*!\name Conversion from/to alphabet_type
-         * \{
-         */
-        //!\brief Implicitly convertible to alphabet_type.
-        constexpr operator alphabet_type() const
-            noexcept(noexcept(assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy.get()))))
         {
-            using seqan3::assign_rank;
-            return assign_rank(alphabet_type{}, static_cast<uint64_t>(internal_proxy.get()));
-        }
-
-        //!\brief Assignable from alphabet_type.
-        constexpr reference_proxy_type & operator=(alphabet_type const a)
-            noexcept(noexcept(internal_proxy.get() = to_rank(a)))
-        {
-            using seqan3::to_rank;
-            internal_proxy.get() = to_rank(a);
-            return *this;
-        }
-        //!\}
-
-        /*!\name Alphabet members
-         * \brief Member functions and types that delegate to `alphabet_type`.
-         * \{
-         */
-        using rank_type = underlying_rank_t<alphabet_type>;
-        using char_type = underlying_char_t<alphabet_type>;
-        static auto constexpr value_size = alphabet_size_v<alphabet_type>;
-
-        constexpr char_type to_char() const
-        {
-            using seqan3::to_char;
-            return to_char(static_cast<alphabet_type>(*this));
-        }
-
-        constexpr rank_type to_rank() const
-        {
-            return internal_proxy.get();
-        }
-
-        constexpr reference_proxy_type & assign_char(char_type const c)
-        {
-            using seqan3::assign_char;
-            return operator=(assign_char(alphabet_type{}, c));
-        }
-
-        constexpr reference_proxy_type & assign_rank(rank_type const c)
-        {
-            internal_proxy.get() = c;
-            return *this;
-        }
-        //!\}
-
-        //!\name Comparison operators (self)
-        //!\{
-        constexpr bool operator==(reference_proxy_type const & rhs) const noexcept
-        {
-            return internal_proxy.get() == rhs.internal_proxy.get();
-        }
-
-        constexpr bool operator!=(reference_proxy_type const & rhs) const noexcept
-        {
-            return !(internal_proxy.get() == rhs.internal_proxy.get());
-        }
-
-        constexpr bool operator<(reference_proxy_type const & rhs) const noexcept
-        {
-            return internal_proxy.get() < rhs.internal_proxy.get();
-        }
-
-        constexpr bool operator>(reference_proxy_type const & rhs) const noexcept
-        {
-            return !(internal_proxy.get() <= rhs.internal_proxy.get());
-        }
-
-        constexpr bool operator<=(reference_proxy_type const & rhs) const noexcept
-        {
-            return internal_proxy.get() == rhs.internal_proxy.get() || internal_proxy.get() < rhs.internal_proxy.get();
-        }
-
-        constexpr bool operator>=(reference_proxy_type const & rhs) const noexcept
-        {
-            return !(internal_proxy.get() < rhs.internal_proxy.get());
-        }
-        //!\}
-
-        //!\name Comparison operators (alphabet_type)
-        //!\{
-        constexpr bool operator==(alphabet_type const & rhs) const noexcept
-        {
-            return static_cast<alphabet_type>(*this) == rhs;
-        }
-
-        constexpr bool operator!=(alphabet_type const & rhs) const noexcept
-        {
-            return !(static_cast<alphabet_type>(*this) == rhs);
-        }
-
-        constexpr bool operator<(alphabet_type const & rhs) const noexcept
-        {
-            return static_cast<alphabet_type>(*this) < rhs;
-        }
-
-        constexpr bool operator>(alphabet_type const & rhs) const noexcept
-        {
-            return !(static_cast<alphabet_type>(*this) <= rhs);
-        }
-
-        constexpr bool operator<=(alphabet_type const & rhs) const noexcept
-        {
-            return static_cast<alphabet_type>(*this) == rhs || static_cast<alphabet_type>(*this) < rhs;
-        }
-
-        constexpr bool operator>=(alphabet_type const & rhs) const noexcept
-        {
-            return !(static_cast<alphabet_type>(*this) < rhs);
+            static_cast<base_t &>(*this).assign_rank(internal);
         }
         //!\}
     };
