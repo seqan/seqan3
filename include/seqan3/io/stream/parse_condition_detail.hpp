@@ -108,8 +108,10 @@ template <char op, typename condition_head_t, typename ...condition_ts>
 inline constexpr_string constexpr condition_message_v
 {
     constexpr_string{"("} +
-    (condition_head_t::msg + ... +
-        (constexpr_string{" "} + constexpr_string{{op, op, '\0'}} + constexpr_string{" "} + condition_ts::msg)) +
+    (condition_head_t::msg + ... + [](auto const & msg)
+    {
+        return constexpr_string{" "} + constexpr_string{{op, op, '\0'}} + constexpr_string{" "} + msg;
+    }(condition_ts::msg)) +
     constexpr_string{")"}
 };
 
