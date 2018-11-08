@@ -82,11 +82,6 @@ struct my_tuple
     }
 };
 
-} // namespace seqan3
-
-namespace std
-{
-
 template <size_t elem>
 constexpr auto & get(seqan3::my_tuple & t)
 {
@@ -131,6 +126,11 @@ constexpr auto const && get(seqan3::my_tuple const && t)
         return std::move(t.el1);
 }
 
+} // namespace seqan3
+
+namespace std
+{
+
 template <>
 struct tuple_size<seqan3::my_tuple>
 {
@@ -140,7 +140,7 @@ struct tuple_size<seqan3::my_tuple>
 template <size_t elem_no>
 struct tuple_element<elem_no, seqan3::my_tuple>
 {
-    using type = seqan3::remove_cvref_t<decltype(std::get<elem_no>(std::declval<seqan3::my_tuple>()))>;
+    using type = seqan3::remove_cvref_t<decltype(get<elem_no>(std::declval<seqan3::my_tuple>()))>;
 };
 
 } // namespace std
