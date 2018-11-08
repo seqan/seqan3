@@ -39,13 +39,10 @@
 
 #pragma once
 
-#include <cassert>
-
 #include <vector>
 
-#include <seqan3/core/platform.hpp>
-#include <seqan3/alphabet/detail/convert.hpp>
-#include <seqan3/alphabet/aminoacid/concept.hpp>
+#include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
+#include <seqan3/io/stream/char_operations.hpp>
 
 namespace seqan3
 {
@@ -53,6 +50,8 @@ namespace seqan3
  * \ingroup aminoacid
  * \implements seqan3::aminoacid_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
  *
  * \details
  * The alphabet consists of letters A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X,
@@ -65,179 +64,35 @@ namespace seqan3
  * \snippet test/snippet/alphabet/aminoacid/aa27.cpp construction
  */
 
-struct aa27
+class aa27 : public aminoacid_base<aa27, 27>
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char;
+private:
+    //!\brief The base class.
+    using base_t = aminoacid_base<aa27, 27>;
 
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = uint8_t;
-
-
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
-     */
-    //!\{
-    static const aa27 A;
-    static const aa27 B;
-    static const aa27 C;
-    static const aa27 D;
-    static const aa27 E;
-    static const aa27 F;
-    static const aa27 G;
-    static const aa27 H;
-    static const aa27 I;
-    static const aa27 J;
-    static const aa27 K;
-    static const aa27 L;
-    static const aa27 M;
-    static const aa27 N;
-    static const aa27 O;
-    static const aa27 P;
-    static const aa27 Q;
-    static const aa27 R;
-    static const aa27 S;
-    static const aa27 T;
-    static const aa27 U;
-    static const aa27 V;
-    static const aa27 W;
-    static const aa27 X;
-    static const aa27 Y;
-    static const aa27 Z;
-    static const aa27 TERMINATOR;
-    static const aa27 UNKNOWN;
-    //!\}
-
-    /*!\name Read functions
-     * \{
-     */
-    //!\brief Return the letter as a character of char_type.
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
-
-    //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
-    //!\}
-
-    /*!\name Write functions
-     * \{
-     */
-    //!\brief Assign from a character.
-    constexpr aa27 & assign_char(char_type const c) noexcept
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        _value = char_to_value[static_cast<index_t>(c)];
-        return *this;
-    }
-
-    //!\brief Assign from a numeric value.
-    constexpr aa27 & assign_rank(rank_type const c)
-    {
-        assert(c < value_size);
-        _value = static_cast<internal_type>(c);
-        return *this;
-    }
-    //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{27};
-
-    /*!\name Conversion operators
-     * \{
-     */
-    //!\brief Explicit conversion to any other amino acid alphabet (via char representation).
-    //!\tparam other_aa_type The type to convert to; must satisfy seqan3::aminoacid_concept.
-    template <typename other_aa_type>
-    //!\cond
-        requires aminoacid_concept<other_aa_type>
+    //!\brief Befriend seqan3::nucleotide_base.
+    friend base_t;
+    //!\cond \brief Befriend seqan3::alphabet_base.
+    friend base_t::base_t;
     //!\endcond
-    explicit constexpr operator other_aa_type() const noexcept
-    {
-        return detail::convert_through_char_representation<other_aa_type, std::decay_t<decltype(*this)>>[to_rank()];
-    }
-    //!\}
 
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(aa27 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr aa27() : base_t{} {}
+    constexpr aa27(aa27 const &) = default;
+    constexpr aa27(aa27 &&) = default;
+    constexpr aa27 & operator=(aa27 const &) = default;
+    constexpr aa27 & operator=(aa27 &&) = default;
+    ~aa27() = default;
 
-    constexpr bool operator!=(aa27 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(aa27 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(aa27 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(aa27 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(aa27 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
+    using base_t::base_t;
     //!\}
 
 protected:
-    //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        A,
-        B,
-        C,
-        D,
-        E,
-        F,
-        G,
-        H,
-        I,
-        J,
-        K,
-        L,
-        M,
-        N,
-        O,
-        P,
-        Q,
-        R,
-        S,
-        T,
-        U,
-        V,
-        W,
-        X,
-        Y,
-        Z,
-        TERMINATOR,
-        UNKNOWN = X
-    };
-
     //!\brief Value to char conversion table.
-    static constexpr char_type value_to_char[value_size]
+    static constexpr char_type rank_to_char[value_size]
     {
         'A',
         'B',
@@ -269,83 +124,27 @@ protected:
     };
 
     //!\brief Char to value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
+    static constexpr std::array<rank_type, 256> char_to_rank
     {
         [] () constexpr
         {
-            using in_t = internal_type;
-            std::array<in_t, 256> ret{};
+            std::array<rank_type, 256> ret{};
 
             // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
             for (auto & c : ret)
-                c = in_t::UNKNOWN;
+                c = 23; // value of 'X'
 
-            ret['A'] = in_t::A; ret['a'] = in_t::A;
-            ret['B'] = in_t::B; ret['b'] = in_t::B;
-            ret['C'] = in_t::C; ret['c'] = in_t::C;
-            ret['D'] = in_t::D; ret['d'] = in_t::D;
-            ret['E'] = in_t::E; ret['e'] = in_t::E;
-            ret['F'] = in_t::F; ret['f'] = in_t::F;
-            ret['G'] = in_t::G; ret['g'] = in_t::G;
-            ret['H'] = in_t::H; ret['h'] = in_t::H;
-            ret['I'] = in_t::I; ret['i'] = in_t::I;
-            ret['J'] = in_t::J; ret['j'] = in_t::J;
-            ret['K'] = in_t::K; ret['k'] = in_t::K;
-            ret['L'] = in_t::L; ret['l'] = in_t::L;
-            ret['M'] = in_t::M; ret['m'] = in_t::M;
-            ret['N'] = in_t::N; ret['n'] = in_t::N;
-            ret['O'] = in_t::O; ret['o'] = in_t::O;
-            ret['P'] = in_t::P; ret['p'] = in_t::P;
-            ret['Q'] = in_t::Q; ret['q'] = in_t::Q;
-            ret['R'] = in_t::R; ret['r'] = in_t::R;
-            ret['S'] = in_t::S; ret['s'] = in_t::S;
-            ret['T'] = in_t::T; ret['t'] = in_t::T;
-            ret['U'] = in_t::U; ret['u'] = in_t::U;
-            ret['V'] = in_t::V; ret['v'] = in_t::V;
-            ret['W'] = in_t::W; ret['w'] = in_t::W;
-            ret['X'] = in_t::X; ret['x'] = in_t::X;
-            ret['Y'] = in_t::Y; ret['y'] = in_t::Y;
-            ret['Z'] = in_t::Z; ret['z'] = in_t::Z;
-            ret['*'] = in_t::TERMINATOR;
+            // reverse mapping for characters and their lowercase
+            for (rank_type rnk = 0u; rnk < value_size; ++rnk)
+            {
+                ret[static_cast<rank_type>(         rank_to_char[rnk]) ] = rnk;
+                ret[static_cast<rank_type>(to_lower(rank_to_char[rnk]))] = rnk;
+            }
+
             return ret;
         }()
     };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
 };
-
-constexpr aa27 aa27::A{internal_type::A};
-constexpr aa27 aa27::B{internal_type::B};
-constexpr aa27 aa27::C{internal_type::C};
-constexpr aa27 aa27::D{internal_type::D};
-constexpr aa27 aa27::E{internal_type::E};
-constexpr aa27 aa27::F{internal_type::F};
-constexpr aa27 aa27::G{internal_type::G};
-constexpr aa27 aa27::H{internal_type::H};
-constexpr aa27 aa27::I{internal_type::I};
-constexpr aa27 aa27::J{internal_type::J};
-constexpr aa27 aa27::K{internal_type::K};
-constexpr aa27 aa27::L{internal_type::L};
-constexpr aa27 aa27::M{internal_type::M};
-constexpr aa27 aa27::N{internal_type::N};
-constexpr aa27 aa27::O{internal_type::O};
-constexpr aa27 aa27::P{internal_type::P};
-constexpr aa27 aa27::Q{internal_type::Q};
-constexpr aa27 aa27::R{internal_type::R};
-constexpr aa27 aa27::S{internal_type::S};
-constexpr aa27 aa27::T{internal_type::T};
-constexpr aa27 aa27::U{internal_type::U};
-constexpr aa27 aa27::V{internal_type::V};
-constexpr aa27 aa27::W{internal_type::W};
-constexpr aa27 aa27::X{internal_type::X};
-constexpr aa27 aa27::Y{internal_type::Y};
-constexpr aa27 aa27::Z{internal_type::Z};
-constexpr aa27 aa27::TERMINATOR{internal_type::TERMINATOR};
-constexpr aa27 aa27::UNKNOWN{aa27::X};
 
 } // namespace seqan3
 
@@ -365,7 +164,7 @@ using aa27_vector = std::vector<aa27>;
 // literals
 // ------------------------------------------------------------------
 
-namespace seqan3::literal
+namespace seqan3
 {
 
 /*!\brief aa27 literal
@@ -377,7 +176,7 @@ namespace seqan3::literal
  * \snippet test/snippet/alphabet/aminoacid/aa27.cpp literal
  *
  * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
+ * All seqan3 literals are in the namespace seqan3!
  */
 
 inline aa27_vector operator""_aa27(const char * s, std::size_t n)
@@ -391,4 +190,4 @@ inline aa27_vector operator""_aa27(const char * s, std::size_t n)
     return r;
 }
 
-} // namespace seqan3::literal
+} // namespace seqan3

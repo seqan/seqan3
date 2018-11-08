@@ -49,17 +49,16 @@ namespace seqan3
 {
 
 /*!\brief A CRTP-base that refines seqan3::alphabet_base and is used by the amino acids.
+ * \ingroup aminoacid
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
- * \tparam char_t       The character type of the alphabet (set this to `void` when defining just a
- *                      seqan3::semi_alphabet_concept).
  */
-template <typename derived_type, auto size, typename char_t = char>
-class aminoacid_base : public alphabet_base<derived_type, size, char_t>
+template <typename derived_type, auto size>
+class aminoacid_base : public alphabet_base<derived_type, size, char>
 {
 private:
     //!\brief Type of the base class.
-    using base_t = alphabet_base<derived_type, size, char_t>;
+    using base_t = alphabet_base<derived_type, size, char>;
 
     //!\brief Befriend the base class.
     friend base_t;
@@ -72,6 +71,7 @@ private:
     constexpr aminoacid_base(aminoacid_base &&) = default;
     constexpr aminoacid_base & operator=(aminoacid_base const &) = default;
     constexpr aminoacid_base & operator=(aminoacid_base &&) = default;
+    ~aminoacid_base() = default;
     //!\}
 
     //!\brief Befriend the derived class so it can instantiate.
@@ -84,6 +84,25 @@ public:
     using typename base_t::rank_type;
     using base_t::value_size;
     using base_t::to_rank;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    // This constructor needs to be public, because constructor templates are not inherited otherwise
+    //!\brief Allow explicit construction from any other aminoacid type and convert via the character representation.
+    template <typename other_aa_type>
+    //!\cond
+        requires !std::Same<aminoacid_base, other_aa_type> &&
+                 !std::Same<derived_type, other_aa_type> &&
+                 aminoacid_concept<other_aa_type>
+    //!\endcond
+    explicit constexpr aminoacid_base(other_aa_type const & other) noexcept
+    {
+        using seqan3::to_rank;
+        static_cast<derived_type &>(*this) =
+            detail::convert_through_char_representation<derived_type, other_aa_type>[to_rank(other)];
+    }
+    //!\}
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
@@ -118,21 +137,6 @@ public:
     static derived_type constexpr Z          = assign_char(derived_type{}, 'Z');
     static derived_type constexpr TERMINATOR = assign_char(derived_type{}, '*');
     static derived_type constexpr UNKNOWN    = X;
-    //!\}
-
-    /*!\name Conversion operators
-     * \{
-     */
-    //!\brief Explicit conversion to any other aminoacid alphabet (via char representation).
-    //!\tparam other_aa_type The type to convert to; must satisfy seqan3::aminoacid_concept.
-    template <typename other_aa_type>
-    //!\cond
-        requires !std::Same<derived_type, other_aa_type> && aminoacid_concept<other_aa_type>
-    //!\endcond
-    explicit constexpr operator other_aa_type() const noexcept
-    {
-        return detail::convert_through_char_representation<other_aa_type, derived_type>[to_rank()];
-    }
     //!\}
 };
 
