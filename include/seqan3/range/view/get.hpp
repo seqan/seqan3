@@ -85,12 +85,13 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <size_t index>
-inline auto const get = view::transform([] (auto && in) -> auto &&
+inline auto const get = view::transform([] (auto && in) -> decltype(auto)
 {
     using std::get;
+    using seqan3::get;
     static_assert(tuple_like_concept<decltype(in)>,
                   "You may only pass ranges to view::get whose reference_t models the tuple_like_concept.");
-    return std::get<index>(in);
+    return get<index>(std::forward<decltype(in)>(in));
 });
 
 //!\}
