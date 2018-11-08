@@ -41,6 +41,7 @@
 
 #include <cassert>
 #include <seqan3/alphabet/concept_pre.hpp>
+#include <seqan3/alphabet/detail/alphabet_base.hpp>
 
 namespace seqan3
 {
@@ -48,6 +49,8 @@ namespace seqan3
  * \ingroup mask
  * \implements seqan3::semi_alphabet_concept
  * \implements seqan3::detail::semi_constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
  *
  * \details
  * This alphabet is not usually used directly, but instead via seqan3::masked.
@@ -55,97 +58,37 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/mask/mask.cpp general
  */
-struct mask
+class mask : public alphabet_base<mask, 2, void>
 {
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = bool;
+private:
+    //!\brief The base class.
+    using base_t = alphabet_base<mask, 2, void>;
+
+    //!\brief Befriend seqan3::alphabet_base.
+    friend base_t;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr mask() : base_t{} {}
+    constexpr mask(mask const &) = default;
+    constexpr mask(mask &&) = default;
+    constexpr mask & operator=(mask const &) = default;
+    constexpr mask & operator=(mask &&) = default;
+    ~mask() = default;
+    //!\}
 
     /*!\name Boolean values
      * \brief Static member "booleans" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
+     * \details Similar to an Enum interface.
      */
     //!\{
     static const mask UNMASKED;
     static const mask MASKED;
     //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr uint8_t value_size{2};
-
-    /*!\name Read function
-     * \{
-     */
-    //!\brief Return the letter's numeric value or rank in the alphabet.
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
-    //!\}
-
-    /*!\name Write functions
-     * \{
-     */
-    //!\brief Assign from a numeric value or true/false.
-    constexpr mask & assign_rank(rank_type const c) noexcept
-    {
-        _value = static_cast<internal_type>(c);
-        return *this;
-    }
-    //!\}
-
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(mask const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
-
-    constexpr bool operator!=(mask const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(mask const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(mask const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(mask const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(mask const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
-    //!\}
-protected:
-    //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values" members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        UNMASKED,
-        MASKED
-    };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
 };
 
-constexpr mask mask::UNMASKED{internal_type::UNMASKED};
-constexpr mask mask::MASKED{internal_type::MASKED};
+mask constexpr mask::UNMASKED{mask{}.assign_rank(0)};
+mask constexpr mask::MASKED  {mask{}.assign_rank(1)};
 } // namespace seqan3

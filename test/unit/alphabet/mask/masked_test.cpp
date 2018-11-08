@@ -62,7 +62,7 @@
  TEST(masked, aggr)
  {
     // Test on dna4.
-    [[maybe_unused]]  masked<dna4> t1{dna4::C, mask::MASKED};
+    [[maybe_unused]]  masked<dna4> t1{'C'_dna4, mask::MASKED};
 
     // Test on aa20.
     [[maybe_unused]]  masked<aa20> t2{aa20::W, mask::MASKED};
@@ -72,7 +72,7 @@
  TEST(masked, zro)
  {
     // Test on dna4.
-    masked<dna4> t1{dna4::A, mask::UNMASKED};
+    masked<dna4> t1{'A'_dna4, mask::UNMASKED};
     masked<dna4> t2{};
     EXPECT_EQ(t1, t2);
 
@@ -86,7 +86,7 @@
  TEST(masked, cp_ctr)
  {
     // Test on dna4.
-    masked<dna4> t1{dna4::C, mask::MASKED};
+    masked<dna4> t1{'C'_dna4, mask::MASKED};
     masked<dna4> t2{t1};
     masked<dna4> t3(t1);
     EXPECT_EQ(t1, t2);
@@ -104,8 +104,8 @@
  TEST(masked, mv_ctr)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
-    masked<dna4> t1{dna4::C, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
+    masked<dna4> t1{'C'_dna4, mask::MASKED};
     masked<dna4> t2{std::move(t1)};
     EXPECT_EQ(t2, t0);
     masked<dna4> t3(std::move(t2));
@@ -124,7 +124,7 @@
  TEST(masked, cp_assgn)
  {
     // Test on dna4.
-    masked<dna4> t1{dna4::C, mask::MASKED};
+    masked<dna4> t1{'C'_dna4, mask::MASKED};
     masked<dna4> t2;
     masked<dna4> t3;
 
@@ -148,8 +148,8 @@
  TEST(masked, mv_assgn)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
-    masked<dna4> t1{dna4::C, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
+    masked<dna4> t1{'C'_dna4, mask::MASKED};
     masked<dna4> t2;
     masked<dna4> t3;
     t2 = std::move(t1);
@@ -172,8 +172,8 @@
  TEST(masked, swap)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
-    masked<dna4> t1{dna4::C, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
+    masked<dna4> t1{'C'_dna4, mask::MASKED};
     masked<dna4> t2{};
     masked<dna4> t3{};
 
@@ -196,52 +196,32 @@
  TEST(masked, get_i)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
 
-    static_assert(std::is_same_v<decltype(seqan3::get<0>(t0)), dna4 &>);
+//     static_assert(std::is_same_v<decltype(get<0>(t0)), dna4 &>);
 
-    EXPECT_EQ(seqan3::get<0>(t0), dna4::C);
-    EXPECT_EQ(seqan3::get<1>(t0), mask::MASKED);
-
-    // Test on aa20.
-    masked<aa20> t1{aa20::W, mask::MASKED};
-
-    static_assert(std::is_same_v<decltype(seqan3::get<0>(t1)), aa20 &>);
-
-    EXPECT_EQ(seqan3::get<0>(t1), aa20::W);
-    EXPECT_EQ(seqan3::get<1>(t1), mask::MASKED);
- }
-
- // std::get<1>
- TEST(masked, stdget_i)
- {
-    // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
-
-    static_assert(std::is_same_v<decltype(std::get<0>(t0)), dna4 &>);
-
-    EXPECT_EQ(std::get<0>(t0), dna4::C);
-    EXPECT_EQ(std::get<1>(t0), mask::MASKED);
+    EXPECT_EQ(get<0>(t0), 'C'_dna4);
+    EXPECT_EQ(get<1>(t0), mask::MASKED);
 
     // Test on aa20.
     masked<aa20> t1{aa20::W, mask::MASKED};
 
-    static_assert(std::is_same_v<decltype(std::get<0>(t1)), aa20 &>);
+//     static_assert(std::is_same_v<decltype(get<0>(t1)), aa20 &>);
 
-    EXPECT_EQ(std::get<0>(t1), aa20::W);
-    EXPECT_EQ(std::get<1>(t1), mask::MASKED);
+    EXPECT_EQ(get<0>(t1), aa20::W);
+    EXPECT_EQ(get<1>(t1), mask::MASKED);
  }
 
  // structured bindings
  TEST(masked, struct_binding)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
     auto [ i, l ] = t0;
     static_assert(std::is_same_v<decltype(i), dna4>);
     static_assert(std::is_same_v<decltype(l), mask>);
 
-    EXPECT_EQ(i, dna4::C);
+    EXPECT_EQ(i, 'C'_dna4);
     // EXPECT_EQ(l, mask::MASKED);
 
     // Test on aa20.
@@ -259,28 +239,14 @@
  TEST(masked, get_type)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
 
-    EXPECT_EQ(seqan3::get<dna4>(t0), dna4::C);
-
-    // Test on aa20.
-    masked<aa20> t1{aa20::W, mask::MASKED};
-
-    EXPECT_EQ(seqan3::get<aa20>(t1), aa20::W);
- }
-
- // std::get<type>
- TEST(masked, stdget_type)
- {
-    // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
-
-    EXPECT_EQ(std::get<dna4>(t0), dna4::C);
+    EXPECT_EQ(get<dna4>(t0), 'C'_dna4);
 
     // Test on aa20.
     masked<aa20> t1{aa20::W, mask::MASKED};
 
-    EXPECT_EQ(std::get<aa20>(t1), aa20::W);
+    EXPECT_EQ(get<aa20>(t1), aa20::W);
  }
 
  // std::tuple_element
@@ -303,7 +269,7 @@
  TEST(masked, type_deduce)
  {
     // Test on dna4.
-    masked t0{dna4::C, mask::MASKED};
+    masked t0{'C'_dna4, mask::MASKED};
     using pt = decltype(t0);
 
     static_assert(std::is_same_v<std::tuple_element_t<0, pt>, dna4>);
@@ -321,13 +287,13 @@
  TEST(masked, cast_to_element)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
 
     auto d = static_cast<dna4>(t0);
     auto q = static_cast<mask>(t0);
     static_assert(std::is_same_v<decltype(d), dna4>);
 
-    EXPECT_EQ(d, dna4::C);
+    EXPECT_EQ(d, 'C'_dna4);
     EXPECT_EQ(q, mask::MASKED);
 
     // Test on aa20.
@@ -345,9 +311,9 @@
  TEST(masked, cmp)
  {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::UNMASKED};
-    masked<dna4> t1{dna4::C, mask::MASKED};
-    masked<dna4> t2{dna4::G, mask::MASKED};
+    masked<dna4> t0{'C'_dna4, mask::UNMASKED};
+    masked<dna4> t1{'C'_dna4, mask::MASKED};
+    masked<dna4> t2{'G'_dna4, mask::MASKED};
 
     EXPECT_LT(t0, t1);
     EXPECT_LE(t0, t1);
@@ -407,20 +373,20 @@ TEST(masked, alphabet_size_v)
 TEST(masked, to_rank)
 {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::MASKED};
-    EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
-    // EXPECT_EQ(to_rank(std::get<1>(t0)), 1);
+    masked<dna4> t0{'C'_dna4, mask::MASKED};
+    EXPECT_EQ(to_rank(get<0>(t0)), 1);
+    // EXPECT_EQ(to_rank(get<1>(t0)), 1);
     // EXPECT_EQ(to_rank(t0),
-    //           to_rank(std::get<0>(t0)) +
-    //           alphabet_size_v<dna4> * to_rank(std::get<1>(t0)));
+    //           to_rank(get<0>(t0)) +
+    //           alphabet_size_v<dna4> * to_rank(get<1>(t0)));
 
     // Test on aa20.
     masked<aa20> t1{aa20::A, mask::UNMASKED};
-    EXPECT_EQ(to_rank(std::get<0>(t1)), 0);
-    // EXPECT_EQ(to_rank(std::get<1>(t1)), 0);
+    EXPECT_EQ(to_rank(get<0>(t1)), 0);
+    // EXPECT_EQ(to_rank(get<1>(t1)), 0);
     // EXPECT_EQ(to_rank(t1),
-    //           to_rank(std::get<0>(t1)) +
-    //           alphabet_size_v<aa20> * to_rank(std::get<1>(t1)));
+    //           to_rank(get<0>(t1)) +
+    //           alphabet_size_v<aa20> * to_rank(get<1>(t1)));
 }
 
 TEST(masked, assign_rank)
@@ -451,19 +417,19 @@ TEST(masked, assign_rank)
 TEST(masked, to_char)
 {
     // Test on dna4.
-    masked<dna4> t0{dna4::C, mask::UNMASKED};
-    EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
+    masked<dna4> t0{'C'_dna4, mask::UNMASKED};
+    EXPECT_EQ(to_char(get<0>(t0)), 'C');
     EXPECT_EQ(to_char(t0), 'C');
     t0 = mask::MASKED;
-    EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
+    EXPECT_EQ(to_char(get<0>(t0)), 'C');
     EXPECT_EQ(to_char(t0), 'c');
 
     // Test on aa20.
     masked<aa20> t1{aa20::W, mask::UNMASKED};
-    EXPECT_EQ(to_char(std::get<0>(t1)), 'W');
+    EXPECT_EQ(to_char(get<0>(t1)), 'W');
     EXPECT_EQ(to_char(t1), 'W');
     t1 = mask::MASKED;
-    EXPECT_EQ(to_char(std::get<0>(t1)), 'W');
+    EXPECT_EQ(to_char(get<0>(t1)), 'W');
     EXPECT_EQ(to_char(t1), 'w');
 }
 
@@ -471,7 +437,7 @@ TEST(masked, assign_char)
 {
     // Test on dna4.
     using type = masked<dna4>;
-    type t0{dna4::C, mask::MASKED};
+    type t0{'C'_dna4, mask::MASKED};
     assign_char(t0, 'A');
     EXPECT_EQ(to_char(t0), 'A');
     assign_char(t0, 'C');

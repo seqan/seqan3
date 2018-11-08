@@ -40,7 +40,8 @@
 
 #include <seqan3/alphabet/mask/all.hpp>
 #include <seqan3/alphabet/composition/cartesian_composition.hpp>
-#include <locale>
+#include <seqan3/io/stream/char_operations.hpp>
+#include <seqan3/io/stream/parse_condition.hpp>
 
 namespace seqan3
 {
@@ -49,6 +50,9 @@ namespace seqan3
  * \ingroup mask
  * \implements seqan3::alphabet_concept
  * \implements seqan3::detail::semi_constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
+ *
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_alphabet_concept.
  * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept, defaults to seqan3::mask.
  *
@@ -59,15 +63,15 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/mask/masked.cpp general
  */
- template <typename sequence_alphabet_t, typename mask_t = mask>
+ template <typename sequence_alphabet_t>
 //!\cond
     requires alphabet_concept<sequence_alphabet_t>
 //!\endcond
-class masked : public cartesian_composition<masked<sequence_alphabet_t, mask_t>, sequence_alphabet_t, mask_t>
+class masked : public cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {
 private:
     //!\brief The base type.
-    using base_type = cartesian_composition<masked<sequence_alphabet_t, mask_t>, sequence_alphabet_t, mask_t>;
+    using base_type = cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
 
 public:
     //!\brief First template parameter as member type.
@@ -76,10 +80,12 @@ public:
     //!\brief Equals the char_type of sequence_alphabet_type.
     using char_type = underlying_char_t<sequence_alphabet_type>;
 
+    using base_type::value_size;
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    masked() = default;
+    constexpr masked() : base_type{} {}
     constexpr masked(masked const &) = default;
     constexpr masked(masked &&) = default;
     constexpr masked & operator =(masked const &) = default;
@@ -87,8 +93,6 @@ public:
     ~masked() = default;
 
     using base_type::base_type; // Inherit non-default constructors
-
-    using base_type::operator=; // Inherit non-default assignment operators
 
     //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked(component_type const alph) {} ))
@@ -100,6 +104,15 @@ public:
     SEQAN3_DOXYGEN_ONLY(( constexpr masked & operator=(indirect_component_type const alph) {} ))
     //!\}
 
+    // Inherit operators from base
+    using base_type::operator=;
+    using base_type::operator==;
+    using base_type::operator!=;
+    using base_type::operator>=;
+    using base_type::operator<=;
+    using base_type::operator<;
+    using base_type::operator>;
+
     /*!\name Write functions
      * \{
      */
@@ -107,8 +120,7 @@ public:
     constexpr masked & assign_char(char_type const c)
     {
         seqan3::assign_char(get<0>(*this), c);
-        // TODO: The check of if c is lowercase can be optimized using a lookup table.
-        seqan3::assign_rank(get<1>(*this), (c >= 'a' && c <= 'z'));
+        seqan3::assign_rank(get<1>(*this), is_lower(c));
         return *this;
     }
     //!\}
@@ -121,7 +133,7 @@ public:
     {
         if (seqan3::to_rank(get<1>(*this)))
         {
-            return std::tolower(seqan3::to_char(get<0>(*this)), std::locale("C"));
+            return to_lower(seqan3::to_char(get<0>(*this)));
         }
         else
         {
