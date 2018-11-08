@@ -9,20 +9,20 @@ int main()
 
 {
 //! [usage]
-union_composition<dna5, gap> letter{};         // implicitly dna5::A
-union_composition<dna5, gap> letter2{dna5::C}; // constructed from alternative (== dna5::C)
-union_composition<dna5, gap> letter3{rna5::U}; // constructed from type that alternative is constructable from (== dna5::T)
+union_composition<dna5, gap> letter{};         // implicitly 'A'_dna5
+union_composition<dna5, gap> letter2{'C'_dna5}; // constructed from alternative (== 'C'_dna5)
+union_composition<dna5, gap> letter3{'U'_rna5}; // constructed from type that alternative is constructable from (== 'T'_dna5)
 
-letter2.assign_char('T');                      // == dna5::T
+letter2.assign_char('T');                      // == 'T'_dna5
 letter2.assign_char('-');                      // == gap::GAP
 letter2.assign_char('K');                      // unknown characters map to the default/unknown
-                                               // character of the first alternative type (== dna5::N)
+                                               // character of the first alternative type (== 'N'_dna5)
 
 letter2 = gap::GAP;                            // assigned from alternative (== gap::GAP)
-letter2 = rna5::U;                             // assigned from type that alternative is assignable from (== dna5::T)
+letter2 = 'U'_rna5;                             // assigned from type that alternative is assignable from (== 'T'_dna5)
 
 dna5 letter4 = letter2.convert_to<dna5>();     // this works
-// gap letter5  = letter2.convert_to<gap>();   // this throws an exception, because the set value was dna5::T
+// gap letter5  = letter2.convert_to<gap>();   // this throws an exception, because the set value was 'T'_dna5
 //! [usage]
 (void) letter4;
 }
@@ -39,7 +39,7 @@ static_assert(union_t::holds_alternative<gap>(), "gap is an alternative of union
 
 {
 //! [value construction]
-union_composition<dna4, gap> letter1{dna4::C}; // or
+union_composition<dna4, gap> letter1{'C'_dna4}; // or
 union_composition<dna4, gap> letter2 = gap::GAP;
 //! [value construction]
 (void) letter1;
@@ -48,7 +48,7 @@ union_composition<dna4, gap> letter2 = gap::GAP;
 
 {
 //! [conversion]
-union_composition<dna4, gap> letter1{rna4::C};
+union_composition<dna4, gap> letter1{'C'_rna4};
 //! [conversion]
 (void) letter1;
 }
@@ -56,7 +56,7 @@ union_composition<dna4, gap> letter1{rna4::C};
 {
 //! [subtype_construction]
 union_composition<dna4, gap> letter1{};
-letter1 = rna4::C;
+letter1 = 'C'_rna4;
 //! [subtype_construction]
 }
 

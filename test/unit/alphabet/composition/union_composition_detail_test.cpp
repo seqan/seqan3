@@ -21,8 +21,8 @@ class detail_union_composition : public union_composition<alphabet_types...>
 {
 public:
     using union_composition<alphabet_types...>::partial_sum_sizes;
-    using union_composition<alphabet_types...>::value_to_char;
-    using union_composition<alphabet_types...>::char_to_value;
+    using union_composition<alphabet_types...>::rank_to_char;
+    using union_composition<alphabet_types...>::char_to_rank;
 };
 
 TEST(union_composition_detail_test, partial_sum_sizes)
@@ -48,76 +48,76 @@ TEST(union_composition_detail_test, partial_sum_sizes)
     EXPECT_EQ(partial_sum4[3], 10);
 }
 
-TEST(union_composition_detail_test, value_to_char)
+TEST(union_composition_detail_test, rank_to_char)
 {
-    constexpr std::array value_to_char2 = detail_union_composition<dna4, gap>::value_to_char;
-    EXPECT_EQ(value_to_char2.size(), 5u);
-    EXPECT_EQ(value_to_char2[0], 'A');
-    EXPECT_EQ(value_to_char2[1], 'C');
-    EXPECT_EQ(value_to_char2[2], 'G');
-    EXPECT_EQ(value_to_char2[3], 'T');
-    EXPECT_EQ(value_to_char2[4], '-');
+    constexpr std::array rank_to_char2 = detail_union_composition<dna4, gap>::rank_to_char;
+    EXPECT_EQ(rank_to_char2.size(), 5u);
+    EXPECT_EQ(rank_to_char2[0], 'A');
+    EXPECT_EQ(rank_to_char2[1], 'C');
+    EXPECT_EQ(rank_to_char2[2], 'G');
+    EXPECT_EQ(rank_to_char2[3], 'T');
+    EXPECT_EQ(rank_to_char2[4], '-');
 
-    constexpr std::array value_to_char3 = detail_union_composition<dna4, gap, dna5>::value_to_char;
-    EXPECT_EQ(value_to_char3.size(), 10u);
-    EXPECT_EQ(value_to_char3[0], 'A');
-    EXPECT_EQ(value_to_char3[1], 'C');
-    EXPECT_EQ(value_to_char3[2], 'G');
-    EXPECT_EQ(value_to_char3[3], 'T');
-    EXPECT_EQ(value_to_char3[4], '-');
-    EXPECT_EQ(value_to_char3[5], 'A');
-    EXPECT_EQ(value_to_char3[6], 'C');
-    EXPECT_EQ(value_to_char3[7], 'G');
-    EXPECT_EQ(value_to_char3[8], 'T');
-    EXPECT_EQ(value_to_char3[9], 'N');
+    constexpr std::array rank_to_char3 = detail_union_composition<dna4, gap, dna5>::rank_to_char;
+    EXPECT_EQ(rank_to_char3.size(), 10u);
+    EXPECT_EQ(rank_to_char3[0], 'A');
+    EXPECT_EQ(rank_to_char3[1], 'C');
+    EXPECT_EQ(rank_to_char3[2], 'G');
+    EXPECT_EQ(rank_to_char3[3], 'T');
+    EXPECT_EQ(rank_to_char3[4], '-');
+    EXPECT_EQ(rank_to_char3[5], 'A');
+    EXPECT_EQ(rank_to_char3[6], 'C');
+    EXPECT_EQ(rank_to_char3[7], 'G');
+    EXPECT_EQ(rank_to_char3[8], 'N');
+    EXPECT_EQ(rank_to_char3[9], 'T');
 
-    constexpr std::array value_to_char4 = detail_union_composition<dna5, gap, dna4>::value_to_char;
-    EXPECT_EQ(value_to_char4.size(), 10u);
-    EXPECT_EQ(value_to_char4[0], 'A');
-    EXPECT_EQ(value_to_char4[1], 'C');
-    EXPECT_EQ(value_to_char4[2], 'G');
-    EXPECT_EQ(value_to_char4[3], 'T');
-    EXPECT_EQ(value_to_char4[4], 'N');
-    EXPECT_EQ(value_to_char4[5], '-');
-    EXPECT_EQ(value_to_char4[6], 'A');
-    EXPECT_EQ(value_to_char4[7], 'C');
-    EXPECT_EQ(value_to_char4[8], 'G');
-    EXPECT_EQ(value_to_char4[9], 'T');
+    constexpr std::array rank_to_char4 = detail_union_composition<dna5, gap, dna4>::rank_to_char;
+    EXPECT_EQ(rank_to_char4.size(), 10u);
+    EXPECT_EQ(rank_to_char4[0], 'A');
+    EXPECT_EQ(rank_to_char4[1], 'C');
+    EXPECT_EQ(rank_to_char4[2], 'G');
+    EXPECT_EQ(rank_to_char4[3], 'N');
+    EXPECT_EQ(rank_to_char4[4], 'T');
+    EXPECT_EQ(rank_to_char4[5], '-');
+    EXPECT_EQ(rank_to_char4[6], 'A');
+    EXPECT_EQ(rank_to_char4[7], 'C');
+    EXPECT_EQ(rank_to_char4[8], 'G');
+    EXPECT_EQ(rank_to_char4[9], 'T');
 }
 
-TEST(union_composition_detail_test, char_to_value)
+TEST(union_composition_detail_test, char_to_rank)
 {
-    constexpr std::array char_to_value2 = detail_union_composition<dna4, gap>::char_to_value;
-    EXPECT_EQ(char_to_value2.size(), 256u);
-    EXPECT_EQ(char_to_value2['A'], 0);
-    EXPECT_EQ(char_to_value2['C'], 1);
-    EXPECT_EQ(char_to_value2['G'], 2);
-    EXPECT_EQ(char_to_value2['T'], 3);
-    EXPECT_EQ(char_to_value2['-'], 4);
+    constexpr std::array char_to_rank2 = detail_union_composition<dna4, gap>::char_to_rank;
+    EXPECT_EQ(char_to_rank2.size(), 256u);
+    EXPECT_EQ(char_to_rank2['A'], 0);
+    EXPECT_EQ(char_to_rank2['C'], 1);
+    EXPECT_EQ(char_to_rank2['G'], 2);
+    EXPECT_EQ(char_to_rank2['T'], 3);
+    EXPECT_EQ(char_to_rank2['-'], 4);
 
-    constexpr std::array char_to_value3 = detail_union_composition<dna4, gap, dna5>::char_to_value;
-    EXPECT_EQ(char_to_value3.size(), 256u);
-    EXPECT_EQ(char_to_value3['A'], 0);
-    EXPECT_EQ(char_to_value3['C'], 1);
-    EXPECT_EQ(char_to_value3['G'], 2);
-    EXPECT_EQ(char_to_value3['T'], 3);
-    EXPECT_EQ(char_to_value3['-'], 4);
-    EXPECT_EQ(char_to_value3['A'], 0);
-    EXPECT_EQ(char_to_value3['C'], 1);
-    EXPECT_EQ(char_to_value3['G'], 2);
-    EXPECT_EQ(char_to_value3['T'], 3);
-    EXPECT_EQ(char_to_value3['N'], 9);
+    constexpr std::array char_to_rank3 = detail_union_composition<dna4, gap, dna5>::char_to_rank;
+    EXPECT_EQ(char_to_rank3.size(), 256u);
+    EXPECT_EQ(char_to_rank3['A'], 0);
+    EXPECT_EQ(char_to_rank3['C'], 1);
+    EXPECT_EQ(char_to_rank3['G'], 2);
+    EXPECT_EQ(char_to_rank3['T'], 3);
+    EXPECT_EQ(char_to_rank3['-'], 4);
+    EXPECT_EQ(char_to_rank3['A'], 0);
+    EXPECT_EQ(char_to_rank3['C'], 1);
+    EXPECT_EQ(char_to_rank3['G'], 2);
+    EXPECT_EQ(char_to_rank3['N'], 8);
+    EXPECT_EQ(char_to_rank3['T'], 3);
 
-    constexpr std::array char_to_value4 = detail_union_composition<dna5, gap, dna4>::char_to_value;
-    EXPECT_EQ(char_to_value4.size(), 256u);
-    EXPECT_EQ(char_to_value4['A'], 0);
-    EXPECT_EQ(char_to_value4['C'], 1);
-    EXPECT_EQ(char_to_value4['G'], 2);
-    EXPECT_EQ(char_to_value4['T'], 3);
-    EXPECT_EQ(char_to_value4['N'], 4);
-    EXPECT_EQ(char_to_value4['-'], 5);
-    EXPECT_EQ(char_to_value4['A'], 0);
-    EXPECT_EQ(char_to_value4['C'], 1);
-    EXPECT_EQ(char_to_value4['G'], 2);
-    EXPECT_EQ(char_to_value4['T'], 3);
+    constexpr std::array char_to_rank4 = detail_union_composition<dna5, gap, dna4>::char_to_rank;
+    EXPECT_EQ(char_to_rank4.size(), 256u);
+    EXPECT_EQ(char_to_rank4['A'], 0);
+    EXPECT_EQ(char_to_rank4['C'], 1);
+    EXPECT_EQ(char_to_rank4['G'], 2);
+    EXPECT_EQ(char_to_rank4['N'], 3);
+    EXPECT_EQ(char_to_rank4['T'], 4);
+    EXPECT_EQ(char_to_rank4['-'], 5);
+    EXPECT_EQ(char_to_rank4['A'], 0);
+    EXPECT_EQ(char_to_rank4['C'], 1);
+    EXPECT_EQ(char_to_rank4['G'], 2);
+    EXPECT_EQ(char_to_rank4['T'], 4);
 }
