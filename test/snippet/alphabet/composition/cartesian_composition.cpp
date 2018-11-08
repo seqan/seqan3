@@ -12,17 +12,17 @@ int main()
 
 {
 //! [value_construction]
-qualified<dna4, phred42> letter1{dna4::C};    // creates {dna4::C, phred42{0}}
-qualified<dna4, phred42> letter2{phred42{1}}; // creates {dna4::A, phred42{1}}
+qualified<dna4, phred42> letter1{'C'_dna4};    // creates {'C'_dna4, phred42{0}}
+qualified<dna4, phred42> letter2{phred42{1}}; // creates {'A'_dna4, phred42{1}}
 //! [value_construction]
 }
 
 {
 //! [subtype_construction]
-// The following creates {dna4::C, phre42{0}}
-qualified<dna4, phred42> letter1{dna4::C};
-// The following also creates {dna4::C, phred42{0}}, since rna4 assignable to dna4
-qualified<dna4, phred42> letter2{rna4::C};
+// The following creates {'C'_dna4, phre42{0}}
+qualified<dna4, phred42> letter1{'C'_dna4};
+// The following also creates {'C'_dna4, phred42{0}}, since rna4 assignable to dna4
+qualified<dna4, phred42> letter2{'C'_rna4};
 
 if (letter1 == letter2)
     debug_stream << "yeah\n"; // yeah
@@ -31,18 +31,18 @@ if (letter1 == letter2)
 
 {
 //! [value_assignment]
-qualified<dna4, phred42> letter1{dna4::T, phred42{1}};
+qualified<dna4, phred42> letter1{'T'_dna4, phred42{1}};
 
-letter1 = dna4::C; // yields {dna4::C, phred42{1}}
-letter1 = phred42{2}; // yields {dna4::C, phred42{2}}
+letter1 = 'C'_dna4; // yields {'C'_dna4, phred42{1}}
+letter1 = phred42{2}; // yields {'C'_dna4, phred42{2}}
 //! [value_assignment]
 }
 
 {
 //! [subtype_assignment]
-qualified<dna4, phred42> letter1{dna4::T, phred42{1}};
+qualified<dna4, phred42> letter1{'T'_dna4, phred42{1}};
 
-letter1 = rna4::C; // yields {dna4::C, phred42{1}}
+letter1 = 'C'_rna4; // yields {'C'_dna4, phred42{1}}
 //! [subtype_assignment]
 }
 
