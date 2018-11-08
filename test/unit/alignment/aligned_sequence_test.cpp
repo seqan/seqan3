@@ -105,7 +105,7 @@ TYPED_TEST(aligned_sequence_test, erase_one_gap)
 
     auto it = erase_gap(aligned_seq, aligned_seq.begin() + 1);
 
-    typename TypeParam::value_type val = dna4::C;
+    typename TypeParam::value_type val{dna4::C};
     val = dna4::C;
     EXPECT_EQ(*it, val);
     EXPECT_EQ(aligned_seq, aligned_seq_expected);
@@ -131,7 +131,7 @@ TYPED_TEST(aligned_sequence_test, erase_multiple_gaps)
 
     auto it = erase_gap(aligned_seq, aligned_seq.begin() + 1, aligned_seq.begin() + 3);
 
-    typename TypeParam::value_type val = dna4::C;
+    typename TypeParam::value_type val{dna4::C};
     val = dna4::C;
     EXPECT_EQ(*it, val);
     EXPECT_EQ(aligned_seq, aligned_seq_expected);
@@ -154,7 +154,10 @@ TYPED_TEST(aligned_sequence_test, cigar_string)
         initialize_typed_test_container(ref,  "ACGTGAT--CTG");
         initialize_typed_test_container(read, "ACGT-CGTAGTG");
 
+//         [[maybe_unused]] char c = detail::compare_aligned_values(ref[0], read[0], false);
+
         std::string expected = "4M1D2M2I3M";
+//         std::string two = detail::get_cigar_string(std::tie(ref, read));
 
         EXPECT_EQ(expected, detail::get_cigar_string(std::make_pair(ref, read)));
 
