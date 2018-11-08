@@ -8,7 +8,7 @@ int main()
 
 {
 //! [code]
-dna4 my_letter{dna4::A};
+dna4 my_letter{'A'_dna4};
 // doesn't work:
 // dna4 my_letter{'A'};
 
@@ -27,7 +27,6 @@ if (my_letter.to_char() == 'A')
 // dna4_vector bar = "ACGTTA";
 
 // but these do:
-using namespace seqan3::literal;
 dna4_vector foo{"ACGTTA"_dna4};
 dna4_vector bar = "ACGTTA"_dna4;
 auto bax = "ACGTTA"_dna4;

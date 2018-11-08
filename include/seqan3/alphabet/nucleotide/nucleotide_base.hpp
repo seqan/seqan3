@@ -47,26 +47,36 @@ namespace seqan3
 {
 
 /*!\brief A CRTP-base that refines seqan3::alphabet_base and is used by the nucleotides.
+ * \ingroup nucleotide
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
- * \tparam char_t       The character type of the alphabet (set this to `void` when defining just a
- *                      seqan3::semi_alphabet_concept).
+ *
+ * \details
+ *
+ * You can use this class to define your own nucleotide alphabet, but types are not required to be based on it to model
+ * seqan3::nucleotide_concept, it is purely a way to avoid code duplication.
+ *
+ * The derived type needs to define only the following table as static member variable:
+ *
+ *   * `static std::array<THAT_TYPE, value_size> complement_table` that defines for every possible rank value
+ *     the corresponding complement.
  */
-template <typename derived_type, auto size, typename char_t = char>
-class nucleotide_base : public alphabet_base<derived_type, size, char_t>
+template <typename derived_type, auto size>
+class nucleotide_base : public alphabet_base<derived_type, size, char>
 {
 private:
     //!\brief Type of the base class.
-    using base_t = alphabet_base<derived_type, size, char_t>;
+    using base_t = alphabet_base<derived_type, size, char>;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr nucleotide_base() : base_t{} {}
+    constexpr nucleotide_base() noexcept : base_t{} {}
     constexpr nucleotide_base(nucleotide_base const &) = default;
     constexpr nucleotide_base(nucleotide_base &&) = default;
     constexpr nucleotide_base & operator=(nucleotide_base const &) = default;
     constexpr nucleotide_base & operator=(nucleotide_base &&) = default;
+    ~nucleotide_base() = default;
     //!\}
 
     //! Befriend the derived_type so it can instantiate.
@@ -79,54 +89,22 @@ public:
     using base_t::value_size;
     using base_t::to_rank;
 
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface.
-     */
-    //!\{
-    static derived_type constexpr A       = assign_char(derived_type{}, 'A');
-    static derived_type constexpr B       = assign_char(derived_type{}, 'B');
-    static derived_type constexpr C       = assign_char(derived_type{}, 'C');
-    static derived_type constexpr D       = assign_char(derived_type{}, 'D');
-    static derived_type constexpr G       = assign_char(derived_type{}, 'G');
-    static derived_type constexpr H       = assign_char(derived_type{}, 'H');
-    static derived_type constexpr K       = assign_char(derived_type{}, 'K');
-    static derived_type constexpr M       = assign_char(derived_type{}, 'M');
-    static derived_type constexpr N       = assign_char(derived_type{}, 'N');
-    static derived_type constexpr R       = assign_char(derived_type{}, 'R');
-    static derived_type constexpr S       = assign_char(derived_type{}, 'S');
-    static derived_type constexpr T       = assign_char(derived_type{}, 'T');
-    static derived_type constexpr U       = assign_char(derived_type{}, 'U');
-    static derived_type constexpr V       = assign_char(derived_type{}, 'V');
-    static derived_type constexpr W       = assign_char(derived_type{}, 'W');
-    static derived_type constexpr Y       = assign_char(derived_type{}, 'Y');
-    static derived_type constexpr UNKNOWN = assign_char(derived_type{}, 'N');
-    //!\}
-
-    /*!\name Conversion operators
+    /*!\name Constructors, destructor and assignment
      * \{
      */
-//     //!\brief Implicit conversion between dna* and rna* of the same size.
-//     //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
-//     template <typename other_nucl_type>
-//     //!\cond
-//         requires !std::Same<derived_type, other_nucl_type> && nucleotide_concept<other_nucl_type> &&
-//                  value_size == alphabet_size_v<other_nucl_type>
-//     //!\endcond
-//     constexpr operator other_nucl_type() const noexcept
-//     {
-//         return other_nucl_type{}.assign_rank(to_rank());
-//     }
-
-    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
+    // This constructor needs to be public, because constructor templates are not inherited otherwise
+    //!\brief Allow explicit construction from any other nucleotide type and convert via the character representation.
     template <typename other_nucl_type>
     //!\cond
-        requires !std::Same<derived_type, other_nucl_type> && nucleotide_concept<other_nucl_type>
+        requires !std::Same<nucleotide_base, other_nucl_type> &&
+                 !std::Same<derived_type, other_nucl_type> &&
+                 nucleotide_concept<other_nucl_type>
     //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
+    explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
-        return detail::convert_through_char_representation<other_nucl_type, derived_type>[to_rank()];
+        using seqan3::to_rank;
+        static_cast<derived_type &>(*this) =
+            detail::convert_through_char_representation<derived_type, other_nucl_type>[to_rank(other)];
     }
     //!\}
 

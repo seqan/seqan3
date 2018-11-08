@@ -39,14 +39,10 @@
 
 #pragma once
 
-#include <cassert>
-
-#include <string>
 #include <vector>
 
-#include <seqan3/alphabet/detail/convert.hpp>
-#include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
 
 // ------------------------------------------------------------------
 // rna15
@@ -56,12 +52,17 @@ namespace seqan3
 {
 
 /*!\brief The 15 letter RNA alphabet, containing all IUPAC smybols minus the gap.
+ * \implements seqan3::nucleotide_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
+ *
  * \ingroup nucleotide
  *
  * \details
- * This alphabet inherits from seqan3::dna15 and is guaranteed to have the same internal representation of
- * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You can implicitly
- * convert between values of seqan3::dna15 and seqan3::rna15.
+ *
+ * This alphabet has the same internal representation as seqan3::dna15, the only difference is that it prints 'U' on
+ * character conversion instead of 'T'. You can assign between values of seqan3::dna15 and seqan3::rna15.
  *
  * The alphabet may be brace initialized from the static letter members. Note that you cannot
  * assign the alphabet by using letters of type `char`, but you instead have to use the
@@ -69,99 +70,43 @@ namespace seqan3
  *
  *\snippet test/snippet/alphabet/nucleotide/rna15.cpp code
  */
-
-struct rna15 : public dna15
+class rna15 : public nucleotide_base<rna15, 15>
 {
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
-     */
-    //!\{
-    static const rna15 A;
-    static const rna15 B;
-    static const rna15 C;
-    static const rna15 D;
-    static const rna15 G;
-    static const rna15 H;
-    static const rna15 K;
-    static const rna15 M;
-    static const rna15 N;
-    static const rna15 R;
-    static const rna15 S;
-    static const rna15 T;
-    static const rna15 U;
-    static const rna15 V;
-    static const rna15 W;
-    static const rna15 Y;
-    static const rna15 UNKNOWN;
-    //!\}
+private:
+    //!\brief The base class.
+    using base_t = nucleotide_base<rna15, 15>;
 
-    /*!\name Read functions
-     * \{
-     */
-    //!\copydoc seqan3::dna4::to_char
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
-
-    //!\copydoc seqan3::dna4::complement
-    constexpr rna15 complement() const noexcept
-    {
-        return dna15::complement();
-    }
-    //!\}
-
-    /*!\name Write functions
-     * \{
-     */
-    //!\copydoc seqan3::dna4::assign_char
-    constexpr rna15 & assign_char(char_type const c) noexcept
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        _value = char_to_value[static_cast<index_t>(c)];
-        return *this;
-    }
-
-    //!\copydoc seqan3::dna4::assign_rank
-    constexpr rna15 & assign_rank(rank_type const c)
-    {
-        assert(c < value_size);
-        _value = static_cast<internal_type>(c);
-        return *this;
-    }
-    //!\}
-
-    /*!\name Conversion operators
-     * \{
-     */
-    //!\brief Implicit conversion between dna* and rna* of the same size.
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
-    template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+    //!\brief Befriend seqan3::nucleotide_base.
+    friend base_t;
+    //!\cond \brief Befriend seqan3::alphabet_base.
+    friend base_t::base_t;
     //!\endcond
-    constexpr operator other_nucl_type() const noexcept
-    {
-        return other_nucl_type{_value};
-    }
 
-    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
-    template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type>
-    //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr rna15() noexcept : base_t{} {}
+    constexpr rna15(rna15 const &) = default;
+    constexpr rna15(rna15 &&) = default;
+    constexpr rna15 & operator=(rna15 const &) = default;
+    constexpr rna15 & operator=(rna15 &&) = default;
+    ~rna15() = default;
+
+    using base_t::base_t;
+
+    //!\brief Allow implicit construction from dna/rna of the same size.
+    constexpr rna15(dna15 const & r) noexcept
     {
-        return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
+        assign_rank(r.to_rank());
     }
     //!\}
 
 protected:
     //!\privatesection
-    //!\copydoc seqan3::dna4::value_to_char
-    static constexpr char_type value_to_char[value_size]
+
+    //!\copydoc seqan3::dna4::rank_to_char
+    static constexpr char_type rank_to_char[value_size]
     {
         'A',
         'B',
@@ -179,61 +124,49 @@ protected:
         'W',
         'Y'
     };
+
+    //!\copydoc seqan3::dna4::char_to_rank
+    static constexpr std::array<rank_type, 256> char_to_rank = dna15::char_to_rank;
+
+    //!\copydoc seqan3::dna4::complement_table
+    static const std::array<rna15, value_size> complement_table;
 };
-
-constexpr rna15 rna15::A{internal_type::A};
-constexpr rna15 rna15::B{internal_type::B};
-constexpr rna15 rna15::C{internal_type::C};
-constexpr rna15 rna15::D{internal_type::D};
-constexpr rna15 rna15::G{internal_type::G};
-constexpr rna15 rna15::H{internal_type::H};
-constexpr rna15 rna15::K{internal_type::K};
-constexpr rna15 rna15::M{internal_type::M};
-constexpr rna15 rna15::N{internal_type::N};
-constexpr rna15 rna15::R{internal_type::R};
-constexpr rna15 rna15::S{internal_type::S};
-constexpr rna15 rna15::U{internal_type::U};
-constexpr rna15 rna15::T{rna15::U};
-constexpr rna15 rna15::V{internal_type::V};
-constexpr rna15 rna15::W{internal_type::W};
-constexpr rna15 rna15::Y{internal_type::Y};
-constexpr rna15 rna15::UNKNOWN{rna15::N};
-
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 
-namespace seqan3
-{
-
 //!\brief Alias for an std::vector of seqan3::rna15.
 //!\relates rna15
 using rna15_vector = std::vector<rna15>;
-
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
 
-namespace seqan3::literal
-{
+/*!\name Literals
+ * \{
+ */
 
-/*!\brief rna15 literal
+/*!\brief The seqan3::rna15 char literal.
+ * \relates seqan3::rna15
+ * \returns seqan3::rna15
+ */
+constexpr rna15 operator""_rna15(char const c) noexcept
+{
+    return rna15{}.assign_char(c);
+}
+
+/*!\brief The seqan3::rna15 string literal.
  * \relates seqan3::rna15
  * \returns seqan3::rna15_vector
  *
  * You can use this string literal to easily assign to rna15_vector:
  *
- *\snippet test/snippet/alphabet/nucleotide/rna15.cpp operator""_rna15
+ * \snippet test/snippet/alphabet/nucleotide/rna15.cpp operator""_rna15
  *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
  */
-
-inline rna15_vector operator""_rna15(const char * s, std::size_t n)
+inline rna15_vector operator""_rna15(char const * s, std::size_t n)
 {
     rna15_vector r;
     r.resize(n);
@@ -243,5 +176,29 @@ inline rna15_vector operator""_rna15(const char * s, std::size_t n)
 
     return r;
 }
+//!\}
 
-} // namespace seqan3::literal
+// ------------------------------------------------------------------
+// rna15 (deferred definition)
+// ------------------------------------------------------------------
+
+constexpr std::array<rna15, rna15::value_size> rna15::complement_table
+{
+    'U'_rna15,    // complement of 'A'_rna15
+    'V'_rna15,    // complement of 'B'_rna15
+    'G'_rna15,    // complement of 'C'_rna15
+    'H'_rna15,    // complement of 'D'_rna15
+    'C'_rna15,    // complement of 'G'_rna15
+    'D'_rna15,    // complement of 'H'_rna15
+    'M'_rna15,    // complement of 'K'_rna15
+    'K'_rna15,    // complement of 'M'_rna15
+    'N'_rna15,    // complement of 'N'_rna15
+    'Y'_rna15,    // complement of 'R'_rna15
+    'S'_rna15,    // complement of 'S'_rna15
+    'A'_rna15,    // complement of 'U'_rna15
+    'B'_rna15,    // complement of 'V'_rna15
+    'W'_rna15,    // complement of 'W'_rna15
+    'R'_rna15     // complement of 'Y'_rna15
+};
+
+} // namespace seqan3

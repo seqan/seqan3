@@ -47,7 +47,7 @@ using namespace seqan3::literal;
 
 TEST(view_rank_to, basic)
 {
-    std::vector<unsigned> vec{0,1,3,3,3,2,0,3,0};
+    std::vector<unsigned> vec{0,1,4,4,4,2,0,4,0};
     dna5_vector cmp{"ACTTTGATA"_dna5};
 
     // pipe notation
