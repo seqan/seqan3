@@ -65,7 +65,6 @@ TEST(validator_test, no_file)
     EXPECT_THROW(my_validator(s), parser_invalid_argument);
 
     filesystem::path file_in_path;
-    std::vector<filesystem::path> path_vector;
 
      // option
      const char * argv[] = {"./argument_parser_test", "-i", "./sandbox.fasta"};
@@ -78,21 +77,20 @@ TEST(validator_test, no_file)
 
 TEST(validator_test, file_exists)
 {
-    test::tmp_filename tmp_file_name{"./testbox.fasta"};
+    test::tmp_filename tmp_file_name{"testbox.fasta"};
     std::ofstream tmp_file(tmp_file_name.get_path());
     file_existance_validator my_validator{};
     EXPECT_NO_THROW(my_validator(tmp_file_name.get_path()));
 
     filesystem::path file_in_path;
-    std::vector<filesystem::path> path_vector;
-    
+
     // option
-    const char * argv[] = {"./argument_parser_test", "-i", "./testbox.fasta"};
+    const char * argv[] = {"./argument_parser_test", "-i", tmp_file_name.get_path().c_str()};
     argument_parser parser("test_parser", 3, argv);
     parser.add_option(file_in_path, 'i', "int-option", "desc",
                       option_spec::DEFAULT, file_existance_validator());
 
-    EXPECT_THROW(parser.parse(), parser_invalid_argument);
+    EXPECT_NO_THROW(parser.parse());
 }
 
 TEST(validator_test, integral_range_validator_success)
