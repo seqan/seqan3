@@ -361,7 +361,7 @@ private:
  * The struct then acts as a functor that throws a seqan3::parser_invalid_argument
  * exception whenever a given filename (string) does not exist.
  *
- * \snippet test/snippet/argument_parser/validators_5.cpp usage
+ * \snippet test/snippet/argument_parser/validators_file_existance.cpp usage
  */
 class file_existance_validator
 {
