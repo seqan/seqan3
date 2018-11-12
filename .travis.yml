@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+dist: xenial
 language: cpp
 
 git:
@@ -19,9 +19,23 @@ linux-gcc-7: &linux-gcc-7
   before_install:
     - export CC="gcc-7" CXX="g++-7"
 
+linux-gcc-8: &linux-gcc-8
+  os: linux
+  compiler: 'g++-8'
+  addons:
+    apt:
+      sources: ['ubuntu-toolchain-r-test']
+      packages: ['g++-8']
+  before_install:
+    - export CC="gcc-8" CXX="g++-8"
+
 # https://docs.travis-ci.com/user/languages/c/#gcc-on-linux
 matrix:
   include:
+  - << : *linux-gcc-8
+    env:
+      - BUILD=unit
+      - BUILD_TYPE=Release
   - << : *linux-gcc-7
     env:
       - BUILD=unit
@@ -34,10 +48,6 @@ matrix:
     env:
       - BUILD=performance
       - BUILD_TYPE=Release
-  - << : *linux-gcc-7
-    env:
-      - BUILD=performance
-      - BUILD_TYPE=Debug
   - << : *linux-gcc-7
     env:
       - BUILD=header
