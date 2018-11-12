@@ -53,7 +53,7 @@ std::vector<T> uniquify(std::vector<T> v)
 template <typename T>
 std::vector<std::vector<T>> uniquify(std::vector<std::vector<T>> v)
 {
-    std::for_each(v.begin(), v.end(), [](auto & hits) { uniquify(hits); } );
+    std::for_each(v.begin(), v.end(), [] (auto & hits) { uniquify(hits); } );
     return v;
 }
 

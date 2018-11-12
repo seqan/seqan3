@@ -92,6 +92,9 @@ TEST(search_scheme_test, error_distribution_coverage_optimum_search_schemes)
 
     error_distributions<2, 3, true>(expected, actual);
     EXPECT_EQ(actual, expected);
+
+    error_distributions<3, 3, true>(expected, actual);
+    EXPECT_EQ(actual, expected);
 }
 
 TEST(search_scheme_test, error_distribution_coverage_computed_search_schemes)

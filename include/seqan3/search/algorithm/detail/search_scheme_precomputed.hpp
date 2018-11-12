@@ -52,7 +52,7 @@ template <uint8_t nbr_blocks>
 struct search
 {
     //!\brief Type for storing the length of blocks
-    typedef std::array<uint64_t, nbr_blocks> blocks_length_type;
+    typedef std::array<size_t, nbr_blocks> blocks_length_type;
 
     //!\brief Order of blocks
     std::array<uint8_t, nbr_blocks> pi;
@@ -73,7 +73,7 @@ struct search
 struct search_dyn
 {
     //!\brief Type for storing the length of blocks
-    typedef std::vector<uint64_t> blocks_length_type;
+    typedef std::vector<size_t> blocks_length_type;
 
     //!\brief Order of blocks
     std::vector<uint8_t> pi;
@@ -100,7 +100,7 @@ using search_scheme_dyn_type = std::vector<search_dyn>;
  * \tparam min_error Lower bound of errors.
  * \tparam max_error Upper bound of errors.
  * \details Please note that the searches within each search scheme are sorted by their asymptotical running time
- *         (i.e. upper error bound string). s.t. easy to compute searches come first. This improves the running time of
+ *         (i.e. upper error bound string), s.t. easy to compute searches come first. This improves the running time of
  *         algorithms that abort after the first hit (e.g. search mode: best). Even though it is not guaranteed, this
  *         seems to be a good greedy approach.
  */
@@ -181,8 +181,16 @@ inline search_scheme_type<4, 5> constexpr optimum_search_scheme<2, 3>
     {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
 }};
 
+template <>
+inline search_scheme_type<4, 5> constexpr optimum_search_scheme<3, 3>
+{{
+    {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 3}, {0, 0, 3, 3, 3}},
+    {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 3}, {0, 1, 1, 2, 3}},
+    {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 3}, {0, 1, 2, 2, 3}},
+    {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
+}};
+
 // TODO: add the following missing optimum search schemes (computation has not finished yet)
-// optimum_search_scheme<3, 3>
 // optimum_search_scheme<i, 4>, 0 < i <= 4
 
 //!\endcond

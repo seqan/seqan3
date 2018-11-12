@@ -49,23 +49,25 @@ namespace seqan3
 /*!\brief Search a query or a range of queries in an index.
  * \param[in] index String index to be searched. Must model seqan3::fm_index_concept.
  * \param[in] queries A single query or a range of queries. A query must model std::ranges::RandomAccessRange,
-                      a range of queries must model std::ranges::SizedRange.
+                      a range of queries must model std::ranges::ForwardRange.
  * \param[in] cfg A configuration object specifying the search parameters (e.g. number of errors, error types,
  *                output format, etc.).
+ * \return    Returns an object modelling std::ranges::Range containing the hits,
+ *            or `void` if an on_hit delegate has been specified.
  *
  * ### Complexity
  *
- * Exponential in the numbers of errors.
+ * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$.
  *
  * ### Exceptions
  *
- * Basic exception guarantee.
+ * Strong exception guarantee if iterating the query does not change its state; basic exception guarantee otherwise.
  */
 template <typename queries_t, typename config_t>
 //!\cond
     requires
         (std::ranges::RandomAccessRange<queries_t> ||
-            (std::ranges::SizedRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
+            (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
         detail::is_algorithm_configuration_v<remove_cvref_t<config_t>>
 //!\endcond
 inline auto search(fm_index_concept const & index, queries_t && queries, config_t const & cfg)
@@ -112,20 +114,21 @@ inline auto search(fm_index_concept const & index, queries_t && queries, config_
  *        It will not allow for any errors and will output all matches as positions in the text.
  * \param[in] index String index to be searched. Must model seqan3::fm_index_concept.
  * \param[in] queries A single query or a range of queries. A query must model std::ranges::RandomAccessRange,
-                      a range of queries must model std::ranges::SizedRange.
+                      a range of queries must model std::ranges::ForwardRange.
+ * \return   Returns an object modelling std::ranges::Range containing the hits.
  *
  * ### Complexity
  *
- * Exponential in the numbers of errors.
+ * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$.
  *
  * ### Exceptions
  *
- * Basic exception guarantee.
+ * Strong exception guarantee if iterating the query does not change its state; basic exception guarantee otherwise.
  */
 template <typename queries_t>
 //!\cond
     requires std::ranges::RandomAccessRange<queries_t> ||
-             (std::ranges::SizedRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
+             (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
 //!\endcond
 inline auto search(fm_index_concept const & index, queries_t && queries)
 {

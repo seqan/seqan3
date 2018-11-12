@@ -56,14 +56,25 @@ namespace seqan3::detail
  * \{
  */
 
-/*!\brief Computes a (non-optimal) search scheme. Currently the generated search scheme represents trivial
- *        backtracking.
+/*!\brief Computes a (non-optimal) search scheme. Currently the generated search scheme represents trivial backtracking.
  * \param[in] min_error Minimum number of errors allowed.
  * \param[in] max_error Maximum number of errors allowed.
+ *
+ * ### Complexity
+ *
+ * Constant.
+ *
+ * ### Exceptions
+ *
+ * Strong exception guarantee.
  */
 inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const max_error)
 {
     // TODO: Replace this at least by the pigeonhole principle or even better by 01*0 schemes.
+    // NOTE: Make sure that the searches are sorted by their asymptotical running time (i.e. upper error bound string),
+    //       s.t. easy to compute searches come first. This improves the running time of algorithms that abort after the
+    //       first hit (e.g. search mode: best). Even though it is not guaranteed, this seems to be a good greedy
+    //       approach.
     std::vector<search_dyn> scheme{{{1}, {min_error}, {max_error}}};
     return scheme;
 }
@@ -72,28 +83,38 @@ inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const
  *        starting position of the first block in the query sequence.
  * \param[in] search_scheme Search scheme that will be used for searching.
  * \param[in] query_length Length of the query that will be searched in an index.
+ * \return    Returns a range of pairs containing for each search the cumulative lengths of blocks and the starting
+ *            position in the query.
+ *
+ * ### Complexity
+ *
+ * Constant.
+ *
+ * ### Exceptions
+ *
+ * Strong exception guarantee.
  */
 template <typename search_scheme_t>
-inline auto search_scheme_block_info(search_scheme_t const & search_scheme, uint64_t const query_length)
+inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size_t const query_length)
 {
     using blocks_length_type = typename search_scheme_t::value_type::blocks_length_type;
 
+    bool constexpr is_dyn_scheme = std::Same<search_scheme_t, search_scheme_dyn_type>;
+
     // Either store information in an array (for search schemes known at compile time) or in a vector otherwise.
-    using result_type = std::conditional_t<std::Same<search_scheme_t, search_scheme_dyn_type>,
-                                           std::vector<std::tuple<blocks_length_type, uint64_t>>,
-                                           std::array<std::tuple<blocks_length_type, uint64_t>,
+    using result_type = std::conditional_t<is_dyn_scheme,
+                                           std::vector<std::tuple<blocks_length_type, size_t>>,
+                                           std::array<std::tuple<blocks_length_type, size_t>,
                                                       transformation_trait_or_t<std::tuple_size<search_scheme_t>,
                                                                                 std::false_type>::value>>;
-
-    bool constexpr is_dyn_scheme = std::Same<result_type, std::vector<std::tuple<blocks_length_type, uint64_t>>>;
 
     result_type result;
     if constexpr (is_dyn_scheme)
         result.resize(search_scheme.size());
 
-    uint8_t  const blocks      {search_scheme[0].blocks()};
-    uint64_t const block_length{query_length / blocks};
-    uint8_t  const rest        {query_length - blocks * block_length};
+    uint8_t const blocks      {search_scheme[0].blocks()};
+    size_t  const block_length{query_length / blocks};
+    uint8_t const rest        {query_length - blocks * block_length};
 
     blocks_length_type blocks_length;
     // set all blocks_length values to block_length
@@ -130,10 +151,12 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, uint
 
 //!\cond
 // forward declaration
-template <bool abort_on_hit>
-inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                      uint8_t const block_id, bool const go_right, auto const & search, auto const & blocks_length,
-                      search_param const error_left, auto && delegate);
+template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+          typename delegate_t>
+inline bool search_ss(iter_t it, query_t & query,
+                      typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+                      uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
+                      blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate);
 //!\endcond
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
@@ -150,19 +173,34 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
  * \param[in] blocks_length Cumulative block lengths of the search.
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \return    If `abort_on_hit` is true, it returns a bool iff. a hit has been found, otherwise it returns void.
+ *
+ * ### Complexity
+ *
+ * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of errors allowed by `search`.
+ *
+ * ### Exceptions
+ *
+ * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
+ * invoking the delegate; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit>
-inline bool search_ss_exact(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                            uint8_t const block_id, bool const go_right, auto const & search,
-                            auto const & blocks_length, search_param const error_left, auto && delegate)
+template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+          typename delegate_t>
+inline bool search_ss_exact(iter_t it, query_t & query,
+                            typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+                            uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
+                            search_t const & search, blocks_length_t const & blocks_length, search_param const error_left,
+                            delegate_t && delegate)
 {
+    using size_type = typename iter_t::size_type;
+
     uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
     bool const go_right2 = (block_id < search.blocks() - 1) && (search.pi[block_id + 1] > search.pi[block_id]);
 
     if (go_right)
     {
-        uint64_t const infix_lb = rb - 1; // inclusive
-        uint64_t const infix_rb = lb + blocks_length[block_id] - 1; // exclusive
+        size_type const infix_lb = rb - 1; // inclusive
+        size_type const infix_rb = lb + blocks_length[block_id] - 1; // exclusive
 
         if (!it.extend_right(query | ranges::view::slice(infix_lb, infix_rb + 1)))
             return false;
@@ -175,8 +213,8 @@ inline bool search_ss_exact(auto it, auto & query, uint64_t const lb, uint64_t c
     }
     else
     {
-        uint64_t const infix_lb = rb - blocks_length[block_id] - 1; // inclusive
-        uint64_t const infix_rb = lb - 1; // inclusive
+        size_type const infix_lb = rb - blocks_length[block_id] - 1; // inclusive
+        size_type const infix_rb = lb - 1; // inclusive
 
         if (!it.extend_left(query | ranges::view::slice(infix_lb, infix_rb + 1)))
             return false;
@@ -194,10 +232,13 @@ inline bool search_ss_exact(auto it, auto & query, uint64_t const lb, uint64_t c
  *        Sub-function for deletions at the end of a block.
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit>
-inline bool search_ss_deletion(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                               uint8_t const block_id, bool const go_right, auto const & search,
-                               auto const & blocks_length, search_param const error_left, auto && delegate)
+template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+          typename delegate_t>
+inline bool search_ss_deletion(iter_t it, query_t & query,
+                               typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+                               uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
+                               search_t const & search, blocks_length_t const & blocks_length,
+                               search_param const error_left, delegate_t && delegate)
 {
     uint8_t const max_error_left_in_block = search.u[block_id] - errors_spent;
     uint8_t const min_error_left_in_block = std::max(search.l[block_id] - errors_spent, 0);
@@ -240,32 +281,25 @@ inline bool search_ss_deletion(auto it, auto & query, uint64_t const lb, uint64_
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
  *        Sub-function for approximate search step (iterating over all children in a conceptual suffix tree).
- * \tparam    abort_on_hit            If the flag is set, the search aborts on the first hit.
- * \param[in] it                      Iterator of a string index built on the text that will be searched.
- * \param[in] query                   Query sequence to be searched.
- * \param[in] lb                      Left bound of the infix of `query` already searched (exclusive).
- * \param[in] rb                      Right bound of the infix of `query` already searched (exclusive).
- * \param[in] errors_spent            Number of errors spent while searching the infix of `query`.
- * \param[in] block_id                Id of the block that the infix is extended to next.
- * \param[in] go_right                The infix will be extended to the right if the flag is set to true.
+ * \copydetails search_ss_exact
  * \param[in] min_error_left_in_block Number of remaining errors that need to be spent in the current block.
- * \param[in] search                  Search of a search scheme to be used for searching.
- * \param[in] blocks_length           Cumulative block lengths of the search.
- * \param[in] error_left              Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate                Function that is called on every hit. Takes `index::iterator_type` as argument.
  */
-template <bool abort_on_hit>
-inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                               uint8_t const block_id, bool const go_right, uint8_t const min_error_left_in_block,
-                               auto const & search, auto const & blocks_length, search_param const error_left,
-                               auto && delegate)
+template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+          typename delegate_t>
+inline bool search_ss_children(iter_t it, query_t & query,
+                               typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+                               uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
+                               uint8_t const min_error_left_in_block, search_t const & search,
+                               blocks_length_t const & blocks_length, search_param const error_left,
+                               delegate_t && delegate)
 {
+    using size_type = typename iter_t::size_type;
     if ((go_right && it.extend_right()) || (!go_right && it.extend_left()))
     {
-        uint64_t const chars_left = blocks_length[block_id] - (rb - lb - 1);
+        size_type const chars_left = blocks_length[block_id] - (rb - lb - 1);
 
-        uint64_t lb2 = lb - !go_right;
-        uint64_t rb2 = rb + go_right;
+        size_type lb2 = lb - !go_right;
+        size_type rb2 = rb + go_right;
 
         do
         {
@@ -343,10 +377,12 @@ inline bool search_ss_children(auto it, auto & query, uint64_t const lb, uint64_
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit>
-inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const rb, uint8_t const errors_spent,
-                      uint8_t const block_id, bool const go_right, auto const & search, auto const & blocks_length,
-                      search_param const error_left, auto && delegate)
+template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t,
+          typename blocks_length_t, typename delegate_t>
+inline bool search_ss(iter_t it, query_t & query,
+                      typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+                      uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
+                      blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate)
 {
     uint8_t const max_error_left_in_block = search.u[block_id] - errors_spent;
     uint8_t const min_error_left_in_block = std::max(search.l[block_id] - errors_spent, 0); // NOTE: changed
@@ -374,8 +410,10 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
         // Insertion
         if (error_left.insertion > 0)
         {
-            uint64_t const lb2 = lb - !go_right;
-            uint64_t const rb2 = rb + go_right;
+            using size_type = typename iter_t::size_type;
+
+            size_type const lb2 = lb - !go_right;
+            size_type const rb2 = rb + go_right;
 
             search_param error_left2{error_left};
             error_left2.total--;
@@ -423,10 +461,19 @@ inline bool search_ss(auto it, auto & query, uint64_t const lb, uint64_t const r
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] search_scheme Search scheme to be used for searching.
  * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
+ *
+ * ### Complexity
+ *
+ * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of maximum errors.
+ *
+ * ### Exceptions
+ *
+ * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
+ * invoking the delegate; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit>
-inline void search_ss(auto const & index, auto & query, search_param const error_left, auto const & search_scheme,
-                      auto && delegate)
+template <bool abort_on_hit, typename iter_t, typename query_t, typename search_scheme_t, typename delegate_t>
+inline void search_ss(iter_t const & index, query_t & query, search_param const error_left,
+                      search_scheme_t const & search_scheme, delegate_t && delegate)
 {
     // retrieve cumulative block lengths and starting position
     auto const block_info = search_scheme_block_info(search_scheme, query.size());
@@ -460,9 +507,19 @@ inline void search_ss(auto const & index, auto & query, search_param const error
  * \param[in] query        Query sequence to be searched in the index.
  * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
+ *
+ * ### Complexity
+ *
+ * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of maximum errors.
+ *
+ * ### Exceptions
+ *
+ * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
+ * invoking the delegate; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit>
-inline void search_algo_bi(auto const & index, auto & query, search_param const error_left, auto && delegate)
+template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
+inline void search_algo_bi(index_t const & index, query_t & query, search_param const error_left,
+                           delegate_t && delegate)
 {
     switch (error_left.total)
     {
@@ -486,27 +543,20 @@ inline void search_algo_bi(auto const & index, auto & query, search_param const 
 }
 
 /*!\brief Searches a query sequence in a unidirectional index.
- * \tparam    abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] index        String index built on the text that will be searched.
- * \param[in] query        Query sequence to be searched in the index.
- * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \copydetails search_algo_bi
  */
-template <bool abort_on_hit>
-inline void search_algo_uni(auto const & index, auto & query, search_param const error_left, auto && delegate)
+template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
+inline void search_algo_uni(index_t const & index, query_t & query, search_param const error_left,
+                            delegate_t && delegate)
 {
     search_trivial<abort_on_hit>(index, query, error_left, delegate);
 }
 
 /*!\brief Searches a query sequence in an index.
- * \tparam    abort_on_hit If the flag is set, the search aborts on the first hit.
- * \param[in] index        String index built on the text that will be searched.
- * \param[in] query        Query sequence to be searched in the index.
- * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \copydetails search_algo_bi
  */
-template <bool abort_on_hit, typename index_t>
-inline void search_algo(index_t const & index, auto & query, search_param const error_left, auto && delegate)
+template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
+inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
 {
     if constexpr (bi_fm_index_concept<index_t>)
         search_algo_bi<abort_on_hit>(index, query, error_left, delegate);

@@ -57,10 +57,18 @@ namespace seqan3::detail
  * \param[in] query_pos     Position in the query sequence indicating the prefix that has already been searched.
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
+ *
+ * ### Complexity
+ *
+ * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$.
+ *
+ * ### Exceptions
+ *
+ * No-throw guarantee if this is also guaranteed when invoking the delegate.
  */
-template <bool abort_on_hit>
-inline bool search_trivial(auto it, auto & query, uint64_t const query_pos, search_param const error_left,
-                           auto && delegate)
+template <bool abort_on_hit, typename iter_t, typename delegate_t>
+inline bool search_trivial(iter_t it, auto & query, typename iter_t::size_type const query_pos,
+                           search_param const error_left, delegate_t && delegate)
 {
     // Exact case (end of query sequence or no errors left)
     if (query_pos == query.size() || error_left.total == 0)
@@ -156,14 +164,15 @@ inline bool search_trivial(auto it, auto & query, uint64_t const query_pos, sear
 *
 * ### Complexity
 *
-* Exponential in the numbers of errors.
+* Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$.
 *
 * ### Exceptions
 *
-* No-throw guarantee.
+* No-throw guarantee if this is also guaranteed when invoking the delegate.
 */
-template <bool abort_on_hit>
-inline void search_trivial(auto const & index, auto & query, search_param const error_left, auto && delegate)
+template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
+inline void search_trivial(index_t const & index, query_t & query, search_param const error_left,
+                           delegate_t && delegate)
 {
     search_trivial<abort_on_hit>(index.begin(), query, 0, error_left, delegate);
 }

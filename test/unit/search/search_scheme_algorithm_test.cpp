@@ -107,16 +107,49 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
 
     std::vector<uint64_t> hits_trivial, hits_ss;
 
-    auto delegate_trivial = [&hits_trivial](auto const & it)
+    auto delegate_trivial = [&hits_trivial] (auto const & it)
     {
         auto const & hits_tmp = it.locate();
         hits_trivial.insert(hits_trivial.end(), hits_tmp.begin(), hits_tmp.end());
     };
 
-    auto delegate_ss = [&hits_ss](auto const & it)
+    auto delegate_ss = [&hits_ss] (auto const & it)
     {
         auto const & hits_tmp = it.locate();
         hits_ss.insert(hits_ss.end(), hits_tmp.begin(), hits_tmp.end());
+    };
+
+    auto remove_predicate_ss = [&text, &orig_query, query_length] (uint64_t const hit)
+    {
+        dna4_vector matched_seq = text | ranges::view::slice(hit, hit + query_length);
+        return (matched_seq != orig_query);
+    };
+
+    auto remove_predicate_trivial = [&] (uint64_t const hit)
+    {
+        // filter only correct error distributions
+        dna4_vector matched_seq = text | ranges::view::slice(hit, hit + query_length);
+        if (orig_query != matched_seq)
+            return true;
+
+        uint64_t lb = 0, rb = 0;
+        uint8_t total_errors = 0;
+        for (uint8_t block = 0; block < search.blocks(); ++block)
+        {
+            rb += ordered_blocks_length[block];
+
+            uint8_t errors = 0;
+            for (uint64_t i = lb; i < rb; ++i)
+                if (hit + i >= text.size())
+                    ++errors;
+                else
+                    errors += query[i] != text[hit + i];
+            total_errors += errors;
+            if (errors != error_distribution[block])
+                return true;
+            lb += ordered_blocks_length[block];
+        }
+        return false;
     };
 
     uint8_t const total        = search.u.back();
@@ -131,40 +164,10 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
     detail::search_trivial<false>(it, query, 0, error_left, delegate_trivial);
 
     // Eliminate hits that we are not interested in (based on the search and chosen error distribution)
-    hits_ss.erase(std::remove_if(hits_ss.begin(), hits_ss.end(),
-                                 [&text, &orig_query, query_length](uint64_t const hit)
-                                 {
-                                     dna4_vector matched_seq = text | ranges::view::slice(hit, hit + query_length);
-                                     return (matched_seq != orig_query);
-                                 }), hits_ss.end());
+    hits_ss.erase(std::remove_if(hits_ss.begin(), hits_ss.end(), remove_predicate_ss), hits_ss.end());
 
-    hits_trivial.erase(std::remove_if(hits_trivial.begin(), hits_trivial.end(),
-                                      [&](uint64_t const hit)
-                                      {
-                                          // filter only correct error distributions
-                                          dna4_vector matched_seq = text | ranges::view::slice(hit, hit + query_length);
-                                          if (orig_query != matched_seq)
-                                              return true;
-
-                                          uint64_t lb = 0, rb = 0;
-                                          uint8_t total_errors = 0;
-                                          for (uint8_t block = 0; block < search.blocks(); ++block)
-                                          {
-                                              rb += ordered_blocks_length[block];
-
-                                              uint8_t errors = 0;
-                                              for (uint64_t i = lb; i < rb; ++i)
-                                                  if (hit + i >= text.size())
-                                                      ++errors;
-                                                  else
-                                                      errors += query[i] != text[hit + i];
-                                              total_errors += errors;
-                                              if (errors != error_distribution[block])
-                                                  return true;
-                                              lb += ordered_blocks_length[block];
-                                          }
-                                          return false;
-                                      }), hits_trivial.end());
+    hits_trivial.erase(std::remove_if(hits_trivial.begin(), hits_trivial.end(), remove_predicate_trivial),
+                       hits_trivial.end());
 
     // Eliminate duplicates
     hits_ss = uniquify(hits_ss);
@@ -269,13 +272,13 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, time_
 
                 std::vector<uint64_t> hits_trivial, hits_ss;
 
-                auto delegate_trivial = [&hits_trivial](auto const & it)
+                auto delegate_trivial = [&hits_trivial] (auto const & it)
                 {
                     auto const & hits_tmp = it.locate();
                     hits_trivial.insert(hits_trivial.end(), hits_tmp.begin(), hits_tmp.end());
                 };
 
-                auto delegate_ss = [&hits_ss](auto const & it)
+                auto delegate_ss = [&hits_ss] (auto const & it)
                 {
                     auto const & hits_tmp = it.locate();
                     hits_ss.insert(hits_ss.end(), hits_tmp.begin(), hits_tmp.end());

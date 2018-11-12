@@ -66,7 +66,7 @@ inline auto search_single(index_t const & index, auto & query, auto const & cfg)
     {
         // NOTE: Casting doubles rounds towards zero (i.e. floor for positive numbers). Thus, given a rate of
         // 10% and a read length of 101 the max number of errors is correctly casted from 10.1 errors to 10
-        std::tie(total, subs, ins, del) = std::apply([& query](auto && ... args)
+        std::tie(total, subs, ins, del) = std::apply([& query] (auto && ... args)
             {
                 return std::tuple{(args * query.size())...};
             }, get<search_cfg::id::max_error_rate>(cfg));
@@ -79,7 +79,7 @@ inline auto search_single(index_t const & index, auto & query, auto const & cfg)
 
     // construct internal delegate for collecting hits for later filtering (if necessary)
     std::vector<typename index_t::iterator_type> internal_hits;
-    auto internal_delegate = [&internal_hits, &max_error](auto const & it)
+    auto internal_delegate = [&internal_hits, &max_error] (auto const & it)
     {
         internal_hits.push_back(it);
     };
@@ -181,11 +181,11 @@ inline auto search_all(index_t const & index, queries_t & queries, auto const & 
                                      typename index_t::iterator_type,
                                      typename index_t::size_type>;
 
-    if constexpr (std::ranges::SizedRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
+    if constexpr (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
     {
         // TODO: if constexpr (contains<search_cfg::id::on_hit>(cfg))
         std::vector<std::vector<hit_t>> hits;
-        hits.reserve(queries.size());
+        hits.reserve(std::distance(queries.begin(), queries.end()));
         for (auto const query : queries)
         {
             hits.push_back(search_single(index, query, cfg));
