@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::nucleotide_concept.
+ * \brief Provides seqan3::NucleotideAlphabet.
  */
 
 #pragma once
@@ -48,13 +48,13 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::nucleotide_concept <>
- * \extends seqan3::alphabet_concept
+/*!\interface seqan3::NucleotideAlphabet <>
+ * \extends seqan3::Alphabet
  * \brief A concept that indicates whether an alphabet represents nucleotides.
  * \ingroup nucleotide
  *
- * In addition to the requirements for seqan3::alphabet_concept, the nucleotide_concept introduces
- * a requirement for a complement function: seqan3::nucleotide_concept::complement.
+ * In addition to the requirements for seqan3::Alphabet, the NucleotideAlphabet introduces
+ * a requirement for a complement function: seqan3::NucleotideAlphabet::complement.
  *
  * \par Concepts and doxygen
  * The requirements for this concept are given as related functions and metafunctions.
@@ -62,21 +62,21 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept nucleotide_concept = requires (type v)
+concept NucleotideAlphabet = requires (type v)
 {
-    requires alphabet_concept<type>;
+    requires Alphabet<type>;
 
     { complement(v) } -> std::remove_reference_t<type>;
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::nucleotide_concept
- * \brief You can expect these functions on all types that implement seqan3::nucleotide_concept.
+/*!\name Requirements for seqan3::NucleotideAlphabet
+ * \brief You can expect these functions on all types that implement seqan3::NucleotideAlphabet.
  * \{
  */
 /*!\fn nucleotide_type seqan3::complement(nucleotide_type const alph)
  * \brief Returns the alphabet letter's complement value.
- * \relates seqan3::nucleotide_concept
+ * \relates seqan3::NucleotideAlphabet
  * \param alph The alphabet letter for whom you wish to receive the complement.
  * \returns The letter's complement, e.g. 'T' for 'A'.
  * \details

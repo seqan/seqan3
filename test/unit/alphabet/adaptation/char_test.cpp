@@ -50,10 +50,10 @@ TYPED_TEST_CASE(char_adaptation, char_types);
 
 TYPED_TEST(char_adaptation, concept_check)
 {
-    EXPECT_TRUE(char_adaptation_concept<TypeParam>);
+    EXPECT_TRUE(CharAdaptation<TypeParam>);
     // NOTE: Using intermediate concept notation with forwarding references cause the concept type
     // to hold a reference.
-    EXPECT_TRUE(char_adaptation_concept<TypeParam &>);
+    EXPECT_TRUE(CharAdaptation<TypeParam &>);
 }
 
 TYPED_TEST(char_adaptation, underlying_char_t)

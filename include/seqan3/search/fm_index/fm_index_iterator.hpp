@@ -68,8 +68,8 @@ namespace seqan3
  */
 
 /*!\brief The SeqAn FM Index Iterator.
- * \implements seqan3::fm_index_iterator_concept
- * \tparam index_t The type of the underlying index; must model seqan3::fm_index_concept.
+ * \implements seqan3::FmIndexIterator
+ * \tparam index_t The type of the underlying index; must model seqan3::FmIndex.
  * \details
  *
  * The iterator's interface provides searching a string from left to right in the indexed text.
@@ -136,7 +136,7 @@ protected:
     }
 
     //!\brief Optimized backward search without alphabet mapping
-    template <detail::sdsl_index_concept csa_t>
+    template <detail::SdslIndex csa_t>
     bool backward_search(csa_t const & csa, sdsl_char_type const c, size_type & l, size_type & r) const noexcept
     {
         assert(l <= r && r < csa.size());
@@ -287,9 +287,9 @@ public:
      *
      * No-throw guarantee.
      */
-    template <alphabet_concept char_t>
+    template <Alphabet char_t>
     //!\cond
-        requires implicitly_convertible_to_concept<char_t, typename index_t::char_type>
+        requires ImplicitlyConvertibleTo<char_t, typename index_t::char_type>
     //!\endcond
     bool extend_right(char_t const c) noexcept
     {
@@ -327,7 +327,7 @@ public:
      */
     template <std::ranges::RandomAccessRange seq_t>
     //!\cond
-        requires implicitly_convertible_to_concept<innermost_value_type_t<seq_t>, typename index_t::char_type>
+        requires ImplicitlyConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>
     //!\endcond
     bool extend_right(seq_t && seq) noexcept
     {

@@ -76,25 +76,25 @@ TEST(parse_condition, parse_condition_msg)
     EXPECT_EQ(foo<'o'>::msg.string(), "foo_o"s);
 }
 
-TEST(parse_condition, parse_condition_concept)
+TEST(parse_condition, ParseCondition)
 {
     using namespace seqan3;
 
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_in_alphabet<dna4>)>);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_char<to_char(aa27::A)>)>);
-    EXPECT_TRUE((detail::parse_condition_concept<decltype(is_in_interval<'a','z'>)>));
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_space)>);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_blank)>);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_graph)>);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_alpha)>);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_digit)>);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_alnum)>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_in_alphabet<dna4>)>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_char<to_char(aa27::A)>)>);
+    EXPECT_TRUE((detail::ParseCondition<decltype(is_in_interval<'a','z'>)>));
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_space)>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_blank)>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_graph)>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_alpha)>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_digit)>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(is_alnum)>);
     // TODO(rrahn): Direct call in concept caused ICE.
     auto val = ((!is_space || is_alpha) || is_digit);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(val)>);
-    EXPECT_TRUE(detail::parse_condition_concept<foo<' '>>);
-    EXPECT_FALSE(detail::parse_condition_concept<bar>);
-    EXPECT_FALSE(detail::parse_condition_concept<int>);
+    EXPECT_TRUE(detail::ParseCondition<decltype(val)>);
+    EXPECT_TRUE(detail::ParseCondition<foo<' '>>);
+    EXPECT_FALSE(detail::ParseCondition<bar>);
+    EXPECT_FALSE(detail::ParseCondition<int>);
 }
 
 TEST(parse_condition, parse_condition_combiner)

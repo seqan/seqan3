@@ -68,7 +68,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                          |
  * | std::ranges::CommonRange        |                                       | *preserved*                                          |
  * | std::ranges::OutputRange        |                                       | *lost*                                               |
- * | seqan3::const_iterable_concept  |                                       | *preserved if std::ranges::CommonRange<urng_t>*  |
+ * | seqan3::ConstIterableRange  |                                       | *preserved if std::ranges::CommonRange<urng_t>*  |
  * |                                 |                                       |                                                      |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                          |
  *

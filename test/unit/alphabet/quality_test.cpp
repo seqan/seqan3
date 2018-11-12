@@ -126,7 +126,7 @@ TYPED_TEST(quality, conversion_rank)
 // ------------------------------------------------------------------
 
 // test provision of data type `phred_type` and phred converter.
-TYPED_TEST(quality, quality_concept)
+TYPED_TEST(quality, Quality)
 {
     TypeParam p{0};
     [[maybe_unused]] typename TypeParam::phred_type p_type = p.to_phred();

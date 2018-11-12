@@ -68,7 +68,7 @@ namespace seqan3
 {
 
 /*!\brief       The SAM format.
- * \implements  alignment_file_format_concept
+ * \implements  AlignmentFileFormat
  * \ingroup     alignment_file
  *
  * \details
@@ -161,7 +161,7 @@ public:
         { "sam" },
     };
 
-    //!\copydoc alignment_file_output_format_concept::write
+    //!\copydoc AlignmentFileOutputFormat::write
     template <typename stream_type,
               typename seq_type,
               typename id_type,
@@ -212,27 +212,27 @@ public:
         // Type Requirements (as static asserts for user friendliness)
         // ---------------------------------------------------------------------
         static_assert((std::ranges::ForwardRange<seq_type>        &&
-                      alphabet_concept<value_type_t<remove_cvref_t<seq_type>>>),
+                      Alphabet<value_type_t<remove_cvref_t<seq_type>>>),
                       "The seq object must be a std::ranges::ForwardRange over "
-                      "letters that model seqan3::alphabet_concept.");
+                      "letters that model seqan3::Alphabet.");
 
         static_assert((std::ranges::ForwardRange<id_type>         &&
-                      alphabet_concept<value_type_t<remove_cvref_t<id_type>>>),
+                      Alphabet<value_type_t<remove_cvref_t<id_type>>>),
                       "The id object must be a std::ranges::ForwardRange over "
-                      "letters that model seqan3::alphabet_concept.");
+                      "letters that model seqan3::Alphabet.");
 
         static_assert(std::UnsignedIntegral<remove_cvref_t<offset_type>>,
                       "The offset object must be a std::UnsignedIntegral.");
 
         static_assert((std::ranges::ForwardRange<ref_seq_type>    &&
-                      alphabet_concept<value_type_t<remove_cvref_t<ref_seq_type>>>),
+                      Alphabet<value_type_t<remove_cvref_t<ref_seq_type>>>),
                       "The ref_seq object must be a std::ranges::ForwardRange "
-                      "over letters that model seqan3::alphabet_concept.");
+                      "over letters that model seqan3::Alphabet.");
 
         static_assert((std::ranges::ForwardRange<ref_id_type>     &&
-                      alphabet_concept<value_type_t<remove_cvref_t<ref_id_type>>>),
+                      Alphabet<value_type_t<remove_cvref_t<ref_id_type>>>),
                       "The ref_id object must be a std::ranges::ForwardRange "
-                      "over letters that model seqan3::alphabet_concept.");
+                      "over letters that model seqan3::Alphabet.");
 
         static_assert(std::Integral<remove_cvref_t<ref_offset_type>>, // -1 is given default to evaluate to 0
                       "The ref_offset object must be an std::Integral >= 0.");
@@ -240,7 +240,7 @@ public:
         if (((ref_offset + 1) < 0))
             throw format_error("The ref_offset object must be an std::Integral >= 0.");
 
-        static_assert(tuple_like_concept<remove_cvref_t<align_type>>,
+        static_assert(TupleLike<remove_cvref_t<align_type>>,
                       "The align object must be a std::pair of two ranges whose "
                       "value_type is comparable to seqan3::gap");
 
@@ -257,22 +257,22 @@ public:
                       "The mapq object must be a std::UnsignedIntegral.");
 
         static_assert((std::ranges::ForwardRange<qual_type>       &&
-                       alphabet_concept<value_type_t<remove_cvref_t<qual_type>>>),
+                       Alphabet<value_type_t<remove_cvref_t<qual_type>>>),
                       "The qual object must be a std::ranges::ForwardRange "
-                      "over letters that model seqan3::alphabet_concept.");
+                      "over letters that model seqan3::Alphabet.");
 
-        static_assert(tuple_like_concept<remove_cvref_t<mate_type>>,
+        static_assert(TupleLike<remove_cvref_t<mate_type>>,
                       "The mate object must be a std::tuple of size 3 with "
-                      "1) a std::ranges::ForwardRange with a value_type modelling seqan3::alphabet_concept, "
+                      "1) a std::ranges::ForwardRange with a value_type modelling seqan3::Alphabet, "
                       "2) an std::UnsignedIntegral, and"
                       "3) an std::UnsignedIntegral.");
 
         static_assert((std::ranges::ForwardRange<decltype(std::get<0>(mate))>                     &&
-                      alphabet_concept<value_type_t<remove_cvref_t<decltype(std::get<0>(mate))>>> &&
+                      Alphabet<value_type_t<remove_cvref_t<decltype(std::get<0>(mate))>>> &&
                       std::UnsignedIntegral<remove_cvref_t<decltype(std::get<1>(mate))>>          &&
                       std::UnsignedIntegral<remove_cvref_t<decltype(std::get<2>(mate))>>),
                       "The mate object must be a std::tuple of size 3 with "
-                      "1) a std::ranges::ForwardRange with a value_type modelling seqan3::alphabet_concept, "
+                      "1) a std::ranges::ForwardRange with a value_type modelling seqan3::Alphabet, "
                       "2) an std::UnsignedIntegral, and"
                       "3) an std::UnsignedIntegral.");
 
@@ -406,7 +406,7 @@ protected:
         {
             using T = remove_cvref_t<decltype(arg)>;
 
-            if constexpr (!container_concept<T>)
+            if constexpr (!ContainerRange<T>)
             {
                 stream << arg;
             }

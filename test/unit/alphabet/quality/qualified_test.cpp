@@ -46,9 +46,9 @@ using namespace seqan3;
 TEST(qualified, concept_check)
 {
     // if the first template argument is a nucleotide, qualified models the nucleotide concept
-    EXPECT_TRUE((nucleotide_concept<qualified<dna4, phred42>>));
+    EXPECT_TRUE((NucleotideAlphabet<qualified<dna4, phred42>>));
     // else, qualified models the nucleotide concept
-    EXPECT_TRUE((alphabet_concept<qualified<char, phred42>>));
+    EXPECT_TRUE((Alphabet<qualified<char, phred42>>));
 }
 
 TEST(qualified, rank_type)

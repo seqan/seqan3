@@ -45,7 +45,7 @@
  */
 
 #include <seqan3/io/sequence_file/format_fasta.hpp>
-#include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/InputFormat.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/io/sequence_file/output_format_concept.hpp>
+#include <seqan3/io/sequence_file/OutputFormat.hpp>
 #include <seqan3/io/sequence_file/output.hpp>

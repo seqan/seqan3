@@ -43,7 +43,7 @@
 using namespace seqan3;
 
 // These test case only test seqan3::union_composition specific functions/properties that are not offered by the general
-// `seqan3::alphabet_concept` interface. Those common interface function of `seqan3::union_composition` will be tested
+// `seqan3::Alphabet` interface. Those common interface function of `seqan3::union_composition` will be tested
 // in `alphabet/alphabet_test.hpp`.
 
 TEST(union_composition_test, initialise_from_component_alphabet)
@@ -257,7 +257,7 @@ TEST(union_composition_test, compare_to_component_alphabet_subtype)
 
 TEST(union_composition_test, fulfills_concepts)
 {
-    EXPECT_TRUE((alphabet_concept<union_composition<dna5, gap>>));
+    EXPECT_TRUE((Alphabet<union_composition<dna5, gap>>));
 }
 
 TEST(union_composition_test, rank_type)

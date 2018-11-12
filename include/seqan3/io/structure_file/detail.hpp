@@ -42,7 +42,7 @@
 #include <map>
 #include <stack>
 
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/RnaStructure.hpp>
 
 namespace seqan3::detail
 {
@@ -50,7 +50,7 @@ namespace seqan3::detail
  * \brief Transforms a structure annotation string into a base pair probability matrix.
  * \ingroup structure_file
  * \throws seqan3::parse_error if unpaired brackets are found in the structure annotation.
- * \tparam structure_alph_type The type of the structure alphabet; must satisfy seqan3::rna_structure_concept.
+ * \tparam structure_alph_type The type of the structure alphabet; must satisfy seqan3::RnaStructure.
  * \tparam bpp_type            The type of the target matrix.
  * \tparam structure_type      The range type of the structure annotation.
  * \param[out] bpp             The target matrix that receives the base pair probabilities.
@@ -62,7 +62,7 @@ template <typename structure_alph_type, typename bpp_type, std::ranges::Range st
 inline
 void bpp_from_rna_structure(bpp_type & bpp, structure_type const & structure, double weight = 1.)
 {
-    if constexpr (!rna_structure_concept<structure_alph_type>)
+    if constexpr (!RnaStructure<structure_alph_type>)
         throw parse_error{"Cannot create base pair probabilities from a structure that is not RNA structure."};
 
     bpp.clear();

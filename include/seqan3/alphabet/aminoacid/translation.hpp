@@ -70,7 +70,7 @@ namespace seqan3
  *
  * No-throw guarantee.
 */
-template <genetic_code gc = genetic_code::CANONICAL, nucleotide_concept nucl_type>
+template <genetic_code gc = genetic_code::CANONICAL, NucleotideAlphabet nucl_type>
 constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) noexcept
 {
     return seqan3::detail::translation_table<nucl_type, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
@@ -95,9 +95,9 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
 template <genetic_code gc = genetic_code::CANONICAL, typename tuple_type>
 //!\cond
     requires std::tuple_size<tuple_type>::value == 3 &&
-             nucleotide_concept<std::tuple_element_t<0, tuple_type>> &&
-             nucleotide_concept<std::tuple_element_t<1, tuple_type>> &&
-             nucleotide_concept<std::tuple_element_t<2, tuple_type>>
+             NucleotideAlphabet<std::tuple_element_t<0, tuple_type>> &&
+             NucleotideAlphabet<std::tuple_element_t<1, tuple_type>> &&
+             NucleotideAlphabet<std::tuple_element_t<2, tuple_type>>
 //!\endcond
 constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
 {
@@ -122,7 +122,7 @@ constexpr aa27 translate_triplet(tuple_type const & input_tuple) noexcept
 */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::InputRange range_type>
     //!\cond
-    requires nucleotide_concept<std::decay_t<reference_t<std::decay_t<range_type>>>>
+    requires NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<range_type>>>>
     //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {
@@ -156,7 +156,7 @@ constexpr aa27 translate_triplet(range_type && input_range)
 */
 template <genetic_code gc = genetic_code::CANONICAL, std::ranges::RandomAccessRange range_type>
 //!\cond
-    requires nucleotide_concept<std::decay_t<reference_t<std::decay_t<range_type>>>>
+    requires NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<range_type>>>>
 //!\endcond
 constexpr aa27 translate_triplet(range_type && input_range)
 {

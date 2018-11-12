@@ -149,7 +149,7 @@ template <>
 struct on_search_config<search_cfg::id::max_error_rate>
 {
     //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
+    template <ConfigElement t>
     using invoke = typename std::is_same<t, search_config_max_error_rate>::type;
 };
 

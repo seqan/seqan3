@@ -95,7 +95,7 @@ private:
     ranges::semiregular_t<fun_t> fun;
 
     //!\brief Whether this view is const_iterable or not.
-    static constexpr bool const_iterable = const_iterable_concept<urng_t> &&
+    static constexpr bool const_iterable = ConstIterableRange<urng_t> &&
                                            std::RegularInvocable<fun_t, reference_t<urng_t>>;
 
     //!\brief The sentinel type is identical to that of the underlying range.
@@ -303,11 +303,11 @@ public:
     //!\}
 
     /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must model seqan3::sequence_container_concept and it's
+     * \tparam container_t Type of the container to convert to; must model seqan3::SequenceContainerRangeRange and it's
      *                     seqan3::reference_t must model std::CommonReference with `reference`.
      * \returns This view converted to container_t.
      */
-    template <sequence_container_concept container_t>
+    template <SequenceContainerRangeRange container_t>
     operator container_t()
     //!\cond
         requires std::CommonReference<reference_t<container_t>, reference>
@@ -319,10 +319,10 @@ public:
     }
 
     //!\overload
-    template <sequence_container_concept container_t>
+    template <SequenceContainerRangeRange container_t>
     operator container_t() const
     //!\cond
-        requires std::CommonReference<reference_t<container_t>, reference> && const_iterable_concept<urng_t>
+        requires std::CommonReference<reference_t<container_t>, reference> && ConstIterableRange<urng_t>
     //!\endcond
     {
         container_t ret;
@@ -428,7 +428,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | depends on functor (see below)                     |
+ * | seqan3::ConstIterableRange  |                                       | depends on functor (see below)                     |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -437,7 +437,7 @@ namespace seqan3::view
  * This view only *preserves* certain concepts if the specified functor models
  * seqan3::regular_std::Invocable<fun_t, reference_t<urng_t>, i.e.
  * applying the functor doesn't change the functor. If the functor only models std::Invocable and not
- * seqan3::regular_invocable_concept these concepts are *lost*.
+ * seqan3::RegularInvocable these concepts are *lost*.
  *
  * ### Example
  *

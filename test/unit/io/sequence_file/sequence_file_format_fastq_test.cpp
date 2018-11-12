@@ -40,8 +40,8 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/quality/all.hpp>
-#include <seqan3/io/sequence_file/input_format_concept.hpp>
-#include <seqan3/io/sequence_file/output_format_concept.hpp>
+#include <seqan3/io/sequence_file/InputFormat.hpp>
+#include <seqan3/io/sequence_file/OutputFormat.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/range/view/convert.hpp>
 
@@ -66,8 +66,8 @@ inline std::vector<phred42> operator""_phred42(const char * s, std::size_t n)
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((sequence_file_input_format_concept<sequence_file_format_fastq>));
-    EXPECT_TRUE((sequence_file_output_format_concept<sequence_file_format_fastq>));
+    EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_fastq>));
+    EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_fastq>));
 }
 
 // ----------------------------------------------------------------------------

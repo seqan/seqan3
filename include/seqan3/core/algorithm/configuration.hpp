@@ -70,7 +70,7 @@ class configuration_fn_base;
  * \ingroup algorithm
  *
  * \tparam configs_t Template parameter pack containing all the inherited configs. Each must satisfy the
- *                   seqan3::detail::config_element_concept
+ *                   seqan3::detail::ConfigElement
  *
  * \details
  *
@@ -125,11 +125,11 @@ class configuration_fn_base;
  *  every algorithm will expose a enum based get interface, that allows to access the element associated with the
  * enum identifier. The details can be found in the respective algorithm description.
  */
-template <config_element_concept ... configs_t>
+template <ConfigElement ... configs_t>
 class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
-    template <config_element_concept ... _configs_t>
+    template <ConfigElement ... _configs_t>
     friend class configuration;
 
 public:
@@ -215,7 +215,7 @@ public:
      *
      * Linear in the number of elements.
      */
-    template <config_element_concept config_element_t>
+    template <ConfigElement config_element_t>
     constexpr auto push_front(config_element_t && cfg_element) const &
     {
         return detail::configuration{std::tuple_cat(std::tuple{std::forward<config_element_t>(cfg_element)},
@@ -223,7 +223,7 @@ public:
     }
 
     //!\copydoc push_front
-    template <config_element_concept config_element_t>
+    template <ConfigElement config_element_t>
     constexpr auto push_front(config_element_t && cfg_element) &&
     {
         return detail::configuration{std::tuple_cat(std::tuple{std::forward<config_element_t>(cfg_element)},
@@ -247,8 +247,8 @@ public:
      *
      * Linear in the number of elements.
      */
-    template <config_element_concept old_config_element_t,
-              config_element_concept new_config_element_t>
+    template <ConfigElement old_config_element_t,
+              ConfigElement new_config_element_t>
     constexpr auto replace_with(old_config_element_t const & SEQAN3_DOXYGEN_ONLY(old_element),
                                 new_config_element_t && new_element) const &
     {
@@ -265,8 +265,8 @@ public:
     }
 
     //!\copydoc replace_with
-    template <config_element_concept old_config_element_t,
-              config_element_concept new_config_element_t>
+    template <ConfigElement old_config_element_t,
+              ConfigElement new_config_element_t>
     constexpr auto replace_with(old_config_element_t const & SEQAN3_DOXYGEN_ONLY(old_element),
                                 new_config_element_t && new_element) &&
     {
@@ -596,7 +596,7 @@ namespace std
 /*!\brief Returns the number of elements stored in seqan3::detail::configuration.
  * \ingroup algorithm
  */
-template <seqan3::detail::config_element_concept ... configs_t>
+template <seqan3::detail::ConfigElement ... configs_t>
 struct tuple_size<seqan3::detail::configuration<configs_t...>>
 {
     //!\brief The number of elements.
@@ -606,7 +606,7 @@ struct tuple_size<seqan3::detail::configuration<configs_t...>>
 /*!\brief Returns the type of the element at the specified position within seqan3::detail::configuration.
  * \ingroup algorithm
  */
-template <size_t pos, seqan3::detail::config_element_concept ... configs_t>
+template <size_t pos, seqan3::detail::ConfigElement ... configs_t>
 struct tuple_element<pos, seqan3::detail::configuration<configs_t...>>
 {
     //!\brief The type of the config at position `pos`

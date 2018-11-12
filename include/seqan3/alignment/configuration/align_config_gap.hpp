@@ -75,7 +75,7 @@ struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_
      * \returns A new configuration containing the gap configuration element.
      */
     template <typename configuration_type,
-              arithmetic_concept value_type>
+              Arithmetic value_type>
     //!\cond
         requires is_algorithm_configuration_v<remove_cvref_t<configuration_type>>
     //!\endcond
@@ -95,7 +95,7 @@ struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_
      * \returns A new configuration containing the gap configuration element.
      */
     template <typename configuration_type,
-              arithmetic_concept value_type>
+              Arithmetic value_type>
     //!\cond
         requires is_algorithm_configuration_v<remove_cvref_t<configuration_type>>
     //!\endcond
@@ -116,7 +116,7 @@ struct align_config_gap_adaptor : public configuration_fn_base<align_config_gap_
      * \returns A new configuration containing the gap configuration element.
      */
     template <typename configuration_type,
-              arithmetic_concept value_type>
+              Arithmetic value_type>
     //!\cond
         requires is_algorithm_configuration_v<remove_cvref_t<configuration_type>>
     //!\endcond
@@ -138,7 +138,7 @@ template <>
 struct on_align_config<align_cfg::id::gap>
 {
     //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
+    template <ConfigElement t>
     using invoke = typename is_type_specialisation_of<t, align_config_gap>::type;
 };
 

@@ -193,7 +193,7 @@ public:
      *                     regarded as a container).
      *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::validator_concept.
+     *                        value. Must satisfy seqan3::Validator.
      *
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  short_id  The short identifier for the option (e.g. 'a').
@@ -204,10 +204,10 @@ public:
      *
      * \throws seqan3::parser_design_error
      */
-    template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
+    template <typename option_type, Validator validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (istream_concept<std::istringstream, option_type> ||
-                  istream_concept<std::istringstream, typename option_type::value_type>) &&
+        requires (Istream<std::istringstream, option_type> ||
+                  Istream<std::istringstream, typename option_type::value_type>) &&
                  std::is_same_v<typename validator_type::value_type, option_type>
     //!\endcond
     void add_option(option_type & value,
@@ -265,7 +265,7 @@ public:
      *                     regarded as a container).
      *                     See <a href="http://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::validator_concept.
+     *                        value. Must satisfy seqan3::Validator.
      *
      * \param[out] value     The variable in which to store the given command line argument.
      * \param[in]  desc      The description of the positional option to be shown in the help page.
@@ -277,10 +277,10 @@ public:
      *
      * The validator must be applicable to the given output variable (\p value).
      */
-    template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
+    template <typename option_type, Validator validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (istream_concept<std::istringstream, option_type> ||
-                  istream_concept<std::istringstream, typename option_type::value_type>) &&
+        requires (Istream<std::istringstream, option_type> ||
+                  Istream<std::istringstream, typename option_type::value_type>) &&
                  std::is_same_v<typename validator_type::value_type, option_type>
     //!\endcond
     void add_positional_option(option_type & value,

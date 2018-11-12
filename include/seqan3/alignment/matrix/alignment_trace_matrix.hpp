@@ -42,7 +42,7 @@
 #include <deque>
 #include <vector>
 
-#include <seqan3/alignment/matrix/matrix_concept.hpp>
+#include <seqan3/alignment/matrix/Matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
@@ -82,9 +82,9 @@ namespace seqan3::detail
 {
 
 //!\brief The declaration of alignment_trace_matrix. Each definition of this
-//!       declaration must satisfy seqan3::detail::matrix_concept.
+//!       declaration must satisfy seqan3::detail::Matrix.
 //!\ingroup alignment_matrix
-//!\implements seqan3::detail::matrix_concept
+//!\implements seqan3::detail::Matrix
 template <typename ...>
 class alignment_trace_matrix;
 
@@ -108,7 +108,7 @@ struct alignment_coordinate
  */
  template <typename trace_matrix_t>
  //!\cond
-     requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
+     requires Matrix<remove_cvref_t<trace_matrix_t>> &&
               std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
  //!\endcond
 inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
@@ -177,7 +177,7 @@ template <
     typename gapped_database_alphabet_t = gapped<value_type_t<database_t>>,
     typename gapped_query_alphabet_t = gapped<value_type_t<query_t>>>
 //!\cond
-    requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
+    requires Matrix<remove_cvref_t<trace_matrix_t>> &&
              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
 //!\endcond
 inline std::pair<std::vector<gapped_database_alphabet_t>, std::vector<gapped_query_alphabet_t>>
@@ -293,7 +293,7 @@ public:
  */
 template <typename database_type, typename query_type, typename align_config_type, typename ...score_matrix_params_t>
 //!\cond
-    requires matrix_concept<alignment_score_matrix<score_matrix_params_t...>> &&
+    requires Matrix<alignment_score_matrix<score_matrix_params_t...>> &&
              std::Integral<typename alignment_score_matrix<score_matrix_params_t...>::entry_type>
 //!\endcond
 class alignment_trace_matrix<database_type, query_type, align_config_type, alignment_score_matrix<score_matrix_params_t...>>
@@ -306,7 +306,7 @@ public:
     //!\brief The type of an entry in the score matrix.
     using score_type = typename score_matrix_type::entry_type;
 
-    //!\copydoc seqan3::detail::matrix_concept::entry_type
+    //!\copydoc seqan3::detail::Matrix::entry_type
     using entry_type = trace_directions;
 
     /*!\name Constructors, destructor and assignment
@@ -334,9 +334,9 @@ public:
     {}
     //!\}
 
-    //!\copydoc seqan3::detail::matrix_concept::rows
+    //!\copydoc seqan3::detail::Matrix::rows
     using score_matrix_type::rows;
-    //!\copydoc seqan3::detail::matrix_concept::cols
+    //!\copydoc seqan3::detail::Matrix::cols
     using score_matrix_type::cols;
 
     //!\brief The trace directions of the matrix at position (*row*, *col*).

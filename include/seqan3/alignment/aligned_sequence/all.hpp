@@ -39,10 +39,10 @@
 
 #pragma once
 
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/aligned_sequence/AlignedSequenceRange.hpp>
 
 /*!\defgroup aligned_sequence Aligned Sequence
  * \ingroup alignment
- * \brief Provides seqan3::aligned_sequence_concept, as well as various ranges
+ * \brief Provides seqan3::AlignedSequenceRange, as well as various ranges
  * that model it.
  */

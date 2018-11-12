@@ -46,7 +46,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::const_iterable_concept <>
+/*!\interface seqan3::ConstIterableRange <>
  * \extends std::InputRange
  * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
  * same strength input range concept as the non-const version.
@@ -66,7 +66,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept const_iterable_concept =
+concept ConstIterableRange =
     std::ranges::InputRange<std::remove_const_t<type>> &&
     std::ranges::InputRange<type const> &&
     (std::ranges::ForwardRange<std::remove_const_t<type>>       == std::ranges::ForwardRange<type const>) &&

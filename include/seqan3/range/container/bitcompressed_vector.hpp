@@ -64,9 +64,9 @@ namespace seqan3
 class debug_stream_type;
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
- * \tparam alphabet_type The value type of the container, must satisfy seqan3::alphabet_concept and not be `&`.
- * \implements seqan3::reservable_container_concept
- * \implements seqan3::cerealisable_concept
+ * \tparam alphabet_type The value type of the container, must satisfy seqan3::Alphabet and not be `&`.
+ * \implements seqan3::ReservableContainerRangeRange
+ * \implements seqan3::Cerealisable
  * \ingroup container
  *
  * This class template behaves just like std::vector<alphabet_type> but has an internal representation where
@@ -91,7 +91,7 @@ class debug_stream_type;
  * threads at the same time **is not safe** and will lead to corruption if both values are stored in the same
  * 64bit-block, i.e. if the distance between `i` and `j` is smaller than 64 / alphabet_size.
  */
-template <alphabet_concept alphabet_type>
+template <Alphabet alphabet_type>
 //!\cond
     requires std::is_same_v<alphabet_type, std::remove_reference_t<alphabet_type>>
 //!\endcond
@@ -263,7 +263,7 @@ private:
         //!\}
     };
 
-    static_assert(alphabet_concept<reference_proxy_type>);
+    static_assert(Alphabet<reference_proxy_type>);
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>
@@ -1136,12 +1136,12 @@ public:
 
     /*!\cond DEV
      * \brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive_concept.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
      * \param archive The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <cereal_archive_concept archive_t>
+    template <CerealArchive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
         archive(data); //TODO: data not yet serialisable

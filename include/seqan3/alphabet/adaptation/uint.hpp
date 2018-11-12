@@ -37,7 +37,7 @@
  * \brief Provides alphabet adaptations for standard uint types.
  * \details
  * This file provides function and metafunction overloads so that the following types
- * fulfil the seqan3::alphabet_concept:
+ * fulfil the seqan3::Alphabet:
  *   * `uint8_t`
  *   * `uint16_t`
  *   * `uint32_t`
@@ -95,7 +95,7 @@ namespace seqan3
 
 /*!\brief Specialisation of seqan3::underlying_char for uint types.
  * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \relates seqan3::uint_adaptation_concept
+ * \relates seqan3::UintAdaptation
  * \sa seqan3::underlying_char_t
  */
 template <typename uint_type>
@@ -111,7 +111,7 @@ struct underlying_char<uint_type>
 
 /*!\brief Specialisation of seqan3::underlying_rank for uint types.
  * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \relates seqan3::uint_adaptation_concept
+ * \relates seqan3::UintAdaptation
  * \sa seqan3::underlying_rank_t
  */
 template <typename uint_type>
@@ -130,7 +130,7 @@ struct underlying_rank<uint_type>
 
 /*!\brief Specialisation of seqan3::alphabet_size that delegates for uint types.
  * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \relates seqan3::uint_adaptation_concept
+ * \relates seqan3::UintAdaptation
  * \sa seqan3::alphabet_size_v
  */
 template <typename uint_type>
@@ -154,7 +154,7 @@ struct alphabet_size<uint_type>
 /*!\name Free function wrappers for the uint alphabet adaptation
  * \brief For `uint8_t`, `uint16_t` and `uint32_t` do conversion to/from char types.
  * \ingroup adaptation
- * \relates seqan3::uint_adaptation_concept
+ * \relates seqan3::UintAdaptation
  * \{
  */
 /*!\brief Converting uint to char casts to a character type of same size.

@@ -42,7 +42,7 @@
 
 #include <sstream>
 
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/aligned_sequence/AlignedSequenceRange.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
@@ -92,7 +92,7 @@ namespace seqan3::detail
  * in the extended CIGAR alphabet (\p extended_cigar = `true`) the function
  * will return an 'X' since the bases are aligned but are not
  * equal.
- * \sa seqan3::aligned_sequence_concept
+ * \sa seqan3::AlignedSequenceRange
  */
 template<typename reference_char_type, typename query_char_type>
 //!\cond
@@ -145,7 +145,7 @@ char compare_aligned_values(reference_char_type const reference_char,
  * In this case, the function seqan3::detail::get_cigar_string will return
  * the following cigar string when printed: "4M2I5M2D1M". The extended cigar
  * string would look like this: "3=1X2I3=1X1=2D1=".
- * \sa seqan3::aligned_sequence_concept
+ * \sa seqan3::AlignedSequenceRange
  */
 template<std::ranges::ForwardRange ref_seq_type, std::ranges::ForwardRange query_seq_type>
 //!\cond
@@ -206,7 +206,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
  *        corresponding CIGAR string.
  * \ingroup alignment_file
  *
- * \tparam alignment_type  Must model the seqan3::tuple_like_concept and must
+ * \tparam alignment_type  Must model the seqan3::TupleLike and must
  *                         have std::tuple_size 2. Each tuple element must model
  *                         std::ForwardRange and its value_type must be comparable
  *                         to seqan3::gap.
@@ -240,9 +240,9 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
  * In this case, the function seqan3::detail::get_cigar_string will return
  * the following cigar string when printed: "4M2I5M2D1M". The extended cigar
  * string would look like this: "3=1X2I3=1X1=2D1=".
- * \sa seqan3::aligned_sequence_concept
+ * \sa seqan3::AlignedSequenceRange
  */
-template<tuple_like_concept alignment_type>
+template<TupleLike alignment_type>
 //!\cond
     requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2
 //!\endcond

@@ -147,7 +147,7 @@
  * | std::ranges::SizedRange         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | std::ranges::CommonRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | std::ranges::OutputRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::const_iterable_concept  | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
+ * | seqan3::ConstIterableRange  | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
  * |                                 |                                  |                                                    |
  * | seqan3::reference_t             | optionally a type or concept     | optionally a type or concept                       |
  *
@@ -179,7 +179,7 @@
  * (since dereferencing an iterator or calling operator[] returns the reference type). The reference type may or may
  * not actually contain a `&` (see below). For many SeqAn specific views additional concept requirements are defined
  * for the input range's reference type, e.g. seqan3::view::complement can only operate on ranges whose elements are
- * nucleotides (meet seqan3::nucleotide_concept_check). In some case the type may even be a specific type or the result
+ * nucleotides (meet seqan3::NucleotideAlphabet_check). In some case the type may even be a specific type or the result
  * of a metafunction.
  *
  * **Returned range's reference type:** Conversely certain views make guarantees on the concepts satisfied by the

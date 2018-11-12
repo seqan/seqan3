@@ -65,7 +65,7 @@ struct trim_fn
     auto operator()(irng_t && irange,
                     underlying_phred_t<value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires std::ranges::InputRange<irng_t> && quality_concept<value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && Quality<value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return ranges::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
@@ -83,14 +83,14 @@ struct trim_fn
     auto operator()(irng_t && irange,
                     std::decay_t<value_type_t<std::decay_t<irng_t>>> const threshold) const
     //!\cond
-        requires std::ranges::InputRange<irng_t> && quality_concept<value_type_t<std::decay_t<irng_t>>>
+        requires std::ranges::InputRange<irng_t> && Quality<value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
         return (*this)(std::forward<irng_t>(irange), to_phred(threshold));
     }
 
     /*!\brief A functor that behaves like a named version of std::bind around seqan3::detail::trim_fn::operator().
-     * \tparam threshold_t Must be an integral type or satisfy the seqan3::quality_concept.
+     * \tparam threshold_t Must be an integral type or satisfy the seqan3::Quality.
      *
      * \details
      *
@@ -122,7 +122,7 @@ struct trim_fn
     };
 
     /*!\brief Range-less interface for use with the pipe notation.
-     * \tparam threshold_t Must be an integral type or satisfy the seqan3::quality_concept.
+     * \tparam threshold_t Must be an integral type or satisfy the seqan3::Quality.
      * \param threshold The minimum quality given by a value of the range's value type.
      *
      * \details
@@ -132,7 +132,7 @@ struct trim_fn
     template <typename threshold_t>
     delegate<threshold_t> operator()(threshold_t const threshold) const
     //!\cond
-        requires std::is_integral_v<std::decay_t<threshold_t>> || quality_concept<std::decay_t<threshold_t>>
+        requires std::is_integral_v<std::decay_t<threshold_t>> || Quality<std::decay_t<threshold_t>>
     //!\endcond
     {
         return delegate<threshold_t>{threshold, *this};
@@ -149,7 +149,7 @@ struct trim_fn
     template <typename irng_t,
               typename threshold_t>
     //!\cond
-        requires std::ranges::InputRange<irng_t> && quality_concept<value_type_t<std::decay_t<irng_t>>> &&
+        requires std::ranges::InputRange<irng_t> && Quality<value_type_t<std::decay_t<irng_t>>> &&
                  (std::is_same_v<std::decay_t<threshold_t>,
                                  std::decay_t<value_type_t<std::decay_t<irng_t>>>> ||
                   std::is_convertible_v<std::decay_t<threshold_t>,
@@ -171,7 +171,7 @@ namespace seqan3::view
  * \{
  */
 
-/*!\brief               A view that does quality-threshold trimming on a range of seqan3::quality_concept.
+/*!\brief               A view that does quality-threshold trimming on a range of seqan3::Quality.
  * \tparam urng_t       The type of the range being processed. See below for requirements.
  * \tparam threshold_t  Either seqan3::value_type_t<urng_t> or
  *                      seqan3::underlying_phred_t<seqan3::value_type_t<urng_t>>.
@@ -200,9 +200,9 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *lost*                          |
  * | std::ranges::CommonRange        |                                       | *lost*                          |
  * | std::ranges::OutputRange        |                                       | *preserved*                     |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                     |
+ * | seqan3::ConstIterableRange  |                                       | *preserved*                     |
  * |                                 |                                       |                                 |
- * | seqan3::reference_t             | seqan3::quality_concept               | seqan3::reference_t<urng_t>     |
+ * | seqan3::reference_t             | seqan3::Quality               | seqan3::reference_t<urng_t>     |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

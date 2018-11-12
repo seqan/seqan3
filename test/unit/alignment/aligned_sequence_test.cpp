@@ -34,7 +34,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/aligned_sequence/AlignedSequenceRange.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
 
@@ -50,7 +50,7 @@ using range_types = ::testing::Types<std::vector<gapped<dna4>>,
 
 // Initializer function is needed for the typed test because the gapped_decorator
 // will be initialized differently than the naive vector<gapped<dna>>.
-template <sequence_container_concept container_type>
+template <SequenceContainerRangeRange container_type>
 void initialize_typed_test_container(container_type & container, std::string const && target)
 {
     for (auto & val : target)
@@ -63,9 +63,9 @@ void initialize_typed_test_container(container_type & container, std::string con
 
 TYPED_TEST_CASE(aligned_sequence_test, range_types);
 
-TYPED_TEST(aligned_sequence_test, aligned_sequence_concept)
+TYPED_TEST(aligned_sequence_test, AlignedSequenceRange)
 {
-    EXPECT_TRUE((aligned_sequence_concept<TypeParam>));
+    EXPECT_TRUE((AlignedSequenceRange<TypeParam>));
 }
 
 TYPED_TEST(aligned_sequence_test, insert_one_gap)

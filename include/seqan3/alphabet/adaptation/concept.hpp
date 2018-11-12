@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::char_adaptation_concept and seqan3::uint_adaptation_concept.
+ * \brief Provides seqan3::CharAdaptation and seqan3::UintAdaptation.
  */
 
 #pragma once
@@ -43,13 +43,13 @@
 
 namespace seqan3
 {
-/*!\interface seqan3::char_adaptation_concept <>
- * \extends seqan3::alphabet_concept
- * \brief A concept that covers char type adaptations for seqan3::alphabet_concept.
+/*!\interface seqan3::CharAdaptation <>
+ * \extends seqan3::Alphabet
+ * \brief A concept that covers char type adaptations for seqan3::Alphabet.
  * \ingroup adaptation
  *
  * \details
- * This concept introduces no formal requirements beyond those of seqan3::alphabet_concept
+ * This concept introduces no formal requirements beyond those of seqan3::Alphabet
  * and type being one of the following types:
  *
  *   * `char`
@@ -71,17 +71,17 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept char_adaptation_concept = alphabet_concept<type> &&
+concept CharAdaptation = Alphabet<type> &&
                                        detail::is_char_adaptation_v<std::remove_reference_t<type>>;
 //!\endcond
 
-/*!\interface seqan3::uint_adaptation_concept <>
- * \extends seqan3::alphabet_concept
- * \brief A concept that covers uint type adaptations for seqan3::alphabet_concept.
+/*!\interface seqan3::UintAdaptation <>
+ * \extends seqan3::Alphabet
+ * \brief A concept that covers uint type adaptations for seqan3::Alphabet.
  * \ingroup adaptation
  *
  * \details
- * This concept introduces no formal requirements beyond those of seqan3::alphabet_concept
+ * This concept introduces no formal requirements beyond those of seqan3::Alphabet
  * and type being one of the following types:
  *
  *   * `uint8_t`
@@ -101,7 +101,7 @@ concept char_adaptation_concept = alphabet_concept<type> &&
  */
 //!\cond
 template <typename type>
-concept uint_adaptation_concept = alphabet_concept<type> &&
+concept UintAdaptation = Alphabet<type> &&
                                        detail::is_uint_adaptation_v<std::remove_reference_t<type>>;
 //!\endcond
 

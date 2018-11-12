@@ -159,24 +159,24 @@ TYPED_TEST(structure, to_char)
 
 TYPED_TEST(structure, concept_check)
 {
-    EXPECT_TRUE(alphabet_concept<TypeParam>);
+    EXPECT_TRUE(Alphabet<TypeParam>);
 }
 
-TYPED_TEST(structure, rna_structure_concept)
+TYPED_TEST(structure, RnaStructure)
 {
     if constexpr (!std::is_same_v<TypeParam, dssp9>)
     {
-        EXPECT_TRUE(rna_structure_concept<TypeParam>);
+        EXPECT_TRUE(RnaStructure<TypeParam>);
         EXPECT_NE(max_pseudoknot_depth_v<TypeParam>, 0);
     }
     else
     {
-        EXPECT_FALSE(rna_structure_concept<TypeParam>);
+        EXPECT_FALSE(RnaStructure<TypeParam>);
     }
 
     // additional wuss test
-    EXPECT_TRUE(rna_structure_concept<wuss<>>);  // also wuss51
-    EXPECT_TRUE(rna_structure_concept<wuss<67>>);
+    EXPECT_TRUE(RnaStructure<wuss<>>);  // also wuss51
+    EXPECT_TRUE(RnaStructure<wuss<67>>);
 }
 
 // ------------------------------------------------------------------
@@ -448,27 +448,27 @@ TEST(structured_rna, cmp)
     EXPECT_GT(t2, t1);
 }
 
-// alphabet_concept: rank_type
+// Alphabet: rank_type
 TEST(structured_rna, rank_type)
 {
     EXPECT_TRUE((std::is_same_v<underlying_rank_t<structured_rna<rna4, dot_bracket3>>, uint8_t>));
 }
 
-// alphabet_concept: char_type
+// Alphabet: char_type
 TEST(structured_rna, char_type)
 {
     EXPECT_TRUE((std::is_same_v<underlying_char_t<structured_rna<rna4, dot_bracket3>>,
                                 underlying_char_t<rna4>>));
 }
 
-// alphabet_concept: alphabet_size
+// Alphabet: alphabet_size
 TEST(structured_rna, alphabet_size_v)
 {
     EXPECT_EQ((alphabet_size_v<structured_rna<rna4, dot_bracket3>>),
               (alphabet_size_v<rna4> * alphabet_size_v<dot_bracket3>));
 }
 
-// alphabet_concept: to_rank
+// Alphabet: to_rank
 TEST(structured_rna, to_rank)
 {
     structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
@@ -479,7 +479,7 @@ TEST(structured_rna, to_rank)
               alphabet_size_v<rna4> * to_rank(std::get<1>(t0)));
 }
 
-// alphabet_concept: assign_rank
+// Alphabet: assign_rank
 TEST(structured_rna, assign_rank)
 {
     using type = structured_rna<rna4, dot_bracket3>;
@@ -493,7 +493,7 @@ TEST(structured_rna, assign_rank)
     }
 }
 
-// alphabet_concept: to_char
+// Alphabet: to_char
 TEST(structured_rna, to_char)
 {
     structured_rna<rna4, dot_bracket3> t0{rna4::C, dot_bracket3::PAIR_CLOSE};
@@ -502,7 +502,7 @@ TEST(structured_rna, to_char)
     EXPECT_EQ(to_char(t0), 'C');
 }
 
-// alphabet_concept: assign_char
+// Alphabet: assign_char
 TEST(structured_rna, assign_char)
 {
     using type = structured_rna<rna4, dot_bracket3>;
@@ -557,7 +557,7 @@ TEST(structured_rna, complement)
 }
 
 // rna_structure concept
-TEST(structured_rna, rna_structure_concept)
+TEST(structured_rna, RnaStructure)
 {
     using type = structured_rna<rna5, wuss51>;
     type t0{rna5::A, wuss51::PAIR_OPEN2};
@@ -792,27 +792,27 @@ TEST(structured_aa, cmp)
     EXPECT_GT(t2, t1);
 }
 
-// alphabet_concept: rank_type
+// Alphabet: rank_type
 TEST(structured_aa, rank_type)
 {
     EXPECT_TRUE((std::is_same_v<underlying_rank_t<structured_aa<aa27, dssp9>>, uint8_t>));
 }
 
-// alphabet_concept: char_type
+// Alphabet: char_type
 TEST(structured_aa, char_type)
 {
     EXPECT_TRUE((std::is_same_v<underlying_char_t<structured_aa<aa27, dssp9>>,
         underlying_char_t<aa27>>));
 }
 
-// alphabet_concept: alphabet_size
+// Alphabet: alphabet_size
 TEST(structured_aa, alphabet_size_v)
 {
     EXPECT_EQ((alphabet_size_v<structured_aa<aa27, dssp9>>),
               (alphabet_size_v<aa27> * alphabet_size_v<dssp9>));
 }
 
-// alphabet_concept: to_rank
+// Alphabet: to_rank
 TEST(structured_aa, to_rank)
 {
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
@@ -823,7 +823,7 @@ TEST(structured_aa, to_rank)
               alphabet_size_v<aa27> * to_rank(std::get<1>(t0)));
 }
 
-// alphabet_concept: assign_rank
+// Alphabet: assign_rank
 TEST(structured_aa, assign_rank)
 {
     using type = structured_aa<aa27, dssp9>;
@@ -837,7 +837,7 @@ TEST(structured_aa, assign_rank)
     }
 }
 
-// alphabet_concept: to_char
+// Alphabet: to_char
 TEST(structured_aa, to_char)
 {
     structured_aa<aa27, dssp9> t0{aa27::C, dssp9::G};
@@ -846,7 +846,7 @@ TEST(structured_aa, to_char)
     EXPECT_EQ(to_char(t0), 'C');
 }
 
-// alphabet_concept: assign_char
+// Alphabet: assign_char
 TEST(structured_aa, assign_char)
 {
     using type = structured_aa<aa27, dssp9>;

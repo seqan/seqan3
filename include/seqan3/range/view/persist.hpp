@@ -85,7 +85,7 @@ public:
     //!\brief The reference_type.
     using reference         = reference_t<urng_t>;
     //!\brief The const_reference type is equal to the reference type if the underlying range is const-iterable.
-    using const_reference   = std::conditional_t<const_iterable_concept<urng_t>, reference, void>;
+    using const_reference   = std::conditional_t<ConstIterableRange<urng_t>, reference, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
     //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
@@ -95,7 +95,7 @@ public:
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = std::ranges::iterator_t<urng_t>;
     //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.
-    using const_iterator    = std::conditional_t<const_iterable_concept<urng_t>, iterator, void>;
+    using const_iterator    = std::conditional_t<ConstIterableRange<urng_t>, iterator, void>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -139,14 +139,14 @@ public:
 
     //!\copydoc begin()
     const_iterator begin() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return seqan3::begin(*urange);
     }
 
     //!\copydoc begin()
     const_iterator cbegin() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return seqan3::begin(*urange);
     }
@@ -171,25 +171,25 @@ public:
 
     //!\copydoc end()
     auto end() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return seqan3::end(*urange);
     }
 
     //!\copydoc end()
     auto cend() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return seqan3::end(*urange);
     }
     //!\}
 
     /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must satisfy seqan3::sequence_container_concept and the
+     * \tparam container_t Type of the container to convert to; must satisfy seqan3::SequenceContainerRangeRange and the
      *                     seqan3::reference_t of both must model std::CommonReference.
      * \returns This view converted to container_t.
      */
-    template <sequence_container_concept container_t>
+    template <SequenceContainerRangeRange container_t>
     operator container_t()
     //!\cond
         requires std::CommonReference<reference_t<container_t>, reference>
@@ -201,10 +201,10 @@ public:
     }
 
     //!\overload
-    template <sequence_container_concept container_t>
+    template <SequenceContainerRangeRange container_t>
     operator container_t() const
     //!\cond
-        requires std::CommonReference<reference_t<container_t>, reference> && const_iterable_concept<urng_t>
+        requires std::CommonReference<reference_t<container_t>, reference> && ConstIterableRange<urng_t>
     //!\endcond
     {
         container_t ret;
@@ -300,7 +300,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *

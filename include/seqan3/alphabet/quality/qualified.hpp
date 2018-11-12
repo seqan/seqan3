@@ -51,10 +51,10 @@ namespace seqan3
 
 /*!\brief Joins an arbitrary alphabet with a quality alphabet.
  * \ingroup quality
- * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::alphabet_concept.
- * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::quality_concept.
- * \implements seqan3::quality_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::Alphabet.
+ * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::Quality.
+ * \implements seqan3::Quality
+ * \implements seqan3::detail::constexpr_Alphabet
  *
  * This composition pairs an arbitrary alphabet with a quality alphabet, where
  * each alphabet character is stored together with its quality score in a
@@ -76,9 +76,9 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/quality/qualified.cpp general
  *
- * This seqan3::cartesian_composition itself fulfils both seqan3::alphabet_concept and seqan3::quality_concept.
+ * This seqan3::cartesian_composition itself fulfils both seqan3::Alphabet and seqan3::Quality.
  */
-template <alphabet_concept sequence_alphabet_t, quality_concept quality_alphabet_t>
+template <Alphabet sequence_alphabet_t, Quality quality_alphabet_t>
 class qualified :
     public cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                  sequence_alphabet_t, quality_alphabet_t>
@@ -158,10 +158,10 @@ public:
 
     /*!\brief Return a qualified where the quality is preserved, but the sequence letter is complemented.
      * \sa seqan3::complement
-     * \sa seqan3::nucleotide_concept::complement
+     * \sa seqan3::NucleotideAlphabet::complement
      */
     constexpr qualified complement() const noexcept
-        requires nucleotide_concept<sequence_alphabet_t>
+        requires NucleotideAlphabet<sequence_alphabet_t>
     {
         using seqan3::complement;
         return qualified{complement(get<0>(*this)), get<1>(*this)};

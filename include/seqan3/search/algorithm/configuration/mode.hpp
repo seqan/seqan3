@@ -128,7 +128,7 @@ template <>
 struct on_search_config<search_cfg::id::mode>
 {
     //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
+    template <ConfigElement t>
     using invoke = typename is_type_specialisation_of<t, search_config_mode>::type;
 };
 

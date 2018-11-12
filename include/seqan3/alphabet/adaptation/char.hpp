@@ -37,7 +37,7 @@
  * \brief Provides alphabet adaptations for standard char types.
  * \details
  * This file provides function and metafunction overloads so that the following types
- * fulfil the seqan3::alphabet_concept:
+ * fulfil the seqan3::Alphabet:
  *   * `char`
  *   * `char16_t`
  *   * `char32_t`
@@ -100,7 +100,7 @@ namespace seqan3
 
 /*!\brief Specialisation of seqan3::underlying_char for char types.
  * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
- * \relates seqan3::char_adaptation_concept
+ * \relates seqan3::CharAdaptation
  * \sa seqan3::underlying_char_t
  */
 template <typename char_type>
@@ -115,7 +115,7 @@ struct underlying_char<char_type>
 
 /*!\brief Specialisation of seqan3::underlying_rank for char types.
  * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
- * \relates seqan3::char_adaptation_concept
+ * \relates seqan3::CharAdaptation
  * \sa seqan3::underlying_rank_t
  */
 template <typename char_type>
@@ -135,7 +135,7 @@ struct underlying_rank<char_type>
 
 /*!\brief Specialisation of seqan3::alphabet_size that delegates for char types.
  * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
- * \relates seqan3::char_adaptation_concept
+ * \relates seqan3::CharAdaptation
  * \sa seqan3::alphabet_size_v
  */
 template <typename char_type>
@@ -159,7 +159,7 @@ struct alphabet_size<char_type>
 /*!\name Free function wrappers for the char alphabet adaptation
  * \brief For `char`, `char16_t` and `char32_t` do conversion to/from uint types.
  * \ingroup adaptation
- * \relates seqan3::char_adaptation_concept
+ * \relates seqan3::CharAdaptation
  * \{
  */
 /*!\brief Converting char to char is no-op (it will just return the value you pass in).

@@ -95,9 +95,9 @@
  *
  * \par Concept
  *
- * The quality submodule defines the seqan3::quality_concept which encompasses
+ * The quality submodule defines the seqan3::Quality which encompasses
  * all the alphabets, defined in the submodule, and refines the
- * seqan3::alphabet_concept by providing Phred score assignment and conversion
+ * seqan3::Alphabet by providing Phred score assignment and conversion
  * operations.
  *
  * \par Assignment and Conversion

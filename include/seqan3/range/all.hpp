@@ -76,7 +76,7 @@
  *
  * ### Storage behaviour
  *
- * **Containers** are the ranges most well known, they own their elements. SeqAn3 makes use of standard STL containers
+ * **ContainerRanges** are the ranges most well known, they own their elements. SeqAn3 makes use of standard STL containers
  * like `std::vector`, but also implements some custom containers. See the \link container container submodule \endlink
  * for more details.
  *
@@ -96,7 +96,7 @@
  * The storage behaviour is orthogonal to the range concepts defined by the iterators mentioned above, i.e. you
  * can have a container that satisfies std::ranges::RandomAccessRange (e.g. `std::vector` does, but `std::list`
  * does not) and you can have views or decorators that do so or don't. For some combinations of iterator capabilities
- * and storage behaviour there are extra concept definitions, e.g. seqan3::random_access_container_concept.
+ * and storage behaviour there are extra concept definitions, e.g. seqan3::RandomAccessContainerRangeRange.
  *
  * \attention
  *

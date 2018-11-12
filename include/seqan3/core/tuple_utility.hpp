@@ -70,7 +70,7 @@ template <size_t beg,
           size_t ... Is,
           typename ...ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>> && tuple_like_concept<tuple_t<>>
+    requires TupleLike<tuple_t<ts...>> && TupleLike<tuple_t<>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> const & t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
@@ -83,7 +83,7 @@ template <size_t beg,
           size_t ... Is,
           typename ...ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>> && tuple_like_concept<tuple_t<>>
+    requires TupleLike<tuple_t<ts...>> && TupleLike<tuple_t<>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
@@ -127,7 +127,7 @@ namespace seqan3
  */
 template <size_t pivot_c, template <typename ...> typename tuple_t, typename ... ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>>
+    requires TupleLike<tuple_t<ts...>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> const & t)
 {
@@ -140,7 +140,7 @@ constexpr auto tuple_split(tuple_t<ts...> const & t)
 //!\copydoc seqan3::tuple_split
 template <size_t pivot_c, template <typename ...> typename tuple_t, typename ... ts>
 //!\cond
-    requires tuple_like_concept<tuple_t<ts...>>
+    requires TupleLike<tuple_t<ts...>>
 //!\endcond
 constexpr auto tuple_split(tuple_t<ts...> && t)
 {
@@ -160,7 +160,7 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
  *
  * \copydetails seqan3::tuple_split
  */
-template <typename pivot_t, tuple_like_concept tuple_t>
+template <typename pivot_t, TupleLike tuple_t>
 constexpr auto tuple_split(tuple_t && t)
 {
     constexpr size_t pivot_c = meta::find_index<detail::tuple_type_list_t<remove_cvref_t<tuple_t>>, pivot_t>::value;
@@ -190,7 +190,7 @@ constexpr auto tuple_split(tuple_t && t)
  *
  * Concurrent invocations of this functions are thread safe.
  */
-template <tuple_like_concept tuple_t>
+template <TupleLike tuple_t>
 constexpr auto tuple_pop_front(tuple_t && t)
 {
     static_assert(std::tuple_size_v<remove_cvref_t<tuple_t>> > 0);

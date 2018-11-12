@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::tuple_like_concept.
+ * \brief Provides seqan3::TupleLike.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -51,27 +51,27 @@
 namespace seqan3::detail
 {
 
-/*!\interface seqan3::detail::tuple_size_concept <>
+/*!\interface seqan3::detail::TupleSize <>
  * \ingroup   core
- * \brief     Subconcept definition for seqan3::tuple_like_concept to test for std::tuple_size-interface.
- * \see       seqan3::tuple_like_concept
+ * \brief     Subconcept definition for seqan3::TupleLike to test for std::tuple_size-interface.
+ * \see       seqan3::TupleLike
  */
 //!\cond
 template <typename tuple_t>
-concept tuple_size_concept = requires (tuple_t v)
+concept TupleSize = requires (tuple_t v)
 {
     { std::tuple_size<tuple_t>::value } -> size_t;
 };
 //!\endcond
 
-/*!\interface seqan3::detail::tuple_get_concept <>
+/*!\interface seqan3::detail::TupleGetConcept <>
  * \ingroup   core
- * \brief     Subconcept definition for seqan3::tuple_like_concept to test for std::get-interface.
- * \see       seqan3::tuple_like_concept
+ * \brief     Subconcept definition for seqan3::TupleLike to test for std::get-interface.
+ * \see       seqan3::TupleLike
  */
 //!\cond
 template <typename tuple_t>
-concept tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
+concept TupleGetConcept = requires (tuple_t & v, tuple_t const & v_c)
 {
     requires std::tuple_size_v<tuple_t> > 0;
 
@@ -109,7 +109,7 @@ struct models_strict_totally_ordered
  * \returns A seqan3::type_list over the element types of the given tuple.
  * \see seqan3::detail::tuple_type_list_t
  */
-template <detail::tuple_size_concept tuple_t>
+template <detail::TupleSize tuple_t>
 struct tuple_type_list
 {
 protected:
@@ -131,7 +131,7 @@ public:
  *
  * \see seqan3::detail::tuple_type_list
  */
-template <detail::tuple_size_concept tuple_t>
+template <detail::TupleSize tuple_t>
 using tuple_type_list_t = typename tuple_type_list<tuple_t>::type;
 } // namespace::seqan3
 
@@ -139,10 +139,10 @@ namespace seqan3
 {
 
 // ----------------------------------------------------------------------------
-// tuple_like_concept
+// TupleLike
 // ----------------------------------------------------------------------------
 
-/*!\interface   seqan3::tuple_like_concept
+/*!\interface   seqan3::TupleLike
  * \extends     std::StrictTotallyOrdered
  * \ingroup     core
  * \brief       Whether a type behaves like a tuple.
@@ -153,14 +153,14 @@ namespace seqan3
  * The std::StrictTotallyOrdered will only be required if all types contained in the tuple like
  * data structure are them selfs strict totally ordered.
  */
-/*!\name Requirements for seqan3::tuple_like_concept
- * \brief You can expect these (meta-)functions on all types that implement seqan3::tuple_like_concept.
+/*!\name Requirements for seqan3::TupleLike
+ * \brief You can expect these (meta-)functions on all types that implement seqan3::TupleLike.
  * \{
  */
 /*!\var         size_t std::tuple_size_v<type>
  * \brief       A unary type trait that holds the number of elements in the tuple.
  * \tparam      type The tuple-like type.
- * \relates     seqan3::tuple_like_concept
+ * \relates     seqan3::TupleLike
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
@@ -170,7 +170,7 @@ namespace seqan3
  * \brief       A transformation trait that holds the type of elements in the tuple.
  * \tparam      i Index of the queried element type.
  * \tparam      type The tuple-like type.
- * \relates     seqan3::tuple_like_concept
+ * \relates     seqan3::TupleLike
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
@@ -179,7 +179,7 @@ namespace seqan3
  */
 /*!\fn              auto && std::get<i>(type && val)
  * \brief           Return the i-th element of the tuple.
- * \relates         seqan3::tuple_like_concept
+ * \relates         seqan3::TupleLike
  * \tparam          i The index of the element to return (of type `size_t`).
  * \param[in,out]   val The tuple-like object to operate on.
  * \returns         The i-th value in the tuple.
@@ -192,7 +192,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept tuple_like_concept = detail::tuple_size_concept<std::remove_reference_t<t>> && requires(t v)
+concept TupleLike = detail::TupleSize<std::remove_reference_t<t>> && requires(t v)
 {
     typename detail::tuple_type_list<remove_cvref_t<t>>::type;
 
@@ -201,7 +201,7 @@ concept tuple_like_concept = detail::tuple_size_concept<std::remove_reference_t<
     //              empty. Furthermore, the std::StrictTotallyOrdered can only be checked if all elements in the
     //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
     requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
-                detail::tuple_get_concept<remove_cvref_t<t>> &&
+                detail::TupleGetConcept<remove_cvref_t<t>> &&
                 (!meta::fold<detail::tuple_type_list_t<remove_cvref_t<t>>,
                              std::true_type,
                              meta::quote_trait<detail::models_strict_totally_ordered>>::value ||

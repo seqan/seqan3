@@ -158,17 +158,17 @@ TEST(builtin_simd, default_simd_max_length)
 #endif
 }
 
-TEST(builtin_simd, simd_concept)
+TEST(builtin_simd, Simd)
 {
-    EXPECT_FALSE(simd_concept<short>);
-    EXPECT_FALSE(simd_concept<int>);
-    EXPECT_FALSE(simd_concept<int[15]>);
-    EXPECT_FALSE(simd_concept<int*>);
+    EXPECT_FALSE(Simd<short>);
+    EXPECT_FALSE(Simd<int>);
+    EXPECT_FALSE(Simd<int[15]>);
+    EXPECT_FALSE(Simd<int*>);
 
-    EXPECT_TRUE(simd_concept<int16x8_t>);
-    EXPECT_TRUE(simd_concept<int32x4_t>);
-    EXPECT_TRUE(simd_concept<int64x2_t>);
-    EXPECT_TRUE(simd_concept<uint16x16_t>);
-    EXPECT_TRUE(simd_concept<uint32x8_t>);
-    EXPECT_TRUE(simd_concept<uint64x4_t>);
+    EXPECT_TRUE(Simd<int16x8_t>);
+    EXPECT_TRUE(Simd<int32x4_t>);
+    EXPECT_TRUE(Simd<int64x2_t>);
+    EXPECT_TRUE(Simd<uint16x16_t>);
+    EXPECT_TRUE(Simd<uint32x8_t>);
+    EXPECT_TRUE(Simd<uint64x4_t>);
 }

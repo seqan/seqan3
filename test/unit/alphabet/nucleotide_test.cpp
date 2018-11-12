@@ -162,8 +162,8 @@ TYPED_TEST(nucleotide, complement)
 
 TYPED_TEST(nucleotide, concept_check)
 {
-    EXPECT_TRUE(nucleotide_concept<TypeParam>);
-    EXPECT_TRUE(nucleotide_concept<TypeParam &>);
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam>);
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam &>);
 }
 
 // ------------------------------------------------------------------

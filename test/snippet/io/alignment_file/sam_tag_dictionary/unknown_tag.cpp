@@ -3,7 +3,7 @@
 
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/range/container/concept.hpp> // for the seqan3::container_concept
+#include <seqan3/range/container/concept.hpp> // for the seqan3::ContainerRange
 
 using namespace seqan3;
 
@@ -12,7 +12,7 @@ auto print_fn = [] (auto && arg)
 {
     using T = remove_cvref_t<decltype(arg)>; // the type T of arg.
 
-    if constexpr (!container_concept<T>)     // If T is not a container,
+    if constexpr (!ContainerRange<T>)     // If T is not a container,
     {
         debug_stream << arg << std::endl;       // just print arg directly.
     }

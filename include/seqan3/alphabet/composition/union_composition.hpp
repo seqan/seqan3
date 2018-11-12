@@ -57,21 +57,21 @@ namespace seqan3
 
 /*!\brief A combined alphabet that can hold values of either of its alternatives.
  * \ingroup composition
- * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::alphabet_concept and be
+ * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::Alphabet and be
  *                              unique.
- * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::Alphabet
+ * \implements seqan3::detail::constexpr_Alphabet
  *
  * \details
  *
  * The union_composition represents the union of two or more alternative alphabets (e.g. the
  * four letter DNA alternative + the gap alternative). It behaves similar to a
  * [union](https://en.cppreference.com/w/cpp/language/union) or std::variant, but it preserves the
- * seqan3::alphabet_concept.
+ * seqan3::Alphabet.
  *
  * Short description:
  *   * combines multiple different alphabets in an "either-or"-fashion;
- *   * is itself a seqan3::alphabet_concept;
+ *   * is itself a seqan3::Alphabet;
  *   * its alphabet size is the sum of the individual sizes;
  *   * default initialises to the the first alternative's default (no empty state like std::variant);
  *   * constructible, assignable and (in-)equality-comparable with each alternative type and also all types that
@@ -84,7 +84,7 @@ namespace seqan3
  */
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::constexpr_alphabet_concept<alternative_types> && ... && (sizeof...(alternative_types) >= 2))
+    requires (detail::constexpr_Alphabet<alternative_types> && ... && (sizeof...(alternative_types) >= 2))
 //!\endcond
 class union_composition
 {
@@ -114,7 +114,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool, implicitly_convertible_to_concept<T, type>>;
+        using invoke = std::integral_constant<bool, ImplicitlyConvertibleTo<T, type>>;
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -586,8 +586,8 @@ protected:
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
 //!\endcond
 {
     return rhs == lhs;
@@ -596,8 +596,8 @@ constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator!=(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
 //!\endcond
 {
     return rhs != lhs;

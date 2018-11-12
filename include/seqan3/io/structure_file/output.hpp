@@ -60,7 +60,7 @@
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
-#include <seqan3/io/structure_file/output_format_concept.hpp>
+#include <seqan3/io/structure_file/OutputFormat.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/range/view/convert.hpp>
@@ -78,8 +78,8 @@ namespace seqan3
  * \tparam selected_field_ids A seqan3::fields type with the list and order of fields IDs; only relevant if these
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
- *                            seqan3::structure_file_output_format_concept).
- * \tparam stream_type        The type of the stream, must satisfy seqan3::ostream_concept.
+ *                            seqan3::StructureFileOutputFormat).
+ * \tparam stream_type        The type of the stream, must satisfy seqan3::Ostream.
  * \details
  *
  * ### Introduction
@@ -275,10 +275,10 @@ namespace seqan3
  * Currently, the only implemented format is seqan3::structure_file_format_vienna. More formats will follow soon.
  */
 
-template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-          detail::type_list_of_structure_file_output_formats_concept valid_formats_
+template <detail::Fields  selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+          detail::TypeListOfStructureFileOutputFormats valid_formats_
               = type_list<structure_file_format_vienna>,
-          ostream_concept<char> stream_type_ = std::ofstream>
+          Ostream<char> stream_type_ = std::ofstream>
 class structure_file_out
 {
 public:
@@ -381,12 +381,12 @@ public:
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam file_format The format of the file in the stream, must satisfy
-     * seqan3::structure_file_output_format_concept.
+     * seqan3::StructureFileOutputFormat.
      * \param[in] _stream  The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      */
-    template <structure_file_output_format_concept file_format>
+    template <StructureFileOutputFormat file_format>
     structure_file_out(stream_type             && _stream,
                       file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -498,7 +498,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-        requires tuple_like_concept<tuple_t>
+        requires TupleLike<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
@@ -559,7 +559,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::OutputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
      * \details
@@ -591,7 +591,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     structure_file_out & operator=(rng_t && range)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -600,7 +600,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -644,7 +644,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     friend structure_file_out & operator|(rng_t && range, structure_file_out & f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return f;
@@ -653,7 +653,7 @@ public:
     //!\overload
     template <std::ranges::InputRange rng_t>
     friend structure_file_out operator|(rng_t && range, structure_file_out && f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return std::move(f);
@@ -941,9 +941,9 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
-template <ostream_concept<char>                stream_type,
-          structure_file_output_format_concept file_format,
-          detail::fields_concept               selected_field_ids>
+template <Ostream<char>                stream_type,
+          StructureFileOutputFormat file_format,
+          detail::Fields                selected_field_ids>
 structure_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
                          type_list<file_format>,

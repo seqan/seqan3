@@ -51,7 +51,7 @@ namespace seqan3::detail
 {
 
 // ----------------------------------------------------------------------------
-// Concept config_element_concept
+// Concept ConfigElement
 // ----------------------------------------------------------------------------
 
 //!\cond
@@ -59,26 +59,26 @@ template <typename derived_t>
 class config_element_base;
 //!\endcond
 
-/*!\interface seqan3::detail::config_element_concept <>
+/*!\interface seqan3::detail::ConfigElement <>
  * \brief Concept for an algorithm configuration.
  * \ingroup algorithm
  *
  * \extends std::Semiregular
  */
 
-/*!\name Requirements for seqan3::detail::config_element_concept
- * \relates seqan3::detail::config_element_concept
- * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element_concept.
+/*!\name Requirements for seqan3::detail::ConfigElement
+ * \relates seqan3::detail::ConfigElement
+ * \brief   You can expect this member on all types that satisfy seqan3::detail::ConfigElement.
  * \{
  */
 /*!\var value
- * \memberof seqan3::detail::config_element_concept
+ * \memberof seqan3::detail::ConfigElement
  * \brief Member storing the configuration value.
  */
 //!\}
 //!\cond
 template <typename config_t>
-concept config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
+concept ConfigElement = std::Semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
     { c.value };
@@ -86,23 +86,23 @@ requires (config_t c)
 //!\endcond
 
 // ----------------------------------------------------------------------------
-// Concept deferred_config_element_concept
+// Concept DeferredConfigElement
 // ----------------------------------------------------------------------------
 
 //!\cond
 // Forward declaration for the deferred config concept
-template <detail::config_element_concept ... configs_t>
+template <detail::ConfigElement ... configs_t>
 class configuration;
 
 template <typename derived_t>
 class deferred_config_element_base;
 //!\endcond
 
-/*!\interface seqan3::detail::deferred_config_element_concept <>
+/*!\interface seqan3::detail::DeferredConfigElement <>
  * \brief Concept for a deferred algorithm configuration.
  * \ingroup algorithm
  *
- * \extends seqan3::detail::config_element_concept
+ * \extends seqan3::detail::ConfigElement
  * \implements seqan3::detail::deferred_config_element_base
  *
  * \details
@@ -112,7 +112,7 @@ class deferred_config_element_base;
  */
 //!\cond
 template <typename config_t>
-concept deferred_config_element_concept = config_element_concept<config_t> &&
+concept DeferredConfigElement = ConfigElement<config_t> &&
     std::is_base_of_v<deferred_config_element_base<std::remove_reference_t<config_t>>,
                                                    std::remove_reference_t<config_t>>;
 //!\endcond

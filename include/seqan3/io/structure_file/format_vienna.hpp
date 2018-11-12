@@ -75,8 +75,8 @@
 namespace seqan3
 {
 /*!\brief       The Vienna format (dot bracket notation) for RNA sequences with secondary structure.
- * \implements  seqan3::structure_file_input_format_concept
- * \implements  seqan3::structure_file_output_format_concept
+ * \implements  seqan3::StructureFileInputFormat
+ * \implements  seqan3::StructureFileOutputFormat
  * \ingroup     structure_file
  *
  * \details
@@ -132,7 +132,7 @@ public:
         { "fa" }
     };
 
-    //!\copydoc seqan3::structure_file_input_format_concept::read
+    //!\copydoc seqan3::StructureFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               bool     structured_seq_combined,
@@ -288,7 +288,7 @@ public:
         }
     }
 
-    //!\copydoc seqan3::structure_file_output_format_concept::write
+    //!\copydoc seqan3::StructureFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,

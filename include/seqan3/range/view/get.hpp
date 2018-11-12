@@ -73,9 +73,9 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                             |
  * | std::ranges::CommonRange        |                                       | *preserved*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                             |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                             |
+ * | seqan3::ConstIterableRange  |                                       | *preserved*                                             |
  * |                                 |                                       |                                                         |
- * | seqan3::reference_t             | seqan3::tuple_like_concept            | std::tuple_element_t<index, seqan3::reference_t<urng_t>>|
+ * | seqan3::reference_t             | seqan3::TupleLike            | std::tuple_element_t<index, seqan3::reference_t<urng_t>>|
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -88,8 +88,8 @@ template <size_t index>
 inline auto const get = view::transform([] (auto && in) -> auto &&
 {
     using std::get;
-    static_assert(tuple_like_concept<decltype(in)>,
-                  "You may only pass ranges to view::get whose reference_t models the tuple_like_concept.");
+    static_assert(TupleLike<decltype(in)>,
+                  "You may only pass ranges to view::get whose reference_t models the TupleLike.");
     return std::get<index>(in);
 });
 

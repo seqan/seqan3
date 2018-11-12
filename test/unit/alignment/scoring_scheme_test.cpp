@@ -40,7 +40,7 @@
 
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
-#include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
+#include <seqan3/alignment/scoring/ScoringScheme.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
@@ -138,9 +138,9 @@ TEST(aminoacid_scoring_scheme, template_argument_deduction)
 TYPED_TEST(generic, concept_check)
 {
     using alph_t = typename TestFixture::alph_t;
-    EXPECT_TRUE((scoring_scheme_concept<TypeParam, alph_t>));
-    EXPECT_TRUE((scoring_scheme_concept<TypeParam const, alph_t>));
-    EXPECT_TRUE((scoring_scheme_concept<TypeParam const &, alph_t>));
+    EXPECT_TRUE((ScoringScheme<TypeParam, alph_t>));
+    EXPECT_TRUE((ScoringScheme<TypeParam const, alph_t>));
+    EXPECT_TRUE((ScoringScheme<TypeParam const &, alph_t>));
 }
 
 TYPED_TEST(generic, member_types)

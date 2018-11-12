@@ -46,8 +46,8 @@ namespace seqan3
 {
 /*!\brief Implementation of a masked alphabet to be used for cartesian compositions.
  * \ingroup mask
- * \implements seqan3::semi_alphabet_concept
- * \implements seqan3::detail::semi_constexpr_alphabet_concept
+ * \implements seqan3::semi_Alphabet
+ * \implements seqan3::detail::semi_constexpr_Alphabet
  *
  * \details
  * This alphabet is not usually used directly, but instead via seqan3::masked.

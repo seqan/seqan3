@@ -111,10 +111,10 @@ struct determine_result_type
 /*!\brief Selects the correct alignment algorithm based on the algorithm configuration.
  * \ingroup pairwise
  * \tparam seq_tuple_t     A tuple like object containing the two source sequences.
- *                         Must model seqan3::tuple_like_concept.
+ *                         Must model seqan3::TupleLike.
  * \tparam configuration_t The specified configuration type.
  */
-template <tuple_like_concept seq_tuple_t, typename configuration_t>
+template <TupleLike seq_tuple_t, typename configuration_t>
 struct alignment_selector
 {
     //!\brief The configuration stored globally for all alignment instances.
@@ -133,7 +133,7 @@ struct alignment_selector
      *
      * \todo Write detail description and explain rationale about the function object.
      */
-    template <tuple_like_concept _seq_tuple_t>
+    template <TupleLike _seq_tuple_t>
     auto select(_seq_tuple_t && seq)
     {
         //TODO Currently we only support edit_distance. We need would actually need real checks for this.

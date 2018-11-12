@@ -33,7 +33,7 @@
 // ============================================================================
 
 /*!\file
- * \brief Provides seqan3::structure_file_input_format_concept.
+ * \brief Provides seqan3::StructureFileInputFormat.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
@@ -53,7 +53,7 @@
 
 namespace seqan3
 {
-/*!\interface seqan3::structure_file_input_format_concept <>
+/*!\interface seqan3::StructureFileInputFormat <>
  * \brief The generic concept for structure file in formats.
  * \ingroup structure_file
  *
@@ -65,7 +65,7 @@ namespace seqan3
  */
 //!\cond
 template<typename t>
-concept structure_file_input_format_concept = requires(t & v,
+concept StructureFileInputFormat = requires(t & v,
                                                             std::ifstream & f,
                                                             structure_file_input_options<rna5, false> & options,
                                                             rna5_vector & seq,
@@ -96,9 +96,9 @@ concept structure_file_input_format_concept = requires(t & v,
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::structure_file_input_format_concept
- * \brief You can expect these **members** on all types that implement seqan3::structure_file_input_format_concept.
- * \memberof seqan3::structure_file_input_format_concept
+/*!\name Requirements for seqan3::StructureFileInputFormat
+ * \brief You can expect these **members** on all types that implement seqan3::StructureFileInputFormat.
+ * \memberof seqan3::StructureFileInputFormat
  * \{
  */
 /*!\fn void read(stream_type & stream,
@@ -113,21 +113,21 @@ concept structure_file_input_format_concept = requires(t & v,
  *               comment_type & comment,
  *               offset_type & offset)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::structure_file_input_format_concept
- * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
+ * \memberof seqan3::StructureFileInputFormat
+ * \tparam stream_type      Input stream, must satisfy seqan3::Istream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam bpp_type         Type of the seqan3::field::BPP input; must satisfy std::ranges::OutputRange
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
  * \tparam structure_type   Type of the seqan3::field::STRUCTURE input; must satisfy std::ranges::OutputRange
- * over a seqan3::rna_structure_concept.
+ * over a seqan3::RnaStructure.
  * \tparam energy_type      Type of the seqan3::field::ENERGY input; must satisfy std::is_floating_point.
  * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR input;
  * must satisfy std::is_floating_point.
  * \tparam comment_type     Type of the seqan3::field::COMMENT input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam offset_type      Type of the seqan3::field::OFFSET input; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.
@@ -153,7 +153,7 @@ concept structure_file_input_format_concept = requires(t & v,
  *     a specialisation of seqan3::structured_rna and the second template parameter to
  *     seqan3::structure_file_input_options must be set to true.
  */
- /*!\var static inline std::vector<std::string> seqan3::structure_file_input_format_concept::file_extensions
+ /*!\var static inline std::vector<std::string> seqan3::StructureFileInputFormat::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}
@@ -164,28 +164,28 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_format_concept [default is false].
+ * seqan3::StructureFileFormat [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_structure_file_input_formats_concept
+ * \see seqan3::TypeListOfStructureFileInputFormats
  */
 template<typename t>
 constexpr bool is_type_list_of_structure_file_input_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_input_format_concept [overload].
+ * seqan3::StructureFileInputFormat [overload].
  * \ingroup core
- * \see seqan3::type_list_of_structure_file_input_formats_concept
+ * \see seqan3::TypeListOfStructureFileInputFormats
  */
 template<typename ... ts>
 constexpr bool is_type_list_of_structure_file_input_formats_v<type_list<ts...>>
-                = (structure_file_input_format_concept<ts> && ...);
+                = (StructureFileInputFormat<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::structure_file_input_format_concept.
+ * seqan3::StructureFileInputFormat.
  * \ingroup core
  * \see seqan3::is_type_list_of_structure_file_formats_v
  */
 template<typename t>
-concept type_list_of_structure_file_input_formats_concept = is_type_list_of_structure_file_input_formats_v<t>;
+concept TypeListOfStructureFileInputFormats = is_type_list_of_structure_file_input_formats_v<t>;
 
 } // namespace seqan3::detail

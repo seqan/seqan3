@@ -91,7 +91,7 @@ template <>
 struct on_align_config<align_cfg::id::output>
 {
     //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
+    template <ConfigElement t>
     using invoke = typename is_value_specialisation_of<t, align_config_output>::type;
 };
 

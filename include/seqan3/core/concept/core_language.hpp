@@ -55,23 +55,23 @@ namespace seqan3::detail
  * \{
  */
 
-/*!\interface   seqan3::detail::weakly_equality_comparable_by_members_with_concept <>
+/*!\interface   seqan3::detail::WeaklyEqualityComparableByMembersWith <>
  * \brief       Like std::detail::WeaklyEqualityComparableWith, but considers only member operators of the LHS.
  */
 //!\cond
 template <typename lhs_t, typename rhs_t>
-concept weakly_equality_comparable_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
+concept WeaklyEqualityComparableByMembersWith = requires (lhs_t const & lhs, rhs_t const & rhs)
 {
     lhs.operator==(rhs); std::Boolean<decltype(lhs.operator==(rhs))>;
     lhs.operator!=(rhs); std::Boolean<decltype(lhs.operator!=(rhs))>;
 };
 //!\endcond
-/*!\interface   seqan3::detail::weakly_ordered_by_members_with_concept <>
- * \brief       Like seqan3::weakly_ordered_with_concept, but considers only member operators of the LHS.
+/*!\interface   seqan3::detail::WeaklyOrderedByMembersWith <>
+ * \brief       Like seqan3::WeaklyOrderedWith, but considers only member operators of the LHS.
  */
 //!\cond
 template <typename lhs_t, typename rhs_t>
-concept weakly_ordered_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
+concept WeaklyOrderedByMembersWith = requires (lhs_t const & lhs, rhs_t const & rhs)
 {
     lhs.operator< (rhs); std::Boolean<decltype(lhs.operator< (rhs))>;
     lhs.operator> (rhs); std::Boolean<decltype(lhs.operator> (rhs))>;
@@ -90,7 +90,7 @@ namespace seqan3
  * \{
  */
 
-/*!\interface   seqan3::weakly_ordered_with_concept <>
+/*!\interface   seqan3::WeaklyOrderedWith <>
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
@@ -98,7 +98,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t1, typename t2>
-concept weakly_ordered_with_concept = requires (std::remove_reference_t<t1> const & v1,
+concept WeaklyOrderedWith = requires (std::remove_reference_t<t1> const & v1,
                                                      std::remove_reference_t<t2> const & v2)
 {
     { v1 <  v2 } -> bool &&;
@@ -108,79 +108,79 @@ concept weakly_ordered_with_concept = requires (std::remove_reference_t<t1> cons
 };
 //!\endcond
 
-/*!\interface   seqan3::implicitly_convertible_to_concept <>
+/*!\interface   seqan3::ImplicitlyConvertibleTo <>
  * \brief       Resolves to `std::ranges::ImplicitlyConvertibleTo<type1, type2>()`.
  */
 //!\cond
 template <typename t, typename u>
-concept implicitly_convertible_to_concept = std::is_convertible_v<t, u>;
+concept ImplicitlyConvertibleTo = std::is_convertible_v<t, u>;
 //!\endcond
 
-/*!\interface   seqan3::explicitly_convertible_to_concept <>
+/*!\interface   seqan3::ExplicitlyConvertibleTo<>
  * \brief       Resolves to `std::ranges::ExplicitlyConvertibleTo<type1, type2>()`.
  */
 //!\cond
 template <typename t, typename u>
-concept explicitly_convertible_to_concept = requires (t vt) { { static_cast<u>(vt)}; };
+concept ExplicitlyConvertibleTo= requires (t vt) { { static_cast<u>(vt)}; };
 //!\endcond
 
-/*!\interface   seqan3::arithmetic_concept <>
+/*!\interface   seqan3::Arithmetic <>
  * \brief       A type that satisfies std::is_arithmetic_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/types/is_arithmetic
  */
 //!\cond
 template <typename t>
-concept arithmetic_concept = std::is_arithmetic_v<t>;
+concept Arithmetic = std::is_arithmetic_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::floating_point_concept <>
- * \extends     seqan3::arithmetic_concept
+/*!\interface   seqan3::FloatingPoint <>
+ * \extends     seqan3::Arithmetic
  * \brief       An arithmetic type that also satisfies std::is_floating_point_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/types/is_floating_point
  */
 //!\cond
 template <typename t>
-concept floating_point_concept = arithmetic_concept<t> && std::is_floating_point_v<t>;
+concept FloatingPoint = Arithmetic<t> && std::is_floating_point_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::trivially_destructible_concept <>
+/*!\interface   seqan3::TriviallyDestructible <>
  * \extends     std::Destructible
  * \brief       A type that satisfies std::is_trivially_destructible_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/types/is_destructible
  */
 //!\cond
 template <typename t>
-concept trivially_destructible_concept = std::Destructible<t> && std::is_trivially_destructible_v<t>;
+concept TriviallyDestructible = std::Destructible<t> && std::is_trivially_destructible_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::trivially_copyable_concept
+/*!\interface   seqan3::TriviallyCopyable
  * \brief       A type that satisfies std::is_trivially_copyable_v<t>.
  * \extends     std::Copyable
  * \sa          http://en.cppreference.com/w/cpp/types/is_trivially_copyable
  */
 //!\cond
 template <typename t>
-concept trivially_copyable_concept = std::Copyable<t> && std::is_trivially_copyable_v<t>;
+concept TriviallyCopyable = std::Copyable<t> && std::is_trivially_copyable_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::trivial_concept
- * \brief       A type that satisfies seqan3::trivially_copyable_concept and seqan3::trivially_destructible_concept.
- * \extends     seqan3::trivially_copyable_concept
- * \extends     seqan3::trivially_destructible_concept
+/*!\interface   seqan3::Trivial
+ * \brief       A type that satisfies seqan3::TriviallyCopyable and seqan3::TriviallyDestructible.
+ * \extends     seqan3::TriviallyCopyable
+ * \extends     seqan3::TriviallyDestructible
  * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Copyable
  */
 //!\cond
 template <typename t>
-concept trivial_concept = trivially_copyable_concept<t> && trivially_destructible_concept<t>;
+concept Trivial = TriviallyCopyable<t> && TriviallyDestructible<t>;
 //!\endcond
 
-/*!\interface   seqan3::standard_layout_concept
+/*!\interface   seqan3::StandardLayout
  * \brief       Resolves to std::is_standard_layout_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/concept/StandardLayoutType
  */
 //!\cond
 template <typename t>
-concept standard_layout_concept = std::is_standard_layout_v<t>;
+concept StandardLayout = std::is_standard_layout_v<t>;
 //!\endcond
 
 }  // namespace seqan3

@@ -44,16 +44,16 @@ using namespace seqan3;
 
 TEST(validator_test, fullfill_concept)
 {
-    EXPECT_TRUE(validator_concept<detail::default_validator<int>>);
-    EXPECT_TRUE(validator_concept<integral_range_validator<int>>);
-    EXPECT_TRUE(validator_concept<value_list_validator<int>>);
-    EXPECT_TRUE(validator_concept<regex_validator<std::string>>);
-    EXPECT_TRUE(validator_concept<regex_validator<std::vector<std::string>>>);
-    EXPECT_TRUE(validator_concept<detail::default_validator<std::vector<int>>>);
-    EXPECT_TRUE(validator_concept<integral_range_validator<std::vector<int>>>);
-    EXPECT_TRUE(validator_concept<value_list_validator<std::vector<int>>>);
-    EXPECT_TRUE(validator_concept<file_ext_validator>);
-    EXPECT_TRUE(validator_concept<file_existance_validator>);
+    EXPECT_TRUE(Validator<detail::default_validator<int>>);
+    EXPECT_TRUE(Validator<integral_range_validator<int>>);
+    EXPECT_TRUE(Validator<value_list_validator<int>>);
+    EXPECT_TRUE(Validator<regex_validator<std::string>>);
+    EXPECT_TRUE(Validator<regex_validator<std::vector<std::string>>>);
+    EXPECT_TRUE(Validator<detail::default_validator<std::vector<int>>>);
+    EXPECT_TRUE(Validator<integral_range_validator<std::vector<int>>>);
+    EXPECT_TRUE(Validator<value_list_validator<std::vector<int>>>);
+    EXPECT_TRUE(Validator<file_ext_validator>);
+    EXPECT_TRUE(Validator<file_existance_validator>);
 }
 
 TEST(validator_test, no_file)

@@ -144,8 +144,8 @@ TYPED_TEST(aminoacid, to_char)
 
 TYPED_TEST(aminoacid, concept_check)
 {
-    EXPECT_TRUE(aminoacid_concept<TypeParam>);
-    EXPECT_TRUE(aminoacid_concept<TypeParam &>);
+    EXPECT_TRUE(AminoacidAlphabet<TypeParam>);
+    EXPECT_TRUE(AminoacidAlphabet<TypeParam &>);
 }
 
 // ------------------------------------------------------------------

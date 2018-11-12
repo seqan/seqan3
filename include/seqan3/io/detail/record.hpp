@@ -51,7 +51,7 @@ namespace seqan3::detail
 {
 
 // ----------------------------------------------------------------------------
-// fields_concept
+// Fields 
 // ----------------------------------------------------------------------------
 
 /*!\brief Auxiliary concept that checks whether a type is a specialisation of seqan3::fields.
@@ -59,7 +59,7 @@ namespace seqan3::detail
  * \relates seqan3::fields
  */
 template <typename t>
-concept fields_concept = is_value_specialisation_of_v<t, fields>;
+concept Fields  = is_value_specialisation_of_v<t, fields>;
 
 // ----------------------------------------------------------------------------
 // select_types_with_ids

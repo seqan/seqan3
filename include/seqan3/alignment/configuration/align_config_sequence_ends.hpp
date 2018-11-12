@@ -225,7 +225,7 @@ struct on_align_config<align_cfg::id::sequence_ends>
     /*!\brief Type alias used by meta::find_if
      * \tparam cfg The configuration element.
      */
-    template <config_element_concept cfg>
+    template <ConfigElement cfg>
     using invoke = std::conditional_t<is_value_specialisation_of_v<cfg, align_config_sequence_ends>,
                                       std::true_type,
                                       typename std::is_same<cfg, align_config_sequence_ends_deferred>::type>;

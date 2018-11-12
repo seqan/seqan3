@@ -46,10 +46,10 @@ namespace seqan3::detail
 {
 
 //!\brief The declaration of alignment_score_matrix. Each specialisation of this
-//!       declaration must satisfy seqan3::detail::matrix_concept.
+//!       declaration must satisfy seqan3::detail::Matrix.
 //!\attention This is a pure base class, you must only use its specialisations.
 //!\ingroup alignment_matrix
-//!\implements seqan3::detail::matrix_concept
+//!\implements seqan3::detail::Matrix
 template <typename ...>
 class alignment_score_matrix;
 

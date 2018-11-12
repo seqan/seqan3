@@ -43,14 +43,14 @@
 #include <iterator>
 #include <type_traits>
 
-// remove if sequence_container_concept_modified_by_const_iterator_bug vanished from travis
+// remove if SequenceContainerRangeRange_modified_by_const_iterator_bug vanished from travis
 #include <string>
 
 #include <seqan3/std/iterator>
 
 // TODO:
-// * merge sequence_container_concept_modified_by_const_iterator back into
-//   sequence_container_concept
+// * merge SequenceContainerRangeRange_modified_by_const_iterator back into
+//   SequenceContainerRangeRange
 // * remove is_basic_string
 // * fix test cases
 // * remove #include <string> in this file
@@ -63,31 +63,31 @@ namespace seqan3::detail
 //!\privatesection
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
-//!\attention Will be deleted once seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::SequenceContainerRangeRange_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 struct is_basic_string : std::false_type
 {};
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
-//!\attention Will be deleted once seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::SequenceContainerRangeRange_modified_by_const_iterator_bug is fixed.
 template <typename value_t, typename traits_t, typename allocator_t>
 struct is_basic_string<std::basic_string<value_t, traits_t, allocator_t>> : std::true_type
 {};
 
 //!\brief Shorthand of seqan3::detail::is_basic_string
-//!\attention Will be deleted once seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
+//!\attention Will be deleted once seqan3::detail::SequenceContainerRangeRange_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
 
-/*!\interface seqan3::detail::sequence_container_concept_modified_by_const_iterator <>
+/*!\interface seqan3::detail::SequenceContainerRangeRange_modified_by_const_iterator <>
  * \brief Checks whether insert and erase can be used with const_iterator
  *
- * \attention This will be merged back into sequence_container_concept once
- * seqan3::detail::sequence_container_concept_modified_by_const_iterator_bug is fixed.
+ * \attention This will be merged back into SequenceContainerRangeRange once
+ * seqan3::detail::SequenceContainerRangeRange_modified_by_const_iterator_bug is fixed.
  */
 //!\cond
 template <typename type>
-concept sequence_container_concept_modified_by_const_iterator = requires (type val, type val2)
+concept SequenceContainerRangeRange_modified_by_const_iterator = requires (type val, type val2)
 {
     { val.insert(val.cbegin(), val2.front())                                           } -> typename type::iterator;
     { val.insert(val.cbegin(), typename type::value_type{})                            } -> typename type::iterator;
@@ -108,19 +108,19 @@ concept sequence_container_concept_modified_by_const_iterator = requires (type v
 
 /*!\brief Workaround for a ubuntu/travis-ci exclusive bug with g++-7.2.
  *
- * seqan3::detail::sequence_container_concept_modified_by_const_iterator <std::string> is
+ * seqan3::detail::SequenceContainerRangeRange_modified_by_const_iterator <std::string> is
  * known to work, but ubuntu::ppa (<18.04)/travis-ci has a version of g++-7.2
  * where a bug in the STL prevents this concept to be true.
  *
  * \attention This workaround can be removed if
- * `/test/range/container/container_concept_test.cpp` is not failing on
+ * `/test/range/container/ContainerRange_test.cpp` is not failing on
  * ubuntu::ppa (<18.04)/travis-ci anymore. \n
  * Probably when the ppa version of gcc7 is newer than `7.2.0-1ubuntu1~16.04` (2017-08-20)
  * \sa https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=xenial
  */
 template<typename string_t = std::string>
-constexpr bool sequence_container_concept_modified_by_const_iterator_bug =
-    is_basic_string_v<string_t> && !sequence_container_concept_modified_by_const_iterator<string_t>;
+constexpr bool SequenceContainerRangeRange_modified_by_const_iterator_bug =
+    is_basic_string_v<string_t> && !SequenceContainerRangeRange_modified_by_const_iterator<string_t>;
 
 //!\publicsection
 
@@ -132,14 +132,14 @@ namespace seqan3
 /*!\addtogroup container
  * \{
  */
-/*!\interface seqan3::container_concept <>
+/*!\interface seqan3::ContainerRange <>
  * \extends std::ranges::ForwardRange
  * \extends std::ranges::SizedRange
  * \extends std::ranges::CommonRange
- * \extends seqan3::const_iterable_concept
+ * \extends seqan3::ConstIterableRange
  * \brief The (most general) container concept as defined by the standard library.
  * \details
- * The container concept is modelled as in the [STL](http://en.cppreference.com/w/cpp/concept/Container), but
+ * The container concept is modelled as in the [STL](http://en.cppreference.com/w/cpp/concept/ContainerRange), but
  * additionally requires std::swap() to be implemented.
  *
  * \attention
@@ -148,7 +148,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept container_concept = requires (type val, type val2, type const cval, typename type::iterator it)
+concept ContainerRange = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
@@ -199,13 +199,13 @@ concept container_concept = requires (type val, type val2, type const cval, type
 };
 //!\endcond
 
-/*!\interface seqan3::sequence_container_concept <>
- * \extends seqan3::container_concept
- * \brief A more refined container concept than seqan3::container_concept.
+/*!\interface seqan3::SequenceContainerRangeRange <>
+ * \extends seqan3::ContainerRange
+ * \brief A more refined container concept than seqan3::ContainerRange.
  *
  * Includes constraints on constructors, `assign()`, `.insert()`, `.erase()`, `.push_back()`, `.pop_back`, `.clear()`,
  * `.size()`, `front()` and `.back()` member functions with corresponding signatures. Models the subset of the
- * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
+ * [STL SequenceContainerRangeRangeConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainerRangeRange) that is supported
  * by `std::list`, `std::vector`, `std::deque`, `std::basic_string`.
  *
  * \attention
@@ -213,9 +213,9 @@ concept container_concept = requires (type val, type val2, type const cval, type
  */
 //!\cond
 template <typename type>
-concept sequence_container_concept = requires (type val, type val2, type const cval)
+concept SequenceContainerRangeRange = requires (type val, type val2, type const cval)
 {
-    requires container_concept<type>;
+    requires ContainerRange<type>;
 
     // construction
     { type{typename type::size_type{}, typename type::value_type{}} };
@@ -243,8 +243,8 @@ concept sequence_container_concept = requires (type val, type val2, type const c
     { val.erase(val.begin(), val.end())                                                } -> typename type::iterator;
 
     // workaround a travis bug where insert/erase can't take a const iterator, e.g. cbegin()
-    requires detail::sequence_container_concept_modified_by_const_iterator_bug<type> ||
-             detail::sequence_container_concept_modified_by_const_iterator<type>;
+    requires detail::SequenceContainerRangeRange_modified_by_const_iterator_bug<type> ||
+             detail::SequenceContainerRangeRange_modified_by_const_iterator<type>;
 
     { val.push_back(val.front())                                                       } -> void;
     { val.push_back(typename type::value_type{})                                       } -> void;
@@ -261,13 +261,13 @@ concept sequence_container_concept = requires (type val, type val2, type const c
 };
 //!\endcond
 
-/*!\interface seqan3::random_access_container_concept <>
- * \extends seqan3::sequence_container_concept
+/*!\interface seqan3::RandomAccessContainerRangeRange <>
+ * \extends seqan3::SequenceContainerRangeRange
  * \extends std::ranges::RandomAccessRange
- * \brief A more refined container concept than seqan3::sequence_container_concept.
+ * \brief A more refined container concept than seqan3::SequenceContainerRangeRange.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the
- * [STL SequenceContainerConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainer) that is supported
+ * [STL SequenceContainerRangeRangeConcept](http://en.cppreference.com/w/cpp/concept/SequenceContainerRangeRange) that is supported
  * by `std::vector`, `std::deque` and `std::basic_string`.
  *
  * \attention
@@ -277,9 +277,9 @@ concept sequence_container_concept = requires (type val, type val2, type const c
  */
 //!\cond
 template <typename type>
-concept random_access_container_concept = requires (type val)
+concept RandomAccessContainerRangeRange = requires (type val)
 {
-    requires sequence_container_concept<type>;
+    requires SequenceContainerRangeRange<type>;
 
     // access container
     { val[0]    } -> typename type::reference;
@@ -291,9 +291,9 @@ concept random_access_container_concept = requires (type val)
 };
 //!\endcond
 
-/*!\interface seqan3::reservable_container_concept <>
- * \extends seqan3::random_access_container_concept
- * \brief A more refined container concept than seqan3::random_access_container_concept.
+/*!\interface seqan3::ReservableContainerRangeRange <>
+ * \extends seqan3::RandomAccessContainerRangeRange
+ * \brief A more refined container concept than seqan3::RandomAccessContainerRangeRange.
  *
  * Adds requirements for `.reserve()`, `.capacity()` and `.shrink_to_fit()`.
  * Satisfied by `std::vector` and `std::basic_string`.
@@ -303,9 +303,9 @@ concept random_access_container_concept = requires (type val)
  */
 //!\cond
 template <typename type>
-concept reservable_container_concept = requires (type val)
+concept ReservableContainerRangeRange = requires (type val)
 {
-    requires random_access_container_concept<type>;
+    requires RandomAccessContainerRangeRange<type>;
 
     { val.capacity()      } -> typename type::size_type;
     { val.reserve(0)      } -> void;

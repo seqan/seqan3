@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Provides seqan3::aminoacid_concept.
+ * \brief Provides seqan3::AminoacidAlphabet.
  */
 
 #pragma once
@@ -48,12 +48,12 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::aminoacid_concept <>
- * \extends seqan3::alphabet_concept
+/*!\interface seqan3::AminoacidAlphabet <>
+ * \extends seqan3::Alphabet
  * \brief A concept that indicates whether an alphabet represents amino acids.
  * \ingroup aminoacid
  *
- * In addition to the requirements for seqan3::alphabet_concept, the amino_acid_concept expects
+ * In addition to the requirements for seqan3::Alphabet, the AminoacidAlphabet expects
  * conforming alphabets to provide an enum-like interface with all possible 27 amino acids as values
  * (although some may be mapped to others if the alphabet is smaller than 27).
  *
@@ -64,9 +64,9 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept aminoacid_concept = requires (type v)
+concept AminoacidAlphabet = requires (type v)
 {
-    requires alphabet_concept<type>;
+    requires Alphabet<type>;
     { std::remove_reference_t<type>::A } -> std::remove_reference_t<type>;
     { std::remove_reference_t<type>::B } -> std::remove_reference_t<type>;
     { std::remove_reference_t<type>::C } -> std::remove_reference_t<type>;

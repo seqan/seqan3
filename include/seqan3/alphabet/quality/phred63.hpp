@@ -53,8 +53,8 @@ namespace seqan3
 {
 
 /*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (full range).
- * \implements seqan3::quality_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::Quality
+ * \implements seqan3::detail::constexpr_Alphabet
  * \ingroup quality
  *
  * \details
@@ -101,7 +101,7 @@ struct phred63
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     * Satisfies the seqan3::Alphabet::to_char() requirement via the seqan3::to_char() wrapper.
      *
      * \par Complexity
      *
@@ -120,7 +120,7 @@ struct phred63
      *
      * \details
      *
-     * Satisfies the seqan3::detail::quality_concept::to_phred() requirement via the seqan3::to_phred() wrapper.
+     * Satisfies the seqan3::detail::Quality::to_phred() requirement via the seqan3::to_phred() wrapper.
      *
      * \par Complexity
      *
@@ -139,7 +139,7 @@ struct phred63
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     * Satisfies the seqan3::Alphabet::to_char() requirement via the seqan3::to_char() wrapper.
      *
      * \par Complexity
      *
@@ -162,7 +162,7 @@ struct phred63
       *
       * \details
       *
-      * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
+      * Satisfies the seqan3::Alphabet::assign_char() requirement via the seqan3::assign_char() wrapper.
       *
       * \par Complexity
       *
@@ -178,7 +178,7 @@ struct phred63
      *
      * \details
      *
-     * Satisfies the seqan3::quality_concept::assign_phred() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::Quality::assign_phred() requirement via the seqan3::assign_rank() wrapper.
      *
      * \par Complexity
      *
@@ -196,7 +196,7 @@ struct phred63
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::semi_Alphabet::assign_rank() requirement via the seqan3::assign_rank() wrapper.
      *
      * \par Complexity
      *
@@ -213,8 +213,8 @@ struct phred63
     //!\}
 
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
-    //!\tparam other_nucl_type The type to convert to; must model seqan3::quality_concept.
-    template <quality_concept other_qual_type>
+    //!\tparam other_nucl_type The type to convert to; must model seqan3::Quality.
+    template <Quality other_qual_type>
     explicit constexpr operator other_qual_type() const noexcept
     {
         return detail::convert_through_phred_representation<other_qual_type, std::decay_t<decltype(*this)>>[to_phred()];

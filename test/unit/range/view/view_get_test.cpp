@@ -166,7 +166,7 @@ TEST(view_get, concepts)
     EXPECT_FALSE(std::ranges::View<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), std::tuple<int, int>>));
 
     auto v1 = vec | view::get<0>;
@@ -177,7 +177,7 @@ TEST(view_get, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), std::tuple<int, int>>));
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
 }

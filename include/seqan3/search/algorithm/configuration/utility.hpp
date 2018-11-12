@@ -119,7 +119,7 @@ struct on_search_config
     /*!\brief A template alias for the invocation. Defaults to std::false_type.
      * \tparam t The type of the configuration element to test.
      */
-    template <config_element_concept t>
+    template <ConfigElement t>
     using invoke = std::false_type;
 };
 
@@ -132,7 +132,7 @@ struct on_search_config
  * \tparam config_element_t The type to get the mapped seqan3::search_cfg::id for.
  * \see seqan3::detail::search_config_type_to_id_v
  */
-template <config_element_concept config_element_t>
+template <ConfigElement config_element_t>
 struct search_config_type_to_id
 {
     //!\brief The mapped seqan3::search_cfg::id. Defaults to seqan3::search_cfg::id::SIZE.
@@ -141,7 +141,7 @@ struct search_config_type_to_id
 
 //!\brief Helper variable template for seqan3::detail::search_config_type_to_id.
 //!\ingroup configuration
-template <config_element_concept config_element_t>
+template <ConfigElement config_element_t>
 inline constexpr search_cfg::id search_config_type_to_id_v = search_config_type_to_id<config_element_t>::value;
 
 // ----------------------------------------------------------------------------

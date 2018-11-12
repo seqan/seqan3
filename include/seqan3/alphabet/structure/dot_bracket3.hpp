@@ -42,7 +42,7 @@
 #include <cassert>
 #include <vector>
 
-#include <seqan3/alphabet/structure/rna_structure_concept.hpp>
+#include <seqan3/alphabet/structure/RnaStructure.hpp>
 
 // ------------------------------------------------------------------
 // dot_bracket3
@@ -52,8 +52,8 @@ namespace seqan3
 {
 
 /*!\brief The three letter RNA structure alphabet of the characters ".()".
- * \implements seqan3::rna_structure_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::RnaStructure
+ * \implements seqan3::detail::constexpr_Alphabet
  * \ingroup structure
  *
  * \details

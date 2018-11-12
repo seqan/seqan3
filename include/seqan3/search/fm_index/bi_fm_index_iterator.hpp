@@ -59,8 +59,8 @@ namespace seqan3
  */
 
 /*!\brief The SeqAn Bidirectional FM Index Iterator.
- * \implements seqan3::bi_fm_index_iterator_concept
- * \tparam index_t The type of the underlying index; must model seqan3::bi_fm_index_concept.
+ * \implements seqan3::BiFmIndexIterator
+ * \tparam index_t The type of the underlying index; must model seqan3::BiFmIndex.
  * \details
  *
  * The iterator's interface provides searching a string both from left to right as well as from right to left in the
@@ -163,7 +163,7 @@ protected:
     }
 
     //!\brief Optimized bidirectional search without alphabet mapping
-    template <detail::sdsl_index_concept csa_t>
+    template <detail::SdslIndex csa_t>
     bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
                               size_type & l_fwd, size_type & r_fwd,
                               size_type & l_bwd, size_type & r_bwd) const noexcept
@@ -217,7 +217,7 @@ protected:
     }
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
-    template <detail::sdsl_index_concept csa_t>
+    template <detail::SdslIndex csa_t>
     bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
                                     size_type const l_parent, size_type const r_parent,
                                     size_type & l_fwd, size_type & r_fwd,
@@ -427,9 +427,9 @@ public:
      *
      * No-throw guarantee.
      */
-    template <alphabet_concept char_t>
+    template <Alphabet char_t>
     //!\cond
-        requires implicitly_convertible_to_concept<char_t, typename index_t::char_type>
+        requires ImplicitlyConvertibleTo<char_t, typename index_t::char_type>
     //!\endcond
     bool extend_right(char_t const c) noexcept
     {
@@ -469,9 +469,9 @@ public:
      *
      * No-throw guarantee.
      */
-    template <alphabet_concept char_t>
+    template <Alphabet char_t>
     //!\cond
-       requires implicitly_convertible_to_concept<char_t, typename index_t::char_type>
+       requires ImplicitlyConvertibleTo<char_t, typename index_t::char_type>
     //!\endcond
     bool extend_left(char_t const c) noexcept
     {
@@ -515,7 +515,7 @@ public:
      */
     template <std::ranges::RandomAccessRange seq_t>
     //!\cond
-        requires implicitly_convertible_to_concept<innermost_value_type_t<seq_t>, typename index_t::char_type>
+        requires ImplicitlyConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>
     //!\endcond
     bool extend_right(seq_t && seq) noexcept
     {
@@ -578,7 +578,7 @@ public:
      */
     template <std::ranges::RandomAccessRange seq_t>
     //!\cond
-       requires implicitly_convertible_to_concept<innermost_value_type_t<seq_t>, typename index_t::char_type>
+       requires ImplicitlyConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>
     //!\endcond
     bool extend_left(seq_t && seq) noexcept
     {

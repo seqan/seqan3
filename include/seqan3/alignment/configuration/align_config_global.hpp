@@ -86,7 +86,7 @@ template <>
 struct on_align_config<align_cfg::id::global>
 {
     //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
+    template <ConfigElement t>
     using invoke = typename std::is_same<t, align_config_global>::type;
 };
 

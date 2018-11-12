@@ -63,15 +63,15 @@
  * for qualities, RNA structures and alignment gaps. In addition there are templates for combining alphabet
  * types into new alphabets, and wrappers for existing data types like the canonical `char`.
  *
- * To be included into the alphabet module, an alphabet must satisfy the generic seqan3::alphabet_concept
+ * To be included into the alphabet module, an alphabet must satisfy the generic seqan3::Alphabet
  * documented below. While this only encompasses a minimum set of requirements, many of our alphabets provide
- * more features and there are more refined concepts. The inheritance diagram of seqan3::alphabet_concept gives
+ * more features and there are more refined concepts. The inheritance diagram of seqan3::Alphabet gives
  * a detailed overview. A more basic overview of this module and it's submodules is available in the collaboration
  * diagram at the top of this page.
  *
  * ## The alphabet concept
  *
- * The seqan3::alphabet_concept defines the requirements a type needs to meet to be considered an alphabet
+ * The seqan3::Alphabet defines the requirements a type needs to meet to be considered an alphabet
  * by SeqAn, or in other words: you can expect certain properties and functions to be defined on
  * all data types we call an alphabet.
  *
@@ -129,7 +129,7 @@
  * is generated via conversion tables. This is, however, not required as long as both interfaces are provided
  * and all functions operate in constant time.
  *
- * <small>In the documentation you will also encounter seqan3::semi_alphabet_concept. It describes "one half" of an
+ * <small>In the documentation you will also encounter seqan3::semi_Alphabet. It describes "one half" of an
  * alphabet and only defines the rank interface as a type requirement. It is mainly used internally and not
  * relevant to most users of SeqAn.</small>
  *
@@ -145,10 +145,10 @@
  * that accepts different alphabet types, you need to use the free function / metafunction interface, because
  * it is the only interface guaranteed to exist (member functions are **not** required/enforced by the concept).
  *
- * ## Containers over alphabets
+ * ## ContainerRanges over alphabets
  *
  * In SeqAn3 it is recommended you use the STL container classes like std::vector for storing sequence data,
- * but you can use other class templates if they satisfy the respective seqan3::container_concept, e.g. `std::deque` or
+ * but you can use other class templates if they satisfy the respective seqan3::ContainerRange, e.g. `std::deque` or
  * <a href="https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md" target="_blank">
  * <tt>folly::fbvector</tt></a> or even <a href="http://doc.qt.io/qt-5/qvector.html" target="_blank">
  * <tt>Qt::QVector</tt></a>.

@@ -55,8 +55,8 @@ namespace seqan3
 
 /*!\brief The 15 letter DNA alphabet, containing all IUPAC smybols minus the gap.
  * \ingroup nucleotide
- * \implements seqan3::nucleotide_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::NucleotideAlphabet
+ * \implements seqan3::detail::constexpr_Alphabet
  *
  * \details
  * Note that you can assign 'U' as a character to dna15 and it will silently
@@ -149,10 +149,10 @@ struct dna15
      * \{
      */
     //!\brief Implicit conversion between dna* and rna* of the same size.
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::NucleotideAlphabet and have the same \link value_size \endlink.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+        requires NucleotideAlphabet<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
     //!\endcond
     constexpr operator other_nucl_type() const noexcept
     {
@@ -160,10 +160,10 @@ struct dna15
     }
 
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::NucleotideAlphabet.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type>
+        requires NucleotideAlphabet<other_nucl_type>
     //!\endcond
     explicit constexpr operator other_nucl_type() const noexcept
     {

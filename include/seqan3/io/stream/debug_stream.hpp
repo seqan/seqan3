@@ -98,7 +98,7 @@ constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
  *
  * See seqan3::fmtflags2 for more details.
  *
- * \attention This class does not yet model seqan3::ostream_concept fully, \todo implement.
+ * \attention This class does not yet model seqan3::Ostream fully, \todo implement.
  */
 class debug_stream_type
 {
@@ -281,15 +281,15 @@ inline debug_stream_type debug_stream{};
  * \{
  */
 /*!\brief All alphabets can be printed to the seqan3::debug_stream by their char representation.
- * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::alphabet_concept.
+ * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::Alphabet.
  * \param s The seqan3::debug_stream.
  * \param l The alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <alphabet_concept alphabet_t>
+template <Alphabet alphabet_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
 //!\cond
-    requires !ostream_concept<std::ostream, alphabet_t>
+    requires !Ostream<std::ostream, alphabet_t>
 //!\endcond
 {
     return s << to_char(l);
@@ -303,7 +303,7 @@ inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
  *
  * \details
  *
- * If the element type models seqan3::alphabet_concept (and is not an unsigned integer), the range is printed
+ * If the element type models seqan3::Alphabet (and is not an unsigned integer), the range is printed
  * just as if it were a string, i.e. `std::vector<dna4>{dna4::C, dna4:G, dna4::A}` is printed as "CGA".
  *
  * In all other cases the elements are comma separated and the range is enclosed in brackets, i.e.
@@ -318,7 +318,7 @@ inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
                std::Same<remove_cvref_t<reference_t<std::remove_const_t<rng_t>>>, char>)
 //!\endcond
 {
-    if constexpr (alphabet_concept<reference_t<remove_cvref_t<rng_t>>> &&
+    if constexpr (Alphabet<reference_t<remove_cvref_t<rng_t>>> &&
                   !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<remove_cvref_t<rng_t>>>>)
     {
         for (auto && l : r)

@@ -114,7 +114,7 @@ inline constexpr_string constexpr condition_message_v
 };
 
 // ----------------------------------------------------------------------------
-// parse_condition_concept
+// ParseCondition
 // ----------------------------------------------------------------------------
 
 //!\cond
@@ -122,18 +122,18 @@ template <typename condition_t>
 class parse_condition_base;
 //!\endcond
 
-/*!\interface seqan3::detail::parse_condition_concept <>
+/*!\interface seqan3::detail::ParseCondition <>
  * \brief An internal concept to check if an object fulfills the requirements of a seqan3::detail::parse_condition.
  * \ingroup stream
  *
  * \details
  *
- * The must be invocable with an seqan3::char_adaptation_concept type and supply a static constexpr `msg` member of type
+ * The must be invocable with an seqan3::CharAdaptation type and supply a static constexpr `msg` member of type
  * seqan3::constexpr_string.
  */
 //!\cond
 template <typename condition_t>
-concept parse_condition_concept = requires
+concept ParseCondition = requires
 {
     requires std::Predicate<std::remove_reference_t<condition_t>, char>;
     requires std::is_base_of_v<parse_condition_base<remove_cvref_t<condition_t>>,
@@ -147,13 +147,13 @@ concept parse_condition_concept = requires
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::detail::parse_condition_concept
- * \brief You can expect the variable and the predicate function on all types that satisfy seqan3::ostream_concept.
+/*!\name Requirements for seqan3::detail::ParseCondition
+ * \brief You can expect the variable and the predicate function on all types that satisfy seqan3::Ostream.
  * \{
  */
 /*!\fn      bool operator()(char_type c);
  * \brief   Predicate function to test if `c` satisfies the given condition.
- * \memberof seqan3::detail::parse_condition_concept
+ * \memberof seqan3::detail::ParseCondition
  * \param   c The character to be tested.
  * \returns `true` on success, `false` otherwise.
  *
@@ -162,7 +162,7 @@ concept parse_condition_concept = requires
  */
 
 /*!\var static constexpr auto msg
- * \memberof seqan3::detail::parse_condition_concept
+ * \memberof seqan3::detail::ParseCondition
  * \brief Defines the condition msg. The type is deduced from the constant expression in the definition of the variable.
  */
 //!\}
@@ -221,11 +221,11 @@ inline std::string make_printable(char_type const c)
 // ----------------------------------------------------------------------------
 
 //!\cond
-template <parse_condition_concept... condition_ts>
+template <ParseCondition... condition_ts>
     requires sizeof...(condition_ts) >= 2
 struct parse_condition_combiner;
 
-template <parse_condition_concept condition_t>
+template <ParseCondition condition_t>
 struct parse_condition_negator;
 //!\endcond
 
@@ -233,7 +233,7 @@ struct parse_condition_negator;
  *        parse conditions to add logical disjunction and negation operator.
  * \ingroup stream
  * \tparam derived_t The parse condition type to be extended with the logical operators.
- *                   Must model seqan3::detail::parse_condition_concept.
+ *                   Must model seqan3::detail::ParseCondition.
  */
 template <typename derived_t>
 class parse_condition_base
@@ -262,8 +262,8 @@ public:
      * \brief Adds logical operators to allow logical disjunction, conjunction and negation on parse conditions.
      * \{
      */
-    //!\brief Combines the result of two seqan3::detail::parse_condition_concept via logical disjunction.
-    template <parse_condition_concept rhs_t>
+    //!\brief Combines the result of two seqan3::detail::ParseCondition via logical disjunction.
+    template <ParseCondition rhs_t>
     constexpr auto operator||(rhs_t const &) const
     {
         return parse_condition_combiner<derived_t, rhs_t>{};
@@ -300,6 +300,7 @@ public:
      */
     //!\brief Returns the message representing this condition as std::string.
     std::string message() const
+        requires ParseCondition<derived_t>
     {
         return derived_t::msg.string();
     }
@@ -311,12 +312,12 @@ public:
 // ----------------------------------------------------------------------------
 
 /*!\brief Logical disjunction operator for parse conditions.
- * \implements seqan3::detail::parse_condition_concept
+ * \implements seqan3::detail::ParseCondition
  * \tparam condition_ts Template parameter pack over all parse condition types. Must contain at least 2 template parameters.
- *                      Must model seqan3::detail::parse_condition_concept.
+ *                      Must model seqan3::detail::ParseCondition.
  * \ingroup stream
  */
-template <parse_condition_concept... condition_ts>
+template <ParseCondition... condition_ts>
 //!\cond
     requires sizeof...(condition_ts) >= 2
 //!\endcond
@@ -335,12 +336,12 @@ struct parse_condition_combiner : public parse_condition_base<parse_condition_co
 };
 
 /*!\brief Logical not operator for a parse condition.
- * \implements seqan3::detail::parse_condition_concept
+ * \implements seqan3::detail::ParseCondition
  * \tparam condition_t Template parameter to apply the not-operator for.
- *                     Must model seqan3::detail::parse_condition_concept.
+ *                     Must model seqan3::detail::ParseCondition.
  * \ingroup stream
  */
-template <parse_condition_concept condition_t>
+template <ParseCondition condition_t>
 struct parse_condition_negator : public parse_condition_base<parse_condition_negator<condition_t>>
 {
     //!\brief The message representing the negation of the associated condition.
@@ -361,7 +362,7 @@ struct parse_condition_negator : public parse_condition_base<parse_condition_neg
 
 /*!\brief Parse condition that checks if a given value is in the range of `rng_beg` and `interval_last`.
  * \ingroup stream
- * \implements seqan3::detail::parse_condition_concept
+ * \implements seqan3::detail::ParseCondition
  * \tparam interval_first non-type template parameter denoting the begin of the allowed range.
  *                        Must be less than or equal to `interval_last`.
  * \tparam interval_last non-type template parameter denoting the end of the allowed range.
@@ -403,10 +404,10 @@ struct is_in_interval_type : public parse_condition_base<is_in_interval_type<int
 
 /*!\brief Parse condition that checks if a given value is within the given alphabet `alphabet_t`.
  * \ingroup stream
- * \implements seqan3::detail::parse_condition_concept
- * \tparam alphabet_t The alphabet type. Must model seqan3::alphabet_concept.
+ * \implements seqan3::detail::ParseCondition
+ * \tparam alphabet_t The alphabet type. Must model seqan3::Alphabet.
  */
-template <alphabet_concept alphabet_t>
+template <Alphabet alphabet_t>
 struct is_in_alphabet_type : public parse_condition_base<is_in_alphabet_type<alphabet_t>>
 {
 private:
@@ -453,7 +454,7 @@ public:
 
 /*!\brief Parse condition that checks if a given value is equal to `char_v`.
  * \ingroup stream
- * \implements seqan3::detail::parse_condition_concept
+ * \implements seqan3::detail::ParseCondition
  * \tparam alphabet_t non-type template parameter with the value that should be checked against.
  */
 template <int char_v>

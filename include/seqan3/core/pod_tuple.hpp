@@ -61,7 +61,7 @@ struct pod_tuple
 
 /*!\brief Behaves like std::tuple but is an aggregate [PODType](http://en.cppreference.com/w/cpp/concept/PODType).
  * \ingroup core
- * \implements seqan3::tuple_like_concept
+ * \implements seqan3::TupleLike
  * \tparam type0    The first type (the first type).
  * \tparam ...types 0-n types (the remaining types of the values to be stored).
  *

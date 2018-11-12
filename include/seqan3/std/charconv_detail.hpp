@@ -708,7 +708,7 @@ inline std::from_chars_result from_chars_integral(char const * first, char const
 //!\endcond
 
 //!\brief Delegates to functions strto[d/f/ld] for floating point value extraction.
-template <seqan3::floating_point_concept value_type>
+template <seqan3::FloatingPoint value_type>
 inline std::from_chars_result from_chars_floating_point(char const * first,
                                                         char const * last,
                                                         value_type & value,

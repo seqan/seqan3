@@ -41,7 +41,7 @@
 
 #include <seqan3/alphabet/quality/all.hpp>
 // #include <seqan3/io/alignment/alignment_file_in_format_concept.hpp>
-#include <seqan3/io/alignment_file/output_format_concept.hpp>
+#include <seqan3/io/alignment_file/OutputFormat.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/range/view/convert.hpp>
 
@@ -66,7 +66,7 @@ inline std::vector<phred42> operator""_phred42(const char * s, std::size_t n)
 TEST(general, concepts)
 {
     // EXPECT_TRUE((alignment_file_in_format_concept<alignment_file_format_sam>));
-    EXPECT_TRUE((alignment_file_output_format_concept<alignment_file_format_sam>));
+    EXPECT_TRUE((AlignmentFileOutputFormat<alignment_file_format_sam>));
 }
 
 // ----------------------------------------------------------------------------

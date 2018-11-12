@@ -60,23 +60,23 @@ namespace seqan3::detail
 {
 //!\cond
 template <typename align_config_t>
-concept semi_global_config_concept = requires (align_config_t & cfg)
+concept SemiGlobalConfig = requires (align_config_t & cfg)
 {
     requires get<align_cfg::id::sequence_ends>(cfg) == free_ends_at::seq1;
 };
 
 template <typename align_config_t>
-concept global_config_concept = has_align_cfg_v<align_cfg::id::global, std::remove_reference_t<align_config_t>>;
+concept GlobalConfig = has_align_cfg_v<align_cfg::id::global, std::remove_reference_t<align_config_t>>;
 
 template <typename align_config_t>
-concept max_errors_concept = has_align_cfg_v<align_cfg::id::max_error, std::remove_reference_t<align_config_t>>;
+concept MaxErrors = has_align_cfg_v<align_cfg::id::max_error, std::remove_reference_t<align_config_t>>;
 //!\endcond
 
 /*!\todo Document me
  * \ingroup pairwise
  */
 template <typename traits_type>
-concept edit_distance_trait_concept = requires
+concept EditDistanceTrait = requires
 {
     typename std::remove_reference_t<traits_type>::word_type;
 };
@@ -99,7 +99,7 @@ struct default_edit_distance_trait_type
 template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
-          edit_distance_trait_concept traits_t = default_edit_distance_trait_type>
+          EditDistanceTrait traits_t = default_edit_distance_trait_type>
 class pairwise_alignment_edit_distance_unbanded
 {
     /*!\name Befriended classes
@@ -145,11 +145,11 @@ private:
     // using result_type = align_result<type_list<uint32_t, int>>;
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
-    static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
+    static constexpr bool use_max_errors = detail::MaxErrors<align_config_t>;
     //!\brief Whether the alignment is a semi-global alignment or not.
-    static constexpr bool is_semi_global = detail::semi_global_config_concept<align_config_t>;
+    static constexpr bool is_semi_global = detail::SemiGlobalConfig<align_config_t>;
     //!\brief Whether the alignment is a global alignment or not.
-    static constexpr bool is_global = detail::global_config_concept<align_config_t> && !is_semi_global;
+    static constexpr bool is_global = detail::GlobalConfig<align_config_t> && !is_semi_global;
 
     //!\brief How to pre-initialize hp.
     static constexpr word_type hp0 = is_global ? 1 : 0;

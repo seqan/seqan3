@@ -40,7 +40,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
+#include <seqan3/alignment/scoring/ScoringScheme.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
@@ -91,7 +91,7 @@ template <>
 struct on_align_config<align_cfg::id::score>
 {
     //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
+    template <ConfigElement t>
     using invoke = typename is_type_specialisation_of<t, align_config_score>::type;
 };
 

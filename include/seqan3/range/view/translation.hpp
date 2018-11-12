@@ -92,7 +92,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 class view_translate_single
 {
@@ -295,7 +295,7 @@ public:
     //!\}
 
     //!\brief Implicit conversion to container types.
-    template <random_access_container_concept container_type>
+    template <RandomAccessContainerRangeRange container_type>
     explicit operator container_type()
     //!\cond
         requires std::is_same_v<aa27, value_type_t<container_type>>
@@ -313,7 +313,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate_single(urng_t &&, translation_frames const) -> view_translate_single<urng_t>;
 
@@ -322,7 +322,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate_single(urng_t &&) -> view_translate_single<urng_t>;
 
@@ -361,9 +361,9 @@ namespace seqan3::view
  * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
+ * | seqan3::ConstIterableRange  | *required*                            | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::nucleotide_concept            | seqan3::aa27                                       |
+ * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | seqan3::aa27                                       |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
@@ -395,7 +395,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 class view_translate
 {
@@ -435,7 +435,7 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::compatible_concept (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate/encapsulate seqan3::Compatible (which doesn't work for types during their definition).
      * \{
      */
     //!\cond
@@ -575,7 +575,7 @@ public:
     //!\}
 
     //!\brief Implicit conversion to container types.
-    template <random_access_container_concept container_type>
+    template <RandomAccessContainerRangeRange container_type>
     explicit operator container_type()
     //!\cond
         requires is_compatible_this_aux<container_type>
@@ -594,7 +594,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate(urng_t &&, translation_frames const) -> view_translate<urng_t>;
 
@@ -603,7 +603,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate(urng_t &&) -> view_translate<urng_t>;
 
@@ -642,9 +642,9 @@ namespace seqan3::view
  * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
+ * | seqan3::ConstIterableRange  | *required*                            | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::nucleotide_concept            | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
+ * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.

@@ -334,7 +334,7 @@ TYPED_TEST(fm_index_iterator_test, lazy_locate)
 
 TEST(fm_index, concepts)
 {
-    EXPECT_TRUE(fm_index_iterator_concept<fm_index_iterator<fm_index<std::vector<dna4>>>>);
-    EXPECT_TRUE(fm_index_iterator_concept<bi_fm_index_iterator<bi_fm_index<std::vector<dna4>>>>);
-    EXPECT_TRUE(bi_fm_index_iterator_concept<bi_fm_index_iterator<bi_fm_index<std::vector<dna4>>>>);
+    EXPECT_TRUE(FmIndexIterator<fm_index_iterator<fm_index<std::vector<dna4>>>>);
+    EXPECT_TRUE(FmIndexIterator<bi_fm_index_iterator<bi_fm_index<std::vector<dna4>>>>);
+    EXPECT_TRUE(BiFmIndexIterator<bi_fm_index_iterator<bi_fm_index<std::vector<dna4>>>>);
 }

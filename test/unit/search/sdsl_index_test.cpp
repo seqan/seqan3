@@ -56,5 +56,5 @@ TYPED_TEST_CASE(sdsl_index_test, alphabet_strategy_types);
 
 TYPED_TEST(sdsl_index_test, concepts)
 {
-    EXPECT_TRUE(seqan3::detail::sdsl_index_concept<sdsl_index<TypeParam>>);
+    EXPECT_TRUE(seqan3::detail::SdslIndex<sdsl_index<TypeParam>>);
 }

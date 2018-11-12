@@ -83,7 +83,7 @@ TYPED_TEST(align_result_test, constructor)
 
 TYPED_TEST(align_result_test, tuple_concept)
 {
-    EXPECT_TRUE((tuple_like_concept<typename TestFixture::res_t>));
+    EXPECT_TRUE((TupleLike<typename TestFixture::res_t>));
 }
 
 TYPED_TEST(align_result_test, tuple_element)

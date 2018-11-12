@@ -275,14 +275,14 @@ public:
 
     //!\copydoc begin()
     const_iterator begin() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cbegin(urange)};
     }
 
     //!\copydoc begin()
     const_iterator cbegin() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cbegin(urange)};
     }
@@ -307,25 +307,25 @@ public:
 
     //!\copydoc end()
     sentinel_type end() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cend(urange)};
     }
 
     //!\copydoc end()
     sentinel_type cend() const noexcept
-        requires const_iterable_concept<urng_t>
+        requires ConstIterableRange<urng_t>
     {
         return {seqan3::cend(urange)};
     }
     //!\}
 
     /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must satisfy seqan3::sequence_container_concept and the
+     * \tparam container_t Type of the container to convert to; must satisfy seqan3::SequenceContainerRangeRange and the
      *                     seqan3::reference_t of both must model std::CommonReference.
      * \returns This view converted to container_t.
      */
-    template <sequence_container_concept container_t>
+    template <SequenceContainerRangeRange container_t>
     operator container_t()
     //!\cond
         requires std::CommonReference<reference_t<container_t>, reference>
@@ -337,10 +337,10 @@ public:
     }
 
     //!\overload
-    template <sequence_container_concept container_t>
+    template <SequenceContainerRangeRange container_t>
     operator container_t() const
     //!\cond
-        requires std::CommonReference<reference_t<container_t>, reference> && const_iterable_concept<urng_t>
+        requires std::CommonReference<reference_t<container_t>, reference> && ConstIterableRange<urng_t>
     //!\endcond
     {
         container_t ret;
@@ -439,7 +439,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             | std::CommonReference<char>            | seqan3::reference_t<urng_t>                        |
  *

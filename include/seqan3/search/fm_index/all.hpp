@@ -50,7 +50,7 @@
  * library). You are able to specify the underlying implementation of the SDSL to adjust it to your needs as well as
  * choose one of the preconfigured indices that are suitable for common applications in sequence analysis.
  *
- * For technical reasons you can currently only build indices over a seqan3::alphabet_concept if its
+ * For technical reasons you can currently only build indices over a seqan3::Alphabet if its
  * seqan3::alphabet_size is smaller or equal 256.
  *
  * You can choose between unidirectional and bidirectional FM indices (which can be thought of suffix trees

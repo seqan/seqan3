@@ -133,11 +133,11 @@ TYPED_TEST(fm_index_test, serialization)
 
 TEST(fm_index_test, concepts)
 {
-    EXPECT_TRUE(fm_index_concept<fm_index<std::vector<dna4>>>);
-    EXPECT_TRUE(fm_index_concept<fm_index<std::vector<dna5>>>);
-    EXPECT_TRUE(fm_index_traits_concept<fm_index_default_traits>);
+    EXPECT_TRUE(FmIndex<fm_index<std::vector<dna4>>>);
+    EXPECT_TRUE(FmIndex<fm_index<std::vector<dna5>>>);
+    EXPECT_TRUE(FmIndexTraits<fm_index_default_traits>);
 
-    EXPECT_TRUE(bi_fm_index_concept<bi_fm_index<std::vector<dna4>>>);
-    EXPECT_TRUE(bi_fm_index_concept<bi_fm_index<std::vector<dna5>>>);
-    EXPECT_TRUE(bi_fm_index_traits_concept<bi_fm_index_default_traits>);
+    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna4>>>);
+    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna5>>>);
+    EXPECT_TRUE(BiFmIndexTraits<bi_fm_index_default_traits>);
 }

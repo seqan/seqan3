@@ -55,18 +55,18 @@ namespace seqan3
 
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composition
- * \implements seqan3::semi_alphabet_concept
- * \implements seqan3::detail::constexpr_semi_alphabet_concept
- * \tparam first_component_type Type of the first letter; must model seqan3::semi_alphabet_concept.
- * \tparam component_types      Types of further letters (up to 4); must model seqan3::semi_alphabet_concept.
+ * \implements seqan3::semi_Alphabet
+ * \implements seqan3::detail::constexpr_semi_Alphabet
+ * \tparam first_component_type Type of the first letter; must model seqan3::semi_Alphabet.
+ * \tparam component_types      Types of further letters (up to 4); must model seqan3::semi_Alphabet.
  *
  * This data structure is CRTP base class for combined alphabets, where the different
  * alphabet letters exist independently as components, similar to a tuple.
  *
  * Short description:
  *   * combines multiple alphabets as independent components, similar to a tuple;
- *   * models seqan3::tuple_like_concept, i.e. provides a std::get interface to its components;
- *   * is itself a seqan3::semi_alphabet_concept, but most derived types implement the full seqan3::alphabet_concept;
+ *   * models seqan3::TupleLike, i.e. provides a std::get interface to its components;
+ *   * is itself a seqan3::semi_Alphabet, but most derived types implement the full seqan3::Alphabet;
  *   * its alphabet size is the product of the individual sizes;
  *   * constructible, assignable and comparable with each component type and also all types that
  *     these are constructible/assignable/comparable with;
@@ -89,8 +89,8 @@ template <typename derived_type,
           typename first_component_type,
           typename ...component_types>
 //!\cond
-    requires detail::constexpr_semi_alphabet_concept<first_component_type> &&
-             (detail::constexpr_semi_alphabet_concept<component_types> && ...)
+    requires detail::constexpr_semi_Alphabet<first_component_type> &&
+             (detail::constexpr_semi_Alphabet<component_types> && ...)
 //!\endcond
 class cartesian_composition : public pod_tuple<first_component_type, component_types...>
 {
@@ -131,7 +131,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool, implicitly_convertible_to_concept<T, type>>;
+        using invoke = std::integral_constant<bool, ImplicitlyConvertibleTo<T, type>>;
     };
 
     /*!\brief 'Callable' helper class that is invokable by meta::invoke.
@@ -164,7 +164,7 @@ private:
     {
         //!\brief The returned type when invoked.
         template <typename type>
-        using invoke = std::integral_constant<bool, weakly_ordered_with_concept<type, T>>;
+        using invoke = std::integral_constant<bool, WeaklyOrderedWith<type, T>>;
     };
 
     //!\brief Is set to `true` if the one component type fulfils the FUN callable with `subtype`.
@@ -230,7 +230,7 @@ public:
     }
 
     /*!\brief Construction via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     * \tparam indirect_component_type Type that models the seqan3::IsAssignable for
      *                                 one of the component types.
      * \param  alph                    The value that should be assigned.
      *
@@ -285,7 +285,7 @@ public:
     }
 
     /*!\brief Assignment via a value of a subtype that is assignable to one of the components.
-     * \tparam indirect_component_type Type that models the seqan3::is_assignable_concept for
+     * \tparam indirect_component_type Type that models the seqan3::IsAssignable for
      *                                 one of the component types.
      * \param  alph                    The value of a component that should be assigned.
      *
@@ -565,8 +565,8 @@ private:
  */
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, component_type> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<component_type, derived_type>
+    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, component_type> &&
+             !detail::WeaklyEqualityComparableByMembersWith<component_type, derived_type>
 //!\endcond
 constexpr bool operator==(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
@@ -576,8 +576,8 @@ constexpr bool operator==(component_type const & lhs,
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, component_type> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<component_type, derived_type>
+    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, component_type> &&
+             !detail::WeaklyEqualityComparableByMembersWith<component_type, derived_type>
 //!\endcond
 constexpr bool operator!=(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
@@ -587,8 +587,8 @@ constexpr bool operator!=(component_type const & lhs,
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, component_type> &&
+             !detail::WeaklyOrderedByMembersWith<component_type, derived_type>
 //!\endcond
 constexpr bool operator<(component_type const & lhs,
                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
@@ -598,8 +598,8 @@ constexpr bool operator<(component_type const & lhs,
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, component_type> &&
+             !detail::WeaklyOrderedByMembersWith<component_type, derived_type>
 //!\endcond
 constexpr bool operator>(component_type const & lhs,
                          cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
@@ -609,8 +609,8 @@ constexpr bool operator>(component_type const & lhs,
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, component_type> &&
+             !detail::WeaklyOrderedByMembersWith<component_type, derived_type>
 //!\endcond
 constexpr bool operator<=(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)
@@ -620,8 +620,8 @@ constexpr bool operator<=(component_type const & lhs,
 
 template <typename component_type, typename derived_type, typename first_component_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, component_type> &&
+             !detail::WeaklyOrderedByMembersWith<component_type, derived_type>
 //!\endcond
 constexpr bool operator>=(component_type const & lhs,
                           cartesian_composition<derived_type, first_component_type, component_types...> const & rhs)

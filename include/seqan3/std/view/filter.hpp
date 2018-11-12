@@ -49,7 +49,7 @@ namespace seqan3::view
 /*!\brief A range adaptor that takes a predicate and returns a view of the elements that satisfy the predicate.
  * \tparam           urng_t The type of the range being processed. See below for requirements. [template parameter
  *                          is omitted in pipe notation]
- * \tparam      predicate_t The type of the predicate, must satisfy seqan3::predicate_concept.
+ * \tparam      predicate_t The type of the predicate, must satisfy seqan3::Predicate.
  * \param[in]        urange The range being processed. [parameter is omitted in pipe notation]
  * \param[in,out] predicate The predicate.
  * \returns A range of those elements in the underlying range that satisfy the predicate.
@@ -70,7 +70,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *lost*                                             |
+ * | seqan3::ConstIterableRange  |                                       | *lost*                                             |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *

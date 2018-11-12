@@ -49,6 +49,6 @@
 #include <seqan3/io/alignment_file/header.hpp>
 #include <seqan3/io/alignment_file/input_options.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
-#include <seqan3/io/alignment_file/output_format_concept.hpp>
+#include <seqan3/io/alignment_file/OutputFormat.hpp>
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>

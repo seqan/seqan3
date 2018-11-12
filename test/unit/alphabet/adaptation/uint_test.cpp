@@ -50,10 +50,10 @@ TYPED_TEST_CASE(uint_adaptation, uint_types);
 
 TYPED_TEST(uint_adaptation, concept_check)
 {
-    EXPECT_TRUE(uint_adaptation_concept<TypeParam>);
+    EXPECT_TRUE(UintAdaptation<TypeParam>);
     // NOTE: Using intermediate concept notation with forwarding references cause the concept type
     // to hold a reference.
-    EXPECT_TRUE(uint_adaptation_concept<TypeParam &>);
+    EXPECT_TRUE(UintAdaptation<TypeParam &>);
 }
 
 TYPED_TEST(uint_adaptation, underlying_rank_t)

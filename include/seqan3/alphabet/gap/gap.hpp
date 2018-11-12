@@ -49,8 +49,8 @@ namespace seqan3
 
 /*!\brief The alphabet of a gap character '-'
  * \ingroup gap
- * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::Alphabet
+ * \implements seqan3::detail::constexpr_Alphabet
  *
  * The alphabet always has the same value ('-').
  *

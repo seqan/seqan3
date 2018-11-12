@@ -45,7 +45,7 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/constexpr_string.hpp>
 
-/*!\defgroup container Container
+/*!\defgroup container ContainerRange
  * \brief The container submodule contains special SeqAn3 containers and generic container concepts.
  * \ingroup range
  * \sa http://en.cppreference.com/w/cpp/container

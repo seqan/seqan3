@@ -52,7 +52,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::validator_concept <>
+/*!\interface seqan3::Validator <>
  * \brief The concept for option validators passed to add_option/positional_option.
  * \ingroup argument_parser
  *
@@ -63,7 +63,7 @@ namespace seqan3
  */
 //!\cond
 template <typename validator_type>
-concept validator_concept = std::Invocable<validator_type, typename validator_type::value_type> &&
+concept Validator = std::Invocable<validator_type, typename validator_type::value_type> &&
                                  requires(validator_type validator,
                                           typename validator_type::value_type value)
 {
@@ -132,7 +132,7 @@ private:
 };
 
 //!\cond
-template <container_concept option_value_type>
+template <ContainerRange option_value_type>
     requires std::Integral<typename option_value_type::value_type>
 class integral_range_validator<option_value_type>
 {
@@ -238,9 +238,9 @@ private:
  * \ingroup argument_parser
  * \extends seqan3::value_list_validator
  *
- * \tparam option_value_type The container type. Must satisfy the seqan3::container_concept.
+ * \tparam option_value_type The container type. Must satisfy the seqan3::ContainerRange.
  */
-template <container_concept option_value_type>
+template <ContainerRange option_value_type>
 //!\cond
     requires !std::is_same_v<option_value_type, std::string>
 //!\endcond

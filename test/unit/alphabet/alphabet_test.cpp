@@ -242,7 +242,7 @@ TYPED_TEST(alphabet, comparison_operators)
 
 TYPED_TEST(alphabet, concept_check)
 {
-    EXPECT_TRUE(alphabet_concept<TypeParam>);
+    EXPECT_TRUE(Alphabet<TypeParam>);
 }
 
 TYPED_TEST(alphabet, debug_streaming)
@@ -315,7 +315,7 @@ TYPED_TEST_CASE(alphabet_constexpr, alphabet_types);
 
 TYPED_TEST(alphabet_constexpr, concept_check)
 {
-    EXPECT_TRUE(detail::constexpr_alphabet_concept<TypeParam>);
+    EXPECT_TRUE(detail::constexpr_Alphabet<TypeParam>);
 }
 
 TYPED_TEST(alphabet_constexpr, default_value_constructor)

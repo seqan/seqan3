@@ -59,7 +59,7 @@
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
-#include <seqan3/io/sequence_file/output_format_concept.hpp>
+#include <seqan3/io/sequence_file/OutputFormat.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/ranges>
@@ -76,8 +76,8 @@ namespace seqan3
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of fields IDs; only relevant if these
  * can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::sequence_file_output_format_concept).
- * \tparam stream_type          The type of the stream, must satisfy seqan3::ostream_concept.
+ * seqan3::SequenceFileOutputFormat).
+ * \tparam stream_type          The type of the stream, must satisfy seqan3::Ostream.
  * \details
  *
  * ### Introduction
@@ -264,10 +264,10 @@ namespace seqan3
  * TODO give overview of formats, once they are all implemented
  */
 
-template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
-          detail::type_list_of_sequence_file_output_formats_concept valid_formats_ =
+template <detail::Fields  selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
+          detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
               type_list<sequence_file_format_fasta, sequence_file_format_fastq>,
-          ostream_concept<char> stream_type_ = std::ofstream>
+          Ostream<char> stream_type_ = std::ofstream>
 class sequence_file_output
 {
 public:
@@ -360,12 +360,12 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_output_format_concept.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::SequenceFileOutputFormat.
      * \param[in] _stream    The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      */
-    template <sequence_file_output_format_concept file_format>
+    template <SequenceFileOutputFormat file_format>
     sequence_file_output(stream_type             && _stream,
                       file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -471,7 +471,7 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
-        requires tuple_like_concept<record_t> &&
+        requires TupleLike<record_t> &&
                  requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
     {
         write_record(detail::get_or_ignore<field::SEQ>(r),
@@ -518,7 +518,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-        requires tuple_like_concept<tuple_t>
+        requires TupleLike<tuple_t>
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::SEQ)>(t),
@@ -572,7 +572,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::OutputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      *
      * \details
@@ -604,7 +604,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     sequence_file_output & operator=(rng_t && range)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -613,7 +613,7 @@ public:
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::InputRange and have a reference type that
-     *                   satisfies seqan3::tuple_like_concept.
+     *                   satisfies seqan3::TupleLike.
      * \param[in] range  The range to write.
      * \param[in] f      The file being written to.
      *
@@ -658,7 +658,7 @@ public:
      */
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return f;
@@ -667,7 +667,7 @@ public:
     //!\overload
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output operator|(rng_t && range, sequence_file_output && f)
-        requires tuple_like_concept<reference_t<rng_t>>
+        requires TupleLike<reference_t<rng_t>>
     {
         f = range;
         return std::move(f);
@@ -881,9 +881,9 @@ protected:
  * \relates seqan3::sequence_file_output
  * \{
  */
-template <ostream_concept<char>             stream_type,
-          sequence_file_output_format_concept  file_format,
-          detail::fields_concept            selected_field_ids>
+template <Ostream<char>             stream_type,
+          SequenceFileOutputFormat  file_format,
+          detail::Fields             selected_field_ids>
 sequence_file_output(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> sequence_file_output<selected_field_ids,
                          type_list<file_format>,

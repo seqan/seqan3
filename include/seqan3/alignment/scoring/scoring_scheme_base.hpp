@@ -64,7 +64,7 @@ namespace seqan3
  * \ingroup scoring
  * \see scoring_scheme_base::set_simple_scheme
  */
-template <arithmetic_concept score_type>
+template <Arithmetic score_type>
 struct match_score : detail::strong_type<score_type, match_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, match_score<score_type>, detail::strong_type_skill::convert>::strong_type;
@@ -74,7 +74,7 @@ struct match_score : detail::strong_type<score_type, match_score<score_type>, de
  * \relates seqan3::match_score
  * \{
  */
-template <arithmetic_concept score_type>
+template <Arithmetic score_type>
 match_score(score_type &&) -> match_score<score_type>;
 //!\}
 
@@ -87,7 +87,7 @@ match_score(score_type &&) -> match_score<score_type>;
  * \ingroup scoring
  * \see scoring_scheme_base::set_simple_scheme
  */
-template <arithmetic_concept score_type>
+template <Arithmetic score_type>
 struct mismatch_score : detail::strong_type<score_type, mismatch_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, mismatch_score<score_type>, detail::strong_type_skill::convert>::strong_type;
@@ -97,7 +97,7 @@ struct mismatch_score : detail::strong_type<score_type, mismatch_score<score_typ
  * \relates seqan3::mismatch_score
  * \{
  */
-template <arithmetic_concept score_type>
+template <Arithmetic score_type>
 mismatch_score(score_type &&) -> mismatch_score<score_type>;
 //!\}
 
@@ -115,7 +115,7 @@ mismatch_score(score_type &&) -> mismatch_score<score_type>;
  *
  * This type is never used directly, instead use seqan3::nucleotide_scoring_scheme or seqan3::aminoacid_scoring_scheme.
  */
-template <typename derived_t, alphabet_concept alphabet_t, arithmetic_concept score_t>
+template <typename derived_t, Alphabet alphabet_t, Arithmetic score_t>
 class scoring_scheme_base
 {
 public:
@@ -161,7 +161,7 @@ private:
     /*!\brief Constructor for the simple scheme (delegates to set_simple_scheme()).
      * \copydetails set_simple_scheme()
      */
-    template <arithmetic_concept score_arg_t>
+    template <Arithmetic score_arg_t>
     constexpr scoring_scheme_base(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     {
         set_simple_scheme(ms, mms);
@@ -192,7 +192,7 @@ public:
      * \param[in] mms Mismatches shall be given this value (of type seqan3::mismatch_score).
      * \throws std::invalid_argument Thrown if you pass a value that is to large/low to be represented by `score_t`.
      */
-    template <arithmetic_concept score_arg_t>
+    template <Arithmetic score_arg_t>
     constexpr void set_simple_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     {
         std::conditional_t<std::Integral<score_t>, int64_t, double> i_ms = static_cast<score_arg_t>(ms);
@@ -230,16 +230,16 @@ public:
      * \param[in] alph2   The second letter to score.
      * \return The score of the two letters in the current scheme.
      */
-    template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
-              explicitly_convertible_to_concept<alphabet_t> alph2_t>
+    template <ExplicitlyConvertibleTo<alphabet_t> alph1_t,
+              ExplicitlyConvertibleTo<alphabet_t> alph2_t>
     constexpr score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
     //!\copydoc score
-    template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
-              explicitly_convertible_to_concept<alphabet_t> alph2_t>
+    template <ExplicitlyConvertibleTo<alphabet_t> alph1_t,
+              ExplicitlyConvertibleTo<alphabet_t> alph2_t>
     constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
@@ -261,12 +261,12 @@ public:
 
     /*!\cond DEV
      * \brief Serialisation support function.
-     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive_concept.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
      * \param  archive   The archive being serialised from/to.
      *
      * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    template <cereal_archive_concept archive_t>
+    template <CerealArchive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
         archive(matrix);

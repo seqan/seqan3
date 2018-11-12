@@ -50,8 +50,8 @@ namespace seqan3
 {
 /*!\brief The canonical amino acid alphabet.
  * \ingroup aminoacid
- * \implements seqan3::aminoacid_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::AminoacidAlphabet
+ * \implements seqan3::detail::constexpr_Alphabet
  *
  * \details
  * The alphabet consists of letters A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y
@@ -169,10 +169,10 @@ struct aa20
      * \{
      */
     //!\brief Explicit conversion to any other amino acid alphabet (via char representation).
-    //!\tparam other_aa_type The type to convert to; must satisfy seqan3::aminoacid_concept.
+    //!\tparam other_aa_type The type to convert to; must satisfy seqan3::AminoacidAlphabet.
     template <typename other_aa_type>
     //!\cond
-        requires aminoacid_concept<other_aa_type>
+        requires AminoacidAlphabet<other_aa_type>
     //!\endcond
     explicit constexpr operator other_aa_type() const noexcept
     {

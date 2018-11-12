@@ -42,7 +42,7 @@
 using namespace seqan3;
 
 // These test case only test seqan3::gapped specific functions/properties that are not offered by the general
-// `seqan3::alphabet_concept` interface. Those common interface function of `seqan3::gapped` will be tested
+// `seqan3::Alphabet` interface. Those common interface function of `seqan3::gapped` will be tested
 // in `alphabet/alphabet_test.hpp`.
 
 TEST(gapped_test, initialise_from_component_alphabet)

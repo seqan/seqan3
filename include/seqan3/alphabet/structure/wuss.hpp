@@ -55,8 +55,8 @@ namespace seqan3
 /*!\brief The WUSS structure alphabet of the characters `.<>:,-_~;()[]{}AaBbCcDd`...
  * \tparam SIZE The alphabet size defaults to 50 and must be an odd number in range 15..67.
  *              It determines the allowed pseudoknot depth by adding characters AaBb..Zz to the alphabet.
- * \implements seqan3::rna_structure_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::RnaStructure
+ * \implements seqan3::detail::constexpr_Alphabet
  * \ingroup structure
  *
  * \details

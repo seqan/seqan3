@@ -56,8 +56,8 @@ namespace seqan3
 
 /*!\brief The four letter DNA alphabet of A,C,G,T.
  * \ingroup nucleotide
- * \implements seqan3::nucleotide_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::NucleotideAlphabet
+ * \implements seqan3::detail::constexpr_Alphabet
  *
  * \details
  * Note that you can assign 'U' as a character to dna4 and it will silently
@@ -97,7 +97,7 @@ struct dna4
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     * Satisfies the seqan3::Alphabet::to_char() requirement via the seqan3::to_char() wrapper.
      *
      * \par Complexity
      *
@@ -116,7 +116,7 @@ struct dna4
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::to_rank() requirement via the seqan3::to_rank() wrapper.
+     * Satisfies the seqan3::semi_Alphabet::to_rank() requirement via the seqan3::to_rank() wrapper.
      *
      * \par Complexity
      *
@@ -137,7 +137,7 @@ struct dna4
      *
      * See \ref nucleotide for the actual values.
      *
-     * Satisfies the seqan3::nucleotide_concept::complement() requirement via the seqan3::complement() wrapper.
+     * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
      *
      * \par Complexity
      *
@@ -160,7 +160,7 @@ struct dna4
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
+     * Satisfies the seqan3::Alphabet::assign_char() requirement via the seqan3::assign_char() wrapper.
      *
      * \par Complexity
      *
@@ -181,7 +181,7 @@ struct dna4
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::semi_Alphabet::assign_rank() requirement via the seqan3::assign_rank() wrapper.
      *
      * \par Complexity
      *
@@ -206,10 +206,10 @@ struct dna4
      * \{
      */
     //!\brief Implicit conversion between dna* and rna* of the same size.
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::NucleotideAlphabet and have the same \link value_size \endlink.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
+        requires NucleotideAlphabet<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
     //!\endcond
     constexpr operator other_nucl_type() const noexcept
     {
@@ -217,10 +217,10 @@ struct dna4
     }
 
     //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
+    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::NucleotideAlphabet.
     template <typename other_nucl_type>
     //!\cond
-        requires nucleotide_concept<other_nucl_type>
+        requires NucleotideAlphabet<other_nucl_type>
     //!\endcond
     explicit constexpr operator other_nucl_type() const noexcept
     {

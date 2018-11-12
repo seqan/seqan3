@@ -47,10 +47,10 @@ namespace seqan3
 /*!\brief Implementation of a masked composition, which extends a given alphabet
  * with a mask.
  * \ingroup mask
- * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::semi_constexpr_alphabet_concept
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_alphabet_concept.
- * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept, defaults to seqan3::mask.
+ * \implements seqan3::Alphabet
+ * \implements seqan3::detail::semi_constexpr_Alphabet
+ * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_Alphabet.
+ * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_Alphabet, defaults to seqan3::mask.
  *
  * \details
  * The masked composition represents a seqan3::cartesian_composition of any given alphabet with the
@@ -61,7 +61,7 @@ namespace seqan3
  */
  template <typename sequence_alphabet_t, typename mask_t = mask>
 //!\cond
-    requires alphabet_concept<sequence_alphabet_t>
+    requires Alphabet<sequence_alphabet_t>
 //!\endcond
 class masked : public cartesian_composition<masked<sequence_alphabet_t, mask_t>, sequence_alphabet_t, mask_t>
 {

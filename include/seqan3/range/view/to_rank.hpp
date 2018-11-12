@@ -75,9 +75,9 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::alphabet_concept              | seqan3::underlying_rank_t<seqan3::value_type_t<urng_t>> |
+ * | seqan3::reference_t             | seqan3::Alphabet              | seqan3::underlying_rank_t<seqan3::value_type_t<urng_t>> |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -89,7 +89,7 @@ namespace seqan3::view
  */
 inline auto const to_rank = deep{view::transform([] (auto const in)
 {
-    static_assert(alphabet_concept<remove_cvref_t<decltype(in)>>, "The value type of seqan3::view::to_rank must model the seqan3::alphabet_concept.");
+    static_assert(Alphabet<remove_cvref_t<decltype(in)>>, "The value type of seqan3::view::to_rank must model the seqan3::Alphabet.");
     return seqan3::to_rank(in);
 })};
 
