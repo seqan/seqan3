@@ -300,7 +300,6 @@ public:
      */
     //!\brief Returns the message representing this condition as std::string.
     std::string message() const
-        requires parse_condition_concept<derived_t>
     {
         return derived_t::msg.string();
     }
