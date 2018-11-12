@@ -52,11 +52,12 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup search
+/*!\addtogroup submodule_search_algorithm
  * \{
  */
 
 /*!\brief Computes a (non-optimal) search scheme. Currently the generated search scheme represents trivial backtracking.
+ *
  * \param[in] min_error Minimum number of errors allowed.
  * \param[in] max_error Maximum number of errors allowed.
  *
@@ -81,10 +82,14 @@ inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const
 
 /*!\brief Returns for each search the cumulative length of blocks in the order of blocks in each search and the
  *        starting position of the first block in the query sequence.
+ *
+ * \tparam search_scheme_t Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
+ *
  * \param[in] search_scheme Search scheme that will be used for searching.
- * \param[in] query_length Length of the query that will be searched in an index.
- * \return    Returns a range of pairs containing for each search the cumulative lengths of blocks and the starting
- *            position in the query.
+ * \param[in] query_length  Length of the query that will be searched in an index.
+ *
+ * \returns A range of pairs containing for each search the cumulative lengths of blocks and the starting position
+ *          in the query.
  *
  * ### Complexity
  *
@@ -151,17 +156,24 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 
 //!\cond
 // forward declaration
-template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss(iter_t it, query_t & query,
-                      typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+inline bool search_ss(iterator_t it, query_t & query,
+                      typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
                       uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
                       blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate);
 //!\endcond
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
  *        Sub-function for searching the remaining part of the current block without any errors.
- * \tparam    abort_on_hit  If the flag is set, the search aborts on the first hit.
+ *
+ * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
+ * \tparam iterator_t      Must model seqan3::bi_fm_index_iterator_concept.
+ * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet of the iterator.
+ * \tparam search_t        Is of type `seqan3::detail::search<>` or `seqan3::detail::search_dyn<>`.
+ * \tparam blocks_length_t Is of type `std::array` or `std::vector` of unsigned integers.
+ * \tparam delegate_t      Takes `iterator_t` as argument.
+ *
  * \param[in] it            Iterator of a string index built on the text that will be searched.
  * \param[in] query         Query sequence to be searched.
  * \param[in] lb            Left bound of the infix of `query` already searched (exclusive).
@@ -172,8 +184,9 @@ inline bool search_ss(iter_t it, query_t & query,
  * \param[in] search        Search of a search scheme to be used for searching.
  * \param[in] blocks_length Cumulative block lengths of the search.
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
- * \return    If `abort_on_hit` is true, it returns a bool iff. a hit has been found, otherwise it returns void.
+ * \param[in] delegate      Function that is called on every hit.
+ *
+ * \returns `True` if and only if `abort_on_hit` is true and a hit has been found.
  *
  * ### Complexity
  *
@@ -184,15 +197,15 @@ inline bool search_ss(iter_t it, query_t & query,
  * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
  * invoking the delegate; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_exact(iter_t it, query_t & query,
-                            typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+inline bool search_ss_exact(iterator_t it, query_t & query,
+                            typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
                             uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
-                            search_t const & search, blocks_length_t const & blocks_length, search_param const error_left,
-                            delegate_t && delegate)
+                            search_t const & search, blocks_length_t const & blocks_length,
+                            search_param const error_left, delegate_t && delegate)
 {
-    using size_type = typename iter_t::size_type;
+    using size_type = typename iterator_t::size_type;
 
     uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
     bool const go_right2 = (block_id < search.blocks() - 1) && (search.pi[block_id + 1] > search.pi[block_id]);
@@ -230,12 +243,13 @@ inline bool search_ss_exact(iter_t it, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
  *        Sub-function for deletions at the end of a block.
+ *
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_deletion(iter_t it, query_t & query,
-                               typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+inline bool search_ss_deletion(iterator_t it, query_t & query,
+                               typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
                                uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
                                search_t const & search, blocks_length_t const & blocks_length,
                                search_param const error_left, delegate_t && delegate)
@@ -281,19 +295,21 @@ inline bool search_ss_deletion(iter_t it, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
  *        Sub-function for approximate search step (iterating over all children in a conceptual suffix tree).
+ *
  * \copydetails search_ss_exact
+ *
  * \param[in] min_error_left_in_block Number of remaining errors that need to be spent in the current block.
  */
-template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_children(iter_t it, query_t & query,
-                               typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+inline bool search_ss_children(iterator_t it, query_t & query,
+                               typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
                                uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
                                uint8_t const min_error_left_in_block, search_t const & search,
                                blocks_length_t const & blocks_length, search_param const error_left,
                                delegate_t && delegate)
 {
-    using size_type = typename iter_t::size_type;
+    using size_type = typename iterator_t::size_type;
     if ((go_right && it.extend_right()) || (!go_right && it.extend_left()))
     {
         size_type const chars_left = blocks_length[block_id] - (rb - lb - 1);
@@ -375,12 +391,13 @@ inline bool search_ss_children(iter_t it, query_t & query,
 }
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
+ *
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit, typename iter_t, typename query_t, typename search_t,
+template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t,
           typename blocks_length_t, typename delegate_t>
-inline bool search_ss(iter_t it, query_t & query,
-                      typename iter_t::size_type const lb, typename iter_t::size_type const rb,
+inline bool search_ss(iterator_t it, query_t & query,
+                      typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
                       uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
                       blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate)
 {
@@ -410,7 +427,7 @@ inline bool search_ss(iter_t it, query_t & query,
         // Insertion
         if (error_left.insertion > 0)
         {
-            using size_type = typename iter_t::size_type;
+            using size_type = typename iterator_t::size_type;
 
             size_type const lb2 = lb - !go_right;
             size_type const rb2 = rb + go_right;
@@ -452,15 +469,22 @@ inline bool search_ss(iter_t it, query_t & query,
 }
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
+ *
  * \details Reference:
  *          Kianfar, K., Pockrandt, C., Torkamandi, B., Luo, H., & Reinert, K. (2018).
  *          Optimum Search Schemes for Approximate String Matching Using Bidirectional FM-Index. bioRxiv, 301085.
- * \tparam    abort_on_hit  If the flag is set, the search aborts on the first hit.
+ *
+ * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
+ * \tparam index_t         Must model seqan3::bi_fm_index_concept.
+ * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam search_scheme_t Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
+ * \tparam delegate_t      Takes `typename index_t::iterator_type` as argument.
+ *
  * \param[in] index         String index built on the text that will be searched.
  * \param[in] query         Query sequence to be searched in the index.
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] search_scheme Search scheme to be used for searching.
- * \param[in] delegate      Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \param[in] delegate      Function that is called on every hit.
  *
  * ### Complexity
  *
@@ -471,8 +495,8 @@ inline bool search_ss(iter_t it, query_t & query,
  * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
  * invoking the delegate; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit, typename iter_t, typename query_t, typename search_scheme_t, typename delegate_t>
-inline void search_ss(iter_t const & index, query_t & query, search_param const error_left,
+template <bool abort_on_hit, typename index_t, typename query_t, typename search_scheme_t, typename delegate_t>
+inline void search_ss(index_t const & index, query_t & query, search_param const error_left,
                       search_scheme_t const & search_scheme, delegate_t && delegate)
 {
     // retrieve cumulative block lengths and starting position
@@ -502,11 +526,16 @@ inline void search_ss(iter_t const & index, query_t & query, search_param const 
 }
 
 /*!\brief Searches a query sequence in a bidirectional index.
- * \tparam    abort_on_hit If the flag is set, the search aborts on the first hit.
+ *
+ * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
+ * \tparam index_t         Must model seqan3::bi_fm_index_concept.
+ * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam delegate_t      Takes `typename index_t::iterator_type` as argument.
+ *
  * \param[in] index        String index built on the text that will be searched.
  * \param[in] query        Query sequence to be searched in the index.
  * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate     Function that is called on every hit. Takes `index::iterator_type` as argument.
+ * \param[in] delegate     Function that is called on every hit.
  *
  * ### Complexity
  *
@@ -543,6 +572,7 @@ inline void search_algo_bi(index_t const & index, query_t & query, search_param 
 }
 
 /*!\brief Searches a query sequence in a unidirectional index.
+ *
  * \copydetails search_algo_bi
  */
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
@@ -553,6 +583,7 @@ inline void search_algo_uni(index_t const & index, query_t & query, search_param
 }
 
 /*!\brief Searches a query sequence in an index.
+ *
  * \copydetails search_algo_bi
  */
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>

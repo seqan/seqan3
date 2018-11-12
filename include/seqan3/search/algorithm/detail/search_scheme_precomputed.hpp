@@ -42,7 +42,7 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup search
+/*!\addtogroup submodule_search_algorithm
  * \{
  */
 

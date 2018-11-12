@@ -46,31 +46,43 @@
 namespace seqan3
 {
 
+/*!\addtogroup submodule_search_algorithm
+ * \{
+ */
+
 /*!\brief Search a query or a range of queries in an index.
- * \param[in] index String index to be searched. Must model seqan3::fm_index_concept.
- * \param[in] queries A single query or a range of queries. A query must model std::ranges::RandomAccessRange,
-                      a range of queries must model std::ranges::ForwardRange.
- * \param[in] cfg A configuration object specifying the search parameters (e.g. number of errors, error types,
- *                output format, etc.).
- * \return    Returns an object modelling std::ranges::Range containing the hits,
- *            or `void` if an on_hit delegate has been specified.
+ *
+ * \tparam index_t   Must model seqan3::fm_index_concept.
+ * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ *                   a range of queries must additionally model std::ranges::ForwardRange.
+ *
+ * \todo Update concepts and documentation of `configuration_t` everywhere once it has been refactored by rrahn.
+ *
+ * \param[in] index   String index to be searched.
+ * \param[in] queries A single query or a range of queries.
+ * \param[in] cfg     A configuration object specifying the search parameters (e.g. number of errors, error types,
+ *                    output format, etc.).
+ *
+ * \returns An object modelling std::ranges::Range containing the hits (the type depends on the specification in `cfg`),
+ *          or `void` if an on_hit delegate has been specified.
  *
  * ### Complexity
  *
- * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$.
+ * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$ where \f$e\f$ is the maximum number of errors.
  *
  * ### Exceptions
  *
- * Strong exception guarantee if iterating the query does not change its state; basic exception guarantee otherwise.
+ * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
+ * invoking a possible delegate specified in `cfg`; basic exception guarantee otherwise.
  */
-template <typename queries_t, typename config_t>
+template <fm_index_concept index_t, typename queries_t, typename configuration_t>
 //!\cond
     requires
         (std::ranges::RandomAccessRange<queries_t> ||
             (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
-        detail::is_algorithm_configuration_v<remove_cvref_t<config_t>>
+        detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
 //!\endcond
-inline auto search(fm_index_concept const & index, queries_t && queries, config_t const & cfg)
+inline auto search(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
     if constexpr (contains<search_cfg::id::max_error>(cfg))
     {
@@ -112,25 +124,30 @@ inline auto search(fm_index_concept const & index, queries_t && queries, config_
 
 /*!\brief Search a query or a range of queries in an index.
  *        It will not allow for any errors and will output all matches as positions in the text.
- * \param[in] index String index to be searched. Must model seqan3::fm_index_concept.
- * \param[in] queries A single query or a range of queries. A query must model std::ranges::RandomAccessRange,
-                      a range of queries must model std::ranges::ForwardRange.
- * \return   Returns an object modelling std::ranges::Range containing the hits.
+ *
+ * \tparam index_t   Must model seqan3::fm_index_concept.
+ * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ *                   a range of queries must additionally model std::ranges::ForwardRange.
+ *
+ * \param[in] index   String index to be searched.
+ * \param[in] queries A single query or a range of queries.
+ *
+ * \returns An object modelling std::ranges::Range containing the hits as positions in the searched text.
  *
  * ### Complexity
  *
- * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$.
+ * Each query with \f$e\f$ errors takes \f$O(|query|^e)\f$ where \f$e\f$ is the maximum number of errors.
  *
  * ### Exceptions
  *
  * Strong exception guarantee if iterating the query does not change its state; basic exception guarantee otherwise.
  */
-template <typename queries_t>
+template <fm_index_concept index_t, typename queries_t>
 //!\cond
     requires std::ranges::RandomAccessRange<queries_t> ||
              (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
 //!\endcond
-inline auto search(fm_index_concept const & index, queries_t && queries)
+inline auto search(index_t const & index, queries_t && queries)
 {
     detail::configuration const default_cfg = search_cfg::max_error(search_cfg::total{0},
                                                                     search_cfg::substitution{0},
@@ -140,5 +157,7 @@ inline auto search(fm_index_concept const & index, queries_t && queries)
                                             | search_cfg::mode(search_cfg::all);
     return search(index, queries, default_cfg);
 }
+
+//!\}
 
 } // namespace seqan3
