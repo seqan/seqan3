@@ -44,6 +44,7 @@
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
+#include <seqan3/io/filesystem.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/view/view_all.hpp>
@@ -302,7 +303,7 @@ private:
  *
  * \snippet test/snippet/argument_parser/validators_3.cpp usage
  */
-class file_ext_validator // TODO AFTER INITIAL MERGE: Check if file exists, also allow filepath
+class file_ext_validator
 {
 public:
     //!\brief Type of values that are tested by validator
@@ -322,14 +323,14 @@ public:
         extensions{v}
     {}
 
-    /*!\brief Tests whether cmp lies inside extensions.
-     * \param cmp The input value to check.
+    /*!\brief Tests whether the filepath \p path ends with a valid extension.
+     * \param path The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(std::string const & cmp) const
+    void operator()(filesystem::path const & path) const
     {
-        std::string ext{cmp.substr(cmp.find_last_of('.') + 1)};
-
+        std::string ext{path.extension().string()};
+        ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
         if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
             throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
                                                             view::all(extensions), "."));
@@ -350,6 +351,45 @@ public:
 private:
     //!\brief Stores valid file extensions.
     std::vector<std::string> extensions;
+};
+
+/*!\brief A validator that checks if a file exists.
+ * \ingroup argument_parser
+ *
+ * \details
+ *
+ * The struct then acts as a functor that throws a seqan3::parser_invalid_argument
+ * exception whenever a given filename (string) does not exist.
+ *
+ * \snippet test/snippet/argument_parser/validators_file_existance.cpp usage
+ */
+class file_existance_validator
+{
+public:
+    //!\brief Type of values that are tested by validator
+    using value_type = filesystem::path;
+
+    /*!\brief Tests whether path exists.
+     * \param path The input value to check.
+     * \throws parser_invalid_argument
+     */
+    void operator()(filesystem::path const & path) const
+    {
+        if (!(filesystem::exists(path)))
+            throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
+    }
+
+    //!\brief Tests whether every filename in list v exists.
+    void operator()(std::vector<filesystem::path> const & v) const
+    {
+         std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
+    }
+
+    //!\brief Returns a message that can be appended to the (positional) options help page info.
+    std::string get_help_page_message() const
+    {
+        return detail::to_string("The file is checked for existence.");
+    }
 };
 
 //!\cond
