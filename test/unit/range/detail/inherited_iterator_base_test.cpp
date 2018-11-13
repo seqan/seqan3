@@ -54,10 +54,10 @@ private:
 
 public:
     skip_odd_numbers_it() = default;
-    constexpr skip_odd_numbers_it(skip_odd_numbers_it const & rhs) = default;
-    constexpr skip_odd_numbers_it(skip_odd_numbers_it && rhs) = default;
-    constexpr skip_odd_numbers_it & operator=(skip_odd_numbers_it const & rhs) = default;
-    constexpr skip_odd_numbers_it & operator=(skip_odd_numbers_it && rhs) = default;
+    skip_odd_numbers_it(skip_odd_numbers_it const & rhs) = default;
+    skip_odd_numbers_it(skip_odd_numbers_it && rhs) = default;
+    skip_odd_numbers_it & operator=(skip_odd_numbers_it const & rhs) = default;
+    skip_odd_numbers_it & operator=(skip_odd_numbers_it && rhs) = default;
     ~skip_odd_numbers_it() = default;
 
     skip_odd_numbers_it(base_base_t it) : base_t{it} {}
