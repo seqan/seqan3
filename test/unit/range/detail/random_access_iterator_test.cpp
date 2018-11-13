@@ -216,12 +216,12 @@ TEST_F(random_access_iterator_test_fixture, cp_destructor)
     // non-const
     using iterator_type = typename seqan3::detail::random_access_iterator<std::vector<uint8_t>>;
     iterator_type it(v_empty);
-    iterator_type * it_ptr;
+    iterator_type * it_ptr = &it;
     it_ptr->iterator_type::~iterator_type();
     // const
     using iterator_type2 = typename seqan3::detail::random_access_iterator<std::vector<uint8_t> const>;
     iterator_type2 it2(v_const_empty);
-    iterator_type2 * it_ptr2;
+    iterator_type2 * it_ptr2 = &it2;
     it_ptr2->iterator_type2::~iterator_type2();
 
 }
