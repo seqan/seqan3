@@ -241,10 +241,7 @@ constexpr size_t dimension_v<t> = 1;
 
 //!\cond
 template <typename t>
-    requires detail::has_value_type<t> && requires
-    {
-        typename value_type_t<remove_cvref_t<value_type_t<remove_cvref_t<t>>>>;
-    }
+    requires detail::has_value_type<t> && detail::has_value_type<value_type_t<remove_cvref_t<t>>>
 constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> + 1;
 //!\endcond
 
