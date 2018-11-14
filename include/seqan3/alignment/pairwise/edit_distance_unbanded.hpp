@@ -47,12 +47,11 @@
 #include <range/v3/utility/iterator.hpp>
 
 #include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
+#include <seqan3/alignment/matrix/alignment_trace_algorithms.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
