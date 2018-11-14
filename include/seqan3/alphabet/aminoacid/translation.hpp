@@ -52,6 +52,15 @@
 
 namespace seqan3
 {
+
+// forwards:
+class dna4;
+class dna5;
+class dna15;
+class rna4;
+class rna5;
+class rna15;
+
 /*!\brief Translate one nucleotide triplet into single amino acid (single nucleotide interface).
  * \tparam nucl_type The type of input nucleotides.
  * \param[in] n1 First nucleotide in triplet.
@@ -73,7 +82,28 @@ namespace seqan3
 template <genetic_code gc = genetic_code::CANONICAL, nucleotide_concept nucl_type>
 constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) noexcept
 {
-    return seqan3::detail::translation_table<nucl_type, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
+    if constexpr (std::Same<nucl_type, dna4> || std::Same<nucl_type, dna5> || std::Same<nucl_type, dna15>)
+    {
+        // table exists for dna15 and is generated for dna4 and dna5 (compile time ok, because small)
+        return seqan3::detail::translation_table<nucl_type, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
+    }
+    else if constexpr (std::Same<nucl_type, rna4> || std::Same<nucl_type, rna5> || std::Same<nucl_type, rna15>)
+    {
+        using rna2dna_t = std::conditional_t<std::Same<nucl_type, rna4>,  dna4,
+                          std::conditional_t<std::Same<nucl_type, rna5>,  dna5,
+                          std::conditional_t<std::Same<nucl_type, rna15>, dna15, void>>>;
+
+        // we can use dna's tables, because ranks are identical
+        return seqan3::detail::translation_table<rna2dna_t, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
+    }
+    else // composites or user defined nucleotide
+    {
+        // we cast to dna15; slightly slower run-time, but lot's of compile time saved for large alphabets.
+        // (nucleotide types can be converted to dna15 by definition)
+        return seqan3::detail::translation_table<dna15, gc>::VALUE[to_rank(static_cast<dna15>(n1))]
+                                                                  [to_rank(static_cast<dna15>(n2))]
+                                                                  [to_rank(static_cast<dna15>(n3))];
+    }
 }
 
 /*!\brief Translate one nucleotide triplet into single amino acid (tuple interface).
