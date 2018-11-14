@@ -231,13 +231,8 @@ using innermost_value_type_t = typename innermost_value_type<t>::type;
  * returns.
  */
 template <typename t>
-constexpr size_t dimension_v = 0;
-
-template <typename t>
-//!\cond
     requires detail::has_value_type<t>
-//!\endcond
-constexpr size_t dimension_v<t> = 1;
+constexpr size_t dimension_v = 1;
 
 //!\cond
 template <typename t>
