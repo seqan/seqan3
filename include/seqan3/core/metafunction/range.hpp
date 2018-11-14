@@ -190,11 +190,10 @@ struct size_type<rng_t>
  * Attention, this metafunction implicitly removes cv-qualifiers on the all value_types except the one returned.
  */
 template <typename t>
-struct innermost_value_type;
-
-template <typename t>
+//!\cond
     requires detail::has_value_type<t>
-struct innermost_value_type<t>
+//!\endcond
+struct innermost_value_type
 {
     //!\brief The return type (recursion not shown).
     using type = value_type_t<remove_cvref_t<t>>;
@@ -202,10 +201,7 @@ struct innermost_value_type<t>
 
 //!\cond
 template <typename t>
-    requires detail::has_value_type<t> && requires
-    {
-        typename value_type_t<remove_cvref_t<value_type_t<remove_cvref_t<t>>>>;
-    }
+    requires detail::has_value_type<t> && detail::has_value_type<value_type_t<remove_cvref_t<t>>>
 struct innermost_value_type<t>
 {
     using type = typename innermost_value_type<value_type_t<remove_cvref_t<t>>>::type;
