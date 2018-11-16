@@ -39,6 +39,8 @@
 
 #pragma once
 
+#include <stdexcept>
+
 namespace seqan3
 {
 

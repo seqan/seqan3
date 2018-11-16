@@ -91,9 +91,9 @@ macro (seqan3_header_test component header_base_path)
             set (source_file "${PROJECT_BINARY_DIR}/header_test_src/${header_source_file_name}")
 
             file (WRITE "${source_file}" "
+#include <${header}>
+#include <${header}>
 #include <gtest/gtest.h>
-#include <${header}>
-#include <${header}>
 TEST(Header, ${header_source_test_name}) {}")
 
             add_library (${target_library} OBJECT "${source_file}")

@@ -42,6 +42,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <set>
 
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
