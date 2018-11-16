@@ -74,8 +74,11 @@ file(MAKE_DIRECTORY ${SEQAN3_BENCHMARK_CLONE_DIR}/include/) # see cmake bug http
 # needed for unit test cases in seqan3/test/unit
 add_library (seqan3::test::unit INTERFACE IMPORTED)
 set_property (TARGET seqan3::test::unit APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test" "gtest_main" "gtest")
-set_property (TARGET seqan3::test::unit APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
+set_property (TARGET seqan3::test::unit
+              APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES  "${SEQAN3_TEST_CLONE_DIR}/googletest/include/"
+                                                             "${SEQAN3_TEST_CLONE_DIR}/googlemock/include/")
 file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/) # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
+file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googlemock/include/) # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
 
 # seqan3::test::header specifies required flags, includes and libraries
 # needed for header test cases in seqan3/test/header
@@ -151,7 +154,7 @@ macro (seqan3_require_test)
     enable_testing ()
 
     set (gtest_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
-    list (APPEND gtest_project_args "-DBUILD_GMOCK=0")
+    list (APPEND gtest_project_args "-DBUILD_GMOCK=1")
 
     # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
     list (APPEND gtest_project_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
