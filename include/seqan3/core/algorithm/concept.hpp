@@ -47,6 +47,14 @@
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
+namespace seqan3
+{
+//!\cond
+// Forward declarations
+struct pipeable_config_element;
+//!\endcond
+}
+
 namespace seqan3::detail
 {
 
@@ -63,13 +71,18 @@ class config_element_base;
  * \brief Concept for an algorithm configuration.
  * \ingroup algorithm
  *
- * \extends std::Semiregular
+ * \extends    std::Copyable
+ * \implements seqan3::pipeable_config_element
  */
 
 /*!\name Requirements for seqan3::detail::config_element_concept
  * \relates seqan3::detail::config_element_concept
  * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element_concept.
  * \{
+ */
+/*!\var id
+ * \memberof seqan3::detail::config_element_concept
+ * \brief Algorithm specific static id used for internal validation checks.
  */
 /*!\var value
  * \memberof seqan3::detail::config_element_concept
@@ -78,24 +91,38 @@ class config_element_base;
 //!\}
 //!\cond
 template <typename config_t>
-concept config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
+concept config_element_concept = std::Copyable<std::remove_reference_t<config_t>> &&
+                                 std::is_base_of_v<pipeable_config_element, std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
+    { std::remove_reference_t<config_t>::id };
     { c.value };
 };
 //!\endcond
+} // namespace seqan3::detail
 
+
+namespace seqan3
+{
+//!\cond
+// Forward declaration for concept definition.
+template <detail::config_element_concept ... configs_t>
+class configuration;
+//!\endcond
+} // namespace seqan3
+
+namespace seqan3::detail
+{
 // ----------------------------------------------------------------------------
 // Concept deferred_config_element_concept
 // ----------------------------------------------------------------------------
 
 //!\cond
-// Forward declaration for the deferred config concept
-template <detail::config_element_concept ... configs_t>
-class configuration;
-
 template <typename derived_t>
 class deferred_config_element_base;
+
+template <detail::config_element_concept ... configs_t>
+class configuration;
 //!\endcond
 
 /*!\interface seqan3::detail::deferred_config_element_concept <>
@@ -116,30 +143,5 @@ concept deferred_config_element_concept = config_element_concept<config_t> &&
     std::is_base_of_v<deferred_config_element_base<std::remove_reference_t<config_t>>,
                                                    std::remove_reference_t<config_t>>;
 //!\endcond
-
-// ----------------------------------------------------------------------------
-// Metafunction is_algorithm_configuration
-// ----------------------------------------------------------------------------
-
-/*!\brief Value metafunction that returns whether a type is an algorithm configuration.
- * \ingroup algorithm
- *
- * \returns std::true_type if the given type is a seqan3::detail::configuration, else std::false_type.
- */
-template <typename object_t>
-struct is_algorithm_configuration : std::false_type
-{};
-
-//!\cond
-template <typename ...config_elements_t>
-struct is_algorithm_configuration<configuration<config_elements_t...>> : std::true_type
-{};
-//!\endcond
-
-/*!\brief Helper variable template for seqan3::detail::is_algorithm_configuration.
- * \ingroup algorithm
- */
-template <typename object_t>
-inline constexpr bool is_algorithm_configuration_v = is_algorithm_configuration<object_t>::value;
 
 } // namespace seqan3::detail
