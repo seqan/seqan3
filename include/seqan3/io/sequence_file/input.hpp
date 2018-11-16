@@ -106,12 +106,12 @@ namespace seqan3
 /*!\typedef using sequence_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
- * must satisfy seqan3::SequenceContainerRangeRange.
+ * must satisfy seqan3::SequenceContainerRange.
  */
 /*!\typedef using sequence_container_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
- * `sequence_container`; must satisfy seqan3::SequenceContainerRangeRange.
+ * `sequence_container`; must satisfy seqan3::SequenceContainerRange.
  */
 /*!\typedef using id_alphabet
  * \memberof seqan3::SequenceFileInputTraits
@@ -120,12 +120,12 @@ namespace seqan3
 /*!\typedef using id_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
- * must satisfy seqan3::SequenceContainerRangeRange.
+ * must satisfy seqan3::SequenceContainerRange.
  */
 /*!\typedef using id_container_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
- * `id_container`; must satisfy seqan3::SequenceContainerRangeRange.
+ * `id_container`; must satisfy seqan3::SequenceContainerRange.
  */
 /*!\typedef using quality_alphabet
  * \memberof seqan3::SequenceFileInputTraits
@@ -134,12 +134,12 @@ namespace seqan3
 /*!\typedef using quality_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
- * must satisfy seqan3::SequenceContainerRangeRange.
+ * must satisfy seqan3::SequenceContainerRange.
  */
 /*!\typedef using quality_container_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::QUAL, a container template that can hold multiple
- * `quality_container`; must satisfy seqan3::SequenceContainerRangeRange.
+ * `quality_container`; must satisfy seqan3::SequenceContainerRange.
  */
 //!\}
 //!\cond
@@ -149,18 +149,18 @@ concept SequenceFileInputTraits = requires (t v)
     requires Alphabet<typename t::sequence_alphabet>;
     requires Alphabet<typename t::sequence_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-    requires SequenceContainerRangeRange<typename t::template sequence_container<typename t::sequence_alphabet>>;
-    requires SequenceContainerRangeRange<typename t::template sequence_container_container<
+    requires SequenceContainerRange<typename t::template sequence_container<typename t::sequence_alphabet>>;
+    requires SequenceContainerRange<typename t::template sequence_container_container<
         typename t::template sequence_container<typename t::sequence_alphabet>>>;
 
     requires Alphabet<typename t::id_alphabet>;
-    requires SequenceContainerRangeRange<typename t::template id_container<typename t::id_alphabet>>;
-    requires SequenceContainerRangeRange<typename t::template id_container_container<typename t::template id_container<
+    requires SequenceContainerRange<typename t::template id_container<typename t::id_alphabet>>;
+    requires SequenceContainerRange<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;
 
     requires Quality<typename t::quality_alphabet>;
-    requires SequenceContainerRangeRange<typename t::template quality_container<typename t::quality_alphabet>>;
-    requires SequenceContainerRangeRange<typename t::template quality_container_container<
+    requires SequenceContainerRange<typename t::template quality_container<typename t::quality_alphabet>>;
+    requires SequenceContainerRange<typename t::template quality_container_container<
         typename t::template quality_container<typename t::quality_alphabet>>>;
 };
 //!\endcond

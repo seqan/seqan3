@@ -106,7 +106,7 @@ protected:
      * \tparam container_type The container type for which to query it's value_type.
      * \returns The type of the container value_type as a string.
      */
-    template <SequenceContainerRangeRange container_type>
+    template <SequenceContainerRange container_type>
     //!\cond
         requires !std::is_same_v<container_type, std::string>
     //!\endcond
@@ -128,14 +128,14 @@ protected:
     }
 
     /*!\brief Formats the container and its value_type for the help page printing.
-     * \tparam container_type A type that must satisfy the seqan3::SequenceContainerRangeRange.
+     * \tparam container_type A type that must satisfy the seqan3::SequenceContainerRange.
      * \param[in] container The container to deduct the type from.
      *
      * \returns The type of the container value type as a string, encapsulated in "List of".
      */
     template <typename container_type>
     //!\cond
-        requires SequenceContainerRangeRange<container_type> && !std::is_same_v<container_type, std::string>
+        requires SequenceContainerRange<container_type> && !std::is_same_v<container_type, std::string>
     //!\endcond
     static std::string option_type_and_list_info(container_type const & container)
     {

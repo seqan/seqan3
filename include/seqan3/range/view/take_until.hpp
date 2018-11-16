@@ -303,11 +303,11 @@ public:
     //!\}
 
     /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must model seqan3::SequenceContainerRangeRange and it's
+     * \tparam container_t Type of the container to convert to; must model seqan3::SequenceContainerRange and it's
      *                     seqan3::reference_t must model std::CommonReference with `reference`.
      * \returns This view converted to container_t.
      */
-    template <SequenceContainerRangeRange container_t>
+    template <SequenceContainerRange container_t>
     operator container_t()
     //!\cond
         requires std::CommonReference<reference_t<container_t>, reference>
@@ -319,7 +319,7 @@ public:
     }
 
     //!\overload
-    template <SequenceContainerRangeRange container_t>
+    template <SequenceContainerRange container_t>
     operator container_t() const
     //!\cond
         requires std::CommonReference<reference_t<container_t>, reference> && ConstIterableRange<urng_t>

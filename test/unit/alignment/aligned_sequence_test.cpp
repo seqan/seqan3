@@ -50,7 +50,7 @@ using range_types = ::testing::Types<std::vector<gapped<dna4>>,
 
 // Initializer function is needed for the typed test because the gapped_decorator
 // will be initialized differently than the naive vector<gapped<dna>>.
-template <SequenceContainerRangeRange container_type>
+template <SequenceContainerRange container_type>
 void initialize_typed_test_container(container_type & container, std::string const && target)
 {
     for (auto & val : target)

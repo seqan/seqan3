@@ -69,7 +69,7 @@ TYPED_TEST_CASE(container, container_types);
 
 TYPED_TEST(container, concepts)
 {
-    EXPECT_TRUE(ReservableContainerRangeRange<TypeParam>);
+    EXPECT_TRUE(ReservableContainerRange<TypeParam>);
 }
 
 TYPED_TEST(container, construction)

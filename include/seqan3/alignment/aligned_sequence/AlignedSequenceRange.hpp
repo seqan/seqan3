@@ -156,13 +156,13 @@ concept AlignedSequenceRange =
 
 /*!\name Aligned sequence interface for containers
  * \brief Enables containers to model seqan3::AlignedSequenceRange if they
- * model seqan3::SequenceContainerRangeRange and have a reference type assignable
+ * model seqan3::SequenceContainerRange and have a reference type assignable
  * from seqan3::gap (e.g. std::vector<seqan3::gapped<seqan3::dna4>>).
  * \{
  */
 /*!\brief An implementation of seqan3::AlignedSequenceRange::insert_gap for sequence containers.
  * \tparam        seq_type Type of the container to modify; must model
- *                         seqan3::SequenceContainerRangeRange; the reference type
+ *                         seqan3::SequenceContainerRange; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
  *                         seqan3::gap.
  * \param[in,out] seq      The container to modify.
@@ -175,7 +175,7 @@ concept AlignedSequenceRange =
  * This function delegates to the member function `insert(iterator, value)` of
  * the container.
  */
-template <SequenceContainerRangeRange seq_type>
+template <SequenceContainerRange seq_type>
 //!\cond
     requires std::Assignable<reference_t<seq_type>, gap const &>
 //!\endcond
@@ -186,7 +186,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
 
 /*!\brief An implementation of seqan3::AlignedSequenceRange::insert_gap for sequence containers.
  * \tparam        seq_type Type of the container to modify; must model
- *                         seqan3::SequenceContainerRangeRange; the reference type
+ *                         seqan3::SequenceContainerRange; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
  *                         seqan3::gap.
  * \param[in,out] seq      The container to modify.
@@ -200,7 +200,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
  * This function delegates to the member function `insert(iterator, count, value)`
  * of the container.
  */
-template <SequenceContainerRangeRange seq_type>
+template <SequenceContainerRange seq_type>
 //!\cond
     requires std::Assignable<reference_t<seq_type>, gap const &>
 //!\endcond
@@ -211,7 +211,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
 
 /*!\brief An implementation of seqan3::AlignedSequenceRange::erase_gap for sequence containers.
  * \tparam        seq_type Type of the container to modify; must model
- *                         seqan3::SequenceContainerRangeRange; the reference type
+ *                         seqan3::SequenceContainerRange; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
  *                         seqan3::gap.
  * \param[in,out] seq      The container to modify.
@@ -227,7 +227,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
  * container. Before delegating, the function checks if the position pointed to
  * by \p pos_it is an actual seqan3::gap and throws an exception if not.
  */
-template <SequenceContainerRangeRange seq_type>
+template <SequenceContainerRange seq_type>
 //!\cond
     requires std::Assignable<reference_t<seq_type>, gap const &>
 //!\endcond
@@ -241,7 +241,7 @@ inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::
 
 /*!\brief An implementation of seqan3::AlignedSequenceRange::erase_gap for sequence containers.
  * \tparam        seq_type Type of the container to modify; must model
- *                         seqan3::SequenceContainerRangeRange; the reference type
+ *                         seqan3::SequenceContainerRange; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
  *                         seqan3::gap.
  * \param[in,out] seq      The container to modify.
@@ -258,7 +258,7 @@ inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::
  * the container. Before delegating, the function checks if the range
  * [\p first, \p last) contains only seqan3::gap symbols.
  */
-template <SequenceContainerRangeRange seq_type>
+template <SequenceContainerRange seq_type>
 //!\cond
     requires std::Assignable<reference_t<seq_type>, gap const &>
 //!\endcond
