@@ -32,11 +32,6 @@
 //
 // ============================================================================
 
-/* \file
- * \brief Provides tests for seqan3::detail::align_config_score.
- * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- */
-
 #include <gtest/gtest.h>
 
 #include <functional>

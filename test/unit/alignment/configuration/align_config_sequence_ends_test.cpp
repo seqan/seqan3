@@ -32,11 +32,6 @@
 //
 // ============================================================================
 
-/* \file
- * \brief Provides tests for alignment free ends configuration.
- * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- */
-
 #include <gtest/gtest.h>
 
 #include <functional>
