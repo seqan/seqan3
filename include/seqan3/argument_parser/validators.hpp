@@ -61,14 +61,48 @@ namespace seqan3
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
+/*!\name Requirements for seqan3::validator_concept
+ * \brief You can expect these (meta-)functions on all types that implement seqan3::validator_concept.
+ * \{
+ */
+/*!\typedef     using value_type
+ * \brief       The type of value on which the validator is called on.
+ * \relates     seqan3::validator_concept
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
+ * will provide an implementation).
+ */
+/*!\fn              void operator()(value_type const & cmp) const
+ * \brief           Validates the value 'cmp' and throws a seqan3::validation_error on failure.
+ * \tparam          value_type The type of the value to be validated.
+ * \param[in,out]   cmp The value to be validated.
+ * \relates         seqan3::validator_concept
+ * \throws          seqan3::validation_error if value 'cmp' does not pass validation.
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
+ */
+/*!\fn              std::string get_help_page_message() const
+ * \brief           Returns a message that can be appended to the (positional) options help page info.
+ * \relates         seqan3::validator_concept
+ * \returns         A string that contains information on the performed validation.
+ *
+ * \details
+ * \attention This is a concept requirement, not an actual function (however types satisfying this concept
+ * will provide an implementation).
+ */
+//!\}
 //!\cond
 template <typename validator_type>
-concept validator_concept = std::Invocable<validator_type, typename validator_type::value_type> &&
-                                 requires(validator_type validator,
-                                          typename validator_type::value_type value)
+concept validator_concept = std::Copyable<remove_cvref_t<validator_type>> &&
+                            requires(validator_type validator,
+                                     typename std::remove_reference_t<validator_type>::value_type value)
 {
-    typename validator_type::value_type;
+    typename std::remove_reference_t<validator_type>::value_type;
 
+    { validator(value) } -> void;
     { validator.get_help_page_message() } -> std::string;
 };
 //!\endcond
@@ -80,6 +114,7 @@ class integral_range_validator;
 
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
+ * \implements seqan3::validator_concept
  *
  * \tparam option_value_type Must be a (container of) integral type(s).
  *
@@ -182,6 +217,7 @@ private:
 
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
+ * \implements seqan3::validator_concept
  *
  * \details
  *
@@ -236,6 +272,7 @@ private:
 
 /*!\brief A validator that checks if each value in a container appears in a list of valid values.
  * \ingroup argument_parser
+ * \implements seqan3::validator_concept
  * \extends seqan3::value_list_validator
  *
  * \tparam option_value_type The container type. Must satisfy the seqan3::container_concept.
@@ -294,6 +331,7 @@ private:
 
 /*!\brief A validator that checks if a filenames has one of the valid extensions.
  * \ingroup argument_parser
+ * \implements seqan3::validator_concept
  *
  * \details
  *
@@ -399,6 +437,7 @@ class regex_validator;
 
 /*!\brief A validator that checks if a matches a regular expression pattern.
  * \ingroup argument_parser
+ * \implements seqan3::validator_concept
  *
  * \details
  *
@@ -450,6 +489,7 @@ private:
 
 /*!\brief A validator that checks if each value in a container satisfies a regex expression.
  * \ingroup argument_parser
+ * \implements seqan3::validator_concept
  * \extends seqan3::regex_validator
  */
 template <>
@@ -500,6 +540,7 @@ namespace detail
 
 /*!\brief Validator that always returns true.
  * \ingroup argument_parser
+ * \implements seqan3::validator_concept
  *
  * \details
  *
@@ -512,11 +553,9 @@ struct default_validator
     //!\brief Type of values that are tested by validator
     using value_type = option_value_type;
 
-    //!\brief Value cmp always passes validation.
-    bool operator()(option_value_type const & /*cmp*/) const noexcept
-    {
-        return true;
-    }
+    //!\brief Value cmp always passes validation because the operator never throws.
+    void operator()(option_value_type const & /*cmp*/) const noexcept
+    {}
 
     //!\brief Since no validation is happening the help message is empty.
     std::string get_help_page_message() const

@@ -44,7 +44,12 @@ using namespace seqan3;
 
 TEST(validator_test, fullfill_concept)
 {
+    EXPECT_FALSE(validator_concept<int>);
+
     EXPECT_TRUE(validator_concept<detail::default_validator<int>>);
+    EXPECT_TRUE(validator_concept<detail::default_validator<int> const>);
+    EXPECT_TRUE(validator_concept<detail::default_validator<int> &>);
+
     EXPECT_TRUE(validator_concept<integral_range_validator<int>>);
     EXPECT_TRUE(validator_concept<value_list_validator<int>>);
     EXPECT_TRUE(validator_concept<regex_validator<std::string>>);
