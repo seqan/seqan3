@@ -57,6 +57,16 @@
 //NOTE(h-2): for the range overloads we explicitly forbid that the type is iteratoer
 // because some types are actually both (e.g. std::directory_iterator)
 
+namespace seqan3::detail
+{
+
+//!\cond
+template <typename t>
+concept has_value_type = requires { typename value_type_t<remove_cvref_t<t>>; };
+//!\endcond
+
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -181,7 +191,7 @@ struct size_type<rng_t>
  */
 template <typename t>
 //!\cond
-    requires requires (t) { typename value_type_t<remove_cvref_t<t>>; }
+    requires detail::has_value_type<t>
 //!\endcond
 struct innermost_value_type
 {
@@ -191,11 +201,7 @@ struct innermost_value_type
 
 //!\cond
 template <typename t>
-    requires requires (t)
-    {
-        typename value_type_t<remove_cvref_t<t>>;
-        typename value_type_t<remove_cvref_t<value_type_t<remove_cvref_t<t>>>>;
-    }
+    requires detail::has_value_type<t> && detail::has_value_type<value_type_t<remove_cvref_t<t>>>
 struct innermost_value_type<t>
 {
     using type = typename innermost_value_type<value_type_t<remove_cvref_t<t>>>::type;
@@ -222,17 +228,13 @@ using innermost_value_type_t = typename innermost_value_type<t>::type;
  */
 template <typename t>
 //!\cond
-    requires requires (t) { typename value_type_t<remove_cvref_t<t>>; }
+    requires detail::has_value_type<t>
 //!\endcond
 constexpr size_t dimension_v = 1;
 
 //!\cond
 template <typename t>
-    requires requires (t)
-    {
-        typename value_type_t<remove_cvref_t<t>>;
-        typename value_type_t<value_type_t<remove_cvref_t<t>>>;
-    }
+    requires detail::has_value_type<t> && detail::has_value_type<value_type_t<remove_cvref_t<t>>>
 constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> + 1;
 //!\endcond
 
