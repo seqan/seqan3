@@ -1,0 +1,46 @@
+#include <iostream>
+#include <string>
+
+#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
+
+using namespace seqan3;
+
+int main()
+{
+    // With c++20 you could also write it like this
+    // auto fn = []<typename type>(std::type_identity<type>)
+    // {
+    // ...
+    // };
+    auto fn = [](auto id)
+    {
+        using type = typename decltype(id)::type;
+
+        // id is of type std::type_identity<type>
+        using id_t = decltype(id);
+        static_assert(std::is_same_v<id_t, std::type_identity<type>>);
+
+        if constexpr(std::is_same_v<type, bool>)
+            debug_stream << "bool";
+
+        if constexpr(std::is_same_v<type, int>)
+            debug_stream << "int";
+
+        if constexpr(std::is_same_v<type, float>)
+            debug_stream << "float";
+
+        debug_stream << ", ";
+    };
+
+    // prints each type name, i.e. "int, float, bool, \n"
+    detail::for_each_type<int, float, bool>(fn);
+    debug_stream << "\n";
+
+    // is the same as explicitly writing
+    fn(std::type_identity<int>{});
+    fn(std::type_identity<float>{});
+    fn(std::type_identity<bool>{});
+    debug_stream << "\n";
+    return 0;
+}
