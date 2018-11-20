@@ -73,8 +73,8 @@ TEST(validator_test, no_file)
     filesystem::path p{"./sandbox.fasta"};
     std::string s{"./stonebox.fasta"};
     file_existance_validator my_validator{};
-    EXPECT_THROW(my_validator(p), parser_invalid_argument);
-    EXPECT_THROW(my_validator(s), parser_invalid_argument);
+    EXPECT_THROW(my_validator(p), validation_failed);
+    EXPECT_THROW(my_validator(s), validation_failed);
 
     filesystem::path file_in_path;
 
@@ -84,7 +84,7 @@ TEST(validator_test, no_file)
      parser.add_option(file_in_path, 'i', "int-option", "desc",
                        option_spec::DEFAULT, file_existance_validator());
 
-     EXPECT_THROW(parser.parse(), parser_invalid_argument);
+     EXPECT_THROW(parser.parse(), validation_failed);
 }
 
 TEST(validator_test, file_exists)

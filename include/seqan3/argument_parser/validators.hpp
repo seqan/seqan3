@@ -364,7 +364,7 @@ public:
 
     /*!\brief Tests whether the filepath \p path ends with a valid extension.
      * \param path The input value to check.
-     * \throws parser_invalid_argument
+     * \throws validation_failed
      */
     void operator()(filesystem::path const & path) const
     {
@@ -397,7 +397,7 @@ private:
  *
  * \details
  *
- * The struct then acts as a functor that throws a seqan3::parser_invalid_argument
+ * The struct then acts as a functor that throws a seqan3::invalid_argument
  * exception whenever a given filename (string) does not exist.
  *
  * \snippet test/snippet/argument_parser/validators_file_existance.cpp usage
@@ -410,12 +410,12 @@ public:
 
     /*!\brief Tests whether path exists.
      * \param path The input value to check.
-     * \throws parser_invalid_argument
+     * \throws invalid_argument
      */
     void operator()(filesystem::path const & path) const
     {
         if (!(filesystem::exists(path)))
-            throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
+            throw validation_failed(detail::to_string("File ", path, " does not exist."));
     }
 
     //!\brief Tests whether every filename in list v exists.
