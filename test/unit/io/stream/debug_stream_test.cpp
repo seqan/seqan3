@@ -38,6 +38,7 @@
 #include <string>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/io/filesystem.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
@@ -140,4 +141,16 @@ TEST(debug_stream, std_endl)
     my_stream << "foo" << std::endl << "bar";
     o.flush();
     EXPECT_EQ(o.str(), "foo\nbar");
+}
+
+TEST(debug_stream, path)
+{
+    std::ostringstream o;
+    debug_stream_type my_stream{o};
+
+    filesystem::path p{"my/path/my_file.txt"};
+
+    my_stream << p;
+    o.flush();
+    EXPECT_EQ(o.str(), "\"my/path/my_file.txt\"");
 }
