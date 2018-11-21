@@ -319,7 +319,7 @@ private:
         stream >> value;
 
         if (stream.fail() || !stream.eof())
-            throw type_conversion_failed("Argument " + in + " could not be casted to type " +
+            throw type_coversion_error("Argument " + in + " could not be casted to type " +
                                          get_type_name_as_string(value) + ".");
     }
 
@@ -357,8 +357,8 @@ private:
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
      *
-     * \throws seqan3::type_conversion_failed
-     * \throws seqan3::overflow_error_on_conversion
+     * \throws seqan3::type_coversion_error
+     * \throws seqan3::overflow_error
      *
      * \details
      *
@@ -380,12 +380,12 @@ private:
         stream >> tmp;
 
         if (stream.fail() || !stream.eof()) // !stream.eof() catches 13a as wrong
-            throw type_conversion_failed("Argument " + in + " could not be casted to type " +
+            throw type_coversion_error("Argument " + in + " could not be casted to type " +
                                          get_type_name_as_string(value) + ".");
 
         if (tmp > static_cast<int64_t>(std::numeric_limits<option_t>::max()) ||
             tmp < static_cast<int64_t>(std::numeric_limits<option_t>::min()))
-            throw overflow_error_on_conversion("Argument " + in + " is not in integer range [" +
+            throw overflow_error("Argument " + in + " is not in integer range [" +
                                                std::to_string(std::numeric_limits<option_t>::min()) + "," +
                                                std::to_string(std::numeric_limits<option_t>::max()) + "].");
 
@@ -590,7 +590,7 @@ private:
      * \param[in]  validator The validator applied to the value after parsing (callable).
      *
      * \throws seqan3::option_declared_multiple_times
-     * \throws seqan3::validation_failed
+     * \throws seqan3::validation_error
      * \throws seqan3::required_option_missing
      *
      * \details
@@ -625,7 +625,7 @@ private:
             }
             catch (std::exception & ex)
             {
-                throw validation_failed(std::string("Validation failed for option ") + prepend_dash(short_id) + "/" +
+                throw validation_error(std::string("Validation failed for option ") + prepend_dash(short_id) + "/" +
                                         prepend_dash(long_id) + ": " + ex.what());
             }
         }
@@ -659,7 +659,7 @@ private:
      *
      * \throws seqan3::invalid_argument
      * \throws seqan3::too_few_arguments
-     * \throws seqan3::validation_failed
+     * \throws seqan3::validation_error
      * \throws seqan3::design_error
      *
      * \details
@@ -731,7 +731,7 @@ private:
         }
         catch (std::exception & ex)
         {
-            throw validation_failed("Validation failed for positional option " +
+            throw validation_error("Validation failed for positional option " +
                                     std::to_string(positional_option_count) + ": " + ex.what());
         }
     }

@@ -18,7 +18,7 @@ int main(int argc, char ** argv)
     {
         myparser.parse();
     }
-    catch (seqan3::argument_parser_exception const & ext) // catch all other exceptions caused by user errors
+    catch (seqan3::argument_parser_error const & ext) // catch all other exceptions caused by user errors
     {
         std::cerr << "[PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;

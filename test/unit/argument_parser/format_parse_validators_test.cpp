@@ -73,8 +73,8 @@ TEST(validator_test, no_file)
     filesystem::path p{"./sandbox.fasta"};
     std::string s{"./stonebox.fasta"};
     file_existance_validator my_validator{};
-    EXPECT_THROW(my_validator(p), validation_failed);
-    EXPECT_THROW(my_validator(s), validation_failed);
+    EXPECT_THROW(my_validator(p), validation_error);
+    EXPECT_THROW(my_validator(s), validation_error);
 
     filesystem::path file_in_path;
 
@@ -84,7 +84,7 @@ TEST(validator_test, no_file)
      parser.add_option(file_in_path, 'i', "int-option", "desc",
                        option_spec::DEFAULT, file_existance_validator());
 
-     EXPECT_THROW(parser.parse(), validation_failed);
+     EXPECT_THROW(parser.parse(), validation_error);
 }
 
 TEST(validator_test, file_exists)
@@ -210,7 +210,7 @@ TEST(validator_test, integral_range_validator_error)
     parser.add_option(option_value, 'i', "int-option", "desc",
                       option_spec::DEFAULT, integral_range_validator<int>(1,20));
 
-    EXPECT_THROW(parser.parse(), validation_failed);
+    EXPECT_THROW(parser.parse(), validation_error);
 
     // option - below min
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
@@ -218,21 +218,21 @@ TEST(validator_test, integral_range_validator_error)
     parser2.add_option(option_value, 'i', "int-option", "desc",
                        option_spec::DEFAULT, integral_range_validator<int>(-20,20));
 
-    EXPECT_THROW(parser2.parse(), validation_failed);
+    EXPECT_THROW(parser2.parse(), validation_error);
 
     // positional option - above max
     const char * argv3[] = {"./argument_parser_test", "30"};
     argument_parser parser3("test_parser", 2, argv3);
     parser3.add_positional_option(option_value, "desc", integral_range_validator<int>(1,20));
 
-    EXPECT_THROW(parser3.parse(), validation_failed);
+    EXPECT_THROW(parser3.parse(), validation_error);
 
     // positional option - below min
     const char * argv4[] = {"./argument_parser_test", "--", "-21"};
     argument_parser parser4("test_parser", 3, argv4);
     parser4.add_positional_option(option_value, "desc", integral_range_validator<int>(-20,20));
 
-    EXPECT_THROW(parser4.parse(), validation_failed);
+    EXPECT_THROW(parser4.parse(), validation_error);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-100"};
@@ -240,7 +240,7 @@ TEST(validator_test, integral_range_validator_error)
     parser5.add_option(option_vector, 'i', "int-option", "desc",
                        option_spec::DEFAULT, integral_range_validator<std::vector<int>>(-50,50));
 
-    EXPECT_THROW(parser5.parse(), validation_failed);
+    EXPECT_THROW(parser5.parse(), validation_error);
 
     // positional option - vector
     option_vector.clear();
@@ -248,7 +248,7 @@ TEST(validator_test, integral_range_validator_error)
     argument_parser parser6("test_parser", 4, argv6);
     parser6.add_positional_option(option_vector, "desc", integral_range_validator<std::vector<int>>(-20,20));
 
-    EXPECT_THROW(parser6.parse(), validation_failed);
+    EXPECT_THROW(parser6.parse(), validation_error);
 }
 
 TEST(validator_test, value_list_validator_success)
@@ -350,14 +350,14 @@ TEST(validator_test, value_list_validator_error)
     parser.add_option(option_value, 's', "string-option", "desc",
                       option_spec::DEFAULT, value_list_validator<std::string>({"ha", "ba", "ma"}));
 
-    EXPECT_THROW(parser.parse(), validation_failed);
+    EXPECT_THROW(parser.parse(), validation_error);
 
     // positional option
     const char * argv3[] = {"./argument_parser_test", "30"};
     argument_parser parser3("test_parser", 2, argv3);
     parser3.add_positional_option(option_value_int, "desc", value_list_validator<int>({0, 5, 10}));
 
-    EXPECT_THROW(parser3.parse(), validation_failed);
+    EXPECT_THROW(parser3.parse(), validation_error);
 
     // positional option - vector
     const char * argv4[] = {"./argument_parser_test", "fo", "ma"};
@@ -365,7 +365,7 @@ TEST(validator_test, value_list_validator_error)
     parser4.add_positional_option(option_vector, "desc",
                                   value_list_validator<std::vector<std::string>>({"ha", "ba", "ma"}));
 
-    EXPECT_THROW(parser4.parse(), validation_failed);
+    EXPECT_THROW(parser4.parse(), validation_error);
 
     // option - vector
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "488"};
@@ -373,7 +373,7 @@ TEST(validator_test, value_list_validator_error)
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
                        option_spec::DEFAULT, value_list_validator<std::vector<int>>({-10,48,50}));
 
-    EXPECT_THROW(parser5.parse(), validation_failed);
+    EXPECT_THROW(parser5.parse(), validation_error);
 }
 
 TEST(validator_test, regex_validator_success)
@@ -465,7 +465,7 @@ TEST(validator_test, regex_validator_error)
     parser.add_option(option_value, 's', "string-option", "desc",
                       option_spec::DEFAULT, regex_validator<std::string>("tt"));
 
-    EXPECT_THROW(parser.parse(), validation_failed);
+    EXPECT_THROW(parser.parse(), validation_error);
 
     // positional option
     const char * argv2[] = {"./argument_parser_test", "jessy"};
@@ -473,7 +473,7 @@ TEST(validator_test, regex_validator_error)
     parser2.add_positional_option(option_value, "desc",
                                   regex_validator<std::string>("[0-9]"));
 
-    EXPECT_THROW(parser2.parse(), validation_failed);
+    EXPECT_THROW(parser2.parse(), validation_error);
 
     // positional option - vector
     const char * argv3[] = {"./argument_parser_test", "rollo", "bttllo", "lollo"};
@@ -481,7 +481,7 @@ TEST(validator_test, regex_validator_error)
     parser3.add_positional_option(option_vector, "desc",
                                   regex_validator<std::vector<std::string>>{".*oll.*"});
 
-    EXPECT_THROW(parser3.parse(), validation_failed);
+    EXPECT_THROW(parser3.parse(), validation_error);
 
     // option - vector
     option_vector.clear();
@@ -490,7 +490,7 @@ TEST(validator_test, regex_validator_error)
     parser4.add_option(option_vector, 's', "string-option", "desc",
                        option_spec::DEFAULT, regex_validator<std::vector<std::string>>("tt"));
 
-    EXPECT_THROW(parser4.parse(), validation_failed);
+    EXPECT_THROW(parser4.parse(), validation_error);
 }
 
 TEST(validator_test, chaining_validators)

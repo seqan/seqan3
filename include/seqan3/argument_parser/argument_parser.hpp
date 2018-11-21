@@ -299,15 +299,15 @@ public:
      * related code and should be enclosed in a try catch block.
      *
      * \throws seqan3::option_declared_multiple_times if an option that is not a list was declared multiple times.
-     * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
+     * \throws seqan3::overflow_error if the numeric argument would cause an overflow error when
      *                                              converted into the expected type.
      * \throws seqan3::parser_interruption on special user request (e.g. --help or --version).
      * \throws seqan3::invalid_argument if the user provided wrong arguments.
      * \throws seqan3::required_option_missing if the user did not provide a required option.
      * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
      * \throws seqan3::too_few_arguments if the command line call contained too few arguments than expected.
-     * \throws seqan3::type_conversion_failed if the argument value could not be converted into the expected type.
-     * \throws seqan3::validation_failed if the argument was not excepted by the provided validator.
+     * \throws seqan3::type_coversion_error if the argument value could not be converted into the expected type.
+     * \throws seqan3::validation_error if the argument was not excepted by the provided validator.
      *
      * \details
      *
@@ -500,7 +500,7 @@ private:
      * \param[in] argc     The number of command line arguments.
      * \param[in] argv     The command line arguments.
      *
-     * \throws seqan3::validation_failed
+     * \throws seqan3::validation_error
      *
      * \details
      *
@@ -521,7 +521,7 @@ private:
      * - else the format is that to seqan3::detail::format_parse
      *
      * If `-export-help` is specified with a value other than html/man or ctd
-     * a validation_failed exception is thrown.
+     * a validation_error exception is thrown.
      */
     void init(int const argc, char const * const * const  argv)
     {
@@ -562,7 +562,7 @@ private:
                 // else if (export_format == "ctd")
                 //     format = detail::format_ctd();
                 else
-                    throw validation_failed("Validation Failed. "
+                    throw validation_error("Validation Failed. "
                                             "Value of --export-help must be one of [html, man, ctd]");
                 return;
             }
