@@ -39,7 +39,6 @@
 #include <gtest/gtest.h>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 template <typename T>
 class search_configuration_test : public ::testing::Test

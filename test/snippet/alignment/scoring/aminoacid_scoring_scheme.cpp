@@ -37,7 +37,6 @@ debug_stream << "New score after editing entry: " << (int) scheme.score(aa27::T,
 
 {
 //! [score sequences]
-using namespace seqan3::literal;
 std::vector<aa27> one = "ALIGATOR"_aa27;
 std::vector<aa27> two = "ANIMATOR"_aa27;
 

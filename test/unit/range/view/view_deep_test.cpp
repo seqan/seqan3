@@ -54,7 +54,6 @@ inline auto const deep_take2 = deep{ranges::view::take(2)};
 }
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 // ------------------------------------------------------------------
 // no parameters

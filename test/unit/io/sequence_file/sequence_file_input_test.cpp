@@ -46,7 +46,6 @@
 #include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(sequence_file_input_iterator, concepts)
 {

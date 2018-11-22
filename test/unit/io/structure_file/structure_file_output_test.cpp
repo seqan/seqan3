@@ -59,7 +59,6 @@
 #include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(general, concepts)
 {

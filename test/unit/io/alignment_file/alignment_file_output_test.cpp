@@ -48,7 +48,6 @@
 #include <seqan3/std/iterator>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 std::vector<dna5_vector> seqs
 {

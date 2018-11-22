@@ -52,7 +52,6 @@ using namespace seqan3;
 
 TEST(align_pairwise, single_rng_lvalue)
 {
-    using namespace seqan3::literal;
 
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
@@ -85,7 +84,6 @@ TEST(align_pairwise, single_rng_lvalue)
 
 TEST(align_pairwise, single_view_lvalue)
 {
-    using namespace seqan3::literal;
 
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
@@ -116,7 +114,6 @@ TEST(align_pairwise, single_view_lvalue)
 
 TEST(align_pairwise, multiple_rng_lvalue)
 {
-    using namespace seqan3::literal;
 
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;

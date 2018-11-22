@@ -44,7 +44,6 @@
 #include <seqan3/std/iterator>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(rows, assign_sequence_files)
 {

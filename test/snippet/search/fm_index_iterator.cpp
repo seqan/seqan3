@@ -3,7 +3,6 @@
 #include <seqan3/search/fm_index/all.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {

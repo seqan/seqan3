@@ -2,7 +2,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {
