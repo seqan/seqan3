@@ -229,7 +229,7 @@ public:
      * \param number_of_consecutive_gaps The number of consecutive gaps that you wish to know the score for.
      * \returns A signed integer (usually 64bit) that holds the score computed based on the selected scheme.
      */
-    constexpr ptrdiff_t score(size_t const number_of_consecutive_gaps) noexcept
+    constexpr ptrdiff_t score(size_t const number_of_consecutive_gaps) const noexcept
     {
         return (gap_open * (number_of_consecutive_gaps ? 1 : 0)) + number_of_consecutive_gaps * gap;
     }

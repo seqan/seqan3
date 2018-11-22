@@ -39,6 +39,7 @@
 #include <range/v3/algorithm/equal.hpp>
 
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
+#include <seqan3/alignment/scoring/gap_scheme_concept.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <seqan3/test/tmp_filename.hpp>
@@ -52,6 +53,13 @@
 #endif // SEQAN3_WITH_CEREAL
 
 using namespace seqan3;
+
+TEST(gap_scheme, concept_check)
+{
+    EXPECT_TRUE((gap_scheme_concept<gap_scheme<>>));
+    EXPECT_TRUE((gap_scheme_concept<gap_scheme<int32_t> const>));
+    EXPECT_TRUE((gap_scheme_concept<gap_scheme<float> const &>));
+}
 
 TEST(gap_scheme, constructors_and_type_deduction_guides)
 {
