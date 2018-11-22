@@ -87,7 +87,7 @@ namespace seqan3::view
  *
  * ```cpp
  * dna5_vector s{"ACTNTGATAN"_dna5};
- * auto v1 = s | view::filter([](dna5 const l) { return (l != dna5::N); }); // == "ACTTGATA"_dna5
+ * auto v1 = s | view::filter([](dna5 const l) { return (l != 'N'_dna5); }); // == "ACTTGATA"_dna5
  * ```
  * \hideinitializer
  */

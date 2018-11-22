@@ -220,7 +220,7 @@ TEST(parse_condition, is_char)
 TEST(parse_condition, is_char_msg)
 {
     using namespace seqan3;
-    EXPECT_EQ((is_char<to_char(dna4::A)>.msg.string()), "is_char<'A'>"s);
+    EXPECT_EQ((is_char<to_char('A'_dna4)>.msg.string()), "is_char<'A'>"s);
     EXPECT_EQ((is_char<'\t'>.msg.string()), "is_char<'\t'>"s);
 }
 

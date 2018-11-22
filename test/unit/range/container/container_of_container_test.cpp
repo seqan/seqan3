@@ -54,7 +54,6 @@
 #endif // SEQAN3_WITH_CEREAL
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 template <typename T>
 class container_of_container : public ::testing::Test
@@ -158,7 +157,7 @@ TYPED_TEST(container_of_container, iterators)
     EXPECT_TRUE(t1.cend() == t1.end());
 
     // writability
-    (*t1.begin())[0] = dna4::T;
+    (*t1.begin())[0] = 'T'_dna4;
     EXPECT_TRUE(dna4_vector(*t1.begin())  == "TCGT"_dna4);
 }
 

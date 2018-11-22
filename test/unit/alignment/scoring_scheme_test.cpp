@@ -261,12 +261,12 @@ TYPED_TEST(generic, custom)
         EXPECT_EQ(2*2+1,    scheme.score(aa27::C, aa27::B));
     } else
     {
-        EXPECT_EQ(0*0+0,    scheme.score(dna15::A, dna15::A)); // A is 0th
-        EXPECT_EQ(0*0+2,    scheme.score(dna15::A, dna15::C)); // C is 2nd
-        EXPECT_EQ(2*2+0,    scheme.score(dna15::C, dna15::A));
-        EXPECT_EQ(3*3+3,    scheme.score(dna15::D, dna15::D)); // D is 3rd
-        EXPECT_EQ(8*8+0,    scheme.score(dna15::N, dna15::A)); // N is 8th
-        EXPECT_EQ(0*0+8,    scheme.score(dna15::A, dna15::N));
+        EXPECT_EQ(0*0+0,    scheme.score('A'_dna15, 'A'_dna15)); // A is 0th
+        EXPECT_EQ(0*0+2,    scheme.score('A'_dna15, 'C'_dna15)); // C is 2nd
+        EXPECT_EQ(2*2+0,    scheme.score('C'_dna15, 'A'_dna15));
+        EXPECT_EQ(3*3+3,    scheme.score('D'_dna15, 'D'_dna15)); // D is 3rd
+        EXPECT_EQ(8*8+0,    scheme.score('N'_dna15, 'A'_dna15)); // N is 8th
+        EXPECT_EQ(0*0+8,    scheme.score('A'_dna15, 'N'_dna15));
     }
 }
 
@@ -290,10 +290,10 @@ TYPED_TEST(generic, convertability)
         {
             using nucl_t = std::decay_t<decltype(aa)>;
 
-            EXPECT_EQ(scheme.score(aa27::C,  aa27::G),
-                      scheme.score(nucl_t::C, nucl_t::G));
-            EXPECT_EQ(scheme.score(aa27::T,  nucl_t::T),
-                      scheme.score(nucl_t::T, aa27::T));
+            EXPECT_EQ(scheme.score(aa27::C,                   aa27::G),
+                      scheme.score(nucl_t{}.assign_char('C'), nucl_t{}.assign_char('G')));
+            EXPECT_EQ(scheme.score(aa27::T,                   nucl_t{}.assign_char('T')),
+                      scheme.score(nucl_t{}.assign_char('T'), aa27::T));
         });
     } else
     {
@@ -303,17 +303,17 @@ TYPED_TEST(generic, convertability)
         {
             using nucl_t = std::decay_t<decltype(nucl)>;
 
-            EXPECT_EQ(scheme.score(dna15::C,  dna15::G),
-                      scheme.score(nucl_t::C, nucl_t::G));
-            EXPECT_EQ(scheme.score(dna15::T,  dna15::T),
-                      scheme.score(nucl_t::T, nucl_t::T));
-            EXPECT_EQ(scheme.score(dna15::A,  dna15::C),
-                      scheme.score(nucl_t::A, nucl_t::C));
+            EXPECT_EQ(scheme.score('C'_dna15,                 'G'_dna15),
+                      scheme.score(nucl_t{}.assign_char('C'), nucl_t{}.assign_char('G')));
+            EXPECT_EQ(scheme.score('T'_dna15,                 'T'_dna15),
+                      scheme.score(nucl_t{}.assign_char('T'), nucl_t{}.assign_char('T')));
+            EXPECT_EQ(scheme.score('A'_dna15,                 'C'_dna15),
+                      scheme.score(nucl_t{}.assign_char('A'), nucl_t{}.assign_char('C')));
 
-            EXPECT_EQ(scheme.score(dna15::C,  nucl_t::G),
-                      scheme.score(nucl_t::C, dna15::G));
-            EXPECT_EQ(scheme.score(dna15::C,  nucl_t::A),
-                      scheme.score(nucl_t::C, dna15::A));
+            EXPECT_EQ(scheme.score('C'_dna15,                 nucl_t{}.assign_char('G')),
+                      scheme.score(nucl_t{}.assign_char('C'), 'G'_dna15));
+            EXPECT_EQ(scheme.score('C'_dna15,                 nucl_t{}.assign_char('A')),
+                      scheme.score(nucl_t{}.assign_char('C'), 'A'_dna15));
         });
 
     }

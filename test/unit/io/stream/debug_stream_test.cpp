@@ -44,7 +44,6 @@
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(debug_stream, basic)
 {
@@ -90,16 +89,16 @@ TEST(debug_stream, alphabet)
     std::ostringstream o;
     debug_stream_type my_stream{o};
 
-    my_stream << dna4::A;
+    my_stream << 'A'_dna4;
     o.flush();
     EXPECT_EQ(o.str(), "A");
 
-    dna5 d = dna5::N;
+    dna5 d = 'N'_dna5;
     my_stream << d;
     o.flush();
     EXPECT_EQ(o.str(), "AN");
 
-    dna5 const d2 = dna5::N;
+    dna5 const d2 = 'N'_dna5;
     my_stream << d2;
     o.flush();
     EXPECT_EQ(o.str(), "ANN");

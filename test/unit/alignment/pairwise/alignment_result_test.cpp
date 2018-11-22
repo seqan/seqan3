@@ -103,7 +103,7 @@ TYPED_TEST(align_result_test, std_position_get)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     {
         res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
@@ -143,7 +143,7 @@ TYPED_TEST(align_result_test, seqan3_pos_get)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     {
         res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
@@ -183,7 +183,7 @@ TYPED_TEST(align_result_test, seqan3_enum_get)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     {
         res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
@@ -222,7 +222,7 @@ TYPED_TEST(align_result_test, id)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
     EXPECT_EQ(tmp.id(), 1);
@@ -232,7 +232,7 @@ TYPED_TEST(align_result_test, score)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
     EXPECT_EQ(tmp.score(), 0);
@@ -242,7 +242,7 @@ TYPED_TEST(align_result_test, end_coordinate)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     {
         res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
@@ -269,7 +269,7 @@ TYPED_TEST(align_result_test, begin_coordinate)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     {
         res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
@@ -296,7 +296,7 @@ TYPED_TEST(align_result_test, trace)
 {
     using res_t = typename TestFixture::res_t;
     using seq_t = typename TestFixture::seq_t;
-    seq_t seq{dna4::A, dna4::T, gap::GAP, dna4::C, gap::GAP, gap::GAP, dna4::A};
+    seq_t seq{'A'_dna4, 'T'_dna4, gap::GAP, 'C'_dna4, gap::GAP, gap::GAP, 'A'_dna4};
 
     {
         res_t tmp{1, 0, {10, 10}, {0, 0}, {seq, seq}};
