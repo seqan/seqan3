@@ -264,9 +264,9 @@ public:
     //!\endcond
 
 private:
-    //!\brief The score per gap character.
-    score_t gap = 0;
-    //!\brief The score per sequence of gaps.
+    //!\brief The score per gap character. Defaults to -1.
+    score_t gap = -1;
+    //!\brief The score per sequence of gaps. Defaults to 0.
     score_t gap_open = 0;
 };
 
