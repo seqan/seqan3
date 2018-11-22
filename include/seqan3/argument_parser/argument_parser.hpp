@@ -221,6 +221,8 @@ public:
             throw parser_design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
         if (id_exists(long_id))
             throw parser_design_error("Option Identifier '" + long_id + "' was already used before.");
+        if (long_id.length() == 1)
+            throw parser_design_error("Long IDs must be either empty, or longer than one character.");
         if (short_id == '\0' && long_id.empty())
             throw parser_design_error("Option Identifiers cannot both be empty.");
 
@@ -249,6 +251,8 @@ public:
             throw parser_design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
         if (id_exists(long_id))
             throw parser_design_error("Option Identifier '" + long_id + "' was already used before.");
+        if (long_id.length() == 1)
+            throw parser_design_error("Long IDs must be either empty, or longer than one character.");
         if (short_id == '\0' && long_id.empty())
             throw parser_design_error("Option Identifiers cannot both be empty.");
 
@@ -609,7 +613,6 @@ private:
 
     //!\brief List of option/flag identifiers that are already used.
     std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version"};
-
 };
 
 } // namespace seqan3

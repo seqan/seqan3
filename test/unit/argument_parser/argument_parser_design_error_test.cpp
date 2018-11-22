@@ -97,6 +97,13 @@ TEST(parse_test, parser_design_error)
                  "advanced-help is bad"), parser_design_error);
     EXPECT_THROW(parser8.add_option(option_value, '\0', "export-help",
                  "export-help is bad"), parser_design_error);
+
+    // using one-letter long identifiers.
+    argument_parser parser9("test_parser", 1, argv);
+    EXPECT_THROW(parser9.add_option(option_value, 'y', "z", "long identifier is one letter"),
+                 parser_design_error);
+    EXPECT_THROW(parser9.add_flag(flag_value, 'y', "z", "long identifier is one letter"),
+                 parser_design_error);
 }
 
 TEST(parse_test, parse_called_twice)
