@@ -44,7 +44,6 @@
 #include <gtest/gtest.h>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 template <typename T>
 class bi_fm_index_iterator_test : public ::testing::Test
@@ -99,25 +98,25 @@ TYPED_TEST(bi_fm_index_iterator_test, extend_char)
     typename TypeParam::index_type bi_fm{text};
 
     auto it = bi_fm.begin();
-    EXPECT_TRUE(it.extend_left(dna4::G)); // "G"
+    EXPECT_TRUE(it.extend_left('G'_dna4)); // "G"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{2, 3, 6, 7, 10}));
-    EXPECT_TRUE(it.extend_left(dna4::C)); // "CG"
+    EXPECT_TRUE(it.extend_left('C'_dna4)); // "CG"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
-    EXPECT_FALSE(it.extend_left(dna4::C)); // "CG"
+    EXPECT_FALSE(it.extend_left('C'_dna4)); // "CG"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
-    EXPECT_FALSE(it.extend_left(dna4::G)); // "CG"
+    EXPECT_FALSE(it.extend_left('G'_dna4)); // "CG"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
-    EXPECT_FALSE(it.extend_right(dna4::T)); // "CG"
+    EXPECT_FALSE(it.extend_right('T'_dna4)); // "CG"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 9}));
-    EXPECT_TRUE(it.extend_right(dna4::G)); // "CGG"
+    EXPECT_TRUE(it.extend_right('G'_dna4)); // "CGG"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
-    EXPECT_TRUE(it.extend_right(dna4::T)); // "CGGT"
+    EXPECT_TRUE(it.extend_right('T'_dna4)); // "CGGT"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
-    EXPECT_TRUE(it.extend_right(dna4::A)); // "CGGTA"
+    EXPECT_TRUE(it.extend_right('A'_dna4)); // "CGGTA"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1}));
-    EXPECT_TRUE(it.extend_left(dna4::A)); // "ACGGTA"
+    EXPECT_TRUE(it.extend_left('A'_dna4)); // "ACGGTA"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0}));
-    EXPECT_FALSE(it.extend_left(dna4::A)); // "ACGGTA"
+    EXPECT_FALSE(it.extend_left('A'_dna4)); // "ACGGTA"
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0}));
 }
 

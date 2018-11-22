@@ -4,18 +4,17 @@
 #include <seqan3/range/view/to_rank.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {
 //! [usage]
 // This does not work:
-// std::cout << dna5::C;
+// std::cout << 'C'_dna5;
 // because the alphabet needs to be converted to char explicitly:
-debug_stream << to_char(dna5::C);  // prints 'C'
+debug_stream << to_char('C'_dna5);  // prints 'C'
 
 // The debug_stream, on the other hand, does this automatically:
-debug_stream << dna5::C;        // prints 'C'
+debug_stream << 'C'_dna5;        // prints 'C'
 
 // Vectors are also not printable to debug_stream:
 std::vector<dna5> vec{"ACGT"_dna5};
@@ -50,7 +49,7 @@ debug_stream << fmtflags2::small_int_as_number << '\'' << i << "'\n";   // print
 }
 
 // this is UNDEFINED BEHAVIOUR, because the underlying stream went out-of-scope:
-//debug_stream << dna4::C;
+//debug_stream << 'C'_dna4;
 //! [set_underlying_stream]
 
 //! [set_underlying_stream2]

@@ -85,14 +85,14 @@ namespace seqan3::view
  *
  * ```cpp
  * dna5_vector s{"ACTNTGATAN"_dna5};
- * auto v1 = s | view::filter([](dna5 const l) { return (l != dna5::N); }); // == "ACTTGATA"_dna5
+ * auto v1 = s | view::filter([](dna5 const l) { return (l != 'N'_dna5); }); // == "ACTTGATA"_dna5
  *
  * // this won't work (as of C++17), because std::find expects begin and end to be of the same type:
- * // auto it = std::find(begin(v1), end(v1), dna5::G);
+ * // auto it = std::find(begin(v1), end(v1), 'G'_dna5);
  *
  * // this will:
  * auto v2 = v1 | view::common;
- * auto it = std::find(begin(v2), end(v2), dna5::G);
+ * auto it = std::find(begin(v2), end(v2), 'G'_dna5);
  * ```
  * \hideinitializer
  */

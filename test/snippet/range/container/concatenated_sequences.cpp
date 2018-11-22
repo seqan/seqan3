@@ -3,7 +3,6 @@
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {
@@ -22,7 +21,7 @@ concat1 = concat2;               // you can assign from other ranges
 concat2[0] = "ATTA"_dna4;        // this works for vector of vector
 //concat1[0] = "ATTA"_dna4;      // but not on concatenated_sequences
 
-concat1[0][1] = dna4::T;         // this, however, does
+concat1[0][1] = 'T'_dna4;         // this, however, does
 debug_stream << concat1[0] << '\n'; // "ATTA"
 
 

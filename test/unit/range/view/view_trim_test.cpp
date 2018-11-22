@@ -71,18 +71,18 @@ TEST(view_trim, standalone)
 
 TEST(view_trim, qualified)
 {
-    std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
-                           {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
-    std::vector<dna5q> cmp1{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
-                            {dna5::A, phred42{20}}};
-    std::vector<dna5q> cmp2{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}};
+    std::vector<dna5q> vec{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}, {'G'_dna5, phred42{30}},
+                           {'A'_dna5, phred42{20}}, {'T'_dna5, phred42{10}}};
+    std::vector<dna5q> cmp1{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}, {'G'_dna5, phred42{30}},
+                            {'A'_dna5, phred42{20}}};
+    std::vector<dna5q> cmp2{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}};
 
     // trim by phred_value
     auto v1 = vec | view::trim(20u);
     EXPECT_EQ(std::vector<dna5q>(v1), cmp1);
 
     // trim by quality character
-    auto v2 = vec | view::trim(dna5q{dna5::C, phred42{40}});
+    auto v2 = vec | view::trim(dna5q{'C'_dna5, phred42{40}});
     EXPECT_EQ(std::vector<dna5q>(v2), cmp2);
 
     // function syntax
@@ -96,7 +96,7 @@ TEST(view_trim, qualified)
 
 TEST(view_trim, concepts)
 {
-    std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}}, {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
+    std::vector<dna5q> vec{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}, {'G'_dna5, phred42{30}}, {'A'_dna5, phred42{20}}, {'T'_dna5, phred42{10}}};
     EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);

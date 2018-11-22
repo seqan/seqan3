@@ -39,7 +39,6 @@
 #include <seqan3/io/alignment_file/detail.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 template <typename T>
 class aligned_sequence_test: public ::testing::Test { };
@@ -105,8 +104,8 @@ TYPED_TEST(aligned_sequence_test, erase_one_gap)
 
     auto it = erase_gap(aligned_seq, aligned_seq.begin() + 1);
 
-    typename TypeParam::value_type val{dna4::C};
-    val = dna4::C;
+    typename TypeParam::value_type val{'C'_dna4};
+    val = 'C'_dna4;
     EXPECT_EQ(*it, val);
     EXPECT_EQ(aligned_seq, aligned_seq_expected);
 
@@ -131,8 +130,8 @@ TYPED_TEST(aligned_sequence_test, erase_multiple_gaps)
 
     auto it = erase_gap(aligned_seq, aligned_seq.begin() + 1, aligned_seq.begin() + 3);
 
-    typename TypeParam::value_type val{dna4::C};
-    val = dna4::C;
+    typename TypeParam::value_type val{'C'_dna4};
+    val = 'C'_dna4;
     EXPECT_EQ(*it, val);
     EXPECT_EQ(aligned_seq, aligned_seq_expected);
 

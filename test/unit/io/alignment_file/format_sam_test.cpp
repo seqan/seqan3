@@ -46,7 +46,6 @@
 #include <seqan3/range/view/convert.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 inline std::vector<phred42> operator""_phred42(const char * s, std::size_t n)
 {
@@ -104,12 +103,12 @@ struct alignment_data : public ::testing::Test
     };
 
     dna5_vector ref_seq = "ACTGATCGAGAGGATCTAGAGGAGATCGTAGGAC"_dna5;
-    std::vector<gapped<dna5>> ref_seq_gapped1 = {dna5::A, dna5::C, dna5::T, dna5::G};
-    std::vector<gapped<dna5>> ref_seq_gapped2 = {dna5::A, dna5::C, dna5::T, dna5::G,
-                                                dna5::A, dna5::T, dna5::C, dna5::G,
-                                                dna5::A};
-    std::vector<gapped<dna5>> ref_seq_gapped3 = {dna5::A, dna5::C, dna5::T, dna5::G,
-                                                dna5::A, dna5::T, dna5::C, dna5::G};
+    std::vector<gapped<dna5>> ref_seq_gapped1 = {'A'_dna5, 'C'_dna5, 'T'_dna5, 'G'_dna5};
+    std::vector<gapped<dna5>> ref_seq_gapped2 = {'A'_dna5, 'C'_dna5, 'T'_dna5, 'G'_dna5,
+                                                'A'_dna5, 'T'_dna5, 'C'_dna5, 'G'_dna5,
+                                                'A'_dna5};
+    std::vector<gapped<dna5>> ref_seq_gapped3 = {'A'_dna5, 'C'_dna5, 'T'_dna5, 'G'_dna5,
+                                                'A'_dna5, 'T'_dna5, 'C'_dna5, 'G'_dna5};
 
     std::string ref_id = "ref";
 
@@ -122,11 +121,11 @@ struct alignment_data : public ::testing::Test
 
     std::vector<std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>> alignments
     {
-        {ref_seq_gapped1, std::vector<gapped<dna5>>{dna5::C, gap::GAP, dna5::G, dna5::T}},
-        {ref_seq_gapped2, std::vector<gapped<dna5>>{dna5::G, dna5::G, dna5::G, dna5::C, dna5::T,
-                                                    dna5::G, dna5::N, gap::GAP, dna5::A}},
-        {ref_seq_gapped3, std::vector<gapped<dna5>>{dna5::G, gap::GAP, dna5::A, dna5::G,
-                                                    dna5::T, dna5::A, gap::GAP, dna5::T}}
+        {ref_seq_gapped1, std::vector<gapped<dna5>>{'C'_dna5, gap::GAP, 'G'_dna5, 'T'_dna5}},
+        {ref_seq_gapped2, std::vector<gapped<dna5>>{'G'_dna5, 'G'_dna5, 'G'_dna5, 'C'_dna5, 'T'_dna5,
+                                                    'G'_dna5, 'N'_dna5, gap::GAP, 'A'_dna5}},
+        {ref_seq_gapped3, std::vector<gapped<dna5>>{'G'_dna5, gap::GAP, 'A'_dna5, 'G'_dna5,
+                                                    'T'_dna5, 'A'_dna5, gap::GAP, 'T'_dna5}}
     };
 
     std::vector<unsigned> flags
