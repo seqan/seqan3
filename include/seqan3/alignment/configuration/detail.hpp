@@ -32,30 +32,55 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
-
- #pragma once
-
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
+/*!\file
+ * \brief Provides some utility functions for the alignment configurations.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_edit.hpp>
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/align_config_max_error.hpp>
-#include <seqan3/alignment/configuration/align_config_output.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
+#pragma once
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
+#include <seqan3/core/algorithm/configuration_utility.hpp>
+
+namespace seqan3::detail
+{
+
+/*!\brief An internal enum to check for a consistent configuration object.
+ * \ingroup configuration
  */
+enum struct align_config_id : uint8_t
+{
+    aligned_ends,
+    band,
+    gap,
+    global,
+    max_error,
+    result,
+    scoring,
+    SIZE
+};
+
+// ----------------------------------------------------------------------------
+// compatibility_table
+// ----------------------------------------------------------------------------
+
+/*!\brief Declaration of algorithm specific compatibility table.
+ * \ingroup algorithm
+ * \tparam algorithm_id_type The type of the algorithm specific id. Algorithm configurations must maintain
+ *                           this table to allow validation checks.
+ */
+template <>
+inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_id::SIZE)>,
+                            static_cast<uint8_t>(align_config_id::SIZE)> compatibility_table<align_config_id>
+{
+{   //0  1  2  3  4  5  6
+    { 0, 1, 1, 1, 1, 1, 1}, // 0: aligned_ends
+    { 1, 0, 1, 1, 1, 1, 1}, // 1: band
+    { 1, 1, 0, 1, 1, 1, 1}, // 2: gap
+    { 1, 1, 1, 0, 1, 1, 1}, // 3: global
+    { 1, 1, 1, 1, 0, 1, 1}, // 4: max_error
+    { 1, 1, 1, 1, 1, 0, 1}, // 5: result
+    { 1, 1, 1, 1, 1, 1, 0}  // 6: scoring
+}
+};
+
+} // namespace seqan3::detail
