@@ -37,6 +37,7 @@
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/std/concepts>
 
 /*!\file
  * \brief Contains metaprogramming utilities for integer types.
@@ -46,7 +47,10 @@
 namespace seqan3::detail
 {
 
-//!\cond DEV
+// ------------------------------------------------------------------
+// min_viable_uint_t
+// ------------------------------------------------------------------
+
 //!\brief Given a value, return the smallest unsigned integer that can hold it.
 template <uint64_t value>
 using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
@@ -58,6 +62,14 @@ using min_viable_uint_t = std::conditional_t<value <= 1ull,          bool,
 //!\sa seqan3::min_viable_uint_t
 template <uint64_t value>
 constexpr auto min_viable_uint_v = static_cast<min_viable_uint_t<value>>(value);
-//!\endcond
+
+// ------------------------------------------------------------------
+// size_in_values_v
+// ------------------------------------------------------------------
+
+//!\brief Return the number of values an integral type can have, i.e. the different between min and max.
+template <std::Integral int_t>
+constexpr size_t size_in_values_v = static_cast<size_t>(std::numeric_limits<int_t>::max()) -
+                                    std::numeric_limits<int_t>::lowest();
 
 } // namespace seqan3::detail
