@@ -4,7 +4,6 @@
 #include <seqan3/range/view/kmer_hash.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {

@@ -66,19 +66,6 @@
  * \brief The main SeqAn3 namespace.
  */
 
-/*!\namespace seqan3::literal
- * \brief The SeqAn3 namespace for literals.
- *
- * SeqAn implements "user defined" literals in multiple places, e.g. `auto foo = "ACGTG"_dna4`. These
- * make working with small examples and tests a lot easier, but the risk of having a name collision with
- * another library is higher so follow the example of the standard library and define all our literals
- * in the namespace `seqan3::literal`.
- *
- * \attention
- * This means you cannot use them, unless you explicitly add `using namespace seqan3::literal;` (in addition
- * to `using namespace seqan3;`).
- */
-
 /*!\cond DEV
  * \namespace seqan3::detail
  * \brief The internal SeqAn3 namespace.

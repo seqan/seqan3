@@ -40,7 +40,6 @@
 #include <gtest/gtest.h>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 // TODO: EXPECT_EQ is not supported by sdsl
 

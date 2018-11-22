@@ -45,7 +45,6 @@
 #include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(view_complement, basic)
 {

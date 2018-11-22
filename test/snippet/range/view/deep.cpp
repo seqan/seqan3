@@ -11,7 +11,6 @@ inline auto const deep_take1 = deep{view::take(1)};
 }
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {

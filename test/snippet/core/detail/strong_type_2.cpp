@@ -18,7 +18,6 @@ struct window_size : detail::strong_type<unsigned, window_size>
 };
 //! [error_window]
 
-using namespace seqan3::literal;
 
 namespace seqan3::detail
 {
