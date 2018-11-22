@@ -153,6 +153,7 @@ public:
     alignment_file_format_sam & operator=(alignment_file_format_sam const &) = delete;
     alignment_file_format_sam(alignment_file_format_sam &&) = default;
     alignment_file_format_sam & operator=(alignment_file_format_sam &&) = default;
+    ~alignment_file_format_sam() = default;
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
