@@ -256,6 +256,40 @@ TYPED_TEST(alphabet, debug_streaming)
     EXPECT_EQ(o.str().size(), 1);
 }
 
+TYPED_TEST(alphabet, hash)
+{
+    {
+        TypeParam t0{};
+        std::hash<TypeParam> h{};
+        if constexpr (std::Same<TypeParam, char>)
+        {
+            for (uint64_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
+            {
+                assign_rank(t0, i);
+                ASSERT_EQ(h(t0), i);
+            }
+        }
+        else
+        {
+            for (uint64_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
+            {
+                assign_rank(t0, i);
+                ASSERT_EQ(h(t0), i);
+            }
+        }
+    }
+    {
+        std::vector<TypeParam> text;
+        text.reserve(4);
+        for (uint64_t i = 0; i < 4; ++i)
+        {
+            text.push_back(assign_rank(TypeParam{}, 0));
+        }
+        std::hash<decltype(text)> h{};
+        ASSERT_EQ(h(text), 0);
+    }
+}
+
 #if SEQAN3_WITH_CEREAL
 template <typename in_archive_t, typename out_archive_t, typename TypeParam>
 void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)

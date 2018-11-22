@@ -256,3 +256,5 @@ concept constexpr_alphabet_concept = constexpr_semi_alphabet_concept<t> && requi
 //!\endcond
 
 } // namespace seqan3::detail
+
+#include <seqan3/alphabet/detail/hash.hpp>
