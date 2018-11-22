@@ -42,6 +42,7 @@
 
 #include <range/v3/algorithm/copy.hpp>
 
+#include <seqan3/alphabet/adaptation/concept.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
@@ -122,6 +123,8 @@ public:
     /*!\name Member types
      * \{
      */
+    //!\brief Type of the underlying alphabet.
+    using alphabet_type = alphabet_t;
     //!\brief Type of the score values.
     using score_type = score_t;
     //!\brief Size type that can hold the dimension of the matrix (i.e. size of the alphabet).
@@ -230,16 +233,24 @@ public:
      * \param[in] alph2   The second letter to score.
      * \return The score of the two letters in the current scheme.
      */
-    template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
-              explicitly_convertible_to_concept<alphabet_t> alph2_t>
+    template <typename alph1_t,
+              typename alph2_t>
+    //!\cond
+        requires (explicitly_convertible_to_concept<alph1_t, alphabet_t> &&
+                  explicitly_convertible_to_concept<alph2_t, alphabet_t>)
+    //!\endcond
     constexpr score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
     //!\copydoc score
-    template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
-              explicitly_convertible_to_concept<alphabet_t> alph2_t>
+    template <typename alph1_t,
+              typename alph2_t>
+    //!\cond
+        requires (explicitly_convertible_to_concept<alph1_t, alphabet_t> &&
+                  explicitly_convertible_to_concept<alph2_t, alphabet_t>)
+    //!\endcond
     constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
