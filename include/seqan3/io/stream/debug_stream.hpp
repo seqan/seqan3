@@ -312,14 +312,15 @@ inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
 template <std::ranges::InputRange rng_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
 //!\cond
-    requires requires (reference_t<remove_cvref_t<rng_t>> l) { { debug_stream << l }; } &&
+    requires !std::Same<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
+             requires (reference_t<rng_t> l) { { debug_stream << l }; } &&
              // exclude null-terminated strings:
              !(std::is_pointer_v<std::decay_t<rng_t>> &&
-               std::Same<remove_cvref_t<reference_t<std::remove_const_t<rng_t>>>, char>)
+               std::Same<remove_cvref_t<reference_t<rng_t>>, char>)
 //!\endcond
 {
-    if constexpr (alphabet_concept<reference_t<remove_cvref_t<rng_t>>> &&
-                  !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<remove_cvref_t<rng_t>>>>)
+    if constexpr (alphabet_concept<remove_cvref_t<reference_t<rng_t>>> &&
+                  !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
     {
         for (auto && l : r)
             s << l;
