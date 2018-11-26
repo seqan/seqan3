@@ -320,7 +320,7 @@ private:
 
         if (stream.fail() || !stream.eof())
             throw type_coversion_error("Argument " + in + " could not be casted to type " +
-                                         get_type_name_as_string(value) + ".");
+                                       get_type_name_as_string(value) + ".");
     }
 
     //!\cond
@@ -381,13 +381,13 @@ private:
 
         if (stream.fail() || !stream.eof()) // !stream.eof() catches 13a as wrong
             throw type_coversion_error("Argument " + in + " could not be casted to type " +
-                                         get_type_name_as_string(value) + ".");
+                                       get_type_name_as_string(value) + ".");
 
         if (tmp > static_cast<int64_t>(std::numeric_limits<option_t>::max()) ||
             tmp < static_cast<int64_t>(std::numeric_limits<option_t>::min()))
             throw overflow_error("Argument " + in + " is not in integer range [" +
-                                               std::to_string(std::numeric_limits<option_t>::min()) + "," +
-                                               std::to_string(std::numeric_limits<option_t>::max()) + "].");
+                                 std::to_string(std::numeric_limits<option_t>::min()) + "," +
+                                 std::to_string(std::numeric_limits<option_t>::max()) + "].");
 
         value = static_cast<option_t>(tmp);
     }
@@ -626,7 +626,7 @@ private:
             catch (std::exception & ex)
             {
                 throw validation_error(std::string("Validation failed for option ") + prepend_dash(short_id) + "/" +
-                                        prepend_dash(long_id) + ": " + ex.what());
+                                       prepend_dash(long_id) + ": " + ex.what());
             }
         }
         else // option is not set
@@ -732,7 +732,7 @@ private:
         catch (std::exception & ex)
         {
             throw validation_error("Validation failed for positional option " +
-                                    std::to_string(positional_option_count) + ": " + ex.what());
+                                   std::to_string(positional_option_count) + ": " + ex.what());
         }
     }
 

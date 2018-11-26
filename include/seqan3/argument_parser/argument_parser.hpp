@@ -563,7 +563,7 @@ private:
                 //     format = detail::format_ctd();
                 else
                     throw validation_error("Validation Failed. "
-                                            "Value of --export-help must be one of [html, man, ctd]");
+                                           "Value of --export-help must be one of [html, man, ctd]");
                 return;
             }
         }

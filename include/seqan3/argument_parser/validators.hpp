@@ -150,7 +150,7 @@ public:
     {
         if (!((cmp <= max) && (cmp >= min)))
             throw validation_error(detail::to_string("Validation Failed - Value ", cmp,
-                                                      " is not in range [", min, ",", max, "]."));
+                                                     " is not in range [", min, ",", max, "]."));
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -197,7 +197,7 @@ public:
             {
                 if (!((cmp_v <= max) && (cmp_v >= min)))
                     throw validation_error(detail::to_string("Validation Failed - Value ", cmp_v,
-                                                              " is not in range [", min, ",", max, "]."));
+                                                             " is not in range [", min, ",", max, "]."));
             });
     }
 
@@ -372,7 +372,7 @@ public:
         ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
         if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
             throw validation_error(detail::to_string("Extension ", ext, " is not one of ",
-                                                      view::all(extensions), "."));
+                                                     view::all(extensions), "."));
     }
 
     //!\brief Tests whether every value of v lies inside extensions.
