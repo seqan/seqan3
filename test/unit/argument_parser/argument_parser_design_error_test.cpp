@@ -104,6 +104,15 @@ TEST(parse_test, parser_design_error)
                  parser_design_error);
     EXPECT_THROW(parser9.add_flag(flag_value, 'y', "z", "long identifier is one letter"),
                  parser_design_error);
+
+    // using non-printable characters
+    argument_parser parser10("test_parser", 1, argv);
+    EXPECT_THROW(parser10.add_option(option_value, '\t', "no\n", "tab and newline don't work!"),
+                 parser_design_error);
+    EXPECT_THROW(parser10.add_flag(flag_value, 'i', "no\n", "tab and newline don't work!"),
+                 parser_design_error);
+    EXPECT_THROW(parser10.add_flag(flag_value, 'a', "-no", "can't start long_id with a hyphen"),
+                 parser_design_error);
 }
 
 TEST(parse_test, parse_called_twice)
