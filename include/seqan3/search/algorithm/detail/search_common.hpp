@@ -32,38 +32,29 @@
 //
 // ============================================================================
 
+/*!\file
+ * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
+ * \brief Provides data structures used by different search algorithms.
+ */
+
 #pragma once
 
-#include <algorithm>
-#include <vector>
+#include <type_traits>
 
-#include <seqan3/alphabet/all.hpp>
-
-namespace seqan3
+namespace seqan3::detail
 {
 
-template <typename T>
-std::vector<T> uniquify(std::vector<T> v)
+//!\brief Object grouping numbers of errors for different kind of error types.
+struct search_param
 {
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end());
-    return v;
-}
+    //!\brief Total number of errors (upper bound over all error types).
+    uint8_t total;
+    //!\brief Total number of substitution errors.
+    uint8_t substitution;
+    //!\brief Total number of insertion errors.
+    uint8_t insertion;
+    //!\brief Total number of deletion errors.
+    uint8_t deletion;
+};
 
-template <typename T>
-std::vector<std::vector<T>> uniquify(std::vector<std::vector<T>> v)
-{
-    std::for_each(v.begin(), v.end(), [] (auto & hits) { uniquify(hits); } );
-    return v;
-}
-
-void random_text(std::vector<dna4> & text, uint64_t const length)
-{
-    uint8_t alphabet_size{4};
-
-    text.resize(length);
-    for (uint64_t i = 0; i < length; ++i)
-        assign_rank(text[i], std::rand() % alphabet_size);
-}
-
-} // namespace std
+} // namespace seqan3::detail

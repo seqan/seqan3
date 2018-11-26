@@ -119,7 +119,7 @@ TYPED_TEST(fm_index_iterator_test, begin)
 
     // begin
     TypeParam it(fm);
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 1, 2, 3, 4, 5, 6})); // sentinel position included
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 1, 2, 3, 4, 5, 6})); // sentinel position included
     EXPECT_EQ(it.query_length(), 0);
     EXPECT_EQ(it.count(), 7);
 }
@@ -132,7 +132,7 @@ TYPED_TEST(fm_index_iterator_test, extend_right_range)
     // successful extend_right(range)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("CG"_dna4));
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 4}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
     EXPECT_EQ(it.query_length(), 2);
     EXPECT_EQ(it.count(), 2);
 
@@ -173,11 +173,11 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char)
     // successful extend_right(char)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right(dna4::A));
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 3}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
     EXPECT_EQ(it.query_length(), 1);
 
     EXPECT_TRUE(it.extend_right(dna4::C));
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 3}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
     EXPECT_EQ(it.query_length(), 2);
 
     // unsuccessful extend_right(char), it remains untouched
@@ -195,7 +195,7 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char)
 //     // successful extend_right(char) using a different alphabet
 //     TypeParam it(fm);
 //     EXPECT_TRUE(it.extend_right(dna4::A));
-//     EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 3}));
+//     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
 //     EXPECT_EQ(it.query_length(), 1);
 // }
 
@@ -223,11 +223,11 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char_and_cycle)
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right(dna4::A));
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 3, 4}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3, 4}));
     EXPECT_EQ(it.query_length(), 1);
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 5, 7}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 5, 7}));
     EXPECT_EQ(it.query_length(), 1);
 }
 
@@ -239,15 +239,15 @@ TYPED_TEST(fm_index_iterator_test, extend_right_and_cycle)
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{0, 3}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
     EXPECT_EQ(it.query_length(), 1);
 
     EXPECT_TRUE(it.cycle_back());
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 4}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
     EXPECT_EQ(it.query_length(), 1);
 
     EXPECT_TRUE(it.extend_right());
-    EXPECT_EQ(sort(it.locate()), (std::vector<uint64_t>{1, 4}));
+    EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
     EXPECT_EQ(it.query_length(), 2);
 
     // unsuccessful cycle_back(), it remains untouched
