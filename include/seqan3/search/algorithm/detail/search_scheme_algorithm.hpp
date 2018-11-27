@@ -57,7 +57,6 @@ namespace seqan3::detail
  */
 
 /*!\brief Computes a (non-optimal) search scheme. Currently the generated search scheme represents trivial backtracking.
- *
  * \param[in] min_error Minimum number of errors allowed.
  * \param[in] max_error Maximum number of errors allowed.
  *
@@ -82,12 +81,9 @@ inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const
 
 /*!\brief Returns for each search the cumulative length of blocks in the order of blocks in each search and the
  *        starting position of the first block in the query sequence.
- *
- * \tparam search_scheme_t Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
- *
+ * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
  * \param[in] search_scheme Search scheme that will be used for searching.
  * \param[in] query_length  Length of the query that will be searched in an index.
- *
  * \returns A range of pairs containing for each search the cumulative lengths of blocks and the starting position
  *          in the query.
  *
@@ -166,14 +162,12 @@ inline bool search_ss(iterator_t it, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
  *        Sub-function for searching the remaining part of the current block without any errors.
- *
- * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
- * \tparam iterator_t      Must model seqan3::bi_fm_index_iterator_concept.
- * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet of the iterator.
- * \tparam search_t        Is of type `seqan3::detail::search<>` or `seqan3::detail::search_dyn<>`.
- * \tparam blocks_length_t Is of type `std::array` or `std::vector` of unsigned integers.
- * \tparam delegate_t      Takes `iterator_t` as argument.
- *
+ * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
+ * \tparam iterator_t       Must model seqan3::bi_fm_index_iterator_concept.
+ * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet of the iterator.
+ * \tparam search_t         Is of type `seqan3::detail::search<>` or `seqan3::detail::search_dyn<>`.
+ * \tparam blocks_length_t  Is of type `std::array` or `std::vector` of unsigned integers.
+ * \tparam delegate_t       Takes `iterator_t` as argument.
  * \param[in] it            Iterator of a string index built on the text that will be searched.
  * \param[in] query         Query sequence to be searched.
  * \param[in] lb            Left bound of the infix of `query` already searched (exclusive).
@@ -185,7 +179,6 @@ inline bool search_ss(iterator_t it, query_t & query,
  * \param[in] blocks_length Cumulative block lengths of the search.
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] delegate      Function that is called on every hit.
- *
  * \returns `True` if and only if `abort_on_hit` is true and a hit has been found.
  *
  * ### Complexity
@@ -194,8 +187,8 @@ inline bool search_ss(iterator_t it, query_t & query,
  *
  * ### Exceptions
  *
- * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
- * invoking the delegate; basic exception guarantee otherwise.
+ * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
+ * strong exception guarantee; basic exception guarantee otherwise.
  */
 template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
@@ -469,17 +462,11 @@ inline bool search_ss(iterator_t it, query_t & query,
 }
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
- *
- * \details Reference:
- *          Kianfar, K., Pockrandt, C., Torkamandi, B., Luo, H., & Reinert, K. (2018).
- *          Optimum Search Schemes for Approximate String Matching Using Bidirectional FM-Index. bioRxiv, 301085.
- *
- * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
- * \tparam index_t         Must model seqan3::bi_fm_index_concept.
- * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet.
- * \tparam search_scheme_t Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
- * \tparam delegate_t      Takes `typename index_t::iterator_type` as argument.
- *
+ * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
+ * \tparam index_t          Must model seqan3::bi_fm_index_concept.
+ * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
+ * \tparam delegate_t       Takes `typename index_t::iterator_type` as argument.
  * \param[in] index         String index built on the text that will be searched.
  * \param[in] query         Query sequence to be searched in the index.
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
@@ -492,8 +479,8 @@ inline bool search_ss(iterator_t it, query_t & query,
  *
  * ### Exceptions
  *
- * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
- * invoking the delegate; basic exception guarantee otherwise.
+ * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
+ * strong exception guarantee; basic exception guarantee otherwise.
  */
 template <bool abort_on_hit, typename index_t, typename query_t, typename search_scheme_t, typename delegate_t>
 inline void search_ss(index_t const & index, query_t & query, search_param const error_left,
@@ -526,12 +513,10 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 }
 
 /*!\brief Searches a query sequence in a bidirectional index.
- *
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
  * \tparam index_t         Must model seqan3::bi_fm_index_concept.
  * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet.
  * \tparam delegate_t      Takes `typename index_t::iterator_type` as argument.
- *
  * \param[in] index        String index built on the text that will be searched.
  * \param[in] query        Query sequence to be searched in the index.
  * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
@@ -543,8 +528,8 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
  *
  * ### Exceptions
  *
- * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
- * invoking the delegate; basic exception guarantee otherwise.
+ * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
+ * strong exception guarantee; basic exception guarantee otherwise.
  */
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
 inline void search_algo_bi(index_t const & index, query_t & query, search_param const error_left,

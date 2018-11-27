@@ -55,18 +55,15 @@ namespace seqan3::detail
  */
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
- *
- * \tparam abort_on_hit If the flag is set, the search algorithm aborts on the first hit.
- * \tparam iterator_t   Must model seqan3::fm_index_iterator_concept.
- * \tparam query_t      Must be a std::ranges::InputRange over the index's alphabet.
- * \tparam delegate_t   Takes `index::iterator_type` as argument.
- *
+ * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
+ * \tparam iterator_t    Must model seqan3::fm_index_iterator_concept.
+ * \tparam query_t       Must be a std::ranges::InputRange over the index's alphabet.
+ * \tparam delegate_t    Takes `index::iterator_type` as argument.
  * \param[in] it         Iterator of atring index built on the text that will be searched.
  * \param[in] query      Query sequence to be searched with the iterator.
  * \param[in] query_pos  Position in the query sequence indicating the prefix that has already been searched.
  * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
- * \param[in] delegate   Function that is called on every hits.
- *
+ * \param[in] delegate   Function that is called on every hit.
  * \returns `True` if and only if `abort_on_hit` is `true` and a hit has been found.
  *
  * ### Complexity
@@ -75,11 +72,11 @@ namespace seqan3::detail
  *
  * ### Exceptions
  *
- * No-throw guarantee if this is also guaranteed when invoking the delegate.
+ * No-throw guarantee if invoking the delegate also guarantees no-throw.
  */
 template <bool abort_on_hit, typename query_t, typename iterator_t, typename delegate_t>
 inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::size_type const query_pos,
-                           search_param const error_left, delegate_t && delegate)
+                           search_param const error_left, delegate_t && delegate) noexcept(noexcept(delegate))
 {
     // Exact case (end of query sequence or no errors left)
     if (query_pos == query.size() || error_left.total == 0)
@@ -167,12 +164,10 @@ inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::
 }
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
- *
- * \tparam abort_on_hit If the flag is set, the search algorithm aborts on the first hit.
- * \tparam index_t      Must model seqan3::fm_index_concept.
- * \tparam query_t      Must be a std::ranges::InputRange over the index's alphabet.
- * \tparam delegate_t   Takes `index::iterator_type` as argument.
- *
+ * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
+ * \tparam index_t       Must model seqan3::fm_index_concept.
+ * \tparam query_t       Must be a std::ranges::InputRange over the index's alphabet.
+ * \tparam delegate_t    Takes `index::iterator_type` as argument.
  * \param[in] index      String index built on the text that will be searched.
  * \param[in] query      Query sequence to be searched in the index.
  * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
@@ -184,11 +179,11 @@ inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::
  *
  * ### Exceptions
  *
- * No-throw guarantee if this is also guaranteed when invoking the delegate.
+ * No-throw guarantee if invoking the delegate also guarantees no-throw.
  */
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
 inline void search_trivial(index_t const & index, query_t & query, search_param const error_left,
-                           delegate_t && delegate)
+                           delegate_t && delegate) noexcept(noexcept(delegate))
 {
     search_trivial<abort_on_hit>(index.begin(), query, 0, error_left, delegate);
 }
