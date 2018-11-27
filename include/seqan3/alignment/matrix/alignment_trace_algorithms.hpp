@@ -187,7 +187,6 @@ alignment_trace(database_t && database,
 #endif
             break;
         }
-
     }
 
     return

@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Contains the declaration of seqan3::detail::alignment_coordinate.
+ * \brief Provides seqan3::detail::alignment_coordinate.
  */
 
 #pragma once
