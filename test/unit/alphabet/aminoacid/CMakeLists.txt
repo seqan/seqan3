@@ -1,0 +1,4 @@
+seqan3_test(aa20_test.cpp)
+seqan3_test(aa27_test.cpp)
+seqan3_test(aminoacid_conversion_integration_test.cpp)
+seqan3_test(aminoacid_translation_integration_test.cpp)
