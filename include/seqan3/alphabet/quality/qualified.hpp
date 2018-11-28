@@ -55,6 +55,9 @@ namespace seqan3
  * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::quality_concept.
  * \implements seqan3::quality_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
+ *
  *
  * This composition pairs an arbitrary alphabet with a quality alphabet, where
  * each alphabet character is stored together with its quality score in a
@@ -102,7 +105,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    qualified() = default;
+    constexpr qualified() = default;
     constexpr qualified(qualified const &) = default;
     constexpr qualified(qualified &&) = default;
     constexpr qualified & operator =(qualified const &) = default;
@@ -111,7 +114,14 @@ public:
 
     using base_type::base_type; // Inherit non-default constructors
 
-    using base_type::operator=; // Inherit non-default assignment operators
+    // Inherit operators from base
+    using base_type::operator=;
+    using base_type::operator==;
+    using base_type::operator!=;
+    using base_type::operator>=;
+    using base_type::operator<=;
+    using base_type::operator<;
+    using base_type::operator>;
 
     //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr qualified(component_type const alph) {} ))

@@ -58,20 +58,24 @@ namespace seqan3
  * \{
  */
 
+template <typename alphabet_type>
+struct underlying_phred
+{};
+
 /*!\brief The internal phred type.
  * \ingroup quality
  * \tparam alphabet_type The type of alphabet. Must model the seqan3::quality_concept.
  *
  * The underlying_phred type requires the quality_concept.
  */
-template <typename alphabet_type>
+template <typename alphabet_with_member_type>
 //!\cond
-    requires requires () { typename alphabet_type::phred_type; }
+    requires requires () { typename alphabet_with_member_type::phred_type; }
 //!\endcond
-struct underlying_phred
+struct underlying_phred<alphabet_with_member_type>
 {
     //!\brief The underlying phred data type.
-    using type = typename alphabet_type::phred_type;
+    using type = typename alphabet_with_member_type::phred_type;
 };
 
 /*!\brief The internal phred type.
@@ -95,7 +99,16 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type v) { { v.assign_phred('c') }; }
 //!\endcond
-constexpr alphabet_type assign_phred(alphabet_type & chr, char const in)
+constexpr alphabet_type & assign_phred(alphabet_type & chr, char const in)
+{
+    return chr.assign_phred(in);
+}
+
+template <typename alphabet_type>
+//!\cond
+    requires requires (alphabet_type v) { { v.assign_phred('c') }; }
+//!\endcond
+constexpr alphabet_type assign_phred(alphabet_type && chr, char const in)
 {
     return chr.assign_phred(in);
 }
