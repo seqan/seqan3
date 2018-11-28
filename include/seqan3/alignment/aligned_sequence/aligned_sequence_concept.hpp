@@ -289,16 +289,17 @@ namespace detail
 {
 
 /*!
- * Create the formatted alignment output and add it to the provided debug_stream.
+ * \brief               Create the formatted alignment output and add it to the provided debug_stream.
  * \tparam alignment_t  The type of the alignment, must satisfy tuple_like_concept.
  * \tparam idx          An index sequence.
- * \param stream        The output stream that receives the formatted alignment.
- * \param align         The alignment that shall be streamed.
+ * \param[in] stream    The output stream that receives the formatted alignment.
+ * \param[in] align     The alignment that shall be streamed.
  */
 template<tuple_like_concept alignment_t, size_t ...idx>
 void stream_alignment(debug_stream_type & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
     size_t const alignment_length = std::get<0>(align).size();
+    char const * indent = "        ";
 
     // split alignment into blocks of length 50 and loop over parts
     for (size_t used_length = 0; used_length < alignment_length; used_length += 50)
@@ -319,7 +320,6 @@ void stream_alignment(debug_stream_type & stream, alignment_t const & align, std
         }
 
         // write sequences
-        const char * indent = "        ";
         stream << std::endl << indent;
         size_t const col_end = std::min(used_length + 50, alignment_length);
         ranges::for_each(std::get<0>(align) | ranges::view::slice(used_length, col_end) | view::to_char,
@@ -370,7 +370,9 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_se
  * \return          The given stream to which the alignment representation is appended.
  */
 template <tuple_like_concept tuple_t>
-requires all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
+//!\cond
+    requires all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
+//!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & stream, tuple_t const & alignment)
 {
     static_assert(std::tuple_size_v<tuple_t> >= 2, "An alignment requires at least two sequences.");
