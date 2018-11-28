@@ -77,12 +77,12 @@ TEST(qualified, alphabet_size_v)
 
 TEST(qualified, to_rank)
 {
-    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
-    EXPECT_EQ(to_rank(std::get<0>(t0)), 1);
-    EXPECT_EQ(to_rank(std::get<1>(t0)), 6);
+    qualified<dna4, phred42> t0{'C'_dna4, phred42{6}};
+    EXPECT_EQ(to_rank(get<0>(t0)), 1);
+    EXPECT_EQ(to_rank(get<1>(t0)), 6);
     EXPECT_EQ(to_rank(t0),
-              to_rank(std::get<0>(t0)) +
-              alphabet_size_v<dna4> * to_rank(std::get<1>(t0)));
+              to_rank(get<1>(t0)) +
+              alphabet_size_v<phred42> * to_rank(get<0>(t0)));
 }
 
 TEST(qualified, assign_rank)
@@ -100,9 +100,9 @@ TEST(qualified, assign_rank)
 
 TEST(qualified, to_char)
 {
-    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
-    EXPECT_EQ(to_char(std::get<0>(t0)), 'C');
-    EXPECT_EQ(to_char(std::get<1>(t0)), '!' + 6);
+    qualified<dna4, phred42> t0{'C'_dna4, phred42{6}};
+    EXPECT_EQ(to_char(get<0>(t0)), 'C');
+    EXPECT_EQ(to_char(get<1>(t0)), '!' + 6);
     EXPECT_EQ(to_char(t0), 'C');
 }
 
@@ -110,30 +110,30 @@ TEST(qualified, assign_char)
 {
     using type = qualified<dna4, phred42>;
 
-    type t0{dna4::C, phred42{17}};
-    char qchar = to_char(std::get<1>(t0));
+    type t0{'C'_dna4, phred42{17}};
+    char qchar = to_char(get<1>(t0));
 
     assign_char(t0, 'A');
     EXPECT_EQ(to_char(t0), 'A');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'C');
     EXPECT_EQ(to_char(t0), 'C');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'G');
     EXPECT_EQ(to_char(t0), 'G');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'T');
     EXPECT_EQ(to_char(t0), 'T');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
     assign_char(t0, 'N');
     EXPECT_EQ(to_char(t0), 'A');
-    EXPECT_EQ(to_char(std::get<1>(t0)), qchar);
+    EXPECT_EQ(to_char(get<1>(t0)), qchar);
 }
 
 TEST(qualified, to_phred)
 {
-    qualified<dna4, phred42> t0{dna4::C, phred42{6}};
-    EXPECT_EQ(to_phred(std::get<1>(t0)), 6);
+    qualified<dna4, phred42> t0{'C'_dna4, phred42{6}};
+    EXPECT_EQ(to_phred(get<1>(t0)), 6);
     EXPECT_EQ(to_phred(t0), 6);
 }
 
@@ -141,7 +141,7 @@ TEST(qualified, assign_phred)
 {
     using type = qualified<dna4, phred42>;
 
-    type t0{dna4::C, phred42{17}};
+    type t0{'C'_dna4, phred42{17}};
     char schar = to_char(t0);
 
     assign_phred(t0, 12);
@@ -154,8 +154,8 @@ TEST(qualified, assign_phred)
 
 TEST(qualified, complement)
 {
-    qualified<dna4, phred42> t0{dna4::A, phred42{8}};
-    qualified<dna4, phred42> t0_c{(dna4::A).complement(), phred42{8}};
+    qualified<dna4, phred42> t0{'A'_dna4, phred42{8}};
+    qualified<dna4, phred42> t0_c{('A'_dna4).complement(), phred42{8}};
 
     EXPECT_EQ(t0.complement(), t0_c);
 }
