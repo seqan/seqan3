@@ -1,36 +1,9 @@
-// ==========================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ==========================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2018, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
 
@@ -40,11 +13,17 @@
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 
+#include "../alphabet_test_template.hpp"
+#include "../alphabet_constexpr_test_template.hpp"
+
 using namespace seqan3;
 
-// These test case only test seqan3::union_composition specific functions/properties that are not offered by the general
-// `seqan3::alphabet_concept` interface. Those common interface function of `seqan3::union_composition` will be tested
-// in `alphabet/alphabet_test.hpp`.
+using union_composition_types = ::testing::Types<union_composition<dna4, gap>,
+                                                 union_composition<dna4, dna5, gap>,
+                                                 union_composition<char, gap>>;
+
+INSTANTIATE_TYPED_TEST_CASE_P(union_composition, alphabet, union_composition_types);
+INSTANTIATE_TYPED_TEST_CASE_P(union_composition, alphabet_constexpr, union_composition_types);
 
 TEST(union_composition_test, initialise_from_component_alphabet)
 {
