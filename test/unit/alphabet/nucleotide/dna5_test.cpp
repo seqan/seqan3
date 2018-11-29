@@ -15,58 +15,60 @@ INSTANTIATE_TYPED_TEST_CASE_P(dna5, alphabet, dna5);
 INSTANTIATE_TYPED_TEST_CASE_P(dna5, alphabet_constexpr, dna5);
 INSTANTIATE_TYPED_TEST_CASE_P(dna5, nucleotide, dna5);
 
-TEST(dna5, assign_char)
+TEST(dna5, to_char_assign_char)
 {
-    using t = dna5;
-    std::vector<char> chars
-    {
-        'A', 'C', 'G', 'T', 'U', 'N',
-        'a', 'c', 'g', 't', 'u', 'n',
-        'R', 'Y', 'S', 'W', 'K', 'M', 'B', 'D', 'H', 'V',
-        'r', 'y', 's', 'w', 'k', 'm', 'b', 'd', 'h', 'v',
-        '!'
-    };
+    EXPECT_EQ(to_char(dna5{}.assign_char('A')), 'A');
+    EXPECT_EQ(to_char(dna5{}.assign_char('C')), 'C');
+    EXPECT_EQ(to_char(dna5{}.assign_char('G')), 'G');
 
-    std::vector<dna5> alphabets
-    {
-        t::A, t::C, t::G, t::T, t::U, t::N,
-        t::A, t::C, t::G, t::T, t::U, t::N,
-        t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N,
-        t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N, t::N,
-        t::N
-    };
+    EXPECT_EQ(to_char(dna5{}.assign_char('U')), 'T');
+    EXPECT_EQ(to_char(dna5{}.assign_char('T')), 'T');
 
-    for (auto [ chr, alp ] : ranges::view::zip(chars, alphabets))
-        EXPECT_EQ((assign_char(dna5{}, chr)), alp);
+    EXPECT_EQ(to_char(dna5{}.assign_char('R')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('Y')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('S')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('W')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('K')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('M')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('B')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('D')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('H')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('V')), 'N');
+
+    EXPECT_EQ(to_char(dna5{}.assign_char('N')), 'N');
+    EXPECT_EQ(to_char(dna5{}.assign_char('!')), 'N');
 }
 
-TEST(dna5, to_char)
+TEST(dna5, char_literal)
 {
-    using t = dna5;
-    std::vector<char> chars
-    {
-        'A', 'C', 'G', 'T', 'T',
-        'N'
-    };
+    EXPECT_EQ(to_char('A'_dna5), 'A');
+    EXPECT_EQ(to_char('C'_dna5), 'C');
+    EXPECT_EQ(to_char('G'_dna5), 'G');
 
-    std::vector<dna5> alphabets
-    {
-        t::A, t::C, t::G, t::T, t::U,
-        t::UNKNOWN
-    };
+    EXPECT_EQ(to_char('U'_dna5), 'T');
+    EXPECT_EQ(to_char('T'_dna5), 'T');
 
-    for (auto [ chr, alp ] : ranges::view::zip(chars, alphabets))
-        EXPECT_EQ(to_char(alp), chr);
+    EXPECT_EQ(to_char('R'_dna5), 'N');
+    EXPECT_EQ(to_char('Y'_dna5), 'N');
+    EXPECT_EQ(to_char('S'_dna5), 'N');
+    EXPECT_EQ(to_char('W'_dna5), 'N');
+    EXPECT_EQ(to_char('K'_dna5), 'N');
+    EXPECT_EQ(to_char('M'_dna5), 'N');
+    EXPECT_EQ(to_char('B'_dna5), 'N');
+    EXPECT_EQ(to_char('D'_dna5), 'N');
+    EXPECT_EQ(to_char('H'_dna5), 'N');
+    EXPECT_EQ(to_char('V'_dna5), 'N');
+
+    EXPECT_EQ(to_char('N'_dna5), 'N');
+    EXPECT_EQ(to_char('!'_dna5), 'N');
 }
 
-TEST(dna5, literals)
+TEST(dna5, string_literal)
 {
-    using namespace seqan3::literal;
-
     dna5_vector v;
-    v.resize(5, dna5::A);
+    v.resize(5, 'A'_dna5);
     EXPECT_EQ(v, "AAAAA"_dna5);
 
-    std::vector<dna5> w{dna5::A, dna5::C, dna5::G, dna5::T, dna5::U, dna5::N, dna5::UNKNOWN};
-    EXPECT_EQ(w, "ACGTTNN"_dna5);
+    std::vector<dna5> w{'A'_dna5, 'C'_dna5, 'G'_dna5, 'T'_dna5, 'U'_dna5, 'N'_dna5};
+    EXPECT_EQ(w, "ACGTTN"_dna5);
 }

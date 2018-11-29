@@ -9,8 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 
@@ -24,10 +22,10 @@ TYPED_TEST_CASE_P(nucleotide);
 
 TYPED_TEST_P(nucleotide, global_complement)
 {
-    EXPECT_EQ(complement(TypeParam::A), TypeParam::T);
-    EXPECT_EQ(complement(TypeParam::C), TypeParam::G);
-    EXPECT_EQ(complement(TypeParam::G), TypeParam::C);
-    EXPECT_EQ(complement(TypeParam::T), TypeParam::A);
+    EXPECT_EQ(complement(TypeParam{}.assign_char('A')), TypeParam{}.assign_char('T'));
+    EXPECT_EQ(complement(TypeParam{}.assign_char('C')), TypeParam{}.assign_char('G'));
+    EXPECT_EQ(complement(TypeParam{}.assign_char('G')), TypeParam{}.assign_char('C'));
+    EXPECT_EQ(complement(TypeParam{}.assign_char('T')), TypeParam{}.assign_char('A'));
 
     using vsize_t = std::decay_t<decltype(alphabet_size_v<TypeParam>)>;
 
