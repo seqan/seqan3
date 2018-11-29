@@ -5,15 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
 // -----------------------------------------------------------------------------------------------------
 
-#include <numeric>
-#include <sstream>
-#include <tuple>
-#include <utility>
-
 #include <gtest/gtest.h>
-
-#include <range/v3/algorithm/for_each.hpp>
-#include <range/v3/view/zip.hpp>
 
 #include <seqan3/alphabet/quality/all.hpp>
 
@@ -24,7 +16,6 @@ class phred : public ::testing::Test
 {};
 
 TYPED_TEST_CASE_P(phred);
-using quality_types2    =       meta::list<phred42, phred63, phred68legacy>;
 
 // more elaborate test of assign_char and to_char, basic test is in alphabet_test.cpp
 TYPED_TEST_P(phred, conversion_char)
@@ -75,19 +66,9 @@ TYPED_TEST_P(phred, conversion_rank)
 }
 
 // test provision of data type `phred_type` and phred converter.
-TYPED_TEST_P(phred, quality_concept)
+TYPED_TEST_P(phred, concept_check)
 {
     EXPECT_TRUE(quality_concept<TypeParam>);
 }
 
-TYPED_TEST(quality, explicit_conversion)
-{
-    meta::for_each(quality_types2{}, [&] (auto && qual) constexpr
-    {
-        using out_type = std::decay_t<decltype(qual)>;
-        EXPECT_EQ(static_cast<out_type>(TypeParam{ 0}), out_type{ 0});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{ 5}), out_type{ 5});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{15}), out_type{15});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{20}), out_type{20});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{40}), out_type{40});
-    });
+REGISTER_TYPED_TEST_CASE_P(phred, conversion_char, conversion_phred, conversion_rank, concept_check);
