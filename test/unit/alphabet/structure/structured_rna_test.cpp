@@ -7,18 +7,20 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/concept_pre.hpp>
-#include <seqan3/alphabet/mask/all.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <range/v3/view/zip.hpp>
+
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/alphabet/structure/all.hpp>
 
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
 
 using namespace seqan3;
+using namespace seqan3::literal;
 
-using masked_types = ::testing::Types<masked<dna4>, masked<dna5>>;
+using structured_rna_types = ::testing::Types<structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(masked, alphabet, masked_types);
-INSTANTIATE_TYPED_TEST_CASE_P(masked, alphabet_constexpr, masked_types);
+INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet, structured_rna_types);
+INSTANTIATE_TYPED_TEST_CASE_P(structured_rna, alphabet_constexpr, structured_rna_types);

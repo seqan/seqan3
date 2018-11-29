@@ -7,18 +7,14 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/concept_pre.hpp>
-#include <seqan3/alphabet/mask/all.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <seqan3/alphabet/quality/phred63.hpp>
 
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "phred_test_template.hpp"
 
 using namespace seqan3;
 
-using masked_types = ::testing::Types<masked<dna4>, masked<dna5>>;
-
-INSTANTIATE_TYPED_TEST_CASE_P(masked, alphabet, masked_types);
-INSTANTIATE_TYPED_TEST_CASE_P(masked, alphabet_constexpr, masked_types);
+INSTANTIATE_TYPED_TEST_CASE_P(phred63, alphabet, phred63);
+INSTANTIATE_TYPED_TEST_CASE_P(phred63, alphabet_constexpr, phred63);
+INSTANTIATE_TYPED_TEST_CASE_P(phred63, phred, phred63);

@@ -7,24 +7,14 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/alphabet/quality/qualified.hpp>
 
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
+#include "phred_test_template.hpp"
 
 using namespace seqan3;
 
-using qualified_types = ::testing::Types<qualified<dna4, phred42>,
-                                         qualified<dna4, phred63>,
-                                         qualified<aa27, phred42>,
-                                         qualified<gapped<dna4>, phred42>,
-                                         dna4q>;
-
-INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet, qualified_types);
-INSTANTIATE_TYPED_TEST_CASE_P(qualified, alphabet_constexpr, qualified_types);
+INSTANTIATE_TYPED_TEST_CASE_P(phred42, alphabet, phred42);
+INSTANTIATE_TYPED_TEST_CASE_P(phred42, alphabet_constexpr, phred42);
+INSTANTIATE_TYPED_TEST_CASE_P(phred42, phred, phred42);
