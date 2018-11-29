@@ -78,8 +78,6 @@ TEST(gapped_test, assign_from_component_alphabet)
 TEST(gapped_test, fulfills_concepts)
 {
     using alphabet_t = gapped<dna4>;
-    EXPECT_TRUE((std::is_pod_v<alphabet_t>));
-    EXPECT_TRUE((std::is_trivial_v<alphabet_t>));
     EXPECT_TRUE((std::is_trivially_copyable_v<alphabet_t>));
     EXPECT_TRUE((std::is_standard_layout_v<alphabet_t>));
 }
