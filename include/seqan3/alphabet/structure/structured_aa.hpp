@@ -55,6 +55,8 @@ namespace seqan3
  * \ingroup structure
  * \implements seqan3::alphabet_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
  * \tparam sequence_alphabet_t Type of the first aminoacid letter; must satisfy seqan3::alphabet_concept.
  * \tparam structure_alphabet_t Types of further structure letters; must satisfy seqan3::alphabet_concept.
  *
@@ -95,7 +97,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    structured_aa() = default;
+    constexpr structured_aa() : base_type{} {}
     constexpr structured_aa(structured_aa const &) = default;
     constexpr structured_aa(structured_aa &&) = default;
     constexpr structured_aa & operator =(structured_aa const &) = default;
@@ -104,7 +106,6 @@ public:
 
     using base_type::base_type; // Inherit non-default constructors
 
-    using base_type::operator=; // Inherit non-default assignment operators
 
     //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa(component_type const alph) {} ))
@@ -115,6 +116,15 @@ public:
     //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa & operator=(indirect_component_type const alph) {} ))
     //!\}
+
+    // Inherit operators from base
+    using base_type::operator=;
+    using base_type::operator==;
+    using base_type::operator!=;
+    using base_type::operator>=;
+    using base_type::operator<=;
+    using base_type::operator<;
+    using base_type::operator>;
 
     /*!\name Write functions
      * \{

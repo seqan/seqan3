@@ -8,7 +8,7 @@ using namespace seqan3;
 int main()
 {
 //! [general]
-qualified<dna4, phred42> letter{dna4::A, phred42{7}};
+qualified<dna4, phred42> letter{'A'_dna4, phred42{7}};
 debug_stream << int(to_rank(letter)) << ' '
           << int(to_rank(get<0>(letter))) << ' '
           << int(to_rank(get<1>(letter))) << '\n';
@@ -26,7 +26,7 @@ debug_stream << int(to_phred(letter)) << ' '
 
 // modify via structured bindings and references:
 auto & [ seq_l, qual_l ] = letter;
-seq_l = dna4::G;
+seq_l = 'G'_dna4;
 debug_stream << to_char(letter) << '\n';
 // G
 //! [general]

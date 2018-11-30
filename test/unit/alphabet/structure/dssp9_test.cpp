@@ -54,7 +54,6 @@ TEST(dssp9, to_char)
 
 TEST(dssp9, literals)
 {
-    using namespace seqan3::literal;
 
     std::vector<dssp9> vec1;
     vec1.resize(5, dssp9::H);

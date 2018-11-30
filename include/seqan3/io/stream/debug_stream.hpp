@@ -304,7 +304,7 @@ inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
  * \details
  *
  * If the element type models seqan3::alphabet_concept (and is not an unsigned integer), the range is printed
- * just as if it were a string, i.e. `std::vector<dna4>{dna4::C, dna4:G, dna4::A}` is printed as "CGA".
+ * just as if it were a string, i.e. <tt>std::vector<dna4>{'C'_dna4, 'G'_dna4, 'A'_dna4}</tt> is printed as "CGA".
  *
  * In all other cases the elements are comma separated and the range is enclosed in brackets, i.e.
  * `std::vector<int>{3, 1, 33, 7}` is printed as "[3,1,33,7]".

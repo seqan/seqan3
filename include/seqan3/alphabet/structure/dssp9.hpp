@@ -39,10 +39,11 @@
 
 #pragma once
 
-#include <cassert>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
 // dssp9
@@ -52,6 +53,11 @@ namespace seqan3
 {
 
 /*!\brief The protein structure alphabet of the characters "HGIEBTSCX".
+ * \implements seqan3::alphabet_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
+ *
  * \ingroup structure
  *
  * \details
@@ -76,13 +82,26 @@ namespace seqan3
  * The following code example creates a dssp9 vector, modifies it, and prints the result to stdout.
  * \snippet test/snippet/alphabet/structure/dssp9.cpp general
  */
-
-struct dssp9
+class dssp9 : public alphabet_base<dssp9, 9>
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = uint8_t;
+private:
+    //!\brief The base class.
+    using base_t = alphabet_base<dssp9, 9>;
+
+    //!\brief Befriend seqan3::alphabet_base.
+    friend base_t;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr dssp9() : base_t{} {}
+    constexpr dssp9(dssp9 const &) = default;
+    constexpr dssp9(dssp9 &&) = default;
+    constexpr dssp9 & operator=(dssp9 const &) = default;
+    constexpr dssp9 & operator=(dssp9 &&) = default;
+    ~dssp9() = default;
+    //!\}
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
@@ -100,149 +119,46 @@ struct dssp9
     static const dssp9 X;
     //!\}
 
-    //!\name Read functions
-    //!\{
-
-    /*!\brief Get the letter as a character of char_type.
-     * \returns The character representation of this dssp9 letter.
-     */
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
-
-    /*!\brief Get the letter's numeric value or rank in the alphabet.
-     * \returns The numeric representation of this dssp9 letter.
-     */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
-    //!\}
-
-    //!\name Write functions
-    //!\{
-
-    /*!\brief Assign from a character.
-     * \param chr The character that is assigned.
-     * \returns The resulting dssp9 character.
-     */
-    constexpr dssp9 & assign_char(char_type const chr) noexcept
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        _value = char_to_value[static_cast<index_t>(chr)];
-        return *this;
-    }
-
-    /*!\brief Assign from a numeric value.
-     * \param rnk The rank value that is assigned.
-     * \returns The resulting dssp9 character.
-     */
-    constexpr dssp9 & assign_rank(rank_type const rnk)
-    {
-        assert(rnk < value_size);
-        _value = static_cast<internal_type>(rnk);
-        return *this;
-    }
-    //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{9};
-
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(dssp9 const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
-
-    constexpr bool operator!=(dssp9 const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(dssp9 const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(dssp9 const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(dssp9 const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(dssp9 const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
-    //!\}
-
 protected:
     //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        H, B, E, G, I, T, S, C, X
-    };
 
     //!\brief Value-to-char conversion table.
-    static constexpr char_type value_to_char[value_size]
+    static constexpr char_type rank_to_char[value_size]
     {
         'H', 'B', 'E', 'G', 'I', 'T', 'S', 'C', 'X'
     };
 
     //!\brief Char-to-value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
+    static constexpr std::array<rank_type, 256> char_to_rank
     {
         [] () constexpr
         {
-            std::array<internal_type, 256> rank_table{};
+            std::array<rank_type, 256> ret{};
 
             // initialize with X (std::array::fill unfortunately not constexpr)
-            for (internal_type & rnk : rank_table)
-                rnk = internal_type::X;
+            for (rank_type & rnk : ret)
+                rnk = 8;
 
-            // canonical
-            rank_table['H'] = internal_type::H;
-            rank_table['B'] = internal_type::B;
-            rank_table['E'] = internal_type::E;
-            rank_table['G'] = internal_type::G;
-            rank_table['I'] = internal_type::I;
-            rank_table['T'] = internal_type::T;
-            rank_table['S'] = internal_type::S;
-            rank_table['C'] = internal_type::C;
-            rank_table['X'] = internal_type::X;
+            // reverse mapping for characters
+            for (rank_type rnk = 0u; rnk < value_size; ++rnk)
+            {
+                ret[static_cast<rank_type>(rank_to_char[rnk])] = rnk;
+            }
 
-            return rank_table;
+            return ret;
         } ()
     };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
 };
 
-constexpr dssp9 dssp9::H{internal_type::H};
-constexpr dssp9 dssp9::B{internal_type::B};
-constexpr dssp9 dssp9::E{internal_type::E};
-constexpr dssp9 dssp9::G{internal_type::G};
-constexpr dssp9 dssp9::I{internal_type::I};
-constexpr dssp9 dssp9::T{internal_type::T};
-constexpr dssp9 dssp9::S{internal_type::S};
-constexpr dssp9 dssp9::C{internal_type::C};
-constexpr dssp9 dssp9::X{internal_type::X};
+constexpr dssp9 dssp9::H = dssp9{}.assign_char('H');
+constexpr dssp9 dssp9::B = dssp9{}.assign_char('B');
+constexpr dssp9 dssp9::E = dssp9{}.assign_char('E');
+constexpr dssp9 dssp9::G = dssp9{}.assign_char('G');
+constexpr dssp9 dssp9::I = dssp9{}.assign_char('I');
+constexpr dssp9 dssp9::T = dssp9{}.assign_char('T');
+constexpr dssp9 dssp9::S = dssp9{}.assign_char('S');
+constexpr dssp9 dssp9::C = dssp9{}.assign_char('C');
+constexpr dssp9 dssp9::X = dssp9{}.assign_char('X');
 
 } // namespace seqan3
 
@@ -250,7 +166,7 @@ constexpr dssp9 dssp9::X{internal_type::X};
 // literals
 // ------------------------------------------------------------------
 
-namespace seqan3::literal
+namespace seqan3
 {
 
 /*!\brief dssp9 literal
@@ -260,14 +176,10 @@ namespace seqan3::literal
  * You can use this string literal to easily assign to a vector of dssp9 characters:
  *
  *```.cpp
- *     using namespace seqan3::literal;
  *     std::vector<dssp9> foo{"EHHHHT"_dssp9};
  *     std::vector<dssp9> bar = "EHHHHT"_dssp9;
  *     auto bax = "EHHHHT"_dssp9;
  *```
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
  */
 inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 {
@@ -280,4 +192,4 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
     return vec;
 }
 
-} // namespace seqan3::literal
+} // namespace seqan3

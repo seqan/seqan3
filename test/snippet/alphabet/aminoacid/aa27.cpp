@@ -27,7 +27,6 @@ if (my_letter.to_char() == 'X')
 // aa27_vector bar = "ABFUYR";
 
 // but these do:
-using namespace seqan3::literal;
 aa27_vector foo{"ABFUYR"_aa27};
 aa27_vector bar = "ABFUYR"_aa27;
 auto bax = "ABFUYR"_aa27;

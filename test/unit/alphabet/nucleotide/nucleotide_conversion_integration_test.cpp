@@ -29,15 +29,14 @@ TYPED_TEST(nucleotide_conversion, explicit_conversion)
     meta::for_each(nucleotide_types2{}, [&] (auto && nucl) constexpr
     {
         using out_type = std::decay_t<decltype(nucl)>;
-        EXPECT_EQ(static_cast<out_type>(TypeParam::A), out_type::A);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::C), out_type::C);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::G), out_type::G);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::T), out_type::T);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::U), out_type::U);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::T), out_type::U);
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('A')), out_type{}.assign_char('A'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('C')), out_type{}.assign_char('C'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('G')), out_type{}.assign_char('G'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('T')), out_type{}.assign_char('T'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('U')), out_type{}.assign_char('U'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('T')), out_type{}.assign_char('U'));
     });
 }
-
 
 // conversion to rna/dna of same size
 TYPED_TEST(nucleotide_conversion, implicit_conversion)
@@ -50,9 +49,9 @@ TYPED_TEST(nucleotide_conversion, implicit_conversion)
                        /* must be rna15 */                                  dna15>>>>>;
 
     // construct
-    EXPECT_EQ(other_type{TypeParam::C}, other_type::C);
+    EXPECT_EQ(other_type{TypeParam{}.assign_char('C')}, other_type{}.assign_char('C'));
     // assign
     other_type l{};
-    l = TypeParam::C;
-    EXPECT_EQ(l, other_type::C);
+    l = TypeParam{}.assign_char('C');
+    EXPECT_EQ(l, other_type{}.assign_char('C'));
 }

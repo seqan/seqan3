@@ -118,6 +118,7 @@ public:
     sequence_file_format_fasta & operator=(sequence_file_format_fasta const &) = delete;
     sequence_file_format_fasta(sequence_file_format_fasta &&) = default;
     sequence_file_format_fasta & operator=(sequence_file_format_fasta &&) = default;
+    ~sequence_file_format_fasta() = default;
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

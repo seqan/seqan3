@@ -39,11 +39,7 @@
 
 #pragma once
 
-#include <cassert>
-#include <utility>
-
-#include <seqan3/alphabet/detail/convert.hpp>
-#include <seqan3/alphabet/quality/concept.hpp>
+#include <seqan3/alphabet/quality/quality_base.hpp>
 
 // ------------------------------------------------------------------
 // phred42
@@ -55,6 +51,9 @@ namespace seqan3
 /*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (typical range).
  * \implements seqan3::quality_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
+ *
  * \ingroup quality
  *
  * \details
@@ -67,217 +66,45 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/quality/phred42.cpp general
  */
-struct phred42
+class phred42 : public quality_base<phred42, 42>
 {
-    /*!\name Member types
-    * \{
-    */
-    //!\brief The 0-based integer representation of a quality score.
-    using rank_type = uint8_t;
+private:
+    //!\brief The base class.
+    using base_t = quality_base<phred42, 42>;
 
-    //!\brief The integer representation of a quality score assignable with =operator.
-    using phred_type = uint8_t;
+    //!\brief Befriend seqan3::quality_base.
+    friend base_t;
+    //!\cond \brief Befriend seqan3::alphabet_base.
+    friend base_t::base_t;
+    //!\endcond
 
-    //!\brief The '!'-based character representation of a quality score.
-    using char_type = char;
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr phred42() : base_t{} {}
+    constexpr phred42(phred42 const &) = default;
+    constexpr phred42(phred42 &&) = default;
+    constexpr phred42 & operator=(phred42 const &) = default;
+    constexpr phred42 & operator=(phred42 &&) = default;
+    ~phred42() = default;
+
+    //!\brief Construct from phred value.
+    constexpr phred42(phred_type const p) : base_t{p} {}
+
+    // Inherit converting constructor
+    using base_t::base_t;
     //!\}
 
-    //!\privatesection
     /*!\name Member variables.
-    * \{
-    */
-    //!\brief The internal 0-based rank value.
-    rank_type _value;
-
-    //!\brief The size of the phred score range range.
-    static constexpr rank_type value_size{42};
-
-    //!\brief Maximal phred score allowed as input. The range [42..61] is mapped to 41.
-    static constexpr rank_type max_value_size{62};
+     * \{
+     */
+    //!\brief The projection offset between phred and rank score representation.
+    static constexpr phred_type offset_phred{0};
 
     //!\brief The projection offset between char and rank score representation.
     static constexpr char_type offset_char{'!'};
     //!\}
-
-    /*!\name Read functions
-     * \{
-     */
-    /*!\brief Return the letter as a character of char_type.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr char_type to_char() const noexcept
-    {
-        return static_cast<char_type>(_value + offset_char);
-    }
-
-    /*!\brief Return the letter's numeric phred code.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::detail::quality_concept::to_phred() requirement via the seqan3::to_phred() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr phred_type to_phred() const noexcept
-    {
-        return _value;
-    }
-
-    /*!\brief Return the letter's rank in the quality alphabet.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::semi_alphabet_concept::to_rank() requirement via the seqan3::to_rank() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return _value;
-    }
-    //!\}
-
-    /*!\name Write functions
-     * \{
-     */
-    /*!\brief Assign from a character.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     */
-    constexpr phred42 & assign_char(char_type const c) noexcept
-    {
-        _value = char_to_value[c];
-        return *this;
-    }
-
-    /*!\brief Assign from the numeric phred value.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::quality_concept::assign_phred() requirement via the seqan3::assign_rank() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     */
-    constexpr phred42 & assign_phred(phred_type const p) noexcept
-    {
-        // p >= 0 is implicitly always true
-        assert(p < max_value_size);
-        // round to largest allowed value when `p` exceeds maximal rank value
-        _value =  (p < value_size) ? p : value_size - 1;
-        return *this;
-    }
-
-    /*!\brief Assign from a the numeric rank value.
-     *
-     * \details
-     *
-     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    constexpr phred42 & assign_rank(phred_type const p) noexcept
-    {
-        return assign_phred(p);
-    }
-    //!\}
-
-    //!\brief Explicit conversion to any other quality alphabet (via char representation).
-    //!\tparam other_qual_type The type to convert to; must satisfy seqan3::quality_concept.
-    //
-    template <quality_concept other_qual_type>
-    explicit constexpr operator other_qual_type() const noexcept
-    {
-        return detail::convert_through_phred_representation<other_qual_type, std::decay_t<decltype(*this)>>[to_phred()];
-    }
-    //!\}
-
-    /*!\name Comparison operators
-     * \{
-     */
-    constexpr bool operator==(const phred42 & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
-
-    constexpr bool operator!=(const phred42 & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(const phred42 & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(const phred42 & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(const phred42 & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(const phred42 & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
-    //!\}
-
-protected:
-    //!\privatesection
-    //!\brief Char to value conversion table.
-    static constexpr std::array<char_type, 256> char_to_value
-    {
-        [] () constexpr
-        {
-            std::array<char_type, 256> ret{};
-            for (char_type c = '!'; c <= 'J'; ++c)
-                ret[c] = c - '!';
-            // reduce ['K' .. '_']  to 'J'
-            for (char_type c = 'K'; c <= '^'; ++c)
-                ret[c] = ret['J'];
-            return ret;
-        }()
-    };
 };
 
 } // namespace seqan3

@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/std/concepts>
 
 // ============================================================================
 // concept
@@ -62,11 +63,9 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept nucleotide_concept = requires (type v)
+concept nucleotide_concept = alphabet_concept<type> && requires (type v, std::remove_reference_t<type> c)
 {
-    requires alphabet_concept<type>;
-
-    { complement(v) } -> std::remove_reference_t<type>;
+    requires std::Same<decltype(complement(v)), decltype(c)>;
 };
 //!\endcond
 

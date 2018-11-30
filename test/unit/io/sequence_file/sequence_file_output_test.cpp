@@ -47,7 +47,6 @@
 #include <seqan3/std/iterator>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(sequence_file_output_iterator, concepts)
 {

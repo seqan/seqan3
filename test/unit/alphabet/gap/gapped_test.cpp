@@ -29,17 +29,17 @@ TEST(gapped_test, initialise_from_component_alphabet)
 {
     using alphabet_t = gapped<dna4>;
 
-    constexpr alphabet_t letter0{dna4::A};
-    constexpr alphabet_t letter1 = dna4::C;
-    constexpr alphabet_t letter2 = {dna4::G};
-    constexpr alphabet_t letter3 = static_cast<alphabet_t>(dna4::T);
+    constexpr alphabet_t letter0{'A'_dna4};
+    constexpr alphabet_t letter1 = 'C'_dna4;
+    constexpr alphabet_t letter2 = {'G'_dna4};
+    constexpr alphabet_t letter3 = static_cast<alphabet_t>('T'_dna4);
 
-    alphabet_t letter4{dna4::A};
-    alphabet_t letter5 = dna4::C;
-    alphabet_t letter6 = {dna4::G};
-    alphabet_t letter7 = static_cast<alphabet_t>(dna4::T);
+    alphabet_t letter4{'A'_dna4};
+    alphabet_t letter5 = 'C'_dna4;
+    alphabet_t letter6 = {'G'_dna4};
+    alphabet_t letter7 = static_cast<alphabet_t>('T'_dna4);
 
-    constexpr alphabet_t letter8{gap::GAP}; // letter3 = dna4::T; does not work
+    constexpr alphabet_t letter8{gap::GAP}; // letter3 = 'T'_dna4; does not work
     alphabet_t letter9{gap::GAP};
 
     EXPECT_EQ(letter0.to_rank(), 0);
@@ -59,16 +59,16 @@ TEST(gapped_test, assign_from_component_alphabet)
     using alphabet_t = gapped<dna4>;
     alphabet_t letter{};
 
-    letter = dna4::A;
+    letter = 'A'_dna4;
     EXPECT_EQ(letter.to_rank(), 0);
 
-    letter = {dna4::C}; // letter = {dna4::C}; does not work
+    letter = {'C'_dna4}; // letter = {'C'_dna4}; does not work
     EXPECT_EQ(letter.to_rank(), 1);
 
-    letter = static_cast<alphabet_t>(dna4::G);
+    letter = static_cast<alphabet_t>('G'_dna4);
     EXPECT_EQ(letter.to_rank(), 2);
 
-    letter = {static_cast<alphabet_t>(dna4::T)};
+    letter = {static_cast<alphabet_t>('T'_dna4)};
     EXPECT_EQ(letter.to_rank(), 3);
 
     letter = gap::GAP;
@@ -78,8 +78,6 @@ TEST(gapped_test, assign_from_component_alphabet)
 TEST(gapped_test, fulfills_concepts)
 {
     using alphabet_t = gapped<dna4>;
-    EXPECT_TRUE((std::is_pod_v<alphabet_t>));
-    EXPECT_TRUE((std::is_trivial_v<alphabet_t>));
     EXPECT_TRUE((std::is_trivially_copyable_v<alphabet_t>));
     EXPECT_TRUE((std::is_standard_layout_v<alphabet_t>));
 }

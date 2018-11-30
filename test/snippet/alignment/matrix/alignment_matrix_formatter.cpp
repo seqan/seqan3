@@ -7,7 +7,6 @@ int main()
 {
     using namespace seqan3;
     using namespace seqan3::detail;
-    using namespace seqan3::literal;
 
     struct no_config
     {};

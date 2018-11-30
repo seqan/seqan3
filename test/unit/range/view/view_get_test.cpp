@@ -46,12 +46,12 @@
 #include <seqan3/alphabet/mask/masked.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(view_get, basic)
 {
-    std::vector<dna4q> qv{{dna4::A, phred42{0}}, {dna4::C, phred42{1}}, {dna4::G, phred42{2}}, {dna4::T, phred42{3}}};
-    std::vector<dna4> cmp0{dna4::A, dna4::C, dna4::G, dna4::T};
+    // TODO remove const-ness from input vector once alphabet_proxy's complement doesnt cause ICE
+    std::vector<dna4q> const qv{{'A'_dna4, phred42{0}}, {'C'_dna4, phred42{1}}, {'G'_dna4, phred42{2}}, {'T'_dna4, phred42{3}}};
+    std::vector<dna4> cmp0{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     std::vector<phred42> cmp1{phred42{0}, phred42{1}, phred42{2}, phred42{3}};
 
     //functor
@@ -83,14 +83,15 @@ TEST(view_get, basic)
 
 TEST(view_get, advanced)
 {
-    std::vector<qualified<masked<dna4>, phred42>> t{{{dna4::A, mask::MASKED}, phred42{0}},
-                                                    {{dna4::C, mask::UNMASKED}, phred42{1}},
-                                                    {{dna4::G, mask::MASKED}, phred42{2}},
-                                                    {{dna4::T, mask::UNMASKED}, phred42{3}}};
+    // TODO remove const-ness from input vector once alphabet_proxy inherits it's alphabet
+    std::vector<qualified<masked<dna4>, phred42>> const t{{{'A'_dna4, mask::MASKED}, phred42{0}},
+                                                    {{'C'_dna4, mask::UNMASKED}, phred42{1}},
+                                                    {{'G'_dna4, mask::MASKED}, phred42{2}},
+                                                    {{'T'_dna4, mask::UNMASKED}, phred42{3}}};
 
     // functor notation
-    std::vector<masked<dna4>> cmp0{{dna4::A, mask::MASKED}, {dna4::C, mask::UNMASKED},
-                                  {dna4::G, mask::MASKED}, {dna4::T, mask::UNMASKED}};
+    std::vector<masked<dna4>> cmp0{{'A'_dna4, mask::MASKED}, {'C'_dna4, mask::UNMASKED},
+                                  {'G'_dna4, mask::MASKED}, {'T'_dna4, mask::UNMASKED}};
     std::vector<masked<dna4>> functor0 = view::get<0>(t);
     EXPECT_EQ(cmp0, functor0);
 
@@ -98,7 +99,7 @@ TEST(view_get, advanced)
     std::vector<phred42> functor1 = view::get<1>(t);
     EXPECT_EQ(cmp1, functor1);
 
-    std::vector<dna4> cmp00{dna4::A, dna4::C, dna4::G, dna4::T};
+    std::vector<dna4> cmp00{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     std::vector<dna4> functor00 = view::get<0>(view::get<0>(t));
     EXPECT_EQ(cmp00, functor00);
 
@@ -113,19 +114,19 @@ TEST(view_get, advanced)
     EXPECT_EQ(cmp00, pipe00);
 
     // combinability
-    std::vector<masked<dna4>> cmprev{{dna4::T, mask::UNMASKED}, {dna4::G, mask::MASKED},
-                                     {dna4::C, mask::UNMASKED}, {dna4::A, mask::MASKED}};
+    std::vector<masked<dna4>> cmprev{{'T'_dna4, mask::UNMASKED}, {'G'_dna4, mask::MASKED},
+                                     {'C'_dna4, mask::UNMASKED}, {'A'_dna4, mask::MASKED}};
     std::vector<masked<dna4>> revtest = t | view::get<0> | view::reverse;
     EXPECT_EQ(cmprev, revtest);
 
-    std::vector<dna4> cmprev2{dna4::T, dna4::G, dna4::C, dna4::A};
+    std::vector<dna4> cmprev2{'T'_dna4, 'G'_dna4, 'C'_dna4, 'A'_dna4};
     std::vector<dna4> revtest2 = t | view::get<0> | view::get<0> | view::reverse;
     EXPECT_EQ(cmprev2, revtest2);
 
     // reference check
-    functor0[0] = masked<dna4>{dna4::T, mask::UNMASKED};
-    std::vector<masked<dna4>> cmpref{{dna4::T, mask::UNMASKED}, {dna4::C, mask::UNMASKED},
-                                     {dna4::G, mask::MASKED}, {dna4::T, mask::UNMASKED}};
+    functor0[0] = masked<dna4>{'T'_dna4, mask::UNMASKED};
+    std::vector<masked<dna4>> cmpref{{'T'_dna4, mask::UNMASKED}, {'C'_dna4, mask::UNMASKED},
+                                     {'G'_dna4, mask::MASKED}, {'T'_dna4, mask::UNMASKED}};
     EXPECT_EQ(cmpref, functor0);
 }
 

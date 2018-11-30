@@ -18,7 +18,6 @@
 #include "../alphabet_constexpr_test_template.hpp"
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 using structured_aa_types = ::testing::Types<structured_aa<aa27, dssp9>>;
 

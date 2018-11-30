@@ -42,7 +42,6 @@
 #include <gtest/gtest.h>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 using namespace seqan3::search_cfg;
 
 template <typename T>

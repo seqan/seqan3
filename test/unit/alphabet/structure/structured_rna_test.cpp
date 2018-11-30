@@ -18,7 +18,6 @@
 #include "../alphabet_constexpr_test_template.hpp"
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 using structured_rna_types = ::testing::Types<structured_rna<rna5, dot_bracket3>, structured_rna<rna4, wuss51>>;
 

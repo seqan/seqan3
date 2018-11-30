@@ -33,17 +33,17 @@ std::string v4 = view::trim(vec, 20u) | view::to_char;  // == "II?5"
 
 {
 //! [dna5q]
-std::vector<dna5q> vec{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
-                       {dna5::A, phred42{20}}, {dna5::T, phred42{10}}};
-std::vector<dna5q> cmp{{dna5::A, phred42{40}}, {dna5::G, phred42{40}}, {dna5::G, phred42{30}},
-                       {dna5::A, phred42{20}}};
+std::vector<dna5q> vec{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}, {'G'_dna5, phred42{30}},
+                       {'A'_dna5, phred42{20}}, {'T'_dna5, phred42{10}}};
+std::vector<dna5q> cmp{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}, {'G'_dna5, phred42{30}},
+                       {'A'_dna5, phred42{20}}};
 
 // trim by phred_value
 auto v1 = vec | view::trim(20u);
 assert(std::vector<dna5q>(v1) == cmp);
 
 // trim by quality character; in this case the nucleotide part of the character is irrelevant
-auto v2 = vec | view::trim(dna5q{dna5::C, phred42{20}});
+auto v2 = vec | view::trim(dna5q{'C'_dna5, phred42{20}});
 assert(std::vector<dna5q>(v2) == cmp);
 
 // combinability

@@ -3,7 +3,6 @@
 #include <seqan3/search/fm_index/all.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {
@@ -42,7 +41,7 @@ it.cycle_back();                     // search the sequence "AAT"
 debug_stream << it.query() << '\n';     // outputs "AAT"
 debug_stream << it.last_char() << '\n'; // outputs 'T'
 
-it.extend_left(dna4::G);             // search the sequence "GAAT"
+it.extend_left('G'_dna4);             // search the sequence "GAAT"
 debug_stream << it.query() << '\n';     // outputs "GAAC"
 debug_stream << it.last_char() << '\n'; // outputs 'G'
 
@@ -73,7 +72,7 @@ debug_stream << uni_it.query() << '\n';     // outputs "CAA"
 // it.cycle_back();
 // debug_stream << it.last_char() << '\n';
 
-uni_it.extend_right(dna4::G);            // search the sequence "AACG"
+uni_it.extend_right('G'_dna4);            // search the sequence "AACG"
 debug_stream << uni_it.query() << '\n';     // outputs "AACG"
 debug_stream << uni_it.last_char() << '\n'; // outputs 'G'
 uni_it.cycle_back();                     // returns false since there is no sequence "AACT" in the text.
@@ -96,7 +95,7 @@ debug_stream << uni_it.query() << '\n';     // outputs "CAA"
 // it.cycle_back();
 // debug_stream << it.last_char() << '\n';
 
-uni_it.extend_right(dna4::G);            // search the sequence "CAAG"
+uni_it.extend_right('G'_dna4);            // search the sequence "CAAG"
 debug_stream << uni_it.query() << '\n';     // outputs "CAAG"
 debug_stream << uni_it.last_char() << '\n'; // outputs 'G'
 uni_it.cycle_back();                     // search the sequence "CAAT"

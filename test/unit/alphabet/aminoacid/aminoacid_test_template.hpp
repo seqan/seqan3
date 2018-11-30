@@ -13,7 +13,6 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 template <typename T>
 class aminoacid : public ::testing::Test

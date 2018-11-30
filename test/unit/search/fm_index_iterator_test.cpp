@@ -45,7 +45,6 @@
 #include <gtest/gtest.h>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 struct fm_index_byte_alphabet_traits
 {
@@ -172,17 +171,17 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char)
 
     // successful extend_right(char)
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(dna4::A));
+    EXPECT_TRUE(it.extend_right('A'_dna4));
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
     EXPECT_EQ(it.query_length(), 1);
 
-    EXPECT_TRUE(it.extend_right(dna4::C));
+    EXPECT_TRUE(it.extend_right('C'_dna4));
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
     EXPECT_EQ(it.query_length(), 2);
 
     // unsuccessful extend_right(char), it remains untouched
     TypeParam it_cpy = it;
-    EXPECT_FALSE(it.extend_right(dna4::C));
+    EXPECT_FALSE(it.extend_right('C'_dna4));
     EXPECT_EQ(it, it_cpy);
 }
 
@@ -194,7 +193,7 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char)
 //
 //     // successful extend_right(char) using a different alphabet
 //     TypeParam it(fm);
-//     EXPECT_TRUE(it.extend_right(dna4::A));
+//     EXPECT_TRUE(it.extend_right('A'_dna4));
 //     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
 //     EXPECT_EQ(it.query_length(), 1);
 // }
@@ -222,7 +221,7 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char_and_cycle)
 
     // successful extend_right() and cycle_back()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(dna4::A));
+    EXPECT_TRUE(it.extend_right('A'_dna4));
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3, 4}));
     EXPECT_EQ(it.query_length(), 1);
 
@@ -290,7 +289,7 @@ TYPED_TEST(fm_index_iterator_test, incomplete_alphabet)
         typename TypeParam::index_type::text_type text{"ACGACG"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
-        EXPECT_FALSE(it.extend_right(dna4::T));
+        EXPECT_FALSE(it.extend_right('T'_dna4));
         EXPECT_EQ(it, TypeParam(fm));
     }
 
@@ -299,7 +298,7 @@ TYPED_TEST(fm_index_iterator_test, incomplete_alphabet)
         typename TypeParam::index_type::text_type text{"CGTCGT"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
-        EXPECT_FALSE(it.extend_right(dna4::A));
+        EXPECT_FALSE(it.extend_right('A'_dna4));
         EXPECT_EQ(it, TypeParam(fm));
     }
 
@@ -309,13 +308,13 @@ TYPED_TEST(fm_index_iterator_test, incomplete_alphabet)
         typename TypeParam::index_type::text_type text{"ATATAT"_dna4};
         typename TypeParam::index_type fm{text};
         TypeParam it = TypeParam(fm);
-        EXPECT_FALSE(it.extend_right(dna4::C));
-        EXPECT_FALSE(it.extend_right(dna4::G));
+        EXPECT_FALSE(it.extend_right('C'_dna4));
+        EXPECT_FALSE(it.extend_right('G'_dna4));
         EXPECT_FALSE(it.extend_right("ACGT"_dna4));
         EXPECT_FALSE(it.extend_right("G"_dna4));
         EXPECT_EQ(it, TypeParam(fm));
 
-        EXPECT_TRUE(it.extend_right(dna4::A));
+        EXPECT_TRUE(it.extend_right('A'_dna4));
         EXPECT_TRUE(it.cycle_back());
         EXPECT_TRUE(std::ranges::equal(it.query(), "T"_dna4));
     }

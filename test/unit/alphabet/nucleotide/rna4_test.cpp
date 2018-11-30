@@ -5,8 +5,6 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
 // -----------------------------------------------------------------------------------------------------
 
-#include <range/v3/view/zip.hpp>
-
 #include "../alphabet_test_template.hpp"
 #include "../alphabet_constexpr_test_template.hpp"
 #include "nucleotide_test_template.hpp"
@@ -15,58 +13,60 @@ INSTANTIATE_TYPED_TEST_CASE_P(rna4, alphabet, rna4);
 INSTANTIATE_TYPED_TEST_CASE_P(rna4, alphabet_constexpr, rna4);
 INSTANTIATE_TYPED_TEST_CASE_P(rna4, nucleotide, rna4);
 
-TEST(rna4, assign_char)
+TEST(rna4, to_char_assign_char)
 {
-    using t = rna4;
-    std::vector<char> chars
-    {
-        'A', 'C', 'G', 'T', 'U', 'N',
-        'a', 'c', 'g', 't', 'u', 'n',
-        'R', 'Y', 'S', 'W', 'K', 'M', 'B', 'D', 'H', 'V',
-        'r', 'y', 's', 'w', 'k', 'm', 'b', 'd', 'h', 'v',
-        '!'
-    };
+    EXPECT_EQ(to_char(rna4{}.assign_char('A')), 'A');
+    EXPECT_EQ(to_char(rna4{}.assign_char('C')), 'C');
+    EXPECT_EQ(to_char(rna4{}.assign_char('G')), 'G');
 
-    std::vector<rna4> alphabets
-    {
-        t::A, t::C, t::G, t::T, t::U, t::A,
-        t::A, t::C, t::G, t::T, t::U, t::A,
-        t::A, t::C, t::C, t::A, t::G, t::A, t::C, t::A, t::A, t::A,
-        t::A, t::C, t::C, t::A, t::G, t::A, t::C, t::A, t::A, t::A,
-        t::A
-    };
+    EXPECT_EQ(to_char(rna4{}.assign_char('U')), 'U');
+    EXPECT_EQ(to_char(rna4{}.assign_char('T')), 'U');
 
-    for (auto [ chr, alp ] : ranges::view::zip(chars, alphabets))
-        EXPECT_EQ((assign_char(rna4{}, chr)), alp);
+    EXPECT_EQ(to_char(rna4{}.assign_char('R')), 'A');
+    EXPECT_EQ(to_char(rna4{}.assign_char('Y')), 'C');
+    EXPECT_EQ(to_char(rna4{}.assign_char('S')), 'C');
+    EXPECT_EQ(to_char(rna4{}.assign_char('W')), 'A');
+    EXPECT_EQ(to_char(rna4{}.assign_char('K')), 'G');
+    EXPECT_EQ(to_char(rna4{}.assign_char('M')), 'A');
+    EXPECT_EQ(to_char(rna4{}.assign_char('B')), 'C');
+    EXPECT_EQ(to_char(rna4{}.assign_char('D')), 'A');
+    EXPECT_EQ(to_char(rna4{}.assign_char('H')), 'A');
+    EXPECT_EQ(to_char(rna4{}.assign_char('V')), 'A');
+
+    EXPECT_EQ(to_char(rna4{}.assign_char('N')), 'A');
+    EXPECT_EQ(to_char(rna4{}.assign_char('!')), 'A');
 }
 
-TEST(rna4, to_char)
+TEST(rna4, char_literal)
 {
-    using t = rna4;
-    std::vector<char> chars
-    {
-        'A', 'C', 'G', 'U', 'U',
-        'A'
-    };
+    EXPECT_EQ(to_char('A'_rna4), 'A');
+    EXPECT_EQ(to_char('C'_rna4), 'C');
+    EXPECT_EQ(to_char('G'_rna4), 'G');
 
-    std::vector<rna4> alphabets
-    {
-        t::A, t::C, t::G, t::T, t::U,
-        t::UNKNOWN
-    };
+    EXPECT_EQ(to_char('U'_rna4), 'U');
+    EXPECT_EQ(to_char('T'_rna4), 'U');
 
-    for (auto [ chr, alp ] : ranges::view::zip(chars, alphabets))
-        EXPECT_EQ(to_char(alp), chr);
+    EXPECT_EQ(to_char('R'_rna4), 'A');
+    EXPECT_EQ(to_char('Y'_rna4), 'C');
+    EXPECT_EQ(to_char('S'_rna4), 'C');
+    EXPECT_EQ(to_char('W'_rna4), 'A');
+    EXPECT_EQ(to_char('K'_rna4), 'G');
+    EXPECT_EQ(to_char('M'_rna4), 'A');
+    EXPECT_EQ(to_char('B'_rna4), 'C');
+    EXPECT_EQ(to_char('D'_rna4), 'A');
+    EXPECT_EQ(to_char('H'_rna4), 'A');
+    EXPECT_EQ(to_char('V'_rna4), 'A');
+
+    EXPECT_EQ(to_char('N'_rna4), 'A');
+    EXPECT_EQ(to_char('!'_rna4), 'A');
 }
 
-TEST(rna4, literals)
+TEST(rna4, string_literal)
 {
-    using namespace seqan3::literal;
-
     rna4_vector v;
-    v.resize(5, rna4::A);
+    v.resize(5, 'A'_rna4);
     EXPECT_EQ(v, "AAAAA"_rna4);
 
-    std::vector<rna4> w{rna4::A, rna4::C, rna4::G, rna4::T, rna4::U, rna4::UNKNOWN};
+    std::vector<rna4> w{'A'_rna4, 'C'_rna4, 'G'_rna4, 'T'_rna4, 'U'_rna4, 'N'_rna4};
     EXPECT_EQ(w, "ACGUUA"_rna4);
 }

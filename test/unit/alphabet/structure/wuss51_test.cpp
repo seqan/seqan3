@@ -19,7 +19,6 @@ INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_constexpr, wuss51);
 // assign_char functions
 TEST(wuss51, assign_char)
 {
-    using namespace seqan3::literal;
 
     using t = wuss51;
     std::vector<char> input
@@ -80,7 +79,6 @@ TEST(wuss51, concept_check)
 
 TEST(wuss51, literals)
 {
-    using namespace seqan3::literal;
 
     std::vector<wuss51> vec1;
     vec1.resize(5, wuss51::PAIR_OPEN);
@@ -93,7 +91,6 @@ TEST(wuss51, literals)
 
 TEST(wuss51, wuss51)
 {
-    using namespace seqan3::literal;
 
     EXPECT_EQ(wuss51::max_pseudoknot_depth, 22);
     std::vector<wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss51;

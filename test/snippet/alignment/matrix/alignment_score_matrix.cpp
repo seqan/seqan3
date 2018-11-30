@@ -12,7 +12,6 @@ int main()
 //! [code]
 using namespace seqan3;
 using namespace seqan3::detail;
-using namespace seqan3::literal;
 
 std::vector<dna4> database = "AACCGGTT"_dna4;
 std::vector<dna4> query = "ACGT"_dna4;

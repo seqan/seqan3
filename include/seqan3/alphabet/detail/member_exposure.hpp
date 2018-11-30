@@ -85,8 +85,7 @@ template <typename alphabet_type_with_members>
 struct alphabet_size<alphabet_type_with_members>
 {
     //!\brief The size retrieved from the type's member.
-    static constexpr underlying_rank_t<alphabet_type_with_members> value =
-        alphabet_type_with_members::value_size;
+    static auto constexpr value = alphabet_type_with_members::value_size;
 };
 
 /*!\brief Implementation of seqan3::semi_alphabet_concept::to_rank() that delegates to a member function.
@@ -122,7 +121,7 @@ constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<al
  * \details
  * Use this e.g. to newly create alphabet letters from rank:
  * ~~~{.cpp}
- * auto l = assign_rank(dna5{}, 1);  // l is of type dna5 and == dna5::C
+ * auto l = assign_rank(dna5{}, 1);  // l is of type dna5 and == 'C'_dna5
  * ~~~
  */
 template <typename alphabet_type>

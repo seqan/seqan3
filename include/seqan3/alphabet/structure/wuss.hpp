@@ -39,11 +39,12 @@
 
 #pragma once
 
-#include <cassert>
 #include <cmath>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/detail/alphabet_base.hpp>
+#include <seqan3/io/stream/char_operations.hpp>
 
 // ------------------------------------------------------------------
 // wuss
@@ -57,6 +58,9 @@ namespace seqan3
  *              It determines the allowed pseudoknot depth by adding characters AaBb..Zz to the alphabet.
  * \implements seqan3::rna_structure_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
+ *
  * \ingroup structure
  *
  * \details
@@ -75,15 +79,35 @@ namespace seqan3
  * \snippet test/snippet/alphabet/structure/wuss.cpp general
  */
 template <uint8_t SIZE = 51>
-struct wuss
+class wuss : public alphabet_base<wuss<SIZE>, SIZE>
 {
-    // check alphabet size constraint
-    static_assert(SIZE >= 15 && SIZE <= 67 && SIZE % 2 == 1);
+private:
+    //!\brief The base class.
+    using base_t = alphabet_base<wuss<SIZE>, SIZE>;
 
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = uint8_t;
+    //!\brief Befriend seqan3::alphabet_base.
+    friend base_t;
+
+    //!\brief Required for deferred instantiation of member "enum" values.
+    using this_type_deferred = typename base_t::derived_t;
+
+public:
+    using base_t::value_size;
+    using base_t::to_rank;
+    using base_t::to_char;
+    using typename base_t::rank_type;
+    using typename base_t::char_type;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr wuss() : base_t{} {}
+    constexpr wuss(wuss const &) = default;
+    constexpr wuss(wuss &&) = default;
+    constexpr wuss & operator=(wuss const &) = default;
+    constexpr wuss & operator=(wuss &&) = default;
+    ~wuss() = default;
+    //!\}
 
     /*!\name Letter values
      * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
@@ -93,122 +117,38 @@ struct wuss
     //!\{
 
     //!\brief `.` not paired (insertion to known structure)
-    static const wuss UNPAIRED;
+    static this_type_deferred constexpr UNPAIRED  = this_type_deferred{}.assign_char('.');
     //!\brief `:` not paired (external residue outside structure)
-    static const wuss UNPAIRED1;
+    static this_type_deferred constexpr UNPAIRED1 = this_type_deferred{}.assign_char(':');
     //!\brief `,` not paired (multifurcation loop)
-    static const wuss UNPAIRED2;
+    static this_type_deferred constexpr UNPAIRED2 = this_type_deferred{}.assign_char(',');
     //!\brief `-` not paired (bulge, interior loop)
-    static const wuss UNPAIRED3;
+    static this_type_deferred constexpr UNPAIRED3 = this_type_deferred{}.assign_char('-');
     //!\brief `_` not paired (hairpin loop)
-    static const wuss UNPAIRED4;
+    static this_type_deferred constexpr UNPAIRED4 = this_type_deferred{}.assign_char('_');
     //!\brief `~` not paired (due to local alignment)
-    static const wuss UNPAIRED5;
+    static this_type_deferred constexpr UNPAIRED5 = this_type_deferred{}.assign_char('~');
     //!\brief `;` not paired
-    static const wuss UNPAIRED6;
+    static this_type_deferred constexpr UNPAIRED6 = this_type_deferred{}.assign_char(';');
 
     //!\brief `<` bracket left (simple terminal stem)
-    static const wuss PAIR_OPEN;
+    static this_type_deferred constexpr PAIR_OPEN   = this_type_deferred{}.assign_char('<');
     //!\brief `(` bracket left (internal helix enclosing `<>`)
-    static const wuss PAIR_OPEN1;
+    static this_type_deferred constexpr PAIR_OPEN1  = this_type_deferred{}.assign_char('(');
     //!\brief `[` bracket left (internal helix enclosing `()`)
-    static const wuss PAIR_OPEN2;
+    static this_type_deferred constexpr PAIR_OPEN2  = this_type_deferred{}.assign_char('[');
     //!\brief `{` bracket left (internal helix enclosing `[]`)
-    static const wuss PAIR_OPEN3;
+    static this_type_deferred constexpr PAIR_OPEN3  = this_type_deferred{}.assign_char('{');
 
     //!\brief `>` bracket right (simple terminal stem)
-    static const wuss PAIR_CLOSE;
+    static this_type_deferred constexpr PAIR_CLOSE  = this_type_deferred{}.assign_char('>');
     //!\brief `)` bracket right (internal helix enclosing `<>`)
-    static const wuss PAIR_CLOSE1;
+    static this_type_deferred constexpr PAIR_CLOSE1 = this_type_deferred{}.assign_char(')');
     //!\brief `]` bracket right (internal helix enclosing `()`)
-    static const wuss PAIR_CLOSE2;
+    static this_type_deferred constexpr PAIR_CLOSE2 = this_type_deferred{}.assign_char(']');
     //!\brief `}` bracket right (internal helix enclosing `[]`)
-    static const wuss PAIR_CLOSE3;
+    static this_type_deferred constexpr PAIR_CLOSE3 = this_type_deferred{}.assign_char('}');
     // pseudoknots not accessible
-    //!\}
-
-    //!\name Read functions
-    //!\{
-
-    /*!
-     * \brief Get the letter as a character of char_type.
-     * \returns The character representation of this wuss letter.
-     */
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
-
-    /*!\brief Get the letter's numeric value or rank in the alphabet.
-     * \returns The numeric representation of this wuss letter.
-     */
-    constexpr rank_type to_rank() const noexcept
-    {
-        return static_cast<rank_type>(_value);
-    }
-    //!\}
-
-    //!\name Write functions
-    //!\{
-
-    /*!
-     * \brief Assign from a character.
-     * \param chr The character that is assigned.
-     * \returns The resulting wuss character.
-     */
-    constexpr wuss & assign_char(char_type const chr) noexcept
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        _value = char_to_value[static_cast<index_t>(chr)];
-        return *this;
-    }
-
-    /*!\brief Assign from a numeric value.
-     * \param rnk The rank value that is assigned.
-     * \returns The resulting wuss character.
-     */
-    constexpr wuss & assign_rank(rank_type const rnk)
-    {
-        assert(rnk < value_size);
-        _value = static_cast<internal_type>(rnk);
-        return *this;
-    }
-    //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{SIZE};
-
-    //!\name Comparison operators
-    //!\{
-    constexpr bool operator==(wuss const & rhs) const noexcept
-    {
-        return _value == rhs._value;
-    }
-
-    constexpr bool operator!=(wuss const & rhs) const noexcept
-    {
-        return _value != rhs._value;
-    }
-
-    constexpr bool operator<(wuss const & rhs) const noexcept
-    {
-        return _value < rhs._value;
-    }
-
-    constexpr bool operator>(wuss const & rhs) const noexcept
-    {
-        return _value > rhs._value;
-    }
-
-    constexpr bool operator<=(wuss const & rhs) const noexcept
-    {
-        return _value <= rhs._value;
-    }
-
-    constexpr bool operator>=(wuss const & rhs) const noexcept
-    {
-        return _value >= rhs._value;
-    }
     //!\}
 
     //!\name RNA structure properties
@@ -260,37 +200,12 @@ struct wuss
 
 protected:
     //!\privatesection
-    /*!\brief The internal type is a strictly typed enum.
-     *
-     * This is done to prevent aggregate initialization from numbers and/or chars.
-     * It is has the drawback that it also introduces a scope which in turn makes
-     * the static "letter values " members necessary.
-     */
-    enum struct internal_type : rank_type
-    {
-        UNPAIRED,    // not paired .
-        UNPAIRED1,   // not paired :
-        UNPAIRED2,   // not paired ,
-        UNPAIRED3,   // not paired -
-        UNPAIRED4,   // not paired _
-        UNPAIRED5,   // not paired ~
-        UNPAIRED6,   // not paired ;
-        PAIR_OPEN,   // bracket left <
-        PAIR_OPEN1,  // bracket left (
-        PAIR_OPEN2,  // bracket left [
-        PAIR_OPEN3,  // bracket left {
-        PAIR_CLOSE,  // bracket right >
-        PAIR_CLOSE1, // bracket right )
-        PAIR_CLOSE2, // bracket right ]
-        PAIR_CLOSE3  // bracket right }
-    };
-
     //!\brief Value-to-char conversion table.
-    static constexpr std::array<char_type, value_size> value_to_char
+    static constexpr std::array<char_type, value_size> rank_to_char
     {
         [] () constexpr
         {
-            std::array<char_type , value_size> chars
+            std::array<char_type, value_size> chars
             {
                 '.', ':', ',', '-', '_', '~', ';', '<', '(', '[', '{', '>', ')', ']', '}'
             };
@@ -308,114 +223,63 @@ protected:
     };
 
     //!\brief Char-to-value conversion table.
-    static constexpr std::array<internal_type, 256> char_to_value
+    static constexpr std::array<rank_type, 256> char_to_rank
     {
         [] () constexpr
         {
-            std::array<internal_type, 256> rank_table{};
+            std::array<rank_type, 256> rank_table{};
 
             // initialize with unpaired (std::array::fill unfortunately not constexpr)
-            for (internal_type & rnk : rank_table)
-                rnk = internal_type::UNPAIRED6;
+            for (rank_type & rnk : rank_table)
+                rnk = 6; // ::UNPAIRED6;
 
             // set alphabet values
             for (rank_type rnk = 0u; rnk < value_size; ++rnk)
-                rank_table[value_to_char[rnk]] = static_cast<internal_type>(rnk);
+                rank_table[rank_to_char[rnk]] = rnk;
             return rank_table;
         } ()
     };
 
     //!\brief Lookup table for interactions: unpaired (1), pair-open (2), pair-close (3).
-    static constexpr std::array<int8_t, value_size> interaction_tab
-    {
-        [] () constexpr
-        {
-            std::array<int8_t, value_size> interaction_table{};
-            int cnt_open = 0;
-            int cnt_close = 0;
-
-            for (rank_type rnk = static_cast<rank_type>(internal_type::UNPAIRED);
-                 rnk <= static_cast<rank_type>(internal_type::UNPAIRED6);
-                 ++rnk)
-            {
-                interaction_table[rnk] = 0;
-            }
-
-            for (rank_type rnk = static_cast<rank_type>(internal_type::PAIR_OPEN);
-                 rnk <= static_cast<rank_type>(internal_type::PAIR_OPEN3);
-                 ++rnk)
-            {
-                interaction_table[rnk] = --cnt_open;
-            }
-
-            for (rank_type rnk = static_cast<rank_type>(internal_type::PAIR_CLOSE);
-                 rnk <= static_cast<rank_type>(internal_type::PAIR_CLOSE3);
-                 ++rnk)
-            {
-                interaction_table[rnk] = ++cnt_close;
-            }
-
-            for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u)
-            {
-                interaction_table[rnk]     = --cnt_open;
-                interaction_table[rnk + 1] = ++cnt_close;
-            }
-
-            return interaction_table;
-        } ()
-    };
-
-public:
-    //!\privatesection
-    //!\brief The data member.
-    internal_type _value;
-    //!\publicsection
+    static std::array<int8_t, SIZE> const interaction_tab;
 };
 
 template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED{internal_type::UNPAIRED};
+constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
+{
+    std::array<int8_t, value_size> interaction_table{};
+    int cnt_open = 0;
+    int cnt_close = 0;
 
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED1{internal_type::UNPAIRED1};
+    for (rank_type rnk = UNPAIRED.to_rank();
+            rnk <= UNPAIRED6.to_rank();
+            ++rnk)
+    {
+        interaction_table[rnk] = 0;
+    }
 
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED2{internal_type::UNPAIRED2};
+    for (rank_type rnk = PAIR_OPEN.to_rank();
+            rnk <= PAIR_OPEN3.to_rank();
+            ++rnk)
+    {
+        interaction_table[rnk] = --cnt_open;
+    }
 
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED3{internal_type::UNPAIRED3};
+    for (rank_type rnk = PAIR_CLOSE.to_rank();
+            rnk <= PAIR_CLOSE3.to_rank();
+            ++rnk)
+    {
+        interaction_table[rnk] = ++cnt_close;
+    }
 
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED4{internal_type::UNPAIRED4};
+    for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u)
+    {
+        interaction_table[rnk]     = --cnt_open;
+        interaction_table[rnk + 1] = ++cnt_close;
+    }
 
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED5{internal_type::UNPAIRED5};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::UNPAIRED6{internal_type::UNPAIRED6};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN{internal_type::PAIR_OPEN};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN1{internal_type::PAIR_OPEN1};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN2{internal_type::PAIR_OPEN2};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_OPEN3{internal_type::PAIR_OPEN3};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE{internal_type::PAIR_CLOSE};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE1{internal_type::PAIR_CLOSE1};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE2{internal_type::PAIR_CLOSE2};
-
-template <uint8_t SIZE>
-constexpr wuss<SIZE> wuss<SIZE>::PAIR_CLOSE3{internal_type::PAIR_CLOSE3};
+    return interaction_table;
+} ();
 
 //!\brief Alias for the default type wuss51.
 typedef wuss<51> wuss51;
@@ -426,7 +290,7 @@ typedef wuss<51> wuss51;
 // literals
 // ------------------------------------------------------------------
 
-namespace seqan3::literal
+namespace seqan3
 {
 
 /*!\brief wuss literal
@@ -436,14 +300,10 @@ namespace seqan3::literal
  * You can use this string literal to easily assign to a vector of wuss characters:
  *
  *```.cpp
- *     using namespace seqan3::literal;
  *     std::vector<wuss<>> foo{".<..>."_wuss51};
  *     std::vector<wuss<>> bar = ".<..>."_wuss51;
  *     auto bax = ".<..>."_wuss51;
  *```
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
  */
 inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
 {
@@ -456,4 +316,4 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
     return vec;
 }
 
-} // namespace seqan3::literal
+} // namespace seqan3

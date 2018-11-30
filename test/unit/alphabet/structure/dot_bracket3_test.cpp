@@ -57,7 +57,6 @@ TEST(dot_bracket3, concept_check)
 
 TEST(dot_bracket3, literals)
 {
-    using namespace seqan3::literal;
 
     std::vector<dot_bracket3> vec1;
     vec1.resize(5, dot_bracket3::PAIR_OPEN);

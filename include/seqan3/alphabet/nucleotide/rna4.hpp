@@ -39,13 +39,10 @@
 
 #pragma once
 
-#include <cassert>
-
 #include <vector>
 
-#include <seqan3/alphabet/detail/convert.hpp>
-#include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
 
 // ------------------------------------------------------------------
 // rna4
@@ -56,11 +53,14 @@ namespace seqan3
 
 /*!\brief The four letter RNA alphabet of A,C,G,U.
  * \ingroup nucleotide
+ * \implements seqan3::nucleotide_concept
+ * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::standard_layout_concept
  *
  * \details
- * This alphabet inherits from seqan3::dna4 and is guaranteed to have the same internal representation of
- * data. The only difference is that it prints 'U' on character conversion instead of 'T'. You assign
- * between values of seqan3::dna4 and seqan3::rna4.
+ * This alphabet has the same internal representation as seqan3::dna4, the only difference is that it prints 'U' on
+ * character conversion instead of 'T'. You can assign between values of seqan3::dna4 and seqan3::rna4.
  *
  * The alphabet may be brace initialized from the static letter members. Note that you cannot
  * assign the alphabet by using letters of type `char`, but you instead have to use the
@@ -68,137 +68,92 @@ namespace seqan3
  *
  *\snippet test/snippet/alphabet/nucleotide/rna4.cpp code
  */
-
-struct rna4 : public dna4
+class rna4 : public nucleotide_base<rna4, 4>
 {
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface . *Don't worry about the `internal_type`.*
-     */
-    //!\{
-    static const rna4 A;
-    static const rna4 C;
-    static const rna4 G;
-    static const rna4 U;
-    static const rna4 T;
-    static const rna4 UNKNOWN;
-    //!\}
-
-    /*!\name Read functions
-     * \{
-     */
-    //!\copydoc seqan3::dna4::to_char
-    constexpr char_type to_char() const noexcept
-    {
-        return value_to_char[static_cast<rank_type>(_value)];
-    }
-
-    //!\copydoc seqan3::dna4::complement
-    constexpr rna4 complement() const noexcept
-    {
-        return rna4{dna4::complement()};
-    }
-    //!\}
-
-    /*!\name Write functions
-     * \{
-     */
-    //!\copydoc seqan3::dna4::assign_char
-    constexpr rna4 & assign_char(char_type const c) noexcept
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        _value = char_to_value[static_cast<index_t>(c)];
-        return *this;
-    }
-
-    //!\copydoc seqan3::dna4::assign_rank
-    constexpr rna4 & assign_rank(rank_type const c)
-    {
-        assert(c < value_size);
-        _value = static_cast<internal_type>(c);
-        return *this;
-    }
-    //!\}
-
-    /*!\name Conversion operators
-     * \{
-     */
-    //!\brief Implicit conversion between dna* and rna* of the same size.
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept and have the same \link value_size \endlink.
-    template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type> && value_size == alphabet_size_v<other_nucl_type>
-    //!\endcond
-    constexpr operator other_nucl_type() const noexcept
-    {
-        return other_nucl_type{_value};
-    }
-
-    //!\brief Explicit conversion to any other nucleotide alphabet (via char representation).
-    //!\tparam other_nucl_type The type to convert to; must satisfy seqan3::nucleotide_concept.
-    template <typename other_nucl_type>
-    //!\cond
-        requires nucleotide_concept<other_nucl_type>
-    //!\endcond
-    explicit constexpr operator other_nucl_type() const noexcept
-    {
-        return detail::convert_through_char_representation<other_nucl_type, std::decay_t<decltype(*this)>>[to_rank()];
-    }
-    //!\}
-
 private:
-    //!\copydoc seqan3::dna4::value_to_char
-    static constexpr char_type value_to_char[value_size]
+    //!\brief The base class.
+    using base_t = nucleotide_base<rna4, 4>;
+
+    //!\brief Befriend seqan3::nucleotide_base.
+    friend base_t;
+    //!\cond \brief Befriend seqan3::alphabet_base.
+    friend base_t::base_t;
+    //!\endcond
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr rna4() noexcept : base_t{} {}
+    constexpr rna4(rna4 const &) = default;
+    constexpr rna4(rna4 &&) = default;
+    constexpr rna4 & operator=(rna4 const &) = default;
+    constexpr rna4 & operator=(rna4 &&) = default;
+    ~rna4() = default;
+
+    using base_t::base_t;
+
+    //!\brief Allow implicit construction from dna/rna of the same size.
+    constexpr rna4(dna4 const & r) noexcept
+    {
+        assign_rank(r.to_rank());
+    }
+    //!\}
+
+protected:
+    //!\privatesection
+
+    //!\copydoc seqan3::dna4::rank_to_char
+    static constexpr char_type rank_to_char[value_size]
     {
         'A',
         'C',
         'G',
         'U'
     };
+
+    //!\copydoc seqan3::dna4::char_to_rank
+    static constexpr std::array<rank_type, 256> char_to_rank = dna4::char_to_rank;
+
+    //!\copydoc seqan3::dna4::complement_table
+    static const std::array<rna4, value_size> complement_table;
 };
-
-constexpr rna4 rna4::A{internal_type::A};
-constexpr rna4 rna4::C{internal_type::C};
-constexpr rna4 rna4::G{internal_type::G};
-constexpr rna4 rna4::U{internal_type::U};
-constexpr rna4 rna4::T{rna4::U};
-constexpr rna4 rna4::UNKNOWN{rna4::A};
-
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 
-namespace seqan3
-{
-
 //!\brief Alias for an std::vector of seqan3::rna4.
 //!\relates rna4
 using rna4_vector = std::vector<rna4>;
-
-} // namespace seqan3
 
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
 
-namespace seqan3::literal
-{
+/*!\name Literals
+ * \{
+ */
 
-/*!\brief rna4 literal
+/*!\brief The seqan3::rna4 char literal.
+ * \relates seqan3::rna4
+ * \returns seqan3::rna4
+ */
+constexpr rna4 operator""_rna4(char const c) noexcept
+{
+    return rna4{}.assign_char(c);
+}
+
+/*!\brief The seqan3::rna4 string literal.
  * \relates seqan3::rna4
  * \returns seqan3::rna4_vector
  *
  * You can use this string literal to easily assign to rna4_vector:
  *
- *\snippet test/snippet/alphabet/nucleotide/rna4.cpp operator""_rna4
+ * \snippet test/snippet/alphabet/nucleotide/rna4.cpp operator""_rna4
  *
- * \attention
- * All seqan3 literals are in the namespace seqan3::literal!
  */
-
-inline rna4_vector operator""_rna4(const char * s, std::size_t n)
+inline rna4_vector operator""_rna4(char const * s, std::size_t n)
 {
     rna4_vector r;
     r.resize(n);
@@ -208,5 +163,18 @@ inline rna4_vector operator""_rna4(const char * s, std::size_t n)
 
     return r;
 }
+//!\}
 
-} // namespace seqan3::literal
+// ------------------------------------------------------------------
+// rna4 (deferred definition)
+// ------------------------------------------------------------------
+
+constexpr std::array<rna4, rna4::value_size> rna4::complement_table
+{
+    'U'_rna4,    // complement of 'A'_rna4
+    'G'_rna4,    // complement of 'C'_rna4
+    'C'_rna4,    // complement of 'G'_rna4
+    'A'_rna4     // complement of 'U'_rna4
+};
+
+} // namespace seqan3

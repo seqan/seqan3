@@ -46,15 +46,13 @@
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
+#include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/complement.hpp>
 #include <seqan3/range/view/translation.hpp>
 #include <seqan3/std/ranges>
 
-
-
 using namespace seqan3;
-using namespace seqan3::literal;
-using namespace seqan3::view;
+// using namespace seqan3::view;
 
 template <typename T>
 class nucleotide : public ::testing::Test
@@ -67,9 +65,8 @@ TYPED_TEST_CASE(nucleotide, nucleotide_types);
 
 TYPED_TEST(nucleotide, view_translate_single)
 {
-    using t = TypeParam;
-
-    std::vector<TypeParam> vec = {t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A};
+    std::string const in{"ACGTACGTACGTA"};
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
     aa27_vector cmp1{"TYVR"_aa27};
     aa27_vector cmp2{"CMHA"_aa27};
 
@@ -101,9 +98,8 @@ TYPED_TEST(nucleotide, view_translate_single)
 
 TYPED_TEST(nucleotide, view_translate)
 {
-    using t = TypeParam;
-
-    std::vector<TypeParam> vec = {t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A};
+    std::string const in{"ACGTACGTACGTA"};
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
     std::vector<std::vector<aa27> > cmp1{{"TYVR"_aa27}};
     std::vector<std::vector<aa27> > cmp2{{"TYVR"_aa27}, {"YVRT"_aa27}};
     std::vector<std::vector<aa27> > cmp3{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}};
@@ -192,9 +188,8 @@ TYPED_TEST(nucleotide, view_translate)
 
 TYPED_TEST(nucleotide, view_translate_single_container_conversion)
 {
-    using t = TypeParam;
-
-    std::vector<TypeParam> vec= {t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A};
+    std::string const in{"ACGTACGTACGTA"};
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
     aa27_vector cmp1{"TYVR"_aa27};
 
     // default parameter translation_frames
@@ -205,9 +200,8 @@ TYPED_TEST(nucleotide, view_translate_single_container_conversion)
 
 TYPED_TEST(nucleotide, view_translate_container_conversion)
 {
-    using t = TypeParam;
-
-    std::vector<TypeParam> vec= {t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A};
+    std::string const in{"ACGTACGTACGTA"};
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
     std::vector<std::vector<aa27> > cmp1{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"YVRT"_aa27}, {"TYVR"_aa27}, {"RTY"_aa27}};
 
     // six frame translation
@@ -223,9 +217,8 @@ TYPED_TEST(nucleotide, view_translate_container_conversion)
 
 TYPED_TEST(nucleotide, view_translate_single_concepts)
 {
-    using t = TypeParam;
-
-    std::vector<TypeParam> vec= {t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A};
+    std::string const in{"ACGTACGTACGTA"};
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
     EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
@@ -243,9 +236,8 @@ TYPED_TEST(nucleotide, view_translate_single_concepts)
 
 TYPED_TEST(nucleotide, view_translate_concepts)
 {
-    using t = TypeParam;
-
-    std::vector<TypeParam> vec= {t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A, t::C, t::G, t::T, t::A};
+    std::string const in{"ACGTACGTACGTA"};
+    std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
     EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);

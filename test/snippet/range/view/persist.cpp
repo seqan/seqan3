@@ -3,7 +3,6 @@
 #include <seqan3/range/view/to_char.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {

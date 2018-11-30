@@ -3,7 +3,6 @@
 #include <iostream>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {

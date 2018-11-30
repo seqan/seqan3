@@ -13,7 +13,6 @@
 
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 int main()
 {
@@ -48,8 +47,8 @@ std::vector<phred42> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
 auto v3 = qvec | view::to_char;
 debug_stream << v3 << '\n'; // [!,(,&,$,(,%,?,1,8]
 
-std::vector<dna4q> qcvec{{dna4::C, phred42{0}}, {dna4::A, phred42{7}}, {dna4::G, phred42{5}}, {dna4::T, phred42{3}},
-                         {dna4::G, phred42{7}}, {dna4::A, phred42{4}}, {dna4::C, phred42{30}}, {dna4::T, phred42{16}}, {dna4::A, phred42{23}}};
+std::vector<dna4q> qcvec{{'C'_dna4, phred42{0}}, {'A'_dna4, phred42{7}}, {'G'_dna4, phred42{5}}, {'T'_dna4, phred42{3}},
+                         {'G'_dna4, phred42{7}}, {'A'_dna4, phred42{4}}, {'C'_dna4, phred42{30}}, {'T'_dna4, phred42{16}}, {'A'_dna4, phred42{23}}};
 auto v4 = qcvec | view::to_char;
 debug_stream << v4 << '\n'; // [C,A,G,T,G,A,C,T,A]
 //! [to_char]
@@ -65,8 +64,8 @@ std::vector<phred42> qvec{{0}, {7}, {5}, {3}, {7}, {4}, {30}, {16}, {23}};
 auto v3 = qvec | view::to_rank | view::convert<unsigned>;
 debug_stream << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
 
-std::vector<dna4q> qcvec{{dna4::C, phred42{0}}, {dna4::A, phred42{7}}, {dna4::G, phred42{5}}, {dna4::T, phred42{3}},
-                         {dna4::G, phred42{7}}, {dna4::A, phred42{4}}, {dna4::C, phred42{30}}, {dna4::T, phred42{16}}, {dna4::A, phred42{23}}};
+std::vector<dna4q> qcvec{{'C'_dna4, phred42{0}}, {'A'_dna4, phred42{7}}, {'G'_dna4, phred42{5}}, {'T'_dna4, phred42{3}},
+                         {'G'_dna4, phred42{7}}, {'A'_dna4, phred42{4}}, {'C'_dna4, phred42{30}}, {'T'_dna4, phred42{16}}, {'A'_dna4, phred42{23}}};
 auto v4 = qcvec | view::to_rank | view::convert<unsigned>;
 debug_stream << v4 << '\n'; // [1,28,22,15,30,16,121,67,92]
 //! [to_rank]

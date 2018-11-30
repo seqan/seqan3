@@ -46,7 +46,6 @@
 #include <seqan3/range/view/convert.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 //TODO remove after #256 is merged
 inline std::vector<phred42> operator""_phred42(const char * s, std::size_t n)

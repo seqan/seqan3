@@ -96,8 +96,8 @@ namespace seqan3::detail
  */
 template<typename reference_char_type, typename query_char_type>
 //!\cond
-    requires std::EqualityComparableWith<std::remove_reference_t<reference_char_type>, gap> &&
-             std::EqualityComparableWith<std::remove_reference_t<query_char_type>, gap>
+    requires std::detail::WeaklyEqualityComparableWith<reference_char_type, gap> &&
+             std::detail::WeaklyEqualityComparableWith<query_char_type, gap>
 //!\endcond
 char compare_aligned_values(reference_char_type const reference_char,
                             query_char_type const query_char,
@@ -149,8 +149,8 @@ char compare_aligned_values(reference_char_type const reference_char,
  */
 template<std::ranges::ForwardRange ref_seq_type, std::ranges::ForwardRange query_seq_type>
 //!\cond
-    requires std::EqualityComparableWith<gap, value_type_t<ref_seq_type>> &&
-             std::EqualityComparableWith<gap, value_type_t<query_seq_type>>
+    requires std::detail::WeaklyEqualityComparableWith<gap, reference_t<ref_seq_type>> &&
+             std::detail::WeaklyEqualityComparableWith<gap, reference_t<query_seq_type>>
 //!\endcond
 std::string get_cigar_string(ref_seq_type && ref_seq,
                              query_seq_type && query_seq,
@@ -251,7 +251,7 @@ std::string get_cigar_string(alignment_type && alignment,
                              uint32_t const query_end_pos = 0,
                              bool const extended_cigar = false)
 {
-    return get_cigar_string(std::get<0>(alignment), std::get<1>(alignment),
+    return get_cigar_string(get<0>(alignment), get<1>(alignment),
                             query_start_pos, query_end_pos, extended_cigar);
 }
 

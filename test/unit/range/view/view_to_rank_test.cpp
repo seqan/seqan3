@@ -43,12 +43,11 @@
 #include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
-using namespace seqan3::literal;
 
 TEST(view_to_rank, basic)
 {
     dna5_vector vec{"ACTTTGATA"_dna5};
-    std::vector<unsigned> cmp{0,1,3,3,3,2,0,3,0};
+    std::vector<unsigned> cmp{0,1,4,4,4,2,0,4,0};
 
     // pipe notation
     std::vector<unsigned> v = vec | view::to_rank;
@@ -59,7 +58,7 @@ TEST(view_to_rank, basic)
     EXPECT_EQ(cmp, v2);
 
     // combinability
-    std::vector<unsigned> cmp2{0, 3, 0, 2, 3, 3, 3, 1, 0};
+    std::vector<unsigned> cmp2{0, 4, 0, 2, 4, 4, 4, 1, 0};
     std::vector<unsigned> v3 = vec | view::to_rank | view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
