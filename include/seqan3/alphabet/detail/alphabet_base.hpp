@@ -188,7 +188,7 @@ public:
      */
     constexpr derived_type & assign_rank(rank_type const c) noexcept
     {
-        assert(c < value_size);
+        assert(static_cast<size_t>(c) < static_cast<size_t>(value_size));
         rank = c;
         return static_cast<derived_type &>(*this);
     }
