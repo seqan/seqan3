@@ -153,3 +153,24 @@ TEST(debug_stream, path)
     o.flush();
     EXPECT_EQ(o.str(), "\"my/path/my_file.txt\"");
 }
+
+TEST(debug_stream, tuple)
+{
+    std::ostringstream o;
+    debug_stream_type my_stream{o};
+
+    std::tuple<size_t, std::string> t0{32, "dummy"};
+    my_stream << t0;
+    o.flush();
+    EXPECT_EQ(o.str(), "(32,dummy)");
+
+    std::tuple<size_t> t1{32};
+    my_stream << t1;
+    o.flush();
+    EXPECT_EQ(o.str(), "(32,dummy)(32)");
+
+    std::tuple<size_t, std::pair<size_t, size_t>> t2{2, {3,2}};
+    my_stream << t2;
+    o.flush();
+    EXPECT_EQ(o.str(), "(32,dummy)(32)(2,(3,2))");
+}

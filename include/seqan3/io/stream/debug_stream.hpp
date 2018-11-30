@@ -45,6 +45,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/shortcuts.hpp>
@@ -293,6 +294,44 @@ inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
 //!\endcond
 {
     return s << to_char(l);
+}
+
+}
+
+namespace seqan3::detail
+{
+
+//!\brief Helper function to print elements of a tuple separately.
+template<typename tuple_t, std::size_t ...I>
+void print_tuple(debug_stream_type & s, tuple_t && t, std::index_sequence<I...> const &)
+{
+    s << '(';
+    ((s << (I == 0 ? "" : ",") << std::get<I>(t)), ...);
+    s << ')';
+}
+
+} // namespace seqan3::detail
+
+namespace seqan3
+{
+    
+/*!\brief All tuples can be printed by printing their elements separately.
+ * \tparam tuple_t Type of the tuple to be printed; must model seqan3::tuple_like_concept.
+ * \param s The seqan3::debug_stream.
+ * \param t The tuple.
+ * \relates seqan3::debug_stream_type
+ */
+template <typename tuple_t>
+//!\cond
+    requires !std::ranges::InputRange<tuple_t> &&
+             !alphabet_concept<remove_cvref_t<tuple_t>> && // exclude cartesian_composition
+             tuple_like_concept<remove_cvref_t<tuple_t>>
+//!\endcond
+inline debug_stream_type & operator<<(debug_stream_type & s, tuple_t && t)
+{
+    detail::print_tuple(s, std::forward<tuple_t>(t),
+                        std::make_index_sequence<std::tuple_size_v<remove_cvref_t<tuple_t>>>{});
+    return s;
 }
 
 /*!\brief All input ranges can be printed to the seqan3::debug_stream element-wise (if their elements are printable).
