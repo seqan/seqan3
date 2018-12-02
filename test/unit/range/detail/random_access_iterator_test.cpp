@@ -67,9 +67,7 @@ protected:
     }
 };
 
-
 // concept checks
-
 TEST(random_access_iterator_test, concept_checks)
 {
     EXPECT_TRUE((std::RandomAccessIterator<seqan3::detail::random_access_iterator<std::vector<int>>>));
