@@ -69,11 +69,7 @@ inline unsigned get_terminal_width()
 
     return w.ws_col;
 #else
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-    if (ret)
-        return csbi.dwSize.Y;   // Y is a (signed) short in my winnt.h
-    // exception ?? return 0 ? 80 ??
+    return 80; // not implemented in windows
 #endif
 }
 
