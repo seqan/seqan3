@@ -34,9 +34,6 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
 # ----------------------------------------------------------------------------
 # Interface targets for the different test modules in seqan3.
 # ----------------------------------------------------------------------------
-if (WIN32)
-    set(AHLWAPI shlwapi.lib)
-endif()
 
 # seqan3::test exposes a base set of required flags, includes, definitions and
 # libraries which are in common for **all** seqan3 tests
