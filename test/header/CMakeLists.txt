@@ -95,6 +95,13 @@ macro (seqan3_header_test component header_base_path)
 #include <${header}>
 #include <gtest/gtest.h>
 TEST(Header, ${header_source_test_name}) {}")
+            # test that seqan3 headers include platform.hpp
+            if ("${component}" MATCHES "seqan3")
+                file (APPEND "${source_file}" "
+#ifndef SEQAN3_DOXYGEN_ONLY
+#error \"Your header file is missing #include<seqan3/core/platform.hpp>\"
+#endif")
+            endif ()
 
             add_library (${target_library} OBJECT "${source_file}")
             # NOTE: a simple target_link_libraries (${target_library} seqan3::test::header)
