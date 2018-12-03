@@ -8,154 +8,28 @@
 //
 //===---------------------------------------------------------------------===//
 
-#ifndef _LIBCPP_SPAN
-#define _LIBCPP_SPAN
 
-/*
-    span synopsis
-
-namespace std {
-
-// constants
-inline constexpr ptrdiff_t dynamic_extent = -1;
-
-// [views.span], class template span
-template <class ElementType, ptrdiff_t Extent = dynamic_extent>
-    class span;
-
-// [span.comparison], span comparison operators
-template <class T, ptrdiff_t X, class U, ptrdiff_t Y>
-    constexpr bool operator==(span<T, X> l, span<U, Y> r);
-template <class T, ptrdiff_t X, class U, ptrdiff_t Y>
-    constexpr bool operator!=(span<T, X> l, span<U, Y> r);
-template <class T, ptrdiff_t X, class U, ptrdiff_t Y>
-    constexpr bool operator<(span<T, X> l, span<U, Y> r);
-template <class T, ptrdiff_t X, class U, ptrdiff_t Y>
-    constexpr bool operator<=(span<T, X> l, span<U, Y> r);
-template <class T, ptrdiff_t X, class U, ptrdiff_t Y>
-    constexpr bool operator>(span<T, X> l, span<U, Y> r);
-template <class T, ptrdiff_t X, class U, ptrdiff_t Y>
-    constexpr bool operator>=(span<T, X> l, span<U, Y> r);
-
-// [span.objectrep], views of object representation
-template <class ElementType, ptrdiff_t Extent>
-    span<const byte, ((Extent == dynamic_extent) ? dynamic_extent :
-        (static_cast<ptrdiff_t>(sizeof(ElementType)) * Extent))> as_bytes(span<ElementType, Extent> s) noexcept;
-
-template <class ElementType, ptrdiff_t Extent>
-    span<      byte, ((Extent == dynamic_extent) ? dynamic_extent :
-        (static_cast<ptrdiff_t>(sizeof(ElementType)) * Extent))> as_writable_bytes(span<ElementType, Extent> s) noexcept;
-
-
-namespace std {
-template <class ElementType, ptrdiff_t Extent = dynamic_extent>
-class span {
-public:
-    // constants and types
-    using element_type = ElementType;
-    using value_type = remove_cv_t<ElementType>;
-    using index_type = ptrdiff_t;
-    using difference_type = ptrdiff_t;
-    using pointer = element_type*;
-    using reference = element_type&;
-    using iterator = implementation-defined;
-    using const_iterator = implementation-defined;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-    static constexpr index_type extent = Extent;
-
-    // [span.cons], span constructors, copy, assignment, and destructor
-    constexpr span() noexcept;
-    constexpr span(pointer ptr, index_type count);
-    constexpr span(pointer firstElem, pointer lastElem);
-    template <size_t N>
-        constexpr span(element_type (&arr)[N]) noexcept;
-    template <size_t N>
-        constexpr span(array<value_type, N>& arr) noexcept;
-    template <size_t N>
-        constexpr span(const array<value_type, N>& arr) noexcept;
-    template <class Container>
-        constexpr span(Container& cont);
-    template <class Container>
-        constexpr span(const Container& cont);
-    constexpr span(const span& other) noexcept = default;
-    template <class OtherElementType, ptrdiff_t OtherExtent>
-        constexpr span(const span<OtherElementType, OtherExtent>& s) noexcept;
-    ~span() noexcept = default;
-    constexpr span& operator=(const span& other) noexcept = default;
-
-    // [span.sub], span subviews
-    template <ptrdiff_t Count>
-        constexpr span<element_type, Count> first() const;
-    template <ptrdiff_t Count>
-        constexpr span<element_type, Count> last() const;
-    template <ptrdiff_t Offset, ptrdiff_t Count = dynamic_extent>
-        constexpr span<element_type, see below> subspan() const;
-
-    constexpr span<element_type, dynamic_extent> first(index_type count) const;
-    constexpr span<element_type, dynamic_extent> last(index_type count) const;
-    constexpr span<element_type, dynamic_extent> subspan(index_type offset, index_type count = dynamic_extent) const;
-
-    // [span.obs], span observers
-    constexpr index_type size() const noexcept;
-    constexpr index_type size_bytes() const noexcept;
-    constexpr bool empty() const noexcept;
-
-    // [span.elem], span element access
-    constexpr reference operator[](index_type idx) const;
-    constexpr reference operator()(index_type idx) const;
-    constexpr pointer data() const noexcept;
-
-    // [span.iterators], span iterator support
-    constexpr iterator begin() const noexcept;
-    constexpr iterator end() const noexcept;
-    constexpr const_iterator cbegin() const noexcept;
-    constexpr const_iterator cend() const noexcept;
-    constexpr reverse_iterator rbegin() const noexcept;
-    constexpr reverse_iterator rend() const noexcept;
-    constexpr const_reverse_iterator crbegin() const noexcept;
-    constexpr const_reverse_iterator crend() const noexcept;
-
-private:
-    pointer data_;     // exposition only
-    index_type size_;  // exposition only
-};
-
-template<class T, size_t N>
-    span(T (&)[N]) -> span<T, N>;
-
-template<class T, size_t N>
-    span(array<T, N>&) -> span<T, N>;
-
-template<class T, size_t N>
-    span(const array<T, N>&) -> span<const T, N>;
-
-template<class Container>
-    span(Container&) -> span<typename Container::value_type>;
-
-template<class Container>
-    span(const Container&) -> span<const typename Container::value_type>;
-
-} // namespace std
-
+/*!\file
+// \brief Provides std::foobar from the C++20 standard library.
+// \see https://en.cppreference.com/...
 */
 
+//!\cond
 // #include <__config>
+#pragma once
+
 #include <cstddef>      // for ptrdiff_t
 #include <iterator>     // for iterators
 #include <array>        // for array
 #include <type_traits>  // for remove_cv, etc
 #include <cstddef>      // for byte
 
-#pragma once
-
-#if __cplusplus <= 201703L
+#if __has_include(<span>)
 
 namespace std
 {
 inline constexpr ptrdiff_t dynamic_extent = -1;
 template <typename span_tp, ptrdiff_t span_extent = dynamic_extent> class span;
-
 
 template <class span_tp>
 struct is_span_impl : public false_type {};
@@ -198,14 +72,13 @@ struct is_span_compatible_container<span_tp, ElementType,
         >>
     : public true_type {};
 
-
 template <typename span_tp, ptrdiff_t span_extent>
 class span {
 public:
 //  constants and types
     using element_type           = span_tp;
     using value_type             = remove_cv_t<span_tp>;
-    using index_type             = ptrdiff_t;
+    using index_type             = size_t;
     using difference_type        = ptrdiff_t;
     using pointer                = span_tp *;
     using const_pointer          = const span_tp *; // not in standard
@@ -261,7 +134,6 @@ public:
                           nullptr_t> = nullptr) noexcept
         : data{other.get_data()} { static_assert(span_extent == other.get_size(), "size mismatch in span's constructor (other span)"); }
 
-
 //  ~span() noexcept = default;
 
     template <ptrdiff_t count>
@@ -299,7 +171,6 @@ public:
         static_assert(offset >= 0 && offset <= get_size(), "Offset out of range in span::subspan()");
         return {get_data() + offset, count == dynamic_extent ? get_size() - offset : count};
     }
-
 
     inline constexpr span<element_type, dynamic_extent>
        subspan(index_type offset, index_type count = dynamic_extent) const noexcept
@@ -358,7 +229,6 @@ private:
 
 };
 
-
 template <typename span_tp>
 class span<span_tp, dynamic_extent> {
 private:
@@ -407,7 +277,6 @@ public:
     inline constexpr span(const container& c,
             enable_if_t<is_span_compatible_container<const container, span_tp>::value, nullptr_t> = nullptr)
         : data{std::data(c)}, size{(index_type) std::size(c)} {}
-
 
     template <class OtherElementType, ptrdiff_t _OtherExtent>
     inline constexpr span(const span<OtherElementType, _OtherExtent>& other,
@@ -548,4 +417,5 @@ template<class container>
     span(const container&) -> span<const typename container::value_type>;
 } // namespace std
 
-#endif // __cplusplus <= 201703L
+#endif // __has_include(<span>)
+//!\endcond
