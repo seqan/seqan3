@@ -89,10 +89,7 @@ namespace seqan3::view
  *
  * ### Example
  *
- * ```cpp
- * dna4_vector s{"ACTTTGATAN"_dna4};
- * auto v1 = subrange{begin(s) + 2, end(s)} | view::to_char; // == "TTTGATAA"
- * ```
+ * \snippet test/snippet/std/view/subrange.cpp example
  * \hideinitializer
  */
 template <std::Iterator it_t, std::Sentinel<it_t> sen_t>
