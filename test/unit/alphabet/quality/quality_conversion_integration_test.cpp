@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/test/testing_list.hpp>
 
 using namespace seqan3;
 
@@ -21,14 +22,13 @@ class quality_conversion : public ::testing::Test
 {};
 
 // add all alphabets from the quality sub module here
-using quality_conversion_types     = ::testing::Types<phred42, phred63, phred68legacy>;
-using quality_types2               =       meta::list<phred42, phred63, phred68legacy>;
+using quality_conversion_types = type_list<phred42, phred63, phred68legacy>;
 
-TYPED_TEST_CASE(quality_conversion, quality_conversion_types);
+TYPED_TEST_CASE(quality_conversion, as_testing_list<quality_conversion_types>);
 
 TYPED_TEST(quality_conversion, explicit_conversion)
 {
-    meta::for_each(quality_types2{}, [&] (auto && qual) constexpr
+    meta::for_each(quality_conversion_types{}, [&] (auto && qual) constexpr
     {
         using out_type = std::decay_t<decltype(qual)>;
         EXPECT_EQ(static_cast<out_type>(TypeParam{ 0}), out_type{ 0});

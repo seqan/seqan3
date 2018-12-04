@@ -10,7 +10,8 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_list.hpp>
+#include <seqan3/test/testing_list.hpp>
 
 using namespace seqan3;
 
@@ -18,15 +19,14 @@ template <typename T>
 class nucleotide_conversion : public ::testing::Test
 {};
 
-using nucleotide_types2 = meta::list<dna4, dna5, dna15, rna4, rna5, rna15>; // needed for some tests
-using nucleotide_types = detail::transfer_template_args_onto_t<nucleotide_types2, ::testing::Types>;
+using nucleotide_types = type_list<dna4, dna5, dna15, rna4, rna5, rna15>; // needed for some tests
 
-TYPED_TEST_CASE(nucleotide_conversion, nucleotide_types);
+TYPED_TEST_CASE(nucleotide_conversion, as_testing_list<nucleotide_types>);
 
 // conversion to any other nucleotide type
 TYPED_TEST(nucleotide_conversion, explicit_conversion)
 {
-    meta::for_each(nucleotide_types2{}, [&] (auto && nucl) constexpr
+    meta::for_each(nucleotide_types{}, [&] (auto && nucl) constexpr
     {
         using out_type = std::decay_t<decltype(nucl)>;
         EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('A')), out_type{}.assign_char('A'));
