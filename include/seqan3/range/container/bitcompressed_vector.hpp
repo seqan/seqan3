@@ -684,7 +684,6 @@ public:
      * \{
      */
     /*!\brief Removes all elements from the container.
-     * \returns The number of elements in the container.
      *
      * ### Complexity
      *
@@ -755,8 +754,8 @@ public:
      *                             std::CommonReference<value_type_t<begin_iterator_type>, value_type>.
      * \tparam   end_iterator_type Must satisfy std::Sentinel.
      * \param[in]              pos Iterator before which the content will be inserted. `pos` may be the end() iterator.
-     * \param[in]         begin_it Begin of range to construct/assign from.
-     * \param[in]           end_it End of range to construct/assign from.
+     * \param[in]         begin_it Begin of range to insert from.
+     * \param[in]           end_it End of range to insert from.
      * \returns                    Iterator pointing to the first element inserted, or `pos` if `begin_it==end_it`.
      *
      * The behaviour is undefined if begin_it and end_it are iterators into `*this`.
@@ -819,7 +818,7 @@ public:
      *
      * Invalidates iterators and references at or after the point of the erase, including the end() iterator.
      *
-     * The iterator first does not need to be dereferenceable if first==end_it: erasing an empty range is a no-op.
+     * The iterator begin_it does not need to be dereferenceable if begin_it==end_it: erasing an empty range is a no-op.
      *
      * ### Complexity
      *
@@ -915,7 +914,7 @@ public:
      * \throws std::length_error If count > max_size().
      * \throws    std::exception Any exception thrown by `Allocator::allocate()` (typically `std::bad_alloc`).
      *
-     * Increase the size() of the vector to count.
+     * Set the size() of the vector to count.
      *
      * If the current capacity() is smaller than count, new storage is allocated and all iterators, including
      * the past-the-end iterator, and all references to the elements are invalidated.
