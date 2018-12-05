@@ -160,7 +160,7 @@ TEST(view_take_exactly, underlying_is_shorter)
     EXPECT_EQ("foo", v);
 
     auto v2 = vec | view::single_pass_input | view::take_exactly(4);
-    EXPECT_EQ(size(v2), 4); // here be dragons
+    EXPECT_EQ(size(v2), 4u); // here be dragons
 }
 
 // ============================================================================
@@ -187,4 +187,3 @@ TEST(view_take_exactly_or_throw, underlying_is_shorter)
     EXPECT_THROW(( v = vec | view::single_pass_input | view::take_exactly_or_throw(4)),
                    unexpected_end_of_input); // full parsing on conversion, throw on conversion
 }
-
