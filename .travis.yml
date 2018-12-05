@@ -70,11 +70,12 @@ matrix:
       directories:
           - /tmp/doxygen-download
     before_install:
-       - DOXYGEN_VER=doxygen-1.8.13
+       - DOXYGEN_VER=1.8.13
+       - DOXYGEN_FOLDER=doxygen-${DOXYGEN_VER}
        - mkdir -p /tmp/doxygen-download
-       - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ ftp://ftp.stack.nl/pub/users/dimitri/${DOXYGEN_VER}.linux.bin.tar.gz
-       - tar -C /tmp/ -zxvf /tmp/doxygen-download/${DOXYGEN_VER}.linux.bin.tar.gz
-       - PATH=$PATH:/tmp/${DOXYGEN_VER}/bin/
+       - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VER}/${DOXYGEN_FOLDER}.linux.bin.tar.gz
+       - tar -C /tmp/ -zxvf /tmp/doxygen-download/${DOXYGEN_FOLDER}.linux.bin.tar.gz
+       - PATH=$PATH:/tmp/${DOXYGEN_FOLDER}/bin/
        - doxygen --version
   - << : *linux-gcc-7
     env:
