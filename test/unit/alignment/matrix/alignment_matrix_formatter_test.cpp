@@ -61,55 +61,55 @@ using typename seqan3::detail::matrix_formatter_test;
 
 TEST_F(matrix_formatter_test, unicode_str_length)
 {
-    EXPECT_EQ(unicode_str_length(" "), 1);
-    EXPECT_EQ(unicode_str_length(";"), 1);
-    EXPECT_EQ(unicode_str_length(""), 0);
-    EXPECT_EQ(unicode_str_length("N"), 1);
-    EXPECT_EQ(unicode_str_length("D"), 1);
-    EXPECT_EQ(unicode_str_length("U"), 1);
-    EXPECT_EQ(unicode_str_length("DU"), 2);
-    EXPECT_EQ(unicode_str_length("L"), 1);
-    EXPECT_EQ(unicode_str_length("DL"), 2);
-    EXPECT_EQ(unicode_str_length("UL"), 2);
-    EXPECT_EQ(unicode_str_length("DUL"), 3);
-    EXPECT_EQ(unicode_str_length("|"), 1);
-    EXPECT_EQ(unicode_str_length("-"), 1);
-    EXPECT_EQ(unicode_str_length("/"), 1);
-    EXPECT_EQ(unicode_str_length("INF"), 3);
+    EXPECT_EQ(unicode_str_length(" "), 1u);
+    EXPECT_EQ(unicode_str_length(";"), 1u);
+    EXPECT_EQ(unicode_str_length(""), 0u);
+    EXPECT_EQ(unicode_str_length("N"), 1u);
+    EXPECT_EQ(unicode_str_length("D"), 1u);
+    EXPECT_EQ(unicode_str_length("U"), 1u);
+    EXPECT_EQ(unicode_str_length("DU"), 2u);
+    EXPECT_EQ(unicode_str_length("L"), 1u);
+    EXPECT_EQ(unicode_str_length("DL"), 2u);
+    EXPECT_EQ(unicode_str_length("UL"), 2u);
+    EXPECT_EQ(unicode_str_length("DUL"), 3u);
+    EXPECT_EQ(unicode_str_length("|"), 1u);
+    EXPECT_EQ(unicode_str_length("-"), 1u);
+    EXPECT_EQ(unicode_str_length("/"), 1u);
+    EXPECT_EQ(unicode_str_length("INF"), 3u);
 
-    EXPECT_EQ(unicode_str_length(u8"ε"), 1);
-    EXPECT_EQ(unicode_str_length(u8"║"), 1);
-    EXPECT_EQ(unicode_str_length(u8"═"), 1);
-    EXPECT_EQ(unicode_str_length(u8"╬"), 1);
-    EXPECT_EQ(unicode_str_length(u8"∞"), 1);
+    EXPECT_EQ(unicode_str_length(u8"ε"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"║"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"═"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"╬"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"∞"), 1u);
 
-    EXPECT_EQ(unicode_str_length(u8"█"), 1);
-    EXPECT_EQ(unicode_str_length(u8"▘"), 1);
-    EXPECT_EQ(unicode_str_length(u8"▝"), 1);
-    EXPECT_EQ(unicode_str_length(u8"▀"), 1);
-    EXPECT_EQ(unicode_str_length(u8"▖"), 1);
-    EXPECT_EQ(unicode_str_length(u8"▌"), 1);
-    EXPECT_EQ(unicode_str_length(u8"▞"), 1);
-    EXPECT_EQ(unicode_str_length(u8"▛"), 1);
-    EXPECT_EQ(unicode_str_length(u8"∞"), 1);
+    EXPECT_EQ(unicode_str_length(u8"█"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"▘"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"▝"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"▀"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"▖"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"▌"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"▞"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"▛"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"∞"), 1u);
 
-    EXPECT_EQ(unicode_str_length(u8"⠀"), 1);
-    EXPECT_EQ(unicode_str_length(u8"⠁"), 1);
-    EXPECT_EQ(unicode_str_length(u8"⠈"), 1);
-    EXPECT_EQ(unicode_str_length(u8"⠉"), 1);
-    EXPECT_EQ(unicode_str_length(u8"⠄"), 1);
-    EXPECT_EQ(unicode_str_length(u8"⠅"), 1);
-    EXPECT_EQ(unicode_str_length(u8"⠌"), 1);
-    EXPECT_EQ(unicode_str_length(u8"⠍"), 1);
+    EXPECT_EQ(unicode_str_length(u8"⠀"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"⠁"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"⠈"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"⠉"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"⠄"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"⠅"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"⠌"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"⠍"), 1u);
 
-    EXPECT_EQ(unicode_str_length(u8"↺"), 1);
-    EXPECT_EQ(unicode_str_length(u8"↖"), 1);
-    EXPECT_EQ(unicode_str_length(u8"↑"), 1);
-    EXPECT_EQ(unicode_str_length(u8"↖↑"), 2);
-    EXPECT_EQ(unicode_str_length(u8"←"), 1);
-    EXPECT_EQ(unicode_str_length(u8"↖←"), 2);
-    EXPECT_EQ(unicode_str_length(u8"↑←"), 2);
-    EXPECT_EQ(unicode_str_length(u8"↖↑←"), 3);
+    EXPECT_EQ(unicode_str_length(u8"↺"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"↖"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"↑"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"↖↑"), 2u);
+    EXPECT_EQ(unicode_str_length(u8"←"), 1u);
+    EXPECT_EQ(unicode_str_length(u8"↖←"), 2u);
+    EXPECT_EQ(unicode_str_length(u8"↑←"), 2u);
+    EXPECT_EQ(unicode_str_length(u8"↖↑←"), 3u);
 }
 
 TEST_F(matrix_formatter_test, score_matrix_ascii)

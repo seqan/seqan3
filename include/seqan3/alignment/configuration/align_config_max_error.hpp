@@ -73,7 +73,7 @@ struct align_config_max_error_adaptor : public configuration_fn_base<align_confi
     //!\cond
         requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
     //!\endcond
-    constexpr auto invoke(configuration_t && cfg, int32_t const err) const
+    constexpr auto invoke(configuration_t && cfg, uint32_t const err) const
     {
         static_assert(is_valid_alignment_configuration_v<align_cfg::id::max_error, remove_cvref_t<configuration_t>>,
                       SEQAN3_INVALID_CONFIG(align_cfg::id::max_error));
