@@ -170,9 +170,9 @@ find_path (SEQAN3_CLONE_DIR NAMES build_system/seqan3-config.cmake HINTS "${CMAK
 if (SEQAN3_CLONE_DIR)
     message (STATUS "  Detected as running from a repository checkout…")
 
-    if (IS_DIRECTORY "${SEQAN3_CLONE_DIR}/include")
+    if (NOT SEQAN3_BASEDIR AND IS_DIRECTORY "${SEQAN3_CLONE_DIR}/include")
         message (STATUS "  …adding SeqAn3 include:     ${SEQAN3_CLONE_DIR}/include")
-        set (SEQAN3_INCLUDE_DIRS "${SEQAN3_CLONE_DIR}/include" ${SEQAN3_INCLUDE_DIRS})
+        set (SEQAN3_BASEDIR "${SEQAN3_CLONE_DIR}/include")
     endif ()
 
     if (EXISTS "${SEQAN3_CLONE_DIR}/submodules")
@@ -187,13 +187,30 @@ if (SEQAN3_CLONE_DIR)
 endif ()
 
 # ----------------------------------------------------------------------------
+# Find SeqAn3 include path
+# ----------------------------------------------------------------------------
+
+if (NOT SEQAN3_BASEDIR)
+    find_path (SEQAN3_BASEDIR "seqan3/version.hpp" HINTS ${SEQAN3_INCLUDE_DIRS})
+endif ()
+
+mark_as_advanced (SEQAN3_BASEDIR)
+
+# find include directory
+if (SEQAN3_BASEDIR)
+    seqan3_config_print ("SeqAn3 include dir found:   ${SEQAN3_BASEDIR}")
+else ()
+    seqan3_config_error ("SeqAn3 include directory could not be found.")
+endif ()
+
+# ----------------------------------------------------------------------------
 # Options for CheckCXXSourceCompiles
 # ----------------------------------------------------------------------------
 
 # deactivate messages in check_*
 set (CMAKE_REQUIRED_QUIET       1)
 # use global variables in Check* calls
-set (CMAKE_REQUIRED_INCLUDES    ${CMAKE_INCLUDE_PATH} ${SEQAN3_INCLUDE_DIRS})
+set (CMAKE_REQUIRED_INCLUDES    ${CMAKE_INCLUDE_PATH} ${SEQAN3_BASEDIR} ${SEQAN3_INCLUDE_DIRS})
 set (CMAKE_REQUIRED_FLAGS       ${CMAKE_CXX_FLAGS})
 
 # ----------------------------------------------------------------------------
@@ -507,35 +524,10 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Find SeqAn3 include path
-# ----------------------------------------------------------------------------
-
-if (NOT SEQAN3_BASEDIR)
-    find_path (SEQAN3_BASEDIR "seqan3"  PATHS ${SEQAN3_INCLUDE_DIRS})
-endif ()
-
-mark_as_advanced (SEQAN3_BASEDIR)
-
-# find include directory
-if (SEQAN3_BASEDIR)
-    set (SEQAN3_INCLUDE_DIRS ${SEQAN3_BASEDIR} ${SEQAN3_INCLUDE_DIRS})
-    seqan3_config_print ("SeqAn3 include dir found:   ${SEQAN3_BASEDIR}")
-else ()
-    seqan3_config_error ("SeqAn3 include directory could not be found.")
-endif ()
-
-# ----------------------------------------------------------------------------
 # Find SeqAn3 version.hpp and extract version
 # ----------------------------------------------------------------------------
 
-set (_SEQAN3_VERSION_HPP "")
-foreach (_INCLUDE_DIR ${SEQAN3_INCLUDE_DIRS})
-    get_filename_component (_SEQAN3_VERSION_HPP "${_INCLUDE_DIR}/seqan3/version.hpp" ABSOLUTE)
-    if (EXISTS ${_SEQAN3_VERSION_HPP})
-        break ()
-    endif ()
-endforeach ()
-
+set (_SEQAN3_VERSION_HPP "${SEQAN3_BASEDIR}/seqan3/version.hpp")
 set (_SEQAN3_VERSION_IDS MAJOR MINOR PATCH)
 
 # set to 0.0.0 ny default
@@ -586,7 +578,7 @@ try_compile (SEQAN3_PLATFORM_TEST
              ${CMAKE_BINARY_DIR}
              ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
              CMAKE_FLAGS         "-DCOMPILE_DEFINITIONS:STRING=${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}"
-                                 "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIRS}"
+                                 "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_BASEDIR};${SEQAN3_INCLUDE_DIRS}"
              COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS}
              LINK_LIBRARIES      ${SEQAN3_LIBRARIES}
              OUTPUT_VARIABLE     SEQAN3_PLATFORM_TEST_OUTPUT)
@@ -615,13 +607,20 @@ if (NOT ${FIND_NAME}_FIND_QUIETLY)
 endif ()
 
 separate_arguments (SEQAN3_CXX_FLAGS_LIST UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
-string(REGEX REPLACE ";( )*[-/]D" ";" SEQAN3_DEFINITIONS_LIST ";${SEQAN3_DEFINITIONS};")
 
-add_library (seqan3::seqan3 INTERFACE IMPORTED)
-set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS_LIST})
-set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_COMPILE_OPTIONS ${SEQAN3_CXX_FLAGS_LIST})
-set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_LINK_LIBRARIES "${SEQAN3_LIBRARIES}")
-set_property (TARGET seqan3::seqan3 APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_INCLUDE_DIRS}")
+add_library (seqan3_seqan3 INTERFACE)
+target_compile_definitions (seqan3_seqan3 INTERFACE ${SEQAN3_DEFINITIONS})
+target_compile_options (seqan3_seqan3 INTERFACE ${SEQAN3_CXX_FLAGS_LIST})
+target_link_libraries (seqan3_seqan3 INTERFACE "${SEQAN3_LIBRARIES}")
+# include seqan3/include/ as -I, because seqan3 should never produce warnings.
+target_include_directories (seqan3_seqan3 INTERFACE "${SEQAN3_BASEDIR}")
+# include everything except seqan3/include/ as -isystem, i.e.
+# a system header which suppresses warnings of external libraries.
+target_include_directories (seqan3_seqan3 SYSTEM INTERFACE "${SEQAN3_INCLUDE_DIRS}")
+add_library (seqan3::seqan3 ALIAS seqan3_seqan3)
+
+# propagate SEQAN3_BASEDIR into SEQAN3_INCLUDE_DIRS
+set (SEQAN3_INCLUDE_DIRS ${SEQAN3_BASEDIR} ${SEQAN3_INCLUDE_DIRS})
 
 if (SEQAN3_FIND_DEBUG)
   message ("Result for ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
