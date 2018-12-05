@@ -26,7 +26,7 @@ enable_testing()
 
 set (SEQAN3_DOXYGEN_TEST_SCRIPT "
     output=\$(${DOXYGEN_EXECUTABLE} 2>&1 > /dev/null);
-    echo \$output;
+    echo \"\$output\";
     test -z \"\$output\"")
 
 if (SEQAN3_USER_DOC)
