@@ -98,7 +98,7 @@ namespace seqan3
  * \attention This is a concept requirement, not an actual function (however types
  *            modelling this concept will provide an implementation).
  */
-/*!\fn      inline seq_type::iterator insert_gap(seq_type & seq, typename seq_type::const_iterator pos_it, typename seq_type::size_type count)
+/*!\fn      inline seq_type::iterator insert_gap(seq_type & seq, typename seq_type::const_iterator pos_it, typename seq_type::size_type size)
  * \brief   Insert multiple seqan3::gap into an aligned sequence.
  * \relates seqan3::aligned_sequence_concept
  *
@@ -106,7 +106,7 @@ namespace seqan3
  *                         seqan3::aligned_sequence_concept.
  * \param[in,out] seq      The aligned sequence to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert a gaps.
- * \param[in]     count    The number of gaps to insert.
+ * \param[in]     size     The number of gaps to insert.
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types
@@ -200,13 +200,13 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
  *                         seqan3::gap.
  * \param[in,out] seq      The container to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert gaps.
- * \param[in]     count    The number of gaps to insert.
+ * \param[in]     size     The number of gaps to insert.
  *
  * \relates seqan3::aligned_sequence_concept
  *
  * \details
  *
- * This function delegates to the member function `insert(iterator, count, value)`
+ * This function delegates to the member function `insert(iterator, size, value)`
  * of the container.
  */
 template <sequence_container_concept seq_type>
@@ -215,9 +215,9 @@ template <sequence_container_concept seq_type>
 //!\endcond
 inline typename seq_type::iterator insert_gap(seq_type & seq,
                                               typename seq_type::const_iterator pos_it,
-                                              typename seq_type::size_type count)
+                                              typename seq_type::size_type size)
 {
-    return seq.insert(pos_it, count, value_type_t<seq_type>{gap::GAP});
+    return seq.insert(pos_it, size, value_type_t<seq_type>{gap::GAP});
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for sequence containers.
@@ -290,6 +290,7 @@ namespace detail
 
 /*!
  * \brief               Create the formatted alignment output and add it to the provided debug_stream.
+ * \ingroup             aligned_sequence
  * \tparam alignment_t  The type of the alignment, must satisfy tuple_like_concept.
  * \tparam idx          An index sequence.
  * \param[in] stream    The output stream that receives the formatted alignment.
@@ -298,55 +299,50 @@ namespace detail
 template<tuple_like_concept alignment_t, size_t ...idx>
 void stream_alignment(debug_stream_type & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
-    size_t const alignment_length = std::get<0>(align).size();
+    size_t const alignment_size = std::get<0>(align).size();
     char const * indent = "        ";
 
     // split alignment into blocks of length 50 and loop over parts
-    for (size_t used_length = 0; used_length < alignment_length; used_length += 50)
+    for (size_t begin_pos = 0; begin_pos < alignment_size; begin_pos += 50)
     {
-        // write header
-        if (used_length != 0)
-            stream << std::endl;
+        size_t const end_pos = std::min(begin_pos + 50, alignment_size);
 
-        stream << std::setw(7) << used_length << ' ';
-        for (size_t col = 1; col <= 50 && col + used_length <= alignment_length; ++col)
+        // write header line
+        if (begin_pos != 0)
+            stream << '\n';
+
+        stream << std::setw(7) << begin_pos << ' ';
+        for (size_t rel_pos = 1; rel_pos <= (end_pos - 1) % 50 + 1; ++rel_pos)
         {
-            if (col % 10 == 0)
+            if (rel_pos % 10 == 0)
                 stream << ':';
-            else if (col % 5 == 0)
+            else if (rel_pos % 5 == 0)
                 stream << '.';
             else
                 stream << ' ';
         }
 
-        // write sequences
-        stream << std::endl << indent;
-        size_t const col_end = std::min(used_length + 50, alignment_length);
-        ranges::for_each(std::get<0>(align) | ranges::view::slice(used_length, col_end) | view::to_char,
+        // write first sequence
+        stream << '\n' << indent;
+        ranges::for_each(std::get<0>(align) | ranges::view::slice(begin_pos, end_pos) | view::to_char,
                          [&stream] (char ch) { stream << ch; });
 
-        auto stream_f = [&] (auto const & previous_sequence, auto const & aligned_sequence)
+        auto stream_f = [&] (auto const & previous_seq, auto const & aligned_seq)
         {
-            stream << std::endl << indent;
-            auto seq1 = previous_sequence.begin() + used_length;
-            auto seq2 = aligned_sequence.begin() + used_length;
-            for (auto it1 = seq1, it2 = seq2;
-                 it1 < previous_sequence.end() && it1 < seq1 + 50 &&
-                 it2 < aligned_sequence.end()  && it2 < seq2 + 50;
-                 ++it1, ++it2)
-            {
-                stream << (seqan3::to_char(*it1) == seqan3::to_char(*it2) ? '|' : ' ');
-            }
-            stream << std::endl << indent;
-            ranges::for_each(aligned_sequence | ranges::view::slice(used_length, col_end) | view::to_char,
+            // write alignment bars
+            stream << '\n' << indent;
+            ranges::for_each(ranges::zip_view(previous_seq, aligned_seq) | ranges::view::slice(begin_pos, end_pos),
+                             [&stream] (auto ch) { stream << (std::get<0>(ch) == std::get<1>(ch) ? '|' : ' '); });
+
+            // write next sequence
+            stream << '\n' << indent;
+            ranges::for_each(aligned_seq | ranges::view::slice(begin_pos, end_pos) | view::to_char,
                              [&stream] (char ch) { stream << ch; });
         };
         (stream_f(std::get<idx>(align), std::get<idx + 1>(align)), ...);
-        stream << std::endl;
+        stream << '\n';
     }
 }
-
-} // namespace detail
 
 /*!
  * \brief True, if each type satisfies aligned_sequence_concept; false otherwise.
@@ -360,7 +356,9 @@ inline bool constexpr all_satisfy_aligned_seq = false;
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
-inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_sequence_concept<elems> && ... && true);
+inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_sequence_concept<elems> && ...);
+
+} // namespace detail
 
 /*!
  * \brief Streaming operator for alignments, which are represented as tuples of aligned sequences.
@@ -371,7 +369,7 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_se
  */
 template <tuple_like_concept tuple_t>
 //!\cond
-    requires all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
+    requires detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<tuple_t>>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & stream, tuple_t const & alignment)
 {

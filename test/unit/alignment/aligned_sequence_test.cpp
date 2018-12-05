@@ -208,7 +208,7 @@ TYPED_TEST(aligned_sequence_test, cigar_string)
     }
 }
 
-TEST(aligned_sequence_stream, tuple)
+TEST(aligned_sequence_stream, multi_without_gaps)
 {
     std::string const expected
     {
@@ -250,7 +250,7 @@ TEST(aligned_sequence_stream, tuple)
     EXPECT_EQ(expected, oss.str());
 }
 
-TEST(aligned_sequence_stream, pair_of_different_types)
+TEST(aligned_sequence_stream, pair_with_gaps)
 {
     std::string const expected
     {
