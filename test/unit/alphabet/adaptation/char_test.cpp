@@ -72,15 +72,9 @@ TYPED_TEST(char_adaptation, to_rank)
     TypeParam l{'A'};
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(l)), underlying_rank_t<TypeParam>>));
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(TypeParam{'A'})), underlying_rank_t<TypeParam>>));
-    if constexpr (std::is_unsigned_v<TypeParam>)
-    {
-        unsigned char cmp{'A'};
-        EXPECT_EQ(to_rank(TypeParam{65}), cmp);
-    }
-    else
-    {
-        EXPECT_EQ(to_rank(TypeParam{65}), 'A');
-    }
+
+    unsigned char cmp{'A'};
+    EXPECT_EQ(to_rank(TypeParam{65}), cmp);
 }
 
 TYPED_TEST(char_adaptation, assign_rank)

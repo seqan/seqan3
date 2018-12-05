@@ -206,7 +206,7 @@ TYPED_TEST_P(alphabet, debug_streaming)
     debug_stream << TypeParam{};
 
     o.flush();
-    EXPECT_EQ(o.str().size(), 1);
+    EXPECT_EQ(o.str().size(), 1u);
 }
 
 TYPED_TEST_P(alphabet, hash)
@@ -239,7 +239,7 @@ TYPED_TEST_P(alphabet, hash)
             text.push_back(assign_rank(TypeParam{}, 0));
         }
         std::hash<decltype(text)> h{};
-        ASSERT_EQ(h(text), 0);
+        ASSERT_EQ(h(text), 0u);
     }
 }
 
