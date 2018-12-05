@@ -106,7 +106,7 @@ namespace seqan3
  *                         seqan3::aligned_sequence_concept.
  * \param[in,out] seq      The aligned sequence to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert a gaps.
- * \param[in]     size     The number of gaps to insert.
+ * \param[in]     size     The number of gap symbols to insert (will result in a gap of length size).
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types
@@ -200,7 +200,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
  *                         seqan3::gap.
  * \param[in,out] seq      The container to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert gaps.
- * \param[in]     size     The number of gaps to insert.
+ * \param[in]     size     The number of gap symbols to insert (will result in a gap of length size).
  *
  * \relates seqan3::aligned_sequence_concept
  *
@@ -288,8 +288,7 @@ inline typename seq_type::iterator erase_gap(seq_type & seq,
 namespace detail
 {
 
-/*!
- * \brief               Create the formatted alignment output and add it to the provided debug_stream.
+/*!\brief               Create the formatted alignment output and add it to the provided debug_stream.
  * \ingroup             aligned_sequence
  * \tparam alignment_t  The type of the alignment, must satisfy tuple_like_concept.
  * \tparam idx          An index sequence.
@@ -344,15 +343,13 @@ void stream_alignment(debug_stream_type & stream, alignment_t const & align, std
     }
 }
 
-/*!
- * \brief True, if each type satisfies aligned_sequence_concept; false otherwise.
+/*!\brief True, if each type satisfies aligned_sequence_concept; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
 inline bool constexpr all_satisfy_aligned_seq = false;
 
-/*!
- * \brief True, if each type satisfies aligned_sequence_concept; false otherwise.
+/*!\brief True, if each type satisfies aligned_sequence_concept; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
@@ -360,8 +357,7 @@ inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_se
 
 } // namespace detail
 
-/*!
- * \brief Streaming operator for alignments, which are represented as tuples of aligned sequences.
+/*!\brief Streaming operator for alignments, which are represented as tuples of aligned sequences.
  * \tparam tuple_t  The alignment type, must satisfy tuple_like_concept and its size must be at least 2.
  * \param stream    The target stream for the formatted output.
  * \param alignment The alignment that shall be formatted. All sequences must be equally long.
