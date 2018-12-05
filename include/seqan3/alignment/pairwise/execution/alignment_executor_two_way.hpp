@@ -208,11 +208,11 @@ private:
     //!\brief The execution policy.
     execution_handler_t exec_handler{};
 
+    //!\brief The underlying resource containing the alignment instances.
+    align_instance_rng_t resource;  // view or lvalue ref
     //!\brief Selects the correct alignment to execute.
     alignment_selector_t selector;
 
-    //!\brief The underlying resource containing the alignment instances.
-    align_instance_rng_t resource;  // view or lvalue ref
     //!\brief Points to the current element in the resource.
     resource_iterator resource_iter{};
     //!\brief End of the resource.

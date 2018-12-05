@@ -65,14 +65,11 @@ namespace seqan3::detail
 inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
                                                        alignment_coordinate const end_coordinate)
 {
-    using signed_size_t = std::make_signed_t<size_t>;
-
-    constexpr auto N = trace_directions::none;
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    signed_size_t row = end_coordinate.seq2_pos + 1;
-    signed_size_t col = end_coordinate.seq1_pos + 1;
+    size_t row = end_coordinate.seq2_pos + 1;
+    size_t col = end_coordinate.seq1_pos + 1;
 
     assert(row < matrix.rows());
     assert(col < matrix.cols());
@@ -82,16 +79,16 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
         trace_directions dir = matrix.at(row, col);
         if ((dir & L) == L)
         {
-            col = std::max<signed_size_t>(col - 1, 0);
+            col = std::max<size_t>(col, 1) - 1;
         }
         else if ((dir & U) == U)
         {
-            row = std::max<signed_size_t>(row - 1, 0);
+            row = std::max<size_t>(row, 1) - 1;
         }
         else if ((dir & D) == D)
         {
-            row = std::max<signed_size_t>(row - 1, 0);
-            col = std::max<signed_size_t>(col - 1, 0);
+            row = std::max<size_t>(row, 1) - 1;
+            col = std::max<size_t>(col, 1) - 1;
         }
         else
         {
@@ -103,7 +100,7 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
         }
     }
 
-    return {std::max<signed_size_t>(col - 1, 0), std::max<signed_size_t>(row - 1, 0)};
+    return {std::max<size_t>(col, 1) - 1, std::max<size_t>(row, 1) - 1};
 }
 
 /*!\brief Compute the trace from a trace matrix.
@@ -137,14 +134,12 @@ alignment_trace(database_t && database,
                 trace_matrix_t && matrix,
                 alignment_coordinate const end_coordinate)
 {
-    using signed_size_t = std::make_signed_t<size_t>;
-
     constexpr auto N = trace_directions::none;
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    signed_size_t col = end_coordinate.seq1_pos + 1;
-    signed_size_t row = end_coordinate.seq2_pos + 1;
+    size_t col = end_coordinate.seq1_pos + 1;
+    size_t row = end_coordinate.seq2_pos + 1;
 
     assert(row <= query.size());
     assert(col <= database.size());
@@ -162,20 +157,20 @@ alignment_trace(database_t && database,
         trace_directions dir = matrix.at(row, col);
         if ((dir & L) == L)
         {
-            col = std::max<signed_size_t>(col - 1, 0);
+            col = std::max<size_t>(col, 1) - 1;
             gapped_database.push_front(database[col]);
             gapped_query.push_front(gap::GAP);
         }
         else if ((dir & U) == U)
         {
-            row = std::max<signed_size_t>(row - 1, 0);
+            row = std::max<size_t>(row, 1) - 1;
             gapped_database.push_front(gap::GAP);
             gapped_query.push_front(query[row]);
         }
         else if ((dir & D) == D)
         {
-            row = std::max<signed_size_t>(row - 1, 0);
-            col = std::max<signed_size_t>(col - 1, 0);
+            row = std::max<size_t>(row, 1) - 1;
+            col = std::max<size_t>(col, 1) - 1;
             gapped_database.push_front(database[col]);
             gapped_query.push_front(query[row]);
         }

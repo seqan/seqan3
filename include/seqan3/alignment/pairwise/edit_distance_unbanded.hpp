@@ -188,7 +188,7 @@ private:
      * \{
      */
     //!\brief Which score value is considered as a hit?
-    size_t max_errors{255};
+    score_type max_errors{255};
     //!\brief The block containing the last active cell.
     size_t last_block{0};
     //!\brief A mask with a bit set on the position of the last row.
@@ -240,8 +240,8 @@ public:
         database{std::forward<database_t>(_database)},
         query{std::forward<query_t>(_query)},
         config{std::forward<align_config_t>(_config)},
-        _score{query.size()},
-        _best_score{query.size()},
+        _score{static_cast<score_type>(query.size())},
+        _best_score{static_cast<score_type>(query.size())},
         _best_score_col{ranges::begin(database)},
         database_it{ranges::begin(database)},
         database_it_end{ranges::end(database)}
@@ -249,7 +249,10 @@ public:
         static constexpr size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
 
         if constexpr(use_max_errors)
+        {
             max_errors = get<align_cfg::id::max_error>(config);
+            assert(max_errors >= score_type{0});
+        }
 
         size_t block_count = (query.size() - 1 + word_size) / word_size;
         score_mask = (word_type)1 << ((query.size() - 1 + word_size) % word_size);
@@ -267,7 +270,7 @@ public:
             _best_score = _score;
         }
 
-        word_type vp0{~static_cast<word_type>(0)};
+        word_type vp0{static_cast<word_type>(~0)};
         word_type vn0{0};
 
         vp.resize(block_count, vp0);
