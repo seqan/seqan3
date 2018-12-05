@@ -8,8 +8,8 @@ using namespace seqan3;
 int main()
 {
 //! [example]
-dna4_vector s{"ACTTTGATAN"_dna4};
-auto v1 = view::subrange<decltype(begin(s)), decltype(end(s))>{begin(s) + 2, end(s)} | view::to_char; // == "TTTGATAA"
+dna4_vector s{"ACTTTGATAA"_dna4};
+auto v1 = view::subrange<decltype(begin(s) + 2), decltype(end(s))>{begin(s) + 2, end(s)} | view::to_char; // == "TTTGATAA"
 //! [example]
 
 debug_stream << v1 << '\n';
