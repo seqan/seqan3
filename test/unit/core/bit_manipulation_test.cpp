@@ -71,10 +71,10 @@ TEST(bit_manipulation, next_power_of_two)
     constexpr size_t next_power_of_two1 = next_power_of_two(1);
     constexpr size_t next_power_of_two2 = next_power_of_two(2);
     constexpr size_t next_power_of_two3 = next_power_of_two(3);
-    EXPECT_EQ(next_power_of_two0, 1);
-    EXPECT_EQ(next_power_of_two1, 1);
-    EXPECT_EQ(next_power_of_two2, 2);
-    EXPECT_EQ(next_power_of_two3, 4);
+    EXPECT_EQ(next_power_of_two0, 1u);
+    EXPECT_EQ(next_power_of_two1, 1u);
+    EXPECT_EQ(next_power_of_two2, 2u);
+    EXPECT_EQ(next_power_of_two3, 4u);
 
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {

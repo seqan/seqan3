@@ -58,8 +58,8 @@ TEST(configuration, concept_check)
 
 TEST(configuration, tuple_size)
 {
-    EXPECT_EQ((std::tuple_size_v<detail::configuration<bax, bar>>), 2);
-    EXPECT_EQ((std::tuple_size<detail::configuration<bax, bar>>::value), 2);
+    EXPECT_EQ((std::tuple_size_v<detail::configuration<bax, bar>>), 2u);
+    EXPECT_EQ((std::tuple_size<detail::configuration<bax, bar>>::value), 2u);
 }
 
 TEST(configuration, tuple_element)
@@ -122,7 +122,7 @@ TEST(configuration, construction_from_tuple)
     detail::configuration cfg{std::tuple<bar, bax>{bar{}, bax{}}};
 
     using t = typename decltype(cfg)::base_type;
-    EXPECT_EQ(std::tuple_size_v<decltype(static_cast<t>(cfg))>, 2);
+    EXPECT_EQ(std::tuple_size_v<decltype(static_cast<t>(cfg))>, 2u);
 }
 
 template <size_t I>
@@ -164,9 +164,9 @@ TEST(configuration, replace_with)
 TEST(configuration, size)
 {
     detail::configuration<foo<0>> cfg{};
-    EXPECT_EQ(cfg.size(), 1);
-    EXPECT_EQ((detail::configuration<foo<1>, foo<0>>{}.size()), 2);
-    EXPECT_EQ(detail::configuration<>{}.size(), 0);
+    EXPECT_EQ(cfg.size(), 1u);
+    EXPECT_EQ((detail::configuration<foo<1>, foo<0>>{}.size()), 2u);
+    EXPECT_EQ(detail::configuration<>{}.size(), 0u);
 }
 
 struct bar_fn_impl : public detail::configuration_fn_base<bar_fn_impl>
