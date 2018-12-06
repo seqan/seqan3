@@ -76,7 +76,9 @@ enum struct id : uint8_t
     //!\brief Identifier for output configuration.
     output,
     //!\brief Identifier for max_error configuration.
-    max_error
+    max_error,
+    //!\brief Identifier for band configuration.
+    band
     //!\cond DEV
     //!\brief Must always be the last item; will be used to determine the number of ids.
     ,SIZE
@@ -175,13 +177,14 @@ inline constexpr align_cfg::id align_config_type_to_id_v = align_config_type_to_
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_cfg::id::SIZE)>,
                             static_cast<uint8_t>(align_cfg::id::SIZE)> align_config_validation_matrix =
 {
-    //  gap    s_ends score  global output  m_err
-    { { false, true,  true,  true,  true , true },  // gap
-      { true,  false, true,  true,  true , true },  // sequence_ends
-      { true,  true,  false, true,  true , true },  // score
-      { true,  true,  true,  false, true , true },  // global
-      { true,  true,  true,  true,  false, true },  // output
-      { true,  true,  true,  true,  true,  false} } // max_error
+    //  gap    s_ends score  global output m_err  band
+    { { false, true,  true,  true,  true,  true,  true  },  // gap
+      { true,  false, true,  true,  true,  true,  true  },  // sequence_ends
+      { true,  true,  false, true,  true,  true,  true  },  // score
+      { true,  true,  true,  false, true,  true,  true  },  // global
+      { true,  true,  true,  true,  false, true,  true  },  // output
+      { true,  true,  true,  true,  true,  false, true  },  // max_error
+      { true,  true,  true,  true,  true,  true,  false } } // band
 };
 
 /*!\brief Determines the first type in reverse order of the given detail::configuration that is not combinable with
