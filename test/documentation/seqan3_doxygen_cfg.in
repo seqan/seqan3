@@ -32,6 +32,9 @@ PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
                          "${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG}"
 
+EXCLUDE_SYMBOLS        = seqan3::contrib
+
+
 ## detect headers without extensions (in std module)
 EXTENSION_MAPPING      = .no_extension=C++
 FILE_PATTERNS          = *
@@ -39,4 +42,4 @@ FILE_PATTERNS          = *
 ## Developer VS user mode
 EXTRACT_PRIVATE        = ${SEQAN3_DOXYGEN_EXTRACT_PRIVATE}
 ENABLED_SECTIONS       = ${SEQAN3_DOXYGEN_ENABLED_SECTIONS}
-EXCLUDE_SYMBOLS        = ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
+EXCLUDE_SYMBOLS        += ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
