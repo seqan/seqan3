@@ -35,9 +35,14 @@
 #include <gtest/gtest.h>
 #include <fstream>
 
+#include <range/v3/view/remove_if.hpp>
+#include <range/v3/algorithm/equal.hpp>
+
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/io/filesystem.hpp>
+#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/range/view/persist.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
@@ -168,6 +173,28 @@ TEST(validator_test, integral_range_validator_success)
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
     EXPECT_EQ(option_vector[0], -10);
     EXPECT_EQ(option_vector[1], 1);
+
+    // get help page message
+    option_vector.clear();
+    const char * argv7[] = {"./argument_parser_test", "-h"};
+    argument_parser parser7("test_parser", 2, argv7);
+    parser7.add_positional_option(option_vector, "desc", integral_range_validator<std::vector<int>>(-20,20));
+
+
+    testing::internal::CaptureStdout();
+    EXPECT_THROW(parser7.parse(), parser_interruption);
+    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string expected = "test_parser"
+                           "==========="
+                           "POSITIONAL ARGUMENTS"
+                           "    ARGUMENT-1 List of INT (32 bit)'s"
+                           "          desc Value must be in range [-20,20]."
+                           "VERSION"
+                           "    Last update: "
+                           "    test_parser version: "
+                           "    SeqAn version: 3.0.0";
+    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+                               expected | ranges::view::remove_if(is_space)));
 }
 
 TEST(validator_test, integral_range_validator_error)
@@ -284,6 +311,28 @@ TEST(validator_test, value_list_validator_success)
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
     EXPECT_EQ(option_vector_int[0], -10);
     EXPECT_EQ(option_vector_int[1], 48);
+
+    // get help page message
+    option_vector.clear();
+    const char * argv7[] = {"./argument_parser_test", "-h"};
+    argument_parser parser7("test_parser", 2, argv7);
+    parser7.add_option(option_vector_int, 'i', "int-option", "desc",
+                       option_spec::DEFAULT, value_list_validator<std::vector<int>>({-10,48,50}));
+
+    testing::internal::CaptureStdout();
+    EXPECT_THROW(parser7.parse(), parser_interruption);
+    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string expected = "test_parser"
+                           "==========="
+                           "OPTIONS"
+                           "    -i, --int-option List of INT (32 bit)'s"
+                           "          desc Value must be one of [-10,48,50]."
+                           "VERSION"
+                           "    Last update: "
+                           "    test_parser version: "
+                           "    SeqAn version: 3.0.0";
+    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+                               expected | ranges::view::remove_if(is_space)));
 }
 
 TEST(validator_test, value_list_validator_error)
@@ -380,6 +429,27 @@ TEST(validator_test, regex_validator_success)
     EXPECT_EQ(option_vector[0], "rita@rambo.com");
     EXPECT_EQ(option_vector[1], "tina@rambo.com");
 
+    // get help page message
+    option_vector.clear();
+    const char * argv7[] = {"./argument_parser_test", "-h"};
+    argument_parser parser7("test_parser", 2, argv7);
+    parser7.add_option(option_vector, 's', "string-option", "desc",
+                       option_spec::DEFAULT, email_vector_validator);
+
+    testing::internal::CaptureStdout();
+    EXPECT_THROW(parser7.parse(), parser_interruption);
+    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string expected = "test_parser"
+                           "==========="
+                           "OPTIONS"
+                           "    -s, --string-option List of STRING's"
+                           "          desc Value must match the pattern '[a-zA-Z]+@[a-zA-Z]+\\.com'."
+                           "VERSION"
+                           "    Last update: "
+                           "    test_parser version: "
+                           "    SeqAn version: 3.0.0";
+    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+                               expected | ranges::view::remove_if(is_space)));
 }
 
 TEST(validator_test, regex_validator_error)
