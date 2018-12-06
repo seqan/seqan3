@@ -66,6 +66,15 @@ TEST(template_inspect, is_type_specialisation_of_v)
     EXPECT_FALSE((detail::is_type_specialisation_of_v<int, type_list>));
 }
 
+template <std::Integral t>
+struct constraint_bar
+{};
+
+TEST(template_inspect, is_type_specialisation_of_with_ill_formed_type)
+{
+    EXPECT_FALSE((detail::is_type_specialisation_of<std::tuple<float>, constraint_bar>::value));
+}
+
 template <int i, char c>
 struct t1 {};
 
@@ -100,8 +109,10 @@ struct bar2
 
 TEST(template_inspect, transfer_template_vargs_onto_enum)
 {
-    using ta = detail::transfer_template_vargs_onto<bar<e2::bar>, foo>::type;
-    EXPECT_TRUE((std::is_same_v<ta, void>));
+    EXPECT_TRUE((std::is_same_v<detail::transformation_trait_or_t<
+                                    detail::transfer_template_vargs_onto<bar<e2::bar>, foo>,
+                                    void>,
+                                void>));
 
     using ta2 = detail::transfer_template_vargs_onto<bar<e2::bar>, bar>::type;
     EXPECT_TRUE((std::is_same_v<ta2, bar<e2::bar>>));
@@ -137,4 +148,18 @@ TEST(template_inspect, is_value_specialisation_of_v)
 
     EXPECT_TRUE((detail::is_value_specialisation_of_v<tl, t1>));
     EXPECT_FALSE((detail::is_value_specialisation_of_v<int, t1>));
+}
+
+template <int varg>
+    requires  0 <= varg && varg <= 2
+struct constraint_vbar
+{};
+
+template <auto ...vargs>
+struct vargs_foo
+{};
+
+TEST(template_inspect, is_type_specialisation_of_with_ill_formed_non_type_template)
+{
+    EXPECT_FALSE((detail::is_value_specialisation_of_v<vargs_foo<5>, constraint_vbar>));
 }
