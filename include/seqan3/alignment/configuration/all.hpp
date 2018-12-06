@@ -49,8 +49,8 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
 #include <seqan3/alignment/configuration/align_config_max_error.hpp>
+#include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
