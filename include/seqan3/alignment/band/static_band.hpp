@@ -47,7 +47,8 @@ namespace seqan3
 {
 
 /*!\brief Type for a lower boundary.
- * \ingroup alignment
+ * \todo Put into core module. This might be useful in other places as well.
+ * \ingroup alignment_band
  * \tparam value_t The underlying type of the lower bound; must model seqan3::arithmetic_concept.
  */
 template <seqan3::arithmetic_concept value_t>
@@ -58,7 +59,8 @@ struct lower_bound : detail::strong_type<value_t, lower_bound<value_t>>
 };
 
 /*!\brief Type for an upper boundary.
- * \ingroup alignment
+ * \todo Put into core module. This might be useful in other places as well.
+ * \ingroup alignment_band
  * \tparam value_t The underlying type of the upper bound; must model seqan3::arithmetic_concept.
  */
 template <seqan3::arithmetic_concept value_t>
@@ -88,27 +90,25 @@ upper_bound(value_t) -> upper_bound<value_t>;
 //!\}
 
 /*!\brief Data structure for a static band.
- * \ingroup alignment
- *
- * \tparam value_t The value type for the boundaries; must model std::integral.
+ * \ingroup alignment_band
  */
-template <std::Integral value_t>
-struct band_static
+class static_band
 {
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    band_static()                                = default;
-    band_static(band_static const &)             = default;
-    band_static(band_static &&)                  = default;
-    band_static & operator=(band_static const &) = default;
-    band_static & operator=(band_static &&)      = default;
-    ~band_static()                               = default;
+    constexpr static_band()                                noexcept = default;
+    constexpr static_band(static_band const &)             noexcept = default;
+    constexpr static_band(static_band &&)                  noexcept = default;
+    constexpr static_band & operator=(static_band const &) noexcept = default;
+    constexpr static_band & operator=(static_band &&)      noexcept = default;
+    ~static_band()                                         noexcept = default;
 
     /*!\brief Construction from seqan3::lower_bound and seqan3::upper_bound.
      * \tparam input_value_t The input type of the lower and upper band boundaries.
-     * \param lower The lower boundary of the band; must model std::integral.
-     * \param upper The upper boundary of the band; must model std::integral.
+     * \param lower The lower boundary of the band; must model std::Integral.
+     * \param upper The upper boundary of the band; must model std::Integral.
      *
      * \throws std::invalid_argument if upper < lower.
      *
@@ -117,35 +117,20 @@ struct band_static
      * For a symmetric band, choose lower = -upper. The upper boundary must not be smaller than the lower boundary.
      */
     template <std::Integral input_value_t>
-    constexpr band_static(lower_bound<input_value_t> const lower, upper_bound<input_value_t> const upper)
+    constexpr static_band(lower_bound<input_value_t> const lower, upper_bound<input_value_t> const upper)
         : lower_bound{lower.get()}, upper_bound{upper.get()}
     {
         if (lower.get() > upper.get())
         {
-            throw std::invalid_argument("An error occurred in the static band configuration: "
-                                        "The upper boundary must not be smaller than the lower boundary.");
+            throw std::invalid_argument("The upper boundary must not be smaller than the lower boundary.");
         }
     }
     //!}
 
-    //!\privatesection
     //!\brief The data member storing the lower boundary of the band.
-    value_t lower_bound{std::numeric_limits<value_t>::max()};
+    int64_t lower_bound{std::numeric_limits<int64_t>::lowest()};
     //!\brief The data member storing the upper boundary of the band.
-    value_t upper_bound{std::numeric_limits<value_t>::max()};
+    int64_t upper_bound{std::numeric_limits<int64_t>::max()};
 };
-
-/*!\name Deduction guides
- * \brief Deduces the template parameter from the argument.
- * \relates seqan3::band_static
- * \{
- */
-/*!
- * \brief Deduces the band type.
- * \tparam value_t The underlying type of the boundaries; must model std::integral.
- */
-template <std::Integral value_t>
-band_static(lower_bound<value_t>, upper_bound<value_t>) -> band_static<value_t>;
-//!\}
 
 } // namespace seqan3
