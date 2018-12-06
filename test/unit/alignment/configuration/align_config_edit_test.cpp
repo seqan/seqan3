@@ -40,14 +40,15 @@ using namespace seqan3;
 
 TEST(align_cfg_edit, is_global)
 {
-    EXPECT_TRUE((detail::has_align_cfg_v<align_cfg::id::global, decltype(align_cfg::edit)>));
+    EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(align_cfg::edit).value)>,
+                              global_alignment_type>),
+               true);
 }
 
 TEST(align_cfg_edit, is_hamming)
 {
-    EXPECT_TRUE((detail::has_align_cfg_v<align_cfg::id::score, decltype(align_cfg::edit)>));
+    auto scheme = get<align_cfg::scoring>(align_cfg::edit).value;
 
-    auto scheme = get<align_cfg::id::score>(align_cfg::edit);
     for (unsigned i = 0; i < decltype(scheme)::matrix_size; ++i)
     {
         for (unsigned j = 0; j < decltype(scheme)::matrix_size; ++j)
@@ -62,7 +63,7 @@ TEST(align_cfg_edit, is_hamming)
 
 TEST(align_cfg_edit, is_simple_gap)
 {
-    EXPECT_TRUE((detail::has_align_cfg_v<align_cfg::id::gap, decltype(align_cfg::edit)>));
-    auto scheme = get<align_cfg::id::gap>(align_cfg::edit);
+    auto scheme = get<align_cfg::gap>(align_cfg::edit).value;
     EXPECT_EQ(scheme.get_gap_score(), -1);
+    EXPECT_EQ(scheme.get_gap_open_score(), 0);
 }
