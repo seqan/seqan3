@@ -299,7 +299,6 @@ template<tuple_like_concept alignment_t, size_t ...idx>
 void stream_alignment(debug_stream_type & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
     size_t const alignment_size = std::get<0>(align).size();
-    char const * indent = "        ";
 
     // split alignment into blocks of length 50 and loop over parts
     for (size_t begin_pos = 0; begin_pos < alignment_size; begin_pos += 50)
@@ -322,19 +321,19 @@ void stream_alignment(debug_stream_type & stream, alignment_t const & align, std
         }
 
         // write first sequence
-        stream << '\n' << indent;
+        stream << '\n' << std::setw(8) << "";
         ranges::for_each(std::get<0>(align) | ranges::view::slice(begin_pos, end_pos) | view::to_char,
                          [&stream] (char ch) { stream << ch; });
 
         auto stream_f = [&] (auto const & previous_seq, auto const & aligned_seq)
         {
             // write alignment bars
-            stream << '\n' << indent;
+            stream << '\n' << std::setw(8) << "";
             ranges::for_each(ranges::zip_view(previous_seq, aligned_seq) | ranges::view::slice(begin_pos, end_pos),
-                             [&stream] (auto ch) { stream << (std::get<0>(ch) == std::get<1>(ch) ? '|' : ' '); });
+                             [&stream] (auto && ch) { stream << (std::get<0>(ch) == std::get<1>(ch) ? '|' : ' '); });
 
             // write next sequence
-            stream << '\n' << indent;
+            stream << '\n' << std::setw(8) << "";
             ranges::for_each(aligned_seq | ranges::view::slice(begin_pos, end_pos) | view::to_char,
                              [&stream] (char ch) { stream << ch; });
         };
