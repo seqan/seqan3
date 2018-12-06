@@ -39,73 +39,39 @@
 
 #pragma once
 
-#include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/core/algorithm/all.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/alignment/configuration/detail.hpp>
+#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
-namespace seqan3::detail
+namespace seqan3::align_cfg
 {
 /*!\brief A configuration element for maximal errors.
  * \ingroup configuration
  */
-struct align_config_max_error
+class max_error : public pipeable_config_element
 {
+public:
+    //!\privatesection
+    //!\brief An internal id used to check for a valid alignment configuration inherited from the alignment policy.
+    static constexpr detail::align_config_id id{detail::align_config_id::max_error};
+
+    /*!\name Constructor, destructor and assignment
+     * \brief Defaulted all standard constructor.
+     * \{
+     */
+    constexpr max_error()                              noexcept = default;
+    constexpr max_error(max_error const &)             noexcept = default;
+    constexpr max_error(max_error &&)                  noexcept = default;
+    constexpr max_error & operator=(max_error const &) noexcept = default;
+    constexpr max_error & operator=(max_error &&)      noexcept = default;
+    ~max_error()                                       noexcept = default;
+
+    //!\brief Constructs with the maximal error allowed.
+    constexpr max_error(uint32_t const error) noexcept : value{error}
+    {}
+    //!}
+
     //!\brief The number of maximal errors allowed.
     uint32_t value{};
 };
 
-/*!\brief The maximal errors adaptor enabling pipe notation.
- * \ingroup configuration
- */
-struct align_config_max_error_adaptor : public configuration_fn_base<align_config_max_error_adaptor>
-{
-
-    /*!\brief Adds to the configuration a maximal errors configuration element.
-     * \tparam configuration_t The type of the underlying configuration scheme.
-     *                         Is required to fulfill the seqan3::detail::is_algorithm_configuration requirement.
-     *
-     * \param[in] cfg The configuration to be extended.
-     * \param[in] err The maximal errors.
-     * \returns A new configuration containing the maximal errors configuration element.
-     */
-    template <typename configuration_t>
-    //!\cond
-        requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    //!\endcond
-    constexpr auto invoke(configuration_t && cfg, int32_t const err) const
-    {
-        static_assert(is_valid_alignment_configuration_v<align_cfg::id::max_error, remove_cvref_t<configuration_t>>,
-                      SEQAN3_INVALID_CONFIG(align_cfg::id::max_error));
-
-        return std::forward<configuration_t>(cfg).push_front(align_config_max_error{err});
-    }
-};
-
-//!\brief Helper template meta-function associated with seqan3::detail::align_config_max_error.
-//!\ingroup configuration
-template <>
-struct on_align_config<align_cfg::id::max_error>
-{
-    //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
-    using invoke = typename std::is_same<t, align_config_max_error>::type;
-};
-
-//!\brief Mapping from the seqan3::detail::align_config_max_error type to its corresponding seqan3::align_cfg::id.
-//!\ingroup configuration
-template <>
-struct align_config_type_to_id<align_config_max_error>
-{
-    //!\brief The associated seqan3::align_cfg::id.
-    static constexpr align_cfg::id value = align_cfg::id::max_error;
-};
-} // namespace seqan3::detail
-
-namespace seqan3::align_cfg
-{
-/*!\brief A configuration adaptor for maximal errors.
- * \ingroup configuration
- */
-inline constexpr detail::align_config_max_error_adaptor max_error;
 } // namespace seqan3::align_cfg

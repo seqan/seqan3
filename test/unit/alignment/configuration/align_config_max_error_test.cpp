@@ -38,58 +38,41 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_max_error.hpp>
+#include <seqan3/core/algorithm/concept.hpp>
 
 using namespace seqan3;
 
-struct bar
+TEST(align_config_max_error, config_element_concept)
 {
-    int value;
-};
-
-TEST(align_config_max_error, constructor)
-{
-    EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_max_error>));
+    EXPECT_TRUE((detail::config_element_concept<align_cfg::max_error>));
 }
 
-TEST(align_config_max_error, on_align_config)
+TEST(align_config_max_error, construction)
 {
-    using global_config_t = detail::align_config_max_error;
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::max_error>::invoke<global_config_t>,
-                 std::true_type>));
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::max_error>::invoke<bar>,
-                 std::false_type>));
+    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::max_error>));
+    EXPECT_TRUE((std::is_copy_constructible_v<align_cfg::max_error>));
+    EXPECT_TRUE((std::is_move_constructible_v<align_cfg::max_error>));
+    EXPECT_TRUE((std::is_copy_assignable_v<align_cfg::max_error>));
+    EXPECT_TRUE((std::is_move_assignable_v<align_cfg::max_error>));
+    EXPECT_TRUE((std::is_constructible_v<align_cfg::max_error, uint32_t>));
 }
 
-TEST(align_config_max_error, align_config_type_to_id)
+TEST(align_config_max_error, configuration)
 {
-    using global_config_t = detail::align_config_max_error;
-    EXPECT_EQ(detail::align_config_type_to_id<global_config_t>::value, align_cfg::id::max_error);
-    EXPECT_EQ(detail::align_config_type_to_id_v<global_config_t>, align_cfg::id::max_error);
-}
+    {
+        align_cfg::max_error elem{10};
+        configuration cfg{elem};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::max_error>(cfg).value)>,
+                                  uint32_t>), true);
 
-TEST(align_config_max_error, invoke)
-{
-    detail::configuration cfg = align_cfg::max_error(10);
+        EXPECT_EQ(get<align_cfg::max_error>(cfg).value, 10u);
+    }
 
-    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
-                                detail::configuration<detail::align_config_max_error>>));
-}
+    {
+        configuration cfg{align_cfg::max_error{10}};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::max_error>(cfg).value)>,
+                                  uint32_t>), true);
 
-TEST(align_config_max_error, get_by_enum)
-{
-    detail::configuration cfg = align_cfg::max_error(10);
-    auto const c_cfg = detail::configuration{align_cfg::max_error(10)};
-
-    EXPECT_EQ(get<align_cfg::id::max_error>(cfg), 10);
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(cfg)),
-                                uint32_t &>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(c_cfg)),
-                                uint32_t const &>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(std::move(cfg))),
-                                uint32_t &&>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(std::move(c_cfg))),
-                                uint32_t const &&>));
+        EXPECT_EQ(get<align_cfg::max_error>(cfg).value, 10u);
+    }
 }
