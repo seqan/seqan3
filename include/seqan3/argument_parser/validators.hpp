@@ -44,9 +44,10 @@
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/filesystem.hpp>
-#include <seqan3/std/concepts>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/std/concepts>
 #include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3
@@ -564,6 +565,113 @@ struct default_validator
     }
 };
 
+/*!\brief A helper struct to chain validators recursively via the pipe operator.
+ *\ingroup argument_parser
+ *\implements seqan3::validator_concept
+ *
+ *\details
+ *
+ * Note that both validators must operate on the same value_type in order to
+ * avoid unexpected behaviour and ensure that the seqan3::argument_parser::add_option
+ * call is well-formed. (add_option(val, ...., validator) requires
+ * that val is of same type as validator::value_type).
+ */
+template <validator_concept validator1_type, validator_concept validator2_type>
+//!\cond
+    requires std::Same<typename validator1_type::value_type, typename validator2_type::value_type>
+//!\endcond
+class validator_chain_adaptor
+{
+public:
+    //!\brief The underlying type in both validators.
+    using value_type = typename validator1_type::value_type;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    //!\brief The default constructor is explicitly deleted.
+    validator_chain_adaptor() = delete;
+    validator_chain_adaptor(validator_chain_adaptor const & pf) = default;
+    validator_chain_adaptor & operator=(validator_chain_adaptor const & pf) = default;
+    validator_chain_adaptor(validator_chain_adaptor &&) = default;
+    validator_chain_adaptor & operator=(validator_chain_adaptor &&) = default;
+
+    /*!\brief Constructing from two validators.
+     * \param[in] vali1_ Some validator to be chained to vali2_.
+     * \param[in] vali2_ Another validator to be chained to vali1_.
+     */
+    validator_chain_adaptor(validator1_type vali1_, validator2_type vali2_) :
+        vali1{std::move(vali1_)}, vali2{std::move(vali2_)}
+    {}
+
+    //!\brief The destructor.
+    ~validator_chain_adaptor() = default;
+    //!\}
+
+    /*!\brief Calls the operator() of each validator on the value cmp.
+     * \param[in] cmp The value to validate.
+     *
+     * This function delegates to the validation of both of the chained validators
+     * by calling their operator() one after the other. The behaviour depends on
+     * the chained validators which may throw on input error.
+     */
+    void operator()(value_type const & cmp) const
+    {
+        vali1(cmp);
+        vali2(cmp);
+    }
+
+    //!\brief Returns a message that can be appended to the (positional) options help page info.
+    std::string get_help_page_message() const
+    {
+        return detail::to_string(vali1.get_help_page_message(), " ", vali2.get_help_page_message());
+    }
+
+private:
+    //!\brief The first validator in the chain.
+    validator1_type vali1;
+    //!\brief The second validator in the chain.
+    validator2_type vali2;
+};
+
 } // namespace detail
+
+/*!\brief Enables the chaining of validators.
+ *!\ingroup argument_parser
+ * \tparam validator1_type The type of the fist validator;
+ *                         Must satisfy the seqan3::validator_concept and the
+ *                         same value_type as the second validator type.
+ * \tparam validator2_type The type of the second validator;
+ *                         Must satisfy the seqan3::validator_concept and the
+ *                         same value_type as the fist validator type.
+ * \param[in] vali1 The first validator to chain.
+ * \param[in] vali2 The second validator to chain.
+ * \returns A new validator that tests a value for both vali1 and vali2.
+ *
+ * \details
+ *
+ * The pipe operator is the AND operation for two validators, which means that a
+ * value must pass both validators in order to be accepted by the new validator.
+ *
+ * For example you may want a file name that only accepts absolute paths but
+ * also must have one out of some given file extensions.
+ * For this purpose you can chain a seqan3::regex_validator to a
+ * seqan3::file_ext_validator like this:
+ *
+ * \include test/snippet/argument_parser/validators_chaining.cpp
+ *
+ * You can chain as many validators as you want which will be evaluated one after
+ * the other from left to right (first to last).
+ */
+template <validator_concept validator1_type, validator_concept validator2_type>
+//!\cond
+    requires std::Same<typename std::remove_reference_t<validator1_type>::value_type,
+                       typename std::remove_reference_t<validator2_type>::value_type>
+//!\endcond
+auto operator|(validator1_type && vali1, validator2_type && vali2)
+{
+    return detail::validator_chain_adaptor{std::forward<validator1_type>(vali1),
+                                           std::forward<validator2_type>(vali2)};
+}
 
 } // namespace seqan3
