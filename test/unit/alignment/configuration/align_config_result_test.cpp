@@ -36,58 +36,42 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/configuration/align_config_output.hpp>
+#include <seqan3/alignment/configuration/align_config_result.hpp>
+#include <seqan3/core/algorithm/concept.hpp>
 
 using namespace seqan3;
 
-struct bar
+TEST(align_config_max_error, config_element_concept)
 {
-    int value;
-};
-
-TEST(align_config_output, constructor)
-{
-    EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_output<align_result_key::end>>));
+    EXPECT_TRUE((detail::config_element_concept<align_cfg::result<align_result_key::score>>));
 }
 
-TEST(align_config_output, on_align_config)
+TEST(align_config_max_error, construction)
 {
-    using output_config_t = detail::align_config_output<align_result_key::trace>;
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::output>::invoke<output_config_t>,
-                 std::true_type>));
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::output>::invoke<bar>,
-                 std::false_type>));
+    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::result<align_result_key::score>>));
+    EXPECT_TRUE((std::is_copy_constructible_v<align_cfg::result<align_result_key::score>>));
+    EXPECT_TRUE((std::is_move_constructible_v<align_cfg::result<align_result_key::score>>));
+    EXPECT_TRUE((std::is_copy_assignable_v<align_cfg::result<align_result_key::score>>));
+    EXPECT_TRUE((std::is_move_assignable_v<align_cfg::result<align_result_key::score>>));
 }
 
-TEST(align_config_output, align_config_type_to_id)
+TEST(align_config_max_error, configuration)
 {
-    using output_config_t = detail::align_config_output<align_result_key::begin>;
-    EXPECT_EQ(detail::align_config_type_to_id<output_config_t>::value, align_cfg::id::output);
-    EXPECT_EQ(detail::align_config_type_to_id_v<output_config_t>, align_cfg::id::output);
-}
+    {
+        align_cfg::result<align_result_key::score> elem{};
+        configuration cfg{elem};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<
+                                    decltype(get<align_cfg::result<align_result_key::score>>(cfg).value)>,
+                                  align_result_key>), true);
 
-TEST(align_config_output, invoke)
-{
-    detail::configuration cfg = align_cfg::output<align_result_key::score>;
+        EXPECT_EQ((get<align_cfg::result<align_result_key::score>>(cfg).value), align_result_key::score);
+    }
 
-    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
-                                detail::configuration<detail::align_config_output<align_result_key::score>>>));
-}
-
-TEST(align_config_output, get_by_enum)
-{
-    detail::configuration cfg = align_cfg::output<align_result_key::score>;
-    auto const c_cfg = detail::configuration{align_cfg::output<align_result_key::score>};
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(cfg)),
-                                align_result_key &>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(c_cfg)),
-                                align_result_key const &>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(std::move(cfg))),
-                                align_result_key &&>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(std::move(c_cfg))),
-                                align_result_key const &&>));
+    {
+        configuration cfg{align_cfg::result<align_result_key::score>{}};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<
+                                    decltype(get<align_cfg::result<align_result_key::score>>(cfg).value)>,
+                                  align_result_key>), true);
+        EXPECT_EQ((get<align_cfg::result<align_result_key::score>>(cfg).value), align_result_key::score);
+    }
 }
