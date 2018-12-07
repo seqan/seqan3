@@ -52,6 +52,7 @@
 #include <seqan3/alignment/matrix/alignment_trace_algorithms.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
@@ -59,16 +60,31 @@ namespace seqan3::detail
 {
 //!\cond
 template <typename align_config_t>
-concept semi_global_config_concept = requires (align_config_t & cfg)
+concept semi_global_config_concept =
+    std::remove_reference_t<align_config_t>::template exists<align_cfg::aligned_ends>() &&
+requires (align_config_t & cfg)
 {
-    requires get<align_cfg::id::sequence_ends>(cfg) == free_ends_at::seq1;
+    requires std::remove_reference_t<
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template is_static<0>();
+    requires std::remove_reference_t<
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template is_static<1>();
+    requires std::remove_reference_t<
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template get_static<0>();
+    requires std::remove_reference_t<
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template get_static<1>();
 };
 
 template <typename align_config_t>
-concept global_config_concept = has_align_cfg_v<align_cfg::id::global, std::remove_reference_t<align_config_t>>;
+concept global_config_concept = requires (align_config_t & cfg)
+{
+    requires cfg.template exists<align_cfg::mode<global_alignment_type>>();
+};
 
 template <typename align_config_t>
-concept max_errors_concept = has_align_cfg_v<align_cfg::id::max_error, std::remove_reference_t<align_config_t>>;
+concept max_errors_concept = requires (align_config_t & cfg)
+{
+    requires cfg.template exists<align_cfg::max_error>();
+};
 //!\endcond
 
 /*!\todo Document me
@@ -248,9 +264,9 @@ public:
     {
         static constexpr size_t alphabet_size = alphabet_size_v<query_alphabet_type>;
 
-        if constexpr(use_max_errors)
+        if constexpr (use_max_errors)
         {
-            max_errors = get<align_cfg::id::max_error>(config);
+            max_errors = get<align_cfg::max_error>(config).value;
             assert(max_errors >= score_type{0});
         }
 

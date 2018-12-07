@@ -5,15 +5,15 @@
 
 #include "alignment_fixture.hpp"
 
+#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 namespace seqan3::fixture::semi_global::edit_distance::unbanded
 {
 
-inline constexpr auto align_config = align_cfg::edit | align_cfg::sequence_ends<free_ends_at::seq1>;
+inline constexpr auto align_config = align_cfg::edit | align_cfg::aligned_ends{seq1_ends_free};
 
 static auto dna4_01 = []()
 {

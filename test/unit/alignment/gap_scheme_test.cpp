@@ -106,14 +106,14 @@ TEST(gap_scheme, member_types)
 TEST(gap_scheme, get_gap_score)
 {
     gap_scheme scheme{};
-    EXPECT_EQ(scheme.get_gap_score(), 0);
+    EXPECT_EQ(scheme.get_gap_score(), -1);
     EXPECT_TRUE((std::is_same_v<typename decltype(scheme)::score_type &, decltype(scheme.get_gap_score())>));
 }
 
 TEST(gap_scheme, set_score_gap)
 {
     gap_scheme scheme{};
-    EXPECT_EQ(scheme.get_gap_score(), 0);
+    EXPECT_EQ(scheme.get_gap_score(), -1);
     scheme.get_gap_score() = -2;
     EXPECT_EQ(scheme.get_gap_score(), -2);
 }
