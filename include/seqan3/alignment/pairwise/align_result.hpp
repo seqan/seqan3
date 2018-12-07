@@ -34,210 +34,154 @@
 
 /*!\file
  * \brief Provides seqan3::align_result.
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ *
+ * \details
+ * Objects of this class are the result of an alignment computation.
+ * It always contains and alignment identifier and the resulting score.
+ * Optionally – if the user requests – also the begin and end positions within
+ * the sequences and the trace can be calculated. When accessing a field that
+ * has not been calculated an std::bad_optional_access exception is thrown.
  */
 
 #pragma once
 
-#include <functional>
 #include <optional>
-#include <tuple>
-
-#include <seqan3/core/metafunction/template_inspection.hpp>
 
 namespace seqan3
 {
 
-/*!\brief Keys for different alignment results.
+/*!\brief Stores the alignment results and gives access to score, traceback and the begin and end coordinates.
  * \ingroup pairwise
+ * \tparam id_t         The type for the alignment identifier.
+ * \tparam score_t      The type for the resulting score.
+ * \tparam coordinate_t The type for both the begin and end coordinates, can be omitted.
+ * \tparam trace_t      The type for the alignment trace, can be omitted.
  */
-enum struct align_result_key : uint8_t
+template <typename id_t, typename score_t, typename coordinate_t = bool, typename trace_t = bool>
+class align_result
 {
-    id,     // cannot be set by the config
-    score,  // report the score
-    end,    // report the end position and score
-    begin,  // report the begin and end position and score
-    trace   // report the full trace and begin and end and score
-};
+private:
+    //! \brief The alignment identifier.
+    id_t id;
+    //! \brief The alignment score.
+    score_t score;
+    //! \brief The end coordinate of the alignment.
+    std::optional<coordinate_t> end_coordinate;
+    //! \brief The begin coordinate of the alignment.
+    std::optional<coordinate_t> begin_coordinate;
+    //! \brief The alignment trace, i.e. the actual base pair matching.
+    std::optional<trace_t> trace;
 
-/*!\brief Stores the alignment results and offers a tuple-like interface.
- * \extends std::tuple
- * \ingroup pairwise
- * \tparam output_type_list_t seqan3::type_list over the contained results.
- */
-template <typename output_type_list_t>
-struct align_result //!\cond
-    : public detail::transfer_template_args_onto_t<output_type_list_t, std::tuple>
-    //!\endcond
-{
+public:
+    /*!\brief Constructor with all available fields.
+     * \param id_               The alignment identifier.
+     * \param score_            The alignment score.
+     * \param end_coordinate_   The end coordinate of the alignment.
+     * \param begin_coordinate_ The begin coordinate of the alignment.
+     * \param trace_            The alignment trace, i.e. the actual base pair matching.
+     */
+    align_result(id_t const id_,
+                 score_t const score_,
+                 coordinate_t const end_coordinate_,
+                 coordinate_t const begin_coordinate_,
+                 trace_t const & trace_)
+        : id{id_}, score{score_}, end_coordinate{end_coordinate_}, begin_coordinate{begin_coordinate_}, trace{trace_}
+    {}
 
-    static_assert(meta::size<output_type_list_t>::value >= 2,
-                  "Logic error: This class requires at least a type list with two template arguments "
-                  "for the id and the alignment score");
+    /*!\brief Constructor without trace.
+     * \param id_               The alignment identifier.
+     * \param score_            The alignment score.
+     * \param end_coordinate_   The end coordinate of the alignment.
+     * \param begin_coordinate_ The begin coordinate of the alignment.
+     */
+    align_result(id_t const id_,
+                 score_t const score_,
+                 coordinate_t const end_coordinate_,
+                 coordinate_t const begin_coordinate_)
+        : id{id_}, score{score_}, end_coordinate{end_coordinate_}, begin_coordinate{begin_coordinate_}, trace{}
+    {}
 
-    //!\brief The base tuple type.
-    using base_type = detail::transfer_template_args_onto_t<output_type_list_t, std::tuple>;
+    /*!\brief Constructor without trace and begin coordinate information.
+     * \param id_               The alignment identifier.
+     * \param score_            The alignment score.
+     * \param end_coordinate_   The end coordinate of the alignment.
+     */
+    align_result(id_t const id_,
+                 score_t const score_,
+                 coordinate_t const end_coordinate_)
+        : id{id_}, score{score_}, end_coordinate{end_coordinate_}, begin_coordinate{}, trace{}
+    {}
 
-    //!\brief Inheriting the constructors of the base type.
-    using base_type::base_type;
+    /*!\brief Constructor with identifier and score only.
+     * \param id_               The alignment identifier.
+     * \param score_            The alignment score.
+     */
+    align_result(id_t const id_,
+                 score_t const score_)
+        : id{id_}, score{score_}, end_coordinate{}, begin_coordinate{}, trace{}
+    {}
+
+    //! \brief Default copy constructor.
+    align_result(align_result const &) = default;
+    //! \brief Default move constructor.
+    align_result(align_result &&) = default;
+    //! \brief Default copy assignment.
+    align_result & operator=(align_result const &) = default;
+    //! \brief Default move assignment.
+    align_result & operator=(align_result &&) = default;
+    //! \brief Default destructor.
+    ~align_result() = default;
 
     /*!\name Access functions
-     * \brief Convenience helper functions to access elements of the alignment result type.
+     * \brief Functions to access elements of the alignment result type.
      * \{
      */
 
-    //!\brief Returns the id.
-    constexpr std::tuple_element_t<0, base_type> id() const noexcept
-    {
-        return std::get<0>(*this);
-    }
-
-    //!\brief Returns the score.
-    constexpr std::tuple_element_t<1, base_type> score() const noexcept
-    {
-        return std::get<1>(*this);
-    }
-
-    /*!\brief Returns the end coordinate of the alignment if requested by the algorithm configuration,
-     *        otherwise `std::ignore`.
+    /*!\brief Returns the alignment identifier.
+     * \return The id field.
      */
-    constexpr decltype(auto) end_coordinate() const & noexcept
+    constexpr id_t get_id() const noexcept
     {
-        if constexpr (std::tuple_size_v<base_type> < 3)
-            return std::ignore;
-        else
-            return std::get<2>(*this);
+        return id;
     }
 
-    //!\overload
-    constexpr decltype(auto) end_coordinate() const && noexcept
-    {
-        if constexpr (std::tuple_size_v<base_type> < 3)
-            return std::ignore;
-        else //TODO Fix outer move after gcc-7
-            return std::move(std::get<2>(std::move(*this)));
-    }
-
-    /*!\brief Returns the begin coordinate of the alignment if requested by the algorithm configuration,
-     *        otherwise `std::ignore`.
+    /*!\brief Returns the alignment score.
+     * \return The score field.
      */
-    constexpr decltype(auto) begin_coordinate() const & noexcept
+    constexpr score_t get_score() const noexcept
     {
-        if constexpr (std::tuple_size_v<base_type> < 4)
-            return std::ignore;
-        else
-            return std::get<3>(*this);
+        return score;
     }
 
-    //!\overload
-    constexpr decltype(auto) begin_coordinate() const && noexcept
-    {
-        if constexpr (std::tuple_size_v<base_type> < 4)
-            return std::ignore;
-        else //TODO Fix outer move after gcc-7 fix
-            return std::move(std::get<3>(std::move(*this)));
-    }
-
-    /*!\brief Returns the traceback of the alignment if requested by the algorithm configuration,
-     *        otherwise `std::ignore`.
+    /*!\brief Returns the end coordinate of the alignment.
+     * \return A pair of positions in the respective sequences, where the calculated alignment ends.
+     * \throws std::bad_optional_access if the end coordinate calculation has not been requested.
      */
-    constexpr decltype(auto) trace() const & noexcept
+    constexpr coordinate_t get_end_coordinate() const
     {
-        if constexpr (std::tuple_size_v<base_type> < 5)
-            return std::ignore;
-        else
-            return std::get<4>(*this);
+        return end_coordinate.value();
     }
 
-    //!\overload
-    constexpr decltype(auto) trace() const && noexcept
+    /*!\brief Returns the begin coordinate of the alignment.
+     * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
+     * \throws  std::bad_optional_access if the begin coordinate calculation has not been requested.
+     * \details Guaranteed to be smaller than or equal to `get_end_coordinate()`.
+     */
+    constexpr coordinate_t get_begin_coordinate() const
     {
-        if constexpr (std::tuple_size_v<base_type> < 5)
-            return std::ignore;
-        else //TODO Fix outer move after gcc-7 fix
-            return std::move(std::get<4>(std::move(*this)));
+        return begin_coordinate.value();
     }
-     //!\}
+
+    /*!\brief Returns the traceback of the alignment.
+     * \return At least two gapped sequences, which represent the alignment.
+     * \throws std::bad_optional_access if the trace calculation has not been requested.
+     */
+    constexpr trace_t get_trace() const
+    {
+        return trace.value();
+    }
+    //!\}
 };
 
-/*!\name Tuple-like get interface
- * \ingroup pairwise
- * \relates seqan3::align_result
- * \{
- */
-
-/*!\brief Returns the specified element using seqan3::align_result_key as specifier.
- * \tparam    e         The enum value of seqan3::align_result_key.
- * \param[in] align_res The seqan3::align_result to get the specified value for.
- * \returns The value associated with the enum value `e`.
- */
-template <align_result_key e, typename output_type_list_t>
-constexpr auto & get(align_result<output_type_list_t> & align_res) noexcept
-{
-    constexpr size_t index = static_cast<uint8_t>(e);
-
-    static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access error: index out of range.");
-    return std::get<index>(align_res);
-}
-
-//!\overload
-template <align_result_key e, typename output_type_list_t>
-constexpr auto const & get(align_result<output_type_list_t> const & align_res) noexcept
-{
-    constexpr size_t index = static_cast<uint8_t>(e);
-
-    static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access error: index out of range.");
-    return std::get<index>(align_res);
-}
-
-//!\overload
-template <align_result_key e, typename output_type_list_t>
-constexpr auto && get(align_result<output_type_list_t> && align_res) noexcept
-{
-    constexpr size_t index = static_cast<uint8_t>(e);
-
-    static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access error: index out of range.");
-    return std::get<index>(std::move(align_res));
-}
-
-//!\overload
-template <align_result_key e, typename output_type_list_t>
-constexpr auto const && get(align_result<output_type_list_t> const && align_res) noexcept
-{
-    constexpr size_t index = static_cast<uint8_t>(e);
-
-    static_assert(index < std::tuple_size_v<align_result<output_type_list_t>>,
-                  "Element access error: index of range.");
-
-    // TODO Remove superfluous outer move after fixed in gcc-7
-    return std::move(std::get<index>(std::move(align_res)));
-}
-//!\}
 } // namespace seqan3
-
-namespace std
-{
-
-/*!\brief Overloads the tuple element type trait function for seqan3::align_result.
- * \ingroup pairwise
- */
-template <size_t idx, typename output_type_list_t>
-struct tuple_element<idx, seqan3::align_result<output_type_list_t>>
-{
-    //!\brief The element type at the given position.
-    using type = std::tuple_element_t<idx, typename seqan3::align_result<output_type_list_t>::base_type>;
-};
-
-/*!\brief Overloads the tuple size type trait function for seqan3::align_result.
- * \ingroup pairwise
- */
-template <typename output_type_list_t>
-struct tuple_size<seqan3::align_result<output_type_list_t>>
-{
-    //!\brief The number of elements.
-    static constexpr size_t value = std::tuple_size_v<typename seqan3::align_result<output_type_list_t>::base_type>;
-};
-} // namespace std
