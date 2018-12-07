@@ -41,37 +41,69 @@
 
 using namespace seqan3;
 
+template <typename test_t>
+struct align_cfg_result_test : public ::testing::Test
+{
+
+};
+
+using test_types = ::testing::Types<detail::with_score_type,
+                                    detail::with_end_position_type,
+                                    detail::with_begin_position_type,
+                                    detail::with_trace_type>;
+
+TYPED_TEST_CASE(align_cfg_result_test, test_types);
+
 TEST(align_config_max_error, config_element_concept)
 {
-    EXPECT_TRUE((detail::config_element_concept<align_cfg::result<align_result_key::score>>));
+    EXPECT_TRUE((detail::config_element_concept<align_cfg::result<detail::with_score_type>>));
 }
 
-TEST(align_config_max_error, construction)
+TYPED_TEST(align_cfg_result_test, construction)
 {
-    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::result<align_result_key::score>>));
-    EXPECT_TRUE((std::is_copy_constructible_v<align_cfg::result<align_result_key::score>>));
-    EXPECT_TRUE((std::is_move_constructible_v<align_cfg::result<align_result_key::score>>));
-    EXPECT_TRUE((std::is_copy_assignable_v<align_cfg::result<align_result_key::score>>));
-    EXPECT_TRUE((std::is_move_assignable_v<align_cfg::result<align_result_key::score>>));
+    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::result<TypeParam>>));
+    EXPECT_TRUE((std::is_copy_constructible_v<align_cfg::result<TypeParam>>));
+    EXPECT_TRUE((std::is_move_constructible_v<align_cfg::result<TypeParam>>));
+    EXPECT_TRUE((std::is_copy_assignable_v<align_cfg::result<TypeParam>>));
+    EXPECT_TRUE((std::is_move_assignable_v<align_cfg::result<TypeParam>>));
+    EXPECT_TRUE((std::is_constructible_v<align_cfg::result<TypeParam>, TypeParam>));
 }
 
-TEST(align_config_max_error, configuration)
+template <typename type>
+auto type_to_variable()
+{
+    using namespace seqan3::align_cfg;
+
+    if constexpr (std::is_same_v<type, detail::with_score_type>)
+    {
+        return with_score;
+    }
+    else if constexpr (std::is_same_v<type, detail::with_end_position_type>)
+    {
+        return with_end_position;
+    }
+    else if constexpr (std::is_same_v<type, detail::with_begin_position_type>)
+    {
+        return with_begin_position;
+    }
+    else
+    {
+        return with_trace;
+    }
+}
+
+TYPED_TEST(align_cfg_result_test, configuration)
 {
     {
-        align_cfg::result<align_result_key::score> elem{};
+        align_cfg::result elem{TypeParam{}};
         configuration cfg{elem};
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<
-                                    decltype(get<align_cfg::result<align_result_key::score>>(cfg).value)>,
-                                  align_result_key>), true);
-
-        EXPECT_EQ((get<align_cfg::result<align_result_key::score>>(cfg).value), align_result_key::score);
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::result>(cfg).value)>,
+                                    TypeParam>));
     }
 
     {
-        configuration cfg{align_cfg::result<align_result_key::score>{}};
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<
-                                    decltype(get<align_cfg::result<align_result_key::score>>(cfg).value)>,
-                                  align_result_key>), true);
-        EXPECT_EQ((get<align_cfg::result<align_result_key::score>>(cfg).value), align_result_key::score);
+        configuration cfg{align_cfg::result{type_to_variable<TypeParam>()}};
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::result>(cfg).value)>,
+                                    TypeParam>));
     }
 }
