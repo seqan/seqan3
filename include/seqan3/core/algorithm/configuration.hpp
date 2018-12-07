@@ -329,6 +329,19 @@ public:
         else
             return std::forward<default_t>(default_value);
     }
+
+    //!\brief Checks if the given type exists in the tuple.
+    template <typename query_t>
+    static constexpr bool exists() noexcept
+    {
+        return !meta::empty<meta::find<type_list<configs_t...>, query_t>>::value;
+    }
+    //!\brief Checks if the given type exists in the tuple.
+    template <template <typename...> typename query_t>
+    static constexpr bool exists() noexcept
+    {
+        return !meta::empty<meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>>::value;
+    }
     //!\}
 
 protected:
@@ -346,19 +359,6 @@ protected:
     explicit constexpr configuration(std::tuple<_configs_t...> && cfg) : base_type{std::move(cfg)}
     {}
     //!\}
-
-    //!\brief Checks if the given type exists in the tuple.
-    template <typename query_t>
-    static constexpr bool exists()
-    {
-        return !meta::empty<meta::find<type_list<configs_t...>, query_t>>::value;
-    }
-    //!\brief Checks if the given type exists in the tuple.
-    template <template <typename...> typename query_t>
-    static constexpr bool exists()
-    {
-        return !meta::empty<meta::find_if<type_list<configs_t...>, detail::is_same_configuration_f<query_t>>>::value;
-    }
 };
 
 /*!\name Type deduction guides
