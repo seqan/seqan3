@@ -34,29 +34,12 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/alignment/configuration/detail.hpp>
 
 using namespace seqan3;
 
-TEST(utility, align_cfg_id)
+TEST(align_config_id, enum_size)
 {
     // NOTE(rrahn): You must update this test if you add a new value to align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(align_cfg::id::SIZE), 7);
-}
-
-struct bar
-{
-    int value;
-};
-
-TEST(utility, on_align_config)
-{
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::SIZE>::invoke<bar>, std::false_type>));
-}
-
-TEST(utility, align_config_type_to_id)
-{
-    EXPECT_EQ(detail::align_config_type_to_id<bar>::value, align_cfg::id::SIZE);
-    EXPECT_EQ(detail::align_config_type_to_id_v<bar>, align_cfg::id::SIZE);
+    EXPECT_EQ(static_cast<uint8_t>(detail::align_config_id::SIZE), 7);
 }
