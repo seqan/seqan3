@@ -199,6 +199,23 @@ TEST(configuration, get_by_type_template)
     }
 }
 
+TEST(configuration, exists_by_type)
+{
+    configuration<bax, bar> cfg{};
+
+    EXPECT_TRUE(std::remove_reference_t<decltype(cfg)>::exists<bax>());
+    EXPECT_FALSE(decltype(cfg)::exists<foo>());
+}
+
+TEST(configuration, exists_by_type_template)
+{
+    configuration<bax, foobar<>> cfg{};
+
+    EXPECT_TRUE(decltype(cfg)::exists<foobar>());
+    EXPECT_TRUE(decltype(cfg)::exists<bax>());
+    EXPECT_FALSE(decltype(cfg)::exists<foo>());
+}
+
 TEST(configuration, value_or_by_type)
 {
     configuration<bax, bar> cfg{};
