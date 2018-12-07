@@ -310,11 +310,11 @@ void stream_alignment(debug_stream_type & stream, alignment_t const & align, std
             stream << '\n';
 
         stream << std::setw(7) << begin_pos << ' ';
-        for (size_t rel_pos = 1; rel_pos <= (end_pos - 1) % 50 + 1; ++rel_pos)
+        for (size_t pos = begin_pos + 1; pos <= end_pos; ++pos)
         {
-            if (rel_pos % 10 == 0)
+            if (pos % 10 == 0)
                 stream << ':';
-            else if (rel_pos % 5 == 0)
+            else if (pos % 5 == 0)
                 stream << '.';
             else
                 stream << ' ';
