@@ -73,21 +73,21 @@ struct determine_result_type
         using seq2_value_type = value_type_t<std::remove_reference_t<seq2_t>>;
         using score_type      = int32_t;
 
-        if constexpr (has_align_cfg_v<align_cfg::id::output, configuration_t>)
+        if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())
         {
-            if constexpr (get<align_cfg::id::output>(configuration_t{}) ==
-                               align_result_key::end)
+            if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
+                                    with_end_position_type>)
                 return align_result<type_list<uint32_t,
                                               score_type,
                                               alignment_coordinate>>{};
-            else if constexpr (get<align_cfg::id::output>(configuration_t{}) ==
-                               align_result_key::begin)
+            else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
+                                         with_begin_position_type>)
                 return align_result<type_list<uint32_t,
                                               score_type,
                                               alignment_coordinate,
                                               alignment_coordinate>>{};
-            else if constexpr (get<align_cfg::id::output>(configuration_t{}) ==
-                               align_result_key::trace)
+            else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
+                                         with_trace_type>)
                 return align_result<type_list<uint32_t,
                                               score_type,
                                               alignment_coordinate,
