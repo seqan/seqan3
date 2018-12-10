@@ -81,9 +81,11 @@ template <fm_index_concept index_t, typename queries_t, typename configuration_t
 //!\endcond
 inline auto search(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
-    if constexpr (contains<search_cfg::id::max_error>(cfg))
+    using cfg_t = remove_cvref_t<configuration_t>;
+
+    if constexpr (cfg_t::template exists<search_cfg::max_error>())
     {
-        auto & [total, subs, ins, del] = get<search_cfg::id::max_error>(cfg);
+        auto & [total, subs, ins, del] = get<search_cfg::max_error>(cfg).value;
         if (subs > total)
             throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
         if (ins > total)
@@ -91,9 +93,9 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
         if (del > total)
             throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
     }
-    else if constexpr (contains<search_cfg::id::max_error_rate>(cfg))
+    else if constexpr (cfg_t::template exists<search_cfg::max_error_rate>())
     {
-        auto & [total, subs, ins, del] = get<search_cfg::id::max_error_rate>(cfg);
+        auto & [total, subs, ins, del] = get<search_cfg::max_error_rate>(cfg).value;
         if (subs > total)
             throw std::invalid_argument("The substitution error threshold is higher than the total error threshold.");
         if (ins > total)
@@ -102,17 +104,17 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
             throw std::invalid_argument("The deletion error threshold is higher than the total error threshold.");
     }
 
-    if constexpr (contains<search_cfg::id::mode>(cfg))
+    if constexpr (cfg_t::template exists<search_cfg::mode>())
     {
-        if constexpr (contains<search_cfg::id::output>(cfg))
+        if constexpr (cfg_t::template exists<search_cfg::output>())
             return detail::search_all(index, queries, cfg);
         else
             return detail::search_all(index, queries, cfg | search_cfg::output(search_cfg::text_position));
     }
     else
     {
-        detail::configuration const cfg2 = cfg | search_cfg::mode(search_cfg::all);
-        if constexpr (contains<search_cfg::id::output>(cfg))
+        configuration const cfg2 = cfg | search_cfg::mode{search_cfg::all};
+        if constexpr (cfg_t::template exists<search_cfg::output>())
             return detail::search_all(index, queries, cfg2);
         else
             return detail::search_all(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
@@ -143,12 +145,12 @@ template <fm_index_concept index_t, typename queries_t>
 //!\endcond
 inline auto search(index_t const & index, queries_t && queries)
 {
-    detail::configuration const default_cfg = search_cfg::max_error(search_cfg::total{0},
-                                                                    search_cfg::substitution{0},
-                                                                    search_cfg::insertion{0},
-                                                                    search_cfg::deletion{0})
-                                            | search_cfg::output(search_cfg::text_position)
-                                            | search_cfg::mode(search_cfg::all);
+    configuration const default_cfg = search_cfg::max_error{search_cfg::total{0},
+                                                            search_cfg::substitution{0},
+                                                            search_cfg::insertion{0},
+                                                            search_cfg::deletion{0}}
+                                            | search_cfg::output{search_cfg::text_position}
+                                            | search_cfg::mode{search_cfg::all};
     return search(index, queries, default_cfg);
 }
 

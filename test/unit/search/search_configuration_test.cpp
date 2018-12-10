@@ -44,21 +44,40 @@ template <typename T>
 class search_configuration_test : public ::testing::Test
 {};
 
+using test_types = ::testing::Types<search_cfg::max_error_rate<>,
+                                    search_cfg::max_error<>,
+                                    search_cfg::mode<detail::search_mode_best>,
+                                    search_cfg::output<detail::search_output_text_position>>;
+
+TYPED_TEST_CASE(search_configuration_test, test_types);
+
 // TODO: this should go to a typed configuration test that also checks the alignment configuration
 TEST(search_configuration_test, symmetric_configuration)
 {
-    for (uint8_t i = 0; i < static_cast<uint8_t>(search_cfg::id::SIZE); ++i)
+    for (uint8_t i = 0; i < static_cast<uint8_t>(detail::search_config_id::SIZE); ++i)
     {
         // no element can occur twice in a configuration
-        EXPECT_FALSE(detail::search_config_validation_matrix[i][i])
+        EXPECT_FALSE(detail::compatibility_table<detail::search_config_id>[i][i])
             << "There is a TRUE value on the diagonal of the search configuration matrix.";
         for (uint8_t j = 0; j < i; ++j)
         {
             // symmetric matrix
-            EXPECT_EQ(detail::search_config_validation_matrix[i][j], detail::search_config_validation_matrix[j][i])
+            EXPECT_EQ(detail::compatibility_table<detail::search_config_id>[i][j],
+                      detail::compatibility_table<detail::search_config_id>[j][i])
                 << "Search configuration matrix is not symmetric.";
         }
     }
+}
+
+TYPED_TEST(search_configuration_test, config_element_concept)
+{
+    EXPECT_TRUE((detail::config_element_concept<TypeParam>));
+}
+
+TYPED_TEST(search_configuration_test, configuration_exists)
+{
+    configuration cfg{TypeParam{}};
+    EXPECT_TRUE(decltype(cfg)::template exists<TypeParam>());
 }
 
 // TEST(search_configuration_test, illegal_runtime_configurations)
