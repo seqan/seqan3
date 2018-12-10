@@ -7,6 +7,13 @@
 
 using namespace seqan3;
 
+namespace incomplete
+{
+
+struct type;
+
+} // namespace incomplete
+
 int main()
 {
     // With c++20 you could also write it like this
@@ -28,12 +35,14 @@ int main()
             debug_stream << "int";
         else if constexpr(std::is_same_v<type, float>)
             debug_stream << "float";
+        else if constexpr(std::is_same_v<type, incomplete::type>)
+            debug_stream << "incomplete::type";
 
         debug_stream << ", ";
     };
 
-    // prints each type name, i.e. "int, float, bool, \n"
-    using types = type_list<int, float, bool>;
+    // prints each type name, i.e. "int, float, bool, incomplete::type, \n"
+    using types = type_list<int, float, bool, incomplete::type>;
     detail::for_each_type(fn, types{});
     debug_stream << "\n";
 
@@ -41,6 +50,7 @@ int main()
     fn(std::type_identity<int>{});
     fn(std::type_identity<float>{});
     fn(std::type_identity<bool>{});
+    fn(std::type_identity<incomplete::type>{});
     debug_stream << "\n";
     return 0;
 }
