@@ -60,7 +60,7 @@ constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scala
 template <simd_concept simd_t, typename scalar_t, scalar_t... I>
 constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
 {
-    return simd_t{(offset + I)...};
+    return simd_t{static_cast<scalar_t>(offset + I)...};
 }
 
 } // namespace seqan3::detail
