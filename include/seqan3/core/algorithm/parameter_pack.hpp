@@ -24,8 +24,9 @@ namespace seqan3::detail
  * \param  fn               The function to call on every argument.
  * \param  args             The arguments as parameter pack.
  *
- * \details This function behaves like std::for_each but on parameter packs.
- * The invocation will be done without any loop.
+ * \details
+ *
+ * This function behaves like std::for_each but on parameter packs. The invocation will be done without any loop.
  *
  * \include test/snippet/core/algorithm/for_each_value.cpp
  */
@@ -46,8 +47,10 @@ constexpr void for_each_value(unary_function_t && fn, args_t && ...args)
  *
  * \param  fn               The function to call on every std::type_identity<type>.
  *
- * \details This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and
- * passed as argument. The invocation will be done without any loop.
+ * \details
+ *
+ * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
+ * argument. The invocation will be done without any loop.
  *
  * \include test/snippet/core/algorithm/for_each_type.cpp
  */
@@ -70,8 +73,10 @@ constexpr void for_each_type(unary_function_t && fn)
  * \param  fn               The function to call on every std::type_identity<type>.
  * \param  type_list        The list of types, i.e. seqan3::type_list, std::tuple. [unused]
  *
- * \details This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and
- * passed as argument. The invocation will be done without any loop.
+ * \details
+ *
+ * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
+ * argument. The invocation will be done without any loop.
  *
  * \include test/snippet/core/algorithm/for_each_type_list.cpp
  */
