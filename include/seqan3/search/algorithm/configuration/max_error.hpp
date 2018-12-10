@@ -35,126 +35,20 @@
 /*!\file
  * \brief Provides the configuration for maximum number of errors for all error types.
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/algorithm/all.hpp>
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <range/v3/algorithm/fill.hpp>
+#include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/numeric/accumulate.hpp>
+#include <range/v3/view/slice.hpp>
+
+#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/search/algorithm/configuration/detail.hpp>
 #include <seqan3/search/algorithm/configuration/max_error_common.hpp>
-#include <seqan3/search/algorithm/configuration/utility.hpp>
-
-namespace seqan3::detail
-{
-/*!\brief A configuration element for the maximum number of errors across all error types (mismatches, insertions,
-          deletions). This is an upper bound of errors independent from error numbers or rates of specific error types.
- * \ingroup search_configuration
- */
-struct search_config_max_error
-{
-    //!\brief The actual value.
-    std::tuple<uint8_t, uint8_t, uint8_t, uint8_t> value;
-};
-
-/*!\brief The max_error adaptor enabling pipe notation.
- * \ingroup search_configuration
- */
-struct search_config_max_error_adaptor : public configuration_fn_base<search_config_max_error_adaptor>
-{
-private:
-    /*!\brief Helper function to set single error types.
-     * \tparam error_type_t Error type to be extracted from `in` and set in `out`.
-     * \param[in] out Output tuple containing all error types.
-     * \param[in] in Input tuple containing a subset of error types.
-     */
-    template <typename error_type_t, typename out_t, typename ... error_types_t>
-    constexpr void get_type_out(out_t & out, std::tuple<error_types_t...> const & in) const
-    {
-        constexpr auto count = meta::count<meta::list<error_types_t...>, error_type_t>::value;
-        static_assert(count <= 1, "The same error type has been passed multiple times to max_error.");
-        if constexpr (count > 0)
-            std::get<error_type_t>(out) = std::get<error_type_t>(in);
-    }
-
-public:
-    /*!\brief Adds to the configuration a max_error configuration element.
-     * \relates seqan3::search_config_max_error
-     * \param[in] cfg The configuration to be extended.
-     * \param[in] ...error_types The maximum number of errors for each error type.
-     * \returns A new configuration containing the max_error configuration element.
-     */
-    template <typename configuration_t, typename ... error_types_t>
-    //!\cond
-        requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    //!\endcond
-    constexpr auto invoke(configuration_t && cfg, error_types_t && ...error_types) const
-    {
-        static_assert(is_valid_search_configuration_v<search_cfg::id::max_error, remove_cvref_t<configuration_t>>,
-                      SEQAN3_INVALID_CONFIG(search_cfg::id::max_error));
-
-        std::tuple in{error_types...};
-        std::tuple<search_cfg::total<uint8_t>, search_cfg::substitution<uint8_t>,
-                   search_cfg::insertion<uint8_t>, search_cfg::deletion<uint8_t>> out{0, 0, 0, 0};
-
-        get_type_out<search_cfg::total<uint8_t>>(out, in);
-        get_type_out<search_cfg::substitution<uint8_t>>(out, in);
-        get_type_out<search_cfg::insertion<uint8_t>>(out, in);
-        get_type_out<search_cfg::deletion<uint8_t>>(out, in);
-
-        using error_types_list_t = meta::list<remove_cvref_t<error_types_t>...>;
-        constexpr bool total_set = meta::in<error_types_list_t, search_cfg::total<uint8_t>>::value;
-        constexpr bool other_error_types_set = meta::count<error_types_list_t, search_cfg::total<uint8_t>>::value !=
-                                               meta::size<error_types_list_t>::value;
-
-        // no specific error types specified
-        if constexpr (!other_error_types_set)
-        {
-            // only total is set: set all to total
-            if constexpr (total_set)
-            {
-                uint8_t const total_v{std::get<0>(out)};
-                std::get<1>(out) = search_cfg::substitution<uint8_t>{total_v};
-                std::get<2>(out) = search_cfg::insertion<uint8_t>{total_v};
-                std::get<3>(out) = search_cfg::deletion<uint8_t>{total_v};
-            }
-        }
-        // at least one specific error type specified
-        else if constexpr (!total_set)
-        {
-            uint8_t const substitution_error = static_cast<uint8_t>(std::get<1>(out));
-            uint8_t const insertion_error = static_cast<uint8_t>(std::get<2>(out));
-            uint8_t const deletion_error = static_cast<uint8_t>(std::get<3>(out));
-            // total not set. set it to sum of all error types
-            std::get<0>(out) = search_cfg::total<uint8_t>{std::min<uint8_t>(255, substitution_error
-                                                                               + insertion_error
-                                                                               + deletion_error)};
-        }
-
-        search_config_max_error tmp{static_cast<std::tuple<uint8_t, uint8_t, uint8_t, uint8_t>>(out)};
-        return std::forward<configuration_t>(cfg).push_front(std::move(tmp));
-    }
-};
-
-//!\brief Helper template meta-function associated with detail::search_config_max_error.
-//!\ingroup search_configuration
-template <>
-struct on_search_config<search_cfg::id::max_error>
-{
-    //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
-    using invoke = typename std::is_same<t, search_config_max_error>::type;
-};
-
-//!\brief Mapping from the detail::search_config_max_error type to it's corresponding seqan3::search_cfg::id.
-//!\ingroup search_configuration
-template <>
-struct search_config_type_to_id<search_config_max_error>
-{
-    //!\brief The associated seqan3::search_cfg::id.
-    static constexpr search_cfg::id value = search_cfg::id::max_error;
-};
-} // namespace seqan3::detail
 
 namespace seqan3::search_cfg
 {
@@ -165,6 +59,105 @@ namespace seqan3::search_cfg
  *          Deletions at the beginning and at the end of the sequence are not considered during a search.
  * \ingroup search_configuration
  */
-inline constexpr detail::search_config_max_error_adaptor max_error;
+template <typename ...errors_t>
+//!\cond
+    requires sizeof...(errors_t) <= 4 &&
+            ((detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, total> ||
+              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, substitution> ||
+              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
+              detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
+//!\endcond
+class max_error : public pipeable_config_element
+{
+
+    //!\brief Helper function to check valid max error configuration.
+    template <typename ..._errors_t>
+    static constexpr bool check_consistency(_errors_t ...errors)
+    {
+        if constexpr (sizeof...(errors) < 2)
+        {
+            return true;
+        }
+        else
+        {
+            return [] (auto head, auto ...tail) constexpr
+            {
+                using head_t = decltype(head);
+                if constexpr (((head_t::_id != decltype(tail)::_id) && ...))
+                    return check_consistency(tail...);
+                else
+                    return false;
+            }(errors...);
+        }
+    }
+
+    static_assert(check_consistency(errors_t{}...),
+                  "You may not use the same error specifier more than once.");
+
+public:
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::max_error};
+
+    //!\publicsecton
+    /*!\name Constructor, destructor and assignment
+     * \brief Defaulted all standard constructor.
+     * \{
+     */
+    constexpr max_error()                              noexcept = default;
+    constexpr max_error(max_error const &)             noexcept = default;
+    constexpr max_error(max_error &&)                  noexcept = default;
+    constexpr max_error & operator=(max_error const &) noexcept = default;
+    constexpr max_error & operator=(max_error &&)      noexcept = default;
+    ~max_error()                                       noexcept = default;
+
+    /*!\brief Constructs the object from a set of error specifiers.
+     * \tparam    errors_t A template parameter pack with the error types.
+     * \param[in] errors   A pack of error specifiers.
+     *
+     * \details
+     *
+     * \todo write me
+     */
+    constexpr max_error(errors_t && ...errors) noexcept
+    //!\cond
+        requires sizeof...(errors_t) > 0
+    //!\endcond
+    {
+        detail::for_each_value([this](auto e)
+        {
+            value[remove_cvref_t<decltype(e)>::_id()] = e.get();
+        }, std::forward<errors_t>(errors)...);
+
+        // Only total is set so we set all other errors to the total limit.
+        if constexpr (((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) == 1)
+        {
+            ranges::fill(value | ranges::view::slice(1, 4), value[0]);
+        } // otherwise if total is not set but any other field is set than use total as the sum of all set errors.
+        else if constexpr (!((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) > 0)
+        {
+            value[0] = std::min(static_cast<uint8_t>(255), ranges::accumulate(value | ranges::view::slice(1, 4),
+                                                                              static_cast<uint8_t>(0)));
+        }
+    }
+    //!}
+
+    //!\brief The ordered error values.
+    std::array<uint8_t, 4> value{0, 0, 0, 0};
+};
+
+/*!\name Type deduction guides
+ * \relates seqan3::search_cfg::max_error
+ * \{
+ */
+
+//!\brief Deduces empty list of error specifiers.
+max_error() -> max_error<>;
+
+//!\brief Deduces template arguments from the passed error specifiers.
+template <typename ...errors_t>
+max_error(errors_t && ...) -> max_error<remove_cvref_t<errors_t>...>;
+//!\}
 
 } // namespace seqan3::search_cfg
