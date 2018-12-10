@@ -26,9 +26,15 @@ namespace seqan3::detail
  *
  * \details
  *
- * This function behaves like std::for_each but on parameter packs. The invocation will be done without any loop.
+ * This function behaves like std::for_each but on parameter packs. The invocation(s) will be done without any loop.
  *
  * \include test/snippet/core/algorithm/for_each_value.cpp
+ *
+ * \attention The order of arguments is different to std::for_each. In std::for_each the first argument is a range and
+ * the second one is a callable. Due to limitations with the ordering for parameter packs we had to change this order in
+ * the other way around.
+ *
+ * \sa https://en.cppreference.com/w/cpp/language/parameter_pack
  */
 template <typename unary_function_t, typename ...args_t>
 //!\cond
@@ -50,9 +56,11 @@ constexpr void for_each_value(unary_function_t && fn, args_t && ...args)
  * \details
  *
  * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
- * argument. The invocation will be done without any loop.
+ * argument. The invocation(s) will be done without any loop.
  *
  * \include test/snippet/core/algorithm/for_each_type.cpp
+ *
+ * \sa seqan3::detail::for_each_value
  */
 template <typename ...types, typename unary_function_t>
 //!\cond
@@ -76,9 +84,15 @@ constexpr void for_each_type(unary_function_t && fn)
  * \details
  *
  * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
- * argument. The invocation will be done without any loop.
+ * argument. The invocation(s) will be done without any loop.
  *
  * \include test/snippet/core/algorithm/for_each_type_list.cpp
+ *
+ * \attention The order of arguments is different to std::for_each. In std::for_each the first argument is a range and
+ * the second one is a callable. To make the interface consistent with seqan3::detail::for_each_value we change the
+ * order here, too.
+ *
+ * \sa seqan3::detail::for_each_value
  */
 template <template <typename...> typename type_list_t, typename ...args_t, typename unary_function_t>
 //!\cond
