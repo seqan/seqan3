@@ -15,19 +15,17 @@ int main()
     // };
     auto fn = [](auto id)
     {
-        using type = typename decltype(id)::type;
-
         // id is of type std::type_identity<type>
         using id_t = decltype(id);
-        static_assert(std::is_same_v<id_t, std::type_identity<type>>);
+        using type = typename id_t::type;
+
+        static_assert(std::is_same_v<id_t, std::type_identity<type>>, "id is of type std::type_identity<type>");
 
         if constexpr(std::is_same_v<type, bool>)
             debug_stream << "bool";
-
-        if constexpr(std::is_same_v<type, int>)
+        else if constexpr(std::is_same_v<type, int>)
             debug_stream << "int";
-
-        if constexpr(std::is_same_v<type, float>)
+        else if constexpr(std::is_same_v<type, float>)
             debug_stream << "float";
 
         debug_stream << ", ";
