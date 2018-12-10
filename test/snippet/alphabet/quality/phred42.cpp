@@ -1,3 +1,4 @@
+//! [general]
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
 
@@ -5,7 +6,6 @@ using namespace seqan3;
 
 int main()
 {
-//! [general]
 // doesn't work:
 // phred = 2;
 // works:
@@ -17,10 +17,11 @@ debug_stream << (int) phred.to_rank() << "\n";  // 2
 
 // doesn't work:
 // phred42{4};
+// another_phred.assign_rank(49);
 // works:
 phred42 another_phred;
-another_phred.assign_rank(49); // converted down to 41
+another_phred.assign_phred(49); // converted down to 41
 debug_stream << (int) another_phred.to_phred() << "\n"; // 41
 // we need to cast to(int)for human readable console output
-//! [general]
 }
+//! [general]
