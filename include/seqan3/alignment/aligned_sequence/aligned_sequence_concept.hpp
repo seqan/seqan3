@@ -106,7 +106,7 @@ namespace seqan3
  *                         seqan3::aligned_sequence_concept.
  * \param[in,out] seq      The aligned sequence to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert a gaps.
- * \param[in]     size     The number of gap symbols to insert (will result in a gap of length size).
+ * \param[in]     size     The number of gap symbols to insert (will result in a gap of length `size`).
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types
@@ -200,13 +200,13 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
  *                         seqan3::gap.
  * \param[in,out] seq      The container to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert gaps.
- * \param[in]     size     The number of gap symbols to insert (will result in a gap of length size).
+ * \param[in]     size     The number of gap symbols to insert (will result in a gap of length `size`).
  *
  * \relates seqan3::aligned_sequence_concept
  *
  * \details
  *
- * This function delegates to the member function `insert(iterator, size, value)`
+ * This function delegates to the member function `insert(iterator, `size`, `value`)`
  * of the container.
  */
 template <sequence_container_concept seq_type>
@@ -298,7 +298,8 @@ namespace detail
 template<tuple_like_concept alignment_t, size_t ...idx>
 void stream_alignment(debug_stream_type & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
 {
-    size_t const alignment_size = std::get<0>(align).size();
+    using std::get;
+    size_t const alignment_size = get<0>(align).size();
 
     // split alignment into blocks of length 50 and loop over parts
     for (size_t begin_pos = 0; begin_pos < alignment_size; begin_pos += 50)
@@ -322,7 +323,7 @@ void stream_alignment(debug_stream_type & stream, alignment_t const & align, std
 
         // write first sequence
         stream << '\n' << std::setw(8) << "";
-        ranges::for_each(std::get<0>(align) | ranges::view::slice(begin_pos, end_pos) | view::to_char,
+        ranges::for_each(get<0>(align) | ranges::view::slice(begin_pos, end_pos) | view::to_char,
                          [&stream] (char ch) { stream << ch; });
 
         auto stream_f = [&] (auto const & previous_seq, auto const & aligned_seq)
@@ -330,14 +331,14 @@ void stream_alignment(debug_stream_type & stream, alignment_t const & align, std
             // write alignment bars
             stream << '\n' << std::setw(8) << "";
             ranges::for_each(ranges::zip_view(previous_seq, aligned_seq) | ranges::view::slice(begin_pos, end_pos),
-                             [&stream] (auto && ch) { stream << (std::get<0>(ch) == std::get<1>(ch) ? '|' : ' '); });
+                             [&stream] (auto && ch) { stream << (get<0>(ch) == get<1>(ch) ? '|' : ' '); });
 
             // write next sequence
             stream << '\n' << std::setw(8) << "";
             ranges::for_each(aligned_seq | ranges::view::slice(begin_pos, end_pos) | view::to_char,
                              [&stream] (char ch) { stream << ch; });
         };
-        (stream_f(std::get<idx>(align), std::get<idx + 1>(align)), ...);
+        (stream_f(get<idx>(align), get<idx + 1>(align)), ...);
         stream << '\n';
     }
 }
