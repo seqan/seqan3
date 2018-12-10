@@ -57,6 +57,10 @@ template <typename value_t>
 struct total : detail::strong_type<value_t, total<value_t>, detail::strong_type_skill::convert>
 {
     using detail::strong_type<value_t, total<value_t>, detail::strong_type_skill::convert>::strong_type;
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr std::integral_constant<uint8_t, 0> _id{};
 };
 
 /*!\name Template argument type deduction guides
@@ -85,6 +89,10 @@ template <typename value_t>
 struct substitution : detail::strong_type<value_t, substitution<value_t>, detail::strong_type_skill::convert>
 {
     using detail::strong_type<value_t, substitution<value_t>, detail::strong_type_skill::convert>::strong_type;
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr std::integral_constant<uint8_t, 1> _id{};
 };
 
 /*!\name Template argument type deduction guides
@@ -112,6 +120,10 @@ template <typename value_t>
 struct insertion : detail::strong_type<value_t, insertion<value_t>, detail::strong_type_skill::convert>
 {
     using detail::strong_type<value_t, insertion<value_t>, detail::strong_type_skill::convert>::strong_type;
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr std::integral_constant<uint8_t, 2> _id{};
 };
 
 /*!\name Template argument type deduction guides
@@ -139,6 +151,10 @@ template <typename value_t>
 struct deletion : detail::strong_type<value_t, deletion<value_t>, detail::strong_type_skill::convert>
 {
     using detail::strong_type<value_t, deletion<value_t>, detail::strong_type_skill::convert>::strong_type;
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr std::integral_constant<uint8_t, 3> _id{};
 };
 
 /*!\name Template argument type deduction guides
