@@ -40,6 +40,7 @@
 #pragma once
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
 
 /*!\defgroup decorator Decorator
  * \brief The decorator submodule contains special SeqAn3 decorators and generic decorator concepts.
