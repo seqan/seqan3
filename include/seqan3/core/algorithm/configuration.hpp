@@ -440,58 +440,6 @@ constexpr auto const && get(configuration<configs_t...> const && config) noexcep
     return std::move(get<pos>(config));
 }
 //!\}
-
-// ============================================================================
-// Utility functions
-// ============================================================================
-
-// ----------------------------------------------------------------------------
-// apply_deferred_configs
-// ----------------------------------------------------------------------------
-
-//!\cond
-// TODO Document me!
-template <std::size_t N, typename fn_t, typename config_t>
-constexpr auto apply_deferred_configs(fn_t && fn,
-                                      config_t && config)
-    requires detail::is_algorithm_configuration_v<remove_cvref_t<config_t>>
-{
-    if constexpr (N == 0)
-    {
-        return fn(std::forward<config_t>(config));
-    }
-    else
-    {
-        using config_as_list = detail::transfer_template_args_onto_t<remove_cvref_t<config_t>, type_list>;
-        using current_config_t = meta::at_c<config_as_list, meta::size<config_as_list>::value - N>;
-
-        auto delegate = [&fn](auto && new_config)
-        {
-            return apply_deferred_configs<N-1>(fn, std::forward<decltype(new_config)>(new_config));
-        };
-
-        if constexpr (std::is_invocable_v<current_config_t, decltype(delegate), remove_cvref_t<config_t>>)
-        {
-            return current_config_t{}(delegate, std::forward<config_t>(config));
-        }
-        else
-        {  // Perfect forwarding of the underlying config.
-            return apply_deferred_configs<N - 1>(fn, std::forward<config_t>(config));
-        }
-    }
-}
-
-template <typename fn_t, typename config_t>
-constexpr auto apply_deferred_configs(fn_t & fn,
-                                      config_t && config)
-    requires detail::is_algorithm_configuration_v<remove_cvref_t<config_t>> &&
-             std::Invocable<std::remove_reference_t<fn_t>, std::remove_reference_t<config_t>>
-{
-    using type_list_t = detail::tuple_type_list_t<typename std::remove_reference_t<config_t>::base_type>;
-    return apply_deferred_configs<meta::size<type_list_t>::value>(std::forward<fn_t>(fn),
-                                                                  std::forward<config_t>(config));
-}
-//!\endcond
 } // namespace seqan3::detail
 
 namespace std

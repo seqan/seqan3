@@ -101,6 +101,5 @@
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/core/algorithm/deferred_config_element_base.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
