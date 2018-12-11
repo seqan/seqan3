@@ -39,9 +39,8 @@
 
 #pragma once
 
-#include <iostream>
 #include <set>
-#include <stdlib.h>
+#include <type_traits>
 
 #include <range/v3/all.hpp>
 
@@ -90,6 +89,24 @@ template <typename inner_type>
 //!\endcond
 struct gap_decorator_anchor_set
 {
+    //!\privatesection
+    //!\brief The gap type as a tuple storing position and accumulated gap lengths.
+    using gap_t = typename std::pair<size_t, size_t>;
+    /* \brief Structure allowing the comparison of gaps.
+     * \details It is assumed that the gap structure is always healthy, i.e.
+     * there are no two gaps that are overlapping. The ordering of gaps structures
+     * is exclusively dependent on the gap starting position which is the
+     * ordering criterion for the anchor set implemented as ordered red-black tree.
+     */
+     template <typename gap_t>
+     struct gap_compare {
+         bool operator() (const gap_t& lhs, const gap_t& rhs) const {
+             return lhs.first < rhs.first;
+         }
+     };
+    //!\brief The iterator type for an anchor set.
+    using anchor_set_iterator = typename std::set<gap_t, gap_compare<gap_t>>::iterator;
+
 public:
     //!\publicsection
     /*!\name Member types
@@ -413,19 +430,6 @@ public:
 
 private:
     //!\privatesection
-   /* \brief Structure allowing the comparison of gaps.
-    * \details It is assumed that the gap structure is always healthy, i.e.
-    * there are no two gaps that are overlapping. The ordering of gaps structures
-    * is exclusively dependent on the gap starting position which is the
-    * ordering criterion for the anchor set implemented as ordered red-black tree.
-    */
-    template <typename gap_t>
-    struct gap_compare {
-        bool operator() (const gap_t& lhs, const gap_t& rhs) const {
-            return lhs.first < rhs.first;
-        }
-    };
-
     /*!\brief Helper function to compute the length of the gap indicated by the
     * input iterator.
     * \details The length of a gap is difference of the accumulator pointed at
@@ -473,12 +477,8 @@ private:
 
     //!\brief Stores a pointer to the ungapped, underlying sequence.
     inner_type * sequence{};
-    //!\brief The gap type as a tuple storing position and accumulated gap lengths.
-    using gap_t = typename std::pair<size_t, size_t>;
     //!\brief Set storing the anchor gaps.
     std::set<gap_t, gap_compare<gap_t>> anchors{};
-    //!\brief The iterator type for an anchor set.
-    using anchor_set_iterator = typename std::set<gap_t, gap_compare<gap_t>>::iterator;
 };
 
 } // namespace seqan3
