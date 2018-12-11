@@ -58,8 +58,7 @@ constexpr void for_each_value(unary_function_t && fn, args_t && ...args)
  * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
  * argument. The invocation(s) will be done without any loop.
  *
- * In contrast to `meta::for_each`, this function can handle types which are incomplete, forward declared and not
- * std::Semiregular.
+ * This function can handle types which are incomplete, forward declared and not std::Semiregular.
  *
  * \include test/snippet/core/algorithm/for_each_type.cpp
  *
@@ -89,8 +88,7 @@ constexpr void for_each_type(unary_function_t && fn)
  * This function behaves like std::for_each but on types. The type will be wrapped into std::type_identity and passed as
  * argument. The invocation(s) will be done without any loop.
  *
- * In contrast to `meta::for_each`, this function can handle types which are incomplete, forward declared and not
- * std::Semiregular.
+ * This function can handle types which are incomplete, forward declared and not std::Semiregular.
  *
  * \include test/snippet/core/algorithm/for_each_type_list.cpp
  *
