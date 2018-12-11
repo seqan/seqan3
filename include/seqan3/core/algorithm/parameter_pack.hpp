@@ -31,7 +31,7 @@ namespace seqan3::detail
  * \include test/snippet/core/algorithm/for_each_value.cpp
  *
  * \attention The order of arguments is different to std::for_each. In std::for_each the first argument is a range and
- * the second one is a callable. Due to limitations with the ordering for parameter packs we had to change this order in
+ * the second one is a callable. Due to limitations with the ordering for parameter packs the order is the other way around.
  * the other way around.
  *
  * \sa https://en.cppreference.com/w/cpp/language/parameter_pack
@@ -95,7 +95,7 @@ constexpr void for_each_type(unary_function_t && fn)
  * \include test/snippet/core/algorithm/for_each_type_list.cpp
  *
  * \attention The order of arguments is different to std::for_each. In std::for_each the first argument is a range and
- * the second one is a callable. To make the interface consistent with seqan3::detail::for_each_value we change the
+ * the second one is a callable. To make the interface consistent with seqan3::detail::for_each_value the order is changed.
  * order here, too.
  *
  * \sa seqan3::detail::for_each_value
