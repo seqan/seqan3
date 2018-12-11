@@ -86,7 +86,7 @@ TEST(view_deep_reverse, deep)
 
     auto v = foo | view::deep_reverse;
 
-    ASSERT_EQ(size(v), 2);
+    ASSERT_EQ(size(v), 2u);
     EXPECT_TRUE((std::ranges::equal(v[0], "ATGCA"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v[1], "TACGT"_dna5)));
 }
@@ -158,7 +158,7 @@ TEST(view_deep_take, deep)
 
     auto v = foo | view::deep_take(2);
 
-    ASSERT_EQ(size(v), 3);
+    ASSERT_EQ(size(v), 3u);
     EXPECT_TRUE((std::ranges::equal(v[0], "AC"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v[1], "TG"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v[2], "NN"_dna5)));
@@ -166,7 +166,7 @@ TEST(view_deep_take, deep)
     int i = 2;
     auto v2 = foo | view::deep_take(i);
 
-    ASSERT_EQ(size(v2), 3);
+    ASSERT_EQ(size(v2), 3u);
     EXPECT_TRUE((std::ranges::equal(v2[0], "AC"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v2[1], "TG"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v2[2], "NN"_dna5)));
@@ -203,7 +203,7 @@ TEST(view_deep_take2, deep)
 
     auto v = foo | view::deep_take2;
 
-    ASSERT_EQ(size(v), 3);
+    ASSERT_EQ(size(v), 3u);
     EXPECT_TRUE((std::ranges::equal(v[0], "AC"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v[1], "TG"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v[2], "NN"_dna5)));
