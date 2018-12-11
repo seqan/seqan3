@@ -32,11 +32,6 @@
 //
 // ==========================================================================
 
-/*!\file
- * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- * \brief Tests for writing sequence files with structure information.
- */
-
 #include <iterator>
 #include <fstream>
 #include <sstream>

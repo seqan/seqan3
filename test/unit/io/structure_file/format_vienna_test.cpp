@@ -32,11 +32,6 @@
 //
 // ==========================================================================
 
-/*!\file
- * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- * \brief Tests for the Vienna file format.
- */
-
 #include <optional>
 #include <sstream>
 #include <tuple>
