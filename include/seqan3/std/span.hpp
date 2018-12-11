@@ -10,21 +10,21 @@
 
 
 /*!\file
-// \brief Provides std::foobar from the C++20 standard library.
-// \see https://en.cppreference.com/...
+// \brief Provides std::span from the C++20 standard library.
+// \see https://en.cppreference.com/w/cpp/container/span
 */
 
 //!\cond
-// #include <__config>
 #pragma once
 
+#include <array>        // for array
 #include <cstddef>      // for ptrdiff_t
 #include <iterator>     // for iterators
-#include <array>        // for array
 #include <type_traits>  // for remove_cv, etc
-#include <cstddef>      // for byte
 
 #if __has_include(<span>)
+#include <span>
+#else
 
 namespace std
 {
@@ -237,7 +237,7 @@ public:
 //  constants and types
     using element_type           = span_tp;
     using value_type             = remove_cv_t<span_tp>;
-    using index_type             = ptrdiff_t;
+    using index_type             = size_t;
     using difference_type        = ptrdiff_t;
     using pointer                = span_tp *;
     using const_pointer          = const span_tp *; // not in standard
