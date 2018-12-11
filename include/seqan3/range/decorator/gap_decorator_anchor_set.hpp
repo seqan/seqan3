@@ -93,14 +93,14 @@ struct gap_decorator_anchor_set
     //!\brief NULL symbol as placeholder for gap_t initialization.
     #define _ 0
 
-    template <typename gap_t>
-    /* \brief Structure allowing the comparison of gaps.
+    /*!\brief Structure allowing the comparison of gaps.
      * \details It is assumed that the gap structure is always healthy, i.e.
      * there are no two gaps that are overlapping. The ordering of gaps structures
      * is exclusively dependent on the gap starting position which is the
      * ordering criterion for the anchor set implemented as ordered red-black tree.
-     */
-     struct gap_compare {
+    */
+    template <typename gap_t>
+    struct gap_compare {
          bool operator() (const gap_t& lhs, const gap_t& rhs) const {
              return lhs.first < rhs.first;
          }
