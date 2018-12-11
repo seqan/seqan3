@@ -52,17 +52,11 @@ TYPED_TEST(align_cfg_mode_test, config_element_concept)
     EXPECT_EQ(detail::config_element_concept<align_cfg::mode<TypeParam>>, true);
 }
 
-TYPED_TEST(align_cfg_mode_test, construction)
-{
-    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::mode<TypeParam>>));
-    EXPECT_TRUE((std::is_constructible_v<align_cfg::mode<TypeParam>, TypeParam>));
-}
-
 TYPED_TEST(align_cfg_mode_test, configuration)
 {
     {
         align_cfg::mode elem{TypeParam{}};
-        configuration cfg{elem};
+        configuration cfg(elem);
         EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(cfg).value)>,
                                   TypeParam>), true);
     }

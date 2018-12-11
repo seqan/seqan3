@@ -52,37 +52,14 @@ namespace seqan3::align_cfg
  * \tparam gap_scheme_t The type of the underlying gap scheme. Must satisfy the seqan3::gap_scheme_concept.
  */
 template <gap_scheme_concept gap_scheme_t>
-class gap : public pipeable_config_element
+struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>
 {
-public:
     //!\privatesection
-    //!\brief The identifier for this configuration.
+    //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::gap};
-
-    //!\publicsection
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr gap()                        = default;
-    constexpr gap(gap const &)             = default;
-    constexpr gap(gap &&)                  = default;
-    constexpr gap & operator=(gap const &) = default;
-    constexpr gap & operator=(gap &&)      = default;
-    ~gap()                                 = default;
-
-    /*!\brief Creates the config element for the given gap scheme.
-     * \param scheme The gap scheme to set. Must satisfy seqan3::gap_scheme_concept.
-     */
-    constexpr gap(gap_scheme_t scheme) : value{std::move(scheme)}
-    {}
-    //!}
-
-    //!\brief The stored configuration value.
-    gap_scheme_t value;
 };
 
-/*!\names Type deduction guides
+/*!\name Type deduction guides
  * \relates seqan3::align_cfg::gap
  * \{
  */

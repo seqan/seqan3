@@ -51,6 +51,6 @@ namespace seqan3::align_cfg
 
 //!\brief Shortcut for edit distance configuration.
 inline constexpr configuration edit = mode{global_alignment} | scoring{nucleotide_scoring_scheme{}} |
-                                      gap(gap_scheme{gap_score{-1}});
+                                      gap{gap_scheme{gap_score{-1}}};
 
 } // namespace seqan3

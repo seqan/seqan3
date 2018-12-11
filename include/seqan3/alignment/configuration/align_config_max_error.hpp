@@ -47,31 +47,12 @@ namespace seqan3::align_cfg
 /*!\brief A configuration element for maximal errors.
  * \ingroup configuration
  */
-class max_error : public pipeable_config_element
+class max_error : public pipeable_config_element<max_error, uint32_t>
 {
 public:
     //!\privatesection
-    //!\brief An internal id used to check for a valid alignment configuration inherited from the alignment policy.
+    //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::max_error};
-
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr max_error()                              noexcept = default;
-    constexpr max_error(max_error const &)             noexcept = default;
-    constexpr max_error(max_error &&)                  noexcept = default;
-    constexpr max_error & operator=(max_error const &) noexcept = default;
-    constexpr max_error & operator=(max_error &&)      noexcept = default;
-    ~max_error()                                       noexcept = default;
-
-    //!\brief Constructs with the maximal error allowed.
-    constexpr max_error(uint32_t const error) noexcept : value{error}
-    {}
-    //!}
-
-    //!\brief The number of maximal errors allowed.
-    uint32_t value{};
 };
 
 } // namespace seqan3::align_cfg

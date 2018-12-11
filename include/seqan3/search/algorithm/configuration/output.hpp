@@ -75,41 +75,17 @@ template <typename output_t>
     requires std::Same<remove_cvref_t<output_t>, detail::search_output_text_position> ||
              std::Same<remove_cvref_t<output_t>, detail::search_output_index_iterator>
 //!\endcond
-class output : public pipeable_config_element
+struct output : public pipeable_config_element<output<output_t>, output_t>
 {
-
-public:
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output};
-
-    //!\publicsecton
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr output()                           noexcept = default;
-    constexpr output(output const &)             noexcept = default;
-    constexpr output(output &&)                  noexcept = default;
-    constexpr output & operator=(output const &) noexcept = default;
-    constexpr output & operator=(output &&)      noexcept = default;
-    ~output()                                    noexcept = default;
-
-    //!\brief Constructs an object from the passed output argument.
-    constexpr output(output_t SEQAN3_DOXYGEN_ONLY(arg)) noexcept
-    {}
-    //!}
-
-    //!\brief The stored output value.
-    output_t value{};
 };
 
 /*!\name Type deduction guides
  * \relates seqan3::search_cfg::output
  * \{
  */
-//!\brief Default type deduces text position output.
-output() -> output<detail::search_output_text_position>;
 
 //!\brief Deduces search output type from constructor argument.
 template <typename output_t>

@@ -81,3 +81,8 @@ TYPED_TEST(alignment_configuration_test, configuration_exists_template)
     configuration cfg{TypeParam{}};
     helper_exists<TypeParam, decltype(cfg)>();
 }
+
+TYPED_TEST(alignment_configuration_test, is_aggregate)
+{
+    EXPECT_TRUE(std::is_aggregate_v<TypeParam>);
+}

@@ -99,7 +99,7 @@ struct seq1_leading : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::seq1_leading
+ * \relates seqan3::align_cfg::seq1_leading
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -115,7 +115,7 @@ seq1_leading(value_t) -> seq1_leading<value_t>;
  * \ingroup configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::seq1_leading
+ * \copydetails seqan3::align_cfg::seq1_leading
  *
  * \see seq1_leading
  * \see seq2_leading
@@ -130,7 +130,7 @@ struct seq1_trailing : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::seq1_trailing
+ * \relates seqan3::align_cfg::seq1_trailing
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -146,7 +146,7 @@ seq1_trailing(value_t) -> seq1_trailing<value_t>;
  * \ingroup configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::seq1_leading
+ * \copydetails seqan3::align_cfg::seq1_leading
  *
  * \see seq1_leading
  * \see seq1_trailing
@@ -161,7 +161,7 @@ struct seq2_leading : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::seq2_leading
+ * \relates seqan3::align_cfg::seq2_leading
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -177,7 +177,7 @@ seq2_leading(value_t) -> seq2_leading<value_t>;
  * \ingroup configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::seq1_leading
+ * \copydetails seqan3::align_cfg::seq1_leading
  *
  * \see seq1_leading
  * \see seq1_trailing
@@ -192,7 +192,7 @@ struct seq2_trailing : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::seq2_trailing
+ * \relates seqan3::align_cfg::seq2_trailing
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -374,7 +374,7 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::end_gaps
+ * \relates seqan3::align_cfg::end_gaps
  * \{
  */
 
@@ -396,34 +396,11 @@ template <typename end_gaps_t>
 //!\cond
     requires detail::is_type_specialisation_of_v<end_gaps_t, end_gaps>
 //!\endcond
-class aligned_ends : public pipeable_config_element
+struct aligned_ends : public pipeable_config_element<aligned_ends<end_gaps_t>, end_gaps_t>
 {
-public:
     //!\privatesection
-    //!\brief The identifier for this configuration.
+    //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::aligned_ends};
-
-    //!\publicsection
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr aligned_ends()                                 = default;
-    constexpr aligned_ends(aligned_ends const &)             = default;
-    constexpr aligned_ends(aligned_ends &&)                  = default;
-    constexpr aligned_ends & operator=(aligned_ends const &) = default;
-    constexpr aligned_ends & operator=(aligned_ends &&)      = default;
-    ~aligned_ends()                                          = default;
-
-    /*!\brief Creates this config from specified end gaps object.
-     * \param arg The end gap object to set. Must be of type seqan3::end_gaps.
-     */
-    constexpr aligned_ends(end_gaps_t arg) noexcept : value{std::move(arg)}
-    {}
-    //!}
-
-    //!\brief The stored configuration value.
-    end_gaps_t value;
 };
 
 /*!\name Type deduction guides
@@ -431,8 +408,8 @@ public:
  * \{
  */
 //!\brief Deduces the end gaps object type from the constructor argument.
-template <typename ...ends_t>
-aligned_ends(ends_t && ...) -> aligned_ends<std::remove_reference_t<ends_t>...>;
+template <typename end_gaps_t>
+aligned_ends(end_gaps_t) -> aligned_ends<std::remove_reference_t<end_gaps_t>>;
 //!\}
 
 // ----------------------------------------------------------------------------

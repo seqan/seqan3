@@ -47,16 +47,6 @@ TEST(align_config_max_error, config_element_concept)
     EXPECT_TRUE((detail::config_element_concept<align_cfg::max_error>));
 }
 
-TEST(align_config_max_error, construction)
-{
-    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::max_error>));
-    EXPECT_TRUE((std::is_copy_constructible_v<align_cfg::max_error>));
-    EXPECT_TRUE((std::is_move_constructible_v<align_cfg::max_error>));
-    EXPECT_TRUE((std::is_copy_assignable_v<align_cfg::max_error>));
-    EXPECT_TRUE((std::is_move_assignable_v<align_cfg::max_error>));
-    EXPECT_TRUE((std::is_constructible_v<align_cfg::max_error, uint32_t>));
-}
-
 TEST(align_config_max_error, configuration)
 {
     {

@@ -65,19 +65,23 @@ concept semi_global_config_concept =
 requires (align_config_t & cfg)
 {
     requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template is_static<0>();
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
+            template is_static<0>();
     requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template is_static<1>();
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
+            template is_static<1>();
     requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template get_static<0>();
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
+            template get_static<0>();
     requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(end_gaps{none_ends_free}))>::template get_static<1>();
+        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
+            template get_static<1>();
 };
 
 template <typename align_config_t>
 concept global_config_concept = requires (align_config_t & cfg)
 {
-    requires cfg.template exists<align_cfg::mode<global_alignment_type>>();
+    requires cfg.template exists<align_cfg::mode<detail::global_alignment_type>>();
 };
 
 template <typename align_config_t>

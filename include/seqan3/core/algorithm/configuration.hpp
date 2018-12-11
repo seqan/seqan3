@@ -96,9 +96,6 @@ public:
      * \param elem The element to store.
      */
     template <typename config_t>
-    //!\cond
-        requires !std::Same<config_t, configuration>
-    //!\endcond
     constexpr configuration(config_t && elem) : base_type{std::forward<config_t>(elem)}
     {}
     //!\}
@@ -365,10 +362,9 @@ protected:
  * \relates seqan3::configuration
  * \{
  */
-
 //!\brief Deduces the correct configuration element type from the passed element.
-template <detail::config_element_concept config_elem_t>
-configuration(config_elem_t) -> configuration<config_elem_t>;
+template <typename config_t>
+configuration(config_t &&) -> configuration<remove_cvref_t<config_t>>;
 //!\}
 
 /*!\name Tuple interface

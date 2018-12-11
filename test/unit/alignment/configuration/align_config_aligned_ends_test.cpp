@@ -49,7 +49,8 @@ struct dummy_gap : seq_end_gap_base<value_t>
 {};
 
 template <typename type>
-class static_end_gap_test : public ::testing::Test {
+class static_end_gap_test : public ::testing::Test
+{
 public:
 
     static constexpr bool expected_value = static_end_gap_test::determine_value(type{});
@@ -76,9 +77,8 @@ using static_end_gap_types = ::testing::Types<seq1_leading<std::true_type>,
 TYPED_TEST_CASE(static_end_gap_test, static_end_gap_types);
 
 template <typename type>
-class dynamic_end_gap_test : public ::testing::Test {
- public:
-};
+class dynamic_end_gap_test : public ::testing::Test
+{};
 
 using dynamic_end_gap_types = ::testing::Types<seq1_leading<bool>,
                                                seq1_trailing<bool>,
@@ -358,19 +358,9 @@ TEST(end_gaps, seq2_ends_free)
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(seq2_ends_free)>, test>), true);
 }
 
-TEST(align_cfg_aligned_ends, construction)
+TEST(align_cfg_aligned_ends, is_aggregate)
 {
-    using namespace seqan3::align_cfg;
-
-    EXPECT_TRUE((std::is_nothrow_default_constructible_v<aligned_ends<end_gaps<>>>));
-    EXPECT_TRUE((std::is_nothrow_copy_constructible_v<aligned_ends<end_gaps<>>>));
-    EXPECT_TRUE((std::is_nothrow_move_constructible_v<aligned_ends<end_gaps<>>>));
-    EXPECT_TRUE((std::is_nothrow_copy_assignable_v<aligned_ends<end_gaps<>>>));
-    EXPECT_TRUE((std::is_nothrow_move_assignable_v<aligned_ends<end_gaps<>>>));
-
-    EXPECT_TRUE((std::is_nothrow_constructible_v<aligned_ends<end_gaps<>>, end_gaps<>>));
-    EXPECT_TRUE((std::is_nothrow_constructible_v<aligned_ends<std::remove_const_t<decltype(all_ends_free)>>,
-                                                 decltype(all_ends_free)>));
+    EXPECT_TRUE((std::is_aggregate_v<aligned_ends<end_gaps<>>>));
 }
 
 TEST(align_cfg_aligned_ends, id)

@@ -109,7 +109,7 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
         if constexpr (cfg_t::template exists<search_cfg::output>())
             return detail::search_all(index, queries, cfg);
         else
-            return detail::search_all(index, queries, cfg | search_cfg::output(search_cfg::text_position));
+            return detail::search_all(index, queries, cfg | search_cfg::output{search_cfg::text_position});
     }
     else
     {
@@ -117,7 +117,7 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
         if constexpr (cfg_t::template exists<search_cfg::output>())
             return detail::search_all(index, queries, cfg2);
         else
-            return detail::search_all(index, queries, cfg2 | search_cfg::output(search_cfg::text_position));
+            return detail::search_all(index, queries, cfg2 | search_cfg::output{search_cfg::text_position});
     }
 }
 

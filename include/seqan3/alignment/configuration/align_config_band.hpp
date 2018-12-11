@@ -29,32 +29,11 @@ template <typename band_t>
 //!\cond
     requires std::Same<band_t, static_band>
 //!\endcond
-class band : public pipeable_config_element
+struct band : public pipeable_config_element<band<band_t>, band_t>
 {
-public:
     //!\privatesection
-    //!\brief An internal id used to check for a valid alignment configuration.
+    //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::band};
-
-    //!\publicsection
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr band()                         noexcept = default;
-    constexpr band(band const &)             noexcept = default;
-    constexpr band(band &&)                  noexcept = default;
-    constexpr band & operator=(band const &) noexcept = default;
-    constexpr band & operator=(band &&)      noexcept = default;
-    ~band()                                  noexcept = default;
-
-    //!\brief Constructs from a given band object.
-    constexpr band(band_t band) : value{std::move(band)}
-    {}
-    //!}
-
-    //!\brief Holds the actual band.
-    band_t value{};
 };
 
 /*!\name Type deduction guides

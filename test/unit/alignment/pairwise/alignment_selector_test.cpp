@@ -67,7 +67,7 @@ TEST(alignment_selector, determine_result_type)
     }
 
     { // test case II
-        auto cfg = align_cfg::edit | align_cfg::result{with_score};
+        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};
         using _t = typename detail::determine_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
 
         EXPECT_EQ(std::tuple_size_v<_t>, 2u);
@@ -76,7 +76,7 @@ TEST(alignment_selector, determine_result_type)
     }
 
     { // test case III
-        auto cfg = align_cfg::edit | align_cfg::result{with_trace};
+        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
         using _t = typename detail::determine_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
 
         using gapped_seq1_t = std::vector<gapped<dna4>>;

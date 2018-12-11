@@ -107,7 +107,7 @@ TEST(configuration, size)
 
 TEST(configuration, get_by_position)
 {
-    configuration<bax, bar> cfg{};
+    configuration cfg = bax{2.2} | bar{1};
 
     { // l-value
         EXPECT_EQ(get<1>(cfg).value, 1);
@@ -139,7 +139,7 @@ TEST(configuration, get_by_position)
 
 TEST(configuration, get_by_type)
 {
-    configuration<bax, bar> cfg{};
+    configuration cfg = bax{2.2} | bar{1};
 
     { // l-value
         EXPECT_FLOAT_EQ(get<bax>(cfg).value, 2.2);
@@ -172,7 +172,7 @@ TEST(configuration, get_by_type)
 
 TEST(configuration, get_by_type_template)
 {
-    configuration<bar, foobar<>> cfg{};
+    configuration cfg = bar{1} | foobar<>{std::vector{0, 1, 2, 3}};
 
     { // l-value
         EXPECT_THAT(get<foobar>(cfg).value, ElementsAre(0, 1, 2, 3));
@@ -218,7 +218,7 @@ TEST(configuration, exists_by_type_template)
 
 TEST(configuration, value_or_by_type)
 {
-    configuration<bax, bar> cfg{};
+    configuration cfg = bax{2.2} | bar{1};
 
     { // l-value
         EXPECT_FLOAT_EQ(cfg.value_or<bax>(1.3), 2.2);
@@ -246,7 +246,7 @@ TEST(configuration, value_or_by_type)
 
 TEST(configuration, value_or_by_type_template)
 {
-    configuration<bax, foobar<>> cfg{};
+    configuration cfg = bar{1} | foobar<>{std::vector<int>{0, 1, 2, 3}};
 
     { // l-value
         EXPECT_THAT(cfg.value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
@@ -254,19 +254,19 @@ TEST(configuration, value_or_by_type_template)
     }
 
     { // const l-value
-        configuration<bax, foobar<>> const cfg_c{cfg};
+        configuration<bar, foobar<>> const cfg_c{cfg};
         EXPECT_THAT(cfg_c.value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
         EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
     }
 
     { // r-value
-        configuration<bax, foobar<>> cfg_r{cfg};
+        configuration<bar, foobar<>> cfg_r{cfg};
         EXPECT_THAT(std::move(cfg_r).value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
         EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
     }
 
     { // const r-value
-        configuration<bax, foobar<>> const cfg_cr{cfg};
+        configuration<bar, foobar<>> const cfg_cr{cfg};
         EXPECT_THAT(std::move(cfg_cr).value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
         EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
     }

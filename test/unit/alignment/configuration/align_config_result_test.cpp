@@ -59,16 +59,6 @@ TEST(align_config_max_error, config_element_concept)
     EXPECT_TRUE((detail::config_element_concept<align_cfg::result<detail::with_score_type>>));
 }
 
-TYPED_TEST(align_cfg_result_test, construction)
-{
-    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::result<TypeParam>>));
-    EXPECT_TRUE((std::is_copy_constructible_v<align_cfg::result<TypeParam>>));
-    EXPECT_TRUE((std::is_move_constructible_v<align_cfg::result<TypeParam>>));
-    EXPECT_TRUE((std::is_copy_assignable_v<align_cfg::result<TypeParam>>));
-    EXPECT_TRUE((std::is_move_assignable_v<align_cfg::result<TypeParam>>));
-    EXPECT_TRUE((std::is_constructible_v<align_cfg::result<TypeParam>, TypeParam>));
-}
-
 template <typename type>
 auto type_to_variable()
 {

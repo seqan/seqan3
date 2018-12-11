@@ -69,8 +69,11 @@ template <typename ...errors_t>
               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, deletion>  ||
               detail::is_type_specialisation_of_v<std::remove_reference_t<errors_t>, insertion>) && ...)
 //!\endcond
-class max_error_rate : public pipeable_config_element
+class max_error_rate : public pipeable_config_element<max_error_rate<errors_t...>, std::array<double, 4>>
 {
+
+    //!\brief An alias type for the base class.
+    using base_t = pipeable_config_element<max_error_rate<errors_t...>, std::array<double, 4>>;
 
     //!\brief Helper function to check valid error rate configuration.
     template <typename ..._errors_t>
@@ -102,7 +105,7 @@ public:
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_rate};
 
-    //!\publicsecton
+    //!\publicsection
     /*!\name Constructor, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
@@ -126,14 +129,15 @@ public:
     //!\cond
         requires sizeof...(errors_t) > 0
     //!\endcond
+        : base_t{}
     {
         detail::for_each_value([this](auto e)
         {
-            value[remove_cvref_t<decltype(e)>::_id()] = e.get();
+            base_t::value[remove_cvref_t<decltype(e)>::_id()] = e.get();
         }, std::forward<errors_t>(errors)...);
 
         // check correct values.
-        ranges::for_each(value, [](auto error_elem)
+        ranges::for_each(base_t::value, [](auto error_elem)
         {
             if (0.0 > error_elem  || error_elem > 1.0)
                 throw std::invalid_argument("Error rates must be between 0 and 1.");
@@ -142,17 +146,14 @@ public:
         // Only total is set so we set all other errors to the total limit.
         if constexpr (((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) == 1)
         {
-            ranges::fill(value | ranges::view::slice(1, 4), value[0]);
+            ranges::fill(base_t::value | ranges::view::slice(1, 4), base_t::value[0]);
         } // otherwise if total is not set but any other field is set than use total as the sum of all set errors.
         else if constexpr (!((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) > 0)
         {
-            value[0] = std::min(1., ranges::accumulate(value | ranges::view::slice(1, 4), .0));
+            base_t::value[0] = std::min(1., ranges::accumulate(base_t::value | ranges::view::slice(1, 4), .0));
         }
     }
     //!}
-
-    //!\brief The ordered error values.
-    std::array<double, 4> value{.0, .0, .0, .0};
 };
 
 /*!\name Type deduction guides

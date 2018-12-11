@@ -12,40 +12,19 @@ enum struct my_id : int
     foo_id
 };
 
-struct bar : public pipeable_config_element
+struct bar : public pipeable_config_element<bar, float>
 {
     static constexpr my_id id{my_id::bar_id};
-
-    bar()                        = default;
-    bar(bar const &)             = default;
-    bar(bar &&)                  = default;
-    bar & operator=(bar const &) = default;
-    bar & operator=(bar &&)      = default;
-    ~bar()                       = default;
-
-    bar(float v) : value(v)
-    {}
-
-    float value;
 };
 
 template <typename t>
-struct foo : public pipeable_config_element
+struct foo : public pipeable_config_element<foo<t>, t>
 {
     static constexpr my_id id{my_id::foo_id};
-
-    foo()                        = default;
-    foo(foo const &)             = default;
-    foo(foo &&)                  = default;
-    foo & operator=(foo const &) = default;
-    foo & operator=(foo &&)      = default;
-    ~foo()                       = default;
-
-    foo(t v) : value(v)
-    {}
-
-    t value;
 };
+
+template <typename t>
+foo(t) -> foo<t>;
 //! [configuration_setup]
 
 //! [compatibility]
@@ -65,7 +44,7 @@ int main()
 {
 {
 //! [combine]
-configuration my_cfg = bar{1.3} | foo<int>{{4}};  // my_cfg is now of type configuration<bar, foo<int>>
+configuration my_cfg = bar{1.3} | foo<int>{4};  // my_cfg is now of type configuration<bar, foo<int>>
 //! [combine]
 
 //! [get]
@@ -77,7 +56,7 @@ std::cout << get<foo>(my_cfg).value << '\n';  // prints 4
 
 {
 //! [push_back]
-configuration my_cfg = configuration{foo<int>{4}}.push_back(bar{});
+configuration my_cfg = configuration{foo{4}}.push_back(bar{.0});
 //! [push_back]
 }
 
