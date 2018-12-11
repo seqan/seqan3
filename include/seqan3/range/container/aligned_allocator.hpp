@@ -126,6 +126,12 @@ public:
         if (n > max_size)
             throw std::bad_alloc();
 
+        // NOTE: On macOS glibc does not implement aligned_alloc, so we need to fallback to posix_memalign instead.
+#if defined(__APPLE__) && (!defined(_GLIBCXX_HAVE_ALIGNED_ALLOC) && !defined(_ISOC11_SOURCE))
+        void * p{};
+        if (int res = posix_memalign(&p, alignment, n * sizeof(value_type)); res == 0 && p != nullptr)
+            return static_cast<pointer>(p);
+#else
         // NOTE:
         // Allocate size bytes of uninitialized storage whose alignment is
         // specified by alignment. The size parameter must be an integral
@@ -139,6 +145,7 @@ public:
         // http://en.cppreference.com/w/cpp/memory/c/aligned_alloc
         if (auto p = static_cast<pointer>(std::aligned_alloc(alignment, n * sizeof(value_type))))
             return p;
+#endif
 
         throw std::bad_alloc();
     }
