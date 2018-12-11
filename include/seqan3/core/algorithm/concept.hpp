@@ -51,6 +51,7 @@ namespace seqan3
 {
 //!\cond
 // Forward declarations
+template <typename derived_t, typename value_t>
 struct pipeable_config_element;
 //!\endcond
 }
@@ -71,7 +72,7 @@ class config_element_base;
  * \brief Concept for an algorithm configuration.
  * \ingroup algorithm
  *
- * \extends    std::Copyable
+ * \extends    std::Semiregular
  * \implements seqan3::pipeable_config_element
  */
 
@@ -91,12 +92,13 @@ class config_element_base;
 //!\}
 //!\cond
 template <typename config_t>
-concept config_element_concept = std::Copyable<std::remove_reference_t<config_t>> &&
-                                 std::is_base_of_v<pipeable_config_element, std::remove_reference_t<config_t>> &&
+concept config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
     { std::remove_reference_t<config_t>::id };
     { c.value };
+    // Must inherit from the pipeable_config_element class.
+    requires std::is_base_of_v<pipeable_config_element<config_t, decltype(c.value)>, config_t>;
 };
 //!\endcond
 } // namespace seqan3::detail

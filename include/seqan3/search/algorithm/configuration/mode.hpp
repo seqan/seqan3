@@ -92,44 +92,17 @@ template <typename mode_t>
              std::Same<remove_cvref_t<mode_t>, detail::search_mode_best> ||
              std::Same<remove_cvref_t<mode_t>, strata>
 //!\endcond
-class mode : public pipeable_config_element
+struct mode : public pipeable_config_element<mode<mode_t>, mode_t>
 {
-public:
-
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::mode};
-
-    //!\publicsecton
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr mode()                         noexcept = default;
-    constexpr mode(mode const &)             noexcept = default;
-    constexpr mode(mode &&)                  noexcept = default;
-    constexpr mode & operator=(mode const &) noexcept = default;
-    constexpr mode & operator=(mode &&)      noexcept = default;
-    ~mode()                                  noexcept = default;
-
-    /*!\brief Constructs an object from the given mode.
-     * \tparam mode_t The type of the search mode.
-     * \param  model  The mode to be used.
-     */
-    constexpr mode(mode_t mode) noexcept : value{std::move(mode)}
-    {}
-    //!}
-
-    //!\brief The stored value.
-    mode_t value{};
 };
 
 /*!\name Type deduction guides
  * \relates seqan3::search_cfg::mode
  * \{
  */
-//!\brief Default type deduces to best mode.
-mode() -> mode<detail::search_mode_best>;
 
 //!\brief Deduces search mode type from constructor argument.
 template <typename mode_t>

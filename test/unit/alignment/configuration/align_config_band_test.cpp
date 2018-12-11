@@ -46,16 +46,6 @@ TEST(align_config_band, config_element_concept)
     EXPECT_TRUE((detail::config_element_concept<align_cfg::band<static_band>>));
 }
 
-TEST(align_config_band, construction)
-{
-    EXPECT_TRUE((std::is_default_constructible_v<align_cfg::band<static_band>>));
-    EXPECT_TRUE((std::is_copy_constructible_v<align_cfg::band<static_band>>));
-    EXPECT_TRUE((std::is_move_constructible_v<align_cfg::band<static_band>>));
-    EXPECT_TRUE((std::is_copy_assignable_v<align_cfg::band<static_band>>));
-    EXPECT_TRUE((std::is_move_assignable_v<align_cfg::band<static_band>>));
-    EXPECT_TRUE((std::is_constructible_v<align_cfg::band<static_band>, static_band>));
-}
-
 TEST(align_config_band, configuration)
 {
     {

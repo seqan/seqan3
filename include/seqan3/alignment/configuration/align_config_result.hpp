@@ -72,32 +72,12 @@ template <typename with_tag_t = detail::with_score_type>
     requires std::Same<with_tag_t, detail::with_score_type> || std::Same<with_tag_t, detail::with_end_position_type> ||
              std::Same<with_tag_t, detail::with_begin_position_type> || std::Same<with_tag_t, detail::with_trace_type>
 //!\endcond
-class result : public pipeable_config_element
+class result : public pipeable_config_element<result<with_tag_t>, with_tag_t>
 {
 public:
     //!\privatesection
-    //!\brief An internal id used to check for a valid alignment configuration inherited from the alignment policy.
+    //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::result};
-
-    //!\publicsection
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr result()                           noexcept = default;
-    constexpr result(result const &)             noexcept = default;
-    constexpr result(result &&)                  noexcept = default;
-    constexpr result & operator=(result const &) noexcept = default;
-    constexpr result & operator=(result &&)      noexcept = default;
-    ~result()                                    noexcept = default;
-
-    //!\brief Construction from the result tag.
-    constexpr result(with_tag_t const)
-    {};
-    //!}
-
-    //!\brief The value of align_config_output.
-    with_tag_t value{};
 };
 
 /*!\name Type deduction guides

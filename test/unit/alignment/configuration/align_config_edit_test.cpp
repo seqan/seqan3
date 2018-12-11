@@ -41,7 +41,7 @@ using namespace seqan3;
 TEST(align_cfg_edit, is_global)
 {
     EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(align_cfg::edit).value)>,
-                              global_alignment_type>),
+                              detail::global_alignment_type>),
                true);
 }
 

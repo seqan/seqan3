@@ -15,7 +15,7 @@ namespace seqan3::fixture::semi_global::edit_distance::max_errors::unbanded
 {
 
 inline constexpr auto align_config = align_cfg::edit |
-                                     align_cfg::aligned_ends{seq1_ends_free} |
+                                     align_cfg::aligned_ends{align_cfg::seq1_ends_free} |
                                      align_cfg::max_error{255};
 
 static auto dna4_01_e255 = []()

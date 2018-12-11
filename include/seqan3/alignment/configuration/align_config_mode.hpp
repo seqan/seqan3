@@ -70,32 +70,11 @@ template <typename alignment_t>
 //!\cond
     requires std::Same<remove_cvref_t<alignment_t>, detail::global_alignment_type>
 //!\endcond
-class mode : public pipeable_config_element
+struct mode : public pipeable_config_element<mode<alignment_t>, alignment_t>
 {
-public:
     //!\privatesection
-    //!\brief An internal id used to check for a valid alignment configuration inherited from the alignment policy.
+    //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{alignment_t::id};
-
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr mode()                         = default;
-    constexpr mode(mode const &)             = default;
-    constexpr mode(mode &&)                  = default;
-    constexpr mode & operator=(mode const &) = default;
-    constexpr mode & operator=(mode &&)      = default;
-    ~mode()                                  = default;
-
-    //!\brief Construction from a specific alignment policy.
-    constexpr mode(alignment_t)
-    {}
-    //!}
-
-    //!\publicsection
-    //!\brief The value of align_config_global.
-    alignment_t value{};
 };
 
 /*!\name Type deduction guides

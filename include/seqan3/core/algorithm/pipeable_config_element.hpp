@@ -52,58 +52,99 @@ namespace seqan3
 /*!\brief Adds pipe interface to configuration elements.
  * \ingroup algorithm
  */
+template <typename derived_t, typename value_type>
 struct pipeable_config_element
-{};
-
-/*!\name Pipe operator
- * \{
- */
-
-/*!\brief Combines left operand with right operand in a new seqan3::configuration.
- * \relates seqan3::pipeable_config_element
- * \ingroup algorithm
- *
- * \param[in] lhs The left operand. Must satisfy seqan3::detail::config_element_concept.
- * \param[in] rhs The right operand. Must satisfy seqan3::detail::config_element_concept.
- *
- * \returns The new configuration instance with containing both configuration elements.
- *
- * \details
- *
- * Effectively calls seqan3::configuration::push_back on a temporary created seqan3::configuration from the
- * left operand.
- */
-template <typename lhs_t, typename rhs_t>
-//!\cond
-    requires std::is_base_of_v<pipeable_config_element, remove_cvref_t<lhs_t>> &&
-             std::is_base_of_v<pipeable_config_element, remove_cvref_t<rhs_t>>
-//!\endcond
-constexpr auto operator|(lhs_t && lhs, rhs_t && rhs)
 {
-    return configuration{std::forward<lhs_t>(lhs)}.push_back(std::forward<rhs_t>(rhs));
-}
+    //!\brief The stored config value.
+    value_type value;
 
-/*!\brief Combines left operand with right operand in a new seqan3::configuration.
- * \relates seqan3::pipeable_config_element
- * \ingroup algorithm
- *
- * \param[in] lhs The left operand. Must be of type seqan3::configuration.
- * \param[in] rhs The right operand. Must satisfy seqan3::detail::config_element_concept.
- *
- * \returns The new configuration instance with containing the previous configuration elements and the new one.
- *
- * \details
- *
- * Effectively calls seqan3::configuration::push_back on the left operand.
- */
-template <typename lhs_t, typename rhs_t>
-//!\cond
-    requires detail::is_algorithm_configuration_v<remove_cvref_t<lhs_t>> &&
-             std::is_base_of_v<pipeable_config_element, remove_cvref_t<rhs_t>>
-//!\endcond
-constexpr auto operator|(lhs_t && lhs, rhs_t && rhs)
-{
-    return std::forward<lhs_t>(lhs).push_back(std::forward<rhs_t>(rhs));
-}
-//!\}
+    /*!\name Pipe operator
+     * \{
+     */
+    /*!\brief Combines two configuration elements to a seqan3::configuration.
+     * \tparam other_derived_t The derived type of the right hand side operand.
+     * \tparam other_value_t   The value type of the right hand side operand.
+     * \param[in] lhs          The left hand operand.
+     * \param[in] rhs          The right hand operand.
+     * \returns A new seqan3::configuration containing `lhs` and `rhs`.
+     *
+     * \details
+     *
+     * Effectively calls seqan3::configuration::push_back on a temporary created seqan3::configuration from the
+     * left operand.
+     */
+    template <typename other_derived_t, typename other_value_t>
+    friend constexpr auto operator|(pipeable_config_element && lhs,
+                                    pipeable_config_element<other_derived_t, other_value_t> && rhs)
+    {
+        return configuration{static_cast<derived_t &&>(lhs)}.push_back(static_cast<other_derived_t &&>(rhs));
+    }
+
+    //!\overload
+    template <typename other_derived_t, typename other_value_t>
+    friend constexpr auto operator|(pipeable_config_element && lhs,
+                                    pipeable_config_element<other_derived_t, other_value_t> const & rhs)
+    {
+        return configuration{static_cast<derived_t &&>(lhs)}.push_back(static_cast<other_derived_t const &>(rhs));
+    }
+
+    //!\overload
+    template <typename other_derived_t, typename other_value_t>
+    friend constexpr auto operator|(pipeable_config_element const & lhs,
+                                    pipeable_config_element<other_derived_t, other_value_t> && rhs)
+    {
+        return configuration{static_cast<derived_t const &>(lhs)}.push_back(static_cast<other_derived_t &&>(rhs));
+    }
+
+    //!\overload
+    template <typename other_derived_t, typename other_value_t>
+    friend constexpr auto operator|(pipeable_config_element const & lhs,
+                                    pipeable_config_element<other_derived_t, other_value_t> const & rhs)
+    {
+        return configuration{static_cast<derived_t const &>(lhs)}.push_back(static_cast<other_derived_t const &>(rhs));
+    }
+
+    /*!\brief Combines two configuration elements to a seqan3::configuration.
+     * \tparam configs_t  A template parameter pack for the given seqan3::configuration.
+     * \param[in] lhs     The left hand operand.
+     * \param[in] rhs     The right hand operand.
+     * \returns A new seqan3::configuration adding `rhs` to the passed `lhs` object.
+     *
+     * \details
+     *
+     * Effectively calls seqan3::configuration::push_back on the left operand.
+     */
+    template <typename ...configs_t>
+    friend constexpr auto operator|(configuration<configs_t...> && lhs,
+                                    pipeable_config_element && rhs)
+    {
+        return std::move(lhs).push_back(static_cast<derived_t &&>(rhs));
+    }
+
+    //!\overload
+    template <typename ...configs_t>
+    friend constexpr auto operator|(configuration<configs_t...> const & lhs,
+                                    pipeable_config_element && rhs)
+    {
+        return lhs.push_back(static_cast<derived_t &&>(rhs));
+    }
+
+    //!\overload
+    template <typename ...configs_t>
+    friend constexpr auto operator|(configuration<configs_t...> && lhs,
+                                    pipeable_config_element const & rhs)
+    {
+        return std::move(lhs).push_back(static_cast<derived_t const &>(rhs));
+    }
+
+    //!\overload
+    template <typename ...configs_t>
+    friend constexpr auto operator|(configuration<configs_t...> const & lhs,
+                                    pipeable_config_element const & rhs)
+    {
+        return lhs.push_back(static_cast<derived_t const &>(rhs));
+    }
+    //!\}
+};
+
 } // namespace seqan3

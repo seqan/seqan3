@@ -53,9 +53,9 @@ public:
 using test_types = ::testing::Types<aminoacid_scoring_scheme<int8_t>, nucleotide_scoring_scheme<int8_t>>;
 TYPED_TEST_CASE(align_confg_scoring_test, test_types);
 
-TYPED_TEST(align_confg_scoring_test, construction)
+TYPED_TEST(align_confg_scoring_test, config_element_concept)
 {
-    EXPECT_TRUE((std::Constructible<align_cfg::scoring<TypeParam>, TypeParam>));
+    EXPECT_TRUE((detail::config_element_concept<align_cfg::scoring<TypeParam>>));
 }
 
 TYPED_TEST(align_confg_scoring_test, configuration)

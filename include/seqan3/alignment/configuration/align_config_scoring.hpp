@@ -8,6 +8,7 @@
 /*!\file
  * \brief Provides seqan3::align_cfg::scoring.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
@@ -24,37 +25,14 @@ namespace seqan3::align_cfg
  * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::scoring_scheme_concept.
  */
 template <typename scoring_scheme_t>
-class scoring : public pipeable_config_element
+struct scoring : public pipeable_config_element<scoring<scoring_scheme_t>, scoring_scheme_t>
 {
-public:
     //!\privatesection
-    //!\brief The identifier for this configuration.
+    //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::scoring};
-
-    //!\publicsection
-    /*!\name Constructor, destructor and assignment
-     * \brief Defaulted all standard constructor.
-     * \{
-     */
-    constexpr scoring()                            = default;
-    constexpr scoring(scoring const &)             = default;
-    constexpr scoring(scoring &&)                  = default;
-    constexpr scoring & operator=(scoring const &) = default;
-    constexpr scoring & operator=(scoring &&)      = default;
-    ~scoring()                                     = default;
-
-    /*!\brief Creates this config from a scoring_scheme.
-     * \param scheme The scoring scheme to set. Must satisfy seqan3::scoring_scheme_concept.
-     */
-    constexpr scoring(scoring_scheme_t scheme) : value{std::move(scheme)}
-    {}
-    //!}
-
-    //!\brief The stored configuration value.
-    scoring_scheme_t value;
 };
 
-/*!\names Type deduction guides
+/*!\name Type deduction guides
  * \relates seqan3::align_cfg::scoring
  * \{
  */

@@ -85,6 +85,10 @@ inline constexpr bool is_configuration_valid_v = is_configuration_valid<query_t,
 template <template <typename ...> typename query_t>
 struct is_same_configuration_f
 {
+    /*!\brief A type template that evaluates to std::true_type if the given type is a specialization of `query_t`,
+     *        otherwise std::false_type.
+     * \tparam compare_type The type to compare against `query_t`.
+     */
     template <typename compare_type>
     using invoke = is_type_specialisation_of<compare_type, query_t>;
 };
