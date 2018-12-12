@@ -21,7 +21,7 @@ class nucleotide_conversion : public ::testing::Test
 
 using nucleotide_types = type_list<dna4, dna5, dna15, rna4, rna5, rna15>; // needed for some tests
 
-TYPED_TEST_CASE(nucleotide_conversion, as_testing_list<nucleotide_types>);
+TYPED_TEST_CASE(nucleotide_conversion, detail::transfer_template_args_onto_t<nucleotide_types, ::testing::Types>);
 
 // conversion to any other nucleotide type
 TYPED_TEST(nucleotide_conversion, explicit_conversion)

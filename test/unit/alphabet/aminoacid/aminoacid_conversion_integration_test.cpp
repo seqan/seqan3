@@ -21,7 +21,7 @@ class aminoacid_conversion : public ::testing::Test
 
 using aminoacid_types = type_list<aa20, aa27>; // needed for some tests
 
-TYPED_TEST_CASE(aminoacid_conversion, as_testing_list<aminoacid_types>);
+TYPED_TEST_CASE(aminoacid_conversion, detail::transfer_template_args_onto_t<aminoacid_types, ::testing::Types>);
 
 // conversion to any other amino acid type
 TYPED_TEST(aminoacid_conversion, explicit_conversion)

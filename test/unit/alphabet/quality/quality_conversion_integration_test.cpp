@@ -24,7 +24,7 @@ class quality_conversion : public ::testing::Test
 // add all alphabets from the quality sub module here
 using quality_conversion_types = type_list<phred42, phred63, phred68legacy>;
 
-TYPED_TEST_CASE(quality_conversion, as_testing_list<quality_conversion_types>);
+TYPED_TEST_CASE(quality_conversion, detail::transfer_template_args_onto_t<quality_conversion_types, ::testing::Types>);
 
 TYPED_TEST(quality_conversion, explicit_conversion)
 {
