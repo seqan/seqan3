@@ -74,7 +74,7 @@ TEST(rows, assign_sequence_files)
     fout = fin;
 
     fout.get_stream().flush();
-    EXPECT_EQ(fout.get_stream().str(), output_comp);
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
 
 TEST(integration, assign_sequence_file_pipes)
@@ -98,7 +98,7 @@ TEST(integration, assign_sequence_file_pipes)
                 sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
 
     fout.get_stream().flush();
-    EXPECT_EQ(fout.get_stream().str(), input);
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), input);
 }
 
 TEST(integration, view)
@@ -132,7 +132,7 @@ TEST(integration, view)
               | sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
 
     fout.get_stream().flush();
-    EXPECT_EQ(fout.get_stream().str(), output);
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output);
 }
 
 TEST(integration, convert_fastq_to_fasta)
@@ -160,5 +160,5 @@ TEST(integration, convert_fastq_to_fasta)
     auto fout = sequence_file_input{std::istringstream{fastq_in}, sequence_file_format_fastq{}} |
                 sequence_file_output{std::ostringstream{}, sequence_file_format_fasta{}};
     fout.get_stream().flush();
-    EXPECT_EQ(fout.get_stream().str(), fasta_out);
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), fasta_out);
 }
