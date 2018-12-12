@@ -80,13 +80,12 @@ namespace seqan3
  * both operator[] and gap insertion/erasure.
  *
  */
-template <typename inner_type>
+template <std::ranges::RandomAccessRange inner_type>
 //!\cond
-    requires container_concept<inner_type>
+//    requires container_concept<inner_type>
 //!\endcond
-struct gap_decorator_anchor_set
+class gap_decorator_anchor_set
 {
-    //!\privatesection
     //!\brief The gap type as a tuple storing position and accumulated gap lengths.
     using gap_t = typename std::pair<size_t, size_t>;
 
@@ -153,9 +152,9 @@ public:
     //!\brief Move assignment.
     constexpr gap_decorator_anchor_set & operator=(gap_decorator_anchor_set && rhs) = default;
     //!\brief Direct sequence assignment resets previously inserted gaps.
-    constexpr gap_decorator_anchor_set & operator=(inner_type sequence)
+    constexpr gap_decorator_anchor_set & operator=(inner_type const & sequence)
     {
-        this->sequence = &sequence;
+        this->sequence = sequence;
         anchors.clear();
     };
     //!\brief Use default deconstructor.
@@ -165,7 +164,7 @@ public:
     //!\}
 
     /*!\brief Returns the total length of the aligned sequence.
-     * \returns The total lengths of the aligned sequence.
+     * \returns The total length of the aligned sequence.
      *
      * \par Complexity
      *
@@ -194,14 +193,16 @@ public:
      *
      * May throw std::set exceptions.
      */
-    bool insert_gap(iterator const it, size_type const size=1)
+    iterator insert_gap(iterator const it, size_type const size=1)
     {
+        if (!size)
+            return it;
         size_type const pos = it - this->begin();
-        if (pos > size())
-            return false;
+        assert(pos <= size());
+
         anchor_set_iterator it_set = anchors.begin();
         // case 1: extend previous/surrounding gap already existing
-        if ((pos < this->size()) && (((value_type)(*this)[pos] == gap::GAP) || (pos > 0 && (value_type)(*this)[pos-1] == gap::GAP)))
+        if ((pos < this->size()) && (((value_type)(*this)[pos] == gap::GAP) || (pos > 0 && (*this)[pos-1] == gap::GAP)))
         {
             it_set = anchors.lower_bound(gap_t{pos, _});
             if (it_set == anchors.end() || (*it_set).first > pos)
@@ -223,16 +224,18 @@ public:
         else
         {
             gap_t gap{pos, size};
-            // pre: pos not in anchor set, find next lower index
-            it = anchors.find(gap_t{pos, _});
-            // add accumulated gaps from preceeding gap
-            if (it != anchors.begin() && it != anchors.end())
-                gap.second += (*--it).second;
+            // pre: pos not in anchor set, find preceeding gap to add accumulated gaps
+            if (anchors.size())
+            {
+                it = anchors.lower_bound(gap_t{pos, _});
+                if (it != anchors.begin())
+                    gap.second += (*--it).second;
+            }
             anchors.insert(gap);
         }
         // post-processing: reverse update of succeeding gaps
         rupdate(pos, size);
-        return true;
+        return it;
     }
 
    /*!\brief Erase gap in given iterator range (exluding it2).
@@ -247,17 +250,15 @@ public:
     *
     * May throw std::set exceptions.
     */
-    bool erase_gap(iterator const it)
+    bool erase_gap(const_iterator it)
     {
-        return erase_gap(it, std::next(it));
+        return erase_gap(it, it + 1);
     }
-    //!\copydoc erase_gap(iterator const it)
-    bool erase_gap(iterator const it1, iterator const it2)
+    //!\copydoc erase_gap(const_iterator it)
+    bool erase_gap(const_iterator it1, const_iterator it2)
     {
-        // TODO: assert or return false?
         if (it1 > it2 || it2 > this->end())
             return false;
-        //assert(it1 <= it2 && it2 <= this->end());
         size_type pos1 = it1 - this->begin(), pos2 = it2 - this->begin();
         anchor_set_iterator it = anchors.lower_bound(gap_t{pos1, _});
         size_type gap_len = get_gap_length(it);
@@ -271,7 +272,6 @@ public:
         else
         {
             gap_t gap{(*it).first, (*it).second - pos2 + pos1};
-            // TODO: emplace better?
             anchors.erase(it);
             anchors.insert(gap);
         }
@@ -382,16 +382,18 @@ public:
     {
         assert(i < size());
         // case 1: no gaps
-        if (!anchors.size()) return value_type((*sequence)[i]);
+        if (!anchors.size())
+            return value_type((*sequence)[i]);
         // case 2: gaps
         anchor_set_iterator it = anchors.lower_bound(gap_t{i, _});
-        if (anchors.size() && it == anchors.end())
+        if (it == anchors.end())
             it = std::prev(it);
 
-        size_type acc = 0, gap_len = 0;
+        size_type acc{0}, gap_len{0};
         if ((*it).first <= i || (it != anchors.begin() && (*(std::prev(it))).first <= i))
         {
-            if ((*it).first > i)    --it;
+            if ((*it).first > i)
+                --it;
             acc = (*it).second;
             gap_len = (*it).second;
             if (*it != *(anchors.begin()))
@@ -430,7 +432,6 @@ public:
     }
     //!\}
 private:
-    //!\privatesection
     /*!\brief Helper function to compute the length of the gap indicated by the
      * input iterator.
      * \details The length of a gap is difference of the accumulator pointed at
@@ -438,7 +439,8 @@ private:
      */
     constexpr size_type get_gap_length(anchor_set_iterator it) const noexcept
     {
-        if (it == anchors.begin()) return (*it).second;
+        if (it == anchors.begin())
+            return (*it).second;
         return (*it).second - (*std::prev(it)).second;
     }
 
@@ -452,8 +454,8 @@ private:
         for (auto it = std::prev(anchors.end(), 1); (*it).first > pos;)
         {
             new_key = (*it).first + size;
-            new_val = (*it).second + size;  //idx2len[*it] + size;
-            anchors.insert(gap_t{new_key, new_val});
+            new_val = (*it).second + size;
+            anchors.emplace_hint(it, gap_t{new_key, new_val});
             anchors.erase(*it--);
         }
     }
