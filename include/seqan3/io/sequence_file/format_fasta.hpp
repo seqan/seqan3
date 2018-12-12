@@ -144,10 +144,11 @@ public:
               id_type                                                                & id,
               qual_type                                                              & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
-                                          decltype(std::istreambuf_iterator<char>{})>
-                            {std::istreambuf_iterator<char>{stream},
-                             std::istreambuf_iterator<char>{}};
+        using stream_char_t = typename stream_type::char_type;
+        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
+                                          decltype(std::istreambuf_iterator<stream_char_t>{})>
+                            {std::istreambuf_iterator<stream_char_t>{stream},
+                             std::istreambuf_iterator<stream_char_t>{}};
         // ID
         read_id(stream_view, options, id);
 
@@ -155,7 +156,7 @@ public:
         read_seq(stream_view, options, sequence);
 
         // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
+        if ((std::istreambuf_iterator<stream_char_t>{stream} == std::istreambuf_iterator<stream_char_t>{}) &&
             (!stream.eof()))
         {
             stream.get(); // triggers error in stream and sets eof
