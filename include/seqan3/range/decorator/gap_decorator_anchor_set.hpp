@@ -32,14 +32,15 @@
 //
 // ============================================================================
 
-/*!\file
- * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
- * \brief Contains a gap decorator to annotate sequences with gaps using a set.
- */
+ /*!\file
+  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
+  * \brief Contains gap decorator to annotate sequences with gaps using a set.
+  */
 
 #pragma once
 
 #include <set>
+#include <tuple>
 #include <type_traits>
 
 #include <range/v3/all.hpp>
@@ -49,16 +50,13 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
-// ------------------------------------------------------------------
-// gap_decorator_anchor_set
-// ------------------------------------------------------------------
-
-namespace seqan3 {
+namespace seqan3
+{
 
 /*!\brief A gap decorator allows the annotation of sequences with gap symbols
  * leaving the underlying sequence unmodified.
  * \tparam inner_type The type of alphabet sequences that will be stored.
- * \implements seqan3::aligned_sequence_concept.
+ * \implements seqan3::aligned_sequence_concept
  * \ingroup decorator
  *
  * This class may be used whenever you want to store or compute an alignment.
@@ -67,7 +65,7 @@ namespace seqan3 {
  * had a rolled out, aligned sequence with alphabet and gap symbols.
  *
  * \details
- * The gap_decorator_anchor_set is a modified anchor list approach - instead
+ * The gap_decorator_anchor_set is a modified anchor list approach -- instead
  * of storing tuples of anchor positions and gap lengths relative to the
  * underlying sequence position, the anchor addresses are virtual and gap
  * lengths accumulated from left to right, i.e. an anchor gap stores at the 2nd
@@ -80,6 +78,7 @@ namespace seqan3 {
  * Sets are implemented as red-black trees and perform random read operations in
  * log (k) time. The anchor set approach provides a good trade-off when using
  * both operator[] and gap insertion/erasure.
+ *
  */
 template <typename inner_type>
 //!\cond
@@ -90,29 +89,31 @@ struct gap_decorator_anchor_set
     //!\privatesection
     //!\brief The gap type as a tuple storing position and accumulated gap lengths.
     using gap_t = typename std::pair<size_t, size_t>;
-    //!\brief NULL symbol as placeholder for gap_t initialization.
-    #define _ 0
 
     /*!\brief Structure allowing the comparison of gaps.
-     * \details It is assumed that the gap structure is always healthy, i.e.
+     * \details It is assumed that the gap structure is always in a consistent
+     * state, i.e.
      * there are no two gaps that are overlapping. The ordering of gaps structures
      * is exclusively dependent on the gap starting position which is the
      * ordering criterion for the anchor set implemented as ordered red-black tree.
-    */
+     */
     template <typename gap_t>
     struct gap_compare {
+        //!\brief The operator allowing gap_t comparison.
          bool operator() (const gap_t& lhs, const gap_t& rhs) const {
              return lhs.first < rhs.first;
          }
      };
     //!\brief The iterator type for an anchor set.
     using anchor_set_iterator = typename std::set<gap_t, gap_compare<gap_t>>::iterator;
+    //!\brief Placeholder for gap elements to be ignored.
+    const ranges::v3::size_type_t<inner_type> _ = 0;
 
 public:
     //!\publicsection
     /*!\name Member types
-    * \{
-    */
+     * \{
+     */
     //!\brief The alphabet type of the underlying sequence.
     //!\hideinitializer
     using alphabet_type = typename ranges::v3::value_type_t<inner_type>;
@@ -131,8 +132,6 @@ public:
     //!\brief Use the difference_type of the underlying sequence.
     //!\hideinitializer
     using difference_type = typename ranges::v3::difference_type_t<inner_type>;
-
-
     //!\brief The iterator type of this container (a random access iterator).
     //!\hideinitializer
     using iterator = detail::random_access_iterator<gap_decorator_anchor_set>;
@@ -184,17 +183,17 @@ public:
     }
 
     /*!\brief Insert a gap of length size at the aligned sequence iterator position.
-    * \returns A boolean flag indicating the success of the insertion operation.
-    *
-    * \par Complexity
-    *
-    * Average and worst case (insertion before last gap): o(k),
-    * Best case (back insertion): o(log k).
-    *
-    * \par Exceptions
-    *
-    * May throw std::set exceptions.
-    */
+     * \returns A boolean flag indicating the success of the insertion operation.
+     *
+     * \par Complexity
+     *
+     * Average and worst case (insertion before last gap): o(k),
+     * Best case (back insertion): o(log k).
+     *
+     * \par Exceptions
+     *
+     * May throw std::set exceptions.
+     */
     bool insert_gap(iterator const it, size_type const size=1)
     {
         size_type const pos = it - this->begin();
@@ -236,7 +235,7 @@ public:
         return true;
     }
 
-    /*!\brief Erase gap in given iterator range (exluding it2).
+   /*!\brief Erase gap in given iterator range (exluding it2).
     * \returns A boolean flag indicating the success of the erasing operation.
     *
     * \par Complexity
@@ -402,6 +401,7 @@ public:
         }
         return value_type((*sequence)[i - acc]);
     }
+    //!\}
 
     /*!\name Comparison operators
      * \brief Compare gap decorators by underlying sequence and gaps.
@@ -428,14 +428,14 @@ public:
     {
         return !(this->operator==(rhs));
     }
-
+    //!\}
 private:
     //!\privatesection
     /*!\brief Helper function to compute the length of the gap indicated by the
-    * input iterator.
-    * \details The length of a gap is difference of the accumulator pointed at
-    * and the one of its predecessor (if existing).
-    */
+     * input iterator.
+     * \details The length of a gap is difference of the accumulator pointed at
+     * and the one of its predecessor (if existing).
+     */
     constexpr size_type get_gap_length(anchor_set_iterator it) const noexcept
     {
         if (it == anchors.begin()) return (*it).second;
@@ -443,9 +443,9 @@ private:
     }
 
     /*!\brief Update all anchor gaps after the indicated position by adding an offset.
-    * \details For not invalidating the iterator over the ordered set, the
-    * update is done in reverse manner excluding the indicated gap.
-    */
+     * \details For not invalidating the iterator over the ordered set, the
+     * update is done in reverse manner excluding the indicated gap.
+     */
     void rupdate(size_type const pos, size_type const size)
     {
         size_type new_key, new_val;
@@ -459,9 +459,9 @@ private:
     }
 
     /*!\brief Update all anchor gaps after indicated position by substracting an offset.
-    * \details For not invalidating the iterator over the ordered set, the
-    * decreasing is done in a forward manner excluding the indicated gap.
-    */
+     * \details For not invalidating the iterator over the ordered set, the
+     * decreasing is done in a forward manner excluding the indicated gap.
+     */
     void update(size_type const pos, size_type const size)
     {
         assert(pos < size);
