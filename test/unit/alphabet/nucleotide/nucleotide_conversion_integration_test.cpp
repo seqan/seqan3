@@ -11,7 +11,6 @@
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/type_list.hpp>
-#include <seqan3/test/testing_list.hpp>
 
 using namespace seqan3;
 

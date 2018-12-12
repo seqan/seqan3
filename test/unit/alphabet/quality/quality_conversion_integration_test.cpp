@@ -13,7 +13,6 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/quality/all.hpp>
-#include <seqan3/test/testing_list.hpp>
 
 using namespace seqan3;
 
