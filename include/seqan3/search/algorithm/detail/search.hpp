@@ -52,14 +52,11 @@ namespace seqan3::detail
  */
 
 /*!\brief Search a single query in an index.
- *
  * \tparam index_t   Must model seqan3::fm_index_concept.
  * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
- *
- * \param[in] index String index to be searched.
- * \param[in] query A single query.
- * \param[in] cfg   A configuration object specifying the search parameters.
- *
+ * \param[in] index  String index to be searched.
+ * \param[in] query  A single query.
+ * \param[in] cfg    A configuration object specifying the search parameters.
  * \returns `True` if and only if `abort_on_hit` is `true` and a hit has been found.
  *
  * ### Complexity
@@ -68,8 +65,8 @@ namespace seqan3::detail
  *
  * ### Exceptions
  *
- * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
- * invoking a possible delegate specified in `cfg`; basic exception guarantee otherwise.
+ * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
+ * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename index_t, typename query_t, typename configuration_t>
 inline auto search_single(index_t const & index, query_t & query, configuration_t const & cfg)
@@ -183,15 +180,12 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 }
 
 /*!\brief Search a query or a range of queries in an index.
- *
- * \tparam index_t   Must model seqan3::fm_index_concept.
- * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
- *                   a range of queries must additionally model std::ranges::ForwardRange.
- *
+ * \tparam index_t    Must model seqan3::fm_index_concept.
+ * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] index   String index to be searched.
  * \param[in] queries A single query or a range of queries.
  * \param[in] cfg     A configuration object specifying the search parameters.
- *
  * \returns `True` if and only if `abort_on_hit` is `true` and a hit has been found.
  *
  * ### Complexity
@@ -200,8 +194,8 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
  *
  * ### Exceptions
  *
- * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
- * invoking a possible delegate specified in `cfg`; basic exception guarantee otherwise.
+ * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
+ * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename index_t, typename queries_t, typename configuration_t>
 inline auto search_all(index_t const & index, queries_t & queries, configuration_t const & cfg)

@@ -47,7 +47,7 @@ namespace seqan3::detail
  */
 
 //!\brief Object storing information for a search (of a search scheme).
-//        Number of blocks have to be known at compile time.
+//!\attention Number of blocks have to be known at compile time.
 template <uint8_t nbr_blocks>
 struct search
 {
@@ -69,7 +69,7 @@ struct search
 };
 
 //!\brief Object storing information for a search (of a search scheme).
-//        Number of blocks do not have to be known at compile time.
+//!\attention Number of blocks do not have to be known at compile time.
 struct search_dyn
 {
     //!\brief Type for storing the length of blocks
@@ -99,10 +99,10 @@ using search_scheme_dyn_type = std::vector<search_dyn>;
 /*!\brief Search scheme that is optimal in the running time for the specified lower and upper error bound.
  * \tparam min_error Lower bound of errors.
  * \tparam max_error Upper bound of errors.
- * \details Please note that the searches within each search scheme are sorted by their asymptotical running time
- *         (i.e. upper error bound string), s.t. easy to compute searches come first. This improves the running time of
- *         algorithms that abort after the first hit (e.g. search mode: best). Even though it is not guaranteed, this
- *         seems to be a good greedy approach.
+ * \details Please note that the searches within each search scheme are sorted by their asymptotical run time
+ *          (i.e. upper error bound string), s.t. easy to compute searches come first. This improves the run time of
+ *          algorithms that abort after the first hit (e.g. search mode: best). Even though it is not guaranteed, this
+ *          seems to be a good greedy approach.
  */
 template <uint8_t min_error, uint8_t max_error>
 inline int constexpr optimum_search_scheme;

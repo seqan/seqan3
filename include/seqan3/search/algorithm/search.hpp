@@ -51,20 +51,17 @@ namespace seqan3
  */
 
 /*!\brief Search a query or a range of queries in an index.
- *
- * \tparam index_t   Must model seqan3::fm_index_concept.
- * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
- *                   a range of queries must additionally model std::ranges::ForwardRange.
- *
- * \todo Update concepts and documentation of `configuration_t` everywhere once it has been refactored by rrahn.
- *
+ * \tparam index_t    Must model seqan3::fm_index_concept.
+ * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] index   String index to be searched.
  * \param[in] queries A single query or a range of queries.
  * \param[in] cfg     A configuration object specifying the search parameters (e.g. number of errors, error types,
  *                    output format, etc.).
+ * \returns An object modelling std::ranges::Range containing the hits (the type depends on the specification
+            in `cfg`), or `void` if an on_hit delegate has been specified.
  *
- * \returns An object modelling std::ranges::Range containing the hits (the type depends on the specification in `cfg`),
- *          or `void` if an on_hit delegate has been specified.
+ * \todo Update concepts and documentation of `configuration_t` everywhere once it has been refactored by rrahn.
  *
  * ### Complexity
  *
@@ -72,8 +69,8 @@ namespace seqan3
  *
  * ### Exceptions
  *
- * Strong exception guarantee if iterating the query does not change its state and if this is also guaranteed when
- * invoking a possible delegate specified in `cfg`; basic exception guarantee otherwise.
+ * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
+ * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
 template <fm_index_concept index_t, typename queries_t, typename configuration_t>
 //!\cond
@@ -124,14 +121,11 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
 
 /*!\brief Search a query or a range of queries in an index.
  *        It will not allow for any errors and will output all matches as positions in the text.
- *
- * \tparam index_t   Must model seqan3::fm_index_concept.
- * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
- *                   a range of queries must additionally model std::ranges::ForwardRange.
- *
+ * \tparam index_t    Must model seqan3::fm_index_concept.
+ * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
+ *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] index   String index to be searched.
  * \param[in] queries A single query or a range of queries.
- *
  * \returns An object modelling std::ranges::Range containing the hits as positions in the searched text.
  *
  * ### Complexity
