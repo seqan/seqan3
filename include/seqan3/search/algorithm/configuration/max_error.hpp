@@ -122,10 +122,13 @@ public:
         // at least one specific error type specified
         else if constexpr (!total_set)
         {
+            uint8_t substitution_error = static_cast<uint8_t>(std::get<1>(out));
+            uint8_t insertion_error = static_cast<uint8_t>(std::get<2>(out));
+            uint8_t deletion_error = static_cast<uint8_t>(std::get<3>(out));
             // total not set. set it to sum of all error types
-            std::get<0>(out) = search_cfg::total<uint8_t>{std::min(255, static_cast<uint8_t>(std::get<1>(out))
-                                                                      + static_cast<uint8_t>(std::get<2>(out))
-                                                                      + static_cast<uint8_t>(std::get<3>(out)))};
+            std::get<0>(out) = search_cfg::total<uint8_t>{std::min<uint8_t>(255, substitution_error
+                                                                               + insertion_error
+                                                                               + deletion_error)};
         }
 
         search_config_max_error tmp{static_cast<std::tuple<uint8_t, uint8_t, uint8_t, uint8_t>>(out)};
