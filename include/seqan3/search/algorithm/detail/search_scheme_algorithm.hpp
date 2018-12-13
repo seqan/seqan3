@@ -115,7 +115,7 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 
     uint8_t const blocks      {search_scheme[0].blocks()};
     size_t  const block_length{query_length / blocks};
-    uint8_t const rest        {query_length - blocks * block_length};
+    uint8_t const rest        {static_cast<uint8_t>(query_length % blocks)};
 
     blocks_length_type blocks_length;
     // set all blocks_length values to block_length
