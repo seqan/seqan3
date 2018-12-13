@@ -269,9 +269,10 @@ public:
     bi_fm_index_iterator(bi_fm_index_iterator &&) noexcept = default;
     bi_fm_index_iterator & operator=(bi_fm_index_iterator &&) noexcept = default;
 
-    bi_fm_index_iterator(index_t const & _index) noexcept : index(&_index), depth(0),
+    bi_fm_index_iterator(index_t const & _index) noexcept : index(&_index),
                                                            fwd_lb(0), fwd_rb(_index.size() - 1),
-                                                           rev_lb(0), rev_rb(_index.size() - 1)
+                                                           rev_lb(0), rev_rb(_index.size() - 1),
+                                                           depth(0)
     {}
     //\}
 
