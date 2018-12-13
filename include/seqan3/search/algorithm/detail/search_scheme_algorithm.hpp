@@ -404,7 +404,7 @@ inline bool search_ss(iterator_t it, query_t & query,
         return true;
     }
     // Exact search in current block.
-    else if ((max_error_left_in_block == 0) && (rb - lb - 1 != blocks_length[block_id]) ||
+    else if ((max_error_left_in_block == 0 && (rb - lb - 1 != blocks_length[block_id])) ||
              (error_left.total == 0 && min_error_left_in_block == 0))
     {
         if (search_ss_exact<abort_on_hit>(it, query, lb, rb, errors_spent, block_id, go_right, search, blocks_length,
