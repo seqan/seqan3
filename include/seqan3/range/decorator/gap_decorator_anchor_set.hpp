@@ -256,7 +256,7 @@ public:
     {
         return erase_gap(it, it + 1);
     }
-    //!\copydoc erase_gap(const_iterator it)
+    //!\copydoc erase_gap(iterator it)
     iterator erase_gap(iterator const it1, iterator const it2)
     {
         // TODO: assert or more robust behaviour: delete all gaps that are located between it1, it2
@@ -481,6 +481,7 @@ private:
 };
 
 // TODO: correct syntax of free function below
+//!\brief The free insert_gap function.
 /*
 template<std::ranges::RandomAccessRange inner_type>
 //!\cond
