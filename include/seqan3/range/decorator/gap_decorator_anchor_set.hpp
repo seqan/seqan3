@@ -45,6 +45,7 @@
 
 #include <range/v3/all.hpp>
 
+#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/range/container/concept.hpp>
@@ -82,7 +83,7 @@ namespace seqan3
  */
 template <std::ranges::RandomAccessRange inner_type>
 //!\cond
-//    requires container_concept<inner_type>
+    requires container_concept<inner_type>
 //!\endcond
 class gap_decorator_anchor_set
 {
@@ -109,7 +110,6 @@ class gap_decorator_anchor_set
     const ranges::v3::size_type_t<inner_type> _ = 0;
 
 public:
-    //!\publicsection
     /*!\name Member types
      * \{
      */
@@ -127,7 +127,7 @@ public:
     using const_reference = value_type const;
     //!\brief Use the size_type of the underlying sequence.
     //!\hideinitializer
-    using size_type = typename ranges::v3::size_type_t<inner_type>;
+    using size_type = size_type_t<inner_type>;
     //!\brief Use the difference_type of the underlying sequence.
     //!\hideinitializer
     using difference_type = typename ranges::v3::difference_type_t<inner_type>;
@@ -154,12 +154,12 @@ public:
     //!\brief Direct sequence assignment resets previously inserted gaps.
     constexpr gap_decorator_anchor_set & operator=(inner_type const & sequence)
     {
-        this->sequence = sequence;
+        sequence = sequence;
         anchors.clear();
     };
     //!\brief Use default deconstructor.
     ~gap_decorator_anchor_set() = default;
-    //!\brief Construct by host and explicit position.
+    //!\brief Construct by host sequence.
     constexpr gap_decorator_anchor_set(inner_type const & sequence): sequence{&sequence} {};
     //!\}
 
@@ -182,6 +182,8 @@ public:
     }
 
     /*!\brief Insert a gap of length size at the aligned sequence iterator position.
+     * \param it Iterator indicating the gap start position in the aligned sequence.
+     * \param size Number of gap symbols to be inserted.
      * \returns A boolean flag indicating the success of the insertion operation.
      *
      * \par Complexity
@@ -193,16 +195,16 @@ public:
      *
      * May throw std::set exceptions.
      */
-    iterator insert_gap(iterator const it, size_type const size=1)
+    iterator insert_gap(iterator const it, size_type const size = 1)
     {
         if (!size)
             return it;
-        size_type const pos = it - this->begin();
+        size_type const pos = it - begin();
         assert(pos <= size());
 
         anchor_set_iterator it_set = anchors.begin();
         // case 1: extend previous/surrounding gap already existing
-        if ((pos < this->size()) && (((value_type)(*this)[pos] == gap::GAP) || (pos > 0 && (*this)[pos-1] == gap::GAP)))
+        if ((pos < size()) && (((value_type)(*this)[pos] == gap::GAP) || (pos > 0 && (*this)[pos-1] == gap::GAP)))
         {
             it_set = anchors.lower_bound(gap_t{pos, _});
             if (it_set == anchors.end() || (*it_set).first > pos)
@@ -250,16 +252,16 @@ public:
     *
     * May throw std::set exceptions.
     */
-    bool erase_gap(const_iterator it)
+    iterator erase_gap(iterator const it)
     {
         return erase_gap(it, it + 1);
     }
     //!\copydoc erase_gap(const_iterator it)
-    bool erase_gap(const_iterator it1, const_iterator it2)
+    iterator erase_gap(iterator const it1, iterator const it2)
     {
-        if (it1 > it2 || it2 > this->end())
-            return false;
-        size_type pos1 = it1 - this->begin(), pos2 = it2 - this->begin();
+        // TODO: assert or more robust behaviour: delete all gaps that are located between it1, it2
+        assert(it1 <= it2 && it2 <= end());
+        size_type pos1 = it1 - begin(), pos2 = it2 - begin();
         anchor_set_iterator it = anchors.lower_bound(gap_t{pos1, _});
         size_type gap_len = get_gap_length(it);
 
@@ -277,7 +279,7 @@ public:
         }
         // post-processing: forward update of succeeding gaps
         update(pos1, pos2-pos1);
-        return true;
+        return it1;
     }
 
     /*!\name Iterators
@@ -381,27 +383,21 @@ public:
     constexpr reference operator[](size_type const i) const
     {
         assert(i < size());
-        // case 1: no gaps
+        // case 1: there are no gaps
         if (!anchors.size())
             return value_type((*sequence)[i]);
-        // case 2: gaps
-        anchor_set_iterator it = anchors.lower_bound(gap_t{i, _});
-        if (it == anchors.end())
-            it = std::prev(it);
-
-        size_type acc{0}, gap_len{0};
-        if ((*it).first <= i || (it != anchors.begin() && (*(std::prev(it))).first <= i))
-        {
-            if ((*it).first > i)
-                --it;
-            acc = (*it).second;
-            gap_len = (*it).second;
-            if (*it != *(anchors.begin()))
-                gap_len -= (*(std::prev(it, 1))).second;
-            if (i >= (*it).first && i < (*it).first + gap_len)
-                return gap::GAP;
-        }
-        return value_type((*sequence)[i - acc]);
+        // case 2: there are gaps
+        anchor_set_iterator it = anchors.upper_bound(gap_t{i, _});
+        if (it == anchors.begin())
+            return value_type((*sequence)[i]); // since no gaps happen before i
+        it = std::prev(it);
+        size_type gap_len{(*it).second};
+        if (it != anchors.begin())
+            gap_len -= (*(std::prev(it, 1))).second;
+        if (i < (*it).first + gap_len)
+           return gap::GAP;
+        else
+           return value_type((*sequence)[i - (*it).second]);
     }
     //!\}
 
@@ -416,7 +412,7 @@ public:
     // TODO: input gap_decorator could be of any subtype, e.g. anchor_set, anchor_list, etc.
     constexpr bool operator==(gap_decorator_anchor_set<inner_type2> const & rhs) const noexcept
     {
-        if (this->anchors.size() != rhs.anchors.size() || this->sequence->size() != rhs.sequence->size())
+        if (anchors.size() != rhs.anchors.size() || sequence->size() != rhs.sequence->size())
             return false;
 
         return std::ranges::equal(*this, rhs);
@@ -428,7 +424,7 @@ public:
     //!\endcond
     constexpr bool operator!=(gap_decorator_anchor_set<inner_type2> const & rhs) const noexcept
     {
-        return !(this->operator==(rhs));
+        return !(operator==(rhs));
     }
     //!\}
 private:
@@ -484,4 +480,15 @@ private:
     std::set<gap_t, gap_compare<gap_t>> anchors{};
 };
 
+// TODO: correct syntax of free function below
+/*
+template<std::ranges::RandomAccessRange inner_type>
+//!\cond
+//    requires aligned_sequence_concept<gap_decorator_type>
+//!\endcond
+typename gap_decorator_anchor_set<inner_type>::iterator insert_gap(typename gap_decorator_anchor_set<inner_type> & gd, gap_decorator_anchor_set<inner_type>::iterator const it, size_type const size = 1)
+{
+    return gd.insert_gap(it, size);
+}
+*/
 } // namespace seqan3
