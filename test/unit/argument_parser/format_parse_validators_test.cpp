@@ -35,16 +35,26 @@
 #include <gtest/gtest.h>
 #include <fstream>
 
+#include <range/v3/view/remove_if.hpp>
+#include <range/v3/algorithm/equal.hpp>
+
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/io/filesystem.hpp>
+#include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/range/view/persist.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
 
 TEST(validator_test, fullfill_concept)
 {
+    EXPECT_FALSE(validator_concept<int>);
+
     EXPECT_TRUE(validator_concept<detail::default_validator<int>>);
+    EXPECT_TRUE(validator_concept<detail::default_validator<int> const>);
+    EXPECT_TRUE(validator_concept<detail::default_validator<int> &>);
+
     EXPECT_TRUE(validator_concept<integral_range_validator<int>>);
     EXPECT_TRUE(validator_concept<value_list_validator<int>>);
     EXPECT_TRUE(validator_concept<regex_validator<std::string>>);
@@ -54,6 +64,8 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(validator_concept<value_list_validator<std::vector<int>>>);
     EXPECT_TRUE(validator_concept<file_ext_validator>);
     EXPECT_TRUE(validator_concept<file_existance_validator>);
+
+    EXPECT_TRUE(validator_concept<decltype(file_ext_validator{{"t"}} | regex_validator{".*"})>);
 }
 
 TEST(validator_test, no_file)
@@ -163,6 +175,28 @@ TEST(validator_test, integral_range_validator_success)
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
     EXPECT_EQ(option_vector[0], -10);
     EXPECT_EQ(option_vector[1], 1);
+
+    // get help page message
+    option_vector.clear();
+    const char * argv7[] = {"./argument_parser_test", "-h"};
+    argument_parser parser7("test_parser", 2, argv7);
+    parser7.add_positional_option(option_vector, "desc", integral_range_validator<std::vector<int>>(-20,20));
+
+
+    testing::internal::CaptureStdout();
+    EXPECT_THROW(parser7.parse(), parser_interruption);
+    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string expected = std::string("test_parser"
+                           "==========="
+                           "POSITIONAL ARGUMENTS"
+                           "    ARGUMENT-1 List of INT (32 bit)'s"
+                           "          desc Value must be in range [-20,20]."
+                           "VERSION"
+                           "    Last update: "
+                           "    test_parser version: "
+                           "    SeqAn version: ") + seqan3_version;
+    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+                               expected | ranges::view::remove_if(is_space)));
 }
 
 TEST(validator_test, integral_range_validator_error)
@@ -279,6 +313,28 @@ TEST(validator_test, value_list_validator_success)
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
     EXPECT_EQ(option_vector_int[0], -10);
     EXPECT_EQ(option_vector_int[1], 48);
+
+    // get help page message
+    option_vector.clear();
+    const char * argv7[] = {"./argument_parser_test", "-h"};
+    argument_parser parser7("test_parser", 2, argv7);
+    parser7.add_option(option_vector_int, 'i', "int-option", "desc",
+                       option_spec::DEFAULT, value_list_validator<std::vector<int>>({-10,48,50}));
+
+    testing::internal::CaptureStdout();
+    EXPECT_THROW(parser7.parse(), parser_interruption);
+    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string expected = std::string("test_parser"
+                           "==========="
+                           "OPTIONS"
+                           "    -i, --int-option List of INT (32 bit)'s"
+                           "          desc Value must be one of [-10,48,50]."
+                           "VERSION"
+                           "    Last update: "
+                           "    test_parser version: "
+                           "    SeqAn version: ") + seqan3_version;
+    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+                               expected | ranges::view::remove_if(is_space)));
 }
 
 TEST(validator_test, value_list_validator_error)
@@ -375,6 +431,27 @@ TEST(validator_test, regex_validator_success)
     EXPECT_EQ(option_vector[0], "rita@rambo.com");
     EXPECT_EQ(option_vector[1], "tina@rambo.com");
 
+    // get help page message
+    option_vector.clear();
+    const char * argv7[] = {"./argument_parser_test", "-h"};
+    argument_parser parser7("test_parser", 2, argv7);
+    parser7.add_option(option_vector, 's', "string-option", "desc",
+                       option_spec::DEFAULT, email_vector_validator);
+
+    testing::internal::CaptureStdout();
+    EXPECT_THROW(parser7.parse(), parser_interruption);
+    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string expected = std::string("test_parser"
+                           "==========="
+                           "OPTIONS"
+                           "    -s, --string-option List of STRING's"
+                           "          desc Value must match the pattern '[a-zA-Z]+@[a-zA-Z]+\\.com'."
+                           "VERSION"
+                           "    Last update: "
+                           "    test_parser version: "
+                           "    SeqAn version: ") + seqan3_version;
+    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+                               expected | ranges::view::remove_if(is_space)));
 }
 
 TEST(validator_test, regex_validator_error)
@@ -414,4 +491,102 @@ TEST(validator_test, regex_validator_error)
                        option_spec::DEFAULT, regex_validator<std::vector<std::string>>("tt"));
 
     EXPECT_THROW(parser4.parse(), validation_failed);
+}
+
+TEST(validator_test, chaining_validators)
+{
+    std::string option_value;
+    std::vector<std::string> option_vector;
+    regex_validator<std::string> absolute_path_validator("(/[^/]+)+/.*\\.[^/\\.]+$");
+    file_ext_validator my_file_ext_validator({"sa", "so"});
+
+    // option
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "/absolute/path/file.sa");
+    }
+
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "relative/path/file.sa"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+
+        EXPECT_THROW(parser.parse(), validation_failed);
+    }
+
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absoulte/path/file.notValidExtension"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+
+        EXPECT_THROW(parser.parse(), validation_failed);
+    }
+
+    // with temporary validators
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT,
+                          regex_validator<std::string>{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          file_ext_validator{"sa", "so"});
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "/absolute/path/file.sa");
+    }
+
+    // three validators
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT,
+                          regex_validator<std::string>{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          file_ext_validator{"sa", "so"} |
+                          regex_validator<std::string>{".*"});
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "/absolute/path/file.sa");
+    }
+
+    // help page message
+    {
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        argument_parser parser("test_parser", 2, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT,
+                          regex_validator<std::string>{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          file_ext_validator{"sa", "so"} |
+                          regex_validator<std::string>{".*"});
+
+        testing::internal::CaptureStdout();
+        EXPECT_THROW(parser.parse(), parser_interruption);
+        std::string stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string("test_parser"
+                               "==========="
+                               "OPTIONS"
+                               "    -s, --string-option STRING"
+                               "          desc Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'. "
+                               "          File name extension must be one of [sa,so]."
+                               "          Value must match the pattern '.*'."
+                               "VERSION"
+                               "    Last update: "
+                               "    test_parser version: "
+                               "    SeqAn version: ") + seqan3_version;
+        EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+                                   expected | ranges::view::remove_if(is_space)));
+    }
 }
