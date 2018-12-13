@@ -135,7 +135,7 @@ struct read : public ::testing::Test
         auto interaction_sets = bpp | ranges::view::remove_if([] (auto & set) { return set.size() != 1; });
         for (auto & iset : interaction_sets)
         {
-            EXPECT_EQ(iset.size(), 1);
+            EXPECT_EQ(iset.size(), 1u);
             EXPECT_EQ(iset.begin()->second, bpp_comp[cnt++]);
             EXPECT_FLOAT_EQ(iset.begin()->first, 1.0f);
         }
