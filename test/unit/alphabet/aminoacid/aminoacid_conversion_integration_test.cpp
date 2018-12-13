@@ -10,7 +10,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
+#include <seqan3/core/type_list.hpp>
 
 using namespace seqan3;
 
@@ -18,15 +18,15 @@ template <typename T>
 class aminoacid_conversion : public ::testing::Test
 {};
 
-using aminoacid_types2 = meta::list<aa20, aa27>; // needed for some tests
-using aminoacid_types = detail::transfer_template_args_onto_t<aminoacid_types2, ::testing::Types>;
+using aminoacid_types = type_list<aa20, aa27>; // needed for some tests
+using aminoacid_gtest_types = detail::transfer_template_args_onto_t<aminoacid_types, ::testing::Types>;
 
-TYPED_TEST_CASE(aminoacid_conversion, aminoacid_types);
+TYPED_TEST_CASE(aminoacid_conversion, aminoacid_gtest_types);
 
 // conversion to any other amino acid type
 TYPED_TEST(aminoacid_conversion, explicit_conversion)
 {
-    meta::for_each(aminoacid_types2{}, [&] (auto && aa) constexpr
+    meta::for_each(aminoacid_types{}, [&] (auto && aa) constexpr
     {
         using out_type = std::decay_t<decltype(aa)>;
         EXPECT_EQ(static_cast<out_type>(TypeParam::A), out_type::A);
