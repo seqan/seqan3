@@ -31,6 +31,8 @@
 
 #include <zlib.h>
 
+#include <seqan3/core/platform.hpp>
+
 namespace seqan3::contrib
 {
 
