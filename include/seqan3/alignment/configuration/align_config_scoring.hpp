@@ -23,7 +23,7 @@ namespace seqan3::align_cfg
 /*!\brief The configuration for scoring class.
  * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::scoring_scheme_concept.
  */
-template <scoring_scheme_concept<char> scoring_scheme_t>
+template <typename scoring_scheme_t>
 class scoring : public pipeable_config_element
 {
 public:
@@ -60,7 +60,7 @@ public:
  */
 
 //!\brief Deduces the scoring scheme type from the constructor argument.
-template <scoring_scheme_concept<char> scheme_t>
+template <typename scheme_t>
 scoring(scheme_t) -> scoring<remove_cvref_t<scheme_t>>;
 //!\}
 

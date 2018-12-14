@@ -141,6 +141,7 @@ TYPED_TEST(generic, concept_check)
     EXPECT_TRUE((scoring_scheme_concept<TypeParam, alph_t>));
     EXPECT_TRUE((scoring_scheme_concept<TypeParam const, alph_t>));
     EXPECT_TRUE((scoring_scheme_concept<TypeParam const &, alph_t>));
+    EXPECT_FALSE((scoring_scheme_concept<TypeParam const &, char>));
 }
 
 TYPED_TEST(generic, member_types)

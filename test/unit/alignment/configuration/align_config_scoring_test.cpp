@@ -46,29 +46,37 @@ template <typename t>
 class align_confg_scoring_test : public ::testing::Test
 {
 public:
-    using scheme_t = t;
+
+    using scheme_t = std::tuple_element_t<0, t>;
+    using alph_t   = std::tuple_element_t<1, t>;
 };
 
-using test_types = ::testing::Types<aminoacid_scoring_scheme<int8_t>, nucleotide_scoring_scheme<int8_t>>;
+using test_types = ::testing::Types<std::tuple<aminoacid_scoring_scheme<int8_t>, aa27>,
+                                    std::tuple<nucleotide_scoring_scheme<int8_t>, dna15>>;
 TYPED_TEST_CASE(align_confg_scoring_test, test_types);
 
 TYPED_TEST(align_confg_scoring_test, construction)
 {
-    EXPECT_TRUE((std::Constructible<align_cfg::scoring<typename TestFixture::scheme_t>, typename TestFixture::scheme_t>));
+    using scheme_t = typename TestFixture::scheme_t;
+    EXPECT_TRUE((std::Constructible<align_cfg::scoring<scheme_t>, scheme_t>));
 }
 
 TYPED_TEST(align_confg_scoring_test, configuration)
 {
+    using alph_t   = typename TestFixture::alph_t;
+    using scheme_t = typename TestFixture::scheme_t;
     {
-        align_cfg::scoring elem{typename TestFixture::scheme_t{}};
+        align_cfg::scoring elem{scheme_t{}};
         configuration cfg{elem};
 
-        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score('a', 'a')), 0);
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char(alph_t{}, 'a'),
+                                                            assign_char(alph_t{}, 'a'))), 0);
     }
 
     {
-        configuration cfg{align_cfg::scoring{typename TestFixture::scheme_t{}}};
+        configuration cfg{align_cfg::scoring{scheme_t{}}};
 
-        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score('a', 'c')), -1);
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char(alph_t{}, 'a'),
+                                                            assign_char(alph_t{}, 'c'))), -1);
     }
 }
