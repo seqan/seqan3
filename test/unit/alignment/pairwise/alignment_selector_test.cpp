@@ -41,7 +41,10 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/alignment/configuration/align_config_edit.hpp>
+#include <range/v3/view/single.hpp>
+#include <range/v3/view/bounded.hpp>
+
+#include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/pairwise/alignment_selector.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
@@ -52,14 +55,14 @@
 
 using namespace seqan3;
 
-TEST(alignment_selector, determine_result_type)
+TEST(alignment_selector, select_result_type)
 {
     using seq1_t = std::vector<dna4>;
     using seq2_t = std::list<dna4>;
 
     { // test case I
         auto cfg = align_cfg::edit;
-        using _t = typename detail::determine_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
+        using _t = typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
 
         EXPECT_EQ(std::tuple_size_v<_t>, 2u);
         EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, _t>, uint32_t>));
@@ -68,7 +71,7 @@ TEST(alignment_selector, determine_result_type)
 
     { // test case II
         auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};
-        using _t = typename detail::determine_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
+        using _t = typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
 
         EXPECT_EQ(std::tuple_size_v<_t>, 2u);
         EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, _t>, uint32_t>));
@@ -77,7 +80,7 @@ TEST(alignment_selector, determine_result_type)
 
     { // test case III
         auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
-        using _t = typename detail::determine_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
+        using _t = typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
 
         using gapped_seq1_t = std::vector<gapped<dna4>>;
         using gapped_seq2_t = std::vector<gapped<dna4>>;
@@ -93,19 +96,32 @@ TEST(alignment_selector, determine_result_type)
 
 TEST(alignment_selector, select)
 {
-    using seq1_t = std::vector<dna4>;
-    using seq2_t = std::vector<dna4>;
-    using seq_t = std::pair<seq1_t, seq2_t>;
+    // using seq1_t = std::vector<dna4>;
+    // using seq2_t = std::vector<dna4>;
+    // using seq_t = std::pair<seq1_t, seq2_t>;
 
     { // test case I
-        auto cfg = align_cfg::edit;
-        using _t = detail::alignment_selector<seq_t, decltype(cfg)>;
+        auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+                   align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
+                   align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
 
-        using res_t = typename detail::determine_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
+        // auto seq1 = "ACGTGAC"_dna4;
+        // auto seq2 = "ACGTGAC"_dna4;
+        // auto p = std::pair{seq1, seq2};
+        auto seq_rng = ranges::view::single(std::pair{"ACGTGAC"_dna4, "ACGGGAC"_dna4})| ranges::view::bounded |
+                       view::persist;
 
-        seq_t s{};
-        EXPECT_TRUE((std::is_same_v<res_t, typename _t::result_type>));
-        EXPECT_TRUE((std::is_same_v<decltype(_t{cfg}.select(s)),
-                                    std::function<res_t(res_t &)>>));
+        auto fn = detail::alignment_configurator::configure(seq_rng, cfg);
+
+        auto res = fn(std::get<0>(*seqan3::begin(seq_rng)), std::get<1>(*seqan3::begin(seq_rng)));
+        std::cout << res.score() << std::endl;
+        // using _t = detail::alignment_selector<seq_t, decltype(cfg)>;
+
+        // using res_t = typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
+        //
+        // seq_t s{};
+        // EXPECT_TRUE((std::is_same_v<res_t, typename _t::result_type>));
+        // EXPECT_TRUE((std::is_same_v<decltype(_t{cfg}.select(s)),
+        //                             std::function<res_t(res_t &)>>));
     }
 }

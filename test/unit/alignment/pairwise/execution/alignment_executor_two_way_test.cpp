@@ -46,11 +46,9 @@ using namespace seqan3;
 
 struct foo
 {
-    int i;
-
-    std::string operator()(std::string & /*ignore*/) const
+    std::string operator()(int const & id) const
     {
-        return std::string{"my_test_"} + std::to_string(i);
+        return std::string{"foo_"} + std::to_string(id);
     }
 };
 
@@ -67,16 +65,23 @@ struct foo_selector
 };
 
 //TODO: Currently we only do a generic integration test. We need to add more testing in the end.
-TEST(alignment_excecutor_two_way, stream_integration)
+TEST(alignment_excecutor_two_way, execution)
 {
-    std::vector<foo> resource_rng{foo{0}, foo{1}, foo{2}, foo{3}, foo{4}, foo{0}, foo{1}, foo{2}, foo{3}, foo{4}};
+    std::vector<std::pair<foo, int>> resource_rng{{foo{}, 0}, {foo{}, 1}, {foo{}, 2}, {foo{}, 3}, {foo{}, 4},
+                                                  {foo{}, 0}, {foo{}, 1}, {foo{}, 2}, {foo{}, 3}, {foo{}, 4}};
 
-    detail::alignment_executor_two_way exec{resource_rng, foo_selector{}};
+    std::function<std::string(foo const &, int const &)> f =
+        [](foo const & fn, int const & id)
+        {
+            return fn(id);
+        };
+
+    detail::alignment_executor_two_way exec{resource_rng, f};
 
     int c = 0;
     for (auto res : exec.range())
     {
-        std::string test = "my_test_" + std::to_string(c % 5);
+        std::string test = "foo_" + std::to_string(c % 5);
         EXPECT_EQ(test, res);
         ++c;
     }

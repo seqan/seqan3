@@ -49,7 +49,7 @@ namespace seqan3
 {
 
 /*!\brief Keys for different alignment results.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  */
 enum struct align_result_key : uint8_t
 {
@@ -62,7 +62,7 @@ enum struct align_result_key : uint8_t
 
 /*!\brief Stores the alignment results and offers a tuple-like interface.
  * \extends std::tuple
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  * \tparam output_type_list_t seqan3::type_list over the contained results.
  */
 template <typename output_type_list_t>
@@ -161,7 +161,7 @@ struct align_result //!\cond
 };
 
 /*!\name Tuple-like get interface
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  * \relates seqan3::align_result
  * \{
  */
@@ -222,7 +222,7 @@ namespace std
 {
 
 /*!\brief Overloads the tuple element type trait function for seqan3::align_result.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  */
 template <size_t idx, typename output_type_list_t>
 struct tuple_element<idx, seqan3::align_result<output_type_list_t>>
@@ -232,7 +232,7 @@ struct tuple_element<idx, seqan3::align_result<output_type_list_t>>
 };
 
 /*!\brief Overloads the tuple size type trait function for seqan3::align_result.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  */
 template <typename output_type_list_t>
 struct tuple_size<seqan3::align_result<output_type_list_t>>
