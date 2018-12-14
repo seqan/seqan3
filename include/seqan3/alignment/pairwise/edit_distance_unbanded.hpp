@@ -101,7 +101,7 @@ concept edit_distance_trait_concept = requires
 };
 
 /*!\brief The default traits type for the edit distance algorithm.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  */
 struct default_edit_distance_trait_type
 {
@@ -110,7 +110,7 @@ struct default_edit_distance_trait_type
 };
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
  * \tparam query_t        \copydoc pairwise_alignment_edit_distance_unbanded::query_type
  * \tparam align_config_t The type of the alignment config.

@@ -60,23 +60,25 @@ TEST(align_pairwise, single_rng_lvalue)
 
     {  // the score
         configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};
-        for (auto && res : align_pairwise(p, cfg))
-        {
-            EXPECT_EQ(res.get_score(), -4);
-        }
+        EXPECT_THROW(align_pairwise(p, cfg), std::domain_error);
+        // for (auto && res : align_pairwise(p, cfg))
+        // {
+        //     EXPECT_EQ(res.score(), -4);
+        // }
     }
 
     {  // the trace
         configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
-        for (auto && res : align_pairwise(p, cfg))
-        {
-            EXPECT_EQ(res.get_score(), -4);
-            auto [cmp1, cmp2] = res.get_end_coordinate();
-            EXPECT_EQ((std::tie(cmp1, cmp2)), (std::tuple{7, 8}));
-            auto && [gap1, gap2] = res.get_alignment();
-            EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
-            EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
-        }
+        EXPECT_THROW(align_pairwise(p, cfg), std::domain_error);
+        // for (auto && res : align_pairwise(p, cfg))
+        // {
+        //     EXPECT_EQ(res.score(), -4);
+        //     auto [cmp1, cmp2] = res.end_coordinate();
+        //     EXPECT_EQ((std::tie(cmp1, cmp2)), (std::tuple{7, 8}));
+        //     auto && [gap1, gap2] = res.trace();
+        //     EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
+        //     EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
+        // }
     }
 }
 
@@ -91,20 +93,23 @@ TEST(align_pairwise, single_view_lvalue)
 
     {  // the score
         configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};
-        for (auto && res : align_pairwise(v, cfg))
-        {
-            EXPECT_EQ(res.get_score(), -4);
-        }
+        EXPECT_THROW(align_pairwise(v, cfg), std::domain_error);
+        // for (auto && res : align_pairwise(v, cfg))
+        // {
+        //      EXPECT_EQ(res.score(), -4);
+        // }
     }
     {  // the trace
         configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
-        for (auto && res : align_pairwise(v, cfg))
-        {
-            EXPECT_EQ(res.get_score(), -4);
-            auto && [gap1, gap2] = res.get_alignment();
-            EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
-            EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
-        }
+
+        EXPECT_THROW(align_pairwise(v, cfg), std::domain_error);
+        // for (auto && res : align_pairwise(v, cfg))
+        // {
+        //     EXPECT_EQ(res.score(), -4);
+        //     auto && [gap1, gap2] = res.trace();
+        //     EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
+        //     EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
+        // }
     }
 }
 
@@ -118,11 +123,12 @@ TEST(align_pairwise, multiple_rng_lvalue)
     std::vector<decltype(p)> vec{10, p};
 
     configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
-    for (auto && res : align_pairwise(vec, cfg))
-    {
-        EXPECT_EQ(res.get_score(), -4);
-        auto && [gap1, gap2] = res.get_alignment();
-        EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
-        EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
-    }
+    EXPECT_THROW(align_pairwise(vec, cfg), std::domain_error);
+    // for (auto && res : align_pairwise(vec, cfg))
+    // {
+    //     EXPECT_EQ(res.score(), -4);
+    //     auto && [gap1, gap2] = res.trace();
+    //     EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
+    //     EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
+    // }
 }
