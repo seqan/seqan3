@@ -42,10 +42,10 @@ namespace seqan3::detail
 struct alignment_configurator
 {
     //!\brief Configure the edit distance algorithm.
-    template <typename config_t>
+    template <typename kernel_t, typename config_t>
     static constexpr auto configure_edit_distance(config_t const & cfg)
     {
-        throw std::domain_error{"This branch is not yet implemented."};
+        return kernel_t{edit_distance_wrapper<remove_cvref_t<config_t>>{cfg}};
     }
 
     //!\brief Configure the algorithm.
@@ -69,10 +69,10 @@ struct alignment_configurator
                                                       nucleotide_scoring_scheme>)
             {
                 // TODO: Check if the matrix is Levenshtein distance.
-                // if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
-                //     (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                //     return configure_edit_distance(cfg);
-                // else
+                if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
+                    (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
+                    return configure_edit_distance<kernel_t>(cfg);
+                else
                     throw std::domain_error{"Linear gaps are not yet implemented."};
             }
             else // Not nucleotide_scoring_scheme
