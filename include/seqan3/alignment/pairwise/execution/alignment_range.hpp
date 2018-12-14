@@ -129,7 +129,7 @@ class alignment_range
          * \{
          */
 
-        constexpr bool operator==(std::ranges::default_sentinel const & rhs) const
+        constexpr bool operator==(std::ranges::default_sentinel const &) const
         {
             return stream_ptr->eof();
         }
@@ -183,7 +183,7 @@ public:
     ~alignment_range()                                   = default;
 
     explicit alignment_range(range_buffer_t & _range_buffer) :
-        range_buffer{&_range_buffer, [](auto ptr) { /*no-op*/ }}
+        range_buffer{&_range_buffer, [](auto) { /*no-op*/ }}
     {}
 
     // Construct from resource.
