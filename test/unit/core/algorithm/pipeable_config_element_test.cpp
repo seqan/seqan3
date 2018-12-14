@@ -36,6 +36,7 @@
 
 #include "configuration_mock.hpp"
 
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
 using namespace seqan3;
@@ -69,10 +70,11 @@ TEST(pipeable_config_element, two_elements)
     }
 }
 
-TEST(pipeable_config_element, configuration_with_configuration)
+TEST(pipeable_config_element, configuration_with_element)
 {
     configuration<bar> tmp{};
     bax b2{};
+
     // lvalue | lvalue
     {
         auto cfg = tmp | b2;
@@ -94,6 +96,35 @@ TEST(pipeable_config_element, configuration_with_configuration)
     // rvalue | rvalue
     {
         auto cfg = configuration<bar>{} | bax{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+    }
+}
+
+TEST(pipeable_config_element, configuration_with_configuration)
+{
+    configuration<bar> tmp{};
+    configuration<bax> b2{};
+    // lvalue | lvalue
+    {
+        auto cfg = tmp | b2;
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+    }
+
+    // rvalue | lvalue
+    {
+        auto cfg = configuration<bar>{} | b2;
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+    }
+
+    // lvalue | rvalue
+    {
+        auto cfg = tmp | configuration<bax>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
+    }
+
+    // rvalue | rvalue
+    {
+        auto cfg = configuration<bar>{} | configuration<bax>{};
         EXPECT_TRUE((std::is_same_v<decltype(cfg), configuration<bar, bax>>));
     }
 }

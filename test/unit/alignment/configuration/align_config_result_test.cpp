@@ -37,7 +37,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_result.hpp>
-#include <seqan3/core/algorithm/concept.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
 
 using namespace seqan3;
 

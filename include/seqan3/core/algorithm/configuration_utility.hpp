@@ -93,29 +93,4 @@ struct is_same_configuration_f
     using invoke = is_type_specialisation_of<compare_type, query_t>;
 };
 
-// ----------------------------------------------------------------------------
-// Metafunction is_algorithm_configuration
-// ----------------------------------------------------------------------------
-
-/*!\brief Value metafunction that returns whether a type is an algorithm configuration.
- * \ingroup algorithm
- *
- * \returns std::true_type if the given type is a seqan3::detail::configuration, else std::false_type.
- */
-template <typename object_t>
-struct is_algorithm_configuration : std::false_type
-{};
-
-//!\cond
-template <typename ...config_elements_t>
-struct is_algorithm_configuration<seqan3::configuration<config_elements_t...>> : std::true_type
-{};
-//!\endcond
-
-/*!\brief Helper variable template for seqan3::detail::is_algorithm_configuration.
- * \ingroup algorithm
- */
-template <typename object_t>
-inline constexpr bool is_algorithm_configuration_v = is_algorithm_configuration<object_t>::value;
-
 } // namespace seqan3::detail

@@ -37,6 +37,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
 
 using namespace seqan3;
 

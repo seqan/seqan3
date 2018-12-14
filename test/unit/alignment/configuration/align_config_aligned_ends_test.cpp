@@ -40,6 +40,7 @@
 
 #include <seqan3/core/metafunction/function.hpp>
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
 
 using namespace seqan3;
 using namespace seqan3::align_cfg;

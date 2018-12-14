@@ -45,6 +45,7 @@
 
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
+#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/tuple_utility.hpp>
@@ -54,6 +55,40 @@
 namespace seqan3
 {
 
+//!\cond
+// Forward declaration for friend declaration definitions below.
+template <detail::config_element_concept ... configs_t>
+class configuration;
+
+template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                         pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+{
+    return configuration{static_cast<lhs_derived_t &&>(lhs)}.push_back(static_cast<rhs_derived_t &&>(rhs));
+}
+
+template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                         pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+{
+    return configuration{static_cast<lhs_derived_t &&>(lhs)}.push_back(static_cast<rhs_derived_t const &>(rhs));
+}
+
+template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                         pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+{
+    return configuration{static_cast<lhs_derived_t const &>(lhs)}.push_back(static_cast<rhs_derived_t &&>(rhs));
+}
+
+template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                         pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+{
+    return configuration{static_cast<lhs_derived_t const &>(lhs)}.push_back(static_cast<rhs_derived_t const &>(rhs));
+}
+//!\endcond
+
 // ----------------------------------------------------------------------------
 // configuration
 // ----------------------------------------------------------------------------
@@ -61,7 +96,7 @@ namespace seqan3
 /*!\brief Collection of elements to configure an algorithm.
  * \ingroup algorithm
  *
- * \tparam configs_t Template parameter pack containing all configuration elements. Each must satisfy the
+ * \tparam configs_t Template parameter pack containing all configuration elements; Must model
  *                   seqan3::detail::config_element_concept
  *
  * \details
@@ -95,8 +130,17 @@ public:
     /*!\brief Constructs a configuration from a single configuration element.
      * \param elem The element to store.
      */
-    template <typename config_t>
-    constexpr configuration(config_t && elem) : base_type{std::forward<config_t>(elem)}
+    template <typename derived_t, typename value_t>
+    constexpr configuration(pipeable_config_element<derived_t, value_t> && elem) :
+        base_type{static_cast<derived_t &&>(std::move(elem))}
+    {}
+
+    /*!\brief Constructs a configuration from a single configuration element.
+     * \param elem The element to store.
+     */
+    template <typename derived_t, typename value_t>
+    constexpr configuration(pipeable_config_element<derived_t, value_t> const & elem) :
+        base_type{static_cast<derived_t const &>(elem)}
     {}
     //!\}
 
@@ -109,118 +153,6 @@ public:
     {
         return std::tuple_size_v<base_type>;
     }
-
-    /*!\name Modifiers
-     * \brief Note that modifications return new configurations and do not modify `this`.
-     * \{
-     */
-
-    // TODO Make to push_back
-    /*!\brief Adds a new config element to the end of the configuration.
-     *
-     * \param[in] elem The configuration element to add.
-     *
-     * \returns A new seqan3::detail::configuration containing the added element.
-     *
-     * \details
-     *
-     * Creates a new seqan3::detail::configuration from `this` and appends the passed config element.
-     * Note, that `this` is not modified by this operation.
-     * Further the configuration checks for an invalid configuration using an algorithm specific lookup table
-     * for the configuration elements and tests whether configuration elements are from the same algorithm.
-     *
-     * ### Example
-     *
-     * \snippet test/snippet/core/algorithm/configuration.cpp push_back
-     *
-     * ### Complexity
-     *
-     * Linear in the number of elements.
-     *
-     * ### Exception
-     *
-     * Strong exception guarantee.
-     */
-    template <detail::config_element_concept config_element_t>
-    constexpr auto push_back(config_element_t elem) const &
-    {
-        static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
-                                                            configs_t...>,
-                      "Configuration error: The passed element cannot be combined with one or more elements in the "
-                      "current configuration.");
-
-        return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
-            std::tuple_cat(static_cast<base_type>(*this),
-            std::tuple{std::move(elem)})};
-    }
-
-    //!\copydoc push_back
-    template <detail::config_element_concept config_element_t>
-    constexpr auto push_back(config_element_t elem) &&
-    {
-        static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
-                                                            configs_t...>,
-                      "Configuration error: The passed element cannot be combined with one or more elements in the "
-                      "current configuration.");
-
-        return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
-            std::tuple_cat(std::move(static_cast<base_type>(*this)),
-            std::tuple{std::move(elem)})};
-    }
-
-    /*!\brief Replaces the old config element with the new one.
-     *
-     * \param[in] old_element The element to replace.
-     * \param[in] new_element The new element to insert.
-     *
-     * \returns A new seqan3::detail::configuration containing the replaced element.
-     *
-     * \details
-     *
-     * Splits the `this` at the position of the `old_config_element_t` and replaces it with `new_element` at
-     * the same position and constructs a new seqan3::detail::configuration from it. Note, that `this` is not
-     * modified by this operation.
-     *
-     * ### Complexity
-     *
-     * Linear in the number of elements.
-     */
-    template <detail::config_element_concept old_config_element_t,
-              detail::config_element_concept new_config_element_t>
-    constexpr auto replace_with(old_config_element_t const & SEQAN3_DOXYGEN_ONLY(old_element),
-                                new_config_element_t && new_element) const &
-    {
-        static_assert(std::tuple_size_v<base_type> > 0, "The configuration cannot be empty.");
-        static_assert(meta::find_index<detail::transfer_template_args_onto_t<base_type, type_list>,
-                                       old_config_element_t>::value != meta::npos::value,
-                      "The element to be replaced is not contained in the passed configuration.");
-
-        auto && [prefix, remainder] = seqan3::tuple_split<old_config_element_t>(static_cast<base_type>(*this));
-
-        return detail::configuration{std::tuple_cat(std::move(prefix),
-                                                    std::tuple{std::forward<new_config_element_t>(new_element)},
-                                                    tuple_pop_front(std::move(remainder)))};
-    }
-
-    //!\copydoc replace_with
-    template <detail::config_element_concept old_config_element_t,
-              detail::config_element_concept new_config_element_t>
-    constexpr auto replace_with(old_config_element_t const & SEQAN3_DOXYGEN_ONLY(old_element),
-                                new_config_element_t && new_element) &&
-    {
-        static_assert(std::tuple_size_v<base_type> > 0, "The configuration cannot be empty.");
-        static_assert(meta::find_index<detail::transfer_template_args_onto_t<base_type, type_list>,
-                                       old_config_element_t>::value != meta::npos::value,
-                      "The element to be replaced is not contained in the passed configuration.");
-
-        auto && [prefix, remainder] =
-            seqan3::tuple_split<old_config_element_t>(std::move(static_cast<base_type>(*this)));
-
-        return detail::configuration{std::tuple_cat(std::move(prefix),
-                                                    std::tuple{std::forward<new_config_element_t>(new_element)},
-                                                    tuple_pop_front(std::move(remainder)))};
-    }
-    //!\}
 
     /*!\name Observers
      * \{
@@ -341,7 +273,130 @@ public:
     }
     //!\}
 
-protected:
+    /*!\name Pipe operator
+     * \{
+     */
+    /*!\brief Combines two seqan3::pipeable_config_element objects to a seqan3::configuration.
+     * \tparam lhs_derived_t The derived type of the left hand side operand.
+     * \tparam lhs_value_t   The value type of the left hand side operand.
+     * \tparam rhs_derived_t The derived type of the right hand side operand.
+     * \tparam rhs_value_t   The value type of the right hand side operand.
+     * \param[in] lhs        The left hand operand.
+     * \param[in] rhs        The right hand operand.
+     * \returns A new seqan3::configuration containing `lhs` and `rhs`.
+     */
+    template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
+
+    //!\overload
+    template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
+
+    // //!\overload
+    template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
+
+    // //!\overload
+    template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
+
+    /*!\brief Combines a seqan3::configuration with a seqan3::pipeable_config_element.
+     * \tparam rhs_derived_t The derived type of the right hand side operand.
+     * \tparam rhs_value_t   The value type of the right hand side operand.
+     * \param[in] lhs     The left hand operand.
+     * \param[in] rhs     The right hand operand.
+     * \returns A new seqan3::configuration adding `rhs` to the passed `lhs` object.
+     */
+    template <typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(configuration && lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+    {
+        return std::move(lhs).push_back(static_cast<rhs_derived_t &&>(rhs));
+    }
+
+    //!\overload
+    template <typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(configuration const & lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs)
+    {
+        return lhs.push_back(static_cast<rhs_derived_t &&>(rhs));
+    }
+
+    //!\overload
+    template <typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(configuration && lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+    {
+        return std::move(lhs).push_back(static_cast<rhs_derived_t const &>(rhs));
+    }
+
+    //!\overload
+    template <typename rhs_derived_t, typename rhs_value_t>
+    friend constexpr auto operator|(configuration const & lhs,
+                                    pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs)
+    {
+        return lhs.push_back(static_cast<rhs_derived_t const &>(rhs));
+    }
+
+    /*!\brief Combines two seqan3::configuration objects.
+     * \tparam rhs_configs_t  A template parameter pack for the second seqan3::configuration operand.
+     * \param[in] lhs         The left hand operand.
+     * \param[in] rhs         The right hand operand.
+     * \returns A new seqan3::configuration as the result of concatenating `lhs` and `rhs`.
+     */
+    template <typename ...rhs_configs_t>
+    friend constexpr auto operator|(configuration && lhs,
+                                    configuration<rhs_configs_t...> && rhs)
+    {
+        using lhs_base_t = typename configuration::base_type;
+        using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
+
+        return make_configuration(std::tuple_cat(static_cast<lhs_base_t>(std::move(lhs)),
+                                                 static_cast<rhs_base_t>(std::move(rhs))));
+    }
+
+    //!\overload
+    template <typename ...rhs_configs_t>
+    friend constexpr auto operator|(configuration const & lhs,
+                                    configuration<rhs_configs_t...> && rhs)
+    {
+        using lhs_base_t = typename configuration::base_type;
+        using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
+
+        return make_configuration(std::tuple_cat(static_cast<lhs_base_t>(lhs),
+                                                 static_cast<rhs_base_t>(std::move(rhs))));
+    }
+
+    //!\overload
+    template <typename ...rhs_configs_t>
+    friend constexpr auto operator|(configuration && lhs,
+                                    configuration<rhs_configs_t...> const & rhs)
+    {
+        using lhs_base_t = typename configuration::base_type;
+        using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
+
+        return make_configuration(std::tuple_cat(static_cast<lhs_base_t>(std::move(lhs)),
+                                                 static_cast<rhs_base_t>(rhs)));
+    }
+
+    //!\overload
+    template <typename ...rhs_configs_t>
+    friend constexpr auto operator|(configuration const & lhs,
+                                    configuration<rhs_configs_t...> const & rhs)
+    {
+        using lhs_base_t = typename configuration::base_type;
+        using rhs_base_t = typename configuration<rhs_configs_t...>::base_type;
+
+        return make_configuration(std::tuple_cat(static_cast<lhs_base_t>(lhs),
+                                                 static_cast<rhs_base_t>(rhs)));
+    }
+    //!\}
+
+private:
 
     /*!\name Internal constructor
      * \{
@@ -356,15 +411,108 @@ protected:
     explicit constexpr configuration(std::tuple<_configs_t...> && cfg) : base_type{std::move(cfg)}
     {}
     //!\}
+
+    /*!\brief Creates a new configuration object by recursively adding the configs from the tuple.
+     * \tparam    tuple_t The tuple from which to create a new configuration object; must model
+                          seqan3::detail::tuple_like_concept and must at least have one element.
+     * \param[in] tpl     The tuple to create the configuration from.
+     * \returns A new configuration object.
+     */
+    template <typename tuple_t>
+    //!\cond
+        requires detail::is_type_specialisation_of_v<tuple_t, std::tuple> &&
+                 std::tuple_size_v<remove_cvref_t<tuple_t>> > 0
+    //!\endcond
+    static constexpr auto make_configuration(tuple_t && tpl)
+    {
+        auto make_config = [](auto && tpl)
+        {
+            auto impl = [](auto & impl_ref, auto && config, auto && head, auto && tail)
+            {
+                if constexpr (std::tuple_size_v<remove_cvref_t<decltype(tail)>> == 0)
+                {
+                    return std::forward<decltype(config)>(config).push_back(std::get<0>(std::forward<decltype(head)>(head)));
+                }
+                else
+                {
+                    auto [_head, _tail] = tuple_split<1>(std::forward<decltype(tail)>(tail));
+                    auto tmp = std::forward<decltype(config)>(config).push_back(
+                            std::get<0>(std::forward<decltype(head)>(head)));
+                    return impl_ref(impl_ref, std::move(tmp), std::move(_head), std::move(_tail));
+                }
+            };
+            auto [head, tail] = tuple_split<1>(std::forward<decltype(tpl)>(tpl));
+            return impl(impl, configuration<>{}, std::move(head), std::move(tail));
+        };
+        return make_config(std::forward<tuple_t>(tpl));
+    }
+
+    /*!\name Modifiers
+     * \brief Note that modifications return new configurations and do not modify `this`.
+     * \{
+     */
+
+    /*!\brief Adds a new config element to the end of the configuration.
+     *
+     * \param[in] elem The configuration element to add.
+     *
+     * \returns A new seqan3::detail::configuration containing the added element.
+     *
+     * \details
+     *
+     * Creates a new seqan3::detail::configuration from `this` and appends the passed config element.
+     * Note, that `this` is not modified by this operation.
+     * Further the configuration checks for an invalid configuration using an algorithm specific lookup table
+     * for the configuration elements and tests whether configuration elements are from the same algorithm.
+     *
+     * ### Complexity
+     *
+     * Linear in the number of elements.
+     *
+     * ### Exception
+     *
+     * Strong exception guarantee.
+     */
+    template <detail::config_element_concept config_element_t>
+    constexpr auto push_back(config_element_t elem) const &
+    {
+        static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
+                                                            configs_t...>,
+                      "Configuration error: The passed element cannot be combined with one or more elements in the "
+                      "current configuration.");
+
+        return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
+            std::tuple_cat(static_cast<base_type>(*this),
+            std::tuple{std::move(elem)})};
+    }
+
+    //!\copydoc push_back
+    template <detail::config_element_concept config_element_t>
+    constexpr auto push_back(config_element_t elem) &&
+    {
+        static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
+                                                            configs_t...>,
+                      "Configuration error: The passed element cannot be combined with one or more elements in the "
+                      "current configuration.");
+
+        return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
+            std::tuple_cat(std::move(static_cast<base_type>(*this)),
+            std::tuple{std::move(elem)})};
+    }
+    //!\}
 };
 
 /*!\name Type deduction guides
  * \relates seqan3::configuration
  * \{
  */
-//!\brief Deduces the correct configuration element type from the passed element.
-template <typename config_t>
-configuration(config_t &&) -> configuration<remove_cvref_t<config_t>>;
+//!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+template <typename derived_t, typename value_t>
+configuration(pipeable_config_element<derived_t, value_t> &&) -> configuration<remove_cvref_t<derived_t>>;
+
+//!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+template <typename derived_t, typename value_t>
+configuration(pipeable_config_element<derived_t, value_t> const &) -> configuration<remove_cvref_t<derived_t>>;
 //!\}
 
 /*!\name Tuple interface
