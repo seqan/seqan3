@@ -32,30 +32,43 @@
 //
 // ============================================================================
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
+#include <gtest/gtest.h>
 
- #pragma once
-
-/*!\defgroup configuration Configuration
- * \brief Data structures and utility functions for configuring alignment algorithm.
- * \ingroup alignment
- *
- * \todo Write detailed landing page.
- */
-
-#include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_edit.hpp>
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/align_config_max_error.hpp>
-#include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
-#include <seqan3/alignment/configuration/align_config_sequence_ends.hpp>
-#include <seqan3/alignment/configuration/utility.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/std/concepts>
 
-/*!\namespace seqan3::align_cfg
- * \brief A special sub namespace for the alignment configurations.
- */
+using namespace seqan3;
+
+template <typename t>
+class align_confg_scoring_test : public ::testing::Test
+{
+public:
+    using scheme_t = t;
+};
+
+using test_types = ::testing::Types<aminoacid_scoring_scheme<int8_t>, nucleotide_scoring_scheme<int8_t>>;
+TYPED_TEST_CASE(align_confg_scoring_test, test_types);
+
+TYPED_TEST(align_confg_scoring_test, construction)
+{
+    EXPECT_TRUE((std::Constructible<align_cfg::scoring<typename TestFixture::scheme_t>, typename TestFixture::scheme_t>));
+}
+
+TYPED_TEST(align_confg_scoring_test, configuration)
+{
+    {
+        align_cfg::scoring elem{typename TestFixture::scheme_t{}};
+        configuration cfg{elem};
+
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score('a', 'a')), 0);
+    }
+
+    {
+        configuration cfg{align_cfg::scoring{typename TestFixture::scheme_t{}}};
+
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score('a', 'c')), -1);
+    }
+}
