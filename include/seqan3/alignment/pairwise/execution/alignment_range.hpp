@@ -161,13 +161,13 @@ public:
 
     // Construct from resource.
     template <typename resource_t,
-              typename selector_t>
+              typename kernel_t>
     //!\cond
-        requires std::is_constructible_v<range_buffer_t, resource_t, selector_t>
+        requires std::is_constructible_v<range_buffer_t, resource_t, kernel_t>
     //!\endcond
-    explicit alignment_range(resource_t _range_buffer_resource,
-                             selector_t _selector) :
-        range_buffer{std::make_shared<range_buffer_t>(std::forward<resource_t>(_range_buffer_resource), _selector)}
+    alignment_range(resource_t _range_buffer_resource,
+                    kernel_t _kernel) :
+        range_buffer{std::make_shared<range_buffer_t>(std::forward<resource_t>(_range_buffer_resource), _kernel)}
     {}
     //!}
 

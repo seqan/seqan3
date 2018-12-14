@@ -44,19 +44,18 @@ namespace seqan3
 template <std::ranges::InputRange sequence_t, typename alignment_config_t>
     requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_config_t>, configuration> &&
              tuple_like_concept<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>>
-constexpr auto align_pairwise(sequence_t && seq, alignment_config_t && config)
+constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
     static_assert(std::tuple_size_v<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>> == 2,
                   "Expects exactly two sequences for pairwise alignments.");
 
-    using seq_tuple_t = std::remove_reference_t<decltype(*std::ranges::begin(seq))>;
+    // Make also work with temporaries.
+    auto seq_view = std::forward<sequence_t>(seq) | view::persist;
+    auto kernel = detail::alignment_configurator::configure(seq_view, config);
 
-    auto seq_view = seq | view::persist;
-    detail::alignment_selector<seq_tuple_t, remove_cvref_t<alignment_config_t>> selector{config};
-    using exec_type = detail::alignment_executor_two_way<decltype(seq_view), decltype(selector)>;
-    return alignment_range<exec_type>{seq_view, selector};
+    using exec_type = detail::alignment_executor_two_way<decltype(seq_view), decltype(kernel)>;
+    return alignment_range<exec_type>{seq_view, kernel};
 }
-//
 
 template <tuple_like_concept seq_t,
           typename alignment_config_t>
