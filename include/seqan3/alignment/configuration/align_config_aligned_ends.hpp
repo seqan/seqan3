@@ -95,7 +95,7 @@ public:
 };
 
 // ----------------------------------------------------------------------------
-// seq1_leading
+// first_seq_leading
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for a leading gap in the first sequence of a pairwise sequence alignment.
@@ -112,12 +112,12 @@ public:
  * Using a `bool` allows to dynamically set the value if the option is only known at runtime. If the option is
  * already known at compile time the static version will be a better option.
  *
- * \see seq1_trailing
- * \see seq2_leading
- * \see seq2_trailing
+ * \see first_seq_trailing
+ * \see second_seq_leading
+ * \see second_seq_trailing
  */
 template <typename value_t>
-struct seq1_leading : public seq_end_gap_base<value_t>
+struct first_seq_leading : public seq_end_gap_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -125,30 +125,30 @@ struct seq1_leading : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::seq1_leading
+ * \relates seqan3::align_cfg::first_seq_leading
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
 template <typename value_t>
-seq1_leading(value_t) -> seq1_leading<value_t>;
+first_seq_leading(value_t) -> first_seq_leading<value_t>;
 //!\}
 
 // ----------------------------------------------------------------------------
-// seq1_trailing
+// first_seq_trailing
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for a trailing gap in the first sequence of a pairwise sequence alignment.
  * \ingroup configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::align_cfg::seq1_leading
+ * \copydetails seqan3::align_cfg::first_seq_leading
  *
- * \see seq1_leading
- * \see seq2_leading
- * \see seq2_trailing
+ * \see first_seq_leading
+ * \see second_seq_leading
+ * \see second_seq_trailing
  */
 template <typename value_t>
-struct seq1_trailing : public seq_end_gap_base<value_t>
+struct first_seq_trailing : public seq_end_gap_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -156,30 +156,30 @@ struct seq1_trailing : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::seq1_trailing
+ * \relates seqan3::align_cfg::first_seq_trailing
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
 template <typename value_t>
-seq1_trailing(value_t) -> seq1_trailing<value_t>;
+first_seq_trailing(value_t) -> first_seq_trailing<value_t>;
 //!\}
 
 // ----------------------------------------------------------------------------
-// seq2_leading
+// second_seq_leading
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for a leading gap in the second sequence of a pairwise sequence alignment.
  * \ingroup configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::align_cfg::seq1_leading
+ * \copydetails seqan3::align_cfg::first_seq_leading
  *
- * \see seq1_leading
- * \see seq1_trailing
- * \see seq2_trailing
+ * \see first_seq_leading
+ * \see first_seq_trailing
+ * \see second_seq_trailing
  */
 template <typename value_t>
-struct seq2_leading : public seq_end_gap_base<value_t>
+struct second_seq_leading : public seq_end_gap_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -187,30 +187,30 @@ struct seq2_leading : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::seq2_leading
+ * \relates seqan3::align_cfg::second_seq_leading
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
 template <typename value_t>
-seq2_leading(value_t) -> seq2_leading<value_t>;
+second_seq_leading(value_t) -> second_seq_leading<value_t>;
 //!\}
 
 // ----------------------------------------------------------------------------
-// seq2_trailing
+// second_seq_trailing
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for a trailing gap in the second sequence of a pairwise sequence alignment.
  * \ingroup configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::align_cfg::seq1_leading
+ * \copydetails seqan3::align_cfg::first_seq_leading
  *
- * \see seq1_leading
- * \see seq1_trailing
- * \see seq2_leading
+ * \see first_seq_leading
+ * \see first_seq_trailing
+ * \see second_seq_leading
  */
 template <typename value_t>
-struct seq2_trailing : public seq_end_gap_base<value_t>
+struct second_seq_trailing : public seq_end_gap_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -218,12 +218,12 @@ struct seq2_trailing : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::seq2_trailing
+ * \relates seqan3::align_cfg::second_seq_trailing
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
 template <typename value_t>
-seq2_trailing(value_t) -> seq2_trailing<value_t>;
+second_seq_trailing(value_t) -> second_seq_trailing<value_t>;
 //!\}
 
 // ----------------------------------------------------------------------------
@@ -237,8 +237,8 @@ seq2_trailing(value_t) -> seq2_trailing<value_t>;
  * \details
  *
  * A wrapper for providing ordered access to the end-gap specifiers independent of the input order.
- * The possible input types can be: seqan3::seq1_leading, seqan3::seq1_trailing, seqan3::seq2_leading and
- * seqan3::seq2_trailing.
+ * The possible input types can be: seqan3::first_seq_leading, seqan3::first_seq_trailing, seqan3::second_seq_leading and
+ * seqan3::second_seq_trailing.
  * The types in the parameter pack `ends_t` are deduced by the corresponding constructor argument.
  * If a specifier is not set it will default to `false` and thus the respective end-gap will be penalized in the
  * pairwise alignment.
@@ -246,10 +246,10 @@ seq2_trailing(value_t) -> seq2_trailing<value_t>;
 template <typename ...ends_t>
 //!\cond
     requires sizeof...(ends_t) <= 4 &&
-             ((detail::is_type_specialisation_of_v<ends_t, seq1_leading> ||
-               detail::is_type_specialisation_of_v<ends_t, seq1_trailing> ||
-               detail::is_type_specialisation_of_v<ends_t, seq2_leading>  ||
-               detail::is_type_specialisation_of_v<ends_t, seq2_trailing>) && ...)
+             ((detail::is_type_specialisation_of_v<ends_t, first_seq_leading> ||
+               detail::is_type_specialisation_of_v<ends_t, first_seq_trailing> ||
+               detail::is_type_specialisation_of_v<ends_t, second_seq_leading>  ||
+               detail::is_type_specialisation_of_v<ends_t, second_seq_trailing>) && ...)
 //!\endcond
 class end_gaps
 {
@@ -312,8 +312,8 @@ public:
      *
      * The sequence end-gap specifier are stored in an ordered fashion. The following position mapping will be used
      * to access the respective values:
-     * seqan3::seq1_leading &rarr; 0; seqan3::seq1_trailing &rarr; 1; seqan3::seq2_leading &rarr; 2;
-     * seqan3::seq2_trailing &rarr; 3.
+     * seqan3::first_seq_leading &rarr; 0; seqan3::first_seq_trailing &rarr; 1; seqan3::second_seq_leading &rarr; 2;
+     * seqan3::second_seq_trailing &rarr; 3.
      *
      * \returns `true` if the respective sequence end-gap is set to be free, `false` otherwise.
      */
@@ -330,8 +330,8 @@ public:
      *
      * The sequence end-gap specifier are stored in an ordered fashion. The following position mapping will be used
      * to access the respective values:
-     * seqan3::seq1_leading &rarr; 0; seqan3::seq1_trailing &rarr; 1; seqan3::seq2_leading &rarr; 2;
-     * seqan3::seq2_trailing &rarr; 3.
+     * seqan3::first_seq_leading &rarr; 0; seqan3::first_seq_trailing &rarr; 1; seqan3::second_seq_leading &rarr; 2;
+     * seqan3::second_seq_trailing &rarr; 3.
      *
      * \returns `true` if the respective sequence end-gap is set to be free, `false` otherwise.
      */
@@ -446,20 +446,20 @@ aligned_ends(end_gaps_t) -> aligned_ends<std::remove_reference_t<end_gaps_t>>;
  */
 
 //!\brief Disables all end-gaps, such that they are not penalized in the pairwise alignment.
-inline constexpr end_gaps all_ends_free{seq1_leading<std::true_type>{},
-                                        seq1_trailing<std::true_type>{},
-                                        seq2_leading<std::true_type>{},
-                                        seq2_trailing<std::true_type>{}};
+inline constexpr end_gaps all_ends_free{first_seq_leading<std::true_type>{},
+                                        first_seq_trailing<std::true_type>{},
+                                        second_seq_leading<std::true_type>{},
+                                        second_seq_trailing<std::true_type>{}};
 
 // ----------------------------------------------------------------------------
 // none_ends_free
 // ----------------------------------------------------------------------------
 
 //!\brief Enables all end-gaps, such that they are penalized in the pairwise alignment.
-inline constexpr end_gaps none_ends_free{seq1_leading<std::false_type>{},
-                                         seq1_trailing<std::false_type>{},
-                                         seq2_leading<std::false_type>{},
-                                         seq2_trailing<std::false_type>{}};
+inline constexpr end_gaps none_ends_free{first_seq_leading<std::false_type>{},
+                                         first_seq_trailing<std::false_type>{},
+                                         second_seq_leading<std::false_type>{},
+                                         second_seq_trailing<std::false_type>{}};
 
 // ----------------------------------------------------------------------------
 // seq1_ends_free
@@ -467,10 +467,10 @@ inline constexpr end_gaps none_ends_free{seq1_leading<std::false_type>{},
 
 //!\brief Enables end-gaps for the first sequence, to compute a semi-global alignment
 //!       with free end gaps in the first sequence
-inline constexpr end_gaps seq1_ends_free{seq1_leading<std::true_type>{},
-                                         seq1_trailing<std::true_type>{},
-                                         seq2_leading<std::false_type>{},
-                                         seq2_trailing<std::false_type>{}};
+inline constexpr end_gaps seq1_ends_free{first_seq_leading<std::true_type>{},
+                                         first_seq_trailing<std::true_type>{},
+                                         second_seq_leading<std::false_type>{},
+                                         second_seq_trailing<std::false_type>{}};
 
 // ----------------------------------------------------------------------------
 // seq2_ends_free
@@ -478,9 +478,9 @@ inline constexpr end_gaps seq1_ends_free{seq1_leading<std::true_type>{},
 
 //!\brief Enables end-gaps for the second sequence, to compute a semi-global alignment
 //!       with free end gaps in the second sequence
-inline constexpr end_gaps seq2_ends_free{seq1_leading<std::false_type>{},
-                                         seq1_trailing<std::false_type>{},
-                                         seq2_leading<std::true_type>{},
-                                         seq2_trailing<std::true_type>{}};
+inline constexpr end_gaps seq2_ends_free{first_seq_leading<std::false_type>{},
+                                         first_seq_trailing<std::false_type>{},
+                                         second_seq_leading<std::true_type>{},
+                                         second_seq_trailing<std::true_type>{}};
 //!\}
 } // namespace seqan3

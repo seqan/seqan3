@@ -66,14 +66,14 @@ private:
     }
 };
 
-using static_end_gap_types = ::testing::Types<seq1_leading<std::true_type>,
-                                              seq1_leading<std::false_type>,
-                                              seq1_trailing<std::true_type>,
-                                              seq1_trailing<std::false_type>,
-                                              seq2_leading<std::true_type>,
-                                              seq2_leading<std::false_type>,
-                                              seq2_trailing<std::true_type>,
-                                              seq2_trailing<std::false_type>>;
+using static_end_gap_types = ::testing::Types<first_seq_leading<std::true_type>,
+                                              first_seq_leading<std::false_type>,
+                                              first_seq_trailing<std::true_type>,
+                                              first_seq_trailing<std::false_type>,
+                                              second_seq_leading<std::true_type>,
+                                              second_seq_leading<std::false_type>,
+                                              second_seq_trailing<std::true_type>,
+                                              second_seq_trailing<std::false_type>>;
 
 TYPED_TEST_CASE(static_end_gap_test, static_end_gap_types);
 
@@ -81,10 +81,10 @@ template <typename type>
 class dynamic_end_gap_test : public ::testing::Test
 {};
 
-using dynamic_end_gap_types = ::testing::Types<seq1_leading<bool>,
-                                               seq1_trailing<bool>,
-                                               seq2_leading<bool>,
-                                               seq2_trailing<bool>>;
+using dynamic_end_gap_types = ::testing::Types<first_seq_leading<bool>,
+                                               first_seq_trailing<bool>,
+                                               second_seq_leading<bool>,
+                                               second_seq_trailing<bool>>;
 
 TYPED_TEST_CASE(dynamic_end_gap_test, dynamic_end_gap_types);
 
@@ -94,71 +94,71 @@ TEST(seq_end_gap_base, aggregate)
     EXPECT_TRUE((std::is_aggregate_v<dummy_gap<bool>>));
 }
 
-TEST(seq1_leading, deduction)
+TEST(first_seq_leading, deduction)
 {
     { // static
-        seq1_leading tmp{std::true_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq1_leading<std::true_type>>), true);
-        seq1_leading tmp2{std::false_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq1_leading<std::false_type>>), true);
+        first_seq_leading tmp{std::true_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), first_seq_leading<std::true_type>>), true);
+        first_seq_leading tmp2{std::false_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), first_seq_leading<std::false_type>>), true);
     }
 
     { // dynamic
-        seq1_leading tmp{true};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq1_leading<bool>>), true);
-        seq1_leading tmp2{false};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq1_leading<bool>>), true);
+        first_seq_leading tmp{true};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), first_seq_leading<bool>>), true);
+        first_seq_leading tmp2{false};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), first_seq_leading<bool>>), true);
     }
 }
 
-TEST(seq1_trailing, deduction)
+TEST(first_seq_trailing, deduction)
 {
     { // static
-        seq1_trailing tmp{std::true_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq1_trailing<std::true_type>>), true);
-        seq1_trailing tmp2{std::false_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq1_trailing<std::false_type>>), true);
+        first_seq_trailing tmp{std::true_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), first_seq_trailing<std::true_type>>), true);
+        first_seq_trailing tmp2{std::false_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), first_seq_trailing<std::false_type>>), true);
     }
 
     { // dynamic
-        seq1_trailing tmp{true};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq1_trailing<bool>>), true);
-        seq1_trailing tmp2{false};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq1_trailing<bool>>), true);
+        first_seq_trailing tmp{true};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), first_seq_trailing<bool>>), true);
+        first_seq_trailing tmp2{false};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), first_seq_trailing<bool>>), true);
     }
 }
 
-TEST(seq2_leading, deduction)
+TEST(second_seq_leading, deduction)
 {
     { // static
-        seq2_leading tmp{std::true_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq2_leading<std::true_type>>), true);
-        seq2_leading tmp2{std::false_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq2_leading<std::false_type>>), true);
+        second_seq_leading tmp{std::true_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), second_seq_leading<std::true_type>>), true);
+        second_seq_leading tmp2{std::false_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), second_seq_leading<std::false_type>>), true);
     }
 
     { // dynamic
-        seq2_leading tmp{true};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq2_leading<bool>>), true);
-        seq2_leading tmp2{false};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq2_leading<bool>>), true);
+        second_seq_leading tmp{true};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), second_seq_leading<bool>>), true);
+        second_seq_leading tmp2{false};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), second_seq_leading<bool>>), true);
     }
 }
 
-TEST(seq2_trailing, deduction)
+TEST(second_seq_trailing, deduction)
 {
     { // static
-        seq2_trailing tmp{std::true_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq2_trailing<std::true_type>>), true);
-        seq2_trailing tmp2{std::false_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq2_trailing<std::false_type>>), true);
+        second_seq_trailing tmp{std::true_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), second_seq_trailing<std::true_type>>), true);
+        second_seq_trailing tmp2{std::false_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), second_seq_trailing<std::false_type>>), true);
     }
 
     { // dynamic
-        seq2_trailing tmp{true};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), seq2_trailing<bool>>), true);
-        seq2_trailing tmp2{false};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), seq2_trailing<bool>>), true);
+        second_seq_trailing tmp{true};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), second_seq_trailing<bool>>), true);
+        second_seq_trailing tmp2{false};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), second_seq_trailing<bool>>), true);
     }
 }
 
@@ -201,40 +201,40 @@ TEST(end_gaps, construction)
     }
 
     { // one element
-        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<seq1_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<seq1_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<seq1_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<seq1_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<seq1_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<first_seq_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<first_seq_leading<std::true_type>>>));
 
-        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<seq1_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
     }
 
     { // four elements
-        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<seq1_leading<std::true_type>,
-                                                                      seq2_leading<bool>,
-                                                                      seq1_trailing<std::false_type>,
-                                                                      seq2_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<seq1_leading<std::true_type>,
-                                                                   seq2_leading<bool>,
-                                                                   seq1_trailing<std::false_type>,
-                                                                   seq2_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<seq1_leading<std::true_type>,
-                                                                   seq2_leading<bool>,
-                                                                   seq1_trailing<std::false_type>,
-                                                                   seq2_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<seq1_leading<std::true_type>,
-                                                                seq2_leading<bool>,
-                                                                seq1_trailing<std::false_type>,
-                                                                seq2_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<seq1_leading<std::true_type>,
-                                                                seq2_leading<bool>,
-                                                                seq1_trailing<std::false_type>,
-                                                                seq2_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<seq1_leading<std::true_type>,
-                                                              seq2_leading<bool>,
-                                                              seq1_trailing<std::false_type>,
-                                                              seq2_trailing<bool>>>));
+        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+                                                                      second_seq_leading<bool>,
+                                                                      first_seq_trailing<std::false_type>,
+                                                                      second_seq_trailing<bool>>>));
+        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+                                                                   second_seq_leading<bool>,
+                                                                   first_seq_trailing<std::false_type>,
+                                                                   second_seq_trailing<bool>>>));
+        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+                                                                   second_seq_leading<bool>,
+                                                                   first_seq_trailing<std::false_type>,
+                                                                   second_seq_trailing<bool>>>));
+        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<first_seq_leading<std::true_type>,
+                                                                second_seq_leading<bool>,
+                                                                first_seq_trailing<std::false_type>,
+                                                                second_seq_trailing<bool>>>));
+        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<first_seq_leading<std::true_type>,
+                                                                second_seq_leading<bool>,
+                                                                first_seq_trailing<std::false_type>,
+                                                                second_seq_trailing<bool>>>));
+        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+                                                              second_seq_leading<bool>,
+                                                              first_seq_trailing<std::false_type>,
+                                                              second_seq_trailing<bool>>>));
     }
 }
 
@@ -246,14 +246,14 @@ TEST(end_gaps, deduction)
     }
 
     { // one element
-        end_gaps eg{seq2_trailing{true}};
-        using foo = end_gaps<seq2_trailing<bool>>;
+        end_gaps eg{second_seq_trailing{true}};
+        using foo = end_gaps<second_seq_trailing<bool>>;
         EXPECT_EQ((std::is_same_v<decltype(eg), foo>), true);
     }
 
     { // multiple elements
-        end_gaps eg{seq2_trailing{true}, seq1_leading{std::true_type{}}, seq2_leading{std::false_type{}}};
-        using foo = end_gaps<seq2_trailing<bool>, seq1_leading<std::true_type>, seq2_leading<std::false_type>>;
+        end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
+        using foo = end_gaps<second_seq_trailing<bool>, first_seq_leading<std::true_type>, second_seq_leading<std::false_type>>;
         EXPECT_EQ((std::is_same_v<decltype(eg), foo>), true);
     }
 }
@@ -270,7 +270,7 @@ TEST(end_gaps, access)
     }
 
     { // custom
-        end_gaps eg{seq2_trailing{true}, seq1_leading{std::true_type{}}, seq2_leading{std::false_type{}}};
+        end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
 
         EXPECT_EQ(eg[0], true);
         EXPECT_EQ(eg[1], false);
@@ -295,7 +295,7 @@ TEST(end_gaps, static_query)
     }
 
     { // custom
-        end_gaps eg{seq2_trailing{true}, seq1_leading{std::true_type{}}, seq2_leading{std::false_type{}}};
+        end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
 
         constexpr bool seq1_l = decltype(eg)::is_static<0>();
         constexpr bool seq1_t = decltype(eg)::is_static<1>();
@@ -311,7 +311,7 @@ TEST(end_gaps, static_query)
 
 TEST(end_gaps, static_access)
 {
-    end_gaps eg{seq2_trailing{true}, seq1_leading{std::true_type{}}, seq2_leading{std::false_type{}}};
+    end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
 
     constexpr bool seq1_l = decltype(eg)::get_static<0>();
     constexpr bool seq2_l = decltype(eg)::get_static<2>();
@@ -324,38 +324,38 @@ TEST(end_gaps, static_access)
 
 TEST(end_gaps, all_ends_free)
 {
-    using test = end_gaps<seq1_leading<std::true_type>,
-                          seq1_trailing<std::true_type>,
-                          seq2_leading<std::true_type>,
-                          seq2_trailing<std::true_type>>;
+    using test = end_gaps<first_seq_leading<std::true_type>,
+                          first_seq_trailing<std::true_type>,
+                          second_seq_leading<std::true_type>,
+                          second_seq_trailing<std::true_type>>;
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(all_ends_free)>, test>), true);
 }
 
 TEST(end_gaps, none_ends_free)
 {
-    using test = end_gaps<seq1_leading<std::false_type>,
-                          seq1_trailing<std::false_type>,
-                          seq2_leading<std::false_type>,
-                          seq2_trailing<std::false_type>>;
+    using test = end_gaps<first_seq_leading<std::false_type>,
+                          first_seq_trailing<std::false_type>,
+                          second_seq_leading<std::false_type>,
+                          second_seq_trailing<std::false_type>>;
 
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(none_ends_free)>, test>), true);
 }
 
 TEST(end_gaps, seq1_ends_free)
 {
-    using test = end_gaps<seq1_leading<std::true_type>,
-                          seq1_trailing<std::true_type>,
-                          seq2_leading<std::false_type>,
-                          seq2_trailing<std::false_type>>;
+    using test = end_gaps<first_seq_leading<std::true_type>,
+                          first_seq_trailing<std::true_type>,
+                          second_seq_leading<std::false_type>,
+                          second_seq_trailing<std::false_type>>;
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(seq1_ends_free)>, test>), true);
 }
 
 TEST(end_gaps, seq2_ends_free)
 {
-    using test = end_gaps<seq1_leading<std::false_type>,
-                          seq1_trailing<std::false_type>,
-                          seq2_leading<std::true_type>,
-                          seq2_trailing<std::true_type>>;
+    using test = end_gaps<first_seq_leading<std::false_type>,
+                          first_seq_trailing<std::false_type>,
+                          second_seq_leading<std::true_type>,
+                          second_seq_trailing<std::true_type>>;
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(seq2_ends_free)>, test>), true);
 }
 
@@ -377,10 +377,10 @@ TEST(align_cfg_aligned_ends, value)
     align_cfg::aligned_ends cfg{seq1_ends_free};
     using type = decltype(cfg.value);
 
-    using test = end_gaps<seq1_leading<std::true_type>,
-                          seq1_trailing<std::true_type>,
-                          seq2_leading<std::false_type>,
-                          seq2_trailing<std::false_type>>;
+    using test = end_gaps<first_seq_leading<std::true_type>,
+                          first_seq_trailing<std::true_type>,
+                          second_seq_leading<std::false_type>,
+                          second_seq_trailing<std::false_type>>;
 
     EXPECT_EQ((std::is_same_v<type, test>), true);
 
