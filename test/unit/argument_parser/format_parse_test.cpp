@@ -626,7 +626,7 @@ TEST(parse_test, too_few_arguments_error)
     EXPECT_THROW(parser2.parse(), too_few_arguments);
 }
 
-TEST(parse_test, unkown_option_error)
+TEST(parse_test, unknown_option_error)
 {
     // unknown short option
     const char * argv[] = {"./argument_parser_test", "-i", "15"};

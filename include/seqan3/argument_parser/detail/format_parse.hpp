@@ -180,7 +180,7 @@ public:
         for (auto && f : flag_calls)
             f();
 
-        check_for_unkown_ids();
+        check_for_unknown_ids();
 
         if (end_of_options_it != argv.end())
             *end_of_options_it = ""; // remove -- before parsing positional arguments
@@ -535,7 +535,7 @@ private:
      * In addition this function removes "--" (if specified) from argv to
      * clean argv for positional option retrieval.
      */
-    void check_for_unkown_ids()
+    void check_for_unknown_ids()
     {
         for (auto it = argv.begin(); it != end_of_options_it; ++it)
         {

@@ -97,7 +97,7 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
         {
 #ifndef NDEBUG
             if (!(row == 0 || col == 0))
-                throw std::logic_error{"Unkown seqan3::trace_direction in an inner cell of the trace matrix."};
+                throw std::logic_error{"Unknown seqan3::trace_direction in an inner cell of the trace matrix."};
 #endif
             break;
         }
@@ -183,7 +183,7 @@ alignment_trace(database_t && database,
         {
 #ifndef NDEBUG
             if (!(row == 0 || col == 0))
-                throw std::logic_error{"Unkown seqan3::trace_direction in an inner cell of the trace matrix."};
+                throw std::logic_error{"Unknown seqan3::trace_direction in an inner cell of the trace matrix."};
 #endif
             break;
         }

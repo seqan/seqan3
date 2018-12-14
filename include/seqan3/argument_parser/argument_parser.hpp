@@ -363,7 +363,7 @@ public:
      * If the user does something wrong, it looks like this:
      * ```console
      * MaxMuster$ ./age_app --foo
-     * The Age App - [PARSER ERROR] Unkown option --foo. Please see -h/--help for more information.
+     * The Age App - [PARSER ERROR] Unknown option --foo. Please see -h/--help for more information.
      * MaxMuster$
      * MaxMuster$ ./age_app -a abc
      * The Age App - [PARSER ERROR] Value cast failed for option -a: Argument abc
