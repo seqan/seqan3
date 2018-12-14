@@ -80,7 +80,7 @@ TEST(align_config_max_error, get_by_enum)
     detail::configuration cfg = align_cfg::max_error(10);
     auto const c_cfg = detail::configuration{align_cfg::max_error(10)};
 
-    EXPECT_EQ(get<align_cfg::id::max_error>(cfg), 10);
+    EXPECT_EQ(get<align_cfg::id::max_error>(cfg), 10u);
     EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::max_error>(cfg)),
                                 uint32_t &>));
 
