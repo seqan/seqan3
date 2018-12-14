@@ -39,6 +39,8 @@
 
 #pragma once
 
+#include <seqan3/core/platform.hpp>
+
 /*!\defgroup decorator Decorator
  * \brief The decorator submodule contains special SeqAn3 decorators and generic decorator concepts.
  * \ingroup range

@@ -36,6 +36,8 @@
 
 #include <string>
 
+#include <seqan3/core/platform.hpp>
+
 /*!\file
  * \brief Contains SeqAn version macros and global variables.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>

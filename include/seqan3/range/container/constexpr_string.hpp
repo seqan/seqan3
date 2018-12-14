@@ -42,6 +42,8 @@
 #include <array>
 #include <type_traits>
 
+#include <seqan3/core/platform.hpp>
+
 namespace seqan3
 {
 

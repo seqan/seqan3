@@ -43,6 +43,7 @@
 
 #include <meta/meta.hpp>
 
+#include <seqan3/core/platform.hpp>
 #include <seqan3/std/type_traits>
 
 namespace seqan3::detail
