@@ -55,12 +55,6 @@ std::cout << get<foo>(my_cfg).value << '\n';  // prints 4
 }
 
 {
-//! [push_back]
-configuration my_cfg = configuration{foo{4}}.push_back(bar{.0});
-//! [push_back]
-}
-
-{
 //! [value_or]
 configuration my_cfg{bar{1.3}};
 std::cout << my_cfg.value_or<bar>("not there") << '\n';  // prints: 1.3

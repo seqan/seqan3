@@ -62,14 +62,6 @@ TEST(configuration, tuple_element)
     EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, configuration<bax, bar>>, bax>));
 }
 
-TEST(configuration, metafunction)
-{
-    EXPECT_TRUE((detail::is_algorithm_configuration<configuration<bax, bar>>::value));
-    EXPECT_TRUE((detail::is_algorithm_configuration_v<configuration<bax, bar>>));
-    EXPECT_FALSE((detail::is_algorithm_configuration<type_list<bax>>::value));
-    EXPECT_FALSE((detail::is_algorithm_configuration_v<type_list<bax>>));
-}
-
 TEST(configuration, standard_construction)
 {
     EXPECT_TRUE((std::is_default_constructible_v<configuration<bax, bar>>));
@@ -86,15 +78,6 @@ TEST(configuration, construction_from_elements)
 
     EXPECT_EQ((std::tuple_size_v<decltype(cfg0)>), 0u);
     EXPECT_EQ((std::tuple_size_v<decltype(cfg1)>), 1u);
-}
-
-TEST(configuration, push_back)
-{
-    configuration cfg1 = configuration{}.push_back(bar{});
-    EXPECT_TRUE((std::is_same_v<decltype(cfg1), configuration<bar>>));
-
-    configuration cfg2 = cfg1.push_back(foobar<>{});
-    EXPECT_TRUE((std::is_same_v<decltype(cfg2), configuration<bar, foobar<std::vector<int>>>>));
 }
 
 TEST(configuration, size)

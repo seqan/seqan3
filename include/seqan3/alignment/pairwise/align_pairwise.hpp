@@ -69,7 +69,7 @@ namespace seqan3
 
 //!\cond
 template <std::ranges::InputRange sequence_t, typename alignment_config_t>
-    requires detail::is_algorithm_configuration_v<remove_cvref_t<alignment_config_t>> &&
+    requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_config_t>, configuration> &&
              tuple_like_concept<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>>
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t && config)
 {
@@ -87,7 +87,7 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t && config)
 
 template <tuple_like_concept seq_t,
           typename alignment_config_t>
-    requires detail::is_algorithm_configuration_v<remove_cvref_t<alignment_config_t>>
+    requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_config_t>, configuration>
 constexpr auto align_pairwise(seq_t && seq, alignment_config_t && config)
 {
     static_assert(std::tuple_size_v<std::remove_reference_t<seq_t>> == 2,

@@ -39,6 +39,7 @@
 
 #pragma once
 
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/search/algorithm/detail/search.hpp>
 #include <seqan3/search/fm_index/all.hpp>
@@ -77,7 +78,7 @@ template <fm_index_concept index_t, typename queries_t, typename configuration_t
     requires
         (std::ranges::RandomAccessRange<queries_t> ||
             (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)) &&
-        detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+        detail::is_type_specialisation_of_v<remove_cvref_t<configuration_t>, configuration>
 //!\endcond
 inline auto search(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
