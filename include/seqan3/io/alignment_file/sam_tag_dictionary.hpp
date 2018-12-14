@@ -318,7 +318,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/general_usage.cpp all
  *
  * \attention You can get any SAM_tag out of the dictionary, even if the tag is
- *            user defined, but note that for unkown tags the return type is an
+ *            user defined, but note that for unknown tags the return type is an
  *            [std::variant](https://en.cppreference.com/w/cpp/utility/variant).
  *            If you want specify the return type of your custom tag, you need
  *            to overload the seqan3::sam_tag_type metafunction.
