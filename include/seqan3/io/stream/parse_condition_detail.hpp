@@ -291,7 +291,7 @@ public:
         requires sizeof(value_t) != 1
     {
         return (static_cast<std::make_unsigned_t<value_t>>(val) < 256) ? operator()(static_cast<uint8_t>(val)) :
-               (val == EOF)                                            ? derived_t::data[256]                  : false;
+               (static_cast<decltype(EOF)>(val) == EOF)                ? derived_t::data[256]                  : false;
     }
     //!\}
 
