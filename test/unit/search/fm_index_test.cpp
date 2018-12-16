@@ -111,7 +111,7 @@ TYPED_TEST(fm_index_test, size)
 
     typename TypeParam::text_type test(8);
     fm.construct(test);
-    EXPECT_EQ(fm.size(), 9); // including a sentinel character
+    EXPECT_EQ(fm.size(), 9u); // including a sentinel character
 }
 
 TYPED_TEST(fm_index_test, serialization)
@@ -127,7 +127,7 @@ TYPED_TEST(fm_index_test, serialization)
     TypeParam fm1{};
     EXPECT_TRUE(fm1.load(path));
 
-    EXPECT_EQ(fm1.size(), 9);
+    EXPECT_EQ(fm1.size(), 9u);
 }
 
 TEST(fm_index_test, concepts)

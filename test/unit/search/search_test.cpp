@@ -297,7 +297,7 @@ TYPED_TEST(search_test, search_strategy_best)
 
         hits_result_t possible_hits{0, 4, 8}; // any of 0, 4, 8 ... 1, 5, 9 are not best hits
         hits_result_t result = search(this->index, "ACGT"_dna4, cfg);
-        ASSERT_EQ(result.size(), 1);
+        ASSERT_EQ(result.size(), 1u);
         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
 
         EXPECT_EQ(search(this->index, "AAAA"_dna4, cfg), (hits_result_t{})); // no hit

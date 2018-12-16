@@ -339,7 +339,7 @@ public:
         size_type _lb = node.lb, _rb = node.rb;
         size_type new_parent_lb = parent_lb, new_parent_rb = parent_rb;
 
-        sdsl_char_type c;
+        sdsl_char_type c{};
 
         for (auto it = first; it != last; ++it)
         {

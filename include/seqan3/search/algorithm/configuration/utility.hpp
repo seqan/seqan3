@@ -277,7 +277,7 @@ constexpr bool contains(detail::configuration<cfg_elements_t...> & cfg) noexcept
 }
 
 template <search_cfg::id e, typename ... cfg_elements_t>
-constexpr bool contains(detail::configuration<cfg_elements_t...> const & cfg) noexcept
+constexpr bool contains(detail::configuration<cfg_elements_t...> const &) noexcept
 {
     using type_list_t = detail::tuple_type_list_t<typename detail::configuration<cfg_elements_t...>::base_type>;
 

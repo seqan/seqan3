@@ -115,7 +115,7 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 
     uint8_t const blocks      {search_scheme[0].blocks()};
     size_t  const block_length{query_length / blocks};
-    uint8_t const rest        {query_length - blocks * block_length};
+    uint8_t const rest        {static_cast<uint8_t>(query_length % blocks)};
 
     blocks_length_type blocks_length;
     // set all blocks_length values to block_length
@@ -404,7 +404,7 @@ inline bool search_ss(iterator_t it, query_t & query,
         return true;
     }
     // Exact search in current block.
-    else if ((max_error_left_in_block == 0) && (rb - lb - 1 != blocks_length[block_id]) ||
+    else if (((max_error_left_in_block == 0) && (rb - lb - 1 != blocks_length[block_id])) ||
              (error_left.total == 0 && min_error_left_in_block == 0))
     {
         if (search_ss_exact<abort_on_hit>(it, query, lb, rb, errors_spent, block_id, go_right, search, blocks_length,

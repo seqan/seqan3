@@ -88,7 +88,7 @@ TYPED_TEST(fm_index_iterator_test, ctr)
 
     // custom constructor
     TypeParam it0{fm};
-    EXPECT_EQ(it0.query_length(), 0);
+    EXPECT_EQ(it0.query_length(), 0u);
     EXPECT_EQ(it0.locate().size(), fm.size());
 
     // default construction (does not initialize the iterator)
@@ -119,8 +119,8 @@ TYPED_TEST(fm_index_iterator_test, begin)
     // begin
     TypeParam it(fm);
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 1, 2, 3, 4, 5, 6})); // sentinel position included
-    EXPECT_EQ(it.query_length(), 0);
-    EXPECT_EQ(it.count(), 7);
+    EXPECT_EQ(it.query_length(), 0u);
+    EXPECT_EQ(it.count(), 7u);
 }
 
 TYPED_TEST(fm_index_iterator_test, extend_right_range)
@@ -132,13 +132,13 @@ TYPED_TEST(fm_index_iterator_test, extend_right_range)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("CG"_dna4));
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
-    EXPECT_EQ(it.query_length(), 2);
-    EXPECT_EQ(it.count(), 2);
+    EXPECT_EQ(it.query_length(), 2u);
+    EXPECT_EQ(it.count(), 2u);
 
     EXPECT_TRUE(it.extend_right("A"_dna4));
     EXPECT_EQ(it.locate(), (std::vector<uint64_t>{1}));
-    EXPECT_EQ(it.query_length(), 3);
-    EXPECT_EQ(it.count(), 1);
+    EXPECT_EQ(it.query_length(), 3u);
+    EXPECT_EQ(it.count(), 1u);
 
     // unsuccessful extend_right(range), it remains untouched
     TypeParam it_cpy = it;
@@ -161,7 +161,7 @@ TYPED_TEST(fm_index_iterator_test, extend_right_range)
 //     TypeParam it(fm);
 //     EXPECT_TRUE(it.extend_right("GA"_dna4));
 //     EXPECT_EQ(it.locate(), (std::vector<uint64_t>{2}));
-//     EXPECT_EQ(it.query_length(), 2);
+//     EXPECT_EQ(it.query_length(), 2u);
 // }
 
 TYPED_TEST(fm_index_iterator_test, extend_right_char)
@@ -173,11 +173,11 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right('A'_dna4));
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
-    EXPECT_EQ(it.query_length(), 1);
+    EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.extend_right('C'_dna4));
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
-    EXPECT_EQ(it.query_length(), 2);
+    EXPECT_EQ(it.query_length(), 2u);
 
     // unsuccessful extend_right(char), it remains untouched
     TypeParam it_cpy = it;
@@ -195,7 +195,7 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char)
 //     TypeParam it(fm);
 //     EXPECT_TRUE(it.extend_right('A'_dna4));
 //     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
-//     EXPECT_EQ(it.query_length(), 1);
+//     EXPECT_EQ(it.query_length(), 1u);
 // }
 
 TYPED_TEST(fm_index_iterator_test, extend_right_range_and_cycle)
@@ -207,11 +207,11 @@ TYPED_TEST(fm_index_iterator_test, extend_right_range_and_cycle)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right("ACGA"_dna4));
     EXPECT_EQ(it.locate(), (std::vector<uint64_t>{0}));
-    EXPECT_EQ(it.query_length(), 4);
+    EXPECT_EQ(it.query_length(), 4u);
 
     EXPECT_TRUE(it.cycle_back());
     EXPECT_EQ(it.locate(), (std::vector<uint64_t>{4}));
-    EXPECT_EQ(it.query_length(), 4);
+    EXPECT_EQ(it.query_length(), 4u);
 }
 
 TYPED_TEST(fm_index_iterator_test, extend_right_char_and_cycle)
@@ -223,11 +223,11 @@ TYPED_TEST(fm_index_iterator_test, extend_right_char_and_cycle)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right('A'_dna4));
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3, 4}));
-    EXPECT_EQ(it.query_length(), 1);
+    EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.cycle_back());
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 5, 7}));
-    EXPECT_EQ(it.query_length(), 1);
+    EXPECT_EQ(it.query_length(), 1u);
 }
 
 TYPED_TEST(fm_index_iterator_test, extend_right_and_cycle)
@@ -239,15 +239,15 @@ TYPED_TEST(fm_index_iterator_test, extend_right_and_cycle)
     TypeParam it(fm);
     EXPECT_TRUE(it.extend_right());
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{0, 3}));
-    EXPECT_EQ(it.query_length(), 1);
+    EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.cycle_back());
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
-    EXPECT_EQ(it.query_length(), 1);
+    EXPECT_EQ(it.query_length(), 1u);
 
     EXPECT_TRUE(it.extend_right());
     EXPECT_EQ(uniquify(it.locate()), (std::vector<uint64_t>{1, 4}));
-    EXPECT_EQ(it.query_length(), 2);
+    EXPECT_EQ(it.query_length(), 2u);
 
     // unsuccessful cycle_back(), it remains untouched
     TypeParam it_cpy = it;
