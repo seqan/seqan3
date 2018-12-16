@@ -177,7 +177,10 @@ macro (seqan3_require_test)
         gtest_project
         PREFIX gtest_project
         GIT_REPOSITORY "https://github.com/google/googletest.git"
-        GIT_TAG "release-1.8.1"
+        # we currently have warnings that were introduced in
+        # 03867b5389516a0f185af52672cf5472fa0c159c, which are still available
+        # in "release-1.8.1", see https://github.com/google/googletest/issues/1419
+        GIT_TAG "52f8183e7f3620cf03f321a2624eb0d4f7649f4c"
         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${gtest_project_args}"
         UPDATE_DISCONNECTED yes
