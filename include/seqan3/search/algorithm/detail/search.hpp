@@ -73,15 +73,16 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 {
     // retrieve error numbers / rates
     detail::search_param max_error{0, 0, 0, 0};
-    auto & [total, subs, ins, del] = max_error;
     if constexpr (contains<search_cfg::id::max_error>(cfg))
     {
+        auto & [total, subs, ins, del] = max_error;
         std::tie(total, subs, ins, del) = get<search_cfg::id::max_error>(cfg);
     }
     else if constexpr (contains<search_cfg::id::max_error_rate>(cfg))
     {
         // NOTE: Casting doubles rounds towards zero (i.e. floor for positive numbers). Thus, given a rate of
         // 10% and a read length of 101 the max number of errors is correctly casted from 10.1 errors to 10
+        auto & [total, subs, ins, del] = max_error;
         std::tie(total, subs, ins, del) = std::apply([& query] (auto && ... args)
             {
                 return std::tuple{(args * query.size())...};
