@@ -35,14 +35,15 @@
 /*!\file
  * \brief Provides the mode configuration to define the search modes "all", "all_best", "best" and "strata".
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/algorithm/all.hpp>
+#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/template_inspection.hpp>
-#include <seqan3/search/algorithm/configuration/utility.hpp>
+#include <seqan3/search/algorithm/configuration/detail.hpp>
 
 /*!\addtogroup search
  * \{
@@ -81,74 +82,32 @@ struct strata : detail::strong_type<uint8_t, strata, detail::strong_type_skill::
     using detail::strong_type<uint8_t, strata, detail::strong_type_skill::convert>::strong_type;
 };
 
-} // namespace seqan3::search_cfg
-
-namespace seqan3::detail
-{
 /*!\brief Configuration element to determine the search mode.
  * \ingroup search_configuration
  */
 template <typename mode_t>
-struct search_config_mode
+//!\cond
+    requires std::Same<remove_cvref_t<mode_t>, detail::search_mode_all> ||
+             std::Same<remove_cvref_t<mode_t>, detail::search_mode_all_best> ||
+             std::Same<remove_cvref_t<mode_t>, detail::search_mode_best> ||
+             std::Same<remove_cvref_t<mode_t>, strata>
+//!\endcond
+struct mode : public pipeable_config_element<mode<mode_t>, mode_t>
 {
-    //!\cond
-    mode_t value;
-    //!\endcond
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::mode};
 };
 
-/*!\brief The seqan3::search_cfg::mode adaptor enabling pipe notation.
- * \ingroup search_configuration
+/*!\name Type deduction guides
+ * \relates seqan3::search_cfg::mode
+ * \{
  */
-template <template <typename ...> typename search_config_mode_type>
-struct search_config_mode_adaptor : public configuration_fn_base<search_config_mode_adaptor<search_config_mode_type>>
-{
 
-    /*!\brief Adds to the configuration the seqan3::search_cfg::mode configuration element.
-     * \param[in] cfg The configuration to be extended.
-     * \param[in] mode The mode determining the search strategy (all, best, all_best, etc.).
-     * \returns A new configuration containing the seqan3::search_cfg::mode configuration element.
-     */
-    template <typename configuration_t, typename mode_t>
-    //!\cond
-        requires is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    //!\endcond
-    // TODO: require strong type
-    constexpr auto invoke(configuration_t && cfg, mode_t mode) const
-    {
-        static_assert(is_valid_search_configuration_v<search_cfg::id::mode, remove_cvref_t<configuration_t>>,
-                      SEQAN3_INVALID_CONFIG(search_cfg::id::mode));
-
-        return std::forward<configuration_t>(cfg).push_front(search_config_mode<mode_t>{std::move(mode)});
-    }
-};
-
-//!\brief Helper template meta-function associated with detail::search_config_mode.
-//!\ingroup search_configuration
-template <>
-struct on_search_config<search_cfg::id::mode>
-{
-    //!\brief Type alias used by meta::find_if
-    template <config_element_concept t>
-    using invoke = typename is_type_specialisation_of<t, search_config_mode>::type;
-};
-
-//!\brief Mapping from the detail::search_config_mode type to it's corresponding seqan3::search_cfg::id.
-//!\ingroup search_configuration
+//!\brief Deduces search mode type from constructor argument.
 template <typename mode_t>
-struct search_config_type_to_id<search_config_mode<mode_t>>
-{
-    //!\brief The associated seqan3::search_cfg::id.
-    static constexpr search_cfg::id value = search_cfg::id::mode;
-};
-} // namespace seqan3::detail
-
-namespace seqan3::search_cfg
-{
-/*!\brief Configuration element to determine the search mode.
- * \ingroup search_configuration
- */
-inline detail::search_config_mode_adaptor<seqan3::detail::search_config_mode> constexpr mode;
-
+mode(mode_t) -> mode<remove_cvref_t<mode_t>>;
+//!\}
 } // namespace seqan3::search_cfg
 
 //!\}

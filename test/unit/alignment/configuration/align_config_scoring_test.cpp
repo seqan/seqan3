@@ -34,60 +34,49 @@
 
 #include <gtest/gtest.h>
 
-#include <type_traits>
-
-#include <seqan3/alignment/configuration/align_config_output.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/std/concepts>
 
 using namespace seqan3;
 
-struct bar
+template <typename t>
+class align_confg_scoring_test : public ::testing::Test
 {
-    int value;
+public:
+
+    using scheme_t = std::tuple_element_t<0, t>;
+    using alph_t   = std::tuple_element_t<1, t>;
 };
 
-TEST(align_config_output, constructor)
+using test_types = ::testing::Types<std::tuple<aminoacid_scoring_scheme<int8_t>, aa27>,
+                                    std::tuple<nucleotide_scoring_scheme<int8_t>, dna15>>;
+TYPED_TEST_CASE(align_confg_scoring_test, test_types);
+
+TYPED_TEST(align_confg_scoring_test, config_element_concept)
 {
-    EXPECT_TRUE((std::is_default_constructible_v<detail::align_config_output<align_result_key::end>>));
+    using scheme_t = typename TestFixture::scheme_t;
+    EXPECT_TRUE((detail::config_element_concept<align_cfg::scoring<scheme_t>>));
 }
 
-TEST(align_config_output, on_align_config)
+TYPED_TEST(align_confg_scoring_test, configuration)
 {
-    using output_config_t = detail::align_config_output<align_result_key::trace>;
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::output>::invoke<output_config_t>,
-                 std::true_type>));
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::output>::invoke<bar>,
-                 std::false_type>));
-}
+    using alph_t   = typename TestFixture::alph_t;
+    using scheme_t = typename TestFixture::scheme_t;
+    {
+        align_cfg::scoring elem{scheme_t{}};
+        configuration cfg{elem};
 
-TEST(align_config_output, align_config_type_to_id)
-{
-    using output_config_t = detail::align_config_output<align_result_key::begin>;
-    EXPECT_EQ(detail::align_config_type_to_id<output_config_t>::value, align_cfg::id::output);
-    EXPECT_EQ(detail::align_config_type_to_id_v<output_config_t>, align_cfg::id::output);
-}
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char(alph_t{}, 'a'),
+                                                            assign_char(alph_t{}, 'a'))), 0);
+    }
 
-TEST(align_config_output, invoke)
-{
-    detail::configuration cfg = align_cfg::output<align_result_key::score>;
+    {
+        configuration cfg{align_cfg::scoring{scheme_t{}}};
 
-    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
-                                detail::configuration<detail::align_config_output<align_result_key::score>>>));
-}
-
-TEST(align_config_output, get_by_enum)
-{
-    detail::configuration cfg = align_cfg::output<align_result_key::score>;
-    auto const c_cfg = detail::configuration{align_cfg::output<align_result_key::score>};
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(cfg)),
-                                align_result_key &>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(c_cfg)),
-                                align_result_key const &>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(std::move(cfg))),
-                                align_result_key &&>));
-
-    EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::output>(std::move(c_cfg))),
-                                align_result_key const &&>));
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char(alph_t{}, 'a'),
+                                                            assign_char(alph_t{}, 'c'))), -1);
+    }
 }

@@ -46,11 +46,11 @@
  * \todo Write detailed landing page.
  */
 
+#include <seqan3/search/algorithm/configuration/detail.hpp>
 #include <seqan3/search/algorithm/configuration/max_error.hpp>
 #include <seqan3/search/algorithm/configuration/max_error_rate.hpp>
 #include <seqan3/search/algorithm/configuration/mode.hpp>
 #include <seqan3/search/algorithm/configuration/output.hpp>
-#include <seqan3/search/algorithm/configuration/utility.hpp>
 
 /*!\namespace seqan3::search_cfg
  * \brief A special sub namespace for the search configurations.

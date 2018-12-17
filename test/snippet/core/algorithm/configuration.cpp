@@ -1,88 +1,69 @@
+#include <iostream>
+
+//! [configuration_setup]
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
 using namespace seqan3;
 
-struct bar
+enum struct my_id : int
 {
-    float value = 0;
+    bar_id,
+    foo_id
 };
 
-struct foo
+struct bar : public pipeable_config_element<bar, float>
 {
-    int value = 0;
+    static constexpr my_id id{my_id::bar_id};
 };
 
-struct with_foo_adaptor : public detail::configuration_fn_base<with_foo_adaptor>
+template <typename t>
+struct foo : public pipeable_config_element<foo<t>, t>
 {
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg,
-                          int new_v) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    {
-        return std::forward<configuration_t>(cfg).push_front(foo{new_v});
-    }
-
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    {
-        return std::forward<configuration_t>(cfg).push_front(foo{2});
-    }
+    static constexpr my_id id{my_id::foo_id};
 };
 
-struct with_bar_adaptor : public detail::configuration_fn_base<with_bar_adaptor>
-{
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg,
-                          float new_v) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    {
-        return std::forward<configuration_t>(cfg).push_front(bar{new_v});
-    }
+template <typename t>
+foo(t) -> foo<t>;
+//! [configuration_setup]
 
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
+//! [compatibility]
+namespace seqan3::detail
+{
+template <>
+inline constexpr std::array<std::array<int, 2>, 2> compatibility_table<my_id>
+{
     {
-        return std::forward<configuration_t>(cfg).push_front(bar{2});
+        {0, 1},
+        {1, 0}
     }
 };
-
-inline constexpr with_foo_adaptor with_foo;
-inline constexpr with_bar_adaptor with_bar;
-
+} // namespace seqan3::detail
+//! [compatibility]
 int main()
 {
-
-//! [combine]
-auto my_cfg = detail::configuration<bar>{} | with_foo(1);  // my_cfg is now of type configuration<foo, bar>
-//! [combine]
-
-[[maybe_unused]]
-//! [access]
-auto bar_value = std::get<1>(my_cfg).value;
-//! [access]
-
 {
-//! [constructor]
-detail::configuration cfg = with_foo(1);
-detail::configuration cfg1 = with_foo;
-//! [constructor]
+//! [combine]
+configuration my_cfg = bar{1.3} | foo<int>{4};  // my_cfg is now of type configuration<bar, foo<int>>
+//! [combine]
+
+//! [get]
+std::cout << get<1>(my_cfg).value   << '\n';  // prints 4
+std::cout << get<bar>(my_cfg).value << '\n';  // prints 1.3
+std::cout << get<foo>(my_cfg).value << '\n';  // prints 4
+//! [get]
 }
 
 {
-//! [combine_2]
-// case 1: adaptor with adaptor
-auto cfg1 = with_foo | with_bar;
-
-// case 2: adaptor with proxy
-auto cfg2 = with_foo | with_bar(2);
-
-// case 3: proxy with adaptor
-auto cfg3 = with_foo(1) | with_bar;
-
-// case 4: proxy with proxy
-auto cfg4 = with_foo(1) | with_bar(2);
-//! [combine_2]
+//! [value_or]
+configuration my_cfg{bar{1.3}};
+std::cout << my_cfg.value_or<bar>("not there") << '\n';  // prints: 1.3
+std::cout << my_cfg.value_or<foo>("not there") << '\n';  // prints: not there
+//! [value_or]
+}
+{
+//! [constructor]
+configuration cfg{bar{1.2}};
+//! [constructor]
 }
 }

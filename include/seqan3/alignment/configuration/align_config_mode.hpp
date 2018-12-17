@@ -32,31 +32,57 @@
 //
 // ============================================================================
 
-#include <gtest/gtest.h>
+/*!\file
+ * \brief Provides global alignment configurations.
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
-#include <seqan3/alignment/configuration/utility.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#pragma once
 
-using namespace seqan3;
+#include <seqan3/alignment/configuration/detail.hpp>
+#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
-TEST(utility, align_cfg_id)
+namespace seqan3::detail
 {
-    // NOTE(rrahn): You must update this test if you add a new value to align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(align_cfg::id::SIZE), 7);
-}
-
-struct bar
+//!\brief Selects the global alignment mode.
+//!\ingroup configuration
+struct global_alignment_type
 {
-    int value;
+    //!\privatesection
+    //!\brief An internal id used to check for a valid alignment configuration.
+    static constexpr detail::align_config_id id{detail::align_config_id::global};
 };
 
-TEST(utility, on_align_config)
-{
-    EXPECT_TRUE((std::is_same_v<typename detail::on_align_config<align_cfg::id::SIZE>::invoke<bar>, std::false_type>));
-}
+} // namespace seqan3::detail
 
-TEST(utility, align_config_type_to_id)
+namespace seqan3::align_cfg
 {
-    EXPECT_EQ(detail::align_config_type_to_id<bar>::value, align_cfg::id::SIZE);
-    EXPECT_EQ(detail::align_config_type_to_id_v<bar>, align_cfg::id::SIZE);
-}
+
+//!\brief Selects global alignment mode.
+//!\ingroup configuration
+inline constexpr detail::global_alignment_type global_alignment;
+
+/*!\brief A configuration element for global alignment.
+ * \ingroup configuration
+ */
+template <typename alignment_t>
+//!\cond
+    requires std::Same<remove_cvref_t<alignment_t>, detail::global_alignment_type>
+//!\endcond
+struct mode : public pipeable_config_element<mode<alignment_t>, alignment_t>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::align_config_id id{alignment_t::id};
+};
+
+/*!\name Type deduction guides
+ * \relates seqan3::align_cfg::mode
+ * \{
+ */
+//!\brief Deduces the alignment mode from the given constructor argument.
+template <typename alignment_t>
+mode(alignment_t) -> mode<alignment_t>;
+//!}
+} // namespace seqan3::align_cfg

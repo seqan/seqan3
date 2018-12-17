@@ -34,328 +34,223 @@
 
 #include <gtest/gtest.h>
 
+#include "configuration_mock.hpp"
+
 #include <seqan3/core/algorithm/configuration.hpp>
 
+using ::testing::ElementsAre;
+
 using namespace seqan3;
-
-struct bar
-{
-    int value{1};
-};
-
-struct bax
-{
-    float value{2.2};
-};
 
 TEST(configuration, concept_check)
 {
     EXPECT_TRUE(detail::config_element_concept<bar>);
     EXPECT_FALSE(detail::config_element_concept<int>);
 
-    EXPECT_TRUE((tuple_like_concept<detail::configuration<bax, bar>>));
+    EXPECT_TRUE((tuple_like_concept<configuration<bax, bar>>));
 }
 
 TEST(configuration, tuple_size)
 {
-    EXPECT_EQ((std::tuple_size_v<detail::configuration<bax, bar>>), 2u);
-    EXPECT_EQ((std::tuple_size<detail::configuration<bax, bar>>::value), 2u);
+    EXPECT_EQ((std::tuple_size_v<configuration<bax, bar>>), 2u);
+    EXPECT_EQ((std::tuple_size<configuration<bax, bar>>::value), 2u);
 }
 
 TEST(configuration, tuple_element)
 {
-    EXPECT_TRUE((std::is_same_v<typename std::tuple_element<0, detail::configuration<bax, bar>>::type, bax>));
-    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, detail::configuration<bax, bar>>, bax>));
-}
-
-TEST(configuration, metafunction)
-{
-    EXPECT_TRUE((detail::is_algorithm_configuration<detail::configuration<bax, bar>>::value));
-    EXPECT_TRUE((detail::is_algorithm_configuration_v<detail::configuration<bax, bar>>));
-    EXPECT_FALSE((detail::is_algorithm_configuration<type_list<bax>>::value));
-    EXPECT_FALSE((detail::is_algorithm_configuration_v<type_list<bax>>));
+    EXPECT_TRUE((std::is_same_v<typename std::tuple_element<0, configuration<bax, bar>>::type, bax>));
+    EXPECT_TRUE((std::is_same_v<std::tuple_element_t<0, configuration<bax, bar>>, bax>));
 }
 
 TEST(configuration, standard_construction)
 {
-    EXPECT_TRUE((std::is_default_constructible_v<detail::configuration<bax, bar>>));
-    EXPECT_TRUE((std::is_copy_constructible_v<detail::configuration<bax, bar>>));
-    EXPECT_TRUE((std::is_move_constructible_v<detail::configuration<bax, bar>>));
-    EXPECT_TRUE((std::is_copy_assignable_v<detail::configuration<bax, bar>>));
-    EXPECT_TRUE((std::is_move_assignable_v<detail::configuration<bax, bar>>));
+    EXPECT_TRUE((std::is_default_constructible_v<configuration<bax, bar>>));
+    EXPECT_TRUE((std::is_copy_constructible_v<configuration<bax, bar>>));
+    EXPECT_TRUE((std::is_move_constructible_v<configuration<bax, bar>>));
+    EXPECT_TRUE((std::is_copy_assignable_v<configuration<bax, bar>>));
+    EXPECT_TRUE((std::is_move_assignable_v<configuration<bax, bar>>));
 }
 
-TEST(configuration, get_by_position)
+TEST(configuration, construction_from_elements)
 {
-    detail::configuration<bax, bar> cfg{};
+    configuration cfg0{};         // empty
+    configuration cfg1{bax{}};      // one element
 
-    { // l-value
-        EXPECT_EQ(std::get<1>(cfg).value, 1);
-        std::get<1>(cfg).value = 3;
-        EXPECT_EQ(std::get<1>(cfg).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(cfg)), bar &>));
-    }
-
-    { // const l-value
-        detail::configuration<bax, bar> const cfg_c{cfg};
-        EXPECT_EQ(std::get<1>(cfg_c).value, 3);
-
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(cfg_c)), bar const &>));
-    }
-
-    { // r-value
-        detail::configuration<bax, bar> cfg_r{cfg};
-        EXPECT_EQ(std::get<1>(std::move(cfg_r)).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_r))), bar &&>));
-    }
-
-    { // const r-value
-        detail::configuration<bax, bar> const cfg_rc{cfg};
-        EXPECT_EQ(std::get<1>(std::move(cfg_rc)).value, 3);
-        // TODO(rrahn): Enable when std::get(const &&) is fixed for gcc7 as well.
-        //EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_rc))), bar const &&>));
-    }
-}
-
-TEST(configuration, construction_from_tuple)
-{
-    detail::configuration cfg{std::tuple<bar, bax>{bar{}, bax{}}};
-
-    using t = typename decltype(cfg)::base_type;
-    EXPECT_EQ(std::tuple_size_v<decltype(static_cast<t>(cfg))>, 2u);
-}
-
-template <size_t I>
-struct foo
-{
-    size_t value{I};
-};
-
-TEST(configuration, push_front)
-{
-    { // l-value
-        detail::configuration<foo<0>> cfg{};
-        auto cfg_2 = cfg.push_front(foo<1>{});
-
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>, foo<0>>>));
-    }
-
-    { // r-value
-        auto cfg_2 = detail::configuration<foo<0>>{}.push_front(foo<1>{});
-
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>, foo<0>>>));
-    }
-}
-
-TEST(configuration, replace_with)
-{
-    { // l-value
-        detail::configuration<foo<0>> cfg{};
-        auto cfg_2 = cfg.replace_with(foo<0>{}, foo<1>{});
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>>>));
-    }
-
-    { // r-value
-        auto cfg_2 = detail::configuration<foo<0>>{}.replace_with(foo<0>{}, foo<1>{});
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_2), detail::configuration<foo<1>>>));
-    }
+    EXPECT_EQ((std::tuple_size_v<decltype(cfg0)>), 0u);
+    EXPECT_EQ((std::tuple_size_v<decltype(cfg1)>), 1u);
 }
 
 TEST(configuration, size)
 {
-    detail::configuration<foo<0>> cfg{};
+    configuration<foobar<>> cfg{};
     EXPECT_EQ(cfg.size(), 1u);
-    EXPECT_EQ((detail::configuration<foo<1>, foo<0>>{}.size()), 2u);
-    EXPECT_EQ(detail::configuration<>{}.size(), 0u);
+    EXPECT_EQ((configuration<foo, foobar<>>{}.size()), 2u);
+    EXPECT_EQ(configuration{}.size(), 0u);
 }
 
-struct bar_fn_impl : public detail::configuration_fn_base<bar_fn_impl>
+TEST(configuration, get_by_position)
 {
+    configuration cfg = bax{2.2} | bar{1};
 
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg,
-                                           int new_v) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    {
-        return std::forward<configuration_t>(cfg).push_front(bar{new_v});
+    { // l-value
+        EXPECT_EQ(get<1>(cfg).value, 1);
+        get<1>(cfg).value = 3;
+        EXPECT_EQ(get<1>(cfg).value, 3);
+        EXPECT_TRUE((std::is_same_v<decltype(get<1>(cfg)), bar &>));
     }
 
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    {
-        return std::forward<configuration_t>(cfg).push_front(bar{0});
-    }
-};
+    { // const l-value
+        configuration<bax, bar> const cfg_c{cfg};
+        EXPECT_EQ(get<1>(cfg_c).value, 3);
 
-struct bax_fn_impl : public detail::configuration_fn_base<bax_fn_impl>
-{
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg,
-                          float new_v) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    {
-        return std::forward<configuration_t>(cfg).push_front(bax{new_v});
+        EXPECT_TRUE((std::is_same_v<decltype(get<1>(cfg_c)), bar const &>));
     }
 
-    template <typename configuration_t>
-    constexpr auto invoke(configuration_t && cfg) const
-        requires detail::is_algorithm_configuration_v<remove_cvref_t<configuration_t>>
-    {
-        return std::forward<configuration_t>(cfg).push_front(bax{0.});
-    }
-};
-
-TEST(configuration, template_deduction_from_proxy)
-{
-    detail::configuration cfg = bar_fn_impl{}(3);
-
-    EXPECT_EQ(std::get<0>(cfg).value, 3);
-    EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar>>));
-}
-
-TEST(configuration, template_deduction_from_variable)
-{
-    detail::configuration cfg = bar_fn_impl{};
-
-    EXPECT_EQ(std::get<0>(cfg).value, 0);
-    EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar>>));
-}
-
-TEST(configuration_fn, invoke_w_configuration)
-{
-
-    { // as l-value
-        detail::configuration<bax> cfg;
-        auto new_cfg = bar_fn_impl{}(cfg, 3);
-
-        EXPECT_EQ(std::get<0>(new_cfg).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(new_cfg), detail::configuration<bar, bax>>));
+    { // r-value
+        configuration<bax, bar> cfg_r{cfg};
+        EXPECT_EQ(get<1>(std::move(cfg_r)).value, 3);
+        EXPECT_TRUE((std::is_same_v<decltype(get<1>(std::move(cfg_r))), bar &&>));
     }
 
-    { // as r-value
-        auto new_cfg = bar_fn_impl{}(detail::configuration<bax>{}, 3);
-
-        EXPECT_EQ(std::get<0>(new_cfg).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(new_cfg), detail::configuration<bar, bax>>));
+    { // const r-value
+        configuration<bax, bar> const cfg_rc{cfg};
+        EXPECT_EQ(get<1>(std::move(cfg_rc)).value, 3);
+        // TODO(rrahn): Enable when get(const &&) is fixed for gcc7 as well.
+        // EXPECT_TRUE((std::is_same_v<decltype(get<1>(std::move(cfg_rc))), bar const &&>));
     }
 }
 
-TEST(configuration_fn, pipeable_w_derived_fn)
+TEST(configuration, get_by_type)
 {
-    { // as l-value
-        detail::configuration<bax> cfg{};
-        bar_fn_impl fn{};
-        auto cfg_r = cfg | fn;
+    configuration cfg = bax{2.2} | bar{1};
 
-        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
+    { // l-value
+        EXPECT_FLOAT_EQ(get<bax>(cfg).value, 2.2);
+        get<bax>(cfg).value = 3.1;
+        get<bar>(cfg).value = 3;
+        EXPECT_FLOAT_EQ(get<bax>(cfg).value, 3.1);
+        EXPECT_TRUE((std::is_same_v<decltype(get<bax>(cfg)), bax &>));
     }
 
-    { // as l-value
-        bar_fn_impl fn{};
-        auto cfg_r = detail::configuration<bax>{} | fn;
+    { // const l-value
+        configuration<bax, bar> const cfg_c{cfg};
+        EXPECT_EQ(get<bar>(cfg_c).value, 3);
 
-        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(get<bar>(cfg_c)), bar const &>));
     }
 
-    { // as r-value
-        detail::configuration<bax> cfg{};
-        auto cfg_r = cfg | bar_fn_impl{};
-
-        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
+    { // r-value
+        configuration<bax, bar> cfg_r{cfg};
+        EXPECT_EQ(get<bar>(std::move(cfg_r)).value, 3);
+        EXPECT_TRUE((std::is_same_v<decltype(get<bar>(std::move(cfg_r))), bar &&>));
     }
 
-    { // as r-value
-        auto cfg_r = detail::configuration<bax>{} | bar_fn_impl{};
-
-        EXPECT_EQ(std::get<0>(cfg_r).value, 0);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg_r), detail::configuration<bar, bax>>));
+    { // const r-value
+        configuration<bax, bar> const cfg_rc{cfg};
+        EXPECT_EQ(get<bar>(std::move(cfg_rc)).value, 3);
+        // TODO(rrahn): Enable when get(const &&) is fixed for gcc7 as well.
+        // EXPECT_TRUE((std::is_same_v<decltype(get<bar>(std::move(cfg_rc))), bar const &&>));
     }
 }
 
-TEST(configuration_fn, pipeable_w_proxy)
+TEST(configuration, get_by_type_template)
 {
-    { // as l-value
-        detail::configuration<bax> cfg_{};
-        int val = 3;
-        auto proxy = bar_fn_impl{}(val);
-        auto cfg = cfg_ | proxy;
+    configuration cfg = bar{1} | foobar<>{std::vector{0, 1, 2, 3}};
 
-        EXPECT_EQ(std::get<0>(cfg).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
+    { // l-value
+        EXPECT_THAT(get<foobar>(cfg).value, ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(cfg)), foobar<> &>));
     }
 
-    { // as l-value
-        int val = 3;
-        auto proxy = bar_fn_impl{}(val);
-        auto cfg = detail::configuration<bax>{} | proxy;
-
-        EXPECT_EQ(std::get<0>(cfg).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
+    { // const l-value
+        configuration<bar, foobar<>> const cfg_c{cfg};
+        EXPECT_THAT(get<foobar>(cfg_c).value, ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(cfg_c)), foobar<> const &>));
     }
 
-    { // as r-value
-        detail::configuration<bax> cfg_{};
-        auto cfg = cfg_ | bar_fn_impl{}(3);
-
-        EXPECT_EQ(std::get<0>(cfg).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
+    { // r-value
+        configuration<bar, foobar<>> cfg_r{cfg};
+        EXPECT_THAT(get<foobar>(std::move(cfg_r)).value, ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(std::move(cfg_r))), foobar<> &&>));
     }
 
-    { // as r-value
-        auto cfg = detail::configuration<bax>{} | bar_fn_impl{}(3);
-
-        EXPECT_EQ(std::get<0>(cfg).value, 3);
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), detail::configuration<bar, bax>>));
+    { // const r-value
+        configuration<bar, foobar<>> const cfg_cr{cfg};
+        EXPECT_THAT(get<foobar>(std::move(cfg_cr)).value, ElementsAre(0, 1, 2, 3));
+        // TODO(rrahn): Enable when get(const &&) is fixed for gcc7 as well.
+        // EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(std::move(cfg_cr))), foobar<> const &&>));
     }
 }
 
-TEST(configuration_fn, pipable_fn_fn)
+TEST(configuration, exists_by_type)
 {
-    auto cfg = bar_fn_impl{} | bax_fn_impl{};
+    configuration<bax, bar> cfg{};
 
-    EXPECT_EQ(std::get<1>(cfg).value, 0);
-    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 0.0);
+    EXPECT_TRUE(std::remove_reference_t<decltype(cfg)>::exists<bax>());
+    EXPECT_FALSE(decltype(cfg)::exists<foo>());
 }
 
-TEST(configuration_fn, pipable_fn_proxy)
+TEST(configuration, exists_by_type_template)
 {
-    auto cfg = bar_fn_impl{} | bax_fn_impl{}(3.0);
+    configuration<bax, foobar<>> cfg{};
 
-    EXPECT_EQ(std::get<1>(cfg).value, 0);
-    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 3.0);
+    EXPECT_TRUE(decltype(cfg)::exists<foobar>());
+    EXPECT_TRUE(decltype(cfg)::exists<bax>());
+    EXPECT_FALSE(decltype(cfg)::exists<foo>());
 }
 
-TEST(configuration_fn, pipable_proxy_fn)
+TEST(configuration, value_or_by_type)
 {
-    auto cfg = bar_fn_impl{}(2) | bax_fn_impl{};
+    configuration cfg = bax{2.2} | bar{1};
 
-    EXPECT_EQ(std::get<1>(cfg).value, 2);
-    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 0.0);
-}
-
-TEST(configuration_fn, pipable_proxy_proxy)
-{
-    auto cfg = bar_fn_impl{}(2) | bax_fn_impl{}(3.0);
-
-    EXPECT_EQ(std::get<1>(cfg).value, 2);
-    EXPECT_FLOAT_EQ(std::get<0>(cfg).value, 3.0);
-}
-
-TEST(configuration_fn, pipeable_w_empty_config)
-{
-    {
-        detail::configuration cfg;
-        auto cfg2 = cfg | bar_fn_impl{}(2);
-        EXPECT_EQ(std::get<0>(cfg2).value, 2);
+    { // l-value
+        EXPECT_FLOAT_EQ(cfg.value_or<bax>(1.3), 2.2);
+        EXPECT_FLOAT_EQ(cfg.value_or<foo>(1.3), 1.3);
     }
 
-    {
-        detail::configuration const cfg;
-        auto cfg2 = cfg | bar_fn_impl{}(2);
-        EXPECT_EQ(std::get<0>(cfg2).value, 2);
+    { // const l-value
+        configuration<bax, bar> const cfg_c{cfg};
+        EXPECT_FLOAT_EQ(cfg_c.value_or<bax>(1.3), 2.2);
+        EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
+    }
+
+    { // r-value
+        configuration<bax, bar> cfg_r{cfg};
+        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<bax>(1.3), 2.2);
+        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
+    }
+
+    { // const r-value
+        configuration<bax, bar> const cfg_cr{cfg};
+        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<bax>(1.3), 2.2);
+        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
+    }
+}
+
+TEST(configuration, value_or_by_type_template)
+{
+    configuration cfg = bar{1} | foobar<>{std::vector<int>{0, 1, 2, 3}};
+
+    { // l-value
+        EXPECT_THAT(cfg.value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_FLOAT_EQ(cfg.value_or<foo>(1.3), 1.3);
+    }
+
+    { // const l-value
+        configuration<bar, foobar<>> const cfg_c{cfg};
+        EXPECT_THAT(cfg_c.value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
+    }
+
+    { // r-value
+        configuration<bar, foobar<>> cfg_r{cfg};
+        EXPECT_THAT(std::move(cfg_r).value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
+    }
+
+    { // const r-value
+        configuration<bar, foobar<>> const cfg_cr{cfg};
+        EXPECT_THAT(std::move(cfg_cr).value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
     }
 }

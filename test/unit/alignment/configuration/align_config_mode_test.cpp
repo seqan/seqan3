@@ -34,73 +34,57 @@
 
 #include <gtest/gtest.h>
 
-#include <meta/meta.hpp>
+#include <type_traits>
 
-#include <seqan3/core/algorithm/deferred_config_element_base.hpp>
+#include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
 using namespace seqan3;
 
-template <int _d>
-struct bar_static
-{
-    int value{_d};
-};
+template <typename type>
+struct align_cfg_mode_test : public ::testing::Test
+{};
 
-struct bar : public detail::deferred_config_element_base<bar>
-{
-    template <typename fn_t, typename configuration_t>
-    constexpr auto invoke(fn_t && fn, configuration_t && config) const
-    {
-        if (std::get<bar>(config).value == 1)
-            return fn(config.replace_with(*this, bar_static<1>{}));
-        else
-            return fn(config.replace_with(*this, bar_static<0>{}));
-    }
+using test_types = ::testing::Types<detail::global_alignment_type>;
+TYPED_TEST_CASE(align_cfg_mode_test, test_types);
 
-    int value{1};
-};
-
-TEST(deferred_config_element_base, concept_check)
+TYPED_TEST(align_cfg_mode_test, config_element_concept)
 {
-    EXPECT_TRUE(detail::deferred_config_element_concept<bar>);
-    EXPECT_FALSE(detail::deferred_config_element_concept<int>);
+    EXPECT_EQ(detail::config_element_concept<align_cfg::mode<TypeParam>>, true);
 }
 
-TEST(deferred_config_element_base, standard_construction)
+TYPED_TEST(align_cfg_mode_test, configuration)
 {
-    EXPECT_TRUE((std::is_default_constructible_v<bar>));
-    EXPECT_TRUE((std::is_copy_constructible_v<bar>));
-    EXPECT_TRUE((std::is_move_constructible_v<bar>));
-    EXPECT_TRUE((std::is_copy_assignable_v<bar>));
-    EXPECT_TRUE((std::is_move_assignable_v<bar>));
+    {
+        align_cfg::mode elem{TypeParam{}};
+        configuration cfg(elem);
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(cfg).value)>,
+                                  TypeParam>), true);
+    }
+
+    {
+        configuration cfg{align_cfg::mode{TypeParam{}}};
+        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(cfg).value)>,
+                                  TypeParam>), true);
+    }
 }
 
-TEST(deferred_config_element_base, invoke)
+template <typename type>
+constexpr auto get_inline_variable()
 {
+    if constexpr (std::is_same_v<type, detail::global_alignment_type>)
     {
-        detail::configuration<bar> cfg{};
-        std::get<0>(cfg).value = 3;
-
-        auto call_on_site = [] (auto && new_cfg)
-        {
-            EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(new_cfg)>,
-                                        detail::configuration<bar_static<0>>>));
-            return std::get<0>(new_cfg).value;
-        };
-        EXPECT_EQ((bar{}(call_on_site, cfg)), 0);
+        return align_cfg::global_alignment;
     }
-
+    else
     {
-        detail::configuration<bar> cfg{};
-        std::get<0>(cfg).value = 1;
-
-        auto call_on_site = [] (auto && new_cfg)
-        {
-            EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(new_cfg)>,
-                                        detail::configuration<bar_static<1>>>));
-            return std::get<0>(new_cfg).value;
-        };
-        EXPECT_EQ((bar{}(call_on_site, cfg)), 1);
+        return std::ignore;
     }
+}
+
+TYPED_TEST(align_cfg_mode_test, construction_from_variable)
+{
+    configuration cfg{align_cfg::mode{get_inline_variable<TypeParam>()}};
+    EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(get<align_cfg::mode>(cfg).value)>,
+                              TypeParam>), true);
 }

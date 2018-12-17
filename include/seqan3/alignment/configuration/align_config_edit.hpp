@@ -40,16 +40,17 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_global.hpp>
-#include <seqan3/alignment/configuration/align_config_score.hpp>
-#include <seqan3/alignment/scoring/all.hpp>
+#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/scoring/gap_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
 
 namespace seqan3::align_cfg
 {
 
 //!\brief Shortcut for edit distance configuration.
-inline constexpr detail::configuration edit = global |
-                                              score(nucleotide_scoring_scheme{}) |
-                                              gap(gap_scheme{gap_score{-1}});
+inline constexpr configuration edit = mode{global_alignment} | scoring{nucleotide_scoring_scheme{}} |
+                                      gap{gap_scheme{gap_score{-1}}};
 
 } // namespace seqan3

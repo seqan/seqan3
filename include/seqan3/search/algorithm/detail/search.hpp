@@ -71,14 +71,17 @@ namespace seqan3::detail
 template <typename index_t, typename query_t, typename configuration_t>
 inline auto search_single(index_t const & index, query_t & query, configuration_t const & cfg)
 {
+    using cfg_t = remove_cvref_t<configuration_t>;
+
     // retrieve error numbers / rates
     detail::search_param max_error{0, 0, 0, 0};
-    if constexpr (contains<search_cfg::id::max_error>(cfg))
+    if constexpr (cfg.template exists<search_cfg::max_error>())
     {
         auto & [total, subs, ins, del] = max_error;
-        std::tie(total, subs, ins, del) = get<search_cfg::id::max_error>(cfg);
+        std::tie(total, subs, ins, del) = std::apply([](auto ...args){ return std::tuple{args...}; },
+                                                     get<search_cfg::max_error>(cfg).value);
     }
-    else if constexpr (contains<search_cfg::id::max_error_rate>(cfg))
+    else if constexpr (cfg.template exists<search_cfg::max_error_rate>())
     {
         // NOTE: Casting doubles rounds towards zero (i.e. floor for positive numbers). Thus, given a rate of
         // 10% and a read length of 101 the max number of errors is correctly casted from 10.1 errors to 10
@@ -86,7 +89,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         std::tie(total, subs, ins, del) = std::apply([& query] (auto && ... args)
             {
                 return std::tuple{(args * query.size())...};
-            }, get<search_cfg::id::max_error_rate>(cfg));
+            }, get<search_cfg::max_error_rate>(cfg).value);
     }
 
     // TODO: if total not set: max_error.total = max_error.deletion + max_error.substitution + max_error.insertion;
@@ -102,8 +105,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     };
 
     // choose mode
-    auto const & selected_mode = seqan3::get<search_cfg::id::mode>(cfg);
-    if constexpr (std::Same<remove_cvref_t<decltype(selected_mode)>, detail::search_mode_best>)
+    if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
     {
         detail::search_param max_error2{max_error};
         max_error2.total = 0;
@@ -113,7 +115,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
             max_error2.total++;
         }
     }
-    else if constexpr (std::Same<remove_cvref_t<decltype(selected_mode)>, detail::search_mode_all_best>)
+    else if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_all_best>>())
     {
         detail::search_param max_error2{max_error};
         max_error2.total = 0;
@@ -123,7 +125,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
             max_error2.total++;
         }
     }
-    else if constexpr (std::Same<remove_cvref_t<decltype(selected_mode)>, search_cfg::strata>)
+    else if constexpr (cfg_t::template exists<search_cfg::mode<search_cfg::strata>>())
     {
         detail::search_param max_error2{max_error};
         max_error2.total = 0;
@@ -135,7 +137,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         if (!internal_hits.empty())
         {
             internal_hits.clear(); // TODO: don't clear when using Optimum Search Schemes with lower error bounds
-            uint8_t const s = selected_mode;
+            uint8_t const s = get<search_cfg::mode>(cfg).value;
             max_error2.total += s - 1;
             detail::search_algo<false>(index, query, max_error2, internal_delegate);
         }
@@ -148,16 +150,14 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     // TODO: filter hits and only do it when necessary (depending on error types)
 
     // output iterators or text_positions
-    auto const & output = seqan3::get<search_cfg::id::output>(cfg);
-    if constexpr (std::Same<remove_cvref_t<decltype(output)>, detail::search_output_index_iterator>)
+    if constexpr (cfg_t::template exists<search_cfg::output<detail::search_output_index_iterator>>())
     {
         return internal_hits;
     }
     else
     {
         std::vector<typename index_t::size_type> hits;
-        auto const & selected_mode = seqan3::get<search_cfg::id::mode>(cfg);
-        if constexpr (std::Same<remove_cvref_t<decltype(selected_mode)>, detail::search_mode_best>)
+        if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
         {
             // only one iterator is reported but it might contain more than one text position
             if (!internal_hits.empty())
@@ -201,12 +201,12 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 template <typename index_t, typename queries_t, typename configuration_t>
 inline auto search_all(index_t const & index, queries_t & queries, configuration_t const & cfg)
 {
+    using cfg_t = remove_cvref_t<configuration_t>;
     // return type: for each query: a vector of text_positions (or iterators)
     // delegate params: text_position (or iterator). we will withhold all hits of one query anyway to filter
     //                  duplicates. more efficient to call delegate once with one vector instead of calling
     //                  delegate for each hit separately at once.
-    auto const & output = seqan3::get<search_cfg::id::output>(cfg);
-    using hit_t = std::conditional_t<std::Same<remove_cvref_t<decltype(output)>, detail::search_output_index_iterator>,
+    using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_iterator>>(),
                                      typename index_t::iterator_type,
                                      typename index_t::size_type>;
 

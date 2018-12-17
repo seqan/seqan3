@@ -69,38 +69,25 @@ namespace seqan3
 
 //!\cond
 template <std::ranges::InputRange sequence_t, typename alignment_config_t>
-    requires detail::is_algorithm_configuration_v<remove_cvref_t<alignment_config_t>> &&
+    requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_config_t>, configuration> &&
              tuple_like_concept<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>>
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t && config)
 {
     static_assert(std::tuple_size_v<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>> == 2,
                   "Expects exactly two sequences for pairwise alignments.");
 
-    auto dispatch_execution = [tpl = std::forward_as_tuple(std::forward<sequence_t>(seq))](auto && cfg)
-    {
-        // if constexpr (detail::has_align_cfg_v<align_cfg::id::on_hit, remove_cvref_t<decltype(cfg)>>)
-        // {
-        //     throw std::invalid_argument{"The delegation option is yet not supported."};
-        // }
-        // else // continue with two-way executor.
-        // {
-            //TODO (rrahn): Extend with execution handler.
-            auto align_rng = std::forward<std::tuple_element_t<0, decltype(tpl)>>(std::get<0>(tpl)) | view::persist;
-            detail::alignment_selector<value_type_t<decltype(align_rng)>,
-                                       std::remove_reference_t<decltype(cfg)>> selector{cfg};
-            using exec_type = detail::alignment_executor_two_way<decltype(align_rng), decltype(selector)>;
-            return alignment_range<exec_type>{align_rng, selector};
-        // }
-    };
+    using seq_tuple_t = std::remove_reference_t<decltype(*std::ranges::begin(seq))>;
 
-    // TODO: replaces the default arguments.
-    return detail::apply_deferred_configs(dispatch_execution, std::forward<alignment_config_t>(config));
+    auto seq_view = seq | view::persist;
+    detail::alignment_selector<seq_tuple_t, remove_cvref_t<alignment_config_t>> selector{config};
+    using exec_type = detail::alignment_executor_two_way<decltype(seq_view), decltype(selector)>;
+    return alignment_range<exec_type>{seq_view, selector};
 }
 //
 
 template <tuple_like_concept seq_t,
           typename alignment_config_t>
-    requires detail::is_algorithm_configuration_v<remove_cvref_t<alignment_config_t>>
+    requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_config_t>, configuration>
 constexpr auto align_pairwise(seq_t && seq, alignment_config_t && config)
 {
     static_assert(std::tuple_size_v<std::remove_reference_t<seq_t>> == 2,

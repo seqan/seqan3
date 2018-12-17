@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::align_config_band.
+ * \brief Provides seqan3::align_cfg::scoring.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
@@ -14,39 +14,32 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/alignment/band/static_band.hpp>
+#include <seqan3/core/metafunction/basic.hpp>
+#include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
 namespace seqan3::align_cfg
 {
 
-/*!\brief A configuration element for alignment bands.
- * \ingroup configuration
- *
- * \tparam band_t The underlying band class; must be a band data structure.
+/*!\brief The configuration for scoring class.
+ * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::scoring_scheme_concept.
  */
-template <typename band_t>
-//!\cond
-    requires std::Same<band_t, static_band>
-//!\endcond
-struct band : public pipeable_config_element<band<band_t>, band_t>
+template <typename scoring_scheme_t>
+struct scoring : public pipeable_config_element<scoring<scoring_scheme_t>, scoring_scheme_t>
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::band};
+    static constexpr detail::align_config_id id{detail::align_config_id::scoring};
 };
 
 /*!\name Type deduction guides
- * \brief Deduces the template parameter from the argument.
- * \relates seqan3::align_cfg::band
+ * \relates seqan3::align_cfg::scoring
  * \{
  */
-/*!
- * \brief Deduces the underlying band type.
- * \tparam band_t The underlying type of the band.
- */
-template <typename band_t>
-band(band_t) -> band<band_t>;
+
+//!\brief Deduces the scoring scheme type from the constructor argument.
+template <typename scheme_t>
+scoring(scheme_t) -> scoring<remove_cvref_t<scheme_t>>;
 //!\}
 
-} // namespace seqan3::detail
+} // namespace seqan3::align_cfg
