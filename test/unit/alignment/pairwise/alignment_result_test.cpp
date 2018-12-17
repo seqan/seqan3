@@ -53,9 +53,7 @@ using aligned_seq_type = std::vector<gapped<dna4>>;
 
 template <typename T>
 struct align_result_test : public ::testing::Test
-{
-    using traits_t = T;
-};
+{};
 
 using align_result_test_types = ::testing::Types
       <detail::align_result_value_type<uint32_t, int32_t, std::pair<size_t, size_t>, std::pair<size_t, size_t>,
@@ -75,34 +73,33 @@ TYPED_TEST_CASE(align_result_test, align_result_test_types);
 
 TYPED_TEST(align_result_test, type_specialisation)
 {
-    EXPECT_TRUE((detail::is_type_specialisation_of_v<typename TestFixture::traits_t, detail::align_result_value_type>));
+    EXPECT_TRUE((detail::is_type_specialisation_of_v<TypeParam, detail::align_result_value_type>));
 }
 
 TYPED_TEST(align_result_test, constructor)
 {
-    EXPECT_TRUE((std::is_default_constructible_v<align_result<typename TestFixture::traits_t>>));
-    EXPECT_TRUE((std::is_copy_constructible_v<align_result<typename TestFixture::traits_t>>));
-    EXPECT_TRUE((std::is_move_constructible_v<align_result<typename TestFixture::traits_t>>));
-    EXPECT_TRUE((std::is_copy_assignable_v<align_result<typename TestFixture::traits_t>>));
-    EXPECT_TRUE((std::is_move_assignable_v<align_result<typename TestFixture::traits_t>>));
-    EXPECT_TRUE((std::is_destructible_v<align_result<typename TestFixture::traits_t>>));
+    EXPECT_FALSE((std::is_default_constructible_v<align_result<TypeParam>>));
+    EXPECT_TRUE((std::is_copy_constructible_v<align_result<TypeParam>>));
+    EXPECT_TRUE((std::is_move_constructible_v<align_result<TypeParam>>));
+    EXPECT_TRUE((std::is_copy_assignable_v<align_result<TypeParam>>));
+    EXPECT_TRUE((std::is_move_assignable_v<align_result<TypeParam>>));
+    EXPECT_TRUE((std::is_destructible_v<align_result<TypeParam>>));
 }
 
 TYPED_TEST(align_result_test, get_id)
 {
-    using traits_t = typename TestFixture::traits_t;
-    using id_t     = decltype(std::declval<traits_t>().id);
+    using id_t = decltype(std::declval<TypeParam>().id);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
-        align_result<traits_t> tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), id_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_id()), id_t>));
         EXPECT_EQ(tmp.get_id(), 1u);
     }
 
     {
-        align_result<traits_t> const tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_id(), 1u);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), id_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_id()), id_t>));
@@ -111,19 +108,18 @@ TYPED_TEST(align_result_test, get_id)
 
 TYPED_TEST(align_result_test, get_score)
 {
-    using traits_t = typename TestFixture::traits_t;
-    using score_t  = decltype(std::declval<traits_t>().score);
+    using score_t = decltype(std::declval<TypeParam>().score);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
-        align_result<traits_t> tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_score(), 0);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), score_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_score()), score_t>));
     }
 
     {
-        align_result<traits_t> const tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_score(), 0);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), score_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_score()), score_t>));
@@ -133,19 +129,18 @@ TYPED_TEST(align_result_test, get_score)
 
 TYPED_TEST(align_result_test, end_coordinate)
 {
-    using traits_t = typename TestFixture::traits_t;
-    using coord_t  = decltype(std::declval<traits_t>().end_coordinate);
+    using coord_t = decltype(std::declval<TypeParam>().end_coordinate);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
-        align_result<traits_t> tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_end_coordinate(), (coord_t{10ul, 10ul}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t>));
     }
 
     {
-        align_result<traits_t> const tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_end_coordinate(), (coord_t{10ul, 10ul}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t>));
@@ -154,19 +149,18 @@ TYPED_TEST(align_result_test, end_coordinate)
 
 TYPED_TEST(align_result_test, begin_coordinate)
 {
-    using traits_t = typename TestFixture::traits_t;
-    using coord_t  = decltype(std::declval<traits_t>().begin_coordinate);
+    using coord_t = decltype(std::declval<TypeParam>().begin_coordinate);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
-        align_result<traits_t> tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_begin_coordinate(), (coord_t{0ul, 0ul}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t>));
     }
 
     {
-        align_result<traits_t> const tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_begin_coordinate(), (coord_t{0ul, 0ul}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t>));
@@ -175,19 +169,18 @@ TYPED_TEST(align_result_test, begin_coordinate)
 
 TYPED_TEST(align_result_test, trace)
 {
-    using traits_t = typename TestFixture::traits_t;
-    using trace_t  = decltype(std::declval<traits_t>().trace);
+    using trace_t = decltype(std::declval<TypeParam>().trace);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
-        align_result<traits_t> tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_trace(), (trace_t{seq, seq}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_trace()), trace_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_trace()), trace_t>));
     }
 
     {
-        align_result<traits_t> const tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_trace(), (trace_t{seq, seq}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_trace()), trace_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_trace()), trace_t>));
@@ -195,13 +188,13 @@ TYPED_TEST(align_result_test, trace)
 
     if constexpr (tuple_like_concept<trace_t>)
     {
-        align_result<traits_t> tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(std::string{std::get<0>(tmp.get_trace()) | view::persist | view::to_char}, std::string{"AT-C--A"});
         EXPECT_EQ(std::string{std::get<1>(tmp.get_trace()) | view::persist | view::to_char}, std::string{"AT-C--A"});
     }
     else
     {
-        align_result<traits_t> tmp{traits_t{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(std::string{(tmp.get_trace()[0]) | view::persist | view::to_char}, std::string{"AT-C--A"});
         EXPECT_EQ(std::string{(tmp.get_trace()[1]) | view::persist | view::to_char}, std::string{"AT-C--A"});
     }
@@ -271,4 +264,11 @@ TEST(align_result_test, type_deduction)
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), double>));
     }
+}
+
+TEST(align_result_test, empty_type)
+{
+    detail::align_result_value_type tr{};
+    align_result tmp(tr);
+    // members must not be accessed
 }

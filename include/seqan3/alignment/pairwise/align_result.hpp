@@ -54,9 +54,9 @@ namespace seqan3::detail
  */
 template <typename id_t,
           typename score_t,
-          typename end_coord_t = void *,
-          typename begin_coord_t = void *,
-          typename trace_t = void *>
+          typename end_coord_t = std::nullopt_t *,
+          typename begin_coord_t = std::nullopt_t *,
+          typename trace_t = std::nullopt_t *>
 struct align_result_value_type
 {
     //! \brief The alignment identifier.
@@ -71,6 +71,14 @@ struct align_result_value_type
     trace_t trace{};
 };
 
+/*!\name Type deduction guides
+ * \brief Type deduction for the different combinations of result types.
+ * \{
+ */
+ //! \brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
+align_result_value_type()
+    -> align_result_value_type<std::nullopt_t *, std::nullopt_t *>;
+
 //! \brief Type deduction for id and score only.
 template <typename id_t, typename score_t>
 align_result_value_type(id_t, score_t)
@@ -81,15 +89,16 @@ template <typename id_t, typename score_t, typename end_coord_t>
 align_result_value_type(id_t, score_t, end_coord_t)
     -> align_result_value_type<id_t, score_t, end_coord_t>;
 
-//! \brief Type deduction without the trace.
+//! \brief Type deduction for id, score, end coordinate and begin coordinate.
 template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t>
 align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t)
     -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t>;
 
-//! \brief Type deduction with all available fields.
+//! \brief Type deduction for id, score, end coordinate, begin coordinate and trace.
 template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t, typename trace_t>
 align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t, trace_t)
     -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t, trace_t>;
+//!\}
 
 } // namespace seqan3::detail
 
@@ -103,7 +112,7 @@ namespace seqan3
  * \details
  *
  * Objects of this class are the result of an alignment computation.
- * It always contains and alignment identifier and the resulting score.
+ * It always contains an alignment identifier and the resulting score.
  * Optionally – if the user requests – also the begin and end positions within
  * the sequences and the trace can be calculated. When accessing a field that
  * has not been calculated, an assertion will fail during compilation.
@@ -140,8 +149,6 @@ public:
      */
     align_result(align_result_traits value) : data(value) {};
 
-    //! \brief Default constructor.
-    align_result() {}
     //! \brief Default copy constructor.
     align_result(align_result const &) = default;
     //! \brief Default move constructor.
@@ -160,48 +167,63 @@ public:
 
     /*!\brief Returns the alignment identifier.
      * \return The id field.
+     * \attention This function with fail the compilation, if the id is not set.
      */
     constexpr id_t get_id() const noexcept
     {
+        static_assert(!std::is_same_v<id_t, std::nullopt_t *>,
+                      "Failed to access the identifier.");
         return data.id;
     }
 
     /*!\brief Returns the alignment score.
      * \return The score field.
+     * \attention This function with fail the compilation, if the score is not set.
      */
     constexpr score_t get_score() const noexcept
     {
+        static_assert(!std::is_same_v<score_t, std::nullopt_t *>,
+                      "Failed to access the score.");
         return data.score;
     }
 
     /*!\brief Returns the end coordinate of the alignment.
      * \return A pair of positions in the respective sequences, where the calculated alignment ends.
+     * \attention This function with fail the compilation, if the end coordinate was not requested in the alignment
+     * configuration.
      */
     constexpr end_coord_t get_end_coordinate() const noexcept
     {
-        static_assert(!std::is_same_v<end_coord_t, void *>,
-                      "Trying to access the end coordinate, although it has not been computed.");
+        static_assert(!std::is_same_v<end_coord_t, std::nullopt_t *>,
+                      "Trying to access the end coordinate, although it was not requested in the alignment "
+                      "configuration.");
         return data.end_coordinate;
     }
 
     /*!\brief Returns the begin coordinate of the alignment.
      * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
      * \details Guaranteed to be smaller than or equal to `get_end_coordinate()`.
+     * \attention This function with fail the compilation, if the begin coordinate was not requested in the alignment
+     * configuration.
      */
     constexpr begin_coord_t get_begin_coordinate() const noexcept
     {
-        static_assert(!std::is_same_v<begin_coord_t, void *>,
-                      "Trying to access the begin coordinate, although it has not been computed.");
+        static_assert(!std::is_same_v<begin_coord_t, std::nullopt_t *>,
+                      "Trying to access the begin coordinate, although it was not requested in the alignment "
+                      "configuration.");
         return data.begin_coordinate;
     }
 
     /*!\brief Returns the traceback of the alignment.
      * \return At least two gapped sequences, which represent the alignment.
+     * \attention This function with fail the compilation, if the trace was not requested in the alignment
+     * configuration.
      */
     constexpr trace_t get_trace() const noexcept
     {
-        static_assert(!std::is_same_v<trace_t, void *>,
-                      "Trying to access the trace, although it has not been computed.");
+        static_assert(!std::is_same_v<trace_t, std::nullopt_t *>,
+                      "Trying to access the trace, although it was not requested in the alignment "
+                      "configuration.");
         return data.trace;
     }
     //!\}
