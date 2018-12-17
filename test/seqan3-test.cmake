@@ -64,35 +64,39 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googlemock/include/)
 
 # seqan3::test exposes a base set of required flags, includes, definitions and
 # libraries which are in common for **all** seqan3 tests
-add_library (seqan3::test INTERFACE IMPORTED)
-set_property (TARGET seqan3::test APPEND PROPERTY INTERFACE_COMPILE_OPTIONS "-pedantic"  "-Wall" "-Wextra" "-Werror")
-set_property (TARGET seqan3::test APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::seqan3" "pthread")
-set_property (TARGET seqan3::test APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_CLONE_DIR}/test/include/")
+add_library (seqan3_test INTERFACE)
+target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
+target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
+target_include_directories (seqan3_test INTERFACE "${SEQAN3_CLONE_DIR}/test/include/")
+add_library (seqan3::test ALIAS seqan3_test)
 
 # seqan3::test::performance specifies required flags, includes and libraries
 # needed for performance test cases in seqan3/test/performance
-add_library (seqan3::test::performance INTERFACE IMPORTED)
-set_property (TARGET seqan3::test::performance APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test" "gbenchmark")
-set_property (TARGET seqan3::test::performance APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
+add_library (seqan3_test_performance INTERFACE)
+target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
+target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
+add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 
 # seqan3::test::unit specifies required flags, includes and libraries
 # needed for unit test cases in seqan3/test/unit
-add_library (seqan3::test::unit INTERFACE IMPORTED)
-set_property (TARGET seqan3::test::unit APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test" "gtest_main" "gtest")
-set_property (TARGET seqan3::test::unit
-              APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES  "${SEQAN3_TEST_CLONE_DIR}/googletest/include/"
-                                                             "${SEQAN3_TEST_CLONE_DIR}/googlemock/include/")
+add_library (seqan3_test_unit INTERFACE)
+target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "gtest_main" "gtest")
+target_include_directories (seqan3_test_unit INTERFACE "${SEQAN3_TEST_CLONE_DIR}/googletest/include/"
+                                                       "${SEQAN3_TEST_CLONE_DIR}/googlemock/include/")
+add_library (seqan3::test::unit ALIAS seqan3_test_unit)
 
 # seqan3::test::coverage specifies required flags, includes and libraries
 # needed for coverage test cases in seqan3/test/coverage
-add_library (seqan3::test::coverage INTERFACE IMPORTED)
-set_property (TARGET seqan3::test::coverage APPEND PROPERTY INTERFACE_COMPILE_OPTIONS "--coverage" "-fprofile-arcs" "-ftest-coverage")
-set_property (TARGET seqan3::test::coverage APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test::unit" "gcov")
+add_library (seqan3_test_coverage INTERFACE)
+target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage")
+target_link_libraries (seqan3_test_coverage INTERFACE "seqan3::test::unit" "gcov")
+add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
 
 # seqan3::test::header specifies required flags, includes and libraries
 # needed for header test cases in seqan3/test/header
-add_library (seqan3::test::header INTERFACE IMPORTED)
-set_property (TARGET seqan3::test::header APPEND PROPERTY INTERFACE_LINK_LIBRARIES "seqan3::test::unit")
+add_library (seqan3_test_header INTERFACE)
+target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
+add_library (seqan3::test::header ALIAS seqan3_test_header)
 
 # ----------------------------------------------------------------------------
 # Commonly shared options for external projects.
@@ -173,7 +177,10 @@ macro (seqan3_require_test)
         gtest_project
         PREFIX gtest_project
         GIT_REPOSITORY "https://github.com/google/googletest.git"
-        GIT_TAG "release-1.8.1"
+        # we currently have warnings that were introduced in
+        # 03867b5389516a0f185af52672cf5472fa0c159c, which are still available
+        # in "release-1.8.1", see https://github.com/google/googletest/issues/1419
+        GIT_TAG "52f8183e7f3620cf03f321a2624eb0d4f7649f4c"
         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${gtest_project_args}"
         UPDATE_DISCONNECTED yes

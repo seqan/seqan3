@@ -293,8 +293,8 @@ public:
         assert(index != nullptr);
         // equal SA interval implies equal parent node information (or both are root nodes)
         assert(!(fwd_lb == rhs.fwd_lb && fwd_rb == rhs.fwd_rb && depth == rhs.depth) ||
-               depth == 0 ||
-               parent_lb == rhs.parent_lb && parent_rb == rhs.parent_rb && _last_char == rhs._last_char);
+               (depth == 0) ||
+               (parent_lb == rhs.parent_lb && parent_rb == rhs.parent_rb && _last_char == rhs._last_char));
 
         return std::tie(fwd_lb, fwd_rb, depth) == std::tie(rhs.fwd_lb, rhs.fwd_rb, rhs.depth);
     }
