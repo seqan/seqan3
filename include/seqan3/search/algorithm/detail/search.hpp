@@ -75,10 +75,9 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 
     // retrieve error numbers / rates
     detail::search_param max_error{0, 0, 0, 0};
-    auto & [total, subs, ins, del] = max_error;
     if constexpr (cfg.template exists<search_cfg::max_error>())
     {
-
+        auto & [total, subs, ins, del] = max_error;
         std::tie(total, subs, ins, del) = std::apply([](auto ...args){ return std::tuple{args...}; },
                                                      get<search_cfg::max_error>(cfg).value);
     }
@@ -106,7 +105,6 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     };
 
     // choose mode
-    auto const & selected_mode = get<search_cfg::mode>(cfg).value;
     if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
     {
         detail::search_param max_error2{max_error};
@@ -139,7 +137,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         if (!internal_hits.empty())
         {
             internal_hits.clear(); // TODO: don't clear when using Optimum Search Schemes with lower error bounds
-            uint8_t const s = selected_mode;
+            uint8_t const s = get<search_cfg::mode>(cfg).value;
             max_error2.total += s - 1;
             detail::search_algo<false>(index, query, max_error2, internal_delegate);
         }
@@ -152,7 +150,6 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     // TODO: filter hits and only do it when necessary (depending on error types)
 
     // output iterators or text_positions
-    auto const & output = get<search_cfg::output>(cfg);
     if constexpr (cfg_t::template exists<search_cfg::output<detail::search_output_index_iterator>>())
     {
         return internal_hits;
@@ -160,7 +157,6 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     else
     {
         std::vector<typename index_t::size_type> hits;
-        auto const & selected_mode = get<search_cfg::mode>(cfg);
         if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
         {
             // only one iterator is reported but it might contain more than one text position
@@ -210,7 +206,6 @@ inline auto search_all(index_t const & index, queries_t & queries, configuration
     // delegate params: text_position (or iterator). we will withhold all hits of one query anyway to filter
     //                  duplicates. more efficient to call delegate once with one vector instead of calling
     //                  delegate for each hit separately at once.
-    auto const & output = get<search_cfg::output>(cfg);
     using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_iterator>>(),
                                      typename index_t::iterator_type,
                                      typename index_t::size_type>;
