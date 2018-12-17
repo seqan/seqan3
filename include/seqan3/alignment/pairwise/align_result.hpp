@@ -40,20 +40,23 @@
 
 #pragma once
 
-namespace seqan3
+#include <seqan3/core/metafunction/template_inspection.hpp>
+
+namespace seqan3::detail
 {
 
-namespace detail
-{
-
-/*!
- * \brief A struct that contains the actual alignment result data.
- * \tparam id_t         The type for the alignment identifier.
- * \tparam score_t      The type for the resulting score.
- * \tparam coordinate_t The type for both the begin and end coordinates, can be omitted.
- * \tparam trace_t      The type for the alignment trace, can be omitted.
+/*!\brief A struct that contains the actual alignment result data.
+ * \tparam id_t          The type for the alignment identifier.
+ * \tparam score_t       The type for the resulting score.
+ * \tparam end_coord_t   The type for the end coordinate, can be omitted.
+ * \tparam begin_coord_t The type for the begin coordinate, can be omitted.
+ * \tparam trace_t       The type for the alignment trace, can be omitted.
  */
-template <typename id_t, typename score_t, typename coordinate_t = void *, typename trace_t = void *>
+template <typename id_t,
+          typename score_t,
+          typename end_coord_t = void *,
+          typename begin_coord_t = void *,
+          typename trace_t = void *>
 struct align_result_value_type
 {
     //! \brief The alignment identifier.
@@ -61,63 +64,81 @@ struct align_result_value_type
     //! \brief The alignment score.
     score_t score{};
     //! \brief The end coordinate of the alignment.
-    coordinate_t end_coordinate{};
+    end_coord_t end_coordinate{};
     //! \brief The begin coordinate of the alignment.
-    coordinate_t begin_coordinate{};
+    begin_coord_t begin_coordinate{};
     //! \brief The alignment trace, i.e. the actual base pair matching.
     trace_t trace{};
 };
 
 //! \brief Type deduction for id and score only.
 template <typename id_t, typename score_t>
-align_result_value_type(id_t, score_t) -> align_result_value_type<id_t, score_t>;
+align_result_value_type(id_t, score_t)
+    -> align_result_value_type<id_t, score_t>;
 
 //! \brief Type deduction for id, score and end coordinate.
-template <typename id_t, typename score_t, typename coordinate_t>
-align_result_value_type(id_t, score_t, coordinate_t) -> align_result_value_type<id_t, score_t, coordinate_t>;
+template <typename id_t, typename score_t, typename end_coord_t>
+align_result_value_type(id_t, score_t, end_coord_t)
+    -> align_result_value_type<id_t, score_t, end_coord_t>;
 
 //! \brief Type deduction without the trace.
-template <typename id_t, typename score_t, typename coordinate_t>
-align_result_value_type(id_t, score_t, coordinate_t, coordinate_t) -> align_result_value_type<id_t, score_t,
-                                                                                              coordinate_t>;
+template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t>
+align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t)
+    -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t>;
 
 //! \brief Type deduction with all available fields.
-template <typename id_t, typename score_t, typename coordinate_t, typename trace_t>
-align_result_value_type(id_t, score_t, coordinate_t, coordinate_t, trace_t) -> align_result_value_type<id_t,
-                                                                                                       score_t,
-                                                                                                       coordinate_t,
-                                                                                                       trace_t>;
+template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t, typename trace_t>
+align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t, trace_t)
+    -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t, trace_t>;
 
-} // namespace detail
+} // namespace seqan3::detail
+
+namespace seqan3
+{
 
 /*!\brief Stores the alignment results and gives access to score, traceback and the begin and end coordinates.
  * \ingroup pairwise
  * \tparam align_result_traits The type of the traits object.
  *
  * \details
+ *
  * Objects of this class are the result of an alignment computation.
  * It always contains and alignment identifier and the resulting score.
  * Optionally – if the user requests – also the begin and end positions within
  * the sequences and the trace can be calculated. When accessing a field that
- * has not been calculated an std::bad_optional_access exception is thrown.
+ * has not been calculated, an assertion will fail during compilation.
  */
 template <typename align_result_traits>
+//!\cond
+    requires detail::is_type_specialisation_of_v<align_result_traits, detail::align_result_value_type>
+//!\endcond
 class align_result
 {
 private:
     //! \brief Traits object that contains the actual alignment result data.
     align_result_traits data;
 
-    using id_t = decltype(data.id);
-    using score_t = decltype(data.score);
-    using coord_t = decltype(data.end_coordinate);
-    using trace_t = decltype(data.trace);
+    /*!\name Member types
+     * \brief Local definition of the types contained in the `data` object.
+     * \{
+     */
+    //! \brief The type for the alignment identifier.
+    using id_t          = decltype(data.id);
+    //! \brief The type for the resulting score.
+    using score_t       = decltype(data.score);
+    //! \brief The type for the end coordinate.
+    using end_coord_t   = decltype(data.end_coordinate);
+    //! \brief The type for the begin coordinate.
+    using begin_coord_t = decltype(data.begin_coordinate);
+    //! \brief The type for the alignment trace.
+    using trace_t       = decltype(data.trace);
+    //!\}
 
 public:
     /*!\brief Constructor to pass the alignment result traits.
-     * \param[in] traits The alignment results.
+     * \param[in] value The alignment results.
      */
-    align_result(align_result_traits traits) : data(traits) {};
+    align_result(align_result_traits value) : data(value) {};
 
     //! \brief Default constructor.
     align_result() {}
@@ -156,9 +177,9 @@ public:
     /*!\brief Returns the end coordinate of the alignment.
      * \return A pair of positions in the respective sequences, where the calculated alignment ends.
      */
-    constexpr coord_t get_end_coordinate() const noexcept
+    constexpr end_coord_t get_end_coordinate() const noexcept
     {
-        static_assert(!std::is_same_v<coord_t, void *>,
+        static_assert(!std::is_same_v<end_coord_t, void *>,
                       "Trying to access the end coordinate, although it has not been computed.");
         return data.end_coordinate;
     }
@@ -167,10 +188,9 @@ public:
      * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
      * \details Guaranteed to be smaller than or equal to `get_end_coordinate()`.
      */
-    constexpr coord_t get_begin_coordinate() const noexcept
+    constexpr begin_coord_t get_begin_coordinate() const noexcept
     {
-        // TODO Problem: Assertion does not fail, if end_coordinate exists, because the coordinate type is set.
-        static_assert(!std::is_same_v<coord_t, void *>,
+        static_assert(!std::is_same_v<begin_coord_t, void *>,
                       "Trying to access the begin coordinate, although it has not been computed.");
         return data.begin_coordinate;
     }
