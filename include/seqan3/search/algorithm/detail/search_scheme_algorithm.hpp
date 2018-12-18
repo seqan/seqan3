@@ -463,7 +463,7 @@ inline bool search_ss(iterator_t it, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
- * \tparam index_t          Must model seqan3::bi_fm_index_concept.
+ * \tparam index_t          Must model seqan3::BiFmIndex.
  * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet.
  * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
  * \tparam delegate_t       Takes `typename index_t::iterator_type` as argument.
@@ -514,7 +514,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 
 /*!\brief Searches a query sequence in a bidirectional index.
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
- * \tparam index_t         Must model seqan3::bi_fm_index_concept.
+ * \tparam index_t         Must model seqan3::BiFmIndex.
  * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet.
  * \tparam delegate_t      Takes `typename index_t::iterator_type` as argument.
  * \param[in] index        String index built on the text that will be searched.
@@ -574,7 +574,7 @@ inline void search_algo_uni(index_t const & index, query_t & query, search_param
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
 inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
 {
-    if constexpr (bi_fm_index_concept<index_t>)
+    if constexpr (BiFmIndex<index_t>)
         search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
     else
         search_algo_uni<abort_on_hit>(index, query, error_left, delegate);

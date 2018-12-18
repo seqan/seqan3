@@ -295,17 +295,17 @@ concept bi_fm_index_traits_concept = requires (t v)
  */
 
 // ============================================================================
-//  bi_fm_index_concept
+//  BiFmIndex
 // ============================================================================
 
-/*!\interface seqan3::bi_fm_index_concept <>
+/*!\interface seqan3::BiFmIndex <>
  * \brief Concept for bidirectional FM indices.
  *
  * This concept defines the interface for bidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept bi_fm_index_concept = fm_index_concept<t> && requires (t index)
+concept BiFmIndex = fm_index_concept<t> && requires (t index)
 {
     typename t::iterator_type; // already required by fm_index_concept but has a different documentation
     typename t::fwd_iterator_type;
@@ -318,21 +318,21 @@ concept bi_fm_index_concept = fm_index_concept<t> && requires (t index)
     { index.rev_begin() } -> typename t::rev_iterator_type;
 };
 //!\endcond
-/*!\name Requirements for seqan3::bi_fm_index_concept
- * \relates seqan3::bi_fm_index_concept
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::bi_fm_index_concept.
+/*!\name Requirements for seqan3::BiFmIndex
+ * \relates seqan3::BiFmIndex
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::BiFmIndex.
  * \{
  *
  * \typedef typename t::iterator_type iterator_type
- * \memberof seqan3::bi_fm_index_concept
+ * \memberof seqan3::BiFmIndex
  * \brief Type of the bidirectional FM index iterator.
  *
  * \typedef typename t::fwd_iterator_type fwd_iterator_type
- * \memberof seqan3::bi_fm_index_concept
+ * \memberof seqan3::BiFmIndex
  * \brief Type of the unidirectional FM index iterator based on the unidirectional FM index on the original text.
  *
  * \typedef typename t::rev_iterator_type rev_iterator_type
- * \memberof seqan3::bi_fm_index_concept
+ * \memberof seqan3::BiFmIndex
  * \brief Type of the unidirectional FM index iterator based on the unidirectional FM index on the reversed text.
  *
  * \todo Write me!
@@ -353,7 +353,7 @@ concept bi_fm_index_concept = fm_index_concept<t> && requires (t index)
 template <typename t>
 concept BiFmIndexIterator = fm_index_iterator_concept<t> && requires (t it)
 {
-    requires bi_fm_index_concept<typename t::index_type>;
+    requires BiFmIndex<typename t::index_type>;
 
     requires requires (typename t::index_type const index) { { t(index) } };
 

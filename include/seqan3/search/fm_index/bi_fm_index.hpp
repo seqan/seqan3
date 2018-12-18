@@ -71,7 +71,7 @@ struct bi_fm_index_default_traits
 };
 
 /*!\brief The SeqAn Bidirectional FM Index
- * \implements seqan3::bi_fm_index_concept
+ * \implements seqan3::BiFmIndex
  * \tparam text_t The type of the text to be indexed; must model std::ranges::RandomAccessRange.
  * \tparam bi_fm_index_traits The traits determining the implementation of the underlying SDSL indices;
                               must model seqan3::bi_fm_index_traits_concept.

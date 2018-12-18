@@ -60,7 +60,7 @@ namespace seqan3
 
 /*!\brief The SeqAn Bidirectional FM Index Iterator.
  * \implements seqan3::BiFmIndexIterator
- * \tparam index_t The type of the underlying index; must model seqan3::bi_fm_index_concept.
+ * \tparam index_t The type of the underlying index; must model seqan3::BiFmIndex.
  * \details
  *
  * The iterator's interface provides searching a string both from left to right as well as from right to left in the
