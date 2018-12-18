@@ -52,7 +52,7 @@ namespace seqan3::detail
  */
 
 /*!\brief Search a single query in an index.
- * \tparam index_t   Must model seqan3::fm_index_concept.
+ * \tparam index_t   Must model seqan3::FmIndex.
  * \tparam queries_t Must be a std::ranges::RandomAccessRange over the index's alphabet.
  * \param[in] index  String index to be searched.
  * \param[in] query  A single query.
@@ -181,7 +181,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 }
 
 /*!\brief Search a query or a range of queries in an index.
- * \tparam index_t    Must model seqan3::fm_index_concept.
+ * \tparam index_t    Must model seqan3::FmIndex.
  * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] index   String index to be searched.

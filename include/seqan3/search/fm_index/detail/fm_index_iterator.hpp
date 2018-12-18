@@ -52,7 +52,7 @@ namespace seqan3::detail
 
 /*!\brief Internal representation of the node of an FM index iterator.
  * \ingroup fm_index
- * \tparam index_t The type of the underlying index; must satisfy seqan3::fm_index_concept.
+ * \tparam index_t The type of the underlying index; must satisfy seqan3::FmIndex.
  */
 template <typename index_t>
 struct fm_index_iterator_node

@@ -103,7 +103,7 @@ struct fm_index_default_traits
 };
 
 /*!\brief The SeqAn FM Index.
- * \implements seqan3::fm_index_concept
+ * \implements seqan3::FmIndex
  * \tparam text_t The type of the text to be indexed; must model std::ranges::ForwardRange.
  * \tparam fm_index_traits The traits determining the implementation of the underlying SDSL index;
                            must model seqan3::fm_index_traits_concept.

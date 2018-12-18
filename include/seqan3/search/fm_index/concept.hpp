@@ -139,17 +139,17 @@ concept fm_index_traits_concept = requires (t v)
  */
 
 // ============================================================================
-//  fm_index_concept
+//  FmIndex
 // ============================================================================
 
-/*!\interface seqan3::fm_index_concept <>
+/*!\interface seqan3::FmIndex <>
  * \brief Concept for unidirectional FM indices.
  *
  * This concept defines the interface for unidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept fm_index_concept = std::Semiregular<t> && requires (t index)
+concept FmIndex = std::Semiregular<t> && requires (t index)
 {
     typename t::text_type;
     typename t::char_type;
@@ -174,25 +174,25 @@ concept fm_index_concept = std::Semiregular<t> && requires (t index)
     { index.store(std::string{}) } -> bool;
 };
 //!\endcond
-/*!\name Requirements for seqan3::fm_index_concept
- * \relates seqan3::fm_index_concept
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::fm_index_concept.
+/*!\name Requirements for seqan3::FmIndex
+ * \relates seqan3::FmIndex
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::FmIndex.
  * \{
  *
  * \typedef typename t::text_type text_type
- * \memberof seqan3::fm_index_concept
+ * \memberof seqan3::FmIndex
  * \brief Type of the indexed text.
  *
  * \typedef typename t::char_type char_type
- * \memberof seqan3::fm_index_concept
+ * \memberof seqan3::FmIndex
  * \brief Type of the underlying character of text_type.
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::fm_index_concept
+ * \memberof seqan3::FmIndex
  * \brief Type for representing the size of the indexed text.
  *
  * \typedef typename t::iterator_type iterator_type
- * \memberof seqan3::fm_index_concept
+ * \memberof seqan3::FmIndex
  * \brief Type of the unidirectional FM index iterator.
  *
  * \todo Write me!
@@ -216,7 +216,7 @@ concept FmIndexIterator = std::Semiregular<t> && requires (t it)
     typename t::index_type;
     typename t::size_type;
 
-    requires fm_index_concept<typename t::index_type>;
+    requires FmIndex<typename t::index_type>;
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
@@ -305,9 +305,9 @@ concept BiFmIndexTraits = requires (t v)
  */
 //!\cond
 template <typename t>
-concept BiFmIndex = fm_index_concept<t> && requires (t index)
+concept BiFmIndex = FmIndex<t> && requires (t index)
 {
-    typename t::iterator_type; // already required by fm_index_concept but has a different documentation
+    typename t::iterator_type; // already required by FmIndex but has a different documentation
     typename t::fwd_iterator_type;
     typename t::rev_iterator_type;
 
