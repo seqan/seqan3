@@ -257,17 +257,17 @@ concept fm_index_iterator_concept = std::Semiregular<t> && requires (t it)
  */
 
 // ============================================================================
-//  bi_fm_index_traits_concept
+//  BiFmIndexTraits
 // ============================================================================
 
-/*!\interface seqan3::bi_fm_index_traits_concept <>
+/*!\interface seqan3::BiFmIndexTraits <>
  * \brief Concept for bidirectional FM Index traits.
  *
  * The traits object must contain two unidirectional FM Index traits.
  */
 //!\cond
 template <typename t>
-concept bi_fm_index_traits_concept = requires (t v)
+concept BiFmIndexTraits = requires (t v)
 {
     requires fm_index_traits_concept<typename t::fm_index_traits>;
     requires fm_index_traits_concept<typename t::rev_fm_index_traits>;
@@ -276,18 +276,18 @@ concept bi_fm_index_traits_concept = requires (t v)
                        typename t::rev_fm_index_traits::sdsl_index_type::size_type>;
 };
 //!\endcond
-/*!\name Requirements for seqan3::bi_fm_index_traits_concept
- * \relates seqan3::bi_fm_index_traits_concept
+/*!\name Requirements for seqan3::BiFmIndexTraits
+ * \relates seqan3::BiFmIndexTraits
  * \brief The bidirectional FM index traits must provide the following types:
  * \{
  *
  * \typedef typename t::fm_index_traits fm_index_traits
- * \memberof seqan3::bi_fm_index_traits_concept
+ * \memberof seqan3::BiFmIndexTraits
  * \brief Declares the type of the underlying unidirectional FM index on the original text.
  *        Must satisfy seqan3::fm_index_traits_concept.
  *
  * \typedef typename t::rev_fm_index_traits rev_fm_index_traits
- * \memberof seqan3::bi_fm_index_traits_concept
+ * \memberof seqan3::BiFmIndexTraits
  * \brief Declares the type of the underlying unidirectional FM index on the reversed text.
  *        Must satisfy seqan3::fm_index_traits_concept.
  *

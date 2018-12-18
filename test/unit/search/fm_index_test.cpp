@@ -138,5 +138,5 @@ TEST(fm_index_test, concepts)
 
     EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna4>>>);
     EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna5>>>);
-    EXPECT_TRUE(bi_fm_index_traits_concept<bi_fm_index_default_traits>);
+    EXPECT_TRUE(BiFmIndexTraits<bi_fm_index_default_traits>);
 }

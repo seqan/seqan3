@@ -74,12 +74,12 @@ struct bi_fm_index_default_traits
  * \implements seqan3::BiFmIndex
  * \tparam text_t The type of the text to be indexed; must model std::ranges::RandomAccessRange.
  * \tparam bi_fm_index_traits The traits determining the implementation of the underlying SDSL indices;
-                              must model seqan3::bi_fm_index_traits_concept.
+                              must model seqan3::BiFmIndexTraits.
  * \details
  *
  * \todo write me
  */
-template <std::ranges::RandomAccessRange text_t, bi_fm_index_traits_concept index_traits_t = bi_fm_index_default_traits>
+template <std::ranges::RandomAccessRange text_t, BiFmIndexTraits index_traits_t = bi_fm_index_default_traits>
 //!\cond
     requires alphabet_concept<innermost_value_type_t<text_t>> &&
              std::Same<underlying_rank_t<innermost_value_type_t<text_t>>, uint8_t>
