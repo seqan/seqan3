@@ -134,7 +134,7 @@ TEST(fm_index_test, concepts)
 {
     EXPECT_TRUE(FmIndex<fm_index<std::vector<dna4>>>);
     EXPECT_TRUE(FmIndex<fm_index<std::vector<dna5>>>);
-    EXPECT_TRUE(fm_index_traits_concept<fm_index_default_traits>);
+    EXPECT_TRUE(FmIndexTraits<fm_index_default_traits>);
 
     EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna4>>>);
     EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna5>>>);

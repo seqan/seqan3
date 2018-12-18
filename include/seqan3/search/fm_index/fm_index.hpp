@@ -106,7 +106,7 @@ struct fm_index_default_traits
  * \implements seqan3::FmIndex
  * \tparam text_t The type of the text to be indexed; must model std::ranges::ForwardRange.
  * \tparam fm_index_traits The traits determining the implementation of the underlying SDSL index;
-                           must model seqan3::fm_index_traits_concept.
+                           must model seqan3::FmIndexTraits.
  * \details
  *
  * The seqan3::fm_index is a fast and space-efficient string index to search strings and collections of strings.
@@ -126,7 +126,7 @@ struct fm_index_default_traits
  *
  * \todo The underlying implementation of the FM Index (Rank data structure, sampling rates, etc.) can be specified ...
  */
-template <std::ranges::RandomAccessRange text_t, fm_index_traits_concept fm_index_traits = fm_index_default_traits>
+template <std::ranges::RandomAccessRange text_t, FmIndexTraits fm_index_traits = fm_index_default_traits>
 //!\cond
     requires alphabet_concept<innermost_value_type_t<text_t>> &&
              std::Same<underlying_rank_t<innermost_value_type_t<text_t>>, uint8_t>
