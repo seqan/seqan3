@@ -163,7 +163,7 @@ inline bool search_ss(iterator_t it, query_t & query,
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
  *        Sub-function for searching the remaining part of the current block without any errors.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
- * \tparam iterator_t       Must model seqan3::bi_fm_index_iterator_concept.
+ * \tparam iterator_t       Must model seqan3::BiFmIndexIterator.
  * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet of the iterator.
  * \tparam search_t         Is of type `seqan3::detail::search<>` or `seqan3::detail::search_dyn<>`.
  * \tparam blocks_length_t  Is of type `std::array` or `std::vector` of unsigned integers.

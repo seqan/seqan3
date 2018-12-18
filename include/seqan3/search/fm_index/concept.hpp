@@ -312,7 +312,7 @@ concept bi_fm_index_concept = fm_index_concept<t> && requires (t index)
     typename t::rev_iterator_type;
 
     // NOTE: circular dependency
-    // requires bi_fm_index_iterator_concept<typename t::iterator_type>;
+    // requires BiFmIndexIterator<typename t::iterator_type>;
 
     { index.fwd_begin() } -> typename t::fwd_iterator_type;
     { index.rev_begin() } -> typename t::rev_iterator_type;
@@ -341,17 +341,17 @@ concept bi_fm_index_concept = fm_index_concept<t> && requires (t index)
  */
 
 // ============================================================================
-//  bi_fm_index_iterator_concept
+//  BiFmIndexIterator
 // ============================================================================
 
-/*!\interface seqan3::bi_fm_index_iterator_concept <>
+/*!\interface seqan3::BiFmIndexIterator <>
  * \brief Concept for bidirectional FM index iterators.
  *
  * This concept defines the interface for iterators for bidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept bi_fm_index_iterator_concept = fm_index_iterator_concept<t> && requires (t it)
+concept BiFmIndexIterator = fm_index_iterator_concept<t> && requires (t it)
 {
     requires bi_fm_index_concept<typename t::index_type>;
 
@@ -368,18 +368,18 @@ concept bi_fm_index_iterator_concept = fm_index_iterator_concept<t> && requires 
 
 };
 //!\endcond
-/*!\name Requirements for seqan3::bi_fm_index_iterator_concept
- * \relates seqan3::bi_fm_index_iterator_concept
+/*!\name Requirements for seqan3::BiFmIndexIterator
+ * \relates seqan3::BiFmIndexIterator
  * \brief You can expect these member types and member functions on all types that satisfy
  *        seqan3::fm_index_iterator_concept.
  * \{
  *
  * \typedef typename t::index_type index_type
- * \memberof seqan3::bi_fm_index_iterator_concept
+ * \memberof seqan3::BiFmIndexIterator
  * \brief Type of the underlying SeqAn FM index (not the underlying SDSL index).
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::bi_fm_index_iterator_concept
+ * \memberof seqan3::BiFmIndexIterator
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me!
