@@ -105,9 +105,7 @@ class gap_decorator_anchor_set
          }
      };
     //!\brief The iterator type for an anchor set.
-    using anchor_set_iterator = typename std::set<gap_t, gap_compare<gap_t>>::iterator;
-    //!\brief Placeholder for gap elements to be ignored.
-    const ranges::v3::size_type_t<inner_type> _ = 0;
+    using set_iterator = typename std::set<gap_t, gap_compare<gap_t>>::iterator;
 
 public:
     /*!\name Member types
@@ -151,6 +149,8 @@ public:
     constexpr gap_decorator_anchor_set (gap_decorator_anchor_set && rhs) = default;
     //!\brief Move assignment.
     constexpr gap_decorator_anchor_set & operator=(gap_decorator_anchor_set && rhs) = default;
+    //!\brief Construct by host sequence.
+    constexpr gap_decorator_anchor_set(inner_type const & sequence): sequence{&sequence} {};
     //!\brief Direct sequence assignment resets previously inserted gaps.
     constexpr gap_decorator_anchor_set & operator=(inner_type const & sequence)
     {
@@ -159,8 +159,6 @@ public:
     };
     //!\brief Use default deconstructor.
     ~gap_decorator_anchor_set() = default;
-    //!\brief Construct by host sequence.
-    constexpr gap_decorator_anchor_set(inner_type const & sequence): sequence{&sequence} {};
     //!\}
 
     /*!\brief Returns the total length of the aligned sequence.
@@ -202,11 +200,11 @@ public:
         size_type const pos = it - begin();
         assert(pos <= size());
 
-        anchor_set_iterator it_set = anchors.begin();
+        set_iterator it_set = anchors.begin();
         // case 1: extend previous/surrounding gap already existing
         if ((pos < size()) && (((value_type)(*this)[pos] == gap::GAP) || (pos > 0 && (*this)[pos-1] == gap::GAP)))
         {
-            it_set = anchors.lower_bound(gap_t{pos, _});
+            it_set = anchors.lower_bound(gap_t{pos, 0/*Unused*/});
             if (it_set == anchors.end() || (*it_set).first > pos)
                 it_set = std::prev(it_set);
             gap_t gap{(*it_set).first, (*it_set).second + size};
@@ -229,7 +227,7 @@ public:
             // pre: pos not in anchor set, find preceeding gap to add accumulated gaps
             if (anchors.size())
             {
-                it = anchors.lower_bound(gap_t{pos, _});
+                it = anchors.lower_bound(gap_t{pos, 0/*Unused*/});
                 if (it != anchors.begin())
                     gap.second += (*--it).second;
             }
@@ -262,7 +260,7 @@ public:
         // TODO: assert or more robust behaviour: delete all gaps that are located between it1, it2
         assert(it1 <= it2 && it2 <= end());
         size_type pos1 = it1 - begin(), pos2 = it2 - begin();
-        anchor_set_iterator it = anchors.lower_bound(gap_t{pos1, _});
+        set_iterator it = anchors.lower_bound(gap_t{pos1, _});
         size_type gap_len = get_gap_length(it);
 
         if (it == anchors.end() || (*it).first > pos1)
@@ -387,7 +385,7 @@ public:
         if (!anchors.size())
             return value_type((*sequence)[i]);
         // case 2: there are gaps
-        anchor_set_iterator it = anchors.upper_bound(gap_t{i, _});
+        set_iterator it = anchors.upper_bound(gap_t{i, _});
         if (it == anchors.begin())
             return value_type((*sequence)[i]); // since no gaps happen before i
         it = std::prev(it);
@@ -433,7 +431,7 @@ private:
      * \details The length of a gap is difference of the accumulator pointed at
      * and the one of its predecessor (if existing).
      */
-    constexpr size_type get_gap_length(anchor_set_iterator it) const noexcept
+    constexpr size_type get_gap_length(set_iterator it) const noexcept
     {
         if (it == anchors.begin())
             return (*it).second;
@@ -463,30 +461,28 @@ private:
     void update(size_type const pos, size_type const size)
     {
         assert(pos < size);
-        auto it = anchors.lower_bound(gap_t{pos + size + 1, _});
+        auto it = anchors.lower_bound(gap_t{pos + size + 1, 0/*Unused*/});
         while (it != anchors.end())
         {
             gap_t gap{(*it).first - size, (*it).second - size};
             anchors.insert(gap);
-            anchor_set_iterator it_next = std::next(it);
+            set_iterator it_next = std::next(it);
             anchors.erase(it);
             it = it_next;
         }
     }
 
     //!\brief Stores a pointer to the ungapped, underlying sequence.
-    inner_type * sequence{};
+    inner_type const * sequence{};
     //!\brief Set storing the anchor gaps.
     std::set<gap_t, gap_compare<gap_t>> anchors{};
 };
 
-// TODO: correct syntax of free function below
+// TODO: necessary here? already defined and conflicting with the one in aligned_sequence_concept.hpp
+// which receives an const_iterator and delegates to a here non-existing insert method.
 //!\brief The free insert_gap function.
 /*
 template<std::ranges::RandomAccessRange inner_type>
-//!\cond
-//    requires aligned_sequence_concept<gap_decorator_type>
-//!\endcond
 typename gap_decorator_anchor_set<inner_type>::iterator insert_gap(typename gap_decorator_anchor_set<inner_type> & gd, gap_decorator_anchor_set<inner_type>::iterator const it, size_type const size = 1)
 {
     return gd.insert_gap(it, size);
