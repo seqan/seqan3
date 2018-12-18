@@ -260,7 +260,7 @@ public:
         // TODO: assert or more robust behaviour: delete all gaps that are located between it1, it2
         assert(it1 <= it2 && it2 <= end());
         size_type pos1 = it1 - begin(), pos2 = it2 - begin();
-        set_iterator it = anchors.lower_bound(gap_t{pos1, _});
+        set_iterator it = anchors.lower_bound(gap_t{pos1, 0/*Unused*/});
         size_type gap_len = get_gap_length(it);
 
         if (it == anchors.end() || (*it).first > pos1)
@@ -385,7 +385,7 @@ public:
         if (!anchors.size())
             return value_type((*sequence)[i]);
         // case 2: there are gaps
-        set_iterator it = anchors.upper_bound(gap_t{i, _});
+        set_iterator it = anchors.upper_bound(gap_t{i, 0/*Unused*/});
         if (it == anchors.begin())
             return value_type((*sequence)[i]); // since no gaps happen before i
         it = std::prev(it);
