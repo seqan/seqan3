@@ -136,7 +136,7 @@ protected:
     }
 
     //!\brief Optimized backward search without alphabet mapping
-    template <detail::sdsl_index_concept csa_t>
+    template <detail::SdslIndex csa_t>
     bool backward_search(csa_t const & csa, sdsl_char_type const c, size_type & l, size_type & r) const noexcept
     {
         assert(l <= r && r < csa.size());

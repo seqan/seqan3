@@ -55,15 +55,15 @@ namespace seqan3::detail
  */
 
  // ============================================================================
- //  sdsl_index_concept
+ //  SdslIndex
  // ============================================================================
 
-/*!\interface seqan3::detail::sdsl_index_concept <>
+/*!\interface seqan3::detail::SdslIndex <>
  * \brief Concept for SDSL FM indices (which are called compressed suffix arrays in the SDSL).
  */
 //!\cond
 template <typename t>
-concept sdsl_index_concept = requires (t sdsl_index)
+concept SdslIndex = requires (t sdsl_index)
 {
     typename t::size_type;
 
@@ -83,13 +83,13 @@ concept sdsl_index_concept = requires (t sdsl_index)
     };
 };
 //!\endcond
-/*!\name Requirements for seqan3::detail::sdsl_index_concept
- * \relates seqan3::detail::sdsl_index_concept
+/*!\name Requirements for seqan3::detail::SdslIndex
+ * \relates seqan3::detail::SdslIndex
  * \brief The SDSL index must support the following interface to work with SeqAn3 FM indices.
  * \{
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::detail::sdsl_index_concept
+ * \memberof seqan3::detail::SdslIndex
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me.
@@ -123,7 +123,7 @@ concept FmIndexTraits = requires (t v)
 {
     typename t::sdsl_index_type;
 
-    requires detail::sdsl_index_concept<typename t::sdsl_index_type>;
+    requires detail::SdslIndex<typename t::sdsl_index_type>;
 };
 //!\endcond
 /*!\name Requirements for seqan3::FmIndexTraits
@@ -133,7 +133,7 @@ concept FmIndexTraits = requires (t v)
  *
  * \typedef typename t::sdsl_index_type sdsl_index_type
  * \memberof seqan3::FmIndexTraits
- * \brief Declares the type of the underlying SDSL index. Must satisfy the seqan3::detail::sdsl_index_concept.
+ * \brief Declares the type of the underlying SDSL index. Must satisfy the seqan3::detail::SdslIndex.
  *
  * \}
  */

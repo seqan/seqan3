@@ -163,7 +163,7 @@ protected:
     }
 
     //!\brief Optimized bidirectional search without alphabet mapping
-    template <detail::sdsl_index_concept csa_t>
+    template <detail::SdslIndex csa_t>
     bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
                               size_type & l_fwd, size_type & r_fwd,
                               size_type & l_bwd, size_type & r_bwd) const noexcept
@@ -217,7 +217,7 @@ protected:
     }
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
-    template <detail::sdsl_index_concept csa_t>
+    template <detail::SdslIndex csa_t>
     bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
                                     size_type const l_parent, size_type const r_parent,
                                     size_type & l_fwd, size_type & r_fwd,
