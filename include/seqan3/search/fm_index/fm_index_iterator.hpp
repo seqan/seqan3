@@ -68,7 +68,7 @@ namespace seqan3
  */
 
 /*!\brief The SeqAn FM Index Iterator.
- * \implements seqan3::fm_index_iterator_concept
+ * \implements seqan3::FmIndexIterator
  * \tparam index_t The type of the underlying index; must model seqan3::fm_index_concept.
  * \details
  *

@@ -157,7 +157,7 @@ concept fm_index_concept = std::Semiregular<t> && requires (t index)
     typename t::iterator_type;
 
     // NOTE: circular dependency
-    // requires fm_index_iterator_concept<typename t::iterator_type>;
+    // requires FmIndexIterator<typename t::iterator_type>;
 
     requires requires (t index, std::vector<typename t::char_type> const text)
     {
@@ -201,17 +201,17 @@ concept fm_index_concept = std::Semiregular<t> && requires (t index)
  */
 
 // ============================================================================
-//  fm_index_iterator_concept
+//  FmIndexIterator
 // ============================================================================
 
-/*!\interface seqan3::fm_index_iterator_concept <>
+/*!\interface seqan3::FmIndexIterator <>
  * \brief Concept for unidirectional FM index iterators.
  *
  * This concept defines the interface for iterators for unidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept fm_index_iterator_concept = std::Semiregular<t> && requires (t it)
+concept FmIndexIterator = std::Semiregular<t> && requires (t it)
 {
     typename t::index_type;
     typename t::size_type;
@@ -238,17 +238,17 @@ concept fm_index_iterator_concept = std::Semiregular<t> && requires (t it)
     { it.lazy_locate()  } -> auto;
 };
 //!\endcond
-/*!\name Requirements for seqan3::fm_index_iterator_concept
- * \relates seqan3::fm_index_iterator_concept
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::fm_index_iterator_concept.
+/*!\name Requirements for seqan3::FmIndexIterator
+ * \relates seqan3::FmIndexIterator
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::FmIndexIterator.
  * \{
  *
  * \typedef typename t::index_type index_type
- * \memberof seqan3::fm_index_iterator_concept
+ * \memberof seqan3::FmIndexIterator
  * \brief Type of the underlying SeqAn FM index (not the underlying SDSL index).
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::fm_index_iterator_concept
+ * \memberof seqan3::FmIndexIterator
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me!
@@ -351,7 +351,7 @@ concept BiFmIndex = fm_index_concept<t> && requires (t index)
  */
 //!\cond
 template <typename t>
-concept BiFmIndexIterator = fm_index_iterator_concept<t> && requires (t it)
+concept BiFmIndexIterator = FmIndexIterator<t> && requires (t it)
 {
     requires BiFmIndex<typename t::index_type>;
 
@@ -371,7 +371,7 @@ concept BiFmIndexIterator = fm_index_iterator_concept<t> && requires (t it)
 /*!\name Requirements for seqan3::BiFmIndexIterator
  * \relates seqan3::BiFmIndexIterator
  * \brief You can expect these member types and member functions on all types that satisfy
- *        seqan3::fm_index_iterator_concept.
+ *        seqan3::FmIndexIterator.
  * \{
  *
  * \typedef typename t::index_type index_type

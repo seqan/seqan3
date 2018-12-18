@@ -56,7 +56,7 @@ namespace seqan3::detail
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
  * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
- * \tparam iterator_t    Must model seqan3::fm_index_iterator_concept.
+ * \tparam iterator_t    Must model seqan3::FmIndexIterator.
  * \tparam query_t       Must be a std::ranges::InputRange over the index's alphabet.
  * \tparam delegate_t    Takes `index::iterator_type` as argument.
  * \param[in] it         Iterator of atring index built on the text that will be searched.
