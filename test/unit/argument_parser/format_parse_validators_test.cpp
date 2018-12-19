@@ -55,12 +55,12 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(validator_concept<detail::default_validator<int> const>);
     EXPECT_TRUE(validator_concept<detail::default_validator<int> &>);
 
-    EXPECT_TRUE(validator_concept<integral_range_validator<int>>);
+    EXPECT_TRUE(validator_concept<arithmetic_range_validator<int>>);
     EXPECT_TRUE(validator_concept<value_list_validator<int>>);
     EXPECT_TRUE(validator_concept<regex_validator<std::string>>);
     EXPECT_TRUE(validator_concept<regex_validator<std::vector<std::string>>>);
     EXPECT_TRUE(validator_concept<detail::default_validator<std::vector<int>>>);
-    EXPECT_TRUE(validator_concept<integral_range_validator<std::vector<int>>>);
+    EXPECT_TRUE(validator_concept<arithmetic_range_validator<std::vector<int>>>);
     EXPECT_TRUE(validator_concept<value_list_validator<std::vector<int>>>);
     EXPECT_TRUE(validator_concept<file_ext_validator>);
     EXPECT_TRUE(validator_concept<file_existance_validator>);
@@ -105,7 +105,7 @@ TEST(validator_test, file_exists)
     EXPECT_NO_THROW(parser.parse());
 }
 
-TEST(validator_test, integral_range_validator_success)
+TEST(validator_test, arithmetic_range_validator_success)
 {
     int option_value;
     std::vector<int> option_vector;
@@ -114,7 +114,7 @@ TEST(validator_test, integral_range_validator_success)
     const char * argv[] = {"./argument_parser_test", "-i", "10"};
     argument_parser parser("test_parser", 3, argv);
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      option_spec::DEFAULT, integral_range_validator<int>(1,20));
+                      option_spec::DEFAULT, arithmetic_range_validator<int>(1,20));
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -125,7 +125,7 @@ TEST(validator_test, integral_range_validator_success)
     const char * argv2[] = {"./argument_parser_test", "-i", "-10"};
     argument_parser parser2("test_parser", 3, argv2);
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, integral_range_validator<int>(-20,20));
+                       option_spec::DEFAULT, arithmetic_range_validator<int>(-20,20));
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -135,7 +135,7 @@ TEST(validator_test, integral_range_validator_success)
     // positional option
     const char * argv3[] = {"./argument_parser_test", "10"};
     argument_parser parser3("test_parser", 2, argv3);
-    parser3.add_positional_option(option_value, "desc", integral_range_validator<int>(1,20));
+    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator<int>(1,20));
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser3.parse());
@@ -145,7 +145,7 @@ TEST(validator_test, integral_range_validator_success)
     // positional option - negative values
     const char * argv4[] = {"./argument_parser_test", "--", "-10"};
     argument_parser parser4("test_parser", 3, argv4);
-    parser4.add_positional_option(option_value, "desc", integral_range_validator<int>(-20,20));
+    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator<int>(-20,20));
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser4.parse());
@@ -156,7 +156,7 @@ TEST(validator_test, integral_range_validator_success)
     const char * argv5[] = {"./argument_parser_test", "-i", "-10", "-i", "48"};
     argument_parser parser5("test_parser", 5, argv5);
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, integral_range_validator<std::vector<int>>(-50,50));
+                       option_spec::DEFAULT, arithmetic_range_validator<std::vector<int>>(-50,50));
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -168,7 +168,7 @@ TEST(validator_test, integral_range_validator_success)
     option_vector.clear();
     const char * argv6[] = {"./argument_parser_test", "--", "-10", "1"};
     argument_parser parser6("test_parser", 4, argv6);
-    parser6.add_positional_option(option_vector, "desc", integral_range_validator<std::vector<int>>(-20,20));
+    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator<std::vector<int>>(-20,20));
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser6.parse());
@@ -180,7 +180,7 @@ TEST(validator_test, integral_range_validator_success)
     option_vector.clear();
     const char * argv7[] = {"./argument_parser_test", "-h"};
     argument_parser parser7("test_parser", 2, argv7);
-    parser7.add_positional_option(option_vector, "desc", integral_range_validator<std::vector<int>>(-20,20));
+    parser7.add_positional_option(option_vector, "desc", arithmetic_range_validator<std::vector<int>>(-20,20));
 
 
     testing::internal::CaptureStdout();
@@ -197,9 +197,21 @@ TEST(validator_test, integral_range_validator_success)
                            "    SeqAn version: ") + seqan3_version;
     EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+
+    // option - double value
+    double double_option_value;
+    const char * argv8[] = {"./argument_parser_test", "-i", "10.9"};
+    argument_parser parser8("test_parser", 3, argv8);
+    parser8.add_option(double_option_value, 'i', "double-option", "desc",
+                       option_spec::DEFAULT, arithmetic_range_validator<double>(1, 20));
+
+    testing::internal::CaptureStderr();
+    EXPECT_NO_THROW(parser8.parse());
+    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+    EXPECT_EQ(double_option_value, 10.9);
 }
 
-TEST(validator_test, integral_range_validator_error)
+TEST(validator_test, arithmetic_range_validator_error)
 {
     int option_value;
     std::vector<int> option_vector;
@@ -208,7 +220,7 @@ TEST(validator_test, integral_range_validator_error)
     const char * argv[] = {"./argument_parser_test", "-i", "30"};
     argument_parser parser("test_parser", 3, argv);
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      option_spec::DEFAULT, integral_range_validator<int>(1,20));
+                      option_spec::DEFAULT, arithmetic_range_validator<int>(1,20));
 
     EXPECT_THROW(parser.parse(), validation_failed);
 
@@ -216,21 +228,21 @@ TEST(validator_test, integral_range_validator_error)
     const char * argv2[] = {"./argument_parser_test", "-i", "-21"};
     argument_parser parser2("test_parser", 3, argv2);
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, integral_range_validator<int>(-20,20));
+                       option_spec::DEFAULT, arithmetic_range_validator<int>(-20,20));
 
     EXPECT_THROW(parser2.parse(), validation_failed);
 
     // positional option - above max
     const char * argv3[] = {"./argument_parser_test", "30"};
     argument_parser parser3("test_parser", 2, argv3);
-    parser3.add_positional_option(option_value, "desc", integral_range_validator<int>(1,20));
+    parser3.add_positional_option(option_value, "desc", arithmetic_range_validator<int>(1,20));
 
     EXPECT_THROW(parser3.parse(), validation_failed);
 
     // positional option - below min
     const char * argv4[] = {"./argument_parser_test", "--", "-21"};
     argument_parser parser4("test_parser", 3, argv4);
-    parser4.add_positional_option(option_value, "desc", integral_range_validator<int>(-20,20));
+    parser4.add_positional_option(option_value, "desc", arithmetic_range_validator<int>(-20,20));
 
     EXPECT_THROW(parser4.parse(), validation_failed);
 
@@ -238,7 +250,7 @@ TEST(validator_test, integral_range_validator_error)
     const char * argv5[] = {"./argument_parser_test", "-i", "-100"};
     argument_parser parser5("test_parser", 3, argv5);
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, integral_range_validator<std::vector<int>>(-50,50));
+                       option_spec::DEFAULT, arithmetic_range_validator<std::vector<int>>(-50,50));
 
     EXPECT_THROW(parser5.parse(), validation_failed);
 
@@ -246,9 +258,18 @@ TEST(validator_test, integral_range_validator_error)
     option_vector.clear();
     const char * argv6[] = {"./argument_parser_test", "--", "-10", "100"};
     argument_parser parser6("test_parser", 4, argv6);
-    parser6.add_positional_option(option_vector, "desc", integral_range_validator<std::vector<int>>(-20,20));
+    parser6.add_positional_option(option_vector, "desc", arithmetic_range_validator<std::vector<int>>(-20,20));
 
     EXPECT_THROW(parser6.parse(), validation_failed);
+
+    // option - double value
+    double double_option_value;
+    const char * argv7[] = {"./argument_parser_test", "-i", "0.9"};
+    argument_parser parser7("test_parser", 3, argv7);
+    parser7.add_option(double_option_value, 'i', "double-option", "desc",
+                       option_spec::DEFAULT, arithmetic_range_validator<double>(1, 20));
+
+    EXPECT_THROW(parser7.parse(), validation_failed);
 }
 
 TEST(validator_test, value_list_validator_success)

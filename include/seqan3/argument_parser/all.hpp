@@ -65,6 +65,6 @@
  *
  * - seqan3::regex_validator
  * - seqan3::value_list_validator
- * - seqan3::integral_range_validator
+ * - seqan3::arithmetic_range_validator
  * - seqan3::file_ext_validator
  */

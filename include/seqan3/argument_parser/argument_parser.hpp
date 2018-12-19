@@ -54,6 +54,7 @@
 #include <seqan3/argument_parser/detail/format_man.hpp>
 #include <seqan3/argument_parser/detail/format_parse.hpp>
 #include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/stream/parse_condition.hpp>
 
 namespace seqan3
 {
@@ -201,8 +202,6 @@ public:
      * \param[in]  desc      The description of the option to be shown in the help page.
      * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
      * \param[in]  validator The validator applied to the value after parsing (callable).
-     *
-     * \throws seqan3::parser_design_error
      */
     template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
     //!\cond
@@ -217,13 +216,7 @@ public:
                     option_spec const & spec = option_spec::DEFAULT,
                     validator_type validator = validator_type{}) // copy to bind rvalues
     {
-        if (id_exists(short_id))
-            throw parser_design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
-        if (id_exists(long_id))
-            throw parser_design_error("Option Identifier '" + long_id + "' was already used before.");
-        if (short_id == '\0' && long_id.empty())
-            throw parser_design_error("Option Identifiers cannot both be empty.");
-
+        verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
         std::visit([=, &value] (auto & f) { f.add_option(value, short_id, long_id, desc, spec, validator); }, format);
@@ -236,8 +229,6 @@ public:
      * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      * \param[in]  desc     The description of the flag to be shown in the help page.
      * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
-     *
-     * \throws seqan3::parser_design_error
      */
     void add_flag(bool & value,
                   char const short_id,
@@ -245,13 +236,7 @@ public:
                   std::string const & desc,
                   option_spec const & spec = option_spec::DEFAULT)
     {
-        if (id_exists(short_id))
-            throw parser_design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
-        if (id_exists(long_id))
-            throw parser_design_error("Option Identifier '" + long_id + "' was already used before.");
-        if (short_id == '\0' && long_id.empty())
-            throw parser_design_error("Option Identifiers cannot both be empty.");
-
+        verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
         std::visit([=, &value] (auto & f) { f.add_flag(value, short_id, long_id, desc, spec); }, format);
@@ -578,6 +563,8 @@ private:
     */
     bool id_exists(std::string const & long_id)
     {
+        if (long_id.empty())
+            return false;
         return(!(used_option_ids.insert(long_id)).second);
     }
 
@@ -588,7 +575,42 @@ private:
     */
     bool id_exists(char const short_id)
     {
+        if (short_id == '\0')
+            return false;
         return(!(used_option_ids.insert(std::string(1, short_id))).second);
+    }
+
+    /*!\brief Verifies that the short and the long identifiers are correctly formatted.
+     * \param[in] short_id The short identifier of the command line option/flag.
+     * \param[in] long_id  The long identifier of the command line option/flag.
+     * \throws seqan3::parser_design_error
+     * \details Specifically, checks that identifiers haven't been used before,
+     *          the length of long IDs is either empty or longer than one char,
+     *          the characters used in the identifiers are all valid,
+     *          and at least one of short_id or long_id is given.
+     */
+    void verify_identifiers(char const short_id, std::string const & long_id)
+    {
+        auto constexpr allowed = is_alnum || is_char<'_'> || is_char<'@'>;
+
+        if (id_exists(short_id))
+            throw parser_design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
+        if (id_exists(long_id))
+            throw parser_design_error("Option Identifier '" + long_id + "' was already used before.");
+        if (long_id.length() == 1)
+            throw parser_design_error("Long IDs must be either empty, or longer than one character.");
+        if (!allowed(short_id) && !is_char<'\0'>(short_id))
+            throw parser_design_error("Option identifiers may only contain alphanumeric characters, '_', or '@'.");
+        if (long_id.size() > 0 && is_char<'-'>(long_id[0]))
+            throw parser_design_error("First character of long ID cannot be '-'.");
+
+        std::for_each(long_id.begin(), long_id.end(), [&allowed] (char c)
+                      {
+                          if (!(allowed(c) || is_char<'-'>(c)))
+                              throw parser_design_error("Long identifiers may only contain alphanumeric characters, '_', '-', or '@'.");
+                      });
+        if (short_id == '\0' && long_id.empty())
+            throw parser_design_error("Option Identifiers cannot both be empty.");
     }
 
     /*!\brief The format of the argument parser that decides the behavior when
@@ -604,7 +626,7 @@ private:
                  detail::format_ctd*/> format{detail::format_help(0)};
 
     //!\brief List of option/flag identifiers that are already used.
-    std::set<std::string> used_option_ids;
+    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version"};
 };
 
 } // namespace seqan3
