@@ -58,17 +58,22 @@ namespace seqan3
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept ostream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
+concept ostream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
                                requires (stream_type & os, value_type & val)
 {
-    typename stream_type::char_type;
-    typename stream_type::traits_type;
-    typename stream_type::int_type;
-    typename stream_type::pos_type;
-    typename stream_type::off_type;
+    typename std::remove_reference_t<stream_type>::char_type;
+    typename std::remove_reference_t<stream_type>::traits_type;
+    typename std::remove_reference_t<stream_type>::int_type;
+    typename std::remove_reference_t<stream_type>::pos_type;
+    typename std::remove_reference_t<stream_type>::off_type;
 
-    { os << val } -> std::basic_ostream<typename stream_type::char_type, typename stream_type::traits_type> &;
+    { os << val } -> std::basic_ostream<typename std::remove_reference_t<stream_type>::char_type,
+                                        typename std::remove_reference_t<stream_type>::traits_type> &;
 };
+
+template <typename stream_type>
+concept ostream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                           ostream_concept<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
 /*!\name Requirements for seqan3::ostream_concept
@@ -126,17 +131,22 @@ concept ostream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept istream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
-                               requires (stream_type & os, value_type & val)
+concept istream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+                               requires (stream_type & is, value_type & val)
 {
-    typename stream_type::char_type;
-    typename stream_type::traits_type;
-    typename stream_type::int_type;
-    typename stream_type::pos_type;
-    typename stream_type::off_type;
+    typename std::remove_reference_t<stream_type>::char_type;
+    typename std::remove_reference_t<stream_type>::traits_type;
+    typename std::remove_reference_t<stream_type>::int_type;
+    typename std::remove_reference_t<stream_type>::pos_type;
+    typename std::remove_reference_t<stream_type>::off_type;
 
-    { os >> val } -> std::basic_istream<typename stream_type::char_type, typename stream_type::traits_type> &;
+    { is >> val } -> std::basic_istream<typename std::remove_reference_t<stream_type>::char_type,
+                                        typename std::remove_reference_t<stream_type>::traits_type> &;
 };
+
+template <typename stream_type>
+concept istream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                           istream_concept<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
 /*!\name Requirements for seqan3::istream_concept
@@ -197,6 +207,7 @@ concept istream_concept = std::is_base_of_v<std::ios_base, stream_type> &&
 template <typename stream_type, typename value_type>
 concept stream_concept = ostream_concept<stream_type, value_type> &&
                               istream_concept<stream_type, value_type>;
+
 //!\endcond
 
 } // namespace seqan3

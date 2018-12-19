@@ -172,7 +172,6 @@ concept parse_condition_concept = requires
 // ----------------------------------------------------------------------------
 
 /*!\brief Returns a printable value for the given character `c`.
- * \tparam char_type The type of the character.
  * \param[in] c The character to be represented as printable string.
  * \return    a std::string containing a printable version of the given character `c`.
  *
@@ -193,8 +192,7 @@ concept parse_condition_concept = requires
  *
  * Thread-safe.
  */
-template <typename char_type>
-inline std::string make_printable(char_type const c)
+inline std::string make_printable(char const c)
 {
     switch (c)
     {
