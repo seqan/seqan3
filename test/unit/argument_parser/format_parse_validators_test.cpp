@@ -519,7 +519,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
-        EXPECT_THROW(parser.parse(), validation_failed);
+        EXPECT_THROW(parser.parse(), validation_error);
     }
 
     {
@@ -528,7 +528,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
 
-        EXPECT_THROW(parser.parse(), validation_failed);
+        EXPECT_THROW(parser.parse(), validation_error);
     }
 
     // with temporary validators
