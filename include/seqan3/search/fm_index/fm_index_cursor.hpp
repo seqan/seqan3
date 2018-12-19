@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- * \brief Provides the seqan3::fm_index_iterator for searching in the unidirectional seqan3::fm_index.
+ * \brief Provides the seqan3::fm_index_cursor for searching in the unidirectional seqan3::fm_index.
  */
 
 #pragma once
@@ -50,14 +50,14 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
-#include <seqan3/search/fm_index/detail/fm_index_iterator.hpp>
+#include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/std/view/transform.hpp>
 
 // namespace seqan3::detail
 // {
 //     // forward declaration
-//     auto get_suffix_array_range(fm_index_iterator<index_t> const & it);
+//     auto get_suffix_array_range(fm_index_cursor<index_t> const & it);
 // } // namespace seqan3::detail
 
 namespace seqan3
@@ -67,28 +67,28 @@ namespace seqan3
  * \{
  */
 
-/*!\brief The SeqAn FM Index Iterator.
- * \implements seqan3::FmIndexIterator
+/*!\brief The SeqAn FM Index Cursor.
+ * \implements seqan3::FmIndexCursor
  * \tparam index_t The type of the underlying index; must model seqan3::FmIndex.
  * \details
  *
- * The iterator's interface provides searching a string from left to right in the indexed text.
- * All methods modifying the iterator (e.g. extending by a character with extend_right()) return a `bool` value whether
- * the operation was successful or not. In case of an unsuccessful operation the iterator remains unmodified, i.e. an
- * iterator can never be in an invalid state except default constructed iterators that are always invalid.
+ * The cursor's interface provides searching a string from left to right in the indexed text.
+ * All methods modifying the cursor (e.g. extending by a character with extend_right()) return a `bool` value whether
+ * the operation was successful or not. In case of an unsuccessful operation the cursor remains unmodified, i.e. an
+ * cursor can never be in an invalid state except default constructed cursors that are always invalid.
  *
  * \cond DEV
  *     The behaviour is equivalent to a suffix tree with the space and time efficiency of the underlying pure FM index.
- *     The iterator traverses the implicit suffix tree beginning at the root node.
+ *     The cursor traverses the implicit suffix tree beginning at the root node.
  *     The implicit suffix tree is not compacted, i.e. going down an edge using extend_right(char) will increase the
  *     query by only one character.
  * \endcond
  *
- * The asymptotic running times for using the iterator depend on the SDSL index configuration. To determine the exact
+ * The asymptotic running times for using the cursor depend on the SDSL index configuration. To determine the exact
  * running times, you have to additionally look up the running times of the used traits (configuration).
  */
 template <typename index_t>
-class fm_index_iterator
+class fm_index_cursor
 {
 
 public:
@@ -109,7 +109,7 @@ protected:
      * \{
      */
     //!\brief Type of the representation of a suffix tree node.
-    using node_type = detail::fm_index_iterator_node<index_t>;
+    using node_type = detail::fm_index_cursor_node<index_t>;
     //!\brief Type of the representation of characters in the underlying SDSL index.
     using sdsl_char_type = typename index_type::sdsl_char_type;
     //!\}
@@ -124,7 +124,7 @@ protected:
     node_type node;
 
     template <typename _index_t>
-    friend class bi_fm_index_iterator;
+    friend class bi_fm_index_cursor;
 
     // friend detail::get_suffix_array_range;
 
@@ -181,20 +181,20 @@ public:
      */
     //!\brief Default constructor. Accessing member functions on a default constructed object is undefined behavior.
     //        Default construction is necessary to make this class semi-regular and e.g., to allow construction of
-    //        std::array of iterators.
-    fm_index_iterator() noexcept = default;
-    fm_index_iterator(fm_index_iterator const &) noexcept = default;
-    fm_index_iterator & operator=(fm_index_iterator const &) noexcept = default;
-    fm_index_iterator(fm_index_iterator &&) noexcept = default;
-    fm_index_iterator & operator=(fm_index_iterator &&) noexcept = default;
+    //        std::array of cursors.
+    fm_index_cursor() noexcept = default;
+    fm_index_cursor(fm_index_cursor const &) noexcept = default;
+    fm_index_cursor & operator=(fm_index_cursor const &) noexcept = default;
+    fm_index_cursor(fm_index_cursor &&) noexcept = default;
+    fm_index_cursor & operator=(fm_index_cursor &&) noexcept = default;
 
-    fm_index_iterator(index_t const & _index) noexcept : index(&_index), node({0, _index.index.size() - 1, 0, 0})
+    fm_index_cursor(index_t const & _index) noexcept : index(&_index), node({0, _index.index.size() - 1, 0, 0})
     {}
     //\}
 
-    /*!\brief Compares two iterators.
-     * \param[in] rhs Other iterator to compare it to.
-     * \returns `true` if both iterators are equal, `false` otherwise.
+    /*!\brief Compares two cursors.
+     * \param[in] rhs Other cursor to compare it to.
+     * \returns `true` if both cursors are equal, `false` otherwise.
      *
      * ### Complexity
      *
@@ -204,7 +204,7 @@ public:
      *
      * No-throw guarantee.
      */
-    bool operator==(fm_index_iterator const & rhs) const noexcept
+    bool operator==(fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
         assert(node != rhs.node || (query_length() == 0 || (parent_lb == rhs.parent_lb && parent_rb == rhs.parent_rb)));
@@ -214,9 +214,9 @@ public:
         return node == rhs.node;
     }
 
-    /*!\brief Compares two iterators.
-     * \param[in] rhs Other iterator to compare it to.
-     * \returns `true` if the iterators are not equal, `false` otherwise.
+    /*!\brief Compares two cursors.
+     * \param[in] rhs Other cursor to compare it to.
+     * \returns `true` if the cursors are not equal, `false` otherwise.
      *
      * ### Complexity
      *
@@ -226,7 +226,7 @@ public:
      *
      * No-throw guarantee.
      */
-    bool operator!=(fm_index_iterator const & rhs) const noexcept
+    bool operator!=(fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
 
@@ -238,7 +238,7 @@ public:
      *        \cond DEV
      *            Goes down the leftmost (i.e. lexicographically smallest) edge.
      *        \endcond
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
      *
@@ -253,7 +253,7 @@ public:
     bool extend_right() noexcept
     {
         // TODO: specialize extend_right() and cycle_back() for EPR-dictionaries
-        // store all iterators at once in a private std::array of iterators
+        // store all cursors at once in a private std::array of cursors
         assert(index != nullptr);
 
         sdsl_char_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
@@ -277,7 +277,7 @@ public:
      * \tparam char_t Type of the character needs to be convertible to the character type `char_type` of the indexed
      *                text.
      * \param[in] c Character to extend the query with to the right.
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
      *
@@ -312,9 +312,9 @@ public:
     /*!\brief Tries to extend the query by `seq` to the right.
     * \tparam seq_t The type of range of the sequence to search; must model std::ranges::RandomAccessRange.
      * \param[in] seq Sequence to extend the query with to the right.
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
-     * If extending fails in the middle of the sequence, all previous computations are rewound to restore the iterator's
+     * If extending fails in the middle of the sequence, all previous computations are rewound to restore the cursor's
      * state before calling this method.
      *
      * ### Complexity
@@ -360,9 +360,9 @@ public:
     /*!\brief Tries to replace the rightmost character of the query by the next lexicographically larger character such
      *        that the query is found in the text.
      *        \cond DEV
-     *            Moves the iterator to the right sibling of the current suffix tree node. It would be equivalent to
+     *            Moves the cursor to the right sibling of the current suffix tree node. It would be equivalent to
      *            going up an edge and going down that edge with the smallest character that is larger than the
-     *            previous searched character. Calling cycle_back() on an iterator pointing to the root node is
+     *            previous searched character. Calling cycle_back() on an cursor pointing to the root node is
      *            undefined behaviour!
      *        \endcond
      * \returns `true` if there exists a query in the text where the rightmost character of the query is
@@ -370,7 +370,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/fm_index_iterator.cpp cycle
+     * \snippet test/snippet/search/fm_index_cursor.cpp cycle
      *
      * ### Complexity
      *
@@ -410,7 +410,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/fm_index_iterator.cpp cycle
+     * \snippet test/snippet/search/fm_index_cursor.cpp cycle
      *
      * ### Complexity
      *
@@ -432,7 +432,7 @@ public:
 
     /*!\brief Returns the length of the searched query.
      *        \cond DEV
-     *            Returns the depth of the iterator node in the implicit suffix tree.
+     *            Returns the depth of the cursor node in the implicit suffix tree.
      *        \endcond
      * \returns Length of query.
      *
@@ -454,7 +454,7 @@ public:
 
     /*!\brief Returns the searched query.
      *        \cond DEV
-     *            Returns the concatenation of all edges from the root node to the iterators current node.
+     *            Returns the concatenation of all edges from the root node to the cursors current node.
      *        \endcond
      * \returns Searched query.
      *

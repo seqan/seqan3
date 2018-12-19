@@ -98,7 +98,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     //                             " of errors for a specific error type.");
 
     // construct internal delegate for collecting hits for later filtering (if necessary)
-    std::vector<typename index_t::iterator_type> internal_hits;
+    std::vector<typename index_t::cursor_type> internal_hits;
     auto internal_delegate = [&internal_hits, &max_error] (auto const & it)
     {
         internal_hits.push_back(it);
@@ -149,8 +149,8 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
 
     // TODO: filter hits and only do it when necessary (depending on error types)
 
-    // output iterators or text_positions
-    if constexpr (cfg_t::template exists<search_cfg::output<detail::search_output_index_iterator>>())
+    // output cursors or text_positions
+    if constexpr (cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>())
     {
         return internal_hits;
     }
@@ -159,7 +159,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         std::vector<typename index_t::size_type> hits;
         if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
         {
-            // only one iterator is reported but it might contain more than one text position
+            // only one cursor is reported but it might contain more than one text position
             if (!internal_hits.empty())
             {
                 auto text_pos = internal_hits[0].lazy_locate();
@@ -168,9 +168,9 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         }
         else
         {
-            for (auto const & it : internal_hits)
+            for (auto const & cur : internal_hits)
             {
-                for (auto const & text_pos : it.locate())
+                for (auto const & text_pos : cur.locate())
                     hits.push_back(text_pos);
                 std::sort(hits.begin(), hits.end());
                 hits.erase(std::unique(hits.begin(), hits.end()), hits.end());
@@ -202,12 +202,12 @@ template <typename index_t, typename queries_t, typename configuration_t>
 inline auto search_all(index_t const & index, queries_t & queries, configuration_t const & cfg)
 {
     using cfg_t = remove_cvref_t<configuration_t>;
-    // return type: for each query: a vector of text_positions (or iterators)
-    // delegate params: text_position (or iterator). we will withhold all hits of one query anyway to filter
+    // return type: for each query: a vector of text_positions (or cursors)
+    // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
     //                  duplicates. more efficient to call delegate once with one vector instead of calling
     //                  delegate for each hit separately at once.
-    using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_iterator>>(),
-                                     typename index_t::iterator_type,
+    using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>(),
+                                     typename index_t::cursor_type,
                                      typename index_t::size_type>;
 
     if constexpr (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)

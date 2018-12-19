@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- * \brief Provides the seqan3::bi_fm_index_iterator for searching in the bidirectional seqan3::bi_fm_index.
+ * \brief Provides the seqan3::bi_fm_index_cursor for searching in the bidirectional seqan3::bi_fm_index.
  */
 
 #pragma once
@@ -58,29 +58,29 @@ namespace seqan3
  * \{
  */
 
-/*!\brief The SeqAn Bidirectional FM Index Iterator.
- * \implements seqan3::BiFmIndexIterator
+/*!\brief The SeqAn Bidirectional FM Index Cursor.
+ * \implements seqan3::BiFmIndexCursor
  * \tparam index_t The type of the underlying index; must model seqan3::BiFmIndex.
  * \details
  *
- * The iterator's interface provides searching a string both from left to right as well as from right to left in the
- * indexed text. It extends the interface of the unidirectional seqan3::fm_index_iterator.
- * All methods modifying the iterator (e.g. extending by a character with extend_right()) return a `bool` value whether
- * the operation was successful or not. In case of an unsuccessful operation the iterator remains unmodified, i.e. an
- * iterator can never be in an invalid state except default constructed iterators that are always invalid.
+ * The cursor's interface provides searching a string both from left to right as well as from right to left in the
+ * indexed text. It extends the interface of the unidirectional seqan3::fm_index_cursor.
+ * All methods modifying the cursor (e.g. extending by a character with extend_right()) return a `bool` value whether
+ * the operation was successful or not. In case of an unsuccessful operation the cursor remains unmodified, i.e. an
+ * cursor can never be in an invalid state except default constructed cursors that are always invalid.
  *
  * \cond DEV
  *     The behaviour is equivalent to a prefix and suffix tree with the space and time efficiency of the underlying pure
- *     FM indices. The iterator traverses the implicit prefix and suffix trees beginning at the root node. The implicit
+ *     FM indices. The cursor traverses the implicit prefix and suffix trees beginning at the root node. The implicit
  *     prefix and suffix trees are not compacted, i.e. going down an edge using extend_right(char) will increase the
  *     query by only one character.
  * \endcond
  *
- * The asymptotic running times for using the iterator depend on the SDSL index configuration. To determine the exact
+ * The asymptotic running times for using the cursor depend on the SDSL index configuration. To determine the exact
  * running times, you have to additionally look up the running times of the used traits (configuration).
  */
 template <typename index_t>
-class bi_fm_index_iterator
+class bi_fm_index_cursor
 {
 
 public:
@@ -95,13 +95,13 @@ public:
     using size_type = typename index_type::size_type;
     //!\}
 
-    /*!\name Iterator types
+    /*!\name Cursor types
      * \{
      */
-    //!\brief Type for the unidirectional iterator on the original text.
-    using fwd_iterator = fm_index_iterator<fm_index<typename index_type::text_type, typename index_type::index_traits::fm_index_traits>>;
-    //!\brief Type for the unidirectional iterator on the reversed text.
-    using rev_iterator = fm_index_iterator<fm_index<typename index_type::rev_text_type, typename index_type::index_traits::fm_index_traits>>;
+    //!\brief Type for the unidirectional cursor on the original text.
+    using fwd_cursor = fm_index_cursor<fm_index<typename index_type::text_type, typename index_type::index_traits::fm_index_traits>>;
+    //!\brief Type for the unidirectional cursor on the reversed text.
+    using rev_cursor = fm_index_cursor<fm_index<typename index_type::rev_text_type, typename index_type::index_traits::fm_index_traits>>;
     //!\}
 
 protected:
@@ -113,28 +113,28 @@ protected:
     //!\brief Type of the underlying FM index.
     index_type const * index;
 
-    /*!\name Suffix array intervals of forward and reverse iterators.
+    /*!\name Suffix array intervals of forward and reverse cursors.
      * \{
      */
-     //!\brief Left suffix array interval of the forward iterator (for extend_right).
+     //!\brief Left suffix array interval of the forward cursor (for extend_right).
     size_type fwd_lb;
-    //!\brief Right suffix array interval of the forward iterator (for extend_right).
+    //!\brief Right suffix array interval of the forward cursor (for extend_right).
     size_type fwd_rb;
-    //!\brief Left suffix array interval of the reverse iterator (for extend_left).
+    //!\brief Left suffix array interval of the reverse cursor (for extend_left).
     size_type rev_lb;
-    //!\brief Right suffix array interval of the reverse iterator (for extend_left).
+    //!\brief Right suffix array interval of the reverse cursor (for extend_left).
     size_type rev_rb;
     //\}
 
     /*!\name Information for on cycle_back() and cycle_front()
-     * \brief Only stored for the iterator that has been used last to go down an edge because once one iterator is
+     * \brief Only stored for the cursor that has been used last to go down an edge because once one cursor is
      *        touched, the others parent information becomes invalid and cannot be used for cycle_back() anymore.
      * \{
      */
 
-    // parent_* and _last_char only have to be stored for the (unidirectional) iterator that has been used last for
+    // parent_* and _last_char only have to be stored for the (unidirectional) cursor that has been used last for
     // extend_right() or cycle_back() resp. extend_left() or cycle_front(), (i.e. either fwd or rev). Thus there is no
-    // need to store it twice. Once the iterator is switched, the information becomes invalid anyway.
+    // need to store it twice. Once the cursor is switched, the information becomes invalid anyway.
 
     //!\brief Left suffix array interval of the parent node.
     size_type parent_lb;
@@ -145,14 +145,14 @@ protected:
     //\}
 
     //!\brief Depth of the node in the suffix tree, i.e. length of the searched query.
-    size_type depth; // equal for both iterators. only stored once
+    size_type depth; // equal for both cursors. only stored once
 
     // supports assertions to check whether cycle_back() resp. cycle_front() is called on the same direction as the last
     // extend_right([...]) resp. extend_left([...])
 #ifndef NDEBUG
-    //!\brief Stores the information which iterator has been used last for extend_*([...]) to allow for assert() in
+    //!\brief Stores the information which cursor has been used last for extend_*([...]) to allow for assert() in
     //        cycle_back() and cycle_front()
-    bool fwd_iter_last_used = false;
+    bool fwd_cursor_last_used = false;
 #endif
 
     //!\brief Helper function to recompute text positions since the indexed text is reversed.
@@ -262,23 +262,23 @@ public:
      */
     //!\brief Default constructor. Accessing member functions on a default constructed object is undefined behavior.
     //        Default construction is necessary to make this class semi-regular and e.g., to allow construction of
-    //        std::array of iterators.
-    bi_fm_index_iterator() noexcept = default;
-    bi_fm_index_iterator(bi_fm_index_iterator const &) noexcept = default;
-    bi_fm_index_iterator & operator=(bi_fm_index_iterator const &) noexcept = default;
-    bi_fm_index_iterator(bi_fm_index_iterator &&) noexcept = default;
-    bi_fm_index_iterator & operator=(bi_fm_index_iterator &&) noexcept = default;
+    //        std::array of cursors.
+    bi_fm_index_cursor() noexcept = default;
+    bi_fm_index_cursor(bi_fm_index_cursor const &) noexcept = default;
+    bi_fm_index_cursor & operator=(bi_fm_index_cursor const &) noexcept = default;
+    bi_fm_index_cursor(bi_fm_index_cursor &&) noexcept = default;
+    bi_fm_index_cursor & operator=(bi_fm_index_cursor &&) noexcept = default;
 
-    bi_fm_index_iterator(index_t const & _index) noexcept : index(&_index),
+    bi_fm_index_cursor(index_t const & _index) noexcept : index(&_index),
                                                            fwd_lb(0), fwd_rb(_index.size() - 1),
                                                            rev_lb(0), rev_rb(_index.size() - 1),
                                                            depth(0)
     {}
     //\}
 
-    /*!\brief Compares two iterators.
-     * \param[in] rhs Other iterator to compare it to.
-     * \returns `true` if both iterators are equal, `false` otherwise.
+    /*!\brief Compares two cursors.
+     * \param[in] rhs Other cursor to compare it to.
+     * \returns `true` if both cursors are equal, `false` otherwise.
      *
      * ### Complexity
      *
@@ -288,7 +288,7 @@ public:
      *
      * No-throw guarantee.
      */
-    bool operator==(bi_fm_index_iterator const & rhs) const noexcept
+    bool operator==(bi_fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
         // equal SA interval implies equal parent node information (or both are root nodes)
@@ -299,9 +299,9 @@ public:
         return std::tie(fwd_lb, fwd_rb, depth) == std::tie(rhs.fwd_lb, rhs.fwd_rb, rhs.depth);
     }
 
-    /*!\brief Compares two iterators.
-     * \param[in] rhs Other iterator to compare it to.
-     * \returns `true` if the iterators are not equal, `false` otherwise.
+    /*!\brief Compares two cursors.
+     * \param[in] rhs Other cursor to compare it to.
+     * \returns `true` if the cursors are not equal, `false` otherwise.
      *
      * ### Complexity
      *
@@ -311,7 +311,7 @@ public:
      *
      * No-throw guarantee.
      */
-    bool operator!=(bi_fm_index_iterator const & rhs) const noexcept
+    bool operator!=(bi_fm_index_cursor const & rhs) const noexcept
     {
         assert(index != nullptr);
 
@@ -323,7 +323,7 @@ public:
      *        \cond DEV
      *            Goes down the leftmost (i.e. lexicographically smallest) edge.
      *        \endcond
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
      *
@@ -338,7 +338,7 @@ public:
     bool extend_right() noexcept
     {
     #ifndef NDEBUG
-        fwd_iter_last_used = true;
+        fwd_cursor_last_used = true;
     #endif
 
         assert(index != nullptr);
@@ -369,9 +369,9 @@ public:
     /*!\brief Tries to extend the query by the smallest possible character to the left such that the query is found in
      *        the text.
      *        \cond DEV
-     *            Goes down the leftmost (i.e. lexicographically smallest) edge in the reverse iterator.
+     *            Goes down the leftmost (i.e. lexicographically smallest) edge in the reverse cursor.
      *        \endcond
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
      *
@@ -386,7 +386,7 @@ public:
     bool extend_left() noexcept
     {
     #ifndef NDEBUG
-        fwd_iter_last_used = false;
+        fwd_cursor_last_used = false;
     #endif
 
         assert(index != nullptr);
@@ -418,7 +418,7 @@ public:
      * \tparam char_t Type of the character needs to be convertible to the character type `char_type` of the indexed
      *                text.
      * \param[in] c Character to extend the query with to the right.
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
      *
@@ -435,7 +435,7 @@ public:
     bool extend_right(char_t const c) noexcept
     {
     #ifndef NDEBUG
-        fwd_iter_last_used = true;
+        fwd_cursor_last_used = true;
     #endif
 
         assert(index != nullptr);
@@ -460,7 +460,7 @@ public:
      * \tparam char_t Type of the character needs to be convertible to the character type `char_type` of the indexed
      *                text.
      * \param[in] c Character to extend the query with to the left.
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
      * ### Complexity
      *
@@ -477,7 +477,7 @@ public:
     bool extend_left(char_t const c) noexcept
     {
     #ifndef NDEBUG
-        fwd_iter_last_used = false;
+        fwd_cursor_last_used = false;
     #endif
 
         assert(index != nullptr);
@@ -501,9 +501,9 @@ public:
     /*!\brief Tries to extend the query by `seq` to the right.
      * \tparam seq_t The type of range of the sequence to search; must model std::ranges::RandomAccessRange.
      * \param[in] seq Sequence to extend the query with to the right.
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
-     * If extending fails in the middle of the sequence, all previous computations are rewound to restore the iterator's
+     * If extending fails in the middle of the sequence, all previous computations are rewound to restore the cursor's
      * state before calling this method.
      *
      * ### Complexity
@@ -526,7 +526,7 @@ public:
         auto last = seq.end();
 
     #ifndef NDEBUG
-        fwd_iter_last_used = (first != last); // only if seq was not empty
+        fwd_cursor_last_used = (first != last); // only if seq was not empty
     #endif
 
         size_type _fwd_lb = fwd_lb, _fwd_rb = fwd_rb, _rev_lb = rev_lb, _rev_rb = rev_rb;
@@ -560,14 +560,14 @@ public:
     /*!\brief Tries to extend the query by `seq` to the left.
      * \tparam seq_t The type of range of the sequence to search; must model std::ranges::RandomAccessRange.
      * \param[in] seq Sequence to extend the query with to the left (starting from right to left, see example).
-     * \returns `true` if the iterator could extend the query successfully.
+     * \returns `true` if the cursor could extend the query successfully.
      *
-     * If extending fails in the middle of the sequence, all previous computations are rewound to restore the iterator's
+     * If extending fails in the middle of the sequence, all previous computations are rewound to restore the cursor's
      * state before calling this method.
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_iterator.cpp extend_left_seq
+     * \snippet test/snippet/search/bi_fm_index_cursor.cpp extend_left_seq
      *
      * ### Complexity
      *
@@ -591,7 +591,7 @@ public:
 
     #ifndef NDEBUG
         if (first != last) // only if seq was not empty
-            fwd_iter_last_used = false;
+            fwd_cursor_last_used = false;
     #endif
 
         size_type _fwd_lb = fwd_lb, _fwd_rb = fwd_rb,
@@ -625,9 +625,9 @@ public:
     /*!\brief Tries to replace the rightmost character of the query by the next lexicographically larger character such
      *        that the query is found in the text.
      *        \cond DEV
-     *            Moves the iterator to the right sibling of the current suffix tree node. It would be equivalent to
+     *            Moves the cursor to the right sibling of the current suffix tree node. It would be equivalent to
      *            going up an edge and going down that edge with the smallest character that is larger than the
-     *            previous searched character. Calling cycle_*() on an iterator pointing to the root node is undefined
+     *            previous searched character. Calling cycle_*() on an cursor pointing to the root node is undefined
      *            behaviour!
      *        \endcond
      * \returns `true` if there exists a query in the text where the rightmost character of the query is
@@ -635,7 +635,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_iterator.cpp cycle
+     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
      *
      * ### Complexity
      *
@@ -652,7 +652,7 @@ public:
     {
     #ifndef NDEBUG
         // cycle_back() can only be used if the last extension was to the right.
-        assert(fwd_iter_last_used);
+        assert(fwd_cursor_last_used);
     #endif
 
         assert(index != nullptr && query_length() > 0);
@@ -678,9 +678,9 @@ public:
     /*!\brief Tries to replace the leftmost character of the query by the next lexicographically larger character such
      *        that the query is found in the text.
      *        \cond DEV
-     *            Moves the iterator to the right sibling of the current suffix tree node. It would be equivalent to
+     *            Moves the cursor to the right sibling of the current suffix tree node. It would be equivalent to
      *            going up an edge and going down that edge with the smallest character that is larger than the
-     *            previous searched character. Calling cycle_*() on an iterator pointing to the root node is undefined
+     *            previous searched character. Calling cycle_*() on an cursor pointing to the root node is undefined
      *            behaviour!
      *        \endcond
      * \returns `true` if there exists a query in the text where the leftmost character of the query is
@@ -688,7 +688,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_iterator.cpp cycle
+     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
      *
      * ### Complexity
      *
@@ -705,7 +705,7 @@ public:
     {
     #ifndef NDEBUG
         // cycle_front() can only be used if the last extension was to the left.
-        assert(!fwd_iter_last_used);
+        assert(!fwd_cursor_last_used);
     #endif
 
         assert(index != nullptr && query_length() > 0);
@@ -734,7 +734,7 @@ public:
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_iterator.cpp cycle
+     * \snippet test/snippet/search/bi_fm_index_cursor.cpp cycle
      *
      * ### Complexity
      *
@@ -753,7 +753,7 @@ public:
         return c;
     }
 
-    /*!\brief Returns the depth of the iterator node in the implicit suffix tree, i.e. the length of the sequence
+    /*!\brief Returns the depth of the cursor node in the implicit suffix tree, i.e. the length of the sequence
      *        searched.
      * \returns Length of searched sequence.
      *
@@ -778,16 +778,16 @@ public:
         return depth;
     }
 
-    /*!\brief Returns a unidirectional seqan3::fm_index_iterator on the original text. query() on the returned
-     *        unidirectional index iterator will be equal to query() on the bidirectional index iterator.
+    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the original text. query() on the returned
+     *        unidirectional index cursor will be equal to query() on the bidirectional index cursor.
      *        cycle_back() and last_char() will be undefined behavior if the last extension on the bidirectional
      *        FM index has been to the left. The behavior will be well-defined after the first extension to the right
      *        on the unidirectional index.
-     * \returns Returns a unidirectional seqan3::fm_index_iterator on the index of the original text.
+     * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the original text.
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_iterator.cpp to_fwd_iterator
+     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_fwd_cursor
      *
      * ### Complexity
      *
@@ -797,39 +797,39 @@ public:
      *
      * No-throw guarantee.
      */
-    fwd_iterator to_fwd_iterator() const noexcept
+    fwd_cursor to_fwd_cursor() const noexcept
     {
         assert(index != nullptr);
 
-        fwd_iterator it{index->fwd_fm};
-        it.parent_lb = parent_lb;
-        it.parent_rb = parent_rb;
-        it.node = {fwd_lb, fwd_rb, depth, _last_char};
+        fwd_cursor cur{index->fwd_fm};
+        cur.parent_lb = parent_lb;
+        cur.parent_rb = parent_rb;
+        cur.node = {fwd_lb, fwd_rb, depth, _last_char};
 
     #ifndef NDEBUG
-        if (!fwd_iter_last_used)
+        if (!fwd_cursor_last_used)
         {
             // invalidate parent interval
-            it.parent_lb = 1;
-            it.parent_rb = 0;
+            cur.parent_lb = 1;
+            cur.parent_rb = 0;
         }
     #endif
 
-        return it;
+        return cur;
     }
 
-    /*!\brief Returns a unidirectional seqan3::fm_index_iterator on the reversed text. query() on the returned
-     *        unidirectional index iterator will be equal to reversing query() on the bidirectional index iterator.
+    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the reversed text. query() on the returned
+     *        unidirectional index cursor will be equal to reversing query() on the bidirectional index cursor.
      *        Note that because of the text being reversed, extend_right() resp. cycle_back()
-     *        correspond to extend_left() resp. cycle_front() on the bidirectional index iterator.
+     *        correspond to extend_left() resp. cycle_front() on the bidirectional index cursor.
      *        Furthermore cycle_back() and last_char() will be undefined behavior if the last extension on the
      *        bidirectional FM index has been to the left. The behavior will be well-defined after the first
      *        extension to the right on the unidirectional index.
-     * \returns Returns a unidirectional seqan3::fm_index_iterator on the index of the reversed text.
+     * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the reversed text.
      *
      * Example:
      *
-     * \snippet test/snippet/search/bi_fm_index_iterator.cpp to_rev_iterator
+     * \snippet test/snippet/search/bi_fm_index_cursor.cpp to_rev_cursor
      *
      * ### Complexity
      *
@@ -839,30 +839,30 @@ public:
      *
      * No-throw guarantee.
      */
-    rev_iterator to_rev_iterator() const noexcept
+    rev_cursor to_rev_cursor() const noexcept
     {
         assert(index != nullptr);
 
-        rev_iterator it{index->rev_fm};
-        it.parent_lb = parent_lb;
-        it.parent_rb = parent_rb;
-        it.node = {rev_lb, rev_rb, depth, _last_char};
+        rev_cursor cur{index->rev_fm};
+        cur.parent_lb = parent_lb;
+        cur.parent_rb = parent_rb;
+        cur.node = {rev_lb, rev_rb, depth, _last_char};
 
     #ifndef NDEBUG
-        if (fwd_iter_last_used)
+        if (fwd_cursor_last_used)
         {
             // invalidate parent interval
-            it.parent_lb = 1;
-            it.parent_rb = 0;
+            cur.parent_lb = 1;
+            cur.parent_rb = 0;
         }
     #endif
 
-        return it;
+        return cur;
     }
 
     /*!\brief Returns the searched query.
      *        \cond DEV
-     *            Returns the concatenation of all edges from the root node to the iterators current node.
+     *            Returns the concatenation of all edges from the root node to the cursors current node.
      *        \endcond
      *
      * ### Complexity

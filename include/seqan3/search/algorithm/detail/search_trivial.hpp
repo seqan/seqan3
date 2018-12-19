@@ -56,11 +56,11 @@ namespace seqan3::detail
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
  * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
- * \tparam iterator_t    Must model seqan3::FmIndexIterator.
+ * \tparam cursor_t      Must model seqan3::FmIndexCursor.
  * \tparam query_t       Must be a std::ranges::InputRange over the index's alphabet.
- * \tparam delegate_t    Takes `index::iterator_type` as argument.
- * \param[in] it         Iterator of atring index built on the text that will be searched.
- * \param[in] query      Query sequence to be searched with the iterator.
+ * \tparam delegate_t    Takes `index::cursor_type` as argument.
+ * \param[in] cur        Cursor of atring index built on the text that will be searched.
+ * \param[in] query      Query sequence to be searched with the cursor.
  * \param[in] query_pos  Position in the query sequence indicating the prefix that has already been searched.
  * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
  * \param[in] delegate   Function that is called on every hit.
@@ -74,17 +74,17 @@ namespace seqan3::detail
  *
  * No-throw guarantee if invoking the delegate also guarantees no-throw.
  */
-template <bool abort_on_hit, typename query_t, typename iterator_t, typename delegate_t>
-inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::size_type const query_pos,
+template <bool abort_on_hit, typename query_t, typename cursor_t, typename delegate_t>
+inline bool search_trivial(cursor_t cur, query_t & query, typename cursor_t::size_type const query_pos,
                            search_param const error_left, delegate_t && delegate) noexcept(noexcept(delegate))
 {
     // Exact case (end of query sequence or no errors left)
     if (query_pos == query.size() || error_left.total == 0)
     {
         // If not at end of query sequence, try searching the remaining suffix without any errors.
-        if (query_pos == query.size() || it.extend_right(ranges::view::drop_exactly(query, query_pos)))
+        if (query_pos == query.size() || cur.extend_right(ranges::view::drop_exactly(query, query_pos)))
         {
-            delegate(it);
+            delegate(cur);
             return true;
         }
     }
@@ -100,24 +100,24 @@ inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::
 
             // always perform a recursive call. Abort recursion if and only if recursive call found a hit and
             // abort_on_hit is set to true.
-            if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate) && abort_on_hit)
+            if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left2, delegate) && abort_on_hit)
                 return true;
         }
 
         // Do not allow deletions at the beginning of the query sequence
-        if (((query_pos > 0 && error_left.deletion > 0) || error_left.substitution > 0) && it.extend_right())
+        if (((query_pos > 0 && error_left.deletion > 0) || error_left.substitution > 0) && cur.extend_right())
         {
             do
             {
                 // Match (when error_left.substitution > 0) and Mismatch
                 if (error_left.substitution > 0)
                 {
-                    bool delta = it.last_char() != query[query_pos];
+                    bool delta = cur.last_char() != query[query_pos];
                     search_param error_left2{error_left};
                     error_left2.total -= delta;
                     error_left2.substitution -= delta;
 
-                    if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left2, delegate) && abort_on_hit)
+                    if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left2, delegate) && abort_on_hit)
                         return true;
                 }
 
@@ -125,9 +125,9 @@ inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::
                 if (query_pos > 0)
                 {
                     // Match (when error_left.substitution == 0)
-                    if (error_left.substitution == 0 && it.last_char() == query[query_pos])
+                    if (error_left.substitution == 0 && cur.last_char() == query[query_pos])
                     {
-                        if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate) &&
+                        if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left, delegate) &&
                             abort_on_hit)
                         {
                             return true;
@@ -143,18 +143,18 @@ inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::
                         error_left2.total--;
                         error_left2.deletion--;
 
-                        if (search_trivial<abort_on_hit>(it, query, query_pos, error_left2, delegate) && abort_on_hit)
+                        if (search_trivial<abort_on_hit>(cur, query, query_pos, error_left2, delegate) && abort_on_hit)
                             return true;
                     }
                 }
-            } while (it.cycle_back());
+            } while (cur.cycle_back());
         }
         else
         {
             // Match (when error_left.substitution == 0)
-            if (it.extend_right(query[query_pos]))
+            if (cur.extend_right(query[query_pos]))
             {
-                if (search_trivial<abort_on_hit>(it, query, query_pos + 1, error_left, delegate) && abort_on_hit)
+                if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left, delegate) && abort_on_hit)
                     return true;
             }
         }
@@ -167,7 +167,7 @@ inline bool search_trivial(iterator_t it, query_t & query, typename iterator_t::
  * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
  * \tparam index_t       Must model seqan3::FmIndex.
  * \tparam query_t       Must be a std::ranges::InputRange over the index's alphabet.
- * \tparam delegate_t    Takes `index::iterator_type` as argument.
+ * \tparam delegate_t    Takes `index::cursor_type` as argument.
  * \param[in] index      String index built on the text that will be searched.
  * \param[in] query      Query sequence to be searched in the index.
  * \param[in] error_left Number of errors left for matching the remaining suffix of the query sequence.
