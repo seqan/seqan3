@@ -399,9 +399,9 @@ public:
     //!\}
 
     /*!\name Comparison operators (against alternatives)
-     * \brief Defines comparison against alternatives, e.g. `union_composition<dna5, gap>{gap::GAP} == 'C'_dna5`. Only
+     * \brief Defines comparison against alternatives, e.g. `union_composition<dna5, gap>{gap{}} == 'C'_dna5`. Only
      *        (in-)equality comparison is explicitly defined, because it would be difficult to argue about e.g.
-     *        `union_composition<dna5, gap>{gap::GAP} < 'C'_dna5`.
+     *        `union_composition<dna5, gap>{gap{}} < 'C'_dna5`.
      * \{
      */
     template <typename alternative_t>
@@ -423,7 +423,7 @@ public:
      * \brief Defines comparison against types that are comparable with alternatives, e.g.
      *        `union_composition<dna5, gap>{'C'_dna5} == 'C'_rna5`. Only (in-)equality comparison is explicitly defined,
      *        because it would be difficult to argue about e.g.
-     *        `union_composition<dna5, gap>{gap::GAP} < 'C'_rna5`.
+     *        `union_composition<dna5, gap>{gap{}} < 'C'_rna5`.
      * \{
      */
     template <typename indirect_alternative_type>

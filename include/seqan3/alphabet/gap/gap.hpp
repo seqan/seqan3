@@ -148,7 +148,4 @@ struct gap
     }
     //!\}
 };
-
-constexpr gap gap::GAP{};
-
 }

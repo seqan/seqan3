@@ -159,12 +159,12 @@ alignment_trace(database_t && database,
         {
             col = std::max<size_t>(col, 1) - 1;
             gapped_database.push_front(database[col]);
-            gapped_query.push_front(gap::GAP);
+            gapped_query.push_front(gap{});
         }
         else if ((dir & U) == U)
         {
             row = std::max<size_t>(row, 1) - 1;
-            gapped_database.push_front(gap::GAP);
+            gapped_database.push_front(gap{});
             gapped_query.push_front(query[row]);
         }
         else if ((dir & D) == D)

@@ -103,11 +103,11 @@ char compare_aligned_values(reference_char_type const reference_char,
                             query_char_type const query_char,
                             bool const extended_cigar)
 {
-    return (reference_char == gap::GAP)
-                ? (query_char == gap::GAP)
+    return (reference_char == gap{})
+                ? (query_char == gap{})
                     ? 'P'
                     : 'I'
-                : (query_char == gap::GAP)
+                : (query_char == gap{})
                     ? 'D'
                     : (extended_cigar)
                         ? (query_char == reference_char)

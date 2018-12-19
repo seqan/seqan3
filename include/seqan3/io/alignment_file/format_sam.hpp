@@ -331,7 +331,7 @@ public:
             // aligned sequences which is more efficient if possible.
             size_t off_end{seq.size() - offset};
             for (auto chr : get<1>(align))
-                if (chr == gap::GAP)
+                if (chr == gap{})
                     ++off_end;
             off_end -= (get<1>(align)).size();
 

@@ -8,7 +8,7 @@ int main()
 //! [general]
 gapped<dna4> gapped_letter{};
 gapped<dna4> converted_letter{'C'_dna4};
-gapped<dna4> gap_letter{gap::GAP};
+gapped<dna4> gap_letter{gap{}};
 // doesn't work:
 // gapped<dna4> my_letter{'A'};
 
