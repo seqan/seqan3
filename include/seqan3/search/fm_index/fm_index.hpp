@@ -49,8 +49,8 @@
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
-#include <seqan3/search/fm_index/detail/fm_index_iterator.hpp>
-#include <seqan3/search/fm_index/fm_index_iterator.hpp>
+#include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
+#include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/std/view/reverse.hpp>
 #include <seqan3/std/view/transform.hpp>
 #include <seqan3/std/ranges>
@@ -61,10 +61,10 @@ namespace seqan3
 //!\cond
 // forward declarations
 template <typename index_t>
-class fm_index_iterator;
+class fm_index_cursor;
 
 template <typename index_t>
-class bi_fm_index_iterator;
+class bi_fm_index_cursor;
 //!\endcond
 
 /*!\addtogroup submodule_fm_index
@@ -103,18 +103,18 @@ struct fm_index_default_traits
 };
 
 /*!\brief The SeqAn FM Index.
- * \implements seqan3::fm_index_concept
+ * \implements seqan3::FmIndex
  * \tparam text_t The type of the text to be indexed; must model std::ranges::ForwardRange.
  * \tparam fm_index_traits The traits determining the implementation of the underlying SDSL index;
-                           must model seqan3::fm_index_traits_concept.
+                           must model seqan3::FmIndexTraits.
  * \details
  *
  * The seqan3::fm_index is a fast and space-efficient string index to search strings and collections of strings.
  *
  * ### General information
  *
- * Here is a short example on how to build an index and search a pattern using an iterator. Please note that there is a
- * very powerful search module with a high-level interface \todo seqan3::search that encapsulates the use of iterators.
+ * Here is a short example on how to build an index and search a pattern using an cursor. Please note that there is a
+ * very powerful search module with a high-level interface \todo seqan3::search that encapsulates the use of cursors.
  *
  * \snippet test/snippet/search/fm_index.cpp all
  *
@@ -126,7 +126,7 @@ struct fm_index_default_traits
  *
  * \todo The underlying implementation of the FM Index (Rank data structure, sampling rates, etc.) can be specified ...
  */
-template <std::ranges::RandomAccessRange text_t, fm_index_traits_concept fm_index_traits = fm_index_default_traits>
+template <std::ranges::RandomAccessRange text_t, FmIndexTraits fm_index_traits = fm_index_default_traits>
 //!\cond
     requires alphabet_concept<innermost_value_type_t<text_t>> &&
              std::Same<underlying_rank_t<innermost_value_type_t<text_t>>, uint8_t>
@@ -162,18 +162,18 @@ public:
     using char_type = innermost_value_type_t<text_t>;
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename sdsl_index_type::size_type;
-    //!\brief The type of the (unidirectional) iterator.
-    using iterator_type = fm_index_iterator<fm_index<text_t, fm_index_traits>>;
+    //!\brief The type of the (unidirectional) cursor.
+    using cursor_type = fm_index_cursor<fm_index<text_t, fm_index_traits>>;
     //!\}
 
     template <typename bi_fm_index_t>
-    friend class bi_fm_index_iterator;
+    friend class bi_fm_index_cursor;
 
     template <typename fm_index_t>
-    friend class fm_index_iterator;
+    friend class fm_index_cursor;
 
     template <typename fm_index_t>
-    friend class detail::fm_index_iterator_node;
+    friend class detail::fm_index_cursor_node;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -299,11 +299,11 @@ public:
     //     return !(*this == rhs);
     // }
 
-    /*!\brief Returns a seqan3::fm_index_iterator on the index that can be used for searching.
+    /*!\brief Returns a seqan3::fm_index_cursor on the index that can be used for searching.
      *        \cond DEV
-     *            Iterator is pointing to the root node of the implicit suffix tree.
+     *            Cursor is pointing to the root node of the implicit suffix tree.
      *        \endcond
-     * \returns Returns a (unidirectional) seqan3::fm_index_iterator on the index.
+     * \returns Returns a (unidirectional) seqan3::fm_index_cursor on the index.
      *
      * ### Complexity
      *
@@ -313,7 +313,7 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator_type begin() const noexcept
+    cursor_type begin() const noexcept
     {
         return {*this};
     }

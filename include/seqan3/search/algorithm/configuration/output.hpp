@@ -52,8 +52,8 @@
 namespace seqan3::detail
 {
 
-//!\brief Type for the "index_iterator" value for the configuration element "output".
-struct search_output_index_iterator {};
+//!\brief Type for the "index_cursor" value for the configuration element "output".
+struct search_output_index_cursor {};
 //!\brief Type for the "text_position" value for the configuration element "output".
 struct search_output_text_position {};
 
@@ -63,7 +63,7 @@ namespace seqan3::search_cfg
 {
 
 //!\brief Configuration element to receive all hits within the error bounds.
-inline detail::search_output_index_iterator constexpr index_iterator;
+inline detail::search_output_index_cursor constexpr index_cursor;
 //!\brief Configuration element to receive all hits within the lowest number of errors.
 inline detail::search_output_text_position constexpr text_position;
 
@@ -73,7 +73,7 @@ inline detail::search_output_text_position constexpr text_position;
 template <typename output_t>
 //!\cond
     requires std::Same<remove_cvref_t<output_t>, detail::search_output_text_position> ||
-             std::Same<remove_cvref_t<output_t>, detail::search_output_index_iterator>
+             std::Same<remove_cvref_t<output_t>, detail::search_output_index_cursor>
 //!\endcond
 struct output : public pipeable_config_element<output<output_t>, output_t>
 {

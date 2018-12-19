@@ -152,10 +152,10 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 
 //!\cond
 // forward declaration
-template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss(iterator_t it, query_t & query,
-                      typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
+inline bool search_ss(cursor_t cur, query_t & query,
+                      typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                       uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
                       blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate);
 //!\endcond
@@ -163,12 +163,12 @@ inline bool search_ss(iterator_t it, query_t & query,
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
  *        Sub-function for searching the remaining part of the current block without any errors.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
- * \tparam iterator_t       Must model seqan3::bi_fm_index_iterator_concept.
- * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet of the iterator.
+ * \tparam cursor_t         Must model seqan3::BiFmIndexCursor.
+ * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet of the cursor.
  * \tparam search_t         Is of type `seqan3::detail::search<>` or `seqan3::detail::search_dyn<>`.
  * \tparam blocks_length_t  Is of type `std::array` or `std::vector` of unsigned integers.
- * \tparam delegate_t       Takes `iterator_t` as argument.
- * \param[in] it            Iterator of a string index built on the text that will be searched.
+ * \tparam delegate_t       Takes `cursor_t` as argument.
+ * \param[in] cur           Cursor of a string index built on the text that will be searched.
  * \param[in] query         Query sequence to be searched.
  * \param[in] lb            Left bound of the infix of `query` already searched (exclusive).
  * \param[in] rb            Right bound of the infix of `query` already searched (exclusive).
@@ -190,15 +190,15 @@ inline bool search_ss(iterator_t it, query_t & query,
  * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
  * strong exception guarantee; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_exact(iterator_t it, query_t & query,
-                            typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
+inline bool search_ss_exact(cursor_t cur, query_t & query,
+                            typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                             uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
                             search_t const & search, blocks_length_t const & blocks_length,
                             search_param const error_left, delegate_t && delegate)
 {
-    using size_type = typename iterator_t::size_type;
+    using size_type = typename cursor_t::size_type;
 
     uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
     bool const go_right2 = (block_id < search.blocks() - 1) && (search.pi[block_id + 1] > search.pi[block_id]);
@@ -208,10 +208,10 @@ inline bool search_ss_exact(iterator_t it, query_t & query,
         size_type const infix_lb = rb - 1; // inclusive
         size_type const infix_rb = lb + blocks_length[block_id] - 1; // exclusive
 
-        if (!it.extend_right(query | ranges::view::slice(infix_lb, infix_rb + 1)))
+        if (!cur.extend_right(query | ranges::view::slice(infix_lb, infix_rb + 1)))
             return false;
 
-        if (search_ss<abort_on_hit>(it, query, lb, infix_rb + 2, errors_spent, block_id2, go_right2, search,
+        if (search_ss<abort_on_hit>(cur, query, lb, infix_rb + 2, errors_spent, block_id2, go_right2, search,
                                     blocks_length, error_left, delegate) && abort_on_hit)
         {
             return true;
@@ -222,10 +222,10 @@ inline bool search_ss_exact(iterator_t it, query_t & query,
         size_type const infix_lb = rb - blocks_length[block_id] - 1; // inclusive
         size_type const infix_rb = lb - 1; // inclusive
 
-        if (!it.extend_left(query | ranges::view::slice(infix_lb, infix_rb + 1)))
+        if (!cur.extend_left(query | ranges::view::slice(infix_lb, infix_rb + 1)))
             return false;
 
-        if (search_ss<abort_on_hit>(it, query, infix_lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
+        if (search_ss<abort_on_hit>(cur, query, infix_lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
                                     error_left, delegate) && abort_on_hit)
         {
             return true;
@@ -239,10 +239,10 @@ inline bool search_ss_exact(iterator_t it, query_t & query,
  *
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_deletion(iterator_t it, query_t & query,
-                               typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
+inline bool search_ss_deletion(cursor_t cur, query_t & query,
+                               typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                                uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
                                search_t const & search, blocks_length_t const & blocks_length,
                                search_param const error_left, delegate_t && delegate)
@@ -256,7 +256,7 @@ inline bool search_ss_deletion(iterator_t it, query_t & query,
         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
         bool const go_right2 = search.pi[block_id2] > search.pi[block_id2 - 1];
 
-        if (search_ss<abort_on_hit>(it, query, lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
+        if (search_ss<abort_on_hit>(cur, query, lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
                                     error_left, delegate) && abort_on_hit)
         {
             return true;
@@ -269,19 +269,19 @@ inline bool search_ss_deletion(iterator_t it, query_t & query,
     if (!(search.pi[block_id] == 1 && !go_right) &&
         !(search.pi[block_id] == search.blocks() && go_right) &&
         max_error_left_in_block > 0 && error_left.total > 0 && error_left.deletion > 0 &&
-        ((go_right && it.extend_right()) || (!go_right && it.extend_left())))
+        ((go_right && cur.extend_right()) || (!go_right && cur.extend_left())))
     {
         search_param error_left2{error_left};
         error_left2.total--;
         error_left2.deletion--;
         do
         {
-            if (search_ss_deletion<abort_on_hit>(it, query, lb, rb, errors_spent + 1, block_id, go_right, search,
+            if (search_ss_deletion<abort_on_hit>(cur, query, lb, rb, errors_spent + 1, block_id, go_right, search,
                                                  blocks_length, error_left2, delegate) && abort_on_hit)
             {
                 return true;
             }
-        } while ((go_right && it.cycle_back()) || (!go_right && it.cycle_front()));
+        } while ((go_right && cur.cycle_back()) || (!go_right && cur.cycle_front()));
     }
     return false;
 }
@@ -293,17 +293,17 @@ inline bool search_ss_deletion(iterator_t it, query_t & query,
  *
  * \param[in] min_error_left_in_block Number of remaining errors that need to be spent in the current block.
  */
-template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_children(iterator_t it, query_t & query,
-                               typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
+inline bool search_ss_children(cursor_t cur, query_t & query,
+                               typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                                uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
                                uint8_t const min_error_left_in_block, search_t const & search,
                                blocks_length_t const & blocks_length, search_param const error_left,
                                delegate_t && delegate)
 {
-    using size_type = typename iterator_t::size_type;
-    if ((go_right && it.extend_right()) || (!go_right && it.extend_left()))
+    using size_type = typename cursor_t::size_type;
+    if ((go_right && cur.extend_right()) || (!go_right && cur.extend_left()))
     {
         size_type const chars_left = blocks_length[block_id] - (rb - lb - 1);
 
@@ -312,7 +312,7 @@ inline bool search_ss_children(iterator_t it, query_t & query,
 
         do
         {
-            bool const delta = it.last_char() != query[(go_right ? rb : lb) - 1];
+            bool const delta = cur.last_char() != query[(go_right ? rb : lb) - 1];
 
             // skip if there are more min errors left in the current block than characters in the block
             // i.e. chars_left - 1 < min_error_left_in_block - delta
@@ -334,7 +334,7 @@ inline bool search_ss_children(iterator_t it, query_t & query,
                     // Thus do not change the direction (go_right) yet.
                     if (error_left.deletion > 0)
                     {
-                        if (search_ss_deletion<abort_on_hit>(it, query, lb2, rb2, errors_spent + delta, block_id,
+                        if (search_ss_deletion<abort_on_hit>(cur, query, lb2, rb2, errors_spent + delta, block_id,
                                                              go_right, search, blocks_length, error_left2, delegate) &&
                             abort_on_hit)
                         {
@@ -346,7 +346,7 @@ inline bool search_ss_children(iterator_t it, query_t & query,
                         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
                         bool const go_right2 = search.pi[block_id2] > search.pi[block_id2 - 1];
 
-                        if (search_ss<abort_on_hit>(it, query, lb2, rb2, errors_spent + delta, block_id2, go_right2,
+                        if (search_ss<abort_on_hit>(cur, query, lb2, rb2, errors_spent + delta, block_id2, go_right2,
                                                     search, blocks_length, error_left2, delegate) &&
                             abort_on_hit)
                         {
@@ -356,7 +356,7 @@ inline bool search_ss_children(iterator_t it, query_t & query,
                 }
                 else
                 {
-                    if (search_ss<abort_on_hit>(it, query, lb2, rb2, errors_spent + delta, block_id, go_right, search,
+                    if (search_ss<abort_on_hit>(cur, query, lb2, rb2, errors_spent + delta, block_id, go_right, search,
                                                 blocks_length, error_left2, delegate) && abort_on_hit)
                     {
                         return true;
@@ -375,10 +375,10 @@ inline bool search_ss_children(iterator_t it, query_t & query,
                 search_param error_left3{error_left};
                 error_left3.total--;
                 error_left3.deletion--;
-                search_ss<abort_on_hit>(it, query, lb, rb, errors_spent + 1, block_id, go_right, search, blocks_length,
+                search_ss<abort_on_hit>(cur, query, lb, rb, errors_spent + 1, block_id, go_right, search, blocks_length,
                                         error_left3, delegate);
             }
-        } while ((go_right && it.cycle_back()) || (!go_right && it.cycle_front()));
+        } while ((go_right && cur.cycle_back()) || (!go_right && cur.cycle_front()));
     }
     return false;
 }
@@ -387,10 +387,10 @@ inline bool search_ss_children(iterator_t it, query_t & query,
  *
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit, typename iterator_t, typename query_t, typename search_t,
+template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t,
           typename blocks_length_t, typename delegate_t>
-inline bool search_ss(iterator_t it, query_t & query,
-                      typename iterator_t::size_type const lb, typename iterator_t::size_type const rb,
+inline bool search_ss(cursor_t cur, query_t & query,
+                      typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
                       uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
                       blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate)
 {
@@ -400,14 +400,14 @@ inline bool search_ss(iterator_t it, query_t & query,
     // Done.
     if (min_error_left_in_block == 0 && lb == 0 && rb == query.size() + 1)
     {
-        delegate(it);
+        delegate(cur);
         return true;
     }
     // Exact search in current block.
     else if (((max_error_left_in_block == 0) && (rb - lb - 1 != blocks_length[block_id])) ||
              (error_left.total == 0 && min_error_left_in_block == 0))
     {
-        if (search_ss_exact<abort_on_hit>(it, query, lb, rb, errors_spent, block_id, go_right, search, blocks_length,
+        if (search_ss_exact<abort_on_hit>(cur, query, lb, rb, errors_spent, block_id, go_right, search, blocks_length,
                                           error_left, delegate) && abort_on_hit)
         {
             return true;
@@ -420,7 +420,7 @@ inline bool search_ss(iterator_t it, query_t & query,
         // Insertion
         if (error_left.insertion > 0)
         {
-            using size_type = typename iterator_t::size_type;
+            using size_type = typename cursor_t::size_type;
 
             size_type const lb2 = lb - !go_right;
             size_type const rb2 = rb + go_right;
@@ -436,7 +436,7 @@ inline bool search_ss(iterator_t it, query_t & query,
                 // TODO: benchmark the improvement on preventing insertions followed by a deletion and vice versa. Does
                 // it pay off the additional complexity and documentation for the user? (Note that the user might only
                 // allow for insertions and deletion and not for mismatches).
-                if (search_ss_deletion<abort_on_hit>(it, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
+                if (search_ss_deletion<abort_on_hit>(cur, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
                                                      blocks_length, error_left2, delegate) && abort_on_hit)
                 {
                     return true;
@@ -444,14 +444,14 @@ inline bool search_ss(iterator_t it, query_t & query,
             }
             else
             {
-                if (search_ss<abort_on_hit>(it, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
+                if (search_ss<abort_on_hit>(cur, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
                                             blocks_length, error_left2, delegate) && abort_on_hit)
                 {
                     return true;
                 }
             }
         }
-        if (search_ss_children<abort_on_hit>(it, query, lb, rb, errors_spent, block_id, go_right,
+        if (search_ss_children<abort_on_hit>(cur, query, lb, rb, errors_spent, block_id, go_right,
                                              min_error_left_in_block, search, blocks_length, error_left, delegate) &&
             abort_on_hit)
         {
@@ -463,10 +463,10 @@ inline bool search_ss(iterator_t it, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
- * \tparam index_t          Must model seqan3::bi_fm_index_concept.
+ * \tparam index_t          Must model seqan3::BiFmIndex.
  * \tparam query_t          Must be a std::ranges::RandomAccessRange over the index's alphabet.
  * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
- * \tparam delegate_t       Takes `typename index_t::iterator_type` as argument.
+ * \tparam delegate_t       Takes `typename index_t::cursor_type` as argument.
  * \param[in] index         String index built on the text that will be searched.
  * \param[in] query         Query sequence to be searched in the index.
  * \param[in] error_left    Number of errors left for matching the remaining suffix of the query sequence.
@@ -495,7 +495,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
         auto const & [blocks_length, start_pos] = block_info[search_id];
 
         bool const hit = search_ss<abort_on_hit>(
-                             index.begin(),            // iterator on the index
+                             index.begin(),            // cursor on the index
                              query,                    // query to be searched
                              start_pos, start_pos + 1, // infix range already searched (open interval)
                                                        // the first character of `query` has the index 1 (not 0)
@@ -514,9 +514,9 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 
 /*!\brief Searches a query sequence in a bidirectional index.
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
- * \tparam index_t         Must model seqan3::bi_fm_index_concept.
+ * \tparam index_t         Must model seqan3::BiFmIndex.
  * \tparam query_t         Must be a std::ranges::RandomAccessRange over the index's alphabet.
- * \tparam delegate_t      Takes `typename index_t::iterator_type` as argument.
+ * \tparam delegate_t      Takes `typename index_t::cursor_type` as argument.
  * \param[in] index        String index built on the text that will be searched.
  * \param[in] query        Query sequence to be searched in the index.
  * \param[in] error_left   Number of errors left for matching the remaining suffix of the query sequence.
@@ -574,7 +574,7 @@ inline void search_algo_uni(index_t const & index, query_t & query, search_param
 template <bool abort_on_hit, typename index_t, typename query_t, typename delegate_t>
 inline void search_algo(index_t const & index, query_t & query, search_param const error_left, delegate_t && delegate)
 {
-    if constexpr (bi_fm_index_concept<index_t>)
+    if constexpr (BiFmIndex<index_t>)
         search_algo_bi<abort_on_hit>(index, query, error_left, delegate);
     else
         search_algo_uni<abort_on_hit>(index, query, error_left, delegate);

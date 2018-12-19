@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- * \brief Provides the concepts for seqan3::fm_index and seqan3::bi_fm_index and its traits and iterators.
+ * \brief Provides the concepts for seqan3::fm_index and seqan3::bi_fm_index and its traits and cursors.
  */
 
 #pragma once
@@ -55,15 +55,15 @@ namespace seqan3::detail
  */
 
  // ============================================================================
- //  sdsl_index_concept
+ //  SdslIndex
  // ============================================================================
 
-/*!\interface seqan3::detail::sdsl_index_concept <>
+/*!\interface seqan3::detail::SdslIndex <>
  * \brief Concept for SDSL FM indices (which are called compressed suffix arrays in the SDSL).
  */
 //!\cond
 template <typename t>
-concept sdsl_index_concept = requires (t sdsl_index)
+concept SdslIndex = requires (t sdsl_index)
 {
     typename t::size_type;
 
@@ -83,13 +83,13 @@ concept sdsl_index_concept = requires (t sdsl_index)
     };
 };
 //!\endcond
-/*!\name Requirements for seqan3::detail::sdsl_index_concept
- * \relates seqan3::detail::sdsl_index_concept
+/*!\name Requirements for seqan3::detail::SdslIndex
+ * \relates seqan3::detail::SdslIndex
  * \brief The SDSL index must support the following interface to work with SeqAn3 FM indices.
  * \{
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::detail::sdsl_index_concept
+ * \memberof seqan3::detail::SdslIndex
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me.
@@ -109,55 +109,55 @@ namespace seqan3
  */
 
 // ============================================================================
-//  fm_index_traits_concept
+//  FmIndexTraits
 // ============================================================================
 
-/*!\interface seqan3::fm_index_traits_concept <>
+/*!\interface seqan3::FmIndexTraits <>
  * \brief Concept for unidirectional FM Index traits.
  *
  * The traits object must contain an index type of the SDSL namespace.
  */
 //!\cond
 template <typename t>
-concept fm_index_traits_concept = requires (t v)
+concept FmIndexTraits = requires (t v)
 {
     typename t::sdsl_index_type;
 
-    requires detail::sdsl_index_concept<typename t::sdsl_index_type>;
+    requires detail::SdslIndex<typename t::sdsl_index_type>;
 };
 //!\endcond
-/*!\name Requirements for seqan3::fm_index_traits_concept
- * \relates seqan3::fm_index_traits_concept
+/*!\name Requirements for seqan3::FmIndexTraits
+ * \relates seqan3::FmIndexTraits
  * \brief The SDSL index must support the following interface to work with SeqAn3.
  * \{
  *
  * \typedef typename t::sdsl_index_type sdsl_index_type
- * \memberof seqan3::fm_index_traits_concept
- * \brief Declares the type of the underlying SDSL index. Must satisfy the seqan3::detail::sdsl_index_concept.
+ * \memberof seqan3::FmIndexTraits
+ * \brief Declares the type of the underlying SDSL index. Must satisfy the seqan3::detail::SdslIndex.
  *
  * \}
  */
 
 // ============================================================================
-//  fm_index_concept
+//  FmIndex
 // ============================================================================
 
-/*!\interface seqan3::fm_index_concept <>
+/*!\interface seqan3::FmIndex <>
  * \brief Concept for unidirectional FM indices.
  *
  * This concept defines the interface for unidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept fm_index_concept = std::Semiregular<t> && requires (t index)
+concept FmIndex = std::Semiregular<t> && requires (t index)
 {
     typename t::text_type;
     typename t::char_type;
     typename t::size_type;
-    typename t::iterator_type;
+    typename t::cursor_type;
 
     // NOTE: circular dependency
-    // requires fm_index_iterator_concept<typename t::iterator_type>;
+    // requires FmIndexCursor<typename t::cursor_type>;
 
     requires requires (t index, std::vector<typename t::char_type> const text)
     {
@@ -165,7 +165,7 @@ concept fm_index_concept = std::Semiregular<t> && requires (t index)
         { index.construct(text) } -> void;
     };
 
-    { index.begin() } -> typename t::iterator_type;
+    { index.begin() } -> typename t::cursor_type;
 
     { index.size()  } -> typename t::size_type;
     { index.empty() } -> bool;
@@ -174,26 +174,26 @@ concept fm_index_concept = std::Semiregular<t> && requires (t index)
     { index.store(std::string{}) } -> bool;
 };
 //!\endcond
-/*!\name Requirements for seqan3::fm_index_concept
- * \relates seqan3::fm_index_concept
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::fm_index_concept.
+/*!\name Requirements for seqan3::FmIndex
+ * \relates seqan3::FmIndex
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::FmIndex.
  * \{
  *
  * \typedef typename t::text_type text_type
- * \memberof seqan3::fm_index_concept
+ * \memberof seqan3::FmIndex
  * \brief Type of the indexed text.
  *
  * \typedef typename t::char_type char_type
- * \memberof seqan3::fm_index_concept
+ * \memberof seqan3::FmIndex
  * \brief Type of the underlying character of text_type.
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::fm_index_concept
+ * \memberof seqan3::FmIndex
  * \brief Type for representing the size of the indexed text.
  *
- * \typedef typename t::iterator_type iterator_type
- * \memberof seqan3::fm_index_concept
- * \brief Type of the unidirectional FM index iterator.
+ * \typedef typename t::cursor_type cursor_type
+ * \memberof seqan3::FmIndex
+ * \brief Type of the unidirectional FM index cursor.
  *
  * \todo Write me!
  *
@@ -201,54 +201,54 @@ concept fm_index_concept = std::Semiregular<t> && requires (t index)
  */
 
 // ============================================================================
-//  fm_index_iterator_concept
+//  FmIndexCursor
 // ============================================================================
 
-/*!\interface seqan3::fm_index_iterator_concept <>
- * \brief Concept for unidirectional FM index iterators.
+/*!\interface seqan3::FmIndexCursor <>
+ * \brief Concept for unidirectional FM index cursors.
  *
- * This concept defines the interface for iterators for unidirectional FM indices.
+ * This concept defines the interface for cursors for unidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept fm_index_iterator_concept = std::Semiregular<t> && requires (t it)
+concept FmIndexCursor = std::Semiregular<t> && requires (t cur)
 {
     typename t::index_type;
     typename t::size_type;
 
-    requires fm_index_concept<typename t::index_type>;
+    requires FmIndex<typename t::index_type>;
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
-    requires requires (t it, typename t::index_type::char_type const c,
-                             std::vector<typename t::index_type::char_type> const seq)
+    requires requires (t cur, typename t::index_type::char_type const c,
+                       std::vector<typename t::index_type::char_type> const seq)
     {
-        { it.extend_right()    } -> bool;
-        { it.extend_right(c)   } -> bool;
-        { it.extend_right(seq) } -> bool;
-        { it.cycle_back()      } -> bool;
+        { cur.extend_right()    } -> bool;
+        { cur.extend_right(c)   } -> bool;
+        { cur.extend_right(seq) } -> bool;
+        { cur.cycle_back()      } -> bool;
     };
 
-    { it.last_char()    } -> typename t::index_type::char_type;
-    { it.query_length() } -> typename t::size_type;
-    { it.query()        } -> auto;
-    { *it               } -> auto;
-    { it.count()        } -> typename t::size_type;
-    { it.locate()       } -> std::vector<typename t::size_type>;
-    { it.lazy_locate()  } -> auto;
+    { cur.last_char()    } -> typename t::index_type::char_type;
+    { cur.query_length() } -> typename t::size_type;
+    { cur.query()        } -> auto;
+    { *cur               } -> auto;
+    { cur.count()        } -> typename t::size_type;
+    { cur.locate()       } -> std::vector<typename t::size_type>;
+    { cur.lazy_locate()  } -> auto;
 };
 //!\endcond
-/*!\name Requirements for seqan3::fm_index_iterator_concept
- * \relates seqan3::fm_index_iterator_concept
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::fm_index_iterator_concept.
+/*!\name Requirements for seqan3::FmIndexCursor
+ * \relates seqan3::FmIndexCursor
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::FmIndexCursor.
  * \{
  *
  * \typedef typename t::index_type index_type
- * \memberof seqan3::fm_index_iterator_concept
+ * \memberof seqan3::FmIndexCursor
  * \brief Type of the underlying SeqAn FM index (not the underlying SDSL index).
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::fm_index_iterator_concept
+ * \memberof seqan3::FmIndexCursor
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me!
@@ -257,83 +257,83 @@ concept fm_index_iterator_concept = std::Semiregular<t> && requires (t it)
  */
 
 // ============================================================================
-//  bi_fm_index_traits_concept
+//  BiFmIndexTraits
 // ============================================================================
 
-/*!\interface seqan3::bi_fm_index_traits_concept <>
+/*!\interface seqan3::BiFmIndexTraits <>
  * \brief Concept for bidirectional FM Index traits.
  *
  * The traits object must contain two unidirectional FM Index traits.
  */
 //!\cond
 template <typename t>
-concept bi_fm_index_traits_concept = requires (t v)
+concept BiFmIndexTraits = requires (t v)
 {
-    requires fm_index_traits_concept<typename t::fm_index_traits>;
-    requires fm_index_traits_concept<typename t::rev_fm_index_traits>;
+    requires FmIndexTraits<typename t::fm_index_traits>;
+    requires FmIndexTraits<typename t::rev_fm_index_traits>;
 
     requires std::Same<typename t::fm_index_traits::sdsl_index_type::size_type,
                        typename t::rev_fm_index_traits::sdsl_index_type::size_type>;
 };
 //!\endcond
-/*!\name Requirements for seqan3::bi_fm_index_traits_concept
- * \relates seqan3::bi_fm_index_traits_concept
+/*!\name Requirements for seqan3::BiFmIndexTraits
+ * \relates seqan3::BiFmIndexTraits
  * \brief The bidirectional FM index traits must provide the following types:
  * \{
  *
  * \typedef typename t::fm_index_traits fm_index_traits
- * \memberof seqan3::bi_fm_index_traits_concept
+ * \memberof seqan3::BiFmIndexTraits
  * \brief Declares the type of the underlying unidirectional FM index on the original text.
- *        Must satisfy seqan3::fm_index_traits_concept.
+ *        Must satisfy seqan3::FmIndexTraits.
  *
  * \typedef typename t::rev_fm_index_traits rev_fm_index_traits
- * \memberof seqan3::bi_fm_index_traits_concept
+ * \memberof seqan3::BiFmIndexTraits
  * \brief Declares the type of the underlying unidirectional FM index on the reversed text.
- *        Must satisfy seqan3::fm_index_traits_concept.
+ *        Must satisfy seqan3::FmIndexTraits.
  *
  * \}
  */
 
 // ============================================================================
-//  bi_fm_index_concept
+//  BiFmIndex
 // ============================================================================
 
-/*!\interface seqan3::bi_fm_index_concept <>
+/*!\interface seqan3::BiFmIndex <>
  * \brief Concept for bidirectional FM indices.
  *
  * This concept defines the interface for bidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept bi_fm_index_concept = fm_index_concept<t> && requires (t index)
+concept BiFmIndex = FmIndex<t> && requires (t index)
 {
-    typename t::iterator_type; // already required by fm_index_concept but has a different documentation
-    typename t::fwd_iterator_type;
-    typename t::rev_iterator_type;
+    typename t::cursor_type; // already required by FmIndex but has a different documentation
+    typename t::fwd_cursor_type;
+    typename t::rev_cursor_type;
 
     // NOTE: circular dependency
-    // requires bi_fm_index_iterator_concept<typename t::iterator_type>;
+    // requires BiFmIndexCursor<typename t::cursor_type>;
 
-    { index.fwd_begin() } -> typename t::fwd_iterator_type;
-    { index.rev_begin() } -> typename t::rev_iterator_type;
+    { index.fwd_begin() } -> typename t::fwd_cursor_type;
+    { index.rev_begin() } -> typename t::rev_cursor_type;
 };
 //!\endcond
-/*!\name Requirements for seqan3::bi_fm_index_concept
- * \relates seqan3::bi_fm_index_concept
- * \brief You can expect these member types and member functions on all types that satisfy seqan3::bi_fm_index_concept.
+/*!\name Requirements for seqan3::BiFmIndex
+ * \relates seqan3::BiFmIndex
+ * \brief You can expect these member types and member functions on all types that satisfy seqan3::BiFmIndex.
  * \{
  *
- * \typedef typename t::iterator_type iterator_type
- * \memberof seqan3::bi_fm_index_concept
- * \brief Type of the bidirectional FM index iterator.
+ * \typedef typename t::cursor_type cursor_type
+ * \memberof seqan3::BiFmIndex
+ * \brief Type of the bidirectional FM index cursor.
  *
- * \typedef typename t::fwd_iterator_type fwd_iterator_type
- * \memberof seqan3::bi_fm_index_concept
- * \brief Type of the unidirectional FM index iterator based on the unidirectional FM index on the original text.
+ * \typedef typename t::fwd_cursor_type fwd_cursor_type
+ * \memberof seqan3::BiFmIndex
+ * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the original text.
  *
- * \typedef typename t::rev_iterator_type rev_iterator_type
- * \memberof seqan3::bi_fm_index_concept
- * \brief Type of the unidirectional FM index iterator based on the unidirectional FM index on the reversed text.
+ * \typedef typename t::rev_cursor_type rev_cursor_type
+ * \memberof seqan3::BiFmIndex
+ * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the reversed text.
  *
  * \todo Write me!
  *
@@ -341,45 +341,45 @@ concept bi_fm_index_concept = fm_index_concept<t> && requires (t index)
  */
 
 // ============================================================================
-//  bi_fm_index_iterator_concept
+//  BiFmIndexCursor
 // ============================================================================
 
-/*!\interface seqan3::bi_fm_index_iterator_concept <>
- * \brief Concept for bidirectional FM index iterators.
+/*!\interface seqan3::BiFmIndexCursor <>
+ * \brief Concept for bidirectional FM index cursors.
  *
- * This concept defines the interface for iterators for bidirectional FM indices.
+ * This concept defines the interface for cursors for bidirectional FM indices.
  */
 //!\cond
 template <typename t>
-concept bi_fm_index_iterator_concept = fm_index_iterator_concept<t> && requires (t it)
+concept BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
 {
-    requires bi_fm_index_concept<typename t::index_type>;
+    requires BiFmIndex<typename t::index_type>;
 
     requires requires (typename t::index_type const index) { { t(index) } };
 
-    requires requires (t it, typename t::index_type::char_type const c,
-                             std::vector<typename t::index_type::char_type> const seq)
+    requires requires (t cur, typename t::index_type::char_type const c,
+                       std::vector<typename t::index_type::char_type> const seq)
     {
-        { it.extend_left()    } -> bool;
-        { it.extend_left(c)   } -> bool;
-        { it.extend_left(seq) } -> bool;
-        { it.cycle_front()    } -> bool;
+        { cur.extend_left()    } -> bool;
+        { cur.extend_left(c)   } -> bool;
+        { cur.extend_left(seq) } -> bool;
+        { cur.cycle_front()    } -> bool;
     };
 
 };
 //!\endcond
-/*!\name Requirements for seqan3::bi_fm_index_iterator_concept
- * \relates seqan3::bi_fm_index_iterator_concept
+/*!\name Requirements for seqan3::BiFmIndexCursor
+ * \relates seqan3::BiFmIndexCursor
  * \brief You can expect these member types and member functions on all types that satisfy
- *        seqan3::fm_index_iterator_concept.
+ *        seqan3::FmIndexCursor.
  * \{
  *
  * \typedef typename t::index_type index_type
- * \memberof seqan3::bi_fm_index_iterator_concept
+ * \memberof seqan3::BiFmIndexCursor
  * \brief Type of the underlying SeqAn FM index (not the underlying SDSL index).
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::bi_fm_index_iterator_concept
+ * \memberof seqan3::BiFmIndexCursor
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me!

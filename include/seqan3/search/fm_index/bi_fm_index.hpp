@@ -44,7 +44,7 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/filesystem.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
-#include <seqan3/search/fm_index/bi_fm_index_iterator.hpp>
+#include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
 #include <seqan3/std/view/reverse.hpp>
 
 namespace seqan3
@@ -71,15 +71,15 @@ struct bi_fm_index_default_traits
 };
 
 /*!\brief The SeqAn Bidirectional FM Index
- * \implements seqan3::bi_fm_index_concept
+ * \implements seqan3::BiFmIndex
  * \tparam text_t The type of the text to be indexed; must model std::ranges::RandomAccessRange.
  * \tparam bi_fm_index_traits The traits determining the implementation of the underlying SDSL indices;
-                              must model seqan3::bi_fm_index_traits_concept.
+                              must model seqan3::BiFmIndexTraits.
  * \details
  *
  * \todo write me
  */
-template <std::ranges::RandomAccessRange text_t, bi_fm_index_traits_concept index_traits_t = bi_fm_index_default_traits>
+template <std::ranges::RandomAccessRange text_t, BiFmIndexTraits index_traits_t = bi_fm_index_default_traits>
 //!\cond
     requires alphabet_concept<innermost_value_type_t<text_t>> &&
              std::Same<underlying_rank_t<innermost_value_type_t<text_t>>, uint8_t>
@@ -127,7 +127,7 @@ protected:
     using rev_fm_index_type = fm_index<rev_text_type, typename index_traits_t::rev_fm_index_traits>;
     //!\}
 
-    //!\brief Access to a reversed view of the text. Needed when a unidirectional iterator on the reversed text is
+    //!\brief Access to a reversed view of the text. Needed when a unidirectional cursor on the reversed text is
     //        constructed from the bidirectional index.
     rev_text_type rev_text;
 
@@ -151,22 +151,22 @@ public:
     //!\brief The index traits object.
     using index_traits = index_traits_t;
 
-    /*!\name Iterator types
+    /*!\name Cursor types
      * \{
      */
-    //!\brief The type of the bidirectional iterator.
-    using iterator_type = bi_fm_index_iterator<bi_fm_index<text_t, index_traits_t>>;
-    //!\brief The type of the unidirectional iterator on the original text.
-    using fwd_iterator_type = fm_index_iterator<fm_index_type>;
-    //!\brief The type of the unidirectional iterator on the reversed text.
-    using rev_iterator_type = fm_index_iterator<rev_fm_index_type>;
+    //!\brief The type of the bidirectional cursor.
+    using cursor_type = bi_fm_index_cursor<bi_fm_index<text_t, index_traits_t>>;
+    //!\brief The type of the unidirectional cursor on the original text.
+    using fwd_cursor_type = fm_index_cursor<fm_index_type>;
+    //!\brief The type of the unidirectional cursor on the reversed text.
+    using rev_cursor_type = fm_index_cursor<rev_fm_index_type>;
     //!\}
 
     template <typename bi_fm_index_t>
-    friend class bi_fm_index_iterator;
+    friend class bi_fm_index_cursor;
 
     template <typename fm_index_t>
-    friend class fm_index_iterator;
+    friend class fm_index_cursor;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -226,7 +226,7 @@ public:
         fwd_fm.construct(text);
         rev_fm.construct(rev_text);
 
-        // does not work yet. segmentation fault in bi_fm_index_iterator snippet
+        // does not work yet. segmentation fault in bi_fm_index_cursor snippet
         // bi_fm_index tmp;
         // tmp.text = &text;
         // tmp.rev_text = view::reverse(*tmp.text);
@@ -287,11 +287,11 @@ public:
     //     return !(*this == rhs);
     // }
 
-    /*!\brief Returns a seqan3::bi_fm_index_iterator on the index that can be used for searching.
+    /*!\brief Returns a seqan3::bi_fm_index_cursor on the index that can be used for searching.
      *        \cond DEV
-     *            Iterator is pointing to the root node of the implicit affix tree.
+     *            Cursor is pointing to the root node of the implicit affix tree.
      *        \endcond
-     * \returns Returns a bidirectional seqan3::bi_fm_index_iterator on the index.
+     * \returns Returns a bidirectional seqan3::bi_fm_index_cursor on the index.
      *
      * ### Complexity
      *
@@ -301,14 +301,14 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator_type begin() const noexcept
+    cursor_type begin() const noexcept
     {
         return {*this};
     }
 
-    /*!\brief Returns a unidirectional seqan3::fm_index_iterator on the original text of the bidirectional index that
+    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the original text of the bidirectional index that
      *        can be used for searching.
-     * \returns Returns a unidirectional seqan3::fm_index_iterator on the index of the original text.
+     * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the original text.
      *
      * ### Complexity
      *
@@ -318,15 +318,15 @@ public:
      *
      * No-throw guarantee.
      */
-    fwd_iterator_type fwd_begin() const noexcept
+    fwd_cursor_type fwd_begin() const noexcept
     {
        return {fwd_fm};
     }
 
-    /*!\brief Returns a unidirectional seqan3::fm_index_iterator on the reversed text of the bidirectional index that
+    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the reversed text of the bidirectional index that
      *        can be used for searching. Note that because of the text being reversed, extend_right() resp. cycle_back()
-     *        correspond to extend_left() resp. cycle_front() on the bidirectional index iterator.
-     * \returns Returns a unidirectional seqan3::fm_index_iterator on the index of the reversed text.
+     *        correspond to extend_left() resp. cycle_front() on the bidirectional index cursor.
+     * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the reversed text.
      *
      * ### Complexity
      *
@@ -336,7 +336,7 @@ public:
      *
      * No-throw guarantee.
      */
-    rev_iterator_type rev_begin() const noexcept
+    rev_cursor_type rev_begin() const noexcept
     {
        return {rev_fm};
     }

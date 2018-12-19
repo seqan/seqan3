@@ -34,7 +34,7 @@
 
 /*!\file
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- * \brief Provides the internal representation of a node of the seqan3::fm_index_iterator.
+ * \brief Provides the internal representation of a node of the seqan3::fm_index_cursor.
  */
 
 #pragma once
@@ -50,12 +50,12 @@ namespace seqan3::detail
  * \{
  */
 
-/*!\brief Internal representation of the node of an FM index iterator.
+/*!\brief Internal representation of the node of an FM index cursor.
  * \ingroup fm_index
- * \tparam index_t The type of the underlying index; must satisfy seqan3::fm_index_concept.
+ * \tparam index_t The type of the underlying index; must satisfy seqan3::FmIndex.
  */
 template <typename index_t>
-struct fm_index_iterator_node
+struct fm_index_cursor_node
 {
     //!\brief Type for representing positions in the indexed text.
     using size_type = typename index_t::size_type;
@@ -73,8 +73,8 @@ struct fm_index_iterator_node
     //!\brief Label of the last edge moved down. Needed for cycle_back().
     sdsl_char_type last_char;
 
-    //!\brief Comparison of two iterator nodes.
-    bool operator==(fm_index_iterator_node const & rhs) const
+    //!\brief Comparison of two cursor nodes.
+    bool operator==(fm_index_cursor_node const & rhs) const
     {
         // NOTE: last_char is implementation specific for cycle_back().
         // lb, rb and depth already determine the node in the suffix tree.
@@ -82,19 +82,19 @@ struct fm_index_iterator_node
         return std::tie(lb, rb, depth) == std::tie(rhs.lb, rhs.rb, rhs.depth);
     }
 
-    //!\brief Comparison of two iterator nodes.
-    bool operator!=(fm_index_iterator_node const & rhs) const
+    //!\brief Comparison of two cursor nodes.
+    bool operator!=(fm_index_cursor_node const & rhs) const
     {
         return !(*this == rhs);
     }
 };
 
-// std::tuple get_suffix_array_range(fm_index_iterator<index_t> const & it)
+// std::tuple get_suffix_array_range(fm_index_cursor<index_t> const & it)
 // {
 //     return {node.lb, node.rb};
 // }
 //
-// std::tuple get_suffix_array_range(bi_fm_index_iterator<index_t> const & it)
+// std::tuple get_suffix_array_range(bi_fm_index_cursor<index_t> const & it)
 // {
 //     return {node.lb, node.rb};
 // }

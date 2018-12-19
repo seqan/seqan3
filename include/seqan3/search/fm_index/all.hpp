@@ -59,11 +59,11 @@
  * FM indices are more powerful for approximate string matching at the cost of a higher space consumption
  * \todo (between a factor of X and Y depending on the configuration).
  *
- * ## FM Index Iterators
+ * ## FM Index Cursors
  *
- * Index Iterators are lightweight objects, i.e. they are cheap to copy.
+ * Index Cursors are lightweight objects, i.e. they are cheap to copy.
  *
- * Note that although the SeqAn3 index iterators are called "iterators", they don't model any of the standard library
+ * Note that although the SeqAn3 index cursor, although having similar behaviour, don't model any of the standard library
  * iterator concepts, not even std::Iterator.
  *
  */

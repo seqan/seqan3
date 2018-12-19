@@ -52,7 +52,7 @@ namespace seqan3
  */
 
 /*!\brief Search a query or a range of queries in an index.
- * \tparam index_t    Must model seqan3::fm_index_concept.
+ * \tparam index_t    Must model seqan3::FmIndex.
  * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] index   String index to be searched.
@@ -73,7 +73,7 @@ namespace seqan3
  * Strong exception guarantee if iterating the query does not change its state and if invoking a possible delegate
  * specified in `cfg` also has a strong exception guarantee; basic exception guarantee otherwise.
  */
-template <fm_index_concept index_t, typename queries_t, typename configuration_t>
+template <FmIndex index_t, typename queries_t, typename configuration_t>
 //!\cond
     requires
         (std::ranges::RandomAccessRange<queries_t> ||
@@ -124,7 +124,7 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
 
 /*!\brief Search a query or a range of queries in an index.
  *        It will not allow for any errors and will output all matches as positions in the text.
- * \tparam index_t    Must model seqan3::fm_index_concept.
+ * \tparam index_t    Must model seqan3::FmIndex.
  * \tparam queries_t  Must be a std::ranges::RandomAccessRange over the index's alphabet.
  *                    a range of queries must additionally model std::ranges::ForwardRange.
  * \param[in] index   String index to be searched.
@@ -139,7 +139,7 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
  *
  * Strong exception guarantee if iterating the query does not change its state; basic exception guarantee otherwise.
  */
-template <fm_index_concept index_t, typename queries_t>
+template <FmIndex index_t, typename queries_t>
 //!\cond
     requires std::ranges::RandomAccessRange<queries_t> ||
              (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
