@@ -22,6 +22,8 @@
 #include <iterator>     // for iterators
 #include <type_traits>  // for remove_cv, etc
 
+#include <seqan3/core/platform.hpp>
+
 #if __has_include(<span>)
 #include <span>
 #else
