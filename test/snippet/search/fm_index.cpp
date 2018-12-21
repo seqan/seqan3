@@ -1,4 +1,3 @@
-//! [all]
 #include <vector>
 #include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/search/fm_index/all.hpp>
@@ -19,4 +18,3 @@ for (auto const & pos : cur.locate())                      // outputs: 8, 22
 debug_stream << '\n';
 return 0;
 }
-//! [all]

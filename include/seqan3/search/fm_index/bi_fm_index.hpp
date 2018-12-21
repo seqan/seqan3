@@ -16,6 +16,7 @@
 
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/filesystem.hpp>
+#include <seqan3/range/view/persist.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
 #include <seqan3/std/view/reverse.hpp>
@@ -67,13 +68,22 @@ protected:
 
 public:
 
+    static_assert(dimension_v<text_t> == 1 || dimension_v<text_t> == 2,
+                  "Only texts or collections of texts can be indexed.");
+
+    //!\brief Indicates whether index is built over a collection.
+    static bool constexpr is_collection = dimension_v<text_t> == 2;
+
     /*!\name Text types
      * \{
      */
     //!\brief The type of the forward indexed text.
     using text_type = text_t;
     //!\brief The type of the forward indexed text.
-    using rev_text_type = decltype(view::reverse(*text));
+    using rev_text_type = std::conditional_t<is_collection,
+                                             decltype(*text | view::deep{view::reverse} | view::deep{view::persist}
+                                                            | view::reverse),
+                                             decltype(*text | view::reverse)>;
     //!\}
 
 protected:
@@ -92,6 +102,9 @@ protected:
      *        in case not all possible characters occur in the indexed text.)
      */
     using sdsl_char_type = typename sdsl_index_type::alphabet_type::char_type;
+
+    //!\brief The type of the alphabet size of the underlying SDSL index.
+    using sdsl_sigma_type = typename sdsl_index_type::alphabet_type::sigma_type;
 
     //!\brief The type of the underlying FM index for the original text.
     using fm_index_type = fm_index<text_t, typename index_traits_t::fm_index_traits>;
@@ -191,11 +204,14 @@ public:
     void construct(text_t const & text)
     {
          // text must not be empty
-        if (text.begin() == text.end())
+        if (std::ranges::begin(text) == std::ranges::end(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
 
         this->text = &text;
-        rev_text = view::reverse(text);
+        if constexpr(is_collection)
+            rev_text = text | view::deep{view::reverse} | view::deep{view::persist} | view::reverse;
+        else
+            rev_text = view::reverse(text);
         fwd_fm.construct(text);
         rev_fm.construct(rev_text);
 
@@ -261,9 +277,9 @@ public:
     // }
 
     /*!\brief Returns a seqan3::bi_fm_index_cursor on the index that can be used for searching.
-     *        \cond DEV
+     *        \if DEV
      *            Cursor is pointing to the root node of the implicit affix tree.
-     *        \endcond
+     *        \endif
      * \returns Returns a bidirectional seqan3::bi_fm_index_cursor on the index.
      *
      * ### Complexity
@@ -299,6 +315,7 @@ public:
     /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the reversed text of the bidirectional index that
      *        can be used for searching. Note that because of the text being reversed, extend_right() resp. cycle_back()
      *        correspond to extend_left() resp. cycle_front() on the bidirectional index cursor.
+     * \attention For text collections the text IDs are also reversed.
      * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the reversed text.
      *
      * ### Complexity

@@ -132,7 +132,7 @@ concept FmIndex = std::Semiregular<t> && requires (t index)
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;
 
-    requires requires (t index, std::vector<typename t::char_type> const text)
+    requires requires (t index, std::vector<value_type_t<typename t::text_type>> const text)
     {
         { t(text) };
         { index.construct(text) } -> void;
@@ -207,7 +207,9 @@ concept FmIndexCursor = std::Semiregular<t> && requires (t cur)
     { cur.query()        } -> auto;
     { *cur               } -> auto;
     { cur.count()        } -> typename t::size_type;
-    { cur.locate()       } -> std::vector<typename t::size_type>;
+    { cur.locate()       } -> std::conditional_t<t::index_type::is_collection,
+                                                std::vector<std::pair<typename t::size_type, typename t::size_type>>,
+                                                std::vector<typename t::size_type>>;
     { cur.lazy_locate()  } -> auto;
 };
 //!\endcond
