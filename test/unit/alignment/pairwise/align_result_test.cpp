@@ -78,7 +78,7 @@ TYPED_TEST(align_result_test, type_specialisation)
 
 TYPED_TEST(align_result_test, constructor)
 {
-    EXPECT_FALSE((std::is_default_constructible_v<align_result<TypeParam>>));
+    EXPECT_TRUE((std::is_default_constructible_v<align_result<TypeParam>>));
     EXPECT_TRUE((std::is_copy_constructible_v<align_result<TypeParam>>));
     EXPECT_TRUE((std::is_move_constructible_v<align_result<TypeParam>>));
     EXPECT_TRUE((std::is_copy_assignable_v<align_result<TypeParam>>));

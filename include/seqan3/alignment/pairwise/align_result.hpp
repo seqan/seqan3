@@ -149,6 +149,8 @@ public:
      */
     align_result(align_result_traits value) : data(value) {};
 
+    //! \brief Default constructor.
+    align_result() = default;
     //! \brief Default copy constructor.
     align_result(align_result const &) = default;
     //! \brief Default move constructor.
