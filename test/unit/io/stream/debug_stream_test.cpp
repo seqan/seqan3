@@ -174,3 +174,32 @@ TEST(debug_stream, tuple)
     o.flush();
     EXPECT_EQ(o.str(), "(32,dummy)(32)(2,(3,2))");
 }
+
+TEST(debug_stream, variant)
+{
+    std::ostringstream o;
+    debug_stream_type my_stream{o};
+
+    std::variant<double, std::string> v;
+
+    v = double{3.3};
+    my_stream << v;
+    o.flush();
+    EXPECT_EQ(o.str(), "3.3");
+
+    v = std::string{"foobar"};
+    my_stream << v;
+    o.flush();
+    EXPECT_EQ(o.str(), "3.3foobar");
+
+    /*const*/
+    std::variant<double, std::string> const v2{double{4.2}};
+    my_stream << v2;
+    o.flush();
+    EXPECT_EQ(o.str(), "3.3foobar4.2");
+
+    /*rvalue*/
+    my_stream << std::variant<double, std::string>{std::string{"tmp"}};
+    o.flush();
+    EXPECT_EQ(o.str(), "3.3foobar4.2tmp");
+}
