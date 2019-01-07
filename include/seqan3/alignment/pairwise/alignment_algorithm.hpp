@@ -108,6 +108,7 @@ public:
             get<1>(res) = get<0>(*(std::ranges::end(last_col) - 1));
             return res;
         }
+        return res;
 
     }
 

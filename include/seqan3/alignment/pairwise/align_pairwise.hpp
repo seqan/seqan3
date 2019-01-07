@@ -76,12 +76,14 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
     static_assert(std::tuple_size_v<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>> == 2,
                   "Expects exactly two sequences for pairwise alignments.");
 
-    // Make also work with temporaries.
-    auto seq_view = std::forward<sequence_t>(seq) | view::persist;
+    // Wrap in persist to make the code also work with temporaries that are not views.
+    auto seq_view = view::persist(std::forward<sequence_t>(seq));
+    // Configure the alignment algorithm.
     auto kernel = detail::alignment_configurator::configure(seq_view, config);
-
-    using exec_type = detail::alignment_executor_two_way<decltype(seq_view), decltype(kernel)>;
-    return alignment_range<exec_type>{seq_view, kernel};
+    // Create a two-way executor for the alignment.
+    detail::alignment_executor_two_way exec{std::move(seq_view), kernel};
+    // Return the range over the alignments.
+    return alignment_range{std::move(exec)};
 }
 
 template <tuple_like_concept seq_t,
@@ -92,7 +94,6 @@ constexpr auto align_pairwise(seq_t && seq, alignment_config_t && config)
     static_assert(std::tuple_size_v<std::remove_reference_t<seq_t>> == 2,
                   "Expects exactly two sequences for pairwise alignments.");
 
-    //TODO: Check the problem here.
     return align_pairwise(ranges::view::single(std::forward<seq_t>(seq)) | ranges::view::bounded,
                           std::forward<alignment_config_t>(config));
 }
