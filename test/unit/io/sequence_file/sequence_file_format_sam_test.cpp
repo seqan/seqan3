@@ -181,20 +181,47 @@ TEST_F(read, options_truncate_ids)
 
 TEST_F(read, no_qual)
 {
-  std::string input
-  {
-      "@ Comment\n"
-      "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t*\n"
-      "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-      "TTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-      "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+   std::string input
+   {
+       "@ Comment\n"
+       "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t*\n"
+       "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+       "TTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
+       "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
     };
 
     expected_quals[0] = { ""_phred42 };
     do_read_test(input);
 }
 
-TEST_F(read, wrong_qual)
+TEST_F(read, ignore_qual)
+{
+    std::string input
+    {
+        "@ Comment\n"
+        "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t*\n"
+        "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+        "TTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
+        "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+    };
+
+    sequence_file_format_sam format;
+    sequence_file_input_options<dna5, false> options;
+    std::string id;
+    dna5_vector seq;
+    std::stringstream istream{input};
+
+    for (unsigned i = 0; i < 3; ++i)
+    {
+        id.clear();
+        seq.clear();
+        EXPECT_NO_THROW(( format.read(istream, options, seq, id, std::ignore) ));
+        EXPECT_EQ(seq,expected_seqs[i]);
+        EXPECT_EQ(id,expected_ids[i]);
+    }
+}
+
+TEST_F(read, qual_too_short)
 {
     std::string input
     {
@@ -212,7 +239,7 @@ TEST_F(read, wrong_qual)
     EXPECT_THROW((format.read(istream, options, seq, id, qual)), unexpected_end_of_input );
 }
 
-TEST_F(read, wrong_qual2)
+TEST_F(read, qual_too_long)
 {
     std::string input
     {
@@ -270,6 +297,49 @@ TEST_F(read, no_seq)
     {
       "@ Comment\n"
       "ID 1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\t*\t!##$%&'()*+,-./++-\tFI:i:1\n"
+    };
+
+    sequence_file_format_sam format;
+    sequence_file_input_options<dna5, false> options;
+    dna5_vector seq;
+    std::stringstream istream{input};
+
+    EXPECT_THROW((format.read(istream, options, seq, std::ignore, std::ignore)), parse_error );
+}
+
+TEST_F(read, ignore_seq)
+{
+    std::string input
+    {
+        "@ Comment\n"
+        "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\n"
+        "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+        "TT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
+        "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+    };
+
+    sequence_file_format_sam format;
+    sequence_file_input_options<dna5, false> options;
+    std::string id;
+    std::vector<phred42> qual;
+    std::stringstream istream{input};
+
+    for (unsigned i = 0; i < 3; ++i)
+    {
+        id.clear();
+        qual.clear();
+        EXPECT_NO_THROW(( format.read(istream, options, std::ignore, id, qual) ));
+        EXPECT_EQ(id,expected_ids[i]);
+        EXPECT_EQ(qual,expected_quals[i]);
+    }
+}
+
+TEST_F(read, wrong_seq)
+{
+    std::string input
+    {
+      "@ Comment\n"
+      "ID 1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTT?TTTTTTTTT\t!##$%&'()*+,-./++-\tFI:i:1\n"
     };
 
     sequence_file_format_sam format;
@@ -343,6 +413,38 @@ TEST_F(write, default_options)
     };
 
     do_write_test();
+
+    EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, no_id)
+{
+    std::string comp
+    {
+      "*\t0\t*\t0\t0\t*\t*\t0\t0\tACGT\t!##$\n"
+      "Test2\t0\t*\t0\t0\t*\t*\t0\t0\tAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGC"
+      "TGNAGGCTGN\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE\n"
+      "Test3\t0\t*\t0\t0\t*\t*\t0\t0\tGGAGTATAATATATATATATAT\t!!*+,-./+*+,-./+!!FF!!\n"
+    };
+
+    ids[0] = "";
+    do_write_test();
+
+    EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, no_seq)
+{
+    std::string comp
+    {
+      "TEST 1\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n"
+      "Test2\t0\t*\t0\t0\t*\t*\t0\t0\tAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGC"
+      "TGNAGGCTGN\t*\n"
+      "Test3\t0\t*\t0\t0\t*\t*\t0\t0\tGGAGTATAATATATATATATAT\t*\n"
+    };
+
+    seqs[0] = ""_dna5;
+    do_write_test_no_qual();
 
     EXPECT_EQ(ostream.str(), comp);
 }

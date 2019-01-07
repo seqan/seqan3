@@ -242,6 +242,9 @@ public:
              {
                   detail::consume(qual_view);
              }
+
+             if (!(is_tab(*begin(qual)) | is_cntrl(*begin(qual))))
+                throw unexpected_end_of_input{"Quality length surpasses sequence length."};
           }
 
           // consume the remaining characters (optional tags and newline)
