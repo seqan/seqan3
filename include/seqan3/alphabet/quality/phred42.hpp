@@ -107,4 +107,17 @@ public:
     //!\}
 };
 
+/*!\name Literals
+ * \{
+ */
+/*!\brief The seqan3::phred42 char literal.
+ * \relates seqan3::phred42
+ * \returns seqan3::phred42
+ */
+constexpr phred42 operator""_phred42(char const c) noexcept
+{
+    return phred42{}.assign_char(c);
+}
+//!\}
+
 } // namespace seqan3

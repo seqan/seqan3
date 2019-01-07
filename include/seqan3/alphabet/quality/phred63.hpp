@@ -105,4 +105,17 @@ public:
     //!\}
 };
 
+/*!\name Literals
+ * \{
+ */
+/*!\brief The seqan3::phred63 char literal.
+ * \relates seqan3::phred63
+ * \returns seqan3::phred63
+ */
+constexpr phred63 operator""_phred63(char const c) noexcept
+{
+    return phred63{}.assign_char(c);
+}
+//!\}
+
 } // namespace seqan3

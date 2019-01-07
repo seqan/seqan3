@@ -105,4 +105,17 @@ public:
     //!\}
 };
 
+/*!\name Literals
+ * \{
+ */
+/*!\brief The seqan3::phred68legacy char literal.
+ * \relates seqan3::phred68legacy
+ * \returns seqan3::phred68legacy
+ */
+constexpr phred68legacy operator""_phred68legacy(char const c) noexcept
+{
+    return phred68legacy{}.assign_char(c);
+}
+//!\}
+
 } // namespace seqan3
