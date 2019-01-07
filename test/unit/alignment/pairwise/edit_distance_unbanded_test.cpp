@@ -157,7 +157,7 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
     using traits_t = test_traits_type<word_type>;
     using algorithm_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_cfg_t, traits_t>;
 
-    auto result = std::tuple<>{};
+    auto result = align_result{detail::align_result_value_type{}};
     auto alignment = algorithm_t{database, query, align_cfg};
 
     // compute alignment
