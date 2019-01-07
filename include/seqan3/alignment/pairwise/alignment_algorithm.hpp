@@ -102,11 +102,13 @@ public:
         result_t res{};
 
         // Choose what needs to be computed.
-        if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>)
+        if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
         {
-            get<1>(res) = get<0>(*(std::ranges::end(this->active_column()) - 1));
+            auto const & col = this->active_column();
+            get<1>(res) = get<0>(*(std::ranges::end(col) - 1));
             return res;
         }
+        return res;
 
     }
 
