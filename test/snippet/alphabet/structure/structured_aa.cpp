@@ -6,7 +6,7 @@ using namespace seqan3;
 int main()
 {
 //! [general]
-structured_aa<aa27, dssp9> letter{aa27::W, dssp9::B};
+structured_aa<aa27, dssp9> letter{aa27::W, 'B'_dssp9};
 debug_stream << int(to_rank(letter)) << ' '
           << int(to_rank(get<0>(letter))) << ' '
           << int(to_rank(get<1>(letter))) << '\n';

@@ -79,7 +79,7 @@ namespace seqan3
  * X = unknown
  *
  * \par Usage
- * The following code example creates a dssp9 vector, modifies it, and prints the result to stdout.
+ * The following code example creates a dssp9 vector, modifies it, and prints the result to stderr.
  * \snippet test/snippet/alphabet/structure/dssp9.cpp general
  */
 class dssp9 : public alphabet_base<dssp9, 9>
@@ -101,22 +101,6 @@ public:
     constexpr dssp9 & operator=(dssp9 const &) = default;
     constexpr dssp9 & operator=(dssp9 &&) = default;
     ~dssp9() = default;
-    //!\}
-
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface. *Don't worry about the `internal_type`.*
-     */
-    //!\{
-    static const dssp9 H;
-    static const dssp9 B;
-    static const dssp9 E;
-    static const dssp9 G;
-    static const dssp9 I;
-    static const dssp9 T;
-    static const dssp9 S;
-    static const dssp9 C;
-    static const dssp9 X;
     //!\}
 
 protected:
@@ -150,36 +134,17 @@ protected:
     };
 };
 
-constexpr dssp9 dssp9::H = dssp9{}.assign_char('H');
-constexpr dssp9 dssp9::B = dssp9{}.assign_char('B');
-constexpr dssp9 dssp9::E = dssp9{}.assign_char('E');
-constexpr dssp9 dssp9::G = dssp9{}.assign_char('G');
-constexpr dssp9 dssp9::I = dssp9{}.assign_char('I');
-constexpr dssp9 dssp9::T = dssp9{}.assign_char('T');
-constexpr dssp9 dssp9::S = dssp9{}.assign_char('S');
-constexpr dssp9 dssp9::C = dssp9{}.assign_char('C');
-constexpr dssp9 dssp9::X = dssp9{}.assign_char('X');
-
-} // namespace seqan3
-
-// ------------------------------------------------------------------
-// literals
-// ------------------------------------------------------------------
-
-namespace seqan3
-{
-
-/*!\brief dssp9 literal
+/*!\name Literals
+ * \{
+ *
+ * \brief The seqan3::dssp9 string literal.
  * \relates seqan3::dssp9
+ * \param[in] str A pointer to the character string to assign.
+ * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::dssp9>
  *
- * You can use this string literal to easily assign to a vector of dssp9 characters:
- *
- *```.cpp
- *     std::vector<dssp9> foo{"EHHHHT"_dssp9};
- *     std::vector<dssp9> bar = "EHHHHT"_dssp9;
- *     auto bax = "EHHHHT"_dssp9;
- *```
+ * You can use this string literal to easily assign to a vector of seqan3::dssp9 characters:
+ * \snippet test/snippet/alphabet/structure/dssp9.cpp string_literal
  */
 inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 {
@@ -191,5 +156,21 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 
     return vec;
 }
+
+/*!
+ * \brief The seqan3::dssp9 char literal.
+ * \relates seqan3::dssp9
+ * \param[in] ch The character to represent as dssp.
+ * \returns seqan3::dssp9
+ *
+ * You can use this string literal to assign a seqan3::dssp9 character:
+ * \snippet test/snippet/alphabet/structure/dssp9.cpp char_literal
+ */
+constexpr dssp9 operator""_dssp9(char const ch) noexcept
+{
+    return dssp9{}.assign_char(ch);
+}
+
+//!\}
 
 } // namespace seqan3

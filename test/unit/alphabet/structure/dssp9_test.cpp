@@ -18,7 +18,6 @@ INSTANTIATE_TYPED_TEST_CASE_P(dssp9, alphabet_constexpr, dssp9);
 // assign_char functions
 TEST(dssp9, assign_char)
 {
-    using t = dssp9;
     std::vector<char> input
     {
         '.', '(', ')',
@@ -29,9 +28,10 @@ TEST(dssp9, assign_char)
 
     std::vector<dssp9> cmp
     {
-        t::X, t::X, t::X,
-        t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X, t::X,
-        t::H, t::B, t::E, t::G, t::I, t::T, t::S
+        'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
+        'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
+        'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
+        'H'_dssp9, 'B'_dssp9, 'E'_dssp9, 'G'_dssp9, 'I'_dssp9, 'T'_dssp9, 'S'_dssp9
     };
 
     for (auto [ ch, cm ] : ranges::view::zip(input, cmp))
@@ -41,24 +41,24 @@ TEST(dssp9, assign_char)
 // to_char functions
 TEST(dssp9, to_char)
 {
-    EXPECT_EQ(to_char(dssp9::H), 'H');
-    EXPECT_EQ(to_char(dssp9::B), 'B');
-    EXPECT_EQ(to_char(dssp9::E), 'E');
-    EXPECT_EQ(to_char(dssp9::G), 'G');
-    EXPECT_EQ(to_char(dssp9::I), 'I');
-    EXPECT_EQ(to_char(dssp9::T), 'T');
-    EXPECT_EQ(to_char(dssp9::S), 'S');
-    EXPECT_EQ(to_char(dssp9::C), 'C');
-    EXPECT_EQ(to_char(dssp9::X), 'X');
+    EXPECT_EQ(to_char('H'_dssp9), 'H');
+    EXPECT_EQ(to_char('B'_dssp9), 'B');
+    EXPECT_EQ(to_char('E'_dssp9), 'E');
+    EXPECT_EQ(to_char('G'_dssp9), 'G');
+    EXPECT_EQ(to_char('I'_dssp9), 'I');
+    EXPECT_EQ(to_char('T'_dssp9), 'T');
+    EXPECT_EQ(to_char('S'_dssp9), 'S');
+    EXPECT_EQ(to_char('C'_dssp9), 'C');
+    EXPECT_EQ(to_char('X'_dssp9), 'X');
 }
 
 TEST(dssp9, literals)
 {
 
     std::vector<dssp9> vec1;
-    vec1.resize(5, dssp9::H);
+    vec1.resize(5, 'H'_dssp9);
     EXPECT_EQ(vec1, "HHHHH"_dssp9);
 
-    std::vector<dssp9> vec2{dssp9::E, dssp9::H, dssp9::H, dssp9::H, dssp9::T, dssp9::G};
+    std::vector<dssp9> vec2{'E'_dssp9, 'H'_dssp9, 'H'_dssp9, 'H'_dssp9, 'T'_dssp9, 'G'_dssp9};
     EXPECT_EQ(vec2, "EHHHTG"_dssp9);
 }
