@@ -75,7 +75,7 @@ namespace seqan3
  *```
  *
  * \par Usage
- * The following code example creates a wuss vector, modifies it, and prints the result to stdout.
+ * The following code example creates a wuss vector, modifies it, and prints the result to stderr.
  * \snippet test/snippet/alphabet/structure/wuss.cpp general
  */
 template <uint8_t SIZE = 51>
@@ -109,52 +109,10 @@ public:
     ~wuss() = default;
     //!\}
 
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface. *Don't worry about the `internal_type`.*
-     * The pseudoknot letters are not accessible in this way, please use the string literals.
-     */
-    //!\{
-
-    //!\brief `.` not paired (insertion to known structure)
-    static this_type_deferred constexpr UNPAIRED  = this_type_deferred{}.assign_char('.');
-    //!\brief `:` not paired (external residue outside structure)
-    static this_type_deferred constexpr UNPAIRED1 = this_type_deferred{}.assign_char(':');
-    //!\brief `,` not paired (multifurcation loop)
-    static this_type_deferred constexpr UNPAIRED2 = this_type_deferred{}.assign_char(',');
-    //!\brief `-` not paired (bulge, interior loop)
-    static this_type_deferred constexpr UNPAIRED3 = this_type_deferred{}.assign_char('-');
-    //!\brief `_` not paired (hairpin loop)
-    static this_type_deferred constexpr UNPAIRED4 = this_type_deferred{}.assign_char('_');
-    //!\brief `~` not paired (due to local alignment)
-    static this_type_deferred constexpr UNPAIRED5 = this_type_deferred{}.assign_char('~');
-    //!\brief `;` not paired
-    static this_type_deferred constexpr UNPAIRED6 = this_type_deferred{}.assign_char(';');
-
-    //!\brief `<` bracket left (simple terminal stem)
-    static this_type_deferred constexpr PAIR_OPEN   = this_type_deferred{}.assign_char('<');
-    //!\brief `(` bracket left (internal helix enclosing `<>`)
-    static this_type_deferred constexpr PAIR_OPEN1  = this_type_deferred{}.assign_char('(');
-    //!\brief `[` bracket left (internal helix enclosing `()`)
-    static this_type_deferred constexpr PAIR_OPEN2  = this_type_deferred{}.assign_char('[');
-    //!\brief `{` bracket left (internal helix enclosing `[]`)
-    static this_type_deferred constexpr PAIR_OPEN3  = this_type_deferred{}.assign_char('{');
-
-    //!\brief `>` bracket right (simple terminal stem)
-    static this_type_deferred constexpr PAIR_CLOSE  = this_type_deferred{}.assign_char('>');
-    //!\brief `)` bracket right (internal helix enclosing `<>`)
-    static this_type_deferred constexpr PAIR_CLOSE1 = this_type_deferred{}.assign_char(')');
-    //!\brief `]` bracket right (internal helix enclosing `()`)
-    static this_type_deferred constexpr PAIR_CLOSE2 = this_type_deferred{}.assign_char(']');
-    //!\brief `}` bracket right (internal helix enclosing `[]`)
-    static this_type_deferred constexpr PAIR_CLOSE3 = this_type_deferred{}.assign_char('}');
-    // pseudoknots not accessible
-    //!\}
-
-    //!\name RNA structure properties
-    //!\{
-
-    /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
+    /*!\name RNA structure properties
+     * \{
+     *
+     *!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
      */
     constexpr bool is_pair_open() const noexcept
@@ -182,7 +140,7 @@ public:
      *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
      */
     // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
-    static constexpr uint8_t max_pseudoknot_depth{(value_size - 7) / 2};
+    static constexpr uint8_t max_pseudoknot_depth{uint8_t{(value_size - 7) / 2}};
 
     /*!\brief Get an identifier for a pseudoknotted interaction.
      * Opening and closing brackets of the same type have the same id.
@@ -231,7 +189,7 @@ protected:
 
             // initialize with unpaired (std::array::fill unfortunately not constexpr)
             for (rank_type & rnk : rank_table)
-                rnk = 6; // ::UNPAIRED6;
+                rnk = 6;
 
             // set alphabet values
             for (rank_type rnk = 0u; rnk < value_size; ++rnk)
@@ -251,22 +209,22 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
     int cnt_open = 0;
     int cnt_close = 0;
 
-    for (rank_type rnk = UNPAIRED.to_rank();
-            rnk <= UNPAIRED6.to_rank();
+    for (rank_type rnk = wuss<SIZE>{}.assign_char('.').to_rank();
+            rnk <= wuss<SIZE>{}.assign_char(';').to_rank();
             ++rnk)
     {
         interaction_table[rnk] = 0;
     }
 
-    for (rank_type rnk = PAIR_OPEN.to_rank();
-            rnk <= PAIR_OPEN3.to_rank();
+    for (rank_type rnk = wuss<SIZE>{}.assign_char('<').to_rank();
+            rnk <= wuss<SIZE>{}.assign_char('{').to_rank();
             ++rnk)
     {
         interaction_table[rnk] = --cnt_open;
     }
 
-    for (rank_type rnk = PAIR_CLOSE.to_rank();
-            rnk <= PAIR_CLOSE3.to_rank();
+    for (rank_type rnk = wuss<SIZE>{}.assign_char('>').to_rank();
+            rnk <= wuss<SIZE>{}.assign_char('}').to_rank();
             ++rnk)
     {
         interaction_table[rnk] = ++cnt_close;
@@ -284,26 +242,17 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
 //!\brief Alias for the default type wuss51.
 typedef wuss<51> wuss51;
 
-} // namespace seqan3
-
-// ------------------------------------------------------------------
-// literals
-// ------------------------------------------------------------------
-
-namespace seqan3
-{
-
-/*!\brief wuss literal
+/*!\name Literals
+ * \{
+ *
+ * \brief The seqan3::wuss51 string literal.
  * \relates seqan3::wuss
+ * \param[in] str A pointer to the character string to assign.
+ * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::wuss51>
  *
- * You can use this string literal to easily assign to a vector of wuss characters:
- *
- *```.cpp
- *     std::vector<wuss<>> foo{".<..>."_wuss51};
- *     std::vector<wuss<>> bar = ".<..>."_wuss51;
- *     auto bax = ".<..>."_wuss51;
- *```
+ * You can use this string literal to easily assign to a vector of seqan3::wuss51 characters:
+ * \snippet test/snippet/alphabet/structure/wuss.cpp string_literal
  */
 inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
 {
@@ -315,5 +264,22 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
 
     return vec;
 }
+
+/*!
+ * \brief The seqan3::wuss51 char literal.
+ * \relates seqan3::wuss
+ * \param[in] ch The character to represent as wuss.
+ * \returns seqan3::wuss51
+ *
+ * You can use this string literal to assign a seqan3::wuss51 character.
+ * For different wuss alphabet sizes the `assign_char` function must be used.
+ * \snippet test/snippet/alphabet/structure/wuss.cpp char_literal
+ */
+constexpr wuss51 operator""_wuss51(char const ch) noexcept
+{
+    return wuss51{}.assign_char(ch);
+}
+
+//!\}
 
 } // namespace seqan3

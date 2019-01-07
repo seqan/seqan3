@@ -15,12 +15,15 @@
 
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet, wuss51);
 INSTANTIATE_TYPED_TEST_CASE_P(wuss51, alphabet_constexpr, wuss51);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss15, alphabet, wuss<15>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss15, alphabet_constexpr, wuss<15>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet, wuss<67>);
+INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet_constexpr, wuss<67>);
 
 // assign_char functions
 TEST(wuss51, assign_char)
 {
 
-    using t = wuss51;
     std::vector<char> input
     {
         '.', '(', ')',
@@ -31,16 +34,10 @@ TEST(wuss51, assign_char)
 
     std::vector<wuss51> cmp
     {
-        t::UNPAIRED, t::PAIR_OPEN1, t::PAIR_CLOSE1,
-        t::UNPAIRED1, t::UNPAIRED2, t::UNPAIRED3, t::UNPAIRED4, t::UNPAIRED5, t::UNPAIRED6,
-        t::PAIR_OPEN, t::PAIR_CLOSE, t::PAIR_OPEN2, t::PAIR_CLOSE2, t::PAIR_OPEN3, t::PAIR_CLOSE3,
-        "H"_wuss51.front(),
-        "B"_wuss51.front(),
-        "E"_wuss51.front(),
-        "G"_wuss51.front(),
-        "I"_wuss51.front(),
-        "T"_wuss51.front(),
-        "S"_wuss51.front()
+        '.'_wuss51, '('_wuss51, ')'_wuss51,
+        ':'_wuss51, ','_wuss51, '-'_wuss51, '_'_wuss51, '~'_wuss51, ';'_wuss51,
+        '<'_wuss51, '>'_wuss51, '['_wuss51, ']'_wuss51, '{'_wuss51, '}'_wuss51,
+        'H'_wuss51, 'B'_wuss51, 'E'_wuss51, 'G'_wuss51, 'I'_wuss51, 'T'_wuss51, 'S'_wuss51
     };
 
     for (auto [ ch, cm ] : ranges::view::zip(input, cmp))
@@ -50,21 +47,21 @@ TEST(wuss51, assign_char)
 // to_char functions
 TEST(wuss51, to_char)
 {
-    EXPECT_EQ(to_char(wuss51::UNPAIRED), '.');
-    EXPECT_EQ(to_char(wuss51::UNPAIRED1), ':');
-    EXPECT_EQ(to_char(wuss51::UNPAIRED2), ',');
-    EXPECT_EQ(to_char(wuss51::UNPAIRED3), '-');
-    EXPECT_EQ(to_char(wuss51::UNPAIRED4), '_');
-    EXPECT_EQ(to_char(wuss51::UNPAIRED5), '~');
-    EXPECT_EQ(to_char(wuss51::UNPAIRED6), ';');
-    EXPECT_EQ(to_char(wuss51::PAIR_OPEN), '<');
-    EXPECT_EQ(to_char(wuss51::PAIR_CLOSE), '>');
-    EXPECT_EQ(to_char(wuss51::PAIR_OPEN1), '(');
-    EXPECT_EQ(to_char(wuss51::PAIR_CLOSE1), ')');
-    EXPECT_EQ(to_char(wuss51::PAIR_OPEN2), '[');
-    EXPECT_EQ(to_char(wuss51::PAIR_CLOSE2), ']');
-    EXPECT_EQ(to_char(wuss51::PAIR_OPEN3), '{');
-    EXPECT_EQ(to_char(wuss51::PAIR_CLOSE3), '}');
+    EXPECT_EQ(to_char('.'_wuss51), '.');
+    EXPECT_EQ(to_char(':'_wuss51), ':');
+    EXPECT_EQ(to_char(','_wuss51), ',');
+    EXPECT_EQ(to_char('-'_wuss51), '-');
+    EXPECT_EQ(to_char('_'_wuss51), '_');
+    EXPECT_EQ(to_char('~'_wuss51), '~');
+    EXPECT_EQ(to_char(';'_wuss51), ';');
+    EXPECT_EQ(to_char('<'_wuss51), '<');
+    EXPECT_EQ(to_char('>'_wuss51), '>');
+    EXPECT_EQ(to_char('('_wuss51), '(');
+    EXPECT_EQ(to_char(')'_wuss51), ')');
+    EXPECT_EQ(to_char('['_wuss51), '[');
+    EXPECT_EQ(to_char(']'_wuss51), ']');
+    EXPECT_EQ(to_char('{'_wuss51), '{');
+    EXPECT_EQ(to_char('}'_wuss51), '}');
 }
 
 // concepts
@@ -79,13 +76,11 @@ TEST(wuss51, concept_check)
 
 TEST(wuss51, literals)
 {
-
     std::vector<wuss51> vec1;
-    vec1.resize(5, wuss51::PAIR_OPEN);
+    vec1.resize(5, '<'_wuss51);
     EXPECT_EQ(vec1, "<<<<<"_wuss51);
 
-    std::vector<wuss51> vec2{wuss51::UNPAIRED, wuss51::PAIR_OPEN, wuss51::PAIR_OPEN,
-                             wuss51::PAIR_CLOSE, wuss51::PAIR_CLOSE, wuss51::UNPAIRED};
+    std::vector<wuss51> vec2{'.'_wuss51, '<'_wuss51, '<'_wuss51, '>'_wuss51, '>'_wuss51, '.'_wuss51};
     EXPECT_EQ(vec2, ".<<>>."_wuss51);
 }
 
