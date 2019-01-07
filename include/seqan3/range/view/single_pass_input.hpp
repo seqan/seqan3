@@ -82,7 +82,7 @@ private:
         //!\brief The underlying range.
         urng_t             urng;
         //!\brief The cached iterator of the underlying range.
-        urng_iterator_type cached_urng_iter{};
+        urng_iterator_type cached_urng_iter{seqan3::begin(urng)};
     };
 
     //!\brief Shared pointer of the data model.
@@ -119,7 +119,7 @@ public:
 
     //!\brief Construction from the underlying view.
     single_pass_input_view(urng_t && urng) :
-        view_state_ptr{new view_state{std::forward<urng_t>(urng), seqan3::begin(urng)}}
+        view_state_ptr{new view_state{std::forward<urng_t>(urng)}}
     {}
     //!\}
 
@@ -147,7 +147,9 @@ public:
     //!\brief Returns a sentinel.
     sentinel end()
     {
-        return {seqan3::end(view_state_ptr->urng)};
+        if (view_state_ptr != nullptr)
+            return {seqan3::end(view_state_ptr->urng)};
+        return sentinel{};
     }
 
     //!\brief Const version of end is deleted, since the underlying view_state must be mutable.
@@ -270,7 +272,9 @@ public:
     //!\brief Compares iterator with sentinel.
     constexpr bool operator==(sentinel_type const & s) const noexcept
     {
-        return cached() == s;
+        if (view_ptr->view_state_ptr != nullptr)
+            return cached() == s;
+        return true;
     }
 
     //!\copydoc operator==
