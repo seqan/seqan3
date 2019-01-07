@@ -124,19 +124,18 @@ public:
     }
     dot_bracket3 value_2()
     {
-        return dot_bracket3::PAIR_OPEN;
+        return '('_db3;
     }
     dot_bracket3 assignable_to_value_2()
     {
-        return dot_bracket3::PAIR_OPEN; // replace if assignable subtype becomes available
+        return '('_db3; // replace if assignable subtype becomes available
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */'A'_rna4, dot_bracket3::UNPAIRED,
-                               /*mid */'C'_rna4, dot_bracket3::PAIR_OPEN,
-                               /*high*/'T'_rna4, dot_bracket3::PAIR_CLOSE);
+        return std::make_tuple(/*low */'A'_rna4, '.'_db3,
+                               /*mid */'C'_rna4, '('_db3,
+                               /*high*/'T'_rna4, ')'_db3);
     }
-
 };
 
 template <>
