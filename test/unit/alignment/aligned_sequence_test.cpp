@@ -79,7 +79,7 @@ TYPED_TEST(aligned_sequence_test, insert_one_gap)
 
     auto it = insert_gap(aligned_seq, aligned_seq.begin() + 1);
 
-    EXPECT_EQ(*it, gap::GAP);
+    EXPECT_EQ(*it, gap{});
     EXPECT_EQ(aligned_seq, aligned_seq_expected);
 }
 
@@ -92,8 +92,8 @@ TYPED_TEST(aligned_sequence_test, insert_multiple_gaps)
 
     auto it = insert_gap(aligned_seq, aligned_seq.begin() + 1, 2);
 
-    EXPECT_EQ(*it, gap::GAP);
-    EXPECT_EQ(*++it, gap::GAP);
+    EXPECT_EQ(*it, gap{});
+    EXPECT_EQ(*++it, gap{});
     EXPECT_EQ(aligned_seq, aligned_seq_expected);
 }
 
@@ -118,7 +118,7 @@ TYPED_TEST(aligned_sequence_test, erase_one_gap)
 
     EXPECT_THROW(erase_gap(aligned_seq_fail, aligned_seq_fail.begin() + 2), gap_erase_failure);
 
-    EXPECT_EQ(aligned_seq_fail[1], gap::GAP); // nothing has changed
+    EXPECT_EQ(aligned_seq_fail[1], gap{}); // nothing has changed
 }
 
 TYPED_TEST(aligned_sequence_test, erase_multiple_gaps)
@@ -145,7 +145,7 @@ TYPED_TEST(aligned_sequence_test, erase_multiple_gaps)
     EXPECT_THROW(erase_gap(aligned_seq_fail, aligned_seq_fail.begin() + 1, aligned_seq_fail.begin() + 3),
                  gap_erase_failure);
 
-    EXPECT_EQ(aligned_seq_fail[1], gap::GAP); // nothing has changed
+    EXPECT_EQ(aligned_seq_fail[1], gap{}); // nothing has changed
 }
 
 TYPED_TEST(aligned_sequence_test, cigar_string)
@@ -262,8 +262,8 @@ TEST(aligned_sequence_stream, pair_with_gaps)
 
     std::pair<std::vector<gapped<rna4>>, std::vector<gapped<rna5>>> const alignment
     {
-        {'C'_rna4, 'U'_rna4, 'U'_rna4, 'C'_rna4, gap::GAP, 'G'_rna4},
-        {'C'_rna5, 'U'_rna5, gap::GAP, 'N'_rna5, 'G'_rna5, 'G'_rna5}
+        {'C'_rna4, 'U'_rna4, 'U'_rna4, 'C'_rna4, gap{}, 'G'_rna4},
+        {'C'_rna5, 'U'_rna5, gap{}, 'N'_rna5, 'G'_rna5, 'G'_rna5}
     };
 
     std::ostringstream oss;

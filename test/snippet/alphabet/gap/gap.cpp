@@ -7,7 +7,7 @@ using namespace seqan3;
 int main()
 {
 //! [general]
-gap my_gap = gap::GAP;
+gap my_gap = gap{};
 gap another_gap{};
 another_gap.assign_char('A'); // setting this does not change anything
 

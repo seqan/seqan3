@@ -190,7 +190,7 @@ template <sequence_container_concept seq_type>
 //!\endcond
 inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type::const_iterator pos_it)
 {
-    return seq.insert(pos_it, value_type_t<seq_type>{gap::GAP});
+    return seq.insert(pos_it, value_type_t<seq_type>{gap{}});
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence_concept::insert_gap for sequence containers.
@@ -217,7 +217,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq,
                                               typename seq_type::const_iterator pos_it,
                                               typename seq_type::size_type size)
 {
-    return seq.insert(pos_it, size, value_type_t<seq_type>{gap::GAP});
+    return seq.insert(pos_it, size, value_type_t<seq_type>{gap{}});
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for sequence containers.
@@ -244,7 +244,7 @@ template <sequence_container_concept seq_type>
 //!\endcond
 inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::const_iterator pos_it)
 {
-    if (*pos_it != gap::GAP) // [[unlikely]]
+    if (*pos_it != gap{}) // [[unlikely]]
         throw gap_erase_failure("The position to be erased does not contain a gap.");
 
     return seq.erase(pos_it);
@@ -278,7 +278,7 @@ inline typename seq_type::iterator erase_gap(seq_type & seq,
                                              typename seq_type::const_iterator last)
 {
     for (auto it = first; it != last; ++it)
-        if (*it != gap::GAP) // [[unlikely]]
+        if (*it != gap{}) // [[unlikely]]
             throw gap_erase_failure("The range to be erased contains at least one non-gap character.");
 
     return seq.erase(first, last);

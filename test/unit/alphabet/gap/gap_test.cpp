@@ -29,7 +29,7 @@ TEST(gap_test, default_initialization)
 {
     gap gap1;
     gap gap2{};
-    gap gap3 = gap::GAP;
+    gap gap3 = gap{};
 
     EXPECT_EQ(gap1.to_rank(), 0);
     EXPECT_EQ(gap2.to_rank(), 0);

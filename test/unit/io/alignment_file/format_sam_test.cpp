@@ -121,11 +121,11 @@ struct alignment_data : public ::testing::Test
 
     std::vector<std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>> alignments
     {
-        {ref_seq_gapped1, std::vector<gapped<dna5>>{'C'_dna5, gap::GAP, 'G'_dna5, 'T'_dna5}},
+        {ref_seq_gapped1, std::vector<gapped<dna5>>{'C'_dna5, gap{}, 'G'_dna5, 'T'_dna5}},
         {ref_seq_gapped2, std::vector<gapped<dna5>>{'G'_dna5, 'G'_dna5, 'G'_dna5, 'C'_dna5, 'T'_dna5,
-                                                    'G'_dna5, 'N'_dna5, gap::GAP, 'A'_dna5}},
-        {ref_seq_gapped3, std::vector<gapped<dna5>>{'G'_dna5, gap::GAP, 'A'_dna5, 'G'_dna5,
-                                                    'T'_dna5, 'A'_dna5, gap::GAP, 'T'_dna5}}
+                                                    'G'_dna5, 'N'_dna5, gap{}, 'A'_dna5}},
+        {ref_seq_gapped3, std::vector<gapped<dna5>>{'G'_dna5, gap{}, 'A'_dna5, 'G'_dna5,
+                                                    'T'_dna5, 'A'_dna5, gap{}, 'T'_dna5}}
     };
 
     std::vector<unsigned> flags
