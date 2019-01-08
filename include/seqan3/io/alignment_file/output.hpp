@@ -91,11 +91,11 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp filename_construction
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
  *
  * Writing to std::cout:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp format_construction
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
  *
  * Note that this is not the same as writing `alignment_file_output<>`
  * (with angle brackets). In the latter case they are explicitly set to their
@@ -153,7 +153,7 @@ namespace seqan3
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp write_range
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
  *
  * ### File I/O pipelines
  *
@@ -294,11 +294,11 @@ public:
      *
      * In most cases the template parameters are deduced completely automatically:
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp filename_construction
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
      *
      * Writing with custom selected fields:
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp format_construction
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
      */
     alignment_file_output(filesystem::path const & _file_name,
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
@@ -517,18 +517,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * alignment_file_output fout{"/tmp/my.sam"};
-     *
-     * std::vector<std::tuple<dna5_vector, std::string>> range
-     * {
-     *     { "ACGT"_dna5, "First" },
-     *     { "NATA"_dna5, "2nd" },
-     *     { "GATA"_dna5, "Third" }
-     * }; // a range of "records"
-     *
-     * fout = range; // will iterate over the records and write them
-     * ```
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp range
      */
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
@@ -562,7 +551,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp write_range
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
      *
      * This is especially useful in combination with file-based filters:
      *
@@ -615,7 +604,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp set_header
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp set_header
      *
      * \sa seqan3::alignment_file_header
      */
