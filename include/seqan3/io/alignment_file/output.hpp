@@ -91,11 +91,11 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp filename_construction
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
  *
  * Writing to std::cout:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp format_construction
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
  *
  * Note that this is not the same as writing `alignment_file_output<>`
  * (with angle brackets). In the latter case they are explicitly set to their
@@ -153,29 +153,20 @@ namespace seqan3
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp write_range
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
  *
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn3:
  *
- * \todo TODO introduce snippet once seqan3:;alignment_file_in is implemented.
+ * \todo Introduce snippet once seqan3::alignment_file_in is implemented.
  *
- * ```cpp
- * // file format conversion in one line:
- * alignment_file_output fout{"output.sam"} = sequence_file_in{"input.sam"};
- *
- * // or in pipe notation:
- * sequence_file_in{"input.sam"} | alignment_file_output{"output.sam"};
- * ```
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp input_range
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * ```cpp
- * sequence_file_in{"input.sam"} | ranges::view::take(5) // take only the first 5 records
- *                               | alignment_file_output{"output.sam"};
- * ```
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp io_pipeline
  *
  * ### Formats
  *
@@ -294,11 +285,11 @@ public:
      *
      * In most cases the template parameters are deduced completely automatically:
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp filename_construction
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
      *
      * Writing with custom selected fields:
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp format_construction
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
      */
     alignment_file_output(std::filesystem::path const & _file_name,
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
@@ -517,18 +508,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * alignment_file_output fout{"/tmp/my.sam"};
-     *
-     * std::vector<std::tuple<dna5_vector, std::string>> range
-     * {
-     *     { "ACGT"_dna5, "First" },
-     *     { "NATA"_dna5, "2nd" },
-     *     { "GATA"_dna5, "Third" }
-     * }; // a range of "records"
-     *
-     * fout = range; // will iterate over the records and write them
-     * ```
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp range
      */
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
@@ -562,7 +542,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp write_range
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
      *
      * This is especially useful in combination with file-based filters:
      *
@@ -615,7 +595,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp set_header
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp set_header
      *
      * \sa seqan3::alignment_file_header
      */
