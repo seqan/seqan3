@@ -42,10 +42,11 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
 #include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
-#include <seqan3/alignment/pairwise/alignment_selector.hpp>
+#include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 #include <seqan3/alignment/pairwise/execution/all.hpp>
 #include <seqan3/alignment/pairwise/policy/all.hpp>
+#include <seqan3/alignment/pairwise/select_result_type.hpp>
 
 /*!\defgroup pairwise_alignment Pairwise
  * \ingroup alignment
