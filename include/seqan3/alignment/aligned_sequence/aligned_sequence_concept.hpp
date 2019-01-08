@@ -374,4 +374,76 @@ inline debug_stream_type & operator<<(debug_stream_type & stream, tuple_t const 
     return stream;
 }
 
+/*!\brief An implementation of seqan3::aligned_sequence_concept::insert_gap for gap decorators.
+ * \tparam  gap_decorator_type  Type of the gap decorator to modify; must model
+ *                              seqan3::aligned_sequence_concept.
+ * \param[in,out] gd       The gap decorator to modify.
+ * \param[in]     it       The iterator pointing to the position where to start inserting gaps.
+ * \param[in]     size     The number of gaps to insert as an optional argument, default is 1.
+ *
+ * \relates seqan3::aligned_sequence_concept
+ *
+ * \details
+ *
+ * This function delegates to the member function `insert(iterator, size)` of
+ * the gap decorator.
+ */
+template<typename gap_decorator_type>
+//!\cond
+    requires requires (gap_decorator_type v) { v.insert_gap(v.begin()); v.insert_gap(v.begin(), 1); }
+//!\endcond
+typename gap_decorator_type::iterator insert_gap(gap_decorator_type & gd, typename gap_decorator_type::iterator const it, typename gap_decorator_type::size_type const size = 1)
+{
+    return gd.insert_gap(it, size);
+}
+
+/*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for gap decorators.
+ * \tparam  gap_decorator_type  Type of the gap decorator to modify; must model
+ *                              seqan3::aligned_sequence_concept.
+ * \param[in,out] gd    The gap decorator to modify.
+ * \param[in] it        The iterator pointing to the position where to erase one gaps.
+ *
+ * \relates seqan3::aligned_sequence_concept
+ *
+ * \details
+ *
+ * This function delegates to the member function `erase(iterator, iterator)` of
+ * the gap decorator. Before delegating, the function checks if the range
+ * [\p first, \p last) contains only seqan3::gap symbols.
+ */
+template<typename gap_decorator_type>
+//!\cond
+    requires requires (gap_decorator_type v) { v.erase_gap(v.begin()); }
+//!\endcond
+typename gap_decorator_type::iterator erase_gap(gap_decorator_type & gd, typename gap_decorator_type::iterator const it)
+{
+    return gd.erase_gap(it);
+}
+
+/*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for gap decorators.
+ * \tparam  gap_decorator_type  Type of the gap decorator to modify; must model
+ *                              seqan3::aligned_sequence_concept.
+ * \param[in,out] gd    The gap decorator to modify.
+ * \param[in] first     The iterator pointing to the position where to start inserting gaps.
+ * \param[in] last      The iterator pointing to the position where to stop erasing gaps.
+ *
+ * \throws seqan3::gap_erase_failure if one of the characters in [\p first, \p last) no seqan3::gap.
+ *
+ * \relates seqan3::aligned_sequence_concept
+ *
+ * \details
+ *
+ * This function delegates to the member function `erase(iterator, iterator)` of
+ * the gap decorator. Before delegating, the function checks if the range
+ * [\p first, \p last) contains only seqan3::gap symbols.
+ */
+template<typename gap_decorator_type>
+//!\cond
+    requires requires (gap_decorator_type v) { v.erase_gap(v.begin(), v.end()); }
+//!\endcond
+typename gap_decorator_type::iterator erase_gap(gap_decorator_type & gd, typename gap_decorator_type::iterator const first, typename gap_decorator_type::iterator const last)
+{
+    return gd.erase_gap(first, last);
+}
+
 } // namespace seqan
