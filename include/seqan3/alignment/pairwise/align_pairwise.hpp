@@ -25,7 +25,7 @@
 
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
-#include <seqan3/alignment/pairwise/alignment_selector.hpp>
+#include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/execution/all.hpp>
 
 #include <seqan3/alphabet/gap/gapped.hpp>
@@ -46,9 +46,6 @@ template <std::ranges::InputRange sequence_t, typename alignment_config_t>
              tuple_like_concept<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>>
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
-    static_assert(std::tuple_size_v<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>> == 2,
-                  "Expects exactly two sequences for pairwise alignments.");
-
     // Wrap in persist to make the code also work with temporaries that are not views.
     auto seq_view = view::persist(std::forward<sequence_t>(seq));
     // Configure the alignment algorithm.
