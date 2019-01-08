@@ -37,13 +37,13 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_output_format_concept = requires (t                         & v,
-                                                          std::ofstream             & f,
-                                                          sequence_file_output_options & options,
-                                                          dna5_vector               & seq,
-                                                          std::string               & id,
-                                                          std::vector<phred42>   & qual,
-                                                          std::vector<dna5q>        & seq_qual)
+SEQAN3_CONCEPT sequence_file_output_format_concept = requires (t                            & v,
+                                                               std::ofstream                & f,
+                                                               sequence_file_output_options & options,
+                                                               dna5_vector                  & seq,
+                                                               std::string                  & id,
+                                                               std::vector<phred42>         & qual,
+                                                               std::vector<dna5q>           & seq_qual)
 {
     t::file_extensions;
 
