@@ -93,16 +93,7 @@ enum class field
  *
  * ### Example
  *
- * ```cpp
- * // specify custom field combination/order to file:
- * sequence_file_input fin{"/tmp/my.fasta", fields<field::ID, field::SEQ>{}};
- *
- * auto record = fin.front(); // get current record, in this case the first
- *
- * // record is tuple-like type, but allows access via field identifiers:
- * auto & id = get<field::ID>(record);
- * auto & seq = get<field::SEQ>(record);
- * ```
+ * \snippet test/snippet/io/record.cpp usage_1
  *
  */
 template <field ...fs>
@@ -163,19 +154,7 @@ struct fields
  *
  * This is how it works:
  *
- * ```cpp
- *
- * using types        = type_list<dna4_vector, std::string, std::vector<phred42>>;
- * using types_as_ids =    fields<field::SEQ,  field::ID,   field::QUAL>;
- *
- * using record_type  = record<types, types_as_ids>;
- * // record_type now mimics std::tuple<std::string, dna4_vector, std::vector<phred42>>, the order also depends on selected_ids
- *
- * record_type my_record;
- * get<1>(my_record) = "the most important sequence in the database";   // access via index
- * get<field::SEQ>(my_record) = "ACGT"_dna4;                            // access via seqan3::field
- * get<std::string>(my_record) = "the least important sequence in the database";   // access via type
- * ```
+ * \snippet test/snippet/io/record.cpp usage_2
  */
 template <typename field_types, typename field_ids>
 struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
