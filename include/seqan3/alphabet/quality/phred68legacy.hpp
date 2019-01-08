@@ -116,6 +116,27 @@ constexpr phred68legacy operator""_phred68legacy(char const c) noexcept
 {
     return phred68legacy{}.assign_char(c);
 }
+
+/*!\brief The seqan3::phred68legacy string literal.
+ * \param[in] s A pointer to the character sequence to assign from.
+ * \param[in] n The length of the character sequence to assign from.
+ * \relates seqan3::phred68legacy
+ * \returns seqan3::std::vector<seqan3::phred68legacy>
+ *
+ * You can use this string literal to easily assign to std::vector<seqan3::phred68legacy>:
+ *
+ * \include test/snippet/alphabet/quality/phred68legacy_literal.cpp
+ */
+inline std::vector<phred68legacy> operator""_phred68legacy(char const * s, std::size_t n)
+{
+    std::vector<phred68legacy> r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
 //!\}
 
 } // namespace seqan3

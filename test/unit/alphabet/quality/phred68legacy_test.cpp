@@ -90,3 +90,14 @@ TEST(phred68legacy, char_literal)
     EXPECT_EQ(to_char('}'_phred68legacy), '}');
     EXPECT_EQ(to_char('~'_phred68legacy), '~');
 }
+
+TEST(phred68legacy, string_literal)
+{
+    std::vector<phred68legacy> v;
+    v.resize(5, '#'_phred68legacy);
+    EXPECT_EQ(v, "#####"_phred68legacy);
+
+    std::vector<phred68legacy> w{'#'_phred68legacy, '#'_phred68legacy, '!'_phred68legacy, '!'_phred68legacy,
+                                 '!'_phred68legacy, '#'_phred68legacy};
+    EXPECT_EQ(w, "##!!!#"_phred68legacy);
+}
