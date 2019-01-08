@@ -41,6 +41,7 @@
 
 #include <ios>
 #include <ostream>
+#include <variant>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
@@ -314,7 +315,7 @@ void print_tuple(debug_stream_type & s, tuple_t && t, std::index_sequence<I...> 
 
 namespace seqan3
 {
-    
+
 /*!\brief All tuples can be printed by printing their elements separately.
  * \tparam tuple_t Type of the tuple to be printed; must model seqan3::tuple_like_concept.
  * \param s The seqan3::debug_stream.
@@ -331,6 +332,27 @@ inline debug_stream_type & operator<<(debug_stream_type & s, tuple_t && t)
 {
     detail::print_tuple(s, std::forward<tuple_t>(t),
                         std::make_index_sequence<std::tuple_size_v<remove_cvref_t<tuple_t>>>{});
+    return s;
+}
+
+/*!\brief A std::variant can be printed by visiting the stream operator for the corresponding type.
+ * \tparam    variant_type The underlying type of the variant.
+ * \param[in] s            The seqan3::debug_stream.
+ * \param[in] v            The variant.
+ * \relates seqan3::debug_stream_type
+ *
+ * \details
+ *
+ * Note that in case the variant is valueless(_by_exception), nothing is printed.
+ */
+template <typename variant_type>
+//!\cond
+    requires detail::is_type_specialisation_of_v<remove_cvref_t<variant_type>, std::variant>
+//!\endcond
+inline debug_stream_type & operator<<(debug_stream_type & s, variant_type && v)
+{
+    if (!v.valueless_by_exception())
+        std::visit([&s](auto&& arg){s << arg;}, v);
     return s;
 }
 
