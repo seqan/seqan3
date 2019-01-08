@@ -48,54 +48,47 @@
 namespace seqan3
 {
 
+/*!\brief Helper metafunction that identifies amino acid alphabets.
+ * \ingroup aminoacid
+ *
+ * \details
+ *
+ * Since an amino acid alphabet has no specific characteristics (like the complement
+ * function for nucleotide alphabets), we distinguish an amino acid alphabet by
+ * the seqan3::is_aminoacid metafunction.
+ *
+ * ### Customisation point
+ *
+ * If you define your own alphabet and want it to be recognised as an amino acid
+ * alphabet by SeqAn, you need to specialise this metafunction for your type and
+ * have it inherit std::true_type.
+ *
+ * \include test/snippet/alphabet/aminoacid/is_aminoacid.cpp
+ */
+template <typename type>
+struct is_aminoacid : std::false_type {};
+
+//!\brief Helper variable that delegates to seqan3::is_aminoacid<type>::value.
+//!\ingroup aminoacid
+template <typename type>
+constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
+
 /*!\interface seqan3::aminoacid_concept <>
  * \extends seqan3::alphabet_concept
  * \brief A concept that indicates whether an alphabet represents amino acids.
  * \ingroup aminoacid
  *
- * In addition to the requirements for seqan3::alphabet_concept, the amino_acid_concept expects
- * conforming alphabets to provide an enum-like interface with all possible 27 amino acids as values
- * (although some may be mapped to others if the alphabet is smaller than 27).
+ * Since an amino acid alphabet has no specific characteristics (like the complement
+ * function for nucleotide alphabets), we distinguish an amino acid alphabet by
+ * the seqan3::is_aminoacid metafunction.
  *
  * \par Concepts and doxygen
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
- *
  */
 //!\cond
 template <typename type>
-concept aminoacid_concept = requires (type v)
-{
-    requires alphabet_concept<type>;
-    { std::remove_reference_t<type>::A } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::B } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::C } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::D } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::E } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::F } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::G } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::H } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::I } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::J } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::K } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::L } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::M } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::N } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::O } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::P } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::Q } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::R } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::S } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::T } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::U } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::V } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::W } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::X } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::Y } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::Z } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::TERMINATOR } -> std::remove_reference_t<type>;
-    { std::remove_reference_t<type>::UNKNOWN } -> std::remove_reference_t<type>;
-
-};
+concept aminoacid_concept = alphabet_concept<type> && is_aminoacid_v<remove_cvref_t<type>>;
 //!\endcond
+
 } // namespace seqan3

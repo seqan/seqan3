@@ -42,6 +42,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
+#include <seqan3/alphabet/aminoacid/concept.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 namespace seqan3

@@ -42,10 +42,12 @@
 #include <vector>
 
 #include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
+#include <seqan3/alphabet/aminoacid/concept.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 namespace seqan3
 {
+
 /*!\brief The canonical amino acid alphabet.
  * \ingroup aminoacid
  * \implements seqan3::aminoacid_concept
@@ -162,6 +164,20 @@ protected:
         }()
     };
 };
+
+} // namespace seqan3
+
+// ------------------------------------------------------------------
+// metafunctions
+// ------------------------------------------------------------------
+
+namespace seqan3
+{
+
+//!\brief Helper metafunction that identifies aa20 as an amino acid alphabet.
+//!\ingroup aminoacid
+template <>
+struct is_aminoacid<aa20> : std::true_type {};
 
 } // namespace seqan3
 
