@@ -81,17 +81,10 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * ```cpp
- * sequence_file_output fout{"/tmp/my.fasta"}; // FastA format detected, std::ofstream opened for file
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp template_deduction
  *
  * Writing to std::cout:
- * ```cpp
- * sequence_file_output fout{std::cout, sequence_file_format_fasta{}};
- * //              ^ no need to specify the template arguments
- *
- * fout.emplace_back("example_id", "ACGTN"_dna5);
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp cout_write
  *
  * Note that this is not the same as writing `sequence_file_output<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -102,21 +95,7 @@ namespace seqan3
  *
  * You can iterate over this file record-wise:
  *
- * ```cpp
- * sequence_file_output fout{"/tmp/my.fasta"};
- *
- * for // ...
- * {
- *     std::string id;
- *     dna5_vector seq;
- *
- *     // ...
- *
- *     fout.emplace_back(seq, id);          // as individual variables
- *     // or:
- *     fout.push_back(std::tie(seq, id));   // as a tuple
- * }
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp record_wise_iteration
  *
  * The easiest way to write to a sequence file is to use the push_back() or emplace_back() member functions. These
  * work similarly to how they work on an std::vector. If you pass a tuple to push_back() or give arguments to
@@ -137,77 +116,30 @@ namespace seqan3
  *
  * The following snippets demonstrates the usage of such a fields trait object.
  *
- * ```cpp
- * sequence_file_output fout{"/tmp/my.fastq", fields<field::ID, field::SEQ_QUAL>{}};
- *
- * for // ...
- * {
- *     std::string id;
- *     std::vector<qualified<dna5>> seq_qual; // vector of combined data structure
- *
- *     // ...
- *
- *     fout.emplace_back(id, seq_qual);       // note also that the order the argumets is now different, because
- *     // or:                                    you specified that ID should be first in the fields template argument
- *     fout.push_back(std::tie(id, seq_qual));
- * }
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp fields_trait_1
  *
  * A different way of passing custom fields to the file is to pass a seqan3::record – instead of a tuple – to
  * push_back(). The seqan3::record clearly indicates which of its elements has which seqan3::field ID so the file will
  * use that information instead of the template argument. This is especially handy when reading from one file and
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
- * ```cpp
- * sequence_file_input   fin{"input.fasta", fields<field::ID, field::SEQ_QUAL>{}};
- * sequence_file_output fout{"output.fasta"}; // doesn't have to match the configuration
- *
- * for (auto & r : fin)
- * {
- *     if // r fulfills some criterium
- *     {
- *         fout.push_back(r);
- *     }
- * }
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp fields_trait_2
  *
  * ### Writing record-wise in batches
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * ```cpp
- * sequence_file_output fout{"/tmp/my.fasta"};
- *
- * std::vector<std::tuple<dna5_vector, std::string>> range
- * {
- *     { "ACGT"_dna5, "First" },
- *     { "NATA"_dna5, "2nd" },
- *     { "GATA"_dna5, "Third" }
- * }; // a range of "records"
- *
- * fout = range; // will iterate over the records and write them
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp batch_write
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn:
  *
- * ```cpp
- * // file format conversion in one line:
- * sequence_file_output fout{"output.fasta"} = sequence_file_input{"input.fastq"};
- *
- * // or in pipe notation:
- * sequence_file_input{"input.fastq"} | sequence_file_output{"output.fasta"};
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp direct_writing
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * ```cpp
- * sequence_file_input{"input.fastq"} | view::minimum_average_quality_filter(20)
- *                                 | view::minimum_sequence_length_filter(50)
- *                                 | ranges::view::take(5)
- *                                 | sequence_file_output{"output.fasta"};
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp view_pipeline
  *
  * ### Column-based writing
  *
@@ -216,22 +148,8 @@ namespace seqan3
  *
  * You can use column-based writing in that case, it uses operator=() :
  *
- * ```cpp
- *
- * struct data_storage_t
- * {
- *     concatenated_sequences<dna5_vector>  sequences;
- *     concatenated_sequences<std::string>  ids;
- * };
- *
- * data_storage_t data_storage; // a global or globally used variable in your program
- *
- * // ... in your file writing function:
- *
- * sequence_file_output fout{"/tmp/my.fasta"};
- *
- * fout = std::tie(data_storage.sequences, data_storage.ids);
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp data_storage
+ * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp col_based_writing
  *
  * ### Formats
  *
@@ -403,24 +321,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     std::string id;
-     *     dna5_vector seq;
-     *
-     *     // ...
-     *
-     *     // assign to iterator
-     *     *it = std::tie(seq, id);
-     *     // is the same as:
-     *     fout.push_back(std::tie(seq, id));
-     * }
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp range_interface
      */
     iterator begin() noexcept
     {
@@ -462,20 +363,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     record<type_list<dna5_vector, std::string>, fields<field::SEQ, field::ID>> r;
-     *
-     *     // ...
-     *
-     *     fout.push_back(r);
-     * }
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp push_back_record
      */
     template <typename record_t>
     void push_back(record_t && r)
@@ -508,21 +396,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     std::string id;
-     *     dna5_vector seq;
-     *
-     *     // ...
-     *
-     *     fout.push_back(std::tie(seq, id));
-     * }
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp push_back_tuple
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
@@ -556,21 +430,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * auto it = fout.begin();
-     *
-     * for // ...
-     * {
-     *     std::string id;
-     *     dna5_vector seq;
-     *
-     *     // ...
-     *
-     *     fout.emplace_back(seq, id);
-     * }
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp emplace_back
      */
     template <typename arg_t, typename ... arg_types>
     void emplace_back(arg_t && arg, arg_types && ... args)
@@ -597,18 +457,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * std::vector<std::tuple<dna5_vector, std::string>> range
-     * {
-     *     { "ACGT"_dna5, "First" },
-     *     { "NATA"_dna5, "2nd" },
-     *     { "GATA"_dna5, "Third" }
-     * }; // a range of "records"
-     *
-     * fout = range; // will iterate over the records and write them
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp batch_write
      */
     template <std::ranges::InputRange rng_t>
     sequence_file_output & operator=(rng_t && range)
@@ -640,29 +489,11 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * std::vector<std::tuple<dna5_vector, std::string>> range
-     * {
-     *     { "ACGT"_dna5, "First" },
-     *     { "NATA"_dna5, "2nd" },
-     *     { "GATA"_dna5, "Third" }
-     * }; // a range of "records"
-     *
-     * range | fout;
-     * // the same as:
-     * fout = range;
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp batch_write_2
      *
      * This is especially useful in combination with file-based filters:
      *
-     * ```cpp
-     * sequence_file_input{"input.fastq"} | view::minimum_average_quality_filter(20)
-     *                                 | view::minimum_sequence_length_filter(50)
-     *                                 | ranges::view::take(5)
-     *                                 | sequence_file_output{"output.fasta"};
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp view_pipeline
      */
     template <std::ranges::InputRange rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
@@ -706,22 +537,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     *
-     * struct data_storage_t
-     * {
-     *     concatenated_sequences<dna5_vector>  sequences;
-     *     concatenated_sequences<std::string>  ids;
-     * };
-     *
-     * data_storage_t data_storage; // a global or globally used variable in your program
-     *
-     * // ... in your file writing function:
-     *
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * fout = std::tie(data_storage.sequences, data_storage.ids);
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp col_based_writing
      */
     template <typename typelist, typename field_ids>
     sequence_file_output & operator=(record<typelist, field_ids> const & r)
@@ -752,22 +568,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     *
-     * struct data_storage_t
-     * {
-     *     concatenated_sequences<dna5_vector>  sequences;
-     *     concatenated_sequences<std::string>  ids;
-     * };
-     *
-     * data_storage_t data_storage; // a global or globally used variable in your program
-     *
-     * // ... in your file writing function:
-     *
-     * sequence_file_output fout{"/tmp/my.fasta"};
-     *
-     * fout = std::tie(data_storage.sequences, data_storage.ids);
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_output.cpp col_based_writing
      */
     template <typename ... arg_types>
     sequence_file_output & operator=(std::tuple<arg_types...> const & t)
