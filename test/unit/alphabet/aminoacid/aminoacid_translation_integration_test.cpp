@@ -21,7 +21,7 @@ TEST(translation, translate_triplets)
     dna15 n1{'C'_dna15};
     dna15 n2{'T'_dna15};
     dna15 n3{'A'_dna15};
-    aa27 c{aa27::L};
+    aa27 c{'L'_aa27};
 
     // Nucleotide interface
     aa27 t1{translate_triplet<genetic_code::CANONICAL, dna15>(n1, n2, n3)};

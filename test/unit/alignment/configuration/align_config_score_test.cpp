@@ -75,7 +75,7 @@ TEST(align_config_score, invoke)
     auto cfg = std::invoke(align_cfg::score(aminoacid_scoring_scheme(aminoacid_similarity_matrix::BLOSUM62)),
                            detail::configuration<>{});
 
-    EXPECT_EQ(std::get<0>(cfg).value.score(aa27::I, aa27::V), 3);
+    EXPECT_EQ(std::get<0>(cfg).value.score('I'_aa27, 'V'_aa27), 3);
     EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
                                 detail::configuration<detail::align_config_score<aminoacid_scoring_scheme<int8_t>>>>));
 }
@@ -85,22 +85,22 @@ TEST(align_config_score, get_by_enum)
     aminoacid_scoring_scheme scheme(aminoacid_similarity_matrix::BLOSUM62);
     detail::configuration cfg = align_cfg::score(scheme);
 
-    EXPECT_EQ(get<align_cfg::id::score>(cfg).score(aa27::I, aa27::V), 3);
+    EXPECT_EQ(get<align_cfg::id::score>(cfg).score('I'_aa27, 'V'_aa27), 3);
     EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::score>(cfg)),
                                 aminoacid_scoring_scheme<int8_t> &>));
 
-    EXPECT_EQ(get<align_cfg::id::score>(std::move(cfg)).score(aa27::I, aa27::V), 3);
+    EXPECT_EQ(get<align_cfg::id::score>(std::move(cfg)).score('I'_aa27, 'V'_aa27), 3);
     EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::score>(std::move(cfg))),
                                 aminoacid_scoring_scheme<int8_t> &&>));
 
     detail::configuration<detail::align_config_score<aminoacid_scoring_scheme<>>> const c_cfg =
         detail::configuration{align_cfg::score(scheme)};
 
-    EXPECT_EQ(get<align_cfg::id::score>(c_cfg).score(aa27::I, aa27::V), 3);
+    EXPECT_EQ(get<align_cfg::id::score>(c_cfg).score('I'_aa27, 'V'_aa27), 3);
     EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::score>(c_cfg)),
                                 aminoacid_scoring_scheme<int8_t> const &>));
 
-    EXPECT_EQ(get<align_cfg::id::score>(std::move(c_cfg)).score(aa27::I, aa27::V), 3);
+    EXPECT_EQ(get<align_cfg::id::score>(std::move(c_cfg)).score('I'_aa27, 'V'_aa27), 3);
     EXPECT_TRUE((std::is_same_v<decltype(get<align_cfg::id::score>(std::move(c_cfg))),
                                 aminoacid_scoring_scheme<int8_t> const &&>));
 }

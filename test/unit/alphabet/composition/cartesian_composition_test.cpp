@@ -152,11 +152,11 @@ public:
     // -------------------------------------------------------------------------
     aa27 value_1()
     {
-        return aa27::K;
+        return 'K'_aa27;
     }
     aa27 assignable_to_value_1()
     {
-        return aa27::K; // replace if assignable subtype becomes available
+        return 'K'_aa27; // replace if assignable subtype becomes available
     }
     dssp9 value_2()
     {
@@ -168,9 +168,9 @@ public:
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */aa27::A, 'H'_dssp9,
-                               /*mid */aa27::P, 'I'_dssp9,
-                               /*high*/aa27::Z, 'X'_dssp9);
+        return std::make_tuple(/*low */'A'_aa27, 'H'_dssp9,
+                               /*mid */'P'_aa27, 'I'_dssp9,
+                               /*high*/'Z'_aa27, 'X'_dssp9);
     }
 };
 

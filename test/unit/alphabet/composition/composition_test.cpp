@@ -20,8 +20,8 @@ TEST(composition, custom_constructors)
     qualified<dna4, phred42> t13{phred42{3}};
     qualified<dna4, phred42> t14{phred63{3}};
 
-    qualified<aa27, phred63> t20{aa27::K, phred63{}};
-    qualified<aa27, phred63> t21{aa27::K};
+    qualified<aa27, phred63> t20{'K'_aa27, phred63{}};
+    qualified<aa27, phred63> t21{'K'_aa27};
     qualified<aa27, phred63> t22{phred63{3}};
     qualified<aa27, phred63> t23{phred42{3}};
 
@@ -88,7 +88,7 @@ TEST(composition_constexpr, custom_constructor)
     constexpr qualified<dna4, phred42> t13{phred42{3}};
     constexpr qualified<dna4, phred42> t14{phred63{3}};
 
-    constexpr qualified<aa27, phred63> t21{aa27::K};
+    constexpr qualified<aa27, phred63> t21{'K'_aa27};
     constexpr qualified<aa27, phred63> t22{phred63{3}};
     constexpr qualified<aa27, phred63> t23{phred42{3}};
 
@@ -133,10 +133,10 @@ TEST(composition, custom_assignment)
     EXPECT_EQ(t11, t13);
     // t11 = phred63{3}; // does not work because of explicit conversion
 
-    qualified<aa27, phred63> t20{aa27::K, phred63{}};
+    qualified<aa27, phred63> t20{'K'_aa27, phred63{}};
     qualified<aa27, phred63> t21{};
-    qualified<aa27, phred63> t22{aa27::K, phred63{3}};
-    t21 = aa27::K;
+    qualified<aa27, phred63> t22{'K'_aa27, phred63{3}};
+    t21 = 'K'_aa27;
     EXPECT_EQ(t20, t21);
     t21 = phred63{3};
     EXPECT_EQ(t21, t22);
@@ -218,7 +218,7 @@ constexpr bool do_assignment()
     // t11 = phred63{3}; // does not work because of explicit conversion
 
     qualified<aa27, phred63> t21{};
-    t21 = aa27::K;
+    t21 = 'K'_aa27;
     t21 = phred63{3};
 
     qualified<gapped<dna4>, phred42> t31{};
@@ -269,10 +269,10 @@ TEST(composition, custom_comparison)
     EXPECT_EQ('C'_rna4,    t11);
     EXPECT_EQ(phred42{3}, t11);
 
-    qualified<aa27, phred63> t21{aa27::K, phred63{3}};
-    EXPECT_EQ(t21, aa27::K);
+    qualified<aa27, phred63> t21{'K'_aa27, phred63{3}};
+    EXPECT_EQ(t21, 'K'_aa27);
     EXPECT_EQ(t21, phred63{3});
-    EXPECT_EQ(aa27::K,     t21);
+    EXPECT_EQ('K'_aa27,    t21);
     EXPECT_EQ(phred63{3},  t21);
 
     qualified<gapped<dna4>, phred42> t31{'C'_dna4, phred42{3}};

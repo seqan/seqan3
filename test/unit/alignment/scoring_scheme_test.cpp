@@ -254,12 +254,12 @@ TYPED_TEST(generic, custom)
 
     if constexpr (detail::is_type_specialisation_of_v<TypeParam, aminoacid_scoring_scheme>)
     {
-        EXPECT_EQ(0*0+0,    scheme.score(aa27::A, aa27::A));
-        EXPECT_EQ(0*0+2,    scheme.score(aa27::A, aa27::C));
-        EXPECT_EQ(2*2+0,    scheme.score(aa27::C, aa27::A));
-        EXPECT_EQ(8*8+8,    scheme.score(aa27::I, aa27::I));
-        EXPECT_EQ(0*0+13,   scheme.score(aa27::A, aa27::N));
-        EXPECT_EQ(2*2+1,    scheme.score(aa27::C, aa27::B));
+        EXPECT_EQ(0*0+0,    scheme.score('A'_aa27, 'A'_aa27));
+        EXPECT_EQ(0*0+2,    scheme.score('A'_aa27, 'C'_aa27));
+        EXPECT_EQ(2*2+0,    scheme.score('C'_aa27, 'A'_aa27));
+        EXPECT_EQ(8*8+8,    scheme.score('I'_aa27, 'I'_aa27));
+        EXPECT_EQ(0*0+13,   scheme.score('A'_aa27, 'N'_aa27));
+        EXPECT_EQ(2*2+1,    scheme.score('C'_aa27, 'B'_aa27));
     } else
     {
         EXPECT_EQ(0*0+0,    scheme.score('A'_dna15, 'A'_dna15)); // A is 0th
@@ -291,10 +291,10 @@ TYPED_TEST(generic, convertability)
         {
             using nucl_t = std::decay_t<decltype(aa)>;
 
-            EXPECT_EQ(scheme.score(aa27::C,                   aa27::G),
+            EXPECT_EQ(scheme.score('C'_aa27,                  'G'_aa27),
                       scheme.score(nucl_t{}.assign_char('C'), nucl_t{}.assign_char('G')));
-            EXPECT_EQ(scheme.score(aa27::T,                   nucl_t{}.assign_char('T')),
-                      scheme.score(nucl_t{}.assign_char('T'), aa27::T));
+            EXPECT_EQ(scheme.score('T'_aa27,                  nucl_t{}.assign_char('T')),
+                      scheme.score(nucl_t{}.assign_char('T'), 'T'_aa27));
         });
     } else
     {
@@ -378,34 +378,34 @@ TYPED_TEST(aminoacid, similarity_matrix)
 {
     // Test constructor
     aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM30};
-    EXPECT_EQ( 4,    scheme.score(aa27::A, aa27::A));
-    EXPECT_EQ(-3,    scheme.score(aa27::A, aa27::C));
-    EXPECT_EQ(-3,    scheme.score(aa27::C, aa27::A));
-    EXPECT_EQ( 9,    scheme.score(aa27::D, aa27::D));
-    EXPECT_EQ( 0,    scheme.score(aa27::N, aa27::A));
+    EXPECT_EQ( 4,    scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ(-3,    scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ(-3,    scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ( 9,    scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ( 0,    scheme.score('N'_aa27, 'A'_aa27));
 
     // Test set function
     scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM45);
 
-    EXPECT_EQ( 5,    scheme.score(aa27::A, aa27::A));
-    EXPECT_EQ(-1,    scheme.score(aa27::A, aa27::C));
-    EXPECT_EQ(-1,    scheme.score(aa27::C, aa27::A));
-    EXPECT_EQ( 7,    scheme.score(aa27::D, aa27::D));
-    EXPECT_EQ(-1,    scheme.score(aa27::N, aa27::A));
+    EXPECT_EQ( 5,    scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ(-1,    scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ(-1,    scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ( 7,    scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ(-1,    scheme.score('N'_aa27, 'A'_aa27));
 
     scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM62);
 
-    EXPECT_EQ( 4,    scheme.score(aa27::A, aa27::A));
-    EXPECT_EQ( 0,    scheme.score(aa27::A, aa27::C));
-    EXPECT_EQ( 0,    scheme.score(aa27::C, aa27::A));
-    EXPECT_EQ( 6,    scheme.score(aa27::D, aa27::D));
-    EXPECT_EQ(-2,    scheme.score(aa27::N, aa27::A));
+    EXPECT_EQ( 4,    scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ( 0,    scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ( 0,    scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ( 6,    scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ(-2,    scheme.score('N'_aa27, 'A'_aa27));
 
     scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
 
-    EXPECT_EQ( 7,    scheme.score(aa27::A, aa27::A));
-    EXPECT_EQ(-1,    scheme.score(aa27::A, aa27::C));
-    EXPECT_EQ(-1,    scheme.score(aa27::C, aa27::A));
-    EXPECT_EQ(10,    scheme.score(aa27::D, aa27::D));
-    EXPECT_EQ(-3,    scheme.score(aa27::N, aa27::A));
+    EXPECT_EQ( 7,    scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ(-1,    scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ(-1,    scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ(10,    scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ(-3,    scheme.score('N'_aa27, 'A'_aa27));
 }
