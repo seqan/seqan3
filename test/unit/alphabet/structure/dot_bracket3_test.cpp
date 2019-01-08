@@ -60,8 +60,7 @@ TEST(dot_bracket3, literals)
     vec1.resize(5, '('_db3);
     EXPECT_EQ(vec1, "((((("_db3);
 
-    std::vector<dot_bracket3> vec2{'.'_db3, '('_db3, '('_db3,
-                                   ')'_db3, ')'_db3, '.'_db3};
+    std::vector<dot_bracket3> vec2{'.'_db3, '('_db3, '('_db3, ')'_db3, ')'_db3, '.'_db3};
     EXPECT_EQ(vec2, ".(())."_db3);
 }
 

@@ -121,7 +121,7 @@ protected:
 
             // initialize with X (std::array::fill unfortunately not constexpr)
             for (rank_type & rnk : ret)
-                rnk = 8;
+                rnk = 8u;
 
             // reverse mapping for characters
             for (rank_type rnk = 0u; rnk < value_size; ++rnk)
@@ -157,8 +157,7 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
     return vec;
 }
 
-/*!
- * \brief The seqan3::dssp9 char literal.
+/*!\brief The seqan3::dssp9 char literal.
  * \relates seqan3::dssp9
  * \param[in] ch The character to represent as dssp.
  * \returns seqan3::dssp9

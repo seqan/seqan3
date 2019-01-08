@@ -88,9 +88,6 @@ private:
     //!\brief Befriend seqan3::alphabet_base.
     friend base_t;
 
-    //!\brief Required for deferred instantiation of member "enum" values.
-    using this_type_deferred = typename base_t::derived_t;
-
 public:
     using base_t::value_size;
     using base_t::to_rank;
@@ -140,7 +137,7 @@ public:
      *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
      */
     // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
-    static constexpr uint8_t max_pseudoknot_depth{uint8_t{(value_size - 7) / 2}};
+    static constexpr uint8_t max_pseudoknot_depth{static_cast<uint8_t>((value_size - 7) / 2)};
 
     /*!\brief Get an identifier for a pseudoknotted interaction.
      * Opening and closing brackets of the same type have the same id.
@@ -152,7 +149,7 @@ public:
         if (interaction_tab[to_rank()] != 0)
             return std::abs(interaction_tab[to_rank()]) - 1;
         else
-            return std::nullopt;
+            return std::nullopt; // unpaired
     }
     //!\}
 
@@ -189,7 +186,7 @@ protected:
 
             // initialize with unpaired (std::array::fill unfortunately not constexpr)
             for (rank_type & rnk : rank_table)
-                rnk = 6;
+                rnk = 6u;
 
             // set alphabet values
             for (rank_type rnk = 0u; rnk < value_size; ++rnk)
@@ -198,7 +195,9 @@ protected:
         } ()
     };
 
-    //!\brief Lookup table for interactions: unpaired (1), pair-open (2), pair-close (3).
+    /*!\brief Lookup table for interactions: unpaired (0), pair-open (< 0), pair-close (> 0).
+     * Paired brackets have the same absolute value.
+     */
     static std::array<int8_t, SIZE> const interaction_tab;
 };
 
@@ -209,31 +208,25 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
     int cnt_open = 0;
     int cnt_close = 0;
 
-    for (rank_type rnk = wuss<SIZE>{}.assign_char('.').to_rank();
-            rnk <= wuss<SIZE>{}.assign_char(';').to_rank();
-            ++rnk)
+    for (rank_type rnk = 0u; rnk <= 6u; ++rnk)
     {
         interaction_table[rnk] = 0;
     }
 
-    for (rank_type rnk = wuss<SIZE>{}.assign_char('<').to_rank();
-            rnk <= wuss<SIZE>{}.assign_char('{').to_rank();
-            ++rnk)
+    for (rank_type rnk = 7u; rnk <= 10u; ++rnk)
     {
         interaction_table[rnk] = --cnt_open;
     }
 
-    for (rank_type rnk = wuss<SIZE>{}.assign_char('>').to_rank();
-            rnk <= wuss<SIZE>{}.assign_char('}').to_rank();
-            ++rnk)
+    for (rank_type rnk = 11u; rnk <= 14u; ++rnk)
     {
         interaction_table[rnk] = ++cnt_close;
     }
 
-    for (rank_type rnk = 15u; rnk + 1 < value_size; rnk += 2u)
+    for (rank_type rnk = 15u; rnk + 1u < value_size; rnk += 2u)
     {
-        interaction_table[rnk]     = --cnt_open;
-        interaction_table[rnk + 1] = ++cnt_close;
+        interaction_table[rnk]      = --cnt_open;
+        interaction_table[rnk + 1u] = ++cnt_close;
     }
 
     return interaction_table;
@@ -259,14 +252,13 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
     std::vector<wuss51> vec;
     vec.resize(len);
 
-    for (size_t idx = 0; idx < len; ++idx)
+    for (size_t idx = 0ul; idx < len; ++idx)
         vec[idx].assign_char(str[idx]);
 
     return vec;
 }
 
-/*!
- * \brief The seqan3::wuss51 char literal.
+/*!\brief The seqan3::wuss51 char literal.
  * \relates seqan3::wuss
  * \param[in] ch The character to represent as wuss.
  * \returns seqan3::wuss51

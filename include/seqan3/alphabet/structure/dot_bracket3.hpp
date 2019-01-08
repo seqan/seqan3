@@ -102,7 +102,7 @@ public:
      */
     constexpr bool is_pair_open() const noexcept
     {
-        return this->to_char() == '(';
+        return rank == 1u;
     }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
@@ -110,7 +110,7 @@ public:
      */
     constexpr bool is_pair_close() const noexcept
     {
-        return this->to_char() == ')';
+        return rank == 2u;
     }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
@@ -118,14 +118,14 @@ public:
      */
     constexpr bool is_unpaired() const noexcept
     {
-        return this->to_char() == '.';
+        return rank == 0u;
     }
 
     /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
      * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
      * pseudoknot support.
      */
-    static constexpr uint8_t max_pseudoknot_depth{1};
+    static constexpr uint8_t max_pseudoknot_depth{1u};
     //!\}
 
 protected:
@@ -146,14 +146,14 @@ protected:
         {
             std::array<rank_type, 256> rank_table{};
 
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+            // initialize with unpaired (std::array::fill unfortunately not constexpr)
             for (rank_type & rnk : rank_table)
-                rnk = 0;
+                rnk = 0u;
 
             // canonical
-            rank_table['.'] = 0;
-            rank_table['('] = 1;
-            rank_table[')'] = 2;
+            rank_table['.'] = 0u;
+            rank_table['('] = 1u;
+            rank_table[')'] = 2u;
 
             return rank_table;
         } ()
@@ -177,14 +177,13 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
     std::vector<dot_bracket3> vec;
     vec.resize(len);
 
-    for (size_t idx = 0u; idx < len; ++idx)
+    for (size_t idx = 0ul; idx < len; ++idx)
         vec[idx].assign_char(str[idx]);
 
     return vec;
 }
 
-/*!
- * \brief The seqan3::db3 char literal.
+/*!\brief The seqan3::db3 char literal.
  * \relates seqan3::dot_bracket3
  * \param[in] ch The character to represent as dot bracket.
  * \returns seqan3::dot_bracket3

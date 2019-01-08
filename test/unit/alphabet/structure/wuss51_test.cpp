@@ -23,7 +23,6 @@ INSTANTIATE_TYPED_TEST_CASE_P(wuss67, alphabet_constexpr, wuss<67>);
 // assign_char functions
 TEST(wuss51, assign_char)
 {
-
     std::vector<char> input
     {
         '.', '(', ')',
@@ -84,9 +83,8 @@ TEST(wuss51, literals)
     EXPECT_EQ(vec2, ".<<>>."_wuss51);
 }
 
-TEST(wuss51, wuss51)
+TEST(wuss51, structure_properties)
 {
-
     EXPECT_EQ(wuss51::max_pseudoknot_depth, 22);
     std::vector<wuss51> vec = ".:,-_~;<>()[]{}AaBbCcDd"_wuss51;
     for (unsigned idx = 0; idx <= 6; ++idx)
