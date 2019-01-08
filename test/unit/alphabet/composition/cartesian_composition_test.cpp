@@ -124,19 +124,18 @@ public:
     }
     dot_bracket3 value_2()
     {
-        return dot_bracket3::PAIR_OPEN;
+        return '('_db3;
     }
     dot_bracket3 assignable_to_value_2()
     {
-        return dot_bracket3::PAIR_OPEN; // replace if assignable subtype becomes available
+        return '('_db3; // replace if assignable subtype becomes available
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */'A'_rna4, dot_bracket3::UNPAIRED,
-                               /*mid */'C'_rna4, dot_bracket3::PAIR_OPEN,
-                               /*high*/'T'_rna4, dot_bracket3::PAIR_CLOSE);
+        return std::make_tuple(/*low */'A'_rna4, '.'_db3,
+                               /*mid */'C'_rna4, '('_db3,
+                               /*high*/'T'_rna4, ')'_db3);
     }
-
 };
 
 template <>
@@ -161,17 +160,17 @@ public:
     }
     dssp9 value_2()
     {
-        return dssp9::I;
+        return 'I'_dssp9;
     }
     dssp9 assignable_to_value_2()
     {
-        return dssp9::I; // replace if assignable subtype becomes available
+        return 'I'_dssp9; // replace if assignable subtype becomes available
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */aa27::A, dssp9::H,
-                               /*mid */aa27::P, dssp9::I,
-                               /*high*/aa27::Z, dssp9::X);
+        return std::make_tuple(/*low */aa27::A, 'H'_dssp9,
+                               /*mid */aa27::P, 'I'_dssp9,
+                               /*high*/aa27::Z, 'X'_dssp9);
     }
 };
 

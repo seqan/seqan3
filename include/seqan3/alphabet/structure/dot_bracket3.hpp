@@ -70,7 +70,7 @@ namespace seqan3
  *```
  *
  * \par Usage
- * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stdout.
+ * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stderr.
  * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp general
  */
 class dot_bracket3 : public alphabet_base<dot_bracket3, 3>
@@ -94,17 +94,6 @@ public:
     ~dot_bracket3() = default;
     //!\}
 
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface. *Don't worry about the `internal_type`.*
-     */
-    //!\{
-    static const dot_bracket3 UNPAIRED;
-    static const dot_bracket3 PAIR_OPEN;
-    static const dot_bracket3 PAIR_CLOSE;
-    static const dot_bracket3 UNKNOWN;
-    //!\}
-
     //!\name RNA structure properties
     //!\{
 
@@ -113,7 +102,7 @@ public:
      */
     constexpr bool is_pair_open() const noexcept
     {
-        return *this == PAIR_OPEN;
+        return rank == 1u;
     }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
@@ -121,7 +110,7 @@ public:
      */
     constexpr bool is_pair_close() const noexcept
     {
-        return *this == PAIR_CLOSE;
+        return rank == 2u;
     }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
@@ -129,14 +118,14 @@ public:
      */
     constexpr bool is_unpaired() const noexcept
     {
-        return *this == UNPAIRED;
+        return rank == 0u;
     }
 
     /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
      * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
      * pseudoknot support.
      */
-    static constexpr uint8_t max_pseudoknot_depth{1};
+    static constexpr uint8_t max_pseudoknot_depth{1u};
     //!\}
 
 protected:
@@ -157,55 +146,56 @@ protected:
         {
             std::array<rank_type, 256> rank_table{};
 
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+            // initialize with unpaired (std::array::fill unfortunately not constexpr)
             for (rank_type & rnk : rank_table)
-                rnk = 0;
+                rnk = 0u;
 
             // canonical
-            rank_table['.'] = 0;
-            rank_table['('] = 1;
-            rank_table[')'] = 2;
+            rank_table['.'] = 0u;
+            rank_table['('] = 1u;
+            rank_table[')'] = 2u;
 
             return rank_table;
         } ()
     };
 };
 
-constexpr dot_bracket3 dot_bracket3::UNPAIRED   = dot_bracket3{}.assign_char('.');
-constexpr dot_bracket3 dot_bracket3::PAIR_OPEN  = dot_bracket3{}.assign_char('(');
-constexpr dot_bracket3 dot_bracket3::PAIR_CLOSE = dot_bracket3{}.assign_char(')');
-constexpr dot_bracket3 dot_bracket3::UNKNOWN    = dot_bracket3::UNPAIRED;
-
-} // namespace seqan3
-
-// ------------------------------------------------------------------
-// literals
-// ------------------------------------------------------------------
-
-namespace seqan3
-{
-
-/*!\brief dot_bracket3 literal
+/*!\name Literals
+ * \{
+ *
+ * \brief The seqan3::db3 string literal.
  * \relates seqan3::dot_bracket3
+ * \param[in] str A pointer to the character string to assign.
+ * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::dot_bracket3>
  *
- * You can use this string literal to easily assign to a vector of dot_bracket3 characters:
- *
- *```.cpp
- *     std::vector<dot_bracket3> foo{".(..)."_db3};
- *     std::vector<dot_bracket3> bar = ".(..)."_db3;
- *     auto bax = ".(..)."_db3;
- *```
+ * You can use this string literal to easily assign to a vector of seqan3::dot_bracket3 characters:
+ * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp string_literal
  */
 inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t len)
 {
     std::vector<dot_bracket3> vec;
     vec.resize(len);
 
-    for (size_t idx = 0u; idx < len; ++idx)
+    for (size_t idx = 0ul; idx < len; ++idx)
         vec[idx].assign_char(str[idx]);
 
     return vec;
 }
+
+/*!\brief The seqan3::db3 char literal.
+ * \relates seqan3::dot_bracket3
+ * \param[in] ch The character to represent as dot bracket.
+ * \returns seqan3::dot_bracket3
+ *
+ * You can use this string literal to assign a seqan3::dot_bracket3 character:
+ * \snippet test/snippet/alphabet/structure/dot_bracket3.cpp char_literal
+ */
+constexpr dot_bracket3 operator""_db3(char const ch) noexcept
+{
+    return dot_bracket3{}.assign_char(ch);
+}
+
+//!\}
 
 } // namespace seqan3

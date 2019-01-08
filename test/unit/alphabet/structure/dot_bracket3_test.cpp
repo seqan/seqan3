@@ -18,7 +18,6 @@ INSTANTIATE_TYPED_TEST_CASE_P(dot_bracket3, alphabet_constexpr, dot_bracket3);
 // assign_char functions
 TEST(dot_bracket3, assign_char)
 {
-    using t = dot_bracket3;
     std::vector<char> input
     {
         '.', '(', ')',
@@ -29,10 +28,10 @@ TEST(dot_bracket3, assign_char)
 
     std::vector<dot_bracket3> cmp
     {
-        t::UNPAIRED, t::PAIR_OPEN, t::PAIR_CLOSE,
-        t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN,
-        t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN,
-        t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN, t::UNKNOWN
+        '.'_db3, '('_db3, ')'_db3,
+        '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3,
+        '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3,
+        '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3, '.'_db3
     };
 
     for (auto [ ch, cm ] : ranges::view::zip(input, cmp))
@@ -42,10 +41,9 @@ TEST(dot_bracket3, assign_char)
 // to_char functions
 TEST(dot_bracket3, to_char)
 {
-    EXPECT_EQ(to_char(dot_bracket3::UNPAIRED), '.');
-    EXPECT_EQ(to_char(dot_bracket3::PAIR_OPEN), '(');
-    EXPECT_EQ(to_char(dot_bracket3::PAIR_CLOSE), ')');
-    EXPECT_EQ(to_char(dot_bracket3::UNKNOWN), '.');
+    EXPECT_EQ(to_char('.'_db3), '.');
+    EXPECT_EQ(to_char('('_db3), '(');
+    EXPECT_EQ(to_char(')'_db3), ')');
 }
 
 // concepts
@@ -59,19 +57,18 @@ TEST(dot_bracket3, literals)
 {
 
     std::vector<dot_bracket3> vec1;
-    vec1.resize(5, dot_bracket3::PAIR_OPEN);
+    vec1.resize(5, '('_db3);
     EXPECT_EQ(vec1, "((((("_db3);
 
-    std::vector<dot_bracket3> vec2{dot_bracket3::UNPAIRED, dot_bracket3::PAIR_OPEN, dot_bracket3::PAIR_OPEN,
-                                   dot_bracket3::PAIR_CLOSE, dot_bracket3::PAIR_CLOSE, dot_bracket3::UNKNOWN};
+    std::vector<dot_bracket3> vec2{'.'_db3, '('_db3, '('_db3, ')'_db3, ')'_db3, '.'_db3};
     EXPECT_EQ(vec2, ".(())."_db3);
 }
 
 TEST(dot_bracket3, dot_bracket3)
 {
     EXPECT_EQ(dot_bracket3::max_pseudoknot_depth, 1);
-    EXPECT_TRUE(dot_bracket3::UNPAIRED.is_unpaired());
-    EXPECT_TRUE(dot_bracket3::PAIR_OPEN.is_pair_open());
-    EXPECT_TRUE(dot_bracket3::PAIR_CLOSE.is_pair_close());
-    EXPECT_TRUE(dot_bracket3::UNKNOWN.is_unpaired());
+    EXPECT_TRUE('.'_db3.is_unpaired());
+    EXPECT_TRUE('('_db3.is_pair_open());
+    EXPECT_TRUE(')'_db3.is_pair_close());
+    EXPECT_TRUE('.'_db3.is_unpaired());
 }

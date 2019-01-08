@@ -8,7 +8,7 @@ using namespace seqan3;
 int main()
 {
 //! [general]
-structured_rna<rna4, dot_bracket3> letter{'G'_rna4, dot_bracket3::PAIR_OPEN};
+structured_rna<rna4, dot_bracket3> letter{'G'_rna4, '('_db3};
 debug_stream << int(to_rank(letter)) << ' '
           << int(to_rank(get<0>(letter))) << ' '
           << int(to_rank(get<1>(letter))) << '\n';
