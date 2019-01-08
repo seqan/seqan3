@@ -91,15 +91,20 @@ class gap_decorator_anchor_set
     using gap_t = typename std::pair<size_t, size_t>;
 
     /*!\brief Structure allowing the comparison of gaps.
+     * \tparam        gap_t Type of the gap storing position an length accumulator.
      * \details It is assumed that the gap structure is always in a consistent
-     * state, i.e.
-     * there are no two gaps that are overlapping. The ordering of gaps structures
-     * is exclusively dependent on the gap starting position which is the
-     * ordering criterion for the anchor set implemented as ordered red-black tree.
+     * state, i.e. there are no two gaps that are overlapping. The ordering of gaps
+     * structures is exclusively dependent on the gap starting position which is
+     * the ordering criterion for the anchor set implemented as ordered red-black tree.
      */
     template <typename gap_t>
     struct gap_compare {
-        //!\brief The operator allowing gap_t comparison.
+        /*!\brief The operator allowing gap_t comparison.
+         * \param[in] lhs   The left-hand gap to compare.
+         * \param[in] rhs   The right-hand side gap to be compared.
+         * \returns A boolean flag indicating whether the gap starting position
+         *          of \p lhs is smaller than the one of \p rhs.
+         */
          bool operator() (const gap_t& lhs, const gap_t& rhs) const {
              return lhs.first < rhs.first;
          }
@@ -180,9 +185,9 @@ public:
     }
 
     /*!\brief Insert a gap of length size at the aligned sequence iterator position.
-     * \param it Iterator indicating the gap start position in the aligned sequence.
-     * \param size Number of gap symbols to be inserted.
-     * \returns A boolean flag indicating the success of the insertion operation.
+     * \param it    Iterator indicating the gap start position in the aligned sequence.
+     * \param size  Number of gap symbols to be inserted.
+     * \returns     An iterator pointing to the start position of the insertion.
      *
      * \par Complexity
      *
@@ -190,19 +195,18 @@ public:
      * Best case (back insertion): o(log k).
      *
      * \par Exceptions
-     *
-     * May throw std::set exceptions.
+     * Throws assertion if \p it points beyond the end position.
      */
     iterator insert_gap(iterator const it, size_type const size = 1)
     {
         if (!size)
             return it;
         size_type const pos = it - begin();
-        assert(pos <= size());
+        assert(pos <= this->size());
 
         set_iterator it_set = anchors.begin();
         // case 1: extend previous/surrounding gap already existing
-        if ((pos < size()) && (((value_type)(*this)[pos] == gap::GAP) || (pos > 0 && (*this)[pos-1] == gap::GAP)))
+        if ((pos < this->size()) && (((value_type)(*this)[pos] == gap::GAP) || (pos > 0 && (*this)[pos-1] == gap::GAP)))
         {
             it_set = anchors.lower_bound(gap_t{pos, 0/*Unused*/});
             if (it_set == anchors.end() || (*it_set).first > pos)
@@ -227,9 +231,9 @@ public:
             // pre: pos not in anchor set, find preceeding gap to add accumulated gaps
             if (anchors.size())
             {
-                it = anchors.lower_bound(gap_t{pos, 0/*Unused*/});
-                if (it != anchors.begin())
-                    gap.second += (*--it).second;
+                auto it_aux = anchors.lower_bound(gap_t{pos, 0/*Unused*/});
+                if (it_aux != anchors.begin())
+                    gap.second += (*--it_aux).second;
             }
             anchors.insert(gap);
         }
@@ -238,33 +242,50 @@ public:
         return it;
     }
 
-   /*!\brief Erase gap in given iterator range (exluding it2).
-    * \returns A boolean flag indicating the success of the erasing operation.
+   /*!\brief Erase one gap symbol at the indicated iterator postion.
+    * \param it     Iterator indicating the gap to be erased.
+    * \returns      An iterator pointing to starting position of the gap erasure.
     *
     * \par Complexity
     *
-    * Average and worst case (erasure before last gap): o(k),
-    * Best case (back erasure): o(log k).
+    * O(log k)
     *
     * \par Exceptions
-    *
-    * May throw std::set exceptions.
+    * \throws seqan3::gap_erase_failure if character is no seqan3::gap.
     */
     iterator erase_gap(iterator const it)
     {
+        // check if [it, it+gap_len[ covers [first, last[
+        if ((*it) != gap::GAP) // [[unlikely]]
+            throw gap_erase_failure("The range to be erased does not corresponds to a consecutive gap.");
         return erase_gap(it, it + 1);
     }
-    //!\copydoc erase_gap(iterator it)
-    iterator erase_gap(iterator const it1, iterator const it2)
+
+    /*!\brief Erase gap symbols at the iterator postions [first, last[.
+     * \param[in]   first    The iterator pointing to the position where to start inserting gaps.
+     * \param[in]   last     The iterator pointing to the position where to stop erasing gaps.
+     * \returns     An iterator pointing to starting position of the gap erasure.
+     *
+     * \par Complexity
+     *
+     * O(log k)
+     *
+     * \par Exceptions
+     *
+     * \throws seqan3::gap_erase_failure if [\p first, \p last[ does not correspond
+     * to a consecutive seqan3::gap range.
+     */
+    iterator erase_gap(iterator const first, iterator const last)
     {
-        // TODO: assert or more robust behaviour: delete all gaps that are located between it1, it2
-        assert(it1 <= it2 && it2 <= end());
-        size_type pos1 = it1 - begin(), pos2 = it2 - begin();
+        size_type pos1 = first - begin(), pos2 = last - begin();
         set_iterator it = anchors.lower_bound(gap_t{pos1, 0/*Unused*/});
         size_type gap_len = get_gap_length(it);
 
         if (it == anchors.end() || (*it).first > pos1)
             it = std::prev(it);
+        // check if [it, it+gap_len[ covers [first, last[
+        if (!(((*it).first <= pos1) && (((*it).first + gap_len) >= pos2))) // [[unlikely]]
+            throw gap_erase_failure("The range to be erased does not corresponds to a consecutive gap.");
         // case 1: complete gap is deleted
         if (((*it).first == pos1) && (gap_len == pos2-pos1))
             anchors.erase(it);
@@ -277,7 +298,7 @@ public:
         }
         // post-processing: forward update of succeeding gaps
         update(pos1, pos2-pos1);
-        return it1;
+        return first;
     }
 
     /*!\name Iterators
@@ -348,9 +369,8 @@ public:
      * \{
      */
     /*!\brief Return the i-th element as a reference.
-     * \param i The element to retrieve.
-     * \throws std::out_of_range If you access an element behind the last.
-     * \returns A reference of the gapped alphabet type .
+     * \param i     The element to retrieve.
+     * \returns     A reference of the gapped alphabet type.
      *
      * \par Complexity
      *
@@ -358,7 +378,7 @@ public:
      *
      * \par Exceptions
      *
-     * Strong exception guarantee (never modifies data)..
+     * Throws std::out_of_range exception if \p i is out of range.
      */
     reference at(size_type const i)
     {
@@ -400,14 +420,23 @@ public:
     //!\}
 
     /*!\name Comparison operators
-     * \brief Compare gap decorators by underlying sequence and gaps.
      * \{
+     */
+    /*!\brief Compare gap decorators by underlying sequence and gaps.
+     * \param[in] rhs   The right-hand side gap decorator to compare.
+     * \returns A boolean flag indicating (in)equality of the aligned sequences.
+     *
+     * |par Complexity
+     * Worst case: O(n*log k)
+     *
+     * \par Exceptions
+     *
+     * No-throw guarantee. Does not modify the aligned sequences.
      */
     template <typename inner_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<inner_type>, std::remove_const_t<inner_type2>>
     //!\endcond
-    // TODO: input gap_decorator could be of any subtype, e.g. anchor_set, anchor_list, etc.
     constexpr bool operator==(gap_decorator_anchor_set<inner_type2> const & rhs) const noexcept
     {
         if (anchors.size() != rhs.anchors.size() || sequence->size() != rhs.sequence->size())
@@ -416,6 +445,7 @@ public:
         return std::ranges::equal(*this, rhs);
     }
 
+    //!\copydoc operator==
     template <typename inner_type2>
     //!\cond
         requires std::is_same_v<std::remove_const_t<inner_type>, std::remove_const_t<inner_type2>>
@@ -428,8 +458,13 @@ public:
 private:
     /*!\brief Helper function to compute the length of the gap indicated by the
      * input iterator.
+     * \param[in] it    Iterator over the internal gap set.
+     * \returns The gap length corresponding to the gap pointed at by \p it.
      * \details The length of a gap is difference of the accumulator pointed at
      * and the one of its predecessor (if existing).
+     *
+     * \par Exceptions
+     * No-throw guarantee.
      */
     constexpr size_type get_gap_length(set_iterator it) const noexcept
     {
@@ -439,6 +474,12 @@ private:
     }
 
     /*!\brief Update all anchor gaps after the indicated position by adding an offset.
+     * \param[in] pos   Gap index after which to perform the update.
+     * \param[in] size  Offset to be added to the virtual gap positions and its accumulators.
+     *
+     * |par Complexity
+     * Linear in the number of gaps.
+     *
      * \details For not invalidating the iterator over the ordered set, the
      * update is done in reverse manner excluding the indicated gap.
      */
@@ -455,8 +496,17 @@ private:
     }
 
     /*!\brief Update all anchor gaps after indicated position by substracting an offset.
+     * \param[in] pos   Gap index after which to perform the update.
+     * \param[in] size  Offset to be removed from the virtual gap positions and its accumulators.
+     *
+     * |par Complexity
+     * Linear in the number of gaps.
+     *
      * \details For not invalidating the iterator over the ordered set, the
      * decreasing is done in a forward manner excluding the indicated gap.
+     *
+     * \par Exceptions
+     * Throws assert when initial update position is out of range.
      */
     void update(size_type const pos, size_type const size)
     {
@@ -478,14 +528,4 @@ private:
     std::set<gap_t, gap_compare<gap_t>> anchors{};
 };
 
-// TODO: necessary here? already defined and conflicting with the one in aligned_sequence_concept.hpp
-// which receives an const_iterator and delegates to a here non-existing insert method.
-//!\brief The free insert_gap function.
-/*
-template<std::ranges::RandomAccessRange inner_type>
-typename gap_decorator_anchor_set<inner_type>::iterator insert_gap(typename gap_decorator_anchor_set<inner_type> & gd, gap_decorator_anchor_set<inner_type>::iterator const it, size_type const size = 1)
-{
-    return gd.insert_gap(it, size);
-}
-*/
 } // namespace seqan3
