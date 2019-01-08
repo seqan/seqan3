@@ -184,13 +184,32 @@ using aa20_vector = std::vector<aa20>;
 namespace seqan3
 {
 
-/*!\brief aa20 literal
+/*!\name Literals
+ * \{
+ */
+
+/*!\brief The seqan3::aa20 char literal.
+ * \param[in] c The character to assign.
+ * \relates seqan3::aa20
+ * \returns seqan3::aa20
+ *
+ * \snippet test/snippet/alphabet/aminoacid/aa20.cpp char_literal
+ *
+ */
+constexpr aa20 operator""_aa20(char const c) noexcept
+{
+    return aa20{}.assign_char(c);
+}
+
+/*!\brief The seqan3::aa20  string literal.
+ * \param[in] s A pointer to the character string to assign.
+ * \param[in] n The size of the character string to assign.
  * \relates seqan3::aa20
  * \returns seqan3::aa20_vector
  *
  * You can use this string literal to easily assign to aa20_vector:
  *
- *\snippet test/snippet/alphabet/aminoacid/aa20.cpp literal
+ * \snippet test/snippet/alphabet/aminoacid/aa20.cpp literal
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!
@@ -206,5 +225,6 @@ inline aa20_vector operator""_aa20(const char * s, std::size_t n)
 
     return r;
 }
+//!\}
 
 } // namespace seqan3

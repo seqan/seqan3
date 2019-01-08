@@ -16,12 +16,12 @@ aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM62};
 debug_stream << "BLOSUM62 score for T and S: " << (int) scheme.score(aa27::T, aa27::S) << "\n"; // == 1
 
 scheme.set_similarity_matrix(aminoacid_similarity_matrix::BLOSUM80);
-debug_stream << "BLOSUM80 score for aa27::T and aa20::S: " << (int) scheme.score(aa27::T, aa20::S) << "\n"; // == 2
+debug_stream << "BLOSUM80 score for aa27::T and 'S'_aa20: " << (int) scheme.score(aa27::T, 'S'_aa20) << "\n"; // == 2
 // you can score aa20 against aa27
 
 scheme.set_hamming_distance();
-debug_stream << "Hamming distance between T and S: " << (int) scheme.score(aa27::T, aa20::S) << "\n"; // == -1
-debug_stream << "Hamming distance between T and T: " << (int) scheme.score(aa27::T, aa20::T) << "\n"; // == 0
+debug_stream << "Hamming distance between T and S: " << (int) scheme.score(aa27::T, 'S'_aa20) << "\n"; // == -1
+debug_stream << "Hamming distance between T and T: " << (int) scheme.score(aa27::T, 'T'_aa20) << "\n"; // == 0
 //! [two letters]
 }
 

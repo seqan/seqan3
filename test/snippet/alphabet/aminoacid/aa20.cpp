@@ -8,17 +8,28 @@ int main()
 
 {
 //! [construction]
-aa20 my_letter{aa20::A};
+aa20 my_letter{'A'_aa20};
 // doesn't work:
 // aa20 my_letter{'A'};
 
 my_letter.assign_char('C'); // <- this does!
 
-my_letter.assign_char('?'); // all unknown characters are converted to aa20::A implicitly
+my_letter.assign_char('?'); // all unknown characters are converted to 'A'_aa20 implicitly
 
 if (my_letter.to_char() == 'A')
     debug_stream << "yeah\n"; // "yeah";
 //! [construction]
+}
+
+{
+//! [char_literal]
+// doesn't work:
+// aa20 acid{'A'};
+
+// this does:
+aa20 acid1{'A'_aa20};
+auto acid2 = 'Y'_aa20; // type = aa20
+//! [char_literal]
 }
 
 {

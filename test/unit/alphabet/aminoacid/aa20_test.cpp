@@ -19,7 +19,6 @@ INSTANTIATE_TYPED_TEST_CASE_P(aa20, aminoacid, aa20);
 
 TEST(aa20, assign_char)
 {
-    using t = aa20;
     std::vector<char> chars
     {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -31,11 +30,15 @@ TEST(aa20, assign_char)
 
     std::vector<aa20> alphabets
     {
-        t::A, t::D, t::C, t::D, t::E, t::F, t::G, t::H, t::I, t::L, t::K, t::L, t::M,
-        t::A, t::D, t::C, t::D, t::E, t::F, t::G, t::H, t::I, t::L, t::K, t::L, t::M,
-        t::N, t::L, t::P, t::Q, t::R, t::S, t::T, t::C, t::V, t::W, t::S, t::Y, t::E,
-        t::N, t::L, t::P, t::Q, t::R, t::S, t::T, t::C, t::V, t::W, t::S, t::Y, t::E,
-        t::W, t::S
+        'A'_aa20, 'D'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20,
+        'H'_aa20, 'I'_aa20, 'L'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20,
+        'A'_aa20, 'D'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20,
+        'H'_aa20, 'I'_aa20, 'L'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20,
+        'N'_aa20, 'L'_aa20, 'P'_aa20, 'Q'_aa20, 'R'_aa20, 'S'_aa20, 'T'_aa20,
+        'C'_aa20, 'V'_aa20, 'W'_aa20, 'S'_aa20, 'Y'_aa20, 'E'_aa20,
+        'N'_aa20, 'L'_aa20, 'P'_aa20, 'Q'_aa20, 'R'_aa20, 'S'_aa20, 'T'_aa20,
+        'C'_aa20, 'V'_aa20, 'W'_aa20, 'S'_aa20, 'Y'_aa20, 'E'_aa20,
+        'W'_aa20, 'S'_aa20
     };
 
     for (auto [ chr, alp ] : ranges::view::zip(chars, alphabets))
@@ -44,7 +47,6 @@ TEST(aa20, assign_char)
 
 TEST(aa20, to_char)
 {
-    using t = aa20;
     std::vector<char> chars
     {
         'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P',
@@ -54,9 +56,11 @@ TEST(aa20, to_char)
 
     std::vector<aa20> alphabets
     {
-        t::A, t::C, t::D, t::E, t::F, t::G, t::H, t::I, t::K, t::L, t::M, t::N, t::P,
-        t::Q, t::R, t::S, t::T, t::V, t::W, t::Y, t::B, t::J, t::O, t::U, t::X, t::Z,
-        t::TERMINATOR, t::UNKNOWN
+        'A'_aa20, 'C'_aa20, 'D'_aa20, 'E'_aa20, 'F'_aa20, 'G'_aa20, 'H'_aa20,
+        'I'_aa20, 'K'_aa20, 'L'_aa20, 'M'_aa20, 'N'_aa20, 'P'_aa20,
+        'Q'_aa20, 'R'_aa20, 'S'_aa20, 'T'_aa20, 'V'_aa20, 'W'_aa20, 'Y'_aa20,
+        'B'_aa20, 'J'_aa20, 'O'_aa20, 'U'_aa20, 'X'_aa20, 'Z'_aa20,
+        'W'_aa20, 'S'_aa20
     };
 
     for (auto [ chr, alp ] : ranges::view::zip(chars, alphabets))
@@ -67,13 +71,40 @@ TEST(aa20, to_char)
 // literals
 // ------------------------------------------------------------------
 
+TEST(literals, char_literal)
+{
+    EXPECT_EQ(to_char('A'_aa20), 'A');
+    EXPECT_EQ(to_char('C'_aa20), 'C');
+    EXPECT_EQ(to_char('D'_aa20), 'D');
+    EXPECT_EQ(to_char('E'_aa20), 'E');
+    EXPECT_EQ(to_char('F'_aa20), 'F');
+    EXPECT_EQ(to_char('G'_aa20), 'G');
+    EXPECT_EQ(to_char('H'_aa20), 'H');
+    EXPECT_EQ(to_char('I'_aa20), 'I');
+    EXPECT_EQ(to_char('K'_aa20), 'K');
+    EXPECT_EQ(to_char('L'_aa20), 'L');
+    EXPECT_EQ(to_char('M'_aa20), 'M');
+    EXPECT_EQ(to_char('N'_aa20), 'N');
+    EXPECT_EQ(to_char('P'_aa20), 'P');
+    EXPECT_EQ(to_char('Q'_aa20), 'Q');
+    EXPECT_EQ(to_char('R'_aa20), 'R');
+    EXPECT_EQ(to_char('S'_aa20), 'S');
+    EXPECT_EQ(to_char('T'_aa20), 'T');
+    EXPECT_EQ(to_char('V'_aa20), 'V');
+    EXPECT_EQ(to_char('W'_aa20), 'W');
+    EXPECT_EQ(to_char('Y'_aa20), 'Y');
+
+    EXPECT_EQ(to_char('*'_aa20), 'W');
+    EXPECT_EQ(to_char('!'_aa20), 'S');
+}
+
 TEST(literals, vector)
 {
     aa20_vector v20;
-    v20.resize(5, aa20::B);
+    v20.resize(5, 'B'_aa20);
     EXPECT_EQ(v20, "DDDDD"_aa20);
 
-    std::vector<aa20> w20{aa20::A, aa20::B, aa20::J, aa20::O, aa20::U, aa20::X, aa20::Z, aa20::UNKNOWN,
-                        aa20::TERMINATOR, aa20::TERMINATOR};
+    std::vector<aa20> w20{'A'_aa20, 'B'_aa20, 'J'_aa20, 'O'_aa20, 'U'_aa20, 'X'_aa20, 'Z'_aa20, '!'_aa20,
+                          '*'_aa20, '*'_aa20};
     EXPECT_EQ(w20, "ADLLCSESW*"_aa20);
 }
