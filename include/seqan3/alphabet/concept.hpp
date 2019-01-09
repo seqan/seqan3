@@ -98,17 +98,19 @@ concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
                                 std::StrictTotallyOrdered<t> &&
                                 requires (t t1, t t2)
 {
-
     // static data members
     alphabet_size<std::remove_reference_t<t>>::value;
     alphabet_size_v<std::remove_reference_t<t>>;
 
     // conversion to rank
-    { to_rank(t1) } -> underlying_rank_t<std::remove_reference_t<t>>;
+    requires noexcept(to_rank(t1));
+    requires std::Same<decltype(to_rank(t1)), underlying_rank_t<std::remove_reference_t<t>>>;
 
     // assignment from rank
-    { assign_rank(t1,  0) }                          -> std::remove_reference_t<t> &;
-    { assign_rank(std::remove_reference_t<t>{}, 0) } -> std::remove_reference_t<t> &&;
+    requires noexcept(assign_rank(t1,  0));
+    requires std::Same<decltype(assign_rank(t1,  0)), std::remove_reference_t<t> &>;
+    requires noexcept(assign_rank(std::remove_reference_t<t>{}, 0));
+    requires std::Same<decltype(assign_rank(std::remove_reference_t<t>{}, 0)), std::remove_reference_t<t> &&>;
 };
 //!\endcond
 
@@ -149,11 +151,14 @@ template <typename t>
 concept alphabet_concept = semi_alphabet_concept<t> && requires (t t1, t t2)
 {
     // conversion to char
-    { to_char(t1) } -> underlying_char_t<std::remove_reference_t<t>>;
+    requires noexcept(to_char(t1));
+    requires std::Same<decltype(to_char(t1)), underlying_char_t<std::remove_reference_t<t>>>;
 
     // assignment from char
-    { assign_char(t1,  0) }                          -> std::remove_reference_t<t> &;
-    { assign_char(std::remove_reference_t<t>{}, 0) } -> std::remove_reference_t<t> &&;
+    requires noexcept(assign_char(t1,  0));
+    requires std::Same<decltype(assign_char(t1,  0)), std::remove_reference_t<t> &>;
+    requires noexcept(assign_char(std::remove_reference_t<t>{},  0));
+    requires std::Same<decltype(assign_char(std::remove_reference_t<t>{}, 0)), std::remove_reference_t<t> &&>;
 };
 //!\endcond
 
