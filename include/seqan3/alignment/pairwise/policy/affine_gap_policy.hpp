@@ -12,12 +12,10 @@
 
 #pragma once
 
+#include <limits>
 #include <tuple>
-#include <type_traits>
 
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {
@@ -34,7 +32,11 @@ namespace seqan3::detail
 template <typename derived_t, typename cell_t>
 class affine_gap_policy
 {
-protected:
+private:
+
+    //!\brief Befriends the derived class to grant it access to the private members.
+    friend derived_t;
+
     /*!\name Member types
      * \{
      */
@@ -68,7 +70,7 @@ protected:
     {
         // Unpack the cached variables.
         auto & [main_score, hz_score] = current_cell;
-        auto & [prev_cell, gap_open, gap_extend] = cache;
+        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & [prev_score, vt_score] = prev_cell;
 
         //TODO For the local alignment we might be able to use GCC overlow builtin arithmetics, which
@@ -79,6 +81,8 @@ protected:
         tmp = std::max(tmp, hz_score);
         prev_score = main_score;
         main_score = tmp;
+        // Check if this was the optimum. Possibly a noop.
+        static_cast<derived_t const &>(*this).check_score(tmp, opt);
         tmp += gap_open;
         vt_score += gap_extend;
         hz_score += gap_extend;
@@ -96,7 +100,8 @@ protected:
     {
         return std::tuple{cell_t{},
                           static_cast<score_t>(scheme.get_gap_open_score() + scheme.get_gap_score()),
-                          static_cast<score_t>(scheme.get_gap_score())};
+                          static_cast<score_t>(scheme.get_gap_score()),
+                          score_t{std::numeric_limits<score_t>::lowest()}};
     }
 };
 
