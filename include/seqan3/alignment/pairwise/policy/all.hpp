@@ -14,6 +14,7 @@
 
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
 
 /*!\defgroup alignment_policy Alignment policies

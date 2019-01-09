@@ -51,7 +51,9 @@ private:
     /*!\brief Auxiliary member types
      * \{
      */
+     //!\brief The type of the first sequence.
     using first_seq_t  = std::tuple_element_t<0, value_type_t<std::ranges::iterator_t<range_type>>>;
+    //!\brief The type of the second sequence.
     using second_seq_t = std::tuple_element_t<1, value_type_t<std::ranges::iterator_t<range_type>>>;
     //!\}
 
@@ -86,9 +88,16 @@ public:
  */
 struct alignment_configurator
 {
-    //!\brief Configure the algorithm.
-    template <std::ranges::ViewableRange sequences_t, typename config_t>
+    /*!\brief Configure the algorithm.
+     * \tparam sequences_t The range type containing the sequence pairs; must model std::ranges::InputRange
+     * \tparam config_t    The alignment configuration type; must be a specialisation of seqan3::configuration.
+     * \param[in]     seq_range The range over the sequence pairs.
+     * \param[in,out] cfg       The configuration object.
+     */
+    template <std::ranges::InputRange sequences_t, typename config_t>
+    //!\cond
         requires is_type_specialisation_of_v<remove_cvref_t<config_t>, configuration>
+    //!\endcond
     static constexpr auto configure(sequences_t seq_range, config_t const & cfg)
     {
         // ----------------------------------------------------------------------------
@@ -106,7 +115,6 @@ struct alignment_configurator
         using result_t = typename select_result_type<first_seq_t, second_seq_t, config_t>::type;
         // Define the kernel type.
         using kernel_t = std::function<result_t(first_seq_t const &, second_seq_t const &)>;
-
 
         // ----------------------------------------------------------------------------
         // Test some basic preconditions
@@ -157,33 +165,196 @@ struct alignment_configurator
         // Unsupported configurations
         // ----------------------------------------------------------------------------
 
-        if constexpr (config_t::template exists<align_cfg::aligned_ends>())
-            throw std::domain_error{"Configuring the aligned ends is yet not supported."};
-
         if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
             throw std::domain_error{"Computing the begin position is yet not supported."};
 
         if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
             throw std::domain_error{"Computing the traceback is yet not supported."};
 
-        // Configure non-edit distance alignment algorithm.
-        using score_type = int;
-        using cell_type = std::pair<score_type, score_type>;
-        using dp_matrix_t = deferred_crtp_base<unbanded_dp_matrix_policy, std::allocator<cell_type>>;
-        using affine_t = deferred_crtp_base<affine_gap_policy, cell_type>;
-        using init_t = deferred_crtp_base<affine_gap_init_policy>;
-
-        return kernel_t{alignment_algorithm<config_t, dp_matrix_t, affine_t, init_t>{cfg}};
+        // Configure the alignment algorithm.
+        return configure_free_ends<kernel_t>(cfg);
     }
 
 private:
 
-    //!\brief Configure the edit distance algorithm.
+    /*!\brief Configures the edit distance algorithm.
+     * \tparam kernel_t The type-erased kernel to return.
+     * \tparam config_t The alignment configuration type.
+     * \param[in] cfg   The passed configuration object.
+     */
     template <typename kernel_t, typename config_t>
     static constexpr auto configure_edit_distance(config_t const & cfg)
     {
         return kernel_t{edit_distance_wrapper<remove_cvref_t<config_t>>{cfg}};
     }
+
+    /*!\brief Configures the free ends property of the standard alignment algorithm.
+     * \tparam kernel_t The type-erased kernel to return.
+     * \tparam config_t The alignment configuration type.
+     * \param[in] cfg   The passed configuration object.
+     */
+    template <typename kernel_t, typename config_t>
+    static constexpr auto configure_free_ends(config_t const &);
+
+    /*!\brief Configures the find_optimum_policy for the alignment algorithm.
+     * \tparam kernel_t     The type-erased kernel to return.
+     * \tparam gap_policy_t The type of the core alignment policy needed for the find_optimum_policy.
+     * \tparam policies_t   A template parameter pack for the remaining policies.
+     * \tparam config_t     The alignment configuration type.
+     * \param[in] cfg       The passed configuration object.
+     *
+     * \details
+     *
+     * The find optimum policy is used to track the optimal score and position if requested.
+     * Some algorithms such as local alignments require to test every cell in the matrix for their optimum.
+     * Thus the core alignment policy computing the cells must be able to access the functions in the
+     * find_optimum_policy. Since both classes are crtp base classes of the alignment algorithm the find_optimum_policy
+     * must befriend the core_policy_t in order to grant it access to the contained member functions.
+     */
+    template <typename kernel_t, typename core_policy_t, typename ...policies_t, typename config_t>
+    static constexpr auto configure_find_optimum(config_t const &);
+
 };
 
+//!\cond
+template <typename kernel_t, typename config_t>
+constexpr auto
+alignment_configurator::configure_free_ends(config_t const & cfg)
+{
+    // ----------------------------------------------------------------------------
+    // score and cell type
+    // ----------------------------------------------------------------------------
+
+    using score_type = int;
+    using cell_type = std::tuple<score_type, score_type>;
+
+    // ----------------------------------------------------------------------------
+    // dynamic programming matrix
+    // ----------------------------------------------------------------------------
+
+    using dp_matrix_t = deferred_crtp_base<unbanded_dp_matrix_policy, std::allocator<cell_type>>;
+
+    // ----------------------------------------------------------------------------
+    // affine gap kernel
+    // ----------------------------------------------------------------------------
+
+    using affine_t = deferred_crtp_base<affine_gap_policy, cell_type>;
+
+    // ----------------------------------------------------------------------------
+    // configure initialization policy
+    // ----------------------------------------------------------------------------
+
+    // Get the value for the sequence ends configuration.
+    auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+    using align_ends_cfg_t = decltype(align_ends_cfg);
+
+    // This lambda augments the initialization policy of the alignment algorithm
+    // with the aligned_ends configuration from before.
+    auto _leading_both = [&](auto first_seq, auto second_seq) constexpr
+    {
+        // Define the trait for the initialization policy
+        struct _trait
+        {
+            using free_first_leading_t  [[maybe_unused]] = decltype(first_seq);
+            using free_second_leading_t [[maybe_unused]] = decltype(second_seq);
+        };
+
+        // Make initialization policy a deferred crtp base and delegate to configure the find optimum policy.
+        using init_t = deferred_crtp_base<affine_gap_init_policy, _trait>;
+        return configure_find_optimum<kernel_t, affine_t, dp_matrix_t, init_t>(cfg);
+    };
+
+    // This lambda determines the initialization configuration for the second sequence given
+    // the leading gap property for it.
+    auto _leading_second = [&](auto first) constexpr
+    {
+        // If possible use static information.
+        if constexpr (align_ends_cfg_t::template is_static<2>())
+        {
+            return _leading_both(first, std::integral_constant<bool, align_ends_cfg_t::template get_static<2>()>{});
+        }
+        else
+        {   // Resolve correct property at runtime.
+            if (align_ends_cfg[2])
+                return _leading_both(first, std::true_type{});
+            else
+                return _leading_both(first, std::false_type{});
+        }
+    };
+
+    // Here the initialization configuration for the first sequence is determined given
+    // the leading gap property for it.
+    // If possible use static information.
+    if constexpr (align_ends_cfg_t::template is_static<0>())
+    {
+        return _leading_second(std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>{});
+    }
+    else
+    {  // Resolve correct property at runtime.
+        if (align_ends_cfg[0])
+            return _leading_second(std::true_type{});
+        else
+            return _leading_second(std::false_type{});
+    }
+}
+//!\endcond
+
+//!\cond
+template <typename kernel_t, typename core_policy_t, typename ...policies_t, typename config_t>
+constexpr auto
+alignment_configurator::configure_find_optimum(config_t const & cfg)
+{
+    // Get the value for the sequence ends configuration.
+    auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+    using align_ends_cfg_t = decltype(align_ends_cfg);
+
+    // This lambda augments the find optimum policy of the alignment algorithm with the
+    // respective aligned_ends configuration.
+    auto _trailing_both = [&](auto first_seq, auto second_seq) constexpr
+    {
+        struct _trait
+        {
+            using find_in_every_cell_t  [[maybe_unused]] = std::false_type;
+            using find_in_last_row_t    [[maybe_unused]] = decltype(first_seq);
+            using find_in_last_column_t [[maybe_unused]] = decltype(second_seq);
+        };
+
+        using init_t = deferred_crtp_base<find_optimum_policy, core_policy_t, _trait>;
+        return kernel_t{alignment_algorithm<config_t, policies_t..., core_policy_t, init_t>{cfg}};
+    };
+
+    // This lambda determines the lookup configuration for the second sequence given
+    // the trailing gap property for it.
+    auto _trailing_second = [&](auto first) constexpr
+    {
+        // If possible use static information.
+        if constexpr (align_ends_cfg_t::template is_static<3>())
+        {
+            return _trailing_both(first, std::integral_constant<bool, align_ends_cfg_t::template get_static<3>()>{});
+        }
+        else
+        { // Resolve correct property at runtime.
+            if (align_ends_cfg[3])
+                return _trailing_both(first, std::true_type{});
+            else
+                return _trailing_both(first, std::false_type{});
+        }
+    };
+
+    // Here the lookup configuration for the first sequence is determined given
+    // the trailing gap property for it.
+    // If possible use static information.
+    if constexpr (align_ends_cfg_t::template is_static<1>())
+    {
+        return _trailing_second(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
+    }
+    else
+    { // Resolve correct property at runtime.
+        if (align_ends_cfg[1])
+            return _trailing_second(std::true_type{});
+        else
+            return _trailing_second(std::false_type{});
+    }
+}
+//!\endcond
 } // namespace seqan3::detail

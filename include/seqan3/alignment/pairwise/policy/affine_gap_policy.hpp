@@ -12,12 +12,10 @@
 
 #pragma once
 
+#include <limits>
 #include <tuple>
-#include <type_traits>
 
-#include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {
@@ -29,12 +27,16 @@ namespace seqan3::detail
 /*!\brief The hot kernel implementation using affine gaps.
  * \ingroup alignment_policy
  * \tparam derived_t   The derived alignment algorithm.
- * \tparam allocator_t The cell type of the dynamic programming matrix.
+ * \tparam cell_t      The cell type of the dynamic programming matrix.
  */
 template <typename derived_t, typename cell_t>
 class affine_gap_policy
 {
-protected:
+private:
+
+    //!\brief Befriends the derived class to grant it access to the private members.
+    friend derived_t;
+
     /*!\name Member types
      * \{
      */
@@ -68,7 +70,7 @@ protected:
     {
         // Unpack the cached variables.
         auto & [main_score, hz_score] = active_cell;
-        auto & [prev_cell, gap_open, gap_extend] = cache;
+        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & [prev_score, vt_score] = prev_cell;
 
         // can we use GCC's builtin saturation arithmetics?
@@ -77,6 +79,8 @@ protected:
         tmp = std::max(tmp, hz_score);
         prev_score = main_score;
         main_score = tmp;
+        // Check if this was the optimum. Possibly a noop.
+        static_cast<derived_t const &>(*this).check_score(tmp, opt);
         tmp += gap_open;
         vt_score += gap_extend;
         hz_score += gap_extend;
@@ -86,7 +90,7 @@ protected:
 
     /*!\brief Creates the cache used for affine gap computation.
      * \tparam    gap_scheme_t The type of the gap scheme.
-     * \param[in] scheme       The configured gap sheme.
+     * \param[in] scheme       The configured gap scheme.
      * \returns The created cache.
      */
     template <typename gap_scheme_t>
@@ -94,7 +98,8 @@ protected:
     {
         return std::tuple{cell_t{},
                           static_cast<score_t>(scheme.get_gap_open_score() + scheme.get_gap_score()),
-                          static_cast<score_t>(scheme.get_gap_score())};
+                          static_cast<score_t>(scheme.get_gap_score()),
+                          score_t{std::numeric_limits<score_t>::lowest()}};
     }
 };
 
