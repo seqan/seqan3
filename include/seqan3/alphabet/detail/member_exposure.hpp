@@ -94,9 +94,14 @@ struct alphabet_size<alphabet_type_with_members>
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
 template <typename alphabet_type>
-constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph)
+//!\cond
     requires requires (alphabet_type alph) { { alph.to_rank() } -> underlying_rank_t<alphabet_type>; }
+//!\endcond
+constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph) noexcept
 {
+    static_assert(noexcept(alph.to_rank()),
+                  "The to_rank() free function can only forward to .to_rank() member functions that "
+                  "are qualified as \"noexcept\".");
     return alph.to_rank();
 }
 
@@ -107,9 +112,14 @@ constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph)
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename alphabet_type>
-constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<alphabet_type> const rank)
+//!\cond
     requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
+//!\endcond
+constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<alphabet_type> const rank) noexcept
 {
+    static_assert(noexcept(alph.assign_rank(rank)),
+                  "The assign_rank() free function can only forward to .assign_rank() member functions that "
+                  "are qualified as \"noexcept\".");
     return alph.assign_rank(rank);
 }
 
@@ -125,9 +135,14 @@ constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<al
  * ~~~
  */
 template <typename alphabet_type>
-constexpr alphabet_type && assign_rank(alphabet_type && alph, underlying_rank_t<alphabet_type> const rank)
+//!\cond
     requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
+//!\endcond
+constexpr alphabet_type && assign_rank(alphabet_type && alph, underlying_rank_t<alphabet_type> const rank) noexcept
 {
+    static_assert(noexcept(alph.assign_rank(rank)),
+                  "The assign_rank() free function can only forward to .assign_rank() member functions that "
+                  "are qualified as \"noexcept\".");
     return std::move(alph.assign_rank(rank));
 }
 //!\}
@@ -162,9 +177,14 @@ struct underlying_char<alphabet_type_with_members>
  * \returns The letter's value in the alphabet's rank type (usually `char`).
  */
 template <typename alphabet_type>
-constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph)
+//!\cond
     requires requires (alphabet_type alph) { { alph.to_char() } -> underlying_char_t<alphabet_type>; }
+//!\endcond
+constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph) noexcept
 {
+    static_assert(noexcept(alph.to_char()),
+                  "The to_char() free function can only forward to .to_char() member functions that "
+                  "are qualified as \"noexcept\".");
     return alph.to_char();
 }
 
@@ -175,9 +195,14 @@ constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph)
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename alphabet_type>
-constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<alphabet_type> const chr)
+//!\cond
     requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
+//!\endcond
+constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<alphabet_type> const chr) noexcept
 {
+    static_assert(noexcept(alph.assign_char(chr)),
+                  "The assign_char() free function can only forward to .assign_char() member functions that "
+                  "are qualified as \"noexcept\".");
     return alph.assign_char(chr);
 }
 
@@ -193,9 +218,14 @@ constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<al
  * ~~~
  */
 template <typename alphabet_type>
-constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<alphabet_type> const chr)
+//!\cond
     requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
+//!\endcond
+constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<alphabet_type> const chr) noexcept
 {
+    static_assert(noexcept(alph.assign_char(chr)),
+                  "The assign_char() free function can only forward to .assign_char() member functions that "
+                  "are qualified as \"noexcept\".");
     return std::move(alph.assign_char(chr));
 }
 //!\}
@@ -217,8 +247,8 @@ constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<
  * \returns The letter's complement, e.g. 'T' for 'A'.
  */
 template <typename nucleotide_type>
-constexpr nucleotide_type complement(nucleotide_type const alph)
     requires requires (nucleotide_type alph) { { alph.complement() } -> nucleotide_type; }
+constexpr nucleotide_type complement(nucleotide_type const alph)
 {
     return alph.complement();
 }

@@ -291,7 +291,7 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr cartesian_composition() : base_t{} {}
+    constexpr cartesian_composition() noexcept : base_t{} {}
     constexpr cartesian_composition(cartesian_composition const &) = default;
     constexpr cartesian_composition(cartesian_composition &&) = default;
     constexpr cartesian_composition & operator=(cartesian_composition const &) = default;
@@ -330,7 +330,7 @@ public:
      *            seqan3::structure_aa).
      */
     //!\brief Construction from initialiser-list.
-    constexpr cartesian_composition(component_types ... components)
+    constexpr cartesian_composition(component_types ... components) noexcept
     {
         assign_rank(rank_sum_helper(components..., std::make_index_sequence<sizeof...(component_types)>{}));
     }
@@ -348,7 +348,7 @@ public:
     //!\cond
         requires is_unique_component<component_type>
     //!\endcond
-    constexpr explicit cartesian_composition(component_type const alph) : cartesian_composition{}
+    constexpr explicit cartesian_composition(component_type const alph) noexcept : cartesian_composition{}
     {
         get<component_type>(*this) = alph;
     }
@@ -370,7 +370,7 @@ public:
     //!\cond
        requires detail::one_component_is<cartesian_composition, derived_type, detail::implicitly_convertible_from, indirect_component_type>
     //!\endcond
-    constexpr explicit cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
+    constexpr explicit cartesian_composition(indirect_component_type const alph) noexcept : cartesian_composition{}
     {
        using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
        component_type tmp(alph); // delegate construction
@@ -381,7 +381,7 @@ public:
     template <typename indirect_component_type>
        requires !detail::one_component_is<cartesian_composition, derived_type, detail::implicitly_convertible_from, indirect_component_type> &&
                  detail::one_component_is<cartesian_composition, derived_type, detail::constructible_from, indirect_component_type>
-    constexpr explicit cartesian_composition(indirect_component_type const alph) : cartesian_composition{}
+    constexpr explicit cartesian_composition(indirect_component_type const alph) noexcept : cartesian_composition{}
     {
        using component_type = meta::front<meta::find_if<component_list, detail::constructible_from<indirect_component_type>>>;
        component_type tmp(alph); // delegate construction
@@ -402,7 +402,7 @@ public:
     //!\cond
         requires is_unique_component<component_type>
     //!\endcond
-    constexpr derived_type & operator=(component_type const alph)
+    constexpr derived_type & operator=(component_type const alph) noexcept
     {
         get<component_type>(*this) = alph;
         return static_cast<derived_type &>(*this);
@@ -421,7 +421,7 @@ public:
     //!\cond
         requires detail::one_component_is<cartesian_composition, derived_type, detail::assignable_from, indirect_component_type>
     //!\endcond
-    constexpr derived_type & operator=(indirect_component_type const alph)
+    constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
         using component_type = meta::front<meta::find_if<component_list, detail::assignable_from<indirect_component_type>>>;
         get<component_type>(*this) = alph; // delegate assignment
@@ -434,7 +434,7 @@ public:
         requires !detail::one_component_is<cartesian_composition, derived_type, detail::assignable_from, indirect_component_type> &&
                  detail::one_component_is<cartesian_composition, derived_type, detail::implicitly_convertible_from, indirect_component_type>
     //!\endcond
-    constexpr derived_type & operator=(indirect_component_type const alph)
+    constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
         using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
         component_type tmp(alph);
@@ -453,7 +453,7 @@ public:
      * \returns A proxy to the contained element that models the same alphabets concepts and supports assignment.
      */
     template <size_t index>
-    friend constexpr auto get(cartesian_composition & l)
+    friend constexpr auto get(cartesian_composition & l) noexcept
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
@@ -471,7 +471,7 @@ public:
      * \returns A proxy to the contained element that models the same alphabets concepts and supports assignment.
      */
     template <typename type>
-    friend constexpr auto get(cartesian_composition & l)
+    friend constexpr auto get(cartesian_composition & l) noexcept
     //!\cond
         requires is_unique_component<type>
     //!\endcond
@@ -484,7 +484,7 @@ public:
      * \returns A copy of the contained element.
      */
     template <size_t index>
-    friend constexpr auto get(cartesian_composition const & l)
+    friend constexpr auto get(cartesian_composition const & l) noexcept
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
@@ -502,7 +502,7 @@ public:
      * \returns A copy of the contained element.
      */
     template <typename type>
-    friend constexpr type get(cartesian_composition const & l)
+    friend constexpr type get(cartesian_composition const & l) noexcept
     //!\cond
         requires is_unique_component<type>
     //!\endcond
@@ -513,7 +513,7 @@ public:
     /*!\brief Implicit cast to a single letter. Works only if the type is unique in the type list.
      */
     template <typename type>
-    constexpr operator type() const
+    constexpr operator type() const noexcept
     //!\cond
         requires is_unique_component<type>
     //!\endcond
@@ -591,7 +591,7 @@ public:
 private:
     //!\brief Return the rank of the i-th component.
     template <size_t index>
-    constexpr rank_type to_component_rank() const
+    constexpr rank_type to_component_rank() const noexcept
     {
         return (to_rank() / cummulative_alph_sizes[index]) % alphabet_size_v<meta::at_c<component_list, index>>;
     }
@@ -624,7 +624,7 @@ private:
 
     //!\brief For the given components, compute the combined rank.
     template <std::size_t ...idx>
-    static constexpr rank_type rank_sum_helper(component_types ... components, std::index_sequence<idx...> const &)
+    static constexpr rank_type rank_sum_helper(component_types ... components, std::index_sequence<idx...> const &) noexcept
     {
         using seqan3::to_rank;
         return ((to_rank(components) * cummulative_alph_sizes[idx]) + ...);
@@ -642,7 +642,7 @@ template <typename indirect_component_type, typename derived_type, typename ...c
              !detail::weakly_equality_comparable_by_members_with_concept<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator==(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, component_types...> const & rhs)
+                          cartesian_composition<derived_type, component_types...> const & rhs) noexcept
 {
     return rhs == lhs;
 }
@@ -653,7 +653,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_equality_comparable_by_members_with_concept<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator!=(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, indirect_component_types...> const & rhs)
+                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs != lhs;
 }
@@ -664,7 +664,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<(indirect_component_type const & lhs,
-                         cartesian_composition<derived_type, indirect_component_types...> const & rhs)
+                         cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs > lhs;
 }
@@ -675,7 +675,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>(indirect_component_type const & lhs,
-                         cartesian_composition<derived_type, indirect_component_types...> const & rhs)
+                         cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs < lhs;
 }
@@ -686,7 +686,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<=(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, indirect_component_types...> const & rhs)
+                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs >= lhs;
 }
@@ -697,7 +697,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>=(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, indirect_component_types...> const & rhs)
+                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs <= lhs;
 }

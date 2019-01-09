@@ -117,7 +117,7 @@ public:
      * \{
      */
     //!\brief Assign from a character.
-    constexpr masked & assign_char(char_type const c)
+    constexpr masked & assign_char(char_type const c) noexcept
     {
         seqan3::assign_char(get<0>(*this), c);
         seqan3::assign_rank(get<1>(*this), is_lower(c));

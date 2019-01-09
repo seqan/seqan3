@@ -86,7 +86,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dot_bracket3() : base_t{} {}
+    constexpr dot_bracket3() noexcept : base_t{} {}
     constexpr dot_bracket3(dot_bracket3 const &) = default;
     constexpr dot_bracket3(dot_bracket3 &&) = default;
     constexpr dot_bracket3 & operator=(dot_bracket3 const &) = default;

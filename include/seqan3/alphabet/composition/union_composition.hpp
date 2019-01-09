@@ -241,7 +241,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr union_composition() = default;
+    constexpr union_composition() noexcept : base_t{} {}
     constexpr union_composition(union_composition const &) = default;
     constexpr union_composition(union_composition &&) = default;
     constexpr union_composition & operator=(union_composition const &) = default;

@@ -98,7 +98,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr wuss() : base_t{} {}
+    constexpr wuss() noexcept : base_t{} {}
     constexpr wuss(wuss const &) = default;
     constexpr wuss(wuss &&) = default;
     constexpr wuss & operator=(wuss const &) = default;
