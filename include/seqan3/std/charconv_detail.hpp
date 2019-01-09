@@ -80,13 +80,14 @@
 
 #pragma once
 
-#include <cstdlib>
-#include <type_traits>
-#include <limits>
-#include <cstdint>
-#include <cstring>
-#include <cmath>
+#include <algorithm>
 #include <cerrno>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <limits>
+#include <type_traits>
 
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
@@ -725,10 +726,8 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
         return {last, std::errc::invalid_argument};
 
     float tmp{};
-    ptrdiff_t constexpr buffer_size = 10000;
-    char hex_buffer[buffer_size];
-    char * start;
-    char * end;
+    ptrdiff_t constexpr buffer_size = 100;
+    char buffer[buffer_size];
 
     if (fmt != std::chars_format::general)
     {
@@ -751,28 +750,42 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
             return {last, std::errc::invalid_argument};
     }
 
-    // If hex format is explicitly expected, the 0x prefix is not allowed in the
-    // the original sequence according to the std::from_chars cppreference
-    // documentation.
-    // In order to use strto[f/d/ld], the prefix must be prepended to achieve
-    // correct parsing. This will also automatically lead to an error if the
-    // original sequence did contain a 0x prefix and thus reflect the correct
-    // requirements of std::from_chars.
-    if (fmt == std::chars_format::hex)
-    {
-        hex_buffer[0] = '0';
-        hex_buffer[1] = 'x';
-        for (unsigned i = 0; i < std::min(buffer_size - 2, last - first); ++i)
-            hex_buffer[i+2] = first[i];
 
-        start = &hex_buffer[0];
-        end = &hex_buffer[0] + sizeof(hex_buffer);
+    // In contrast to std::from_chars, std::strto[f/d/ld] does not treat the second
+    // parameter (str_end) as "end of the sequence to parse" but merely as an out
+    // parameter to indicate where the parsing ended. Therefore, if [last] does
+    // not point to the end of a null-terminated string, a buffer is needed to
+    // represent the truncated sequence and ensure correct from_chars functionality.
+    char * start;
+
+    if ((*last != '\0' ) || fmt == std::chars_format::hex)
+    {
+        // If hex format is explicitly expected, the 0x prefix is not allowed in the
+        // the original sequence according to the std::from_chars cppreference
+        // documentation.
+        // In order to use strto[f/d/ld], the prefix must be prepended to achieve
+        // correct parsing. This will also automatically lead to an error if the
+        // original sequence did contain a 0x prefix and thus reflect the correct
+        // requirements of std::from_chars.
+        ptrdiff_t offset{0};
+        if (fmt == std::chars_format::hex)
+        {
+            buffer[0] = '0';
+            buffer[1] = 'x';
+            offset = 2;
+        }
+
+        std::copy(first, last, &buffer[offset]);
+        buffer[std::min<ptrdiff_t>(buffer_size - offset, last - first)] = '\0';
+
+        start = &buffer[0];
     }
     else
     {
         start = const_cast<char *>(first);
-        end = const_cast<char *>(last);
     }
+
+    char * end;
 
     if constexpr (std::Same<std::remove_reference_t<value_type>, float>)
     {
@@ -791,7 +804,7 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
     {
         return {last, std::errc::result_out_of_range};
     }
-    else if (tmp == 0 && end == first)
+    else if (tmp == 0 && end == start)
     {
         return {last, std::errc::invalid_argument};
     }
