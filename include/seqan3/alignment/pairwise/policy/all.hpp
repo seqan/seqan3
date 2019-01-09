@@ -16,6 +16,7 @@
 
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
 
 //!\cond DEV
@@ -132,5 +133,38 @@
  * ### Existing gap init policies:
  *
  *  - seqan3::detail::affine_gap_init_policy
+ *
+ * ## Find optimum policies
+ *
+ * These policies are used to define the search space of the alignment optimum.
+ *
+ * Function name             | Arguments                     | Return value                         |
+ * ------------------------- | ----------------------------- | ------------------------------------ |
+ * `check_score`             | `score const`, `optimum &`    | `void`                               |
+ * `check_score_last_row`    | `score const`, `optimum &`    | `void`                               |
+ * `check_score_last_column` | `rng_t &&`, `optimum &`       | `void`                               |
+ *
+ * - check_score:
+ *
+ *    Is called for every cell in the dynamic programming matrix. Might be a "NO-OP".
+ *    The left operand is the score of the current cell and the right operand is the current optimum that will
+ *    be updated if the current score was higher.
+ *
+ * - check_score_last_row:
+ *
+ *    Is called only for the cells in the last row of the dynamic programming matrix. Might be a NO-OP.
+ *    The left operand is the score of the current cell and the right operand is the current optimum that will
+ *    be updated if the current score was higher.
+ *
+ * - check_score_last_column:
+ *
+ *    Is called only for the cells in the last column of the dynamic programming matrix.
+ *    The left operand is the entire last column, because the algorithm's layout is column based.
+ *    This function might skip the entire range and only compare the last value (the score for the global alignment)
+ *    depending on the alignment configuration.
+ *
+ * ### Existing optimum policies:
+ *
+ *  - seqan3::detail::find_optimum_policy
  */
 //!\endcond

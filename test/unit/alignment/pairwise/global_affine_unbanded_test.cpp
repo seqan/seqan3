@@ -37,7 +37,8 @@ TYPED_TEST_CASE_P(global_affine_unbanded);
 
 using global_affine_unbanded_types
     = ::testing::Types<
-        param<&global::affine::unbanded::dna4_01>
+        param<&global::affine::unbanded::dna4_01>,
+        param<&global::affine::unbanded::dna4_02>
     >;
 
 TYPED_TEST_P(global_affine_unbanded, score)

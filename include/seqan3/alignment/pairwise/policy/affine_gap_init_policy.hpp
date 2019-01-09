@@ -14,20 +14,40 @@
 
 #include <tuple>
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {
 
-/*!\brief Implements the Initialisation of the dynamic programming matrix with affine gaps.
+/*!\brief The default traits class for seqan3::detail::affine_gap_init_policy.
+ * \ingroup alignment_policy
+ *
+ * \details
+ *
+ * Enables the behaviour of a global alignment where both sides of the dynamic programming matrix are
+ * initialised with growing gap penalties.
+ */
+struct default_affine_init_traits
+{
+    //!\brief A std::bool_constant to enable/disable free end gaps for the leading gaps of the first sequence.
+    using free_first_leading_t  = std::false_type;
+    //!\brief A std::bool_constant to enable/disable free end gaps for the leading gaps of the second sequence.
+    using free_second_leading_t = std::false_type;
+};
+
+/*!\brief Implements the initialisation of the dynamic programming matrix with affine gaps.
  * \ingroup alignment_policy
  * \tparam derived_t   The derived alignment algorithm.
+ * \tparam traits_type The traits type to determine the initialisation rules of the dynamic programming matrix.
+ *                     Defaults to seqan3::detail::default_affine_init_traits.
  */
-template <typename derived_t>
+template <typename derived_t, typename traits_type = default_affine_init_traits>
 class affine_gap_init_policy
 {
-protected:
+private:
+
+    //!\brief Befriends the derived class to grant it access to the private members.
+    friend derived_t;
     /*!\name Constructor, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
@@ -52,12 +72,23 @@ protected:
         using std::get;
 
         auto & [main_score, hz_score] = current_cell;
-        auto & [prev_cell, gap_open, gap_extend] = cache;
+        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & vt_score = get<1>(prev_cell);
+        (void) opt;  // prevent compiler warning.
 
         main_score = 0;
-        hz_score = gap_open + gap_extend;
-        vt_score = gap_open + gap_extend;
+
+        // Initialise the vertical matrix cell according to the traits settings.
+        if constexpr (traits_type::free_first_leading_t::value)
+            vt_score = 0;
+        else
+            vt_score = gap_open + gap_extend;
+
+        // Initialise the horizontal matrix cell according to the traits settings.
+        if constexpr (traits_type::free_second_leading_t::value)
+            hz_score = 0;
+        else
+            hz_score = gap_open + gap_extend;
     }
 
     /*!\brief Initialises a cell in the first column of the dynamic programming matrix.
@@ -72,12 +103,19 @@ protected:
         using std::get;
 
         auto & [main_score, hz_score] = current_cell;
-        auto & [prev_cell, gap_open, gap_extend] = cache;
+        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & vt_score = get<1>(prev_cell);
+        (void) opt;  // prevent compiler warning.
 
         main_score = vt_score;
+
+        // Initialise the vertical matrix cell according to the traits settings.
+        if constexpr (traits_type::free_first_leading_t::value)
+            vt_score = 0;
+        else
+            vt_score += gap_extend;
+
         hz_score = main_score + gap_open + gap_extend;
-        vt_score += gap_extend;
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
@@ -90,13 +128,21 @@ protected:
     constexpr auto init_row_cell(cell_t & current_cell, cache_t & cache) const noexcept
     {
         auto & [main_score, hz_score] = current_cell;
-        auto & [prev_cell, gap_open, gap_extend] = cache;
+        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & [prev_score, vt_score] = prev_cell;
+        (void) opt;  // prevent compiler warning.
 
         prev_score = main_score;
         main_score = hz_score;
-        hz_score += gap_extend;
+
         vt_score += main_score + gap_open + gap_extend;
+
+        // Initialise the horizontal matrix cell according to the traits settings.
+        if constexpr (traits_type::free_second_leading_t::value)
+            hz_score = 0;
+        else
+            hz_score += gap_extend;
+
     }
 };
 
