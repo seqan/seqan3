@@ -117,7 +117,10 @@ private:
     //!\}
 
 public:
-    /*!\brief Constructor to pass the alignment result traits.
+    /*!\name Constructor, destructor and assignment
+     * \{
+     *
+     * \brief Constructor to pass the alignment result traits.
      * \param[in] value The alignment results.
      */
     align_result(align_result_traits value) : data(value) {};
@@ -134,6 +137,7 @@ public:
     align_result & operator=(align_result &&) = default;
     //! \brief Default destructor.
     ~align_result() = default;
+    //!\}
 
     /*!\name Access functions
      * \brief Functions to access elements of the alignment result type.
