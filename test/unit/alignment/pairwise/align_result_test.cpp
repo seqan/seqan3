@@ -1,36 +1,9 @@
-// ==========================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ==========================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
 
@@ -135,15 +108,15 @@ TYPED_TEST(align_result_test, end_coordinate)
     {
         align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_end_coordinate(), (coord_t{10ul, 10ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t const &>));
     }
 
     {
         align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_end_coordinate(), (coord_t{10ul, 10ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t const &>));
     }
 }
 
@@ -155,48 +128,50 @@ TYPED_TEST(align_result_test, begin_coordinate)
     {
         align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_begin_coordinate(), (coord_t{0ul, 0ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t const &>));
     }
 
     {
         align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.get_begin_coordinate(), (coord_t{0ul, 0ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t const &>));
     }
 }
 
-TYPED_TEST(align_result_test, trace)
+TYPED_TEST(align_result_test, alignment)
 {
-    using trace_t = decltype(std::declval<TypeParam>().trace);
+    using alignment_t = decltype(std::declval<TypeParam>().alignment);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
         align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_trace(), (trace_t{seq, seq}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_trace()), trace_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_trace()), trace_t>));
+        EXPECT_EQ(tmp.get_alignment(), (alignment_t{seq, seq}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_alignment()), alignment_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_alignment()), alignment_t const &>));
     }
 
     {
         align_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_trace(), (trace_t{seq, seq}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_trace()), trace_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_trace()), trace_t>));
+        EXPECT_EQ(tmp.get_alignment(), (alignment_t{seq, seq}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_alignment()), alignment_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_alignment()), alignment_t const &>));
     }
 
-    if constexpr (tuple_like_concept<trace_t>)
+    if constexpr (tuple_like_concept<alignment_t>)
     {
         align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(std::string{std::get<0>(tmp.get_trace()) | view::persist | view::to_char}, std::string{"AT-C--A"});
-        EXPECT_EQ(std::string{std::get<1>(tmp.get_trace()) | view::persist | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{std::get<0>(tmp.get_alignment()) | view::persist | view::to_char},
+                  std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{std::get<1>(tmp.get_alignment()) | view::persist | view::to_char},
+                  std::string{"AT-C--A"});
     }
     else
     {
         align_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(std::string{(tmp.get_trace()[0]) | view::persist | view::to_char}, std::string{"AT-C--A"});
-        EXPECT_EQ(std::string{(tmp.get_trace()[1]) | view::persist | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{(tmp.get_alignment()[0]) | view::persist | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{(tmp.get_alignment()[1]) | view::persist | view::to_char}, std::string{"AT-C--A"});
     }
 }
 
@@ -237,15 +212,15 @@ TEST(align_result_test, type_deduction)
         align_result tmp(tr);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), double>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_trace()), std::vector<gapped<rna5>>>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_alignment()), std::vector<gapped<rna5>> const &>));
 
         EXPECT_EQ(tmp.get_id(), 2);
         EXPECT_DOUBLE_EQ(tmp.get_score(), 5.0);
         EXPECT_EQ((tmp.get_end_coordinate()), (coord_t{1, -1}));
         EXPECT_EQ((tmp.get_begin_coordinate()), (coord_t{10, -10}));
-        EXPECT_EQ(tmp.get_trace(), seq);
+        EXPECT_EQ(tmp.get_alignment(), seq);
     }
 
     {
@@ -255,7 +230,7 @@ TEST(align_result_test, type_deduction)
         align_result tmp(tr);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), double>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
     }
 
     {

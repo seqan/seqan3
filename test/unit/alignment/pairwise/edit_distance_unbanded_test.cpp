@@ -219,7 +219,7 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
     EXPECT_EQ(trace_matrix, fixture.trace_matrix);
     EXPECT_EQ(alignment.score(), fixture.score);
 
-    auto && [gapped_database, gapped_query] = alignment.trace();
+    auto && [gapped_database, gapped_query] = alignment.alignment();
     EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.gapped_sequence1);
     EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.gapped_sequence2);
 }
@@ -235,7 +235,7 @@ TYPED_TEST_P(edit_distance_unbanded, trace)
 
     auto alignment = edit_distance<word_type>(database, query, align_cfg);
 
-    auto && [gapped_database, gapped_query] = alignment.trace();
+    auto && [gapped_database, gapped_query] = alignment.alignment();
     EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.gapped_sequence1);
     EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.gapped_sequence2);
 }

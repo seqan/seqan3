@@ -469,9 +469,9 @@ public:
             res_vt.begin_coordinate = alignment_begin_coordinate(matrix, res_vt.end_coordinate);
         }
 
-        if constexpr (!std::is_same_v<decltype(res_vt.trace), std::nullopt_t *>)
+        if constexpr (!std::is_same_v<decltype(res_vt.alignment), std::nullopt_t *>)
         {
-            res_vt.trace = alignment_trace(database, query, matrix, res_vt.end_coordinate);
+            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.end_coordinate);
         }
         res = align_result<result_value_type>{res_vt};
         return res;
@@ -512,8 +512,8 @@ public:
         return {col, query.size() - 1};
     }
 
-    //!\brief Return the trace of the alignment
-    auto trace() const noexcept
+    //!\brief Return the alignment, i.e. the actual base pair matching.
+    auto alignment() const noexcept
     {
         return alignment_trace(database, query, trace_matrix(), end_coordinate());
     }

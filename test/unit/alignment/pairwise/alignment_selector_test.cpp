@@ -83,11 +83,11 @@ TEST(alignment_selector, determine_result_type)
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_end_coordinate()),
-                                    detail::alignment_coordinate>));
+                                    detail::alignment_coordinate const &>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_begin_coordinate()),
-                                    detail::alignment_coordinate>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_trace()),
-                                    std::pair<gapped_seq1_t, gapped_seq2_t>>));
+                                    detail::alignment_coordinate const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_alignment()),
+                                    std::pair<gapped_seq1_t, gapped_seq2_t> const &>));
     }
 }
 

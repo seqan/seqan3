@@ -1,36 +1,9 @@
-// ============================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ============================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
 /*!\file
  * \brief Provides seqan3::align_result.
@@ -50,13 +23,13 @@ namespace seqan3::detail
  * \tparam score_t       The type for the resulting score.
  * \tparam end_coord_t   The type for the end coordinate, can be omitted.
  * \tparam begin_coord_t The type for the begin coordinate, can be omitted.
- * \tparam trace_t       The type for the alignment trace, can be omitted.
+ * \tparam alignment_t   The type for the alignment, can be omitted.
  */
 template <typename id_t,
           typename score_t,
           typename end_coord_t = std::nullopt_t *,
           typename begin_coord_t = std::nullopt_t *,
-          typename trace_t = std::nullopt_t *>
+          typename alignment_t = std::nullopt_t *>
 struct align_result_value_type
 {
     //! \brief The alignment identifier.
@@ -67,8 +40,8 @@ struct align_result_value_type
     end_coord_t end_coordinate{};
     //! \brief The begin coordinate of the alignment.
     begin_coord_t begin_coordinate{};
-    //! \brief The alignment trace, i.e. the actual base pair matching.
-    trace_t trace{};
+    //! \brief The alignment, i.e. the actual base pair matching.
+    alignment_t alignment{};
 };
 
 /*!\name Type deduction guides
@@ -94,10 +67,10 @@ template <typename id_t, typename score_t, typename end_coord_t, typename begin_
 align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t)
     -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t>;
 
-//! \brief Type deduction for id, score, end coordinate, begin coordinate and trace.
-template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t, typename trace_t>
-align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t, trace_t)
-    -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t, trace_t>;
+//! \brief Type deduction for id, score, end coordinate, begin coordinate and alignment.
+template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t, typename alignment_t>
+align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t, alignment_t)
+    -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t, alignment_t>;
 //!\}
 
 } // namespace seqan3::detail
@@ -105,7 +78,7 @@ align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t, trace_t)
 namespace seqan3
 {
 
-/*!\brief Stores the alignment results and gives access to score, traceback and the begin and end coordinates.
+/*!\brief Stores the alignment results and gives access to score, alignment and the begin and end coordinates.
  * \ingroup pairwise
  * \tparam align_result_traits The type of the traits object.
  *
@@ -114,7 +87,7 @@ namespace seqan3
  * Objects of this class are the result of an alignment computation.
  * It always contains an alignment identifier and the resulting score.
  * Optionally – if the user requests – also the begin and end positions within
- * the sequences and the trace can be calculated. When accessing a field that
+ * the sequences and the alignment can be calculated. When accessing a field that
  * has not been calculated, an assertion will fail during compilation.
  */
 template <typename align_result_traits>
@@ -139,8 +112,8 @@ private:
     using end_coord_t   = decltype(data.end_coordinate);
     //! \brief The type for the begin coordinate.
     using begin_coord_t = decltype(data.begin_coordinate);
-    //! \brief The type for the alignment trace.
-    using trace_t       = decltype(data.trace);
+    //! \brief The type for the alignment.
+    using alignment_t   = decltype(data.alignment);
     //!\}
 
 public:
@@ -194,7 +167,7 @@ public:
      * \attention This function with fail the compilation, if the end coordinate was not requested in the alignment
      * configuration.
      */
-    constexpr end_coord_t get_end_coordinate() const noexcept
+    constexpr end_coord_t const & get_end_coordinate() const noexcept
     {
         static_assert(!std::is_same_v<end_coord_t, std::nullopt_t *>,
                       "Trying to access the end coordinate, although it was not requested in the alignment "
@@ -208,7 +181,7 @@ public:
      * \attention This function with fail the compilation, if the begin coordinate was not requested in the alignment
      * configuration.
      */
-    constexpr begin_coord_t get_begin_coordinate() const noexcept
+    constexpr begin_coord_t const & get_begin_coordinate() const noexcept
     {
         static_assert(!std::is_same_v<begin_coord_t, std::nullopt_t *>,
                       "Trying to access the begin coordinate, although it was not requested in the alignment "
@@ -216,17 +189,16 @@ public:
         return data.begin_coordinate;
     }
 
-    /*!\brief Returns the traceback of the alignment.
+    /*!\brief Returns the actual alignment, i.e. the base pair matching.
      * \return At least two gapped sequences, which represent the alignment.
-     * \attention This function with fail the compilation, if the trace was not requested in the alignment
+     * \attention This function with fail the compilation, if the alignment was not requested in the alignment
      * configuration.
      */
-    constexpr trace_t get_trace() const noexcept
+    constexpr alignment_t const & get_alignment() const noexcept
     {
-        static_assert(!std::is_same_v<trace_t, std::nullopt_t *>,
-                      "Trying to access the trace, although it was not requested in the alignment "
-                      "configuration.");
-        return data.trace;
+        static_assert(!std::is_same_v<alignment_t, std::nullopt_t *>,
+                      "Trying to access the alignment, although it was not requested in the alignment configuration.");
+        return data.alignment;
     }
     //!\}
 };

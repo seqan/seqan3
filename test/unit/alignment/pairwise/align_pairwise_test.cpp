@@ -73,7 +73,7 @@ TEST(align_pairwise, single_rng_lvalue)
             EXPECT_EQ(res.get_score(), -4);
             auto [cmp1, cmp2] = res.get_end_coordinate();
             EXPECT_EQ((std::tie(cmp1, cmp2)), (std::tuple{7, 8}));
-            auto && [gap1, gap2] = res.get_trace();
+            auto && [gap1, gap2] = res.get_alignment();
             EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
             EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
         }
@@ -101,7 +101,7 @@ TEST(align_pairwise, single_view_lvalue)
         for (auto && res : align_pairwise(v, cfg))
         {
             EXPECT_EQ(res.get_score(), -4);
-            auto && [gap1, gap2] = res.get_trace();
+            auto && [gap1, gap2] = res.get_alignment();
             EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
             EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
         }
@@ -121,7 +121,7 @@ TEST(align_pairwise, multiple_rng_lvalue)
     for (auto && res : align_pairwise(vec, cfg))
     {
         EXPECT_EQ(res.get_score(), -4);
-        auto && [gap1, gap2] = res.get_trace();
+        auto && [gap1, gap2] = res.get_alignment();
         EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
         EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");
     }
