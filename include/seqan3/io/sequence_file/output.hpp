@@ -239,7 +239,7 @@ namespace seqan3
  */
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
-          detail::type_list_of_sequence_file_output_formats_concept valid_formats_ =
+          detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
               type_list<sequence_file_format_fasta, sequence_file_format_fastq>,
           char_concept stream_char_type_ = char>
 class sequence_file_output
