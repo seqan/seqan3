@@ -112,7 +112,7 @@ struct implicitly_convertible_from
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, implicitly_convertible_to_concept<T, type>>;
+    using invoke = std::integral_constant<bool, ImplicitlyConvertibleTo<T, type>>;
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.

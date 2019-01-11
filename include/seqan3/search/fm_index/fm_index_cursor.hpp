@@ -272,7 +272,7 @@ public:
      */
     template <alphabet_concept char_t>
     //!\cond
-        requires implicitly_convertible_to_concept<char_t, typename index_t::char_type>
+        requires ImplicitlyConvertibleTo<char_t, typename index_t::char_type>
     //!\endcond
     bool extend_right(char_t const c) noexcept
     {
@@ -310,7 +310,7 @@ public:
      */
     template <std::ranges::RandomAccessRange seq_t>
     //!\cond
-        requires implicitly_convertible_to_concept<innermost_value_type_t<seq_t>, typename index_t::char_type>
+        requires ImplicitlyConvertibleTo<innermost_value_type_t<seq_t>, typename index_t::char_type>
     //!\endcond
     bool extend_right(seq_t && seq) noexcept
     {

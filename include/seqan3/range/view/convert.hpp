@@ -61,7 +61,7 @@ namespace seqan3::view
 template <typename out_t>
 auto const convert = view::transform([] (auto const & in) -> out_t
 {
-    if constexpr (implicitly_convertible_to_concept<std::remove_reference_t<decltype(in)>, out_t>)
+    if constexpr (ImplicitlyConvertibleTo<std::remove_reference_t<decltype(in)>, out_t>)
         return in;
     else
         return static_cast<out_t>(in);

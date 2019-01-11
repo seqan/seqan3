@@ -51,7 +51,7 @@ SEQAN3_CONCEPT WeaklyOrderedByMembersWith = requires (lhs_t const & lhs, rhs_t c
 //!\endcond
 
 /*!\interface   seqan3::detail::convertible_to_by_member_concept <>
- * \brief       Like seqan3::implicitly_convertible_to_concept, but only considers member operators of the source type.
+ * \brief       Like seqan3::ImplicitlyConvertibleTo, but only considers member operators of the source type.
  */
 //!\cond
 template <typename source_t, typename target_t>
@@ -89,12 +89,12 @@ SEQAN3_CONCEPT weakly_ordered_with_concept = requires (std::remove_reference_t<t
 };
 //!\endcond
 
-/*!\interface   seqan3::implicitly_convertible_to_concept <>
+/*!\interface   seqan3::ImplicitlyConvertibleTo <>
  * \brief       Resolves to `std::ranges::ImplicitlyConvertibleTo<type1, type2>()`.
  */
 //!\cond
 template <typename t, typename u>
-SEQAN3_CONCEPT implicitly_convertible_to_concept = std::is_convertible_v<t, u>;
+SEQAN3_CONCEPT ImplicitlyConvertibleTo = std::is_convertible_v<t, u>;
 //!\endcond
 
 /*!\interface   seqan3::explicitly_convertible_to_concept <>

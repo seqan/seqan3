@@ -113,7 +113,7 @@ inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t
 template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           typename other_t>
-    requires implicitly_convertible_to_concept<other_t, cartesian_derived_t>
+    requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
 inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        weakly_equality_comparable_with,
@@ -121,7 +121,7 @@ inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t
 template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           typename other_t>
-    requires implicitly_convertible_to_concept<other_t, cartesian_derived_t>
+    requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
 inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        weakly_ordered_with,

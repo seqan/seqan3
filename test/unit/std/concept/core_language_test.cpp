@@ -28,11 +28,11 @@ TEST(core_language_concepts, DerivedFrom)
     EXPECT_TRUE((!std::DerivedFrom<type_a, type_b>));
 }
 
-TEST(implicitly_convertible_to_concept, basic)
+TEST(ImplicitlyConvertibleTo, basic)
 {
-    EXPECT_TRUE((implicitly_convertible_to_concept<type_b, type_c>));
-    EXPECT_TRUE((!implicitly_convertible_to_concept<type_c, type_b>));
-    EXPECT_TRUE((!implicitly_convertible_to_concept<type_a, type_c>));
+    EXPECT_TRUE((ImplicitlyConvertibleTo<type_b, type_c>));
+    EXPECT_TRUE((!ImplicitlyConvertibleTo<type_c, type_b>));
+    EXPECT_TRUE((!ImplicitlyConvertibleTo<type_a, type_c>));
 }
 
 TEST(explicitly_convertible_to_concept, basic)
