@@ -31,16 +31,16 @@ TEST(cereal, CerealOutputArchive)
     EXPECT_FALSE((CerealOutputArchive<cereal::PortableBinaryInputArchive>));
 }
 
-TEST(cereal, cereal_input_archive_concept)
+TEST(cereal, CerealInputArchive)
 {
-    EXPECT_FALSE((cereal_input_archive_concept<cereal::XMLOutputArchive>));
-    EXPECT_FALSE((cereal_input_archive_concept<cereal::JSONOutputArchive>));
-    EXPECT_FALSE((cereal_input_archive_concept<cereal::BinaryOutputArchive>));
-    EXPECT_FALSE((cereal_input_archive_concept<cereal::PortableBinaryOutputArchive>));
-    EXPECT_TRUE((cereal_input_archive_concept<cereal::XMLInputArchive>));
-    EXPECT_TRUE((cereal_input_archive_concept<cereal::JSONInputArchive>));
-    EXPECT_TRUE((cereal_input_archive_concept<cereal::BinaryInputArchive>));
-    EXPECT_TRUE((cereal_input_archive_concept<cereal::PortableBinaryInputArchive>));
+    EXPECT_FALSE((CerealInputArchive<cereal::XMLOutputArchive>));
+    EXPECT_FALSE((CerealInputArchive<cereal::JSONOutputArchive>));
+    EXPECT_FALSE((CerealInputArchive<cereal::BinaryOutputArchive>));
+    EXPECT_FALSE((CerealInputArchive<cereal::PortableBinaryOutputArchive>));
+    EXPECT_TRUE((CerealInputArchive<cereal::XMLInputArchive>));
+    EXPECT_TRUE((CerealInputArchive<cereal::JSONInputArchive>));
+    EXPECT_TRUE((CerealInputArchive<cereal::BinaryInputArchive>));
+    EXPECT_TRUE((CerealInputArchive<cereal::PortableBinaryInputArchive>));
 }
 
 TEST(cereal, CerealArchive)

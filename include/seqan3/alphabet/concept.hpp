@@ -166,7 +166,7 @@ underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const 
 }
 
 /*!\brief Restore an alphabet letter from a saved rank.
- * \tparam archive_t Must satisfy seqan3::cereal_input_archive_concept.
+ * \tparam archive_t Must satisfy seqan3::CerealInputArchive.
  * \tparam wrapped_alphabet_t A seqan3::semi_alphabet_concept after Cereal mangles it up.
  * \param l The alphabet letter (cereal wrapped).
  * \param r The assigned value.
@@ -178,7 +178,7 @@ underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const 
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
-template <cereal_input_archive_concept archive_t, typename wrapped_alphabet_t>
+template <CerealInputArchive archive_t, typename wrapped_alphabet_t>
 void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
                                        wrapped_alphabet_t && l,
                                        underlying_rank_t<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>> const & r)
