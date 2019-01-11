@@ -18,6 +18,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <seqan3/std/view/view_all.hpp>
 
 //-----------------------------------------------------------------------------
 // Implementation of single pass input view.
@@ -35,8 +36,9 @@ class single_pass_input_iterator;
  * \implements std::ranges::InputRange
  * \ingroup view
  */
-template <std::ranges::InputRange urng_t>
-class single_pass_input_view : public detail::view_base
+template <std::ranges::View urng_t>
+class single_pass_input_view : public view_base,
+                               public ranges::view_interface<single_pass_input_view<urng_t>>
 {
 private:
 
@@ -49,17 +51,10 @@ private:
     template <typename view_t>
     friend class single_pass_input_iterator;
 
-    //!\brief The internal view_state.
-    struct view_state
-    {
-        //!\brief The underlying range.
-        urng_t             urng;
-        //!\brief The cached iterator of the underlying range.
-        urng_iterator_type cached_urng_iter{seqan3::begin(urng)};
-    };
-
-    //!\brief Shared pointer of the data model.
-    std::shared_ptr<view_state> view_state_ptr{};
+    //!\brief The underlying range.
+    urng_t             urng;
+    //!\brief The cached iterator of the underlying range.
+    urng_iterator_type cached_urng_iter{};
 
 public:
     /*!\name Member types
@@ -91,8 +86,15 @@ public:
     ~single_pass_input_view() = default;
 
     //!\brief Construction from the underlying view.
-    single_pass_input_view(urng_t && urng) :
-        view_state_ptr{new view_state{std::forward<urng_t>(urng)}}
+    single_pass_input_view(urng_t _urng) :
+        urng{_urng},
+        cached_urng_iter{seqan3::begin(urng)}
+    {}
+
+    //!\brief Construction from InputRange type.
+    template <std::ranges::InputRange _urng_t>
+    single_pass_input_view(_urng_t & _urng) :
+        single_pass_input_view{_urng | view::all}
     {}
     //!\}
 
@@ -120,9 +122,7 @@ public:
     //!\brief Returns a sentinel.
     sentinel end()
     {
-        if (view_state_ptr != nullptr)
-            return {seqan3::end(view_state_ptr->urng)};
-        return sentinel{};
+        return {seqan3::end(urng)};
     }
 
     //!\brief Const version of end is deleted, since the underlying view_state must be mutable.
@@ -138,8 +138,9 @@ public:
  * \{
  */
 //!\brief Deduces the single_pass_input_view from the underlying range.
-template <std::ranges::InputRange urng_t>
-single_pass_input_view(urng_t &&) -> single_pass_input_view<urng_t>;
+template <typename _urng_t>
+single_pass_input_view(_urng_t &) ->
+    single_pass_input_view<decltype(std::declval<_urng_t>() | view::all)>;
 //!\}
 } // seqan3::detail
 
@@ -278,7 +279,7 @@ protected:
     //!\brief Gives access to the cached iterator.
     base_iterator_type & cached() const noexcept
     {
-        return view_ptr->view_state_ptr->cached_urng_iter;
+        return view_ptr->cached_urng_iter;
     }
 };
 }  // seqan3::detail
