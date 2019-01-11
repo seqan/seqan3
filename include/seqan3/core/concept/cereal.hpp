@@ -26,7 +26,7 @@ namespace seqan3
 
 /*!\interface seqan3::cereal_output_archive_concept <>
  * \brief All output archives of the Cereal library satisfy this.
- * \extends seqan3::cereal_archive_concept
+ * \extends seqan3::CerealArchive
  * \ingroup core
  *
  * This includes cereal::BinaryOutputArchive, cereal::PortableBinaryOutputArchive, cereal::JSONOutputArchive,
@@ -47,7 +47,7 @@ SEQAN3_CONCEPT cereal_output_archive_concept = false;
 
 /*!\interface seqan3::cereal_input_archive_concept <>
  * \brief All input archives of the Cereal library satisfy this.
- * \extends seqan3::cereal_archive_concept
+ * \extends seqan3::CerealArchive
  * \ingroup core
  *
  * This includes cereal::BinaryInputArchive, cereal::PortableBinaryInputArchive, cereal::JSONInputArchive,
@@ -66,7 +66,7 @@ SEQAN3_CONCEPT cereal_input_archive_concept = false;
 #endif
 //!\endcond
 
-/*!\interface seqan3::cereal_archive_concept <>
+/*!\interface seqan3::CerealArchive <>
  * \brief All archives of the Cereal library satisfy this.
  * \ingroup core
  *
@@ -76,16 +76,16 @@ SEQAN3_CONCEPT cereal_input_archive_concept = false;
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-SEQAN3_CONCEPT cereal_archive_concept = cereal_output_archive_concept<t> || cereal_input_archive_concept<t>;
+SEQAN3_CONCEPT CerealArchive = cereal_output_archive_concept<t> || cereal_input_archive_concept<t>;
 #else
 template <typename t>
-SEQAN3_CONCEPT cereal_archive_concept = false;
+SEQAN3_CONCEPT CerealArchive = false;
 #endif
 //!\endcond
 
 /*!\interface seqan3::cereal_text_archive_concept <>
  * \brief All text archives of the Cereal library satisfy this.
- * \extends seqan3::cereal_archive_concept
+ * \extends seqan3::CerealArchive
  * \ingroup core
  *
  * This includes cereal::JSONOutputArchive, cereal::XMLOutputArchive, cereal::JSONInputArchive,
