@@ -145,7 +145,7 @@ struct weakly_ordered_with
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, weakly_ordered_with_concept<type, T>>;
+    using invoke = std::integral_constant<bool, WeaklyOrderedWith<type, T>>;
 };
 
 } // namespace seqan3::detail

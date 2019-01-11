@@ -37,7 +37,7 @@ SEQAN3_CONCEPT weakly_equality_comparable_by_members_with_concept = requires (lh
 };
 //!\endcond
 /*!\interface   seqan3::detail::WeaklyOrderedByMembersWith <>
- * \brief       Like seqan3::weakly_ordered_with_concept, but considers only member operators of the LHS.
+ * \brief       Like seqan3::WeaklyOrderedWith, but considers only member operators of the LHS.
  */
 //!\cond
 template <typename lhs_t, typename rhs_t>
@@ -71,7 +71,7 @@ namespace seqan3
  * \{
  */
 
-/*!\interface   seqan3::weakly_ordered_with_concept <>
+/*!\interface   seqan3::WeaklyOrderedWith <>
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
@@ -79,7 +79,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t1, typename t2>
-SEQAN3_CONCEPT weakly_ordered_with_concept = requires (std::remove_reference_t<t1> const & v1,
+SEQAN3_CONCEPT WeaklyOrderedWith = requires (std::remove_reference_t<t1> const & v1,
                                                      std::remove_reference_t<t2> const & v2)
 {
     { v1 <  v2 } -> bool &&;
