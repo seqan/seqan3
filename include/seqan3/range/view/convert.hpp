@@ -45,7 +45,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                       | *lost*                          |
  * | seqan3::const_iterable_concept  |                                       | *preserved*                     |
  * |                                 |                                       |                                 |
- * | seqan3::reference_t             | seqan3::convertible_to_concept<out_t> | `out_t`                         |
+ * | seqan3::reference_t             | seqan3::ConvertibleTo<out_t>          | `out_t`                         |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
