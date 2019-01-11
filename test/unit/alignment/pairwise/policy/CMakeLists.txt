@@ -1,1 +1,2 @@
+seqan3_test(unbanded_score_dp_matrix_policy_test.cpp)
 seqan3_test(unbanded_score_trace_dp_matrix_policy_test.cpp)

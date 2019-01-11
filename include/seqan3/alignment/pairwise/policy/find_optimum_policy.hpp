@@ -129,12 +129,12 @@ protected:
         {
             ranges::for_each(rng, [&](auto && tpl)
             {
-                optimum = std::max(optimum, get<0>(tpl));
+                optimum = std::max(optimum, get<0>(get<0>(tpl)));
             });
         }
         else  // Only check the last cell for the global alignment.
         {
-            auto val = get<0>(*(--seqan3::end(rng)));
+            auto val = get<0>(get<0>(*(--seqan3::end(rng))));
             optimum = std::max(optimum, val);
         }
     }

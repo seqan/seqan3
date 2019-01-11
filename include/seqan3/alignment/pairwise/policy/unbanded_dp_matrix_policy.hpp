@@ -13,11 +13,15 @@
 #pragma once
 
 #include <vector>
-#include <utility>
+#include <tuple>
+
+#include <range/v3/view/bounded.hpp>
+#include <range/v3/view/repeat_n.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/range/shortcuts.hpp>
+#include <seqan3/std/span.hpp>
 
 namespace seqan3::detail
 {
@@ -61,20 +65,26 @@ private:
      * \param[in] second_batch The second sequence (or packed sequences).
      */
     template <typename first_batch_t, typename second_batch_t>
-    void allocate_score_matrix(first_batch_t && first_batch, second_batch_t && second_batch)
+    constexpr void allocate_matrix(first_batch_t && first_batch, second_batch_t && second_batch)
     {
-        dimension_first_batch = std::ranges::size(first_batch);
-        dimension_second_batch = std::ranges::size(second_batch);
+        dimension_first_batch = seqan3::size(first_batch) + 1;
+        dimension_second_batch = seqan3::size(second_batch) + 1;
 
         // We use only one column to compute the score.
-        score_matrix.resize(dimension_second_batch + 1);
+        score_matrix.resize(dimension_second_batch);
     }
 
     //!\brief Returns the current column of the alignment matrix.
     auto current_column()
     {
-        using iter_t = std::ranges::iterator_t<decltype(score_matrix)>;
-        return view::subrange<iter_t, iter_t>{std::ranges::begin(score_matrix), std::ranges::end(score_matrix)};
+        return ranges::view::zip(std::span{score_matrix},
+                                 ranges::view::repeat_n(std::ignore, dimension_second_batch) | ranges::view::bounded);
+    }
+
+    //!\brief Moves internal matrix pointer to the next column.
+    constexpr void next_column()
+    {
+        // noop
     }
 
     //!\brief The data container.
