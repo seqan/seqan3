@@ -163,7 +163,7 @@ struct alphabet_size<uint_type>
  * \returns The letter's value in the alphabet's rank type (usually `uint`).
  */
 template <typename uint_type>
-constexpr underlying_char_t<uint_type> to_char(uint_type const intgr)
+constexpr underlying_char_t<uint_type> to_char(uint_type const intgr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr;
@@ -175,7 +175,7 @@ constexpr underlying_char_t<uint_type> to_char(uint_type const intgr)
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
 template <typename uint_type>
-constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr)
+constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr;
@@ -188,7 +188,7 @@ constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr)
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename uint_type>
-constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type> const chr)
+constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type> const chr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr = chr;
@@ -204,7 +204,7 @@ constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type
  * \snippet test/snippet/alphabet/adaptation/uint.cpp assign_char
  */
 template <typename uint_type>
-constexpr uint_type && assign_char(uint_type && intgr, underlying_char_t<uint_type> const chr)
+constexpr uint_type && assign_char(uint_type && intgr, underlying_char_t<uint_type> const chr) noexcept
     requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
 {
     return std::move(intgr = chr);
@@ -217,7 +217,7 @@ constexpr uint_type && assign_char(uint_type && intgr, underlying_char_t<uint_ty
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename uint_type>
-constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type> const intgr2)
+constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type> const intgr2) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr = intgr2;
@@ -233,7 +233,7 @@ constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type
  * \snippet test/snippet/alphabet/adaptation/uint.cpp assign_rank
  */
 template <typename uint_type>
-constexpr uint_type && assign_rank(uint_type && intgr, underlying_rank_t<uint_type> const intgr2)
+constexpr uint_type && assign_rank(uint_type && intgr, underlying_rank_t<uint_type> const intgr2) noexcept
     requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
 {
     return std::move(intgr = intgr2);

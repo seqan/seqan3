@@ -168,7 +168,7 @@ struct alphabet_size<char_type>
  * \returns The letter's value in the alphabet's rank type (usually `char`).
  */
 template <typename char_type>
-constexpr underlying_char_t<char_type> to_char(char_type const chr)
+constexpr underlying_char_t<char_type> to_char(char_type const chr) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return chr;
@@ -180,7 +180,7 @@ constexpr underlying_char_t<char_type> to_char(char_type const chr)
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
 template <typename char_type>
-constexpr underlying_rank_t<char_type> to_rank(char_type const chr)
+constexpr underlying_rank_t<char_type> to_rank(char_type const chr) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return chr;
@@ -193,7 +193,7 @@ constexpr underlying_rank_t<char_type> to_rank(char_type const chr)
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename char_type>
-constexpr char_type & assign_char(char_type & chr, underlying_char_t<char_type> const chr2)
+constexpr char_type & assign_char(char_type & chr, underlying_char_t<char_type> const chr2) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return chr = chr2;
@@ -206,7 +206,7 @@ constexpr char_type & assign_char(char_type & chr, underlying_char_t<char_type> 
  * \returns The assignment result as a temporary.
  */
 template <typename char_type>
-constexpr char_type && assign_char(char_type && chr, underlying_char_t<char_type> const chr2)
+constexpr char_type && assign_char(char_type && chr, underlying_char_t<char_type> const chr2) noexcept
     requires detail::is_char_adaptation_v<std::remove_reference_t<char_type>>
 {
     return std::move(chr = chr2);
@@ -219,7 +219,7 @@ constexpr char_type && assign_char(char_type && chr, underlying_char_t<char_type
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename char_type>
-constexpr char_type & assign_rank(char_type & chr, underlying_rank_t<char_type> const rank)
+constexpr char_type & assign_rank(char_type & chr, underlying_rank_t<char_type> const rank) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return chr = rank;
@@ -232,7 +232,7 @@ constexpr char_type & assign_rank(char_type & chr, underlying_rank_t<char_type> 
  * \returns The assignment result as a temporary.
  */
 template <typename char_type>
-constexpr char_type && assign_rank(char_type && chr, underlying_rank_t<char_type> const rank)
+constexpr char_type && assign_rank(char_type && chr, underlying_rank_t<char_type> const rank) noexcept
     requires detail::is_char_adaptation_v<std::remove_reference_t<char_type>>
 {
     return std::move(chr = rank);

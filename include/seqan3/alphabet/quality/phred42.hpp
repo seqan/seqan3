@@ -82,7 +82,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred42() : base_t{} {}
+    constexpr phred42() noexcept : base_t{} {}
     constexpr phred42(phred42 const &) = default;
     constexpr phred42(phred42 &&) = default;
     constexpr phred42 & operator=(phred42 const &) = default;

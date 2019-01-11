@@ -36,8 +36,6 @@
 
 #include <seqan3/core/metafunction/function.hpp>
 
-using namespace seqan3;
-
 constexpr
 int    constexpr_nonvoid_free_fun(int i) { return i; }
 int nonconstexpr_nonvoid_free_fun(int i) { return i; }

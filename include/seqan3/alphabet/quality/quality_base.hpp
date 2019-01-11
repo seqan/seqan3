@@ -69,7 +69,7 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr quality_base() : base_t{} {}
+    constexpr quality_base() noexcept : base_t{} {}
     constexpr quality_base(quality_base const &) = default;
     constexpr quality_base(quality_base &&) = default;
     constexpr quality_base & operator=(quality_base const &) = default;

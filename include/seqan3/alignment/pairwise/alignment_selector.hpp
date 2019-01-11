@@ -69,8 +69,8 @@ struct determine_result_type
     //!\brief Helper function to determine the actual result type.
     static constexpr auto _determine()
     {
-        using seq1_value_type = value_type_t<std::remove_reference_t<seq1_t>>;
-        using seq2_value_type = value_type_t<std::remove_reference_t<seq2_t>>;
+        using seq1_value_type = gapped<value_type_t<std::remove_reference_t<seq1_t>>>;
+        using seq2_value_type = gapped<value_type_t<std::remove_reference_t<seq2_t>>>;
         using score_type      = int32_t;
 
         if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())
@@ -92,8 +92,8 @@ struct determine_result_type
                                               score_type,
                                               alignment_coordinate,
                                               alignment_coordinate,
-                                              std::pair<std::vector<gapped<seq1_value_type>>,
-                                                        std::vector<gapped<seq2_value_type>>>>>{};
+                                              std::pair<std::vector<seq1_value_type>,
+                                                        std::vector<seq2_value_type>>>>{};
             else
                 return align_result<type_list<uint32_t,
                                               score_type>>{};

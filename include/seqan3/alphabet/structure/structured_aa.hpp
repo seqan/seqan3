@@ -97,7 +97,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr structured_aa() : base_type{} {}
+    constexpr structured_aa() noexcept : base_type{} {}
     constexpr structured_aa(structured_aa const &) = default;
     constexpr structured_aa(structured_aa &&) = default;
     constexpr structured_aa & operator =(structured_aa const &) = default;
@@ -130,7 +130,7 @@ public:
      * \{
      */
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
-    constexpr structured_aa & assign_char(char_type const c)
+    constexpr structured_aa & assign_char(char_type const c) noexcept
     {
         seqan3::assign_char(get<0>(*this), c);
         return *this;

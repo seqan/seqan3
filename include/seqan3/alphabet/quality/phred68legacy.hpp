@@ -80,7 +80,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred68legacy() : base_t{} {}
+    constexpr phred68legacy() noexcept : base_t{} {}
     constexpr phred68legacy(phred68legacy const &) = default;
     constexpr phred68legacy(phred68legacy &&) = default;
     constexpr phred68legacy & operator=(phred68legacy const &) = default;

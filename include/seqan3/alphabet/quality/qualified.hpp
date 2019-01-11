@@ -105,7 +105,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr qualified() = default;
+    constexpr qualified() noexcept : base_type{} {}
     constexpr qualified(qualified const &) = default;
     constexpr qualified(qualified &&) = default;
     constexpr qualified & operator =(qualified const &) = default;
@@ -124,27 +124,27 @@ public:
     using base_type::operator>;
 
     //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr qualified(component_type const alph) {} ))
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified(component_type const alph) noexcept {} ))
     //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr qualified(indirect_component_type const alph) {} ))
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified(indirect_component_type const alph) noexcept {} ))
     //!\copydoc cartesian_composition::operator=(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(component_type const alph) {} ))
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(component_type const alph) noexcept {} ))
     //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(indirect_component_type const alph) {} ))
+    SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(indirect_component_type const alph) noexcept {} ))
     //!\}
 
     /*!\name Write functions
      * \{
      */
     //!\brief Assign from a character. This modifies the internal sequence letter.
-    constexpr qualified & assign_char(char_type const c)
+    constexpr qualified & assign_char(char_type const c) noexcept
     {
         seqan3::assign_char(get<0>(*this), c);
         return *this;
     }
 
     //!\brief Assign from a phred value. This modifies the internal quality letter.
-    constexpr qualified & assign_phred(phred_type const c)
+    constexpr qualified & assign_phred(phred_type const c) noexcept
     {
         seqan3::assign_phred(get<1>(*this), c);
         return *this;
