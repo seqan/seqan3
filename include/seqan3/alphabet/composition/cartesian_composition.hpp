@@ -89,7 +89,7 @@ template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           template <typename> typename fun_t,
           typename other_t>
-    requires convertible_to_by_member_concept<other_t, cartesian_derived_t>
+    requires ConvertibleToByMember<other_t, cartesian_derived_t>
 inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        fun_t,

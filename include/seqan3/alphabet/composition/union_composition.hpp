@@ -77,7 +77,7 @@ inline bool constexpr one_alternative_is<union_composition<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires convertible_to_by_member_concept<target_t, union_composition<alternatives...>>
+    requires ConvertibleToByMember<target_t, union_composition<alternatives...>>
 inline bool constexpr one_alternative_is<union_composition<alternatives...>,
                                          fun_t,
                                          target_t> = false;

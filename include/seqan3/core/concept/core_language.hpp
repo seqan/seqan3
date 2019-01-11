@@ -50,12 +50,12 @@ SEQAN3_CONCEPT WeaklyOrderedByMembersWith = requires (lhs_t const & lhs, rhs_t c
 };
 //!\endcond
 
-/*!\interface   seqan3::detail::convertible_to_by_member_concept <>
+/*!\interface   seqan3::detail::ConvertibleToByMember <>
  * \brief       Like seqan3::ImplicitlyConvertibleTo, but only considers member operators of the source type.
  */
 //!\cond
 template <typename source_t, typename target_t>
-SEQAN3_CONCEPT convertible_to_by_member_concept = requires (source_t s)
+SEQAN3_CONCEPT ConvertibleToByMember = requires (source_t s)
 {
     { s.operator target_t() } -> target_t;
 };
