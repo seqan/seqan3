@@ -13,11 +13,16 @@
 #pragma once
 
 #include <vector>
-#include <utility>
+#include <tuple>
+
+#include <range/v3/view/repeat_n.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/range/shortcuts.hpp>
+#include <seqan3/std/span.hpp>
+#include <seqan3/std/view/common.hpp>
 
 namespace seqan3::detail
 {
@@ -63,22 +68,22 @@ private:
      * \param[in] second_range The first sequence (or packed sequences).
      */
     template <typename first_range_t, typename second_range_t>
-    constexpr void allocate_score_matrix(first_range_t && first_range, second_range_t && second_range)
+    constexpr void allocate_matrix(first_range_t && first_range, second_range_t && second_range)
     {
-        dimension_first_range = std::ranges::size(first_range);
-        dimension_second_range = std::ranges::size(second_range);
+        dimension_first_range = std::ranges::distance(first_range) + 1;
+        dimension_second_range = std::ranges::distance(second_range) + 1;
 
         current_column_index = 0;
 
         // We use only one column to compute the score.
-        score_matrix.resize(dimension_second_range + 1);
+        score_matrix.resize(dimension_second_range);
     }
 
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column() noexcept
     {
-        using iter_t = std::ranges::iterator_t<decltype(score_matrix)>;
-        return view::subrange<iter_t, iter_t>{std::ranges::begin(score_matrix), std::ranges::end(score_matrix)};
+        return ranges::view::zip(std::span{score_matrix},
+                                 ranges::view::repeat_n(std::ignore, dimension_second_range) | view::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.
@@ -96,4 +101,17 @@ private:
     //!\brief The index of the active column.
     size_t current_column_index = 0;
 };
+
+/*!\brief Returns only the score column of the current matrix column.
+ *
+ * \details
+ *
+ * This helper view is used as long as view::get is broken for nested zip-views.
+ * See https://github.com/seqan/seqan3/issues/745 for more details.
+ */
+inline const auto view_get_score_column = ranges::view::transform([](auto && elem)
+{
+    using std::get;
+    return get<0>(std::forward<decltype(elem)>(elem));
+});
 } // namespace seqan3::detail

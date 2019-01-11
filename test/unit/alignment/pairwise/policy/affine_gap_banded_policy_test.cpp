@@ -74,7 +74,7 @@ TEST(affine_gap_banded_policy, compute_first_band_cell)
 
     {  // max from diagonal
         std::tuple cell{std::tuple{0, -10}, std::tuple{-11, -20}};
-        mock.compute_first_band_cell(cell, cache, 5);
+        mock.compute_first_band_cell(std::make_tuple(std::ref(cell), std::ignore), cache, 5);
 
         EXPECT_EQ(std::get<0>(cell), (std::tuple{5, -10}));
         EXPECT_EQ(std::get<1>(cell), (std::tuple{-11, -20}));
@@ -85,7 +85,7 @@ TEST(affine_gap_banded_policy, compute_first_band_cell)
 
     {  // max from horizontal
         std::tuple cell{std::tuple{0, -10}, std::tuple{-11, -20}};
-        mock.compute_first_band_cell(cell, cache, -25);
+        mock.compute_first_band_cell(std::make_tuple(std::ref(cell), std::ignore), cache, -25);
 
         EXPECT_EQ(std::get<0>(cell), (std::tuple{-20, -10}));
         EXPECT_EQ(std::get<1>(cell), (std::tuple{-11, -20}));
@@ -97,7 +97,7 @@ TEST(affine_gap_banded_policy, compute_first_band_cell)
     {  // max from vertical - ignored in the computation.
         std::get<0>(cache) = std::tuple{0, 10};
         std::tuple cell{std::tuple{0, -10}, std::tuple{-11, -20}};
-        mock.compute_first_band_cell(cell, cache, -10);
+        mock.compute_first_band_cell(std::make_tuple(std::ref(cell), std::ignore), cache, -10);
 
         EXPECT_EQ(std::get<0>(cell), (std::tuple{-10, -10}));
         EXPECT_EQ(std::get<1>(cell), (std::tuple{-11, -20}));
@@ -117,7 +117,7 @@ TEST(affine_gap_banded_policy, compute_cell)
     { // max from diagonal
         std::get<0>(cache) = std::tuple{0, -4};
         std::tuple cell{std::tuple{0, -10}, std::tuple{-11, -20}};
-        mock.compute_cell(cell, cache, 5);
+        mock.compute_cell(std::make_tuple(std::ref(cell), std::ignore), cache, 5);
 
         EXPECT_EQ(std::get<0>(cell), (std::tuple{5, -6}));
         EXPECT_EQ(std::get<1>(cell), (std::tuple{-11, -20}));
@@ -129,7 +129,7 @@ TEST(affine_gap_banded_policy, compute_cell)
     { // max from horizontal
         std::get<0>(cache) = std::tuple{0, -15};
         std::tuple cell{std::tuple{0, -10}, std::tuple{-11, -3}};
-        mock.compute_cell(cell, cache, -10);
+        mock.compute_cell(std::make_tuple(std::ref(cell), std::ignore), cache, -10);
 
         EXPECT_EQ(std::get<0>(cell), (std::tuple{-3, -4}));
         EXPECT_EQ(std::get<1>(cell), (std::tuple{-11, -3}));
@@ -141,7 +141,7 @@ TEST(affine_gap_banded_policy, compute_cell)
     {  // max from vertical
         std::get<0>(cache) = std::tuple{0, -3};
         std::tuple cell{std::tuple{0, -10}, std::tuple{-11, -4}};
-        mock.compute_cell(cell, cache, -10);
+        mock.compute_cell(std::make_tuple(std::ref(cell), std::ignore), cache, -10);
 
         EXPECT_EQ(std::get<0>(cell), (std::tuple{-3, -5}));
         EXPECT_EQ(std::get<1>(cell), (std::tuple{-11, -4}));

@@ -64,12 +64,14 @@ private:
      * \param[in]     score           The score of comparing the respective letters of the first and the second sequence.
      */
     template <typename score_cell_type, typename cache_t>
-    constexpr void compute_cell(score_cell_type & current_cell,
+    constexpr void compute_cell(score_cell_type && current_cell,
                                 cache_t & cache,
                                 score_t const score) const noexcept
     {
+        using std::get;
+
         // Unpack the cached variables.
-        auto & [main_score, hz_score] = current_cell;
+        auto & [main_score, hz_score] = get<0>(current_cell);
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & [prev_score, vt_score] = prev_cell;
 

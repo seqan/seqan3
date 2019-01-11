@@ -67,11 +67,11 @@ private:
      * \param[in,out] cache        The cache storing hot helper variables.
      */
     template <typename cell_t, typename cache_t>
-    constexpr auto init_origin_cell(cell_t & current_cell, cache_t & cache) const noexcept
+    constexpr auto init_origin_cell(cell_t && current_cell, cache_t & cache) const noexcept
     {
         using std::get;
 
-        auto & [main_score, hz_score] = current_cell;
+        auto & [main_score, hz_score] = get<0>(current_cell);
         auto & vt_score = get<1>(get<0>(cache));
 
         main_score = 0;
@@ -96,11 +96,11 @@ private:
      * \param[in,out] cache        The cache storing hot helper variables.
      */
     template <typename cell_t, typename cache_t>
-    constexpr auto init_column_cell(cell_t & current_cell, cache_t & cache) const noexcept
+    constexpr auto init_column_cell(cell_t && current_cell, cache_t & cache) const noexcept
     {
         using std::get;
 
-        auto & [main_score, hz_score] = current_cell;
+        auto & [main_score, hz_score] = get<0>(current_cell);
         auto & vt_score = get<1>(get<0>(cache));
 
         main_score = vt_score;
@@ -121,11 +121,11 @@ private:
      * \param[in,out] cache        The cache storing hot helper variables.
      */
     template <typename cell_t, typename cache_t>
-    constexpr auto init_row_cell(cell_t & current_cell, cache_t & cache) const noexcept
+    constexpr auto init_row_cell(cell_t && current_cell, cache_t & cache) const noexcept
     {
         using std::get;
 
-        auto & [main_score, hz_score] = current_cell;
+        auto & [main_score, hz_score] = get<0>(current_cell);
         auto & [prev_score, vt_score] = get<0>(cache);
 
         prev_score = main_score;

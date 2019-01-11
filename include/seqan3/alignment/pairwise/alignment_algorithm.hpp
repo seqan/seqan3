@@ -134,7 +134,7 @@ public:
         assert(cfg_ptr != nullptr);
 
         // We need to allocate the score_matrix and maybe the trace_matrix.
-        this->allocate_score_matrix(first_range, second_range);
+        this->allocate_matrix(first_range, second_range);
 
         // Initialise cache variables to keep frequently used variables close to the CPU registers.
         auto cache = this->make_cache(cfg_ptr->template value_or<align_cfg::gap>(gap_scheme{gap_score{-1},
@@ -276,6 +276,7 @@ private:
     void initialise_matrix(cache_t & cache)
     {
         auto col = this->current_column();
+        auto score_col = col | view_get_score_column;
 
         this->init_origin_cell(*seqan3::begin(col), cache);
 
@@ -285,9 +286,9 @@ private:
         });
 
         if constexpr (is_banded)
-            this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(col)))), get<3>(cache));
+            this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(score_col)))), get<3>(cache));
         else
-            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(col))), get<3>(cache));
+            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(score_col))), get<3>(cache));
     }
 
     /*!\brief Compute the alignment by iterating over the dynamic programming matrix in a column wise manner.
@@ -310,17 +311,18 @@ private:
         ranges::for_each(first_range, [&, this](auto seq1_value)
         {
             auto col = this->current_column();
+            auto score_col = col | view_get_score_column;
             this->init_row_cell(*seqan3::begin(col), cache);
 
             auto second_range_it = std::ranges::begin(second_range);
-            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto & cell)
+            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
                 this->compute_cell(cell, cache, score_scheme.score(seq1_value, *second_range_it));
                 ++second_range_it;
             });
-            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(col))), get<3>(cache));
+            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(score_col))), get<3>(cache));
         });
-        this->check_score_last_column(this->current_column(), get<3>(cache));
+        this->check_score_last_column(this->current_column() | view_get_score_column, get<3>(cache));
     }
 
     /*!\brief Compute the alignment by iterating over the banded dynamic programming matrix in a column wise manner.
@@ -347,6 +349,7 @@ private:
         {
             this->next_column(); // Move to the next column.
             auto col = this->current_column();
+            auto score_col = col | view_get_score_column;
 
             this->init_row_cell(*seqan3::begin(col), cache); // initialise first row of dp matrix.
 
@@ -360,7 +363,7 @@ private:
             });
 
             if (this->band_touches_last_row())  // TODO [[unlikely]]
-                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(col)))), get<3>(cache));
+                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(score_col)))), get<3>(cache));
         });
 
         // ----------------------------------------------------------------------------
@@ -373,6 +376,7 @@ private:
         {
             this->next_column(); // Move to the next column.
             auto col = this->current_column();
+            auto score_col = col | view_get_score_column;
 
             // Move the second_range_it to the correct position depending on the current band position.
             auto second_range_it = std::ranges::begin(second_range);
@@ -394,9 +398,12 @@ private:
             });
 
             if (this->band_touches_last_row()) // TODO [[unlikely]]
-                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(col)))), get<3>(cache));
+                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(score_col)))), get<3>(cache));
         });
-        this->check_score_last_column(this->current_column() | view::get<0>, get<3>(cache));
+        // We need to call view_get_score_column twice. The first time we access the score column which is a
+        // zipped range in the banded case and the second time to call the actual score column.
+        this->check_score_last_column(this->current_column() | view_get_score_column | view_get_score_column,
+                                      get<3>(cache));
     }
 
     //!\brief The alignment configuration stored on the heap.

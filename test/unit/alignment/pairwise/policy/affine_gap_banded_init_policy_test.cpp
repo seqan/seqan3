@@ -40,7 +40,7 @@ TEST(affine_gap_banded_init_policy, init_origin_cell)
 
     affine_gap_banded_init_policy_mock mock{};
 
-    mock.init_origin_cell(cell, cache);
+    mock.init_origin_cell(std::make_tuple(std::ref(cell), std::ignore), cache);
 
     EXPECT_EQ(std::get<0>(cell), (std::tuple{0, -10}));
     EXPECT_EQ(std::get<1>(cell), (std::tuple{0, 0}));
@@ -56,7 +56,7 @@ TEST(affine_gap_banded_init_policy, init_column_cell)
 
     affine_gap_banded_init_policy_mock mock{};
 
-    mock.init_column_cell(cell, cache);
+    mock.init_column_cell(std::make_tuple(std::ref(cell), std::ignore), cache);
 
     EXPECT_EQ(std::get<0>(cell), (std::tuple{-10, -20}));
     EXPECT_EQ(std::get<1>(cell), (std::tuple{0, 0}));
@@ -72,7 +72,7 @@ TEST(affine_gap_banded_init_policy, init_row_cell)
 
     affine_gap_banded_init_policy_mock mock{};
 
-    mock.init_row_cell(cell, cache);
+    mock.init_row_cell(std::make_tuple(std::ref(cell), std::ignore), cache);
 
     EXPECT_EQ(std::get<0>(cell), (std::tuple{-10, -11}));
     EXPECT_EQ(std::get<1>(cell), (std::tuple{0, -10}));

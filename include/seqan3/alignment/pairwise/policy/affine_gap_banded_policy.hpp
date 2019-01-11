@@ -72,7 +72,7 @@ private:
     {
         using std::get;
         // Unpack the cached variables.
-        auto & [current_entry, next_entry] = current_cell;
+        auto & [current_entry, next_entry] = get<0>(current_cell);
         auto & [main_score, hz_score] = current_entry;
         auto const & prev_hz_score = get<1>(next_entry);
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
@@ -106,7 +106,7 @@ private:
     {
         using std::get;
         // Unpack the cached variables.
-        auto & [current_entry, next_entry] = current_cell;
+        auto & [current_entry, next_entry] = get<0>(current_cell);
         auto & main_score = get<0>(current_entry);
         auto const & prev_hz_score = get<1>(next_entry);
         auto & vt_score = get<1>(get<0>(cache));

@@ -149,19 +149,22 @@ TEST(banded_score_dp_matrix_policy, current_column)
 
     auto mock = mock_factory();
 
-    auto col = mock.current_column();
+    auto col = mock.current_column() | detail::view_get_score_column;
+
     EXPECT_EQ(std::tuple_size_v<value_type_t<decltype(col)>>, 2u);
     EXPECT_EQ(seqan3::size(col), 4u);
 
     // Writing into the first value means writing into the second value
-    for (auto tpl : col)
-        std::get<0>(tpl) = std::tuple{-1, -1};
+    for (auto && tpl : col)
+    {
+        std::get<0>(std::forward<decltype(tpl)>(tpl)) = std::tuple{-1, -1};
+    }
 
-    for (auto tpl : col | view::take_exactly(3u))
-        EXPECT_EQ(std::get<1>(tpl), (std::tuple{-1, -1}));
+    for (auto && tpl : col | view::take_exactly(3u))
+        EXPECT_EQ(std::get<1>(std::forward<decltype(tpl)>(tpl)), (std::tuple{-1, -1}));
 
-
-    EXPECT_EQ(std::get<1>(*(--seqan3::end(col))), (std::tuple{decltype(mock)::INF, decltype(mock)::INF}));
+    EXPECT_EQ(std::get<1>(*std::ranges::prev(seqan3::end(col))),
+              (std::tuple{decltype(mock)::INF, decltype(mock)::INF}));
 }
 
 TEST(banded_score_dp_matrix_policy, second_range_begin_offset)

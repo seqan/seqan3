@@ -62,7 +62,8 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        // Call get twice since the banded score column is a zipped range and we need to access the main column.
+        auto & [main_score, hz_score] = get<0>(get<0>(current_cell));
         auto & vt_score = get<1>(get<0>(cache));
 
         main_score = 0;
@@ -91,7 +92,8 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        // Call get twice since the banded score column is a zipped range and we need to access the main column.
+        auto & [main_score, hz_score] = get<0>(get<0>(current_cell));
         auto & vt_score = get<1>(get<0>(cache));
 
         main_score = vt_score;
@@ -114,7 +116,7 @@ private:
     template <typename cell_t, typename cache_t>
     constexpr auto init_row_cell(cell_t && current_cell, cache_t & cache) const noexcept
     {
-        auto & [current_entry, next_entry] = current_cell; // Split into current entry and next entry.
+        auto & [current_entry, next_entry] = get<0>(current_cell); // Split into current entry and next entry.
         auto & main_score = get<0>(current_entry);  // current_entry stores current score to be updated.
         auto & hz_score = get<1>(next_entry);  // next_entry stores last horizontal value (shifted by one).
         auto & vt_score = get<1>(get<0>(cache));

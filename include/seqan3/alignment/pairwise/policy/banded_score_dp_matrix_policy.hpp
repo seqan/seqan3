@@ -15,6 +15,7 @@
 #include <limits>
 #include <memory>
 
+#include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/slice.hpp>
 #include <range/v3/view/zip.hpp>
 
@@ -22,6 +23,7 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span.hpp>
+#include <seqan3/std/view/common.hpp>
 
 namespace seqan3::detail
 {
@@ -100,9 +102,12 @@ public:
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column() noexcept
     {
+        auto span = current_band_size();
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
-        return ranges::view::zip(std::span{std::addressof(*current_matrix_iter), current_band_size()},
-                                 std::span{std::addressof(*(current_matrix_iter + 1)), current_band_size()});
+        auto zip_score = ranges::view::zip(std::span{std::addressof(*current_matrix_iter), span},
+                                           std::span{std::addressof(*(current_matrix_iter + 1)), span});
+        return ranges::view::zip(std::move(zip_score),
+                                 ranges::view::repeat_n(std::ignore, span) | view::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.
