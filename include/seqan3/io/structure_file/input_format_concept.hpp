@@ -139,7 +139,7 @@ namespace seqan3::detail
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::structure_file_format_concept [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_structure_file_input_formats_concept
+ * \see seqan3::TypeListOfStructureFileInputFormats
  */
 template<typename t>
 constexpr bool is_type_list_of_structure_file_input_formats_v = false;
@@ -147,7 +147,7 @@ constexpr bool is_type_list_of_structure_file_input_formats_v = false;
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::StructureFileInputFormat [overload].
  * \ingroup core
- * \see seqan3::type_list_of_structure_file_input_formats_concept
+ * \see seqan3::TypeListOfStructureFileInputFormats
  */
 template<typename ... ts>
 constexpr bool is_type_list_of_structure_file_input_formats_v<type_list<ts...>>
@@ -159,6 +159,5 @@ constexpr bool is_type_list_of_structure_file_input_formats_v<type_list<ts...>>
  * \see seqan3::is_type_list_of_structure_file_formats_v
  */
 template<typename t>
-SEQAN3_CONCEPT type_list_of_structure_file_input_formats_concept = is_type_list_of_structure_file_input_formats_v<t>;
-
+SEQAN3_CONCEPT TypeListOfStructureFileInputFormats = is_type_list_of_structure_file_input_formats_v<t>;
 } // namespace seqan3::detail

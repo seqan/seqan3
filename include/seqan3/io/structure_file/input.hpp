@@ -637,7 +637,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  */
 template<structure_file_input_traits_concept traits_type_ = structure_file_input_default_traits_rna,
          detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-         detail::type_list_of_structure_file_input_formats_concept valid_formats_
+         detail::TypeListOfStructureFileInputFormats valid_formats_
              = type_list<structure_file_format_vienna>,
          istream_concept<char> stream_type_ = std::ifstream>
 class structure_file_in
@@ -1171,7 +1171,7 @@ namespace std
  */
 template<seqan3::structure_file_input_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,
-         seqan3::detail::type_list_of_structure_file_input_formats_concept valid_formats,
+         seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
          seqan3::istream_concept<char> stream_type>
 struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
 {
@@ -1185,7 +1185,7 @@ struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, val
 template<size_t elem_no,
          seqan3::structure_file_input_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,
-         seqan3::detail::type_list_of_structure_file_input_formats_concept valid_formats,
+         seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
          seqan3::istream_concept<char> stream_type>
 struct tuple_element<elem_no, seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
     : tuple_element<elem_no, typename seqan3::structure_file_in<traits_type,
