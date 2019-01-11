@@ -171,13 +171,13 @@ template <typename t>
 SEQAN3_CONCEPT trivial_concept = TriviallyCopyable<t> && TriviallyDestructible<t> && std::is_trivial_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::standard_layout_concept
+/*!\interface   seqan3::StandardLayout
  * \brief       Resolves to std::is_standard_layout_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/concept/StandardLayoutType
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT standard_layout_concept = std::is_standard_layout_v<t>;
+SEQAN3_CONCEPT StandardLayout = std::is_standard_layout_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::weakly_assignable_concept

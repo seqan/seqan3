@@ -32,7 +32,7 @@ namespace seqan3
  * \implements seqan3::rna_structure_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
  * \implements seqan3::TriviallyCopyable
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::StandardLayout
  *
  * \ingroup structure
  *

@@ -25,7 +25,7 @@ namespace seqan3
  * \implements seqan3::alphabet_concept
  * \implements seqan3::detail::semi_constexpr_alphabet_concept
  * \implements seqan3::TriviallyCopyable
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::StandardLayout
  *
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_alphabet_concept.
  * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept, defaults to seqan3::mask.

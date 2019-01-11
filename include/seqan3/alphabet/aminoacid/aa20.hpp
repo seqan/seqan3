@@ -26,7 +26,7 @@ namespace seqan3
  * \implements seqan3::AminoacidAlphabet
  * \implements seqan3::detail::constexpr_alphabet_concept
  * \implements seqan3::TriviallyCopyable
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::StandardLayout
  *
  * \details
  * The alphabet consists of letters A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y

@@ -29,7 +29,7 @@ namespace seqan3
  * \implements seqan3::QualityAlphabet
  * \implements seqan3::detail::constexpr_alphabet_concept
  * \implements seqan3::TriviallyCopyable
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::StandardLayout
  *
  *
  * This composition pairs an arbitrary alphabet with a quality alphabet, where

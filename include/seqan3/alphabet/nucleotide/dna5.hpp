@@ -31,7 +31,7 @@ class rna5;
  * \implements seqan3::NucleotideAlphabet
  * \implements seqan3::detail::constexpr_alphabet_concept
  * \implements seqan3::TriviallyCopyable
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::StandardLayout
  *
  * \details
  * Note that you can assign 'U' as a character to dna5 and it will silently
