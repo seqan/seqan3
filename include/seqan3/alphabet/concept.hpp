@@ -148,7 +148,7 @@ SEQAN3_CONCEPT alphabet_concept = semi_alphabet_concept<t> && requires (t v)
  */
 /*!
  * \brief Save an alphabet letter to stream.
- * \tparam archive_t Must satisfy seqan3::cereal_output_archive_concept.
+ * \tparam archive_t Must satisfy seqan3::CerealOutputArchive.
  * \tparam alphabet_t Type of l; must satisfy seqan3::semi_alphabet_concept.
  * \param l The alphabet letter.
  * \relates seqan3::semi_alphabet_concept
@@ -159,7 +159,7 @@ SEQAN3_CONCEPT alphabet_concept = semi_alphabet_concept<t> && requires (t v)
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
-template <cereal_output_archive_concept archive_t, semi_alphabet_concept alphabet_t>
+template <CerealOutputArchive archive_t, semi_alphabet_concept alphabet_t>
 underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &, alphabet_t const & l)
 {
     return to_rank(l);

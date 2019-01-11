@@ -24,7 +24,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::cereal_output_archive_concept <>
+/*!\interface seqan3::CerealOutputArchive <>
  * \brief All output archives of the Cereal library satisfy this.
  * \extends seqan3::CerealArchive
  * \ingroup core
@@ -38,10 +38,10 @@ namespace seqan3
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-SEQAN3_CONCEPT cereal_output_archive_concept = std::is_base_of_v<cereal::detail::OutputArchiveBase, t>;
+SEQAN3_CONCEPT CerealOutputArchive = std::is_base_of_v<cereal::detail::OutputArchiveBase, t>;
 #else
 template <typename t>
-SEQAN3_CONCEPT cereal_output_archive_concept = false;
+SEQAN3_CONCEPT CerealOutputArchive = false;
 #endif
 //!\endcond
 
@@ -76,7 +76,7 @@ SEQAN3_CONCEPT cereal_input_archive_concept = false;
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-SEQAN3_CONCEPT CerealArchive = cereal_output_archive_concept<t> || cereal_input_archive_concept<t>;
+SEQAN3_CONCEPT CerealArchive = CerealOutputArchive<t> || cereal_input_archive_concept<t>;
 #else
 template <typename t>
 SEQAN3_CONCEPT CerealArchive = false;
