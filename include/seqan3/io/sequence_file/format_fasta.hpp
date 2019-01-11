@@ -47,7 +47,7 @@
 namespace seqan3
 {
 /*!\brief       The FastA format.
- * \implements  sequence_file_input_format_concept
+ * \implements  SequenceFileInputFormat
  * \implements  SequenceFileOutputFormat
  * \ingroup     sequence
  *
@@ -104,7 +104,7 @@ public:
         { "frn"   },
     };
 
-    //!\copydoc sequence_file_input_format_concept::read
+    //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function

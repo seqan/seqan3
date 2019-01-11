@@ -219,7 +219,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields
  * must be in seqan3::sequence_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::sequence_file_input_format_concept).
+ * seqan3::SequenceFileInputFormat).
  * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
  * \details
  *
@@ -612,7 +612,7 @@ public:
      */
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_input_format_concept.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::SequenceFileInputFormat.
      * \param[in] stream     The stream to operate on; must be derived of std::basic_istream.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -626,7 +626,7 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <istream_concept2 stream_t,
-              sequence_file_input_format_concept file_format>
+              SequenceFileInputFormat file_format>
     sequence_file_input(stream_t                 & stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -645,7 +645,7 @@ public:
 
     //!\overload
     template <istream_concept2 stream_t,
-              sequence_file_input_format_concept file_format>
+              SequenceFileInputFormat file_format>
     sequence_file_input(stream_t                && stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -860,7 +860,7 @@ protected:
         }
 
         assert(!format.valueless_by_exception());
-        std::visit([&] (sequence_file_input_format_concept & f)
+        std::visit([&] (SequenceFileInputFormat & f)
         {
             // read new record
             if constexpr (selected_field_ids::contains(field::SEQ_QUAL))
@@ -915,7 +915,7 @@ protected:
  * \{
  */
 template <istream_concept2                   stream_type,
-          sequence_file_input_format_concept file_format,
+          SequenceFileInputFormat file_format,
           detail::fields_concept             selected_field_ids>
 sequence_file_input(stream_type && stream,
                     file_format const &,
@@ -926,7 +926,7 @@ sequence_file_input(stream_type && stream,
                            typename std::remove_reference_t<stream_type>::char_type>;
 
 template <istream_concept2                   stream_type,
-          sequence_file_input_format_concept file_format,
+          SequenceFileInputFormat file_format,
           detail::fields_concept             selected_field_ids>
 sequence_file_input(stream_type & stream,
                     file_format const &,
