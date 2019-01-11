@@ -30,7 +30,7 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((structure_file_input_format_concept<structure_file_format_vienna>));
+    EXPECT_TRUE((StructureFileInputFormat<structure_file_format_vienna>));
     EXPECT_TRUE((StructureFileOutputFormat<structure_file_format_vienna>));
 }
 
