@@ -104,11 +104,11 @@ SEQAN3_CONCEPT cereal_text_archive_concept = false;
 #endif
 //!\endcond
 
-/*!\interface seqan3::cerealisable_concept <>
+/*!\interface seqan3::Cerealisable <>
  * \ingroup core
  * \brief Specifies the requirements for types that are serialisable via Cereal.
  *
- * The `value_t` type satisfy the cerealisable_concept, if `value_t` can be
+ * The `value_t` type satisfy the Cerealisable, if `value_t` can be
  * serialised with cereal, i.e. `value_t` has a single serialisation function
  * (`serialize`) or split load/save pair (load and save) either inside or
  * outside of the class.
@@ -120,14 +120,14 @@ SEQAN3_CONCEPT cereal_text_archive_concept = false;
  * using namespace seqan3;
  *
  * // fundamental types are serialisable
- * static_assert(cerealisable_concept<int>);
+ * static_assert(Cerealisable<int>);
  *
  * #include <array>
  * #include <cereal/types/array.hpp> // std::array is now serialisable
- * static_assert(cerealisable_concept<std::array<int, 12>>);
+ * static_assert(Cerealisable<std::array<int, 12>>);
  *
  * #include <seqan3/alphabet/nucleotide/dna4.hpp> // dna4 is serialisable
- * static_assert(cerealisable_concept<dna4>);
+ * static_assert(Cerealisable<dna4>);
  * ```
  *
  * \attention
@@ -138,12 +138,12 @@ SEQAN3_CONCEPT cereal_text_archive_concept = false;
 template <typename value_t,
           typename input_archive_t = cereal::BinaryInputArchive,
           typename output_archive_t = cereal::BinaryOutputArchive>
-SEQAN3_CONCEPT cerealisable_concept =
+SEQAN3_CONCEPT Cerealisable =
     cereal::traits::is_input_serializable<value_t, input_archive_t>::value &&
     cereal::traits::is_output_serializable<value_t, output_archive_t>::value;
 #else
 template <typename t>
-SEQAN3_CONCEPT cerealisable_concept = false;
+SEQAN3_CONCEPT Cerealisable = false;
 #endif
 //!\endcond
 
