@@ -244,7 +244,7 @@ inline std::from_chars_result from_chars(char const * first, char const * last, 
  *
  * \sa https://en.cppreference.com/w/cpp/utility/from_chars
  */
-template <seqan3::floating_point_concept floating_point_type>
+template <seqan3::FloatingPoint floating_point_type>
 inline std::from_chars_result from_chars(char const * first,
                                          char const * last,
                                          floating_point_type & value,

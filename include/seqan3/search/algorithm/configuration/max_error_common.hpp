@@ -45,7 +45,7 @@ total(value_t) -> total<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 total(value_t) -> total<double>;
 //!\}
@@ -77,7 +77,7 @@ substitution(value_t) -> substitution<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 substitution(value_t) -> substitution<double>;
 //!\}
@@ -108,7 +108,7 @@ insertion(value_t) -> insertion<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 insertion(value_t) -> insertion<double>;
 //!\}
@@ -139,7 +139,7 @@ deletion(value_t) -> deletion<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 deletion(value_t) -> deletion<double>;
 //!\}

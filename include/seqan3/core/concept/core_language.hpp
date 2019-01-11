@@ -114,14 +114,14 @@ template <typename t>
 SEQAN3_CONCEPT Arithmetic = std::is_arithmetic_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::floating_point_concept <>
+/*!\interface   seqan3::FloatingPoint <>
  * \extends     seqan3::Arithmetic
  * \brief       An arithmetic type that also satisfies std::is_floating_point_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/types/is_floating_point
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT FloatingPoint = arithmetic_concept<t> && std::is_floating_point_v<t>;
+SEQAN3_CONCEPT FloatingPoint = Arithmetic<t> && std::is_floating_point_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::char_concept <>
