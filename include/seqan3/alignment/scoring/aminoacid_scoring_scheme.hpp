@@ -79,7 +79,7 @@ enum class aminoacid_similarity_matrix
  * Score two sequences:
  * \snippet test/snippet/alignment/scoring/aminoacid_scoring_scheme.cpp score sequences
  */
-template <arithmetic_concept score_type = int8_t>
+template <Arithmetic score_type = int8_t>
 class aminoacid_scoring_scheme : public scoring_scheme_base<aminoacid_scoring_scheme<score_type>, aa27, score_type>
 {
 private:
@@ -104,7 +104,7 @@ public:
     SEQAN3_DOXYGEN_ONLY(( constexpr aminoacid_scoring_scheme() noexcept {} ))
     //!\copydoc scoring_scheme_base::scoring_scheme_base(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     SEQAN3_DOXYGEN_ONLY((
-      template <arithmetic_concept score_arg_t>
+      template <Arithmetic score_arg_t>
       constexpr aminoacid_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms) {}
     ))
     //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & _matrix)
@@ -292,11 +292,11 @@ aminoacid_scoring_scheme() -> aminoacid_scoring_scheme<int8_t>;
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
  * To use a larger type, specify the template argument manually.
  */
-template <arithmetic_concept score_arg_type>
+template <Arithmetic score_arg_type>
 aminoacid_scoring_scheme(match_score<score_arg_type>,
                          mismatch_score<score_arg_type>) -> aminoacid_scoring_scheme<int8_t>;
 
-template <arithmetic_concept score_arg_type>
+template <Arithmetic score_arg_type>
 aminoacid_scoring_scheme(std::array<std::array<score_arg_type, 27>, 27>) -> aminoacid_scoring_scheme<score_arg_type>;
 
 aminoacid_scoring_scheme(aminoacid_similarity_matrix) -> aminoacid_scoring_scheme<int8_t>;

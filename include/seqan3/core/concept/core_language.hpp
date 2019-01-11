@@ -105,23 +105,23 @@ template <typename t, typename u>
 SEQAN3_CONCEPT ExplicitlyConvertibleTo = requires (t vt) { { static_cast<u>(vt)}; };
 //!\endcond
 
-/*!\interface   seqan3::arithmetic_concept <>
+/*!\interface   seqan3::Arithmetic <>
  * \brief       A type that satisfies std::is_arithmetic_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/types/is_arithmetic
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT arithmetic_concept = std::is_arithmetic_v<t>;
+SEQAN3_CONCEPT Arithmetic = std::is_arithmetic_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::floating_point_concept <>
- * \extends     seqan3::arithmetic_concept
+ * \extends     seqan3::Arithmetic
  * \brief       An arithmetic type that also satisfies std::is_floating_point_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/types/is_floating_point
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT floating_point_concept = arithmetic_concept<t> && std::is_floating_point_v<t>;
+SEQAN3_CONCEPT FloatingPoint = arithmetic_concept<t> && std::is_floating_point_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::char_concept <>
