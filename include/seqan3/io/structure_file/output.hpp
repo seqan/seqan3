@@ -249,7 +249,7 @@ namespace seqan3
  */
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-          detail::type_list_of_structure_file_output_formats_concept valid_formats_
+          detail::TypeListOfStructureFileOutputFormats valid_formats_
               = type_list<structure_file_format_vienna>,
           ostream_concept<char> stream_type_ = std::ofstream>
 class structure_file_out
