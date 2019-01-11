@@ -17,8 +17,8 @@ using namespace seqan3;
 
 TEST(configuration, concept_check)
 {
-    EXPECT_TRUE(detail::config_element_concept<bar>);
-    EXPECT_FALSE(detail::config_element_concept<int>);
+    EXPECT_TRUE(detail::ConfigElement<bar>);
+    EXPECT_FALSE(detail::ConfigElement<int>);
 
     EXPECT_TRUE((tuple_like_concept<configuration<bax, bar>>));
 }

@@ -30,7 +30,7 @@ namespace seqan3
 
 //!\cond
 // Forward declaration for friend declaration definitions below.
-template <detail::config_element_concept ... configs_t>
+template <detail::ConfigElement ... configs_t>
 class configuration;
 
 template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
@@ -70,7 +70,7 @@ constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> con
  * \ingroup algorithm
  *
  * \tparam configs_t Template parameter pack containing all configuration elements; Must model
- *                   seqan3::detail::config_element_concept
+ *                   seqan3::detail::ConfigElement
  *
  * \details
  *
@@ -78,11 +78,11 @@ constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> con
  * configurations for a specific algorithm. It extends the standard tuple interface with some useful functions to modify
  * and query the user configurations.
  */
-template <detail::config_element_concept ... configs_t>
+template <detail::ConfigElement ... configs_t>
 class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
-    template <detail::config_element_concept ... _configs_t>
+    template <detail::ConfigElement ... _configs_t>
     friend class configuration;
 public:
     //!\privatesection
@@ -446,7 +446,7 @@ private:
      *
      * Strong exception guarantee.
      */
-    template <detail::config_element_concept config_element_t>
+    template <detail::ConfigElement config_element_t>
     constexpr auto push_back(config_element_t elem) const &
     {
         static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
@@ -460,7 +460,7 @@ private:
     }
 
     //!\copydoc push_back
-    template <detail::config_element_concept config_element_t>
+    template <detail::ConfigElement config_element_t>
     constexpr auto push_back(config_element_t elem) &&
     {
         static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
@@ -570,7 +570,7 @@ namespace std
 /*!\brief Returns the number of elements stored in seqan3::detail::configuration.
  * \ingroup algorithm
  */
-template <seqan3::detail::config_element_concept ... configs_t>
+template <seqan3::detail::ConfigElement ... configs_t>
 struct tuple_size<seqan3::configuration<configs_t...>>
 {
     //!\brief The number of elements.
@@ -580,7 +580,7 @@ struct tuple_size<seqan3::configuration<configs_t...>>
 /*!\brief Returns the type of the element at the specified position within seqan3::configuration.
  * \ingroup algorithm
  */
-template <size_t pos, seqan3::detail::config_element_concept ... configs_t>
+template <size_t pos, seqan3::detail::ConfigElement ... configs_t>
 struct tuple_element<pos, seqan3::configuration<configs_t...>>
 {
     //!\brief The type of the config at position `pos`

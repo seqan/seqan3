@@ -42,9 +42,9 @@ TEST(search_configuration_test, symmetric_configuration)
     }
 }
 
-TYPED_TEST(search_configuration_test, config_element_concept)
+TYPED_TEST(search_configuration_test, ConfigElement)
 {
-    EXPECT_TRUE((detail::config_element_concept<TypeParam>));
+    EXPECT_TRUE((detail::ConfigElement<TypeParam>));
 }
 
 TYPED_TEST(search_configuration_test, configuration_exists)
