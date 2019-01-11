@@ -36,12 +36,12 @@ SEQAN3_CONCEPT weakly_equality_comparable_by_members_with_concept = requires (lh
     lhs.operator!=(rhs); std::Boolean<decltype(lhs.operator!=(rhs))>;
 };
 //!\endcond
-/*!\interface   seqan3::detail::weakly_ordered_by_members_with_concept <>
+/*!\interface   seqan3::detail::WeaklyOrderedByMembersWith <>
  * \brief       Like seqan3::weakly_ordered_with_concept, but considers only member operators of the LHS.
  */
 //!\cond
 template <typename lhs_t, typename rhs_t>
-SEQAN3_CONCEPT weakly_ordered_by_members_with_concept = requires (lhs_t const & lhs, rhs_t const & rhs)
+SEQAN3_CONCEPT WeaklyOrderedByMembersWith = requires (lhs_t const & lhs, rhs_t const & rhs)
 {
     lhs.operator< (rhs); std::Boolean<decltype(lhs.operator< (rhs))>;
     lhs.operator> (rhs); std::Boolean<decltype(lhs.operator> (rhs))>;

@@ -633,8 +633,8 @@ constexpr bool operator!=(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<(indirect_component_type const & lhs,
                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
@@ -644,8 +644,8 @@ constexpr bool operator<(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>(indirect_component_type const & lhs,
                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
@@ -655,8 +655,8 @@ constexpr bool operator>(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<=(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
@@ -666,8 +666,8 @@ constexpr bool operator<=(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>=(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
