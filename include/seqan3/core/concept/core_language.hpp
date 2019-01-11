@@ -150,25 +150,25 @@ template <typename t>
 SEQAN3_CONCEPT TriviallyDestructible = std::Destructible<t> && std::is_trivially_destructible_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::trivially_copyable_concept
+/*!\interface   seqan3::TriviallyCopyable
  * \brief       A type that satisfies std::is_trivially_copyable_v<t>.
  * \extends     std::Copyable
  * \sa          http://en.cppreference.com/w/cpp/types/is_trivially_copyable
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT trivially_copyable_concept = std::Copyable<t> && std::is_trivially_copyable_v<t>;
+SEQAN3_CONCEPT TriviallyCopyable = std::Copyable<t> && std::is_trivially_copyable_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::trivial_concept
- * \brief       A type that satisfies seqan3::trivially_copyable_concept and seqan3::TriviallyDestructible.
- * \extends     seqan3::trivially_copyable_concept
+ * \brief       A type that satisfies seqan3::TriviallyCopyable and seqan3::TriviallyDestructible.
+ * \extends     seqan3::TriviallyCopyable
  * \extends     seqan3::TriviallyDestructible
  * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Copyable
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT trivial_concept = trivially_copyable_concept<t> && TriviallyDestructible<t> && std::is_trivial_v<t>;
+SEQAN3_CONCEPT trivial_concept = TriviallyCopyable<t> && TriviallyDestructible<t> && std::is_trivial_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::standard_layout_concept

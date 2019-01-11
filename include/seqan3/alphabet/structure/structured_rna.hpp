@@ -28,7 +28,7 @@ namespace seqan3
  * \ingroup structure
  * \implements seqan3::rna_structure_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
- * \implements seqan3::trivially_copyable_concept
+ * \implements seqan3::TriviallyCopyable
  * \implements seqan3::standard_layout_concept
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::NucleotideAlphabet.
  * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::rna_structure_concept.

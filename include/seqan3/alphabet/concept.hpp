@@ -48,7 +48,7 @@ namespace seqan3
  * For the purpose of concept checking the types `t &` and `t &&` are also considered to satisfy
  * seqan3::semi_alphabet_concept if the type `t` satisfies it.
  *
- * It is recommended that alphabets also model seqan3::standard_layout_concept and seqan3::trivially_copyable_concept
+ * It is recommended that alphabets also model seqan3::standard_layout_concept and seqan3::TriviallyCopyable
  * and all alphabets shipped with SeqAn3 do so.
  *
  * \par Serialisation
