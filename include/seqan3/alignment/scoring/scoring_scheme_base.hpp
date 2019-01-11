@@ -203,16 +203,15 @@ public:
      * \param[in] alph2   The second letter to score.
      * \return The score of the two letters in the current scheme.
      */
-    template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
-              explicitly_convertible_to_concept<alphabet_t> alph2_t>
+    template <ExplicitlyConvertibleTo<alphabet_t> alph1_t,
+              ExplicitlyConvertibleTo<alphabet_t> alph2_t>
     constexpr score_t & score(alph1_t const alph1, alph2_t const alph2) noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];
     }
 
     //!\copydoc score
-    template <explicitly_convertible_to_concept<alphabet_t> alph1_t,
-              explicitly_convertible_to_concept<alphabet_t> alph2_t>
+    template <ExplicitlyConvertibleTo<alphabet_t> alph1_t, ExplicitlyConvertibleTo<alphabet_t> alph2_t>
     constexpr score_t score(alph1_t const alph1, alph2_t const alph2) const noexcept
     {
         return matrix[to_rank(static_cast<alphabet_t>(alph1))][to_rank(static_cast<alphabet_t>(alph2))];

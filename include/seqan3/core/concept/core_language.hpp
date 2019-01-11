@@ -97,12 +97,12 @@ template <typename t, typename u>
 SEQAN3_CONCEPT ImplicitlyConvertibleTo = std::is_convertible_v<t, u>;
 //!\endcond
 
-/*!\interface   seqan3::explicitly_convertible_to_concept <>
+/*!\interface   seqan3::ExplicitlyConvertibleTo <>
  * \brief       Resolves to `std::ranges::ExplicitlyConvertibleTo<type1, type2>()`.
  */
 //!\cond
 template <typename t, typename u>
-SEQAN3_CONCEPT explicitly_convertible_to_concept = requires (t vt) { { static_cast<u>(vt)}; };
+SEQAN3_CONCEPT ExplicitlyConvertibleTo = requires (t vt) { { static_cast<u>(vt)}; };
 //!\endcond
 
 /*!\interface   seqan3::arithmetic_concept <>
