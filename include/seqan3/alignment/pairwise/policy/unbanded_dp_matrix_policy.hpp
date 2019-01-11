@@ -13,11 +13,11 @@
 #pragma once
 
 #include <vector>
-#include <utility>
+#include <tuple>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/range/shortcuts.hpp>
+#include <seqan3/std/span.hpp>
 
 namespace seqan3::detail
 {
@@ -61,20 +61,25 @@ private:
      * \param[in] second_batch The first sequence (or packed sequences).
      */
     template <typename first_batch_t, typename second_batch_t>
-    void allocate_score_matrix(first_batch_t && first_batch, second_batch_t && second_batch)
+    constexpr void allocate_matrix(first_batch_t && first_batch, second_batch_t && second_batch)
     {
-        dimension_first_batch = std::ranges::size(std::forward<first_batch_t>(first_batch));
-        dimension_second_batch = std::ranges::size(std::forward<second_batch_t>(second_batch));
+        dimension_first_batch = std::ranges::size(std::forward<first_batch_t>(first_batch)) + 1;
+        dimension_second_batch = std::ranges::size(std::forward<second_batch_t>(second_batch)) + 1;
 
         // We use only one column to compute the score.
-        score_matrix.resize(dimension_second_batch + 1);
+        score_matrix.resize(dimension_second_batch);
     }
 
     //!\brief Returns the active column that is computed next.
-    auto active_column()
+    constexpr auto active_column()
     {
-        using iter_t = std::ranges::iterator_t<decltype(score_matrix)>;
-        return view::subrange<iter_t, iter_t>{std::ranges::begin(score_matrix), std::ranges::end(score_matrix)};
+        return std::tuple{std::span{score_matrix}, std::ignore};
+    }
+
+    //!\brief Moves internal matrix pointer to the next column.
+    constexpr void next_column()
+    {
+        // noop
     }
 
     //!\brief The data container.
