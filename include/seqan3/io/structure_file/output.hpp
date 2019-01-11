@@ -51,7 +51,7 @@ namespace seqan3
  * \tparam selected_field_ids A seqan3::fields type with the list and order of fields IDs; only relevant if these
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
- *                            seqan3::structure_file_output_format_concept).
+ *                            seqan3::StructureFileOutputFormat).
  * \tparam stream_type        The type of the stream, must satisfy seqan3::ostream_concept.
  * \details
  *
@@ -354,12 +354,12 @@ public:
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam file_format The format of the file in the stream, must satisfy
-     * seqan3::structure_file_output_format_concept.
+     * seqan3::StructureFileOutputFormat.
      * \param[in] _stream  The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      */
-    template <structure_file_output_format_concept file_format>
+    template <StructureFileOutputFormat file_format>
     structure_file_out(stream_type             && _stream,
                       file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -915,7 +915,7 @@ protected:
  * \{
  */
 template <ostream_concept<char>                stream_type,
-          structure_file_output_format_concept file_format,
+          StructureFileOutputFormat file_format,
           detail::fields_concept               selected_field_ids>
 structure_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
