@@ -140,14 +140,14 @@ SEQAN3_CONCEPT char_concept = std::Integral<t> &&
                         std::Same<t, char16_t> || std::Same<t, char32_t> || std::Same<t, wchar_t>);
 //!\endcond
 
-/*!\interface   seqan3::trivially_destructible_concept <>
+/*!\interface   seqan3::TriviallyDestructible <>
  * \extends     std::Destructible
  * \brief       A type that satisfies std::is_trivially_destructible_v<t>.
  * \sa          http://en.cppreference.com/w/cpp/types/is_destructible
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT trivially_destructible_concept = std::Destructible<t> && std::is_trivially_destructible_v<t>;
+SEQAN3_CONCEPT TriviallyDestructible = std::Destructible<t> && std::is_trivially_destructible_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::trivially_copyable_concept
@@ -161,14 +161,14 @@ SEQAN3_CONCEPT trivially_copyable_concept = std::Copyable<t> && std::is_triviall
 //!\endcond
 
 /*!\interface   seqan3::trivial_concept
- * \brief       A type that satisfies seqan3::trivially_copyable_concept and seqan3::trivially_destructible_concept.
+ * \brief       A type that satisfies seqan3::trivially_copyable_concept and seqan3::TriviallyDestructible.
  * \extends     seqan3::trivially_copyable_concept
- * \extends     seqan3::trivially_destructible_concept
+ * \extends     seqan3::TriviallyDestructible
  * \sa          http://en.cppreference.com/w/cpp/experimental/ranges/concepts/Copyable
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT trivial_concept = trivially_copyable_concept<t> && trivially_destructible_concept<t> && std::is_trivial_v<t>;
+SEQAN3_CONCEPT trivial_concept = trivially_copyable_concept<t> && TriviallyDestructible<t> && std::is_trivial_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::standard_layout_concept
