@@ -18,23 +18,23 @@
 
 using namespace seqan3;
 
-TEST(io, stream_concept)
+TEST(io, Stream)
 {
-    EXPECT_FALSE((stream_concept<std::istream, char>));
-    EXPECT_FALSE((stream_concept<std::ostream, char>));
-    EXPECT_TRUE((stream_concept<std::iostream, char>));
-    EXPECT_FALSE((stream_concept<std::ifstream, char>));
-    EXPECT_FALSE((stream_concept<std::ofstream, char>));
-    EXPECT_TRUE((stream_concept<std::fstream, char>));
-    EXPECT_FALSE((stream_concept<std::istringstream, char>));
-    EXPECT_FALSE((stream_concept<std::ostringstream, char>));
-    EXPECT_TRUE((stream_concept<std::stringstream, char>));
-    EXPECT_FALSE((stream_concept<std::vector<char>, char>));
-    EXPECT_FALSE((stream_concept<std::vector<char>, char>));
-    EXPECT_FALSE((stream_concept<std::vector<char>, char>));
-    EXPECT_FALSE((stream_concept<std::string, char>));
-    EXPECT_FALSE((stream_concept<std::string, char>));
-    EXPECT_FALSE((stream_concept<std::string, char>));
+    EXPECT_FALSE((Stream<std::istream, char>));
+    EXPECT_FALSE((Stream<std::ostream, char>));
+    EXPECT_TRUE((Stream<std::iostream, char>));
+    EXPECT_FALSE((Stream<std::ifstream, char>));
+    EXPECT_FALSE((Stream<std::ofstream, char>));
+    EXPECT_TRUE((Stream<std::fstream, char>));
+    EXPECT_FALSE((Stream<std::istringstream, char>));
+    EXPECT_FALSE((Stream<std::ostringstream, char>));
+    EXPECT_TRUE((Stream<std::stringstream, char>));
+    EXPECT_FALSE((Stream<std::vector<char>, char>));
+    EXPECT_FALSE((Stream<std::vector<char>, char>));
+    EXPECT_FALSE((Stream<std::vector<char>, char>));
+    EXPECT_FALSE((Stream<std::string, char>));
+    EXPECT_FALSE((Stream<std::string, char>));
+    EXPECT_FALSE((Stream<std::string, char>));
 }
 
 TEST(io, istream_concept)
