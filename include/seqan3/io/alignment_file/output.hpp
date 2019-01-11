@@ -199,7 +199,7 @@ template <detail::fields_concept selected_field_ids_ =
                      field::EVALUE,
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
-          detail::type_list_of_alignment_file_output_formats_concept valid_formats_ =
+          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ =
               type_list<alignment_file_format_sam/*,
                         alignment_file_format_bam,
                         alignment_file_format_blast_tabular*/>,
