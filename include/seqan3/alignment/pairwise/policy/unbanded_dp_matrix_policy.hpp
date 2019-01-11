@@ -58,7 +58,7 @@ private:
      * \tparam first_batch_t   The type of the first sequence (or packed sequences).
      * \tparam second_batch_t  The type of the second sequence (or packed sequences).
      * \param[in] first_batch  The first sequence (or packed sequences).
-     * \param[in] second_batch The first sequence (or packed sequences).
+     * \param[in] second_batch The second sequence (or packed sequences).
      */
     template <typename first_batch_t, typename second_batch_t>
     void allocate_score_matrix(first_batch_t && first_batch, second_batch_t && second_batch)

@@ -79,6 +79,7 @@
  * ### Existing matrix policies:
  *
  *  - seqan3::detail::unbanded_dp_matrix_policy
+ *  - seqan3::detail::unbanded_score_trace_dp_matrix_policy
  *
  * ## Gap policies
  *
