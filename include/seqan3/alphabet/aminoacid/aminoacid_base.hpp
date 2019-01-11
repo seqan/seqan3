@@ -68,7 +68,7 @@ public:
     //!\cond
         requires !std::Same<aminoacid_base, other_aa_type> &&
                  !std::Same<derived_type, other_aa_type> &&
-                 aminoacid_concept<other_aa_type>
+                 AminoacidAlphabet<other_aa_type>
     //!\endcond
     explicit constexpr aminoacid_base(other_aa_type const & other) noexcept
     {

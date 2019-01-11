@@ -110,7 +110,7 @@ public:
  * details.
  *
  * This class ensures that the proxy itself also models seqan3::semi_alphabet_concept, seqan3::alphabet_concept,
- * seqan3::quality_concept, seqan3::nucleotide_concept and/or seqan3::aminoacid_concept if the emulated type models
+ * seqan3::quality_concept, seqan3::nucleotide_concept and/or seqan3::AminoacidAlphabet if the emulated type models
  * these. This makes sure that function templates which accept the original, also accept the proxy. An exception
  * are multi-layered compositions of alphabets where the proxy currently does not support access via `get`.
  *

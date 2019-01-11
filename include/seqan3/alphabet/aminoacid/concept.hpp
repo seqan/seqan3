@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Provides seqan3::aminoacid_concept.
+ * \brief Provides seqan3::AminoacidAlphabet.
  */
 
 #pragma once
@@ -46,7 +46,7 @@ struct is_aminoacid : std::false_type {};
 template <typename type>
 constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
 
-/*!\interface seqan3::aminoacid_concept <>
+/*!\interface seqan3::AminoacidAlphabet <>
  * \extends seqan3::alphabet_concept
  * \brief A concept that indicates whether an alphabet represents amino acids.
  * \ingroup aminoacid
@@ -61,7 +61,7 @@ constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT aminoacid_concept = alphabet_concept<type> && is_aminoacid_v<remove_cvref_t<type>>;
+SEQAN3_CONCEPT AminoacidAlphabet = alphabet_concept<type> && is_aminoacid_v<remove_cvref_t<type>>;
 //!\endcond
 
 } // namespace seqan3
