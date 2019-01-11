@@ -51,7 +51,7 @@ namespace seqan3
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of fields IDs; only relevant if these
  * can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- * seqan3::sequence_file_output_format_concept).
+ * seqan3::SequenceFileOutputFormat).
  * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
  * \details
  *
@@ -342,7 +342,7 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sequence_file_output_format_concept.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::SequenceFileOutputFormat.
      * \param[in,out] stream The stream to write to, must be derived of std::basic_ostream<stream_char_t>.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -357,7 +357,7 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <ostream_concept2 stream_t,
-              sequence_file_output_format_concept file_format>
+              SequenceFileOutputFormat file_format>
     sequence_file_output(stream_t                 & stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -371,7 +371,7 @@ public:
 
     //!\overload
     template <ostream_concept2 stream_t,
-              sequence_file_output_format_concept file_format>
+              SequenceFileOutputFormat file_format>
     sequence_file_output(stream_t                && stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -910,7 +910,7 @@ protected:
  * \{
  */
 template <ostream_concept2                     stream_t,
-          sequence_file_output_format_concept file_format,
+          SequenceFileOutputFormat file_format,
           detail::fields_concept              selected_field_ids>
 sequence_file_output(stream_t &&,
                      file_format const &,
@@ -920,7 +920,7 @@ sequence_file_output(stream_t &&,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
 template <ostream_concept2                     stream_t,
-          sequence_file_output_format_concept file_format,
+          SequenceFileOutputFormat file_format,
           detail::fields_concept              selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,
