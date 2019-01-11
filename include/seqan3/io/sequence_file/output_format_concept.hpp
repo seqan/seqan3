@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::sequence_file_format_out_concept and auxiliary classes.
+ * \brief Provides seqan3::SequenceFileFormatOut and auxiliary classes.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
