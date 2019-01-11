@@ -110,7 +110,7 @@ public:
  * details.
  *
  * This class ensures that the proxy itself also models seqan3::semi_alphabet_concept, seqan3::alphabet_concept,
- * seqan3::quality_concept, seqan3::NucleotideAlphabet and/or seqan3::AminoacidAlphabet if the emulated type models
+ * seqan3::QualityAlphabet, seqan3::NucleotideAlphabet and/or seqan3::AminoacidAlphabet if the emulated type models
  * these. This makes sure that function templates which accept the original, also accept the proxy. An exception
  * are multi-layered compositions of alphabets where the proxy currently does not support access via `get`.
  *
@@ -225,7 +225,7 @@ public:
     }
 
     constexpr derived_type & assign_phred(phred_type_virtual const c) noexcept
-        requires quality_concept<alphabet_type>
+        requires QualityAlphabet<alphabet_type>
     {
         alphabet_type tmp{};
         using seqan3::assign_phred;
@@ -253,7 +253,7 @@ public:
     }
 
     constexpr phred_type to_phred() const noexcept
-        requires quality_concept<alphabet_type>
+        requires QualityAlphabet<alphabet_type>
     {
         using seqan3::to_phred;
         return to_phred(static_cast<alphabet_type>(*this));

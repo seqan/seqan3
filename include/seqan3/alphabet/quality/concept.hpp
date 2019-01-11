@@ -21,12 +21,12 @@ namespace seqan3
 {
 
 // ------------------------------------------------------------------
-// Member exposure for the seqan3::quality_concept
+// Member exposure for the seqan3::QualityAlphabet
 // ------------------------------------------------------------------
 
-/*!\name Helpers for seqan3::quality_concept
+/*!\name Helpers for seqan3::QualityAlphabet
  * \brief These functions and metafunctions expose member variables and types so
- * that the type can model the seqan3::quality_concept.
+ * that the type can model the seqan3::QualityAlphabet.
  * \ingroup quality
  * \{
  */
@@ -37,9 +37,9 @@ struct underlying_phred
 
 /*!\brief The internal phred type.
  * \ingroup quality
- * \tparam alphabet_type The type of alphabet. Must model the seqan3::quality_concept.
+ * \tparam alphabet_type The type of alphabet. Must model the seqan3::QualityAlphabet.
  *
- * The underlying_phred type requires the quality_concept.
+ * The underlying_phred type requires the QualityAlphabet.
  */
 template <typename alphabet_with_member_type>
 //!\cond
@@ -53,20 +53,20 @@ struct underlying_phred<alphabet_with_member_type>
 
 /*!\brief The internal phred type.
  * \ingroup quality
- * \tparam alphabet_type The type of alphabet. Must model the seqan3::quality_concept.
+ * \tparam alphabet_type The type of alphabet. Must model the seqan3::QualityAlphabet.
  *
- * The underlying_phred type requires the quality_concept.
+ * The underlying_phred type requires the QualityAlphabet.
  */
 template <typename alphabet_type>
 using underlying_phred_t = typename underlying_phred<alphabet_type>::type;
 
 /*!\brief The public setter function of a phred score.
  * \ingroup quality
- * \tparam    alphabet_type The type of alphabet. Must model the seqan3::quality_concept.
+ * \tparam    alphabet_type The type of alphabet. Must model the seqan3::QualityAlphabet.
  * \param[in] chr           The quality value to assign a score.
  * \param[in] in            The character to representing the phred score.
  *
- * The underlying_phred type requires the quality_concept.
+ * The underlying_phred type requires the QualityAlphabet.
  */
 template <typename alphabet_type>
 //!\cond
@@ -88,10 +88,10 @@ constexpr alphabet_type assign_phred(alphabet_type && chr, char const in)
 
 /*!\brief The public getter function for the phred representation of a score.
  * \ingroup quality
- * \tparam    alphabet_type The type of alphabet. Must model the seqan3::quality_concept.
+ * \tparam    alphabet_type The type of alphabet. Must model the seqan3::QualityAlphabet.
  * \param[in] chr           The quality value to convert into the phred score.
  *
- * The underlying_phred type requires the quality_concept.
+ * The underlying_phred type requires the QualityAlphabet.
  */
 template <typename alphabet_type>
 //!\cond
@@ -104,16 +104,16 @@ constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
 //\}
 
 // ------------------------------------------------------------------
-// seqan3::quality_concept
+// seqan3::QualityAlphabet
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::quality_concept <>
+/*!\interface seqan3::QualityAlphabet <>
  * \extends seqan3::alphabet_concept
  * \brief A concept that indicates whether an alphabet represents quality scores.
  * \ingroup quality
  *
  * In addition to the requirements for seqan3::alphabet_concept, the
- * quality_concept introduces a requirement for conversion functions from and to
+ * QualityAlphabet introduces a requirement for conversion functions from and to
  * a Phred score.
  *
  * \par Concepts and doxygen
@@ -123,7 +123,7 @@ constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
  */
 //!\cond
 template<typename q>
-SEQAN3_CONCEPT quality_concept = requires(q quality)
+SEQAN3_CONCEPT QualityAlphabet = requires(q quality)
 {
     requires alphabet_concept<q>;
 
