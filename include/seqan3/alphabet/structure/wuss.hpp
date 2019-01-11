@@ -54,7 +54,7 @@ namespace seqan3
 {
 
 /*!\brief The WUSS structure alphabet of the characters `.<>:,-_~;()[]{}AaBbCcDd`...
- * \tparam SIZE The alphabet size defaults to 50 and must be an odd number in range 15..67.
+ * \tparam SIZE The alphabet size defaults to 51 and must be an odd number in range 15..67.
  *              It determines the allowed pseudoknot depth by adding characters AaBb..Zz to the alphabet.
  * \implements seqan3::rna_structure_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
@@ -81,6 +81,9 @@ namespace seqan3
 template <uint8_t SIZE = 51>
 class wuss : public alphabet_base<wuss<SIZE>, SIZE>
 {
+    static_assert(SIZE >= 15 && SIZE <= 67 && SIZE % 2 == 1,
+                  "The wuss<> alphabet size must be an odd number in range 15..67.");
+
 private:
     //!\brief The base class.
     using base_t = alphabet_base<wuss<SIZE>, SIZE>;
