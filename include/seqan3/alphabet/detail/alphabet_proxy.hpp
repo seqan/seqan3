@@ -181,7 +181,7 @@ private:
     //!\brief Assignment from any type that the emulated type is assignable from.
     template <typename indirect_assignable_type>
     constexpr derived_type & operator=(indirect_assignable_type const & c) noexcept
-        requires weakly_assignable_concept<alphabet_type, indirect_assignable_type>
+        requires WeaklyAssignable<alphabet_type, indirect_assignable_type>
     {
         alphabet_type a{};
         a = c;

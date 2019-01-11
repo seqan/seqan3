@@ -122,7 +122,7 @@ template <typename t>
 SEQAN3_CONCEPT aligned_sequence_concept =
     std::ranges::ForwardRange<t> &&
     alphabet_concept<value_type_t<t>> &&
-    weakly_assignable_concept<reference_t<t>, gap const &> &&
+    WeaklyAssignable<reference_t<t>, gap const &> &&
     requires (t v)
     {
         { insert_gap(v, v.begin()) } -> typename t::iterator; // global functions for generic usability
@@ -159,7 +159,7 @@ SEQAN3_CONCEPT aligned_sequence_concept =
  */
 template <sequence_container_concept seq_type>
 //!\cond
-    requires weakly_assignable_concept<reference_t<seq_type>, gap const &>
+    requires WeaklyAssignable<reference_t<seq_type>, gap const &>
 //!\endcond
 inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type::const_iterator pos_it)
 {
@@ -184,7 +184,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
  */
 template <sequence_container_concept seq_type>
 //!\cond
-    requires weakly_assignable_concept<reference_t<seq_type>, gap const &>
+    requires WeaklyAssignable<reference_t<seq_type>, gap const &>
 //!\endcond
 inline typename seq_type::iterator insert_gap(seq_type & seq,
                                               typename seq_type::const_iterator pos_it,
@@ -213,7 +213,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq,
  */
 template <sequence_container_concept seq_type>
 //!\cond
-    requires weakly_assignable_concept<reference_t<seq_type>, gap const &>
+    requires WeaklyAssignable<reference_t<seq_type>, gap const &>
 //!\endcond
 inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::const_iterator pos_it)
 {
@@ -244,7 +244,7 @@ inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::
  */
 template <sequence_container_concept seq_type>
 //!\cond
-    requires weakly_assignable_concept<reference_t<seq_type>, gap const &>
+    requires WeaklyAssignable<reference_t<seq_type>, gap const &>
 //!\endcond
 inline typename seq_type::iterator erase_gap(seq_type & seq,
                                              typename seq_type::const_iterator first,

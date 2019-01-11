@@ -123,7 +123,7 @@ struct assignable_from
 {
     //!\brief The returned type when invoked.
     template <typename type>
-    using invoke = std::integral_constant<bool, weakly_assignable_concept<type, T>>;
+    using invoke = std::integral_constant<bool, WeaklyAssignable<type, T>>;
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.

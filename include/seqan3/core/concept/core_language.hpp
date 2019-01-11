@@ -180,7 +180,7 @@ template <typename t>
 SEQAN3_CONCEPT StandardLayout = std::is_standard_layout_v<t>;
 //!\endcond
 
-/*!\interface   seqan3::weakly_assignable_concept
+/*!\interface   seqan3::WeaklyAssignable
  * \brief       Resolves to std::is_assignable_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_assignable
  *
@@ -191,7 +191,7 @@ SEQAN3_CONCEPT StandardLayout = std::is_standard_layout_v<t>;
  */
 //!\cond
 template <typename t, typename u>
-SEQAN3_CONCEPT weakly_assignable_concept = std::is_assignable_v<t, u>;
+SEQAN3_CONCEPT WeaklyAssignable = std::is_assignable_v<t, u>;
 //!\endcond
 
 }  // namespace seqan3
