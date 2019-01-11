@@ -88,7 +88,7 @@ public:
         assert(cfg_ptr != nullptr);
 
         // We need to allocate the score_matrix and maybe the trace_matrix.
-        this->allocate_score_matrix(first_batch, second_batch);
+        this->allocate_matrix(first_batch, second_batch);
 
         // Initialize cache variables to keep frequently used variables close to the CPU registers.
         auto cache = this->setup_cache(get<align_cfg::gap>(*cfg_ptr).value);
@@ -120,11 +120,11 @@ protected:
     template <typename cache_t>
     void initialize(cache_t & cache)
     {
-        auto col = this->active_column();
+        auto [score_col, trace_col] = this->active_column();
 
-        this->init_origin_cell(*std::ranges::begin(col), cache);
+        this->init_origin_cell(*std::ranges::begin(score_col), cache);
 
-        ranges::for_each(col | ranges::view::drop_exactly(1), [&cache, this](auto & cell)
+        ranges::for_each(score_col | ranges::view::drop_exactly(1), [&cache, this](auto & cell)
         {
             this->init_column_cell(cell, cache);
         });
@@ -149,18 +149,18 @@ protected:
         auto const & score_scheme = get<align_cfg::scoring>(*cfg_ptr).value;
         ranges::for_each(first_batch, [&, this](auto seq1_value)
         {
-            auto col = this->active_column();
-            this->init_row_cell(*std::ranges::begin(col), cache);
+            auto [score_col, trace_col] = this->active_column();
+            this->init_row_cell(*std::ranges::begin(score_col), cache);
 
             auto second_batch_it = std::ranges::begin(second_batch);
-            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto & cell)
+            ranges::for_each(score_col | ranges::view::drop_exactly(1), [&, this] (auto & cell)
             {
                 this->compute_cell(cell, cache, score_scheme.score(seq1_value, *second_batch_it));
                 ++second_batch_it;
             });
-            this->check_score_last_row(get<0>(*(seqan3::end(col) - 1)), get<3>(cache));
+            this->check_score_last_row(get<0>(*(seqan3::end(score_col) - 1)), get<3>(cache));
         });
-        this->check_score_last_column(this->active_column(), get<3>(cache));
+        this->check_score_last_column(get<0>(this->active_column()), get<3>(cache));
     }
 
 private:
