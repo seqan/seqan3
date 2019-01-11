@@ -18,7 +18,7 @@
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
-#include <seqan3/io/structure_file/InputFormat.hpp>
+#include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/range/view/convert.hpp>
 
