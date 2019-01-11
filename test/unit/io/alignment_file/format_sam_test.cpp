@@ -27,7 +27,7 @@ using namespace seqan3;
 TEST(general, concepts)
 {
     // EXPECT_TRUE((alignment_file_in_format_concept<alignment_file_format_sam>));
-    EXPECT_TRUE((alignment_file_output_format_concept<alignment_file_format_sam>));
+    EXPECT_TRUE((AlignmentFileOutputFormat<alignment_file_format_sam>));
 }
 
 // ----------------------------------------------------------------------------
