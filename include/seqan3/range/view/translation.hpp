@@ -65,7 +65,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 class view_translate_single
 {
@@ -286,7 +286,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate_single(urng_t &&, translation_frames const) -> view_translate_single<urng_t>;
 
@@ -295,7 +295,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate_single(urng_t &&) -> view_translate_single<urng_t>;
 
@@ -336,7 +336,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::nucleotide_concept            | seqan3::aa27                                       |
+ * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | seqan3::aa27                                       |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
@@ -368,7 +368,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 class view_translate
 {
@@ -567,7 +567,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate(urng_t &&, translation_frames const) -> view_translate<urng_t>;
 
@@ -576,7 +576,7 @@ template <typename urng_t>
 //!\cond
     requires std::ranges::SizedRange<urng_t> &&
              std::ranges::RandomAccessRange<urng_t> &&
-             nucleotide_concept<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
 view_translate(urng_t &&) -> view_translate<urng_t>;
 
@@ -617,7 +617,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::nucleotide_concept            | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
+ * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.

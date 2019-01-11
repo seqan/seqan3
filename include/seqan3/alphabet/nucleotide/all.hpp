@@ -103,7 +103,7 @@
  *
  * \par Concept
  *
- * The nucleotide submodule defines seqan3::nucleotide_concept which encompasses all the alphabets defined in the
+ * The nucleotide submodule defines seqan3::NucleotideAlphabet which encompasses all the alphabets defined in the
  * submodule and refines seqan3::alphabet_concept. The only additional requirement is that their values can be
  * complemented, see below.
  *
@@ -130,7 +130,7 @@
  *
  * In the typical structure of DNA molecules (or double-stranded RNA), each nucleotide has a complement that it
  * pairs with. To generate the complement value of a nucleotide letter, you can call an implementation of
- * seqan3::nucleotide_concept::complement() on it.
+ * seqan3::NucleotideAlphabet::complement() on it.
  *
  * For the ambiguous letters, the complement is the (possibly also ambiguous) letter representing the union of the
  * individual complements.

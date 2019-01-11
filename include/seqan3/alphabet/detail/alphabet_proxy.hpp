@@ -110,7 +110,7 @@ public:
  * details.
  *
  * This class ensures that the proxy itself also models seqan3::semi_alphabet_concept, seqan3::alphabet_concept,
- * seqan3::quality_concept, seqan3::nucleotide_concept and/or seqan3::AminoacidAlphabet if the emulated type models
+ * seqan3::quality_concept, seqan3::NucleotideAlphabet and/or seqan3::AminoacidAlphabet if the emulated type models
  * these. This makes sure that function templates which accept the original, also accept the proxy. An exception
  * are multi-layered compositions of alphabets where the proxy currently does not support access via `get`.
  *
@@ -261,7 +261,7 @@ public:
 
 #if 0 // this currently causes GCC ICE in cartesian_composition test
     constexpr alphabet_type complement() const noexcept
-        requires nucleotide_concept<alphabet_type>
+        requires NucleotideAlphabet<alphabet_type>
     {
         using seqan3::complement;
         return complement(static_cast<alphabet_type>(*this));

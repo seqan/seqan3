@@ -148,10 +148,10 @@ public:
 
     /*!\brief Return a qualified where the quality is preserved, but the sequence letter is complemented.
      * \sa seqan3::complement
-     * \sa seqan3::nucleotide_concept::complement
+     * \sa seqan3::NucleotideAlphabet::complement
      */
     constexpr qualified complement() const noexcept
-        requires nucleotide_concept<sequence_alphabet_t>
+        requires NucleotideAlphabet<sequence_alphabet_t>
     {
         using seqan3::complement;
         return qualified{complement(get<0>(*this)), get<1>(*this)};
