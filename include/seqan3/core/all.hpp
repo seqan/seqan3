@@ -48,6 +48,7 @@
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/concept/all.hpp>
 #include <seqan3/core/detail/all.hpp>
+#include <seqan3/core/make_equality_comparable_with.hpp>
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/pod_tuple.hpp>
