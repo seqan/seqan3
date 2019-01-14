@@ -52,7 +52,7 @@ namespace seqan3
  * can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
  * seqan3::SequenceFileOutputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::Char.
  * \details
  *
  * ### Introduction
@@ -159,7 +159,7 @@ namespace seqan3
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
               type_list<sequence_file_format_fasta, sequence_file_format_fastq>,
-          char_concept stream_char_type_ = char>
+          Char stream_char_type_ = char>
 class sequence_file_output
 {
 public:
@@ -720,8 +720,8 @@ sequence_file_output(stream_t &&,
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
-template <OStream2                 stream_t,
-          SequenceFileOutputFormat file_format,
+template <OStream2                            stream_t,
+          sequence_file_output_format_concept file_format,
           detail::fields_concept   selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,

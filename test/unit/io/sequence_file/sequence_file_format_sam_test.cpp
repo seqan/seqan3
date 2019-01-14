@@ -1,61 +1,24 @@
-// ==========================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ==========================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
+
 #include <sstream>
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/sequence_file/format_sam.hpp>
+#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;
 
-inline std::vector<phred42> operator""_phred42(const char * s, std::size_t n)
-{
-    std::vector<phred42> r;
-    r.resize(n);
-
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
-
-    return r;
-}
 // ----------------------------------------------------------------------------
 // general
 // ----------------------------------------------------------------------------
@@ -113,13 +76,13 @@ TEST_F(read, standard)
 {
     std::string input
     {
-        "@ Comment\n"
-        "@ Blablabla\n"
-        "@ Bla\tbla\tbla\n"
-        "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\n"
-        "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-        "TT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-        "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+R"(@ Comment
+@ Blablabla
+@ Bla   bla bla
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
+ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
+ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
+)"
     };
     do_read_test(input);
 }
@@ -128,24 +91,13 @@ TEST_F(read, tags)
 {
     std::string input
     {
-      "@ Comment\n"
-      "ID1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\tFI:i:1\n"
-      "ID2\t0\t*\t0\t0\tBABA\t*\t30\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-      "TTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\tAS:i:3\n"
-      "ID3 lala\t0\t*\t0\t0\tHAHAHA+\t*\t0\t0\tACGTTTA\t!!!!!!!\tTI:i:2\n"
-    };
-    do_read_test(input);
-}
-
-TEST_F(read, whitespace_in_seq_qual)
-{
-    std::string input
-    {
-      "@ Comment\n"
-      "ID1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\n"
-      "ID2\t0\t*\t0\t0\tBABA\t*\t30\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-      "TTTTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-      "ID3 lala\t0\t*\t0\t0\tHAHAHA+\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+R"(@ Comment
+@ Blablabla
+@ Bla   bla bla
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-	FI:i:1
+ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE	AS:i:3
+ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!	TI:i:2
+)"
     };
     do_read_test(input);
 }
@@ -154,11 +106,11 @@ TEST_F(read, mixed_issues)
 {
   std::string input
   {
-    "@ Comment\n"
-    "ID1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\n"
-    "ID2\t0\t*\t0\t0\tBABA\t*\t30\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-    "TTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-    "ID3 lala\t0\t*\t0\t0\tHAHAHA+\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+R"(@ Comment
+ID1	0	BABABA	200	0	*	BABABA	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-	FI:i:1
+ID2	0	*	0	0	BABA	*	30	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
+ID3 lala	0	*	0	0	HAHAHAHA+	*	0	0	ACGTTTA	!!!!!!!
+)"
     };
     do_read_test(input);
 }
@@ -167,11 +119,11 @@ TEST_F(read, options_truncate_ids)
 {
   std::string input
   {
-      "@ Comment\n"
-      "ID1 b\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\n"
-      "ID2 lala2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-      "TTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-      "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+R"(@ Comment
+ID1 b	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
+ID2 lala2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
+ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
+)"
     };
 
     options.truncate_ids = true;
@@ -183,11 +135,11 @@ TEST_F(read, no_qual)
 {
    std::string input
    {
-       "@ Comment\n"
-       "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t*\n"
-       "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-       "TTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-       "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+R"(@ Comment
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	*
+ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
+ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
+)"
     };
 
     expected_quals[0] = { ""_phred42 };
@@ -198,11 +150,11 @@ TEST_F(read, ignore_qual)
 {
     std::string input
     {
-        "@ Comment\n"
-        "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t*\n"
-        "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-        "TTTTT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-        "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+R"(@ Comment
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	*
+ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
+ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
+)"
     };
 
     sequence_file_format_sam format;
@@ -225,8 +177,9 @@ TEST_F(read, qual_too_short)
 {
     std::string input
     {
-      "@ Comment\n"
-      "ID 1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()-./++-\tFI:i:1\n"
+R"(@ Comment
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()-./++-
+)"
     };
 
     sequence_file_format_sam format;
@@ -243,8 +196,9 @@ TEST_F(read, qual_too_long)
 {
     std::string input
     {
-      "@ Comment\n"
-      "ID 1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-+\tFI:i:1\n"
+R"(@ Comment
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-+
+)"
     };
 
     sequence_file_format_sam format;
@@ -261,8 +215,9 @@ TEST_F(read, wrong_qual3)
 {
     std::string input
     {
-      "@ Comment\n"
-      "ID 1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*\n,-./++-\tFI:i:1\n"
+R"(@ Comment
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*\n,-./++-
+)"
     };
 
     sequence_file_format_sam format;
@@ -279,8 +234,9 @@ TEST_F(read, no_id)
 {
     std::string input
     {
-      "@ Comment\n"
-      "*\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\tFI:i:1\n"
+R"(@ Comment
+*	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
+)"
     };
 
     sequence_file_format_sam format;
@@ -295,8 +251,9 @@ TEST_F(read, no_seq)
 {
     std::string input
     {
-      "@ Comment\n"
-      "ID 1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\t*\t!##$%&'()*+,-./++-\tFI:i:1\n"
+R"(@ Comment
+ID 1	0	*	0	0	*	*	0	0	*	!##$%&'()*+,-./++-
+)"
     };
 
     sequence_file_format_sam format;
@@ -311,11 +268,11 @@ TEST_F(read, ignore_seq)
 {
     std::string input
     {
-        "@ Comment\n"
-        "ID1\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTT\t!##$%&'()*+,-./++-\n"
-        "ID2\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-        "TT\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE\n"
-        "ID3 lala\t0\t*\t0\t0\t*\t*\t0\t0\tACGTTTA\t!!!!!!!\n"
+R"(@ Comment
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-
+ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE
+ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
+)"
     };
 
     sequence_file_format_sam format;
@@ -338,8 +295,9 @@ TEST_F(read, wrong_seq)
 {
     std::string input
     {
-      "@ Comment\n"
-      "ID 1\t0\tBABABA\t200\t0\t*\tBABABA\t0\t0\tACGTTTTT?TTTTTTTTT\t!##$%&'()*+,-./++-\tFI:i:1\n"
+R"(@ Comment
+ID 1	0	*	0	0	*	*	0	0	ACGTTTTT?TTTTTTTTT	!##$%&'()*+,-./++-
+)"
     };
 
     sequence_file_format_sam format;
@@ -348,6 +306,52 @@ TEST_F(read, wrong_seq)
     std::stringstream istream{input};
 
     EXPECT_THROW((format.read(istream, options, seq, std::ignore, std::ignore)), parse_error );
+}
+
+TEST_F(read, from_stream_file)
+{
+    std::string input
+    {
+R"(read1	41	ref	1	61	1S1M1D2M	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
+read 2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
+read3	43	ref	3	63	1S1M1D4M1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+)"
+    };
+
+    std::vector<dna5_vector> seq_comp
+    {
+        "ACGT"_dna5,
+        "AGGCTGNAG"_dna5,
+        "GGAGTATA"_dna5
+    };
+
+    std::vector<std::string> id_comp
+    {
+        "read1",
+        "read 2",
+        "read3"
+    };
+
+    std::vector<std::vector<phred42>> qual_comp
+    {
+        { "!##$"_phred42 },
+        { "!##$&'()*"_phred42 },
+        { "!!*+,-./"_phred42 },
+    };
+
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_sam{}};
+
+    size_t counter = 0;
+    for (auto & [ seq, id, qual ] : fin)
+    {
+        EXPECT_TRUE((std::ranges::equal(seq,  seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(qual,  qual_comp[counter])));
+
+        counter++;
+    }
+
+    EXPECT_EQ(counter, 3u);
 }
 
 // ----------------------------------------------------------------------------
@@ -406,10 +410,10 @@ TEST_F(write, default_options)
 {
     std::string comp
     {
-      "TEST 1\t0\t*\t0\t0\t*\t*\t0\t0\tACGT\t!##$\n"
-      "Test2\t0\t*\t0\t0\t*\t*\t0\t0\tAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGC"
-      "TGNAGGCTGN\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE\n"
-      "Test3\t0\t*\t0\t0\t*\t*\t0\t0\tGGAGTATAATATATATATATAT\t!!*+,-./+*+,-./+!!FF!!\n"
+R"(TEST 1	0	*	0	0	*	*	0	0	ACGT	!##$
+Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE
+Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	!!*+,-./+*+,-./+!!FF!!
+)"
     };
 
     do_write_test();
@@ -421,10 +425,10 @@ TEST_F(write, no_id)
 {
     std::string comp
     {
-      "*\t0\t*\t0\t0\t*\t*\t0\t0\tACGT\t!##$\n"
-      "Test2\t0\t*\t0\t0\t*\t*\t0\t0\tAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGC"
-      "TGNAGGCTGN\t!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE\n"
-      "Test3\t0\t*\t0\t0\t*\t*\t0\t0\tGGAGTATAATATATATATATAT\t!!*+,-./+*+,-./+!!FF!!\n"
+R"(*	0	*	0	0	*	*	0	0	ACGT	!##$
+Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE
+Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	!!*+,-./+*+,-./+!!FF!!
+)"
     };
 
     ids[0] = "";
@@ -437,10 +441,10 @@ TEST_F(write, no_seq)
 {
     std::string comp
     {
-      "TEST 1\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n"
-      "Test2\t0\t*\t0\t0\t*\t*\t0\t0\tAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGC"
-      "TGNAGGCTGN\t*\n"
-      "Test3\t0\t*\t0\t0\t*\t*\t0\t0\tGGAGTATAATATATATATATAT\t*\n"
+R"(TEST 1	0	*	0	0	*	*	0	0	*	*
+Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	*
+Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	*
+)"
     };
 
     seqs[0] = ""_dna5;
@@ -454,13 +458,35 @@ TEST_F(write, no_qual)
 {
     std::string comp
     {
-      "TEST 1\t0\t*\t0\t0\t*\t*\t0\t0\tACGT\t*\n"
-      "Test2\t0\t*\t0\t0\t*\t*\t0\t0\tAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGC"
-      "TGNAGGCTGN\t*\n"
-      "Test3\t0\t*\t0\t0\t*\t*\t0\t0\tGGAGTATAATATATATATATAT\t*\n"
+R"(TEST 1	0	*	0	0	*	*	0	0	ACGT	*
+Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	*
+Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	*
+)"
     };
 
     do_write_test_no_qual();
 
     EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, from_stream_file)
+{
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_sam{}};
+
+    for(int i = 0; i < 3; i++)
+    {
+        fout.emplace_back(seqs[i],ids[i], quals[i]);
+    }
+
+    fout.get_stream().flush();
+
+    std::string comp
+    {
+R"(TEST 1	0	*	0	0	*	*	0	0	ACGT	!##$
+Test2	0	*	0	0	*	*	0	0	AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDBDDEBDBEEBEBE
+Test3	0	*	0	0	*	*	0	0	GGAGTATAATATATATATATAT	!!*+,-./+*+,-./+!!FF!!
+)"
+    };
+
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), comp);
 }
