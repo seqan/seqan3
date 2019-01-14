@@ -373,10 +373,7 @@ struct parse_asserter
  * joined efficiently, maintaining constant-time evaluation independent of the number of checks. Functors can be
  * combined with the `||-operator` or negated via the `!-operator`:
  *
- * ```cpp
- * auto constexpr my_cond = is_char<'%'> || is_digit;
- * bool is_percent = my_cond(*example_it);
- * ```
+ * \snippet test/snippet/io/stream/parse_condition.cpp operator
  *
  * Defining complex combinations and using them in e.g. input/output can increase speed significantly over checking
  * multiple functions: we measured speed-ups of 10x for a single check and speed-ups of
