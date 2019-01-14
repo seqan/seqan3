@@ -47,18 +47,6 @@
 
 using namespace seqan3;
 
-//TODO remove after #256 is merged
-inline std::vector<phred42> operator""_phred42(const char * s, std::size_t n)
-{
-    std::vector<phred42> r;
-    r.resize(n);
-
-    for (size_t i = 0; i < n; ++i)
-        r[i].assign_char(s[i]);
-
-    return r;
-}
-
 // ----------------------------------------------------------------------------
 // general
 // ----------------------------------------------------------------------------

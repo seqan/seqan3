@@ -118,6 +118,27 @@ constexpr phred42 operator""_phred42(char const c) noexcept
 {
     return phred42{}.assign_char(c);
 }
+
+/*!\brief The seqan3::phred42 string literal.
+ * \param[in] s A pointer to the character sequence to assign from.
+ * \param[in] n The length of the character sequence to assign from.
+ * \relates seqan3::phred42
+ * \returns seqan3::std::vector<seqan3::phred42>
+ *
+ * You can use this string literal to easily assign to std::vector<seqan3::phred42>:
+ *
+ * \include test/snippet/alphabet/quality/phred42_literal.cpp
+ */
+inline std::vector<phred42> operator""_phred42(char const * s, std::size_t n)
+{
+    std::vector<phred42> r;
+    r.resize(n);
+
+    for (size_t i = 0; i < n; ++i)
+        r[i].assign_char(s[i]);
+
+    return r;
+}
 //!\}
 
 } // namespace seqan3

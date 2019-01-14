@@ -85,3 +85,13 @@ TEST(phred63, char_literal)
     EXPECT_EQ(to_char('^'_phred63), '^');
     EXPECT_EQ(to_char('_'_phred63), '_');
 }
+
+TEST(phred63, string_literal)
+{
+    std::vector<phred63> v;
+    v.resize(5, '#'_phred63);
+    EXPECT_EQ(v, "#####"_phred63);
+
+    std::vector<phred63> w{'#'_phred63, '#'_phred63, '!'_phred63, '!'_phred63, '!'_phred63, '#'_phred63};
+    EXPECT_EQ(w, "##!!!#"_phred63);
+}
