@@ -77,35 +77,34 @@ struct determine_result_type
         {
             if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                     with_end_position_type>)
-                return align_result<type_list<uint32_t,
-                                              score_type,
-                                              alignment_coordinate>>{};
+                return align_result_value_type<uint32_t,
+                                               score_type,
+                                               alignment_coordinate>{};
             else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                          with_begin_position_type>)
-                return align_result<type_list<uint32_t,
-                                              score_type,
-                                              alignment_coordinate,
-                                              alignment_coordinate>>{};
+                return align_result_value_type<uint32_t,
+                                               score_type,
+                                               alignment_coordinate,
+                                               alignment_coordinate>{};
             else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                          with_trace_type>)
-                return align_result<type_list<uint32_t,
-                                              score_type,
-                                              alignment_coordinate,
-                                              alignment_coordinate,
-                                              std::pair<std::vector<seq1_value_type>,
-                                                        std::vector<seq2_value_type>>>>{};
+                return align_result_value_type<uint32_t,
+                                               score_type,
+                                               alignment_coordinate,
+                                               alignment_coordinate,
+                                               std::pair<std::vector<seq1_value_type>,
+                                                         std::vector<seq2_value_type>>>{};
             else
-                return align_result<type_list<uint32_t,
-                                              score_type>>{};
+                return align_result_value_type<uint32_t, score_type>{};
         }
         else
         {
-            return align_result<type_list<uint32_t, score_type>>{};
+            return align_result_value_type<uint32_t, score_type>{};
         }
     }
 
     //!\brief The determined result type.
-    using type = decltype(_determine());
+    using type = align_result<decltype(_determine())>;
 };
 
 /*!\brief Selects the correct alignment algorithm based on the algorithm configuration.

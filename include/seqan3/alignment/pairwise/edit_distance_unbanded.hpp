@@ -448,30 +448,32 @@ public:
      * \param[in,out] res The alignment result to fill.
      * \returns A reference to the filled alignment result.
      */
-    template <typename result_type>
-    result_type & operator()(result_type & res)
+    template <typename result_value_type>
+    align_result<result_value_type> & operator()(align_result<result_value_type> & res)
     {
         _compute();
-        if constexpr (std::tuple_size_v<result_type> >= 2)
+        result_value_type res_vt{};
+        if constexpr (!std::is_same_v<decltype(res_vt.score), std::nullopt_t *>)
         {
-            get<align_result_key::score>(res) = score();
+            res_vt.score = score();
         }
 
-        if constexpr (std::tuple_size_v<result_type> >= 3)
+        if constexpr (!std::is_same_v<decltype(res_vt.end_coordinate), std::nullopt_t *>)
         {
-            get<align_result_key::end>(res) = end_coordinate();
+            res_vt.end_coordinate = end_coordinate();
         }
 
         [[maybe_unused]] alignment_trace_matrix matrix = trace_matrix();
-        if constexpr (std::tuple_size_v<result_type> >= 4)
+        if constexpr (!std::is_same_v<decltype(res_vt.begin_coordinate), std::nullopt_t *>)
         {
-            get<align_result_key::begin>(res) = alignment_begin_coordinate(matrix, get<align_result_key::end>(res));
+            res_vt.begin_coordinate = alignment_begin_coordinate(matrix, res_vt.end_coordinate);
         }
 
-        if constexpr (std::tuple_size_v<result_type> >= 5)
+        if constexpr (!std::is_same_v<decltype(res_vt.alignment), std::nullopt_t *>)
         {
-            get<align_result_key::trace>(res) = alignment_trace(database, query, matrix, get<align_result_key::end>(res));
+            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.end_coordinate);
         }
+        res = align_result<result_value_type>{res_vt};
         return res;
     }
 
@@ -510,8 +512,8 @@ public:
         return {col, query.size() - 1};
     }
 
-    //!\brief Return the trace of the alignment
-    auto trace() const noexcept
+    //!\brief Return the alignment, i.e. the actual base pair matching.
+    auto alignment() const noexcept
     {
         return alignment_trace(database, query, trace_matrix(), end_coordinate());
     }
