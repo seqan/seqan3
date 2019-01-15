@@ -1,6 +1,6 @@
-// -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin 
-// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik 
+/// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
 // -----------------------------------------------------------------------------------------------------
@@ -20,14 +20,9 @@ template <typename T>
 class fm_index_test : public ::testing::Test
 {};
 
-using fm_index_types = ::testing::Types<fm_index<std::vector<dna4>>,
-                                        bi_fm_index<std::vector<dna4>>,
-                                        bi_fm_index<std::vector<aa27>>,
-                                        bi_fm_index<std::vector<char>>>;
+TYPED_TEST_CASE_P(fm_index_test);
 
-TYPED_TEST_CASE(fm_index_test, fm_index_types);
-
-TYPED_TEST(fm_index_test, ctr)
+TYPED_TEST_P(fm_index_test, ctr)
 {
     typename TypeParam::text_type text(10); // initialized with smallest char
 
@@ -56,7 +51,7 @@ TYPED_TEST(fm_index_test, ctr)
     EXPECT_EQ(fm0.size(), fm5.size());
 }
 
-TYPED_TEST(fm_index_test, swap)
+TYPED_TEST_P(fm_index_test, swap)
 {
     typename TypeParam::text_type textA(10);
     typename TypeParam::text_type textB(20);
@@ -77,7 +72,7 @@ TYPED_TEST(fm_index_test, swap)
     EXPECT_NE(fm0.size(), fm2.size());
 }
 
-TYPED_TEST(fm_index_test, size)
+TYPED_TEST_P(fm_index_test, size)
 {
     TypeParam fm;
     EXPECT_TRUE(fm.empty());
@@ -87,7 +82,7 @@ TYPED_TEST(fm_index_test, size)
     EXPECT_EQ(fm.size(), 9u); // including a sentinel character
 }
 
-TYPED_TEST(fm_index_test, serialization)
+TYPED_TEST_P(fm_index_test, serialization)
 {
     typename TypeParam::text_type text(8);
     TypeParam fm0{text};
@@ -103,13 +98,17 @@ TYPED_TEST(fm_index_test, serialization)
     EXPECT_EQ(fm1.size(), 9u);
 }
 
-TEST(fm_index_test, concepts)
+TYPED_TEST_P(fm_index_test, concept_check)
 {
-    EXPECT_TRUE(FmIndex<fm_index<std::vector<dna4>>>);
-    EXPECT_TRUE(FmIndex<fm_index<std::vector<dna5>>>);
+    EXPECT_TRUE(FmIndex<TypeParam>);
     EXPECT_TRUE(FmIndexTraits<fm_index_default_traits>);
-
-    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna4>>>);
-    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<dna5>>>);
     EXPECT_TRUE(BiFmIndexTraits<bi_fm_index_default_traits>);
 }
+
+TYPED_TEST_P(fm_index_test, empty_text)
+{
+    typename TypeParam::text_type text{};
+    EXPECT_THROW(TypeParam index{text}, std::invalid_argument);
+}
+
+REGISTER_TYPED_TEST_CASE_P(fm_index_test, ctr, swap, size, serialization, concept_check, empty_text);

@@ -30,6 +30,21 @@ std::vector<std::vector<T>> uniquify(std::vector<std::vector<T>> v)
     return v;
 }
 
+template <typename T1, typename T2>
+std::vector<std::pair<T1, T2>> uniquify(std::vector<std::pair<T1, T2>> v)
+{
+    std::sort(v.begin(), v.end());
+    v.erase(std::unique(v.begin(), v.end()), v.end());
+    return v;
+}
+
+template <typename T1, typename T2>
+std::vector<std::vector<std::pair<T1, T2>>> uniquify(std::vector<std::vector<std::pair<T1, T2>>> v)
+{
+    std::for_each(v.begin(), v.end(), [] (auto & hits) { uniquify(hits); } );
+    return v;
+}
+
 void random_text(std::vector<dna4> & text, uint64_t const length)
 {
     uint8_t alphabet_size{4};

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin 
-// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik 
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
 // -----------------------------------------------------------------------------------------------------
@@ -15,6 +15,7 @@
 #include <sdsl/suffix_trees.hpp>
 
 #include <range/v3/algorithm/copy.hpp>
+#include <range/v3/view/join.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/filesystem.hpp>
@@ -24,9 +25,9 @@
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/std/view/reverse.hpp>
 #include <seqan3/std/view/transform.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -51,7 +52,24 @@ class bi_fm_index_cursor;
  * ### Running time / Space consumption
  *
  * \f$SAMPLING\_RATE = 16\f$
- * \f$\Sigma\f$: alphabet_size<char_type> where char_type is the seqan3 alphabet type (e.g. dna4 has an alphabet size of 4)
+ * \f$\Sigma\f$: alphabet_size<char_type> where char_type is the seqan3 alphabet type (e.g. dna4 has an alphabet size of 4).
+ *
+ * For an index over a text collection a delimiter is added inbetween the texts. This causes sigma to increase by 1.
+ * \attention For any alphabet, the symbol with rank 255 is not allowed to occur in the text. Addtionally,
+ *            rank 254 cannot occur when indexing text collections.
+ *
+ * \if DEV
+ * Rank 255 is generally not allowed. When constructing the index, we increase the rank of every letter by 1, since the
+ * SDSL uses 0 as a sentinel. Incrementing 255 by 1 will cause the rank (uint8_t) to overflow to 0.
+ * For text collections, 255 is reserved as delimiter between the individual texts. Therefore the letter with rank 254
+ * cannot occur in the text.
+ *
+ * This index will only work for byte alphabets, i.e. alphabets with a size <= 256.
+ * When switching to bigger alphabets, the requires clause of the seqan3::fm_index, the seqan3::fm_index_default_traits,
+ * the delimiter choice and the transform view for the construction need to be adjusted. Additionally, all occurrences
+ * of uint8_t should be double checked to make sure they also apply to bigger alphabets.
+ * \endif
+ *
  * \f$T_{BACKWARD\_SEARCH}: O(\log \Sigma)\f$
  *
  * \todo Asymptotic space consumption:
@@ -89,11 +107,17 @@ struct fm_index_default_traits
  * Here is a short example on how to build an index and search a pattern using an cursor. Please note that there is a
  * very powerful search module with a high-level interface \todo seqan3::search that encapsulates the use of cursors.
  *
- * \snippet test/snippet/search/fm_index.cpp all
+ * \include test/snippet/search/fm_index.cpp
+ *
+ * \attention When building an index for a text collection over any alphabet, the symbol with rank 255 is reserved
+ *            and may not occur in the text.
  *
  * Here is an example using a collection of strings (e.g. a genome with multiple chromosomes or a protein database):
  *
- * Coming soon. Stay tuned!
+ * \include test/snippet/search/fm_index_collection.cpp
+ *
+ * \attention When building an index for a text collection over any alphabet, the symbols with rank 254 and 255
+              are reserved and may not be used in the text.
  *
  * ### Choosing an index implementation
  *
@@ -102,7 +126,7 @@ struct fm_index_default_traits
 template <std::ranges::RandomAccessRange text_t, FmIndexTraits fm_index_traits = fm_index_default_traits>
 //!\cond
     requires alphabet_concept<innermost_value_type_t<text_t>> &&
-             std::Same<underlying_rank_t<innermost_value_type_t<text_t>>, uint8_t>
+             alphabet_size_v<innermost_value_type_t<text_t>> <= 256
 //!\endcond
 class fm_index
 {
@@ -118,12 +142,21 @@ protected:
      *        in case not all possible characters occur in the indexed text.)
      */
     using sdsl_char_type = typename sdsl_index_type::alphabet_type::char_type;
+    //!\brief The type of the alphabet size of the underlying SDSL index.
+    using sdsl_sigma_type = typename sdsl_index_type::alphabet_type::sigma_type;
     //!\}
 
     //!\brief Underlying index from the SDSL.
     sdsl_index_type index;
     //!\brief Pointer to the indexed text.
     text_t const * text = nullptr;
+
+    //!\brief Bitvector storing begin positions for collections.
+    sdsl::sd_vector<> text_begin;
+    //!\brief Select support for text_begin.
+    sdsl::select_support_sd<1> text_begin_ss;
+    //!\brief Rank support for text_begin.
+    sdsl::rank_support_sd<1> text_begin_rs;
 
 public:
     /*!\name Member types
@@ -138,6 +171,12 @@ public:
     //!\brief The type of the (unidirectional) cursor.
     using cursor_type = fm_index_cursor<fm_index<text_t, fm_index_traits>>;
     //!\}
+
+    static_assert(dimension_v<text_t> == 1 || dimension_v<text_t> == 2,
+                  "Only texts or collections of texts can be indexed.");
+
+    //!\brief Indicates whether index is built over a collection.
+    static bool constexpr is_collection = dimension_v<text_t> == 2;
 
     template <typename bi_fm_index_t>
     friend class bi_fm_index_cursor;
@@ -196,10 +235,14 @@ public:
      * No guarantees.
      */
     void construct(text_t const & text)
+        //!\cond
+        requires !is_collection
+        //!\endcond
     {
          // text must not be empty
-        if (text.begin() == text.end())
+        if (std::ranges::begin(text) == std::ranges::end(text))
             throw std::invalid_argument("The text that is indexed cannot be empty.");
+
         this->text = &text;
         // TODO:
         // * check what happens in sdsl when constructed twice!
@@ -208,10 +251,20 @@ public:
         // uint8_t largest_char = 0;
         sdsl::int_vector<8> tmp_text(text.size());
 
-        //TODO view::reverse is broken and can't be chained right now
-        std::vector<value_type_t<text_t>> another_copy = text | view::reverse;
-
-        std::ranges::copy(another_copy | view::to_rank | view::transform([] (uint8_t const r) { return r + 1; }),
+        std::ranges::copy(text
+                          | view::to_rank
+                          | view::transform([] (uint8_t const r)
+                          {
+                              if constexpr (alphabet_size_v<char_type> == 256)
+                              {
+                                  if (r == 255)
+                                      throw std::out_of_range("The input text cannot be indexed, because for full"
+                                                              "character alphabets the last one/two values are reserved"
+                                                              "(single sequence/collection).");
+                              }
+                              return r + 1;
+                          })
+                          | view::reverse,
                           seqan3::begin(tmp_text)); // reverse and increase rank by one
 
         sdsl::construct_im(index, tmp_text, 0);
@@ -220,6 +273,86 @@ public:
         // index.m_C.resize(largest_char);
         // index.m_C.shrink_to_fit();
         // index.m_sigma = largest_char;
+    }
+
+    //!\overload
+    void construct(text_t const & text)
+        //!\cond
+        requires is_collection
+        //!\endcond
+    {
+        // text collection must not be empty
+        if (std::ranges::begin(text) == std::ranges::end(text))
+            throw std::invalid_argument("The text that is indexed cannot be empty.");
+
+        size_t text_size{0}; // text size including delimiters
+
+        // there must be at least one non-empty text in the collection
+        bool all_empty = true;
+
+        for (auto && t : text)
+        {
+            if (std::ranges::begin(t) != std::ranges::end(t))
+            {
+                all_empty = false;
+            }
+            text_size += 1 + t.size(); // text size and delimiter (sum will be 1 for empty texts)
+        }
+
+        if (all_empty)
+            throw std::invalid_argument("A text collection that only contains empty texts cannot be indexed.");
+
+        this->text = &text;
+
+        // bitvector where 1 marks the begin position of a single text from the collection in the concatenated text
+        sdsl::bit_vector pos(text_size, 0);
+        size_t prefix_sum{0};
+
+        for (auto && t : text)
+        {
+            pos[prefix_sum] = 1;
+            prefix_sum += t.size() + 1;
+        }
+
+        text_begin    = sdsl::sd_vector(pos);
+        text_begin_ss = sdsl::select_support_sd<1>(&text_begin);
+        text_begin_rs = sdsl::rank_support_sd<1>(&text_begin);
+
+        sdsl::int_vector<8> tmp_text(text_size - 1); // last text in collection needs no delimiter
+
+        uint8_t delimiter = alphabet_size_v<char_type> >= 255 ? 255 : alphabet_size_v<char_type> + 1;
+
+        std::vector<uint8_t> tmp = text
+                                   | view::deep{view::to_rank}
+                                   | view::deep
+                                   {
+                                       view::transform([] (uint8_t const r)
+                                       {
+                                           if constexpr (alphabet_size_v<char_type> >= 255)
+                                           {
+                                               if (r >= 254)
+                                                   throw std::out_of_range("The input text cannot be indexed, because"
+                                                                           " for full character alphabets the last one/"
+                                                                           "two values are reserved (single sequence/"
+                                                                           "collection).");
+                                           }
+                                           return r + 1;
+                                       })
+                                   }
+                                   | ranges::view::join(delimiter);
+
+        std::ranges::copy((tmp | view::reverse), seqan3::begin(tmp_text));
+
+        //!\todo Replace with this once this does not cause debug builds to exceed max memory on travis
+        // std::ranges::copy(text
+        //                   | view::deep{view::to_rank}
+        //                   | view::deep{view::transform([] (uint8_t const r) { return r + 1; })} // increase rank
+        //                   | view::deep{view::reverse}
+        //                   | view::reverse
+        //                   | ranges::view::join(delimiter), // join with delimiter
+        //                   seqan3::begin(tmp_text));
+
+        sdsl::construct_im(index, tmp_text, 0);
     }
 
     //!\overload
@@ -273,9 +406,9 @@ public:
     // }
 
     /*!\brief Returns a seqan3::fm_index_cursor on the index that can be used for searching.
-     *        \cond DEV
+     *        \if DEV
      *            Cursor is pointing to the root node of the implicit suffix tree.
-     *        \endcond
+     *        \endif
      * \returns Returns a (unidirectional) seqan3::fm_index_cursor on the index.
      *
      * ### Complexity
