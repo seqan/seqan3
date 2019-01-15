@@ -36,6 +36,7 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/view/get.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -823,7 +824,7 @@ protected:
     {
         static_assert(detail::decays_to_ignore_v<seq_qual_t> ||
                       (detail::decays_to_ignore_v<seq_t> && detail::decays_to_ignore_v<qual_t>),
-                  "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
+                      "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
 
         assert(!format.valueless_by_exception());
         std::visit([&] (auto & f)
@@ -832,9 +833,9 @@ protected:
             {
                 f.write(*secondary_stream,
                         options,
-                        seq_qual | view::convert<typename seq_qual_t::sequence_alphabet_type>,
+                        seq_qual | view::get<0>,
                         id,
-                        seq_qual | view::convert<typename seq_qual_t::quality_alphabet_type>);
+                        seq_qual | view::get<1>);
             }
             else
             {
@@ -866,7 +867,7 @@ protected:
         static_assert(detail::decays_to_ignore_v<reference_t<seq_quals_t>> ||
                       (detail::decays_to_ignore_v<reference_t<seqs_t>> &&
                        detail::decays_to_ignore_v<reference_t<quals_t>>),
-                  "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
+                      "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
 
         assert(!format.valueless_by_exception());
         std::visit([&] (auto & f)
@@ -878,9 +879,9 @@ protected:
                 for (auto && v : zipped)
                     f.write(*secondary_stream,
                             options,
-                            std::get<0>(v) | view::convert<typename reference_t<seq_quals_t>::sequence_alphabet_type>,
+                            std::get<0>(v) | view::get<0>,
                             std::get<1>(v),
-                            std::get<0>(v) | view::convert<typename reference_t<seq_quals_t>::quality_alphabet_type>);
+                            std::get<0>(v) | view::get<1>);
             }
             else
             {
