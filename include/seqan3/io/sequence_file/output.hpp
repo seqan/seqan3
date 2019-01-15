@@ -826,6 +826,10 @@ protected:
                       (detail::decays_to_ignore_v<seq_t> && detail::decays_to_ignore_v<qual_t>),
                       "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
 
+        if constexpr (!detail::decays_to_ignore_v<seq_qual_t>)
+            static_assert(detail::is_type_specialisation_of_v<value_type_t<seq_qual_t>, qualified>,
+                          "The SEQ_QUAL field must contain a range over the seqan3::qualified alphabet.");
+
         assert(!format.valueless_by_exception());
         std::visit([&] (auto & f)
         {
@@ -868,6 +872,10 @@ protected:
                       (detail::decays_to_ignore_v<reference_t<seqs_t>> &&
                        detail::decays_to_ignore_v<reference_t<quals_t>>),
                       "You may not select field::SEQ_QUAL and either of field::SEQ and field::QUAL at the same time.");
+
+        if constexpr (!detail::decays_to_ignore_v<reference_t<seq_quals_t>>)
+            static_assert(detail::is_type_specialisation_of_v<value_type_t<reference_t<seq_quals_t>>, qualified>,
+                          "The SEQ_QUAL field must contain a range over the seqan3::qualified alphabet.");
 
         assert(!format.valueless_by_exception());
         std::visit([&] (auto & f)
