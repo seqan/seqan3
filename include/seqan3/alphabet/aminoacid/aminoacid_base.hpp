@@ -76,41 +76,6 @@ public:
             detail::convert_through_char_representation<derived_type, other_aa_type>[to_rank(other)];
     }
     //!\}
-
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     * \details Similar to an Enum interface.
-     */
-    //!\{
-    static derived_type constexpr A          = assign_char(derived_type{}, 'A');
-    static derived_type constexpr B          = assign_char(derived_type{}, 'B');
-    static derived_type constexpr C          = assign_char(derived_type{}, 'C');
-    static derived_type constexpr D          = assign_char(derived_type{}, 'D');
-    static derived_type constexpr E          = assign_char(derived_type{}, 'E');
-    static derived_type constexpr F          = assign_char(derived_type{}, 'F');
-    static derived_type constexpr G          = assign_char(derived_type{}, 'G');
-    static derived_type constexpr H          = assign_char(derived_type{}, 'H');
-    static derived_type constexpr I          = assign_char(derived_type{}, 'I');
-    static derived_type constexpr J          = assign_char(derived_type{}, 'J');
-    static derived_type constexpr K          = assign_char(derived_type{}, 'K');
-    static derived_type constexpr L          = assign_char(derived_type{}, 'L');
-    static derived_type constexpr M          = assign_char(derived_type{}, 'M');
-    static derived_type constexpr N          = assign_char(derived_type{}, 'N');
-    static derived_type constexpr O          = assign_char(derived_type{}, 'O');
-    static derived_type constexpr P          = assign_char(derived_type{}, 'P');
-    static derived_type constexpr Q          = assign_char(derived_type{}, 'Q');
-    static derived_type constexpr R          = assign_char(derived_type{}, 'R');
-    static derived_type constexpr S          = assign_char(derived_type{}, 'S');
-    static derived_type constexpr T          = assign_char(derived_type{}, 'T');
-    static derived_type constexpr U          = assign_char(derived_type{}, 'U');
-    static derived_type constexpr V          = assign_char(derived_type{}, 'V');
-    static derived_type constexpr W          = assign_char(derived_type{}, 'W');
-    static derived_type constexpr X          = assign_char(derived_type{}, 'X');
-    static derived_type constexpr Y          = assign_char(derived_type{}, 'Y');
-    static derived_type constexpr Z          = assign_char(derived_type{}, 'Z');
-    static derived_type constexpr TERMINATOR = assign_char(derived_type{}, '*');
-    static derived_type constexpr UNKNOWN    = X;
-    //!\}
 };
 
 } // namespace seqan3

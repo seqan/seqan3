@@ -29,47 +29,47 @@ TYPED_TEST(aminoacid_conversion, explicit_conversion)
     meta::for_each(aminoacid_types{}, [&] (auto && aa) constexpr
     {
         using out_type = std::decay_t<decltype(aa)>;
-        EXPECT_EQ(static_cast<out_type>(TypeParam::A), out_type::A);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::C), out_type::C);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::D), out_type::D);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::E), out_type::E);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::F), out_type::F);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::G), out_type::G);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::H), out_type::H);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::I), out_type::I);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::K), out_type::K);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::L), out_type::L);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::M), out_type::M);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::N), out_type::N);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::P), out_type::P);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::Q), out_type::Q);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::R), out_type::R);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::S), out_type::S);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::T), out_type::T);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::V), out_type::V);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::W), out_type::W);
-        EXPECT_EQ(static_cast<out_type>(TypeParam::Y), out_type::Y);
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('A')), out_type{}.assign_char('A'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('C')), out_type{}.assign_char('C'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('D')), out_type{}.assign_char('D'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('E')), out_type{}.assign_char('E'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('F')), out_type{}.assign_char('F'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('G')), out_type{}.assign_char('G'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('H')), out_type{}.assign_char('H'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('I')), out_type{}.assign_char('I'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('K')), out_type{}.assign_char('K'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('L')), out_type{}.assign_char('L'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('M')), out_type{}.assign_char('M'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('N')), out_type{}.assign_char('N'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('P')), out_type{}.assign_char('P'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('Q')), out_type{}.assign_char('Q'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('R')), out_type{}.assign_char('R'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('S')), out_type{}.assign_char('S'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('T')), out_type{}.assign_char('T'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('V')), out_type{}.assign_char('V'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('W')), out_type{}.assign_char('W'));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('Y')), out_type{}.assign_char('Y'));
         if (std::is_same_v<TypeParam, aa27>)
         {
-            EXPECT_EQ(static_cast<out_type>(TypeParam::B), out_type::B);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::J), out_type::J);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::O), out_type::O);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::U), out_type::U);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::X), out_type::X);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::Z), out_type::Z);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::TERMINATOR), out_type::TERMINATOR);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::UNKNOWN), out_type::UNKNOWN);
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('B')), out_type{}.assign_char('B'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('J')), out_type{}.assign_char('J'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('O')), out_type{}.assign_char('O'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('U')), out_type{}.assign_char('U'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('X')), out_type{}.assign_char('X'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('Z')), out_type{}.assign_char('Z'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('*')), out_type{}.assign_char('*'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('!')), out_type{}.assign_char('!'));
         }
         else if (std::is_same_v<TypeParam, aa20>)
         {
-            EXPECT_EQ(static_cast<out_type>(TypeParam::B), out_type::D);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::J), out_type::L);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::O), out_type::L);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::U), out_type::C);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::X), out_type::S);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::Z), out_type::E);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::TERMINATOR), out_type::W);
-            EXPECT_EQ(static_cast<out_type>(TypeParam::UNKNOWN), out_type::S);
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('B')), out_type{}.assign_char('D'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('J')), out_type{}.assign_char('L'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('O')), out_type{}.assign_char('L'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('U')), out_type{}.assign_char('C'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('X')), out_type{}.assign_char('S'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('Z')), out_type{}.assign_char('E'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('*')), out_type{}.assign_char('W'));
+            EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_char('!')), out_type{}.assign_char('S'));
         }
     });
 }

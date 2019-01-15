@@ -63,261 +63,261 @@ struct translation_table<dna15, seqan3::genetic_code::CANONICAL, void_type>
     static constexpr aa27 VALUE[dna15::value_size][dna15::value_size][dna15::value_size]
     {
         { // a??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::K,          aa27::X, aa27::N, aa27::X, aa27::K,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::K,          aa27::X, aa27::N, aa27::X, aa27::X, aa27::N }, // aa?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ab?
-            { aa27::T,          aa27::T, aa27::T, aa27::T, aa27::T,          aa27::T, aa27::T, aa27::T, aa27::T, aa27::T,          aa27::T, aa27::T, aa27::T, aa27::T, aa27::T }, // ac?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ad?
-            { aa27::R,          aa27::X, aa27::S, aa27::X, aa27::R,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::R,          aa27::X, aa27::S, aa27::X, aa27::X, aa27::S }, // ag?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ah?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ak?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // am?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // an?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ar?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // as?
-            { aa27::I,          aa27::X, aa27::I, aa27::X, aa27::M,          aa27::I, aa27::X, aa27::I, aa27::X, aa27::X,          aa27::X, aa27::I, aa27::X, aa27::I, aa27::I }, // at?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // av?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // aw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // ay?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'K'_aa27, 'X'_aa27, 'N'_aa27, 'X'_aa27, 'K'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'K'_aa27, 'X'_aa27, 'N'_aa27, 'X'_aa27, 'X'_aa27, 'N'_aa27 }, // aa?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ab?
+            { 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27, 'T'_aa27 }, // ac?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ad?
+            { 'R'_aa27, 'X'_aa27, 'S'_aa27, 'X'_aa27, 'R'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'R'_aa27, 'X'_aa27, 'S'_aa27, 'X'_aa27, 'X'_aa27, 'S'_aa27 }, // ag?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ah?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ak?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // am?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // an?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ar?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // as?
+            { 'I'_aa27, 'X'_aa27, 'I'_aa27, 'X'_aa27, 'M'_aa27, 'I'_aa27, 'X'_aa27, 'I'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'I'_aa27, 'X'_aa27, 'I'_aa27, 'I'_aa27 }, // at?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // av?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // aw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ay?
     }, { // b??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ba?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // br?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bs?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // bw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // by?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ba?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // br?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bs?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // bw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // by?
         }, { // c??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::Q,          aa27::X, aa27::H, aa27::X, aa27::Q,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::Q,          aa27::X, aa27::H, aa27::X, aa27::X, aa27::H }, // ca?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cb?
-            { aa27::P,          aa27::P, aa27::P, aa27::P, aa27::P,          aa27::P, aa27::P, aa27::P, aa27::P, aa27::P,          aa27::P, aa27::P, aa27::P, aa27::P, aa27::P }, // cc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cd?
-            { aa27::R,          aa27::R, aa27::R, aa27::R, aa27::R,          aa27::R, aa27::R, aa27::R, aa27::R, aa27::R,          aa27::R, aa27::R, aa27::R, aa27::R, aa27::R }, // cg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ch?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ck?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cs?
-            { aa27::L,          aa27::L, aa27::L, aa27::L, aa27::L,          aa27::L, aa27::L, aa27::L, aa27::L, aa27::L,          aa27::L, aa27::L, aa27::L, aa27::L, aa27::L }, // ct?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // cw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // cy?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'Q'_aa27, 'X'_aa27, 'H'_aa27, 'X'_aa27, 'Q'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'Q'_aa27, 'X'_aa27, 'H'_aa27, 'X'_aa27, 'X'_aa27, 'H'_aa27 }, // ca?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cb?
+            { 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27, 'P'_aa27 }, // cc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cd?
+            { 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27, 'R'_aa27 }, // cg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ch?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ck?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cs?
+            { 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27, 'L'_aa27 }, // ct?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // cw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // cy?
         }, { // d??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // da?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // db?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ds?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // dw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // dy?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // da?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // db?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ds?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // dw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // dy?
 
         }, { // g??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::E,          aa27::X, aa27::D, aa27::X, aa27::E,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::E,          aa27::X, aa27::D, aa27::X, aa27::X, aa27::D }, // ga?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gb?
-            { aa27::A,          aa27::A, aa27::A, aa27::A, aa27::A,          aa27::A, aa27::A, aa27::A, aa27::A, aa27::A,          aa27::A, aa27::A, aa27::A, aa27::A, aa27::A }, // gc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gd?
-            { aa27::G,          aa27::G, aa27::G, aa27::G, aa27::G,          aa27::G, aa27::G, aa27::G, aa27::G, aa27::G,          aa27::G, aa27::G, aa27::G, aa27::G, aa27::G }, // gg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gs?
-            { aa27::V,          aa27::V, aa27::V, aa27::V, aa27::V,          aa27::V, aa27::V, aa27::V, aa27::V, aa27::V,          aa27::V, aa27::V, aa27::V, aa27::V, aa27::V }, // gt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // gw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // gy?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'E'_aa27, 'X'_aa27, 'D'_aa27, 'X'_aa27, 'E'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'E'_aa27, 'X'_aa27, 'D'_aa27, 'X'_aa27, 'X'_aa27, 'D'_aa27 }, // ga?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gb?
+            { 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27, 'A'_aa27 }, // gc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gd?
+            { 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27, 'G'_aa27 }, // gg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gs?
+            { 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27, 'V'_aa27 }, // gt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // gw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // gy?
         }, { // h??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ha?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hs?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ht?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // hw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // hy?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ha?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hs?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ht?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // hw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // hy?
 
         }, { // k??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ka?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // km?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ks?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // kw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // ky?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ka?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // km?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ks?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // kw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ky?
 
         }, { // m??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ma?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // md?
-            { aa27::R,          aa27::X, aa27::X, aa27::X, aa27::R,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::R,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ms?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // mw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // my?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ma?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // md?
+            { 'R'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'R'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'R'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ms?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // mw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // my?
 
 
         }, { // n??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ng?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ns?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // nw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // ny?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ng?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ns?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // nw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ny?
         }, { // r??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rs?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // rw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // ry?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rs?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // rw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ry?
         }, { // s??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ss?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // st?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // sw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // sy?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ss?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // st?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // sw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // sy?
         }, { // t??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::TERMINATOR, aa27::X, aa27::Y, aa27::X, aa27::TERMINATOR, aa27::X, aa27::X, aa27::X, aa27::X, aa27::TERMINATOR, aa27::X, aa27::Y, aa27::X, aa27::X, aa27::Y }, // ta?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // tb?
-            { aa27::S,          aa27::S, aa27::S, aa27::S, aa27::S,          aa27::S, aa27::S, aa27::S, aa27::S, aa27::S,          aa27::S, aa27::S, aa27::S, aa27::S, aa27::S }, // tc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // td?
-            { aa27::TERMINATOR, aa27::X, aa27::C, aa27::X, aa27::W,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::C, aa27::X, aa27::C }, // tg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // th?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // tk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // tm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // tn?
-            { aa27::TERMINATOR, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // tr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ts?
-            { aa27::L,          aa27::X, aa27::F, aa27::X, aa27::X,          aa27::L, aa27::X, aa27::X, aa27::X, aa27::L,          aa27::X, aa27::F, aa27::X, aa27::X, aa27::F }, // tt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // tv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // tw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // ty?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { '*'_aa27, 'X'_aa27, 'Y'_aa27, 'X'_aa27, '*'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, '*'_aa27, 'X'_aa27, 'Y'_aa27, 'X'_aa27, 'X'_aa27, 'Y'_aa27 }, // ta?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tb?
+            { 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27, 'S'_aa27 }, // tc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // td?
+            { '*'_aa27, 'X'_aa27, 'C'_aa27, 'X'_aa27, 'W'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'C'_aa27, 'X'_aa27, 'C'_aa27 }, // tg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // th?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tn?
+            { '*'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ts?
+            { 'L'_aa27, 'X'_aa27, 'F'_aa27, 'X'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'F'_aa27, 'X'_aa27, 'X'_aa27, 'F'_aa27 }, // tt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // tw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // ty?
         }, { // v??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // va?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vs?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // vw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // vy?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // va?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vs?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // vw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // vy?
         }, { // w??
-            // a,               b,       c,       d,       g,                h,       k,       m,       n,       r,                s,       t,       v,       w,       y
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wa?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wm?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ws?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // wv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ww?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // wy?
+            // a,        b,        c,        d,        g,        h,        k,        m,        n,        r,        s,        t,        v,        w,        y
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wa?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wm?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ws?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // wv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ww?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // wy?
         }, { // y??
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ya?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yb?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yc?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yd?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yg?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yh?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yk?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ym?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yn?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yr?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // ys?
-            { aa27::L,          aa27::X, aa27::X, aa27::X, aa27::L,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::L,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yt?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yv?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }, // yw?
-            { aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X,          aa27::X, aa27::X, aa27::X, aa27::X, aa27::X }  // yy?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ya?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yb?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yc?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yd?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yg?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yh?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yk?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ym?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yn?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yr?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // ys?
+            { 'L'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'L'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yt?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yv?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }, // yw?
+            { 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27, 'X'_aa27 }  // yy?
         }
     };
 };

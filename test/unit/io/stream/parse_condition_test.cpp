@@ -54,7 +54,7 @@ TEST(parse_condition, parse_condition_concept)
     using namespace seqan3;
 
     EXPECT_TRUE(detail::parse_condition_concept<decltype(is_in_alphabet<dna4>)>);
-    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_char<to_char(aa27::A)>)>);
+    EXPECT_TRUE(detail::parse_condition_concept<decltype(is_char<to_char('A'_aa27)>)>);
     EXPECT_TRUE((detail::parse_condition_concept<decltype(is_in_interval<'a','z'>)>));
     EXPECT_TRUE(detail::parse_condition_concept<decltype(is_space)>);
     EXPECT_TRUE(detail::parse_condition_concept<decltype(is_blank)>);
@@ -184,7 +184,7 @@ TEST(parse_condition, is_char)
     }
 
     {
-        auto constexpr cond = is_char<to_char(aa27::A)>;
+        auto constexpr cond = is_char<to_char('A'_aa27)>;
         EXPECT_TRUE(cond('A'));
         EXPECT_FALSE(cond('z'));
     }

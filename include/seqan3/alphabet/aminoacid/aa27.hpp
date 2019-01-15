@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
+#include <seqan3/alphabet/aminoacid/concept.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 
 namespace seqan3
@@ -122,6 +123,20 @@ protected:
 } // namespace seqan3
 
 // ------------------------------------------------------------------
+// metafunctions
+// ------------------------------------------------------------------
+
+namespace seqan3
+{
+
+//!\brief Helper metafunction that identifies aa27 as an amino acid alphabet.
+//!\ingroup aminoacid
+template <>
+struct is_aminoacid<aa27> : std::true_type {};
+
+} // namespace seqan3
+
+// ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 
@@ -140,7 +155,26 @@ using aa27_vector = std::vector<aa27>;
 namespace seqan3
 {
 
-/*!\brief aa27 literal
+/*!\name Literals
+ * \{
+ */
+
+/*!\brief The seqan3::aa27 char literal.
+ * \param[in] c The character to assign.
+ * \relates seqan3::aa27
+ * \returns seqan3::aa27
+ *
+ * \snippet test/snippet/alphabet/aminoacid/aa27.cpp char_literal
+ *
+ */
+constexpr aa27 operator""_aa27(char const c) noexcept
+{
+    return aa27{}.assign_char(c);
+}
+
+/*!\brief The seqan3::aa27 string literal.
+ * \param[in] s A pointer to the character string to assign.
+ * \param[in] n The size of the character string to assign.
  * \relates seqan3::aa27
  * \returns seqan3::aa27_vector
  *
@@ -162,5 +196,6 @@ inline aa27_vector operator""_aa27(const char * s, std::size_t n)
 
     return r;
 }
+//!\}
 
 } // namespace seqan3
