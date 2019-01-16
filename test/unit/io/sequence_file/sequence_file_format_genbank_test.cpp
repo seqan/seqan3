@@ -40,6 +40,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
@@ -403,6 +404,63 @@ TEST_F(read, illegal_alphabet)
     std::stringstream istream{input};
     EXPECT_THROW(( format.read(istream, options, seq, id, std::ignore)), parse_error );
 }
+
+TEST_F(read, from_stream_file)
+{
+    std::string input
+    {
+        "LOCUS read1\tstuff\n"
+        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
+        "            cds.\n"
+        "ACCESSION   read1\n"
+        "ORIGIN\n"
+        "        1 ACGTTTTTTT TTTTTTTT\n"
+        "//\n"
+        "LOCUS read2\n"
+        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
+        "            cds.\n"
+        "ACCESSION   ID2\n"
+        "ORIGIN\n"
+        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
+        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
+        "//\n"
+        "LOCUS read3\n"
+        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
+        "            cds.\n"
+        "ACCESSION   ID3\n"
+        "ORIGIN\n"
+        "        1 ACGTTTA\n"
+        "//\n"
+    };
+
+    std::vector<dna5_vector> seq_comp
+    {
+        "ACGTTTTTTTTTTTTTTT"_dna5,
+        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5,
+        "ACGTTTA"_dna5
+    };
+
+    std::vector<std::string> id_comp
+    {
+        "read1",
+        "read2",
+        "read3"
+    };
+
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_genbank{}};
+
+    size_t counter = 0;
+    for (auto & [ seq, id, qual ] : fin)
+    {
+        EXPECT_TRUE((std::ranges::equal(seq,  seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+
+        counter++;
+    }
+
+    EXPECT_EQ(counter, 3u);
+}
+
 
 // ----------------------------------------------------------------------------
 // writing

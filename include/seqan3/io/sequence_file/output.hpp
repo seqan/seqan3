@@ -34,6 +34,7 @@
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_genbank.hpp>
 #include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
@@ -161,7 +162,7 @@ namespace seqan3
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
               type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
-                        sequence_file_format_sam>,
+                        sequence_file_format_genbank, sequence_file_format_sam>,
           char_concept stream_char_type_ = char>
 class sequence_file_output
 {
