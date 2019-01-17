@@ -10,6 +10,8 @@
  * \brief Meta-header for the mask submodule; includes all headers from alphabet/mask/.
  */
 
+#pragma once
+
 #include <seqan3/alphabet/mask/mask.hpp>
 #include <seqan3/alphabet/mask/masked.hpp>
 

@@ -16,6 +16,7 @@
 #include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/view/map.hpp>
 
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/iterator>
