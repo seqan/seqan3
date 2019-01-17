@@ -38,7 +38,7 @@ namespace seqan3
  */
 template <typename alphabet_type_with_members>
 //!\cond
-    requires requires (alphabet_type_with_members alph) { typename alphabet_type_with_members::rank_type; }
+    requires requires { typename alphabet_type_with_members::rank_type; }
 //!\endcond
 struct underlying_rank<alphabet_type_with_members>
 {
@@ -53,13 +53,12 @@ struct underlying_rank<alphabet_type_with_members>
  */
 template <typename alphabet_type_with_members>
 //!\cond
-    requires requires (alphabet_type_with_members alph) { alphabet_type_with_members::value_size; }
+    requires requires { alphabet_type_with_members::value_size; }
 //!\endcond
-struct alphabet_size<alphabet_type_with_members>
-{
-    //!\brief The size retrieved from the type's member.
-    static auto constexpr value = alphabet_type_with_members::value_size;
-};
+struct alphabet_size<alphabet_type_with_members> :
+    std::integral_constant<decltype(alphabet_type_with_members::value_size),
+                           alphabet_type_with_members::value_size>
+{};
 
 /*!\brief Implementation of seqan3::semi_alphabet_concept::to_rank() that delegates to a member function.
  * \tparam alphabet_type Must provide a `.to_rank()` member function.
@@ -111,7 +110,7 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type && assign_rank(alphabet_type && alph, underlying_rank_t<alphabet_type> const rank) noexcept
+constexpr alphabet_type assign_rank(alphabet_type && alph, underlying_rank_t<alphabet_type> const rank) noexcept
 {
     static_assert(noexcept(alph.assign_rank(rank)),
                   "The assign_rank() free function can only forward to .assign_rank() member functions that "
@@ -194,12 +193,54 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type && assign_char(alphabet_type && alph, underlying_char_t<alphabet_type> const chr) noexcept
+constexpr alphabet_type assign_char(alphabet_type && alph, underlying_char_t<alphabet_type> const chr) noexcept
 {
     static_assert(noexcept(alph.assign_char(chr)),
                   "The assign_char() free function can only forward to .assign_char() member functions that "
                   "are qualified as \"noexcept\".");
     return std::move(alph.assign_char(chr));
+}
+
+/*!\brief Implementation of seqan3::alphabet_concept::char_is_valid_for() that delegates to a static member function.
+ * \tparam alphabet_type Must provide a `char_is_valid()` static member function.
+ * \param chr The `char` value you wish to check.
+ * \returns `true` or `false`.
+ */
+template <typename alphabet_type_with_members>
+//!\cond
+    requires requires { { std::remove_reference_t<alphabet_type_with_members>::char_is_valid(char{0}) } -> bool; }
+//!\endcond
+constexpr bool char_is_valid_for(underlying_char_t<alphabet_type_with_members> const chr) noexcept
+{
+    return std::remove_reference_t<alphabet_type_with_members>::char_is_valid(chr);
+}
+
+/*!\brief Implementation of seqan3::alphabet_concept::assign_char_strict() that delegates to a member function.
+ * \tparam alphabet_type Must provide an `.assign_char_strict()` member function.
+ * \param alph The alphabet letter that you wish to assign to.
+ * \param chr The `char` value you wish to assign.
+ * \throws seqan3::invalid_char_assignment If seqan3::char_is_valid_for returns `false` for the given character.
+ * \returns A reference to the alphabet letter you passed in.
+ */
+template <typename alphabet_type_with_members>
+//!\cond
+    requires requires (alphabet_type_with_members alph) { { alph.assign_char_strict(char{0}) } -> alphabet_type_with_members &; }
+//!\endcond
+constexpr alphabet_type_with_members & assign_char_strict(alphabet_type_with_members & alph,
+                                                          underlying_char_t<alphabet_type_with_members> const chr)
+{
+    return alph.assign_char_strict(chr);
+}
+
+//!\overload
+template <typename alphabet_type_with_members>
+//!\cond
+    requires requires (alphabet_type_with_members alph) { { alph.assign_char_strict(char{0}) } -> alphabet_type_with_members &; }
+//!\endcond
+constexpr alphabet_type_with_members assign_char_strict(alphabet_type_with_members && alph,
+                                                        underlying_char_t<alphabet_type_with_members> const chr)
+{
+    return std::move(alph.assign_char_strict(chr));
 }
 //!\}
 
