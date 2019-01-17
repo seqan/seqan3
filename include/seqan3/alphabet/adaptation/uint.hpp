@@ -48,7 +48,7 @@ using uint_adaptations_char_types = meta::list<char,
 
 //!\brief Metafunction overload for types that are in seqan3::detail::uint_adaptations.
 template <typename type_in_list>
-    requires meta::in<uint_adaptations, type_in_list>::value
+    requires meta::in<uint_adaptations, std::remove_reference_t<type_in_list>>::value
 struct is_uint_adaptation<type_in_list> :
     std::true_type
 {};
@@ -79,7 +79,7 @@ struct underlying_char<uint_type>
 {
     //!\brief The character type of the same size as `uint_type`.
     using type = meta::at<detail::uint_adaptations_char_types,
-                          meta::find_index<detail::uint_adaptations, uint_type>>;
+                          meta::find_index<detail::uint_adaptations, std::remove_reference_t<uint_type>>>;
 };
 
 /*!\brief Specialisation of seqan3::underlying_rank for uint types.
@@ -110,15 +110,10 @@ template <typename uint_type>
 //!\cond
     requires detail::is_uint_adaptation_v<uint_type>
 //!\endcond
-struct alphabet_size<uint_type>
-{
-    //!\brief Smallest unsigned integral type that can hold value;
-    using type = detail::min_viable_uint_t<static_cast<uint64_t>(std::numeric_limits<uint_type>::max()) + 1 -
-                                           std::numeric_limits<uint_type>::lowest()>;
-    //!\brief The alphabet's size.
-    static constexpr type value =
-        static_cast<type>(std::numeric_limits<uint_type>::max()) + 1 - std::numeric_limits<uint_type>::lowest();
-};
+struct alphabet_size<uint_type> :
+    std::integral_constant<detail::min_viable_uint_t<detail::size_in_values_v<uint_type>>,
+                           detail::size_in_values_v<uint_type>>
+{};
 
 // ------------------------------------------------------------------
 // free functions
@@ -167,20 +162,36 @@ constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type
     return intgr = chr;
 }
 
-/*!\brief Assign from a character type via implicit or explicit cast.
- * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \param intgr An alphabet letter temporary.
- * \param chr The `char` value you wish to assign.
- * \returns The assignment result as a temporary.
- * \details
- * Use this e.g. to newly create alphabet letters from uint:
- * \snippet test/snippet/alphabet/adaptation/uint.cpp assign_char
- */
+//!\overload
 template <typename uint_type>
-constexpr uint_type && assign_char(uint_type && intgr, underlying_char_t<uint_type> const chr) noexcept
-    requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
+constexpr uint_type assign_char(uint_type &&, underlying_char_t<uint_type> const chr) noexcept
+    requires detail::is_uint_adaptation_v<uint_type>
 {
-    return std::move(intgr = chr);
+    return chr;
+}
+
+//!\brief For adaptations seqan3::assign_char_strict behaves exactly as seqan3::assign_char.
+template <typename uint_type>
+constexpr uint_type & assign_char_strict(uint_type & intgr, underlying_char_t<uint_type> const chr) noexcept
+    requires detail::is_uint_adaptation_v<uint_type>
+{
+    return intgr = chr;
+}
+
+//!\overload
+template <typename uint_type>
+constexpr uint_type assign_char_strict(uint_type &&, underlying_char_t<uint_type> const chr) noexcept
+    requires detail::is_uint_adaptation_v<uint_type>
+{
+    return chr;
+}
+
+//!\brief For char adaptations, all character values are valid.
+template <typename uint_type>
+constexpr bool char_is_valid_for(underlying_char_t<uint_type> const) noexcept
+    requires detail::is_uint_adaptation_v<uint_type>
+{
+    return true;
 }
 
 /*!\brief Assign a rank to to the uint (same as calling `=`).
@@ -196,20 +207,12 @@ constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type
     return intgr = intgr2;
 }
 
-/*!\brief Assign a rank to to the uint (same as calling `=`).
- * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \param intgr An alphabet letter temporary.
- * \param intgr2 The `rank` value you wish to assign.
- * \returns The assignment result as a temporary.
- * \details
- * Use this e.g. to newly create alphabet letters from rank:
- * \snippet test/snippet/alphabet/adaptation/uint.cpp assign_rank
- */
+//!\overload
 template <typename uint_type>
-constexpr uint_type && assign_rank(uint_type && intgr, underlying_rank_t<uint_type> const intgr2) noexcept
-    requires detail::is_uint_adaptation_v<std::remove_reference_t<uint_type>>
+constexpr uint_type assign_rank(uint_type &&, underlying_rank_t<uint_type> const intgr2) noexcept
+    requires detail::is_uint_adaptation_v<uint_type>
 {
-    return std::move(intgr = intgr2);
+    return intgr2;
 }
 //!\}
 //!\}
