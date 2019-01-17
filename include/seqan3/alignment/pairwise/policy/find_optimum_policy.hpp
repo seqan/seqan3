@@ -16,6 +16,7 @@
 
 #include <range/v3/algorithm/for_each.hpp>
 
+#include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/core/metafunction/deferred_crtp_base.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/concepts>
@@ -74,7 +75,7 @@ protected:
 
     /*!\brief Checks every cell of the dynamic programming matrix.
      * \tparam score_t The type of the score.
-     * \param[in]     val       The current value.
+     * \param[in]     current   The current value.
      * \param[in,out] optimum   The current optimum to compare with.
      *
      * \details
@@ -82,16 +83,19 @@ protected:
      * This function resolves to a "NO-OP" function if the trait for searching every cell is set to std::false_type.
      */
     template <typename score_t>
-    constexpr void check_score([[maybe_unused]] score_t const val,
-                               [[maybe_unused]] score_t & optimum) const noexcept
+    constexpr void check_score([[maybe_unused]] alignment_optimum<score_t> const & current,
+                               [[maybe_unused]] alignment_optimum<score_t> & optimum) const noexcept
     {
         if constexpr (traits_type::find_in_every_cell_type::value)
-            optimum = std::max(optimum, val);
+        {
+            optimum = std::max(current, optimum, alignment_optimum_compare_less{});
+        }
+
     }
 
     /*!\brief Checks a cell of the last row of the dynamic programming matrix.
      * \tparam score_t The type of the score.
-     * \param[in]     val       The current value.
+     * \param[in]     current   The current value.
      * \param[in,out] optimum   The current optimum to compare with.
      *
      * \details
@@ -101,11 +105,11 @@ protected:
      * takes care of calling this function for the appropriate cells.
      */
     template <typename score_t>
-    constexpr void check_score_last_row([[maybe_unused]] score_t const val,
-                                        [[maybe_unused]] score_t & optimum) const noexcept
+    constexpr void check_score_last_row([[maybe_unused]] alignment_optimum<score_t> const & current,
+                                        [[maybe_unused]] alignment_optimum<score_t> & optimum) const noexcept
     {
         if constexpr (traits_type::find_in_last_row_type::value)
-            optimum = std::max(optimum, val);
+            optimum = std::max(current, optimum, alignment_optimum_compare_less{});
     }
 
     /*!\brief Checks the complete last column for the optimal score.
@@ -121,7 +125,8 @@ protected:
      * Due to a column based iteration layout the entire last column can be searched at once.
      */
     template <std::ranges::BidirectionalRange rng_t, typename score_t>
-    constexpr void check_score_last_column(rng_t && rng, score_t & optimum) const noexcept
+    constexpr void check_score_last_column(rng_t const & rng,
+                                           alignment_optimum<score_t> & optimum) const noexcept
     {
         using std::get;
         // Only check the entire column if it was configured to search here.
@@ -129,13 +134,19 @@ protected:
         {
             ranges::for_each(rng, [&](auto && tpl)
             {
-                optimum = std::max(optimum, get<0>(get<0>(tpl)));
+                optimum = std::max(alignment_optimum<score_t>{get<0>(get<0>(tpl)),
+                                                              static_cast<alignment_coordinate>(get<1>(tpl))},
+                                   optimum,
+                                   alignment_optimum_compare_less{});
             });
         }
         else  // Only check the last cell for the global alignment.
         {
-            auto val = get<0>(get<0>(*(--seqan3::end(rng))));
-            optimum = std::max(optimum, val);
+            auto && current = *(--seqan3::end(rng));
+            optimum = std::max(alignment_optimum<score_t>{get<0>(get<0>(current)),
+                                                          static_cast<alignment_coordinate>(get<1>(current))},
+                               optimum,
+                               alignment_optimum_compare_less{});
         }
     }
 };

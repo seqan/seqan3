@@ -16,9 +16,11 @@
 #include <tuple>
 
 #include <range/v3/view/bounded.hpp>
+#include <range/v3/view/iota.hpp>
 #include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/zip.hpp>
 
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/span.hpp>
@@ -77,14 +79,20 @@ private:
     //!\brief Returns the current column of the alignment matrix.
     auto current_column()
     {
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_begin{column_index_type{current_column_index}, row_index_type{0u}};
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_end{column_index_type{current_column_index}, row_index_type{dimension_second_batch}};
+
         return ranges::view::zip(std::span{score_matrix},
+                                 ranges::view::iota(col_begin, col_end),
                                  ranges::view::repeat_n(std::ignore, dimension_second_batch) | ranges::view::bounded);
     }
 
     //!\brief Moves internal matrix pointer to the next column.
     constexpr void next_column()
     {
-        // noop
+        ++current_column_index;
     }
 
     //!\brief The data container.
@@ -93,5 +101,7 @@ private:
     size_t dimension_first_batch  = 0;
     //!\brief Caches the size of the vertical dimension (number of rows).
     size_t dimension_second_batch = 0;
+    //!\brief The index of the active column.
+    size_t current_column_index = 0;
 };
 } // namespace seqan3::detail

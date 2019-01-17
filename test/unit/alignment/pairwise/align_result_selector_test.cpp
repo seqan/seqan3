@@ -59,9 +59,9 @@ TEST(alignment_selector, align_result_selector)
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_end_coordinate()),
-                                    detail::alignment_coordinate const &>));
+                                    alignment_coordinate const &>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_begin_coordinate()),
-                                    detail::alignment_coordinate const &>));
+                                    alignment_coordinate const &>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_alignment()),
                                     std::tuple<gapped_seq1_t, gapped_seq2_t> const &>));
     }

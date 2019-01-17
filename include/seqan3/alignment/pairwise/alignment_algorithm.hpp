@@ -137,7 +137,7 @@ public:
         // Choose what needs to be computed.
         if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
         {
-            res.score = get<3>(cache);
+            res.score = get<3>(cache).score;
         }
         return align_result{res};
     }
@@ -160,7 +160,9 @@ private:
             this->init_column_cell(std::forward<decltype(cell)>(cell), cache);
         });
 
-        this->check_score_last_row(get<0>(get<0>(*(--seqan3::end(col)))), get<3>(cache));
+        auto [cell, coordinate, trace] = *(--seqan3::end(col));
+        alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
+        this->check_score_last_row(current, get<3>(cache));
     }
 
     /*!\brief Compute the alignment by iterating over the dynamic programming matrix in a column wise manner.
@@ -188,12 +190,16 @@ private:
             auto second_batch_it = std::ranges::begin(second_batch);
             ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
-                this->compute_cell(std::forward<decltype(cell)>(cell),
-                                   cache,
+                this->compute_cell(std::forward<decltype(cell)>(cell), cache,
                                    score_scheme.score(seq1_value, *second_batch_it));
                 ++second_batch_it;
             });
-            this->check_score_last_row(get<0>(get<0>(*(--seqan3::end(col)))), get<3>(cache));
+            // First construct an alignment_optimum object to make it comparable with the current optimum.
+            auto [cell, coordinate, trace] = *(--seqan3::end(col));
+            alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
+            this->check_score_last_row(current, get<3>(cache));
+            // Move internal matrix to next column.
+            this->next_column();
         });
         this->check_score_last_column(this->current_column(), get<3>(cache));
     }

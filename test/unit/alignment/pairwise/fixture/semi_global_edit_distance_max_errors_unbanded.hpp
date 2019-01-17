@@ -20,6 +20,9 @@ inline constexpr auto align_config = align_cfg::edit |
 
 static auto dna4_01_e255 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         // score: 5 (3 deletions, 1 insertion, 1 substitutions)
@@ -33,8 +36,8 @@ static auto dna4_01_e255 = []()
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
-        alignment_coordinate{8, 0},
-        alignment_coordinate{15, 8},
+        alignment_coordinate{column_index_type{8u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -68,6 +71,9 @@ static auto dna4_01_e255 = []()
 
 static auto dna4_01T_e255 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -81,8 +87,8 @@ static auto dna4_01T_e255 = []()
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{8, 15},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
         std::vector
         {
         //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
@@ -130,6 +136,9 @@ static auto dna4_01T_e255 = []()
 
 static auto dna4_02_e255 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         // score: 4 (3 deletions, 1 insertion)
@@ -143,8 +152,8 @@ static auto dna4_02_e255 = []()
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{7, 8},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{7u}, row_index_type{8u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
@@ -178,6 +187,9 @@ static auto dna4_02_e255 = []()
 
 static auto aa27_01_e255 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         // score: 5 (3 deletions, 1 insertion, 1 substitutions)
@@ -191,8 +203,8 @@ static auto aa27_01_e255 = []()
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
-        alignment_coordinate{8, 0},
-        alignment_coordinate{15, 8},
+        alignment_coordinate{column_index_type{8u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
@@ -226,6 +238,9 @@ static auto aa27_01_e255 = []()
 
 static auto aa27_01T_e255 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -239,8 +254,8 @@ static auto aa27_01T_e255 = []()
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{8, 15},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
         std::vector
         {
         //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U

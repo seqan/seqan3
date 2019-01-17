@@ -1,0 +1,127 @@
+// ==========================================================================
+//                 SeqAn - The Library for Sequence Analysis
+// ==========================================================================
+//
+// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
+// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
+//       its contributors may be used to endorse or promote products derived
+//       from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+// DAMAGE.
+//
+// ==========================================================================
+
+#include <gtest/gtest.h>
+
+#include <list>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+#include <meta/meta.hpp>
+
+#include <range/v3/view/single.hpp>
+#include <range/v3/view/bounded.hpp>
+
+#include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/configuration/align_config_result.hpp>
+#include <seqan3/alignment/pairwise/alignment_configurator.hpp>
+#include <seqan3/alphabet/gap/gapped.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/view/to_char.hpp>
+
+using namespace seqan3;
+
+TEST(alignment_selector, select_result_type)
+{
+    using seq1_t = std::vector<dna4>;
+    using seq2_t = std::list<dna4>;
+
+    { // test case I
+        auto cfg = align_cfg::edit;
+        using _t = align_result<typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type>;
+
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
+    }
+
+    { // test case II
+        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};
+        using _t = align_result<typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type>;
+
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
+    }
+
+    { // test case III
+        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
+        using _t = align_result<typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type>;
+
+        using gapped_seq1_t = std::vector<gapped<dna4>>;
+        using gapped_seq2_t = std::vector<gapped<dna4>>;
+
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_end_coordinate()),
+                                    alignment_coordinate const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_begin_coordinate()),
+                                    alignment_coordinate const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_alignment()),
+                                    std::tuple<gapped_seq1_t, gapped_seq2_t> const &>));
+    }
+}
+
+TEST(alignment_selector, select)
+{
+    // using seq1_t = std::vector<dna4>;
+    // using seq2_t = std::vector<dna4>;
+    // using seq_t = std::pair<seq1_t, seq2_t>;
+
+    { // test case I
+        auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+                   align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
+                   align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
+
+        // auto seq1 = "ACGTGAC"_dna4;
+        // auto seq2 = "ACGTGAC"_dna4;
+        // auto p = std::pair{seq1, seq2};
+        auto seq_rng = ranges::view::single(std::pair{"ACGTGAC"_dna4, "ACGGGAC"_dna4})| ranges::view::bounded |
+                       view::persist;
+
+        auto fn = detail::alignment_configurator::configure(seq_rng, cfg);
+
+        auto res = fn(std::get<0>(*seqan3::begin(seq_rng)), std::get<1>(*seqan3::begin(seq_rng)));
+        std::cout << res.get_score() << std::endl;
+        // using _t = detail::alignment_selector<seq_t, decltype(cfg)>;
+
+        // using res_t = typename detail::select_result_type<seq1_t, seq2_t, decltype(cfg)>::type;
+        //
+        // seq_t s{};
+        // EXPECT_TRUE((std::is_same_v<res_t, typename _t::result_type>));
+        // EXPECT_TRUE((std::is_same_v<decltype(_t{cfg}.select(s)),
+        //                             std::function<res_t(res_t &)>>));
+    }
+}

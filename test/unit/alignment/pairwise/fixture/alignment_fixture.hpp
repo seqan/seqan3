@@ -3,6 +3,7 @@
 
 #include <limits>
 
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 
@@ -11,7 +12,7 @@ namespace seqan3
 
 namespace seqan3::fixture
 {
-using detail::alignment_coordinate;
+// using seqan3::alignment_coordinate;
 
 static constexpr auto INF = std::numeric_limits<int>::max();
 

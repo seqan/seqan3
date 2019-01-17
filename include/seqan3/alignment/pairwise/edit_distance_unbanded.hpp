@@ -483,7 +483,7 @@ public:
         if constexpr(is_semi_global)
             col = std::distance(begin(database), _best_score_col);
 
-        return {col, query.size() - 1};
+        return {column_index_type{col}, row_index_type{query.size() - 1}};
     }
 
     //!\brief Return the alignment, i.e. the actual base pair matching.
