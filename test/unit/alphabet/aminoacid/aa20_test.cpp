@@ -108,3 +108,25 @@ TEST(literals, vector)
                           '*'_aa20, '*'_aa20};
     EXPECT_EQ(w20, "ADLLCSESW*"_aa20);
 }
+
+TEST(aa20, char_is_valid)
+{
+    constexpr auto aa27_validator = (is_alpha || is_char<'*'>);
+
+    for (char c : ranges::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+    {
+        bool expect = false;
+        switch (c)
+        {
+            case 'B': case 'J': case 'O': case 'U': case 'X': case 'Z':
+            case 'b': case 'j': case 'o': case 'u': case 'x': case 'z':
+            case '*':
+                break;
+            default:
+                expect = aa27_validator(c);
+                break;
+        }
+
+        EXPECT_EQ(aa20::char_is_valid(c), expect);
+    }
+}

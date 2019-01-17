@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <range/v3/view/iota.hpp>
+
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/alphabet/quality/phred63.hpp>
-#include <seqan3/alphabet/quality/phred68legacy.hpp>
+#include <seqan3/alphabet/exception.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
 
 #if SEQAN3_WITH_CEREAL
@@ -57,7 +57,7 @@ TYPED_TEST_P(alphabet, global_assign_rank)
 //     EXPECT_THROW(assign_rank(t0, alphabet_size_v<TypeParam>));
 
     EXPECT_TRUE((std::is_same_v<decltype(assign_rank(t0, 0)), TypeParam &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(TypeParam{}, 0)), TypeParam &&>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(TypeParam{}, 0)), TypeParam>));
 }
 
 TYPED_TEST_P(alphabet, global_to_rank)
@@ -141,20 +141,34 @@ TYPED_TEST_P(alphabet, global_assign_char)
     using char_t = underlying_char_t<TypeParam>;
     char_t i = std::numeric_limits<char_t>::min();
     char_t j = std::numeric_limits<char_t>::max();
-    if (std::is_same_v<TypeParam, phred42> || std::is_same_v<TypeParam, phred63> || std::is_same_v<TypeParam, phred68legacy>)
-    {
-        // specification details documented in alphabet/quality/all.hpp
-        i = (!std::is_same_v<TypeParam, phred68legacy>) ? '!' : ';';
-        j = (std::is_same_v<TypeParam, phred42>) ? 'J' : ((std::is_same_v<TypeParam, phred63>) ? '_' : '~');
-    }
 
     TypeParam t0;
-    for (; i < j; ++i){
+    for (; i < j; ++i)
         assign_char(t0, i);
-    }
 
     EXPECT_TRUE((std::is_same_v<decltype(assign_char(t0, 0)), TypeParam &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{}, 0)), TypeParam &&>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{}, 0)), TypeParam>));
+}
+
+TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example for most; more inside specialised tests
+{
+    if constexpr (alphabet_size_v<TypeParam> < 255) // includes most of our alphabets, but not the adaptations!
+    {
+        EXPECT_FALSE((char_is_valid_for<TypeParam>(0))); // for none of our alphabets char{0} is valid
+    }
+}
+
+TYPED_TEST_P(alphabet, global_assign_char_strict)
+{
+    for (underlying_char_t<TypeParam> c :
+         ranges::view::iota(ptrdiff_t{std::numeric_limits<underlying_char_t<TypeParam>>::min()},
+                            ptrdiff_t{std::numeric_limits<underlying_char_t<TypeParam>>::max()} + 1))
+    {
+        if (char_is_valid_for<TypeParam>(c))
+            EXPECT_NO_THROW(assign_char_strict(TypeParam{}, c));
+        else
+            EXPECT_THROW(assign_char_strict(TypeParam{}, c), invalid_char_assignment);
+    }
 }
 
 TYPED_TEST_P(alphabet, global_to_char)
@@ -196,6 +210,8 @@ TYPED_TEST_P(alphabet, comparison_operators)
 TYPED_TEST_P(alphabet, concept_check)
 {
     EXPECT_TRUE(alphabet_concept<TypeParam>);
+    EXPECT_TRUE(alphabet_concept<TypeParam &>);
+    EXPECT_TRUE(alphabet_concept<TypeParam &&>);
 }
 
 TYPED_TEST_P(alphabet, debug_streaming)
@@ -291,4 +307,5 @@ TYPED_TEST_P(alphabet, serialisation)
 
 REGISTER_TYPED_TEST_CASE_P(alphabet, alphabet_size, default_value_constructor, global_assign_rank, global_to_rank,
     copy_constructor, move_constructor, copy_assignment, move_assignment, swap, global_assign_char, global_to_char,
-    comparison_operators, concept_check, debug_streaming, hash, serialisation);
+    global_char_is_valid_for, global_assign_char_strict, comparison_operators, concept_check, debug_streaming, hash,
+    serialisation);

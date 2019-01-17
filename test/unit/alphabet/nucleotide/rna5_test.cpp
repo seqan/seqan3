@@ -70,3 +70,12 @@ TEST(rna5, string_literal)
     std::vector<rna5> w{'A'_rna5, 'C'_rna5, 'G'_rna5, 'T'_rna5, 'U'_rna5, 'N'_rna5};
     EXPECT_EQ(w, "ACGUUN"_rna5);
 }
+
+TEST(rna5, char_is_valid)
+{
+    constexpr auto validator = is_char<'A'> || is_char<'C'> || is_char<'G'> || is_char<'T'> || is_char<'U'>
+                            || is_char<'a'> || is_char<'c'> || is_char<'g'> || is_char<'t'> || is_char<'u'>
+                            || is_char<'N'> || is_char<'n'>;
+    for (char c : ranges::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+        EXPECT_EQ(rna5::char_is_valid(c), validator(c));
+}

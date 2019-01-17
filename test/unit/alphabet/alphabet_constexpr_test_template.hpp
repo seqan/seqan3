@@ -32,7 +32,9 @@ TYPED_TEST_CASE_P(alphabet_constexpr);
 
 TYPED_TEST_P(alphabet_constexpr, concept_check)
 {
-    EXPECT_TRUE(detail::constexpr_alphabet_concept<TypeParam>);
+    EXPECT_TRUE(detail::constexpr_alphabet_concept<TypeParam   >);
+    EXPECT_TRUE(detail::constexpr_alphabet_concept<TypeParam & >);
+    EXPECT_TRUE(detail::constexpr_alphabet_concept<TypeParam &&>);
 }
 
 TYPED_TEST_P(alphabet_constexpr, default_value_constructor)
