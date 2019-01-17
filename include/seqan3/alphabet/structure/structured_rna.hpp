@@ -106,6 +106,13 @@ public:
         seqan3::assign_char(get<0>(*this), c);
         return *this;
     }
+
+    //!\brief Strict assign from a nucleotide character. This modifies the internal sequence letter.
+    structured_rna & assign_char_strict(char_type const c)
+    {
+        seqan3::assign_char_strict(get<0>(*this), c);
+        return *this;
+    }
     //!\}
 
     //!\name Read functions
@@ -132,6 +139,12 @@ public:
         return structured_rna{get<0>(*this).complement(), get<1>(*this)};
     }
     //!\}
+
+    //!\brief Validate whether a character is valid in the sequence alphabet.
+    static constexpr bool char_is_valid(char_type const c) noexcept
+    {
+        return char_is_valid_for<sequence_alphabet_type>(c);
+    }
 
     //!\name RNA structure properties
     //!\{
