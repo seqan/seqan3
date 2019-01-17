@@ -75,7 +75,7 @@ public:
      */
     constexpr bool is_pair_open() const noexcept
     {
-        return rank == 1u;
+        return to_rank() == 1u;
     }
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
@@ -83,7 +83,7 @@ public:
      */
     constexpr bool is_pair_close() const noexcept
     {
-        return rank == 2u;
+        return to_rank() == 2u;
     }
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
@@ -91,7 +91,7 @@ public:
      */
     constexpr bool is_unpaired() const noexcept
     {
-        return rank == 0u;
+        return to_rank() == 0u;
     }
 
     /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
