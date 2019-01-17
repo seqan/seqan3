@@ -1,4 +1,3 @@
-#include <seqan3/alphabet/all.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
 
@@ -13,7 +12,7 @@ int main()
 // dna4 my_letter{0};      // we want to set the default, an A
 // dna4 my_letter{'A'};    // we also want to set an A, but we are setting value 65
 
-// debug_stream << my_letter; // you expect 'A', but how would you access the number?
+// std::cout << my_letter; // you expect 'A', but how would you access the number?
 //! [ambiguity]
 }
 
@@ -22,12 +21,25 @@ int main()
 dna4 my_letter;
 assign_rank(my_letter, 0);       // assign an A via rank interface
 assign_char(my_letter, 'A');     // assign an A via char interface
-my_letter = 'A'_dna4;             // some alphabets (BUT NOT ALL!) also provide an enum-like interface
-
-debug_stream << to_char(my_letter);            // prints 'A'
-debug_stream << (unsigned)to_rank(my_letter);  // prints 0
-// we have to add the cast here, because uint8_t is also treated as a char type by default :(
 //! [nonambiguous]
+
+//! [print]
+std::cout << to_char(my_letter);            // prints 'A'
+std::cout << (unsigned)to_rank(my_letter);  // prints 0
+// we have to add the cast here, because uint8_t is also treated as a char type by default :(
+
+// Using SeqAn's debug_stream:
+debug_stream << to_char(my_letter);         // prints 'A'
+debug_stream << my_letter;                  // prints 'A' (calls to_char() automatically!)
+debug_stream << to_rank(my_letter);         // prints 0   (casts uint8_t to unsigned automatically!)
+//! [print]
+}
+
+{
+//! [literal]
+dna4        my_letter = 'A'_dna4;           // identical to assign_char(my_letter, 'A');
+dna4_vector my_seq    = "ACGT"_dna4;        // identical to calling assign_char for each element
+//! [literal]
 }
 
 }
