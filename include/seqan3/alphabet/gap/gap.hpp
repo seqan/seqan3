@@ -15,7 +15,7 @@
 
 #include <cassert>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/alphabet/detail/alphabet_base.hpp>
 
 namespace seqan3
 {
@@ -32,93 +32,31 @@ namespace seqan3
  * \snippet test/snippet/alphabet/gap/gap.cpp general
  */
 
-struct gap
+class gap : public alphabet_base<gap, 1, char>
 {
-    //!\brief The type of the alphabet when converted to char (e.g. via to_char()).
-    using char_type = char;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
-    using rank_type = bool;
+private:
+    //!\brief The base class.
+    using base_t = alphabet_base<gap, 1, char>;
 
-    //!\cond
-    bool _bug_workaround; // See GCC Bug-Report: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
-    //!\endcond
+    //!\brief Befriend seqan3::alphabet_base.
+    friend base_t;
 
-    /*!\name Letter values
-     * \brief Static member "letters" that can be assigned to the alphabet or used in aggregate initialization.
-     */
-    //!\{
-    static const gap GAP;
-    //!\}
+    //!\brief The character that will be printed.
+    static constexpr char char_value = '-';
 
-    /*!\name Read functions
+public:
+    /*!\name Constructors, destructor and assignment
      * \{
      */
-    //!\brief Return the letter as a character of char_type (returns always '-').
-    constexpr char_type to_char() const noexcept
-    {
-        return '-';
-    }
+    constexpr gap() noexcept : base_t{} {}
+    constexpr gap(gap const &) = default;
+    constexpr gap(gap &&) = default;
+    constexpr gap & operator=(gap const &) = default;
+    constexpr gap & operator=(gap &&) = default;
+    ~gap() = default;
 
-    //!\brief Return the letter's numeric value or rank in the alphabet. (returns always 0)
-    constexpr rank_type to_rank() const noexcept
-    {
-        return 0;
-    }
-    //!\}
-
-    /*!\name Write functions
-     * \{
-     */
-    //!\brief Assign from a character (no-op, since gap has only one character).
-    //!\param c not used, since gap has only one character
-    constexpr gap & assign_char([[maybe_unused]] char_type const c) noexcept
-    {
-        return *this;
-    }
-
-    //!\brief Assign from a numeric value (no-op, since gap has only one character).
-    //!\param i not used, since gap has only one character
-    constexpr gap & assign_rank([[maybe_unused]] rank_type const i) noexcept
-    {
-        assert(i == 0);
-        return *this;
-    }
-    //!\}
-
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
-    static constexpr rank_type value_size{1};
-
-    //!\name Comparison operators
-    //!\{
-    friend constexpr bool operator==(gap const &, gap const &) noexcept
-    {
-        return true;
-    }
-
-    friend constexpr bool operator!=(gap const &, gap const &) noexcept
-    {
-        return false;
-    }
-
-    friend constexpr bool operator<(gap const &, gap const &) noexcept
-    {
-        return false;
-    }
-
-    friend constexpr bool operator>(gap const &, gap const &) noexcept
-    {
-        return false;
-    }
-
-    friend constexpr bool operator<=(gap const &, gap const &) noexcept
-    {
-        return true;
-    }
-
-    friend constexpr bool operator>=(gap const &, gap const &) noexcept
-    {
-        return true;
-    }
+    using base_t::base_t;
     //!\}
 };
+
 }
