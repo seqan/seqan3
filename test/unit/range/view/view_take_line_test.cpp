@@ -45,9 +45,9 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 
     // consuming behaviour
     auto v4 = vec | view::single_pass_input;
-    auto v5 = v4 | adaptor;
+    auto v5 = std::move(v4) | adaptor;
     EXPECT_EQ("foo", std::string(v5));
-    EXPECT_EQ('b', *begin(v4)); // not newline
+    EXPECT_EQ('b', *begin(v5)); // not newline
 }
 
 template <typename adaptor_t>

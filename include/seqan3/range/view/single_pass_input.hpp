@@ -37,8 +37,7 @@ class single_pass_input_iterator;
  * \ingroup view
  */
 template <std::ranges::View urng_t>
-class single_pass_input_view : public view_base,
-                               public ranges::view_interface<single_pass_input_view<urng_t>>
+class single_pass_input_view : public ranges::view_interface<single_pass_input_view<urng_t>>
 {
 private:
 
@@ -86,15 +85,16 @@ public:
     ~single_pass_input_view() = default;
 
     //!\brief Construction from the underlying view.
-    single_pass_input_view(urng_t _urng) :
-        urng{_urng},
+    // template <std::ranges::View _urng_t>
+    explicit single_pass_input_view(urng_t _urng) :
+        urng{std::move(_urng)},
         cached_urng_iter{seqan3::begin(urng)}
     {}
 
     //!\brief Construction from InputRange type.
     template <std::ranges::InputRange _urng_t>
-    single_pass_input_view(_urng_t & _urng) :
-        single_pass_input_view{_urng | view::all}
+    explicit single_pass_input_view(_urng_t & _urng) :
+        single_pass_input_view{view::all(_urng)}
     {}
     //!\}
 
@@ -138,9 +138,9 @@ public:
  * \{
  */
 //!\brief Deduces the single_pass_input_view from the underlying range.
-template <typename _urng_t>
+template <std::ranges::InputRange _urng_t>
 single_pass_input_view(_urng_t &) ->
-    single_pass_input_view<decltype(std::declval<_urng_t>() | view::all)>;
+    single_pass_input_view<decltype(view::all(std::declval<_urng_t &>()))>;
 //!\}
 } // seqan3::detail
 
