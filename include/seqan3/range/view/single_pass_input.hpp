@@ -139,6 +139,7 @@ public:
  */
 //!\brief Deduces the single_pass_input_view from the underlying range.
 template <std::ranges::InputRange _urng_t>
+    requires !std::ranges::View<_urng_t>
 single_pass_input_view(_urng_t &) ->
     single_pass_input_view<decltype(view::all(std::declval<_urng_t &>()))>;
 //!\}
