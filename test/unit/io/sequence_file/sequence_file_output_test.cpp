@@ -117,7 +117,11 @@ TEST(general, construct_from_stream)
 TEST(general, default_template_args_and_deduction_guides)
 {
     using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
+<<<<<<< HEAD
     using comp2 = type_list<sequence_file_format_fasta, sequence_file_format_fastq, sequence_file_format_sam>;
+=======
+    using comp2 = type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq>;
+>>>>>>> [FEATURE] Test for stream files embl IO
     using comp3 = char;
 
     /* default template args */
@@ -159,9 +163,15 @@ TEST(general, default_template_args_and_deduction_guides)
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+<<<<<<< HEAD
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta,
                                                                               sequence_file_format_fastq,
                                                                               sequence_file_format_sam>>));// changed
+=======
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,       type_list<sequence_file_format_embl,
+                                                                              sequence_file_format_fasta,
+                                                                              sequence_file_format_fastq>>));// changed
+>>>>>>> [FEATURE] Test for stream files embl IO
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -171,9 +181,15 @@ TEST(general, default_template_args_and_deduction_guides)
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
+<<<<<<< HEAD
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta,
                                                                               sequence_file_format_fastq,
                                                                               sequence_file_format_sam>>));// changed
+=======
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_embl,
+                                                                              sequence_file_format_fasta,
+                                                                              sequence_file_format_fastq>>));// changed
+>>>>>>> [FEATURE] Test for stream files embl IO
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 

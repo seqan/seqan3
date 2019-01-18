@@ -1,36 +1,9 @@
-// ==========================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ==========================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
 
@@ -40,7 +13,9 @@
 #include <range/v3/view/transform.hpp>
 
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/range/view/convert.hpp>
@@ -149,19 +124,23 @@ TEST_F(read, no_id)
 {
     std::string input
     {
-        "IK ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT\nTTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT\nTTTTTTTTTT\nTTTTTTTTTT\vTTTTTTTTTT\tTTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
+        R"(IK ID1;  stuff
+        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+          ACGTTTTTTT
+          TTTTTTTT        18
+        //
+        ID ID2;
+        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+          ACGTTTTTTT
+          TTTTTTTTTT
+          TTTTTTTTTT    TTTTTTTTTT    TTTTTTTTTT TTTTTTTTTT 60
+        TTTTTTTTTT TTTTTTTTTT TT        82
+        //
+        ID ID3 lala;
+        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+          ACGTTTA        7
+        //
+        )"
     };
 
     std::stringstream istream{input};
@@ -423,6 +402,53 @@ TEST_F(read, illegal_alphabet)
     EXPECT_THROW(( format.read(istream, options, seq, id, std::ignore)), parse_error );
 }
 
+TEST_F(read, from_stream_file)
+{
+    std::string input
+    {
+        "ID read1;\tstuff\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTT        18\n"
+        "//\n"
+        "ID read2;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
+        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
+        "//\n"
+        "ID read3;\n"
+        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
+        "  ACGTTTA        7\n"
+        "//\n"
+    };
+
+    std::vector<dna5_vector> seq_comp
+    {
+        "ACGTTTTTTTTTTTTTTT"_dna5,
+        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5,
+        "ACGTTTA"_dna5
+    };
+
+    std::vector<std::string> id_comp
+    {
+        "read1",
+        "read2",
+        "read3"
+    };
+
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_embl{}};
+
+    size_t counter = 0;
+    for (auto & [ seq, id, qual ] : fin)
+    {
+        EXPECT_TRUE((std::ranges::equal(seq,  seq_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+
+        counter++;
+    }
+
+    EXPECT_EQ(counter, 3u);
+}
+
 // ----------------------------------------------------------------------------
 // writing
 // ----------------------------------------------------------------------------
@@ -570,4 +596,35 @@ TEST_F(write, complete_header)
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, from_stream_file)
+{
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_embl{}};
+
+    for(int i = 0; i < 3; i++)
+    {
+        fout.emplace_back(seqs[i],ids[i]);
+    }
+
+    fout.get_stream().flush();
+
+    std::string comp
+    {
+        "ID TEST 1; 4 BP.\n"
+        "SQ Sequence 4 BP;\n"
+        "ACGT                                                              4\n"
+        "//\n"
+        "ID Test2; 91 BP.\n"
+        "SQ Sequence 91 BP;\n"
+        "AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60\n"  // linebreak inserted after 60 char
+        "TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91\n"
+        "//\n"
+        "ID Test3; 24 BP.\n"
+        "SQ Sequence 24 BP;\n"
+        "GGAGTATAAT ATATATATAT ATAT                                        24\n"
+        "//\n"
+    };
+
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), comp);
 }

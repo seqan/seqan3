@@ -1,36 +1,9 @@
-// ============================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ============================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
 /*!\file
  * \brief Provides the seqan3::sequence_file_format_embl class.
@@ -50,6 +23,7 @@
 #include <range/v3/view/drop_while.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/remove_if.hpp>
+#include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -71,6 +45,8 @@
 #include <seqan3/std/view/subrange.hpp>
 #include <seqan3/std/view/transform.hpp>
 
+#include <seqan3/std/charconv>
+
 namespace seqan3
 {
 /*!\brief       The EMBL format.
@@ -91,8 +67,8 @@ namespace seqan3
  *
  * ### Implementation notes
  *
- * When reading the ID-line, the ID is read until it encounters a ';'. Unless, the option truncate_ids is set to true,
- * then the id is read until it either sees a blank, ';' or a new line.
+ * When reading the ID-line, the ID is read until the stream encounters a ';'. Unless, the option truncate_ids is set to
+ * true, then the id is read until it either sees a blank, ';' or a new line.
  *
  * When writing the ID-line, the sequence length is appended.
  *
@@ -143,17 +119,17 @@ public:
                              std::istreambuf_iterator<char>{}};
         auto stream_it = ranges::begin(stream_view);
 
-        std::string identifier;
+        std::string idbuffer;
         ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                     std::back_inserter(identifier));
-        if (identifier != "ID")
+                     std::back_inserter(idbuffer));
+        if (idbuffer != "ID")
             throw parse_error{"An entry has to start with the code word ID."};
 
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
             if (options.complete_header)
             {
-                ranges::copy(identifier | view::char_to<value_type_t<id_type>>, std::back_inserter(id));
+                ranges::copy(idbuffer | view::char_to<value_type_t<id_type>>, std::back_inserter(id));
                 do
                 {
                     ranges::copy(stream_view | view::take_until_or_throw(is_char<'S'>)
@@ -163,7 +139,7 @@ public:
                     ++stream_it;
                 } while (*stream_it != 'Q');
                 id.pop_back(); // remove 'S' from id
-                identifier = "SQ";
+                idbuffer = "SQ";
             }
             else
             {
@@ -184,19 +160,18 @@ public:
                                  std::back_inserter(id));
                 }
             }
-
         }
 
         // Jump to sequence
-        detail::consume(stream_view | view::take_line_or_throw);
-        while (identifier != "SQ")
+        if (idbuffer !="SQ")
         {
-            identifier.clear();
-            ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                         std::back_inserter(identifier));
-            detail::consume(stream_view | view::take_until(is_cntrl));
-            ++stream_it;
+            do
+            {
+                detail::consume(stream_view | view::take_until_or_throw(is_char<'S'>));
+                ++stream_it;
+            } while (*stream_it != 'Q');
         }
+        detail::consume(stream_view | view::take_line_or_throw); //Consume line with infos to sequence
 
         // Sequence
         auto constexpr is_end = is_char<'/'> ;
@@ -225,8 +200,9 @@ public:
         {
             detail::consume(stream_view | view::take_until(is_end));
         }
-        //Jump over //
-        detail::consume(stream_view | view::take_until(is_cntrl));
+        //Jump over // and cntrl
+        ++stream_it;
+        ++stream_it;
         ++stream_it;
 
         // make sure "buffer at end" implies "stream at end"
@@ -250,7 +226,8 @@ public:
     {
 
         ranges::ostreambuf_iterator stream_it{stream};
-        size_t sequence_size = 0;
+        [[maybe_unused]] size_t sequence_size = 0;
+        [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
             sequence_size = ranges::size(sequence);
 
@@ -270,13 +247,11 @@ public:
             }
             else
             {
-                stream_it = 'I';
-                stream_it = 'D';
-                stream_it = ' ';
+                ranges::copy(std::string_view{"ID "}, stream_it);
                 ranges::copy(id, stream_it);
-                stream_it = ';';
-                stream_it = ' ';
-                ranges::copy(std::to_string(sequence_size), stream_it);
+                ranges::copy(std::string_view{"; "}, stream_it);
+                auto res = std::to_chars(&buffer[0], &buffer[0] + sizeof(buffer), sequence_size);
+                std::copy(&buffer[0], res.ptr, stream_it);
                 ranges::copy(std::string_view{" BP.\n"}, stream_it);
             }
 
@@ -285,8 +260,7 @@ public:
         // Sequence
         if constexpr (detail::decays_to_ignore_v<seq_type>) // sequence
         {
-            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing "
-            "embl files."};
+            throw std::logic_error{"The SEQ field may not be set to ignore when writing embl files."};
         }
         else
         {
@@ -294,23 +268,23 @@ public:
                 throw std::runtime_error{"The SEQ field may not be empty when writing embl files."};
 
             ranges::copy(std::string_view{"SQ Sequence "}, stream_it);
-            ranges::copy(std::to_string(sequence_size), stream_it);
-            ranges::copy(std::string_view{" BP;"}, stream_it);
-            stream_it = '\n';
-            auto seq = sequence | ranges::view::chunk(60);
+            auto res = std::to_chars(&buffer[0], &buffer[0] + sizeof(buffer), sequence_size);
+            std::copy(&buffer[0], res.ptr, stream_it);
+            ranges::copy(std::string_view{" BP;\n"}, stream_it);
+            auto seqChunk = sequence | ranges::view::chunk(60);
             unsigned int i = 0;
             size_t bp = 0;
-            while (bp < sequence_size)
+            for (auto chunk : seqChunk)
             {
-                ranges::copy(seq[i] | view::to_char
-                                    | ranges::view::chunk(10)
-                                    | ranges::view::join(' '), stream_it);
-                bp = std::min(sequence_size, bp + 60);
+                ranges::copy(chunk | view::to_char
+                                   | ranges::view::chunk(10)
+                                   | ranges::view::join(' '), stream_it);
                 ++i;
                 stream_it = ' ';
+                bp = std::min(sequence_size, bp + 60);
                 uint8_t num_blanks = 60 * i - bp;  // for sequence characters
                 num_blanks += num_blanks / 10;     // additional chunk separators
-                ranges::copy(std::string(num_blanks, ' '), stream_it);
+                ranges::copy(ranges::view::repeat_n(' ', num_blanks), stream_it);
                 ranges::copy(std::to_string(bp), stream_it);
                 stream_it = '\n';
             }

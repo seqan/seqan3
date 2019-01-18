@@ -34,6 +34,7 @@
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_sam.hpp>
@@ -336,11 +337,19 @@ template <
     detail::fields_concept                     selected_field_ids_ = fields<field::SEQ,
                                                                                           field::ID,
                                                                                           field::QUAL>,
+<<<<<<< HEAD
     detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<sequence_file_format_fasta,
                                                                                              sequence_file_format_fastq,
                                                                                              sequence_file_format_sam
                                                                                              /*, ...*/>,
     char_concept                               stream_char_type_   = char>
+=======
+    detail::type_list_of_sequence_file_input_formats_concept valid_formats_      = type_list<sequence_file_format_embl,
+                                                                                             sequence_file_format_fasta,
+                                                                                             sequence_file_format_fastq
+                                                                                         /*, ...*/>,
+    char_concept                                             stream_char_type_   = char>
+>>>>>>> [FEATURE] Test for stream files embl IO
 class sequence_file_input
 {
 public:
