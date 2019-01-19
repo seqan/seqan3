@@ -27,9 +27,79 @@
 
 namespace std
 {
-
 //!\addtogroup iterator
 //!\{
+
+/*!\brief A type trait class that provides uniform interface to the properties of types that model the
+ *        WeaklyIncrementable concept.
+ * \tparam t The type to query.
+ * \sa https://en.cppreference.com/w/cpp/iterator/incrementable_traits
+ */
+template <typename t>
+struct incrementable_traits
+{};
+
+//!\cond
+template <typename t>
+    requires std::is_object_v<t>
+struct incrementable_traits<t*>
+{
+    using difference_type = ptrdiff_t;
+};
+
+template <typename t>
+struct incrementable_traits<const t> : incrementable_traits<t>
+{};
+
+template <typename t>
+    requires requires { typename t::difference_type; }
+struct incrementable_traits<t>
+{
+    using difference_type = typename t::difference_type;
+};
+
+template <typename t>
+    requires (!requires { typename t::difference_type; } &&
+              requires(t const & a, t const & b) { requires Integral<decltype(a - b)>; })
+struct incrementable_traits<t>
+{
+    using difference_type = std::make_signed_t<decltype(declval<t>() - declval<t>())>;
+};
+//!\endcond
+
+//!\cond
+namespace detail
+{
+// The type does not support incrementable concepts.
+template <typename t>
+struct incrementable_traits_or_iterator_traits
+{};
+
+// Use incrementable_traits<t>::difference_type if it is defined.
+template <typename t>
+    requires requires { typename incrementable_traits<t>::difference_type; }
+struct incrementable_traits_or_iterator_traits<t>
+{
+    using difference_type = typename incrementable_traits<t>::difference_type;
+};
+
+// Fall back to iterstor_traits if incrementable_traits<t>::difference_type is not defined.
+template <typename t>
+    requires (!requires { typename incrementable_traits<t>::difference_type; } &&
+               requires { typename iterator_traits<t>::difference_type; })
+struct incrementable_traits_or_iterator_traits<t>
+{
+    using difference_type = typename iterator_traits<t>::difference_type;
+};
+}
+//!\endcond
+
+/*!\brief Defines the incrementable type's difference type
+ * \tparam t The type to get the difference type for.
+ * \sa https://en.cppreference.com/w/cpp/iterator/iter_t
+ */
+template <typename t>
+using iter_difference_t = typename detail::incrementable_traits_or_iterator_traits<t>::difference_type;
 
 // ------------------------------------------------------------------
 // auxiliary functions
@@ -90,9 +160,9 @@ template <typename t>
 concept WeaklyIncrementable = Semiregular<t> &&
                                    requires (t v)
 {
-    typename std::iterator_traits<std::remove_reference_t<t>>::difference_type;
-    requires SignedIntegral<typename std::iterator_traits<std::remove_reference_t<t>>::difference_type>;
-    { ++v } -> t &; /* not required to be equality preserving */
+    typename iter_difference_t<std::remove_reference_t<t>>;
+    requires SignedIntegral<iter_difference_t<std::remove_reference_t<t>>>;
+    requires Same<decltype(++v), t &>; /* not required to be equality preserving */
     v++; /* not required to be equality preserving */
 };
 //!\endcond
