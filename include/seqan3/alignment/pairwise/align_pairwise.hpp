@@ -25,7 +25,7 @@
 
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
-#include <seqan3/alignment/pairwise/alignment_selector.hpp>
+#include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/execution/all.hpp>
 
 #include <seqan3/alphabet/gap/gapped.hpp>
@@ -44,19 +44,17 @@ namespace seqan3
 template <std::ranges::InputRange sequence_t, typename alignment_config_t>
     requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_config_t>, configuration> &&
              tuple_like_concept<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>>
-constexpr auto align_pairwise(sequence_t && seq, alignment_config_t && config)
+constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
-    static_assert(std::tuple_size_v<value_type_t<std::ranges::iterator_t<std::remove_reference_t<sequence_t>>>> == 2,
-                  "Expects exactly two sequences for pairwise alignments.");
-
-    using seq_tuple_t = std::remove_reference_t<decltype(*std::ranges::begin(seq))>;
-
-    auto seq_view = seq | view::persist;
-    detail::alignment_selector<seq_tuple_t, remove_cvref_t<alignment_config_t>> selector{config};
-    using exec_type = detail::alignment_executor_two_way<decltype(seq_view), decltype(selector)>;
-    return alignment_range<exec_type>{seq_view, selector};
+    // Wrap in persist to make the code also work with temporaries that are not views.
+    auto seq_view = view::persist(std::forward<sequence_t>(seq));
+    // Configure the alignment algorithm.
+    auto kernel = detail::alignment_configurator::configure(seq_view, config);
+    // Create a two-way executor for the alignment.
+    detail::alignment_executor_two_way exec{std::move(seq_view), kernel};
+    // Return the range over the alignments.
+    return alignment_range{std::move(exec)};
 }
-//
 
 template <tuple_like_concept seq_t,
           typename alignment_config_t>
@@ -66,7 +64,6 @@ constexpr auto align_pairwise(seq_t && seq, alignment_config_t && config)
     static_assert(std::tuple_size_v<std::remove_reference_t<seq_t>> == 2,
                   "Expects exactly two sequences for pairwise alignments.");
 
-    //TODO: Check the problem here.
     return align_pairwise(ranges::view::single(std::forward<seq_t>(seq)) | ranges::view::bounded,
                           std::forward<alignment_config_t>(config));
 }

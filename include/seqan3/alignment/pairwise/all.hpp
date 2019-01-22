@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link pairwise pairwise submodule \endlink.
+ * \brief Meta-header for the \link pairwise_alignment pairwise submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -14,11 +14,14 @@
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
-#include <seqan3/alignment/pairwise/alignment_selector.hpp>
+#include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
+#include <seqan3/alignment/pairwise/align_result_selector.hpp>
+#include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 #include <seqan3/alignment/pairwise/execution/all.hpp>
+#include <seqan3/alignment/pairwise/policy/all.hpp>
 
-/*!\defgroup pairwise Pairwise
+/*!\defgroup pairwise_alignment Pairwise
  * \ingroup alignment
  * \brief Provides the algorithmic components for the computation of pairwise alignments.
  */

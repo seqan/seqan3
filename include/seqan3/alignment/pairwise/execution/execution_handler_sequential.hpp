@@ -22,30 +22,21 @@ namespace seqan3::detail
 /*!\brief Handles the sequential execution of alignments.
  * \ingroup execution
  */
-class execution_handler_sequential
+struct execution_handler_sequential
 {
 public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    execution_handler_sequential()                                                 = default;
-    execution_handler_sequential(execution_handler_sequential const &)             = default;
-    execution_handler_sequential(execution_handler_sequential &&)                  = default;
-    execution_handler_sequential & operator=(execution_handler_sequential const &) = default;
-    execution_handler_sequential & operator=(execution_handler_sequential &&)      = default;
-    ~execution_handler_sequential()                                                = default;
-    //!}
 
     /*!\name Execution
      * \{
      */
     //!\brief Invokes the passed alignment instance in a blocking manner.
-    template <typename func_result_t>
-    void execute(std::function<func_result_t(func_result_t &)> func,
-                 func_result_t & res,
-                 std::function<void(decltype(func(res)))> delegate)
+    template <typename func_result_t, typename first_batch_t, typename second_batch_t>
+    void execute(std::function<func_result_t(first_batch_t const &, second_batch_t const &)> func,
+                 first_batch_t const & first_batch,
+                 second_batch_t const & second_batch,
+                 std::function<void(decltype(func(first_batch, second_batch)))> delegate)
     {
-        delegate(func(res));
+        delegate(func(first_batch, second_batch));
     }
     //!\}
 };

@@ -66,11 +66,12 @@ TEST(align_pairwise, single_view_lvalue)
         configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};
         for (auto && res : align_pairwise(v, cfg))
         {
-            EXPECT_EQ(res.get_score(), -4);
+             EXPECT_EQ(res.get_score(), -4);
         }
     }
     {  // the trace
         configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
+
         for (auto && res : align_pairwise(v, cfg))
         {
             EXPECT_EQ(res.get_score(), -4);

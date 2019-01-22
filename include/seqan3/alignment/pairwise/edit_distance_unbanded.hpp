@@ -24,6 +24,7 @@
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_algorithms.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/range/shortcuts.hpp>
@@ -74,7 +75,7 @@ concept edit_distance_trait_concept = requires
 };
 
 /*!\brief The default traits type for the edit distance algorithm.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  */
 struct default_edit_distance_trait_type
 {
@@ -83,7 +84,7 @@ struct default_edit_distance_trait_type
 };
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
  * \tparam query_t        \copydoc pairwise_alignment_edit_distance_unbanded::query_type
  * \tparam align_config_t The type of the alignment config.
@@ -578,6 +579,77 @@ template<typename database_t, typename query_t, typename config_t, typename trai
 pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config, traits_t)
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
 //!\}
+
+// ----------------------------------------------------------------------------
+// edit_distance_wrapper
+// ----------------------------------------------------------------------------
+
+/*!\brief This type wraps the call to the seqan3::detail::pairwise_alignment_edit_distance_unbanded algorithm.
+ * \implements std::Invocable
+ * \tparam config_t The configuration type.
+ *
+ * \details
+ *
+ * This wrapper class is used to decouple the sequence types from the algorithm class type.
+ * Within the alignment configuration a std::function object with this wrapper stored is returned
+ * if an edit distance should be computed. On invocation it delegates the call to the actual implementation
+ * of the edit distance algorithm, while the interface is unified with the execution model of the pairwise alignment
+ * algorithms.
+ */
+template <typename config_t>
+class edit_distance_wrapper
+{
+public:
+    /*!\name Constructor, destructor and assignment
+     * \brief Defaulted all standard constructor.
+     * \{
+     */
+    constexpr edit_distance_wrapper() = default;
+    constexpr edit_distance_wrapper(edit_distance_wrapper const &) = default;
+    constexpr edit_distance_wrapper(edit_distance_wrapper &&) = default;
+    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper const &) = default;
+    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper &&) = default;
+    ~edit_distance_wrapper() = default;
+
+    /*!\brief Constructs the wrapper with the passed configuration.
+     * \param cfg The configuration to be passed to the algorithm.
+     *
+     * \details
+     *
+     * The configuration is copied once to the heap during construction and maintained by a std::shared_ptr.
+     * The configuration is not passed to the function-call-operator of this function object, in order to avoid
+     * incompatible configurations between the passed configuration and the one used during configuration of this
+     * class. Further the function object will be stored in a std::function which requires copyable objects and
+     * in parallel executions the function object must be copied as well.
+     */
+    constexpr edit_distance_wrapper(config_t const & cfg) : cfg_ptr{new config_t(cfg)}
+    {}
+    //!}
+
+    /*!\brief Invokes the actual alignment computation given two sequences.
+     * \tparam    first_batch_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
+     * \tparam    second_batch_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \param[in] first_batch    The first sequence (or packed sequences).
+     * \param[in] second_batch   The second sequence (or packed sequences).
+     */
+    template <std::ranges::ForwardRange first_batch_t, std::ranges::ForwardRange second_batch_t>
+    constexpr auto operator()(first_batch_t && first_batch, second_batch_t && second_batch)
+    {
+        using result_t = typename detail::align_result_selector<remove_cvref_t<first_batch_t>,
+                                                                remove_cvref_t<second_batch_t>,
+                                                                remove_cvref_t<config_t>>::type;
+
+        pairwise_alignment_edit_distance_unbanded algo{std::forward<first_batch_t>(first_batch),
+                                                       std::forward<second_batch_t>(second_batch),
+                                                       *cfg_ptr};
+        align_result<result_t> res{};
+        return algo(res);
+    }
+
+private:
+    //!\brief The alignment configuration stored on the heap.
+    std::shared_ptr<remove_cvref_t<config_t>> cfg_ptr{};
+};
 
 //!\cond
 template<typename database_t, typename query_t, typename align_config_t, typename traits_t>

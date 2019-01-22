@@ -20,6 +20,7 @@
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
+#include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -27,105 +28,131 @@ namespace seqan3::detail
 
 /*!\brief A two way executor for pairwise alignments.
  * \ingroup execution
- * \tparam align_instance_rng_t  A bounded range over the alignment instances to compute.
- * \tparam alignment_seclector_t Selects the alignment to execute.
- * \tparam execution_handler_t   The execution handler managing the execution of the alignment instances.
+ * \tparam resource_t            The underlying range of sequence pairs to be computed; must model
+ *                               std::ranges::ViewableRange and std::ranges::InputRange.
+ * \tparam alignment_algorithm_t The alignment algorithm to be invoked on each sequence pair.
+ * \tparam execution_handler_t   The execution handler managing the execution of the alignments.
+ *
+ * \details
+ *
+ * This alignment executor provides an additional buffer over the computed alignments to allow
+ * a two-way execution flow. The alignment results can then be accessed in an order-preserving manner using the
+ * alignment_executor_two_way::bump() member function.
  */
-template <std::ranges::ViewableRange align_instance_rng_t,
-          typename alignment_selector_t,
+template <std::ranges::ViewableRange resource_t,
+          typename alignment_algorithm_t,
           typename execution_handler_t = execution_handler_sequential>
+//!\cond
+    requires std::ranges::InputRange<std::remove_reference_t<resource_t>>
+//!\endcond
 class alignment_executor_two_way
 {
-    //!\brief Shortcut declaration for this class.
-    using this_t = alignment_executor_two_way<align_instance_rng_t, alignment_selector_t, execution_handler_t>;
-
-    //!\brief Grants alignment_range access to the protected/private member of this class.
-    template <typename executor_t>
-    friend class seqan3::alignment_range;
-
-    /*!\name Resource
+private:
+    /*!\name Resource types
      * \{
      */
-    //!\brief The resource type
-    using resource_type       = std::remove_reference_t<align_instance_rng_t>;
-    //!\brief The iterator over the resource.
-    using resource_iterator   = std::ranges::iterator_t<resource_type>;
-    //!\brief The sentinel over the resource.
-    using resource_sentinel   = std::ranges::sentinel_t<resource_type>;
+    //!\brief The underlying resource type.
+    using resource_type       = detail::single_pass_input_view<resource_t>;
     //!\brief The value type of the resource.
-    using resource_value_type = std::remove_reference_t<decltype(*std::declval<resource_iterator>())>;
+    using resource_value_type = value_type_t<resource_type>;
     //!\}
 
-    /*!\name Buffer
+    /*!\name Buffer types
      * \{
      */
     //!\brief The result of invoking the alignment instance.
-    using buffer_value_type = typename std::remove_reference_t<alignment_selector_t>::result_type;
+    using buffer_value_type = typename alignment_algorithm_t::result_type;
     //!\brief The internal buffer.
     using buffer_type       = std::vector<buffer_value_type>;
     //!\brief The pointer type of the buffer.
     using buffer_pointer    = std::ranges::iterator_t<buffer_type>;
     //!\}
+
 public:
+
+    /*!\name Member types
+     * \{
+     */
+
     //!\brief The result type of invoking the alignment instance.
     using value_type      = buffer_value_type;
     //!\brief A reference to the alignment result.
     using reference       = std::add_lvalue_reference_t<value_type>;
     //!\brief The difference type for the buffer.
     using difference_type = typename buffer_type::difference_type;
+    //!\}
 
     /*!\name Constructors, destructor and assignment
+     * \brief The class is not copy-constructible or copy-assignable but allows move construction and assignment.
      * \{
      */
-    alignment_executor_two_way()                                               = default;
-    alignment_executor_two_way(alignment_executor_two_way const &)             = default;
-    alignment_executor_two_way(alignment_executor_two_way &&)                  = default;
-    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = default;
-    alignment_executor_two_way & operator=(alignment_executor_two_way &&)      = default;
-    ~alignment_executor_two_way()                                              = default;
+    alignment_executor_two_way() = delete;
+    alignment_executor_two_way(alignment_executor_two_way const &) = delete;
+    alignment_executor_two_way(alignment_executor_two_way &&) = default;
+    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete;
+    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;
+    ~alignment_executor_two_way() = default;
 
     //!\brief Constructs this executor with the passed range of alignment instances.
-    alignment_executor_two_way(align_instance_rng_t _resource,
-                               alignment_selector_t _selector) :
-        resource{std::forward<align_instance_rng_t>(_resource)},
-        selector{std::forward<alignment_selector_t>(_selector)},
-        resource_iter{begin(resource)},
-        resource_end{end(resource)}
+    alignment_executor_two_way(resource_t && resrc,
+                               alignment_algorithm_t fn) :
+        resource{view::single_pass_input(std::forward<resource_t>(resrc))},
+        kernel{fn}
     {
-        buffer.resize(1);
-        setg(end(buffer), end(buffer));
+        init_buffer();
     }
     //!}
-
-    //!\brief Returns a seqan3::detail::alignment_range over the invoked alignment instances.
-    alignment_range<this_t> range()
-    {
-        return alignment_range<this_t>{*this};
-    }
-
-protected:
 
     /*!\name Get area
      * \{
      */
+    /*!\brief Returns the current alignment result in the buffer and advances the buffer to the next position.
+     * \returns A std::optional that either contains a reference to the underlying value or is empty iff the
+     *          underlying resource has been completely consumed.
+     *
+     * \details
+     *
+     * If there is no available input in the result buffer anymore, this function triggers an underflow to fill
+     * the buffer with the next alignments.
+     *
+     * ### Exception
+     *
+     * Throws std::bad_function_call if the algorithm was not set.
+     */
+    std::optional<value_type> bump()
+    {
+        if (gptr == buffer_pointer{} || in_avail() == 0)
+        {
+            if (underflow() == eof)
+            {
+                return {std::nullopt};
+            }
+        }
+        return {std::move(*gptr++)};
+    }
+
     //!\brief Returns the remaining number of elements in the buffer, that are not read yet.
     constexpr size_t in_avail() const noexcept
     {
         return egptr - gptr;
     }
+    //!\}
 
-    //!\brief Returns the current alignment result in the buffer and advances the buffer get pointer.
-    std::optional<std::reference_wrapper<value_type>> bump()
+    /*!\name Miscellaneous
+     * \{
+     */
+    //!\brief Checks whether the end of the input resource was reached.
+    bool is_eof() noexcept
     {
-        if (gptr == buffer_pointer{} || gptr >= egptr)
-        {
-            if (underflow() == eof)
-            {
-                return {};
-            }
-        }
-        return {std::ref(*gptr++)};
+        return seqan3::begin(resource) == seqan3::end(resource);
     }
+    //!\}
+
+private:
+
+    /*!\name Get area
+     * \{
+     */
 
     //\brief Sets the buffer pointer.
     void setg(buffer_pointer beg, buffer_pointer end)
@@ -144,21 +171,21 @@ protected:
             return eof;
 
         // Reset the get pointer.
-        setg(begin(buffer), begin(buffer) +
-            std::min(static_cast<size_t>(resource_end - resource_iter), buffer.size()));
+        setg(seqan3::begin(buffer), seqan3::end(buffer));
 
         // Apply the alignment execution.
         // TODO: Adapt for async behavior for parallel execution handler.
-        std::transform(resource_iter, resource_iter + in_avail(), gptr,
-            [this](auto && align_instance){
-                // value_type tmp;
-                auto f = selector.select(std::forward<decltype(align_instance)>(align_instance));
-                value_type tmp;
-                exec_handler.execute(std::move(f), tmp, [&tmp](auto && res){ tmp = std::move(res); });
-                return tmp;
-            });
-        // Advance the resource.
-        std::advance(resource_iter, in_avail());
+        size_t count = 0;
+        for (auto resource_iter = seqan3::begin(resource);
+             count < in_avail() && !is_eof(); ++count, ++resource_iter, ++gptr)
+        {
+            auto const & [first_seq, second_seq] = *resource_iter;
+            exec_handler.execute(kernel, first_seq, second_seq, [this](auto && res){ *gptr = std::move(res); });
+        }
+
+        // Update the available get position if the buffer was consumed completely.
+        setg(seqan3::begin(buffer), seqan3::begin(buffer) + count);
+
         return in_avail();
     }
     //!\}
@@ -166,14 +193,14 @@ protected:
     /*!\name Miscellaneous
      * \{
      */
-    //!\brief Checks whether the end of the input resource was reached.
-    bool is_eof() const noexcept
+
+    //!\brief Initialises the underlying buffer.
+    void init_buffer()
     {
-        return resource_iter == resource_end;
+        buffer.resize(1);
+        setg(seqan3::end(buffer), seqan3::end(buffer));
     }
     //!\}
-
-private:
 
     //!\brief Indicates the end-of-stream.
     static constexpr size_t eof{-1};
@@ -182,30 +209,25 @@ private:
     execution_handler_t exec_handler{};
 
     //!\brief The underlying resource containing the alignment instances.
-    align_instance_rng_t resource;  // view or lvalue ref
+    resource_type resource{};
     //!\brief Selects the correct alignment to execute.
-    alignment_selector_t selector;
-
-    //!\brief Points to the current element in the resource.
-    resource_iterator resource_iter{};
-    //!\brief End of the resource.
-    resource_sentinel resource_end{};
+    alignment_algorithm_t kernel{};
 
     //!\brief The buffer storing the alignment results.
-    buffer_type buffer;
+    buffer_type buffer{};
     //!\brief The get pointer in the buffer.
-    buffer_pointer gptr;
+    buffer_pointer gptr{};
     //!\brief The end get pointer in the buffer.
-    buffer_pointer egptr;
+    buffer_pointer egptr{};
 };
 
 /*!\name Type deduction guides
  * \relates seqan3::detail::alignment_executor_two_way
  * \{
  */
-template <std::ranges::ViewableRange resource_rng_t, typename selector_t>
-alignment_executor_two_way(resource_rng_t && , selector_t &&) ->
-    alignment_executor_two_way<resource_rng_t, selector_t, execution_handler_sequential>;
+template <typename resource_rng_t, typename func_t>
+alignment_executor_two_way(resource_rng_t &&, func_t) ->
+    alignment_executor_two_way<resource_rng_t, func_t, execution_handler_sequential>;
 
 //!\}
 } // namespace seqan3::detail

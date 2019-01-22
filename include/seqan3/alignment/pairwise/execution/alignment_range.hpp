@@ -22,17 +22,18 @@ namespace seqan3
 
 /*!\brief The alignment
  * \ingroup execution
- * \tparam range_buffer_t The buffer type for the alignment stream.
+ * \tparam alignment_executor_type The buffer type for the alignment stream.
  *
  * \details
  *
  * Provides a stream-like range interface over the alignments instances that are computed in a
  * seqan3::detail::alignment_executor_two_way executor.
  */
-template <typename range_buffer_t>
+template <typename alignment_executor_type>
+//TODO requires alignment_executor_concept<alignment_executor_type>
 class alignment_range
 {
-    static_assert(!std::is_const_v<range_buffer_t>,
+    static_assert(!std::is_const_v<alignment_executor_type>,
                   "Cannot create an alignment stream over a const buffer.");
 
     //!\brief The iterator of seqan3::detail::alignment_range.
@@ -45,8 +46,6 @@ class alignment_range
         using value_type = typename alignment_range::value_type;
         //!\brief Use reference type defined by container.
         using reference = typename alignment_range::reference;
-        //!\brief Use const reference type provided by container.
-        using const_reference = std::add_const_t<reference>;
         //!\brief Pointer type is pointer of container element type.
         using pointer = std::add_pointer_t<value_type>;
         //!\brief Sets iterator category as input iterator.
@@ -55,46 +54,44 @@ class alignment_range
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        iterator_type()                                  = default;
-        iterator_type(iterator_type const &)             = default;
-        iterator_type(iterator_type &&)                  = default;
-        iterator_type & operator=(iterator_type const &) = default;
-        iterator_type & operator=(iterator_type &&)      = default;
-        ~iterator_type()                                 = default;
+        constexpr iterator_type() noexcept = default;
+        constexpr iterator_type(iterator_type const &) noexcept = default;
+        constexpr iterator_type(iterator_type &&) noexcept = default;
+        constexpr iterator_type & operator=(iterator_type const &) noexcept = default;
+        constexpr iterator_type & operator=(iterator_type &&) noexcept = default;
+        ~iterator_type() = default;
 
         //!\brief Construct from alignment stream.
-        iterator_type(alignment_range & _stream) : stream_ptr(&_stream)
+        constexpr iterator_type(alignment_range & range) noexcept : range_ptr(&range)
         {}
         //!}
 
         /*!\name Read
          * \{
          */
-        reference operator*()
+        reference operator*() noexcept
         {
-            return stream_ptr->cached();
+            return range_ptr->cache;
         }
 
-        const_reference operator*() const
+        value_type const & operator*() const noexcept
         {
-            return stream_ptr->cached();
+            return range_ptr->cache;
         }
         //!\}
 
         /*!\name Increment operators
          * \{
          */
-        iterator_type & operator++(/*pre*/)
+        iterator_type & operator++(/*pre*/) noexcept
         {
-            stream_ptr->next();
+            range_ptr->next();
             return *this;
         }
 
-        iterator_type operator++(int /*post*/)
+        void operator++(int /*post*/) noexcept
         {
-            auto tmp{*this};
-            stream_ptr->next();
-            return tmp;
+            ++(*this);
         }
         //!\}
 
@@ -102,88 +99,100 @@ class alignment_range
          * \{
          */
 
-        constexpr bool operator==(std::ranges::default_sentinel const &) const
+        constexpr bool operator==(std::ranges::default_sentinel const &) const noexcept
         {
-            return stream_ptr->eof();
+            return range_ptr->eof();
         }
 
         friend constexpr bool operator==(std::ranges::default_sentinel const & lhs,
-                                         iterator_type const & rhs)
+                                         iterator_type const & rhs) noexcept
         {
             return rhs == lhs;
         }
 
-        constexpr bool operator!=(std::ranges::default_sentinel const & rhs) const
+        constexpr bool operator!=(std::ranges::default_sentinel const & rhs) const noexcept
         {
             return !(*this == rhs);
         }
 
         friend constexpr bool operator!=(std::ranges::default_sentinel const & lhs,
-                                         iterator_type const & rhs)
+                                         iterator_type const & rhs) noexcept
         {
             return rhs != lhs;
         }
         //!\}
     private:
         //!\brief Pointer to the underlying range.
-        alignment_range * stream_ptr{};
+        alignment_range * range_ptr{};
     };
 
     // Befriend the iterator with this class.
+    // TODO Check if this is necessary.
     friend class iterator_type;
 
 public:
 
     //!\brief The offset type.
-    using difference_type = typename range_buffer_t::difference_type;
+    using difference_type = typename alignment_executor_type::difference_type;
     //!\brief The alignment result type.
-    using value_type      = typename range_buffer_t::value_type;
+    using value_type      = typename alignment_executor_type::value_type;
     //!\brief The reference type.
-    using reference       = typename range_buffer_t::reference;
+    using reference       = typename alignment_executor_type::reference;
     //!\brief The iterator type.
     using iterator        = iterator_type;
+    //!\brief This range is never const-iterable. The const_iterator is always void.
+    using const_iterator  = void;
     //!\brief The sentinel type.
     using sentinel        = std::ranges::default_sentinel;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_range()                                    = delete;
-    alignment_range(alignment_range const &)             = default;
-    alignment_range(alignment_range &&)                  = default;
-    alignment_range & operator=(alignment_range const &) = default;
-    alignment_range & operator=(alignment_range &&)      = default;
-    ~alignment_range()                                   = default;
+    alignment_range() = default;
+    alignment_range(alignment_range const &) = delete;
+    alignment_range(alignment_range &&) = default;
+    alignment_range & operator=(alignment_range const &) = delete;
+    alignment_range & operator=(alignment_range &&) = default;
+    ~alignment_range() = default;
 
-    explicit alignment_range(range_buffer_t & _range_buffer) :
-        range_buffer{&_range_buffer, [](auto) { /*no-op*/ }}
-    {}
+    //!\brief Explicit deletion to forbid copy construction of the underlying executor.
+    explicit alignment_range(alignment_executor_type const & _alignment_executor) = delete;
 
-    // Construct from resource.
-    template <typename resource_t,
-              typename selector_t>
-    //!\cond
-        requires std::is_constructible_v<range_buffer_t, resource_t, selector_t>
-    //!\endcond
-    explicit alignment_range(resource_t _range_buffer_resource,
-                             selector_t _selector) :
-        range_buffer{std::make_shared<range_buffer_t>(std::forward<resource_t>(_range_buffer_resource), _selector)}
+    /*!\brief Constructs a new alignment range by taking ownership over the passed alignment buffer.
+     * \tparam _alignment_executor_type The buffer type. Must be the same type as `alignment_executor_type` when
+     *                                  references and cv-qualifiers are removed.
+     * \param[in] _alignment_executor   The buffer to take ownership from.
+     *
+     * \details
+     *
+     * Constructs a new alignment range by taking ownership over the passed alignment buffer.
+     */
+    explicit alignment_range(alignment_executor_type && _alignment_executor) :
+        alignment_executor{new alignment_executor_type{std::move(_alignment_executor)}},
+        eof_flag(false)
     {}
     //!}
 
     /*!\name Iterators
      * \{
      */
-    iterator begin()
+    constexpr iterator begin()
     {
-        next();
+        if (!eof_flag)
+            next();
         return iterator{*this};
     }
 
-    sentinel end() noexcept
+    const_iterator begin() const = delete;
+    const_iterator cbegin() const = delete;
+
+    constexpr sentinel end() noexcept
     {
         return {};
     }
+
+    constexpr sentinel end() const = delete;
+    constexpr sentinel cend() const = delete;
     //!\}
 
 protected:
@@ -192,25 +201,14 @@ protected:
     void next()
     {
         assert(!eof());
-        if (auto opt = range_buffer->bump(); opt.has_value())
-            cache = &(*opt).get();
+
+        if (!alignment_executor)
+            throw std::runtime_error{"No alignment execution buffer available."};
+
+        if (auto opt = alignment_executor->bump(); opt.has_value())
+            cache = std::move(*opt);
         else
             eof_flag = true;
-    }
-
-    //!\brief Returns the cached result.
-    // TODO make iterable in case of multiple results per alignment.
-    auto & cached() noexcept
-    {
-        assert(cache);
-        return *cache;
-    }
-
-    //!\copydoc cached()
-    auto const & cached() const noexcept
-    {
-        assert(cache);
-        return *cache;
     }
 
     //!\brief Returns whether the executor buffer reached is end.
@@ -221,11 +219,21 @@ protected:
 
 private:
     //!\brief The underlying executor buffer.
-    std::shared_ptr<range_buffer_t> range_buffer;
+    std::unique_ptr<alignment_executor_type> alignment_executor{};
     //!\brief Stores last read element.
-    value_type * cache{};
+    value_type cache{};
     //!\brief Indicates whether the stream has reached its end.
-    bool eof_flag{false};
+    bool eof_flag{true};
 };
+
+/*!\name Type deduction guide
+ * \relates seqan3::alignment_range
+ * \{
+ */
+
+//!\brief Deduces from the passed alignment_executor_type
+template <typename alignment_executor_type>
+alignment_range(alignment_executor_type &&) -> alignment_range<std::remove_reference_t<alignment_executor_type>>;
+//!}
 
 } // namespace seqan3

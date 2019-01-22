@@ -18,102 +18,92 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/all.hpp>
-#include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/align_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
+#include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/metafunction/deferred_crtp_base.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/range/view/persist.hpp>
 
 namespace seqan3::detail
 {
 
-/*!\brief Helper metafunction to determine the alignment result type based on the configuration.
- * \ingroup pairwise
- * \tparam seq1_t          The type of the first sequence.
- * \tparam seq2_t          The type of the second sequence.
- * \tparam configuration_t The configuration type. Must be of type seqan3::detail::configuration
+/*!\brief Configures the alignment kernel given the sequences and the configuration object.
+ * \ingroup pairwise_alignment
  */
-template <typename seq1_t, typename seq2_t, typename configuration_t>
-struct determine_result_type
+struct alignment_configurator
 {
-    //!\brief Helper function to determine the actual result type.
-    static constexpr auto _determine()
+    //!\brief Configure the edit distance algorithm.
+    template <typename kernel_t, typename config_t>
+    static constexpr auto configure_edit_distance(config_t const & cfg)
     {
-        using seq1_value_type = gapped<value_type_t<std::remove_reference_t<seq1_t>>>;
-        using seq2_value_type = gapped<value_type_t<std::remove_reference_t<seq2_t>>>;
-        using score_type      = int32_t;
-
-        if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())
-        {
-            if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
-                                    with_end_position_type>)
-                return align_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate>{};
-            else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
-                                         with_begin_position_type>)
-                return align_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate,
-                                               alignment_coordinate>{};
-            else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
-                                         with_trace_type>)
-                return align_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate,
-                                               alignment_coordinate,
-                                               std::pair<std::vector<seq1_value_type>,
-                                                         std::vector<seq2_value_type>>>{};
-            else
-                return align_result_value_type<uint32_t, score_type>{};
-        }
-        else
-        {
-            return align_result_value_type<uint32_t, score_type>{};
-        }
+        return kernel_t{edit_distance_wrapper<remove_cvref_t<config_t>>{cfg}};
     }
 
-    //!\brief The determined result type.
-    using type = align_result<decltype(_determine())>;
-};
-
-/*!\brief Selects the correct alignment algorithm based on the algorithm configuration.
- * \ingroup pairwise
- * \tparam seq_tuple_t     A tuple like object containing the two source sequences.
- *                         Must model seqan3::tuple_like_concept.
- * \tparam configuration_t The specified configuration type.
- */
-template <tuple_like_concept seq_tuple_t, typename configuration_t>
-struct alignment_selector
-{
-    //!\brief The configuration stored globally for all alignment instances.
-    configuration_t config;
-
-    //!\brief The result type of invoking the algorithm.
-    using result_type = typename determine_result_type<std::tuple_element_t<0, std::remove_reference_t<seq_tuple_t>>,
-                                                       std::tuple_element_t<1, std::remove_reference_t<seq_tuple_t>>,
-                                                       configuration_t>::type;
-
-    /*!\brief Selects the corresponding alignment algorithm based on compile time and runtime decisions.
-     * \param[in] seq The sequences as a tuple.
-     * \returns A std::function object to be called within the alignment execution.
-     *
-     * \details
-     *
-     * \todo Write detail description and explain rationale about the function object.
-     */
-    template <tuple_like_concept _seq_tuple_t>
-    auto select(_seq_tuple_t && seq)
+    //!\brief Configure the algorithm.
+    template <std::ranges::View sequences_t, typename config_t>
+        requires is_type_specialisation_of_v<remove_cvref_t<config_t>, configuration>
+    static constexpr auto configure(sequences_t SEQAN3_DOXYGEN_ONLY(seq_range), config_t const & cfg)
     {
-        //TODO Currently we only support edit_distance. We need would actually need real checks for this.
-        std::function<result_type(result_type &)> func =
-            pairwise_alignment_edit_distance_unbanded{std::get<0>(std::forward<_seq_tuple_t>(seq)) | view::persist,
-                                                      std::get<1>(std::forward<_seq_tuple_t>(seq)) | view::persist,
-                                                      config};
-        return func;
+        using first_seq_t = std::remove_reference_t<
+                                std::tuple_element_t<
+                                    0,
+                                    value_type_t<std::ranges::iterator_t<remove_cvref_t<sequences_t>>>
+                                >
+                            >;
+        using second_seq_t = std::remove_reference_t<
+                                std::tuple_element_t<
+                                    1,
+                                    value_type_t<std::ranges::iterator_t<remove_cvref_t<sequences_t>>>
+                                >
+                             >;
+
+        using result_t = align_result<typename align_result_selector<first_seq_t,
+                                                                     second_seq_t,
+                                                                     remove_cvref_t<config_t>>::type
+                                     >;
+        using kernel_t = std::function<result_t(first_seq_t const &, second_seq_t const &)>;
+
+        auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
+        auto const & scoring_scheme =
+            cfg.template value_or<align_cfg::scoring>(nucleotide_scoring_scheme{match_score{0}, mismatch_score{-1}});
+        // Linear gaps
+        if (gaps.get_gap_open_score() == 0)
+        {
+            if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
+                                                      nucleotide_scoring_scheme>)
+            {
+                // TODO: Check if the matrix is Levenshtein distance.
+                if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
+                    (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
+                    return configure_edit_distance<kernel_t>(cfg);
+                else
+                    throw std::domain_error{"Linear gaps are not yet implemented."};
+            }
+            else // Not nucleotide_scoring_scheme
+            {
+                throw std::domain_error{"Linear gaps are not yet implemented."};
+            }
+        }
+        else // Affine gaps
+        {
+            using score_type = int;
+            using cell_type = std::pair<score_type, score_type>;
+            using dp_matrix_t = deferred_crtp_base<unbanded_dp_matrix_policy, std::allocator<cell_type>>;
+            using affine_t = deferred_crtp_base<affine_gap_policy, cell_type>;
+            using init_t = deferred_crtp_base<affine_gap_init_policy>;
+            //TODO: copies but we want to have unique_funtion to only move.
+            return kernel_t{alignment_algorithm<config_t, dp_matrix_t, affine_t, init_t>{cfg}};
+        }
     }
 };
+
 } // namespace seqan3::detail

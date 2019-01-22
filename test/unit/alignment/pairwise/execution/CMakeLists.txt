@@ -1,1 +1,2 @@
 seqan3_test(alignment_executor_two_way_test.cpp)
+seqan3_test(alignment_range_test.cpp)
