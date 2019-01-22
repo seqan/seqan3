@@ -1,3 +1,4 @@
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 
 using namespace seqan3;
@@ -89,7 +90,7 @@ is_xdigit('e');  // returns true.
 std::istringstream istr{"ATZE"};
 
 std::istream_iterator<char> it{istr};
-parse_asserter asserter{is_in_alphabet<dna5>};
+parse_asserter asserter{is_in_alphabet<dna4>};
 
 while (it != std::istream_iterator<char>{})
 {

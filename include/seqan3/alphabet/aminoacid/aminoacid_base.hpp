@@ -17,6 +17,7 @@
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
+#include <seqan3/io/stream/char_operations.hpp>
 
 namespace seqan3
 {
@@ -76,6 +77,48 @@ public:
             detail::convert_through_char_representation<derived_type, other_aa_type>[to_rank(other)];
     }
     //!\}
+
+    /*!\brief Validate whether a character value has a one-to-one mapping to an alphabet value.
+     *
+     * \details
+     *
+     * Models the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * wrapper.
+     *
+     * Behaviour specific to amino acids: True also for lower case letters that silently convert to their upper case.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    static constexpr bool char_is_valid(char_type const c) noexcept
+    {
+        return valid_char_table[static_cast<uint8_t>(c)];
+    }
+
+private:
+    //!\brief Implementation of #char_is_valid().
+    static constexpr std::array<bool, 256> valid_char_table
+    {
+        [] () constexpr
+        {
+            // init with false
+            std::array<bool, 256> ret{};
+
+            // the original valid chars and their lower cases
+            for (uint8_t c : derived_type::rank_to_char)
+            {
+                ret[         c ] = true;
+                ret[to_lower(c)] = true;
+            }
+
+            return ret;
+        }()
+    };
 };
 
 } // namespace seqan3

@@ -72,3 +72,16 @@ TEST(dna15, string_literal)
     std::vector<dna15> w{'A'_dna15, 'C'_dna15, 'G'_dna15, 'T'_dna15, 'U'_dna15, 'N'_dna15};
     EXPECT_EQ(w, "ACGTTN"_dna15);
 }
+
+TEST(dna15, char_is_valid)
+{
+    constexpr auto validator = is_char<'A'> || is_char<'C'> || is_char<'G'> || is_char<'T'> || is_char<'U'>
+                            || is_char<'a'> || is_char<'c'> || is_char<'g'> || is_char<'t'> || is_char<'u'>
+                            || is_char<'N'> || is_char<'n'>
+                            || is_char<'R'> || is_char<'Y'> || is_char<'S'> || is_char<'W'> || is_char<'K'>
+                            || is_char<'M'> || is_char<'B'> || is_char<'D'> || is_char<'H'> || is_char<'V'>
+                            || is_char<'r'> || is_char<'y'> || is_char<'s'> || is_char<'w'> || is_char<'k'>
+                            || is_char<'m'> || is_char<'b'> || is_char<'d'> || is_char<'h'> || is_char<'v'>;
+    for (char c : ranges::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+        EXPECT_EQ(dna15::char_is_valid(c), validator(c));
+}

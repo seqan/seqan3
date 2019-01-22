@@ -28,6 +28,7 @@
 #include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/transform.hpp>
 
+#include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>

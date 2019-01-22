@@ -32,21 +32,22 @@ TYPED_TEST_CASE(uint_adaptation, uint_types);
 
 TYPED_TEST(uint_adaptation, concept_check)
 {
-    EXPECT_TRUE(uint_adaptation_concept<TypeParam>);
-    // NOTE: Using intermediate concept notation with forwarding references cause the concept type
-    // to hold a reference.
-    EXPECT_TRUE(uint_adaptation_concept<TypeParam &>);
+    EXPECT_TRUE(uint_adaptation_concept<TypeParam   >);
+    EXPECT_TRUE(uint_adaptation_concept<TypeParam & >);
+    EXPECT_TRUE(uint_adaptation_concept<TypeParam &&>);
 }
 
 TYPED_TEST(uint_adaptation, underlying_rank_t)
 {
-    EXPECT_TRUE((std::is_same_v<underlying_rank_t<TypeParam>, TypeParam>));
+    EXPECT_TRUE((std::is_same_v<underlying_rank_t<TypeParam   >, TypeParam>));
+    EXPECT_TRUE((std::is_same_v<underlying_rank_t<TypeParam & >, TypeParam>));
+    EXPECT_TRUE((std::is_same_v<underlying_rank_t<TypeParam &&>, TypeParam>));
 }
 
 TYPED_TEST(uint_adaptation, to_rank)
 {
     TypeParam l{65};
-    EXPECT_TRUE((std::is_same_v<decltype(to_rank(l)), underlying_rank_t<TypeParam>>));
+    EXPECT_TRUE((std::is_same_v<decltype(to_rank(l)),             underlying_rank_t<TypeParam>>));
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(TypeParam{65})), underlying_rank_t<TypeParam>>));
     EXPECT_EQ(to_rank(TypeParam{65}), l);
 }
@@ -54,10 +55,10 @@ TYPED_TEST(uint_adaptation, to_rank)
 TYPED_TEST(uint_adaptation, assign_rank)
 {
     TypeParam l{65};
-    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(l, 65)), underlying_rank_t<TypeParam> &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(TypeParam{65}, 65)), underlying_rank_t<TypeParam> &&>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(l,             65)), underlying_rank_t<TypeParam> &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(TypeParam{65}, 65)), underlying_rank_t<TypeParam>  >));
     EXPECT_EQ((assign_rank(TypeParam{65}, 65)), l);
-    EXPECT_EQ((assign_rank(l, 67)), TypeParam{67});
+    EXPECT_EQ((assign_rank(l,             67)), TypeParam{67});
 }
 
 TYPED_TEST(uint_adaptation, underlying_char_t)
@@ -69,7 +70,7 @@ TYPED_TEST(uint_adaptation, underlying_char_t)
 TYPED_TEST(uint_adaptation, to_char)
 {
     TypeParam l{65};
-    EXPECT_TRUE((std::is_same_v<decltype(to_char(l)), underlying_char_t<TypeParam>>));
+    EXPECT_TRUE((std::is_same_v<decltype(to_char(l)),             underlying_char_t<TypeParam>>));
     EXPECT_TRUE((std::is_same_v<decltype(to_char(TypeParam{65})), underlying_char_t<TypeParam>>));
     if constexpr (std::is_unsigned_v<TypeParam>)
     {
@@ -85,10 +86,19 @@ TYPED_TEST(uint_adaptation, to_char)
 TYPED_TEST(uint_adaptation, assign_char)
 {
     TypeParam l{65};
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char(l, 'A')), underlying_rank_t<TypeParam> &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{'A'}, 'A')), underlying_rank_t<TypeParam> &&>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char(l,              'A')), underlying_rank_t<TypeParam> &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{'A'}, 'A')), underlying_rank_t<TypeParam>  >));
     EXPECT_EQ((assign_char(TypeParam{67}, 'A')), l);
-    EXPECT_EQ((assign_char(l, 'C')), TypeParam{67});
+    EXPECT_EQ((assign_char(l,             'C')), TypeParam{67});
+}
+
+TYPED_TEST(uint_adaptation, assign_char_strict)
+{
+    TypeParam l{65};
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_strict(l,              'A')), underlying_rank_t<TypeParam> &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_strict(TypeParam{'A'}, 'A')), underlying_rank_t<TypeParam>  >));
+    EXPECT_EQ((assign_char_strict(TypeParam{67}, 'A')), l);
+    EXPECT_EQ((assign_char_strict(l,             'C')), TypeParam{67});
 }
 
 TYPED_TEST(uint_adaptation, alphabet_size_v)

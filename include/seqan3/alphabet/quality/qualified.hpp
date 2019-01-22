@@ -116,6 +116,13 @@ public:
         return *this;
     }
 
+    //!\brief Strict assign from a character. This modifies the internal sequence letter.
+    qualified & assign_char_strict(char_type const c)
+    {
+        seqan3::assign_char_strict(get<0>(*this), c);
+        return *this;
+    }
+
     //!\brief Assign from a phred value. This modifies the internal quality letter.
     constexpr qualified & assign_phred(phred_type const c) noexcept
     {
@@ -150,6 +157,12 @@ public:
         return qualified{complement(get<0>(*this)), get<1>(*this)};
     }
     //!\}
+
+    //!\brief Validate whether a character is valid in the sequence alphabet.
+    static constexpr bool char_is_valid(char_type const c) noexcept
+    {
+        return char_is_valid_for<sequence_alphabet_type>(c);
+    }
 };
 
 //!\brief Type deduction guide enables usage of qualified without specifying template args.

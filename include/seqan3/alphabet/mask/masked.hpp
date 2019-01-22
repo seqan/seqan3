@@ -97,6 +97,15 @@ public:
         seqan3::assign_rank(get<1>(*this), is_lower(c));
         return *this;
     }
+
+    //!\brief Strict assign from a character.
+    masked & assign_char_strict(char_type const c)
+    {
+        if (!char_is_valid(c))
+            throw invalid_char_assignment{detail::get_display_name_v<masked>.string(), c};
+
+        return assign_char(c);
+    }
     //!\}
 
     /*!\name Read functions
@@ -113,6 +122,30 @@ public:
         {
             return seqan3::to_char(get<0>(*this));
         }
+    }
+    //!\}
+
+    /*!\brief Validate whether a character value has a one-to-one mapping to an alphabet value.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * wrapper.
+     *
+     * Default implementation: True for all character values that are reproduced by #to_char() after being assigned
+     * to the alphabet.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    static constexpr bool char_is_valid(char_type const c) noexcept
+    {
+        return masked{}.assign_char(c).to_char() == c;
     }
 };
 

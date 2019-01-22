@@ -215,6 +215,15 @@ public:
         return operator=(tmp);
     }
 
+    derived_type & assign_char_strict(char_type_virtual const c)
+        requires alphabet_concept<alphabet_type>
+    {
+        alphabet_type tmp{};
+        using seqan3::assign_char_strict;
+        assign_char_strict(tmp, c);
+        return operator=(tmp);
+    }
+
     constexpr derived_type & assign_phred(phred_type_virtual const c) noexcept
         requires quality_concept<alphabet_type>
     {
@@ -258,6 +267,13 @@ public:
         return complement(static_cast<alphabet_type>(*this));
     }
 #endif
+
+    //!\brief Delegate to the emulated type's validator.
+    static constexpr bool char_is_valid(char_type_virtual const c) noexcept
+    {
+        using seqan3::char_is_valid_for;
+        return char_is_valid_for<alphabet_type>(c);
+    }
     //!\}
 };
 

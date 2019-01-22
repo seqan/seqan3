@@ -15,6 +15,7 @@
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/io/stream/char_operations.hpp>
 
 namespace seqan3
 {
@@ -29,7 +30,8 @@ namespace seqan3
  * You can use this class to define your own nucleotide alphabet, but types are not required to be based on it to model
  * seqan3::nucleotide_concept, it is purely a way to avoid code duplication.
  *
- * The derived type needs to define only the following table as static member variable:
+ * In addition to the requirements of seqan3::alphabet_base, the derived type needs to define the following static
+ * member variable (can be private):
  *
  *   * `static std::array<THAT_TYPE, value_size> complement_table` that defines for every possible rank value
  *     the corresponding complement.
@@ -106,6 +108,56 @@ public:
         return derived_type::complement_table[to_rank()];
     }
     //!\}
+
+    /*!\brief Validate whether a character value has a one-to-one mapping to an alphabet value.
+     *
+     * \details
+     *
+     * Satisfies the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * wrapper.
+     *
+     * Behaviour specific to nucleotides: True also for lower case letters that silently convert to their upper case
+     * **and** true also for U/T respectively, e.g. 'U' is a valid character for seqan3::dna4, because its informational
+     * content is identical to 'T'.
+     *
+     * \par Complexity
+     *
+     * Constant.
+     *
+     * \par Exceptions
+     *
+     * Guaranteed not to throw.
+     */
+    static constexpr bool char_is_valid(char_type const c) noexcept
+    {
+        return valid_char_table[static_cast<uint8_t>(c)];
+    }
+
+private:
+    //!\brief Implementation of #char_is_valid().
+    static constexpr std::array<bool, 256> valid_char_table
+    {
+        [] () constexpr
+        {
+            // init with false
+            std::array<bool, 256> ret{};
+
+            // the original valid chars and their lower cases
+            for (uint8_t c : derived_type::rank_to_char)
+            {
+                ret[         c ] = true;
+                ret[to_lower(c)] = true;
+            }
+
+            // U and T shall be accepted for all
+            ret['U'] = true;
+            ret['T'] = true;
+            ret['u'] = true;
+            ret['t'] = true;
+
+            return ret;
+        }()
+    };
 };
 
 } // namespace seqan3

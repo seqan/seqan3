@@ -10,6 +10,8 @@
  * \brief Meta-header for the nucleotide submodule; includes all headers from alphabet/nucleotide/.
  */
 
+#pragma once
+
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>

@@ -113,3 +113,10 @@ TEST(literals, vector)
     std::vector<aa27> w27{'A'_aa27, 'Y'_aa27, 'P'_aa27, 'T'_aa27, 'U'_aa27, 'N'_aa27, 'X'_aa27, '!'_aa27, '*'_aa27};
     EXPECT_EQ(w27, "AYPTUNXX*"_aa27);
 }
+
+TEST(aa27, char_is_valid)
+{
+    constexpr auto validator = is_alpha || is_char<'*'>;
+    for (char c : ranges::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+        EXPECT_EQ(aa27::char_is_valid(c), validator(c));
+}

@@ -14,6 +14,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/adaptation/concept.hpp>
 #include <seqan3/io/stream/parse_condition_detail.hpp>
 
 // ----------------------------------------------------------------------------

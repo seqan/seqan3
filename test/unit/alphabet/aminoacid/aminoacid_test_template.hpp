@@ -11,6 +11,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/io/stream/parse_condition.hpp>
 
 using namespace seqan3;
 

@@ -19,7 +19,7 @@
 
 #include <seqan3/std/concepts>
 
-#include <seqan3/alphabet/all.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/exception.hpp>
@@ -377,24 +377,9 @@ struct is_in_interval_type : public parse_condition_base<is_in_interval_type<int
  * \implements seqan3::detail::parse_condition_concept
  * \tparam alphabet_t The alphabet type. Must model seqan3::alphabet_concept.
  */
-template <alphabet_concept alphabet_t>
+template <detail::constexpr_alphabet_concept alphabet_t>
 struct is_in_alphabet_type : public parse_condition_base<is_in_alphabet_type<alphabet_t>>
 {
-private:
-    //!\brief Conversion table from lower to upper case (ignoring locales).
-    static constexpr std::array<unsigned char, 256> to_upper = [] () constexpr
-    {
-        std::array<unsigned char, 256> ret{};
-
-        for (size_t i = 0; i < 256; ++i)
-            ret[i] = i;
-
-        for (size_t i = 'a'; i <= 'z'; ++i)
-            ret[i] = i - 'a' + 'A';
-
-        return ret;
-    }();
-
 public:
     //!\brief The message representing this condition.
     static constexpr auto msg = constexpr_string{"is_in_alphabet<"} +
@@ -411,8 +396,8 @@ public:
     {
         data_t ret{};
 
-        for (unsigned char i = 0; i < 255; ++i)
-            ret[i] = to_char(assign_char(alphabet_t{}, i)) == to_upper[i];
+        for (size_t i = 0; i < 256; ++i)
+            ret[i] = char_is_valid_for<alphabet_t>(static_cast<uint8_t>(i));
 
         return ret;
     }();
