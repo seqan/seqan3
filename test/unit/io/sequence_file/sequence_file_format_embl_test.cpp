@@ -9,16 +9,13 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;
 
@@ -28,8 +25,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((sequence_file_input_format_concept<sequence_file_format_embl>));
-    EXPECT_TRUE((sequence_file_output_format_concept<sequence_file_format_embl>));
+    EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_embl>));
+    EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_embl>));
 }
 
 // ----------------------------------------------------------------------------
@@ -50,6 +47,23 @@ struct read : public ::testing::Test
         { "ACGTTTTTTTTTTTTTTT"_dna5 },
         { "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5 },
         { "ACGTTTA"_dna5 },
+    };
+
+    std::string input
+    {
+R"(ID ID1;	stuff
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTT        18
+//
+ID ID2;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60
+TTTTTTTTTT TTTTTTTTTT TT        82
+//
+ID ID3 lala;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTA        7
+//)"
     };
 
     sequence_file_format_embl format;
@@ -79,44 +93,6 @@ struct read : public ::testing::Test
 
 TEST_F(read, standard)
 {
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-
-    do_read_test(input);
-}
-
-TEST_F(read, whitespace_in_seq)
-{
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT\nTTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT\nTTTTTTTTTT\nTTTTTTTTTT\vTTTTTTTTTT\tTTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
     do_read_test(input);
 }
 
@@ -124,71 +100,27 @@ TEST_F(read, no_id)
 {
     std::string input
     {
-        R"(IK ID1;  stuff
-        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-          ACGTTTTTTT
-          TTTTTTTT        18
-        //
-        ID ID2;
-        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-          ACGTTTTTTT
-          TTTTTTTTTT
-          TTTTTTTTTT    TTTTTTTTTT    TTTTTTTTTT TTTTTTTTTT 60
-        TTTTTTTTTT TTTTTTTTTT TT        82
-        //
-        ID ID3 lala;
-        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-          ACGTTTA        7
-        //
-        )"
+R"(IK ID1;  stuff
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTT        18
+//
+ID ID2;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60
+TTTTTTTTTT TTTTTTTTTT TT        82
+//
+ID ID3 lala;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTA        7
+//)"
     };
 
     std::stringstream istream{input};
     EXPECT_THROW(( format.read(istream, options, seq, id, std::ignore)), parse_error );
 }
 
-TEST_F(read, other_lines)
-{
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "XX\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT\nTTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT\nTTTTTTTTTT\nTTTTTTTTTT\vTTTTTTTTTT\tTTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "AC 2389ß\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-    do_read_test(input);
-}
-
 TEST_F(read, options_truncate_ids)
 {
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-
     options.truncate_ids = true;
     expected_ids[2] = "ID3"; // "lala" is stripped
     do_read_test(input);
@@ -198,80 +130,33 @@ TEST_F(read, complete_header)
 {
     std::string input
     {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "XX\n"
-        "AC   AB000263;\n"
-        "XX\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
+R"(ID ID1;	stuff
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTT        18
+//
+ID ID2;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60
+TTTTTTTTTT TTTTTTTTTT TT        82
+//
+ID ID3 lala;
+XX
+AC   AB000263;
+XX
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTA        7
+//)"
     };
 
-    options.complete_header = true;
+    options.embl_genbank_complete_header = true;
     expected_ids[0] = "ID ID1;\tstuff\n";
     expected_ids[1] = "ID ID2;\n";
     expected_ids[2] = "ID ID3 lala;\nXX\nAC   AB000263;\nXX\n";
     do_read_test(input);
 }
 
-TEST_F(read, complete_header2)
-{
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "XX S\n"
-        "XX Q\n"
-        "AC   AB000263;\n"
-        "XX\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-
-    options.complete_header = true;
-    expected_ids[0] = "ID ID1;\tstuff\n";
-    expected_ids[1] = "ID ID2;\n";
-    expected_ids[2] = "ID ID3 lala;\nXX S\nXX Q\nAC   AB000263;\nXX\n";
-    do_read_test(input);
-}
-
 TEST_F(read, only_seq)
 {
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-
     std::stringstream istream{input};
 
     for (unsigned i = 0; i < 3; ++i)
@@ -289,22 +174,22 @@ TEST_F(read, only_seq_multiple_lines_before)
 {
     std::string input
     {
-        "ID ID1;\tstuff\n"
-        "XX\n"
-        "XX\n"
-        "XX\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
+R"(ID ID1;	stuff
+XX
+XX
+XX
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTT        18
+//
+ID ID2;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60
+TTTTTTTTTT TTTTTTTTTT TT        82
+//
+ID ID3 lala;
+SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+  ACGTTTA        7
+//)"
     };
 
     std::stringstream istream{input};
@@ -322,23 +207,6 @@ TEST_F(read, only_seq_multiple_lines_before)
 
 TEST_F(read, only_id)
 {
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-
     std::stringstream istream{input};
 
     for (unsigned i = 0; i < 3; ++i)
@@ -354,23 +222,6 @@ TEST_F(read, only_id)
 
 TEST_F(read, seq_qual)
 {
-    std::string input
-    {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID ID2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID ID3 lala;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-
     std::stringstream istream{input};
     sequence_file_input_options<dna5, true> options2;
 
@@ -392,10 +243,10 @@ TEST_F(read, illegal_alphabet)
 {
     std::string input
     {
-        "ID ID1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ARGTTTTTTT\nTTTTTTTT        18\n"
-        "//\n"
+        R"(ID ID1;	stuff
+        SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
+          ARGTTTTTTT TTTTTTTT        18
+        //)"
     };
 
     std::stringstream istream{input};
@@ -404,44 +255,13 @@ TEST_F(read, illegal_alphabet)
 
 TEST_F(read, from_stream_file)
 {
-    std::string input
-    {
-        "ID read1;\tstuff\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTT        18\n"
-        "//\n"
-        "ID read2;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT 60\n"
-        "TTTTTTTTTT TTTTTTTTTT TT        82\n"
-        "//\n"
-        "ID read3;\n"
-        "SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;\n"
-        "  ACGTTTA        7\n"
-        "//\n"
-    };
-
-    std::vector<dna5_vector> seq_comp
-    {
-        "ACGTTTTTTTTTTTTTTT"_dna5,
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5,
-        "ACGTTTA"_dna5
-    };
-
-    std::vector<std::string> id_comp
-    {
-        "read1",
-        "read2",
-        "read3"
-    };
-
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_embl{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_embl{}, fields<field::SEQ, field::ID>{}};
 
     size_t counter = 0;
-    for (auto & [ seq, id, qual ] : fin)
+    for (auto & [ seq, id ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seq,  seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seq,  expected_seqs[counter])));
+        EXPECT_TRUE((std::ranges::equal(id,  expected_ids[counter])));
 
         counter++;
     }
@@ -467,6 +287,24 @@ struct write : public ::testing::Test
         "TEST 1",
         "Test2",
         "Test3"
+    };
+
+	std::string comp
+    {
+R"(ID TEST 1; 4 BP.
+SQ Sequence 4 BP;
+ACGT                                                              4
+//
+ID Test2; 91 BP.
+SQ Sequence 91 BP;
+AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60
+TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91
+//
+ID Test3; 24 BP.
+SQ Sequence 24 BP;
+GGAGTATAAT ATATATATAT ATAT                                        24
+//
+)"
     };
 
     sequence_file_format_embl format;
@@ -510,22 +348,6 @@ TEST_F(write, arg_handling_seq_empty)
 
 TEST_F(write, default_options)
 {
-    std::string comp
-    {
-        "ID TEST 1; 4 BP.\n"
-        "SQ Sequence 4 BP;\n"
-        "ACGT                                                              4\n"
-        "//\n"
-        "ID Test2; 91 BP.\n"
-        "SQ Sequence 91 BP;\n"
-        "AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60\n"  // linebreak inserted after 60 char
-        "TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91\n"
-        "//\n"
-        "ID Test3; 24 BP.\n"
-        "SQ Sequence 24 BP;\n"
-        "GGAGTATAAT ATATATATAT ATAT                                        24\n"
-        "//\n"
-    };
 
     do_write_test();
 
@@ -548,23 +370,6 @@ TEST_F(write, seq_qual)
 
     ostream.flush();
 
-    std::string comp
-    {
-        "ID TEST 1; 4 BP.\n"
-        "SQ Sequence 4 BP;\n"
-        "ACGT                                                              4\n"
-        "//\n"
-        "ID Test2; 91 BP.\n"
-        "SQ Sequence 91 BP;\n"
-        "AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60\n"  // linebreak inserted after 60 char
-        "TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91\n"
-        "//\n"
-        "ID Test3; 24 BP.\n"
-        "SQ Sequence 24 BP;\n"
-        "GGAGTATAAT ATATATATAT ATAT                                        24\n"
-        "//\n"
-    };
-
     EXPECT_EQ(ostream.str(), comp);
 }
 
@@ -572,24 +377,25 @@ TEST_F(write, complete_header)
 {
     std::string comp
     {
-        "ID TEST 1; 4 BP.\n"
-        "XX\n"
-        "SQ Sequence 4 BP;\n"
-        "ACGT                                                              4\n"
-        "//\n"
-        "ID Test2; 91 BP.\n"
-        "XX\n"
-        "SQ Sequence 91 BP;\n"
-        "AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60\n"  // linebreak inserted after 60 char
-        "TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91\n"
-        "//\n"
-        "ID Test3; 24 BP.\n"
-        "XX\n"
-        "SQ Sequence 24 BP;\n"
-        "GGAGTATAAT ATATATATAT ATAT                                        24\n"
-        "//\n"
+R"(ID TEST 1; 4 BP.
+XX
+SQ Sequence 4 BP;
+ACGT                                                              4
+//
+ID Test2; 91 BP.
+XX
+SQ Sequence 91 BP;
+AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60
+TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91
+//
+ID Test3; 24 BP.
+XX
+SQ Sequence 24 BP;
+GGAGTATAAT ATATATATAT ATAT                                        24
+//
+)"
     };
-    options.complete_header = true;
+    options.embl_genbank_complete_header = true;
     ids[0] = std::string{"ID TEST 1; 4 BP.\nXX\n"};
     ids[1] = std::string{"ID Test2; 91 BP.\nXX\n"};
     ids[2] = std::string{"ID Test3; 24 BP.\nXX\n"};
@@ -608,23 +414,6 @@ TEST_F(write, from_stream_file)
     }
 
     fout.get_stream().flush();
-
-    std::string comp
-    {
-        "ID TEST 1; 4 BP.\n"
-        "SQ Sequence 4 BP;\n"
-        "ACGT                                                              4\n"
-        "//\n"
-        "ID Test2; 91 BP.\n"
-        "SQ Sequence 91 BP;\n"
-        "AGGCTGNAGG CTGNAGGCTG NAGGCTGNAG GCTGNAGGCT GNAGGCTGNA GGCTGNAGGC 60\n"  // linebreak inserted after 60 char
-        "TGNAGGCTGN AGGCTGNAGG CTGNAGGCTG N                                91\n"
-        "//\n"
-        "ID Test3; 24 BP.\n"
-        "SQ Sequence 24 BP;\n"
-        "GGAGTATAAT ATATATATAT ATAT                                        24\n"
-        "//\n"
-    };
 
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), comp);
 }

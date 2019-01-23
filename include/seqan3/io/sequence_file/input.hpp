@@ -335,6 +335,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
 template <
     SequenceFileInputTraits                    traits_type_        = sequence_file_input_default_traits_dna,
     detail::fields_concept                     selected_field_ids_ = fields<field::SEQ,
+<<<<<<< HEAD
                                                                                           field::ID,
                                                                                           field::QUAL>,
 <<<<<<< HEAD
@@ -342,14 +343,15 @@ template <
                                                                                              sequence_file_format_fastq,
                                                                                              sequence_file_format_sam
                                                                                              /*, ...*/>,
-    char_concept                               stream_char_type_   = char>
 =======
-    detail::type_list_of_sequence_file_input_formats_concept valid_formats_      = type_list<sequence_file_format_embl,
-                                                                                             sequence_file_format_fasta,
-                                                                                             sequence_file_format_fastq
-                                                                                         /*, ...*/>,
-    char_concept                                             stream_char_type_   = char>
->>>>>>> [FEATURE] Test for stream files embl IO
+                                                                            field::ID,
+                                                                            field::QUAL>,
+    detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<sequence_file_format_embl,
+                                                                               sequence_file_format_fasta,
+                                                                               sequence_file_format_fastq
+                                                                               /*, ...*/>,
+>>>>>>> [FIX] Fix layout embl IO
+    char_concept                               stream_char_type_   = char>
 class sequence_file_input
 {
 public:

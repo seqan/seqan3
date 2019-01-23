@@ -39,7 +39,7 @@ struct sequence_file_output_options
     bool        add_carriage_return     = false;
 
     //!\brief Complete header given for embl or genbank
-    bool        complete_header  = false;
+    bool        embl_genbank_complete_header  = false;
 };
 
 } // namespace seqan3

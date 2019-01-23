@@ -27,7 +27,7 @@ struct sequence_file_input_options
     //!\brief Read the ID string only up until the first whitespace character.
     bool truncate_ids = false;
     //!\brief Read the complete header to id.
-    bool complete_header = false;
+    bool embl_genbank_complete_header = false;
 };
 
 } // namespace seqan3
