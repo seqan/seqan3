@@ -1,36 +1,9 @@
-// ============================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ============================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
 /*!\file
  * \brief Provides the seqan3::sequence_file_format_genbank class.
@@ -44,18 +17,10 @@
 #include <string_view>
 #include <vector>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/utility/iterator.hpp>
 #include <range/v3/view/chunk.hpp>
-#include <range/v3/view/drop_while.hpp>
-#include <range/v3/view/join.hpp>
-#include <range/v3/view/remove_if.hpp>
-#include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
@@ -64,18 +29,15 @@
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/take.hpp>
-#include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
 /*!\brief       The GenBank format.
- * \implements  sequence_file_input_format_concept
- * \implements  sequence_file_output_format_concept
+ * \implements  seqan3::SequenceFileInputFormat
+ * \implements  seqan3::SequenceFileOutputFormat
  * \ingroup     sequence
  *
  * \details
@@ -92,9 +54,9 @@ namespace seqan3
  *
  * ### Implementation notes
  *
- * There is no truncate_ids option while reading because the GenBank format has no (FASTA-like) identifier. Instead,
- * there is the option t"complete_header" to indicate whether the whole header is to be read (complete_header=true) or
- * only the "LOCUS" information should be stored.
+ * There is no truncate_ids option while reading because the GenBank format has no (FASTA-like) idbuffer. Instead,
+ * there is the option "complete_header" to indicate whether the whole header is to be read
+ * (embl_genbank_complete_header=true) or only the "LOCUS" information should be stored.
  *
  * Passed qualities to either the read or write function are ignored.
  *
@@ -105,7 +67,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-     //!\brief Default constructor is explicitly deleted, you need to provide a stream or file name.
+     //!\brief Default constructor is explicitly defaulted, you need to provide a stream or file name.
     sequence_file_format_genbank() = default;
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the genbank file.
     sequence_file_format_genbank(sequence_file_format_genbank const &) = delete;
@@ -125,75 +87,72 @@ public:
         { "gbk" },
     };
 
-    //!\copydoc sequence_file_input_format_concept::read
+    //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read(stream_type                                                            & stream,
+    void read(stream_type                                                            	& stream,
               sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-              seq_type                                                               & sequence,
-              id_type                                                                & id,
-              qual_type                                                              & SEQAN3_DOXYGEN_ONLY(qualities))
+              seq_type                                                                  & sequence,
+              id_type                                                                   & id,
+              qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
-                                          decltype(std::istreambuf_iterator<char>{})>
+        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<char>{stream}),
+                                                 decltype(std::istreambuf_iterator<char>{})>
                            {std::istreambuf_iterator<char>{stream},
                             std::istreambuf_iterator<char>{}};
-        auto stream_it = ranges::begin(stream_view);
+        auto stream_it = std::ranges::begin(stream_view);
 
-        std::string identifier;
-        ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                     std::back_inserter(identifier));
+        std::string idbuffer;
+        std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
+                          std::back_inserter(idbuffer));
 
-        if (identifier != "LOCUS")
+        if (idbuffer != "LOCUS")
             throw parse_error{"An entry has to start with the code word LOCUS."};
 
         //ID
         if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            if (options.complete_header)
+            if (options.embl_genbank_complete_header)
             {
-                while (identifier != "ORIGIN")
+                while (idbuffer != "ORIGIN")
                 {
-                        ranges::copy(identifier  | view::char_to<value_type_t<id_type>>,
-                                     std::back_inserter(id));
-                        ranges::copy(stream_view | view::take_until_or_throw(is_char<'\n'>)
-                                                 | view::char_to<value_type_t<id_type>>,
-                                     std::back_inserter(id));
-                        ranges::copy(std::string_view{"\n"} | view::char_to<value_type_t<id_type>>,
-                                     std::back_inserter(id));
+                        std::ranges::copy(idbuffer  | view::char_to<value_type_t<id_type>>,
+                                     	  std::back_inserter(id));
+                        std::ranges::copy(stream_view | view::take_until_or_throw(is_char<'\n'>)
+                                                	  | view::char_to<value_type_t<id_type>>,
+                                     	  std::back_inserter(id));
+                        std::ranges::copy(std::string_view{"\n"} | view::char_to<value_type_t<id_type>>,
+                                     	  std::back_inserter(id));
 
                     ++stream_it;
-                    identifier.clear();
-                    ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                                 std::back_inserter(identifier));
+                    idbuffer.clear();
+                    std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
+                                 	  std::back_inserter(idbuffer));
                 }
             }
             else
             {
-                detail::consume(stream_view | ranges::view::take_while(is_blank));
+				// ID
+                detail::consume(stream_view | view::take_until(!is_blank));
                 // read id
-                ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank)
-                                         | view::char_to<value_type_t<id_type>>,
-                             std::back_inserter(id));
+                std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank)
+                                              | view::char_to<value_type_t<id_type>>,
+                                  std::back_inserter(id));
                 detail::consume(stream_view | view::take_line_or_throw);
-                identifier.clear();
-                // Update identifier to jump to sequence (see below)
-                ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                             std::back_inserter(identifier));
             }
         }
 
         // Jump to sequence
-        while (identifier != "ORIGIN") //True, if not complete header is read into id
+        while (idbuffer != "ORIGIN") //True, if not complete header is read into id
         {
             detail::consume(stream_view | view::take_until(is_cntrl));
             ++stream_it;
-            identifier.clear();
-            ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                         std::back_inserter(identifier));
+            idbuffer.clear();
+            std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
+                              std::back_inserter(idbuffer));
         }
 
         // Sequence
@@ -206,50 +165,42 @@ public:
                                         | view::take_until_or_throw(is_end);   // until //
 
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            ranges::copy(seq_view | view::transform([is_legal_alph] (char const c) // enforce legal alphabet
-                                    {
-                                        if (!is_legal_alph(c))
-                                        {
-                                            throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                              is_legal_alph.msg.string() +
-                                                              " evaluated to false on " +
-                                                              detail::make_printable(c)};
-                                        }
-                                        return c;
-                                    })
-                                  | view::char_to<value_type_t<seq_type>>,         // convert to actual target alphabet
-                         std::back_inserter(sequence));
+            std::ranges::copy(seq_view | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+                                         {
+                                             if (!is_legal_alph(c))
+                                             {
+                                                 throw parse_error{std::string{"Encountered an unexpected letter: "} +
+                                                                   is_legal_alph.msg.string() +
+                                                                   " evaluated to false on " +
+                                                                   detail::make_printable(c)};
+                                             }
+                                             return c;
+                                         })
+                                       | view::char_to<value_type_t<seq_type>>,    // convert to actual target alphabet
+                                         std::back_inserter(sequence));
         }
         else
         {
             detail::consume(stream_view | view::take_until(is_end));
         }
         //Jump over //
-        detail::consume(stream_view | view::take_until(is_cntrl));
         ++stream_it;
-
-
-        // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
-            (!stream.eof()))
-        {
-            stream.get(); // triggers error in stream and sets eof
-        }
+        ++stream_it;
+        ++stream_it;
     }
 
-    //!\copydoc sequence_file_output_format_concept::write
+    //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write(stream_type                     & stream,
+    void write(stream_type                        & stream,
                sequence_file_output_options const & options,
-               seq_type                       && sequence,
-               id_type                        && id,
-               qual_type                      && SEQAN3_DOXYGEN_ONLY(qualities))
+               seq_type                           && sequence,
+               id_type                            && id,
+               qual_type                          && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-
-        ranges::ostreambuf_iterator stream_it{stream};
+        std::ranges::ostreambuf_iterator stream_it{stream};
         size_t sequence_size = 0;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
             sequence_size = ranges::size(sequence);
@@ -259,36 +210,35 @@ public:
         {
             throw std::logic_error{"The ID field may not be set to ignore when writing genbank files."};
         }
+        else if (ranges::empty(id)) //[[unlikely]]
+        {
+            throw std::runtime_error{"The ID field may not be empty when writing genbank files."};
+        }
+        else if (options.embl_genbank_complete_header)
+        {
+            std::ranges::copy(id, stream_it);
+        }
         else
         {
-            if (ranges::empty(id)) //[[unlikely]]
-                throw std::runtime_error{"The ID field may not be empty when writing genbank files."};
-
-            if (options.complete_header)
-            {
-                ranges::copy(id, stream_it);
-            }
-            else
-            {
-                ranges::copy(std::string_view{"LOCUS       "}, stream_it);
-                ranges::copy(id, stream_it);
-                ranges::copy(std::string_view{"                 "}, stream_it);
-                ranges::copy(std::to_string(sequence_size), stream_it);
-                ranges::copy(std::string_view{" bp\n"}, stream_it);
-            }
+            std::ranges::copy(std::string_view{"LOCUS       "}, stream_it);
+            std::ranges::copy(id, stream_it);
+            std::ranges::copy(std::string_view{"                 "}, stream_it);
+            std::ranges::copy(std::to_string(sequence_size), stream_it);
+            std::ranges::copy(std::string_view{" bp\n"}, stream_it);
         }
 
         // Sequence
         if constexpr (detail::decays_to_ignore_v<seq_type>) // sequence
         {
-            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing genbank files."};
+            throw std::logic_error{"The SEQ field may not be set to ignore when writing genbank files."};
+        }
+        else if (ranges::empty(sequence)) //[[unlikely]]
+        {
+            throw std::runtime_error{"The SEQ field may not be empty when writing genbank files."};
         }
         else
         {
-            if (ranges::empty(sequence)) //[[unlikely]]
-                throw std::runtime_error{"The SEQ field may not be empty when writing genbank files."};
-
-            ranges::copy(std::string_view{"ORIGIN"}, stream_it);
+            std::ranges::copy(std::string_view{"ORIGIN"}, stream_it);
             stream_it = '\n';
             auto seq = sequence | ranges::view::chunk(60);
             unsigned int i = 0;
@@ -297,16 +247,16 @@ public:
             {
                 for(size_t j = std::to_string(bp).length(); j < 9; j++)
                     stream_it = ' ';
-                ranges::copy(std::to_string(bp), stream_it);
+                std::ranges::copy(std::to_string(bp), stream_it);
                 stream_it = ' ';
-                ranges::copy(seq[i] | view::to_char
-                                    | ranges::view::chunk(10)
-                                    | ranges::view::join(' '), stream_it);
+                std::ranges::copy(seq[i] | view::to_char
+                                         | ranges::view::chunk(10)
+                                         | std::view::join(' '), stream_it);
                 bp += 60;
                 ++i;
                 stream_it = '\n';
             }
-            ranges::copy(std::string_view{"//"}, stream_it);
+            std::ranges::copy(std::string_view{"//"}, stream_it);
             stream_it = '\n';
         }
     }

@@ -1,50 +1,21 @@
-// ==========================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ==========================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert, FU Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ==========================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
 #include <sstream>
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
-#include <seqan3/range/view/convert.hpp>
+#include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3;
 
@@ -54,8 +25,8 @@ using namespace seqan3;
 
 TEST(general, concepts)
 {
-    EXPECT_TRUE((sequence_file_input_format_concept<sequence_file_format_genbank>));
-    EXPECT_TRUE((sequence_file_output_format_concept<sequence_file_format_genbank>));
+    EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_genbank>));
+    EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_genbank>));
 }
 
 // ----------------------------------------------------------------------------
@@ -76,6 +47,33 @@ struct read : public ::testing::Test
         { "ACGTTTTTTTTTTTTTTT"_dna5 },
         { "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5 },
         { "ACGTTTA"_dna5 },
+    };
+
+	std::string input
+    {
+R"(LOCUS ID1	stuff
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID1
+ORIGIN
+        1 ACGTTTTTTT TTTTTTTT
+//
+LOCUS ID2
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID2
+ORIGIN
+        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT
+       61 TTTTTTTTTT TTTTTTTTTT TT
+//
+LOCUS ID3
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID3
+ORIGIN
+        1 ACGTTTA
+//
+)"
     };
 
     sequence_file_format_genbank format;
@@ -105,94 +103,12 @@ struct read : public ::testing::Test
 
 TEST_F(read, standard)
 {
-    std::string input
-    {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS ID2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS ID3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
-    do_read_test(input);
-}
-
-TEST_F(read, whitespace_in_seq)
-{
-    std::string input
-    {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTT\vTTT\n"
-        "//\n"
-        "LOCUS ID2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTT\nTTTT TTTTTTTTTT TTTTTTTTTT\t TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS ID3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGT\tTTA\n"
-        "//\n"
-    };
     do_read_test(input);
 }
 
 TEST_F(read, complete_header)
 {
-    std::string input
-    {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS ID2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS ID3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
-    options.complete_header = true;
+    options.embl_genbank_complete_header = true;
     expected_ids[0] = std::string{"LOCUS ID1\tstuff\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide,"
     " complete\n            cds.\nACCESSION   ID1\n"};
     expected_ids[1] = std::string{"LOCUS ID2\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide,"
@@ -204,32 +120,6 @@ TEST_F(read, complete_header)
 
 TEST_F(read, only_seq)
 {
-    std::string input
-    {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS ID2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS ID3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
     std::stringstream istream{input};
 
     for (unsigned i = 0; i < 3; ++i)
@@ -245,32 +135,6 @@ TEST_F(read, only_seq)
 
 TEST_F(read, only_id)
 {
-    std::string input
-    {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS ID2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS ID3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
     std::stringstream istream{input};
 
     for (unsigned i = 0; i < 3; ++i)
@@ -286,32 +150,6 @@ TEST_F(read, only_id)
 
 TEST_F(read, ignore_id)
 {
-    std::string input
-    {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS ID2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS ID3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
     std::stringstream istream{input};
 
     for (unsigned i = 0; i < 3; ++i)
@@ -328,13 +166,14 @@ TEST_F(read, no_locus)
 {
     std::string input
     {
-        "LOCOS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
+R"(LOCOS ID1	stuff
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID1
+ORIGIN
+        1 ACGTTTTTTT TTTTTTTT
+//
+)"
     };
 
     std::stringstream istream{input};
@@ -345,32 +184,6 @@ TEST_F(read, no_locus)
 
 TEST_F(read, seq_qual)
 {
-    std::string input
-    {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS ID2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS ID3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
     std::stringstream istream{input};
     sequence_file_input_options<dna5, true> options2;
 
@@ -392,13 +205,14 @@ TEST_F(read, illegal_alphabet)
 {
     std::string input
     {
-        "LOCUS ID1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTT?TT TTTTTTTT\n"
-        "//\n"
+R"(LOCUS ID1	stuff
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID1
+ORIGIN
+        1 ACGTTTT?TT TTTTTTTT
+//
+)"
     };
 
     std::stringstream istream{input};
@@ -407,60 +221,19 @@ TEST_F(read, illegal_alphabet)
 
 TEST_F(read, from_stream_file)
 {
-    std::string input
-    {
-        "LOCUS read1\tstuff\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   read1\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS read2\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID2\n"
-        "ORIGIN\n"
-        "        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS read3\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID3\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
-    std::vector<dna5_vector> seq_comp
-    {
-        "ACGTTTTTTTTTTTTTTT"_dna5,
-        "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"_dna5,
-        "ACGTTTA"_dna5
-    };
-
-    std::vector<std::string> id_comp
-    {
-        "read1",
-        "read2",
-        "read3"
-    };
-
-    sequence_file_input fin{std::istringstream{input}, sequence_file_format_genbank{}};
+    sequence_file_input fin{std::istringstream{input}, sequence_file_format_genbank{}, fields<field::SEQ, field::ID>{}};
 
     size_t counter = 0;
-    for (auto & [ seq, id, qual ] : fin)
+    for (auto & [ seq, id ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seq,  seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+        EXPECT_TRUE((std::ranges::equal(seq,  expected_seqs[counter])));
+        EXPECT_TRUE((std::ranges::equal(id,  expected_ids[counter])));
 
         counter++;
     }
 
     EXPECT_EQ(counter, 3u);
 }
-
 
 // ----------------------------------------------------------------------------
 // writing
@@ -481,6 +254,24 @@ struct write : public ::testing::Test
         "ID2",
         "ID3"
     };
+
+	std::string comp
+	{
+R"(LOCUS       ID1                 18 bp
+ORIGIN
+        1 ACGTTTTTTT TTTTTTTT
+//
+LOCUS       ID2                 82 bp
+ORIGIN
+        1 ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT
+       61 TTTTTTTTTT TTTTTTTTTT TT
+//
+LOCUS       ID3                 7 bp
+ORIGIN
+        1 ACGTTTA
+//
+)"
+	};
 
     sequence_file_format_genbank format;
 
@@ -523,23 +314,6 @@ TEST_F(write, arg_handling_seq_empty)
 
 TEST_F(write, default_options)
 {
-    std::string comp
-    {
-        "LOCUS       ID1                 18 bp\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS       ID2                 82 bp\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS       ID3                 7 bp\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
@@ -561,23 +335,6 @@ TEST_F(write, seq_qual)
 
     ostream.flush();
 
-    std::string comp
-    {
-        "LOCUS       ID1                 18 bp\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS       ID2                 82 bp\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS       ID3                 7 bp\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
-    };
-
     EXPECT_EQ(ostream.str(), comp);
 }
 
@@ -585,41 +342,42 @@ TEST_F(write, complete_header)
 {
     std::string comp
     {
-        "LOCUS       ID1                 18 bp\n"
-        "DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete\n"
-        "            cds.\n"
-        "ACCESSION   ID1\n"
-        "VERSION     ID1\n"
-        "KEYWORDS    .\n"
-        "SOURCE      .\n"
-        "  ORGANISM  .\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTT\n"
-        "//\n"
-        "LOCUS       ID2                 82 bp\n"
-        "DEFINITION  ID2\n"
-        "ACCESSION   ID2\n"
-        "VERSION     ID2\n"
-        "KEYWORDS    .\n"
-        "SOURCE      .\n"
-        "  ORGANISM  .\n"
-        "ORIGIN\n"
-        "        1 ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT\n"
-        "       61 TTTTTTTTTT TTTTTTTTTT TT\n"
-        "//\n"
-        "LOCUS       ID3                 7 bp\n"
-        "DEFINITION  ID3\n"
-        "ACCESSION   ID3\n"
-        "VERSION     ID3\n"
-        "KEYWORDS    .\n"
-        "SOURCE      .\n"
-        "  ORGANISM  .\n"
-        "ORIGIN\n"
-        "        1 ACGTTTA\n"
-        "//\n"
+R"(LOCUS       ID1                 18 bp
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID1
+VERSION     ID1
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+ORIGIN
+        1 ACGTTTTTTT TTTTTTTT
+//
+LOCUS       ID2                 82 bp
+DEFINITION  ID2
+ACCESSION   ID2
+VERSION     ID2
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+ORIGIN
+        1 ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT
+       61 TTTTTTTTTT TTTTTTTTTT TT
+//
+LOCUS       ID3                 7 bp
+DEFINITION  ID3
+ACCESSION   ID3
+VERSION     ID3
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+ORIGIN
+        1 ACGTTTA
+//
+)"
     };
 
-    options.complete_header = true;
+    options.embl_genbank_complete_header = true;
     ids[0] = std::string{"LOCUS       ID1                 18 bp\nDEFINITION  Homo sapiens mRNA for prepro cortistatin "
     "like peptide, complete\n            cds.\nACCESSION   ID1\nVERSION     ID1\nKEYWORDS    .\nSOURCE      .\n"
     "  ORGANISM  .\n"};
@@ -630,4 +388,18 @@ TEST_F(write, complete_header)
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
+}
+
+TEST_F(write, from_stream_file)
+{
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_genbank{}};
+
+    for(int i = 0; i < 3; i++)
+    {
+        fout.emplace_back(seqs[i],ids[i]);
+    }
+
+    fout.get_stream().flush();
+
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), comp);
 }
