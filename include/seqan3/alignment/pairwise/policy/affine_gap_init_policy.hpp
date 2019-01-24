@@ -79,16 +79,16 @@ private:
         main_score = 0;
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_first_leading_t::value)
+        if constexpr (traits_type::free_second_leading_t::value)
             vt_score = 0;
         else
-            vt_score = gap_open + gap_extend;
+            vt_score = gap_open;
 
         // Initialise the horizontal matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if constexpr (traits_type::free_first_leading_t::value)
             hz_score = 0;
         else
-            hz_score = gap_open + gap_extend;
+            hz_score = gap_open;
     }
 
     /*!\brief Initialises a cell in the first column of the dynamic programming matrix.
@@ -110,12 +110,12 @@ private:
         main_score = vt_score;
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_first_leading_t::value)
+        if constexpr (traits_type::free_second_leading_t::value)
             vt_score = 0;
         else
             vt_score += gap_extend;
 
-        hz_score = main_score + gap_open + gap_extend;
+        hz_score = main_score + gap_open;
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
@@ -135,10 +135,10 @@ private:
         prev_score = main_score;
         main_score = hz_score;
 
-        vt_score += main_score + gap_open + gap_extend;
+        vt_score += main_score + gap_open;
 
         // Initialise the horizontal matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if constexpr (traits_type::free_first_leading_t::value)
             hz_score = 0;
         else
             hz_score += gap_extend;
