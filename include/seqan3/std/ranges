@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/range/detail/enable_view.hpp>
 
 #if __cpp_lib_ranges // C++20 ranges available
 #include <ranges>
@@ -26,6 +26,9 @@
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/any_view.hpp>
 #include <range/v3/view/reverse.hpp>
+
+#include <seqan3/core/metafunction/transformation_trait_or.hpp>
+#include <seqan3/std/concepts>
 
 /*!\defgroup ranges ranges
  * \ingroup std
@@ -230,4 +233,51 @@ using SEQAN3_DOXYGEN_ONLY(iter_move =) ::ranges::iter_move;
 //!\}
 } // namespace std::ranges
 
+// -----------------------------------------------------------------------------------------------------
+// enable_view alias
+// -----------------------------------------------------------------------------------------------------
+
+/* The ranges::enable_view boolean indicates whether a type is a View. In order to create an alias
+ * for the std library that we can specialise for seqan3 types (we cannot specialise using declarations)
+ * we create a new std::ranges::enable_view integer. Additionally, we now need an ranges::enable_view overload
+ * that delegates to std::ranges::enable_view<type>.
+ */
+
+namespace ranges
+{
+
+//!\brief Customises ranges type trait that indicates whether `type` is a view.
+template <typename type>
+//!\cond
+    requires (seqan3::detail::enable_view<type> == 0) || (seqan3::detail::enable_view<type> == 1)
+//!\endcond
+constexpr bool enable_view<type> = static_cast<bool>(seqan3::detail::enable_view<type>);
+
+} // namespace ranges
+
+namespace std::ranges
+{
+
+//!\brief Type trait that indicates whether `type` is a view.
+template <typename type>
+constexpr bool enable_view = ::ranges::enable_view<type>;
+
+} // namespace std::ranges
+
 #endif // no standard header
+
+#if __cpp_lib_ranges
+
+namespace std::ranges
+{
+
+//!\brief Customises std::ranges type trait that indicates whether `type` is a view.
+template <typename type>
+//!\cond
+    requires (seqan3::detail::enable_view<type> == 0) || (seqan3::detail::enable_view<type> == 1)
+//!\endcond
+constexpr bool enable_view<type> = static_cast<bool>(seqan3::detail::enable_view<type>);
+
+} // namespace std::ranges
+
+#endif
