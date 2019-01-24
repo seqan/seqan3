@@ -7,11 +7,11 @@
 
 #include <gtest/gtest.h>
 
+#include <range/v3/algorithm/equal.hpp>
+
 #include "configuration_mock.hpp"
 
 #include <seqan3/core/algorithm/configuration.hpp>
-
-using ::testing::ElementsAre;
 
 using namespace seqan3;
 
@@ -131,25 +131,25 @@ TEST(configuration, get_by_type_template)
     configuration cfg = bar{1} | foobar<>{std::vector{0, 1, 2, 3}};
 
     { // l-value
-        EXPECT_THAT(get<foobar>(cfg).value, ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(get<foobar>(cfg).value, std::vector{0, 1, 2, 3}));
         EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(cfg)), foobar<> &>));
     }
 
     { // const l-value
         configuration<bar, foobar<>> const cfg_c{cfg};
-        EXPECT_THAT(get<foobar>(cfg_c).value, ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(get<foobar>(cfg_c).value, std::vector{0, 1, 2, 3}));
         EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(cfg_c)), foobar<> const &>));
     }
 
     { // r-value
         configuration<bar, foobar<>> cfg_r{cfg};
-        EXPECT_THAT(get<foobar>(std::move(cfg_r)).value, ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(get<foobar>(std::move(cfg_r)).value, std::vector{0, 1, 2, 3}));
         EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(std::move(cfg_r))), foobar<> &&>));
     }
 
     { // const r-value
         configuration<bar, foobar<>> const cfg_cr{cfg};
-        EXPECT_THAT(get<foobar>(std::move(cfg_cr)).value, ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(get<foobar>(std::move(cfg_cr)).value, std::vector{0, 1, 2, 3}));
         // TODO(rrahn): Enable when get(const &&) is fixed for gcc7 as well.
         // EXPECT_TRUE((std::is_same_v<decltype(get<foobar>(std::move(cfg_cr))), foobar<> const &&>));
     }
@@ -205,25 +205,25 @@ TEST(configuration, value_or_by_type_template)
     configuration cfg = bar{1} | foobar<>{std::vector<int>{0, 1, 2, 3}};
 
     { // l-value
-        EXPECT_THAT(cfg.value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(cfg.value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
         EXPECT_FLOAT_EQ(cfg.value_or<foo>(1.3), 1.3);
     }
 
     { // const l-value
         configuration<bar, foobar<>> const cfg_c{cfg};
-        EXPECT_THAT(cfg_c.value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(cfg_c.value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
         EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
     }
 
     { // r-value
         configuration<bar, foobar<>> cfg_r{cfg};
-        EXPECT_THAT(std::move(cfg_r).value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(std::move(cfg_r).value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
         EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
     }
 
     { // const r-value
         configuration<bar, foobar<>> const cfg_cr{cfg};
-        EXPECT_THAT(std::move(cfg_cr).value_or<foobar>(3.3), ElementsAre(0, 1, 2, 3));
+        EXPECT_TRUE(ranges::equal(std::move(cfg_cr).value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
         EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
     }
 }
