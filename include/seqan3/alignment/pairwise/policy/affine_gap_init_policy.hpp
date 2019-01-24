@@ -77,13 +77,13 @@ private:
         main_score = 0;
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_first_leading_t::value)
+        if constexpr (traits_type::free_second_leading_t::value)
             vt_score = 0;
         else
             vt_score = get<1>(cache);
 
         // Initialise the horizontal matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if constexpr (traits_type::free_first_leading_t::value)
             hz_score = 0;
         else
             hz_score = get<1>(cache);
@@ -106,7 +106,7 @@ private:
         main_score = vt_score;
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_first_leading_t::value)
+        if constexpr (traits_type::free_second_leading_t::value)
             vt_score = 0;
         else
             vt_score += get<2>(cache);
@@ -134,7 +134,7 @@ private:
         vt_score += main_score + get<1>(cache);
 
         // Initialise the horizontal matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if constexpr (traits_type::free_first_leading_t::value)
             hz_score = 0;
         else
             hz_score += get<2>(cache);

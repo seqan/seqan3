@@ -159,6 +159,8 @@ private:
         {
             this->init_column_cell(cell, cache);
         });
+
+        this->check_score_last_row(get<0>(*(seqan3::end(col) - 1)), get<3>(cache));
     }
 
     /*!\brief Compute the alignment by iterating over the dynamic programming matrix in a column wise manner.

@@ -12,8 +12,8 @@
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
-#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
@@ -78,21 +78,14 @@ static auto dna4_02 = []()
 {
     return alignment_fixture
     {
-        // score: 8 (7 insertions, 1 substitutions)
-        // alignment:
-        // AACCGGTTAACCGGTT
-        // | | | | | | | |
-        // A-C-G-T-A-C-G-TA
-        "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}}
-                     | align_cfg::aligned_ends{align_cfg::end_gaps{align_cfg::first_seq_leading{std::true_type{}},
-                                                                   align_cfg::second_seq_leading{std::true_type{}}}},
-        -7,
-        "AACCGGTTAACCG---GTT",
-        "----------ACGTACGTA",
+        "AACCGGTTAACCGGTT"_dna4,
+        align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        -18,
+        "A-C-G-T-A-C-G-TA",
+        "AACCGGTTAACCGGTT",
         alignment_coordinate{0, 0},
-        alignment_coordinate{15, 8},
+        alignment_coordinate{8, 15},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
