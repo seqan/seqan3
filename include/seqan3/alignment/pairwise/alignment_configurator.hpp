@@ -307,8 +307,8 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     // score and cell type
     // ----------------------------------------------------------------------------
 
-    using score_type = int;
-    using cell_type = std::tuple<score_type, score_type>;
+    using score_type = int32_t;
+    using cell_type = std::tuple<score_type, score_type, ignore_t>;
 
     // ----------------------------------------------------------------------------
     // dynamic programming matrix

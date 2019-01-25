@@ -49,7 +49,7 @@ public:
 auto mock_factory(seqan3::static_band const & band = seqan3::static_band{seqan3::lower_bound{-3},
                                                                          seqan3::upper_bound{5}})
 {
-    banded_score_dp_matrix_policy_mock<std::allocator<std::tuple<int, int>>> mock{};
+    banded_score_dp_matrix_policy_mock<std::allocator<std::tuple<int, int, seqan3::detail::ignore_t>>> mock{};
 
     std::string seq1 = "ACGTAGACTACTG";
     std::string seq2 = "ACGTAGACTACTGACGT";
@@ -81,8 +81,9 @@ TEST(banded_score_dp_matrix_policy, allocate_matrix)
     EXPECT_EQ(mock.band_row_index, 3u);
     EXPECT_NE(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
 
-    auto last_cell = *(--seqan3::end(mock.score_matrix));
-    EXPECT_EQ(last_cell, (std::tuple{decltype(mock)::INF, decltype(mock)::INF}));
+    auto last_cell = *std::ranges::prev(seqan3::end(mock.score_matrix));
+    EXPECT_EQ(std::get<0>(last_cell), decltype(mock)::INF);
+    EXPECT_EQ(std::get<1>(last_cell), decltype(mock)::INF);
 }
 
 TEST(banded_score_dp_matrix_policy, next_column)
@@ -157,14 +158,19 @@ TEST(banded_score_dp_matrix_policy, current_column)
     // Writing into the first value means writing into the second value
     for (auto && tpl : col)
     {
-        std::get<0>(std::forward<decltype(tpl)>(tpl)) = std::tuple{-1, -1};
+        std::get<0>(std::forward<decltype(tpl)>(tpl)) = std::tuple{-1, -1, std::ignore};
     }
 
     for (auto && tpl : col | view::take_exactly(3u))
-        EXPECT_EQ(std::get<1>(std::forward<decltype(tpl)>(tpl)), (std::tuple{-1, -1}));
+    {
+        int first;
+        int second;
+        std::tie(first, second, std::ignore) = std::get<1>(tpl);
+        EXPECT_EQ((std::tie(first, second)), (std::tuple{-1, -1}));
+    }
 
-    EXPECT_EQ(std::get<1>(*std::ranges::prev(seqan3::end(col))),
-              (std::tuple{decltype(mock)::INF, decltype(mock)::INF}));
+    EXPECT_EQ(std::get<0>(std::get<1>(*std::ranges::prev(seqan3::end(col)))), decltype(mock)::INF);
+    EXPECT_EQ(std::get<1>(std::get<1>(*std::ranges::prev(seqan3::end(col)))), decltype(mock)::INF);
 }
 
 TEST(banded_score_dp_matrix_policy, second_range_begin_offset)

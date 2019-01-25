@@ -21,6 +21,7 @@
 #include <range/v3/view/zip.hpp>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
@@ -95,7 +96,12 @@ public:
 
         // Reserve one more cell to deal with last cell in the banded column which needs only the diagonal and up cell.
         // TODO: introduce specific named cell types with initialisation values.
-        score_matrix.resize(band_column_index + band_row_index + 2, cell_type{INF, INF});
+        score_matrix.resize(band_column_index + band_row_index + 2);
+
+        using std::get;
+        get<0>(score_matrix.back()) = INF;
+        get<1>(score_matrix.back()) = INF;
+        get<2>(score_matrix.back()) = trace_directions::none;
         current_column_index = 0;
         // Position the iterator to the right offset within the band.
         current_matrix_iter = seqan3::begin(score_matrix) + band_column_index;

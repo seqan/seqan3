@@ -72,25 +72,53 @@ private:
     {
         using std::get;
         // Unpack the cached variables.
-        auto & [current_entry, next_entry] = get<0>(current_cell);
-        auto & [main_score, hz_score] = current_entry;
-        auto const & prev_hz_score = get<1>(next_entry);
+        auto & [score_entry, coordinate, trace_value] = current_cell;
+        auto & [current_entry, next_entry] = score_entry;
+        auto & [main_score, hz_score, hz_trace] = current_entry;
+        auto const & [_ignore, prev_hz_score, prev_hz_trace]= next_entry;
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
-        auto & [tmp, vt_score] = prev_cell;
+        auto & [tmp, vt_score, vt_trace] = prev_cell;
+
+        std::ignore = _ignore;
 
         //TODO For the local alignment we might be able to use GCC overlow builtin arithmetics, which
         // allows us to check if overflow/underflow would happen. Not sure, if this helps with the performance though.
         // (see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html)
         main_score += score;
-        main_score = std::max(main_score, vt_score);
-        main_score = std::max(main_score, prev_hz_score);
+        // Compute where the max comes from.
+        if constexpr (decays_to_ignore_v<decltype(trace_value)>) // Don't compute a traceback
+        {
+            main_score = (main_score < vt_score) ? vt_score : main_score;
+            main_score = (main_score < prev_hz_score) ? prev_hz_score : main_score;
+        }
+        else  // Compute any traceback
+        {
+            main_score = (main_score < vt_score) ? (trace_value = vt_trace, vt_score)
+                                   : (trace_value = trace_directions::diagonal, main_score);
+            main_score = (main_score < prev_hz_score) ? (trace_value = prev_hz_trace, prev_hz_score)
+                                   : main_score;
+        }
+
         // Check if this was the optimum. Possibly a noop.
         static_cast<derived_type const &>(*this).check_score(
-            alignment_optimum{main_score, static_cast<alignment_coordinate>(get<1>(current_cell))}, opt);
+            alignment_optimum{main_score, static_cast<alignment_coordinate>(coordinate)}, opt);
 
         tmp = main_score + gap_open;
-        vt_score = std::max(vt_score + gap_extend, tmp);
-        hz_score = std::max(prev_hz_score + gap_extend, tmp);
+        vt_score += gap_extend;
+        hz_score = prev_hz_score + gap_extend;
+
+        if constexpr (decays_to_ignore_v<decltype(trace_value)>)
+        {
+            vt_score = (vt_score < tmp) ? tmp : vt_score;
+            hz_score = (hz_score < tmp) ? tmp : hz_score;
+        }
+        else
+        {
+            vt_score = (vt_score < tmp) ? (vt_trace = trace_directions::up_open, tmp)
+                                        : (vt_trace = trace_directions::up, vt_score);
+            hz_score = (hz_score < tmp) ? (hz_trace = trace_directions::left_open, tmp)
+                                        : (hz_trace = trace_directions::left, hz_score);
+        }
     }
 
     /*!\brief Computes the score of the first cell within the band.
@@ -107,21 +135,40 @@ private:
     {
         using std::get;
         // Unpack the cached variables.
-        auto & [current_entry, next_entry] = get<0>(current_cell);
+        auto & [score_entry, coordinate, trace_value] = current_cell;
+        auto & [current_entry, next_entry] = score_entry;
         auto & main_score = get<0>(current_entry);
         auto const & prev_hz_score = get<1>(next_entry);
-        auto & vt_score = get<1>(get<0>(cache));
+        auto const & prev_hz_trace = get<2>(next_entry);
+        auto & [tmp, vt_score, vt_trace] = get<0>(cache);
+
+        std::ignore = tmp;
 
         // Compute the diagonal score and the compare with the previous horizontal value.
         main_score += score;
-        main_score = std::max(main_score, prev_hz_score);
+
+        if constexpr (decays_to_ignore_v<decltype(trace_value)>) // Don't compute a traceback
+        {
+            main_score = (main_score < prev_hz_score) ? prev_hz_score : main_score;
+        }
+        else
+        {
+            main_score = (main_score < prev_hz_score) ? (trace_value = prev_hz_trace, prev_hz_score)
+                                   : (trace_value = trace_directions::diagonal, main_score);
+        }
+
         // Check if this was the optimum. Possibly a noop.
         static_cast<derived_type const &>(*this).check_score(
-                alignment_optimum{main_score, static_cast<alignment_coordinate>(get<1>(current_cell))}, get<3>(cache));
+                alignment_optimum{main_score, static_cast<alignment_coordinate>(coordinate)}, get<3>(cache));
         // At the top of the band we can not come from up but only diagonal or left, so the next vertical must be a
         // gap open.
         vt_score = main_score + get<1>(cache);  // add gap open cost
-        // Don't compute the horizontal value, as it won't be used anyway.
+
+        // Store vertical open as it is the only way to get into the first cell of the band from a vertical direction.
+        if constexpr (!decays_to_ignore_v<decltype(trace_value)>) // Traceback requested.
+            vt_trace = trace_directions::up_open;
+
+        // Don't compute the horizontal value, since it will never be used.
     }
 
     using base_t::make_cache;

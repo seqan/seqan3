@@ -63,22 +63,36 @@ private:
         using std::get;
 
         // Call get twice since the banded score column is a zipped range and we need to access the main column.
-        auto & [main_score, hz_score] = get<0>(get<0>(current_cell));
+        auto & [main_score, hz_score, hz_trace] = get<0>(get<0>(current_cell));
+        auto & trace_value = get<2>(current_cell);
         auto & vt_score = get<1>(get<0>(cache));
+        auto & vt_trace = get<2>(get<0>(cache));
 
         main_score = 0;
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
+        {
             vt_score = 0;
+            vt_trace = trace_directions::none;
+        }
         else
+        {
             vt_score = get<1>(cache);
-
+            vt_trace = trace_directions::up_open;
+        }
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
+        {
             hz_score = 0;
+            hz_trace = trace_directions::none;
+        }
         else
+        {
             hz_score = get<1>(cache);
+            hz_trace = trace_directions::left_open;
+        }
+        trace_value = trace_directions::none;
     }
 
     /*!\brief Initialises a cell in the first column of the dynamic programming matrix.
@@ -93,18 +107,27 @@ private:
         using std::get;
 
         // Call get twice since the banded score column is a zipped range and we need to access the main column.
-        auto & [main_score, hz_score] = get<0>(get<0>(current_cell));
+        auto & [main_score, hz_score, hz_trace] = get<0>(get<0>(current_cell));
+        auto & trace_value = get<2>(current_cell);
         auto & vt_score = get<1>(get<0>(cache));
+        auto & vt_trace = get<2>(get<0>(cache));
 
         main_score = vt_score;
+        trace_value = vt_trace;
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
+        {
             vt_score = 0;
+            vt_trace = trace_directions::none;
+        }
         else
+        { // previous vertical + gap extension
             vt_score += get<2>(cache);
-
-        hz_score = main_score + get<1>(cache);
+            vt_trace = trace_directions::up;
+        }
+        hz_score = main_score + get<1>(cache); // gap_opening cost
+        hz_trace = trace_directions::left_open;
     }
 
     /*!\brief Initialises a cell in the first row of the current band.
@@ -117,18 +140,30 @@ private:
     constexpr auto init_row_cell(cell_t && current_cell, cache_t & cache) const noexcept
     {
         auto & [current_entry, next_entry] = get<0>(current_cell); // Split into current entry and next entry.
+        auto & trace_value = get<2>(current_cell);  // the trace value to store.
         auto & main_score = get<0>(current_entry);  // current_entry stores current score to be updated.
-        auto & hz_score = get<1>(next_entry);  // next_entry stores last horizontal value (shifted by one).
+        auto & hz_trace = get<2>(current_entry); // store trace for the next horizontal computation.
+        auto const & hz_score = get<1>(next_entry);  // next_entry stores last horizontal value (shifted by one).
+        auto const & prev_hz_trace = get<1>(next_entry);  // next_entry stores last horizontal value (shifted by one).
         auto & vt_score = get<1>(get<0>(cache));
+        auto & vt_trace = get<2>(get<0>(cache));
 
         main_score = hz_score;
-        vt_score += main_score + get<1>(cache); // gap opening cost + gap extension cost.
+        trace_value = prev_hz_trace;
+        vt_score += main_score + get<1>(cache); // gap opening cost
+        vt_trace = trace_directions::up_open;
 
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
+        {
             get<1>(current_entry) = 0;
+            hz_trace = trace_directions::none;
+        }
         else
+        {
             get<1>(current_entry) = hz_score + get<2>(cache);
+            hz_trace = trace_directions::left;
+        }
     }
 
     /*!\brief Balances the total score based on the band parameters and the alignment configuration.
