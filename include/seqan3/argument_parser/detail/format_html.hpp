@@ -110,15 +110,17 @@ public:
      */
     void parse(argument_parser_meta_data const & parser_meta)
     {
+        meta = parser_meta;
+
         print_header();
 
         print_section("Synopsis");
         _print_synopsis();
 
-        if (!parser_meta.description.empty())
+        if (!meta.description.empty())
         {
             print_section("Description");
-            for (auto desc : parser_meta.description)
+            for (auto desc : meta.description)
                 print_line(desc);
         }
 
@@ -327,7 +329,7 @@ private:
                   << "<strong>Last update:</strong> " << to_html(meta.date) << "<br>\n<strong>"
                   << meta.app_name << " version:</strong> " << meta.version << "<br>\n"
                   << "<strong>SeqAn version:</strong> " << SEQAN3_VERSION_MAJOR << '.' <<  SEQAN3_VERSION_MINOR << '.'
-                  << SEQAN3_VERSION_PATCH;
+                  << SEQAN3_VERSION_PATCH << "<br>\n";
 
         if (!meta.url.empty())
         {

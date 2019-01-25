@@ -147,7 +147,7 @@ protected:
     std::string escape_special_xml_chars(std::string const & original)
     {
         std::string escaped;
-        escaped.resize(original.size()); // will be at least as long
+        escaped.reserve(original.size()); // will be at least as long
 
         for (auto c : original)
         {
