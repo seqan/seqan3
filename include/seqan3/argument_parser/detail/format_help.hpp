@@ -765,4 +765,76 @@ public:
     }
 };
 
+/*!\brief The format that prints the copyright information to std::cout.
+ * \ingroup argument_parser
+ *
+ * \details
+ *
+ * The copyright message printing is not done immediately, because the user cannot provide
+ * meta information (e.g. long_copyright) on construction of the parser. Thus the meta information is collected
+ * and only evaluated when calling seqan3::format_version::parse.
+ */
+class format_copyright : public format_help
+{
+public:
+    /*!\brief Initiates the printing of the copyright message to std::cout.
+     * \param[in] parser_meta The meta information that are needed for a detailed version information.
+     */
+    void parse(argument_parser_meta_data const & parser_meta)
+    {
+        meta = parser_meta;
+        std::string seqan_license{
+        R"(Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Knut Reinert or the FU Berlin nor the names of
+      its contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.)"};
+
+        std::cout << std::string(80, '=') << to_text("\n\\fB") << "Copyright information for "
+                  << meta.app_name << ":\n" << to_text("\\fP") << std::string(80, '-') << '\n';
+
+        if (!empty(meta.long_copyright))
+        {
+            std::cout << to_text("\\fP") << meta.long_copyright << "\n\n";
+        }
+        else if (!empty(meta.short_copyright))
+        {
+            std::cout << to_text("\\fP") << meta.app_name << " full copyright information not available. Displaying"
+                      << " short copyright information instead:\n" << to_text("\\fP") << meta.short_copyright << "\n\n";
+        }
+        else
+        {
+            std::cout << to_text("\\fP") << meta.app_name << " copyright information not available.\n\n";
+        }
+
+        std::cout << std::string(80, '=') << to_text("\n\\fB")
+                  << "This program contains SeqAn3 code licensed under the following terms:\n" << to_text("\\fP")
+                  << std::string(80, '-') << '\n' << seqan_license << '\n';
+
+        throw parser_interruption();
+    }
+};
+
 } // namespace seqan3::detail
