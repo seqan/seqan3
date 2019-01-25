@@ -25,13 +25,17 @@ namespace seqan3::detail
 enum struct trace_directions : uint8_t
 {
     //!\brief No trace
-    none      = 0b0000,
+    none      = 0b00000,
     //!\brief Trace comes from the diagonal entry.
-    diagonal  = 0b0001,
+    diagonal  = 0b00001,
     //!\brief Trace comes from the above entry.
-    up        = 0b0010,
+    up        = 0b00010,
     //!\brief Trace comes from the left entry.
-    left      = 0b0100
+    left      = 0b00100,
+    //!\brief Trace comes from the above entry, while opening the gap.
+    up_open   = 0b01000,
+    //!\brief Trace comes from the left entry, while opening the gap.
+    left_open = 0b10000
 };
 
 } // namespace seqan3::detail

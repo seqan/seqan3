@@ -14,7 +14,7 @@
 
 #include <tuple>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
 
 namespace seqan3::detail
 {
@@ -71,24 +71,37 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        auto & [main_score, hz_score, hz_trace]       = get<0>(current_cell);
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & vt_score = get<1>(prev_cell);
         (void) opt;  // prevent compiler warning.
 
         main_score = 0;
+        get<2>(current_cell) = trace_directions::none; // store the trace direction
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
+        {
             vt_score = 0;
+            get<2>(prev_cell) = trace_directions::none;  // cache vertical trace
+        }
         else
+        {
             vt_score = gap_open;
+            get<2>(prev_cell) = trace_directions::up_open; // cache vertical trace
+        }
 
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
+        {
             hz_score = 0;
+            hz_trace = trace_directions::none; // cache horizontal trace
+        }
         else
+        {
             hz_score = gap_open;
+            hz_trace = trace_directions::left_open; // cache horizontal trace
+        }
     }
 
     /*!\brief Initialises a cell in the first column of the dynamic programming matrix.
@@ -102,20 +115,28 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        auto & [main_score, hz_score, hz_trace]       = get<0>(current_cell);
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & vt_score = get<1>(prev_cell);
         (void) opt;  // prevent compiler warning.
 
         main_score = vt_score;
+        get<2>(current_cell) = get<2>(prev_cell); // store the trace direction
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
+        {
             vt_score = 0;
+            get<2>(prev_cell) = trace_directions::none; // cache vertical trace
+        }
         else
+        {
             vt_score += gap_extend;
+            get<2>(prev_cell) = trace_directions::up; // cache vertical trace
+        }
 
         hz_score = main_score + gap_open;
+        hz_trace = trace_directions::none;  // cache horizontal trace
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
@@ -129,22 +150,28 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        auto & [main_score, hz_score, hz_trace]       = get<0>(current_cell);
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
-        auto & [prev_score, vt_score] = prev_cell;
+        auto & [prev_score, vt_score, vt_trace]       = prev_cell;
         (void) opt;  // prevent compiler warning.
 
         prev_score = main_score;
         main_score = hz_score;
+        get<2>(current_cell) = hz_trace; // store the trace direction
 
         vt_score += main_score + gap_open;
-
+        vt_trace = trace_directions::none; // cache vertical trace
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
+        {
             hz_score = 0;
+            hz_trace = trace_directions::none;
+        }
         else
+        {
             hz_score += gap_extend;
-
+            hz_trace = trace_directions::left;
+        }
     }
 };
 

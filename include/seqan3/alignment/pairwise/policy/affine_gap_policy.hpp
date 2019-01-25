@@ -16,6 +16,7 @@
 #include <tuple>
 
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
 
 namespace seqan3::detail
 {
@@ -71,27 +72,55 @@ private:
         using std::get;
 
         // Unpack the cached variables.
-        auto & [score_entry, coordinate, trace_entry] = current_cell;
-        auto & [main_score, hz_score] = score_entry;
+        auto & [score_entry, coordinate, trace_value] = current_cell;
+        auto & [main_score, hz_score, hz_trace]       = score_entry;
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
-        auto & [prev_score, vt_score] = prev_cell;
+        auto & [prev_score, vt_score, vt_trace]       = prev_cell;
 
-        //TODO For the local alignment we might be able to use GCC overlow builtin arithmetics, which
+        //TODO For the local alignment we might be able to use GCC overflow builtin arithmetics, which
         // allows us to check if overflow/underflow would happen. Not sure, if this helps with the performance though.
         // (see https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html)
+
+        // Precompute the diagonal score.
         score_t tmp = prev_score + score;
-        tmp = std::max(tmp, vt_score);
-        tmp = std::max(tmp, hz_score);
+
+        // Compute where the max comes from.
+        if constexpr (decays_to_ignore_v<decltype(trace_value)>) // Don't compute a traceback
+        {
+            tmp = (tmp < vt_score) ? vt_score : tmp;
+            tmp = (tmp < hz_score) ? hz_score : tmp;
+        }
+        else  // Compute any traceback
+        {
+            tmp = (tmp < vt_score) ? (trace_value = vt_trace, vt_score)
+                                   : (trace_value = trace_directions::diagonal, tmp);
+            tmp = (tmp < hz_score) ? (trace_value = hz_trace, hz_score)
+                                   : tmp;
+        }
+        // Cache the current main score for the next diagonal computation and update the current score.
         prev_score = main_score;
         main_score = tmp;
         // Check if this was the optimum. Possibly a noop.
         static_cast<derived_t const &>(*this).check_score(
                 alignment_optimum{tmp, static_cast<alignment_coordinate>(coordinate)}, opt);
+
+        // Prepare horizontal and vertical score for next column.
         tmp += gap_open;
         vt_score += gap_extend;
         hz_score += gap_extend;
-        vt_score = std::max(vt_score, tmp);
-        hz_score = std::max(hz_score, tmp);
+
+        if constexpr (decays_to_ignore_v<decltype(trace_value)>)
+        {
+            vt_score = (vt_score < tmp) ? tmp : vt_score;
+            hz_score = (hz_score < tmp) ? tmp : hz_score;
+        }
+        else
+        {
+            vt_score = (vt_score < tmp) ? (vt_trace = trace_directions::up_open, tmp)
+                                        : (vt_trace = trace_directions::up, vt_score);
+            hz_score = (hz_score < tmp) ? (hz_trace = trace_directions::up_open, tmp)
+                                        : (hz_trace = trace_directions::up, hz_score);
+        }
     }
 
     /*!\brief Creates the cache used for affine gap computation.
