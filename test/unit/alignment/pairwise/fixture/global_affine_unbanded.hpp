@@ -42,10 +42,10 @@ static auto dna4_01 = []()
         "ACGTACGTA"_dna4,
         align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         -18,
-        "AACCGGTTAACCGGTT",
-        "A-C-G-T-A-C-G-TA",
+        "AACCGGTTAACCG---GTT",
+        "A----------CGTACGTA",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -88,10 +88,10 @@ static auto dna4_02 = []()
         "AACCGGTTAACCGGTT"_dna4,
         align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         -18,
-        "A-C-G-T-A-C-G-TA",
-        "AACCGGTTAACCGGTT",
+        "ACGTAC----------GTA",
+        "A---ACCGGTTAACCGGTT",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T

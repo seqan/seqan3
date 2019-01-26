@@ -41,9 +41,9 @@ static auto dna4_01 = []()
         "ACGTAAAACGT"_dna4,
         align_config_semi_seq1 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         10,
-        "TTTTTACGT---ATGTCCCCC",
-        "-----ACGTAAAACGT-----",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        "ACGT---ATGT",
+        "ACGTAAAACGT",
+        alignment_coordinate{column_index_type{5u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{13u}, row_index_type{11u}},
         std::vector
         {
@@ -87,8 +87,8 @@ static auto dna4_02 = []()
         "TTTTTACGTATGTCCCCC"_dna4,
         align_config_semi_seq1 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         -13,
-        "-----ACGTA--------AAACGT",
-        "TTTTTACGTATGTCCCCC------",
+        "-----ACGTA--------",
+        "TTTTTACGTATGTCCCCC",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
         alignment_coordinate{column_index_type{5u}, row_index_type{18u}},
         std::vector
@@ -133,10 +133,10 @@ static auto dna4_03 = []()
         "ACGTAAAACGT"_dna4,
         align_config_semi_seq2 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         -13,
-        "-----ACGTA--------AAACGT",
-        "TTTTTACGTATGTCCCCC------",
+        "TTTTTACGTATGTCCCCC",
+        "-----ACGTA--------",
         alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{5u}, row_index_type{18u}},
+        alignment_coordinate{column_index_type{18u}, row_index_type{5u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -172,17 +172,17 @@ static auto dna4_04 = []()
 {
     using detail::column_index_type;
     using detail::row_index_type;
-    
+
     return alignment_fixture
     {
         "ACGTAAAACGT"_dna4,
         "TTTTTACGTATGTCCCCC"_dna4,
         align_config_semi_seq2 | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         10,
-        "TTTTTACGT---ATGTCCCCC",
-        "-----ACGTAAAACGT-----",
-        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        alignment_coordinate{column_index_type{13u}, row_index_type{11u}},
+        "ACGTAAAACGT",
+        "ACGT---ATGT",
+        alignment_coordinate{column_index_type{0u}, row_index_type{5u}},
+        alignment_coordinate{column_index_type{11u}, row_index_type{13u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T

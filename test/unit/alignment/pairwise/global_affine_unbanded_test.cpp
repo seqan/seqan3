@@ -53,19 +53,66 @@ using semi_global_affine_unbanded_types
 TYPED_TEST_P(global_affine_unbanded, score)
 {
     auto const & fixture = this->fixture();
-    // We only compute the score.
     auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_score};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    // TODO Make test work with ranges.
     auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
 
     EXPECT_EQ((*std::ranges::begin(alignment)).get_score(), fixture.score);
 }
 
-REGISTER_TYPED_TEST_CASE_P(global_affine_unbanded, score);
+TYPED_TEST_P(global_affine_unbanded, end_position)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_end_position};
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+
+    auto res = *std::ranges::begin(alignment);
+    EXPECT_EQ(res.get_score(), fixture.score);
+    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+}
+
+TYPED_TEST_P(global_affine_unbanded, begin_position)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_begin_position};
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+
+    auto res = *std::ranges::begin(alignment);
+    EXPECT_EQ(res.get_score(), fixture.score);
+    EXPECT_EQ(res.get_begin_coordinate(), fixture.begin_coordinate);
+    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+}
+
+TYPED_TEST_P(global_affine_unbanded, trace)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_trace};
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+
+    auto res = *std::ranges::begin(alignment);
+    EXPECT_EQ(res.get_score(), fixture.score);
+    EXPECT_EQ(res.get_begin_coordinate(), fixture.begin_coordinate);
+    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+    EXPECT_TRUE(ranges::equal(get<0>(res.get_alignment()) | view::to_char, fixture.gapped_sequence1));
+    EXPECT_TRUE(ranges::equal(get<1>(res.get_alignment()) | view::to_char, fixture.gapped_sequence2));
+}
+
+REGISTER_TYPED_TEST_CASE_P(global_affine_unbanded, score, end_position, begin_position, trace);
 
 INSTANTIATE_TYPED_TEST_CASE_P(global, global_affine_unbanded, global_affine_unbanded_types);
 INSTANTIATE_TYPED_TEST_CASE_P(semi_global, global_affine_unbanded, semi_global_affine_unbanded_types);

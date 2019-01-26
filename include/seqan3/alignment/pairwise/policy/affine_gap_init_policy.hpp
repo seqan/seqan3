@@ -58,7 +58,7 @@ private:
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy const &) noexcept = default;
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy &&) noexcept = default;
     ~affine_gap_init_policy() noexcept = default;
-    //!}
+    //!\}
 
     /*!\brief Initialises the origin of the dynamic programming matrix.
      * \tparam        cell_t       The underlying cell type.
@@ -71,10 +71,9 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score, hz_trace]       = get<0>(current_cell);
-        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
+        auto & [main_score, hz_score, hz_trace] = get<0>(current_cell);
+        auto & prev_cell = get<0>(cache);
         auto & vt_score = get<1>(prev_cell);
-        (void) opt;  // prevent compiler warning.
 
         main_score = 0;
         get<2>(current_cell) = trace_directions::none; // store the trace direction
@@ -87,7 +86,7 @@ private:
         }
         else
         {
-            vt_score = gap_open;
+            vt_score = get<1>(cache);
             get<2>(prev_cell) = trace_directions::up_open; // cache vertical trace
         }
 
@@ -99,7 +98,7 @@ private:
         }
         else
         {
-            hz_score = gap_open;
+            hz_score = get<1>(cache);
             hz_trace = trace_directions::left_open; // cache horizontal trace
         }
     }
@@ -115,10 +114,9 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score, hz_trace]       = get<0>(current_cell);
-        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
+        auto & [main_score, hz_score, hz_trace] = get<0>(current_cell);
+        auto & prev_cell = get<0>(cache);
         auto & vt_score = get<1>(prev_cell);
-        (void) opt;  // prevent compiler warning.
 
         main_score = vt_score;
         get<2>(current_cell) = get<2>(prev_cell); // store the trace direction
@@ -131,12 +129,12 @@ private:
         }
         else
         {
-            vt_score += gap_extend;
+            vt_score += get<2>(cache);
             get<2>(prev_cell) = trace_directions::up; // cache vertical trace
         }
 
-        hz_score = main_score + gap_open;
-        hz_trace = trace_directions::none;  // cache horizontal trace
+        hz_score = main_score + get<1>(cache);
+        hz_trace = trace_directions::left_open;  // cache horizontal trace
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
@@ -150,17 +148,16 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score, hz_trace]       = get<0>(current_cell);
-        auto & [prev_cell, gap_open, gap_extend, opt] = cache;
-        auto & [prev_score, vt_score, vt_trace]       = prev_cell;
-        (void) opt;  // prevent compiler warning.
+        auto & [main_score, hz_score, hz_trace] = get<0>(current_cell);
+        auto & prev_cell = get<0>(cache);
+        auto & [prev_score, vt_score, vt_trace] = prev_cell;
 
         prev_score = main_score;
         main_score = hz_score;
         get<2>(current_cell) = hz_trace; // store the trace direction
 
-        vt_score += main_score + gap_open;
-        vt_trace = trace_directions::none; // cache vertical trace
+        vt_score += main_score + get<1>(cache);
+        vt_trace = trace_directions::up_open; // cache vertical trace
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
         {
@@ -169,7 +166,7 @@ private:
         }
         else
         {
-            hz_score += gap_extend;
+            hz_score += get<2>(cache);
             hz_trace = trace_directions::left;
         }
     }

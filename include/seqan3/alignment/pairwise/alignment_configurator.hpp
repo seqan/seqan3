@@ -161,16 +161,6 @@ struct alignment_configurator
             }
         }
 
-        // ----------------------------------------------------------------------------
-        // Unsupported configurations
-        // ----------------------------------------------------------------------------
-
-        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
-            throw std::domain_error{"Computing the begin position is yet not supported."};
-
-        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
-            throw std::domain_error{"Computing the traceback is yet not supported."};
-
         // Configure the alignment algorithm.
         return configure_free_ends_initialisation<kernel_t>(cfg);
     }
@@ -217,6 +207,20 @@ private:
     template <typename kernel_t, typename ...policies_t, typename config_t>
     static constexpr auto configure_free_ends_optimum_search(config_t const & cfg);
 
+    /*!\brief Determines the trace type.
+     * \tparam config_t The configuration type.
+     */
+    template <typename config_t>
+    struct configure_trace_type
+    {
+        //!\brief If traceback is enabled resolves to seqan3::detail::trace_directions,
+        //!\      otherwise seqan3::detail::ignore_t.
+        using type = std::conditional_t<config_t::template exists<align_cfg::result<with_trace_type>>() ||
+                                        config_t::template exists<align_cfg::result<with_begin_position_type>>(),
+                                        trace_directions,
+                                        ignore_t>;
+    };
+
 };
 
 //!\cond
@@ -229,13 +233,18 @@ alignment_configurator::configure_free_ends_initialisation(config_t const & cfg)
     // ----------------------------------------------------------------------------
 
     using score_type = int32_t;
-    using cell_type = std::tuple<score_type, score_type, ignore_t>;
+    using trace_type = typename configure_trace_type<config_t>::type;
+    using cell_type = std::tuple<score_type, score_type, trace_type>;
 
     // ----------------------------------------------------------------------------
     // dynamic programming matrix
     // ----------------------------------------------------------------------------
 
-    using dp_matrix_t = deferred_crtp_base<unbanded_dp_matrix_policy, std::allocator<cell_type>>;
+    // Use the correct dp matrix type.
+    using dp_matrix_t = std::conditional_t<std::is_same_v<trace_type, trace_directions>,
+                                           deferred_crtp_base<unbanded_score_trace_dp_matrix_policy,
+                                                              std::allocator<cell_type>, std::allocator<trace_type>>,
+                                           deferred_crtp_base<unbanded_dp_matrix_policy, std::allocator<cell_type>>>;
 
     // ----------------------------------------------------------------------------
     // affine gap kernel

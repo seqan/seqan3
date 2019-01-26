@@ -58,7 +58,7 @@ private:
     constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy const &) = default;
     constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy &&)      = default;
     ~unbanded_dp_matrix_policy()                                                       = default;
-    //!}
+    //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.
      * \tparam first_batch_t   The type of the first sequence (or packed sequences).

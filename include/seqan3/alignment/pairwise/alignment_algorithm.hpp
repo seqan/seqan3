@@ -30,6 +30,7 @@
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
+#include <seqan3/std/view/subrange.hpp>
 
 namespace seqan3::detail
 {
@@ -135,9 +136,32 @@ public:
         result_t res{};
 
         // Choose what needs to be computed.
-        if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_score_type>>())
         {
             res.score = get<3>(cache).score;
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = get<3>(cache).coordinate;
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
+        { // At the moment we also compute the traceback even if only the begin coordinate was requested.
+          // This can be later optimised by computing the reverse alignment in a narrow band in linear memory.
+          // Especially for the SIMD version this might be more efficient.
+            res.score = get<3>(cache).score;
+            res.end_coordinate = get<3>(cache).coordinate;
+            res.begin_coordinate = get<0>(compute_traceback(first_batch,
+                                                            second_batch,
+                                                            get<3>(cache).coordinate));
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = get<3>(cache).coordinate;
+            std::tie(res.begin_coordinate, res.alignment) = compute_traceback(first_batch,
+                                                                              second_batch,
+                                                                              get<3>(cache).coordinate);
         }
         return align_result{res};
     }
@@ -161,6 +185,7 @@ private:
         });
 
         auto [cell, coordinate, trace] = *(--seqan3::end(col));
+        (void) trace; // unused in this context.
         alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
         this->check_score_last_row(current, get<3>(cache));
     }
@@ -184,6 +209,9 @@ private:
         auto const & score_scheme = get<align_cfg::scoring>(*cfg_ptr).value;
         ranges::for_each(first_batch, [&, this](auto seq1_value)
         {
+            // Move internal matrix to next column.
+            this->next_column();
+
             auto col = this->current_column();
             this->init_row_cell(*std::ranges::begin(col), cache);
 
@@ -196,12 +224,66 @@ private:
             });
             // First construct an alignment_optimum object to make it comparable with the current optimum.
             auto [cell, coordinate, trace] = *(--seqan3::end(col));
+            (void) trace; // unused in this context.
             alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
             this->check_score_last_row(current, get<3>(cache));
-            // Move internal matrix to next column.
-            this->next_column();
         });
         this->check_score_last_column(this->current_column(), get<3>(cache));
+    }
+
+    template <typename first_batch_t, typename second_batch_t>
+    auto compute_traceback(first_batch_t const & first_batch,
+                           second_batch_t const & second_batch,
+                           alignment_coordinate const & end_coordinate)
+    {
+        using first_seq_value_type = value_type_t<first_batch_t>;
+        using second_seq_value_type = value_type_t<second_batch_t>;
+
+        // Parse the traceback
+        auto [begin_coordinate, first_gap_segments, second_gap_segments] = this->parse_traceback(end_coordinate);
+
+        auto fill_aligned_sequence = [](auto & aligned_sequence, auto & gap_segments, size_t const normalise)
+        {
+            assert(normalise <= gap_segments[0].position);
+
+            size_t offset = 0;
+            for (auto const & gap_elem : gap_segments)
+            {
+                // insert_gap(aligned_sequence, gap.position + offset, gap.size);
+                auto it = seqan3::begin(aligned_sequence);
+                std::advance(it, (gap_elem.position - normalise) + offset);
+                aligned_sequence.insert(it, gap_elem.size, gap{});
+                offset += gap_elem.size;
+            }
+        };
+
+        // Get the subrange over the first sequence according to the begin and end coordinate.
+        auto it_first_seq_begin = seqan3::begin(first_batch);
+        std::advance(it_first_seq_begin, begin_coordinate.first_seq_pos);
+        auto it_first_seq_end = seqan3::begin(first_batch);
+        std::advance(it_first_seq_end, end_coordinate.first_seq_pos);
+
+        using first_subrange_type = seqan3::view::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
+        auto first_subrange = first_subrange_type{it_first_seq_begin, it_first_seq_end};
+
+        // Create and fill the aligned_sequence for the first sequence.
+        std::vector<gapped<first_seq_value_type>> first_aligned_seq{first_subrange};
+        fill_aligned_sequence(first_aligned_seq, first_gap_segments, begin_coordinate.first_seq_pos);
+
+        // Get the subrange over the second sequence according to the begin and end coordinate.
+        auto it_second_seq_begin = seqan3::begin(second_batch);
+        std::advance(it_second_seq_begin, begin_coordinate.second_seq_pos);
+        auto it_second_seq_end = seqan3::begin(second_batch);
+        std::advance(it_second_seq_end, end_coordinate.second_seq_pos);
+
+        using second_subrange_type = seqan3::view::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
+        auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};
+
+        // Create and fill the aligned_sequence for the first sequence.
+        std::vector<gapped<second_seq_value_type>> second_aligned_seq{second_subrange};
+        fill_aligned_sequence(second_aligned_seq, second_gap_segments, begin_coordinate.second_seq_pos);
+
+        return std::tuple{begin_coordinate, std::tuple{first_aligned_seq, second_aligned_seq}};
     }
 
     //!\brief The alignment configuration stored on the heap.

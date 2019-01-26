@@ -35,8 +35,11 @@ namespace seqan3::detail
  */
 struct default_find_optimum_trait
 {
+    //!\brief Disables lookup of the optimal score in every cell.
     using find_in_every_cell_type  = std::false_type;
+    //!\brief Disables lookup of the optimal score in the last row.
     using find_in_last_row_type    = std::false_type;
+    //!\brief Disables lookup of the optimal score in the last column.
     using find_in_last_column_type = std::false_type;
 };
 
@@ -69,7 +72,7 @@ private:
     constexpr find_optimum_policy & operator=(find_optimum_policy const &) = default;
     constexpr find_optimum_policy & operator=(find_optimum_policy &&) = default;
     ~find_optimum_policy() = default;
-    //!}
+    //!\}
 
 protected:
 
