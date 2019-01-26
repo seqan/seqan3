@@ -35,7 +35,7 @@ auto generate_sequence_seqan3(size_t const len = 500,
                               size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, alphabet_size_v<alphabet_t>);
+    std::uniform_int_distribution<uint8_t> dis_alpha(0, alphabet_size_v<alphabet_t> - 1);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     std::vector<alphabet_t> sequence;
@@ -54,7 +54,7 @@ auto generate_sequence_seqan2(size_t const len = 500,
                               size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE);
+    std::uniform_int_distribution<uint8_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE - 1);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     seqan::String<alphabet_t> sequence;
@@ -107,7 +107,49 @@ BENCHMARK(seqan2_affine_dna4);
 #endif // SEQAN3_HAS_SEQAN2
 
 // ============================================================================
-//  affine; score; dna4; set
+//  affine; trace; dna4; single
+// ============================================================================
+
+void seqan3_affine_dna4_trace(benchmark::State & state)
+{
+    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
+               align_cfg::result{align_cfg::with_trace};
+
+    auto seq1 = generate_sequence_seqan3<seqan3::dna4>(500, 0, 0);
+    auto seq2 = generate_sequence_seqan3<seqan3::dna4>(500, 0, 1);
+
+    for (auto _ : state)
+    {
+        auto rng = align_pairwise(std::tie(seq1, seq2), cfg);
+        *seqan3::begin(rng);
+    }
+}
+
+BENCHMARK(seqan3_affine_dna4_trace);
+
+#ifdef SEQAN3_HAS_SEQAN2
+
+void seqan2_affine_dna4_trace(benchmark::State & state)
+{
+    auto seq1 = generate_sequence_seqan2<seqan::Dna>(500, 0, 0);
+    auto seq2 = generate_sequence_seqan2<seqan::Dna>(500, 0, 1);
+
+    seqan::Gaps<decltype(seq1)> gap1{seq1};
+    seqan::Gaps<decltype(seq2)> gap2{seq2};
+    for (auto _ : state)
+    {
+        // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+        seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
+    }
+}
+
+BENCHMARK(seqan2_affine_dna4_trace);
+#endif // SEQAN3_HAS_SEQAN2
+
+// ============================================================================
+//  affine; score; dna4; collection
 // ============================================================================
 
 void seqan3_affine_dna4_collection(benchmark::State & state)
@@ -160,6 +202,72 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
 }
 
 BENCHMARK(seqan2_affine_dna4_collection);
+#endif // SEQAN3_HAS_SEQAN2
+
+// ============================================================================
+//  affine; trace; dna4; collection
+// ============================================================================
+
+void seqan3_affine_dna4_trace_collection(benchmark::State & state)
+{
+    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
+               align_cfg::result{align_cfg::with_trace};
+
+    using sequence_t = decltype(generate_sequence_seqan3<seqan3::dna4>());
+
+    std::vector<std::pair<sequence_t, sequence_t>> vec;
+    for (unsigned i = 0; i < 100; ++i)
+    {
+        sequence_t seq1 = generate_sequence_seqan3<seqan3::dna4>(100, 0, i);
+        sequence_t seq2 = generate_sequence_seqan3<seqan3::dna4>(100, 0, i + 100);
+        vec.push_back(std::pair{seq1, seq2});
+    }
+
+    for (auto _ : state)
+    {
+        for (auto && rng : align_pairwise(vec, cfg))
+            rng.get_score();
+    }
+}
+
+BENCHMARK(seqan3_affine_dna4_trace_collection);
+
+#ifdef SEQAN3_HAS_SEQAN2
+
+void seqan2_affine_dna4_trace_collection(benchmark::State & state)
+{
+    using sequence_t = decltype(generate_sequence_seqan2<seqan::Dna>());
+
+    seqan::StringSet<sequence_t> vec1;
+    seqan::StringSet<sequence_t> vec2;
+    for (unsigned i = 0; i < 100; ++i)
+    {
+        sequence_t seq1 = generate_sequence_seqan2<seqan::Dna>(100, 0, i);
+        sequence_t seq2 = generate_sequence_seqan2<seqan::Dna>(100, 0, i + 100);
+        appendValue(vec1, seq1);
+        appendValue(vec2, seq2);
+    }
+
+
+    seqan::StringSet<seqan::Gaps<sequence_t>> gap1;
+    seqan::StringSet<seqan::Gaps<sequence_t>> gap2;
+
+    for (unsigned i = 0; i < 100; ++i)
+    {
+        appendValue(gap1, seqan::Gaps<sequence_t>{vec1[i]});
+        appendValue(gap2, seqan::Gaps<sequence_t>{vec2[i]});
+    }
+
+    for (auto _ : state)
+    {
+        // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
+        seqan::globalAlignment(gap1, gap2, seqan::Score<int>{4, -5, -1, -11});
+    }
+}
+
+BENCHMARK(seqan2_affine_dna4_trace_collection);
 #endif // SEQAN3_HAS_SEQAN2
 
 // ============================================================================
