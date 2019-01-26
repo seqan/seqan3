@@ -93,9 +93,9 @@ private:
         else  // Compute any traceback
         {
             tmp = (tmp < vt_score) ? (trace_value = vt_trace, vt_score)
-                                   : (trace_value = trace_directions::diagonal, tmp);
+                                   : (trace_value = trace_directions::diagonal | vt_trace, tmp);
             tmp = (tmp < hz_score) ? (trace_value = hz_trace, hz_score)
-                                   : tmp;
+                                   : (trace_value |= hz_trace, tmp);
         }
         // Cache the current main score for the next diagonal computation and update the current score.
         prev_score = main_score;
@@ -118,8 +118,8 @@ private:
         {
             vt_score = (vt_score < tmp) ? (vt_trace = trace_directions::up_open, tmp)
                                         : (vt_trace = trace_directions::up, vt_score);
-            hz_score = (hz_score < tmp) ? (hz_trace = trace_directions::up_open, tmp)
-                                        : (hz_trace = trace_directions::up, hz_score);
+            hz_score = (hz_score < tmp) ? (hz_trace = trace_directions::left_open, tmp)
+                                        : (hz_trace = trace_directions::left, hz_score);
         }
     }
 

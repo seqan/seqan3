@@ -134,7 +134,7 @@ private:
         }
 
         hz_score = main_score + get<1>(cache);
-        hz_trace = trace_directions::none;  // cache horizontal trace
+        hz_trace = trace_directions::left_open;  // cache horizontal trace
     }
 
     /*!\brief Initialises a cell in the first row of the dynamic programming matrix.
@@ -156,7 +156,7 @@ private:
         get<2>(current_cell) = hz_trace; // store the trace direction
 
         vt_score += main_score + get<1>(cache);
-        vt_trace = trace_directions::none; // cache vertical trace
+        vt_trace = trace_directions::up_open; // cache vertical trace
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
         {

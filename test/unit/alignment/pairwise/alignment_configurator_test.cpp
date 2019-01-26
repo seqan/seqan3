@@ -21,60 +21,46 @@ auto setup()
     return ranges::view::single(std::move(data)) | view::persist;
 }
 
-TEST(alignment_configurator, configure_edit)
+template <typename config_t>
+bool run_test(config_t const & cfg)
 {
-    auto cfg = align_cfg::edit;
-
     auto r = setup();
     auto fn = detail::alignment_configurator::configure(r, cfg);
     auto [seq1, seq2] = *seqan3::begin(r);
 
-    EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+    return fn(seq1, seq2).get_score() == 0;
+}
+
+TEST(alignment_configurator, configure_edit)
+{
+    EXPECT_TRUE(run_test(align_cfg::edit));
 }
 
 TEST(alignment_configurator, configure_edit_end_position)
 {
-    auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_end_position};
-
-    auto r = setup();
-    auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto [seq1, seq2] = *seqan3::begin(r);
-
-    EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{align_cfg::with_end_position}));
 }
 
 TEST(alignment_configurator, configure_edit_begin_position)
 {
-    auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_begin_position};
-
-    auto r = setup();
-    auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto [seq1, seq2] = *seqan3::begin(r);
-
-    EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{align_cfg::with_begin_position}));
 }
 
 TEST(alignment_configurator, configure_edit_trace)
 {
-    auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
-
-    auto r = setup();
-    auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto [seq1, seq2] = *seqan3::begin(r);
-
-    EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{align_cfg::with_trace}));
 }
 
 TEST(alignment_configurator, configure_edit_semi)
 {
-    auto cfg = align_cfg::edit | align_cfg::aligned_ends{align_cfg::seq1_ends_free};
-    EXPECT_THROW(detail::alignment_configurator::configure(setup(), cfg), invalid_alignment_configuration);
+    EXPECT_THROW(run_test(align_cfg::edit | align_cfg::aligned_ends{align_cfg::seq1_ends_free}),
+                 invalid_alignment_configuration);
 }
 
 TEST(alignment_configurator, configure_edit_banded)
 {
-    auto cfg = align_cfg::edit | align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
-    EXPECT_THROW(detail::alignment_configurator::configure(setup(), cfg), invalid_alignment_configuration);
+    EXPECT_THROW((run_test(align_cfg::edit | align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}})),
+                 invalid_alignment_configuration);
 }
 
 TEST(alignment_configurator, configure_affine_global)
@@ -83,11 +69,7 @@ TEST(alignment_configurator, configure_affine_global)
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}};
 
-    auto r = setup();
-    auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto [seq1, seq2] = *seqan3::begin(r);
-
-    EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+    EXPECT_TRUE(run_test(cfg));
 }
 
 TEST(alignment_configurator, configure_affine_global_end_position)
@@ -97,11 +79,7 @@ TEST(alignment_configurator, configure_affine_global_end_position)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{align_cfg::with_end_position};
 
-    auto r = setup();
-    auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto [seq1, seq2] = *seqan3::begin(r);
-
-    EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+    EXPECT_TRUE(run_test(cfg));
 }
 
 TEST(alignment_configurator, configure_affine_global_begin_position)
@@ -111,7 +89,7 @@ TEST(alignment_configurator, configure_affine_global_begin_position)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{align_cfg::with_begin_position};
 
-    EXPECT_THROW(detail::alignment_configurator::configure(setup(), cfg), invalid_alignment_configuration);
+    EXPECT_TRUE(run_test(cfg));
 }
 
 TEST(alignment_configurator, configure_affine_global_trace)
@@ -121,7 +99,7 @@ TEST(alignment_configurator, configure_affine_global_trace)
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{align_cfg::with_trace};
 
-    EXPECT_THROW(detail::alignment_configurator::configure(setup(), cfg), invalid_alignment_configuration);
+    EXPECT_TRUE(run_test(cfg));
 }
 
 TEST(alignment_configurator, configure_affine_global_banded)
@@ -132,11 +110,7 @@ TEST(alignment_configurator, configure_affine_global_banded)
                    align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                    align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
 
-        auto r = setup();
-        auto fn = detail::alignment_configurator::configure(r, cfg);
-        auto [seq1, seq2] = *seqan3::begin(r);
-
-        EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+        EXPECT_TRUE(run_test(cfg));
     }
 
     {  // invalid band
@@ -146,23 +120,26 @@ TEST(alignment_configurator, configure_affine_global_banded)
         auto cfg_lower = cfg_base | align_cfg::band{static_band{lower_bound{-10}, upper_bound{-5}}};
         auto cfg_upper = cfg_base | align_cfg::band{static_band{lower_bound{5}, upper_bound{6}}};
 
-        auto r = setup();
-
-        {
-            auto fn = detail::alignment_configurator::configure(r, cfg_lower);
-            auto [seq1, seq2] = *seqan3::begin(r);
-
-            EXPECT_THROW((fn(seq1, seq2).get_score()), invalid_alignment_configuration);
-        }
-
-        {
-            auto fn = detail::alignment_configurator::configure(r, cfg_upper);
-            auto [seq1, seq2] = *seqan3::begin(r);
-
-            EXPECT_THROW((fn(seq1, seq2).get_score()), invalid_alignment_configuration);
-        }
+        EXPECT_THROW(run_test(cfg_lower), invalid_alignment_configuration);
+        EXPECT_THROW(run_test(cfg_upper), invalid_alignment_configuration);
     }
 }
+
+// TEST(alignment_configurator, configure_affine_global_banded_with_trace)
+// {
+//     auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+//                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+//                align_cfg::scoring{nucleotide_scoring_scheme{}} |
+//                align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
+//
+//     auto cfg_trace = cfg | align_cfg::result{align_cfg::with_trace};
+//     auto cfg_begin = cfg | align_cfg::result{align_cfg::with_begin_position};
+//     auto cfg_end = cfg | align_cfg::result{align_cfg::with_end_position};
+//
+//     EXPECT_TRUE(run_test(cfg_end));
+//     EXPECT_THROW(run_test(cfg_trace), invalid_alignment_configuration);
+//     EXPECT_THROW(run_test(cfg_begin), invalid_alignment_configuration);
+// }
 
 TEST(alignment_configurator, configure_affine_global_semi)
 {
@@ -171,9 +148,5 @@ TEST(alignment_configurator, configure_affine_global_semi)
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::aligned_ends{align_cfg::all_ends_free};
 
-    auto r = setup();
-    auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto [seq1, seq2] = *seqan3::begin(r);
-
-    EXPECT_EQ((fn(seq1, seq2).get_score()), 0);
+    EXPECT_TRUE(run_test(cfg));
 }

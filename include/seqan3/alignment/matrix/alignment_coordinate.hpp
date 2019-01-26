@@ -15,6 +15,7 @@
 #include <type_traits>
 
 #include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 
@@ -370,5 +371,25 @@ public:
     //!\brief The begin/end position of the alignment in the second sequence.
     SEQAN3_DOXYGEN_ONLY(size_t second_seq_pos;)
 };
+
+/*!\brief A seqan3::alignment_coordinate can be printed to the seqan3::debug_stream.
+ * \tparam    coordinate_type The alignment coordinate type.
+ * \param[in] s               The seqan3::debug_stream.
+ * \param[in] c               The alignment coordinate to print.
+ * \relates seqan3::debug_stream_type
+ *
+ * \details
+ *
+ * Prints the alignment coordinate as a tuple.
+ */
+template <typename coordinate_type>
+//!\cond
+    requires std::Same<remove_cvref_t<coordinate_type>, alignment_coordinate>
+//!\endcond
+inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type && c)
+{
+    s << std::tie(c.first_seq_pos, c.second_seq_pos);
+    return s;
+}
 
 } // namespace seqan3

@@ -94,7 +94,7 @@ private:
      * \tparam config_type The configuration for which to select the correct matrix policy.
      * \tparam trait_types A template parameter pack with additional traits to augment the selected policy.
      */
-    template <typename config_type, typename ... trait_types>
+    template <typename config_type, typename score_allocator_t, typename trace_allocator_t>
     struct select_matrix_policy
     {
     private:
@@ -103,10 +103,20 @@ private:
         template <typename config_t>
         static constexpr auto select() noexcept
         {
-            if constexpr (config_t::template exists<align_cfg::band>())
-                return deferred_crtp_base<banded_score_dp_matrix_policy, trait_types...>{};
+            // Check whether traceback was requested or not.
+            if constexpr (std::is_same_v<typename trace_allocator_t::value_type, ignore_t>)
+            {  // No traceback
+                if constexpr (config_t::template exists<align_cfg::band>())
+                    return deferred_crtp_base<banded_score_dp_matrix_policy, score_allocator_t>{};
+                else
+                    return deferred_crtp_base<unbanded_dp_matrix_policy, score_allocator_t>{};
+            }
             else
-                return deferred_crtp_base<unbanded_dp_matrix_policy, trait_types...>{};
+            {  // requested traceback
+                return deferred_crtp_base<unbanded_score_trace_dp_matrix_policy,
+                                          score_allocator_t,
+                                          trace_allocator_t>{};
+            }
         }
 
     public:
@@ -229,16 +239,6 @@ public:
             }
         }
 
-        // ----------------------------------------------------------------------------
-        // Unsupported configurations
-        // ----------------------------------------------------------------------------
-
-        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
-            throw invalid_alignment_configuration{"Computing the begin position is yet not supported."};
-
-        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
-            throw invalid_alignment_configuration{"Computing the traceback is yet not supported."};
-
         // Configure the alignment algorithm.
         return configure_free_ends_initialisation<function_wrapper_t>(cfg);
     }
@@ -295,6 +295,20 @@ private:
     template <typename function_wrapper_t, typename ...policies_t, typename config_t>
     static constexpr function_wrapper_t configure_free_ends_optimum_search(config_t const & cfg);
 
+    /*!\brief Determines the trace type.
+     * \tparam config_t The configuration type.
+     */
+    template <typename config_t>
+    struct configure_trace_type
+    {
+        //!\brief If traceback is enabled resolves to seqan3::detail::trace_directions,
+        //!\      otherwise seqan3::detail::ignore_t.
+        using type = std::conditional_t<config_t::template exists<align_cfg::result<with_trace_type>>() ||
+                                        config_t::template exists<align_cfg::result<with_begin_position_type>>(),
+                                        trace_directions,
+                                        ignore_t>;
+    };
+
 };
 
 //!\cond
@@ -308,13 +322,20 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     // ----------------------------------------------------------------------------
 
     using score_type = int32_t;
-    using cell_type = std::tuple<score_type, score_type, ignore_t>;
+    using trace_type = typename configure_trace_type<config_t>::type;
+    using cell_type = std::tuple<score_type, score_type, trace_type>;
 
     // ----------------------------------------------------------------------------
     // dynamic programming matrix
     // ----------------------------------------------------------------------------
 
-    using dp_matrix_t = typename select_matrix_policy<config_t, std::allocator<cell_type>>::type;
+    if constexpr (!std::is_same_v<trace_type, ignore_t> &&
+                   config_t::template exists<align_cfg::band>())
+        throw invalid_alignment_configuration{"Computing traceback for banded alignments is yet not supported."};
+
+    using dp_matrix_t = typename select_matrix_policy<config_t,
+                                                      std::allocator<cell_type>,
+                                                      std::allocator<trace_type>>::type;
 
     // ----------------------------------------------------------------------------
     // affine gap kernel

@@ -58,11 +58,12 @@
  * These policies maintain the alignment matrix in their own state.
  * The following table shows the functions that are required by the seqan3::detail::alignment_algorithm.
  *
- * Function name     | Arguments | Return value                         |
- * ----------------- | --------- | ------------------------------------ |
- * `allocate_matrix` | &Oslash;  | `void`                               |
- * `current_column`  | &Oslash;  | *implementation defined* - see below |
- * `next_column`     | &Oslash;  | `void`                               |
+ * Function name     | Arguments               | Return value                                                                 |
+ * ----------------- | ----------------------- | ---------------------------------------------------------------------------- |
+ * `allocate_matrix` | &Oslash;                | `void`                                                                       |
+ * `current_column`  | &Oslash;                | *implementation defined* - see below                                         |
+ * `next_column`     | &Oslash;                | `void`                                                                       |
+ * `parse_traceback` | `alignment_coordinate`  | `tuple<alignment_coordinate, tuple<deque<gap_segment>, deque<gap_segment>>>` |
  *
  * - allocate_matrix:
  *
@@ -79,6 +80,13 @@
  * - next_column:
  *
  *     Is called at the end of a column computation and moves internal matrix pointers to the next column.
+ *
+ * - parse_traceback:
+ *
+ *     This function is only required if the alignment is requested. It gets the coordinate where the traceback
+ *     should be started and returns a tuple with the begin coordinate and the two iterable ranges containing
+ *     seqan3::detail::gap_segment s. These gap segments store the gaps within the first sequence and the second
+ *     sequence respectively.
  *
  * ### Existing matrix policies:
  *
