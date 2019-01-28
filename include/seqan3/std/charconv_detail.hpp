@@ -145,7 +145,7 @@ inline char* append4(char* buffer, T i)
     return append2(append2(buffer, (i) / 100), (i) % 100);
 }
 
-char* u32toa(uint32_t value, char* buffer)
+inline char* u32toa(uint32_t value, char* buffer)
 {
     if (value < 10000)
     {
@@ -205,7 +205,7 @@ char* u32toa(uint32_t value, char* buffer)
     return buffer;
 }
 
-char* u64toa(uint64_t value, char* buffer)
+inline char* u64toa(uint64_t value, char* buffer)
 {
     if (value < 100000000)
     {
