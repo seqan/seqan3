@@ -118,7 +118,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept sequence_file_input_traits_concept = requires (t v)
+SEQAN3_CONCEPT sequence_file_input_traits_concept = requires (t v)
 {
     requires alphabet_concept<typename t::sequence_alphabet>;
     requires alphabet_concept<typename t::sequence_legal_alphabet>;

@@ -50,7 +50,7 @@ namespace std
  */
 //!\cond
 template <class T, class U>
-concept Same = std::is_same_v<T, U>;
+SEQAN3_CONCEPT Same = std::is_same_v<T, U>;
 //!\endcond
 
 /*!\interface std::DerivedFrom <>
@@ -60,7 +60,7 @@ concept Same = std::is_same_v<T, U>;
  */
 //!\cond
 template <class Derived, class Base >
-concept DerivedFrom =
+SEQAN3_CONCEPT DerivedFrom =
     std::is_base_of_v<Base, Derived> &&
     std::is_convertible_v<const volatile Derived*, const volatile Base*>;
 //!\endcond
@@ -73,7 +73,7 @@ concept DerivedFrom =
  */
 //!\cond
 template <class From, class To>
-concept ConvertibleTo =
+SEQAN3_CONCEPT ConvertibleTo =
     std::is_convertible_v<From, To> &&
     requires(From (&f)())
     {
@@ -88,7 +88,7 @@ concept ConvertibleTo =
  */
 //!\cond
 template <class T, class U >
-concept CommonReference =
+SEQAN3_CONCEPT CommonReference =
   Same<::ranges::common_reference_t<T, U>, ::ranges::common_reference_t<U, T>> &&
   ConvertibleTo<T, ::ranges::common_reference_t<T, U>> &&
   ConvertibleTo<U, ::ranges::common_reference_t<T, U>>;
@@ -101,7 +101,7 @@ concept CommonReference =
  */
 //!\cond
 template <class T, class U>
-concept Common =
+SEQAN3_CONCEPT Common =
     Same<::ranges::common_type_t<T, U>, ::ranges::common_type_t<U, T>> &&
     ConvertibleTo<T, ::ranges::common_type_t<T, U>> &&
     ConvertibleTo<U, ::ranges::common_type_t<T, U>> &&
@@ -117,7 +117,7 @@ concept Common =
  */
 //!\cond
 template <class T>
-concept Integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
+SEQAN3_CONCEPT Integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
 //!\endcond
 
 /*!\interface std::SignedIntegral
@@ -128,7 +128,7 @@ concept Integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
  */
 //!\cond
 template <class T>
-concept SignedIntegral = Integral<T> && std::is_signed_v<T>;
+SEQAN3_CONCEPT SignedIntegral = Integral<T> && std::is_signed_v<T>;
 //!\endcond
 
 /*!\interface std::UnsignedIntegral
@@ -139,7 +139,7 @@ concept SignedIntegral = Integral<T> && std::is_signed_v<T>;
  */
 //!\cond
 template <class T>
-concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
+SEQAN3_CONCEPT UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
 //!\endcond
 
 /*!\interface std::Assignable <>
@@ -159,7 +159,7 @@ concept UnsignedIntegral = Integral<T> && !SignedIntegral<T>;
  */
 //!\cond
 template <class LHS, class RHS>
-concept Assignable =
+SEQAN3_CONCEPT Assignable =
     std::is_lvalue_reference_v<LHS> &&
     CommonReference<std::remove_reference_t<LHS> const &, std::remove_reference_t<RHS> const&> &&
     requires(LHS lhs, RHS&& rhs)
@@ -186,7 +186,7 @@ concept Assignable =
 //!\}
 //!\cond
 template <class T>
-concept Swappable = std::is_swappable_v<T>;
+SEQAN3_CONCEPT Swappable = std::is_swappable_v<T>;
 //!\endcond
 
 /*!\interface std::SwappableWith <>
@@ -196,7 +196,7 @@ concept Swappable = std::is_swappable_v<T>;
  */
 //!\cond
 template <class T, class U>
-concept SwappableWith =
+SEQAN3_CONCEPT SwappableWith =
     std::is_swappable_with_v<T, T> &&
     std::is_swappable_with_v<U, U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -211,7 +211,7 @@ concept SwappableWith =
  */
 //!\cond
 template < class T >
-concept Destructible = std::is_nothrow_destructible_v<T>;
+SEQAN3_CONCEPT Destructible = std::is_nothrow_destructible_v<T>;
 //!\endcond
 
 /*!\interface   std::Constructible <>
@@ -222,7 +222,7 @@ concept Destructible = std::is_nothrow_destructible_v<T>;
  */
 //!\cond
 template < class T, class... Args >
-concept Constructible = Destructible<T> && std::is_constructible_v<T, Args...>;
+SEQAN3_CONCEPT Constructible = Destructible<T> && std::is_constructible_v<T, Args...>;
 //!\endcond
 
 /*!\interface   std::DefaultConstructible <>
@@ -233,7 +233,7 @@ concept Constructible = Destructible<T> && std::is_constructible_v<T, Args...>;
  */
 //!\cond
 template < class T >
-concept DefaultConstructible = Constructible<T>;
+SEQAN3_CONCEPT DefaultConstructible = Constructible<T>;
 //!\endcond
 
 /*!\interface   std::MoveConstructible <>
@@ -246,7 +246,7 @@ concept DefaultConstructible = Constructible<T>;
  */
 //!\cond
 template< class T >
-concept MoveConstructible = Constructible<T, T> && ConvertibleTo<T, T>;
+SEQAN3_CONCEPT MoveConstructible = Constructible<T, T> && ConvertibleTo<T, T>;
 //!\endcond
 
 /*!\interface   std::CopyConstructible <>
@@ -259,7 +259,7 @@ concept MoveConstructible = Constructible<T, T> && ConvertibleTo<T, T>;
  */
 //!\cond
 template <class T>
-concept CopyConstructible =
+SEQAN3_CONCEPT CopyConstructible =
   MoveConstructible<T> &&
   Constructible<T, T&>       && ConvertibleTo<T&, T> &&
   Constructible<T, const T&> && ConvertibleTo<const T&, T> &&
@@ -281,7 +281,7 @@ concept CopyConstructible =
  */
 //!\cond
 template < class T >
-concept Movable = std::is_object_v<T> && MoveConstructible<T> && Assignable<T&, T> && Swappable<T>;
+SEQAN3_CONCEPT Movable = std::is_object_v<T> && MoveConstructible<T> && Assignable<T&, T> && Swappable<T>;
 //!\endcond
 
 // ============================================================================
@@ -295,7 +295,7 @@ concept Movable = std::is_object_v<T> && MoveConstructible<T> && Assignable<T&, 
  */
 //!\cond
 template <class B>
-concept Boolean =
+SEQAN3_CONCEPT Boolean =
     Movable<seqan3::remove_cvref_t<B>> &&
     requires(std::remove_reference_t<B> const & b1,
              std::remove_reference_t<B> const & b2, bool const a)
@@ -330,7 +330,7 @@ namespace std::detail
  */
 //!\cond
 template <class T, class U>
-concept WeaklyEqualityComparableWith =
+SEQAN3_CONCEPT WeaklyEqualityComparableWith =
     requires(std::remove_reference_t<T> const & t,
              std::remove_reference_t<U> const & u)
     {
@@ -371,7 +371,7 @@ namespace std
 //!\}
 //!\cond
 template < class T >
-concept EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
+SEQAN3_CONCEPT EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
 //!\endcond
 
 /*!\interface   std::EqualityComparableWith <>
@@ -384,7 +384,7 @@ concept EqualityComparable = detail::WeaklyEqualityComparableWith<T, T>;
  */
 //!\cond
 template <class T, class U>
-concept EqualityComparableWith =
+SEQAN3_CONCEPT EqualityComparableWith =
     EqualityComparable<T> &&
     EqualityComparable<U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -428,7 +428,7 @@ concept EqualityComparableWith =
 //!\}
 //!\cond
 template <class T>
-concept StrictTotallyOrdered =
+SEQAN3_CONCEPT StrictTotallyOrdered =
     EqualityComparable<T> &&
     requires(std::remove_reference_t<T> const & a,
              std::remove_reference_t<T> const & b)
@@ -449,7 +449,7 @@ concept StrictTotallyOrdered =
  */
 //!\cond
 template <class T, class U>
-concept StrictTotallyOrderedWith =
+SEQAN3_CONCEPT StrictTotallyOrderedWith =
     StrictTotallyOrdered<T> &&
     StrictTotallyOrdered<U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -483,7 +483,7 @@ concept StrictTotallyOrderedWith =
  */
 //!\cond
 template <class T>
-concept Copyable = CopyConstructible<T> && Movable<T> && Assignable<T&, const T&>;
+SEQAN3_CONCEPT Copyable = CopyConstructible<T> && Movable<T> && Assignable<T&, const T&>;
 //!\endcond
 
 /*!\interface   std::Semiregular
@@ -494,7 +494,7 @@ concept Copyable = CopyConstructible<T> && Movable<T> && Assignable<T&, const T&
  */
 //!\cond
 template <class T>
-concept Semiregular = Copyable<T> && DefaultConstructible<T>;
+SEQAN3_CONCEPT Semiregular = Copyable<T> && DefaultConstructible<T>;
 //!\endcond
 
 /*!\interface   std::Regular
@@ -505,7 +505,7 @@ concept Semiregular = Copyable<T> && DefaultConstructible<T>;
  */
 //!\cond
 template <class T>
-concept Regular = Semiregular<T> && EqualityComparable<T>;
+SEQAN3_CONCEPT Regular = Semiregular<T> && EqualityComparable<T>;
 //!\endcond
 
 // ============================================================================
@@ -518,7 +518,7 @@ concept Regular = Semiregular<T> && EqualityComparable<T>;
  */
 //!\cond
 template< class F, class... Args >
-concept Invocable =
+SEQAN3_CONCEPT Invocable =
     requires(F&& f, Args&&... args)
     {
         std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -534,7 +534,7 @@ concept Invocable =
  */
 //!\cond
 template< class F, class... Args >
-concept RegularInvocable = Invocable<F, Args...>;
+SEQAN3_CONCEPT RegularInvocable = Invocable<F, Args...>;
 //!\endcond
 
 /*!\interface   std::Predicate <>
@@ -544,7 +544,7 @@ concept RegularInvocable = Invocable<F, Args...>;
  */
 //!\cond
 template < class F, class... Args >
-concept Predicate = RegularInvocable<F, Args...> && Boolean<std::invoke_result_t<F, Args...>>;
+SEQAN3_CONCEPT Predicate = RegularInvocable<F, Args...> && Boolean<std::invoke_result_t<F, Args...>>;
 //!\endcond
 
 /*!\interface   std::Relation <>
@@ -555,7 +555,7 @@ concept Predicate = RegularInvocable<F, Args...> && Boolean<std::invoke_result_t
  */
 //!\cond
 template <class R, class T, class U>
-concept Relation =
+SEQAN3_CONCEPT Relation =
     Predicate<R, T, T> &&
     Predicate<R, U, U> &&
     CommonReference<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
@@ -574,7 +574,7 @@ concept Relation =
  */
 //!\cond
 template < class R, class T, class U >
-concept StrictWeakOrder = Relation<R, T, U>;
+SEQAN3_CONCEPT StrictWeakOrder = Relation<R, T, U>;
 //!\endcond
 //!\}
 

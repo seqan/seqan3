@@ -38,10 +38,10 @@ namespace seqan3
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-concept cereal_output_archive_concept = std::is_base_of_v<cereal::detail::OutputArchiveBase, t>;
+SEQAN3_CONCEPT cereal_output_archive_concept = std::is_base_of_v<cereal::detail::OutputArchiveBase, t>;
 #else
 template <typename t>
-concept cereal_output_archive_concept = false;
+SEQAN3_CONCEPT cereal_output_archive_concept = false;
 #endif
 //!\endcond
 
@@ -59,10 +59,10 @@ concept cereal_output_archive_concept = false;
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-concept cereal_input_archive_concept = std::is_base_of_v<cereal::detail::InputArchiveBase, t>;
+SEQAN3_CONCEPT cereal_input_archive_concept = std::is_base_of_v<cereal::detail::InputArchiveBase, t>;
 #else
 template <typename t>
-concept cereal_input_archive_concept = false;
+SEQAN3_CONCEPT cereal_input_archive_concept = false;
 #endif
 //!\endcond
 
@@ -76,10 +76,10 @@ concept cereal_input_archive_concept = false;
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-concept cereal_archive_concept = cereal_output_archive_concept<t> || cereal_input_archive_concept<t>;
+SEQAN3_CONCEPT cereal_archive_concept = cereal_output_archive_concept<t> || cereal_input_archive_concept<t>;
 #else
 template <typename t>
-concept cereal_archive_concept = false;
+SEQAN3_CONCEPT cereal_archive_concept = false;
 #endif
 //!\endcond
 
@@ -97,10 +97,10 @@ concept cereal_archive_concept = false;
 //!\cond
 #if SEQAN3_WITH_CEREAL
 template <typename t>
-concept cereal_text_archive_concept = std::is_base_of_v<cereal::traits::TextArchive, t>;
+SEQAN3_CONCEPT cereal_text_archive_concept = std::is_base_of_v<cereal::traits::TextArchive, t>;
 #else
 template <typename t>
-concept cereal_text_archive_concept = false;
+SEQAN3_CONCEPT cereal_text_archive_concept = false;
 #endif
 //!\endcond
 
@@ -138,12 +138,12 @@ concept cereal_text_archive_concept = false;
 template <typename value_t,
           typename input_archive_t = cereal::BinaryInputArchive,
           typename output_archive_t = cereal::BinaryOutputArchive>
-concept cerealisable_concept =
+SEQAN3_CONCEPT cerealisable_concept =
     cereal::traits::is_input_serializable<value_t, input_archive_t>::value &&
     cereal::traits::is_output_serializable<value_t, output_archive_t>::value;
 #else
 template <typename t>
-concept cerealisable_concept = false;
+SEQAN3_CONCEPT cerealisable_concept = false;
 #endif
 //!\endcond
 

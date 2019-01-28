@@ -106,7 +106,7 @@ class parse_condition_base;
  */
 //!\cond
 template <typename condition_t>
-concept parse_condition_concept = requires
+SEQAN3_CONCEPT parse_condition_concept = requires
 {
     requires std::Predicate<std::remove_reference_t<condition_t>, char>;
     requires std::is_base_of_v<parse_condition_base<remove_cvref_t<condition_t>>,

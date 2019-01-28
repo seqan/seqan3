@@ -31,7 +31,7 @@ namespace seqan3
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept ostream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+SEQAN3_CONCEPT ostream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
                                requires (stream_type & os, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
@@ -45,7 +45,7 @@ concept ostream_concept = std::is_base_of_v<std::ios_base, std::remove_reference
 };
 
 template <typename stream_type>
-concept ostream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+SEQAN3_CONCEPT ostream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
                            ostream_concept<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
@@ -104,7 +104,7 @@ concept ostream_concept2 = requires { typename std::remove_reference_t<stream_ty
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept istream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+SEQAN3_CONCEPT istream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
                                requires (stream_type & is, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
@@ -118,7 +118,7 @@ concept istream_concept = std::is_base_of_v<std::ios_base, std::remove_reference
 };
 
 template <typename stream_type>
-concept istream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+SEQAN3_CONCEPT istream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
                            istream_concept<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
@@ -178,7 +178,7 @@ concept istream_concept2 = requires { typename std::remove_reference_t<stream_ty
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept stream_concept = ostream_concept<stream_type, value_type> &&
+SEQAN3_CONCEPT stream_concept = ostream_concept<stream_type, value_type> &&
                               istream_concept<stream_type, value_type>;
 
 //!\endcond

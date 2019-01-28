@@ -31,7 +31,7 @@ namespace seqan3::detail
 */
 //!\cond
 template <typename matrix_t>
-concept matrix_concept = requires(matrix_t m)
+SEQAN3_CONCEPT matrix_concept = requires(matrix_t m)
 {
 //!\endcond
     /*!\typedef typedef IMPLEMENTATION_DEFINED entry_type;

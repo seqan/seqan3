@@ -31,7 +31,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename tuple_t>
-concept tuple_size_concept = requires (tuple_t v)
+SEQAN3_CONCEPT tuple_size_concept = requires (tuple_t v)
 {
     { std::tuple_size<tuple_t>::value } -> size_t;
 };
@@ -44,7 +44,7 @@ concept tuple_size_concept = requires (tuple_t v)
  */
 //!\cond
 template <typename tuple_t>
-concept tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
+SEQAN3_CONCEPT tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
 {
     requires std::tuple_size_v<tuple_t> > 0;
 
@@ -168,7 +168,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept tuple_like_concept = detail::tuple_size_concept<std::remove_reference_t<t>> && requires(t v)
+SEQAN3_CONCEPT tuple_like_concept = detail::tuple_size_concept<std::remove_reference_t<t>> && requires(t v)
 {
     typename detail::tuple_type_list<remove_cvref_t<t>>::type;
 

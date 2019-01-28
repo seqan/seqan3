@@ -35,7 +35,7 @@ namespace seqan3::detail
 
 //!\cond
 template <typename t>
-concept has_value_type = requires { typename value_type_t<remove_cvref_t<t>>; };
+SEQAN3_CONCEPT has_value_type = requires { typename value_type_t<remove_cvref_t<t>>; };
 //!\endcond
 
 } // namespace seqan3::detail
@@ -230,7 +230,7 @@ constexpr size_t dimension_v<t> = dimension_v<value_type_t<remove_cvref_t<t>>> +
  */
 //!\cond
 template <typename t1, typename t2>
-concept compatible_concept = requires (t1, t2)
+SEQAN3_CONCEPT compatible_concept = requires (t1, t2)
 {
     requires (dimension_v<t1> == dimension_v<t2>);
 

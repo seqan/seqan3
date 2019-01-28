@@ -35,6 +35,6 @@ namespace seqan3::detail
  * \ingroup core
  */
 template <typename t>
-concept type_list_concept = is_type_specialisation_of_v<t, type_list>;
+SEQAN3_CONCEPT type_list_concept = is_type_specialisation_of_v<t, type_list>;
 
 } // namespace seqan3::detail

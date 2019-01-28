@@ -123,7 +123,7 @@ constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
  */
 //!\cond
 template<typename q>
-concept quality_concept = requires(q quality)
+SEQAN3_CONCEPT quality_concept = requires(q quality)
 {
     requires alphabet_concept<q>;
 

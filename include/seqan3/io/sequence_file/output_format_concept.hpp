@@ -37,7 +37,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept sequence_file_output_format_concept = requires (t                         & v,
+SEQAN3_CONCEPT sequence_file_output_format_concept = requires (t                         & v,
                                                           std::ofstream             & f,
                                                           sequence_file_output_options & options,
                                                           dna5_vector               & seq,
@@ -119,5 +119,5 @@ constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> 
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-concept type_list_of_sequence_file_output_formats_concept = is_type_list_of_sequence_file_output_formats_v<t>;
+SEQAN3_CONCEPT type_list_of_sequence_file_output_formats_concept = is_type_list_of_sequence_file_output_formats_v<t>;
 } // namespace seqan3::detail

@@ -119,7 +119,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept aligned_sequence_concept =
+SEQAN3_CONCEPT aligned_sequence_concept =
     std::ranges::ForwardRange<t> &&
     alphabet_concept<value_type_t<t>> &&
     weakly_assignable_concept<reference_t<t>, gap const &> &&

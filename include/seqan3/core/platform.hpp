@@ -29,15 +29,16 @@
 #   error "This is not a C++ compiler."
 #endif
 
-// Concepts TS [required]
+// C++ Concepts [required]
 #ifdef __cpp_concepts
 #   if __cpp_concepts == 201507 // GCC and Concepts TS
-#       define concept concept bool
+#       define SEQAN3_CONCEPT concept bool
 #   else
         static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
+#       define SEQAN3_CONCEPT concept
 #   endif
 #else
-#   error "SeqAn3 requires the Concepts TS, make sure that you have set -fconcepts (not all compilers support this)."
+#   error "SeqAn3 requires C++ Concepts, either vie the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
 #endif
 
 // SeqAn [required]

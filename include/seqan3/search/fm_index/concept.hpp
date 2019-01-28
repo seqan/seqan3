@@ -36,7 +36,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-concept SdslIndex = requires (t sdsl_index)
+SEQAN3_CONCEPT SdslIndex = requires (t sdsl_index)
 {
     typename t::size_type;
 
@@ -92,7 +92,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept FmIndexTraits = requires (t v)
+SEQAN3_CONCEPT FmIndexTraits = requires (t v)
 {
     typename t::sdsl_index_type;
 
@@ -122,7 +122,7 @@ concept FmIndexTraits = requires (t v)
  */
 //!\cond
 template <typename t>
-concept FmIndex = std::Semiregular<t> && requires (t index)
+SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
 {
     typename t::text_type;
     typename t::char_type;
@@ -184,7 +184,7 @@ concept FmIndex = std::Semiregular<t> && requires (t index)
  */
 //!\cond
 template <typename t>
-concept FmIndexCursor = std::Semiregular<t> && requires (t cur)
+SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
 {
     typename t::index_type;
     typename t::size_type;
@@ -242,7 +242,7 @@ concept FmIndexCursor = std::Semiregular<t> && requires (t cur)
  */
 //!\cond
 template <typename t>
-concept BiFmIndexTraits = requires (t v)
+SEQAN3_CONCEPT BiFmIndexTraits = requires (t v)
 {
     requires FmIndexTraits<typename t::fm_index_traits>;
     requires FmIndexTraits<typename t::rev_fm_index_traits>;
@@ -280,7 +280,7 @@ concept BiFmIndexTraits = requires (t v)
  */
 //!\cond
 template <typename t>
-concept BiFmIndex = FmIndex<t> && requires (t index)
+SEQAN3_CONCEPT BiFmIndex = FmIndex<t> && requires (t index)
 {
     typename t::cursor_type; // already required by FmIndex but has a different documentation
     typename t::fwd_cursor_type;
@@ -326,7 +326,7 @@ concept BiFmIndex = FmIndex<t> && requires (t index)
  */
 //!\cond
 template <typename t>
-concept BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
+SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
 {
     requires BiFmIndex<typename t::index_type>;
 

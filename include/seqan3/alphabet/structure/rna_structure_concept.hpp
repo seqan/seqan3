@@ -64,7 +64,7 @@ namespace seqan3
  */
 //!\cond
 template <typename structure_type>
-concept rna_structure_concept = requires(structure_type val)
+SEQAN3_CONCEPT rna_structure_concept = requires(structure_type val)
 {
     // requires fulfillment of alphabet concept
     requires alphabet_concept<structure_type>;

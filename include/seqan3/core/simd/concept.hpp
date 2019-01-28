@@ -34,7 +34,7 @@ inline namespace simd
  */
 //!\cond
 template <typename simd_t>
-concept simd_concept = requires (simd_t a, simd_t b)
+SEQAN3_CONCEPT simd_concept = requires (simd_t a, simd_t b)
 {
     typename simd_traits<simd_t>::scalar_type;
     typename simd_traits<simd_t>::mask_type;
