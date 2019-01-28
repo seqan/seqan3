@@ -32,6 +32,10 @@ linux-gcc-8: &linux-gcc-8
 # https://docs.travis-ci.com/user/languages/c/#gcc-on-linux
 matrix:
   include:
+  - << : *linux-gcc-7
+    env:
+      - BUILD=coverage
+      - BUILD_TYPE=Debug
   - << : *linux-gcc-8
     env:
       - BUILD=unit
@@ -77,10 +81,6 @@ matrix:
        - tar -C /tmp/ -zxvf /tmp/doxygen-download/${DOXYGEN_FOLDER}.linux.bin.tar.gz
        - PATH=$PATH:/tmp/${DOXYGEN_FOLDER}/bin/
        - doxygen --version
-  - << : *linux-gcc-7
-    env:
-      - BUILD=coverage
-      - BUILD_TYPE=Debug
 
 install:
   - ccache --version
