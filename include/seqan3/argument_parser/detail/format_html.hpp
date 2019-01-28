@@ -347,7 +347,7 @@ private:
                 std::cout << meta.app_name << " Copyright: </strong>"
                        << meta.short_copyright << "<br>\n<strong>";
 
-            std::cout << "SeqAn Copyright:</strong> 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n<strong>";
+            std::cout << "SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n<strong>";
 
             if (!meta.citation.empty())
                 std::cout << "In your academic works please cite:</strong> " << meta.citation << "<br>\n";

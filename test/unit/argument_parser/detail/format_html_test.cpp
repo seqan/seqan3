@@ -121,7 +121,7 @@ TEST(html_test, html)
                           "<br>"
                           "<h2>Legal</h2>"
                           "<strong>program_full_options Copyright: </strong>short copyright<br>"
-                          "<strong>SeqAn Copyright:</strong> 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>"
+                          "<strong>SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>"
                           "<strong>In your academic works please cite:</strong> citation<br>"
                           "For full copyright and/or warranty information see <tt>--copyright</tt>."
                           "</body></html>");
