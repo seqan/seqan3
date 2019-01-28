@@ -65,7 +65,7 @@ class config_element_base;
 //!\}
 //!\cond
 template <typename config_t>
-concept config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
+SEQAN3_CONCEPT config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
     { std::remove_reference_t<config_t>::id };

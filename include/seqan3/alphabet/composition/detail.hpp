@@ -35,7 +35,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-concept cartesian_composition_concept = requires
+SEQAN3_CONCEPT cartesian_composition_concept = requires
 {
     typename t::seqan3_cartesian_components;
     typename t::seqan3_recursive_cartesian_components;

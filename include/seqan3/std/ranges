@@ -43,7 +43,7 @@ namespace std::ranges
  */
 //!\cond
 template <typename type>
-concept Range = (bool)::ranges::Range<type>();
+SEQAN3_CONCEPT Range = (bool)::ranges::Range<type>();
 //!\endcond
 
 /*!\interface std::ranges::SizedRange <>
@@ -53,7 +53,7 @@ concept Range = (bool)::ranges::Range<type>();
  */
 //!\cond
 template <typename type>
-concept SizedRange = Range<type> && (bool)::ranges::SizedRange<type>();
+SEQAN3_CONCEPT SizedRange = Range<type> && (bool)::ranges::SizedRange<type>();
 //!\endcond
 
 /*!\interface std::ranges::CommonRange  <>
@@ -63,7 +63,7 @@ concept SizedRange = Range<type> && (bool)::ranges::SizedRange<type>();
  */
 //!\cond
 template <typename type>
-concept CommonRange = Range<type> && (bool)::ranges::BoundedRange<type>();
+SEQAN3_CONCEPT CommonRange = Range<type> && (bool)::ranges::BoundedRange<type>();
 //!\endcond
 
 /*!\interface std::ranges::OutputRange <>
@@ -74,7 +74,7 @@ concept CommonRange = Range<type> && (bool)::ranges::BoundedRange<type>();
  */
 //!\cond
 template <typename type, typename out_type>
-concept OutputRange = Range<type> && (bool)::ranges::OutputRange<type, out_type>();
+SEQAN3_CONCEPT OutputRange = Range<type> && (bool)::ranges::OutputRange<type, out_type>();
 //!\endcond
 
 /*!\interface std::ranges::InputRange <>
@@ -85,7 +85,7 @@ concept OutputRange = Range<type> && (bool)::ranges::OutputRange<type, out_type>
  */
 //!\cond
 template <typename type>
-concept InputRange = Range<type> && (bool)::ranges::InputRange<type>();
+SEQAN3_CONCEPT InputRange = Range<type> && (bool)::ranges::InputRange<type>();
 //!\endcond
 
 /*!\interface std::ranges::ForwardRange <>
@@ -96,7 +96,7 @@ concept InputRange = Range<type> && (bool)::ranges::InputRange<type>();
  */
 //!\cond
 template <typename type>
-concept ForwardRange = InputRange<type> && (bool)::ranges::ForwardRange<type>();
+SEQAN3_CONCEPT ForwardRange = InputRange<type> && (bool)::ranges::ForwardRange<type>();
 //!\endcond
 
 /*!\interface std::ranges::BidirectionalRange <>
@@ -107,7 +107,7 @@ concept ForwardRange = InputRange<type> && (bool)::ranges::ForwardRange<type>();
  */
 //!\cond
 template <typename type>
-concept BidirectionalRange = ForwardRange<type> && (bool)::ranges::BidirectionalRange<type>();
+SEQAN3_CONCEPT BidirectionalRange = ForwardRange<type> && (bool)::ranges::BidirectionalRange<type>();
 //!\endcond
 
 /*!\interface std::ranges::RandomAccessRange <>
@@ -118,7 +118,7 @@ concept BidirectionalRange = ForwardRange<type> && (bool)::ranges::Bidirectional
  */
 //!\cond
 template <typename type>
-concept RandomAccessRange = BidirectionalRange<type> && (bool)::ranges::RandomAccessRange<type>();
+SEQAN3_CONCEPT RandomAccessRange = BidirectionalRange<type> && (bool)::ranges::RandomAccessRange<type>();
 //!\endcond
 
 /*!\interface std::ranges::ContiguousRange <>
@@ -127,7 +127,7 @@ concept RandomAccessRange = BidirectionalRange<type> && (bool)::ranges::RandomAc
  */
 //!\cond
 template <typename type>
-concept ContiguousRange = RandomAccessRange<type> && (bool)::ranges::ContiguousRange<type>();
+SEQAN3_CONCEPT ContiguousRange = RandomAccessRange<type> && (bool)::ranges::ContiguousRange<type>();
 //!\endcond
 
 /*!\interface std::ranges::View <>
@@ -139,7 +139,7 @@ concept ContiguousRange = RandomAccessRange<type> && (bool)::ranges::ContiguousR
  */
 //!\cond
 template <typename type>
-concept View = Range<type> && (bool)::ranges::View<type>();
+SEQAN3_CONCEPT View = Range<type> && (bool)::ranges::View<type>();
 //!\endcond
 
 /*!\interface std::ranges::ViewableRange <>
@@ -149,7 +149,7 @@ concept View = Range<type> && (bool)::ranges::View<type>();
  */
 //!\cond
 template <typename type>
-concept ViewableRange = Range<type> && (std::is_lvalue_reference_v<type> || View<type>);
+SEQAN3_CONCEPT ViewableRange = Range<type> && (std::is_lvalue_reference_v<type> || View<type>);
 //!\endcond
 
 /*!\typedef std::ranges::begin;

@@ -34,7 +34,7 @@ namespace seqan3::detail
 {
 //!\cond
 template <typename align_config_t>
-concept semi_global_config_concept =
+SEQAN3_CONCEPT semi_global_config_concept =
     std::remove_reference_t<align_config_t>::template exists<align_cfg::aligned_ends>() &&
 requires (align_config_t & cfg)
 {
@@ -53,13 +53,13 @@ requires (align_config_t & cfg)
 };
 
 template <typename align_config_t>
-concept global_config_concept = requires (align_config_t & cfg)
+SEQAN3_CONCEPT global_config_concept = requires (align_config_t & cfg)
 {
     requires cfg.template exists<align_cfg::mode<detail::global_alignment_type>>();
 };
 
 template <typename align_config_t>
-concept max_errors_concept = requires (align_config_t & cfg)
+SEQAN3_CONCEPT max_errors_concept = requires (align_config_t & cfg)
 {
     requires cfg.template exists<align_cfg::max_error>();
 };
@@ -69,7 +69,7 @@ concept max_errors_concept = requires (align_config_t & cfg)
  * \ingroup pairwise
  */
 template <typename traits_type>
-concept edit_distance_trait_concept = requires
+SEQAN3_CONCEPT edit_distance_trait_concept = requires
 {
     typename std::remove_reference_t<traits_type>::word_type;
 };

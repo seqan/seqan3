@@ -61,7 +61,7 @@ constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
  */
 //!\cond
 template <typename type>
-concept aminoacid_concept = alphabet_concept<type> && is_aminoacid_v<remove_cvref_t<type>>;
+SEQAN3_CONCEPT aminoacid_concept = alphabet_concept<type> && is_aminoacid_v<remove_cvref_t<type>>;
 //!\endcond
 
 } // namespace seqan3

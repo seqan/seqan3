@@ -41,7 +41,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept alignment_file_output_format_concept =
+SEQAN3_CONCEPT alignment_file_output_format_concept =
     requires (t                                                               & v,
               std::ofstream                                                   & stream,
               alignment_file_output_options                                   & options,
@@ -178,5 +178,5 @@ constexpr bool is_type_list_of_alignment_file_output_formats_v<type_list<ts...>>
  * \see seqan3::is_type_list_of_alignment_file_formats_v
  */
 template <typename t>
-concept type_list_of_alignment_file_output_formats_concept = is_type_list_of_alignment_file_output_formats_v<t>;
+SEQAN3_CONCEPT type_list_of_alignment_file_output_formats_concept = is_type_list_of_alignment_file_output_formats_v<t>;
 } // namespace seqan3::detail

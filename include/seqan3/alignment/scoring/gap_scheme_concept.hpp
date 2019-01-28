@@ -46,7 +46,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept gap_scheme_concept = requires (t scheme, size_t num)
+SEQAN3_CONCEPT gap_scheme_concept = requires (t scheme, size_t num)
 {
     { scheme.score(num) } -> ptrdiff_t;
 };

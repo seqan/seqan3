@@ -39,7 +39,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-concept const_iterable_concept =
+SEQAN3_CONCEPT const_iterable_concept =
     std::ranges::InputRange<std::remove_const_t<type>> &&
     std::ranges::InputRange<type const> &&
     (std::ranges::ForwardRange<std::remove_const_t<type>>       == std::ranges::ForwardRange<type const>) &&

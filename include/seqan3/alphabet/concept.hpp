@@ -64,7 +64,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
+SEQAN3_CONCEPT semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
                                 std::StrictTotallyOrdered<t> &&
                                 requires (t v)
 {
@@ -115,7 +115,7 @@ concept semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
  */
 //!\cond
 template <typename t>
-concept alphabet_concept = semi_alphabet_concept<t> && requires (t v)
+SEQAN3_CONCEPT alphabet_concept = semi_alphabet_concept<t> && requires (t v)
 {
     // conversion to char
     requires           noexcept(to_char(v));
@@ -213,7 +213,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-concept constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && requires
+SEQAN3_CONCEPT constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(to_rank(std::remove_reference_t<t>{}));
@@ -249,7 +249,7 @@ concept constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && requires
  */
 //!\cond
 template <typename t>
-concept constexpr_alphabet_concept = constexpr_semi_alphabet_concept<t> &&
+SEQAN3_CONCEPT constexpr_alphabet_concept = constexpr_semi_alphabet_concept<t> &&
                                      alphabet_concept<t> &&
                                      requires
 {
