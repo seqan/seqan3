@@ -86,9 +86,12 @@ TEST(builtin_simd, simd_traits)
     EXPECT_EQ(simd_traits<int32x4_t>::max_length, 16u);
     EXPECT_EQ(simd_traits<int64x2_t>::max_length, 16u);
 
-    EXPECT_TRUE((std::is_same_v<simd_traits<int16x8_t>::mask_type, int16x8_t>));
-    EXPECT_TRUE((std::is_same_v<simd_traits<int32x4_t>::mask_type, int32x4_t>));
-    EXPECT_TRUE((std::is_same_v<simd_traits<int64x2_t>::mask_type, int64x2_t>));
+    EXPECT_TRUE((std::is_same_v<simd_traits<int16x8_t>::mask_type,
+                                decltype(std::declval<int16x8_t>() == std::declval<int16x8_t>())>));
+    EXPECT_TRUE((std::is_same_v<simd_traits<int32x4_t>::mask_type,
+                                decltype(std::declval<int32x4_t>() == std::declval<int32x4_t>())>));
+    EXPECT_TRUE((std::is_same_v<simd_traits<int64x2_t>::mask_type,
+                                decltype(std::declval<int64x2_t>() == std::declval<int64x2_t>())>));
 
     EXPECT_TRUE((std::is_same_v<simd_traits<int16x8_t>::swizzle_type, uint8x16_t>));
     EXPECT_TRUE((std::is_same_v<simd_traits<int32x4_t>::swizzle_type, uint8x16_t>));
@@ -108,9 +111,12 @@ TEST(builtin_simd, simd_traits)
     EXPECT_EQ(simd_traits<uint32x8_t>::max_length, 32u);
     EXPECT_EQ(simd_traits<uint64x4_t>::max_length, 32u);
 
-    EXPECT_TRUE((std::is_same_v<simd_traits<uint16x16_t>::mask_type, int16x16_t>));
-    EXPECT_TRUE((std::is_same_v<simd_traits<uint32x8_t>::mask_type, int32x8_t>));
-    EXPECT_TRUE((std::is_same_v<simd_traits<uint64x4_t>::mask_type, int64x4_t>));
+    EXPECT_TRUE((std::is_same_v<simd_traits<uint16x16_t>::mask_type,
+                 decltype(std::declval<int16x16_t>() == std::declval<int16x16_t>())>));
+    EXPECT_TRUE((std::is_same_v<simd_traits<uint32x8_t>::mask_type,
+                 decltype(std::declval<uint32x8_t>() == std::declval<uint32x8_t>())>));
+    EXPECT_TRUE((std::is_same_v<simd_traits<uint64x4_t>::mask_type,
+                 decltype(std::declval<uint64x4_t>() == std::declval<uint64x4_t>())>));
 
     EXPECT_TRUE((std::is_same_v<simd_traits<uint16x16_t>::swizzle_type, uint8x32_t>));
     EXPECT_TRUE((std::is_same_v<simd_traits<uint32x8_t>::swizzle_type, uint8x32_t>));

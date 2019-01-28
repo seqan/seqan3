@@ -162,7 +162,7 @@ struct simd_traits<builtin_simd_t>
 
     static_assert(std::is_integral_v<scalar_type>, "For now we assume that builtin simd can only be integers");
     //!\copydoc seqan3::simd::simd_traits::mask_type
-    using mask_type = typename detail::builtin_simd<std::make_signed_t<scalar_type>, length>::type;
+    using mask_type = decltype(std::declval<builtin_simd_t>() == std::declval<builtin_simd_t>());
     //!\copydoc seqan3::simd::simd_traits::swizzle_type
     using swizzle_type = typename detail::builtin_simd<uint8_t, max_length>::type;
 };
