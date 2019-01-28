@@ -12,6 +12,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/exception.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/test/pretty_printing.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <seqan3/test/tmp_filename.hpp>
