@@ -34,30 +34,31 @@ TEST(html_test, html)
                            "<html lang=\"en\">"
                            "<head>"
                            "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"
-                           "<title> &mdash; </title>"
+                           "<title>empty_options &mdash; </title>"
                            "</head>"
                            "<body>"
-                           "<h1></h1>"
+                           "<h1>empty_options</h1>"
                            "<div></div>"
                            "<h2>Synopsis</h2>"
                            "<h2>Version</h2>"
                            "<strong>Last update:</strong> <br>"
-                           "<strong> version:</strong> <br>"
+                           "<strong>empty_options version:</strong> <br>"
                            "<strong>SeqAn version:</strong> 3.0.0<br>"
+                           "<br>"
                            "</body></html>");
     EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
 
    // Full html help page.
-   argument_parser parser1("full", 3, argv0);
+   argument_parser parser1("program_full_options", 3, argv0);
    parser1.info.synopsis.push_back("synopsis");
    parser1.info.synopsis.push_back("synopsis2");
    parser1.info.description.push_back("description");
    parser1.info.description.push_back("description2");
-   parser1.info.short_description = "so short";
+   parser1.info.short_description = "short description";
    parser1.info.url = "www.seqan.de";
-   parser1.info.short_copyright = "short";
-   parser1.info.long_copyright = "long";
+   parser1.info.short_copyright = "short copyright";
+   parser1.info.long_copyright = "long_copyright";
    parser1.info.citation = "citation";
    parser1.add_option(option_value, 'i', "int", "this is a int option.");
    parser1.add_option(option_value, 'j', "jint", "this is a int option.");
@@ -74,12 +75,18 @@ TEST(html_test, html)
                           "<html lang=\"en\">"
                           "<head>"
                           "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"
-                          "<title> &mdash; </title>"
+                          "<title>program_full_options &mdash; short description</title>"
                           "</head>"
                           "<body>"
-                          "<h1></h1>"
-                          "<div></div>"
+                          "<h1>program_full_options</h1>"
+                          "<div>short description</div>"
                           "<h2>Synopsis</h2>"
+                          "<p>"
+                          "<strong>program_full_options</strong> synopsis"
+                          "<br />"
+                          "<strong>program_full_options</strong> synopsis2"
+                          "<br />"
+                          "</p>"
                           "<h2>Description</h2>"
                           "<p>"
                           "description"
@@ -107,8 +114,16 @@ TEST(html_test, html)
                           "</dl>"
                           "<h2>Version</h2>"
                           "<strong>Last update:</strong> <br>"
-                          "<strong> version:</strong> <br>"
+                          "<strong>program_full_options version:</strong> <br>"
                           "<strong>SeqAn version:</strong> 3.0.0<br>"
+                          "<h2>Url</h2>"
+                          "www.seqan.de<br>"
+                          "<br>"
+                          "<h2>Legal</h2>"
+                          "<strong>program_full_options Copyright: </strong>short copyright<br>"
+                          "<strong>SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>"
+                          "<strong>In your academic works please cite:</strong> citation<br>"
+                          "For full copyright and/or warranty information see <tt>--copyright</tt>."
                           "</body></html>");
    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
                               expected | ranges::view::remove_if(is_space)));
