@@ -12,9 +12,9 @@
 #include <range/v3/view/zip.hpp>
 #include <range/v3/view/filter.hpp>
 
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/std/iterator>
@@ -52,6 +52,13 @@ std::string const output_comp
     "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
     "> Test3\n"
     "GGAGTATAATATATATATATATAT\n"
+};
+
+std::vector<std::vector<phred42>> quals
+{
+    "!!!!"_phred42,
+    "!#@$!#@$!#@#!$@#!$@#!$!#@$!#@#!$@#!$!#$@!!$$$$$$$$$$$$!!!!!!!!!!!!!!!!!!!!$$$$$$$$$$!!!!!$!"_phred42,
+    "!@#!@#!#!######@$!#@!!!@"_phred42
 };
 
 // ----------------------------------------------------------------------------
@@ -345,6 +352,24 @@ TEST(row, different_fields_in_record_and_file)
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), expected_out);
 }
 
+TEST(row, writing_seq_qual)
+{
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
+    fout.options.fasta_letters_per_line = 0;
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        std::vector<qualified<dna5, phred42>> seq_qual;
+        seq_qual.resize(quals[i].size());
+        std::copy(seqs[i].begin(), seqs[i].end(), seq_qual.begin());
+        std::copy(quals[i].begin(), quals[i].end(), seq_qual.begin());
+
+        fout.emplace_back(ids[i], seq_qual);
+    }
+
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
+}
+
 // ----------------------------------------------------------------------------
 // rows
 // ----------------------------------------------------------------------------
@@ -397,6 +422,25 @@ TEST(columns, assign_record_of_columns)
 TEST(columns, assign_tuple_of_columns)
 {
     assign_impl(std::tie(seqs, ids));
+}
+
+TEST(columns, writing_seq_qual)
+{
+    sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}, fields<field::ID, field::SEQ_QUAL>()};
+    fout.options.fasta_letters_per_line = 0;
+
+    std::vector<std::vector<qualified<dna5, phred42>>> seq_quals{3};
+    for (size_t i = 0; i < 3; ++i)
+    {
+        seq_quals[i].resize(quals[i].size());
+        std::copy(seqs[i].begin(), seqs[i].end(), seq_quals[i].begin());
+        std::copy(quals[i].begin(), quals[i].end(), seq_quals[i].begin());
+    }
+
+    fout = std::tie(ids, seq_quals);
+
+    fout.get_stream().flush();
+    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
 
 // ----------------------------------------------------------------------------
