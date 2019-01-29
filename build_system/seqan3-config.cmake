@@ -350,6 +350,7 @@ else ()
             set (C++17FS_LIB ${_LIB})
             break ()
         endif ()
+        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_ORIGINAL})
     endforeach ()
 
     if (C++17FS_LIB)

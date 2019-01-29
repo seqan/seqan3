@@ -5,7 +5,7 @@ using namespace seqan3;
 
 int main()
 {
-    alignment_file_output fout{"/tmp/my.sam"};
+    alignment_file_output fout{filesystem::temp_directory_path()/"my.sam"};
 
     std::string ref_id;
     std::string read_id;

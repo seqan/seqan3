@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <iostream>
 
 #include <seqan3/argument_parser/detail/format_base.hpp>

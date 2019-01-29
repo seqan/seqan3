@@ -47,6 +47,14 @@ add_library (seqan3::test ALIAS seqan3_test)
 # needed for performance test cases in seqan3/test/performance
 add_library (seqan3_test_performance INTERFACE)
 target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
+
+# NOTE: google benchmarks needs Shlwapi (Shell Lightweight Utility Functions) on windows
+# see https://msdn.microsoft.com/en-us/library/windows/desktop/bb759844(v=vs.85).aspx
+# see https://github.com/google/benchmark/blob/c614dfc0d4eadcd19b188ff9c7e226c138f894a1/README.md#platform-specific-libraries
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    target_link_libraries (seqan3_test_performance INTERFACE "Shlwapi")
+endif()
+
 target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
 add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 
