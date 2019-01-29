@@ -120,32 +120,32 @@ static constexpr char cDigitsLut[200] = {
     '7', '9', '8', '9', '9'};
 
 template <typename T>
-inline char* append1(char* buffer, T i)
+inline char* append1(char* buffer, T i) noexcept
 {
     *buffer = '0' + static_cast<char>(i);
     return buffer + 1;
 }
 
 template <typename T>
-inline char* append2(char* buffer, T i)
+inline char* append2(char* buffer, T i) noexcept
 {
     memcpy(buffer, &cDigitsLut[(i)*2], 2);
     return buffer + 2;
 }
 
 template <typename T>
-inline char* append3(char* buffer, T i)
+inline char* append3(char* buffer, T i) noexcept
 {
     return append2(append1(buffer, (i) / 100), (i) % 100);
 }
 
 template <typename T>
-inline char* append4(char* buffer, T i)
+inline char* append4(char* buffer, T i) noexcept
 {
     return append2(append2(buffer, (i) / 100), (i) % 100);
 }
 
-inline char* u32toa(uint32_t value, char* buffer)
+inline char* u32toa(uint32_t value, char* buffer) noexcept
 {
     if (value < 10000)
     {
@@ -205,7 +205,7 @@ inline char* u32toa(uint32_t value, char* buffer)
     return buffer;
 }
 
-inline char* u64toa(uint64_t value, char* buffer)
+inline char* u64toa(uint64_t value, char* buffer) noexcept
 {
     if (value < 100000000)
     {
@@ -315,13 +315,13 @@ struct traits_base
 {
     using type = uint64_t;
 
-    static int width(value_type v)
+    static int width(value_type v) noexcept
     {
         auto t = (64 - __builtin_clzll(v | 1)) * 1233 >> 12;
         return t - (v < pow10_64[t]) + 1;
     }
 
-    static char* convert(value_type v, char* p)
+    static char* convert(value_type v, char* p) noexcept
     {
         return u64toa(v, p);
     }
@@ -334,22 +334,22 @@ struct traits_base<value_type, decltype(void(uint32_t{std::declval<value_type>()
 {
     using type = uint32_t;
 
-    static int width(value_type v)
+    static int width(value_type v) noexcept
     {
         auto t = (32 - __builtin_clz(v | 1)) * 1233 >> 12;
         return t - (v < pow10_32[t]) + 1;
     }
 
-    static char* convert(value_type v, char* p)
+    static char* convert(value_type v, char* p) noexcept
     {
         return u32toa(v, p);
     }
 
-    static auto& pow() { return pow10_32; }
+    static auto& pow() noexcept { return pow10_32; }
 };
 
 template <typename value_type>
-inline bool mul_overflowed(unsigned char a, value_type b, unsigned char& r)
+inline bool mul_overflowed(unsigned char a, value_type b, unsigned char& r) noexcept
 {
     auto c = a * b;
     r = c;
@@ -357,7 +357,7 @@ inline bool mul_overflowed(unsigned char a, value_type b, unsigned char& r)
 }
 
 template <typename value_type>
-inline bool mul_overflowed(unsigned short a, value_type b, unsigned short& r)
+inline bool mul_overflowed(unsigned short a, value_type b, unsigned short& r) noexcept
 {
     auto c = a * b;
     r = c;
@@ -365,14 +365,14 @@ inline bool mul_overflowed(unsigned short a, value_type b, unsigned short& r)
 }
 
 template <typename value_type>
-inline bool mul_overflowed(value_type a, value_type b, value_type & r)
+inline bool mul_overflowed(value_type a, value_type b, value_type & r) noexcept
 {
     static_assert(std::is_unsigned<value_type>::value, "");
     return __builtin_mul_overflow(a, b, &r);
 }
 
 template <typename value_type, typename _Up>
-inline bool mul_overflowed(value_type a, _Up b, value_type & r)
+inline bool mul_overflowed(value_type a, _Up b, value_type & r) noexcept
 {
     return mul_overflowed(a, static_cast<value_type>(b), r);
 }
@@ -386,7 +386,7 @@ struct traits : traits_base<value_type>
 
     // precondition: at least one non-zero character available
     static char const*
-    read(char const* p, char const* ep, type& a, type& b)
+    read(char const* p, char const* ep, type& a, type& b) noexcept
     {
         type cprod[digits];
         int j = digits - 1;
@@ -407,7 +407,7 @@ struct traits : traits_base<value_type>
 
     template <typename _It1, typename _It2, class _Up>
     static _Up
-    inner_product(_It1 first1, _It1 last1, _It2 first2, _Up init)
+    inner_product(_It1 first1, _It1 last1, _It2 first2, _Up init) noexcept
     {
         for (; first1 < last1; ++first1, ++first2)
             init = init + *first1 * *first2;
@@ -416,20 +416,20 @@ struct traits : traits_base<value_type>
 };
 
 template <typename value_type>
-inline value_type complement(value_type x)
+inline value_type complement(value_type x) noexcept
 {
     static_assert(std::UnsignedIntegral<value_type>, "cast to unsigned first");
     return value_type(~x + 1);
 }
 
 template <typename value_type>
-inline auto to_unsigned(value_type x)
+inline auto to_unsigned(value_type x) noexcept
 {
     return static_cast<std::make_unsigned_t<value_type>>(x);
 }
 
 template <typename value_type>
-inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type value, std::false_type)
+inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type value, std::false_type) noexcept
 {
     using tx = traits<value_type>;
     auto diff = last - first;
@@ -441,7 +441,7 @@ inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type va
 }
 
 template <typename value_type>
-inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type value, std::true_type)
+inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type value, std::true_type) noexcept
 {
     auto x = to_unsigned(value);
     if (value < 0 && first != last)
@@ -455,7 +455,7 @@ inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type va
 
 template <typename value_type>
 inline std::to_chars_result to_chars_integral(char* first, char* last, value_type value, int base,
-                    std::true_type)
+                    std::true_type) noexcept
 {
     auto x = to_unsigned(value);
     if (value < 0 && first != last)
@@ -469,7 +469,7 @@ inline std::to_chars_result to_chars_integral(char* first, char* last, value_typ
 
 template <typename value_type>
 inline std::to_chars_result to_chars_integral(char* first, char* last, value_type value, int base,
-                    std::false_type)
+                    std::false_type) noexcept
 {
     if (base == 10)
         return to_chars_itoa(first, last, value, std::false_type());
@@ -495,7 +495,7 @@ inline std::to_chars_result to_chars_integral(char* first, char* last, value_typ
 }
 
 template <typename _It, typename value_type, typename _Fn, typename... _Ts>
-inline std::from_chars_result sign_combinator(_It first, _It last, value_type & value, _Fn f, _Ts... args)
+inline std::from_chars_result sign_combinator(_It first, _It last, value_type & value, _Fn f, _Ts... args) noexcept
 {
     using tl = std::numeric_limits<value_type>;
     decltype(to_unsigned(value)) x;
@@ -535,7 +535,7 @@ inline std::from_chars_result sign_combinator(_It first, _It last, value_type & 
 }
 
 template <typename value_type>
-inline bool in_pattern(value_type c)
+inline bool in_pattern(value_type c) noexcept
 {
     return '0' <= c && c <= '9';
 }
@@ -545,11 +545,11 @@ struct in_pattern_result
     bool ok;
     int val;
 
-    explicit operator bool() const { return ok; }
+    explicit operator bool() const noexcept { return ok; }
 };
 
 template <typename value_type>
-inline in_pattern_result in_pattern(value_type c, int base)
+inline in_pattern_result in_pattern(value_type c, int base) noexcept
 {
     if (base <= 10)
         return {'0' <= c && c < '0' + base, c - '0'};
@@ -562,7 +562,7 @@ inline in_pattern_result in_pattern(value_type c, int base)
 }
 
 template <typename _It, typename value_type, typename _Fn, typename... _Ts>
-inline std::from_chars_result subject_seq_combinator(_It first, _It last, value_type & value, _Fn f, _Ts... args)
+inline std::from_chars_result subject_seq_combinator(_It first, _It last, value_type & value, _Fn f, _Ts... args) noexcept
 {
     auto find_non_zero = [](_It first, _It last)
     {
@@ -599,7 +599,7 @@ inline std::from_chars_result subject_seq_combinator(_It first, _It last, value_
 
 template <typename value_type, std::enable_if_t<std::is_unsigned<value_type>::value, int> = 0>
 inline std::from_chars_result
-from_chars_atoi(char const * first, char const * last, value_type & value)
+from_chars_atoi(char const * first, char const * last, value_type & value) noexcept
 {
     using tx = traits<value_type>;
     using output_type = typename tx::type;
@@ -623,14 +623,14 @@ from_chars_atoi(char const * first, char const * last, value_type & value)
 }
 
 template <std::SignedIntegral value_type>
-inline std::from_chars_result from_chars_atoi(char const * first, char const * last, value_type & value)
+inline std::from_chars_result from_chars_atoi(char const * first, char const * last, value_type & value) noexcept
 {
     using t = decltype(to_unsigned(value));
     return sign_combinator(first, last, value, from_chars_atoi<t>);
 }
 
 template <std::UnsignedIntegral value_type>
-inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base)
+inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base) noexcept
 {
     if (base == 10)
         return from_chars_atoi(first, last, value);
@@ -674,7 +674,7 @@ inline std::from_chars_result from_chars_integral(char const * first, char const
 }
 
 template <std::SignedIntegral value_type>
-inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base)
+inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base) noexcept
 {
     using t = decltype(to_unsigned(value));
     return sign_combinator(first, last, value, from_chars_integral<t>, base);
@@ -686,7 +686,7 @@ template <seqan3::floating_point_concept value_type>
 inline std::from_chars_result from_chars_floating_point(char const * first,
                                                         char const * last,
                                                         value_type & value,
-                                                        std::chars_format fmt = std::chars_format::general)
+                                                        std::chars_format fmt = std::chars_format::general) noexcept
 {
     // The locale issue:
     // std::from_chars is documented to be locale independent. The accepted patterns

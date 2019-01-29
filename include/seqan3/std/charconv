@@ -109,7 +109,7 @@ void from_chars(char const *, char const *, bool, int = 10) = delete;
  * \sa https://en.cppreference.com/w/cpp/utility/to_chars
  */
 template <std::Integral value_type>
-inline std::to_chars_result to_chars(char * first, char * last, value_type value, int base)
+inline std::to_chars_result to_chars(char * first, char * last, value_type value, int base) noexcept
 {
     assert(2 <= base && base <= 36);
     return seqan3::detail::to_chars_integral(first, last, value, base, is_signed<value_type>());
@@ -118,7 +118,7 @@ inline std::to_chars_result to_chars(char * first, char * last, value_type value
 //!\brief std::to_chars overload with default base = 10.
 //!\ingroup charconv
 template <std::Integral value_type>
-inline std::to_chars_result to_chars(char * first, char * last, value_type value)
+inline std::to_chars_result to_chars(char * first, char * last, value_type value) noexcept
 {
     return seqan3::detail::to_chars_itoa(first, last, value, is_signed<value_type>());
 }
@@ -171,7 +171,7 @@ inline std::to_chars_result to_chars(char * first, char * last, value_type value
  * \sa https://en.cppreference.com/w/cpp/utility/from_chars
  */
 template <std::Integral value_type>
-inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value, int base)
+inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value, int base) noexcept
 {
     assert(2 <= base && base <= 36);
     return seqan3::detail::from_chars_integral(first, last, value, base);
@@ -180,7 +180,7 @@ inline std::from_chars_result from_chars(char const * first, char const * last, 
 //!\brief std::from_chars overload for integrals with default base = 10.
 //!\ingroup charconv
 template <std::Integral value_type>
-inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value) // base 10 default
+inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value) noexcept // base 10 default
 {
     return seqan3::detail::from_chars_atoi(first, last, value);
 }
@@ -248,7 +248,7 @@ template <seqan3::floating_point_concept floating_point_type>
 inline std::from_chars_result from_chars(char const * first,
                                          char const * last,
                                          floating_point_type & value,
-                                         std::chars_format fmt = std::chars_format::general)
+                                         std::chars_format fmt = std::chars_format::general) noexcept
 {
     return seqan3::detail::from_chars_floating_point(first, last, value, fmt);
 }
