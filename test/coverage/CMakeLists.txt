@@ -24,6 +24,8 @@ endif ()
 # Files which should not be included in the coverage report
 set (TEST_COVERAGE_EXCLUDE_FILES
     "'/usr/*'"
+    "'${SEQAN3_CLONE_DIR}/include/seqan3/contrib/*'"
+    "'${SEQAN3_CLONE_DIR}/include/seqan3/std/*'"
     "'${SEQAN3_CLONE_DIR}/submodules/*'"
     "'${SEQAN3_CLONE_DIR}/test/unit/*'"
     "'${PROJECT_BINARY_DIR}/vendor/*'"
