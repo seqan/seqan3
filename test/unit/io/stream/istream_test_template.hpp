@@ -27,7 +27,7 @@ TYPED_TEST_CASE_P(istream);
 
 TYPED_TEST_P(istream, concept_check)
 {
-    EXPECT_TRUE((istream_concept<TypeParam, char>));
+    EXPECT_TRUE((IStream<TypeParam, char>));
 }
 
 TYPED_TEST_P(istream, input)

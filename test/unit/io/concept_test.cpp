@@ -37,23 +37,23 @@ TEST(io, Stream)
     EXPECT_FALSE((Stream<std::string, char>));
 }
 
-TEST(io, istream_concept)
+TEST(io, IStream)
 {
-    EXPECT_TRUE((istream_concept<std::istream, char>));
-    EXPECT_FALSE((istream_concept<std::ostream, char>));
-    EXPECT_TRUE((istream_concept<std::iostream, char>));
-    EXPECT_TRUE((istream_concept<std::ifstream, char>));
-    EXPECT_FALSE((istream_concept<std::ofstream, char>));
-    EXPECT_TRUE((istream_concept<std::fstream, char>));
-    EXPECT_TRUE((istream_concept<std::istringstream, char>));
-    EXPECT_FALSE((istream_concept<std::ostringstream, char>));
-    EXPECT_TRUE((istream_concept<std::stringstream, char>));
-    EXPECT_FALSE((istream_concept<std::vector<char>, char>));
-    EXPECT_FALSE((istream_concept<std::vector<char>, char>));
-    EXPECT_FALSE((istream_concept<std::vector<char>, char>));
-    EXPECT_FALSE((istream_concept<std::string, char>));
-    EXPECT_FALSE((istream_concept<std::string, char>));
-    EXPECT_FALSE((istream_concept<std::string, char>));
+    EXPECT_TRUE((IStream<std::istream, char>));
+    EXPECT_FALSE((IStream<std::ostream, char>));
+    EXPECT_TRUE((IStream<std::iostream, char>));
+    EXPECT_TRUE((IStream<std::ifstream, char>));
+    EXPECT_FALSE((IStream<std::ofstream, char>));
+    EXPECT_TRUE((IStream<std::fstream, char>));
+    EXPECT_TRUE((IStream<std::istringstream, char>));
+    EXPECT_FALSE((IStream<std::ostringstream, char>));
+    EXPECT_TRUE((IStream<std::stringstream, char>));
+    EXPECT_FALSE((IStream<std::vector<char>, char>));
+    EXPECT_FALSE((IStream<std::vector<char>, char>));
+    EXPECT_FALSE((IStream<std::vector<char>, char>));
+    EXPECT_FALSE((IStream<std::string, char>));
+    EXPECT_FALSE((IStream<std::string, char>));
+    EXPECT_FALSE((IStream<std::string, char>));
 }
 
 TEST(io, OStream)

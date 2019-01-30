@@ -177,9 +177,9 @@ public:
      */
     template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (istream_concept<std::istringstream, option_type> ||
-                  istream_concept<std::istringstream, typename option_type::value_type>) &&
-                 std::is_same_v<typename validator_type::value_type, option_type>
+        requires (IStream<std::istringstream, option_type> ||
+                  IStream<std::istringstream, typename option_type::value_type>) &&
+                  std::is_same_v<typename validator_type::value_type, option_type>
     //!\endcond
     void add_option(option_type & value,
                     char const short_id,
@@ -236,9 +236,9 @@ public:
      */
     template <typename option_type, validator_concept validator_type = detail::default_validator<option_type>>
     //!\cond
-        requires (istream_concept<std::istringstream, option_type> ||
-                  istream_concept<std::istringstream, typename option_type::value_type>) &&
-                 std::is_same_v<typename validator_type::value_type, option_type>
+        requires (IStream<std::istringstream, option_type> ||
+                  IStream<std::istringstream, typename option_type::value_type>) &&
+                  std::is_same_v<typename validator_type::value_type, option_type>
     //!\endcond
     void add_positional_option(option_type & value,
                                std::string const & desc,

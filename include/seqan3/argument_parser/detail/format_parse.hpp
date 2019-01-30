@@ -275,7 +275,7 @@ private:
 
     /*!\brief Tries to cast an input string into a value.
      *
-     * \tparam option_t Must satisfy the seqan3::istream_concept.
+     * \tparam option_t Must satisfy the seqan3::IStream.
      *
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
@@ -284,7 +284,7 @@ private:
      */
     template <typename option_t>
     //!\cond
-        requires istream_concept<std::istringstream, option_t>
+        requires IStream<std::istringstream, option_t>
     //!\endcond
     void retrieve_value(option_t & value, std::string const & in)
     {
@@ -306,14 +306,14 @@ private:
     /*!\brief Appends a casted value to its container.
      *
      * \tparam container_option_t Must satisfy the seqan3::sequence_container_concept and
-     *                            its value_type must satisfy the seqan3::istream_concept
+     *                            its value_type must satisfy the seqan3::IStream
      *
      * \param[out] value Container that stores the casted value.
      * \param[in]  in    The input argument to be casted.
      */
     template <sequence_container_concept container_option_t>
     //!\cond
-        requires istream_concept<std::istringstream, typename container_option_t::value_type>
+        requires IStream<std::istringstream, typename container_option_t::value_type>
     //!\cond
     void retrieve_value(container_option_t & value, std::string const & in)
     {
@@ -344,7 +344,7 @@ private:
      */
     template <std::Integral option_t>
     //!\cond
-        requires istream_concept<std::istringstream, option_t>
+        requires IStream<std::istringstream, option_t>
     //!\endcond
     void retrieve_value(option_t & value, std::string const & in)
     {

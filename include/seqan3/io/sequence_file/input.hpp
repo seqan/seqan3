@@ -625,7 +625,7 @@ public:
      * it is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <istream_concept2 stream_t,
+    template <IStream2 stream_t,
               SequenceFileInputFormat file_format>
     sequence_file_input(stream_t                 & stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
@@ -644,7 +644,7 @@ public:
     }
 
     //!\overload
-    template <istream_concept2 stream_t,
+    template <IStream2 stream_t,
               SequenceFileInputFormat file_format>
     sequence_file_input(stream_t                && stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
@@ -914,8 +914,13 @@ protected:
  * \relates seqan3::sequence_file_input
  * \{
  */
+<<<<<<< HEAD
 template <istream_concept2                   stream_type,
           SequenceFileInputFormat file_format,
+=======
+template <IStream2                           stream_type,
+          SequenceFileInputFormat            file_format,
+>>>>>>> b7da21f... [MISC] Rename istream_concept -> IStream
           detail::fields_concept             selected_field_ids>
 sequence_file_input(stream_type && stream,
                     file_format const &,
@@ -925,8 +930,8 @@ sequence_file_input(stream_type && stream,
                            type_list<file_format>,
                            typename std::remove_reference_t<stream_type>::char_type>;
 
-template <istream_concept2                   stream_type,
-          SequenceFileInputFormat file_format,
+template <IStream2                           stream_type,
+          SequenceFileInputFormat            file_format,
           detail::fields_concept             selected_field_ids>
 sequence_file_input(stream_type & stream,
                     file_format const &,

@@ -411,7 +411,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *                            must be in seqan3::structure_file_in::field_ids.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::StructureFileInputFormat).
- * \tparam stream_type        The type of the stream, must satisfy seqan3::istream_concept.
+ * \tparam stream_type        The type of the stream, must satisfy seqan3::IStream.
  * \details
  *
  * ### Introduction
@@ -639,7 +639,7 @@ template<structure_file_input_traits_concept traits_type_ = structure_file_input
          detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::TypeListOfStructureFileInputFormats valid_formats_
              = type_list<structure_file_format_vienna>,
-         istream_concept<char> stream_type_ = std::ifstream>
+         IStream<char> stream_type_ = std::ifstream>
 class structure_file_in
 {
 public:
@@ -1148,7 +1148,7 @@ protected:
  * \relates seqan3::structure_file_in
  * \{
  */
-template <istream_concept<char> stream_type,
+template <IStream<char> stream_type,
           StructureFileInputFormat file_format,
           detail::fields_concept selected_field_ids>
 structure_file_in(stream_type && _stream, file_format const &, selected_field_ids const &)
@@ -1172,7 +1172,7 @@ namespace std
 template<seqan3::structure_file_input_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::istream_concept<char> stream_type>
+         seqan3::IStream<char> stream_type>
 struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -1186,7 +1186,7 @@ template<size_t elem_no,
          seqan3::structure_file_input_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::istream_concept<char> stream_type>
+         seqan3::IStream<char> stream_type>
 struct tuple_element<elem_no, seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
     : tuple_element<elem_no, typename seqan3::structure_file_in<traits_type,
                                                                 selected_field_ids,
