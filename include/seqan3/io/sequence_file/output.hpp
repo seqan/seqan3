@@ -356,7 +356,7 @@ public:
      * want compression.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <ostream_concept2 stream_t,
+    template <OStream2 stream_t,
               SequenceFileOutputFormat file_format>
     sequence_file_output(stream_t                 & stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
@@ -370,7 +370,7 @@ public:
     }
 
     //!\overload
-    template <ostream_concept2 stream_t,
+    template <OStream2 stream_t,
               SequenceFileOutputFormat file_format>
     sequence_file_output(stream_t                && stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
@@ -909,8 +909,8 @@ protected:
  * \relates seqan3::sequence_file_output
  * \{
  */
-template <ostream_concept2                     stream_t,
-          SequenceFileOutputFormat file_format,
+template <OStream2                            stream_t,
+          SequenceFileOutputFormat            file_format,
           detail::fields_concept              selected_field_ids>
 sequence_file_output(stream_t &&,
                      file_format const &,
@@ -919,8 +919,8 @@ sequence_file_output(stream_t &&,
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
-template <ostream_concept2                     stream_t,
-          SequenceFileOutputFormat file_format,
+template <OStream2                             stream_t,
+          SequenceFileOutputFormat            file_format,
           detail::fields_concept              selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,

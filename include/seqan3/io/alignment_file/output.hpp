@@ -47,7 +47,7 @@ namespace seqan3
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
  *                              must model seqan3::AlignmentFileOutputFormat).
- * \tparam stream_type          The type of the stream, must model seqan3::ostream_concept.
+ * \tparam stream_type          The type of the stream, must model seqan3::OStream.
  *
  * \details
  *
@@ -203,7 +203,7 @@ template <detail::fields_concept selected_field_ids_ =
               type_list<alignment_file_format_sam/*,
                         alignment_file_format_bam,
                         alignment_file_format_blast_tabular*/>,
-          ostream_concept<char> stream_type_ = std::ofstream>
+          OStream<char> stream_type_ = std::ofstream>
 class alignment_file_output
 {
 public:
@@ -674,7 +674,7 @@ protected:
  * \relates seqan3::alignment_file_output
  * \{
  */
-template <ostream_concept<char>             stream_type,
+template <OStream<char>             stream_type,
           AlignmentFileOutputFormat file_format,
           detail::fields_concept            selected_field_ids>
 alignment_file_output(stream_type && _stream, file_format const &, selected_field_ids const &)

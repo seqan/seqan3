@@ -84,7 +84,7 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(t & v,
  *                offset_type && offset)
  * \brief Write the given fields to the specified stream.
  * \memberof seqan3::StructureFileOutputFormat
- * \tparam stream_type      Output stream, must satisfy seqan3::ostream_concept with `char`.
+ * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
  * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange

@@ -52,7 +52,7 @@ namespace seqan3
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::StructureFileOutputFormat).
- * \tparam stream_type        The type of the stream, must satisfy seqan3::ostream_concept.
+ * \tparam stream_type        The type of the stream, must satisfy seqan3::OStream.
  * \details
  *
  * ### Introduction
@@ -251,7 +251,7 @@ namespace seqan3
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
           detail::TypeListOfStructureFileOutputFormats valid_formats_
               = type_list<structure_file_format_vienna>,
-          ostream_concept<char> stream_type_ = std::ofstream>
+          OStream<char> stream_type_ = std::ofstream>
 class structure_file_out
 {
 public:
@@ -914,8 +914,8 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
-template <ostream_concept<char>                stream_type,
-          StructureFileOutputFormat file_format,
+template <OStream<char>                        stream_type,
+          StructureFileOutputFormat            file_format,
           detail::fields_concept               selected_field_ids>
 structure_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,

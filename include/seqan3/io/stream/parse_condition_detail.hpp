@@ -121,7 +121,7 @@ SEQAN3_CONCEPT ParseCondition = requires
 //!\endcond
 
 /*!\name Requirements for seqan3::detail::ParseCondition
- * \brief You can expect the variable and the predicate function on all types that satisfy seqan3::ostream_concept.
+ * \brief You can expect the variable and the predicate function on all types that satisfy seqan3::OStream.
  * \{
  */
 /*!\fn      bool operator()(char_type c);
