@@ -167,7 +167,7 @@ SEQAN3_CONCEPT IStream2 = requires { typename std::remove_reference_t<stream_typ
   */
 //!\}
 
-/*!\interface seqan3::stream_concept <>
+/*!\interface seqan3::Stream <>
  * \extends seqan3::IStream
  * \extends seqan3::OStream
  * \brief Concept for i/o streams permitting both directions.
