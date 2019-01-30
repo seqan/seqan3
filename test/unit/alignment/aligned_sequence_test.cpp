@@ -93,9 +93,9 @@ TEST(aligned_sequence_debug_stream, pair_with_gaps)
         "        CU-NGG\n"
     };
 
-    std::pair<std::vector<gapped<rna4>>, std::vector<gapped<rna5>>> const alignment
+    std::pair<std::vector<gapped<rna5>>, std::vector<gapped<rna5>>> const alignment
     {
-        {'C'_rna4, 'U'_rna4, 'U'_rna4, 'C'_rna4, gap{}, 'G'_rna4},
+        {'C'_rna5, 'U'_rna5, 'U'_rna5, 'C'_rna5, gap{}, 'G'_rna5},
         {'C'_rna5, 'U'_rna5, gap{}, 'N'_rna5, 'G'_rna5, 'G'_rna5}
     };
 
