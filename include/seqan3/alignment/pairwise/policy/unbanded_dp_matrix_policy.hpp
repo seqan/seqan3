@@ -30,7 +30,10 @@ namespace seqan3::detail
 template <typename derived_t, typename allocator_t>
 class unbanded_dp_matrix_policy
 {
-protected:
+private:
+
+    //!\brief Befriends the derived class to grant it access to the private members.
+    friend derived_t;
 
     /*!\name Member types
      * \{

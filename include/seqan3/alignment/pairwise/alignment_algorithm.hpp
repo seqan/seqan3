@@ -69,7 +69,7 @@ namespace seqan3::detail
  */
 template <typename config_t, typename ...algorithm_policies_t>
 class alignment_algorithm :
-    protected invoke_deferred_crtp_base<algorithm_policies_t, alignment_algorithm<algorithm_policies_t...>>...
+    public invoke_deferred_crtp_base<algorithm_policies_t, alignment_algorithm<config_t, algorithm_policies_t...>>...
 {
 public:
     /*!\name Constructor, destructor and assignment
@@ -137,8 +137,7 @@ public:
         // Choose what needs to be computed.
         if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
         {
-            auto last_col = this->current_column();
-            res.score = get<0>(*(std::ranges::end(last_col) - 1));
+            res.score = get<3>(cache);
         }
         return align_result{res};
     }
@@ -160,6 +159,8 @@ private:
         {
             this->init_column_cell(cell, cache);
         });
+
+        this->check_score_last_row(get<0>(*(seqan3::end(col) - 1)), get<3>(cache));
     }
 
     /*!\brief Compute the alignment by iterating over the dynamic programming matrix in a column wise manner.
@@ -177,6 +178,7 @@ private:
                         second_batch_t const & second_batch,
                         cache_t & cache)
     {
+        using std::get;
         auto const & score_scheme = get<align_cfg::scoring>(*cfg_ptr).value;
         ranges::for_each(first_batch, [&, this](auto seq1_value)
         {
@@ -189,7 +191,9 @@ private:
                 this->compute_cell(cell, cache, score_scheme.score(seq1_value, *second_batch_it));
                 ++second_batch_it;
             });
+            this->check_score_last_row(get<0>(*(seqan3::end(col) - 1)), get<3>(cache));
         });
+        this->check_score_last_column(this->current_column(), get<3>(cache));
     }
 
     //!\brief The alignment configuration stored on the heap.

@@ -15,6 +15,7 @@
 #include <seqan3/range/view/to_char.hpp>
 
 #include "fixture/global_affine_unbanded.hpp"
+#include "fixture/semi_global_affine_unbanded.hpp"
 
 using namespace seqan3;
 using namespace seqan3::detail;
@@ -37,7 +38,16 @@ TYPED_TEST_CASE_P(global_affine_unbanded);
 
 using global_affine_unbanded_types
     = ::testing::Types<
-        param<&global::affine::unbanded::dna4_01>
+        param<&global::affine::unbanded::dna4_01>,
+        param<&global::affine::unbanded::dna4_02>
+    >;
+
+using semi_global_affine_unbanded_types
+    = ::testing::Types<
+        param<&semi_global::affine::unbanded::dna4_01>,
+        param<&semi_global::affine::unbanded::dna4_02>,
+        param<&semi_global::affine::unbanded::dna4_03>,
+        param<&semi_global::affine::unbanded::dna4_04>
     >;
 
 TYPED_TEST_P(global_affine_unbanded, score)
@@ -57,5 +67,5 @@ TYPED_TEST_P(global_affine_unbanded, score)
 
 REGISTER_TYPED_TEST_CASE_P(global_affine_unbanded, score);
 
-// work around a bug that you can't specify more than 50 template arguments to ::testing::types
 INSTANTIATE_TYPED_TEST_CASE_P(global, global_affine_unbanded, global_affine_unbanded_types);
+INSTANTIATE_TYPED_TEST_CASE_P(semi_global, global_affine_unbanded, semi_global_affine_unbanded_types);
