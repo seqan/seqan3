@@ -18,6 +18,7 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/range/container/constexpr_string.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail
@@ -58,13 +59,24 @@ namespace seqan3
  *
  * \sa seqan3::sam_tag_dictionary
  */
+
+#ifdef __cpp_nontype_template_parameter_class
+template <constexpr_string<2> str> // TODO: better handling if too large string is provided?
+constexpr uint16_t operator""_tag()
+{
+#else // GCC/Clang extension
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 template <typename char_t, char_t ...s>
 constexpr uint16_t operator""_tag()
 {
     static_assert(std::Same<char_t, char>, "Illegal SAM tag: Type must be char.");
-    static_assert((sizeof...(s) == 2),     "Illegal SAM tag: Exactly two characters must be given.");
+    constexpr constexpr_string<sizeof...(s)> str{std::array<char, sizeof...(s)>{s...}};
+#pragma GCC diagnostic pop
+#endif
 
-    char constexpr str[sizeof...(s)] = {s...};
+    static_assert(str.size() == 2, "Illegal SAM tag: Exactly two characters must be given.");
+
     char constexpr char0 = str[0];
     char constexpr char1 = str[1];
 
