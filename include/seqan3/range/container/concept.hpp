@@ -150,7 +150,7 @@ SEQAN3_CONCEPT container_concept = requires (type val, type val2, type const cva
     { type{}          } -> type;   // default constructor
     { type{type{}}    } -> type;   // copy/move constructor
     { val = val2      } -> type &; // assignment
-    { (&val)->~type() } -> void;   // destructor
+    { (&val)->~type() };           // destructor
 
     { val.begin()     } -> typename type::iterator;
     { val.end()       } -> typename type::iterator;
