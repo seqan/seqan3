@@ -103,7 +103,9 @@ seqan3_require_test ()
 
 seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include")
 seqan3_header_test (seqan3_test "${SEQAN3_CLONE_DIR}/test/include")
-seqan3_header_test (range-v3 "${SEQAN3_CLONE_DIR}/submodules/range-v3/include")
+
+# contains deprecated headers that produce an error when included
+# seqan3_header_test (range-v3 "${SEQAN3_CLONE_DIR}/submodules/range-v3/include")
 
 # not self-contained headers; error: extra ‘;’ [-Werror=pedantic]
 # seqan3_header_test (lemon "${SEQAN3_CLONE_DIR}/submodules/lemon/include")
