@@ -29,6 +29,10 @@
 #   error "This is not a C++ compiler."
 #endif
 
+#if __has_include(<version>)
+#   include <version>
+#endif
+
 // C++ Concepts [required]
 #ifdef __cpp_concepts
 #   if __cpp_concepts == 201507 // GCC and Concepts TS
