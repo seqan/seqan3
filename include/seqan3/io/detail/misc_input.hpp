@@ -100,7 +100,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     {
     #ifdef SEQAN3_HAS_ZLIB
         if ((extension == ".gz") || (extension == ".bgzf"))
-            filename.replace_extension("");
+            filename.replace_extension();
 
         return {new contrib::basic_gz_istream<char_t>{primary_stream}, stream_deleter_default};
     #else
@@ -111,7 +111,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     {
     #ifdef SEQAN3_HAS_BZIP2
         if (extension == ".bz2")
-            filename.replace_extension("");
+            filename.replace_extension();
 
         return {new contrib::basic_bz2_istream<char_t>{primary_stream}, stream_deleter_default};
     #else
