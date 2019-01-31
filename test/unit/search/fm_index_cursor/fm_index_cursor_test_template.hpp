@@ -59,7 +59,7 @@ TYPED_TEST_P(fm_index_cursor_test, ctr)
     EXPECT_EQ(it0.locate().size(), fm.size());
 
     // default construction (does not initialize the cursor)
-    TypeParam it1;
+    [[maybe_unused]] TypeParam it1;
 
     // copy construction
     TypeParam it2{it0};
