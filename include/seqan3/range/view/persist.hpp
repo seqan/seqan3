@@ -149,7 +149,7 @@ public:
     template <sequence_container_concept container_t>
     operator container_t() const
     //!\cond
-        requires std::CommonReference<reference_t<container_t>, reference> && const_iterable_concept<urng_t>
+        requires std::CommonReference<reference_t<std::remove_reference_t<container_t>>, reference>
     //!\endcond
     {
         container_t ret;
