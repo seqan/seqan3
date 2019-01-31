@@ -12,7 +12,9 @@
 
 #pragma once
 
-#if __has_include(<concepts>) // C++20 concepts available
+#include <seqan3/core/platform.hpp>
+
+#ifdef __cpp_lib_concepts        // C++20 ranges available
 #include <concepts>
 #else                         // use range-v3 to emulate
 
@@ -21,7 +23,6 @@
 
 #include <range/v3/utility/common_type.hpp>
 
-#include <seqan3/core/platform.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 
 /*!\defgroup std std

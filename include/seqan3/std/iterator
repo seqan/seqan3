@@ -16,7 +16,8 @@
 
 #ifndef __cpp_lib_ranges
 
-#include <range/v3/utility/iterator.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
+#include <range/v3/iterator/stream_iterators.hpp>
 
 #include <seqan3/std/concepts>
 
@@ -135,7 +136,8 @@ constexpr auto back_inserter(container_t & container)
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT Readable = static_cast<bool>(::ranges::Readable<t>());
+SEQAN3_CONCEPT Readable = ::ranges::Readable<t>;
+
 //!\endcond
 
 /*!\interface std::Writable <>
@@ -145,7 +147,7 @@ SEQAN3_CONCEPT Readable = static_cast<bool>(::ranges::Readable<t>());
  */
 //!\cond
 template <typename out, typename t>
-SEQAN3_CONCEPT Writable = static_cast<bool>(::ranges::Writable<out, t>());
+SEQAN3_CONCEPT Writable = ::ranges::Writable<out, t>;
 //!\endcond
 
 /*!\interface std::WeaklyIncrementable <>
@@ -177,7 +179,7 @@ SEQAN3_CONCEPT WeaklyIncrementable = Semiregular<t> &&
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT Incrementable = Regular<i> && WeaklyIncrementable<i> && static_cast<bool>(::ranges::Incrementable<i>());
+SEQAN3_CONCEPT Incrementable = Regular<i> && WeaklyIncrementable<i> && ::ranges::Incrementable<i>;
 //!\endcond
 
 /*!\interface std::Iterator <>
@@ -188,7 +190,7 @@ SEQAN3_CONCEPT Incrementable = Regular<i> && WeaklyIncrementable<i> && static_ca
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT Iterator = WeaklyIncrementable<i> && static_cast<bool>(::ranges::Iterator<i>());
+SEQAN3_CONCEPT Iterator = WeaklyIncrementable<i> && ::ranges::Iterator<i>;
 //!\endcond
 
 /*!\interface std::Sentinel <>
@@ -200,7 +202,7 @@ SEQAN3_CONCEPT Iterator = WeaklyIncrementable<i> && static_cast<bool>(::ranges::
  */
 //!\cond
 template <typename s, typename i>
-SEQAN3_CONCEPT Sentinel = Semiregular<s> && Iterator<i> && static_cast<bool>(::ranges::Sentinel<s, i>());
+SEQAN3_CONCEPT Sentinel = Semiregular<s> && Iterator<i> && ::ranges::Sentinel<s, i>;
 //!\endcond
 
 /*!\interface std::SizedSentinel <>
@@ -211,7 +213,7 @@ SEQAN3_CONCEPT Sentinel = Semiregular<s> && Iterator<i> && static_cast<bool>(::r
  */
 //!\cond
 template <typename s, typename i>
-SEQAN3_CONCEPT SizedSentinel = Sentinel<s, i> && static_cast<bool>(::ranges::SizedSentinel<s, i>());
+SEQAN3_CONCEPT SizedSentinel = Sentinel<s, i> && ::ranges::SizedSentinel<s, i>;
 //!\endcond
 
 /*!\interface std::OutputIterator <>
@@ -224,7 +226,7 @@ SEQAN3_CONCEPT SizedSentinel = Sentinel<s, i> && static_cast<bool>(::ranges::Siz
  */
 //!\cond
 template <typename out, typename t>
-SEQAN3_CONCEPT OutputIterator = Iterator<out> && Writable<out, t> && static_cast<bool>(::ranges::OutputIterator<out, t>());
+SEQAN3_CONCEPT OutputIterator = Iterator<out> && Writable<out, t> && ::ranges::OutputIterator<out, t>;
 //!\endcond
 
 /*!\interface std::InputIterator <>
@@ -236,7 +238,7 @@ SEQAN3_CONCEPT OutputIterator = Iterator<out> && Writable<out, t> && static_cast
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT InputIterator = Iterator<i> && Readable<i> && static_cast<bool>(::ranges::InputIterator<i>());
+SEQAN3_CONCEPT InputIterator = Iterator<i> && Readable<i> && ::ranges::InputIterator<i>;
 //!\endcond
 
 /*!\interface std::ForwardIterator <>
@@ -252,7 +254,7 @@ template <typename i>
 SEQAN3_CONCEPT ForwardIterator = InputIterator<i> &&
                                Incrementable<i> &&
                                Sentinel<i, i> &&
-                               static_cast<bool>(::ranges::ForwardIterator<i>());
+                               ::ranges::ForwardIterator<i>;
 //!\endcond
 
 /*!\interface std::BidirectionalIterator <>
@@ -263,7 +265,7 @@ SEQAN3_CONCEPT ForwardIterator = InputIterator<i> &&
  */
 //!\cond
 template <typename i>
-SEQAN3_CONCEPT BidirectionalIterator = ForwardIterator<i> && static_cast<bool>(::ranges::BidirectionalIterator<i>());
+SEQAN3_CONCEPT BidirectionalIterator = ForwardIterator<i> && ::ranges::BidirectionalIterator<i>;
 //!\endcond
 
 /*!\interface std::RandomAccessIterator <>
@@ -280,7 +282,7 @@ template <typename i>
 SEQAN3_CONCEPT RandomAccessIterator = BidirectionalIterator<i> &&
                                     StrictTotallyOrdered<i> &&
                                     SizedSentinel<i, i> &&
-                                    static_cast<bool>(::ranges::RandomAccessIterator<i>());
+                                    ::ranges::RandomAccessIterator<i>;
 //!\endcond
 
 //!\} // Iterator Concepts.
