@@ -129,6 +129,7 @@ private:
          * \{
          */
         bool operator==(iterator_type const & rhs) const noexcept(!or_throw)
+            requires std::ForwardIterator<base_base_t>
         {
             return static_cast<base_base_t>(*this) == static_cast<base_base_t>(rhs);
         }
@@ -157,6 +158,7 @@ private:
         }
 
         bool operator!=(iterator_type const & rhs) const noexcept(!or_throw)
+            requires std::ForwardIterator<base_base_t>
         {
             return static_cast<base_base_t>(*this) != static_cast<base_base_t>(rhs);
         }
