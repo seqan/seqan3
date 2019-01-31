@@ -18,6 +18,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/view/common.hpp>
 
 #include <range/v3/view/generate_n.hpp>
 
@@ -60,7 +61,7 @@ TEST(align_pairwise, single_view_lvalue)
     auto seq2 = "AGTGATACT"_dna4;
 
     // auto p = std::make_pair(seq1, seq2);
-    auto v = ranges::view::single(std::tie(seq1, seq2)) | ranges::view::bounded;
+    auto v = ranges::view::single(std::tie(seq1, seq2)) | view::common;
 
     {  // the score
         configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};

@@ -22,7 +22,7 @@ struct foo : seqan3::detail::parse_condition_base<foo<char_v>>
 
     using base_t = seqan3::detail::parse_condition_base<foo<char_v>>;
 
-    static auto constexpr data = [&] () { typename base_t::data_t d{}; d[char_v] = true; return d; }();
+    static auto constexpr data = [] () { typename base_t::data_t d{}; d[char_v] = true; return d; }();
 };
 
 template <char char_v>
