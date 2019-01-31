@@ -14,9 +14,6 @@
 
 #include <type_traits>
 
-#include <range/v3/utility/iterator_traits.hpp>
-#include <range/v3/range_traits.hpp>
-
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/basic.hpp>

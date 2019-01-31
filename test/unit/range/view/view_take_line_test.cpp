@@ -10,15 +10,12 @@
 #include <gtest/gtest.h>
 
 #include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/take_while.hpp> //DEBUG
-#include <range/v3/view/unique.hpp> //DEBUG
+#include <range/v3/view/unique.hpp>
 
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/iterator> //DEBUG
-#include <seqan3/core/detail/reflection.hpp> //DEBUG
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/view/reverse.hpp>
 #include <seqan3/std/view/common.hpp>

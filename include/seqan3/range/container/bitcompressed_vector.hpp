@@ -14,8 +14,6 @@
 
 #include <type_traits>
 
-#include <range/v3/iterator_range.hpp>
-
 #include <sdsl/int_vector.hpp>
 
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>

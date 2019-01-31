@@ -17,7 +17,6 @@
 #include <utility>
 
 #include <range/v3/algorithm/copy.hpp>
-#include <range/v3/utility/iterator.hpp>
 
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>

@@ -14,9 +14,6 @@
 
 #include <type_traits>
 
-#include <range/v3/range_concepts.hpp>
-#include <range/v3/utility/functional.hpp>
-
 #include <seqan3/core/platform.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>

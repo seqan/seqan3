@@ -15,7 +15,7 @@
 #include <ios>
 #include <type_traits>
 
-#include <range/v3/utility/associated_types.hpp>
+#include <range/v3/iterator/associated_types.hpp>
 
 #include <seqan3/core/platform.hpp>
 
