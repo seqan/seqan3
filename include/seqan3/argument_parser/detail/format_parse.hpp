@@ -93,7 +93,7 @@ public:
                     option_spec const & spec,
                     validator_type && validator)
     {
-        option_calls.push_back([=, &value]()
+        option_calls.push_back([this, &value, short_id, long_id, spec, validator]()
         {
             get_option(value, short_id, long_id, spec, validator);
         });
@@ -113,7 +113,7 @@ public:
                   std::string const & /*desc*/,
                   option_spec const & /*spec*/)
     {
-        flag_calls.push_back([=, &value]()
+        flag_calls.push_back([this, &value, short_id, long_id]()
         {
             get_flag(value, short_id, long_id);
         });
@@ -134,7 +134,7 @@ public:
                                std::string const & /*desc*/,
                                validator_type && validator)
     {
-        positional_option_calls.push_back([=, &value]()
+        positional_option_calls.push_back([this, &value, validator]()
         {
             get_positional_option(value, validator);
         });

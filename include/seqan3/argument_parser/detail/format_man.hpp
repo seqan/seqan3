@@ -52,7 +52,7 @@ public:
                     option_spec const & spec,
                     validator_type && validator)
     {
-        parser_set_up_calls.push_back([=, &value]()
+        parser_set_up_calls.push_back([this, &value, short_id, long_id, desc, spec, validator] ()
         {
             if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED)))
                 print_list_item(prep_id_for_help(short_id, long_id) + " " + option_type_and_list_info(value),
@@ -73,7 +73,7 @@ public:
                   std::string const & desc,
                   option_spec const & spec)
     {
-        parser_set_up_calls.push_back([=] ()
+        parser_set_up_calls.push_back([this, short_id, long_id, desc, spec] ()
         {
             if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED)))
                 print_list_item(prep_id_for_help(short_id, long_id), desc);
@@ -94,7 +94,7 @@ public:
     {
         ++positional_option_count;
 
-        positional_option_calls.push_back([=, &value]()
+        positional_option_calls.push_back([this, &value, desc, validator] ()
         {
             std::string key{"\\fBARGUMENT-" + std::to_string(positional_option_count) +
                             "\\fP " + option_type_and_list_info(value)};
