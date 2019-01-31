@@ -52,7 +52,7 @@ public:
         for (size_t i = 0; i < N; ++i)
             rhs[i] = rhs[i] || base_t::operator[](i);
 
-        return std::move(rhs);
+        return rhs;
     }
     //!\brief Return a new bitset with all bits flipped.
     constexpr constexpr_pseudo_bitset operator~() const noexcept
