@@ -39,18 +39,18 @@ namespace seqan3
 //!\cond
 template<typename t>
 SEQAN3_CONCEPT StructureFileInputFormat = requires(t & v,
-                                                            std::ifstream & f,
-                                                            structure_file_input_options<rna5, false> & options,
-                                                            rna5_vector & seq,
-                                                            std::string & id,
-                                                            std::vector<std::set<std::pair<double, size_t>>> & bpp,
-                                                            std::vector<wuss51> & structure,
-                                                            std::vector<structured_rna<rna5, wuss51>> & structured_seq,
-                                                            double energy,
-                                                            double react,
-                                                            double react_err,
-                                                            std::string & comment,
-                                                            size_t offset)
+                                                   std::ifstream & f,
+                                                   structure_file_input_options<rna5, false> & options,
+                                                   rna5_vector & seq,
+                                                   std::string & id,
+                                                   std::vector<std::set<std::pair<double, size_t>>> & bpp,
+                                                   std::vector<wuss51> & structure,
+                                                   std::vector<structured_rna<rna5, wuss51>> & structured_seq,
+                                                   double energy,
+                                                   double react,
+                                                   double react_err,
+                                                   std::string & comment,
+                                                   size_t offset)
 {
     t::file_extensions;
 

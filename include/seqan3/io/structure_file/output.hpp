@@ -914,9 +914,9 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
-template <OStream<char>                        stream_type,
-          StructureFileOutputFormat            file_format,
-          detail::fields_concept               selected_field_ids>
+template <OStream<char>             stream_type,
+          StructureFileOutputFormat file_format,
+          detail::fields_concept    selected_field_ids>
 structure_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
                          type_list<file_format>,

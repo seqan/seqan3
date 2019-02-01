@@ -909,9 +909,9 @@ protected:
  * \relates seqan3::sequence_file_output
  * \{
  */
-template <OStream2                            stream_t,
-          SequenceFileOutputFormat            file_format,
-          detail::fields_concept              selected_field_ids>
+template <OStream2                 stream_t,
+          SequenceFileOutputFormat file_format,
+          detail::fields_concept   selected_field_ids>
 sequence_file_output(stream_t &&,
                      file_format const &,
                      selected_field_ids const &)
@@ -919,9 +919,9 @@ sequence_file_output(stream_t &&,
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
-template <OStream2                             stream_t,
-          SequenceFileOutputFormat            file_format,
-          detail::fields_concept              selected_field_ids>
+template <OStream2                 stream_t,
+          SequenceFileOutputFormat file_format,
+          detail::fields_concept   selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,
                      selected_field_ids const &)
