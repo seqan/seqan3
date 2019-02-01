@@ -52,7 +52,7 @@ inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
  *
  * \see seqan3::detail::is_configuration_valid_v
  */
-template <config_element_concept query_t, config_element_concept ... compare_types>
+template <ConfigElement query_t, ConfigElement ... compare_types>
 struct is_configuration_valid :
     public std::conditional_t<
         (std::is_same_v<remove_cvref_t<decltype(query_t::id)>, remove_cvref_t<decltype(compare_types::id)>> && ...) &&

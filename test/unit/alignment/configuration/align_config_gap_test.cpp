@@ -14,9 +14,9 @@
 
 using namespace seqan3;
 
-TEST(align_config_gap, config_element_concept)
+TEST(align_config_gap, ConfigElement)
 {
-    EXPECT_TRUE((detail::config_element_concept<align_cfg::gap<gap_scheme<>>>));
+    EXPECT_TRUE((detail::ConfigElement<align_cfg::gap<gap_scheme<>>>));
 }
 
 TEST(align_config_gap, configuration)

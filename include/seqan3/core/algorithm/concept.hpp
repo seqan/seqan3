@@ -33,7 +33,7 @@ namespace seqan3::detail
 {
 
 // ----------------------------------------------------------------------------
-// Concept config_element_concept
+// Concept ConfigElement
 // ----------------------------------------------------------------------------
 
 //!\cond
@@ -41,7 +41,7 @@ template <typename derived_t>
 class config_element_base;
 //!\endcond
 
-/*!\interface seqan3::detail::config_element_concept <>
+/*!\interface seqan3::detail::ConfigElement <>
  * \brief Concept for an algorithm configuration.
  * \ingroup algorithm
  *
@@ -49,23 +49,23 @@ class config_element_base;
  * \implements seqan3::pipeable_config_element
  */
 
-/*!\name Requirements for seqan3::detail::config_element_concept
- * \relates seqan3::detail::config_element_concept
- * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element_concept.
+/*!\name Requirements for seqan3::detail::ConfigElement
+ * \relates seqan3::detail::ConfigElement
+ * \brief   You can expect this member on all types that satisfy seqan3::detail::ConfigElement.
  * \{
  */
 /*!\var id
- * \memberof seqan3::detail::config_element_concept
+ * \memberof seqan3::detail::ConfigElement
  * \brief Algorithm specific static id used for internal validation checks.
  */
 /*!\var value
- * \memberof seqan3::detail::config_element_concept
+ * \memberof seqan3::detail::ConfigElement
  * \brief Member storing the configuration value.
  */
 //!\}
 //!\cond
 template <typename config_t>
-SEQAN3_CONCEPT config_element_concept = std::Semiregular<std::remove_reference_t<config_t>> &&
+SEQAN3_CONCEPT ConfigElement = std::Semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
     { std::remove_reference_t<config_t>::id };
