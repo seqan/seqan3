@@ -29,6 +29,23 @@ set(SEQAN3_DOXYFILE_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_doxygen_cfg.in)
 option(SEQAN3_USER_DOC "Create build target and test for user documentation." ON)
 option(SEQAN3_DEV_DOC "Create build target and test for developer documentation." ON)
 
+### Download and extract cppreference-doxygen-web.tag.xml for std:: documentation links
+set(SEQAN3_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.tag.xml")
+include(ExternalProject)
+ExternalProject_Add (
+    download-cppreference-doxygen-web-tag
+    URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20190110/html-book-20190110.tar.xz"
+    URL_HASH SHA256=cb8d6724c8dde8b9a4fac0eedc070dfb7adca6b714267fef089094e670c1a0e6
+    TLS_VERIFY ON
+    DOWNLOAD_DIR "${PROJECT_BINARY_DIR}"
+    DOWNLOAD_NAME "html-book.tar.xz"
+    DOWNLOAD_NO_EXTRACT YES
+    BINARY_DIR "${PROJECT_BINARY_DIR}"
+    CONFIGURE_COMMAND tar -xf "html-book.tar.xz" "cppreference-doxygen-web.tag.xml"
+    BUILD_COMMAND rm "html-book.tar.xz"
+    INSTALL_COMMAND ""
+)
+
 if (SEQAN3_USER_DOC)
     message (STATUS "Configuring user doc.")
 
@@ -44,6 +61,7 @@ if (SEQAN3_USER_DOC)
     add_custom_target(doc_usr ALL
                       COMMAND ${DOXYGEN_EXECUTABLE}
                       WORKING_DIRECTORY ${SEQAN3_DOXYGEN_OUTPUT_DIR}
+                      DEPENDS download-cppreference-doxygen-web-tag
                       COMMENT "Generating user API documentation with Doxygen"
                       VERBATIM)
 endif ()
@@ -63,6 +81,7 @@ if (SEQAN3_DEV_DOC)
     add_custom_target(doc_dev ALL
                       COMMAND ${DOXYGEN_EXECUTABLE}
                       WORKING_DIRECTORY ${SEQAN3_DOXYGEN_OUTPUT_DIR}
+                      DEPENDS download-cppreference-doxygen-web-tag
                       COMMENT "Generating developer API documentation with Doxygen"
                       VERBATIM)
                       message (STATUS "Add devel doc test.")
