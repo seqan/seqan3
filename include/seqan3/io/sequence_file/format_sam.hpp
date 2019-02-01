@@ -17,9 +17,6 @@
 #include <string_view>
 #include <vector>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/utility/iterator.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
@@ -48,9 +45,12 @@ namespace seqan3
    * ### Introduction
    *
    * The SAM format is commonly used to store pairwise alignment information between a query sequence and its
-   * reference sequence, e.g. a read mapping result. As it provides information on the **id**, **sequence** and
-   * **quality** of each query, it can additionally be treated as a sequence file.
-   * See the [article on Wikipedia](https://en.wikipedia.org/wiki/SAM_(file_format)) or the 
+   * reference sequence, e.g. a read mapping result. Some people also use the SAM format as plain storage for
+   * sequences (and qualities) and in some cases the original sequence files are no longer available. The
+   * seqan3::sequence_file_format_sam allows using SAM files in this manner and provides easy convertibility
+   * from/to FASTQ; but there is no access to the alignment information stored in SAM files. Use
+   * seqan3::alignment_file_format_sam if you are interested in the alignment.
+   * See the [article on Wikipedia](https://en.wikipedia.org/wiki/SAM_(file_format)) or the
    * [technical specification] (https://samtools.github.io/hts-specs/SAMv1.pdf) for an in-depth description of
    * the format.
    *
@@ -61,10 +61,7 @@ namespace seqan3
    *
    * ### Implementation notes
    *
-   * This implementation supports the following optional features of the format:
-   *
-   * line breaks and/or other whitespace characters in any part of the sequence (only when reading!), optional tags
-   * are going to be ignored (when reading)
+   * This implementation ignores all fields besides id, seq and quality.
    *
    */
 class sequence_file_format_sam
@@ -73,7 +70,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-     //!\brief Default constructor is explicitly deleted, you need to give a stream or file name.
+     //!\brief Default constructor is explicitly defaulted, you need to give a stream or file name.
     sequence_file_format_sam() = default;
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     sequence_file_format_sam(sequence_file_format_sam const &) = delete;
@@ -128,14 +125,14 @@ public:
         {
             if (options.truncate_ids)
             {
-                ranges::copy(stream_view | view::take_until_or_throw(is_blank)
+                std::ranges::copy(stream_view | view::take_until_or_throw(is_blank)
                                          | view::char_to<value_type_t<id_type>>,
                              std::back_inserter(id));
                 detail::consume(stream_view | view::take_until_or_throw(is_tab));
             }
             else
             {
-                ranges::copy(stream_view | view::take_until_or_throw(is_tab)
+                std::ranges::copy(stream_view | view::take_until_or_throw(is_tab)
                                          | view::char_to<value_type_t<id_type>>,
                              std::back_inserter(id));
             }
@@ -162,7 +159,7 @@ public:
          if constexpr (!detail::decays_to_ignore_v<seq_type>)
          {
              auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-             ranges::copy(seq_view | view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+             std::ranges::copy(seq_view | view::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                       {
                                           if (!is_legal_alph(c))
                                           {
@@ -199,12 +196,12 @@ public:
              {
                   // seq_qual field implies that they are the same variable
                   assert(std::addressof(sequence) == std::addressof(qualities));
-                  ranges::copy(qual_view | view::char_to<typename value_type_t<qual_type>::quality_alphabet_type>,
+                  std::ranges::copy(qual_view | view::char_to<typename value_type_t<qual_type>::quality_alphabet_type>,
                                ranges::begin(qualities) + sequence_size_before);
              }
              else if constexpr (!detail::decays_to_ignore_v<qual_type>)
              {
-                  ranges::copy(qual_view | view::char_to<value_type_t<qual_type>>,
+                  std::ranges::copy(qual_view | view::char_to<value_type_t<qual_type>>,
                                std::back_inserter(qualities));
              }
              else
@@ -252,7 +249,7 @@ public:
         else if (ranges::empty(id)) //[[unlikely]]
             stream_it = '*';
         else
-            ranges::copy(id, stream_it);
+            std::ranges::copy(id, stream_it);
 
         stream << "\t0\t*\t0\t0\t*\t*\t0\t0\t";
 
@@ -262,16 +259,17 @@ public:
         else if (ranges::empty(sequence)) //[[unlikely]]
             stream_it = '*';
         else
-            ranges::copy(sequence | view::to_char, stream_it);
+            std::ranges::copy(sequence | view::to_char, stream_it);
         stream_it = '\t';
 
         // Quality line
         if constexpr (detail::decays_to_ignore_v<qual_type>)
-          stream_it = '*';
+            stream_it = '*';
         else if (ranges::empty(qualities))
-          stream_it = '*';
+            stream_it = '*';
         else
-            ranges::copy(qualities | view::to_char, stream_it);
+            std::ranges::copy(qualities | view::to_char, stream_it);
+
         detail::write_eol(stream_it, options.add_carriage_return);
     }
 };
