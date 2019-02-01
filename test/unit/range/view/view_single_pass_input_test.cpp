@@ -36,11 +36,11 @@ class single_pass_input : public ::testing::Test
         {
             return rng_type{1, 2, 3, 4, 5};
         }
-        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::ranges::istream_range<char>>)
+        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, ranges::istream_view<char>>)
         {
             return std::istringstream{"12345"};
         }
-        else /*(std::is_same_v<rng_type, std::ranges::istream_range<int>>)*/
+        else if constexpr (std::is_same_v<rng_type, ranges::istream_view<int>>)
         {
             return std::istringstream{"1 2 3 4 5"};
         }
@@ -55,8 +55,8 @@ public:
 using underlying_range_types = ::testing::Types<std::vector<char>,
                                                 std::vector<int>,
                                                 std::vector<char> const,
-                                                std::ranges::istream_range<char>,
-                                                std::ranges::istream_range<int>>;
+                                                ranges::istream_view<char>,
+                                                ranges::istream_view<int>>;
 
 TYPED_TEST_CASE(single_pass_input, underlying_range_types);
 

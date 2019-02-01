@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <range/v3/iterator_range.hpp>
+#include <range/v3/view/subrange.hpp>
 
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -66,7 +66,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <std::Iterator it_t, std::Sentinel<it_t> sen_t>
-using subrange = std::ranges::iterator_range<it_t, sen_t>;
+using subrange = ::ranges::subrange<it_t, sen_t>;
 //TODO change to ranges::subrange once that has arrived
 
 } // namespace seqan3::view

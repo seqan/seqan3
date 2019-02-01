@@ -15,10 +15,6 @@
 #include <cassert>
 #include <type_traits>
 
-#include <range/v3/utility/iterator_traits.hpp>
-#include <range/v3/range_traits.hpp>
-
-#include <seqan3/std/ranges>
 #include <seqan3/std/iterator>
 
 namespace seqan3::detail

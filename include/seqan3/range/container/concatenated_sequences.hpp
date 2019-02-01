@@ -28,6 +28,7 @@
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 #include <seqan3/std/view/common.hpp>
+#include <seqan3/std/view/subrange.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/vector.hpp>
@@ -971,7 +972,9 @@ public:
         if (last - first == 0)
             return begin() + pos_as_num;
 
-        auto const ilist = std::ranges::make_iterator_range(first, last, std::distance(first, last));
+        auto const ilist = view::subrange<begin_iterator_type, end_iterator_type>(first,
+                                                                                  last,
+                                                                                  std::distance(first, last));
 
         data_delimiters.reserve(data_values.size() + ilist.size());
         data_delimiters.insert(data_delimiters.begin() + pos_as_num,

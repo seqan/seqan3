@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <range/v3/utility/iterator.hpp>
-
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -99,23 +97,23 @@ class alignment_range
          * \{
          */
 
-        constexpr bool operator==(std::ranges::default_sentinel const &) const noexcept
+        constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
         {
             return range_ptr->eof();
         }
 
-        friend constexpr bool operator==(std::ranges::default_sentinel const & lhs,
+        friend constexpr bool operator==(std::ranges::default_sentinel_t const & lhs,
                                          iterator_type const & rhs) noexcept
         {
             return rhs == lhs;
         }
 
-        constexpr bool operator!=(std::ranges::default_sentinel const & rhs) const noexcept
+        constexpr bool operator!=(std::ranges::default_sentinel_t const & rhs) const noexcept
         {
             return !(*this == rhs);
         }
 
-        friend constexpr bool operator!=(std::ranges::default_sentinel const & lhs,
+        friend constexpr bool operator!=(std::ranges::default_sentinel_t const & lhs,
                                          iterator_type const & rhs) noexcept
         {
             return rhs != lhs;
@@ -143,7 +141,7 @@ public:
     //!\brief This range is never const-iterable. The const_iterator is always void.
     using const_iterator  = void;
     //!\brief The sentinel type.
-    using sentinel        = std::ranges::default_sentinel;
+    using sentinel        = std::ranges::default_sentinel_t;
 
     /*!\name Constructors, destructor and assignment
      * \{

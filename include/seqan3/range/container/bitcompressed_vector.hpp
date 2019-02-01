@@ -14,8 +14,6 @@
 
 #include <type_traits>
 
-#include <range/v3/iterator_range.hpp>
-
 #include <sdsl/int_vector.hpp>
 
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
@@ -30,6 +28,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <seqan3/std/view/subrange.hpp>
 
 namespace seqan3
 {
@@ -118,7 +117,7 @@ private:
          * \brief All are explicitly defaulted.
          * \{
          */
-        constexpr reference_proxy_type() noexcept : base_t{} {}
+        constexpr reference_proxy_type() noexcept : base_t{}, internal_proxy{} {}
         constexpr reference_proxy_type(reference_proxy_type const &) = default;
         constexpr reference_proxy_type(reference_proxy_type &&) = default;
         constexpr reference_proxy_type & operator=(reference_proxy_type const &) = default;
@@ -755,7 +754,9 @@ public:
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
 
-        auto v = std::ranges::iterator_range{begin_it, end_it} | seqan3::view::convert<value_type> | seqan3::view::to_rank;
+        auto v = view::subrange<begin_iterator_type, end_iterator_type>{begin_it, end_it}
+               | view::convert<value_type>
+               | view::to_rank;
         data.insert(data.begin() + pos_as_num, seqan3::begin(v), seqan3::end(v));
 
         return begin() + pos_as_num;

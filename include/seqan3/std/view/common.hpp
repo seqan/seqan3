@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <range/v3/view/bounded.hpp>
+#include <range/v3/view/common.hpp>
 
 #include <seqan3/std/iterator>
 
@@ -69,6 +69,6 @@ namespace seqan3::view
  * ```
  * \hideinitializer
  */
-inline constexpr auto common = ranges::view::bounded;
+inline constexpr auto common = ranges::view::common;
 
 } // namespace seqan3::view

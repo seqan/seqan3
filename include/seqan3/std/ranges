@@ -12,19 +12,20 @@
 
 #pragma once
 
-#if __has_include(<ranges>) // C++20 ranges available
+#include <seqan3/core/platform.hpp>
+
+#if __cpp_lib_ranges // C++20 ranges available
 #include <ranges>
 #else // implement via range-v3
 
-#include <range/v3/range_concepts.hpp>
-#include <range/v3/empty.hpp>
-#include <range/v3/iterator_range.hpp>
+#include <range/v3/range/concepts.hpp>
+#include <range/v3/iterator/default_sentinel.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
+#include <range/v3/iterator/stream_iterators.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/any_view.hpp>
 #include <range/v3/view/reverse.hpp>
-
-#include <seqan3/core/platform.hpp>
 
 /*!\defgroup ranges ranges
  * \ingroup std
@@ -43,7 +44,7 @@ namespace std::ranges
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT Range = (bool)::ranges::Range<type>();
+SEQAN3_CONCEPT Range = ::ranges::Range<type>;
 //!\endcond
 
 /*!\interface std::ranges::SizedRange <>
@@ -53,7 +54,7 @@ SEQAN3_CONCEPT Range = (bool)::ranges::Range<type>();
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT SizedRange = Range<type> && (bool)::ranges::SizedRange<type>();
+SEQAN3_CONCEPT SizedRange = Range<type> && ::ranges::SizedRange<type>;
 //!\endcond
 
 /*!\interface std::ranges::CommonRange  <>
@@ -63,7 +64,7 @@ SEQAN3_CONCEPT SizedRange = Range<type> && (bool)::ranges::SizedRange<type>();
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT CommonRange = Range<type> && (bool)::ranges::BoundedRange<type>();
+SEQAN3_CONCEPT CommonRange = Range<type> && ::ranges::CommonRange<type>;
 //!\endcond
 
 /*!\interface std::ranges::OutputRange <>
@@ -74,7 +75,7 @@ SEQAN3_CONCEPT CommonRange = Range<type> && (bool)::ranges::BoundedRange<type>()
  */
 //!\cond
 template <typename type, typename out_type>
-SEQAN3_CONCEPT OutputRange = Range<type> && (bool)::ranges::OutputRange<type, out_type>();
+SEQAN3_CONCEPT OutputRange = Range<type> && ::ranges::OutputRange<type, out_type>;
 //!\endcond
 
 /*!\interface std::ranges::InputRange <>
@@ -85,7 +86,7 @@ SEQAN3_CONCEPT OutputRange = Range<type> && (bool)::ranges::OutputRange<type, ou
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT InputRange = Range<type> && (bool)::ranges::InputRange<type>();
+SEQAN3_CONCEPT InputRange = Range<type> && ::ranges::InputRange<type>;
 //!\endcond
 
 /*!\interface std::ranges::ForwardRange <>
@@ -96,7 +97,7 @@ SEQAN3_CONCEPT InputRange = Range<type> && (bool)::ranges::InputRange<type>();
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT ForwardRange = InputRange<type> && (bool)::ranges::ForwardRange<type>();
+SEQAN3_CONCEPT ForwardRange = InputRange<type> && ::ranges::ForwardRange<type>;
 //!\endcond
 
 /*!\interface std::ranges::BidirectionalRange <>
@@ -107,7 +108,7 @@ SEQAN3_CONCEPT ForwardRange = InputRange<type> && (bool)::ranges::ForwardRange<t
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT BidirectionalRange = ForwardRange<type> && (bool)::ranges::BidirectionalRange<type>();
+SEQAN3_CONCEPT BidirectionalRange = ForwardRange<type> && ::ranges::BidirectionalRange<type>;
 //!\endcond
 
 /*!\interface std::ranges::RandomAccessRange <>
@@ -118,7 +119,7 @@ SEQAN3_CONCEPT BidirectionalRange = ForwardRange<type> && (bool)::ranges::Bidire
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT RandomAccessRange = BidirectionalRange<type> && (bool)::ranges::RandomAccessRange<type>();
+SEQAN3_CONCEPT RandomAccessRange = BidirectionalRange<type> && ::ranges::RandomAccessRange<type>;
 //!\endcond
 
 /*!\interface std::ranges::ContiguousRange <>
@@ -127,7 +128,7 @@ SEQAN3_CONCEPT RandomAccessRange = BidirectionalRange<type> && (bool)::ranges::R
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT ContiguousRange = RandomAccessRange<type> && (bool)::ranges::ContiguousRange<type>();
+SEQAN3_CONCEPT ContiguousRange = RandomAccessRange<type> && ::ranges::ContiguousRange<type>;
 //!\endcond
 
 /*!\interface std::ranges::View <>
@@ -139,7 +140,7 @@ SEQAN3_CONCEPT ContiguousRange = RandomAccessRange<type> && (bool)::ranges::Cont
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT View = Range<type> && (bool)::ranges::View<type>();
+SEQAN3_CONCEPT View = Range<type> && ::ranges::View<type>;
 //!\endcond
 
 /*!\interface std::ranges::ViewableRange <>
@@ -183,9 +184,14 @@ using SEQAN3_DOXYGEN_ONLY(empty =) ::ranges::empty;
 using SEQAN3_DOXYGEN_ONLY(equal =) ::ranges::equal;
 
 /*!\typedef std::ranges::default_sentinel
-* \brief Alias for ranges::default_sentinel. Empty sentinel type for use with iterator types that know the bound of their range.
+* \brief Alias for ranges::default_sentinel. Empty sentinel object for use with iterators that know the bound of their range.
 */
 using SEQAN3_DOXYGEN_ONLY(default_sentinel =) ::ranges::default_sentinel;
+
+/*!\typedef std::ranges::default_sentinel_t
+* \brief Alias for ranges::default_sentinel_t. Type of ranges::default_sentinel.
+*/
+using SEQAN3_DOXYGEN_ONLY(default_sentinel_t =) ::ranges::default_sentinel_t;
 
 /*!\typedef std::ranges::sentinel_t
 * \brief Alias for ranges::sentinel_t. Obtains the sentinel type of a range.
@@ -202,16 +208,6 @@ using SEQAN3_DOXYGEN_ONLY(iterator_t =) ::ranges::iterator_t;
 */
 using SEQAN3_DOXYGEN_ONLY(ostreambuf_iterator =) ::ranges::ostreambuf_iterator;
 
-/*!\typedef std::ranges::iterator_range
-* \brief Alias for ranges::iterator_range. Iterator adaptor for a Range type.
-*/
-using SEQAN3_DOXYGEN_ONLY(iterator_range =) ::ranges::iterator_range;
-
-/*!\typedef std::ranges::make_iterator_range
-* \brief Alias for ranges::make_iterator_range. Makes the iterator adaptor.
-*/
-using SEQAN3_DOXYGEN_ONLY(make_iterator_range =) ::ranges::make_iterator_range;
-
 /*!\typedef std::ranges::cbegin
 * \brief Alias for ranges::cbegin. Returns an iterator to the beginning of a range.
 */
@@ -221,11 +217,6 @@ using SEQAN3_DOXYGEN_ONLY(cbegin =) ::ranges::cbegin;
 * \brief Alias for ranges::cend. Returns an iterator to the end of a range.
 */
 using SEQAN3_DOXYGEN_ONLY(cend =) ::ranges::cend;
-
-/*!\typedef std::ranges::istream_range
-* \brief Alias for ranges::istream_range. Istream adaptor for a Range type.
-*/
-using SEQAN3_DOXYGEN_ONLY(istream_range =) ::ranges::istream_range;
 
 /*!\typedef std::ranges::ostream_iterator
 * \brief Alias for ranges::ostream_iterator. Ostream adaptor for a Range type.

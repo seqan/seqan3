@@ -18,7 +18,6 @@
 #include <vector>
 
 #include <range/v3/algorithm/copy.hpp>
-#include <range/v3/utility/iterator.hpp>
 #include <range/v3/view/chunk.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/remove_if.hpp>

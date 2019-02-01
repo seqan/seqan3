@@ -262,7 +262,7 @@ public:
     //!\brief The const iterator type is void, because files are not const-iterable.
     using const_iterator    = void;
     //!\brief The type returned by end().
-    using sentinel          = std::ranges::default_sentinel;
+    using sentinel          = std::ranges::default_sentinel_t;
     //!\}
 
     /*!\name Constructors, destructor and assignment

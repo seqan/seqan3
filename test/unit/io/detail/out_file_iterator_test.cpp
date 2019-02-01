@@ -83,5 +83,5 @@ TEST(out_file_iterator, comparison)
     it_t it{fake_file};
 
     // never at end
-    EXPECT_FALSE(it == std::ranges::default_sentinel{});
+    EXPECT_FALSE(it == std::ranges::default_sentinel);
 }

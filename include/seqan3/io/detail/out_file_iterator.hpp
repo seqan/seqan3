@@ -126,26 +126,26 @@ public:
      * \brief This iterator never equals its sentinel.
      * \{
      */
-    constexpr bool operator==(std::ranges::default_sentinel const &) const noexcept
+    constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
     {
         return false;
     }
 
-    constexpr bool operator!=(std::ranges::default_sentinel const &) const noexcept
+    constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
     {
         return true;
     }
 
-    constexpr friend bool operator==(std::ranges::default_sentinel const &,
+    constexpr friend bool operator==(std::ranges::default_sentinel_t const &,
                                      out_file_iterator const & it) noexcept
     {
-        return (it == std::ranges::default_sentinel{});
+        return (it == std::ranges::default_sentinel);
     }
 
-    constexpr friend bool operator!=(std::ranges::default_sentinel const &,
+    constexpr friend bool operator!=(std::ranges::default_sentinel_t const &,
                                      out_file_iterator const & it) noexcept
     {
-        return (it != std::ranges::default_sentinel{});
+        return (it != std::ranges::default_sentinel);
     }
     //!\}
 

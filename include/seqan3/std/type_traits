@@ -14,8 +14,6 @@
 
 #include <type_traits>
 
-#if __cplusplus <= 201810L // TODO feature_test_macro if available
-
 namespace std
 {
 
@@ -29,11 +27,17 @@ namespace std
  * \ingroup type_traits
  */
 template <typename t>
-struct type_identity
+struct type_identity;
+
+//!\cond
+template <typename t>
+    requires true
+struct type_identity<t>
 {
     //!\brief The return type (which is the argument).
     using type = t;
 };
+//!\endcond
 
 //!\brief A shortcut for std::type_identity.
 //!\ingroup type_traits
@@ -41,5 +45,3 @@ template <typename t>
 using type_identity_t = typename type_identity<t>::type;
 
 } // namespace std
-
-#endif // C++17

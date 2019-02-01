@@ -48,7 +48,7 @@ struct structure_file_input_class : public ::testing::Test
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
             filecreator << contents; // must contain at least one record
         }
-        return std::move(filename);
+        return filename;
     }
 };
 
