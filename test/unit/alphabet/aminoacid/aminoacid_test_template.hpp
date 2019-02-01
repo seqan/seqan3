@@ -23,8 +23,8 @@ TYPED_TEST_CASE_P(aminoacid);
 
 TYPED_TEST_P(aminoacid, concept_check)
 {
-    EXPECT_TRUE(aminoacid_concept<TypeParam>);
-    EXPECT_TRUE(aminoacid_concept<TypeParam &>);
+    EXPECT_TRUE(AminoacidAlphabet<TypeParam>);
+    EXPECT_TRUE(AminoacidAlphabet<TypeParam &>);
 }
 
 // ------------------------------------------------------------------

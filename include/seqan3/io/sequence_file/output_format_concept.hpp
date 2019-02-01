@@ -70,7 +70,7 @@ SEQAN3_CONCEPT sequence_file_output_format_concept = requires (t                
  * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
  * \tparam qual_type        Type of the seqan3::field::QUAL output; must satisfy std::ranges::OutputRange
- * over a seqan3::quality_concept.
+ * over a seqan3::QualityAlphabet.
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::SEQ, i.e. the "sequence".

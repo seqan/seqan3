@@ -103,7 +103,7 @@ namespace seqan3
  */
 /*!\typedef using quality_alphabet
  * \memberof seqan3::sequence_file_input_traits_concept
- * \brief Alphabet of the characters for the seqan3::field::QUAL; must satisfy seqan3::quality_concept.
+ * \brief Alphabet of the characters for the seqan3::field::QUAL; must satisfy seqan3::QualityAlphabet.
  */
 /*!\typedef using quality_container
  * \memberof seqan3::sequence_file_input_traits_concept
@@ -132,7 +132,7 @@ SEQAN3_CONCEPT sequence_file_input_traits_concept = requires (t v)
     requires sequence_container_concept<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;
 
-    requires quality_concept<typename t::quality_alphabet>;
+    requires QualityAlphabet<typename t::quality_alphabet>;
     requires sequence_container_concept<typename t::template quality_container<typename t::quality_alphabet>>;
     requires sequence_container_concept<typename t::template quality_container_container<
         typename t::template quality_container<typename t::quality_alphabet>>>;

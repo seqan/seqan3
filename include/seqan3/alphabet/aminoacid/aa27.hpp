@@ -22,7 +22,7 @@ namespace seqan3
 {
 /*!\brief The twenty-seven letter amino acid alphabet.
  * \ingroup aminoacid
- * \implements seqan3::aminoacid_concept
+ * \implements seqan3::AminoacidAlphabet
  * \implements seqan3::detail::constexpr_alphabet_concept
  * \implements seqan3::trivially_copyable_concept
  * \implements seqan3::standard_layout_concept

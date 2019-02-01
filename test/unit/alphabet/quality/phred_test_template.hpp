@@ -68,7 +68,7 @@ TYPED_TEST_P(phred, conversion_rank)
 // test provision of data type `phred_type` and phred converter.
 TYPED_TEST_P(phred, concept_check)
 {
-    EXPECT_TRUE(quality_concept<TypeParam>);
+    EXPECT_TRUE(QualityAlphabet<TypeParam>);
 }
 
 REGISTER_TYPED_TEST_CASE_P(phred, conversion_char, conversion_phred, conversion_rank, concept_check);

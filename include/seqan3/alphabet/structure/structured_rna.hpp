@@ -30,7 +30,7 @@ namespace seqan3
  * \implements seqan3::detail::constexpr_alphabet_concept
  * \implements seqan3::trivially_copyable_concept
  * \implements seqan3::standard_layout_concept
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::nucleotide_concept.
+ * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::NucleotideAlphabet.
  * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::rna_structure_concept.
  *
  * This composition pairs a nucleotide alphabet with a structure alphabet. The rank values
@@ -44,11 +44,11 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/structure/structured_rna.cpp general
  *
- * This seqan3::cartesian_composition itself models both seqan3::nucleotide_concept and seqan3::rna_structure_concept.
+ * This seqan3::cartesian_composition itself models both seqan3::NucleotideAlphabet and seqan3::rna_structure_concept.
  */
 template <typename sequence_alphabet_t, typename structure_alphabet_t>
 //!\cond
-    requires nucleotide_concept<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t>
+    requires NucleotideAlphabet<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t>
 //!\endcond
 class structured_rna :
     public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
@@ -127,7 +127,7 @@ public:
     /*!\brief Return a structured_rna where the sequence letter is converted to its complement.
      * \details
      * See \ref nucleotide for the actual values.
-     * Satisfies the seqan3::nucleotide_concept::complement() requirement via the seqan3::complement() wrapper.
+     * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
      * The structure letter is not modified.
      * \par Complexity
      * Constant.

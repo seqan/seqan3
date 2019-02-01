@@ -30,7 +30,7 @@ namespace seqan3::view
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
  *
- * Calls seqan3::nucleotide_concept::complement() on every element of the input range.
+ * Calls seqan3::NucleotideAlphabet::complement() on every element of the input range.
  *
  * ### View properties
  *
@@ -52,7 +52,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::nucleotide_concept            | std::remove_reference_t<seqan3::reference_t<urng_t>> |
+ * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | std::remove_reference_t<seqan3::reference_t<urng_t>> |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -64,9 +64,9 @@ namespace seqan3::view
 
 inline auto const complement = deep{view::transform([] (auto && in)
 {
-    static_assert(nucleotide_concept<std::remove_const_t<decltype(in)>>,
-                  "The innermost value type must satisfy the nucleotide_concept.");
-    // call element-wise complement from the nucleotide_concept
+    static_assert(NucleotideAlphabet<std::remove_const_t<decltype(in)>>,
+                  "The innermost value type must satisfy the NucleotideAlphabet.");
+    // call element-wise complement from the NucleotideAlphabet
     using seqan3::complement;
     return complement(in);
 })};

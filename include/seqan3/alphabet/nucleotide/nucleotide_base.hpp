@@ -28,7 +28,7 @@ namespace seqan3
  * \details
  *
  * You can use this class to define your own nucleotide alphabet, but types are not required to be based on it to model
- * seqan3::nucleotide_concept, it is purely a way to avoid code duplication.
+ * seqan3::NucleotideAlphabet, it is purely a way to avoid code duplication.
  *
  * In addition to the requirements of seqan3::alphabet_base, the derived type needs to define the following static
  * member variable (can be private):
@@ -73,7 +73,7 @@ public:
     //!\cond
         requires !std::Same<nucleotide_base, other_nucl_type> &&
                  !std::Same<derived_type, other_nucl_type> &&
-                 nucleotide_concept<other_nucl_type>
+                 NucleotideAlphabet<other_nucl_type>
     //!\endcond
     explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
@@ -93,7 +93,7 @@ public:
      *
      * See \ref nucleotide for the actual values.
      *
-     * Satisfies the seqan3::nucleotide_concept::complement() requirement via the seqan3::complement() wrapper.
+     * Satisfies the seqan3::NucleotideAlphabet::complement() requirement via the seqan3::complement() wrapper.
      *
      * \par Complexity
      *

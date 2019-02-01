@@ -42,8 +42,8 @@ TYPED_TEST_P(nucleotide, global_complement)
 
 TYPED_TEST_P(nucleotide, concept_check)
 {
-    EXPECT_TRUE(nucleotide_concept<TypeParam>);
-    EXPECT_TRUE(nucleotide_concept<TypeParam &>);
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam>);
+    EXPECT_TRUE(NucleotideAlphabet<TypeParam &>);
 }
 
 REGISTER_TYPED_TEST_CASE_P(nucleotide, global_complement, concept_check);
