@@ -224,34 +224,10 @@ TEST(test_add_copyright, copyright)
     // Tests the --copyright call.
     const char * argvCopyright[] = {"./copyright", "--copyright"};
     argument_parser copyright("myApp", 2, argvCopyright);
-    std::string seqan_license = std::string(
-        "Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin"
-        "Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik"
-        "All rights reserved."
 
-        "Redistribution and use in source and binary forms, with or without"
-        "modification, are permitted provided that the following conditions are met:"
-
-        "   * Redistributions of source code must retain the above copyright"
-        "     notice, this list of conditions and the following disclaimer."
-        "   * Redistributions in binary form must reproduce the above copyright"
-        "     notice, this list of conditions and the following disclaimer in the"
-        "     documentation and/or other materials provided with the distribution."
-        "   * Neither the name of Knut Reinert or the FU Berlin nor the names of"
-        "     its contributors may be used to endorse or promote products derived"
-        "     from this software without specific prior written permission."
-
-        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\""
-        "AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE"
-        "IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE"
-        "ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE"
-        "FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL"
-        "DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR"
-        "SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER"
-        "CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT"
-        "LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY"
-        "OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH"
-        "DAMAGE.");
+    std::ifstream license_file{std::string{{SEQAN_INCLUDE_DIR}} + "/../LICENSE"};
+    std::string license_string{(std::istreambuf_iterator<char>(license_file)),
+                                std::istreambuf_iterator<char>()};
     // Test --copyright with empty short and long copyright info.
     {
         testing::internal::CaptureStdout();
@@ -264,7 +240,7 @@ TEST(test_add_copyright, copyright)
                                "================================================================================"
                                "This program contains SeqAn3 code licensed under the following terms:"
                                "--------------------------------------------------------------------------------"
-                               + seqan_license);
+                               + license_string);
         EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
                                    expected | ranges::view::remove_if(is_space)));
     }
@@ -283,7 +259,7 @@ TEST(test_add_copyright, copyright)
                                "================================================================================"
                                "This program contains SeqAn3 code licensed under the following terms:"
                                "--------------------------------------------------------------------------------"
-                               + seqan_license);
+                               + license_string);
         EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
                                    expected | ranges::view::remove_if(is_space)));
     }
@@ -301,7 +277,7 @@ TEST(test_add_copyright, copyright)
                                "================================================================================"
                                "This program contains SeqAn3 code licensed under the following terms:"
                                "--------------------------------------------------------------------------------"
-                               + seqan_license);
+                               + license_string);
         EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
                                    expected | ranges::view::remove_if(is_space)));
     }
