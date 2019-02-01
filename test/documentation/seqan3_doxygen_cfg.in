@@ -32,6 +32,8 @@ PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "SEQAN3_DOXYGEN_ONLY(x)= x" \
                          "${SEQAN3_DOXYGEN_PREDEFINED_NDEBUG}"
 
+TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=http://en.cppreference.com/w/"
+
 EXCLUDE_SYMBOLS        = seqan3::contrib
 
 
