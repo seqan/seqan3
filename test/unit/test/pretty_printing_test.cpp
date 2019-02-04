@@ -25,3 +25,25 @@ TEST(debug_stream, basic)
 
     EXPECT_EQ((testing::internal::GetCapturedStdout()), "aAGA(42,-10)");
 }
+
+namespace seqan3 {
+
+struct foo
+{
+    int f{0};
+
+    bool operator==(foo const & fo) const
+    {
+        return f == fo.f;
+    }
+};
+
+using myint = int;
+
+}
+
+TEST(debug_stream, not_printable_with_debug_stream)
+{
+    foo f1{};
+    EXPECT_EQ(f1, f1);
+}

@@ -15,6 +15,7 @@
 #include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
+#include <seqan3/std/view/view_all.hpp>
 
 using namespace seqan3;
 
@@ -99,10 +100,15 @@ TEST(debug_stream, range_of_alphabet)
     o.flush();
     EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATAC");
 
+    // print view
+    my_stream << view::all(d2);
+    o.flush();
+    EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATACAGGATAC");
+
     concatenated_sequences<bitcompressed_vector<dna5>> const vec2 = {"ACGT"_dna5, "GAGGA"_dna5};
     my_stream << vec2;
     o.flush();
-    EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATAC[ACGT,GAGGA]");
+    EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATACAGGATAC[ACGT,GAGGA]");
 }
 
 TEST(debug_stream, std_endl)

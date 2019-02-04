@@ -125,6 +125,7 @@ public:
      */
     //!\brief Forwards to the underlying stream object.
     template <typename t>
+        requires requires (t & v, std::ostream * out) { *out << v; }
     debug_stream_type & operator<<(t && v)
     {
         *stream << v;
@@ -347,6 +348,7 @@ template <std::ranges::InputRange rng_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
 //!\cond
     requires !std::Same<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
+             !requires (rng_t & v, std::ostream * out) { *out << v; } &&
              requires (reference_t<rng_t> l) { { debug_stream << l }; } &&
              // exclude null-terminated strings:
              !(std::is_pointer_v<std::decay_t<rng_t>> &&
@@ -380,6 +382,44 @@ inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
 
     return s;
 }
+
+//!\cond
+// extra overload for view is needed because range-v3 view have a ostream<< overload and overload resolution would
+// be ambigious with our overload for ranges.
+template <typename rng_t>
+inline debug_stream_type & operator<<(debug_stream_type & ds, rng_t && r)
+    requires !std::Same<remove_cvref_t<reference_t<rng_t>>, remove_cvref_t<rng_t>> && // prevent recursive instantiation
+             requires (rng_t & v, std::ostream * out) { *out << v; } &&
+             std::ranges::View<remove_cvref_t<rng_t>>
+{
+    if constexpr (alphabet_concept<remove_cvref_t<reference_t<rng_t>>> &&
+                  !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
+    {
+        for (auto && l : r)
+            ds << l;
+    }
+    else
+    {
+        ds << '[';
+        auto b = begin(r);
+        auto e = end(r);
+        if (b != e)
+        {
+            ds << *b;
+            ++b;
+        }
+        while (b != e)
+        {
+            ds << ',';
+            ds << *b;
+            ++b;
+        }
+        ds << ']';
+    }
+
+    return ds;
+}
+//!\endcond
 
 //!\}
 
