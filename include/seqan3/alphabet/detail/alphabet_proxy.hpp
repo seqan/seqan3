@@ -249,14 +249,26 @@ public:
         requires alphabet_concept<alphabet_type>
     {
         using seqan3::to_char;
-        return to_char(static_cast<alphabet_type>(*this));
+        /* (smehringer) Explicit conversion instead of static_cast:
+         * See explanation in to_phred().
+         */
+        return to_char(operator alphabet_type());
     }
 
     constexpr phred_type to_phred() const noexcept
         requires QualityAlphabet<alphabet_type>
     {
         using seqan3::to_phred;
-        return to_phred(static_cast<alphabet_type>(*this));
+        /* (smehringer) Explicit conversion instead of static_cast:
+         * The cartesian composition qualified returns a component_proxy which inherits from alphabet_proxy_base.
+         * The qualified alphabet itself inherits from quality_base.
+         * Now when accessing get<1>(seq_qual_alph) we want to call to_phred at some point because we want the quality,
+         * therefore the to_phred function from alphabet_proxy is called, but this function did a static_cast to the
+         * derived type which is calling the constructor from quality_base. Unfortunately now, the generic quality_base
+         *  constructor uses assign_phred(static_cast<derived_type &>(*this), to_phred(other)); (here) which again
+         * tries to call to_phred of the alphabet_proxy => infinite loop :boom:
+         */
+        return to_phred(operator alphabet_type());
     }
 
 #if 0 // this currently causes GCC ICE in cartesian_composition test
