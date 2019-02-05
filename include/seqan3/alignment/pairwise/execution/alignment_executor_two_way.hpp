@@ -203,7 +203,7 @@ private:
     //!\}
 
     //!\brief Indicates the end-of-stream.
-    static constexpr size_t eof{-1};
+    static constexpr size_t eof{std::numeric_limits<size_t>::max()};
 
     //!\brief The execution policy.
     execution_handler_t exec_handler{};
