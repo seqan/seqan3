@@ -148,20 +148,20 @@ constexpr alignment_matrix_format alignment_matrix_format::ascii
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_block
 {
-    u8"ε", u8"║", u8"═", u8"╬",
-    {u8"█",u8"▘",u8"▝",u8"▀",u8"▖",u8"▌",u8"▞",u8"▛"}
+    "ε", "║", "═", "╬",
+    {"█","▘","▝","▀","▖","▌","▞","▛"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_braille
 {
-    u8"ε", u8"║", u8"═", u8"╬",
-    {u8"⠀",u8"⠁",u8"⠈",u8"⠉",u8"⠄",u8"⠅",u8"⠌",u8"⠍"}
+    "ε", "║", "═", "╬",
+    {"⠀","⠁","⠈","⠉","⠄","⠅","⠌","⠍"}
 };
 
 constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
 {
-    u8"ε", u8"║", u8"═", u8"╬",
-    {u8"↺",u8"↖",u8"↑",u8"↖↑",u8"←",u8"↖←",u8"↑←",u8"↖↑←"}
+    "ε", "║", "═", "╬",
+    {"↺","↖","↑","↖↑","←","↖←","↑←","↖↑←"}
 };
 
 /*!\brief Formats and prints trace and score matrices that satisfy the
