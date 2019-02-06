@@ -1,11 +1,15 @@
 PROJECT_NAME           = "SeqAn3"
+PROJECT_BRIEF          = "The Modern C++ library for Sequence Analysis in Bioinformatics."
+PROJECT_LOGO           =
+LAYOUT_FILE            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/DoxygenLayout.xml
 
 ## PATHS
 OUTPUT_DIRECTORY       = ${SEQAN3_DOXYGEN_OUTPUT_DIR}
-INPUT                  = ${SEQAN3_DOXYGEN_INCLUDE_DIR}
-STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_INCLUDE_DIR}
-STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_INCLUDE_DIR}
-EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_INCLUDE_DIR}/../
+INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc
+STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
+STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
+EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
 
 ## DOT SUPPORT
 HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
@@ -24,6 +28,7 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 SORT_BRIEF_DOCS        = YES
+#TOC_INCLUDE_HEADINGS   = 2
 
 PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "CEREAL_LOAD_FUNCTION_NAME=load" \
