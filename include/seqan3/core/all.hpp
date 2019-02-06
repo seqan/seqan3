@@ -52,14 +52,3 @@
 /*!\namespace std
  * \brief SeqAn specific customisations in the standard namespace.
  */
-
-/*!\mainpage SeqAn3 API documentation
- *
- * This is the API documentation for the SeqAn3 library.
- *
- * We recommend browsing the documentation via the "Modules" menu on the left.
- *
- * Installation instructions are available on [GitHub](https://github.com/seqan/seqan3).
- *
- * A manual will be added in the future.
- */
