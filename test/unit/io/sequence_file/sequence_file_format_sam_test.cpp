@@ -131,6 +131,38 @@ ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!
     do_read_test(input);
 }
 
+TEST_F(read, seq_qual)
+{
+
+    std::string input
+    {
+R"(@ Comment
+@ Blablabla
+@ Bla   bla bla
+ID1	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTT	!##$%&'()*+,-./++-	FI:i:1
+ID2	0	*	0	0	*	*	0	0	ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT	!##$&'()*+,-./+)*+,-)*+,-)*+,-)*+,BDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDEBDE	AS:i:3
+ID3 lala	0	*	0	0	*	*	0	0	ACGTTTA	!!!!!!!	TI:i:2
+)"
+    };
+
+    std::stringstream istream{input};
+
+    std::vector<qualified<dna5, phred42>> seq_qual;
+    sequence_file_input_options<dna5, true> options2;
+
+    for (unsigned i = 0; i < 3; ++i)
+    {
+        id.clear();
+        seq_qual.clear();
+
+        format.read(istream, options2, seq_qual, id, seq_qual);
+
+        EXPECT_TRUE((std::ranges::equal(id, expected_ids[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<dna5>, expected_seqs[i])));
+        EXPECT_TRUE((std::ranges::equal(seq_qual | view::convert<phred42>, expected_quals[i])));
+    }
+}
+
 TEST_F(read, no_qual)
 {
    std::string input

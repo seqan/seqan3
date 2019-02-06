@@ -109,7 +109,7 @@ public:
         size_t sequence_size_before{0};
         size_t sequence_size_after{0};
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
-            sequence_size_before = ranges::size(sequence);
+            sequence_size_before = std::ranges::size(sequence);
 
         auto constexpr is_tab{is_char<'\t'>};
         auto constexpr is_cntrl{is_char<'\n'>};
@@ -160,20 +160,20 @@ public:
          {
              auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
              std::ranges::copy(seq_view | view::transform([is_legal_alph] (char const c) // enforce legal alphabet
-                                      {
-                                          if (!is_legal_alph(c))
                                           {
-                                              throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                is_legal_alph.msg.string() +
-                                                                " evaluated to false on " +
-                                                                detail::make_printable(c)};
-                                          }
-                                          return c;
-                                      })
-                                    | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
-                           std::back_inserter(sequence));
+                                              if (!is_legal_alph(c))
+                                              {
+                                                  throw parse_error{std::string{"Encountered an unexpected letter: "} +
+                                                                    is_legal_alph.msg.string() +
+                                                                    " evaluated to false on " +
+                                                                    detail::make_printable(c)};
+                                              }
+                                              return c;
+                                          })
+                                        | view::char_to<value_type_t<seq_type>>, // convert to actual target alphabet
+                                          std::back_inserter(sequence));
 
-              sequence_size_after = ranges::size(sequence);
+              sequence_size_after = std::ranges::size(sequence);
           }
           else
           {
@@ -197,7 +197,7 @@ public:
                   // seq_qual field implies that they are the same variable
                   assert(std::addressof(sequence) == std::addressof(qualities));
                   std::ranges::copy(qual_view | view::char_to<typename value_type_t<qual_type>::quality_alphabet_type>,
-                               ranges::begin(qualities) + sequence_size_before);
+                               std::ranges::begin(qualities) + sequence_size_before);
              }
              else if constexpr (!detail::decays_to_ignore_v<qual_type>)
              {
@@ -242,11 +242,11 @@ public:
                           "The sequence must model std::ranges::ForwardRange and its value type must model "
                           "seqan3::alphabet_concept.");
         }
-        ranges::ostreambuf_iterator stream_it{stream};
+        std::ranges::ostreambuf_iterator stream_it{stream};
         // ID
         if constexpr (detail::decays_to_ignore_v<id_type>)
             stream_it = '*';
-        else if (ranges::empty(id)) //[[unlikely]]
+        else if (std::ranges::empty(id)) //[[unlikely]]
             stream_it = '*';
         else
             std::ranges::copy(id, stream_it);
@@ -256,7 +256,7 @@ public:
         // Sequence
         if constexpr (detail::decays_to_ignore_v<seq_type>)
             stream_it = '*';
-        else if (ranges::empty(sequence)) //[[unlikely]]
+        else if (std::ranges::empty(sequence)) //[[unlikely]]
             stream_it = '*';
         else
             std::ranges::copy(sequence | view::to_char, stream_it);
@@ -265,7 +265,7 @@ public:
         // Quality line
         if constexpr (detail::decays_to_ignore_v<qual_type>)
             stream_it = '*';
-        else if (ranges::empty(qualities))
+        else if (std::ranges::empty(qualities))
             stream_it = '*';
         else
             std::ranges::copy(qualities | view::to_char, stream_it);
