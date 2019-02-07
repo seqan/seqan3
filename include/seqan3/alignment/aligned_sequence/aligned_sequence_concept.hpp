@@ -28,12 +28,68 @@
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
 
-namespace seqan3
+// ---------------------------------------------------------------------------------------------------------------------
+// unaligned_seq transformation trait
+// ---------------------------------------------------------------------------------------------------------------------
+
+namespace seqan3::detail
 {
 
-// -----------------------------------------------------------------------------
+//!\brief Helper function to deduce the unaligned sequence type from an aligned sequence container.
+template <template <typename...> typename container_type, typename seq_alph_t, typename ...rest_t>
+//!\cond
+    requires container_concept<container_type<gapped<seq_alph_t>, rest_t...>>
+//!\endcond
+constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, rest_t...>)
+    -> container_type<seq_alph_t, rest_t...>;
+
+//!\overload
+template <template <typename...> typename container_type,
+          template <typename...> typename allocator_type,
+          typename seq_alph_t, typename ...rest_t>
+//!\cond
+    requires container_concept<container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>>
+//!\endcond
+constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>)
+    -> container_type<seq_alph_t, allocator_type<seq_alph_t>, rest_t...>;
+
+//!\brief Default transformation trait that shall expose the unaligned sequence type of t when specialised.
+template <typename t>
+struct unaligned_seq
+{};
+
+//!\brief Exposes the unaligned sequence type given an aligned sequence container type.
+template <typename t>
+//!\cond
+    requires !requires { typename std::remove_reference_t<t>::unaligned_seq_type; } &&
+              requires { remove_gap_from_value_type(std::declval<t>()); }
+//!\endcond
+struct unaligned_seq<t>
+{
+    //!\brief The unaligned sequence type of t
+    using type = decltype(remove_gap_from_value_type(std::declval<t>()));
+};
+
+// customisation point for our gap decorators.
+//!\brief Exposes the unaligned sequence type if *t* exposes the type member `unaligned_seq_type`.
+template <typename t>
+//!\cond
+    requires requires { typename std::remove_reference_t<t>::unaligned_seq_type; }
+//!\endcond
+struct unaligned_seq<t>
+{
+    using type = typename std::remove_reference_t<t>::unaligned_seq_type; //!< The unaligned sequence type of t
+};
+
+//!\brief Helper type that delegates to seqan3::detail::unaligned_seq::type.
+template <typename t>
+using unaligned_seq_t = typename unaligned_seq<t>::type;
+
+} // namespace seqan3::detail
+
+// ---------------------------------------------------------------------------------------------------------------------
 // aligned_sequence_concept
-// -----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 /*!\interface seqan3::aligned_sequence_concept <>
  * \extends   std::ranges::ForwardRange
