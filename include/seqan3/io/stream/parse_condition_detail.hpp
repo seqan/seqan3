@@ -207,25 +207,8 @@ struct parse_condition_negator;
  *                   Must model seqan3::detail::parse_condition_concept.
  */
 template <typename derived_t>
-class parse_condition_base
+struct parse_condition_base
 {
-private:
-
-    //!\brief Friend declaration for the derived type to access the private constructors.
-    friend derived_t;
-
-    /*!\name Constructor, destructor and assignment
-     * \brief This base class is abstract and all constructors are declared private.
-     * \{
-     */
-    constexpr parse_condition_base() = default;
-    constexpr parse_condition_base(parse_condition_base const &) = default;
-    constexpr parse_condition_base(parse_condition_base &&) = default;
-    constexpr parse_condition_base & operator=(parse_condition_base const &) = default;
-    constexpr parse_condition_base & operator=(parse_condition_base &&) = default;
-    ~parse_condition_base() =  default;
-    //!\}
-public:
     //!\brief Type of the data field; as soon as std::bitset is fully constexpr, use that instead!
     using data_t = constexpr_pseudo_bitset<257>; // sizeof(char) plus EOF
 
