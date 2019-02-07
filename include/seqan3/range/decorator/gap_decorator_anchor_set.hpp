@@ -349,7 +349,7 @@ public:
     //!\}
 
     //!\brief The underlying ungapped range type.
-    using ungapped_range_type = inner_type;
+    using unaligned_seq_type = inner_type;
 
     /*!\name Constructors, destructor and assignment.
      * \{
@@ -520,6 +520,15 @@ public:
         update(it, pos2 - pos1);
 
         return iterator{*this, pos1};
+    }
+
+    /*!\brief Assigns a new sequence of type seqan3:;gap_decorator_anchor_set::unaligned_seq_type to the decorator.
+     * \param[in,out] dec       The decorator to modify.
+     * \param[in]     unaligned The unaligned sequence to assign.
+     */
+    friend void assign_unaligned(gap_decorator_anchor_set & dec, unaligned_seq_type & unaligned)
+    {
+        dec = unaligned;
     }
     //!\}
 
