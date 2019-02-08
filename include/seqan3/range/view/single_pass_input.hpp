@@ -85,7 +85,6 @@ public:
     ~single_pass_input_view() = default;
 
     //!\brief Construction from the underlying view.
-    // template <std::ranges::View _urng_t>
     explicit single_pass_input_view(urng_t _urng) :
         urng{std::move(_urng)},
         cached_urng_iter{seqan3::begin(urng)}
@@ -247,9 +246,7 @@ public:
     //!\brief Compares iterator with sentinel.
     constexpr bool operator==(sentinel_type const & s) const noexcept
     {
-        if (view_ptr->view_state_ptr != nullptr)
-            return cached() == s;
-        return true;
+        return cached() == s;
     }
 
     //!\copydoc operator==

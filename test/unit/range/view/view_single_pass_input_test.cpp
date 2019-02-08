@@ -124,12 +124,6 @@ TYPED_TEST(single_pass_input, view_end)
     EXPECT_TRUE((std::is_same_v<decltype(view.end()), sentinel_type>));
 }
 
-TYPED_TEST(single_pass_input, default_construction)
-{
-    detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>> v{};
-    EXPECT_TRUE(seqan3::begin(v) == seqan3::end(v));
-}
-
 TYPED_TEST(single_pass_input, view_iterate)
 {
     TypeParam p{this->data};

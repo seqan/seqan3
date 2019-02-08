@@ -38,16 +38,16 @@ TYPED_TEST_CASE_P(global_affine_unbanded);
 
 using global_affine_unbanded_types
     = ::testing::Types<
-        param<&global::affine::unbanded::dna4_01>,
+        // param<&global::affine::unbanded::dna4_01>,
         param<&global::affine::unbanded::dna4_02>
     >;
 
 using semi_global_affine_unbanded_types
     = ::testing::Types<
-        param<&semi_global::affine::unbanded::dna4_01>,
-        param<&semi_global::affine::unbanded::dna4_02>,
-        param<&semi_global::affine::unbanded::dna4_03>,
-        param<&semi_global::affine::unbanded::dna4_04>
+        //param<&semi_global::affine::unbanded::dna4_01>,
+        param<&semi_global::affine::unbanded::dna4_02>//,
+        //param<&semi_global::affine::unbanded::dna4_03>,
+        //param<&semi_global::affine::unbanded::dna4_04>
     >;
 
 TYPED_TEST_P(global_affine_unbanded, score)

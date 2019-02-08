@@ -52,7 +52,7 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type       = detail::single_pass_input_view<resource_t>;
+    using resource_type       = detail::single_pass_input_view<decltype(view::all(std::declval<resource_t>()))>;
     //!\brief The value type of the resource.
     using resource_value_type = value_type_t<resource_type>;
     //!\}
@@ -96,7 +96,7 @@ public:
     //!\brief Constructs this executor with the passed range of alignment instances.
     alignment_executor_two_way(resource_t && resrc,
                                alignment_algorithm_t fn) :
-        resource{view::single_pass_input(std::forward<resource_t>(resrc))},
+        resource{view::single_pass_input(view::all(std::forward<resource_t>(resrc)))},
         kernel{fn}
     {
         init_buffer();
