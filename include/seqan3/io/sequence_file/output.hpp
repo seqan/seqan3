@@ -33,6 +33,7 @@
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/view/convert.hpp>
@@ -158,8 +159,8 @@ namespace seqan3
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
-              type_list<sequence_file_format_fasta, sequence_file_format_fastq>,
-          Char stream_char_type_ = char>
+              type_list<sequence_file_format_fasta, sequence_file_format_fastq, sequence_file_format_sam>,
+          char_concept stream_char_type_ = char>
 class sequence_file_output
 {
 public:
@@ -720,8 +721,8 @@ sequence_file_output(stream_t &&,
                             type_list<file_format>,
                             typename std::remove_reference_t<stream_t>::char_type>;
 
-template <OStream2                            stream_t,
-          sequence_file_output_format_concept file_format,
+template <OStream2                 stream_t,
+          SequenceFileOutputFormat file_format,
           detail::fields_concept   selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,

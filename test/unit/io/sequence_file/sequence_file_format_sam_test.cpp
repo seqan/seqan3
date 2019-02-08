@@ -24,8 +24,8 @@ using namespace seqan3;
 // ----------------------------------------------------------------------------
 TEST(general, concepts)
 {
-  EXPECT_TRUE((sequence_file_input_format_concept<sequence_file_format_sam>));
-  EXPECT_TRUE((sequence_file_output_format_concept<sequence_file_format_sam>));
+  EXPECT_TRUE((SequenceFileInputFormat<sequence_file_format_sam>));
+  EXPECT_TRUE((SequenceFileOutputFormat<sequence_file_format_sam>));
 }
 // ----------------------------------------------------------------------------
 // reading

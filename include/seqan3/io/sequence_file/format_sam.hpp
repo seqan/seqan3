@@ -31,13 +31,11 @@
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
   /*!\brief       The SAM format used as sequence file.
-   * \implements  sequence_file_format_concept
+   * \implements  SequenceFileFormat
    * \ingroup     sequence
    *
    * \details
@@ -88,7 +86,7 @@ public:
         { "sam" },
     };
 
-    //!\copydoc sequence_file_input_format_concept::read
+    //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -100,7 +98,7 @@ public:
               id_type                                                                   & id,
               qual_type                                                                 & qualities)
     {
-        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<char>{stream}),
+        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<char>{stream}),
                                           decltype(std::istreambuf_iterator<char>{})>
                             {std::istreambuf_iterator<char>{stream},
                              std::istreambuf_iterator<char>{}};
@@ -145,10 +143,10 @@ public:
         //Jump over SAM colums 2-9 (FLAG RNAME POS MAPQ CIGAR RNEXT PNEXT TLEN)
         for (int i = 0; i < 8;i++)
         {
-            ++begin(stream_view);
+            std::ranges::next(begin(stream_view));
             detail::consume(stream_view | view::take_until_or_throw(is_tab));
         }
-        ++begin(stream_view);
+        std::ranges::next(begin(stream_view));
 
         auto seq_view{stream_view | view::take_until_or_throw(is_tab)}; // until next tab
 
@@ -159,7 +157,7 @@ public:
          if constexpr (!detail::decays_to_ignore_v<seq_type>)
          {
              auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-             std::ranges::copy(seq_view | view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+             std::ranges::copy(seq_view | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                           {
                                               if (!is_legal_alph(c))
                                               {
@@ -180,12 +178,12 @@ public:
               for (auto it = begin(seq_view); it != end(seq_view); ++it)
                   ++sequence_size_after;
           }
-          ++begin(stream_view); // skip tab
+          std::ranges::next(begin(stream_view)); // skip tab
 
           /* Qualities */
           if (is_char<'*'>(*begin(stream_view)))
           {
-              ++begin(stream_view); // skip *
+              std::ranges::next(begin(stream_view)); // skip *
           }
           else
           {
@@ -215,7 +213,7 @@ public:
 
           // consume the remaining characters (optional tags)
           detail::consume(stream_view | view::take_until_or_throw(is_cntrl));
-          ++begin(stream_view); //consume newline
+          std::ranges::next(begin(stream_view)); //consume newline
 
           // make sure "buffer at end" implies "stream at end"
           if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
@@ -225,7 +223,7 @@ public:
           }
     }
 
-    //!\copydoc sequence_file_output_format_concept::write
+    //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,
@@ -238,9 +236,9 @@ public:
     {
         if constexpr (!(detail::decays_to_ignore_v<seq_type>))
         {
-            static_assert(std::ranges::ForwardRange<seq_type> && alphabet_concept<value_type_t<seq_type>>,
+            static_assert(std::ranges::ForwardRange<seq_type> && Alphabet<value_type_t<seq_type>>,
                           "The sequence must model std::ranges::ForwardRange and its value type must model "
-                          "seqan3::alphabet_concept.");
+                          "seqan3::Alphabet.");
         }
         std::ranges::ostreambuf_iterator stream_it{stream};
         // ID
