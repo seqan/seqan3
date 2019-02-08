@@ -129,10 +129,8 @@ public:
               comment_type & SEQAN3_DOXYGEN_ONLY(comment),
               offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
-        using stream_char_t = typename stream_type::char_type;
-        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
-                                          decltype(std::istreambuf_iterator<stream_char_t>{})>
-                           {std::istreambuf_iterator<stream_char_t>{stream}, std::istreambuf_iterator<stream_char_t>{}};
+        using stream_it_t = std::istreambuf_iterator<typename stream_type::char_type>;
+        auto stream_view = view::subrange<stream_it_t, stream_it_t>{stream_it_t{stream}, stream_it_t{}};
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;
@@ -256,8 +254,7 @@ public:
         detail::consume(stream_view | view::take_until(!is_space));
 
         // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<stream_char_t>{stream} == std::istreambuf_iterator<stream_char_t>{})
-            && (!stream.eof()))
+        if ((stream_it_t{stream} == stream_it_t{}) && (!stream.eof()))
         {
             stream.get(); // triggers error in stream and sets eof
         }

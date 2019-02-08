@@ -832,7 +832,7 @@ public:
         if (!primary_stream->good())
             throw file_open_error{"Could not open file for reading."};
 
-        // possibly add intermediate compression stream
+        // possibly add intermediate decompression stream
         secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
 
         // initialise format handler
@@ -866,7 +866,7 @@ public:
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
 
-        // possibly add intermediate compression stream
+        // possibly add intermediate decompression stream
         secondary_stream = detail::make_secondary_istream(*primary_stream);
 
         // buffer first record
@@ -878,8 +878,7 @@ public:
     structure_file_in(stream_t && stream,
                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
-        format{file_format{}}
+        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}, format{file_format{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");

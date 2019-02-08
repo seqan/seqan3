@@ -363,7 +363,7 @@ public:
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam file_format The format of the file in the stream, must satisfy
      * seqan3::StructureFileOutputFormat.
-     * \param[in,out] stream  The stream to write to, must be derived of std::basic_ostream<stream_char_t>.
+     * \param[in,out] stream The stream to write to, must be derived of std::basic_ostream.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      *
