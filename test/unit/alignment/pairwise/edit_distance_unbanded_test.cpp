@@ -14,7 +14,7 @@
 
 using namespace seqan3;
 using namespace seqan3::detail;
-using namespace seqan3::fixture;
+using namespace seqan3::test::alignment::fixture;
 
 template <typename word_t = uint64_t>
 struct test_traits_type

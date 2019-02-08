@@ -19,7 +19,7 @@
 
 using namespace seqan3;
 using namespace seqan3::detail;
-using namespace seqan3::fixture;
+using namespace seqan3::test::alignment::fixture;
 
 template <auto _fixture>
 struct param : public ::testing::Test

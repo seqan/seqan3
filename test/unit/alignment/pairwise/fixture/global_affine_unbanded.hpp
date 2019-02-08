@@ -20,7 +20,7 @@
 
 #include "alignment_fixture.hpp"
 
-namespace seqan3::fixture::global::affine::unbanded
+namespace seqan3::test::alignment::fixture::global::affine::unbanded
 {
 
 inline constexpr auto align_config = align_cfg::mode{align_cfg::global_alignment} |
@@ -117,4 +117,4 @@ static auto dna4_02 = []()
     };
 }();
 
-} // namespace seqan3::fixture::global::affine::unbanded
+} // namespace seqan3::test::alignment::fixture::global::affine::unbanded

@@ -9,8 +9,9 @@
 namespace seqan3
 {}
 
-namespace seqan3::fixture
+namespace seqan3::test::alignment::fixture
 {
+
 using detail::alignment_coordinate;
 
 static constexpr auto INF = std::numeric_limits<int>::max();
@@ -24,7 +25,8 @@ static constexpr auto UL = U | L;
 static constexpr auto DL = D | L;
 static constexpr auto DUL = D | U | L;
 
-template <typename sequence1_t, typename sequence2_t, typename config_t, typename score_t, typename score_matrix_t, typename trace_matrix_t>
+template <typename sequence1_t, typename sequence2_t, typename config_t,
+          typename score_t, typename score_matrix_t, typename trace_matrix_t>
 struct alignment_fixture
 {
     template <typename trace_t>
@@ -90,4 +92,4 @@ alignment_fixture(
     detail::alignment_trace_matrix<std::vector<trace_t>>
 >;
 
-} // namespace seqan3::fixture
+} // namespace seqan3::test::alignment::fixture
