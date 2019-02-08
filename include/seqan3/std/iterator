@@ -287,4 +287,14 @@ SEQAN3_CONCEPT RandomAccessIterator = BidirectionalIterator<i> &&
 
 }  // namespace std
 
+namespace std::ranges
+{
+//!\cond
+using ::ranges::advance;
+inline constexpr ::ranges::iter_distance_fn distance;
+using ::ranges::prev;
+using ::ranges::next;
+//!\endcond
+} // namespace std::ranges
+
 #endif // C++17
