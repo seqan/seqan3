@@ -340,14 +340,14 @@ TYPED_TEST(container_of_container, streamable)
     TypeParam t1{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     std::ostringstream o;
-    debug_stream.set_underlying_stream(o);
+    debug_stream_type my_stream{o};
 
-    debug_stream << TypeParam{};
+    my_stream << TypeParam{};
 
     o.flush();
     EXPECT_EQ(o.str(), "[]");
 
-    debug_stream << ", " << t1;
+    my_stream << ", " << t1;
 
     o.flush();
     EXPECT_EQ(o.str(), "[], [ACGT,ACGT,GAGGA]");
