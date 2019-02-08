@@ -34,4 +34,4 @@ endmacro ()
 seqan3_require_ccache ()
 seqan3_require_test ()
 
-add_subdirectories ()
+add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/test)
