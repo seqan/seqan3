@@ -21,6 +21,7 @@
 #include <range/v3/range/concepts.hpp>
 #include <range/v3/iterator/default_sentinel.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
+#include <range/v3/iterator/operations.hpp>
 #include <range/v3/iterator/stream_iterators.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/equal.hpp>
@@ -162,6 +163,11 @@ using SEQAN3_DOXYGEN_ONLY(begin =) ::ranges::begin;
  * \brief Alias for ranges::end. Returns an iterator to the end of a range.
  */
 using SEQAN3_DOXYGEN_ONLY(end =) ::ranges::end;
+
+/*!\typedef std::ranges::next
+ * \brief Alias for ranges::next. Returns next iterator.
+ */
+using SEQAN3_DOXYGEN_ONLY(next =) ::ranges::next;
 
 /*!\typedef std::ranges::size
  * \brief Alias for ranges::size. Obtains the size of a range whose size can be calculated in constant time.
