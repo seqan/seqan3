@@ -29,4 +29,16 @@ public:
     gap_erase_failure(std::string const & s) : std::logic_error{s} {}
 };
 
+//!\brief Thrown if the configuration of the alignment algorithm is invalid.
+class invalid_alignment_configuration : public std::invalid_argument
+{
+public:
+
+    /*!\brief The constructor.
+     * \param[in] s The error message.
+     */
+    invalid_alignment_configuration(std::string const & s) : std::invalid_argument{s}
+    {}
+};
+
 } // namespace seqan3
