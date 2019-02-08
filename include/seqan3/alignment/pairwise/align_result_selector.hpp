@@ -29,11 +29,11 @@ namespace seqan3::detail
 /*!\brief Helper metafunction to select the alignment result type based on the configuration.
  * \ingroup pairwise_alignment
  * \tparam first_bach_t    The type of the first sequence.
- * \tparam second_batch_t  The type of the second sequence.
+ * \tparam second_range_t  The type of the second sequence.
  * \tparam configuration_t The configuration type. Must be of type seqan3::detail::configuration
  */
-template <std::ranges::ForwardRange first_batch_t,
-          std::ranges::ForwardRange second_batch_t,
+template <std::ranges::ForwardRange first_range_t,
+          std::ranges::ForwardRange second_range_t,
           typename configuration_t>
 //!\cond
     requires is_type_specialisation_of_v<remove_cvref_t<configuration_t>, configuration>
@@ -43,8 +43,8 @@ struct align_result_selector
     //!\brief Helper function to determine the actual result type.
     static constexpr auto _determine()
     {
-        using first_seq_value_type  = gapped<value_type_t<first_batch_t>>;
-        using second_seq_value_type = gapped<value_type_t<second_batch_t>>;
+        using first_seq_value_type  = gapped<value_type_t<first_range_t>>;
+        using second_seq_value_type = gapped<value_type_t<second_range_t>>;
         using score_type            = int32_t;
 
         if constexpr (std::remove_reference_t<configuration_t>::template exists<align_cfg::result>())

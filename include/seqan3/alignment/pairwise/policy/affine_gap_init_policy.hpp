@@ -58,7 +58,7 @@ private:
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy const &) noexcept = default;
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy &&) noexcept = default;
     ~affine_gap_init_policy() noexcept = default;
-    //!}
+    //!\}
 
     /*!\brief Initialises the origin of the dynamic programming matrix.
      * \tparam        cell_t       The underlying cell type.

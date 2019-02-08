@@ -48,13 +48,13 @@ private:
      * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr affine_gap_policy()                                      noexcept = default;
-    constexpr affine_gap_policy(affine_gap_policy const &)             noexcept = default;
-    constexpr affine_gap_policy(affine_gap_policy &&)                  noexcept = default;
+    constexpr affine_gap_policy() noexcept = default;
+    constexpr affine_gap_policy(affine_gap_policy const &) noexcept = default;
+    constexpr affine_gap_policy(affine_gap_policy &&) noexcept = default;
     constexpr affine_gap_policy & operator=(affine_gap_policy const &) noexcept = default;
-    constexpr affine_gap_policy & operator=(affine_gap_policy &&)      noexcept = default;
-    ~affine_gap_policy()                                               noexcept = default;
-    //!}
+    constexpr affine_gap_policy & operator=(affine_gap_policy &&) noexcept = default;
+    ~affine_gap_policy() noexcept = default;
+    //!\}
 
     /*!\brief Computes the score for current cell.
      * \tparam        score_cell_type The type of the current cell.

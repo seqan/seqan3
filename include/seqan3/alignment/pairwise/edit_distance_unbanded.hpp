@@ -627,20 +627,20 @@ public:
     //!}
 
     /*!\brief Invokes the actual alignment computation given two sequences.
-     * \tparam    first_batch_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
-     * \tparam    second_batch_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
-     * \param[in] first_batch    The first sequence (or packed sequences).
-     * \param[in] second_batch   The second sequence (or packed sequences).
+     * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
+     * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \param[in] first_range    The first sequence (or packed sequences).
+     * \param[in] second_range   The second sequence (or packed sequences).
      */
-    template <std::ranges::ForwardRange first_batch_t, std::ranges::ForwardRange second_batch_t>
-    constexpr auto operator()(first_batch_t && first_batch, second_batch_t && second_batch)
+    template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
+    constexpr auto operator()(first_range_t && first_range, second_range_t && second_range)
     {
-        using result_t = typename detail::align_result_selector<remove_cvref_t<first_batch_t>,
-                                                                remove_cvref_t<second_batch_t>,
+        using result_t = typename detail::align_result_selector<remove_cvref_t<first_range_t>,
+                                                                remove_cvref_t<second_range_t>,
                                                                 remove_cvref_t<config_t>>::type;
 
-        pairwise_alignment_edit_distance_unbanded algo{std::forward<first_batch_t>(first_batch),
-                                                       std::forward<second_batch_t>(second_batch),
+        pairwise_alignment_edit_distance_unbanded algo{std::forward<first_range_t>(first_range),
+                                                       std::forward<second_range_t>(second_range),
                                                        *cfg_ptr};
         align_result<result_t> res{};
         return algo(res);
