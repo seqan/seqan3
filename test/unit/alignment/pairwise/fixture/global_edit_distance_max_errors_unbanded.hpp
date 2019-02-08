@@ -10,7 +10,7 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
-namespace seqan3::fixture::global::edit_distance::max_errors::unbanded
+namespace seqan3::test::alignment::fixture::global::edit_distance::max_errors::unbanded
 {
 
 inline constexpr auto align_config = align_cfg::edit | align_cfg::max_error{255};
@@ -283,4 +283,4 @@ static auto aa27_01T_e255 = []()
     };
 }();
 
-} // namespace seqan3::fixture::global::edit_distance::unbanded
+} // namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded

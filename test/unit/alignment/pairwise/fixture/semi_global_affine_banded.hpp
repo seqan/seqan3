@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
+#include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
@@ -21,11 +22,12 @@
 
 #include "alignment_fixture.hpp"
 
-namespace seqan3::test::alignment::fixture::semi_global::affine::unbanded
+namespace seqan3::test::alignment::fixture::semi_global::affine::banded
 {
 
 inline constexpr auto align_config = align_cfg::mode{align_cfg::global_alignment} |
-                                     align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
+                                     align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+                                     align_cfg::band{static_band{lower_bound{-4}, upper_bound{8}}};
 
 inline constexpr auto align_config_semi_seq1 = align_config | align_cfg::aligned_ends{align_cfg::seq1_ends_free};
 inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned_ends{align_cfg::seq2_ends_free};

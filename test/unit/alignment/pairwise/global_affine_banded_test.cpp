@@ -14,8 +14,8 @@
 
 #include <seqan3/range/view/to_char.hpp>
 
-#include "fixture/global_affine_unbanded.hpp"
-#include "fixture/semi_global_affine_unbanded.hpp"
+#include "fixture/global_affine_banded.hpp"
+#include "fixture/semi_global_affine_banded.hpp"
 
 using namespace seqan3;
 using namespace seqan3::detail;
@@ -31,26 +31,22 @@ struct param : public ::testing::Test
 };
 
 template <typename param_t>
-class global_affine_unbanded : public param_t
+class global_affine_banded : public param_t
 {};
 
-TYPED_TEST_CASE_P(global_affine_unbanded);
+TYPED_TEST_CASE_P(global_affine_banded);
 
-using global_affine_unbanded_types
+using global_affine_banded_types
     = ::testing::Types<
-        param<&global::affine::unbanded::dna4_01>,
-        param<&global::affine::unbanded::dna4_02>
+        param<&global::affine::banded::dna4_01>
     >;
 
-using semi_global_affine_unbanded_types
+using semi_global_affine_banded_types
     = ::testing::Types<
-        param<&semi_global::affine::unbanded::dna4_01>,
-        param<&semi_global::affine::unbanded::dna4_02>,
-        param<&semi_global::affine::unbanded::dna4_03>,
-        param<&semi_global::affine::unbanded::dna4_04>
+        param<&semi_global::affine::banded::dna4_01>
     >;
 
-TYPED_TEST_P(global_affine_unbanded, score)
+TYPED_TEST_P(global_affine_banded, score)
 {
     auto const & fixture = this->fixture();
     // We only compute the score.
@@ -65,7 +61,8 @@ TYPED_TEST_P(global_affine_unbanded, score)
     EXPECT_EQ((*std::ranges::begin(alignment)).get_score(), fixture.score);
 }
 
-REGISTER_TYPED_TEST_CASE_P(global_affine_unbanded, score);
+REGISTER_TYPED_TEST_CASE_P(global_affine_banded, score);
 
-INSTANTIATE_TYPED_TEST_CASE_P(global, global_affine_unbanded, global_affine_unbanded_types);
-INSTANTIATE_TYPED_TEST_CASE_P(semi_global, global_affine_unbanded, semi_global_affine_unbanded_types);
+// work around a bug that you can't specify more than 50 template arguments to ::testing::types
+INSTANTIATE_TYPED_TEST_CASE_P(global, global_affine_banded, global_affine_banded_types);
+INSTANTIATE_TYPED_TEST_CASE_P(semi_global, global_affine_banded, semi_global_affine_banded_types);

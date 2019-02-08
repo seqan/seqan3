@@ -1,0 +1,3 @@
+seqan3_test (affine_gap_banded_init_policy_test.cpp)
+seqan3_test (affine_gap_banded_policy_test.cpp)
+seqan3_test (banded_score_dp_matrix_policy_test.cpp)

@@ -10,7 +10,7 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
-namespace seqan3::fixture::semi_global::edit_distance::unbanded
+namespace seqan3::test::alignment::fixture::semi_global::edit_distance::unbanded
 {
 
 inline constexpr auto align_config = align_cfg::edit | align_cfg::aligned_ends{align_cfg::seq1_ends_free};
@@ -283,4 +283,4 @@ static auto aa27_01T = []()
     };
 }();
 
-} // namespace seqan3::fixture::global::edit_distance::unbanded
+} // namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded

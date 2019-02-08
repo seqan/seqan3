@@ -9,7 +9,7 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
-namespace seqan3::fixture::global::edit_distance::unbanded
+namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded
 {
 
 static auto dna4_01 = []()
@@ -280,4 +280,4 @@ static auto aa27_01T = []()
     };
 }();
 
-} // namespace seqan3::fixture::global::edit_distance::unbanded
+} // namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded

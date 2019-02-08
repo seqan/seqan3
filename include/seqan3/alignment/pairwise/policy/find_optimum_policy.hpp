@@ -19,6 +19,7 @@
 #include <seqan3/core/metafunction/deferred_crtp_base.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -71,7 +72,7 @@ private:
     constexpr find_optimum_policy & operator=(find_optimum_policy const &) = default;
     constexpr find_optimum_policy & operator=(find_optimum_policy &&) = default;
     ~find_optimum_policy() = default;
-    //!}
+    //!\}
 
 protected:
 
@@ -137,8 +138,55 @@ protected:
         }
         else  // Only check the last cell for the global alignment.
         {
-            auto val = get<0>(*(--seqan3::end(rng)));
+            auto val = get<0>(*std::ranges::prev(seqan3::end(rng)));
             optimum = std::max(optimum, val);
+        }
+    }
+
+    /*!\brief Balances the total score of the alignment depending on the band settings and the alignment configuration.
+     * \tparam score_type      The type of the score.
+     * \tparam dimension_type  The type of the matrix dimensions.
+     * \tparam band_type       The type of the band.
+     * \tparam gap_scheme_type The type of the gap_scheme.
+     * \param[in,out] total            The total score to be updated.
+     * \param[in]     dimension_first  The horizontal matrix dimension.
+     * \param[in]     dimension_second The vertical matrix dimension.
+     * \param[in]     band             The band.
+     * \param[in]     scheme           The gap scheme to get the score for the trailing gap.
+     */
+    template <typename score_type,
+              typename dimension_type,
+              typename band_type,
+              typename gap_scheme_type>
+    constexpr void balance_trailing_gaps([[maybe_unused]] score_type & total,
+                                         [[maybe_unused]] dimension_type const dimension_first,
+                                         [[maybe_unused]] dimension_type const dimension_second,
+                                         [[maybe_unused]] band_type const & band,
+                                         [[maybe_unused]] gap_scheme_type const & scheme)
+    {
+        using cmp_int_type = std::make_signed_t<dimension_type>;
+
+        // Only balance score if max is not searched in entire last row.
+        if constexpr (!traits_type::find_in_last_row_type::value && !traits_type::find_in_every_cell_type::value)
+        {  // The band ends before crossing the last column.
+            cmp_int_type gap_size = dimension_first -
+                                    std::min(static_cast<cmp_int_type>(band.upper_bound + dimension_second),
+                                             static_cast<cmp_int_type>(dimension_first));
+
+            assert(gap_size >= 0);
+            total += scheme.score(gap_size);
+        }
+
+        // Only balance score if max is not searched in entire last column.
+        if constexpr (!traits_type::find_in_last_column_type::value && !traits_type::find_in_every_cell_type::value)
+        {
+            // The band ends before crossing the last row.
+            cmp_int_type gap_size = dimension_second -
+                                    std::min(static_cast<cmp_int_type>(dimension_first - band.lower_bound),
+                                             static_cast<cmp_int_type>(dimension_second));
+
+            assert(gap_size >= 0);
+            total += scheme.score(gap_size);
         }
     }
 };

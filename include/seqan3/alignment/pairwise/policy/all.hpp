@@ -14,8 +14,11 @@
 
 #pragma once
 
+#include <seqan3/alignment/pairwise/policy/affine_gap_banded_init_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/affine_gap_banded_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/banded_score_dp_matrix_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
 

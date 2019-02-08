@@ -40,6 +40,8 @@ private:
      */
     //!\brief The underlying cell type of the dynamic programming matrix.
     using cell_type = typename allocator_t::value_type;
+    //!\brief The type of the score matrix.
+    using score_matrix_type = std::vector<cell_type, allocator_t>;
     //!\}
 
     /*!\name Constructor, destructor and assignment
@@ -52,36 +54,46 @@ private:
     constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy const &) = default;
     constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy &&)      = default;
     ~unbanded_dp_matrix_policy()                                                       = default;
-    //!}
+    //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.
-     * \tparam first_batch_t   The type of the first sequence (or packed sequences).
-     * \tparam second_batch_t  The type of the second sequence (or packed sequences).
-     * \param[in] first_batch  The first sequence (or packed sequences).
-     * \param[in] second_batch The first sequence (or packed sequences).
+     * \tparam first_range_t   The type of the first sequence (or packed sequences).
+     * \tparam second_range_t  The type of the second sequence (or packed sequences).
+     * \param[in] first_range  The first sequence (or packed sequences).
+     * \param[in] second_range The first sequence (or packed sequences).
      */
-    template <typename first_batch_t, typename second_batch_t>
-    void allocate_score_matrix(first_batch_t && first_batch, second_batch_t && second_batch)
+    template <typename first_range_t, typename second_range_t>
+    constexpr void allocate_score_matrix(first_range_t && first_range, second_range_t && second_range)
     {
-        dimension_first_batch = std::ranges::size(first_batch);
-        dimension_second_batch = std::ranges::size(second_batch);
+        dimension_first_range = std::ranges::size(first_range);
+        dimension_second_range = std::ranges::size(second_range);
+
+        current_column_index = 0;
 
         // We use only one column to compute the score.
-        score_matrix.resize(dimension_second_batch + 1);
+        score_matrix.resize(dimension_second_range + 1);
     }
 
     //!\brief Returns the current column of the alignment matrix.
-    auto current_column()
+    constexpr auto current_column() noexcept
     {
         using iter_t = std::ranges::iterator_t<decltype(score_matrix)>;
         return view::subrange<iter_t, iter_t>{std::ranges::begin(score_matrix), std::ranges::end(score_matrix)};
     }
 
+    //!\brief Moves internal matrix pointer to the next column.
+    constexpr void next_column() noexcept
+    {
+        ++current_column_index;
+    }
+
     //!\brief The data container.
-    std::vector<cell_type, allocator_t> score_matrix{};
+    score_matrix_type score_matrix{};
     //!\brief Caches the size of the horizontal dimension (number of columns).
-    size_t dimension_first_batch  = 0;
+    size_t dimension_first_range  = 0;
     //!\brief Caches the size of the vertical dimension (number of rows).
-    size_t dimension_second_batch = 0;
+    size_t dimension_second_range = 0;
+    //!\brief The index of the active column.
+    size_t current_column_index = 0;
 };
 } // namespace seqan3::detail
