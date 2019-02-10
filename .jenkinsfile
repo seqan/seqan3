@@ -3,114 +3,174 @@ import hudson.triggers.TimerTrigger;
 // Checks whether the current build was triggered by cron job.
 // We need this to check, whether we want to trigger a deployment
 // step for a stable nightly build.
-def isTriggeredByCron()
+def is_triggered_by_cron()
 {
     for (cause in currentBuild.rawBuild.getCauses())
     {
+        echo "###CAUSE: $cause.properties"
         if (cause instanceof TimerTrigger.TimerTriggerCause)
-            return "cron"
-
-        return "other"
+            return true
+        return false
     }
 }
 
-// Start the pipeline.
-pipeline {
-    agent any
-    triggers {  // Additional trigger to build nightly only on master.
-        cron(BRANCH_NAME == 'master' ? "H 1 * * *" : "")
-    }
-    environment {  // Prepare environment for build.
-        BUILD_TRIGGER = "${isTriggeredByCron()}"
-    }
-    stages {
-        stage ('Configure') { // TODO(rrahn): Check if really needed.
-            steps {
-                script {
-                    echo "The pushed branch: ${BRANCH_NAME}"
-                }
-            }
-        }
-        stage ('Test') { // Perform CI tests.
-            parallel {
-                stage ('unit') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_unit_tests_unix', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+// TODO Enable me later: Start nightly build every night between 1:00-4:59
+// properties([
+//     pipelineTriggers([cron('H H(1-4) * * *')])
+// ])
+
+// Keep at most 10 builds -> for nightly master this should be last 10 days
+properties([
+    buildDiscarder(
+        logRotator(
+            artifactDaysToKeepStr: '',
+            artifactNumToKeepStr: '',
+            daysToKeepStr: '',
+            numToKeepStr: '10'
+        )
+    )
+])
+
+// TODO Check if this PR was triggered by a close event.
+// properties([
+//     [$class: 'JobRestrictionProperty'],
+//     pipelineTriggers(
+//         [githubPullRequests(events: [close()], spec: '', triggerMode: 'HEAVY_HOOKS')]
+//     )
+// ])
+
+// Check if this build is a nightly build.
+def is_nightly = is_triggered_by_cron()
+
+if (env.CHANGE_ID) {
+    echo "State: " + pullRequest.getState()
+    echo "Is merged: " + pullRequest.isMerged()
+} else {
+    echo "Not a change request"
+}
+
+/* unit builds
+ * compiler g++-7, g++-8 [, g++-9] [, clang++-concepts]
+ * ubuntu_18_04, free_bsd, mac_os
+ * cereal on off
+ */
+
+// Configure linux unit tests
+def axis_agent = ["ununtu"] // "macos"
+def axis_compiler = ["g++-7", "g++-8"] // g++-9, clang-concepts
+def axis_cereal = [true, false]
+def tasks = [:]
+
+for(int i=0; i< axis_compiler.size(); i++)
+{
+
+    def axis_compiler_value = axis_compiler[i]
+    def subTasks = [:]
+    for(int j=0; j< axis_cereal.size(); j++)
+    {
+        def axis_cereal_value = axis_cereal[j]
+        def label = "ubuntu-CXX=${axis_compiler_value}-cereal=${axis_cereal_value}"
+        subTasks[label] =
+        {
+            // Run on nodes matching labels 'ubuntu' and the compiler axis value.
+            node("ubuntu && $axis_compiler_value")
+            {
+                // For docker nodes we need to define the workspace explicitly, as they use a mounted
+                // volume on the filesystem which is shared by all docker instances.
+                // Since the docker executor don't know each other, they are not locking the workspace but using the
+                // same, which can lead to many unexpected results.
+                ws("$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$label")
+                {
+
+                    def build_name
+                    def compiler
+                    def disable_cereal
+                    def workspace
+
+                    stage ('prepare')
+                    {
+                        build_name = "$env.DOCKER_SLAVE_NAME CXX=${axis_compiler_value} " +
+                                     "cereal=${axis_cereal_value} Branch=$env.BRANCH_NAME Build=$env.BUILD_NUMBER"
+                        workspace = pwd()
+                        echo workspace
+
+                        // Clean the workspace before building.
+                        deleteDir()
+
+                        if (axis_cereal_value)
+                           disable_cereal = 'OFF'
+                        else
+                            disable_cereal = 'ON'
+
+                        sh 'lsb_release -a'
+                        sh 'sudo apt-get update'
+                        sh "sudo apt-get install -y $axis_compiler_value cmake zlib1g-dev libbz2-dev"
+                        sh 'git clone https://github.com/seqan/seqan3-infrastructure.git seqan3-infra'
+                        compiler = sh(script: "which $axis_compiler_value", returnStdout: true).trim()
                     }
-                }
-                stage ('doc') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_doc_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+                    stage('checkout')
+                    {
+                        // Perform checkout in specific location
+                        dir('checkout')
+                        {
+                            checkout scm
+                        }
                     }
-                }
-                stage ('header') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_header_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
-                    }
-                }
-                stage ('memory') {
-                    steps {
-                        echo "TODO: Perform memory tests."
-                    }
-                }
-                stage ('coverage') {
-                    steps {
-                        echo "TODO: Perform coverage tests."
-                    }
-                }
-                stage ('performance') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_performance_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
-                    }
-                }
-            }
-        }
-        stage ('Deploy') { // conditional deploy step.
-            agent none
-            when { // only execute if nightly build on 'master' branch or if seqan was tagged with a new release.
-                beforeAgent true
-                anyOf {
-                    allOf {
-                        branch 'master'
-                        environment name: 'BUILD_TRIGGER', value: 'cron'
-                    }
-                    // tag "seqan-*"  // TODO: Currently breaks the pipeline: see https://issues.jenkins-ci.org/browse/JENKINS-52554
-                }
-            }
-            stages {
-                stage ('package nightly stable') {
-                    when {
-                        beforeAgent true
-                        branch 'master'
-                        environment name: 'BUILD_TRIGGER', value: 'cron'
-                    }
-                    steps {
-                        script {
-                            build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'ON')], quietPeriod: 0
+                    // Prepare environment and run ctest step.
+                    withEnv(["BUILDNAME=$build_name",
+                             "PLATFORM=unix",
+                             "MODEL=Continuous",
+                             "TEST_MODEL=unit",
+                             "WORKSPACE=$workspace",
+                             "SITE_NAME=jenkins",
+                             "DISABLE_CEREAL=$disable_cereal",
+                             "CXX=$compiler"])
+                    {
+                        stage('run'){
+                            dir(workspace)
+                            {
+                                sh "ctest --no-compress-output -VV -S $workspace/seqan3-infra/ctest/seqan3_jenkins.cmake"
+                            }
                         }
                     }
                 }
-                // stage ('package release') {
-                    // when {
-                        // beforeAgent true
-                        // tag "seqan-*"
-                    // }
-                    // steps {
-                        // script {
-                            // build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'OFF')], quietPeriod: 0
-                        // }
-                    // }
-                // }
-                stage ('acceptance test') {
-                    steps {
-                        echo "TODO: perform acceptance test"
-                    }
-                }
             }
         }
     }
+    tasks["ubuntu-${axis_compiler_value}"] = {
+        echo "parallel subTasks"
+        // parallel subTasks
+    }
 }
+
+
+/* sanitizer builds
+ * g++-7 sanitizer options
+ */
+
+/* doc builds
+ * user develop
+ */
+
+/* coverage build
+ * g++-8 debug mode
+ */
+
+/* valgrind build
+ *
+ */
+
+/* clang-tidy
+ *
+ */
+
+/* performance build
+ * g++-7, g++-8 [, g++-9] [, clang-concpets]
+ */
+
+stage ("Matrix") {
+    parallel tasks
+}
+
+
+//TODO Build discarder
