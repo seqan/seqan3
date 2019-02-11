@@ -132,7 +132,7 @@ namespace seqan3
  */
 /*!\typedef using structure_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
- * \brief Alphabet of the characters for the seqan3::field::STRUCTURE; must satisfy seqan3::rna_structure_concept.
+ * \brief Alphabet of the characters for the seqan3::field::STRUCTURE; must satisfy seqan3::RnaStructureAlphabet.
  */
 /*!\typedef using structure_container
  * \memberof seqan3::structure_file_input_traits_concept
@@ -249,7 +249,7 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 
     // structure
     requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
-          || rna_structure_concept<typename t::structure_alphabet>;
+          || RnaStructureAlphabet<typename t::structure_alphabet>;
     requires sequence_container_concept<typename t::template structure_container<typename t::structure_alphabet>>;
 //    requires sequence_container_concept
 //        <typename t::template structure_container_container

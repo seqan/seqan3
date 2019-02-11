@@ -26,12 +26,12 @@ namespace seqan3
 
 /*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with an RNA structure alphabet.
  * \ingroup structure
- * \implements seqan3::rna_structure_concept
+ * \implements seqan3::RnaStructureAlphabet
  * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::NucleotideAlphabet.
- * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::rna_structure_concept.
+ * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::RnaStructureAlphabet.
  *
  * This composition pairs a nucleotide alphabet with a structure alphabet. The rank values
  * correpsond to numeric values in the size of the composition, while the character values
@@ -44,11 +44,11 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/structure/structured_rna.cpp general
  *
- * This seqan3::cartesian_composition itself models both seqan3::NucleotideAlphabet and seqan3::rna_structure_concept.
+ * This seqan3::cartesian_composition itself models both seqan3::NucleotideAlphabet and seqan3::RnaStructureAlphabet.
  */
 template <typename sequence_alphabet_t, typename structure_alphabet_t>
 //!\cond
-    requires NucleotideAlphabet<sequence_alphabet_t> && rna_structure_concept<structure_alphabet_t>
+    requires NucleotideAlphabet<sequence_alphabet_t> && RnaStructureAlphabet<structure_alphabet_t>
 //!\endcond
 class structured_rna :
     public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,

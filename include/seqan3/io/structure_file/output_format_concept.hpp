@@ -92,7 +92,7 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(t & v,
  * \tparam bpp_type         Type of the seqan3::field::BPP output; must satisfy std::ranges::OutputRange
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
  * \tparam structure_type   Type of the seqan3::field::STRUCTURE output; must satisfy std::ranges::OutputRange
- * over a seqan3::rna_structure_concept.
+ * over a seqan3::RnaStructureAlphabet.
  * \tparam energy_type      Type of the seqan3::field::ENERGY output; must satisfy std::is_floating_point.
  * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR output;
  * must satisfy std::is_floating_point.

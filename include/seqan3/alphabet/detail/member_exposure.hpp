@@ -269,19 +269,19 @@ constexpr nucleotide_type complement(nucleotide_type const alph)
 //!\}
 
 // ------------------------------------------------------------------
-// seqan3::rna_structure_concept
+// seqan3::RnaStructureAlphabet
 // ------------------------------------------------------------------
 
-/*!\name Helpers for seqan3::rna_structure_concept
+/*!\name Helpers for seqan3::RnaStructureAlphabet
  * \brief These functions and metafunctions expose member variables and types so that they satisfy
- * seqan3::rna_structure_concept.
- * \relates seqan3::rna_structure_concept
+ * seqan3::RnaStructureAlphabet.
+ * \relates seqan3::RnaStructureAlphabet
  * \ingroup structure
  */
 //!\{
 
-/*!\brief Implementation of seqan3::rna_structure_concept::is_pair_open() that delegates to a member function.
- * \relates seqan3::rna_structure_concept
+/*!\brief Implementation of seqan3::RnaStructureAlphabet::is_pair_open() that delegates to a member function.
+ * \relates seqan3::RnaStructureAlphabet
  * \tparam structure_type Must provide a `.is_pair_open()` member function.
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents a rightward interaction, False otherwise.
@@ -293,8 +293,8 @@ constexpr bool is_pair_open(structure_type const alph)
     return alph.is_pair_open();
 }
 
-/*!\brief Implementation of seqan3::rna_structure_concept::is_pair_close() that delegates to a member function.
- * \relates seqan3::rna_structure_concept
+/*!\brief Implementation of seqan3::RnaStructureAlphabet::is_pair_close() that delegates to a member function.
+ * \relates seqan3::RnaStructureAlphabet
  * \tparam structure_type Must provide a `.is_pair_close()` member function.
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents a leftward interaction, False otherwise.
@@ -306,8 +306,8 @@ constexpr bool is_pair_close(structure_type const alph)
     return alph.is_pair_close();
 }
 
-/*!\brief Implementation of seqan3::rna_structure_concept::is_unpaired() that delegates to a member function.
- * \relates seqan3::rna_structure_concept
+/*!\brief Implementation of seqan3::RnaStructureAlphabet::is_unpaired() that delegates to a member function.
+ * \relates seqan3::RnaStructureAlphabet
  * \tparam structure_type Must provide a `.is_unpaired()` member function.
  * \param alph The alphabet letter which is checked for the pairing property.
  * \returns True if the letter represents an unpaired site, False otherwise.
@@ -320,7 +320,7 @@ constexpr bool is_unpaired(structure_type const alph)
 }
 
 /*!\brief Specialisation of seqan3::max_pseudoknot_depth that delegates to structure_type::max_pseudoknot_depth.
- * \relates seqan3::rna_structure_concept
+ * \relates seqan3::RnaStructureAlphabet
  * \tparam alphabet_type_with_pseudoknot_attribute Must provide a `static uint8_t max_pseudoknot_depth` member variable.
  */
 template <typename alphabet_type_with_pseudoknot_attribute>
@@ -334,8 +334,8 @@ struct max_pseudoknot_depth<alphabet_type_with_pseudoknot_attribute>
     static constexpr uint8_t value = alphabet_type_with_pseudoknot_attribute::max_pseudoknot_depth;
 };
 
-/*!\brief Implementation of seqan3::rna_structure_concept::pseudoknot_id() that delegates to a member function.
- * \relates seqan3::rna_structure_concept
+/*!\brief Implementation of seqan3::RnaStructureAlphabet::pseudoknot_id() that delegates to a member function.
+ * \relates seqan3::RnaStructureAlphabet
  * \tparam alphabet_type_with_pseudoknot_attribute If it supports pseudoknots, it must provide a `.pseudoknot_id()`
  * member function, otherwise it can be omitted.
  * \param alph The alphabet letter which is checked for the pseudoknot id.

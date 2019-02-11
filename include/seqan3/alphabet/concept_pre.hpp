@@ -246,12 +246,12 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 //!\}
 
 // ------------------------------------------------------------------
-// seqan3::rna_structure_concept
+// seqan3::RnaStructureAlphabet
 // ------------------------------------------------------------------
 
-/*!\name Requirements for seqan3::rna_structure_concept
- * \brief You can expect these functions on all types that implement seqan3::rna_structure_concept.
- * \relates seqan3::rna_structure_concept
+/*!\name Requirements for seqan3::RnaStructureAlphabet
+ * \brief You can expect these functions on all types that implement seqan3::RnaStructureAlphabet.
+ * \relates seqan3::RnaStructureAlphabet
  * \{
  */
 /*!\brief Metafunction that indicates to what extent an alphabet can handle pseudoknots.
