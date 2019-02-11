@@ -32,16 +32,16 @@ namespace seqan3
 {
 
 // ------------------------------------------------------------------
-// seqan3::semi_alphabet_concept
+// seqan3::Semialphabet
 // ------------------------------------------------------------------
 
-/*!\name Requirements for seqan3::semi_alphabet_concept
- * \brief You can expect these functions on all types that implement seqan3::semi_alphabet_concept.
- * \relates seqan3::semi_alphabet_concept
+/*!\name Requirements for seqan3::Semialphabet
+ * \brief You can expect these functions on all types that implement seqan3::Semialphabet.
+ * \relates seqan3::Semialphabet
  * \{
  */
 /*!\brief The `rank_type` of the semi_alphabet. [type metafunction base template]
- * \tparam semi_alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \tparam semi_alphabet_type Must satisfy seqan3::Semialphabet.
  * \ingroup alphabet
  *
  * \par Helper template alias
@@ -70,7 +70,7 @@ template <typename semi_alphabet_type>
 using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
 
 /*!\brief The size of the alphabet. [value metafunction base template]
- * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \tparam alphabet_type Must satisfy seqan3::Semialphabet.
  * \ingroup alphabet
  *
  * This is the expression to retrieve the value:
@@ -95,7 +95,7 @@ struct alphabet_size<alphabet_type &&> : alphabet_size<alphabet_type>
 {};
 
 /*!\brief The size of the alphabet. [value metafunction shortcut]
- * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \tparam alphabet_type Must satisfy seqan3::Semialphabet.
  * \ingroup alphabet
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::alphabet_size.

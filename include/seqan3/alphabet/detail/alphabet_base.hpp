@@ -27,7 +27,7 @@ namespace seqan3
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
  * \tparam char_t       The character type of the alphabet (set this to `void` when defining just a
- *                      seqan3::semi_alphabet_concept).
+ *                      seqan3::Semialphabet).
  *
  * \details
  *
@@ -106,7 +106,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::to_rank() requirement via the to_rank() wrapper.
+     * Satisfies the seqan3::Semialphabet::to_rank() requirement via the to_rank() wrapper.
      *
      * \par Complexity
      *
@@ -180,7 +180,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::Semialphabet::assign_rank() requirement via the seqan3::assign_rank() wrapper.
      *
      * \par Complexity
      *
@@ -244,7 +244,7 @@ public:
      *
      * \details
      *
-     * Models the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Models the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Default implementation: True for all character values that are reproduced by #to_char() after being assigned

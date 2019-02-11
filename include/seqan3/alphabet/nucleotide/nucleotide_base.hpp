@@ -113,7 +113,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Satisfies the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Behaviour specific to nucleotides: True also for lower case letters that silently convert to their upper case

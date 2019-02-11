@@ -19,14 +19,14 @@ namespace std
 {
 /*!\brief Struct for hashing a character.
  * \ingroup alphabet
- * \tparam alphabet_t The type of character to hash; Must model seqan3::semi_alphabet_concept.
+ * \tparam alphabet_t The type of character to hash; Must model seqan3::Semialphabet.
  */
-template <seqan3::semi_alphabet_concept alphabet_t>
+template <seqan3::Semialphabet alphabet_t>
 struct hash<alphabet_t>
 {
     /*!\brief Compute the hash for a character.
      * \ingroup alphabet
-     * \param[in] character The character to process. Must model seqan3::semi_alphabet_concept.
+     * \param[in] character The character to process. Must model seqan3::Semialphabet.
      *
      * \returns size_t.
      * \sa seqan3::to_rank.
@@ -41,18 +41,18 @@ struct hash<alphabet_t>
 /*!\brief Struct for hashing a range of characters.
  * \ingroup alphabet
  * \tparam urng_t The type of the range; Must model std::ranges::InputRange and the reference type of the range of the
-                  range must model seqan3::semi_alphabet_concept.
+                  range must model seqan3::Semialphabet.
  */
 template <ranges::InputRange urng_t>
     //!\cond
-    requires seqan3::semi_alphabet_concept<seqan3::reference_t<urng_t>>
+    requires seqan3::Semialphabet<seqan3::reference_t<urng_t>>
     //!\endcond
 struct hash<urng_t>
 {
     /*!\brief Compute the hash for a range of characters.
      * \ingroup alphabet
      * \param[in] range The input range to process. Must model std::ranges::InputRange and the reference type of the
-                        range of the range must model seqan3::semi_alphabet_concept.
+                        range of the range must model seqan3::Semialphabet.
      * \returns size_t.
      */
     size_t operator()(urng_t const & range) const noexcept

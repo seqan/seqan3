@@ -23,12 +23,12 @@ namespace seqan3
 {
 
 // ------------------------------------------------------------------
-// seqan3::semi_alphabet_concept
+// seqan3::Semialphabet
 // ------------------------------------------------------------------
 
-/*!\name Helpers for seqan3::semi_alphabet_concept
+/*!\name Helpers for seqan3::Semialphabet
  * \brief These functions and metafunctions expose member variables and types so that they satisfy
- * seqan3::semi_alphabet_concept.
+ * seqan3::Semialphabet.
  * \ingroup alphabet
  * \{
  */
@@ -60,7 +60,7 @@ struct alphabet_size<alphabet_type_with_members> :
                            alphabet_type_with_members::value_size>
 {};
 
-/*!\brief Implementation of seqan3::semi_alphabet_concept::to_rank() that delegates to a member function.
+/*!\brief Implementation of seqan3::Semialphabet::to_rank() that delegates to a member function.
  * \tparam alphabet_type Must provide a `.to_rank()` member function.
  * \param alph The alphabet letter that you wish to convert to rank.
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
@@ -77,7 +77,7 @@ constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph) noe
     return alph.to_rank();
 }
 
-/*!\brief Implementation of seqan3::semi_alphabet_concept::assign_rank() that delegates to a member function.
+/*!\brief Implementation of seqan3::Semialphabet::assign_rank() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_rank()` member function.
  * \param alph The alphabet letter that you wish to assign to.
  * \param rank The `rank` value you wish to assign.
@@ -95,7 +95,7 @@ constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<al
     return alph.assign_rank(rank);
 }
 
-/*!\brief Implementation of seqan3::semi_alphabet_concept::assign_rank() that delegates to a member function.
+/*!\brief Implementation of seqan3::Semialphabet::assign_rank() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_rank()` member function.
  * \param alph An alphabet letter temporary.
  * \param rank The `rank` value you wish to assign.

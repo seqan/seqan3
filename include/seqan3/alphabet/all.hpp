@@ -119,7 +119,7 @@
  *
  * Note, however, that literals **are not** required by the concept.
  *
- * <small>In the documentation you will also encounter seqan3::semi_alphabet_concept. It describes "one half" of an
+ * <small>In the documentation you will also encounter seqan3::Semialphabet. It describes "one half" of an
  * alphabet and only defines the rank interface as a type requirement. It is mainly used internally and not
  * relevant to most users of SeqAn.</small>
  *

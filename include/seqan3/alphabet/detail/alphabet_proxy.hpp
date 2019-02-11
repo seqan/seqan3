@@ -109,7 +109,7 @@ public:
  * This CRTP base facilitates the definition of such proxies. Most users of SeqAn will not need to understand the
  * details.
  *
- * This class ensures that the proxy itself also models seqan3::semi_alphabet_concept, seqan3::alphabet_concept,
+ * This class ensures that the proxy itself also models seqan3::Semialphabet, seqan3::alphabet_concept,
  * seqan3::QualityAlphabet, seqan3::NucleotideAlphabet and/or seqan3::AminoacidAlphabet if the emulated type models
  * these. This makes sure that function templates which accept the original, also accept the proxy. An exception
  * are multi-layered compositions of alphabets where the proxy currently does not support access via `get`.

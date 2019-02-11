@@ -27,8 +27,8 @@ namespace seqan3
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_alphabet_concept.
- * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept, defaults to seqan3::mask.
+ * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::Semialphabet.
+ * \tparam mask_t Types of masked letter; must satisfy seqan3::Semialphabet, defaults to seqan3::mask.
  *
  * \details
  * The masked composition represents a seqan3::cartesian_composition of any given alphabet with the
@@ -129,7 +129,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Satisfies the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Default implementation: True for all character values that are reproduced by #to_char() after being assigned

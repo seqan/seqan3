@@ -24,7 +24,7 @@ namespace seqan3::detail
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::detail::cartesian_composition_concept <>
- * \extends seqan3::semi_alphabet_concept
+ * \extends seqan3::Semialphabet
  * \brief seqan3::cartesian_composition and its specialisations model this concept.
  * \ingroup alphabet
  *

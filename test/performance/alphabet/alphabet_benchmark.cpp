@@ -50,7 +50,7 @@ static void to_char(benchmark::State& state)
     state.counters["loop_iterations"] = std::numeric_limits<char_t>::max() - std::numeric_limits<char_t>::min();
 }
 
-template <semi_alphabet_concept alphabet_t>
+template <Semialphabet alphabet_t>
 static void assign_rank(benchmark::State& state)
 {
     using rank_t_ = underlying_rank_t<alphabet_t>;
@@ -69,7 +69,7 @@ static void assign_rank(benchmark::State& state)
     state.counters["loop_iterations"] = std::numeric_limits<rank_t>::max() - std::numeric_limits<rank_t>::min();
 }
 
-template <semi_alphabet_concept alphabet_t>
+template <Semialphabet alphabet_t>
 static void to_rank(benchmark::State& state)
 {
     using rank_t_ = underlying_rank_t<alphabet_t>;

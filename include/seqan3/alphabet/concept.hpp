@@ -26,10 +26,10 @@ namespace seqan3
 {
 
 // ------------------------------------------------------------------
-// semi_alphabet_concept
+// Semialphabet
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::semi_alphabet_concept <>
+/*!\interface seqan3::Semialphabet <>
  * \brief The basis for seqan3::alphabet_concept, but requires only rank interface (not char).
  * \ingroup alphabet
  * \extends std::Regular
@@ -46,7 +46,7 @@ namespace seqan3
  *   * std::StrictTotallyOrdered ("has all comparison operators")
  *
  * For the purpose of concept checking the types `t &` and `t &&` are also considered to satisfy
- * seqan3::semi_alphabet_concept if the type `t` satisfies it.
+ * seqan3::Semialphabet if the type `t` satisfies it.
  *
  * It is recommended that alphabets also model seqan3::StandardLayout and seqan3::TriviallyCopyable
  * and all alphabets shipped with SeqAn3 do so.
@@ -64,7 +64,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> &&
+SEQAN3_CONCEPT Semialphabet = std::Regular<std::remove_reference_t<t>> &&
                                 std::StrictTotallyOrdered<t> &&
                                 requires (t v)
 {
@@ -89,7 +89,7 @@ SEQAN3_CONCEPT semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> 
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::alphabet_concept <>
- * \extends seqan3::semi_alphabet_concept
+ * \extends seqan3::Semialphabet
  * \brief The generic alphabet concept that covers most data types used in ranges.
  * \ingroup alphabet
  *
@@ -115,7 +115,7 @@ SEQAN3_CONCEPT semi_alphabet_concept = std::Regular<std::remove_reference_t<t>> 
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT alphabet_concept = semi_alphabet_concept<t> && requires (t v)
+SEQAN3_CONCEPT alphabet_concept = Semialphabet<t> && requires (t v)
 {
     // conversion to char
     requires           noexcept(to_char(v));
@@ -141,25 +141,25 @@ SEQAN3_CONCEPT alphabet_concept = semi_alphabet_concept<t> && requires (t v)
 // ------------------------------------------------------------------
 
 /*!\cond DEV
- * \name Generic serialisation functions for all seqan3::semi_alphabet_concept
- * \brief All types that satisfy seqan3::semi_alphabet_concept can be serialised via Cereal.
+ * \name Generic serialisation functions for all seqan3::Semialphabet
+ * \brief All types that satisfy seqan3::Semialphabet can be serialised via Cereal.
  *
  * \{
  */
 /*!
  * \brief Save an alphabet letter to stream.
  * \tparam archive_t Must satisfy seqan3::CerealOutputArchive.
- * \tparam alphabet_t Type of l; must satisfy seqan3::semi_alphabet_concept.
+ * \tparam alphabet_t Type of l; must satisfy seqan3::Semialphabet.
  * \param l The alphabet letter.
- * \relates seqan3::semi_alphabet_concept
+ * \relates seqan3::Semialphabet
  *
  * \details
  *
- * Delegates to seqan3::semi_alphabet_concept::to_rank.
+ * Delegates to seqan3::Semialphabet::to_rank.
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
-template <CerealOutputArchive archive_t, semi_alphabet_concept alphabet_t>
+template <CerealOutputArchive archive_t, Semialphabet alphabet_t>
 underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &, alphabet_t const & l)
 {
     return to_rank(l);
@@ -167,14 +167,14 @@ underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const 
 
 /*!\brief Restore an alphabet letter from a saved rank.
  * \tparam archive_t Must satisfy seqan3::CerealInputArchive.
- * \tparam wrapped_alphabet_t A seqan3::semi_alphabet_concept after Cereal mangles it up.
+ * \tparam wrapped_alphabet_t A seqan3::Semialphabet after Cereal mangles it up.
  * \param l The alphabet letter (cereal wrapped).
  * \param r The assigned value.
- * \relates seqan3::semi_alphabet_concept
+ * \relates seqan3::Semialphabet
  *
  * \details
  *
- * Delegates to seqan3::semi_alphabet_concept::assign_rank.
+ * Delegates to seqan3::Semialphabet::assign_rank.
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
@@ -182,7 +182,7 @@ template <CerealInputArchive archive_t, typename wrapped_alphabet_t>
 void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
                                        wrapped_alphabet_t && l,
                                        underlying_rank_t<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>> const & r)
-    requires semi_alphabet_concept<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
+    requires Semialphabet<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
 {
     assign_rank(static_cast<detail::strip_cereal_wrapper_t<wrapped_alphabet_t> &>(l), r);
 }
@@ -199,11 +199,11 @@ namespace seqan3::detail
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::detail::ConstexprSemialphabet <>
- * \brief A seqan3::semi_alphabet_concept that has a constexpr default constructor and constexpr accessors.
+ * \brief A seqan3::Semialphabet that has a constexpr default constructor and constexpr accessors.
  * \ingroup alphabet
- * \extends seqan3::semi_alphabet_concept
+ * \extends seqan3::Semialphabet
  *
- * The same as seqan3::semi_alphabet_concept, except that all required functions are also required to be callable
+ * The same as seqan3::Semialphabet, except that all required functions are also required to be callable
  * in a `constexpr`-context.
  *
  * \par Concepts and doxygen
@@ -213,7 +213,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT ConstexprSemialphabet = semi_alphabet_concept<t> && requires
+SEQAN3_CONCEPT ConstexprSemialphabet = Semialphabet<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(to_rank(std::remove_reference_t<t>{}));
