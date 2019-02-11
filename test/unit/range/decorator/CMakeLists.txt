@@ -1,0 +1,1 @@
+seqan3_test(gap_decorator_anchor_set_test.cpp)
