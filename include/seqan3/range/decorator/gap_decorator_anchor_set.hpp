@@ -8,272 +8,520 @@
 /*!\file
  * \brief Provides seqan3::gap_decorator_anchor_set.
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
+#include <limits>
 #include <set>
 #include <tuple>
 #include <type_traits>
 
-#include <range/v3/all.hpp>
-
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/std/ranges>
+#include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3
 {
 
 /*!\brief A gap decorator allows the annotation of sequences with gap symbols
- * leaving the underlying sequence unmodified.
- * \tparam inner_type The type of alphabet sequences that will be stored.
+ *        while leaving the underlying sequence unmodified.
+ * \tparam inner_type The type of range that will be decorated with gaps; must model std::ranges::RandomAccessRange
+ *                    and std::ranges::SizedRange.
  * \implements seqan3::aligned_sequence_concept
  * \ingroup decorator
  *
- * This class may be used whenever you want to store or compute an alignment.
- * The underlying (ungapped sequence) remains unmodified, and is augmented by
- * gap information. Iterating over a gap_decorator sequences behaves as if you
- * had a rolled out, aligned sequence with alphabet and gap symbols.
- *
  * \details
- * The gap_decorator_anchor_set is a modified anchor list approach -- instead
- * of storing tuples of anchor positions and gap lengths relative to the
- * underlying sequence position, the anchor addresses are virtual and gap
- * lengths accumulated from left to right, i.e. an anchor gap stores at the 2nd
- * position all previous gap lengths including its own.
- * This reduces the lookup time to log (k) with k
- * being the number of continuous gaps (not gap symbols) and comes at the price
- * of O(k) worst-case runtime for gap modifications - when inserting or erasing
- * gaps the tailing gaps have to be updated by the resulting offset.
- * The gap maintaining structure is a set that is given a gap comparing structure.
- * Sets are implemented as red-black trees and perform random read operations in
- * log (k) time. The anchor set approach provides a good trade-off when using
- * both operator[] and gap insertion/erasure.
+ *
+ * This class may be used whenever you want to store or compute an alignment. The underlying (ungapped) sequence
+ * remains unmodified, and is augmented with gap information. The seqan3::gap_decorator_anchor_set behaves just like a
+ * vector over a gapped alphabet when iterating over it, inserting/erasing gaps or accessing a position. The only
+ * difference lies in the performance and size overhead (see below).
+ *
+ *
+ * ### Performance
+ *
+ * **n** The length of the underlying sequence.
+ * **k** The number of contiguous gaps (not gap symbols).
+ * **l** The total number of gap symbols.
+ *
+ * |            | access next | random access    | gap insert/erase at end | gap insert/erase random | size overhead |
+ * |------------|-------------|----------------- |-------------------------|-------------------------|---------------|
+ * | decorator  | \f$O(1)\f$  | \f$O(\log(k))\f$ | \f$O(\log(k))\f$        | \f$O(k)\f$              | \f$O(k)\f$    |
+ * | vector     | \f$O(1)\f$  | \f$O(1)\f$       | \f$O(1)\f$              | \f$O(n)\f$              | \f$O(n)\f$    |
+ *
+ * The *size overhead* refers to the space that is needed when using each of the data structures in addition to an
+ * already existing ungapped sequence.
+ *
+ * ### Implementation details
+ *
+ * This decorator stores a std::set over tuples of `(pos, cumulative_size)` where every entry represents one
+ * contiguous stretch of gaps. `pos` is the (virtual) insert position in the underlying range and `cumulative_size`
+ * is the length of that contiguous stretch of gaps plus the length of all preceding elements.
+ * Resolving random access requires logarithmic access into the set and inserting or removing a gap symbol additionally
+ * entails updating all subsequent elements in the set to preserve correct cumulative sizes.
  *
  */
 template <std::ranges::RandomAccessRange inner_type>
 //!\cond
-    requires container_concept<inner_type>
+    requires std::ranges::SizedRange<inner_type>
 //!\endcond
 class gap_decorator_anchor_set
 {
-    //!\brief The gap type as a tuple storing position and accumulated gap lengths.
-    using gap_t = typename std::pair<size_t, size_t>;
-
-    /*!\brief Structure allowing the comparison of gaps.
-     * \tparam        gap_t Type of the gap storing position an length accumulator.
-     * \details It is assumed that the gap structure is always in a consistent
-     * state, i.e. there are no two gaps that are overlapping. The ordering of gaps
-     * structures is exclusively dependent on the gap starting position which is
-     * the ordering criterion for the anchor set implemented as ordered red-black tree.
+private:
+    /*!\brief The iterator that moves over the seqan3::gap_decorator_anchor_set.
+     *
+     * \details
+     *
+     * This iterator returns values when dereferenced, not references, i.e. it does not satisfy the semantic
+     * requirements of [LegacyForwardIterator](https://en.cppreference.com/w/cpp/named_req/ForwardIterator). It does
+     * model the C++20 std::BidirectionalIterator (and std::ForwardIterator implicitly).
      */
-    template <typename gap_t>
-    struct gap_compare {
-        /*!\brief The operator allowing gap_t comparison.
-         * \param[in] lhs   The left-hand gap to compare.
-         * \param[in] rhs   The right-hand side gap to be compared.
-         * \returns A boolean flag indicating whether the gap starting position
-         *          of \p lhs is smaller than the one of \p rhs.
+    class gap_decorator_anchor_set_iterator
+    {
+    private:
+        //!\brief Pointer to the underlying container structure.
+        typename std::add_pointer_t<gap_decorator_anchor_set const> host{nullptr};
+        //!\brief Stores the virtual position index for the seqan3::gap_decorator_anchor_set.
+        typename gap_decorator_anchor_set::size_type pos{0u};
+        //!\brief Stores the physical position in the ungapped/underlying view.
+        int64_t ungapped_view_pos{0}; // must be signed because we need this value to be -1 in case of leading gaps.
+        //!\brief Stores the position (inkl. gaps) where the last (consecutive) gap that is still before the current
+        //!       iterator position ends.
+        typename gap_decorator_anchor_set::size_type left_gap_end{0};
+        //!\brief A pointer to the current anchor gap node. Note that the current tuple value at position 0 is the
+        //!       start of the right gap that is still behind the current iterator position.
+        typename gap_decorator_anchor_set::set_iterator_type anchor_set_it{};
+        //!\brief Caches the current value pointed at.
+        typename gap_decorator_anchor_set::value_type current_val{gap{}};
+
+        //!\brief A helper function that performs the random access into the anchor set, updating all member variables.
+        void jump(typename gap_decorator_anchor_set::size_type const new_pos)
+        {
+            assert(new_pos <= host->size());
+            pos = new_pos;
+
+            anchor_set_it = host->anchors.upper_bound(anchor_gap_t{pos, host->bound_dummy});
+            ungapped_view_pos = pos;
+
+            if (anchor_set_it != host->anchors.begin())
+            {
+                typename gap_decorator_anchor_set::set_iterator_type prev{std::prev(anchor_set_it)};
+                size_type gap_len{prev->second};
+
+                if (prev != host->anchors.begin())
+                    gap_len -= std::prev(prev)->second;
+
+                ungapped_view_pos -= prev->second;
+                left_gap_end = prev->first + gap_len;
+            }
+
+            if (ungapped_view_pos != static_cast<int64_t>(host->ungapped_view.size()) &&
+                pos >= left_gap_end && (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first))
+                current_val = host->ungapped_view[ungapped_view_pos];
+            else
+                current_val = gap{};
+        }
+
+    public:
+        /*!\name Member types
+         * \brief Make the parent's member types visible.
+         * \{
          */
-         bool operator() (const gap_t& lhs, const gap_t& rhs) const {
-             return lhs.first < rhs.first;
-         }
-     };
-    //!\brief The iterator type for an anchor set.
-    using set_iterator = typename std::set<gap_t, gap_compare<gap_t>>::iterator;
+        //!\brief Type for distances between iterators.
+        using difference_type = typename gap_decorator_anchor_set::difference_type;
+        //!\brief Value type of container elements.
+        using value_type = typename gap_decorator_anchor_set::value_type;
+        //!\brief Const-reference type defined by container (which equals the reference type).
+        using reference = typename gap_decorator_anchor_set::const_reference; // = reference
+        //!\brief Equals reference type.
+        using const_reference = reference;
+        //!\brief Pointer of container value type.
+        using pointer = value_type *;
+        //!\brief Tag this class as a bidirectional iterator since random access is possible but not in constant time.
+        using iterator_category = std::bidirectional_iterator_tag;
+        //!\}
+
+        /*!\name Constructors/Destructors
+         * \{
+         */
+        //!\brief Default constructor.
+        constexpr gap_decorator_anchor_set_iterator() = default;
+        //!\brief Copy constructor.
+        constexpr gap_decorator_anchor_set_iterator(gap_decorator_anchor_set_iterator const &) = default;
+        //!\brief Copy construction via assignment.
+        constexpr gap_decorator_anchor_set_iterator & operator=(gap_decorator_anchor_set_iterator const &) = default;
+        //!\brief Move constructor.
+        constexpr gap_decorator_anchor_set_iterator (gap_decorator_anchor_set_iterator &&) = default;
+        //!\brief Move assignment.
+        constexpr gap_decorator_anchor_set_iterator & operator=(gap_decorator_anchor_set_iterator &&) = default;
+        //!\brief Use default deconstructor.
+        ~gap_decorator_anchor_set_iterator() = default;
+
+        //!\brief Construct from seqan3::gap_decorator_anchor_set and initialise members.
+        explicit constexpr gap_decorator_anchor_set_iterator(gap_decorator_anchor_set const & host_) noexcept :
+            host(&host_), anchor_set_it{host_.anchors.begin()}
+        {
+            if (host_.anchors.size() && (*host_.anchors.begin()).first == 0) // there are gaps at the very front
+            {
+                --ungapped_view_pos; // set ungapped_view_pos to -1 so operator++ works without an extra if-branch.
+                left_gap_end = anchor_set_it->second;
+                ++anchor_set_it;
+            }
+            else
+            {
+                current_val = host_.ungapped_view[0];
+            }
+        }
+
+        //!\brief Construct from seqan3::gap_decorator_anchor_set and explicit position.
+        constexpr gap_decorator_anchor_set_iterator(gap_decorator_anchor_set const & host_,
+                                                    typename gap_decorator_anchor_set::size_type const pos_) noexcept :
+             host(&host_)
+        {
+            jump(pos_); // random access to pos
+        }
+        //!\}
+
+        /*!\name Arithmetic operators
+         * \{
+        */
+        //!\brief Pre-increment, returns updated iterator.
+        constexpr gap_decorator_anchor_set_iterator & operator++() noexcept
+        {
+            assert(host); // host is set
+            ++pos;
+
+            if (pos < left_gap_end)
+            {   // we stay within the preceding gap stretch
+                // no op but must precede other cases
+            }
+            else if (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first)
+            {   // proceed within the view since we are right of the previous gap but didn't arrive at the right gap yet
+                ++ungapped_view_pos;
+                if (ungapped_view_pos != static_cast<int64_t>(host->ungapped_view.size()))
+                    current_val = host->ungapped_view[ungapped_view_pos];
+            }
+            else
+            {   // we arrived at the right gap and have to update the variables. ungapped_view_pos remains unchanged.
+                left_gap_end = anchor_set_it->first + anchor_set_it->second -
+                               ((anchor_set_it != host->anchors.begin()) ? (std::prev(anchor_set_it))->second : 0);
+                ++anchor_set_it;
+                current_val = gap{};
+            }
+
+            return *this;
+        }
+
+        //!\brief Pre-decrement, returns updated iterator.
+        constexpr gap_decorator_anchor_set_iterator & operator--() noexcept
+        {
+            assert(host); // host is set
+            --pos;
+
+            if (pos < left_gap_end)
+            {   // there was no gap before but we arrive at the left gap and have to update the variables.
+                (anchor_set_it != host->anchors.begin()) ? --anchor_set_it : anchor_set_it;
+
+                if (anchor_set_it != host->anchors.begin())
+                {
+                    auto prev = std::prev(anchor_set_it);
+                    left_gap_end = prev->first + prev->second -
+                                   ((prev != host->anchors.begin()) ? std::prev(prev)->second : 0);
+                }
+                else // [[unlikely]]
+                {
+                    left_gap_end = 0;
+                }
+                current_val = gap{};
+            }
+            else if (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first)
+            {   // we are neither at the left nor right gap
+                --ungapped_view_pos;
+                current_val = host->ungapped_view[ungapped_view_pos];
+            }
+            // else -> no op (we are still within the right gap stretch)
+
+            return *this;
+        }
+
+        //!\brief Post-increment, returns previous iterator state (delegates to pre-increment).
+        constexpr gap_decorator_anchor_set_iterator operator++(int) noexcept
+        {
+            gap_decorator_anchor_set_iterator cpy{*this};
+            ++(*this);
+            return cpy;
+        }
+
+        //!\brief Post-decrement, returns previous iterator state (delegates to pre-decrement).
+        constexpr gap_decorator_anchor_set_iterator operator--(int) noexcept
+        {
+            gap_decorator_anchor_set_iterator cpy{*this};
+            --(*this);
+            return cpy;
+        }
+        //!\}
+
+        /*!\name Reference/Dereference operators
+         * \{
+        */
+        //!\brief Dereference operator returns a copy of the element currently pointed at.
+        constexpr reference operator*() const noexcept
+        {
+            return current_val;
+        }
+
+        //!\brief Returns a pointer to the currently cached value.
+        constexpr pointer operator->() const noexcept
+        {
+            return &current_val;
+        }
+        //!\}
+
+        /*!\name Comparison operators
+         * \brief Compares iterators by virtual position.
+         * \{
+         */
+        constexpr friend bool operator==(gap_decorator_anchor_set_iterator const & lhs,
+                                         gap_decorator_anchor_set_iterator const & rhs)
+        {
+            return lhs.pos == rhs.pos;
+        }
+
+        constexpr friend bool operator!=(gap_decorator_anchor_set_iterator const & lhs,
+                                         gap_decorator_anchor_set_iterator const & rhs)
+        {
+            return lhs.pos != rhs.pos;
+        }
+
+        constexpr friend bool operator<(gap_decorator_anchor_set_iterator const & lhs,
+                                        gap_decorator_anchor_set_iterator const & rhs)
+        {
+            return lhs.pos < rhs.pos;
+        }
+
+        constexpr friend bool operator>(gap_decorator_anchor_set_iterator const & lhs,
+                                        gap_decorator_anchor_set_iterator const & rhs)
+        {
+            return lhs.pos > rhs.pos;
+        }
+
+        constexpr friend bool operator<=(gap_decorator_anchor_set_iterator const & lhs,
+                                         gap_decorator_anchor_set_iterator const & rhs)
+        {
+            return lhs.pos <= rhs.pos;
+        }
+
+        constexpr friend bool operator>=(gap_decorator_anchor_set_iterator const & lhs,
+                                         gap_decorator_anchor_set_iterator const & rhs)
+        {
+            return lhs.pos >= rhs.pos;
+        }
+        //!\}
+    };
 
 public:
-    /*!\name Member types
+    /*!\name Range-associated member types
      * \{
      */
-    //!\brief The alphabet type of the underlying sequence.
-    //!\hideinitializer
-    using alphabet_type = typename ranges::v3::value_type_t<inner_type>;
-    //!\brief The union type of the alphabet type and gap symbol type.
-    //!\hideinitializer
-    using value_type = gapped<alphabet_type>;
-    //!\brief Use the value type as reference type.
-    //!\hideinitializer
+    //!\brief The union type of the alphabet type and gap symbol type (see seqan3::gapped).
+    using value_type = gapped<value_type_t<inner_type>>;
+    //!\brief Use the value type as reference type because the underlying sequence must not be modified.
     using reference = value_type;
-    //!\brief Use the const value type as reference type.
-    //!\hideinitializer
-    using const_reference = value_type const;
-    //!\brief Use the size_type of the underlying sequence.
-    //!\hideinitializer
+    //!\brief const_reference type equals reference type equals value type because the underlying sequence must not
+    //!       be modified.
+    using const_reference = reference;
+    //!\brief The size_type of the underlying sequence.
     using size_type = size_type_t<inner_type>;
-    //!\brief Use the difference_type of the underlying sequence.
-    //!\hideinitializer
-    using difference_type = typename ranges::v3::difference_type_t<inner_type>;
-    //!\brief The iterator type of this container (a random access iterator).
-    //!\hideinitializer
-    using iterator = detail::random_access_iterator<gap_decorator_anchor_set>;
-    //!\hideinitializer
-    using const_iterator = detail::random_access_iterator<gap_decorator_anchor_set const>;
+    //!\brief The difference type of the underlying sequence.
+    using difference_type = difference_type_t<inner_type>;
+    //!\brief The iterator type of this container (a bidirectional iterator).
+    using iterator = gap_decorator_anchor_set_iterator;
+    //!\brief The const_iterator equals the iterator type. Since no references are ever returned and thus the underlying
+    //!        sequence cannot be modified through the iterator there is no need for const.
+    using const_iterator = iterator;
     //!\}
 
-    /*!\name Constructors/Destructors
+    //!\brief The underlying ungapped range type.
+    using ungapped_range_type = inner_type;
+
+    /*!\name Constructors, destructor and assignment.
      * \{
      */
-    //!\brief Default constructor.
+    //!\brief Default constructor. Attention: all operations on a solely default constructed decorator,
+    //!       except assigning a new range, are UB.
     constexpr gap_decorator_anchor_set() = default;
     //!\brief Copy constructor.
     constexpr gap_decorator_anchor_set(gap_decorator_anchor_set const &) = default;
     //!\brief Copy construction via assignment.
     constexpr gap_decorator_anchor_set & operator=(gap_decorator_anchor_set const &) = default;
     //!\brief Move constructor.
-    constexpr gap_decorator_anchor_set (gap_decorator_anchor_set && rhs) = default;
+    constexpr gap_decorator_anchor_set(gap_decorator_anchor_set && rhs) = default;
     //!\brief Move assignment.
     constexpr gap_decorator_anchor_set & operator=(gap_decorator_anchor_set && rhs) = default;
-    //!\brief Construct by host sequence.
-    constexpr gap_decorator_anchor_set(inner_type const & sequence): sequence{&sequence} {};
-    //!\brief Direct sequence assignment resets previously inserted gaps.
-    constexpr gap_decorator_anchor_set & operator=(inner_type const & sequence)
-    {
-        sequence = sequence;
-        anchors.clear();
-    };
     //!\brief Use default deconstructor.
     ~gap_decorator_anchor_set() = default;
-    //!\}
+
+    //!\brief Construct with the ungapped range type.
+    constexpr gap_decorator_anchor_set(inner_type const & range) : ungapped_view{view::all(range)} {}
+    // !\}
 
     /*!\brief Returns the total length of the aligned sequence.
-     * \returns The total length of the aligned sequence.
+     * \returns The total length of the aligned sequence (gaps included).
      *
-     * \par Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
      */
     size_type size() const noexcept
     {
         if (anchors.size())
-            return (*(anchors.rbegin())).second + sequence->size();
-        return sequence->size();
+            return anchors.rbegin()->second + ungapped_view.size();
+
+        return ungapped_view.size();
     }
 
-    /*!\brief Insert a gap of length size at the aligned sequence iterator position.
-     * \param it    Iterator indicating the gap start position in the aligned sequence.
-     * \param size  Number of gap symbols to be inserted.
-     * \returns     An iterator pointing to the start position of the insertion.
-     *
-     * \par Complexity
-     *
-     * Average and worst case (insertion before last gap): o(k),
-     * Best case (back insertion): o(log k).
-     *
-     * \par Exceptions
-     * Throws assertion if \p it points beyond the end position.
+    /*!\name Aligned sequence modifications
+     * \{
      */
-    iterator insert_gap(iterator const it, size_type const size = 1)
+    /*!\brief Insert a gap of length count at the aligned sequence iterator position.
+     * \param it     Iterator indicating the gap start position in the aligned sequence.
+     * \param count  Number of gap symbols to be inserted.
+     * \returns      An iterator pointing to the start position of the insertion.
+     *
+     * ### Complexity
+     *
+     * Average and worst case (insertion before last gap): \f$O(k)\f$,
+     * Best case (back insertion): \f$O(\log k)\f$.
+     */
+    iterator insert_gap(iterator const it, size_type const count = 1)
     {
-        if (!size)
-            return it;
-        size_type const pos = it - begin();
-        assert(pos <= this->size());
+        assert(ungapped_view.size());
 
-        set_iterator it_set = anchors.begin();
-        // case 1: extend previous/surrounding gap already existing
-        if ((pos < this->size()) && (((value_type)(*this)[pos] == gap{}.to_char()) || (pos > 0 && (*this)[pos-1] == gap{}.to_char())))
+        if (!count) // [[unlikely]]
+            return it;
+
+        size_type const pos = std::distance(begin(), it);
+        assert(pos <= size());
+
+        set_iterator_type it_set = anchors.upper_bound(anchor_gap_t{pos, bound_dummy});
+
+        if (it_set == anchors.begin()) // will also catch if anchors is empty since begin() == end()
         {
-            it_set = anchors.lower_bound(gap_t{pos, 0/*Unused*/});
-            if (it_set == anchors.end() || (*it_set).first > pos)
-                it_set = std::prev(it_set);
-            gap_t gap{(*it_set).first, (*it_set).second + size};
-            // merge with successor
-            auto it_next = it_set;
-            ++it_next;
-            if ((*it_set) < (*std::prev(anchors.end())) && (*it_next).first <= (*it_set).first + size - 1)
-            {
-                // extend gap for *it_next, delete *(it_next+1)
-                gap.second += (*it_next).second;
-                anchors.erase(it_next);
-            }
-            anchors.erase(it_set);
-            anchors.insert(gap);
+            anchors.emplace_hint(anchors.begin(), anchor_gap_t{pos, count});
         }
-        // case 2: create new anchor gap
-        else
+        else // there are gaps before pos
         {
-            gap_t gap{pos, size};
-            // pre: pos not in anchor set, find preceeding gap to add accumulated gaps
-            if (anchors.size())
+            --it_set;
+            auto gap_len{it_set->second};
+            if (it_set != anchors.begin())
+                gap_len -= (*(std::prev(it_set))).second;
+
+            if (it_set->first + gap_len >= pos) // extend existing gap
             {
-                auto it_aux = anchors.lower_bound(gap_t{pos, 0/*Unused*/});
-                if (it_aux != anchors.begin())
-                    gap.second += (*--it_aux).second;
+                anchor_gap_t gap{it_set->first, it_set->second + count};
+                it_set = anchors.erase(it_set);
+                anchors.insert(it_set, gap);
             }
-            anchors.insert(gap);
+            else                                  // insert new gap
+            {
+                anchor_gap_t gap{pos, it_set->second + count};
+                ++it_set;
+                anchors.insert(it_set, gap);
+            }
         }
+
         // post-processing: reverse update of succeeding gaps
-        rupdate(pos, size);
-        return it;
+        rupdate(pos, count);
+        return iterator{*this, pos};
     }
 
    /*!\brief Erase one gap symbol at the indicated iterator postion.
     * \param it     Iterator indicating the gap to be erased.
-    * \returns      An iterator pointing to starting position of the gap erasure.
-    *
-    * \par Complexity
-    *
-    * O(log k)
-    *
-    * \par Exceptions
+    * \returns      Iterator following the last removed element.
     * \throws seqan3::gap_erase_failure if character is no seqan3::gap.
+    *
+    * \details
+    *
+    * ### Complexity
+    *
+    * \f$O(\log k)\f$
     */
     iterator erase_gap(iterator const it)
     {
+        assert(ungapped_view.size());
+
         // check if [it, it+gap_len[ covers [first, last[
-        if ((*it) != gap{}.to_char()) // [[unlikely]]
-            throw gap_erase_failure("The range to be erased does not corresponds to a consecutive gap.");
-        return erase_gap(it, it + 1);
+        if ((*it) != gap{}) // [[unlikely]]
+            throw gap_erase_failure("The range to be erased does not correspond to a consecutive gap.");
+
+        auto end_it = std::next(it);
+        return erase_gap(it, end_it);
     }
 
     /*!\brief Erase gap symbols at the iterator postions [first, last[.
      * \param[in]   first    The iterator pointing to the position where to start inserting gaps.
      * \param[in]   last     The iterator pointing to the position where to stop erasing gaps.
-     * \returns     An iterator pointing to starting position of the gap erasure.
-     *
-     * \par Complexity
-     *
-     * O(log k)
-     *
-     * \par Exceptions
-     *
+     * \returns     Iterator following the last removed element.
      * \throws seqan3::gap_erase_failure if [\p first, \p last[ does not correspond
-     * to a consecutive seqan3::gap range.
+     * to a consecutive range of seqan3::gap 's.
+     *
+     * \details
+     *
+     * ### Complexity
+     *
+     * \f$O(\log k)\f$
      */
     iterator erase_gap(iterator const first, iterator const last)
     {
-        size_type pos1 = first - begin(), pos2 = last - begin();
-        set_iterator it = anchors.lower_bound(gap_t{pos1, 0/*Unused*/});
-        size_type gap_len = get_gap_length(it);
+        assert(ungapped_view.size());
 
-        if (it == anchors.end() || (*it).first > pos1)
-            it = std::prev(it);
+        size_type const pos1 = std::distance(begin(), first);
+        size_type const pos2 = std::distance(begin(), last);
+        set_iterator_type it = anchors.upper_bound(anchor_gap_t{pos1, bound_dummy}); // first element greater than pos1
+
+        if (it == anchors.begin())
+            throw gap_erase_failure{"There is no gap to erase in range [" + std::to_string(pos1) + "," +
+                                    std::to_string(pos2) + "]."};
+
+        --it;
+        size_type const gap_len = gap_length(it);
+
         // check if [it, it+gap_len[ covers [first, last[
-        if (!(((*it).first <= pos1) && (((*it).first + gap_len) >= pos2))) // [[unlikely]]
-            throw gap_erase_failure("The range to be erased does not corresponds to a consecutive gap.");
+        if ((it->first + gap_len) < pos2) // [[unlikely]]
+        {
+            throw gap_erase_failure{"The range to be erased does not correspond to a consecutive gap."};
+        }
         // case 1: complete gap is deleted
-        if (((*it).first == pos1) && (gap_len == pos2-pos1))
-            anchors.erase(it);
+        else if (gap_len == pos2 - pos1)
+        {
+            it = anchors.erase(it);
+        }
         // case 2: gap to be deleted in tail or larger than 1 (equiv. to shift tail left, i.e. pos remains unchanged)
         else
         {
-            gap_t gap{(*it).first, (*it).second - pos2 + pos1};
-            anchors.erase(it);
-            anchors.insert(gap);
+            anchor_gap_t gap{it->first, it->second - pos2 + pos1};
+            it = anchors.erase(it);
+            it = anchors.insert(it, gap); // amortized constant because of hint
+            ++it; // update node after the current
         }
+
         // post-processing: forward update of succeeding gaps
-        update(pos1, pos2-pos1);
-        return first;
+        update(it, pos2 - pos1);
+
+        return iterator{*this, pos1};
     }
+    //!\}
 
     /*!\name Iterators
      * \{
@@ -283,23 +531,17 @@ public:
      *
      * If the container is empty, the returned iterator will be equal to end().
      *
-     * \par Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
      */
-    iterator begin() noexcept
+    iterator begin() const noexcept
     {
         return iterator{*this};
-    }
-
-    //!\copydoc begin()
-    const_iterator begin() const noexcept
-    {
-        return const_iterator{*this};
     }
 
     //!\copydoc begin()
@@ -311,25 +553,19 @@ public:
     /*!\brief Returns an iterator to the element following the last element of the decorator.
      * \returns Iterator to the behind last element.
      *
-     * This element acts as a placeholder; attempting to dereference it results in undefined behaviour.
+     * \attention This element acts as a placeholder; attempting to dereference it results in undefined behaviour.
      *
-     * \par Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * \par Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
      */
-    iterator end() noexcept
+    iterator end() const noexcept
     {
         return iterator{*this, size()};
-    }
-
-    //!\copydoc end()
-    const_iterator end() const noexcept
-    {
-        return const_iterator{*this, size()};
     }
 
     //!\copydoc end()
@@ -346,18 +582,17 @@ public:
      * \param i     The element to retrieve.
      * \returns     A reference of the gapped alphabet type.
      *
-     * \par Complexity
+     * ### Complexity
      *
-     * Constant.
+     * \f$O(\log k)\f$ where \f$k\f$ is the number of gaps.
      *
-     * \par Exceptions
+     * ### Exceptions
      *
      * Throws std::out_of_range exception if \p i is out of range.
      */
     reference at(size_type const i)
     {
-        //TODO add SEQAN_UNLIKELY
-        if (i >= size())
+        if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access element behind the last in gap_decorator."};
         return (*this)[i];
     }
@@ -365,141 +600,196 @@ public:
     //!\copydoc at()
     const_reference at(size_type const i) const
     {
-        //TODO add SEQAN_UNLIKELY
-        if (i >= size())
+        if (i >= size()) // [[unlikely]]
             throw std::out_of_range{"Trying to access element behind the last in gap_decorator."};
         return (*this)[i];
     }
 
-    //!\copydoc at()
-    constexpr reference operator[](size_type const i) const
+    /*!\brief Return the i-th element as a reference.
+     * \param i     The element to retrieve.
+     * \returns     A reference of the gapped alphabet type.
+     *
+     * This function delegates to an iterator seqan3::gap_decorator_anchor_set.
+     *
+     * ### Complexity
+     *
+     * \f$O(\log k)\f$ where \f$k\f$ is the number of gaps.
+     *
+     */
+    constexpr reference operator[](size_type const i) const noexcept
     {
-        assert(i < size());
-        // case 1: there are no gaps
-        if (!anchors.size())
-            return value_type((*sequence)[i]);
-        // case 2: there are gaps
-        set_iterator it = anchors.upper_bound(gap_t{i, 0/*Unused*/});
-        if (it == anchors.begin())
-            return value_type((*sequence)[i]); // since no gaps happen before i
-        it = std::prev(it);
-        size_type gap_len{(*it).second};
-        if (it != anchors.begin())
-            gap_len -= (*(std::prev(it, 1))).second;
-        if (i < (*it).first + gap_len)
-           return gap{}.to_char();
-        else
-           return value_type((*sequence)[i - (*it).second]);
+        return *iterator{*this, i};
     }
     //!\}
 
     /*!\name Comparison operators
      * \{
      */
-    /*!\brief Compare gap decorators by underlying sequence and gaps.
-     * \param[in] rhs   The right-hand side gap decorator to compare.
+    /*!\brief Compares two seqan3::gap_decorator_anchor_set 's by underlying sequence and gaps.
+     * \param[in] lhs The left-hand side gap decorator to compare.
+     * \param[in] rhs The right-hand side gap decorator to compare.
      * \returns A boolean flag indicating (in)equality of the aligned sequences.
      *
-     * |par Complexity
-     * Worst case: O(n*log k)
+     * ### Complexity
+     * Worst case: \f$O(n*\log k)\f$
+     * Constant in case the decorators have not the same number of (consecutive) gaps.
      *
-     * \par Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee. Does not modify the aligned sequences.
      */
-    template <typename inner_type2>
-    //!\cond
-        requires std::is_same_v<std::remove_const_t<inner_type>, std::remove_const_t<inner_type2>>
-    //!\endcond
-    constexpr bool operator==(gap_decorator_anchor_set<inner_type2> const & rhs) const noexcept
+    friend bool operator==(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
-        if (anchors.size() != rhs.anchors.size() || sequence->size() != rhs.sequence->size())
-            return false;
+        if (lhs.size()  == rhs.size()  &&
+            lhs.anchors == rhs.anchors &&
+            std::ranges::equal(lhs.ungapped_view, rhs.ungapped_view))
+        {
+            return true;
+        }
 
-        return std::ranges::equal(*this, rhs);
+        return false;
     }
 
     //!\copydoc operator==
-    template <typename inner_type2>
-    //!\cond
-        requires std::is_same_v<std::remove_const_t<inner_type>, std::remove_const_t<inner_type2>>
-    //!\endcond
-    constexpr bool operator!=(gap_decorator_anchor_set<inner_type2> const & rhs) const noexcept
+    friend bool operator!=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
     {
-        return !(operator==(rhs));
+        return !(lhs == rhs);
+    }
+
+    friend bool operator<(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    {
+        auto lit = lhs.begin();
+        auto rit = rhs.begin();
+
+        while (lit != lhs.end() && rit != rhs.end() && *lit == *rit)
+            ++lit, ++rit;
+
+        if (rit == rhs.end())
+            return false;           //  lhs == rhs, or rhs prefix of lhs
+        else if (lit == lhs.end())
+            return true;            // lhs prefix of rhs
+
+        return *lit < *rit;
+    }
+
+    friend bool operator<=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    {
+        auto lit = lhs.begin();
+        auto rit = rhs.begin();
+
+        while (lit != lhs.end() && rit != rhs.end() && *lit == *rit)
+            ++lit, ++rit;
+
+        if (lit == lhs.end())
+            return true;            // lhs == rhs, or lhs prefix of rhs
+        else if (rit == rhs.end())
+            return false;           // rhs prefix of lhs
+
+        return *lit < *rit;
+    }
+
+    friend bool operator>(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    {
+        return !(lhs <= rhs);
+    }
+
+    friend bool operator>=(gap_decorator_anchor_set const & lhs, gap_decorator_anchor_set const & rhs) noexcept
+    {
+        return !(lhs < rhs);
     }
     //!\}
+
 private:
-    /*!\brief Helper function to compute the length of the gap indicated by the
-     * input iterator.
+    //!\brief The gap type as a tuple storing position and accumulated gap lengths.
+    using anchor_gap_t = typename std::pair<size_t, size_t>;
+
+    //!\brief The type of set to store the anchor gaps.
+    using anchor_set_type = std::set<anchor_gap_t>;
+
+    //!\brief The iterator type for an anchor set.
+    using set_iterator_type = typename anchor_set_type::iterator;
+
+    //!\brief The maximum value is needed for a correct search with upper_bound() in the anchor set.
+    constexpr static size_t bound_dummy{std::numeric_limits<size_t>::max()};
+
+    /*!\brief Helper function to compute the length of the gap indicated by the input iterator.
      * \param[in] it    Iterator over the internal gap set.
      * \returns The gap length corresponding to the gap pointed at by \p it.
-     * \details The length of a gap is difference of the accumulator pointed at
-     * and the one of its predecessor (if existing).
      *
-     * \par Exceptions
+     * \details
+     *
+     * The length of a gap pointed to by \p it is the difference of the current cumulative sum of gaps
+     * (second tuple position) and the one of its predecessor (if existing).
+     *
+     * ### Exceptions
      * No-throw guarantee.
      */
-    constexpr size_type get_gap_length(set_iterator it) const noexcept
+    constexpr size_type gap_length(set_iterator_type it) const noexcept
     {
-        if (it == anchors.begin())
-            return (*it).second;
-        return (*it).second - (*std::prev(it)).second;
+        return (it == anchors.begin()) ? it->second : it->second - (*std::prev(it)).second;
     }
 
     /*!\brief Update all anchor gaps after the indicated position by adding an offset.
-     * \param[in] pos   Gap index after which to perform the update.
-     * \param[in] size  Offset to be added to the virtual gap positions and its accumulators.
+     * \param[in] pos    Gap index after which to perform the update.
+     * \param[in] offset Offset to be added to the virtual gap positions and its accumulators.
      *
-     * |par Complexity
-     * Linear in the number of gaps.
+     * \details
      *
-     * \details For not invalidating the iterator over the ordered set, the
+     * In order to avoid key conflicts when inserting into anchors, the
      * update is done in reverse manner excluding the indicated gap.
+     *
+     * ### Complexity
+     * Linear in the number of gaps.
      */
-    void rupdate(size_type const pos, size_type const size)
+    void rupdate(size_type const pos, size_type const offset)
     {
-        size_type new_key, new_val;
-        for (auto it = std::prev(anchors.end(), 1); (*it).first > pos;)
+        for (auto it = std::prev(anchors.end(), 1); it->first > pos;)
         {
-            new_key = (*it).first + size;
-            new_val = (*it).second + size;
-            anchors.emplace_hint(it, gap_t{new_key, new_val});
+            anchors.emplace_hint(it, anchor_gap_t{it->first + offset, it->second + offset});
             anchors.erase(*it--);
         }
     }
 
     /*!\brief Update all anchor gaps after indicated position by substracting an offset.
-     * \param[in] pos   Gap index after which to perform the update.
-     * \param[in] size  Offset to be removed from the virtual gap positions and its accumulators.
+     * \param[in] it     Iterator pointing to the first anchor node to update.
+     * \param[in] offset Offset to be removed from the virtual gap positions and its accumulators.
      *
-     * |par Complexity
-     * Linear in the number of gaps.
+     * \details
      *
-     * \details For not invalidating the iterator over the ordered set, the
+     * In order to avoid key conflicts when inserting into anchors, the
      * decreasing is done in a forward manner excluding the indicated gap.
      *
-     * \par Exceptions
-     * Throws assert when initial update position is out of range.
+     * ### Complexity
+     * Linear in the number of gaps.
      */
-    void update(size_type const pos, size_type const size)
+    void update(set_iterator_type it, size_type const offset)
     {
-        assert(pos < size);
-        auto it = anchors.lower_bound(gap_t{pos + size + 1, 0/*Unused*/});
         while (it != anchors.end())
         {
-            gap_t gap{(*it).first - size, (*it).second - size};
-            anchors.insert(gap);
-            set_iterator it_next = std::next(it);
-            anchors.erase(it);
-            it = it_next;
+            anchor_gap_t gap{it->first - offset, it->second - offset};
+            it = anchors.erase(it);
+            it = anchors.insert(it, gap);
+            ++it;
         }
     }
 
-    //!\brief Stores a pointer to the ungapped, underlying sequence.
-    inner_type const * sequence{};
+    //!\brief Stores a (copy of a) view to the ungapped, underlying sequence.
+    decltype(view::all(std::declval<inner_type const &>())) ungapped_view{};
+
     //!\brief Set storing the anchor gaps.
-    std::set<gap_t, gap_compare<gap_t>> anchors{};
+    anchor_set_type anchors{};
 };
 
-} // namespace seqan3
+} // namespace seqan
+
+namespace seqan3::detail
+{
+
+//!\brief Type trait that declares any seqan3::gap_decorator_anchor_set to be **NOT a view**.
+template <typename type>
+constexpr int enable_view<seqan3::gap_decorator_anchor_set<type>> = 0;
+
+template <typename type>
+constexpr int enable_view<seqan3::gap_decorator_anchor_set<type> const> = 0;
+
+} // namespace seqan3::detail

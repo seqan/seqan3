@@ -143,6 +143,7 @@ SEQAN3_CONCEPT aligned_sequence_concept =
  * \{
  */
 /*!\brief An implementation of seqan3::aligned_sequence_concept::insert_gap for sequence containers.
+ * \ingroup seqan3::aligned_sequence_concept
  * \tparam        seq_type Type of the container to modify; must model
  *                         seqan3::sequence_container_concept; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
@@ -150,7 +151,6 @@ SEQAN3_CONCEPT aligned_sequence_concept =
  * \param[in,out] seq      The container to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert a gap.
  *
- * \relates seqan3::aligned_sequence_concept
  *
  * \details
  *
@@ -167,6 +167,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence_concept::insert_gap for sequence containers.
+ * \ingroup seqan3::aligned_sequence_concept
  * \tparam        seq_type Type of the container to modify; must model
  *                         seqan3::sequence_container_concept; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
@@ -174,8 +175,6 @@ inline typename seq_type::iterator insert_gap(seq_type & seq, typename seq_type:
  * \param[in,out] seq      The container to modify.
  * \param[in]     pos_it   The iterator pointing to the position where to insert gaps.
  * \param[in]     size     The number of gap symbols to insert (will result in a gap of length `size`).
- *
- * \relates seqan3::aligned_sequence_concept
  *
  * \details
  *
@@ -194,6 +193,7 @@ inline typename seq_type::iterator insert_gap(seq_type & seq,
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for sequence containers.
+ * \ingroup seqan3::aligned_sequence_concept
  * \tparam        seq_type Type of the container to modify; must model
  *                         seqan3::sequence_container_concept; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
@@ -202,8 +202,6 @@ inline typename seq_type::iterator insert_gap(seq_type & seq,
  * \param[in]     pos_it   The iterator pointing to the position where to erase a gap.
  *
  * \throws seqan3::gap_erase_failure if there is no seqan3::gap at \p pos_it.
- *
- * \relates seqan3::aligned_sequence_concept
  *
  * \details
  *
@@ -224,6 +222,7 @@ inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::
 }
 
 /*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for sequence containers.
+ * \ingroup seqan3::aligned_sequence_concept
  * \tparam        seq_type Type of the container to modify; must model
  *                         seqan3::sequence_container_concept; the reference type
  *                         (seqan3::reference_t<seq_type>) must be assignable from
@@ -233,8 +232,6 @@ inline typename seq_type::iterator erase_gap(seq_type & seq, typename seq_type::
  * \param[in]     last     The iterator pointing to the position where to stop erasing gaps.
  *
  * \throws seqan3::gap_erase_failure if one of the characters in [\p first, \p last) no seqan3::gap.
- *
- * \relates seqan3::aligned_sequence_concept
  *
  * \details
  *
@@ -255,6 +252,87 @@ inline typename seq_type::iterator erase_gap(seq_type & seq,
             throw gap_erase_failure("The range to be erased contains at least one non-gap character.");
 
     return seq.erase(first, last);
+}
+//!\}
+
+/*!\name Aligned sequence interface for ranges that have the corresponding member functions.
+ * \brief Enables ranges to model seqan3::aligned_sequence_concept if they have the member functions
+ *        insert_gap() and erase_gap().
+ * \{
+ */
+/*!\brief An implementation of seqan3::aligned_sequence_concept::insert_gap for ranges with the corresponding
+ *        member function insert_gap(it, size).
+ * \ingroup seqan3::aligned_sequence_concept
+ * \tparam range_type   Type of the range to modify; must have an insert_gap(it, size) member function.
+ * \param[in,out] rng   The range to modify.
+ * \param[in]     it    The iterator pointing to the position where to start inserting gaps.
+ * \param[in]     size  The number of gaps to insert as an optional argument, default is 1.
+ *
+ * \details
+ *
+ * This function delegates to the member function `insert(iterator, size)` of the range.
+ */
+template <typename range_type>
+//!\cond
+    requires requires (range_type v)
+        {
+            v.insert_gap(typename range_type::iterator{});
+            v.insert_gap(typename range_type::iterator{}, typename range_type::size_type{});
+        }
+//!\endcond
+typename range_type::iterator insert_gap(range_type & rng,
+                                         typename range_type::iterator const it,
+                                         typename range_type::size_type const size = 1)
+{
+    return rng.insert_gap(it, size);
+}
+
+/*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for ranges with the corresponding
+ *        member function erase_gap(it).
+ * \ingroup seqan3::aligned_sequence_concept
+ * \tparam range_type   Type of the range to modify; must have an erase_gap(it) member function.
+ * \param[in,out] rng   The range to modify.
+ * \param[in] it        The iterator pointing to the position where to erase one gap.
+ *
+ * \details
+ *
+ * This function delegates to the member function `erase(it)` of
+ * the range.
+ */
+template <typename range_type>
+//!\cond
+    requires requires (range_type v) { v.erase_gap(typename range_type::iterator{}); }
+//!\endcond
+typename range_type::iterator erase_gap(range_type & rng,
+                                        typename range_type::iterator const it)
+{
+    return rng.erase_gap(it);
+}
+
+/*!\brief An implementation of seqan3::aligned_sequence_concept::erase_gap for ranges with the corresponding
+ *        member function erase_gap(first, last).
+ * \ingroup seqan3::aligned_sequence_concept
+ * \tparam range_type   Type of the range to modify; must have an erase_gap(first, last) member function.
+ * \param[in,out] rng   The range to modify.
+ * \param[in] first     The iterator pointing to the position where to start erasing gaps.
+ * \param[in] last      The iterator pointing to the position where to stop erasing gaps.
+ *
+ * \throws seqan3::gap_erase_failure if one of the characters in [\p first, \p last) is no seqan3::gap.
+ *
+ *
+ * \details
+ *
+ * This function delegates to the member function `erase(first, last)` of the range.
+ */
+template <typename range_type>
+//!\cond
+    requires requires (range_type v) { v.erase_gap(typename range_type::iterator{}, typename range_type::iterator{}); }
+//!\endcond
+typename range_type::iterator erase_gap(range_type & rng,
+                                        typename range_type::iterator const first,
+                                        typename range_type::iterator const last)
+{
+    return rng.erase_gap(first, last);
 }
 //!\}
 
