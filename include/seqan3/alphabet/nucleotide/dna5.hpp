@@ -29,7 +29,7 @@ class rna5;
 /*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
  * \ingroup nucleotide
  * \implements seqan3::NucleotideAlphabet
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *

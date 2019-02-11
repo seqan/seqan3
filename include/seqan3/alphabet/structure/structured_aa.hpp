@@ -27,7 +27,7 @@ namespace seqan3
 /*!\brief A seqan3::cartesian_composition that joins an aminoacid alphabet with a protein structure alphabet.
  * \ingroup structure
  * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  * \tparam sequence_alphabet_t Type of the first aminoacid letter; must satisfy seqan3::alphabet_concept.

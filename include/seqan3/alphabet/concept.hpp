@@ -222,10 +222,10 @@ SEQAN3_CONCEPT ConstexprSemialphabet = semi_alphabet_concept<t> && requires
 //!\endcond
 
 // ------------------------------------------------------------------
-// constexpr_alphabet_concept
+// ConstexprAlphabet
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::detail::constexpr_alphabet_concept <>
+/*!\interface seqan3::detail::ConstexprAlphabet <>
  * \brief A seqan3::alphabet_concept that has constexpr accessors.
  * \ingroup alphabet
  * \extends seqan3::detail::ConstexprSemialphabet
@@ -249,7 +249,7 @@ SEQAN3_CONCEPT ConstexprSemialphabet = semi_alphabet_concept<t> && requires
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT constexpr_alphabet_concept = ConstexprSemialphabet<t> &&
+SEQAN3_CONCEPT ConstexprAlphabet = ConstexprSemialphabet<t> &&
                                      alphabet_concept<t> &&
                                      requires
 {

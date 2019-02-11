@@ -160,7 +160,7 @@ namespace seqan3
 // forward
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::constexpr_alphabet_concept<alternative_types> && ...) &&
+    requires (detail::ConstexprAlphabet<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond

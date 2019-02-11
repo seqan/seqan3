@@ -143,7 +143,7 @@ namespace seqan3
  * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::alphabet_concept and be
  *                              unique.
  * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
 
@@ -169,7 +169,7 @@ namespace seqan3
  */
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::constexpr_alphabet_concept<alternative_types> && ...) &&
+    requires (detail::ConstexprAlphabet<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond

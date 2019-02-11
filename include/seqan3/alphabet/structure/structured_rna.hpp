@@ -27,7 +27,7 @@ namespace seqan3
 /*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with an RNA structure alphabet.
  * \ingroup structure
  * \implements seqan3::rna_structure_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::NucleotideAlphabet.

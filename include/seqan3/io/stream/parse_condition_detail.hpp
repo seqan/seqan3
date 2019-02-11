@@ -360,7 +360,7 @@ struct is_in_interval_type : public parse_condition_base<is_in_interval_type<int
  * \implements seqan3::detail::ParseCondition
  * \tparam alphabet_t The alphabet type. Must model seqan3::alphabet_concept.
  */
-template <detail::constexpr_alphabet_concept alphabet_t>
+template <detail::ConstexprAlphabet alphabet_t>
 struct is_in_alphabet_type : public parse_condition_base<is_in_alphabet_type<alphabet_t>>
 {
 public:
