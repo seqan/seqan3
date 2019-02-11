@@ -62,12 +62,21 @@ namespace seqan3
  * \{
  */
 /*!\typedef using sequence_alphabet
+<<<<<<< HEAD
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::alphabet_concept.
  */
 /*!\typedef using sequence_legal_alphabet
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::alphabet_concept and be convertible to
+=======
+ * \memberof seqan3::sequence_file_input_traits_concept
+ * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::Alphabet.
+ */
+/*!\typedef using sequence_legal_alphabet
+ * \memberof seqan3::sequence_file_input_traits_concept
+ * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::Alphabet and be convertible to
+>>>>>>> [MISC] Rename alphabet_concept to Alphabet
  * `sequence_alphabet`.
  *
  * \details
@@ -88,8 +97,13 @@ namespace seqan3
  * `sequence_container`; must satisfy seqan3::sequence_container_concept.
  */
 /*!\typedef using id_alphabet
+<<<<<<< HEAD
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::alphabet_concept.
+=======
+ * \memberof seqan3::sequence_file_input_traits_concept
+ * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::Alphabet.
+>>>>>>> [MISC] Rename alphabet_concept to Alphabet
  */
 /*!\typedef using id_container
  * \memberof seqan3::SequenceFileInputTraits
@@ -120,14 +134,20 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
 {
+<<<<<<< HEAD
     requires alphabet_concept<typename t::sequence_alphabet>;
     requires alphabet_concept<typename t::sequence_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+=======
+    requires Alphabet<typename t::sequence_alphabet>;
+    requires Alphabet<typename t::sequence_legal_alphabet>;
+    requires explicitly_convertible_to_concept<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+>>>>>>> [MISC] Rename alphabet_concept to Alphabet
     requires sequence_container_concept<typename t::template sequence_container<typename t::sequence_alphabet>>;
     requires sequence_container_concept<typename t::template sequence_container_container<
         typename t::template sequence_container<typename t::sequence_alphabet>>>;
 
-    requires alphabet_concept<typename t::id_alphabet>;
+    requires Alphabet<typename t::id_alphabet>;
     requires sequence_container_concept<typename t::template id_container<typename t::id_alphabet>>;
     requires sequence_container_concept<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;

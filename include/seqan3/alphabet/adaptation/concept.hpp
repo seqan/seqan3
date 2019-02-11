@@ -17,12 +17,12 @@
 namespace seqan3
 {
 /*!\interface seqan3::char_adaptation_concept <>
- * \extends seqan3::alphabet_concept
- * \brief A concept that covers char type adaptations for seqan3::alphabet_concept.
+ * \extends seqan3::Alphabet
+ * \brief A concept that covers char type adaptations for seqan3::Alphabet.
  * \ingroup adaptation
  *
  * \details
- * This concept introduces no formal requirements beyond those of seqan3::alphabet_concept
+ * This concept introduces no formal requirements beyond those of seqan3::Alphabet
  * and type being one of the following types:
  *
  *   * `char`
@@ -44,17 +44,17 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT char_adaptation_concept = alphabet_concept<type> &&
+SEQAN3_CONCEPT char_adaptation_concept = Alphabet<type> &&
                                   detail::is_char_adaptation_v<type>;
 //!\endcond
 
 /*!\interface seqan3::uint_adaptation_concept <>
- * \extends seqan3::alphabet_concept
- * \brief A concept that covers uint type adaptations for seqan3::alphabet_concept.
+ * \extends seqan3::Alphabet
+ * \brief A concept that covers uint type adaptations for seqan3::Alphabet.
  * \ingroup adaptation
  *
  * \details
- * This concept introduces no formal requirements beyond those of seqan3::alphabet_concept
+ * This concept introduces no formal requirements beyond those of seqan3::Alphabet
  * and type being one of the following types:
  *
  *   * `uint8_t`
@@ -74,7 +74,7 @@ SEQAN3_CONCEPT char_adaptation_concept = alphabet_concept<type> &&
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT uint_adaptation_concept = alphabet_concept<type> &&
+SEQAN3_CONCEPT uint_adaptation_concept = Alphabet<type> &&
                                   detail::is_uint_adaptation_v<type>;
 //!\endcond
 

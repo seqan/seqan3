@@ -66,9 +66,9 @@ SEQAN3_CONCEPT SequenceFileInputFormat = requires (t                            
  * \memberof seqan3::SequenceFileInputFormat
  * \tparam stream_type      Input stream, must satisfy seqan3::IStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam qual_type        Type of the seqan3::field::QUAL input; must satisfy std::ranges::OutputRange
  * over a seqan3::QualityAlphabet.
  * \param[in,out] stream    The input stream to read from.

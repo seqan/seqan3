@@ -89,9 +89,9 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(t & v,
  * \memberof seqan3::StructureFileInputFormat
  * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam bpp_type         Type of the seqan3::field::BPP input; must satisfy std::ranges::OutputRange
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
  * \tparam structure_type   Type of the seqan3::field::STRUCTURE input; must satisfy std::ranges::OutputRange
@@ -100,7 +100,7 @@ SEQAN3_CONCEPT StructureFileInputFormat = requires(t & v,
  * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR input;
  * must satisfy std::is_floating_point.
  * \tparam comment_type     Type of the seqan3::field::COMMENT input; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam offset_type      Type of the seqan3::field::OFFSET input; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The input stream to read from.
  * \param[in]     options   File specific options passed to the format.

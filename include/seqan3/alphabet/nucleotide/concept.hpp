@@ -23,11 +23,11 @@ namespace seqan3
 {
 
 /*!\interface seqan3::NucleotideAlphabet <>
- * \extends seqan3::alphabet_concept
+ * \extends seqan3::Alphabet
  * \brief A concept that indicates whether an alphabet represents nucleotides.
  * \ingroup nucleotide
  *
- * In addition to the requirements for seqan3::alphabet_concept, the NucleotideAlphabet introduces
+ * In addition to the requirements for seqan3::Alphabet, the NucleotideAlphabet introduces
  * a requirement for a complement function: seqan3::NucleotideAlphabet::complement.
  *
  * \par Concepts and doxygen
@@ -36,7 +36,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT NucleotideAlphabet = alphabet_concept<type> && requires (type v, std::remove_reference_t<type> c)
+SEQAN3_CONCEPT NucleotideAlphabet = Alphabet<type> && requires (type v, std::remove_reference_t<type> c)
 {
     requires std::Same<decltype(complement(v)), decltype(c)>;
 };

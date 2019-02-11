@@ -37,7 +37,7 @@ namespace seqan3
 class debug_stream_type;
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
- * \tparam alphabet_type The value type of the container, must satisfy seqan3::alphabet_concept and not be `&`.
+ * \tparam alphabet_type The value type of the container, must satisfy seqan3::Alphabet and not be `&`.
  * \implements seqan3::reservable_container_concept
  * \implements seqan3::Cerealisable
  * \ingroup container
@@ -64,7 +64,7 @@ class debug_stream_type;
  * threads at the same time **is not safe** and will lead to corruption if both values are stored in the same
  * 64bit-block, i.e. if the distance between `i` and `j` is smaller than 64 / alphabet_size.
  */
-template <alphabet_concept alphabet_type>
+template <Alphabet alphabet_type>
 //!\cond
     requires std::is_same_v<alphabet_type, std::remove_reference_t<alphabet_type>>
 //!\endcond
@@ -133,7 +133,7 @@ private:
         //!\}
     };
 
-    static_assert(alphabet_concept<reference_proxy_type>);
+    static_assert(Alphabet<reference_proxy_type>);
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>

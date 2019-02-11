@@ -24,7 +24,7 @@ namespace seqan3
 {
 /*!\interface seqan3::rna_structure_concept
  * \brief A concept that indicates whether an alphabet represents RNA structure.
- * \implements alphabet_concept
+ * \implements Alphabet
  * \tparam structure_type The structure alphabet type.
  * \ingroup structure
  * \details RNA structure alphabets are required to represent interactions among RNA nucleotides.
@@ -67,7 +67,7 @@ template <typename structure_type>
 SEQAN3_CONCEPT rna_structure_concept = requires(structure_type val)
 {
     // requires fulfillment of alphabet concept
-    requires alphabet_concept<structure_type>;
+    requires Alphabet<structure_type>;
 
     // these are delegated to member functions, see file ../detail/member_exposure.hpp
     { is_pair_open(val) } -> bool;

@@ -50,8 +50,8 @@ template <uint8_t interval_first, uint8_t interval_last>
 //!\endcond
 inline detail::is_in_interval_type<interval_first, interval_last> constexpr is_in_interval{};
 
-/*!\brief Checks whether a given letter is valid for the specified seqan3::alphabet_concept.
- * \tparam alphabet_t The alphabet to check; must model seqan3::alphabet_concept.
+/*!\brief Checks whether a given letter is valid for the specified seqan3::Alphabet.
+ * \tparam alphabet_t The alphabet to check; must model seqan3::Alphabet.
  * \ingroup stream
  *
  * \details
@@ -63,7 +63,7 @@ inline detail::is_in_interval_type<interval_first, interval_last> constexpr is_i
  * ### Example
  * \snippet test/snippet/io/stream/parse_condition.cpp is_in_alphabet
  */
-template <alphabet_concept alphabet_t>
+template <Alphabet alphabet_t>
 inline detail::is_in_alphabet_type<alphabet_t> constexpr is_in_alphabet{};
 
 /*!\brief Checks whether a given letter is the same as the template non-type argument.

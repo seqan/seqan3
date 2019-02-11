@@ -22,7 +22,7 @@ INSTANTIATE_TYPED_TEST_CASE_P(gap, alphabet_constexpr, gap);
 
 TEST(gap_test, fulfills_concept)
 {
-    EXPECT_TRUE(alphabet_concept<gap>);
+    EXPECT_TRUE(Alphabet<gap>);
 }
 
 TEST(gap_test, default_initialization)

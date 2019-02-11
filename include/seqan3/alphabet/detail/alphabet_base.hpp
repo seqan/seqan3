@@ -32,7 +32,7 @@ namespace seqan3
  * \details
  *
  * You can use this class to define your own alphabet, but types are not required to be based on it to model
- * seqan3::alphabet_concept, it is purely a way to avoid code duplication.
+ * seqan3::Alphabet, it is purely a way to avoid code duplication.
  *
  * The base class represents the alphabet value as the rank and
  * automatically deduces the rank type from the size, it further defines all required member functions and types; the
@@ -84,7 +84,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     * Satisfies the seqan3::Alphabet::to_char() requirement via the seqan3::to_char() wrapper.
      *
      * \par Complexity
      *
@@ -130,7 +130,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
+     * Satisfies the seqan3::Alphabet::assign_char() requirement via the seqan3::assign_char() wrapper.
      *
      * \par Complexity
      *
@@ -156,7 +156,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::assign_char_strict() requirement via the seqan3::assign_char_strict()
+     * Satisfies the seqan3::Alphabet::assign_char_strict() requirement via the seqan3::assign_char_strict()
      * wrapper.
      *
      * ### Complexity

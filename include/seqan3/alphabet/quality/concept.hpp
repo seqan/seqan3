@@ -108,11 +108,11 @@ constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::QualityAlphabet <>
- * \extends seqan3::alphabet_concept
+ * \extends seqan3::Alphabet
  * \brief A concept that indicates whether an alphabet represents quality scores.
  * \ingroup quality
  *
- * In addition to the requirements for seqan3::alphabet_concept, the
+ * In addition to the requirements for seqan3::Alphabet, the
  * QualityAlphabet introduces a requirement for conversion functions from and to
  * a Phred score.
  *
@@ -125,7 +125,7 @@ constexpr underlying_phred_t<alphabet_type> to_phred(alphabet_type const & chr)
 template<typename q>
 SEQAN3_CONCEPT QualityAlphabet = requires(q quality)
 {
-    requires alphabet_concept<q>;
+    requires Alphabet<q>;
 
     { assign_phred(quality, typename q::rank_type{}) } -> q;
     { to_phred(quality) } -> const typename q::phred_type;

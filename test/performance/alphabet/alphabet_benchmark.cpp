@@ -14,7 +14,7 @@
 
 using namespace seqan3;
 
-template <alphabet_concept alphabet_t>
+template <Alphabet alphabet_t>
 static void assign_char(benchmark::State& state)
 {
     using char_t = underlying_char_t<alphabet_t>;
@@ -32,7 +32,7 @@ static void assign_char(benchmark::State& state)
     state.counters["loop_iterations"] = std::numeric_limits<char_t>::max() - std::numeric_limits<char_t>::min();
 }
 
-template <alphabet_concept alphabet_t>
+template <Alphabet alphabet_t>
 static void to_char(benchmark::State& state)
 {
     using char_t = underlying_char_t<alphabet_t>;

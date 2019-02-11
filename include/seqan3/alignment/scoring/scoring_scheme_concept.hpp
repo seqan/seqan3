@@ -20,8 +20,8 @@ namespace seqan3
 /*!\interface seqan3::scoring_scheme_concept <>
  * \brief A concept that requires that type be able to score two letters.
  * \tparam t            The type the concept check is performed on (the putative scoring scheme).
- * \tparam alphabet_t   The type of the first letter that you wish to score; must model seqan3::alphabet_concept.
- * \tparam alphabet2_t  The type of the second letter that you wish to score; must model seqan3::alphabet_concept;
+ * \tparam alphabet_t   The type of the first letter that you wish to score; must model seqan3::Alphabet.
+ * \tparam alphabet2_t  The type of the second letter that you wish to score; must model seqan3::Alphabet;
  *                      defaults to `alphabet_t`.
  * \ingroup scoring
  *
@@ -56,7 +56,7 @@ namespace seqan3
  */
 //!\}
 //!\cond
-template <typename t, alphabet_concept alphabet_t, alphabet_concept alphabet2_t = alphabet_t>
+template <typename t, Alphabet alphabet_t, Alphabet alphabet2_t = alphabet_t>
 SEQAN3_CONCEPT scoring_scheme_concept = requires (t scheme,
                                                 alphabet_t const alph1,
                                                 alphabet2_t const alph2)

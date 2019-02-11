@@ -30,12 +30,12 @@ namespace seqan3
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::Semialphabet <>
- * \brief The basis for seqan3::alphabet_concept, but requires only rank interface (not char).
+ * \brief The basis for seqan3::Alphabet, but requires only rank interface (not char).
  * \ingroup alphabet
  * \extends std::Regular
  * \extends std::StrictTotallyOrdered
  *
- * This concept represents "one half" of the seqan3::alphabet_concept, it requires no
+ * This concept represents "one half" of the seqan3::Alphabet, it requires no
  * `char` representation and corresponding interfaces. It is mostly used internally and
  * in the composition of alphabet types (see seqan3::cartesian_composition).
  *
@@ -85,10 +85,10 @@ SEQAN3_CONCEPT Semialphabet = std::Regular<std::remove_reference_t<t>> &&
 //!\endcond
 
 // ------------------------------------------------------------------
-// alphabet_concept
+// Alphabet
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::alphabet_concept <>
+/*!\interface seqan3::Alphabet <>
  * \extends seqan3::Semialphabet
  * \brief The generic alphabet concept that covers most data types used in ranges.
  * \ingroup alphabet
@@ -100,7 +100,7 @@ SEQAN3_CONCEPT Semialphabet = std::Regular<std::remove_reference_t<t>> &&
  * the \ref alphabet module.
  *
  * For the purpose of concept checking the types `t &` and `t &&` are also considered to satisfy
- * seqan3::alphabet_concept if the type `t` satisfies it.
+ * seqan3::Alphabet if the type `t` satisfies it.
  *
  * \par Serialisation
  *
@@ -115,7 +115,7 @@ SEQAN3_CONCEPT Semialphabet = std::Regular<std::remove_reference_t<t>> &&
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT alphabet_concept = Semialphabet<t> && requires (t v)
+SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
 {
     // conversion to char
     requires           noexcept(to_char(v));
@@ -226,21 +226,21 @@ SEQAN3_CONCEPT ConstexprSemialphabet = Semialphabet<t> && requires
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::detail::ConstexprAlphabet <>
- * \brief A seqan3::alphabet_concept that has constexpr accessors.
+ * \brief A seqan3::Alphabet that has constexpr accessors.
  * \ingroup alphabet
  * \extends seqan3::detail::ConstexprSemialphabet
- * \extends seqan3::alphabet_concept
+ * \extends seqan3::Alphabet
  *
- * The same as seqan3::alphabet_concept, except that the following interface requirements are also required to be
+ * The same as seqan3::Alphabet, except that the following interface requirements are also required to be
  * callable in a `constexpr`-context:
  *
- *   * seqan3::alphabet_concept::to_char
- *   * seqan3::alphabet_concept::assign_char
- *   * seqan3::alphabet_concept::char_is_valid_for
+ *   * seqan3::Alphabet::to_char
+ *   * seqan3::Alphabet::assign_char
+ *   * seqan3::Alphabet::char_is_valid_for
  *
  * The only exception is:
  *
- *   * seqan3::alphabet_concept::assign_char_strict
+ *   * seqan3::Alphabet::assign_char_strict
  *
  * \par Concepts and doxygen
  *
@@ -250,7 +250,7 @@ SEQAN3_CONCEPT ConstexprSemialphabet = Semialphabet<t> && requires
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT ConstexprAlphabet = ConstexprSemialphabet<t> &&
-                                     alphabet_concept<t> &&
+                                     Alphabet<t> &&
                                      requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to

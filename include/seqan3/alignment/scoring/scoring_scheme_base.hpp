@@ -88,7 +88,7 @@ mismatch_score(score_type &&) -> mismatch_score<score_type>;
  *
  * This type is never used directly, instead use seqan3::nucleotide_scoring_scheme or seqan3::aminoacid_scoring_scheme.
  */
-template <typename derived_t, alphabet_concept alphabet_t, Arithmetic score_t>
+template <typename derived_t, Alphabet alphabet_t, Arithmetic score_t>
 class scoring_scheme_base
 {
 public:

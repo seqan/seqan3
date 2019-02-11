@@ -109,7 +109,7 @@ public:
  * This CRTP base facilitates the definition of such proxies. Most users of SeqAn will not need to understand the
  * details.
  *
- * This class ensures that the proxy itself also models seqan3::Semialphabet, seqan3::alphabet_concept,
+ * This class ensures that the proxy itself also models seqan3::Semialphabet, seqan3::Alphabet,
  * seqan3::QualityAlphabet, seqan3::NucleotideAlphabet and/or seqan3::AminoacidAlphabet if the emulated type models
  * these. This makes sure that function templates which accept the original, also accept the proxy. An exception
  * are multi-layered compositions of alphabets where the proxy currently does not support access via `get`.
@@ -207,7 +207,7 @@ public:
     }
 
     constexpr derived_type & assign_char(char_type_virtual const c) noexcept
-        requires alphabet_concept<alphabet_type>
+        requires Alphabet<alphabet_type>
     {
         alphabet_type tmp{};
         using seqan3::assign_char;
@@ -216,7 +216,7 @@ public:
     }
 
     derived_type & assign_char_strict(char_type_virtual const c)
-        requires alphabet_concept<alphabet_type>
+        requires Alphabet<alphabet_type>
     {
         alphabet_type tmp{};
         using seqan3::assign_char_strict;
@@ -246,7 +246,7 @@ public:
     }
 
     constexpr char_type to_char() const noexcept
-        requires alphabet_concept<alphabet_type>
+        requires Alphabet<alphabet_type>
     {
         using seqan3::to_char;
         /* (smehringer) Explicit conversion instead of static_cast:

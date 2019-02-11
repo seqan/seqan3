@@ -10,7 +10,7 @@
  * \brief Provides alphabet adaptations for standard char types.
  * \details
  * This file provides function and metafunction overloads so that the following types
- * fulfil the seqan3::alphabet_concept:
+ * fulfil the seqan3::Alphabet:
  *   * `char`
  *   * `char16_t`
  *   * `char32_t`

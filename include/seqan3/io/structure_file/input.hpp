@@ -67,11 +67,11 @@ namespace seqan3
  */
 /*!\typedef using seq_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
- * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::alphabet_concept.
+ * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using seq_legal_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
- * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::alphabet_concept and be convertible to
+ * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::Alphabet and be convertible to
  * `seq_alphabet`.
  *
  * \details
@@ -93,7 +93,7 @@ namespace seqan3
  */
 /*!\typedef using id_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
- * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::alphabet_concept.
+ * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using id_container
  * \memberof seqan3::structure_file_input_traits_concept
@@ -173,7 +173,7 @@ namespace seqan3
  */
 /*!\typedef using comment_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
- * \brief Alphabet of the characters for the seqan3::field::COMMENT; must satisfy seqan3::alphabet_concept.
+ * \brief Alphabet of the characters for the seqan3::field::COMMENT; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using comment_container
  * \memberof seqan3::structure_file_input_traits_concept
@@ -201,9 +201,15 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 {
     // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
     // sequence
+<<<<<<< HEAD
     requires alphabet_concept<typename t::seq_alphabet>;
     requires alphabet_concept<typename t::seq_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
+=======
+    requires Alphabet<typename t::seq_alphabet>;
+    requires Alphabet<typename t::seq_legal_alphabet>;
+    requires explicitly_convertible_to_concept<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
+>>>>>>> [MISC] Rename alphabet_concept to Alphabet
     requires sequence_container_concept<typename t::template seq_container<typename t::seq_alphabet>>;
 //    requires sequence_container_concept
 //        <typename t::template seq_container_container
@@ -211,7 +217,7 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 //                <typename t::seq_alphabet>>>;
 
     // id
-    requires alphabet_concept<typename t::id_alphabet>;
+    requires Alphabet<typename t::id_alphabet>;
     requires sequence_container_concept<typename t::template id_container<typename t::id_alphabet>>;
 //    requires sequence_container_concept
 //        <typename t::template id_container_container
@@ -279,7 +285,7 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 //                <typename t::react_type>>>;
 
     // comment
-    requires alphabet_concept<typename t::comment_alphabet>;
+    requires Alphabet<typename t::comment_alphabet>;
     requires sequence_container_concept<typename t::template comment_container<typename t::comment_alphabet>>;
 //    requires sequence_container_concept
 //        <typename t::template comment_container_container

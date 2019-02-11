@@ -45,7 +45,7 @@ namespace seqan3
  *
  * The following extended type requirements for a type `T` must hold true:
  *
- *   * seqan3::reference_t<T> must model seqan3::alphabet_concept.
+ *   * seqan3::reference_t<T> must model seqan3::Alphabet.
  *   * seqan3::reference_t<T> must be assignable from seqan3::gap.
  *
  * ### Concepts and doxygen
@@ -121,7 +121,7 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT aligned_sequence_concept =
     std::ranges::ForwardRange<t> &&
-    alphabet_concept<value_type_t<t>> &&
+    Alphabet<value_type_t<t>> &&
     WeaklyAssignable<reference_t<t>, gap const &> &&
     requires (t v)
     {

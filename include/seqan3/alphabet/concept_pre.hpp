@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief seqan3::alphabet_concept metafunction base classes.
+ * \brief seqan3::Alphabet metafunction base classes.
  *
  * Include this file, if you implement an alphabet type with free/global function
  * and metafunction interfaces.
@@ -18,7 +18,7 @@
  * \snippet test/snippet/alphabet/concept_pre.cpp include order
  *
  * If you include `concept.hpp` before your definitions, than your type will
- * not be resolved as satisfying seqan3::alphabet_concept.
+ * not be resolved as satisfying seqan3::Alphabet.
  *
  * This is not `true` for custom alphabets implementing the interfaces as
  * member functions/variables/types.
@@ -140,17 +140,17 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
 //!\}
 
 // ------------------------------------------------------------------
-// seqan3::alphabet_concept
+// seqan3::Alphabet
 // ------------------------------------------------------------------
 
-/*!\name Requirements for seqan3::alphabet_concept
- * \brief You can expect these functions on all types that implement seqan3::alphabet_concept.
- * \relates seqan3::alphabet_concept
+/*!\name Requirements for seqan3::Alphabet
+ * \brief You can expect these functions on all types that implement seqan3::Alphabet.
+ * \relates seqan3::Alphabet
  * \{
  */
 
 /*!\brief The `char_type` of the alphabet. [type metafunction base template]
- * \tparam alphabet_type Must satisfy seqan3::alphabet_concept.
+ * \tparam alphabet_type Must satisfy seqan3::Alphabet.
  * \ingroup alphabet
  *
  * \par Helper template alias

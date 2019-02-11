@@ -26,12 +26,12 @@ namespace seqan3
 
 /*!\brief A seqan3::cartesian_composition that joins an aminoacid alphabet with a protein structure alphabet.
  * \ingroup structure
- * \implements seqan3::alphabet_concept
+ * \implements seqan3::Alphabet
  * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
- * \tparam sequence_alphabet_t Type of the first aminoacid letter; must satisfy seqan3::alphabet_concept.
- * \tparam structure_alphabet_t Types of further structure letters; must satisfy seqan3::alphabet_concept.
+ * \tparam sequence_alphabet_t Type of the first aminoacid letter; must satisfy seqan3::Alphabet.
+ * \tparam structure_alphabet_t Types of further structure letters; must satisfy seqan3::Alphabet.
  *
  * This composition pairs an aminoacid alphabet with a structure alphabet. The rank values
  * correpsond to numeric values in the size of the composition, while the character values
@@ -44,11 +44,11 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/structure/structured_aa.cpp general
  *
- * This seqan3::cartesian_composition itself fulfills seqan3::alphabet_concept.
+ * This seqan3::cartesian_composition itself fulfills seqan3::Alphabet.
  */
 template <typename sequence_alphabet_t = aa27, typename structure_alphabet_t = dssp9>
 //!\cond
-    requires alphabet_concept<sequence_alphabet_t> && alphabet_concept<structure_alphabet_t>
+    requires Alphabet<sequence_alphabet_t> && Alphabet<structure_alphabet_t>
 //!\endcond
 class structured_aa :
     public cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,

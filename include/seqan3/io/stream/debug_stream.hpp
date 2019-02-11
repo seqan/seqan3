@@ -256,12 +256,12 @@ inline debug_stream_type debug_stream{};
  * \{
  */
 /*!\brief All alphabets can be printed to the seqan3::debug_stream by their char representation.
- * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::alphabet_concept.
+ * \tparam alphabet_t Type of the alphabet to be printed; must model seqan3::Alphabet.
  * \param s The seqan3::debug_stream.
  * \param l The alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <alphabet_concept alphabet_t>
+template <Alphabet alphabet_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
 //!\cond
     requires !OStream<std::ostream, alphabet_t>
@@ -298,7 +298,7 @@ namespace seqan3
 template <typename tuple_t>
 //!\cond
     requires !std::ranges::InputRange<tuple_t> &&
-             !alphabet_concept<remove_cvref_t<tuple_t>> && // exclude cartesian_composition
+             !Alphabet<remove_cvref_t<tuple_t>> && // exclude cartesian_composition
              tuple_like_concept<remove_cvref_t<tuple_t>>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, tuple_t && t)
@@ -337,7 +337,7 @@ inline debug_stream_type & operator<<(debug_stream_type & s, variant_type && v)
  *
  * \details
  *
- * If the element type models seqan3::alphabet_concept (and is not an unsigned integer), the range is printed
+ * If the element type models seqan3::Alphabet (and is not an unsigned integer), the range is printed
  * just as if it were a string, i.e. <tt>std::vector<dna4>{'C'_dna4, 'G'_dna4, 'A'_dna4}</tt> is printed as "CGA".
  *
  * In all other cases the elements are comma separated and the range is enclosed in brackets, i.e.
@@ -353,7 +353,7 @@ inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
                std::Same<remove_cvref_t<reference_t<rng_t>>, char>)
 //!\endcond
 {
-    if constexpr (alphabet_concept<remove_cvref_t<reference_t<rng_t>>> &&
+    if constexpr (Alphabet<remove_cvref_t<reference_t<rng_t>>> &&
                   !detail::is_uint_adaptation_v<remove_cvref_t<reference_t<rng_t>>>)
     {
         for (auto && l : r)

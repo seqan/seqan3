@@ -27,7 +27,7 @@ namespace seqan3::view
 /*!\brief               A view over an alphabet, given a range of characters.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
- * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::alphabet_concept.
+ * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::Alphabet.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
@@ -61,12 +61,12 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/rank_char.cpp char_to
  * \hideinitializer
  */
-template <alphabet_concept alphabet_type>
+template <Alphabet alphabet_type>
 inline auto const char_to = deep{view::transform([] (auto && in)
 {
     static_assert(std::is_same_v<remove_cvref_t<decltype(in)>, remove_cvref_t<underlying_char_t<alphabet_type>>>,
                     "The innermost value type must be the underlying char type of alphabet_type.");
-    // call element-wise assign_char from the alphabet_concept
+    // call element-wise assign_char from the Alphabet
     return assign_char(alphabet_type{}, in);
 })};
 

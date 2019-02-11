@@ -22,7 +22,7 @@ namespace seqan3
 /*!\brief Implementation of a masked composition, which extends a given alphabet
  * with a mask.
  * \ingroup mask
- * \implements seqan3::alphabet_concept
+ * \implements seqan3::Alphabet
  * \implements seqan3::detail::SemiConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
@@ -39,7 +39,7 @@ namespace seqan3
  */
  template <typename sequence_alphabet_t>
 //!\cond
-    requires alphabet_concept<sequence_alphabet_t>
+    requires Alphabet<sequence_alphabet_t>
 //!\endcond
 class masked : public cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {

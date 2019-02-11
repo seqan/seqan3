@@ -120,12 +120,12 @@ constexpr alphabet_type assign_rank(alphabet_type && alph, underlying_rank_t<alp
 //!\}
 
 // ------------------------------------------------------------------
-// seqan3::alphabet_concept
+// seqan3::Alphabet
 // ------------------------------------------------------------------
 
-/*!\name Helpers for seqan3::alphabet_concept
+/*!\name Helpers for seqan3::Alphabet
  * \brief These functions and metafunctions expose member variables and types so that they satisfy
- * seqan3::alphabet_concept.
+ * seqan3::Alphabet.
  * \ingroup alphabet
  * \{
  */
@@ -143,7 +143,7 @@ struct underlying_char<alphabet_type_with_members>
     using type = typename alphabet_type_with_members::char_type;
 };
 
-/*!\brief Implementation of seqan3::alphabet_concept::to_char() that delegates to a member function.
+/*!\brief Implementation of seqan3::Alphabet::to_char() that delegates to a member function.
  * \tparam alphabet_type Must provide a `.to_char()` member function.
  * \param alph The alphabet letter that you wish to convert to char.
  * \returns The letter's value in the alphabet's rank type (usually `char`).
@@ -160,7 +160,7 @@ constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph) noe
     return alph.to_char();
 }
 
-/*!\brief Implementation of seqan3::alphabet_concept::assign_char() that delegates to a member function.
+/*!\brief Implementation of seqan3::Alphabet::assign_char() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_char()` member function.
  * \param alph The alphabet letter that you wish to assign to.
  * \param chr The `char` value you wish to assign.
@@ -178,7 +178,7 @@ constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<al
     return alph.assign_char(chr);
 }
 
-/*!\brief Implementation of seqan3::alphabet_concept::assign_char() that delegates to a member function.
+/*!\brief Implementation of seqan3::Alphabet::assign_char() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_char()` member function.
  * \param alph An alphabet letter temporary.
  * \param chr The `char` value you wish to assign.
@@ -201,7 +201,7 @@ constexpr alphabet_type assign_char(alphabet_type && alph, underlying_char_t<alp
     return std::move(alph.assign_char(chr));
 }
 
-/*!\brief Implementation of seqan3::alphabet_concept::char_is_valid_for() that delegates to a static member function.
+/*!\brief Implementation of seqan3::Alphabet::char_is_valid_for() that delegates to a static member function.
  * \tparam alphabet_type Must provide a `char_is_valid()` static member function.
  * \param chr The `char` value you wish to check.
  * \returns `true` or `false`.
@@ -215,7 +215,7 @@ constexpr bool char_is_valid_for(underlying_char_t<alphabet_type_with_members> c
     return std::remove_reference_t<alphabet_type_with_members>::char_is_valid(chr);
 }
 
-/*!\brief Implementation of seqan3::alphabet_concept::assign_char_strict() that delegates to a member function.
+/*!\brief Implementation of seqan3::Alphabet::assign_char_strict() that delegates to a member function.
  * \tparam alphabet_type Must provide an `.assign_char_strict()` member function.
  * \param alph The alphabet letter that you wish to assign to.
  * \param chr The `char` value you wish to assign.

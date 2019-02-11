@@ -20,7 +20,7 @@
 namespace seqan3
 {
 
-//!\brief An exception typically thrown by seqan3::alphabet_concept::assign_char_strict.
+//!\brief An exception typically thrown by seqan3::Alphabet::assign_char_strict.
 struct invalid_char_assignment : std::runtime_error
 {
     //!\brief Constructor that takes the type name and the failed character as arguments.

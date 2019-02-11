@@ -125,7 +125,7 @@ struct fm_index_default_traits
  */
 template <std::ranges::RandomAccessRange text_t, FmIndexTraits fm_index_traits = fm_index_default_traits>
 //!\cond
-    requires alphabet_concept<innermost_value_type_t<text_t>> &&
+    requires Alphabet<innermost_value_type_t<text_t>> &&
              alphabet_size_v<innermost_value_type_t<text_t>> <= 256
 //!\endcond
 class fm_index

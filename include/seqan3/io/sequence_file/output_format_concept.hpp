@@ -66,9 +66,9 @@ SEQAN3_CONCEPT SequenceFileOutputFormat = requires (t                           
  * \memberof seqan3::SequenceFileOutputFormat
  * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam qual_type        Type of the seqan3::field::QUAL output; must satisfy std::ranges::OutputRange
  * over a seqan3::QualityAlphabet.
  * \param[in,out] stream    The output stream to write into.

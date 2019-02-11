@@ -270,7 +270,7 @@ public:
      *
      * No-throw guarantee.
      */
-    template <alphabet_concept char_t>
+    template <Alphabet char_t>
     //!\cond
         requires ImplicitlyConvertibleTo<char_t, typename index_t::char_type>
     //!\endcond
