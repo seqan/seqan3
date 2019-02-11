@@ -169,7 +169,7 @@ class union_composition;
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::constexpr_semi_alphabet_concept<component_types> && ...)
+    requires (detail::ConstexprSemialphabet<component_types> && ...)
 //!\endcond
 class cartesian_composition;
 

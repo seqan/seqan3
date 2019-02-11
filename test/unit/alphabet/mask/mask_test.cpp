@@ -15,7 +15,7 @@ using namespace seqan3;
 TEST(assignment, concept_check)
 {
     EXPECT_TRUE(semi_alphabet_concept<mask>);
-    EXPECT_TRUE(detail::constexpr_semi_alphabet_concept<mask>);
+    EXPECT_TRUE(detail::ConstexprSemialphabet<mask>);
 }
 
 TEST(assignment, assign_rank)

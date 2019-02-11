@@ -195,10 +195,10 @@ void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
 namespace seqan3::detail
 {
 // ------------------------------------------------------------------
-// constexpr_semi_alphabet_concept
+// ConstexprSemialphabet
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::detail::constexpr_semi_alphabet_concept <>
+/*!\interface seqan3::detail::ConstexprSemialphabet <>
  * \brief A seqan3::semi_alphabet_concept that has a constexpr default constructor and constexpr accessors.
  * \ingroup alphabet
  * \extends seqan3::semi_alphabet_concept
@@ -213,7 +213,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && requires
+SEQAN3_CONCEPT ConstexprSemialphabet = semi_alphabet_concept<t> && requires
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(to_rank(std::remove_reference_t<t>{}));
@@ -228,7 +228,7 @@ SEQAN3_CONCEPT constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && req
 /*!\interface seqan3::detail::constexpr_alphabet_concept <>
  * \brief A seqan3::alphabet_concept that has constexpr accessors.
  * \ingroup alphabet
- * \extends seqan3::detail::constexpr_semi_alphabet_concept
+ * \extends seqan3::detail::ConstexprSemialphabet
  * \extends seqan3::alphabet_concept
  *
  * The same as seqan3::alphabet_concept, except that the following interface requirements are also required to be
@@ -249,7 +249,7 @@ SEQAN3_CONCEPT constexpr_semi_alphabet_concept = semi_alphabet_concept<t> && req
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT constexpr_alphabet_concept = constexpr_semi_alphabet_concept<t> &&
+SEQAN3_CONCEPT constexpr_alphabet_concept = ConstexprSemialphabet<t> &&
                                      alphabet_concept<t> &&
                                      requires
 {

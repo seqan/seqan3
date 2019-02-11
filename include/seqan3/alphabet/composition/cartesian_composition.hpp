@@ -145,7 +145,7 @@ decltype(auto) get();
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composition
  * \implements seqan3::semi_alphabet_concept
- * \implements seqan3::detail::constexpr_semi_alphabet_concept
+ * \implements seqan3::detail::ConstexprSemialphabet
  * \tparam first_component_type Type of the first letter; must model seqan3::semi_alphabet_concept.
  * \tparam component_types      Types of further letters (up to 4); must model seqan3::semi_alphabet_concept.
  *
@@ -177,7 +177,7 @@ decltype(auto) get();
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::constexpr_semi_alphabet_concept<component_types> && ...)
+    requires (detail::ConstexprSemialphabet<component_types> && ...)
 //!\endcond
 class cartesian_composition :
     public alphabet_base<derived_type,
