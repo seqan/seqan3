@@ -21,7 +21,7 @@
 
 namespace seqan3
 {
-/*!\interface seqan3::ostream_concept <>
+/*!\interface seqan3::OStream <>
  * \ingroup stream
  * \brief Concept for output streams.
  *
@@ -31,8 +31,8 @@ namespace seqan3
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT ostream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
-                               requires (stream_type & os, value_type & val)
+SEQAN3_CONCEPT OStream = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+                         requires (stream_type & os, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
     typename std::remove_reference_t<stream_type>::traits_type;
@@ -45,18 +45,18 @@ SEQAN3_CONCEPT ostream_concept = std::is_base_of_v<std::ios_base, std::remove_re
 };
 
 template <typename stream_type>
-SEQAN3_CONCEPT ostream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                           ostream_concept<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+SEQAN3_CONCEPT OStream2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                          OStream<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
-/*!\name Requirements for seqan3::ostream_concept
- * \relates seqan3::ostream_concept
- * \brief You can expect these member types and the free function on all types that satisfy seqan3::ostream_concept.
+/*!\name Requirements for seqan3::OStream
+ * \relates seqan3::OStream
+ * \brief You can expect these member types and the free function on all types that satisfy seqan3::OStream.
  * \{
  */
 /*!\fn      std::basic_ostream<char_type, traits_type> & operator<<(value_type val);
  * \brief   (un)-formatted output operator for the respective type on the underlying stream.
- * \relates seqan3::ostream_concept
+ * \relates seqan3::OStream
  * \param   val The value to write into the stream.
  * \returns A reference to a std::basic_ostream<char_type, traits_type>.
  *
@@ -69,32 +69,32 @@ SEQAN3_CONCEPT ostream_concept2 = requires { typename std::remove_reference_t<st
  */
 
  /*!\typedef typename stream::char_type char_type
-  * \memberof seqan3::ostream_concept
+  * \memberof seqan3::OStream
   * \brief Declares the associated char type.
   */
 
  /*!\typedef typename stream::traits_type traits_type
-  * \memberof seqan3::ostream_concept
+  * \memberof seqan3::OStream
   * \brief Declares the associated traits type.
   */
 
  /*!\typedef typename stream::int_type int_type
-  * \memberof seqan3::ostream_concept
+  * \memberof seqan3::OStream
   * \brief Declares the associated int type.
   */
 
  /*!\typedef typename stream::pos_type pos_type
-  * \memberof seqan3::ostream_concept
+  * \memberof seqan3::OStream
   * \brief Declares the associated pos type.
   */
 
  /*!\typedef typename stream::off_type off_type
-  * \memberof seqan3::ostream_concept
+  * \memberof seqan3::OStream
   * \brief Declares the associated off type.
   */
 //!\}
 
-/*!\interface seqan3::istream_concept <>
+/*!\interface seqan3::IStream <>
  * \ingroup stream
  * \brief Concept for input streams.
  *
@@ -104,8 +104,8 @@ SEQAN3_CONCEPT ostream_concept2 = requires { typename std::remove_reference_t<st
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT istream_concept = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
-                               requires (stream_type & is, value_type & val)
+SEQAN3_CONCEPT IStream = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+                         requires (stream_type & is, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
     typename std::remove_reference_t<stream_type>::traits_type;
@@ -118,18 +118,18 @@ SEQAN3_CONCEPT istream_concept = std::is_base_of_v<std::ios_base, std::remove_re
 };
 
 template <typename stream_type>
-SEQAN3_CONCEPT istream_concept2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                           istream_concept<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+SEQAN3_CONCEPT IStream2 = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                          IStream<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
-/*!\name Requirements for seqan3::istream_concept
- * \relates seqan3::istream_concept
- * \brief You can expect these member types and the free function on all types that satisfy seqan3::istream_concept.
+/*!\name Requirements for seqan3::IStream
+ * \relates seqan3::IStream
+ * \brief You can expect these member types and the free function on all types that satisfy seqan3::IStream.
  * \{
  */
 /*!\fn      std::basic_istream<char_type, traits_type> & operator>>(value_type val);
  * \brief   (un)-formatted input operator for the respective type on the underlying stream.
- * \relates seqan3::istream_concept
+ * \relates seqan3::IStream
  * \param   val The value to read from the stream.
  * \returns A reference to a std::basic_istream<char_type, traits_type>.
  *
@@ -142,34 +142,34 @@ SEQAN3_CONCEPT istream_concept2 = requires { typename std::remove_reference_t<st
  */
 
  /*!\typedef typename stream::char_type char_type
-  * \memberof seqan3::istream_concept
+  * \memberof seqan3::IStream
   * \brief Declares the associated char type.
   */
 
  /*!\typedef typename stream::traits_type traits_type
-  * \memberof seqan3::istream_concept
+  * \memberof seqan3::IStream
   * \brief Declares the associated traits type.
   */
 
  /*!\typedef typename stream::int_type int_type
-  * \memberof seqan3::istream_concept
+  * \memberof seqan3::IStream
   * \brief Declares the associated int type.
   */
 
  /*!\typedef typename stream::pos_type pos_type
-  * \memberof seqan3::istream_concept
+  * \memberof seqan3::IStream
   * \brief Declares the associated pos type.
   */
 
  /*!\typedef typename stream::off_type off_type
-  * \memberof seqan3::istream_concept
+  * \memberof seqan3::IStream
   * \brief Declares the associated off type.
   */
 //!\}
 
-/*!\interface seqan3::stream_concept <>
- * \extends seqan3::istream_concept
- * \extends seqan3::ostream_concept
+/*!\interface seqan3::Stream <>
+ * \extends seqan3::IStream
+ * \extends seqan3::OStream
  * \brief Concept for i/o streams permitting both directions.
  * \ingroup stream
  *
@@ -178,8 +178,8 @@ SEQAN3_CONCEPT istream_concept2 = requires { typename std::remove_reference_t<st
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT stream_concept = ostream_concept<stream_type, value_type> &&
-                              istream_concept<stream_type, value_type>;
+SEQAN3_CONCEPT Stream = OStream<stream_type, value_type> &&
+                        IStream<stream_type, value_type>;
 
 //!\endcond
 

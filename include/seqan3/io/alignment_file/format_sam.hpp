@@ -135,7 +135,7 @@ public:
         { "sam" },
     };
 
-    //!\copydoc alignment_file_output_format_concept::write
+    //!\copydoc AlignmentFileOutputFormat::write
     template <typename stream_type,
               typename seq_type,
               typename id_type,

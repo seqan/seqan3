@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::sequence_file_input_format_concept and auxiliary classes.
+ * \brief Provides seqan3::SequenceFileInputFormat and auxiliary classes.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -26,7 +26,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::sequence_file_input_format_concept <>
+/*!\interface seqan3::SequenceFileInputFormat <>
  * \brief The generic concept for sequence file in formats.
  * \ingroup sequence
  *
@@ -38,13 +38,13 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_input_format_concept = requires (t                                     & v,
-                                                         std::ifstream                         & f,
-                                                         sequence_file_input_options<dna5, false> & options,
-                                                         dna5_vector                           & seq,
-                                                         std::string                           & id,
-                                                         std::vector<phred42>                  & qual,
-                                                         std::vector<dna5q>                    & seq_qual)
+SEQAN3_CONCEPT SequenceFileInputFormat = requires (t                                        & v,
+                                                   std::ifstream                            & f,
+                                                   sequence_file_input_options<dna5, false> & options,
+                                                   dna5_vector                              & seq,
+                                                   std::string                              & id,
+                                                   std::vector<phred42>                     & qual,
+                                                   std::vector<dna5q>                       & seq_qual)
 {
     t::file_extensions;
 
@@ -54,17 +54,17 @@ SEQAN3_CONCEPT sequence_file_input_format_concept = requires (t                 
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::sequence_file_input_format_concept
- * \brief You can expect these **members** on all types that implement seqan3::sequence_file_input_format_concept.
- * \memberof seqan3::sequence_file_input_format_concept
+/*!\name Requirements for seqan3::SequenceFileInputFormat
+ * \brief You can expect these **members** on all types that implement seqan3::SequenceFileInputFormat.
+ * \memberof seqan3::SequenceFileInputFormat
  * \{
  */
 
 /*!\fn void read(stream_type & stream, seqan3::sequence_file_input_options const & options, seq_type & sequence,
  *               id_type & id, qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::sequence_file_input_format_concept
- * \tparam stream_type      Input stream, must satisfy seqan3::istream_concept with `char`.
+ * \memberof seqan3::SequenceFileInputFormat
+ * \tparam stream_type      Input stream, must satisfy seqan3::IStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
  * \tparam id_type          Type of the seqan3::field::ID input; must satisfy std::ranges::OutputRange
@@ -89,7 +89,7 @@ SEQAN3_CONCEPT sequence_file_input_format_concept = requires (t                 
  *     a specialisation of seqan3::qualified and the second template parameter to
  *     seqan3::sequence_file_input_options must be set to true.
  */
- /*!\var static inline std::vector<std::string> seqan3::sequence_file_input_format_concept::file_extensions
+ /*!\var static inline std::vector<std::string> seqan3::SequenceFileInputFormat::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}
@@ -100,28 +100,27 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_input_format_concept [default is false].
+ * seqan3::SequenceFileInputFormat [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_sequence_file_input_formats_concept
+ * \see seqan3::TypeListOfSequenceFileInputFormats
  */
 template <typename t>
 constexpr bool is_type_list_of_sequence_file_input_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_input_format_concept [overload].
+ * seqan3::SequenceFileInputFormat [overload].
  * \ingroup core
-  * \see seqan3::type_list_of_sequence_file_input_formats_concept
+  * \see seqan3::TypeListOfSequenceFileInputFormats
  */
 template <typename ... ts>
 constexpr bool is_type_list_of_sequence_file_input_formats_v<type_list<ts...>> =
-    (sequence_file_input_format_concept<ts> && ...);
+    (SequenceFileInputFormat<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- *        seqan3::sequence_file_input_format_concept.
+ *        seqan3::SequenceFileInputFormat.
  * \ingroup core
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sequence_file_input_formats_concept = is_type_list_of_sequence_file_input_formats_v<t>;
-
+SEQAN3_CONCEPT TypeListOfSequenceFileInputFormats = is_type_list_of_sequence_file_input_formats_v<t>;
 } // namespace seqan3::detail

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::sequence_file_format_out_concept and auxiliary classes.
+ * \brief Provides seqan3::SequenceFileFormatOut and auxiliary classes.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -25,7 +25,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::sequence_file_output_format_concept <>
+/*!\interface seqan3::SequenceFileOutputFormat <>
  * \brief The generic concept for sequence file out formats.
  * \ingroup sequence
  *
@@ -37,13 +37,13 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_output_format_concept = requires (t                         & v,
-                                                          std::ofstream             & f,
-                                                          sequence_file_output_options & options,
-                                                          dna5_vector               & seq,
-                                                          std::string               & id,
-                                                          std::vector<phred42>   & qual,
-                                                          std::vector<dna5q>        & seq_qual)
+SEQAN3_CONCEPT SequenceFileOutputFormat = requires (t                            & v,
+                                                    std::ofstream                & f,
+                                                    sequence_file_output_options & options,
+                                                    dna5_vector                  & seq,
+                                                    std::string                  & id,
+                                                    std::vector<phred42>         & qual,
+                                                    std::vector<dna5q>           & seq_qual)
 {
     t::file_extensions;
 
@@ -54,17 +54,17 @@ SEQAN3_CONCEPT sequence_file_output_format_concept = requires (t                
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::sequence_file_output_format_concept
- * \brief You can expect these **members** on all types that implement seqan3::sequence_file_output_format_concept.
- * \memberof seqan3::sequence_file_output_format_concept
+/*!\name Requirements for seqan3::SequenceFileOutputFormat
+ * \brief You can expect these **members** on all types that implement seqan3::SequenceFileOutputFormat.
+ * \memberof seqan3::SequenceFileOutputFormat
  * \{
  */
 
 /*!\fn void write(stream_type & stream, seqan3::sequence_file_output_options const & options, seq_type && sequence,
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::sequence_file_output_format_concept
- * \tparam stream_type      Output stream, must satisfy seqan3::ostream_concept with `char`.
+ * \memberof seqan3::SequenceFileOutputFormat
+ * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::alphabet_concept.
  * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
@@ -86,7 +86,7 @@ SEQAN3_CONCEPT sequence_file_output_format_concept = requires (t                
  *   * The format does not handle seqan3::field::SEQ_QUAL, instead seqan3::sequence_file_output splits it into two views
  *     and passes it to the format as if they were separate.
  */
-/*!\var static inline std::vector<std::string> seqan3::sequence_file_output_format_concept::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::SequenceFileOutputFormat::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 
@@ -98,26 +98,26 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_output_format_concept [default is false].
+ * seqan3::SequenceFileOutputFormat [default is false].
  * \ingroup core
- * \see seqan3::type_list_of_sequence_file_output_formats_concept
+ * \see seqan3::TypeListOfSequenceFileOutputFormats
  */
 template <typename t>
 constexpr bool is_type_list_of_sequence_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_output_format_concept [overload].
+ * seqan3::SequenceFileOutputFormat [overload].
  * \ingroup core
-  * \see seqan3::type_list_of_sequence_file_output_formats_concept
+  * \see seqan3::TypeListOfSequenceFileOutputFormats
  */
 template <typename ... ts>
 constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> =
-    (sequence_file_output_format_concept<ts> && ...);
+    (SequenceFileOutputFormat<ts> && ...);
 
-/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet seqan3::sequence_file_format_concept.
+/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet seqan3::SequenceFileFormat.
  * \ingroup core
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sequence_file_output_formats_concept = is_type_list_of_sequence_file_output_formats_v<t>;
+SEQAN3_CONCEPT TypeListOfSequenceFileOutputFormats = is_type_list_of_sequence_file_output_formats_v<t>;
 } // namespace seqan3::detail

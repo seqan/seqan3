@@ -46,8 +46,8 @@ namespace seqan3
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
- *                              must model seqan3::alignment_file_output_format_concept).
- * \tparam stream_type          The type of the stream, must model seqan3::ostream_concept.
+ *                              must model seqan3::AlignmentFileOutputFormat).
+ * \tparam stream_type          The type of the stream, must model seqan3::OStream.
  *
  * \details
  *
@@ -199,11 +199,11 @@ template <detail::fields_concept selected_field_ids_ =
                      field::EVALUE,
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
-          detail::type_list_of_alignment_file_output_formats_concept valid_formats_ =
+          detail::TypeListOfAlignmentFileOutputFormats valid_formats_ =
               type_list<alignment_file_format_sam/*,
                         alignment_file_format_bam,
                         alignment_file_format_blast_tabular*/>,
-          ostream_concept<char> stream_type_ = std::ofstream>
+          OStream<char> stream_type_ = std::ofstream>
 class alignment_file_output
 {
 public:
@@ -313,14 +313,14 @@ public:
     }
 
     /*!\brief Construct from an existing stream and with specified format.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::alignment_file_output_format_concept.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::AlignmentFileOutputFormat.
      * \param[in] _stream    The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      *
      * \details
      */
-    template <alignment_file_output_format_concept file_format>
+    template <AlignmentFileOutputFormat file_format>
     alignment_file_output(stream_type             && _stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -674,8 +674,8 @@ protected:
  * \relates seqan3::alignment_file_output
  * \{
  */
-template <ostream_concept<char>             stream_type,
-          alignment_file_output_format_concept file_format,
+template <OStream<char>             stream_type,
+          AlignmentFileOutputFormat file_format,
           detail::fields_concept            selected_field_ids>
 alignment_file_output(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,

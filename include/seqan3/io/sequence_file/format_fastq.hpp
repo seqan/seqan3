@@ -45,7 +45,7 @@
 namespace seqan3
 {
 /*!\brief       The FastQ format.
- * \implements  sequence_file_format_concept
+ * \implements  SequenceFileFormat
  * \ingroup     sequence
  *
  * \details
@@ -65,7 +65,7 @@ namespace seqan3
  *
  * All documented encodings for the quality string are supported (see the article above), but they are **not detected**
  * from the file. Instead, when reading the file, you have to set the respective alphabet via a traits type (see
- * seqan3::sequence_file_input_traits_concept and the quality submodule \todo link).
+ * seqan3::SequenceFileInputTraits and the quality submodule \todo link).
  *
  * ### Implementation notes
  *
@@ -96,7 +96,7 @@ public:
         { "fq"    }
     };
 
-    //!\copydoc sequence_file_input_format_concept::read
+    //!\copydoc SequenceFileInputFormat::read
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -219,7 +219,7 @@ public:
         }
     }
 
-    //!\copydoc sequence_file_output_format_concept::write
+    //!\copydoc SequenceFileOutputFormat::write
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
               typename id_type,

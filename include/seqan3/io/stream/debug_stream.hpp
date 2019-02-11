@@ -73,7 +73,7 @@ constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
  *
  * See seqan3::fmtflags2 for more details.
  *
- * \attention This class does not yet model seqan3::ostream_concept fully, \todo implement.
+ * \attention This class does not yet model seqan3::OStream fully, \todo implement.
  */
 class debug_stream_type
 {
@@ -264,7 +264,7 @@ inline debug_stream_type debug_stream{};
 template <alphabet_concept alphabet_t>
 inline debug_stream_type & operator<<(debug_stream_type & s, alphabet_t const l)
 //!\cond
-    requires !ostream_concept<std::ostream, alphabet_t>
+    requires !OStream<std::ostream, alphabet_t>
 //!\endcond
 {
     return s << to_char(l);

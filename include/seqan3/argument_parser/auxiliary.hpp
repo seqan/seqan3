@@ -118,7 +118,7 @@ namespace detail
  */
 template <typename ...value_type>
 //!\cond
-requires (ostream_concept<std::iostream, std::remove_reference_t<value_type>> && ...)
+requires (OStream<std::iostream, std::remove_reference_t<value_type>> && ...)
 //!\endcond
 std::string to_string(value_type && ...values)
 {
