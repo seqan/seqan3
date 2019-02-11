@@ -563,8 +563,8 @@ protected:
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
 //!\endcond
 {
     return rhs == lhs;
@@ -573,8 +573,8 @@ constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator!=(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
 //!\endcond
 {
     return rhs != lhs;

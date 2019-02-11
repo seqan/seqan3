@@ -611,8 +611,8 @@ private:
  */
 template <typename indirect_component_type, typename derived_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator==(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, component_types...> const & rhs) noexcept
@@ -622,8 +622,8 @@ constexpr bool operator==(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator!=(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
