@@ -289,7 +289,7 @@ constexpr uint8_t max_pseudoknot_depth_v = max_pseudoknot_depth<alphabet_type>::
 } // namespace seqan3
 
 // ------------------------------------------------------------------
-// seqan3::char_adaption_concept
+// seqan3::CharAdaptationAlphabet
 // ------------------------------------------------------------------
 
 namespace seqan3::detail
