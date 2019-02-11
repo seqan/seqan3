@@ -379,10 +379,10 @@ public:
      * A list item is composed of a key (`key`) and value (`desc`)
      * and usually used for option identifier-description-pairs.
      * E.g.:
-     *-------------------------------------------
+     *```console
      *     -a, --age LONG
      *            Super important integer for age.
-     *-------------------------------------------
+     *```
      */
     void add_list_item(std::string const & key, std::string const & desc)
     {

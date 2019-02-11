@@ -27,7 +27,7 @@
  * \ingroup pairwise_alignment
  * \brief Provides policies for the alignment algorithm.
  *
- * ## Introduction
+ * # Introduction
  *
  * The standard pairwise alignment algorithm in SeqAn is implemented in many variations. It supports the standard
  * algorithms such as the global, local, and semi-global alignment using different kinds of scoring matrices for
@@ -51,7 +51,7 @@
  * separate logical units of the alignment algorithm, i.e. the initialisation, the computation, and the memory
  * allocation of the alignment matrix.
  *
- * ## Matrix policies
+ * # Matrix policies
  *
  * Matrix policies are used to allocate and to provide an iterable interface to the alignment matrix.
  * These policies maintain the alignment matrix in their own state.
@@ -83,7 +83,7 @@
  *
  *  - seqan3::detail::unbanded_dp_matrix_policy
  *
- * ## Gap policies
+ * # Gap policies
  *
  * Gap policies are used to initialise and to compute the cells within the alignment matrix.
  * The gap policies are further divided into a policy initialising the matrix and computing the cells.
@@ -137,7 +137,7 @@
  *
  *  - seqan3::detail::affine_gap_init_policy
  *
- * ## Find optimum policies
+ * # Find optimum policies
  *
  * These policies are used to define the search space of the alignment optimum.
  *

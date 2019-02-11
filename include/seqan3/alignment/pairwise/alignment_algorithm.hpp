@@ -45,7 +45,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * ## Configuration
+ * # Configuration
  *
  * The first template argument is the type of the alignment configuration which was used to configure the alignment
  * algorithm type. They must be the same, otherwise it is possible that the output is not coherent with the expected
@@ -53,7 +53,7 @@ namespace seqan3::detail
  * seqan3::detail::alignment_configurator and returned as a std::function object, which can be passed around and
  * copied to create, for example multiple instances of the algorithm that can be executed in parallel.
  *
- * ## Policies
+ * # Policies
  *
  * This type uses multiple inheritance to configure a specific alignment computation, e.g. global or local alignments,
  * using SIMD operations or scalar operations, computing the traceback or only the score etc.. These configurations

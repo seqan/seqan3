@@ -13,12 +13,12 @@
   * \ingroup search
   *
   * \details
-  * ## Search Algorithms
+  * # Search Algorithms
   *
   * The Search module offers a simple unified interface that allows searching SeqAn3 indices such as FM indices or k-mer
   * indices and choosing the best algorithm based on the index at hand.
   *
-  * ## FM Indices
+  * # FM Indices
   *
   * The search algorithms for FM indices implement either a trivial backtracking approach or an optimum search scheme.
   * Latter are currently only available for searches with up to and including three errors using bidirectional indices.
@@ -26,7 +26,7 @@
   *
   * \if DEV
   *
-  * ### Implementation details of Search Schemes
+  * ## Implementation details of Search Schemes
   *
   * A search scheme is a collection of searches, where each search `s` specifies the order in which the blocks are
   * searched (`s.pi`), the lower error bounds (`s.l`) and the upper error bounds (`s.u`). If the number of blocks that
@@ -46,14 +46,14 @@
   *
   * \endif
   *
-  * ### Reference
+  * ## Reference
   *
   * Kianfar, K., Pockrandt, C., Torkamandi, B., Luo, H., & Reinert, K. (2018).
   *
   * Optimum Search Schemes for Approximate String Matching Using Bidirectional FM-Index. bioRxiv, 301085.
   * https://doi.org/10.1101/301085
   *
-  * ## K-mer Indices
+  * # K-mer Indices
   *
   * \todo Rewrite landing page.
   *

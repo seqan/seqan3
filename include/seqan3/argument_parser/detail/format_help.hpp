@@ -371,10 +371,10 @@ protected:
      * A list item is composed of a key (term) and value (desc)
      * and usually used for option identifier-description-pairs.
      * E.g.:
-     *-------------------------------------------
+     *```console
      *     -a, --age LONG
      *            Super important integer for age.
-     *-------------------------------------------
+     *```
      */
     void print_list_item(std::string const & term, std::string const & desc)
     {
