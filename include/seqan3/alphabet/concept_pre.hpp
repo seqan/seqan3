@@ -311,7 +311,7 @@ template <typename type>
 constexpr bool is_char_adaptation_v = is_char_adaptation<type>::value;
 
 // ------------------------------------------------------------------
-// seqan3::uint_adaption_concept
+// seqan3::UintAdaptionAlphabet
 // ------------------------------------------------------------------
 
 //!\brief Metafunction that indicates whether a type is a uint alphabet adaptation.

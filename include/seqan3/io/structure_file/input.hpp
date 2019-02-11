@@ -201,15 +201,9 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 {
     // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
     // sequence
-<<<<<<< HEAD
-    requires alphabet_concept<typename t::seq_alphabet>;
-    requires alphabet_concept<typename t::seq_legal_alphabet>;
-    requires ExplicitlyConvertibleTo<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
-=======
     requires Alphabet<typename t::seq_alphabet>;
     requires Alphabet<typename t::seq_legal_alphabet>;
-    requires explicitly_convertible_to_concept<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
->>>>>>> [MISC] Rename alphabet_concept to Alphabet
+    requires ExplicitlyConvertibleTo<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
     requires sequence_container_concept<typename t::template seq_container<typename t::seq_alphabet>>;
 //    requires sequence_container_concept
 //        <typename t::template seq_container_container

@@ -21,7 +21,7 @@ namespace seqan3
 /*!\brief Implementation of a masked alphabet to be used for cartesian compositions.
  * \ingroup mask
  * \implements seqan3::Semialphabet
- * \implements seqan3::detail::SemiConstexprAlphabet
+ * \implements seqan3::detail::ConstexprSemialphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *

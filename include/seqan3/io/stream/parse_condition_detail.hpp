@@ -357,13 +357,8 @@ struct is_in_interval_type : public parse_condition_base<is_in_interval_type<int
 
 /*!\brief Parse condition that checks if a given value is within the given alphabet `alphabet_t`.
  * \ingroup stream
-<<<<<<< HEAD
  * \implements seqan3::detail::ParseCondition
- * \tparam alphabet_t The alphabet type. Must model seqan3::alphabet_concept.
-=======
- * \implements seqan3::detail::parse_condition_concept
  * \tparam alphabet_t The alphabet type. Must model seqan3::Alphabet.
->>>>>>> [MISC] Rename alphabet_concept to Alphabet
  */
 template <detail::ConstexprAlphabet alphabet_t>
 struct is_in_alphabet_type : public parse_condition_base<is_in_alphabet_type<alphabet_t>>
