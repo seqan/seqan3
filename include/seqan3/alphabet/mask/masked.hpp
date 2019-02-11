@@ -23,7 +23,7 @@ namespace seqan3
  * with a mask.
  * \ingroup mask
  * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::semi_constexpr_alphabet_concept
+ * \implements seqan3::detail::SemiConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *
