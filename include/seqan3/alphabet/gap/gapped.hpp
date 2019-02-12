@@ -39,6 +39,6 @@ template <typename alphabet_t>
 //!\cond
     requires alphabet_concept<alphabet_t>
 //!\endcond
-using gapped = union_composition<alphabet_t, gap>;
+using gapped = union_composition<gap, alphabet_t>;
 
 } // namespace seqan3

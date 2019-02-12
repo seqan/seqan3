@@ -42,16 +42,16 @@ TEST(gapped_test, initialise_from_component_alphabet)
     constexpr alphabet_t letter8{gap{}}; // letter3 = 'T'_dna4; does not work
     alphabet_t letter9{gap{}};
 
-    EXPECT_EQ(letter0.to_rank(), 0);
-    EXPECT_EQ(letter1.to_rank(), 1);
-    EXPECT_EQ(letter2.to_rank(), 2);
-    EXPECT_EQ(letter3.to_rank(), 3);
-    EXPECT_EQ(letter4.to_rank(), 0);
-    EXPECT_EQ(letter5.to_rank(), 1);
-    EXPECT_EQ(letter6.to_rank(), 2);
-    EXPECT_EQ(letter7.to_rank(), 3);
-    EXPECT_EQ(letter8.to_rank(), 4);
-    EXPECT_EQ(letter9.to_rank(), 4);
+    EXPECT_EQ(letter0.to_rank(), 1);
+    EXPECT_EQ(letter1.to_rank(), 2);
+    EXPECT_EQ(letter2.to_rank(), 3);
+    EXPECT_EQ(letter3.to_rank(), 4);
+    EXPECT_EQ(letter4.to_rank(), 1);
+    EXPECT_EQ(letter5.to_rank(), 2);
+    EXPECT_EQ(letter6.to_rank(), 3);
+    EXPECT_EQ(letter7.to_rank(), 4);
+    EXPECT_EQ(letter8.to_rank(), 0);
+    EXPECT_EQ(letter9.to_rank(), 0);
 }
 
 TEST(gapped_test, assign_from_component_alphabet)
@@ -59,19 +59,19 @@ TEST(gapped_test, assign_from_component_alphabet)
     using alphabet_t = gapped<dna4>;
     alphabet_t letter{};
 
-    letter = 'A'_dna4;
+    letter = gap{};
     EXPECT_EQ(letter.to_rank(), 0);
 
-    letter = {'C'_dna4}; // letter = {'C'_dna4}; does not work
+    letter = 'A'_dna4;
     EXPECT_EQ(letter.to_rank(), 1);
 
-    letter = static_cast<alphabet_t>('G'_dna4);
+    letter = {'C'_dna4}; // letter = {'C'_dna4}; does not work
     EXPECT_EQ(letter.to_rank(), 2);
 
-    letter = {static_cast<alphabet_t>('T'_dna4)};
+    letter = static_cast<alphabet_t>('G'_dna4);
     EXPECT_EQ(letter.to_rank(), 3);
 
-    letter = gap{};
+    letter = {static_cast<alphabet_t>('T'_dna4)};
     EXPECT_EQ(letter.to_rank(), 4);
 }
 
