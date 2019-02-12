@@ -202,7 +202,7 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
     // sequence
     requires alphabet_concept<typename t::seq_alphabet>;
     requires alphabet_concept<typename t::seq_legal_alphabet>;
-    requires explicitly_convertible_to_concept<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
+    requires ExplicitlyConvertibleTo<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
     requires sequence_container_concept<typename t::template seq_container<typename t::seq_alphabet>>;
 //    requires sequence_container_concept
 //        <typename t::template seq_container_container

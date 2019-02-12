@@ -122,7 +122,7 @@ SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
 {
     requires alphabet_concept<typename t::sequence_alphabet>;
     requires alphabet_concept<typename t::sequence_legal_alphabet>;
-    requires explicitly_convertible_to_concept<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+    requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
     requires sequence_container_concept<typename t::template sequence_container<typename t::sequence_alphabet>>;
     requires sequence_container_concept<typename t::template sequence_container_container<
         typename t::template sequence_container<typename t::sequence_alphabet>>>;

@@ -25,7 +25,7 @@ namespace seqan3::search_cfg
  */
 template <typename value_t>
 //!\cond
-    requires arithmetic_concept<value_t>
+    requires Arithmetic<value_t>
 //!\endcond
 struct total : detail::strong_type<value_t, total<value_t>, detail::strong_type_skill::convert>
 {
@@ -45,7 +45,7 @@ total(value_t) -> total<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 total(value_t) -> total<double>;
 //!\}
@@ -57,7 +57,7 @@ total(value_t) -> total<double>;
  */
 template <typename value_t>
 //!\cond
-    requires arithmetic_concept<value_t>
+    requires Arithmetic<value_t>
 //!\endcond
 struct substitution : detail::strong_type<value_t, substitution<value_t>, detail::strong_type_skill::convert>
 {
@@ -77,7 +77,7 @@ substitution(value_t) -> substitution<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 substitution(value_t) -> substitution<double>;
 //!\}
@@ -88,7 +88,7 @@ substitution(value_t) -> substitution<double>;
  */
 template <typename value_t>
 //!\cond
-    requires arithmetic_concept<value_t>
+    requires Arithmetic<value_t>
 //!\endcond
 struct insertion : detail::strong_type<value_t, insertion<value_t>, detail::strong_type_skill::convert>
 {
@@ -108,7 +108,7 @@ insertion(value_t) -> insertion<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 insertion(value_t) -> insertion<double>;
 //!\}
@@ -119,7 +119,7 @@ insertion(value_t) -> insertion<double>;
  */
 template <typename value_t>
 //!\cond
-    requires arithmetic_concept<value_t>
+    requires Arithmetic<value_t>
 //!\endcond
 struct deletion : detail::strong_type<value_t, deletion<value_t>, detail::strong_type_skill::convert>
 {
@@ -139,7 +139,7 @@ deletion(value_t) -> deletion<uint8_t>;
 
 template <typename value_t>
 //!\cond
-    requires floating_point_concept<value_t>
+    requires FloatingPoint<value_t>
 //!\endcond
 deletion(value_t) -> deletion<double>;
 //!\}

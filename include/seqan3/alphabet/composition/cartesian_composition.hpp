@@ -89,7 +89,7 @@ template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           template <typename> typename fun_t,
           typename other_t>
-    requires convertible_to_by_member_concept<other_t, cartesian_derived_t>
+    requires ConvertibleToByMember<other_t, cartesian_derived_t>
 inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        fun_t,
@@ -113,7 +113,7 @@ inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t
 template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           typename other_t>
-    requires implicitly_convertible_to_concept<other_t, cartesian_derived_t>
+    requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
 inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        weakly_equality_comparable_with,
@@ -121,7 +121,7 @@ inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t
 template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           typename other_t>
-    requires implicitly_convertible_to_concept<other_t, cartesian_derived_t>
+    requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
 inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        weakly_ordered_with,
@@ -611,8 +611,8 @@ private:
  */
 template <typename indirect_component_type, typename derived_type, typename ...component_types>
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator==(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, component_types...> const & rhs) noexcept
@@ -622,8 +622,8 @@ constexpr bool operator==(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyEqualityComparableByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator!=(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
@@ -633,8 +633,8 @@ constexpr bool operator!=(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<(indirect_component_type const & lhs,
                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
@@ -644,8 +644,8 @@ constexpr bool operator<(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>(indirect_component_type const & lhs,
                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
@@ -655,8 +655,8 @@ constexpr bool operator>(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<=(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
@@ -666,8 +666,8 @@ constexpr bool operator<=(indirect_component_type const & lhs,
 
 template <typename indirect_component_type, typename derived_type, typename ...indirect_component_types>
 //!\cond
-    requires detail::weakly_ordered_by_members_with_concept<derived_type, indirect_component_type> &&
-             !detail::weakly_ordered_by_members_with_concept<indirect_component_type, derived_type>
+    requires detail::WeaklyOrderedByMembersWith<derived_type, indirect_component_type> &&
+             !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>=(indirect_component_type const & lhs,
                           cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept

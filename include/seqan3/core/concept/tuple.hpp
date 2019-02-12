@@ -50,7 +50,7 @@ SEQAN3_CONCEPT tuple_get_concept = requires (tuple_t & v, tuple_t const & v_c)
 
     typename std::tuple_element<0, tuple_t>::type;
     { get<0>(v)              } -> typename std::tuple_element<0, tuple_t>::type;
-//     requires weakly_assignable_concept<decltype(get<0>(v)), typename std::tuple_element<0, tuple_t>::type>;
+//     requires WeaklyAssignable<decltype(get<0>(v)), typename std::tuple_element<0, tuple_t>::type>;
     //TODO check that the previous returns something that can be assigned to
     // unfortunately std::Assignable requires lvalue-reference, but we want to accept xvalues too (returned proxies)
     { get<0>(v_c)            } -> typename std::tuple_element<0, tuple_t>::type;

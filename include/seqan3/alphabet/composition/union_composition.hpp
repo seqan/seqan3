@@ -77,7 +77,7 @@ inline bool constexpr one_alternative_is<union_composition<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires convertible_to_by_member_concept<target_t, union_composition<alternatives...>>
+    requires ConvertibleToByMember<target_t, union_composition<alternatives...>>
 inline bool constexpr one_alternative_is<union_composition<alternatives...>,
                                          fun_t,
                                          target_t> = false;
@@ -144,8 +144,8 @@ namespace seqan3
  *                              unique.
  * \implements seqan3::alphabet_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
- * \implements seqan3::trivially_copyable_concept
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::TriviallyCopyable
+ * \implements seqan3::StandardLayout
 
  * \details
  *
@@ -563,8 +563,8 @@ protected:
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
 //!\endcond
 {
     return rhs == lhs;
@@ -573,8 +573,8 @@ constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types
 template <typename lhs_t, typename ...alternative_types>
 constexpr bool operator!=(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::weakly_equality_comparable_by_members_with_concept<union_composition<alternative_types...>, lhs_t> &&
-             !detail::weakly_equality_comparable_by_members_with_concept<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
 //!\endcond
 {
     return rhs != lhs;

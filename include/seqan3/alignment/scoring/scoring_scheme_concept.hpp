@@ -37,7 +37,7 @@ namespace seqan3
  * \{
  */
 /*!\typedef     typedef IMPLEMENTATION_DEFINED score_type;
- * \brief       The type returned by seqan3::scoring_scheme_concept::score(), usually a seqan3::arithmetic_concept.
+ * \brief       The type returned by seqan3::scoring_scheme_concept::score(), usually a seqan3::Arithmetic.
  * \memberof seqan3::scoring_scheme_concept
  *
  * \details

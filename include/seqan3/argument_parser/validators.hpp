@@ -101,7 +101,7 @@ class arithmetic_range_validator;
  *
  * \snippet test/snippet/argument_parser/validators_1.cpp usage
  */
-template <arithmetic_concept option_value_type>
+template <Arithmetic option_value_type>
 class arithmetic_range_validator<option_value_type>
 {
 public:
@@ -143,7 +143,7 @@ private:
 
 //!\cond
 template <container_concept option_value_type>
-    requires arithmetic_concept<typename option_value_type::value_type>
+    requires Arithmetic<typename option_value_type::value_type>
 class arithmetic_range_validator<option_value_type>
 {
 public:

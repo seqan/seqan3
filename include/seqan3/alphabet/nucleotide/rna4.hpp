@@ -28,8 +28,8 @@ namespace seqan3
  * \ingroup nucleotide
  * \implements seqan3::NucleotideAlphabet
  * \implements seqan3::detail::constexpr_alphabet_concept
- * \implements seqan3::trivially_copyable_concept
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::TriviallyCopyable
+ * \implements seqan3::StandardLayout
  *
  * \details
  * This alphabet has the same internal representation as seqan3::dna4, the only difference is that it prints 'U' on

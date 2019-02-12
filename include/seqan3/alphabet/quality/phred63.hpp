@@ -24,8 +24,8 @@ namespace seqan3
 /*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (full range).
  * \implements seqan3::QualityAlphabet
  * \implements seqan3::detail::constexpr_alphabet_concept
- * \implements seqan3::trivially_copyable_concept
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::TriviallyCopyable
+ * \implements seqan3::StandardLayout
  *
  * \ingroup quality
  *

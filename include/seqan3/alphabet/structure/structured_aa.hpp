@@ -28,8 +28,8 @@ namespace seqan3
  * \ingroup structure
  * \implements seqan3::alphabet_concept
  * \implements seqan3::detail::constexpr_alphabet_concept
- * \implements seqan3::trivially_copyable_concept
- * \implements seqan3::standard_layout_concept
+ * \implements seqan3::TriviallyCopyable
+ * \implements seqan3::StandardLayout
  * \tparam sequence_alphabet_t Type of the first aminoacid letter; must satisfy seqan3::alphabet_concept.
  * \tparam structure_alphabet_t Types of further structure letters; must satisfy seqan3::alphabet_concept.
  *
