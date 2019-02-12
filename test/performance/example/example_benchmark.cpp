@@ -10,6 +10,10 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/test/performance/units.hpp>
+
+using namespace seqan3::test;
+
 static void vector_copy_benchmark(benchmark::State& state) {
     std::vector<int> x = {15, 13, 12, 10};
     for (auto _ : state)
@@ -25,8 +29,7 @@ static void memcpy_benchmark(benchmark::State& state) {
     for (auto _ : state)
         memcpy(dst, src, size);
 
-    int64_t bytes = int64_t(state.iterations()) * int64_t(size);
-    state.counters["bytes_processed"] = bytes;
+    state.counters["bytes_per_second"] = bytes_per_second(size);
     delete[] src;
     delete[] dst;
 }
@@ -40,8 +43,7 @@ static void copy_benchmark(benchmark::State& state) {
     for (auto _ : state)
         std::copy_n(src, size, dst);
 
-    int64_t bytes = int64_t(state.iterations()) * int64_t(size);
-    state.counters["bytes_processed"] = bytes;
+    state.counters["bytes_per_second"] = bytes_per_second(size);
     delete[] src;
     delete[] dst;
 }
