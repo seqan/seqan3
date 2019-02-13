@@ -210,9 +210,9 @@ TYPED_TEST_P(alphabet, comparison_operators)
 
 TYPED_TEST_P(alphabet, concept_check)
 {
-    EXPECT_TRUE(alphabet_concept<TypeParam>);
-    EXPECT_TRUE(alphabet_concept<TypeParam &>);
-    EXPECT_TRUE(alphabet_concept<TypeParam &&>);
+    EXPECT_TRUE(Alphabet<TypeParam>);
+    EXPECT_TRUE(Alphabet<TypeParam &>);
+    EXPECT_TRUE(Alphabet<TypeParam &&>);
 }
 
 TYPED_TEST_P(alphabet, debug_streaming)

@@ -10,7 +10,7 @@
  * \brief Provides alphabet adaptations for standard uint types.
  * \details
  * This file provides function and metafunction overloads so that the following types
- * fulfil the seqan3::alphabet_concept:
+ * fulfil the seqan3::Alphabet:
  *   * `uint8_t`
  *   * `uint16_t`
  *   * `uint32_t`

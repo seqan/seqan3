@@ -26,8 +26,8 @@ namespace seqan3
 {
 
 /*!\brief The protein structure alphabet of the characters "HGIEBTSCX".
- * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::Alphabet
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *

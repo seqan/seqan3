@@ -27,12 +27,12 @@ namespace seqan3
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
  * \tparam char_t       The character type of the alphabet (set this to `void` when defining just a
- *                      seqan3::semi_alphabet_concept).
+ *                      seqan3::Semialphabet).
  *
  * \details
  *
  * You can use this class to define your own alphabet, but types are not required to be based on it to model
- * seqan3::alphabet_concept, it is purely a way to avoid code duplication.
+ * seqan3::Alphabet, it is purely a way to avoid code duplication.
  *
  * The base class represents the alphabet value as the rank and
  * automatically deduces the rank type from the size, it further defines all required member functions and types; the
@@ -84,7 +84,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::to_char() requirement via the seqan3::to_char() wrapper.
+     * Satisfies the seqan3::Alphabet::to_char() requirement via the seqan3::to_char() wrapper.
      *
      * \par Complexity
      *
@@ -106,7 +106,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::to_rank() requirement via the to_rank() wrapper.
+     * Satisfies the seqan3::Semialphabet::to_rank() requirement via the to_rank() wrapper.
      *
      * \par Complexity
      *
@@ -130,7 +130,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::assign_char() requirement via the seqan3::assign_char() wrapper.
+     * Satisfies the seqan3::Alphabet::assign_char() requirement via the seqan3::assign_char() wrapper.
      *
      * \par Complexity
      *
@@ -156,7 +156,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::alphabet_concept::assign_char_strict() requirement via the seqan3::assign_char_strict()
+     * Satisfies the seqan3::Alphabet::assign_char_strict() requirement via the seqan3::assign_char_strict()
      * wrapper.
      *
      * ### Complexity
@@ -180,7 +180,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::Semialphabet::assign_rank() requirement via the seqan3::assign_rank() wrapper.
      *
      * \par Complexity
      *
@@ -244,7 +244,7 @@ public:
      *
      * \details
      *
-     * Models the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Models the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Default implementation: True for all character values that are reproduced by #to_char() after being assigned

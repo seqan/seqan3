@@ -236,7 +236,7 @@ TEST(union_composition_test, compare_to_component_alphabet_subtype)
 
 TEST(union_composition_test, fulfills_concepts)
 {
-    EXPECT_TRUE((alphabet_concept<union_composition<dna5, gap>>));
+    EXPECT_TRUE((Alphabet<union_composition<dna5, gap>>));
 }
 
 TEST(union_composition_test, rank_type)

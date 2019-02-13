@@ -24,7 +24,7 @@ namespace seqan3
 /*!\brief The canonical amino acid alphabet.
  * \ingroup aminoacid
  * \implements seqan3::AminoacidAlphabet
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *

@@ -24,10 +24,10 @@ namespace seqan3
 
 /*!\brief Joins an arbitrary alphabet with a quality alphabet.
  * \ingroup quality
- * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::alphabet_concept.
+ * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::Alphabet.
  * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::QualityAlphabet.
  * \implements seqan3::QualityAlphabet
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *
@@ -52,9 +52,9 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/quality/qualified.cpp general
  *
- * This seqan3::cartesian_composition itself fulfils both seqan3::alphabet_concept and seqan3::QualityAlphabet.
+ * This seqan3::cartesian_composition itself fulfils both seqan3::Alphabet and seqan3::QualityAlphabet.
  */
-template <alphabet_concept sequence_alphabet_t, QualityAlphabet quality_alphabet_t>
+template <Alphabet sequence_alphabet_t, QualityAlphabet quality_alphabet_t>
 class qualified :
     public cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                  sequence_alphabet_t, quality_alphabet_t>

@@ -49,7 +49,7 @@ TEST(dot_bracket3, to_char)
 // concepts
 TEST(dot_bracket3, concept_check)
 {
-    EXPECT_TRUE(rna_structure_concept<dot_bracket3>);
+    EXPECT_TRUE(RnaStructureAlphabet<dot_bracket3>);
     EXPECT_NE(max_pseudoknot_depth_v<dot_bracket3>, 0);
 }
 

@@ -24,7 +24,7 @@ namespace seqan3::detail
 // ------------------------------------------------------------------
 
 /*!\interface seqan3::detail::cartesian_composition_concept <>
- * \extends seqan3::semi_alphabet_concept
+ * \extends seqan3::Semialphabet
  * \brief seqan3::cartesian_composition and its specialisations model this concept.
  * \ingroup alphabet
  *
@@ -160,7 +160,7 @@ namespace seqan3
 // forward
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::constexpr_alphabet_concept<alternative_types> && ...) &&
+    requires (detail::ConstexprAlphabet<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond
@@ -169,7 +169,7 @@ class union_composition;
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::constexpr_semi_alphabet_concept<component_types> && ...)
+    requires (detail::ConstexprSemialphabet<component_types> && ...)
 //!\endcond
 class cartesian_composition;
 

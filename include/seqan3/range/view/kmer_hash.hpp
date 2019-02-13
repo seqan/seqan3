@@ -38,13 +38,13 @@ private:
 
     /*!\brief            Call the view's constructor with the underlying view as argument.
      * \param[in] urange The input range to process. Must model std::ranges::ViewableRange and the reference type of the
-     *                   range of the range must model seqan3::semi_alphabet_concept.
+     *                   range of the range must model seqan3::Semialphabet.
      * \param[in] k      The k-mer size to construct hashes for.
      * \returns          A range of converted elements.
      */
     template <std::ranges::ViewableRange urng_t>
     //!\cond
-        requires semi_alphabet_concept<reference_t<urng_t>>
+        requires Semialphabet<reference_t<urng_t>>
     //!\endcond
     static auto impl(urng_t && urange, size_t const k)
     {
@@ -94,7 +94,7 @@ namespace seqan3::view
      * | std::ranges::OutputRange        |                                       | *lost*                                             |
      * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
      * |                                 |                                       |                                                    |
-     * | seqan3::reference_t             | seqan3::semi_alphabet_concept         | std::size_t                                        |
+     * | seqan3::reference_t             | seqan3::Semialphabet                  | std::size_t                                        |
      *
      * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
      *

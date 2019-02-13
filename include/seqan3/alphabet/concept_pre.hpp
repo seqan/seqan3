@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief seqan3::alphabet_concept metafunction base classes.
+ * \brief seqan3::Alphabet metafunction base classes.
  *
  * Include this file, if you implement an alphabet type with free/global function
  * and metafunction interfaces.
@@ -18,7 +18,7 @@
  * \snippet test/snippet/alphabet/concept_pre.cpp include order
  *
  * If you include `concept.hpp` before your definitions, than your type will
- * not be resolved as satisfying seqan3::alphabet_concept.
+ * not be resolved as satisfying seqan3::Alphabet.
  *
  * This is not `true` for custom alphabets implementing the interfaces as
  * member functions/variables/types.
@@ -32,16 +32,16 @@ namespace seqan3
 {
 
 // ------------------------------------------------------------------
-// seqan3::semi_alphabet_concept
+// seqan3::Semialphabet
 // ------------------------------------------------------------------
 
-/*!\name Requirements for seqan3::semi_alphabet_concept
- * \brief You can expect these functions on all types that implement seqan3::semi_alphabet_concept.
- * \relates seqan3::semi_alphabet_concept
+/*!\name Requirements for seqan3::Semialphabet
+ * \brief You can expect these functions on all types that implement seqan3::Semialphabet.
+ * \relates seqan3::Semialphabet
  * \{
  */
 /*!\brief The `rank_type` of the semi_alphabet. [type metafunction base template]
- * \tparam semi_alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \tparam semi_alphabet_type Must satisfy seqan3::Semialphabet.
  * \ingroup alphabet
  *
  * \par Helper template alias
@@ -70,7 +70,7 @@ template <typename semi_alphabet_type>
 using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
 
 /*!\brief The size of the alphabet. [value metafunction base template]
- * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \tparam alphabet_type Must satisfy seqan3::Semialphabet.
  * \ingroup alphabet
  *
  * This is the expression to retrieve the value:
@@ -95,7 +95,7 @@ struct alphabet_size<alphabet_type &&> : alphabet_size<alphabet_type>
 {};
 
 /*!\brief The size of the alphabet. [value metafunction shortcut]
- * \tparam alphabet_type Must satisfy seqan3::semi_alphabet_concept.
+ * \tparam alphabet_type Must satisfy seqan3::Semialphabet.
  * \ingroup alphabet
  *
  * \attention Do not specialise this shortcut, instead specialise seqan3::alphabet_size.
@@ -140,17 +140,17 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
 //!\}
 
 // ------------------------------------------------------------------
-// seqan3::alphabet_concept
+// seqan3::Alphabet
 // ------------------------------------------------------------------
 
-/*!\name Requirements for seqan3::alphabet_concept
- * \brief You can expect these functions on all types that implement seqan3::alphabet_concept.
- * \relates seqan3::alphabet_concept
+/*!\name Requirements for seqan3::Alphabet
+ * \brief You can expect these functions on all types that implement seqan3::Alphabet.
+ * \relates seqan3::Alphabet
  * \{
  */
 
 /*!\brief The `char_type` of the alphabet. [type metafunction base template]
- * \tparam alphabet_type Must satisfy seqan3::alphabet_concept.
+ * \tparam alphabet_type Must satisfy seqan3::Alphabet.
  * \ingroup alphabet
  *
  * \par Helper template alias
@@ -246,12 +246,12 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
 //!\}
 
 // ------------------------------------------------------------------
-// seqan3::rna_structure_concept
+// seqan3::RnaStructureAlphabet
 // ------------------------------------------------------------------
 
-/*!\name Requirements for seqan3::rna_structure_concept
- * \brief You can expect these functions on all types that implement seqan3::rna_structure_concept.
- * \relates seqan3::rna_structure_concept
+/*!\name Requirements for seqan3::RnaStructureAlphabet
+ * \brief You can expect these functions on all types that implement seqan3::RnaStructureAlphabet.
+ * \relates seqan3::RnaStructureAlphabet
  * \{
  */
 /*!\brief Metafunction that indicates to what extent an alphabet can handle pseudoknots.
@@ -289,7 +289,7 @@ constexpr uint8_t max_pseudoknot_depth_v = max_pseudoknot_depth<alphabet_type>::
 } // namespace seqan3
 
 // ------------------------------------------------------------------
-// seqan3::char_adaption_concept
+// seqan3::CharAdaptationAlphabet
 // ------------------------------------------------------------------
 
 namespace seqan3::detail
@@ -311,7 +311,7 @@ template <typename type>
 constexpr bool is_char_adaptation_v = is_char_adaptation<type>::value;
 
 // ------------------------------------------------------------------
-// seqan3::uint_adaption_concept
+// seqan3::UintAdaptionAlphabet
 // ------------------------------------------------------------------
 
 //!\brief Metafunction that indicates whether a type is a uint alphabet adaptation.

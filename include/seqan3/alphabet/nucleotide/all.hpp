@@ -104,7 +104,7 @@
  * \par Concept
  *
  * The nucleotide submodule defines seqan3::NucleotideAlphabet which encompasses all the alphabets defined in the
- * submodule and refines seqan3::alphabet_concept. The only additional requirement is that their values can be
+ * submodule and refines seqan3::Alphabet. The only additional requirement is that their values can be
  * complemented, see below.
  *
  * \par Complement

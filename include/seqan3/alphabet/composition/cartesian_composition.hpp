@@ -144,10 +144,10 @@ decltype(auto) get();
 
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
  * \ingroup composition
- * \implements seqan3::semi_alphabet_concept
- * \implements seqan3::detail::constexpr_semi_alphabet_concept
- * \tparam first_component_type Type of the first letter; must model seqan3::semi_alphabet_concept.
- * \tparam component_types      Types of further letters (up to 4); must model seqan3::semi_alphabet_concept.
+ * \implements seqan3::Semialphabet
+ * \implements seqan3::detail::ConstexprSemialphabet
+ * \tparam first_component_type Type of the first letter; must model seqan3::Semialphabet.
+ * \tparam component_types      Types of further letters (up to 4); must model seqan3::Semialphabet.
  *
  * This data structure is CRTP base class for combined alphabets, where the different
  * alphabet letters exist independently as component_list, similar to a tuple.
@@ -155,7 +155,7 @@ decltype(auto) get();
  * Short description:
  *   * combines multiple alphabets as independent component_list, similar to a tuple;
  *   * models seqan3::tuple_like_concept, i.e. provides a get interface to its component_list;
- *   * is itself a seqan3::semi_alphabet_concept, but most derived types implement the full seqan3::alphabet_concept;
+ *   * is itself a seqan3::Semialphabet, but most derived types implement the full seqan3::Alphabet;
  *   * its alphabet size is the product of the individual sizes;
  *   * constructible, assignable and comparable with each component type and also all types that
  *     these are constructible/assignable/comparable with;
@@ -177,7 +177,7 @@ decltype(auto) get();
 template <typename derived_type,
           typename ...component_types>
 //!\cond
-    requires (detail::constexpr_semi_alphabet_concept<component_types> && ...)
+    requires (detail::ConstexprSemialphabet<component_types> && ...)
 //!\endcond
 class cartesian_composition :
     public alphabet_base<derived_type,

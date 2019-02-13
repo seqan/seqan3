@@ -47,7 +47,7 @@ template <typename type>
 constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
 
 /*!\interface seqan3::AminoacidAlphabet <>
- * \extends seqan3::alphabet_concept
+ * \extends seqan3::Alphabet
  * \brief A concept that indicates whether an alphabet represents amino acids.
  * \ingroup aminoacid
  *
@@ -61,7 +61,7 @@ constexpr bool is_aminoacid_v = is_aminoacid<type>::value;
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT AminoacidAlphabet = alphabet_concept<type> && is_aminoacid_v<remove_cvref_t<type>>;
+SEQAN3_CONCEPT AminoacidAlphabet = Alphabet<type> && is_aminoacid_v<remove_cvref_t<type>>;
 //!\endcond
 
 } // namespace seqan3

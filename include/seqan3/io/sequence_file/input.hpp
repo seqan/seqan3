@@ -63,11 +63,11 @@ namespace seqan3
  */
 /*!\typedef using sequence_alphabet
  * \memberof seqan3::SequenceFileInputTraits
- * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::alphabet_concept.
+ * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using sequence_legal_alphabet
  * \memberof seqan3::SequenceFileInputTraits
- * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::alphabet_concept and be convertible to
+ * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::Alphabet and be convertible to
  * `sequence_alphabet`.
  *
  * \details
@@ -89,7 +89,7 @@ namespace seqan3
  */
 /*!\typedef using id_alphabet
  * \memberof seqan3::SequenceFileInputTraits
- * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::alphabet_concept.
+ * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using id_container
  * \memberof seqan3::SequenceFileInputTraits
@@ -120,14 +120,14 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
 {
-    requires alphabet_concept<typename t::sequence_alphabet>;
-    requires alphabet_concept<typename t::sequence_legal_alphabet>;
+    requires Alphabet<typename t::sequence_alphabet>;
+    requires Alphabet<typename t::sequence_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
     requires sequence_container_concept<typename t::template sequence_container<typename t::sequence_alphabet>>;
     requires sequence_container_concept<typename t::template sequence_container_container<
         typename t::template sequence_container<typename t::sequence_alphabet>>>;
 
-    requires alphabet_concept<typename t::id_alphabet>;
+    requires Alphabet<typename t::id_alphabet>;
     requires sequence_container_concept<typename t::template id_container<typename t::id_alphabet>>;
     requires sequence_container_concept<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;

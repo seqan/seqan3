@@ -26,7 +26,7 @@ namespace seqan3::view
 /*!\brief                A view over an alphabet, given a range of ranks.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
- * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::alphabet_concept.
+ * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::Alphabet.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup view
@@ -61,7 +61,7 @@ namespace seqan3::view
  */
 template <typename alphabet_type>
 //!\cond
-    requires alphabet_concept<alphabet_type>
+    requires Alphabet<alphabet_type>
 //!\endcond
 inline auto const rank_to = deep{view::transform(
 [] (underlying_rank_t<alphabet_type> const in) -> alphabet_type

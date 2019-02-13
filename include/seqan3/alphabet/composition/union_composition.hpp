@@ -140,10 +140,10 @@ namespace seqan3
 
 /*!\brief A combined alphabet that can hold values of either of its alternatives.
  * \ingroup composition
- * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::alphabet_concept and be
+ * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::Alphabet and be
  *                              unique.
- * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::constexpr_alphabet_concept
+ * \implements seqan3::Alphabet
+ * \implements seqan3::detail::ConstexprAlphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
 
@@ -152,11 +152,11 @@ namespace seqan3
  * The union_composition represents the union of two or more alternative alphabets (e.g. the
  * four letter DNA alternative + the gap alternative). It behaves similar to a
  * [union](https://en.cppreference.com/w/cpp/language/union) or std::variant, but it preserves the
- * seqan3::alphabet_concept.
+ * seqan3::Alphabet.
  *
  * Short description:
  *   * combines multiple different alphabets in an "either-or"-fashion;
- *   * is itself a seqan3::alphabet_concept;
+ *   * is itself a seqan3::Alphabet;
  *   * its alphabet size is the sum of the individual sizes;
  *   * default initialises to the the first alternative's default (no empty state like std::variant);
  *   * constructible, assignable and (in-)equality-comparable with each alternative type and also all types that
@@ -169,7 +169,7 @@ namespace seqan3
  */
 template <typename ...alternative_types>
 //!\cond
-    requires (detail::constexpr_alphabet_concept<alternative_types> && ...) &&
+    requires (detail::ConstexprAlphabet<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond

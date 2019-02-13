@@ -66,11 +66,11 @@ TEST(wuss51, to_char)
 // concepts
 TEST(wuss51, concept_check)
 {
-    EXPECT_TRUE(rna_structure_concept<wuss51>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss51>);
     EXPECT_NE(max_pseudoknot_depth_v<wuss51>, 0);
 
-    EXPECT_TRUE(rna_structure_concept<wuss<>>);  // same as wuss51
-    EXPECT_TRUE(rna_structure_concept<wuss<67>>);
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<>>);  // same as wuss51
+    EXPECT_TRUE(RnaStructureAlphabet<wuss<67>>);
 }
 
 TEST(wuss51, literals)

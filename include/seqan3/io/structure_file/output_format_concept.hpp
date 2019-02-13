@@ -86,18 +86,18 @@ SEQAN3_CONCEPT StructureFileOutputFormat = requires(t & v,
  * \memberof seqan3::StructureFileOutputFormat
  * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam id_type          Type of the seqan3::field::ID output; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam bpp_type         Type of the seqan3::field::BPP output; must satisfy std::ranges::OutputRange
  * over a set of pair of types satisfying std::is_floating_point and std::numeric_limits::is_integer, respectively.
  * \tparam structure_type   Type of the seqan3::field::STRUCTURE output; must satisfy std::ranges::OutputRange
- * over a seqan3::rna_structure_concept.
+ * over a seqan3::RnaStructureAlphabet.
  * \tparam energy_type      Type of the seqan3::field::ENERGY output; must satisfy std::is_floating_point.
  * \tparam react_type       Type of the seqan3::field::REACT and seqan3::field::REACT_ERR output;
  * must satisfy std::is_floating_point.
  * \tparam comment_type     Type of the seqan3::field::COMMENT output; must satisfy std::ranges::OutputRange
- * over a seqan3::alphabet_concept.
+ * over a seqan3::Alphabet.
  * \tparam offset_type      Type of the seqan3::field::OFFSET output; must satisfy std::numeric_limits::is_integer.
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.

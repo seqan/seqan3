@@ -22,13 +22,13 @@ namespace seqan3
 /*!\brief Implementation of a masked composition, which extends a given alphabet
  * with a mask.
  * \ingroup mask
- * \implements seqan3::alphabet_concept
- * \implements seqan3::detail::semi_constexpr_alphabet_concept
+ * \implements seqan3::Alphabet
+ * \implements seqan3::detail::ConstexprSemialphabet
  * \implements seqan3::TriviallyCopyable
  * \implements seqan3::StandardLayout
  *
- * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::semi_alphabet_concept.
- * \tparam mask_t Types of masked letter; must satisfy seqan3::semi_alphabet_concept, defaults to seqan3::mask.
+ * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::Semialphabet.
+ * \tparam mask_t Types of masked letter; must satisfy seqan3::Semialphabet, defaults to seqan3::mask.
  *
  * \details
  * The masked composition represents a seqan3::cartesian_composition of any given alphabet with the
@@ -39,7 +39,7 @@ namespace seqan3
  */
  template <typename sequence_alphabet_t>
 //!\cond
-    requires alphabet_concept<sequence_alphabet_t>
+    requires Alphabet<sequence_alphabet_t>
 //!\endcond
 class masked : public cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {
@@ -129,7 +129,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::semi_alphabet_concept::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
+     * Satisfies the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
      * wrapper.
      *
      * Default implementation: True for all character values that are reproduced by #to_char() after being assigned

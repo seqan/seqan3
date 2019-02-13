@@ -30,5 +30,5 @@ private:
     friend alphabet_base<ab, 2>;
 };
 
-static_assert(alphabet_concept<ab>);
+static_assert(Alphabet<ab>);
 //! [example]
