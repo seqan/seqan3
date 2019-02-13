@@ -35,6 +35,7 @@
 #include <seqan3/io/filesystem.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
+#include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
@@ -411,7 +412,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *                            must be in seqan3::structure_file_in::field_ids.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::StructureFileInputFormat).
- * \tparam stream_type        The type of the stream, must satisfy seqan3::IStream.
+ * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::char_concept.
  * \details
  *
  * ### Introduction
@@ -639,7 +640,7 @@ template<structure_file_input_traits_concept traits_type_ = structure_file_input
          detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::TypeListOfStructureFileInputFormats valid_formats_
              = type_list<structure_file_format_vienna>,
-         IStream<char> stream_type_ = std::ifstream>
+         char_concept stream_char_type_ = char>
 class structure_file_in
 {
 public:
@@ -653,8 +654,8 @@ public:
     using selected_field_ids = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
     using valid_formats      = valid_formats_;
-    //!\brief The type of the underlying stream.
-    using stream_type        = stream_type_;
+    //!\brief Character type of the stream(s), usually `char`.
+    using stream_char_type   = stream_char_type_;
     //!\}
 
     /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
@@ -809,45 +810,33 @@ public:
     ~structure_file_in() = default;
 
     /*!\brief Construct from filename.
-     * \param[in] _file_name Path to the file you wish to open.
+     * \param[in] filename Path to the file you wish to open.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
+     * \throws seqan3::file_open_error if the file could not be opened, e.g. non-existent, non-readable, unknown format.
      *
      * \details
      *
      * In addition to the file name, you may specify a custom seqan3::fields type which may be easier than
      * defining all the template parameters.
+     *
+     * ### Decompression
+     *
+     * This constructor transparently applies a decompression stream on top of the file stream in case
+     * the file is detected as being compressed.
+     * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    structure_file_in(filesystem::path const & _file_name,
-                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
+    structure_file_in(filesystem::path filename,
+                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
     {
-        // open stream
-        stream.open(_file_name, std::ios_base::in | std::ios::binary);
-        if (!stream.is_open())
+        if (!primary_stream->good())
             throw file_open_error{"Could not open file for reading."};
 
-        // initialise format handler
-        bool format_found = false;
-        std::string extension = _file_name.extension().string();
-        if (extension.size() > 1)
-        {
-            extension = extension.substr(1); // drop leading "."
-            meta::for_each(valid_formats{}, [&] (auto && fmt)
-            {
-                using fmt_type = remove_cvref_t<decltype(fmt)>;
+        // possibly add intermediate decompression stream
+        secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
 
-                for (auto const & ext : fmt_type::file_extensions)
-                {
-                    if (std::ranges::equal(ext, extension))
-                    {
-                        format = fmt_type{};
-                        format_found = true;
-                        return;
-                    }
-                }
-            });
-        }
-        if (!format_found)
-            throw unhandled_extension_error("No valid format found for this extension.");
+        // initialise format handler
+        detail::set_format(format, filename);
 
         // buffer first record
         read_next_record();
@@ -856,18 +845,46 @@ public:
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam file_format The format of the file in the stream, must satisfy
      * seqan3::StructureFileInputFormat.
-     * \param[in] _stream The stream to operate on (this must be std::move'd in!).
+     * \param[in] stream The stream to operate on; must be derived of std::basic_istream.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
+     *
+     * \details
+     *
+     * ### Decompression
+     *
+     * This constructor transparently applies a decompression stream on top of the stream in case
+     * the file is detected as being compressed.
+     * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template<StructureFileInputFormat file_format>
-    structure_file_in(stream_type && _stream,
+    template<IStream2 stream_t, StructureFileInputFormat file_format>
+    structure_file_in(stream_t & stream,
                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        stream{std::move(_stream)}, format{file_format{}}
+        primary_stream{&stream, stream_deleter_noop}, format{file_format{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
+
+        // possibly add intermediate decompression stream
+        secondary_stream = detail::make_secondary_istream(*primary_stream);
+
+        // buffer first record
+        read_next_record();
+    }
+
+    //!\overload
+    template<IStream2 stream_t, StructureFileInputFormat file_format>
+    structure_file_in(stream_t && stream,
+                      file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}, format{file_format{}}
+    {
+        static_assert(meta::in<valid_formats, file_format>::value,
+                      "You selected a format that is not in the valid_formats of this file.");
+
+        // possibly add intermediate compression stream
+        secondary_stream = detail::make_secondary_istream(*primary_stream);
 
         // buffer first record
         read_next_record();
@@ -1029,11 +1046,21 @@ protected:
     file_as_tuple_type columns_buffer;
     //!\}
 
-    //!\brief Path of the file that the stream operates on.
-    std::string file_name;
+    /*!\name Stream / file access
+     * \{
+     */
+    //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
+    using stream_ptr_t = std::unique_ptr<std::basic_istream<stream_char_type>,
+                                         std::function<void(std::basic_istream<stream_char_type>*)>>;
+    //!\brief Stream deleter that does nothing (no ownership assumed).
+    static void stream_deleter_noop(std::basic_istream<stream_char_type> *) {}
+    //!\brief Stream deleter with default behaviour (ownership assumed).
+    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr) { delete ptr; }
 
-    //!\brief The stream we are reading from.
-    stream_type stream;
+    //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
+    stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
+    //!\brief The secondary stream is a compression layer on the primary or just points to the primary (no compression).
+    stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief File is at position 1 behind the last record.
     bool at_end{false};
@@ -1042,6 +1069,7 @@ protected:
     using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
+    //!\}
 
     //!\brief Tell the format to move to the next record and update the buffer.
     void read_next_record()
@@ -1053,7 +1081,7 @@ protected:
         record_buffer.clear();
 
         // at end if we could not read further
-        if (stream.eof())
+        if (secondary_stream->eof())
         {
             at_end = true;
             return;
@@ -1069,7 +1097,7 @@ protected:
                               "You may not select field::STRUCTURED_SEQ and field::STRUCTURE at the same time.");
                 static_assert(!selected_field_ids::contains(field::SEQ),
                               "You may not select field::STRUCTURED_SEQ and field::SEQ at the same time.");
-                f.read(stream,
+                f.read(*secondary_stream,
                        options,
                        detail::get_or_ignore<field::STRUCTURED_SEQ>(record_buffer), // seq
                        detail::get_or_ignore<field::ID>(record_buffer),
@@ -1083,7 +1111,7 @@ protected:
             }
             else
             {
-                f.read(stream,
+                f.read(*secondary_stream,
                        options,
                        detail::get_or_ignore<field::SEQ>(record_buffer),
                        detail::get_or_ignore<field::ID>(record_buffer),
@@ -1148,14 +1176,23 @@ protected:
  * \relates seqan3::structure_file_in
  * \{
  */
-template <IStream<char> stream_type,
+template <IStream2 stream_type,
           StructureFileInputFormat file_format,
           detail::fields_concept selected_field_ids>
-structure_file_in(stream_type && _stream, file_format const &, selected_field_ids const &)
+structure_file_in(stream_type && stream, file_format const &, selected_field_ids const &)
     -> structure_file_in<typename structure_file_in<>::traits_type,       // actually use the default
                          selected_field_ids,
                          type_list<file_format>,
-                         std::remove_reference_t<stream_type>>;
+                         typename std::remove_reference_t<stream_type>::char_type>;
+
+template <IStream2 stream_type,
+          StructureFileInputFormat file_format,
+          detail::fields_concept selected_field_ids>
+structure_file_in(stream_type & stream, file_format const &, selected_field_ids const &)
+    -> structure_file_in<typename structure_file_in<>::traits_type,       // actually use the default
+                         selected_field_ids,
+                         type_list<file_format>,
+                         typename std::remove_reference_t<stream_type>::char_type>;
 //!\}
 
 } // namespace seqan3
@@ -1172,8 +1209,8 @@ namespace std
 template<seqan3::structure_file_input_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::IStream<char> stream_type>
-struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
+         seqan3::char_concept stream_char_t>
+struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
     static constexpr size_t value = selected_field_ids::as_array.size();
@@ -1186,12 +1223,12 @@ template<size_t elem_no,
          seqan3::structure_file_input_traits_concept traits_type,
          seqan3::detail::fields_concept selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::IStream<char> stream_type>
-struct tuple_element<elem_no, seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_type>>
+         seqan3::char_concept stream_char_t>
+struct tuple_element<elem_no, seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::structure_file_in<traits_type,
                                                                 selected_field_ids,
                                                                 valid_formats,
-                                                                stream_type>::file_as_tuple_type>
+                                                                stream_char_t>::file_as_tuple_type>
 {};
 
 } // namespace std

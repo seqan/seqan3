@@ -31,6 +31,7 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/filesystem.hpp>
 #include <seqan3/io/record.hpp>
+#include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/structure_file/output_format_concept.hpp>
@@ -52,7 +53,7 @@ namespace seqan3
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::StructureFileOutputFormat).
- * \tparam stream_type        The type of the stream, must satisfy seqan3::OStream.
+ * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::char_concept.
  * \details
  *
  * ### Introduction
@@ -95,7 +96,7 @@ namespace seqan3
  *
  * Writing to std::cout:
  * ```cpp
- * structure_file_out fout{std::move(std::cout), structure_file_format_vienna{}};
+ * structure_file_out fout{std::cout, structure_file_format_vienna{}};
  * //               ^ no need to specify the template arguments
  *
  * fout.emplace_back("example_id", "ACGTN"_dna5);
@@ -104,8 +105,7 @@ namespace seqan3
  * Note that this is not the same as writing `structure_file_out<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
  * [automatic deduction](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
- * chooses different parameters depending on the constructor arguments. For opening from file, `structure_file_out<>`
- * would have also worked, but for opening from stream it would not have.
+ * chooses different parameters depending on the constructor arguments. Prefer deduction over explicit defaults.
  *
  * ### Writing record-wise
  *
@@ -251,7 +251,7 @@ namespace seqan3
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
           detail::TypeListOfStructureFileOutputFormats valid_formats_
               = type_list<structure_file_format_vienna>,
-          OStream<char> stream_type_ = std::ofstream>
+          char_concept stream_char_type_ = char>
 class structure_file_out
 {
 public:
@@ -263,8 +263,8 @@ public:
     using selected_field_ids    = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
     using valid_formats         = valid_formats_;
-    //!\brief The type of the underlying stream.
-    using stream_type           = stream_type_;
+    //!\brief Character type of the stream(s), usually `char`.
+    using stream_char_type      = stream_char_type_;
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
@@ -332,38 +332,70 @@ public:
     ~structure_file_out() = default;
 
     /*!\brief Construct from filename.
-     * \param[in] _file_name Path to the file you wish to open.
+     * \param[in] filename Path to the file you wish to open.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
      *
      * \details
      *
      * In addition to the file name, you may specify a custom seqan3::fields type which may be easier than
      * defining all the template parameters.
+     *
+     * ### Compression
+     *
+     * This constructor transparently applies a compression stream on top of the file stream in case
+     * the given file extension suggests the user wants this.
+     * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    structure_file_out(filesystem::path const & _file_name,
-                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
+    structure_file_out(filesystem::path filename,
+                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
     {
-        // open stream
-        stream.open(_file_name, std::ios_base::out | std::ios::binary);
-        if (!stream.is_open())
+        if (!primary_stream->good())
             throw file_open_error{"Could not open file for writing."};
 
+        // possibly add intermediate compression stream
+        secondary_stream = detail::make_secondary_ostream(*primary_stream, filename);
+
         // initialise format handler or throw if format is not found
-        detail::set_format(format, _file_name);
+        detail::set_format(format, filename);
     }
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam file_format The format of the file in the stream, must satisfy
      * seqan3::StructureFileOutputFormat.
-     * \param[in] _stream  The stream to operate on (this must be std::move'd in!).
+     * \param[in,out] stream The stream to write to, must be derived of std::basic_ostream.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
+     *
+     * \details
+     *
+     * ### Compression
+     *
+     * This constructor **does not** apply compression transparently (because there is no way to know if the user
+     * wants this). However, you can just pass e.g. seqan3::contrib::gz_ostream to this constructor if you explicitly
+     * want compression.
+     * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <StructureFileOutputFormat file_format>
-    structure_file_out(stream_type             && _stream,
-                      file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                      selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        stream{std::move(_stream)}, format{file_format{}}
+    template <OStream2 stream_t, StructureFileOutputFormat file_format>
+    structure_file_out(stream_t & stream,
+                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        primary_stream{&stream, stream_deleter_noop},
+        secondary_stream{&stream, stream_deleter_noop},
+        format{file_format{}}
+    {
+        static_assert(meta::in<valid_formats, file_format>::value,
+                      "You selected a format that is not in the valid_formats of this file.");
+    }
+
+    //!\overload
+    template <OStream2 stream_t, StructureFileOutputFormat file_format>
+    structure_file_out(stream_t && stream,
+                       file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
+        secondary_stream{&*primary_stream, stream_deleter_noop},
+        format{file_format{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -751,25 +783,37 @@ public:
     structure_file_output_options options;
 
     /*!\cond DEV
-     * \brief Expose a reference to the underlying stream object. [public, but not documented as part of the API]
+     * \brief Expose a reference to the secondary stream. [public, but not documented as part of the API]
      */
-    stream_type & get_stream()
+    std::basic_ostream<stream_char_type> & get_stream()
     {
-        return stream;
+        return *secondary_stream;
     }
     //!\endcond
 protected:
     //!\privatesection
-    //!\brief Path of the file that the stream operates on.
-    std::string file_name;
 
-    //!\brief The stream we are writing to.
-    stream_type stream;
+    /*!\name Stream / file access
+     * \{
+     */
+    //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
+    using stream_ptr_t = std::unique_ptr<std::basic_ostream<stream_char_type>,
+                                         std::function<void(std::basic_ostream<stream_char_type>*)>>;
+    //!\brief Stream deleter that does nothing (no ownership assumed).
+    static void stream_deleter_noop(std::basic_ostream<stream_char_type> *) {}
+    //!\brief Stream deleter with default behaviour (ownership assumed).
+    static void stream_deleter_default(std::basic_ostream<stream_char_type> * ptr) { delete ptr; }
+
+    //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
+    stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
+    //!\brief The secondary stream is a compression layer on the primary or just points to the primary (no compression).
+    stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
     using format_type = detail::transfer_template_args_onto_t<valid_formats, std::variant>;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
+    //!\}
 
     //!\brief Write record to format.
     template <typename seq_type,
@@ -802,7 +846,7 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<structured_seq_type>)
             {
-                f.write(stream,
+                f.write(*secondary_stream,
                         options,
                         structured_seq | view::convert<typename structured_seq_type::sequence_alphabet_type>,
                         id,
@@ -816,7 +860,7 @@ protected:
             }
             else
             {
-                f.write(stream,
+                f.write(*secondary_stream,
                         options,
                         seq,
                         id,
@@ -878,7 +922,7 @@ protected:
 
                 for (auto && v : zipped)
                 {
-                    f.write(stream,
+                    f.write(*secondary_stream,
                             options,
                             std::get<0>(v) | view::convert
                                              <typename reference_t<structured_seq_type>::sequence_alphabet_type>,
@@ -899,7 +943,7 @@ protected:
 
                 for (auto && v : zipped)
                 {
-                    f.write(stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v), std::get<3>(v),
+                    f.write(*secondary_stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v), std::get<3>(v),
                             std::get<4>(v), std::get<5>(v), std::get<6>(v), std::get<7>(v), std::get<8>(v));
                 }
             }
@@ -914,13 +958,21 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
-template <OStream<char>             stream_type,
+template <OStream2 stream_t,
           StructureFileOutputFormat file_format,
-          detail::fields_concept    selected_field_ids>
-structure_file_out(stream_type && _stream, file_format const &, selected_field_ids const &)
+          detail::fields_concept selected_field_ids>
+structure_file_out(stream_t &&, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
-                         type_list<file_format>,
-                         std::remove_reference_t<stream_type>>;
+                          type_list<file_format>,
+                          typename std::remove_reference_t<stream_t>::char_type>;
+
+template <OStream2 stream_t,
+          StructureFileOutputFormat file_format,
+          detail::fields_concept selected_field_ids>
+structure_file_out(stream_t &, file_format const &, selected_field_ids const &)
+    -> structure_file_out<selected_field_ids,
+                          type_list<file_format>,
+                          typename std::remove_reference_t<stream_t>::char_type>;
 //!\}
 
 } // namespace seqan3
