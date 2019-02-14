@@ -12,7 +12,7 @@
  * \defgroup submodule_fm_index FM Index
  * \ingroup search
  *
- * ## FM Indices
+ * # FM Indices
  *
  * FM indices are text indices similar to suffix trees or suffix arrays which are based on the Burrow Wheeler
  * transform and a sampled suffix array. FM indices are significantly smaller in space without sacrificing speed. They
@@ -32,7 +32,7 @@
  * FM indices are more powerful for approximate string matching at the cost of a higher space consumption
  * \todo (between a factor of X and Y depending on the configuration).
  *
- * ## FM Index Cursors
+ * # FM Index Cursors
  *
  * Index Cursors are lightweight objects, i.e. they are cheap to copy.
  *

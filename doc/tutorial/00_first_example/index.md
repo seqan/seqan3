@@ -22,7 +22,7 @@ changes in the language in recent years, we recommend the following resources:**
 
   * "A Tour of C++", Second Edition, Bjarne Stroustrup, 2018
 
-## First head line
+# First head line
 
 
-## A second head line
+# A second head line

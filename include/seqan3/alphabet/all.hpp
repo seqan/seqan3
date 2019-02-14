@@ -11,7 +11,7 @@
  *
  * \defgroup alphabet Alphabet
  *
- * ## Introduction
+ * # Introduction
  *
  * Alphabets are a core component in SeqAn. They enable us to represent the smallest
  * unit of biological sequence data, e.g. a nucleotide or an amino acid.
@@ -42,7 +42,7 @@
  * a detailed overview. A more basic overview of this module and it's submodules is available in the collaboration
  * diagram at the top of this page.
  *
- * ## The alphabet concept
+ * # The alphabet concept
  *
  * The seqan3::Alphabet defines the requirements a type needs to meet to be considered an alphabet
  * by SeqAn, or in other words: you can expect certain properties and functions to be defined on
@@ -135,7 +135,7 @@
  * that accepts different alphabet types, you need to use the free function / metafunction interface, because
  * it is the only interface guaranteed to exist (member functions are **not** required/enforced by the concept).
  *
- * ## Containers over alphabets
+ * # Containers over alphabets
  *
  * In SeqAn3 it is recommended you use the STL container classes like std::vector for storing sequence data,
  * but you can use other class templates if they satisfy the respective seqan3::container_concept, e.g. `std::deque` or

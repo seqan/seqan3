@@ -36,7 +36,7 @@ namespace seqan3::detail
  *  * the column symbol that comes after the row symbol (alignment_matrix_format::row_col_sep)
  *  * the traces symbols of a traceback matrix (alignment_matrix_format::trace_dir)
  *
- * ## Example
+ * # Example
  * \snippet test/snippet/alignment/matrix/alignment_matrix_formatter.cpp alignment_matrix_format
  *
  * ### Output
@@ -171,7 +171,7 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  *
  * \details
  *
- * ## Example
+ * # Example
  *
  * \snippet test/snippet/alignment/matrix/alignment_score_matrix.cpp code
  *

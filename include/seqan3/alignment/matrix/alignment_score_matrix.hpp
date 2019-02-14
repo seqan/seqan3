@@ -35,7 +35,7 @@ class alignment_score_matrix;
  * std::vector<#entry_type> data structure where each row is stored
  * continuously.
  *
- * ## Example
+ * # Example
  *
  * \snippet test/snippet/alignment/matrix/alignment_score_matrix.cpp code
  *

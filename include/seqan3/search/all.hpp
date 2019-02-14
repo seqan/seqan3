@@ -11,7 +11,7 @@
  *
  * \defgroup search Search
  *
- * ## Introduction
+ * # Introduction
  *
  * Searching is a key component in many sequence analysis tools. The search module is a powerful and easy way to search
  * sequences in a large text or an arbitrary nested collection of texts. When it comes to searching, indices are a core

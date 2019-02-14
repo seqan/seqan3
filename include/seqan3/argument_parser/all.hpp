@@ -21,15 +21,15 @@
 /*!\defgroup argument_parser Argument Parser
  * \brief The Argument Parser Module
  *
- * ## The Argument Parser Class
+ * # The Argument Parser Class
  *
  * \copydetails seqan3::argument_parser
  *
- * ## Parsing Command Line Arguments
+ * # Parsing Command Line Arguments
  *
  * \copydetails seqan3::argument_parser::parse
  *
- * ## Argument Validation
+ * # Argument Validation
  *
  * The SeqAn 3 Argument Parser offers a validation mechanism for (positional_)options
  * via callables. You can pass any functor that fulfills the seqan3::validator_concept

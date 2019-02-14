@@ -35,7 +35,7 @@ class alignment_trace_matrix;
  * std::vector<#entry_type> data structure where each row is stored
  * continuously.
  *
- * ## Example
+ * # Example
  *
  * \snippet test/snippet/alignment/matrix/alignment_trace_matrix_vector.cpp code
  *
@@ -64,7 +64,7 @@ public:
  *
  * \todo TODO: Is currently only able to handle the edit distance.
  *
- * ## Example
+ * # Example
  *
  * \snippet test/snippet/alignment/matrix/alignment_trace_matrix.cpp code
  *
