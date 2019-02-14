@@ -181,7 +181,7 @@ TEST(validator_test, arithmetic_range_validator_success)
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser8.parse());
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(double_option_value, 10.9);
+    EXPECT_FLOAT_EQ(double_option_value, 10.9);
 }
 
 TEST(validator_test, arithmetic_range_validator_error)
