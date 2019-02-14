@@ -35,7 +35,7 @@ auto generate_sequence_seqan3(size_t const len = 500,
                               size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, alphabet_size_v<alphabet_t>);
+    std::uniform_int_distribution<uint8_t> dis_alpha(0, alphabet_size_v<alphabet_t> - 1);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     std::vector<alphabet_t> sequence;
@@ -54,7 +54,7 @@ auto generate_sequence_seqan2(size_t const len = 500,
                               size_t const seed = 0)
 {
     std::mt19937 gen(seed);
-    std::uniform_int_distribution<uint8_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE);
+    std::uniform_int_distribution<uint8_t> dis_alpha(0, seqan::ValueSize<alphabet_t>::VALUE - 1);
     std::uniform_int_distribution<size_t> dis_length(len - variance, len + variance);
 
     seqan::String<alphabet_t> sequence;
