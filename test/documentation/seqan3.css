@@ -1,0 +1,133 @@
+body {
+    background-color: #CCC;
+    color: black;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+div, p, dl {
+    font-size: 13pt;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    line-height: 30px;
+}
+
+table {
+    font-size: 12pt;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+div.contents {
+    margin-bottom: 10px;
+    padding: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 960px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+#titlearea {
+    background-color: white;
+    align-content: center;
+}
+
+hr.footer {
+    display: none;
+}
+
+.title {
+    text-align: center;
+}
+
+.footer {
+    background-color: #AAA;
+}
+
+div.fragment {
+    font-size: 12pt;
+    line-height: 30px;
+    font-family: "Ubuntu Mono", "SFMono-Regular",source-code-pro,Menlo,Monaco,Consolas,"Roboto Mono","Droid Sans Mono","Liberation Mono",Consolas,"Courier New",Courier,monospace;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #F2F2F2;
+    border: 1px solid #F2F2F2;
+}
+
+code {
+    font-size: 12pt;
+    line-height: 15px;
+    font-family: "Ubuntu Mono", "SFMono-Regular",source-code-pro,Menlo,Monaco,Consolas,"Roboto Mono","Droid Sans Mono","Liberation Mono",Consolas,"Courier New",Courier,monospace;
+    padding: 2px;
+    border-radius: 1px;
+    background-color: #F2F2F2;
+    border: 1px solid #F2F2F2;
+}
+
+dl.section {
+    padding: 10px;
+}
+
+dl.attention {
+    background-color: #FFF1F1;
+}
+
+dl.warning {
+    border-color: #E08D12;
+    background-color: #FBF0E0;
+}
+
+dl.note {
+    border-color: #E9DF24;
+    background-color: #FCFBE6;
+}
+
+hr {
+    border-top: 2px solid #E4E4E4;
+    height: 2px;
+}
+
+table.doxtable {
+    empty-cells: show;
+    border: 1px solid #CBCBCB;
+}
+
+table.doxtable caption {
+    color: #000;
+    font: italic 85%/1 arial,sans-serif;
+    padding: 1em 0;
+    text-align: center;
+}
+
+table.doxtable td:first-child, table.doxtable th:first-child {
+    border-left-width: 0;
+}
+
+table.doxtable thead {
+    background-color: #E0E0E0;
+    color: #000;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+table.doxtable td {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 2px solid #CBCBCB;
+    border-width: 0 1 0 0px;
+    font-size: inherit;
+    margin: 0;
+    overflow: visible;
+    padding: .5em 1em;
+}
+
+table.doxtable th {
+    border: 0;
+    border-width: 0 1 0 0px;
+    font-size: inherit;
+    margin: 0;
+    overflow: visible;
+    padding: .5em 1em;
+    border-bottom: 2px solid #CBCBCB;
+    background-color: #EBEDF2;
+    color: black;
+    font-style: bold;
+}
