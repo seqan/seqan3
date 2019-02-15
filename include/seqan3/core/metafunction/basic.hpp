@@ -34,6 +34,28 @@ namespace seqan3
 template <typename t>
 using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<t>>;
 
+// ----------------------------------------------------------------------------
+// remove_rvalue_reference
+// ----------------------------------------------------------------------------
+
+/*!\brief Return the input type with `&&` removed, but lvalue references preserved [Type metafunction].
+ * \tparam t The type to operate on.
+ * \see seqan3::remove_rvalue_reference_t
+ */
+template <typename t>
+struct remove_rvalue_reference
+{
+    //!\brief The return type is the input type with any `&&` stripped.
+    using type = std::conditional_t<std::is_rvalue_reference_v<t>, std::remove_reference_t<t>, t>;
+};
+
+/*!\brief Return the input type with `&&` removed, but lvalue references preserved [Type metafunction, shortcut].
+ * \tparam t The type to operate on.
+ * \see seqan3::remove_rvalue_reference
+ */
+template <typename t>
+using remove_rvalue_reference_t = typename remove_rvalue_reference<t>::type;
+
 //!\}
 
 } // namespace seqan3
