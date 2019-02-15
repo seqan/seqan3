@@ -12,6 +12,8 @@ in the other tutorials and how to use this documentation.
 <tr>  <th> Recommended reading    </th>  <td>                        </td>   </tr>
 </table>
 
+---
+
 *Every page in the tutorials begins with this section. It is recommended you do the "prerequisite tutorials" before
 the current one. You should also have a look at the links provided in "recommended reading" and maybe keep them open
 in separate tabs/windows as reference.*
@@ -24,5 +26,14 @@ changes in the language in recent years, we recommend the following resources:**
 
 # First head line
 
+`some inline code`
 
-# A second head line
+## A second head line
+
+\note This is a note.
+
+\warning This is a warning.
+
+\attention Attention attention!
+
+\remark Remark remark!
