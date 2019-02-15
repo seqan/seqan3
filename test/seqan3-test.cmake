@@ -76,6 +76,7 @@ add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
 # needed for header test cases in seqan3/test/header
 add_library (seqan3_test_header INTERFACE)
 target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
+target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
 add_library (seqan3::test::header ALIAS seqan3_test_header)
 
 # ----------------------------------------------------------------------------
