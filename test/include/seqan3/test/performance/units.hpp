@@ -19,8 +19,7 @@
 namespace seqan3::test
 {
 
-/**
- * This returns a counter which represents how many bytes were processed per second.
+/*!\brief This returns a counter which represents how many bytes were processed per second.
  *
  * \param  bytes The total number of bytes processed of a complete benchmark run.
  * \return       Returns a benchmark Counter which represents bytes/s.

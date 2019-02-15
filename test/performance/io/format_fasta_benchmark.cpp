@@ -25,10 +25,12 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/test/performance/units.hpp>
 
 #include <sstream>
 
 using namespace seqan3;
+using namespace seqan3::test;
 
 void write3(benchmark::State & state)
 {
@@ -42,6 +44,12 @@ void write3(benchmark::State & state)
     {
         format.write(ostream, options, seq, id, std::ignore);
     }
+
+    ostream = std::ostringstream{};
+    format.write(ostream, options, seq, id, std::ignore);
+    size_t bytes_per_run = ostream.str().size();
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
 
 BENCHMARK(write3);
@@ -50,14 +58,20 @@ BENCHMARK(write3);
 
 void write2(benchmark::State & state)
 {
-    std::ostringstream outStream;
+    std::ostringstream ostream;
     seqan::CharString meta = "seq";
     seqan::Dna5String seq = "ACTAGACTAGCTACGATCAGCTACGATCAGCTACGA";
 
     for (auto _ : state)
     {
-        seqan::writeRecord(outStream, meta, seq, seqan::Fasta());
+        seqan::writeRecord(ostream, meta, seq, seqan::Fasta());
     }
+
+    ostream = std::ostringstream{};
+    seqan::writeRecord(ostream, meta, seq, seqan::Fasta());
+    size_t bytes_per_run = ostream.str().size();
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
 
 BENCHMARK(write2);
@@ -76,9 +90,13 @@ void read3(benchmark::State & state)
     for (auto _ : state)
     {
         format.read(istream, options, seq, id, std::ignore);
-	    id.clear();
-	    seq.clear();
+        id.clear();
+        seq.clear();
     }
+
+    size_t bytes_per_run = dummy_file.size();
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
 BENCHMARK(read3);
 
@@ -101,10 +119,14 @@ void read2(benchmark::State & state)
 
     for (auto _ : state)
     {
-        readRecord(meta, seq,  it, seqan::Fasta{});
+        readRecord(meta, seq, it, seqan::Fasta{});
         clear(meta);
         clear(seq);
     }
+
+    size_t bytes_per_run = dummy_file.size();
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = bytes_per_second(bytes_per_run);
 }
 BENCHMARK(read2);
 #endif
