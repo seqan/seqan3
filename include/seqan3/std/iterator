@@ -17,6 +17,7 @@
 #ifndef __cpp_lib_ranges
 
 #include <range/v3/iterator/insert_iterators.hpp>
+#include <range/v3/iterator/operations.hpp>
 #include <range/v3/iterator/stream_iterators.hpp>
 
 #include <seqan3/std/concepts>
@@ -293,7 +294,7 @@ namespace std::ranges
 {
 //!\cond
 using ::ranges::advance;
-inline constexpr ::ranges::iter_distance_fn distance;
+using ::ranges::distance;
 using ::ranges::prev;
 using ::ranges::next;
 //!\endcond
