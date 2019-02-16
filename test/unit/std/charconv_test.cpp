@@ -322,7 +322,7 @@ TYPED_TEST(from_char_real_test, real_numbers)
         auto res = std::from_chars(&str[0], &str[0] + str.size(), val);
         EXPECT_FLOAT_EQ(val, TypeParam{4});
         EXPECT_EQ(res.ec, std::errc{});
-        EXPECT_EQ(res.ptr, &str[0] + str.size());
+        EXPECT_EQ(res.ptr, &str[0] + 1);
     }
 
     {
@@ -349,7 +349,7 @@ TYPED_TEST(from_char_real_test, real_numbers)
         auto res = std::from_chars(&str[0], &str[0] + str.size(), val);
         EXPECT_FLOAT_EQ(val, TypeParam{1.2});
         EXPECT_EQ(res.ec, std::errc{});
-        EXPECT_EQ(res.ptr, &str[0] + str.size());
+        EXPECT_EQ(res.ptr, &str[0] + 3);
     }
 
     {
@@ -366,6 +366,16 @@ TYPED_TEST(from_char_real_test, real_numbers)
         TypeParam val{42};
         std::string str = "3.194357";
         auto res = std::from_chars(&str[0], &str[0] + 4, val);
+        EXPECT_FLOAT_EQ(val, TypeParam{3.19});
+        EXPECT_EQ(res.ec, std::errc{});
+        EXPECT_EQ(res.ptr, &str[0] + 4);
+    }
+
+    // Partial Parsing
+    {
+        TypeParam val{42};
+        std::string str = "3.19abc";
+        auto res = std::from_chars(&str[0], &str[0] + str.size(), val);
         EXPECT_FLOAT_EQ(val, TypeParam{3.19});
         EXPECT_EQ(res.ec, std::errc{});
         EXPECT_EQ(res.ptr, &str[0] + 4);
@@ -438,7 +448,7 @@ TYPED_TEST(from_char_real_test, nan_value)
 
     {
         TypeParam val{};
-        std::string str = "nan(...)";
+        std::string str = "nan(abc)";
         auto res = std::from_chars(&str[0], &str[0] + str.size(), val);
         EXPECT_TRUE(std::isnan(val));
         EXPECT_EQ(res.ec, std::errc{});
@@ -447,7 +457,7 @@ TYPED_TEST(from_char_real_test, nan_value)
 
     {
         TypeParam val{};
-        std::string str = "NAN(...)";
+        std::string str = "NAN(abc)";
         auto res = std::from_chars(&str[0], &str[0] + str.size(), val);
         EXPECT_TRUE(std::isnan(val));
         EXPECT_EQ(res.ec, std::errc{});
