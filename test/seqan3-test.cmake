@@ -91,6 +91,50 @@ list (APPEND SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${PROJEC
 # Commonly used macros for the different test modules in seqan3.
 # ----------------------------------------------------------------------------
 
+# Get a specific component of a test file which follows the seqan3 naming scheme.
+# e.g. target_source_file = "range/view/take.cpp"
+# component:
+#  * TARGET_NAME - the target name (e.g. "take")
+#  * TEST_NAME - the test name which includes the target_path (e.g. "range/view/take")
+#  * TARGET_PATH - the path to the target source (e.g. "range/view")
+macro (seqan3_test_component VAR target_source_file component_name_)
+    string (TOUPPER "${component_name_}" component_name)
+
+    get_filename_component (target_relative_path "${target_source_file}" DIRECTORY)
+    get_filename_component (target_cpp "${target_source_file}" NAME)
+    string (REGEX REPLACE ".cpp$" "" target_name ${target_cpp})
+
+    if (component_name STREQUAL "TARGET_NAME")
+        set (${VAR} ${target_name})
+    elseif (component_name STREQUAL "TEST_NAME")
+        if (target_relative_path)
+            set (${VAR} "${target_relative_path}/${target_name}")
+        else ()
+            set (${VAR} "${target_name}")
+        endif ()
+    elseif (component_name STREQUAL "TARGET_PATH")
+        set (${VAR} "${target_relative_path}")
+    endif ()
+
+    unset (target_name)
+    unset (target_cpp)
+    unset (target_relative_path)
+endmacro ()
+
+macro (seqan3_test_files VAR test_base_path_)
+    # test_base_path is /home/.../seqan3/test/
+    get_filename_component(test_base_path "${test_base_path_}" ABSOLUTE)
+    file (RELATIVE_PATH test_base_path_relative "${CMAKE_SOURCE_DIR}" "${test_base_path}")
+    # ./ is a hack to deal with empty test_base_path_relative
+    set (test_base_path_relative "./${test_base_path_relative}")
+    # collect all cpp files
+    file (GLOB_RECURSE ${VAR} RELATIVE "${test_base_path}"
+          "${test_base_path_relative}/*.cpp")
+
+    unset (test_base_path)
+    unset (test_base_path_relative)
+endmacro ()
+
 macro (seqan3_require_ccache)
     find_program (CCACHE_PROGRAM ccache)
     find_package_message (CCACHE_PROGRAM_PRE "Finding program ccache" "[${CCACHE_PROGRAM}]")
