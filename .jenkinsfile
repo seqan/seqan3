@@ -72,24 +72,36 @@ def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
         }
     }
 
-    // Prepare environment and run ctest step.
-    withEnv(["BUILDNAME=$build_name",
-             "PLATFORM=$platform",
-             "MODEL=$model",
-             "TEST_MODEL=unit",
-             "WORKSPACE=$workspace",
-             "SITE_NAME=jenkins",
-             "DISABLE_CEREAL=$disable_cereal",
-             "CTEST_BUILD_TYPE=$build_type",
-             "CXX=$cxx"])
+    try
     {
-        stage('run')
+        // Prepare environment and run ctest step.
+        withEnv(["BUILDNAME=$build_name",
+                 "PLATFORM=$platform",
+                 "MODEL=$model",
+                 "TEST_MODEL=unit",
+                 "WORKSPACE=$workspace",
+                 "SITE_NAME=jenkins",
+                 "DISABLE_CEREAL=$disable_cereal",
+                 "CTEST_BUILD_TYPE=$build_type",
+                 "CXX=$cxx"])
         {
-            dir(workspace)
+            stage('run')
             {
-                sh "ctest --no-compress-output -VV -S $workspace/seqan3-infra/ctest/seqan3_jenkins.cmake"
+                dir(workspace)
+                {
+                    sh "ctest --no-compress-output -VV -S $workspace/seqan3-infra/ctest/seqan3_jenkins.cmake"
+                }
             }
         }
+    }
+    catch (Exception ex)
+    {
+        currentBuild.result = 'failure'
+        if (env.CHANGE_ID)
+            pullRequest.createStatus(status: 'failure',
+                                     context: 'continuous-integration/jenkins/pr-merge',
+                                     description: 'Running ctest failed.')
+        throw ex
     }
 }
 
