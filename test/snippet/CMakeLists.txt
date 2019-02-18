@@ -19,18 +19,18 @@ macro (seqan3_snippet target_cpp snippet_full_path)
     # NOTE(marehr): ".+/test/" REGEX is greedy, that means
     # /test/test/test/hello_snippet.cpp will result in an empty `test_path`
     string (REGEX REPLACE ".cpp$" "" target_name ${target_cpp})
-    string (REGEX REPLACE ".+/test/" "" test_path ${snippet_full_path})
-    string (REGEX REPLACE ".+/test/snippet/" "" source_path ${snippet_full_path})
+    string (REGEX REPLACE ".+/(doc|test)/" "" test_path ${snippet_full_path})
+    string (REGEX REPLACE ".+/(doc|test/snippet)/" "" source_path ${snippet_full_path})
     set (target "${target_name}_snippet")
 
-    add_executable (${target} ${source_path}/${target_cpp})
+    add_executable (${target} ${snippet_full_path}/${target_cpp})
     target_link_libraries (${target} seqan3::test::unit)
     set_target_properties(${target}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${source_path}"
     )
 
-    add_test (NAME "${test_path}/${target}" COMMAND ${target})
+    add_test (NAME "${snippet_full_path}/${target}" COMMAND ${target})
 
     unset (target_name)
     unset (test_path)
@@ -40,11 +40,20 @@ endmacro ()
 seqan3_require_ccache ()
 seqan3_require_test ()
 
-# add all snippets
+# add all snippets in test/snippet
 file(GLOB_RECURSE snippets "*.cpp")
 foreach(snippet ${snippets})
     get_filename_component(target_cpp "${snippet}" NAME)
     get_filename_component(snippet_full_path "${snippet}" DIRECTORY)
+
+    seqan3_snippet("${target_cpp}" "${snippet_full_path}")
+endforeach()
+
+# add all snippets in doc/
+file(GLOB_RECURSE doc_snippets "../../doc/*.cpp")
+foreach(doc_snippet ${doc_snippets})
+    get_filename_component(target_cpp "${doc_snippet}" NAME)
+    get_filename_component(snippet_full_path "${doc_snippet}" DIRECTORY)
 
     seqan3_snippet("${target_cpp}" "${snippet_full_path}")
 endforeach()
