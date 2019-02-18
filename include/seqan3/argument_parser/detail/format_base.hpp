@@ -120,7 +120,7 @@ protected:
      * \param[in] long_id  The long identifier of the option/flag.
      * \returns The name of the short and long id, prepended with (double)dash.
      *
-     * \details  e.g. "-i,--integer","-i", or "--integer".
+     * \details  e.g. "-i,--integer", "-i", or "--integer".
      */
     static std::string prep_id_for_help(char const short_id, std::string const & long_id)
     {

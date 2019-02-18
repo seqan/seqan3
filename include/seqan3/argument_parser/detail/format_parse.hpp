@@ -721,7 +721,7 @@ private:
     std::vector<std::string> argv;
     //!\brief Number of command line arguments.
     int argc;
-    //!\brief Artificial end of argv if -- was seen.
+    //!\brief Artificial end of argv if \-- was seen.
     std::vector<std::string>::iterator end_of_options_it;
 };
 
