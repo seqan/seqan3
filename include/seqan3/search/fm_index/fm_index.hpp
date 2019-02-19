@@ -18,7 +18,7 @@
 #include <range/v3/view/join.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
@@ -436,7 +436,7 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool load(filesystem::path const & path)
+    bool load(std::filesystem::path const & path)
     {
         sdsl_index_type tmp;
         if (sdsl::load_from_file(tmp, path))
@@ -459,7 +459,7 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool store(filesystem::path const & path) const
+    bool store(std::filesystem::path const & path) const
     {
         return sdsl::store_to_file(index, path);
     }

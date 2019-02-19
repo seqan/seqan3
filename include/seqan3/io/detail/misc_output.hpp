@@ -34,7 +34,7 @@ namespace seqan3::detail
  * \throws seqan3::file_open_error If a compression-extension is used, but is not supported/available.
  */
 template<char_concept char_t>
-inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, filesystem::path & filename)
+inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, std::filesystem::path & filename)
     -> std::unique_ptr<std::basic_ostream<char_t>, std::function<void(std::basic_ostream<char_t>*)>>
 {
     // don't assume ownership

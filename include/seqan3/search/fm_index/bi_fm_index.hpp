@@ -15,7 +15,7 @@
 #include <utility>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
@@ -343,12 +343,12 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool load(filesystem::path const & path)
+    bool load(std::filesystem::path const & path)
     {
-        filesystem::path path_fwd{path};
-        filesystem::path path_rev{path};
-        path_fwd += filesystem::path{".fwd"};
-        path_rev += filesystem::path{".rev"};
+        std::filesystem::path path_fwd{path};
+        std::filesystem::path path_rev{path};
+        path_fwd += std::filesystem::path{".fwd"};
+        path_rev += std::filesystem::path{".rev"};
         return fwd_fm.load(path_fwd) && rev_fm.load(path_rev);
     }
 
@@ -364,12 +364,12 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool store(filesystem::path const & path) const
+    bool store(std::filesystem::path const & path) const
     {
-        filesystem::path path_fwd{path};
-        filesystem::path path_rev{path};
-        path_fwd += filesystem::path{".fwd"};
-        path_rev += filesystem::path{".rev"};
+        std::filesystem::path path_fwd{path};
+        std::filesystem::path path_rev{path};
+        path_fwd += std::filesystem::path{".fwd"};
+        path_rev += std::filesystem::path{".rev"};
         return fwd_fm.store(path_fwd) && rev_fm.store(path_rev);
     }
 

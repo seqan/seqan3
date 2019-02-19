@@ -29,7 +29,7 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
@@ -346,7 +346,7 @@ public:
      * the given file extension suggests the user wants this.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    structure_file_out(filesystem::path filename,
+    structure_file_out(std::filesystem::path filename,
                        selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
     {

@@ -12,19 +12,16 @@
 
 #pragma once
 
+#include <seqan3/core/platform.hpp>
+
 #if __has_include(<filesystem>)
 #include <filesystem>
 #else
 #include <experimental/filesystem>
-#endif // __has_include(experimental/filesystem)
 
-#include <seqan3/core/platform.hpp>
-
-namespace seqan3
+namespace std
 {
-#if __has_include(<filesystem>)
-namespace filesystem = std::filesystem;
-#else
 namespace filesystem = std::experimental::filesystem;
+} // namespace std
+
 #endif // __has_include(experimental/filesystem)
-} // namespace seqan3

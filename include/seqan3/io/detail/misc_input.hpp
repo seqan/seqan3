@@ -68,7 +68,7 @@ inline bool starts_with(ref_t && reference, query_t && query)
  * \throws seqan3::file_open_error If the magic bytes suggest compression, but is not supported/available.
  */
 template <char_concept char_t>
-inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, filesystem::path & filename)
+inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, std::filesystem::path & filename)
     -> std::unique_ptr<std::basic_istream<char_t>, std::function<void(std::basic_istream<char_t>*)>>
 {
     // don't assume ownership
@@ -130,7 +130,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 template <char_concept char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream)
 {
-    filesystem::path p;
+    std::filesystem::path p;
     return make_secondary_istream(primary_stream, p);
 }
 

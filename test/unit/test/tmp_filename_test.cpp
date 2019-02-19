@@ -10,7 +10,7 @@
 
 #include <seqan3/test/tmp_filename.hpp>
 
-namespace fs = seqan3::filesystem;
+namespace fs = std::filesystem;
 using namespace seqan3::test;
 
 // aggregate initialization

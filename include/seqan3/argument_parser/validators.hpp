@@ -19,7 +19,7 @@
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/view/view_all.hpp>
@@ -340,7 +340,7 @@ public:
      * \param path The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(filesystem::path const & path) const
+    void operator()(std::filesystem::path const & path) const
     {
         std::string ext{path.extension().string()};
         ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
@@ -380,20 +380,20 @@ class file_existance_validator
 {
 public:
     //!\brief Type of values that are tested by validator
-    using value_type = filesystem::path;
+    using value_type = std::filesystem::path;
 
     /*!\brief Tests whether path exists.
      * \param path The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(filesystem::path const & path) const
+    void operator()(std::filesystem::path const & path) const
     {
-        if (!(filesystem::exists(path)))
+        if (!(std::filesystem::exists(path)))
             throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
     }
 
     //!\brief Tests whether every filename in list v exists.
-    void operator()(std::vector<filesystem::path> const & v) const
+    void operator()(std::vector<std::filesystem::path> const & v) const
     {
          std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
     }
