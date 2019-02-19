@@ -137,7 +137,7 @@ public:
 
         print_footer();
 
-        throw parser_interruption();
+        std::exit(EXIT_SUCCESS);
     }
 
     /*!\brief Adds a print_section call to seqan3::format_man::parser_set_up_calls.

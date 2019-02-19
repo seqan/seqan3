@@ -29,7 +29,7 @@ TEST(help_add_test, add_option)
     argument_parser parser0("empty_options", 1, argv0);
     parser0.info.synopsis.push_back("synopsis");
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser0.parse(), parser_interruption);
+    EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("empty_options"
                            "============="
@@ -42,7 +42,7 @@ TEST(help_add_test, add_option)
     const char * argv1[] = {"./help_add_test", "-h"};
     argument_parser parser1("test_parser", 2, argv1);
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser1.parse(), parser_interruption);
+    EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                                        "==========="
@@ -57,7 +57,7 @@ TEST(help_add_test, add_option)
     argument_parser short_copy("test_parser", 2, argv1);
     short_copy.info.short_copyright = "short";
     testing::internal::CaptureStdout();
-    EXPECT_THROW(short_copy.parse(), parser_interruption);
+    EXPECT_EXIT(short_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                            "==========="
@@ -74,7 +74,7 @@ TEST(help_add_test, add_option)
     argument_parser long_copy("test_parser", 2, argv1);
     long_copy.info.long_copyright = "long";
     testing::internal::CaptureStdout();
-    EXPECT_THROW(long_copy.parse(), parser_interruption);
+    EXPECT_EXIT(long_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                            "==========="
@@ -91,7 +91,7 @@ TEST(help_add_test, add_option)
     argument_parser citation("test_parser", 2, argv1);
     citation.info.citation = "citation";
     testing::internal::CaptureStdout();
-    EXPECT_THROW(citation.parse(), parser_interruption);
+    EXPECT_EXIT(citation.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                            "==========="
@@ -110,7 +110,7 @@ TEST(help_add_test, add_option)
     // argument_parser copyright("copyright", 2, argvCopyright);
     // copyright.info.long_copyright = "long copyright";
     // testing::internal::CaptureStdout();
-    // EXPECT_THROW(copyright.parse(), parser_interruption);
+    // EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     // stdout = testing::internal::GetCapturedStdout();
     // expected = "whatever is expected";
     // EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
@@ -120,7 +120,7 @@ TEST(help_add_test, add_option)
     const char * argv2[] = {"./help_add_test", "-hh"};
     argument_parser parser2("test_parser_2", 2, argv2);
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser2.parse(), parser_interruption);
+    EXPECT_EXIT(parser2.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser_2"
                            "============="
@@ -135,7 +135,7 @@ TEST(help_add_test, add_option)
     const char * argv3[] = {"./help_add_test", "--version"};
     argument_parser parser3("version", 2, argv3);
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser3.parse(), parser_interruption);
+    EXPECT_EXIT(parser3.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("version"
                            "======="
@@ -153,7 +153,7 @@ TEST(help_add_test, add_option)
     parser4.add_flag(flag_value, 'f', "flag", "this is a flag.");
     parser4.add_positional_option(pos_opt_value, "this is a positional option.");
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser4.parse(), parser_interruption);
+    EXPECT_EXIT(parser4.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("versionURL"
                            "=========="
@@ -171,7 +171,7 @@ TEST(help_add_test, add_option)
     parser5.add_option(option_value, 'i', "int", "this is a int option.", option_spec::HIDDEN);
     parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", option_spec::HIDDEN);
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser5.parse(), parser_interruption);
+    EXPECT_EXIT(parser5.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("hidden"
                            "======"
@@ -196,7 +196,7 @@ TEST(help_add_test, add_option)
     parser6.info.examples.push_back("example");
     parser6.info.examples.push_back("example2");
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser6.parse(), parser_interruption);
+    EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("full - so short"
                            "==============="
@@ -224,5 +224,5 @@ TEST(help_add_test, add_option)
     EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
 
-   // EXPECT_THROW(parser6.parse(), parser_interruption);
+   // EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
 }

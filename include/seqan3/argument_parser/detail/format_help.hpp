@@ -176,7 +176,7 @@ public:
 
         print_footer();
 
-        throw parser_interruption(); // program should not continue from here
+        std::exit(EXIT_SUCCESS); // program should not continue from here
     }
 
     /*!\brief Adds a print_section call to parser_set_up_calls.
@@ -663,7 +663,7 @@ public:
 
         print_line("Try -h or --help for more information.\n");
 
-        throw parser_interruption();
+        std::exit(EXIT_SUCCESS);
     }
 };
 
@@ -761,7 +761,7 @@ public:
         print_header();
         print_version();
 
-        throw parser_interruption(); // program should not continue from here
+        std::exit(EXIT_SUCCESS); // program should not continue from here
     }
 };
 

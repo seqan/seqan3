@@ -157,7 +157,7 @@ TEST(validator_test, arithmetic_range_validator_success)
 
 
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser7.parse(), parser_interruption);
+    EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std::string stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
                            "==========="
@@ -316,7 +316,7 @@ TEST(validator_test, value_list_validator_success)
                        option_spec::DEFAULT, value_list_validator<std::vector<int>>({-10,48,50}));
 
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser7.parse(), parser_interruption);
+    EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std::string stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
                            "==========="
@@ -433,7 +433,7 @@ TEST(validator_test, regex_validator_success)
                        option_spec::DEFAULT, email_vector_validator);
 
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser7.parse(), parser_interruption);
+    EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std::string stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
                            "==========="
@@ -567,7 +567,7 @@ TEST(validator_test, chaining_validators)
                           regex_validator<std::string>{".*"});
 
         testing::internal::CaptureStdout();
-        EXPECT_THROW(parser.parse(), parser_interruption);
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         std::string stdout = testing::internal::GetCapturedStdout();
         std::string expected = std::string("test_parser"
                                "==========="

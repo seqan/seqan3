@@ -19,11 +19,6 @@ int main(int argc, char ** argv)
         std::cerr << "The-Age-App - [PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
     }
-    catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
-    {
-        seqan3::debug_stream << std::endl << "Thanks for using The-Age-App!" << std::endl; // customize
-        return 0;
-    }
 
     seqan3::debug_stream << "integer given by user: " << age << std::endl;
     return 0;

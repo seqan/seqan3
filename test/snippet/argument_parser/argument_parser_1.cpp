@@ -23,10 +23,6 @@ int main(int argc, char ** argv)
         std::cerr << "[PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
     }
-    catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
-    {
-        return 0;
-    }
 
     if (bonus)
         grades.push_back(1.0); // extra good grade
