@@ -13,7 +13,7 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -43,13 +43,13 @@ TEST(validator_test, fullfill_concept)
 
 TEST(validator_test, no_file)
 {
-    filesystem::path p{"./sandbox.fasta"};
+    std::filesystem::path p{"./sandbox.fasta"};
     std::string s{"./stonebox.fasta"};
     file_existance_validator my_validator{};
     EXPECT_THROW(my_validator(p), parser_invalid_argument);
     EXPECT_THROW(my_validator(s), parser_invalid_argument);
 
-    filesystem::path file_in_path;
+    std::filesystem::path file_in_path;
 
      // option
      const char * argv[] = {"./argument_parser_test", "-i", "./sandbox.fasta"};
@@ -67,7 +67,7 @@ TEST(validator_test, file_exists)
     file_existance_validator my_validator{};
     EXPECT_NO_THROW(my_validator(tmp_file_name.get_path()));
 
-    filesystem::path file_in_path;
+    std::filesystem::path file_in_path;
 
     // option
     const char * argv[] = {"./argument_parser_test", "-i", tmp_file_name.get_path().c_str()};

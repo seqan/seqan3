@@ -1,13 +1,13 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/io/stream/debug_stream.hpp>
 
 int main(int argc, const char ** argv)
 {
     seqan3::argument_parser myparser("Test", argc, argv); // initialize
 
-    seqan3::filesystem::path myfile;
+    std::filesystem::path myfile;
     seqan3::file_existance_validator my_validator{};
 
     myparser.add_option(myfile,'f',"file","Give me a filename.",

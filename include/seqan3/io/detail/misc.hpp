@@ -17,7 +17,7 @@
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/type_list.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/std/iterator>
 
 namespace seqan3::detail
@@ -50,7 +50,7 @@ constexpr void write_eol(it_t & it, bool const add_cr)
  */
 template <typename format_variant_type>
 void set_format(format_variant_type & format,
-                filesystem::path const & file_name)
+                std::filesystem::path const & file_name)
 {
     using valid_formats = detail::transfer_template_args_onto_t<format_variant_type, type_list>;
 
