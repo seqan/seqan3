@@ -23,6 +23,8 @@
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
+#include <seqan3/core/detail/reflection.hpp>
+#include <seqan3/std/filesystem>
 
 namespace seqan3::detail
 {
@@ -54,25 +56,27 @@ protected:
                                  float,
                                  bool,
                                  char,
-                                 std::string>;
-        std::vector<std::string> names{"INT (8 bit)",
-                                       "UNSIGNED (8 bit)",
-                                       "INT (16 bit)",
-                                       "UNSIGNED (16 bit)",
-                                       "INT (32 bit)",
-                                       "UNSIGNED (32 bit)",
-                                       "INT (64 bit)",
-                                       "UNSIGNED (64 bit)",
-                                       "DOUBLE",
-                                       "FLOAT",
-                                       "BOOL",
-                                       "CHAR",
-                                       "STRING"};
+                                 std::string,
+                                 std::filesystem::path>;
+        std::vector<std::string> names{"signed 8 bit integer",
+                                       "unsigned 8 bit integer",
+                                       "signed 16 bit integer",
+                                       "unsigned 16 bit integer",
+                                       "signed 32 bit integer",
+                                       "unsigned 32 bit integer",
+                                       "signed 64 bit integer",
+                                       "unsigned 64 bit integer",
+                                       "double",
+                                       "float",
+                                       "bool",
+                                       "char",
+                                       "std::string",
+                                       "std::filesystem::path"};
 
         if constexpr (meta::in<types, type>::value)
             return names[meta::find_index<types, type>::value];
         else
-            return "UNKNOWN_TYPE";
+            return detail::get_display_name_v<value_type>.string();
     }
 
     /*!\brief Returns the `value_type` of the input container as a string (reflection).
@@ -97,7 +101,7 @@ protected:
     template <typename option_value_type>
     static std::string option_type_and_list_info(option_value_type const & value)
     {
-        return ("\\fI" + get_type_name_as_string(value) + "\\fP");
+        return ("(\\fI" + get_type_name_as_string(value) + "\\fP)");
     }
 
     /*!\brief Formats the container and its value_type for the help page printing.
@@ -112,7 +116,7 @@ protected:
     //!\endcond
     static std::string option_type_and_list_info(container_type const & container)
     {
-        return ("List of \\fI" + get_type_name_as_string(container) + "\\fP's");
+        return ("(\\fIList\\fP of \\fI" + get_type_name_as_string(container) + "\\fP's)");
     }
 
     /*!\brief Formats the option/flag identifier pair for the help page printing.

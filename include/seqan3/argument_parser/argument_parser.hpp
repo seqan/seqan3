@@ -295,7 +295,7 @@ public:
      * ===========
      *
      * OPTIONS
-     *     -a, --user-age INT (32 bit)
+     *     -a, --user-age (signed 32 bit integer)
      *           Please specify your age.
      *
      * VERSION
@@ -316,7 +316,7 @@ public:
      * ```console
      * MaxMuster$ ./age_app -a abc
      * The Age App - [PARSER ERROR] Value cast failed for option -a: Argument abc
-     *                              could not be casted to type INT (32 bit).
+     *                              could not be casted to type (signed 32 bit integer).
      * ```
      */
     void parse()
@@ -414,11 +414,11 @@ public:
      *           Specify the names of the penguins.
      *
      * OPTIONS
-     *     -d, --day INT (32 bit)
+     *     -d, --day (signed 32 bit integer)
      *           Please specify your preferred day.
-     *     -m, --month INT (32 bit)
+     *     -m, --month (signed 32 bit integer)
      *           Please specify your preferred month.
-     *     -y, --year INT (32 bit)
+     *     -y, --year (signed 32 bit integer)
      *           Please specify your preferred year.
      *
      * EXAMPLES
