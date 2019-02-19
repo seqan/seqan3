@@ -773,6 +773,8 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
         tmp = strtold(start, &end);
     }
 
+    last = first + (end - start);
+
     if (errno == ERANGE)
     {
         return {last, std::errc::result_out_of_range};

@@ -410,23 +410,41 @@ TEST(parse_type_test, parse_success_bool_option)
     bool option_value;
     bool positional_value;
 
-    const char * argv[] = {"./argument_parser_test", "-b", "1", "0"};
-    argument_parser parser("test_parser", 4, argv);
-    parser.add_option(option_value, 'b', "bool-option", "this is a bool option.");
-    parser.add_positional_option(positional_value, "this is a bool positional.");
+    // numbers 0 and 1
+    {
+        const char * argv[] = {"./argument_parser_test", "-b", "1", "0"};
+        argument_parser parser("test_parser", 4, argv);
+        parser.add_option(option_value, 'b', "bool-option", "this is a bool option.");
+        parser.add_positional_option(positional_value, "this is a bool positional.");
 
-    testing::internal::CaptureStderr();
-    EXPECT_NO_THROW(parser.parse());
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
 
-    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value, true);
-    EXPECT_EQ(positional_value, false);
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, true);
+        EXPECT_EQ(positional_value, false);
+    }
+
+    // true and false
+    {
+        const char * argv[] = {"./argument_parser_test", "-b", "true", "false"};
+        argument_parser parser("test_parser", 4, argv);
+        parser.add_option(option_value, 'b', "bool-option", "this is a bool option.");
+        parser.add_positional_option(positional_value, "this is a bool positional.");
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, true);
+        EXPECT_EQ(positional_value, false);
+    }
 }
 
 TEST(parse_type_test, parse_success_int_option)
 {
     int option_value;
-    int positional_value;
+    size_t positional_value;
 
     const char * argv[] = {"./argument_parser_test", "-i", "-2", "278"};
     argument_parser parser("test_parser", 4, argv);
@@ -438,7 +456,7 @@ TEST(parse_type_test, parse_success_int_option)
 
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
     EXPECT_EQ(option_value, -2);
-    EXPECT_EQ(positional_value, 278);
+    EXPECT_EQ(positional_value, 278u);
 }
 
 TEST(parse_type_test, parse_success_double_option)
@@ -455,8 +473,8 @@ TEST(parse_type_test, parse_success_double_option)
     EXPECT_NO_THROW(parser.parse());
 
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value, 12.457);
-    EXPECT_EQ(positional_value, 0.123);
+    EXPECT_FLOAT_EQ(option_value, 12.457);
+    EXPECT_FLOAT_EQ(positional_value, 0.123);
 
     // double expression with e
     const char * argv2[] = {"./argument_parser_test", "-d", "6.0221418e23"};
@@ -467,8 +485,8 @@ TEST(parse_type_test, parse_success_double_option)
     EXPECT_NO_THROW(parser2.parse());
 
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value, 6.0221418e23);
-    EXPECT_EQ(positional_value, 0.123);
+    EXPECT_FLOAT_EQ(option_value, 6.0221418e23);
+    EXPECT_FLOAT_EQ(positional_value, 0.123);
 
 }
 
