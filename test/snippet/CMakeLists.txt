@@ -32,7 +32,7 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
 endmacro ()
 
 macro (seqan3_snippets test_name_prefix snippet_base_path)
-    seqan3_test_files (snippet_files "${snippet_base_path}")
+    seqan3_test_files (snippet_files "${snippet_base_path}" "*.cpp")
     foreach (snippet ${snippet_files})
         seqan3_snippet("${test_name_prefix}" "${snippet}" "${snippet_base_path}")
     endforeach ()
