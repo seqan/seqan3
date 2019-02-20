@@ -255,10 +255,11 @@ public:
      * \attention The function must be called at the very end of all parser
      * related code and should be enclosed in a try catch block.
      *
+     * \throws seqan3::parser_design_error if the this function was already called before.
+     *
      * \throws seqan3::option_declared_multiple_times if an option that is not a list was declared multiple times.
      * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
      *                                              converted into the expected type.
-     * \throws seqan3::parser_interruption on special user request (e.g. \--help or \--version).
      * \throws seqan3::parser_invalid_argument if the user provided wrong arguments.
      * \throws seqan3::required_option_missing if the user did not provide a required option.
      * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
@@ -272,33 +273,22 @@ public:
      * starts to process the command line for specified options, flags and
      * positional options.
      *
-     * The parser behaves differently when the given command line (`argv`)
-     * contains the following keywords (in order of checking) :
+     * If the given command line input (`argv`) contains the following keywords (in order of checking), the parser
+     * will exit (std::exit) with error code 0 after doing the following:
      *
-     * - **-h/\--help** Prints the help page and throws
-     *                 a seqan3::parser_interruption.
-     * - **-hh/\--advanced-help** Prints the help page including advanced options
-     *                           and throws a seqan3::parser_interruption.
-     * - <b>\--version</b> Prints the version information and throws
-     *                 a seqan3::parser_interruption.
-     * - <b>\--export-help [format]</b> Prints the application description in the
-     *                              given format (html/man/ctd) and throws a
-     *                              seqan3::parser_interruption.
+     * - **-h/\--help** Prints the help page.
+     * - **-hh/\--advanced-help** Prints the help page including advanced options.
+     * - <b>\--version</b> Prints the version information.
+     * - <b>\--export-help [format]</b> Prints the application description in the given format (html/man/ctd).
      *
-     * For example you can call your application binary like this:
-     * ```console
-     * MaxMuster$ ./my_app --export-help html > my_app.html
-     * ```
+     * Example:
      *
-     * Note: We throw a parser_interruption exception to ensure that the
-     * application/program is not executed when the user requests special
-     * behaviour.
-     * You should therefore enclose this function into a try catch block,
-     * customizing the behaviour of your application parser:
+     * \note Since the argument parser may throw, you should always wrap `parse()` into a try-catch block.
      *
      * \snippet test/snippet/argument_parser/argument_parser_2.cpp usage
      *
-     * For example a help call gives the following output:
+     * The code above gives the following output when calling `--help`:
+     *
      * ```console
      * MaxMuster$ ./age_app --help
      * The-Age-App
@@ -321,7 +311,9 @@ public:
      * ```console
      * MaxMuster$ ./age_app --foo
      * The Age App - [PARSER ERROR] Unknown option --foo. Please see -h/--help for more information.
-     * MaxMuster$
+     * ```
+     *
+     * ```console
      * MaxMuster$ ./age_app -a abc
      * The Age App - [PARSER ERROR] Value cast failed for option -a: Argument abc
      *                              could not be casted to type INT (32 bit).

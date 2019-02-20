@@ -28,7 +28,7 @@ TEST(html_test, html)
     const char * argv0[] = {"./help_add_test", "--export-help", "html"};
     argument_parser parser0("empty_options", 3, argv0);
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser0.parse(), parser_interruption);
+    EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" http://www.w3.org/TR/html4/strict.dtd\">"
                            "<html lang=\"en\">"
@@ -69,7 +69,7 @@ TEST(html_test, html)
    parser1.info.examples.push_back("example");
    parser1.info.examples.push_back("example2");
    testing::internal::CaptureStdout();
-   EXPECT_THROW(parser1.parse(), parser_interruption);
+   EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
    stdout = testing::internal::GetCapturedStdout();
    expected = std::string("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" http://www.w3.org/TR/html4/strict.dtd\">"
                           "<html lang=\"en\">"

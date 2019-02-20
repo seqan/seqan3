@@ -142,34 +142,4 @@ public:
     parser_design_error(std::string const & s) : std::logic_error(s) {}
 };
 
-/*!\brief This exception is not an error but expected behavior that shall
- * terminate the program (e.g. when printing the help page).
- *
- * \details
- *
- * Behavior that triggers a parser interruption:
- *
- * - <b>\--version</b> Prints the version information.
- * - <b>\--copyright</b> Prints the copyright information.
- * - **-h/\--help** Prints the help page (excluding advanced options).
- * - **-hh/\--advanced-help** Prints the help page including advanced options.
- * - <b>\--export-help [format]</b> Prints the help page information in the
- *                              given format (html/man/ctd).
- */
-class parser_interruption : public std::exception
-{
-public:
-    //!\brief Returns the error message.
-    char const * what()
-    {
-        return error.c_str();
-    }
-
-private:
-    //!\brief Message to the developer when exception is not caught.
-    std::string error{std::string("ATTENTION: The parser printed or exported the help page/interface information.") +
-                      "This behaviour is expected but the exception should be caught by the developer through " +
-                      "a try-catch block (see documentation) and the program correctly terminated."};
-};
-
 } // namespace seqan3

@@ -142,7 +142,7 @@ public:
 
         print_footer();
 
-        throw parser_interruption();
+        std::exit(EXIT_SUCCESS);
     }
 
     /*!\brief Adds a print_section call to parser_set_up_calls.

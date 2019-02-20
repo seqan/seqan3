@@ -23,10 +23,6 @@ int main(int argc, const char ** argv)
         std::cerr << "[PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
     }
-    catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
-    {
-        return 0;
-    }
 
     seqan3::debug_stream << "filename given by user passed validation: " << myfile.string() << "\n";
 
