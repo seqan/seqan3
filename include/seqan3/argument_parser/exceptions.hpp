@@ -149,11 +149,11 @@ public:
  *
  * Behavior that triggers a parser interruption:
  *
- * - **--version** Prints the version information.
- * - **--copyright** Prints the copyright information.
- * - **-h/--help** Prints the help page (excluding advanced options).
- * - **-hh/--advanced-help** Prints the help page including advanced options.
- * - **--export-help [format]** Prints the help page information in the
+ * - <b>\--version</b> Prints the version information.
+ * - <b>\--copyright</b> Prints the copyright information.
+ * - **-h/\--help** Prints the help page (excluding advanced options).
+ * - **-hh/\--advanced-help** Prints the help page including advanced options.
+ * - <b>\--export-help [format]</b> Prints the help page information in the
  *                              given format (html/man/ctd).
  */
 class parser_interruption : public std::exception

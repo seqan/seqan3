@@ -258,7 +258,7 @@ public:
      * \throws seqan3::option_declared_multiple_times if an option that is not a list was declared multiple times.
      * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
      *                                              converted into the expected type.
-     * \throws seqan3::parser_interruption on special user request (e.g. --help or --version).
+     * \throws seqan3::parser_interruption on special user request (e.g. \--help or \--version).
      * \throws seqan3::parser_invalid_argument if the user provided wrong arguments.
      * \throws seqan3::required_option_missing if the user did not provide a required option.
      * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
@@ -275,13 +275,13 @@ public:
      * The parser behaves differently when the given command line (`argv`)
      * contains the following keywords (in order of checking) :
      *
-     * - **-h/--help** Prints the help page and throws
+     * - **-h/\--help** Prints the help page and throws
      *                 a seqan3::parser_interruption.
-     * - **-hh/--advanced-help** Prints the help page including advanced options
+     * - **-hh/\--advanced-help** Prints the help page including advanced options
      *                           and throws a seqan3::parser_interruption.
-     * - **--version** Prints the version information and throws
+     * - <b>\--version</b> Prints the version information and throws
      *                 a seqan3::parser_interruption.
-     * - **--export-help [format]** Prints the application description in the
+     * - <b>\--export-help [format]</b> Prints the application description in the
      *                              given format (html/man/ctd) and throws a
      *                              seqan3::parser_interruption.
      *
@@ -468,16 +468,16 @@ private:
      *
      * - **no arguments** If no arguments are provided on the commandline, the
      *                    seqan3::detail::format_short_help is set.
-     * - **-h/--help** sets the format to seqan3::detail::format_help
-     * - **-hh/--advanced-help** sets the format to seqan3::detail::format_help
+     * - **-h/\--help** sets the format to seqan3::detail::format_help
+     * - **-hh/\--advanced-help** sets the format to seqan3::detail::format_help
      *                           and show_advanced_options to `true`.
-     * - **--version** sets the format to seqan3::detail::format_version.
-     * - **-export-help html** sets the format to seqan3::detail::format_html.
-     * - **-export-help man** sets the format to seqan3::detail::format_man.
-     * - **-export-help ctd** sets the format to seqan3::detail::format_ctd.
+     * - <b>\--version</b> sets the format to seqan3::detail::format_version.
+     * - <b>\--export-help html</b> sets the format to seqan3::detail::format_html.
+     * - <b>\--export-help man</b> sets the format to seqan3::detail::format_man.
+     * - <b>\--export-help ctd</b> sets the format to seqan3::detail::format_ctd.
      * - else the format is that to seqan3::detail::format_parse
      *
-     * If `-export-help` is specified with a value other than html/man or ctd
+     * If `--export-help` is specified with a value other than html/man or ctd
      * a parser_invalid_argument is thrown.
      */
     void init(int const argc, char const * const * const  argv)
