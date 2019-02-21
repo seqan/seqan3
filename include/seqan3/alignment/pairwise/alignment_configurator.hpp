@@ -113,9 +113,18 @@ private:
             }
             else
             {  // requested traceback
-                return deferred_crtp_base<unbanded_score_trace_dp_matrix_policy,
-                                          score_allocator_t,
-                                          trace_allocator_t>{};
+                if constexpr (config_t::template exists<align_cfg::band>())
+                {
+                    return deferred_crtp_base<banded_score_trace_dp_matrix_policy,
+                                              score_allocator_t,
+                                              trace_allocator_t>{};
+                }
+                else
+                {
+                    return deferred_crtp_base<unbanded_score_trace_dp_matrix_policy,
+                                              score_allocator_t,
+                                              trace_allocator_t>{};
+                }
             }
         }
 
@@ -328,10 +337,6 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     // ----------------------------------------------------------------------------
     // dynamic programming matrix
     // ----------------------------------------------------------------------------
-
-    if constexpr (!std::is_same_v<trace_type, ignore_t> &&
-                   config_t::template exists<align_cfg::band>())
-        throw invalid_alignment_configuration{"Computing traceback for banded alignments is yet not supported."};
 
     using dp_matrix_t = typename select_matrix_policy<config_t,
                                                       std::allocator<cell_type>,

@@ -12,11 +12,14 @@
 
 #pragma once
 
+#include <deque>
+
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/zip.hpp>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/pairwise/policy/banded_score_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_score_trace_dp_matrix_policy.hpp>
 #include <seqan3/std/span.hpp>
 
 namespace seqan3::detail
@@ -53,12 +56,14 @@ private:
     using base_t::current_matrix_iter;
     using base_t::band_column_index;
     using base_t::band_row_index;
+    using base_t::band_size;
 
     // Import member functions from base class
     using base_t::current_band_size;
     using base_t::second_range_begin_offset;
     using base_t::band_touches_last_row;
     using base_t::trim_sequences;
+    using base_t::map_banded_coordinate_to_range_position;
 
     /*!\name Member types
      * \{
@@ -96,11 +101,8 @@ private:
     {
         base_t::allocate_matrix(first_range, second_range, band);
 
-        // Allocate the k-banded score matrix for the trace matrix and set the matrix iterator to the first position
-        // within the matrix.
-        band_dimension = band_column_index + band_row_index + 1;
-        trace_matrix.resize(band_dimension * dimension_first_range);
-        trace_matrix_iter = seqan3::begin(trace_matrix) + band_column_index;
+        trace_matrix.resize(band_size * dimension_first_range);
+        trace_matrix_iter = std::ranges::begin(trace_matrix) + band_column_index;
     }
 
     //!\brief Returns the current column of the alignment matrix.
@@ -114,7 +116,7 @@ private:
         // The end coordinate ends at it - begin(matrix) + current_band_size
         advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
             col_begin{column_index_type{current_column_index},
-                      row_index_type{static_cast<size_t>(std::ranges::distance(seqan3::begin(score_matrix),
+                      row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
                                                                                current_matrix_iter))}};
         advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
@@ -131,14 +133,156 @@ private:
     constexpr void next_column() noexcept
     {
         base_t::next_column();
-        trace_matrix_iter += band_dimension - ((current_matrix_iter != seqan3::begin(score_matrix)) ? 1 : 0);
+        // Move trace back pointer to begin of next column
+        trace_matrix_iter = std::ranges::begin(trace_matrix) + band_size * current_column_index;
+        // As long as we shift the band towards the band_column_index, jump to the correct begin.
+        if (current_column_index < band_column_index)
+            trace_matrix_iter += band_column_index - current_column_index;
+    }
+
+    /*!\brief Parses the traceback starting from the given coordinate.
+     * \param end_coordinate The coordinate from where to start the traceback.
+     *
+     * \returns A tuple containing the begin coordinate and a tuple with all seqan3::detail::gap_segment s for the
+     *          first sequence and the second sequence.
+     */
+    constexpr auto parse_traceback(alignment_coordinate const & end_coordinate) const
+    {
+        // Store the trace segments.
+        std::deque<gap_segment> first_segments{};
+        std::deque<gap_segment> second_segments{};
+
+        // Put the iterator to the position where the traceback starts.
+        auto direction_iter = std::ranges::begin(trace_matrix);
+        std::advance(direction_iter, end_coordinate.first_seq_pos * band_size +
+                                     end_coordinate.second_seq_pos);
+
+        // Parse the trace until interrupt.
+        while (*direction_iter != trace_directions::none)
+        {
+            // parse until end of diagonal run
+            while (static_cast<bool>(*direction_iter & trace_directions::diagonal))
+            {
+                std::ranges::advance(direction_iter, -static_cast<int_fast32_t>(band_size));
+            }
+
+            size_t col_pos = std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) / band_size;
+            // parse vertical gap -> record gap in first_segments (will be translated into gap of first sequence)
+            if (static_cast<bool>(*direction_iter & trace_directions::up) ||
+                static_cast<bool>(*direction_iter & trace_directions::up_open))
+            {
+                // Get the current column index (note the column based layout)
+
+                gap_segment gap{col_pos, 0u};
+
+                // Follow gap until open signal is detected.
+                while (!static_cast<bool>(*direction_iter & trace_directions::up_open))
+                {
+                    --direction_iter;
+                    ++gap.size;
+                }
+                // explicitly follow opening gap
+                --direction_iter;
+                ++gap.size;
+                // record the gap
+                first_segments.push_front(std::move(gap));
+                continue;
+            }
+            // parse horizontal gap -> record gap in second_segments (will be translated into gap of second sequence)
+            if (static_cast<bool>(*direction_iter & trace_directions::left) ||
+                static_cast<bool>(*direction_iter & trace_directions::left_open))
+            {
+                // Get the current row index (note the column based layout)
+                size_t pos = std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) % band_size +
+                             static_cast<int_fast32_t>(col_pos - band_column_index);
+                gap_segment gap{pos, 0u};
+
+                // Follow gap until open signal is detected.
+                while (!static_cast<bool>(*direction_iter & trace_directions::left_open))
+                {
+                    std::ranges::advance(direction_iter, -static_cast<int_fast32_t>(band_size) + 1);
+                    ++gap.size;
+                }
+                // explicitly follow opening gap
+                std::ranges::advance(direction_iter, -static_cast<int_fast32_t>(band_size) + 1);
+                ++gap.size;
+                second_segments.push_front(std::move(gap));
+            }
+        }
+
+        // Get begin coordinate.
+        auto c = column_index_type{
+                static_cast<uint_fast32_t>(std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) /
+                                           band_size)};
+        auto r = row_index_type{
+                static_cast<uint_fast32_t>(std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) %
+                                        band_size)};
+
+        // Validate correct coordinates.
+        auto begin_coordinate = map_banded_coordinate_to_range_position(
+                alignment_coordinate{column_index_type{c}, row_index_type{r}});
+        assert(begin_coordinate.first_seq_pos >= 0u);
+        assert(begin_coordinate.first_seq_pos <= end_coordinate.first_seq_pos);
+
+        assert(begin_coordinate.second_seq_pos >= 0u);
+        assert(begin_coordinate.second_seq_pos <= map_banded_coordinate_to_range_position(end_coordinate).second_seq_pos);
+
+        return std::tuple{begin_coordinate, first_segments, second_segments};
+    }
+
+    //!\brief Helper function to print the trace matrix; for debugging only.
+    constexpr void print_trace_matrix() const
+    {
+        auto printable = [](trace_directions dir)
+        {
+            std::string seq{};
+            if (dir == trace_directions::none)
+                seq.append("0");
+            if ((dir & trace_directions::diagonal) == trace_directions::diagonal)
+                seq.append("\\");
+            if ((dir & trace_directions::up) == trace_directions::up)
+                seq.append("|");
+            if ((dir & trace_directions::up_open) == trace_directions::up_open)
+                seq.append("^");
+            if ((dir & trace_directions::left) == trace_directions::left)
+                seq.append("-");
+            if ((dir & trace_directions::left_open) == trace_directions::left_open)
+                seq.append("<");
+            return seq;
+        };
+
+        // First part: moving band right
+        for (size_t col = 0; col < band_column_index; ++col)
+        {
+            auto it = std::ranges::begin(trace_matrix) + (band_size * col) + (band_column_index - col);
+            for (size_t row = 0; row <= std::min(dimension_second_range - 1, band_row_index + col); ++row, ++it)
+            {
+                debug_stream << /*std::ranges::distance(std::ranges::begin(trace_matrix), it)*/printable(*it) << ',';
+            }
+            debug_stream << '\n';
+        }
+
+        // Second part: moving band down.
+        for (size_t col = band_column_index; col < dimension_first_range; ++col)
+        {
+            for (size_t padding = 0; padding < col - band_column_index; ++padding)
+                debug_stream << " ,";
+
+            auto it = std::ranges::begin(trace_matrix) + (band_size * col);
+            for (size_t row = 0; row < band_size; ++row, ++it)
+            {
+                // If the band moves out of the matrix do not try to print the characters.
+                if (col - band_column_index + row >= dimension_second_range)
+                    continue;
+                debug_stream << printable(*it) << ',';
+            }
+            debug_stream << '\n';
+        }
     }
 
     //!\brief The data container.
     trace_matrix_type trace_matrix{};
     //!\brief The current iterator in the trace matrix.
     typename std::ranges::iterator_t<trace_matrix_type> trace_matrix_iter{};
-    //!\brief The full dimension of the band.
-    uint_fast32_t band_dimension{};
 };
 } // namespace seqan3::detail

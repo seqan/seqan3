@@ -288,6 +288,30 @@ public:
         {
             res.score = get<3>(cache).score;
         }
+        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
+        { // At the moment we also compute the traceback even if only the begin coordinate was requested.
+          // This can be later optimised by computing the reverse alignment in linear memory from the maximum.
+          // Especially for the SIMD version this might be more efficient.
+            res.score = get<3>(cache).score;
+            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+            res.begin_coordinate =
+                get<0>(compute_traceback(first_range,
+                                         second_range,
+                                         get<3>(cache).coordinate));
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+            std::tie(res.begin_coordinate, res.alignment) = compute_traceback(first_range,
+                                                                              second_range,
+                                                                              get<3>(cache).coordinate);
+        }
         return align_result{res};
     }
 private:
@@ -466,7 +490,7 @@ private:
     template <typename first_range_t, typename second_range_t>
     auto compute_traceback(first_range_t const & first_range,
                            second_range_t const & second_range,
-                           alignment_coordinate const & end_coordinate)
+                           alignment_coordinate end_coordinate)
     {
         using first_seq_value_type = value_type_t<first_range_t>;
         using second_seq_value_type = value_type_t<second_range_t>;
@@ -488,6 +512,11 @@ private:
                 offset += gap_elem.size;
             }
         };
+
+        // In banded case we need to refine the end coordinate to map to the correct position within the
+        // second range.
+        if constexpr (is_banded)
+            end_coordinate = this->map_banded_coordinate_to_range_position(end_coordinate);
 
         // Get the subrange over the first sequence according to the begin and end coordinate.
         auto it_first_seq_begin = seqan3::begin(first_range);

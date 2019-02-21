@@ -108,8 +108,8 @@ TYPED_TEST_P(global_affine_unbanded, trace)
     EXPECT_EQ(res.get_score(), fixture.score);
     EXPECT_EQ(res.get_begin_coordinate(), fixture.begin_coordinate);
     EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
-    EXPECT_TRUE(ranges::equal(get<0>(res.get_alignment()) | view::to_char, fixture.gapped_sequence1));
-    EXPECT_TRUE(ranges::equal(get<1>(res.get_alignment()) | view::to_char, fixture.gapped_sequence2));
+    EXPECT_TRUE(ranges::equal(get<0>(res.get_alignment()) | view::to_char, fixture.aligned_sequence1));
+    EXPECT_TRUE(ranges::equal(get<1>(res.get_alignment()) | view::to_char, fixture.aligned_sequence2));
 }
 
 REGISTER_TYPED_TEST_CASE_P(global_affine_unbanded, score, end_position, begin_position, trace);

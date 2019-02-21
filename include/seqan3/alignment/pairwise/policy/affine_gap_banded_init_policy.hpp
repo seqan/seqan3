@@ -143,12 +143,12 @@ private:
         auto & trace_value = get<2>(current_cell);  // the trace value to store.
         auto & main_score = get<0>(current_entry);  // current_entry stores current score to be updated.
         auto & hz_trace = get<2>(current_entry); // store trace for the next horizontal computation.
-        auto const & hz_score = get<1>(next_entry);  // next_entry stores last horizontal value (shifted by one).
-        auto const & prev_hz_trace = get<1>(next_entry);  // next_entry stores last horizontal value (shifted by one).
+        auto const & prev_hz_score = get<1>(next_entry);  // get the previous horizontal score.
+        auto const & prev_hz_trace = get<2>(next_entry);  // get the previous horizontal trace.
         auto & vt_score = get<1>(get<0>(cache));
         auto & vt_trace = get<2>(get<0>(cache));
 
-        main_score = hz_score;
+        main_score = prev_hz_score;
         trace_value = prev_hz_trace;
         vt_score += main_score + get<1>(cache); // gap opening cost
         vt_trace = trace_directions::up_open;
@@ -161,7 +161,7 @@ private:
         }
         else
         {
-            get<1>(current_entry) = hz_score + get<2>(cache);
+            get<1>(current_entry) = prev_hz_score + get<2>(cache);
             hz_trace = trace_directions::left;
         }
     }

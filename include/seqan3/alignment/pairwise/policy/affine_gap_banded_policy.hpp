@@ -94,9 +94,9 @@ private:
         else  // Compute any traceback
         {
             main_score = (main_score < vt_score) ? (trace_value = vt_trace, vt_score)
-                                   : (trace_value = trace_directions::diagonal, main_score);
+                                                 : (trace_value = trace_directions::diagonal | vt_trace, main_score);
             main_score = (main_score < prev_hz_score) ? (trace_value = prev_hz_trace, prev_hz_score)
-                                   : main_score;
+                                                      : (trace_value |= prev_hz_trace, main_score);
         }
 
         // Check if this was the optimum. Possibly a noop.

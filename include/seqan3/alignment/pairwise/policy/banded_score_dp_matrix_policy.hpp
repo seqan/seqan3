@@ -94,9 +94,11 @@ public:
         band_row_index = std::abs(std::min(static_cast<int_fast32_t>(band.lower_bound),
                                            static_cast<int_fast32_t>(0)));
 
+        band_size = band_column_index + band_row_index + 1;
+
         // Reserve one more cell to deal with last cell in the banded column which needs only the diagonal and up cell.
         // TODO: introduce specific named cell types with initialisation values.
-        score_matrix.resize(band_column_index + band_row_index + 2);
+        score_matrix.resize(band_size + 1);
 
         using std::get;
         get<0>(score_matrix.back()) = INF;
@@ -222,6 +224,20 @@ public:
         return std::tuple{trim_first_range(), trim_second_range()};
     }
 
+    /*!\brief Refines the coordinate for the banded matrix to map the actual sequence position.
+     * \param coordinate The coordinate to refine.
+     */
+    constexpr auto map_banded_coordinate_to_range_position(alignment_coordinate coordinate) const noexcept
+    {
+        // Refine the row coordinate to match the original sequence coordinates since the first position of the
+        // trace matrix is shifted by the value of the band_column_index, i.e. the upper bound of the band.
+        //
+        // case 1: ends in column before the band_column_index: subtract the offset from the actual row coordinate.
+        // case 2: ends in column after the band_column_index: add the offset to the actual row coordinate.
+        coordinate.second_seq_pos += static_cast<int32_t>(coordinate.first_seq_pos - band_column_index);
+        return coordinate;
+    }
+
 private:
 
     using base_t::score_matrix;
@@ -235,6 +251,8 @@ private:
     uint_fast32_t band_column_index{};
     //!\brief The row index where the lower band of the band starts.
     uint_fast32_t band_row_index{};
+    //!\brief The full dimension of the band.
+    uint_fast32_t band_size{};
 };
 
 } // namespace seqan3::detail
