@@ -42,3 +42,21 @@ template <typename alphabet_t>
 using gapped = union_composition<gap, alphabet_t>;
 
 } // namespace seqan3
+
+namespace seqan3::detail
+{
+// ---------------------------------------------------------------------------------------------------------------------
+// is_gapped_alphabet constexpr variable
+// ---------------------------------------------------------------------------------------------------------------------
+
+//!\brief Helper variable to determine if an alphabet is gapped [default: false].
+//!\ingroup gap
+template <typename t>
+constexpr bool is_gapped_alphabet = false;
+
+//!\brief Helper variable to determine if an alphabet is gapped, true for specilisations of seqan3::gapped.
+//!\ingroup gap
+template <typename t>
+constexpr bool is_gapped_alphabet<gapped<t>> = true;
+
+} // namespace seqan3::detail
