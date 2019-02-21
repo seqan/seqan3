@@ -769,6 +769,15 @@ TEST(parse_test, multiple_empty_options)
     }
 
     {
+        const char * argv[]{"./empty_long", "-s=1", "--unknown"};
+        argument_parser parser("empty_long", 3, argv);
+        parser.add_option(option_value, 'i', "", "no long");
+        parser.add_option(option_value, 's', "", "no long");
+
+        EXPECT_THROW(parser.parse(), unknown_option);
+    }
+
+    {
         const char * argv[]{"./empty_short", "--long=2"};
         argument_parser parser("empty_short", 2, argv);
         parser.add_option(option_value, '\0', "longi", "no short");
