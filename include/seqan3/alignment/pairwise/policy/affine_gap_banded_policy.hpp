@@ -85,7 +85,8 @@ private:
         main_score = std::max(main_score, vt_score);
         main_score = std::max(main_score, prev_hz_score);
         // Check if this was the optimum. Possibly a noop.
-        static_cast<derived_type const &>(*this).check_score(main_score, opt);
+        static_cast<derived_type const &>(*this).check_score(
+            alignment_optimum{main_score, static_cast<alignment_coordinate>(get<1>(current_cell))}, opt);
 
         tmp = main_score + gap_open;
         vt_score = std::max(vt_score + gap_extend, tmp);
@@ -115,7 +116,8 @@ private:
         main_score += score;
         main_score = std::max(main_score, prev_hz_score);
         // Check if this was the optimum. Possibly a noop.
-        static_cast<derived_type const &>(*this).check_score(main_score, get<3>(cache));
+        static_cast<derived_type const &>(*this).check_score(
+                alignment_optimum{main_score, static_cast<alignment_coordinate>(get<1>(current_cell))}, get<3>(cache));
         // At the top of the band we can not come from up but only diagonal or left, so the next vertical must be a
         // gap open.
         vt_score = main_score + get<1>(cache);  // add gap open cost

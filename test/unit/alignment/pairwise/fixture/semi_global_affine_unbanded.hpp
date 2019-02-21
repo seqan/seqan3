@@ -32,6 +32,9 @@ inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned
 
 static auto dna4_01 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         "TTTTTACGTATGTCCCCC"_dna4,
@@ -40,8 +43,8 @@ static auto dna4_01 = []()
         10,
         "TTTTTACGT---ATGTCCCCC",
         "-----ACGTAAAACGT-----",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{13u, 11},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{13u}, row_index_type{11u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -75,6 +78,9 @@ static auto dna4_01 = []()
 
 static auto dna4_02 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         "ACGTAAAACGT"_dna4,
@@ -83,8 +89,8 @@ static auto dna4_02 = []()
         -13,
         "-----ACGTA--------AAACGT",
         "TTTTTACGTATGTCCCCC------",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{5u, 18},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{5u}, row_index_type{18u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -118,6 +124,9 @@ static auto dna4_02 = []()
 
 static auto dna4_03 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         "TTTTTACGTATGTCCCCC"_dna4,
@@ -126,8 +135,8 @@ static auto dna4_03 = []()
         -13,
         "-----ACGTA--------AAACGT",
         "TTTTTACGTATGTCCCCC------",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{5u, 18},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{5u}, row_index_type{18u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -161,6 +170,9 @@ static auto dna4_03 = []()
 
 static auto dna4_04 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+    
     return alignment_fixture
     {
         "ACGTAAAACGT"_dna4,
@@ -169,8 +181,8 @@ static auto dna4_04 = []()
         10,
         "TTTTTACGT---ATGTCCCCC",
         "-----ACGTAAAACGT-----",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{13u, 11},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{13u}, row_index_type{11u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T

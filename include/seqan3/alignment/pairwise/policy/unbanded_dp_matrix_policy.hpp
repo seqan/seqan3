@@ -15,10 +15,12 @@
 #include <vector>
 #include <tuple>
 
+#include <range/v3/view/iota.hpp>
 #include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/zip.hpp>
 
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/span.hpp>
@@ -82,7 +84,13 @@ private:
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column() noexcept
     {
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_begin{column_index_type{current_column_index}, row_index_type{0u}};
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
+
         return ranges::view::zip(std::span{score_matrix},
+                                 ranges::view::iota(col_begin, col_end),
                                  ranges::view::repeat_n(std::ignore, dimension_second_range) | view::common);
     }
 

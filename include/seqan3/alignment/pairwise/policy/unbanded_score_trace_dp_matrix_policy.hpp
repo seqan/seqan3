@@ -12,9 +12,10 @@
 
 #pragma once
 
+#include <range/v3/view/iota.hpp>
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
 #include <seqan3/std/span.hpp>
 
@@ -49,6 +50,8 @@ private:
     using base_t::dimension_second_range;
     //!\brief Make score_matrix visible in this class.
     using base_t::score_matrix;
+    //!\brief Make current_column_index visible in this class.
+    using base_t::current_column_index;
 
     /*!\name Member types
      * \{
@@ -84,9 +87,7 @@ private:
     template <typename first_range_t, typename second_range_t>
     constexpr void allocate_matrix(first_range_t && first_range, second_range_t && second_range)
     {
-        dimension_first_range = seqan3::size(std::forward<first_range_t>(first_range)) + 1;
-        dimension_second_range = seqan3::size(std::forward<second_range_t>(second_range)) + 1;
-
+        base_t::allocate_matrix(first_range, second_range);
         // We use only one column to compute the score.
         score_matrix.resize(dimension_second_range);
         // We use the full matrix to store the trace direction.
@@ -97,12 +98,20 @@ private:
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column()
     {
-        return ranges::view::zip(std::span{score_matrix}, std::span{&(*trace_matrix_iter), dimension_second_range});
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_begin{column_index_type{current_column_index}, row_index_type{0u}};
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
+
+        return ranges::view::zip(std::span{score_matrix},
+                                 ranges::view::iota(col_begin, col_end),
+                                 std::span{&(*trace_matrix_iter), dimension_second_range});
     }
 
     //!\brief Moves internal matrix pointer to the next column.
     constexpr void next_column() noexcept
     {
+        base_t::next_column();
         trace_matrix_iter += dimension_second_range;
     }
 

@@ -132,7 +132,7 @@ private:
     }
 
     /*!\brief Balances the total score based on the band parameters and the alignment configuration.
-     * \tparam        score_type       The type of the score to update.
+     * \tparam        optimum_type     The type of the optimum to update.
      * \tparam        band_type        The type of the band.
      * \tparam        gap_scheme_type  The type of the gap_scheme.
      * \param[in,out] total  The total score to update.
@@ -144,20 +144,20 @@ private:
      * Depending on the band position and the alignment configuration updates the total score
      * of the alignment. It adds the score for initialising the matrix with a gap until the begin of the band.
      */
-    template <typename score_type, typename band_type, typename gap_scheme_type>
-    constexpr void balance_leading_gaps(score_type & total,
+    template <typename optimum_type, typename band_type, typename gap_scheme_type>
+    constexpr void balance_leading_gaps(optimum_type & total,
                                         band_type const & band,
                                         gap_scheme_type const & scheme) const noexcept
     {
         if constexpr (!traits_type::free_second_leading_t::value)
         {  // Band starts inside of second sequence.
             if (0 > band.upper_bound)
-                total += scheme.score(std::abs(band.upper_bound));
+                total.score += scheme.score(std::abs(band.upper_bound));
         }
         if constexpr (!traits_type::free_first_leading_t::value)
         { // Band starts inside of first sequence.
             if (band.lower_bound > 0)
-                total += scheme.score(band.lower_bound);
+                total.score += scheme.score(band.lower_bound);
         }
     }
 };

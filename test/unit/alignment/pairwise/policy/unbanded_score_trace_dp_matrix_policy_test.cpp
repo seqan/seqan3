@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_trace_dp_matrix_policy.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
@@ -27,12 +28,14 @@ public:
 
     using base_t::base_t;
 
+    // Make member functions available for testing
     using base_t::allocate_matrix;
     using base_t::current_column;
     using base_t::next_column;
 
     using base_t::dimension_first_range;
     using base_t::dimension_second_range;
+    using base_t::current_column_index;
     using base_t::score_matrix;
     using base_t::trace_matrix;
 };
@@ -94,7 +97,9 @@ TYPED_TEST(unbanded_score_trace_test, current_column)
     EXPECT_EQ(seqan3::size(zip_view), seq2.size() + 1);
 
     using value_t = seqan3::value_type_t<decltype(zip_view)>;
-    EXPECT_EQ(std::tuple_size_v<value_t>, 2u);
+    EXPECT_EQ(std::tuple_size_v<value_t>, 3u);
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(zip_view)>);
+    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(zip_view)>);
 }
 
 TYPED_TEST(unbanded_score_trace_test, next_column)
@@ -111,25 +116,33 @@ TYPED_TEST(unbanded_score_trace_test, next_column)
     for (auto && entry : zip_view)
     {
         std::get<0>(entry) = std::tuple{10, -10};
-        std::get<1>(entry) = seqan3::detail::trace_directions::diagonal;
+        std::get<2>(entry) = seqan3::detail::trace_directions::diagonal;
     }
 
     // Get the same active column again
     auto zip_view_2 = mock.current_column();
+    size_t row_index = 0u;
     for (auto const entry : zip_view_2)
     {
         EXPECT_TRUE((std::get<0>(entry) == std::tuple{10, -10}));
-        EXPECT_TRUE((std::get<1>(entry) == seqan3::detail::trace_directions::diagonal));
+        EXPECT_EQ(std::get<1>(entry).first_seq_pos,  0u);
+        EXPECT_EQ(std::get<1>(entry).second_seq_pos,  row_index++);
+        EXPECT_TRUE((std::get<2>(entry) == seqan3::detail::trace_directions::diagonal));
     }
+
+    EXPECT_EQ(mock.current_column_index, 0u);
 
     // Go to next active column and check if active column has moved.
     mock.next_column();
     auto zip_view_3 = mock.current_column();
 
+    row_index = 0;
     for (auto const entry : zip_view_3)
     {
         EXPECT_TRUE((std::get<0>(entry) == std::tuple{10, -10}));
-        EXPECT_TRUE((std::get<1>(entry) == seqan3::detail::trace_directions::none));
+        EXPECT_EQ(std::get<1>(entry).first_seq_pos,  1u);
+        EXPECT_EQ(std::get<1>(entry).second_seq_pos,  row_index++);
+        EXPECT_TRUE((std::get<2>(entry) == seqan3::detail::trace_directions::none));
     }
 
     EXPECT_EQ(seqan3::size(zip_view_3), seq2.size() + 1);

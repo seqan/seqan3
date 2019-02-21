@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/band/static_band.hpp>
+#include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_banded_init_policy.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 
@@ -89,21 +90,22 @@ TEST(affine_gap_banded_init_policy, balance_leading_gaps)
     static_band band{lower_bound{-3}, upper_bound{3}};
     gap_scheme scheme{gap_score{-1}, gap_open_score{-10}};
     affine_gap_banded_init_policy_mock mock{};
-    //
-    int total = 0;
+
+    detail::alignment_optimum<int> total;
+    total.score = 0;
 
     mock.balance_leading_gaps(total, band, scheme);
-    EXPECT_EQ(total, 0);
+    EXPECT_EQ(total.score, 0);
 
     band.lower_bound = -4;
     band.upper_bound = -3;
 
     mock.balance_leading_gaps(total, band, scheme);
-    EXPECT_EQ(total, -13);
+    EXPECT_EQ(total.score, -13);
 
     band.lower_bound = 4;
     band.upper_bound = 10;
 
     mock.balance_leading_gaps(total, band, scheme);
-    EXPECT_EQ(total, -27);
+    EXPECT_EQ(total.score, -27);
 }

@@ -150,7 +150,7 @@ public:
         // Choose what needs to be computed.
         if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
         {
-            res.score = get<3>(cache);
+            res.score = get<3>(cache).score;
         }
         return align_result{res};
     }
@@ -262,7 +262,7 @@ public:
 
         if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
         {
-            res.score = get<3>(cache);
+            res.score = get<3>(cache).score;
         }
         return align_result{res};
     }
@@ -276,7 +276,6 @@ private:
     void initialise_matrix(cache_t & cache)
     {
         auto col = this->current_column();
-        auto score_col = col | view_get_score_column;
 
         this->init_origin_cell(*seqan3::begin(col), cache);
 
@@ -285,10 +284,18 @@ private:
             this->init_column_cell(std::forward<decltype(cell)>(cell), cache);
         });
 
+        auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+        std::ignore = trace;
         if constexpr (is_banded)
-            this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(score_col)))), get<3>(cache));
+        {
+            alignment_optimum current{get<0>(get<0>(std::move(cell))), static_cast<alignment_coordinate>(coordinate)};
+            this->check_score_last_row(current, get<3>(cache));
+        }
         else
-            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(score_col))), get<3>(cache));
+        {
+            alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
+            this->check_score_last_row(current, get<3>(cache));
+        }
     }
 
     /*!\brief Compute the alignment by iterating over the dynamic programming matrix in a column wise manner.
@@ -311,7 +318,6 @@ private:
         ranges::for_each(first_range, [&, this](auto seq1_value)
         {
             auto col = this->current_column();
-            auto score_col = col | view_get_score_column;
             this->init_row_cell(*seqan3::begin(col), cache);
 
             auto second_range_it = std::ranges::begin(second_range);
@@ -320,9 +326,21 @@ private:
                 this->compute_cell(cell, cache, score_scheme.score(seq1_value, *second_range_it));
                 ++second_range_it;
             });
-            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(score_col))), get<3>(cache));
+
+            // Prepare last cell for tracking the optimum.
+            auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+            std::ignore = trace;
+            alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
+            this->check_score_last_row(current, get<3>(cache));
         });
-        this->check_score_last_column(this->current_column() | view_get_score_column, get<3>(cache));
+
+        // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
+        auto last_column_view = this->current_column() | ranges::view::transform([](auto && entry) {
+            using std::get;
+            return std::tuple{get<0>(std::forward<decltype(entry)>(entry)),
+                              get<1>(std::forward<decltype(entry)>(entry))};
+        });
+        this->check_score_last_column(last_column_view, get<3>(cache));
     }
 
     /*!\brief Compute the alignment by iterating over the banded dynamic programming matrix in a column wise manner.
@@ -349,8 +367,6 @@ private:
         {
             this->next_column(); // Move to the next column.
             auto col = this->current_column();
-            auto score_col = col | view_get_score_column;
-
             this->init_row_cell(*seqan3::begin(col), cache); // initialise first row of dp matrix.
 
             auto second_range_it = seqan3::begin(second_range);
@@ -363,7 +379,13 @@ private:
             });
 
             if (this->band_touches_last_row())  // TODO [[unlikely]]
-                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(score_col)))), get<3>(cache));
+            {
+                auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+                std::ignore = trace;
+                alignment_optimum current{get<0>(get<0>(std::move(cell))),
+                                          static_cast<alignment_coordinate>(coordinate)};
+                this->check_score_last_row(current, get<3>(cache));
+            }
         });
 
         // ----------------------------------------------------------------------------
@@ -376,7 +398,6 @@ private:
         {
             this->next_column(); // Move to the next column.
             auto col = this->current_column();
-            auto score_col = col | view_get_score_column;
 
             // Move the second_range_it to the correct position depending on the current band position.
             auto second_range_it = std::ranges::begin(second_range);
@@ -398,16 +419,26 @@ private:
             });
 
             if (this->band_touches_last_row()) // TODO [[unlikely]]
-                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(score_col)))), get<3>(cache));
+            {
+                auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+                std::ignore = trace;
+                alignment_optimum current{get<0>(get<0>(std::move(cell))),
+                                          static_cast<alignment_coordinate>(coordinate)};
+                this->check_score_last_row(current, get<3>(cache));
+            }
         });
-        // We need to call view_get_score_column twice. The first time we access the score column which is a
-        // zipped range in the banded case and the second time to call the actual score column.
-        this->check_score_last_column(this->current_column() | view_get_score_column | view_get_score_column,
-                                      get<3>(cache));
+        // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
+        auto last_column_view = this->current_column() | ranges::view::transform([](auto && entry) {
+            using std::get;
+            return std::tuple{get<0>(get<0>(std::forward<decltype(entry)>(entry))),
+                              get<1>(std::forward<decltype(entry)>(entry))};
+        });
+        this->check_score_last_column(last_column_view, get<3>(cache));
     }
 
     //!\brief The alignment configuration stored on the heap.
     std::shared_ptr<config_t> cfg_ptr{};
+
 };
 
 } // namespace seqan3::detail

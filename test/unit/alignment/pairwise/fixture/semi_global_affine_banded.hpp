@@ -42,8 +42,8 @@ static auto dna4_01 = []()
         10,
         "TTTTTACGT---ATGTCCCCC",
         "-----ACGTAAAACGT-----",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{13u, 11},
+        alignment_coordinate{detail::column_index_type{0u}, detail::row_index_type{0u}},
+        alignment_coordinate{detail::column_index_type{13u}, detail::row_index_type{11u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -85,8 +85,8 @@ static auto dna4_02 = []()
         -13,
         "-----ACGTA--------AAACGT",
         "TTTTTACGTATGTCCCCC------",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{5u, 18},
+        alignment_coordinate{detail::column_index_type{0u}, detail::row_index_type{0u}},
+        alignment_coordinate{detail::column_index_type{5u}, detail::row_index_type{18u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -128,8 +128,8 @@ static auto dna4_03 = []()
         -13,
         "-----ACGTA--------AAACGT",
         "TTTTTACGTATGTCCCCC------",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{5u, 18},
+        alignment_coordinate{detail::column_index_type{0u}, detail::row_index_type{0u}},
+        alignment_coordinate{detail::column_index_type{5u}, detail::row_index_type{18u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -171,8 +171,8 @@ static auto dna4_04 = []()
         10,
         "TTTTTACGT---ATGTCCCCC",
         "-----ACGTAAAACGT-----",
-        alignment_coordinate{0u, 0},
-        alignment_coordinate{13u, 11},
+        alignment_coordinate{detail::column_index_type{0u}, detail::row_index_type{0u}},
+        alignment_coordinate{detail::column_index_type{13u}, detail::row_index_type{11u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T

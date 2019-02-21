@@ -15,10 +15,12 @@
 #include <limits>
 #include <memory>
 
+#include <range/v3/view/iota.hpp>
 #include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/slice.hpp>
 #include <range/v3/view/zip.hpp>
 
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
@@ -103,10 +105,21 @@ public:
     constexpr auto current_column() noexcept
     {
         auto span = current_band_size();
+
+        assert(span > 0u);  // The span must always be greater than 0.
+
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_begin{column_index_type{current_column_index},
+                      row_index_type{static_cast<size_t>(std::ranges::distance(seqan3::begin(score_matrix),
+                                                                               current_matrix_iter))}};
+        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
+
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
         auto zip_score = ranges::view::zip(std::span{std::addressof(*current_matrix_iter), span},
                                            std::span{std::addressof(*(current_matrix_iter + 1)), span});
         return ranges::view::zip(std::move(zip_score),
+                                 ranges::view::iota(col_begin, col_end),
                                  ranges::view::repeat_n(std::ignore, span) | view::common);
     }
 

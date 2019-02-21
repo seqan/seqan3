@@ -27,6 +27,7 @@ public:
 
     using base_t::base_t;
 
+    // Expose member function for testing
     using base_t::allocate_matrix;
     using base_t::current_column;
     using base_t::next_column;
@@ -34,6 +35,7 @@ public:
     using base_t::dimension_first_range;
     using base_t::dimension_second_range;
     using base_t::score_matrix;
+    using base_t::current_column_index;
 
 };
 
@@ -90,7 +92,7 @@ TYPED_TEST(unbanded_score_matrix_test, current_column)
 
     EXPECT_EQ(seqan3::size(zip_view), seq2.size() + 1);
     EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(std::get<0>(zip_view[0]))>, TypeParam>));
-    EXPECT_TRUE(seqan3::detail::decays_to_ignore_v<std::remove_reference_t<decltype(std::get<1>(zip_view[0]))>>);
+    EXPECT_TRUE(seqan3::detail::decays_to_ignore_v<std::remove_reference_t<decltype(std::get<2>(zip_view[0]))>>);
 }
 
 TYPED_TEST(unbanded_score_matrix_test, next_column)
@@ -107,20 +109,22 @@ TYPED_TEST(unbanded_score_matrix_test, next_column)
     for (auto && entry : zip_view)
     {
         std::get<0>(entry) = std::tuple{10, -10};
-        std::get<1>(entry) = 1;
+        std::get<2>(entry) = 1;
     }
 
+    EXPECT_EQ(mock.current_column_index, 0u);
     // Go to next active column and check if active column has moved.
     mock.next_column();
     auto zip_view_2 = mock.current_column();
+    size_t row_index = 0;
     for (auto const entry : zip_view_2)
     {
         EXPECT_TRUE((std::get<0>(entry) == std::tuple{10, -10}));
-        EXPECT_TRUE(seqan3::detail::decays_to_ignore_v<std::remove_reference_t<decltype(std::get<1>(entry))>>);
+        EXPECT_EQ(std::get<1>(entry).first_seq_pos, 1u);
+        EXPECT_EQ(std::get<1>(entry).second_seq_pos, row_index++);
+        EXPECT_TRUE(seqan3::detail::decays_to_ignore_v<std::remove_reference_t<decltype(std::get<2>(entry))>>);
     }
 }
-
-#include <seqan3/io/stream/debug_stream.hpp>
 
 TYPED_TEST(unbanded_score_matrix_test, test_concepts)
 {
@@ -129,22 +133,12 @@ TYPED_TEST(unbanded_score_matrix_test, test_concepts)
     // Get the active column
     auto zip_view = mock.current_column();
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(zip_view)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(zip_view)>);
     EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(zip_view)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(zip_view)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(zip_view)>);
 
     auto it = seqan3::begin(zip_view);
-
-    EXPECT_TRUE(std::InputIterator<decltype(it)>);
-    EXPECT_TRUE(std::ForwardIterator<decltype(it)>);
     EXPECT_TRUE(std::BidirectionalIterator<decltype(it)>);
-    EXPECT_TRUE(std::RandomAccessIterator<decltype(it)>);
 
     auto it_e = seqan3::end(zip_view);
-    EXPECT_TRUE(std::InputIterator<decltype(it_e)>);
-    EXPECT_TRUE(std::ForwardIterator<decltype(it_e)>);
     EXPECT_TRUE(std::BidirectionalIterator<decltype(it_e)>);
-    EXPECT_TRUE(std::RandomAccessIterator<decltype(it_e)>);
 }

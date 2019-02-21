@@ -28,6 +28,9 @@ inline constexpr auto align_config = align_cfg::mode{align_cfg::global_alignment
 
 static auto dna4_01 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -41,8 +44,8 @@ static auto dna4_01 = []()
         -18,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{15, 8},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{15u}, row_index_type{8u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -76,6 +79,9 @@ static auto dna4_01 = []()
 
 static auto dna4_02 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         "ACGTACGTA"_dna4,
@@ -84,8 +90,8 @@ static auto dna4_02 = []()
         -18,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{8, 15},
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{8u}, row_index_type{15u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T

@@ -49,8 +49,8 @@ static auto dna4_01 = []()
         -18,
         "A---ACCGGTTAACCGGTT",
         "ACGTAC----------GTA",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{15, 8},
+        alignment_coordinate{detail::column_index_type{0u}, detail::row_index_type{0u}},
+        alignment_coordinate{detail::column_index_type{15u}, detail::row_index_type{8u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T

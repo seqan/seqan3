@@ -15,7 +15,7 @@
 #include <limits>
 #include <tuple>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/alignment/matrix/alignment_optimum.hpp>
 
 namespace seqan3::detail
 {
@@ -56,24 +56,27 @@ private:
     ~affine_gap_policy() noexcept = default;
     //!\}
 
-    /*!\brief Computes the score for current cell.
-     * \tparam        score_cell_type The type of the current cell.
-     * \tparam        cache_t         The type of the cache.
-     * \param[in,out] current_cell    The current cell in the dynamic programming matrix.
-     * \param[in,out] cache           The cache storing hot helper variables.
-     * \param[in]     score           The score of comparing the respective letters of the first and the second sequence.
+    /*!\brief Computes the score of the current cell.
+     * \tparam  matrix_entry_type The type of the current cell.
+     * \tparam  cache_type        The type of the cache.
+     * \param[in,out] current_cell The current cell in the dynamic programming matrix.
+     * \param[in,out] cache        The cache storing hot helper variables.
+     * \param[in]     score        The score of comparing the respective letters of the first and the second sequence.
      */
-    template <typename score_cell_type, typename cache_t>
-    constexpr void compute_cell(score_cell_type && current_cell,
+    template <typename matrix_entry_type, typename cache_t>
+    constexpr void compute_cell(matrix_entry_type && current_cell,
                                 cache_t & cache,
                                 score_t const score) const noexcept
     {
         using std::get;
 
         // Unpack the cached variables.
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        auto & [score_entry, coordinate, trace_entry] = current_cell;
+        auto & [main_score, hz_score] = score_entry;
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & [prev_score, vt_score] = prev_cell;
+
+        std::ignore = trace_entry;
 
         //TODO For the local alignment we might be able to use GCC overlow builtin arithmetics, which
         // allows us to check if overflow/underflow would happen. Not sure, if this helps with the performance though.
@@ -84,7 +87,8 @@ private:
         prev_score = main_score;
         main_score = tmp;
         // Check if this was the optimum. Possibly a noop.
-        static_cast<derived_t const &>(*this).check_score(tmp, opt);
+        static_cast<derived_t const &>(*this).check_score(
+                alignment_optimum{tmp, static_cast<alignment_coordinate>(coordinate)}, opt);
         tmp += gap_open;
         vt_score += gap_extend;
         hz_score += gap_extend;
@@ -100,10 +104,12 @@ private:
     template <typename gap_scheme_t>
     constexpr auto make_cache(gap_scheme_t && scheme) const noexcept
     {
+        alignment_optimum opt{std::numeric_limits<score_t>::lowest(),
+                              alignment_coordinate{column_index_type{0u}, row_index_type{0u}}};
         return std::tuple{cell_t{},
                           static_cast<score_t>(scheme.get_gap_open_score() + scheme.get_gap_score()),
                           static_cast<score_t>(scheme.get_gap_score()),
-                          score_t{std::numeric_limits<score_t>::lowest()}};
+                          std::move(opt)};
     }
 };
 
