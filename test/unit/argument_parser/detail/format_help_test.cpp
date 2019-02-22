@@ -16,49 +16,58 @@
 
 using namespace seqan3;
 
-TEST(help_add_test, add_option)
-{
-    std::string stdout;
-    std::string expected;
-    int option_value;
-    bool flag_value;
-    std::vector<std::string> pos_opt_value;
+// reused global variables
+std::string std_cout;
+std::string expected;
+int option_value;
+bool flag_value;
+std::vector<std::string> pos_opt_value;
+const char * argv0[] = {"./help_add_test"};
+const char * argv1[] = {"./help_add_test", "-h"};
+const char * argv2[] = {"./help_add_test", "-hh"};
+const char * argv3[] = {"./help_add_test", "--version"};
 
+TEST(help_page_printing, short_help)
+{
     // Empty call with no options given. For detail::format_short_help
-    const char * argv0[] = {"./help_add_test"};
     argument_parser parser0("empty_options", 1, argv0);
     parser0.info.synopsis.push_back("synopsis");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("empty_options"
                            "============="
                            "empty_options synopsis"
                            "Try -h or --help for more information.");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, no_information)
+{
     // Empty help call with -h
-    const char * argv1[] = {"./help_add_test", "-h"};
     argument_parser parser1("test_parser", 2, argv1);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                                        "==========="
                                        "VERSION"
                                        "Last update:"
                                        "test_parser version:"
                                        "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, with_short_copyright)
+{
     // Again, but with short copyright, long copyright, and citation.
     argument_parser short_copy("test_parser", 2, argv1);
     short_copy.info.short_copyright = "short";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(short_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                            "==========="
                            "VERSION"
@@ -68,14 +77,17 @@ TEST(help_add_test, add_option)
                            "LEGAL"
                            "test_parser Copyright: short"
                            "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, with_long_copyright)
+{
     argument_parser long_copy("test_parser", 2, argv1);
     long_copy.info.long_copyright = "long";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(long_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                            "==========="
                            "VERSION"
@@ -85,14 +97,17 @@ TEST(help_add_test, add_option)
                            "LEGAL"
                            "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                            "For full copyright and/or warranty information see --copyright.");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, with_citation)
+{
     argument_parser citation("test_parser", 2, argv1);
     citation.info.citation = "citation";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(citation.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser"
                            "==========="
                            "VERSION"
@@ -102,7 +117,7 @@ TEST(help_add_test, add_option)
                            "LEGAL"
                            "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                            "In your academic works please cite: citation");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
 
     // Tests the --copyright call. TODO: should be uncommented/fixed after --copyright is actually implemented.
@@ -111,41 +126,48 @@ TEST(help_add_test, add_option)
     // copyright.info.long_copyright = "long copyright";
     // testing::internal::CaptureStdout();
     // EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    // stdout = testing::internal::GetCapturedStdout();
+    // std_cout = testing::internal::GetCapturedStdout();
     // expected = "whatever is expected";
-    // EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    // EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                // expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, empty_advanced_help)
+{
     // Empty help call with -hh
-    const char * argv2[] = {"./help_add_test", "-hh"};
     argument_parser parser2("test_parser_2", 2, argv2);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser2.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("test_parser_2"
                            "============="
                            "VERSION"
                            "Last update:"
                            "test_parser_2 version:"
                            "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, empty_version_call)
+{
     // Empty version call
-    const char * argv3[] = {"./help_add_test", "--version"};
     argument_parser parser3("version", 2, argv3);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser3.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("version"
                            "======="
                            "VERSION"
                            "Last update:"
                            "version version:"
                            "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, version_call)
+{
     // Version call with url and options.
     argument_parser parser4("versionURL", 2, argv3);
     parser4.info.url = "www.seqan.de";
@@ -154,7 +176,7 @@ TEST(help_add_test, add_option)
     parser4.add_positional_option(pos_opt_value, "this is a positional option.");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser4.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("versionURL"
                            "=========="
                            "VERSION"
@@ -163,16 +185,19 @@ TEST(help_add_test, add_option)
                            "SeqAn version: 3.0.0"
                            "URL"
                            "www.seqan.de");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, do_not_print_hidden_options)
+{
     // Add an option and request help.
     argument_parser parser5("hidden", 2, argv1);
     parser5.add_option(option_value, 'i', "int", "this is a int option.", option_spec::HIDDEN);
     parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", option_spec::HIDDEN);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser5.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("hidden"
                            "======"
                            "OPTIONS"
@@ -180,9 +205,12 @@ TEST(help_add_test, add_option)
                            "Last update:"
                            "hidden version:"
                            "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
+}
 
+TEST(help_page_printing, full_information)
+{
     // Add synopsis, description, short description, positional option, option, flag, and example.
     argument_parser parser6("full", 2, argv1);
     parser6.info.synopsis.push_back("synopsis");
@@ -197,7 +225,7 @@ TEST(help_add_test, add_option)
     parser6.info.examples.push_back("example2");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    std_cout = testing::internal::GetCapturedStdout();
     expected = std::string("full - so short"
                            "==============="
                            "SYNOPSIS"
@@ -207,10 +235,10 @@ TEST(help_add_test, add_option)
                            "description"
                            "description2"
                            "POSITIONAL ARGUMENTS"
-                           "ARGUMENT-1 List of STRING's"
+                           "ARGUMENT-1 (List of std::string's)"
                            "this is a positional option."
                            "OPTIONS"
-                           "-i, --int INT (32 bit)"
+                           "-i, --int (signed 32 bit integer)"
                            "this is a int option."
                            "-f, --flag"
                            "this is a flag."
@@ -221,7 +249,7 @@ TEST(help_add_test, add_option)
                            "Last update:"
                            "full version:"
                            "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
 
    // EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
