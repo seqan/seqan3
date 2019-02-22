@@ -38,6 +38,7 @@
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/range/view/get.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -848,10 +849,10 @@ protected:
             {
                 f.write(*secondary_stream,
                         options,
-                        structured_seq | view::convert<typename structured_seq_type::sequence_alphabet_type>,
+                        structured_seq | view::get<0>,
                         id,
                         bpp,
-                        structured_seq | view::convert<typename structured_seq_type::structure_alphabet_type>,
+                        structured_seq | view::get<1>,
                         energy,
                         react,
                         react_error,
@@ -924,12 +925,10 @@ protected:
                 {
                     f.write(*secondary_stream,
                             options,
-                            std::get<0>(v) | view::convert
-                                             <typename reference_t<structured_seq_type>::sequence_alphabet_type>,
+                            std::get<0>(v) | view::get<0>, // seq
                             std::get<1>(v),  // id
                             std::get<2>(v),  // bpp
-                            std::get<0>(v) | view::convert
-                                             <typename reference_t<structured_seq_type>::structure_alphabet_type>,
+                            std::get<0>(v) | view::get<1>, // structure
                             std::get<3>(v),  // energy
                             std::get<4>(v),  // react
                             std::get<5>(v),  // react_error
