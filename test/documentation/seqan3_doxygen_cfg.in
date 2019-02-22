@@ -43,6 +43,7 @@ TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=http://en.cppreference.
 
 EXCLUDE_SYMBOLS        = seqan3::contrib
 
+FORMULA_FONTSIZE       = 14
 
 ## detect headers without extensions (in std module)
 EXTENSION_MAPPING      = .no_extension=C++
