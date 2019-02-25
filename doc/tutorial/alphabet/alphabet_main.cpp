@@ -59,6 +59,13 @@ int main ()
 //! [gapped]
     assert(size3 == 6u);
 
+    // Prevent -Wunused-variable warnings.
+    (void)rank_a;
+    (void)rank_g;
+    (void)size1;
+    (void)size2;
+    (void)size3;
+
 //! [closing]
     return 0;
 }
