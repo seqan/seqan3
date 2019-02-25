@@ -466,6 +466,41 @@ public:
         return {};
     }
 
+    /*!\brief           Write a seqan3::record to the file.
+     * \tparam record_t Type of the record, a specialisation of seqan3::record.
+     * \param[in] r     The record to write.
+     *
+     * \details
+     *
+     * ### Complexity
+     *
+     * Constant. TODO linear in the size of the written sequences?
+     *
+     * ### Exceptions
+     *
+     * Basic exception safety.
+     *
+     * ### Example
+     *
+     * \snippet test/snippet/io/structure_file/structure_file_output.cpp pass_rec
+     */
+    template <typename record_t>
+    void push_back(record_t && r)
+        requires tuple_like_concept<record_t> &&
+                 requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
+    {
+        write_record(detail::get_or_ignore<field::SEQ>(r),
+                     detail::get_or_ignore<field::ID>(r),
+                     detail::get_or_ignore<field::BPP>(r),
+                     detail::get_or_ignore<field::STRUCTURE>(r),
+                     detail::get_or_ignore<field::STRUCTURED_SEQ>(r),
+                     detail::get_or_ignore<field::ENERGY>(r),
+                     detail::get_or_ignore<field::REACT>(r),
+                     detail::get_or_ignore<field::REACT_ERR>(r),
+                     detail::get_or_ignore<field::COMMENT>(r),
+                     detail::get_or_ignore<field::OFFSET>(r));
+    }
+
     /*!\brief           Write a record in form of a std::tuple to the file.
      * \tparam tuple_t  Type of the record, a specialisation of std::tuple.
      * \param[in] t     The record to write.
