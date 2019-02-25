@@ -125,21 +125,21 @@ TEST(alignment_configurator, configure_affine_global_banded)
     }
 }
 
-// TEST(alignment_configurator, configure_affine_global_banded_with_trace)
-// {
-//     auto cfg = align_cfg::mode{align_cfg::global_alignment} |
-//                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
-//                align_cfg::scoring{nucleotide_scoring_scheme{}} |
-//                align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
-//
-//     auto cfg_trace = cfg | align_cfg::result{align_cfg::with_trace};
-//     auto cfg_begin = cfg | align_cfg::result{align_cfg::with_begin_position};
-//     auto cfg_end = cfg | align_cfg::result{align_cfg::with_end_position};
-//
-//     EXPECT_TRUE(run_test(cfg_end));
-//     EXPECT_THROW(run_test(cfg_trace), invalid_alignment_configuration);
-//     EXPECT_THROW(run_test(cfg_begin), invalid_alignment_configuration);
-// }
+TEST(alignment_configurator, configure_affine_global_banded_with_trace)
+{
+    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
+
+    auto cfg_trace = cfg | align_cfg::result{align_cfg::with_trace};
+    auto cfg_begin = cfg | align_cfg::result{align_cfg::with_begin_position};
+    auto cfg_end = cfg | align_cfg::result{align_cfg::with_end_position};
+
+    EXPECT_TRUE(run_test(cfg_end));
+    EXPECT_TRUE(run_test(cfg_trace));
+    EXPECT_TRUE(run_test(cfg_begin));
+}
 
 TEST(alignment_configurator, configure_affine_global_semi)
 {

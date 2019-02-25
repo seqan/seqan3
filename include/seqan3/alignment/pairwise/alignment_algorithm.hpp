@@ -80,7 +80,7 @@ private:
     static constexpr bool is_banded = std::remove_reference_t<config_t>::template exists<align_cfg::band>();
 
 public:
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */
@@ -487,6 +487,18 @@ private:
         this->check_score_last_column(last_column_view, get<3>(cache));
     }
 
+    /*!\brief Computes the traceback if requested.
+    * \tparam    first_range_t  The type of the first sequence (or packed sequences).
+    * \tparam    second_range_t The type of the second sequence (or packed sequences).
+    * \param[in] first_range    The first sequence.
+    * \param[in] second_range   The second sequence.
+    * \param[in] end_coordinate The end coordinate within the matrix where the traceback starts.
+    *
+    * \details
+    *
+    * First parses the traceback and computes the gap segments for the sequences. Then applies the gap segments
+    * to the infix of the corresponding range and return the aligned sequence.
+    */
     template <typename first_range_t, typename second_range_t>
     auto compute_traceback(first_range_t const & first_range,
                            second_range_t const & second_range,
@@ -549,7 +561,6 @@ private:
 
     //!\brief The alignment configuration stored on the heap.
     std::shared_ptr<config_t> cfg_ptr{};
-
 };
 
 } // namespace seqan3::detail

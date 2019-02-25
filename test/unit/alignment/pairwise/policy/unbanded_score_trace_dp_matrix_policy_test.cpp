@@ -52,9 +52,9 @@ struct unbanded_score_trace_test : public ::testing::Test
     }
 };
 
-using test_type = std::tuple<std::tuple<int32_t, int32_t>, seqan3::detail::trace_directions>;
+using test_type = ::testing::Types<std::tuple<std::tuple<int32_t, int32_t>, seqan3::detail::trace_directions>>;
 
-TYPED_TEST_CASE(unbanded_score_trace_test, ::testing::Types<test_type>);
+TYPED_TEST_CASE(unbanded_score_trace_test, test_type);
 
 TYPED_TEST(unbanded_score_trace_test, constructor)
 {
@@ -111,7 +111,7 @@ TYPED_TEST(unbanded_score_trace_test, next_column)
 
     mock.allocate_matrix(seq1, seq2);
 
-    // Get the active column
+    // Assign to the active column
     auto zip_view = mock.current_column();
     for (auto && entry : zip_view)
     {

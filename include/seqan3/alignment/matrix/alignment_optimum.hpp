@@ -22,7 +22,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief Stores the current optimum in the alignment algorithms.
+/*!\brief Stores the current optimum of the alignment algorithms.
  * \ingroup alignment_matrix
  * \tparam score_t The type of the tracked alignment score.
  *
@@ -40,7 +40,7 @@ struct alignment_optimum
     alignment_coordinate coordinate{};
 };
 
-/*!\name Type deduction guide
+/*!\name Type deduction guides
  * \{
  */
 

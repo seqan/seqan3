@@ -45,7 +45,7 @@ private:
     using score_t = std::tuple_element_t<0, cell_t>;
     //!\}
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */

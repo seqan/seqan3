@@ -61,7 +61,7 @@ private:
     static constexpr std::tuple_element_t<0, cell_type> INF =
         std::numeric_limits<std::tuple_element_t<0, cell_type>>::lowest() / 2;
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr banded_score_dp_matrix_policy() = default;

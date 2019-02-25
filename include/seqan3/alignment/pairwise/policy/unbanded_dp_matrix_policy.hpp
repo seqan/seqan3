@@ -51,7 +51,7 @@ private:
     using score_matrix_type = std::vector<cell_type, allocator_t>;
     //!\}
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */

@@ -46,7 +46,7 @@ private:
     //!\brief Import this typename into class scope.
     using score_t = typename base_t::score_t;
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */

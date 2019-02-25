@@ -68,7 +68,7 @@ row_index_type(index_t const) -> row_index_type<size_t>;
  *
  * \details
  *
- * The class seqan3::detail::alignment_coordinate can be extended with an incrementable and decrementable policy,
+ * The class seqan3::detail::alignment_coordinate can be extended with an incrementable and decrementable policy
  * such that it can be used as a value type inside of a iota_view. This state offers three policies: none, which
  * leaves the functionality of seqan3::detail::alignment_coordinate untouched; column, which adds the respective
  * functionality only for the column index and row, which adds the respective functionality only for the row index.
@@ -93,11 +93,11 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
  * \details
  *
  * This class provides all members to make the `advanceable_alignment_coordinate` be usable in a std::ranges::iota_view.
- * For the purpose of alignments modelling only incrementable and decrementable would fully suffice.
+ * For the purpose of alignments, modelling only incrementable and decrementable would fully suffice.
  * Unfortunately, the current range implementation does not preserve std::ranges::BidirectionalRange properties,
  * so we need to model the full advanceable concept in order to preserve the std::ranges::RandomAccessRange properties.
- * This however can be relaxed if the range implementation fully complies with the current standard draft for Ranges,
- * and increment and decrement would be enough.
+ * This, however, can be relaxed if the range implementation fully complies with the current standard draft for Ranges,
+ * as increment and decrement would be enough.
  */
 template <std::UnsignedIntegral index_t,
           advanceable_alignment_coordinate_state state = advanceable_alignment_coordinate_state::none>
@@ -137,7 +137,7 @@ public:
         second_seq_pos{std::move(other.second_seq_pos)}
     {}
 
-    /*!\brief Save construction from column and row indices.
+    /*!\brief Construction from the respective column and row indices.
      * \param c_idx The respective column index within the matrix. Of type seqan3::detail::column_index_type.
      * \param r_idx The respective row index within the matrix. Of type seqan3::detail::row_index_type.
      */
@@ -348,7 +348,7 @@ public:
     constexpr alignment_coordinate(base_t && base) : base_t{std::move(base)}
     {}
 
-    /*!\brief Save construction from column and row indices.
+    /*!\brief Construction from the respective column and row indices.
      * \tparam index_t The index type used to store the column and row position.
      * \param[in] c_idx The respective column index within the matrix. Of type seqan3::detail::column_index_type.
      * \param[in] r_idx The respective row index within the matrix. Of type seqan3::detail::row_index_type.
@@ -361,9 +361,7 @@ public:
     //!\endcond
     //!\}
 
-    //!\brief The begin/end position of the alignment in the first sequence.
     using base_t::first_seq_pos;
-    //!\brief The begin/end position of the alignment in the second sequence.
     using base_t::second_seq_pos;
 
     //!\brief The begin/end position of the alignment in the first sequence.
@@ -384,9 +382,11 @@ public:
  */
 template <typename coordinate_type>
 //!\cond
-    requires std::Same<remove_cvref_t<coordinate_type>, alignment_coordinate>
+    requires std::Same<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
+             detail::is_type_specialisation_of_v<remove_cvref_t<coordinate_type>,
+                                                 detail::advanceable_alignment_coordinate>
 //!\endcond
-inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type && c)
+inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type const & c)
 {
     s << std::tie(c.first_seq_pos, c.second_seq_pos);
     return s;

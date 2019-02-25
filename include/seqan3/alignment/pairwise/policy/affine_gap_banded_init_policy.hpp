@@ -39,7 +39,7 @@ private:
     //!\brief Befriends the derived type.
     friend derived_t;
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */

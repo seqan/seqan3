@@ -48,7 +48,7 @@ private:
 
     //!\brief Befriends the derived class to grant it access to the private members.
     friend derived_t;
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */

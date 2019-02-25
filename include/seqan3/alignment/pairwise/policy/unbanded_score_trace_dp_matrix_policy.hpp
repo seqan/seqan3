@@ -43,6 +43,11 @@ struct gap_segment
  * \tparam derived_t   The derived alignment algorithm.
  * \tparam score_allocator_t The allocator type used for allocating the score matrix.
  * \tparam trace_allocator_t The allocator type used for allocating the trace matrix.
+ *
+ * \details
+ *
+ * Internally manages two vectors for the scoring matrix and the traceback matrix for the
+ * banded dynamic programming matrix.
  */
 template <typename derived_t, typename score_allocator_t, typename trace_allocator_t>
 class unbanded_score_trace_dp_matrix_policy :
@@ -84,7 +89,7 @@ private:
     using trace_matrix_type = std::vector<trace_type, trace_allocator_t>;
     //!\}
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr unbanded_score_trace_dp_matrix_policy() = default;

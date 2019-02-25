@@ -599,7 +599,7 @@ template <typename config_t>
 class edit_distance_wrapper
 {
 public:
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */

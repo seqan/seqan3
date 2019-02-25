@@ -68,7 +68,6 @@ private:
     /*!\name Member types
      * \{
      */
-    //!\brief The underlying cell type of the dynamic programming matrix.
     //!\brief The underlying cell type of the scoring matrix.
     using cell_type = typename score_allocator_t::value_type;
     //!\brief The underlying cell type of the trace matrix.
@@ -79,7 +78,7 @@ private:
     using trace_matrix_type = std::vector<trace_type, trace_allocator_t>;
     //!\}
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr banded_score_trace_dp_matrix_policy() = default;
@@ -88,13 +87,15 @@ private:
     constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy const &) = default;
     constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy &&) = default;
     ~banded_score_trace_dp_matrix_policy() = default;
-    //!}
+    //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.
      * \tparam first_range_t   The type of the first sequence (or packed sequences).
      * \tparam second_range_t  The type of the second sequence (or packed sequences).
+     * \tparam band_t          The type of the band object.
      * \param[in] first_range  The first sequence (or packed sequences).
      * \param[in] second_range The second sequence (or packed sequences).
+     * \param[in] band         The band object.
      */
     template <typename first_range_t, typename second_range_t, typename band_t>
     constexpr void allocate_matrix(first_range_t && first_range, second_range_t && second_range, band_t const & band)

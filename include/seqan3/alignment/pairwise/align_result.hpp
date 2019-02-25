@@ -117,7 +117,7 @@ private:
     //!\}
 
 public:
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      *
      * \brief Constructor to pass the alignment result traits.

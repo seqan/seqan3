@@ -23,8 +23,6 @@
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
-#include <seqan3/io/stream/debug_stream.hpp>
-
 namespace seqan3::detail
 {
 
@@ -66,7 +64,7 @@ private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend derived_t;
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr find_optimum_policy() = default;
@@ -162,8 +160,8 @@ protected:
      * \tparam band_type       The type of the band.
      * \tparam gap_scheme_type The type of the gap_scheme.
      * \param[in,out] total            The total score to be updated.
-     * \param[in]     dimension_first  The horizontal matrix dimension.
-     * \param[in]     dimension_second The vertical matrix dimension.
+     * \param[in]     dimension_first  The matrix dimension in horizontal direction (size of first range + 1).
+     * \param[in]     dimension_second The matrix dimension in vertical direction (size of second range + 1).
      * \param[in]     band             The band.
      * \param[in]     scheme           The gap scheme to get the score for the trailing gap.
      */
