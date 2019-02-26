@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::unbanded_dp_matrix_policy.
+ * \brief Provides seqan3::detail::unbanded_score_dp_matrix_policy.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -35,7 +35,7 @@ namespace seqan3::detail
  * \tparam allocator_t The allocator type used for allocating the dynamic programming matrix.
  */
 template <typename derived_t, typename allocator_t>
-class unbanded_dp_matrix_policy
+class unbanded_score_dp_matrix_policy
 {
 private:
 
@@ -55,12 +55,12 @@ private:
      * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr unbanded_dp_matrix_policy()                                              = default;
-    constexpr unbanded_dp_matrix_policy(unbanded_dp_matrix_policy const &)             = default;
-    constexpr unbanded_dp_matrix_policy(unbanded_dp_matrix_policy &&)                  = default;
-    constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy const &) = default;
-    constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy &&)      = default;
-    ~unbanded_dp_matrix_policy()                                                       = default;
+    constexpr unbanded_score_dp_matrix_policy() = default;
+    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy const &) = default;
+    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy &&) = default;
+    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy const &) = default;
+    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy &&) = default;
+    ~unbanded_score_dp_matrix_policy() = default;
     //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.

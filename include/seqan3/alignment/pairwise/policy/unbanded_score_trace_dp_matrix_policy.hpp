@@ -20,7 +20,7 @@
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
-#include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/std/span.hpp>
 
@@ -51,18 +51,18 @@ struct gap_segment
  */
 template <typename derived_t, typename score_allocator_t, typename trace_allocator_t>
 class unbanded_score_trace_dp_matrix_policy :
-    public unbanded_dp_matrix_policy<unbanded_score_trace_dp_matrix_policy<derived_t,
-                                                                           score_allocator_t,
-                                                                           trace_allocator_t>,
-                                     score_allocator_t>
+    public unbanded_score_dp_matrix_policy<unbanded_score_trace_dp_matrix_policy<derived_t,
+                                                                                 score_allocator_t,
+                                                                                 trace_allocator_t>,
+                                           score_allocator_t>
 {
 private:
 
     //!\brief The base type
-    using base_t = unbanded_dp_matrix_policy<unbanded_score_trace_dp_matrix_policy<derived_t,
-                                                                                   score_allocator_t,
-                                                                                   trace_allocator_t>,
-                                             score_allocator_t>;
+    using base_t = unbanded_score_dp_matrix_policy<unbanded_score_trace_dp_matrix_policy<derived_t,
+                                                                                         score_allocator_t,
+                                                                                         trace_allocator_t>,
+                                                   score_allocator_t>;
 
     //!\brief Befriends the derived class to grant it access to the private members.
     friend derived_t;

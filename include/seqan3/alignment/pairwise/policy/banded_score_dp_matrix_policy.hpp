@@ -22,7 +22,7 @@
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
-#include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span.hpp>
@@ -38,12 +38,12 @@ namespace seqan3::detail
  */
 template <typename derived_t, typename allocator_type>
 class banded_score_dp_matrix_policy :
-    public unbanded_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>
+    public unbanded_score_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>
 {
 private:
 
     //!\brief The type of the base.
-    using base_t = unbanded_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>;
+    using base_t = unbanded_score_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>;
 
     //!\brief Befriend CRTP derived type.
     friend derived_t;

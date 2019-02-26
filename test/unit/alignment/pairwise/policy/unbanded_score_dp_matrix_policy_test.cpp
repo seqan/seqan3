@@ -11,7 +11,7 @@
 
 #include <range/v3/view/bounded.hpp>
 
-#include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/std/iterator>
@@ -19,11 +19,11 @@
 
 template <typename score_alloc_t>
 struct policy_mock :
-    public seqan3::detail::unbanded_dp_matrix_policy<policy_mock<score_alloc_t>, score_alloc_t>
+    public seqan3::detail::unbanded_score_dp_matrix_policy<policy_mock<score_alloc_t>, score_alloc_t>
 {
 public:
 
-    using base_t = seqan3::detail::unbanded_dp_matrix_policy<policy_mock<score_alloc_t>, score_alloc_t>;
+    using base_t = seqan3::detail::unbanded_score_dp_matrix_policy<policy_mock<score_alloc_t>, score_alloc_t>;
 
     using base_t::base_t;
 

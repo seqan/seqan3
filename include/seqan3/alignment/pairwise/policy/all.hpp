@@ -21,7 +21,7 @@
 #include <seqan3/alignment/pairwise/policy/banded_score_dp_matrix_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/banded_score_trace_dp_matrix_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_trace_dp_matrix_policy.hpp>
 
 //!\cond DEV
@@ -91,7 +91,7 @@
  *
  * ### Existing matrix policies:
  *
- *  - seqan3::detail::unbanded_dp_matrix_policy
+ *  - seqan3::detail::unbanded_score_dp_matrix_policy
  *  - seqan3::detail::unbanded_score_trace_dp_matrix_policy
  *
  * # Gap policies

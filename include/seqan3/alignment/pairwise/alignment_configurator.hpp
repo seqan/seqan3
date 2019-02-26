@@ -109,7 +109,7 @@ private:
                 if constexpr (config_t::template exists<align_cfg::band>())
                     return deferred_crtp_base<banded_score_dp_matrix_policy, score_allocator_t>{};
                 else
-                    return deferred_crtp_base<unbanded_dp_matrix_policy, score_allocator_t>{};
+                    return deferred_crtp_base<unbanded_score_dp_matrix_policy, score_allocator_t>{};
             }
             else
             {  // requested traceback
