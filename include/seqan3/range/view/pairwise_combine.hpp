@@ -127,6 +127,34 @@ private:
             ++*this;
             return tmp;
         }
+
+        //!\brief Pre-decrement operator.
+        constexpr iterator_type & operator--(/*pre-decrement*/)
+            noexcept(noexcept(--std::declval<source_iterator_type>()))
+        //!\cond
+            requires std::BidirectionalIterator<source_iterator_type>
+        //!\endcond
+        {
+            if (--second_it == first_it)
+            {
+                --first_it;
+                second_it = end_it;
+                --second_it;
+            }
+            return *this;
+        }
+
+        //!\brief Post-decrement operator.
+        constexpr iterator_type operator--(int /*post-decrement*/)
+            noexcept(noexcept(std::declval<source_iterator_type>()--))
+        //!\cond
+            requires std::BidirectionalIterator<source_iterator_type>
+        //!\endcond
+        {
+            iterator_type tmp{*this};
+            --*this;
+            return tmp;
+        }
         //!\}
 
         /*!\name Comparison operators
@@ -288,7 +316,7 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::detail::pairwise_combine
+ * \relates seqan3::detail::pairwise_combine_view
  * \{
  */
 

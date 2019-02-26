@@ -15,6 +15,7 @@
 #include <range/v3/view/filter.hpp>
 
 #include <seqan3/range/view/pairwise_combine.hpp>
+#include <seqan3/std/view/reverse.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 template <typename t>
@@ -79,6 +80,7 @@ TYPED_TEST_CASE(pairwise_combine_iterator_test, test_types);
 TYPED_TEST(pairwise_combine_iterator_test, concepts)
 {
     EXPECT_TRUE(std::ForwardIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
+    EXPECT_TRUE(std::BidirectionalIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, construction)
@@ -173,6 +175,28 @@ TYPED_TEST(pairwise_combine_iterator_test, post_increment)
     EXPECT_EQ(*it, (std::tuple{'a', 'c'}));
 }
 
+TYPED_TEST(pairwise_combine_iterator_test, pre_decrement)
+{
+    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+    auto r = this->resource();
+    iterator_t it{std::ranges::prev(r.end()), r.end()};
+
+    EXPECT_EQ(*(--it), (std::tuple{'c', 'd'}));
+}
+
+TYPED_TEST(pairwise_combine_iterator_test, post_decrement)
+{
+    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+    auto r = this->resource();
+    iterator_t it{std::ranges::prev(r.end()), r.end()};
+
+    --it;
+    EXPECT_EQ(*(it--), (std::tuple{'c', 'd'}));
+    EXPECT_EQ(*it, (std::tuple{'b', 'd'}));
+}
+
 TYPED_TEST(pairwise_combine_iterator_test, equality)
 {
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
@@ -233,6 +257,18 @@ TYPED_TEST(pairwise_combine_test, iterate)
         cmp.push_back(r);
 
     EXPECT_TRUE(ranges::equal(cmp, this->expect()));
+}
+
+TYPED_TEST(pairwise_combine_test, iterate_reverse)
+{
+    auto v = this->create_view();
+    using ref_t = seqan3::reference_t<decltype(v)>;
+    std::vector<ref_t> cmp;
+
+    for (auto r : v | seqan3::view::reverse)
+        cmp.push_back(r);
+
+    EXPECT_TRUE(ranges::equal(cmp, this->expect() | seqan3::view::reverse));
 }
 
 TEST(pairwise_combine_test, filter_output)
