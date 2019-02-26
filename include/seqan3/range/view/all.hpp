@@ -17,6 +17,7 @@
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/get.hpp>
+#include <seqan3/range/view/pairwise_combine.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/rank_to.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
