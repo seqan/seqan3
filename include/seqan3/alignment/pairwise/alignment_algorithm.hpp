@@ -134,6 +134,10 @@ public:
     {
         assert(cfg_ptr != nullptr);
 
+        // ----------------------------------------------------------------------------
+        // Initialise dp algorithm.
+        // ----------------------------------------------------------------------------
+
         // We need to allocate the score_matrix and maybe the trace_matrix.
         this->allocate_matrix(first_range, second_range);
 
@@ -143,7 +147,15 @@ public:
 
         initialise_matrix(cache);
 
+        // ----------------------------------------------------------------------------
+        // Compute the unbanded alignment.
+        // ----------------------------------------------------------------------------
+
         compute_matrix(first_range, second_range, cache);
+
+        // ----------------------------------------------------------------------------
+        // Cleanup and prepare the alignment result.
+        // ----------------------------------------------------------------------------
 
         using result_t = typename align_result_selector<first_range_t, second_range_t, config_t>::type;
         result_t res{};
@@ -323,6 +335,7 @@ private:
     template <typename cache_t>
     void initialise_matrix(cache_t & cache)
     {
+        // Get the current dynamic programming matrix.
         auto col = this->current_column();
 
         this->init_origin_cell(*std::ranges::begin(col), cache);
@@ -552,7 +565,7 @@ private:
         using second_subrange_type = seqan3::view::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
         auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};
 
-        // Create and fill the aligned_sequence for the first sequence.
+        // Create and fill the aligned_sequence for the second sequence.
         std::vector<gapped<second_seq_value_type>> second_aligned_seq{second_subrange};
         fill_aligned_sequence(second_aligned_seq, second_gap_segments, begin_coordinate.second_seq_pos);
 

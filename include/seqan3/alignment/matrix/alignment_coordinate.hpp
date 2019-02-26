@@ -61,7 +61,7 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
  * \ingroup alignment_matrix
  * \implements std::EqualityComparable
  * \tparam states   A non-type template flag to enable a specific advanceable policy.
- *                  See seqan3::detail::advanceable_alignment_coordinate_state
+ * \see seqan3::detail::advanceable_alignment_coordinate_state.
  *
  * \details
  *
