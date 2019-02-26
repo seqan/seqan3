@@ -44,7 +44,6 @@ namespace seqan3
  * vector over a gapped alphabet when iterating over it, inserting/erasing gaps or accessing a position. The only
  * difference lies in the performance and size overhead (see below).
  *
- *
  * ### Performance
  *
  * **n** The length of the underlying sequence.
@@ -66,6 +65,11 @@ namespace seqan3
  * is the length of that contiguous stretch of gaps plus the length of all preceding elements.
  * Resolving random access requires logarithmic access into the set and inserting or removing a gap symbol additionally
  * entails updating all subsequent elements in the set to preserve correct cumulative sizes.
+ *
+ * ### The seqan3::gap_decorator_anchor_set::iterator type
+ *
+ * \attention The iterator of the seqan3::gap_decorator_anchor_set does not model the std::LegacyInputIterator because
+ * it has no operator->. Note that it does model the std::ranges::InputIterator.
  *
  */
 template <std::ranges::RandomAccessRange inner_type>
@@ -98,8 +102,8 @@ private:
         //!\brief A pointer to the current anchor gap node. Note that the current tuple value at position 0 is the
         //!       start of the right gap that is still behind the current iterator position.
         typename gap_decorator_anchor_set::set_iterator_type anchor_set_it{};
-        //!\brief Caches the current value pointed at.
-        typename gap_decorator_anchor_set::value_type current_val{gap{}};
+        //!\brief Caches whether the iterator points to a gap (true) or not (false).
+        bool is_at_gap{true};
 
         //!\brief A helper function that performs the random access into the anchor set, updating all member variables.
         void jump(typename gap_decorator_anchor_set::size_type const new_pos)
@@ -124,9 +128,9 @@ private:
 
             if (ungapped_view_pos != static_cast<int64_t>(host->ungapped_view.size()) &&
                 pos >= left_gap_end && (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first))
-                current_val = host->ungapped_view[ungapped_view_pos];
+                is_at_gap = false;
             else
-                current_val = gap{};
+                is_at_gap = true;
         }
 
     public:
@@ -176,7 +180,7 @@ private:
             }
             else
             {
-                current_val = host_.ungapped_view[0];
+                is_at_gap = false;
             }
         }
 
@@ -206,14 +210,14 @@ private:
             {   // proceed within the view since we are right of the previous gap but didn't arrive at the right gap yet
                 ++ungapped_view_pos;
                 if (ungapped_view_pos != static_cast<int64_t>(host->ungapped_view.size()))
-                    current_val = host->ungapped_view[ungapped_view_pos];
+                    is_at_gap = false;
             }
             else
             {   // we arrived at the right gap and have to update the variables. ungapped_view_pos remains unchanged.
                 left_gap_end = anchor_set_it->first + anchor_set_it->second -
                                ((anchor_set_it != host->anchors.begin()) ? (std::prev(anchor_set_it))->second : 0);
                 ++anchor_set_it;
-                current_val = gap{};
+                is_at_gap = true;
             }
 
             return *this;
@@ -239,12 +243,12 @@ private:
                 {
                     left_gap_end = 0;
                 }
-                current_val = gap{};
+                is_at_gap = true;
             }
             else if (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first)
             {   // we are neither at the left nor right gap
                 --ungapped_view_pos;
-                current_val = host->ungapped_view[ungapped_view_pos];
+                is_at_gap = false;
             }
             // else -> no op (we are still within the right gap stretch)
 
@@ -274,13 +278,8 @@ private:
         //!\brief Dereference operator returns a copy of the element currently pointed at.
         constexpr reference operator*() const noexcept
         {
-            return current_val;
-        }
-
-        //!\brief Returns a pointer to the currently cached value.
-        constexpr pointer operator->() const noexcept
-        {
-            return &current_val;
+            return (is_at_gap) ? static_cast<reference>(gap{})
+                               : static_cast<reference>(host->ungapped_view[ungapped_view_pos]);
         }
         //!\}
 
