@@ -179,7 +179,7 @@ private:
         for (auto resource_iter = seqan3::begin(resource);
              count < in_avail() && !is_eof(); ++count, ++resource_iter, ++gptr)
         {
-            auto const & [first_seq, second_seq] = *resource_iter;
+            auto && [first_seq, second_seq] = *resource_iter;
             exec_handler.execute(kernel, first_seq, second_seq, [this](auto && res){ *gptr = std::move(res); });
         }
 

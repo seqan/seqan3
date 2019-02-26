@@ -18,7 +18,7 @@ using namespace seqan3;
 auto setup()
 {
     auto data = std::tuple{"ACGT"_dna4, "ACGT"_dna4};
-    return ranges::view::single(std::move(data)) | view::persist;
+    return ranges::view::single(std::move(data));
 }
 
 template <typename config_t>
@@ -26,7 +26,7 @@ bool run_test(config_t const & cfg)
 {
     auto r = setup();
     auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto [seq1, seq2] = *seqan3::begin(r);
+    auto && [seq1, seq2] = *seqan3::begin(r);
 
     return fn(seq1, seq2).get_score() == 0;
 }

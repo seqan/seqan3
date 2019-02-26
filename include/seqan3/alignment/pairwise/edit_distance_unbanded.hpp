@@ -638,9 +638,7 @@ public:
                                                                 remove_cvref_t<second_range_t>,
                                                                 remove_cvref_t<config_t>>::type;
 
-        pairwise_alignment_edit_distance_unbanded algo{std::forward<first_range_t>(first_range),
-                                                       std::forward<second_range_t>(second_range),
-                                                       *cfg_ptr};
+        pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr};
         align_result<result_t> res{};
         return algo(res);
     }

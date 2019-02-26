@@ -129,7 +129,7 @@ public:
      * and at most \f$ O(N^2) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t const & first_range, second_range_t const & second_range)
+    auto operator()(first_range_t && first_range, second_range_t && second_range)
         requires !is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -207,7 +207,7 @@ public:
      * and at most \f$ O(N*k) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t const & first_range, second_range_t const & second_range)
+    auto operator()(first_range_t && first_range, second_range_t && second_range)
         requires is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -357,8 +357,8 @@ private:
     template <typename first_range_t,
               typename second_range_t,
               typename cache_t>
-    void compute_matrix(first_range_t const & first_range,
-                        second_range_t const & second_range,
+    void compute_matrix(first_range_t & first_range,
+                        second_range_t & second_range,
                         cache_t & cache)
     {
         using std::get;
@@ -405,8 +405,8 @@ private:
     template <typename first_range_t,
               typename second_range_t,
               typename cache_t>
-    void compute_banded_matrix(first_range_t const & first_range,
-                               second_range_t const & second_range,
+    void compute_banded_matrix(first_range_t & first_range,
+                               second_range_t & second_range,
                                cache_t & cache)
     {
         auto const & score_scheme = get<align_cfg::scoring>(*cfg_ptr).value;
@@ -500,8 +500,8 @@ private:
     * to the infix of the corresponding range and return the aligned sequence.
     */
     template <typename first_range_t, typename second_range_t>
-    auto compute_traceback(first_range_t const & first_range,
-                           second_range_t const & second_range,
+    auto compute_traceback(first_range_t & first_range,
+                           second_range_t & second_range,
                            alignment_coordinate end_coordinate)
     {
         using first_seq_value_type = value_type_t<first_range_t>;

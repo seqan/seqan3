@@ -70,7 +70,7 @@ private:
      * \param[in] second_range The first sequence (or packed sequences).
      */
     template <typename first_range_t, typename second_range_t>
-    constexpr void allocate_matrix(first_range_t && first_range, second_range_t && second_range)
+    constexpr void allocate_matrix(first_range_t & first_range, second_range_t & second_range)
     {
         dimension_first_range = std::ranges::distance(first_range) + 1;
         dimension_second_range = std::ranges::distance(second_range) + 1;

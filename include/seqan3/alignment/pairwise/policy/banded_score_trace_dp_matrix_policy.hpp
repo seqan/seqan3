@@ -98,7 +98,7 @@ private:
      * \param[in] band         The band object.
      */
     template <typename first_range_t, typename second_range_t, typename band_t>
-    constexpr void allocate_matrix(first_range_t && first_range, second_range_t && second_range, band_t const & band)
+    constexpr void allocate_matrix(first_range_t & first_range, second_range_t & second_range, band_t const & band)
     {
         base_t::allocate_matrix(first_range, second_range, band);
 

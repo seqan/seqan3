@@ -83,7 +83,7 @@ public:
      * \param[in] band         The band.
      */
     template <typename first_range_t, typename second_range_t, typename band_t>
-    constexpr void allocate_matrix(first_range_t && first_range, second_range_t && second_range, band_t const & band)
+    constexpr void allocate_matrix(first_range_t & first_range, second_range_t & second_range, band_t const & band)
     {
         dimension_first_range  = std::distance(seqan3::begin(first_range), seqan3::end(first_range)) + 1;
         dimension_second_range = std::distance(seqan3::begin(second_range), seqan3::end(second_range)) + 1;
@@ -198,8 +198,8 @@ public:
     * sequences are trimmed, such that the band starts in the origin and ends in the sink.
     */
     template <typename first_range_t, typename second_range_t, typename band_t>
-    constexpr auto trim_sequences(first_range_t && first_range,
-                                  second_range_t && second_range,
+    constexpr auto trim_sequences(first_range_t & first_range,
+                                  second_range_t & second_range,
                                   band_t const & band) const noexcept
     {
         using band_type = decltype(band.lower_bound);
@@ -211,14 +211,14 @@ public:
         {
             size_t begin_pos = std::max(band.lower_bound - 1, static_cast<band_type>(0));
             size_t end_pos = std::min(band.upper_bound + dimension_second, dimension_first);
-            return std::forward<first_range_t>(first_range) | ranges::view::slice(begin_pos, end_pos);
+            return first_range | ranges::view::slice(begin_pos, end_pos);
         };
 
         auto trim_second_range = [&]() constexpr
         {
             size_t begin_pos = std::abs(std::min(band.upper_bound + 1, static_cast<band_type>(0)));
             size_t end_pos = std::min(dimension_first - band.lower_bound, dimension_second);
-            return std::forward<second_range_t>(second_range) | ranges::view::slice(begin_pos, end_pos);
+            return second_range | ranges::view::slice(begin_pos, end_pos);
         };
 
         return std::tuple{trim_first_range(), trim_second_range()};
