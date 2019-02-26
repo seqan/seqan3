@@ -27,8 +27,8 @@ int main ()
     assert(thy == 'T'_dna4);
 
 //! [rank]
-    // Get the rank type of an alphabet.
-    using rank_type = underlying_rank_t<dna4>;
+    // Get the rank type of the alphabet (here uint8_t).
+    using rank_type = dna4::rank_type;
 
     // Retrieve the numerical representation (rank) of the characters.
     rank_type rank_a = ade.to_rank();   // => 0

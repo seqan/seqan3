@@ -7,45 +7,48 @@
 
 //! [exercise]
 #include <array>     // std::array
-#include <iostream>  // std::cerr, std::endl
-#include <cstring>   // std::strlen
+#include <string>    // std::string
 #include <vector>    // std::vector
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/argument_parser/all.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/range/view/char_to.hpp>
 
 using namespace seqan3;
 
 int main (int argc, char * argv[])
 {
-    // Test for the presence of an input sequence.
-    if (argc != 2)
+    std::string input{};
+    seqan3::argument_parser parser("GC Content", argc, argv);
+    parser.add_positional_option(input, "Specify an input sequence.");
+    try
     {
-        std::cerr << "Usage: " << argv[0] << " <sequence>" << std::endl;
-        return 1;
+        parser.parse();
+    }
+    catch (seqan3::parser_invalid_argument const & ext) // the input is invalid
+    {
+        debug_stream << "[PARSER ERROR] " << ext.what() << '\n';
+        return 0;
     }
 
-    // Get the length of the input.
-    size_t len = std::strlen(argv[1]);
+    // Convert the input to a dna5 sequence.
+    std::vector<dna5> sequence{input | view::char_to<dna5>};
 
-    // Convert the input to a dna4 sequence.
-    std::vector<dna4> sequence(len);
-    for (size_t idx = 0ul; idx < len; ++idx)
-        assign_char_strict(sequence[idx], argv[1][idx]); // unknown characters raise an error
-
-    // Initialise an array with count values for dna4 symbols.
-    std::array<size_t, dna4::value_size> count;
+    // Initialise an array with count values for dna5 symbols.
+    std::array<size_t, dna5::value_size> count;
     count.fill(0ul);
 
     // Increase the symbol count according to the sequence.
-    for (dna4 symbol : sequence)
+    for (dna5 symbol : sequence)
         ++count[symbol.to_rank()];
 
     // Calculate the GC content: (#G + #C) / (#A + #T + #G + #C).
-    size_t gc = count['C'_dna4.to_rank()] + count['G'_dna4.to_rank()];
-    float gc_content = 1.0f * gc / len;
+    size_t gc = count['C'_dna5.to_rank()] + count['G'_dna5.to_rank()];
+    size_t atgc = input.size() - count['N'_dna5.to_rank()];
+    float gc_content = 1.0f * gc / atgc;
 
-    debug_stream << "The GC content of " << sequence << " is " << 100 * gc_content << "%." << std::endl;
+    debug_stream << "The GC content of " << sequence << " is " << 100 * gc_content << "%.\n";
 
     return 0;
 }

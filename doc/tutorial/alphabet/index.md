@@ -45,7 +45,7 @@ For instance, the alphabet seqan3::dna5 contains the additional symbol 'N' to re
 <br/>
 
 ## Creation of alphabet symbols
-Let's look at an example code, which demonstrates how characters of the seqan3::dna4 alphabet are created.
+Let's look at some example code, which demonstrates how characters of the seqan3::dna4 alphabet are created.
 \snippet alphabet_main.cpp create
 \snippet alphabet_main.cpp closing
 
@@ -61,8 +61,8 @@ We have shown three solutions for assigning variables of alphabet type.
 
 ## The rank of a symbol
 The rank of a symbol is a number in range \[0..alphabet_size), where each number is paired with
-an alphabet symbol by a bijective function. For instance in seqan3::dna5 the bijection is
-<br/> `A ⟼ 0` <br/> `C ⟼ 1` <br/> `G ⟼ 2` <br/> `T ⟼ 3` <br/> `N ⟼ 4`.
+an alphabet symbol by a bijective function. For instance in seqan3::dna4 the bijection is
+<br/> `A ⟼ 0` <br/> `C ⟼ 1` <br/> `G ⟼ 2` <br/> `T ⟼ 3`.
 
 SeqAn provides the function seqan3::to_rank for converting a symbol to its rank value,
 as demonstrated in the following code example. Note that the data type of the rank is usually the smallest possible
@@ -76,6 +76,35 @@ You can retrieve the alphabet size by accessing the class member variable `value
 which is implemented (but not required) in all seqan3::Alphabet instances.
 However, through the concept it is guaranteed that a global seqan3::alphabet_size_v constant exists.
 \snippet alphabet_main.cpp size
+
+<br/>
+
+---
+
+# Containers over alphabets
+
+In SeqAn you can use the STL containers to model e.g. sequences, sets or mappings with our alphabets.
+For sequences we recommend the std::vector with one of SeqAn's alphabet types. Instead of building a map from
+characters with logarithmic access times, the rank representation can be used straight as an array index
+with constant access time. In the following exercise you can practise the use of alphabet containers together
+with the previously discussed functions.
+
+\assignment{Excercise: GC content of a sequence}
+An important property of DNA and RNA molecules is the *GC content*,
+which is the percentage of nucleobases that are either Guanine or Cytosine.
+Given the nucleotide counts \f$n_A\f$, \f$n_T\f$, \f$n_G\f$, \f$n_C\f$ the GC content \f$c\f$ is calculated as
+\f[ c = \frac{n_G + n_C}{n_A + n_T + n_G + n_C} \f]
+Write a program that
+1. reads a sequence as command line argument into a vector of seqan3::dna5,
+2. counts the number of occurrences for each nucleotide and
+3. calculates the GC content.
+
+The seqan3::dna5 type ensures that invalid characters in the input sequence are converted 'N'.
+Note that these characters should not influence the GC content.
+\endassignment
+\solution
+\snippet alphabet_gc_content.cpp exercise
+\endsolution
 
 <br/>
 
@@ -105,8 +134,7 @@ alphabets look like, so the compiler can decide, whether a given type is valid o
 we can now require that the given `alphabet_type` is a nucleotide alphabet.
 
 ~~~cpp
-template <typename alphabet_type>
-    requires seqan3::NucleotideAlphabet<alphabet_type>
+template <seqan3::NucleotideAlphabet alphabet_type>
 alphabet_type complement(alphabet_type const alph)
 {
     // implementation...
@@ -126,33 +154,6 @@ A more general concept in SeqAn is seqan3::Alphabet. It ensures for all alphabet
 \note Of course, the seqan3::NucleotideAlphabet satisfies seqan3::Alphabet. <br/>
       It actually extends the alphabet concept with the [complement()](\ref seqan3::NucleotideAlphabet::complement)
       function.
-
-<br/>
-
----
-
-# Containers over alphabets
-
-In SeqAn you can use the STL containers to model e.g. sequences, sets or mappings with our alphabets.
-For sequences we recommend the std::vector with one of SeqAn's alphabet types. Instead of building a map from
-characters with logarithmic access times, the rank representation can be used straight as an array index
-with constant access time. In the following exercise you can practise the use of alphabet containers together
-with the previously discussed functions.
-
-\assignment{Excercise: GC content of a sequence}
-An important property of DNA and RNA molecules is the *GC content*,
-which is the percentage of nucleobases that are either Guanine or Cytosine.
-Given the nucleotide counts \f$n_A\f$, \f$n_T\f$, \f$n_G\f$, \f$n_C\f$ the GC content \f$c\f$ is calculated as
-\f[ c = \frac{n_G + n_C}{n_A + n_T + n_G + n_C} \f]
-Write a program that
-1. reads a sequence as command line argument into a vector of seqan3::dna4,
-2. fails for incorrect characters in the sequence,
-3. counts the number of occurrences for each nucleotide and
-4. calculates the GC content.
-\endassignment
-\solution
-\snippet alphabet_gc_content.cpp exercise
-\endsolution
 
 <br/>
 
@@ -209,59 +210,92 @@ Finally, we want to demonstrate how easy it is to implement a custom alphabet wi
 In the previous exercise we have calculated the GC content. Guanine and Cytosine are complementary nucleobases,
 which pair in a DNA molecule by building 3 hydrogen bonds. Adenine and Thymine pair with only 2 hydrogen bonds.
 As a consequence, we denote Guanine and Cytosine as strong (S) and Adenine and Thymine as weak (W) nucleobases.
+In this section we want to implement a seqan3::Alphabet that consists of the characters `S` and `W` to represent
+strong and weak nucleobases. 
 
-\assignment{Excercise: A little alphabet}
-
-In this exercise we want to implement a seqan3::Alphabet that consists of the characters `S` and `W` to represent
-strong and weak nucleobases. Therefore, we have to implement all requirements for the alphabet concept,
-which are documented [here](\ref seqan3::Alphabet). As you see, a concept can also hierarchically require
-other concepts, e.g. a seqan3::Alphabet has to satisfy seqan3::Semialphabet as well.
-
-Here is a code frame and a test function to start with:
+Let's start with a simple struct that only holds the alphabet's rank value: 
 ~~~cpp
-#include <iostream>   // std::cerr, std::endl
-#include <seqan3/alphabet/all.hpp>
+#include <seqan3/alphabet/concept.hpp> // for seqan3::Alphabet concept checks
 
-using namespace seqan3;
-
-class dna2
+struct dna2
 {
-    // ... implementation of member functions and variables
-}
-
-// ... implementation of operators for std::EqualityComparable
-// ... implementation of operators for std::StrictTotallyOrdered
-
-// Constrained function that works only for seqan3::Alphabet types.
-template <typename alph_type>
-    requires Alphabet<alph_type>
-void test_function(alph_type)
-{
-    std::cerr << "You're good!" << std::endl;
-    std::cerr << "The alphabet size is " << (unsigned)alphabet_size_v<dna2> << "." << std::endl;
-}
-
-int main ()
-{
-    // Let's test our new alphabet class here. The compilation fails, if members are missing.
-    test_function(dna2{});
-    return 0;
-}
+    using rank_type = uint8_t;
+    rank_type rank{};
+};
 ~~~
 
-The following steps guide you through the implementation.
-If you keep the suggested naming, SeqAn will automatically expose the members to the respective global functions.
-1. Define the types `rank_type` and `char_type` for your alphabet.
-2. Define the static member constant `value_size`, which holds the alphabet size.
-3. Define a (private) member to store the rank value.
-4. Implement the member functions `to_rank(void)`, `to_char(void)`, `assign_rank(rank_type const)` and
-   `assign_char(char_type const)`.
-5. Implement the static member function `char_is_valid(char_type const)`.
-6. Implement the member function `assign_char_strict(char_type const)` that throws seqan3::invalid_char_assignment,
-   if `char_is_valid` evaluates to false.
-7. Overload all [equality](https://en.cppreference.com/w/cpp/concepts/EqualityComparable) and
-   [comparison](https://en.cppreference.com/w/cpp/concepts/StrictTotallyOrdered) operators for your class.
+But if you want SeqAn's algorithms to accept it as an alphabet, you need to make sure that your type
+satisfies the requirements of the seqan3::Alphabet concept. A quick check can reveal that this is not the case:
+~~~cpp
+static_assert(seqan3::Alphabet<dna2>);          // compiler error
+~~~
+
+A look at the documentation of seqan3::Alphabet will reveal that it is actually a refinement of other concepts, 
+more precisely seqan3::Semialphabet which in turn refines std::Regular and std::StrictTotallyOrdered. 
+Let's check those:
+
+~~~cpp
+static_assert(std::Regular<dna2>);              // compiler error
+static_assert(std::StrictTotallyOrdered<dna2>); // compiler error
+static_assert(seqan3::Semialphabet<dna2>);      // compiler error
+static_assert(seqan3::Alphabet<dna2>);          // compiler error
+~~~
+
+You should see that your type models none of the concepts. 
+For std::Regular we need to make our alphabet [equality comparable](\ref std::EqualityComparable)
+by implementing the (in-)equality operators (as free functions).
+\snippet alphabet_custom_steps.cpp equality
+
+\assignment{Excercise}
+Implement the inequality operator (!=) for `dna2`.
 \endassignment
 \solution
-\snippet alphabet_custom.cpp exercise
+\snippet alphabet_custom_steps.cpp inequality
 \endsolution
+
+We see that our type now models std::Regular.
+\snippet alphabet_custom_steps.cpp regular
+
+Let's have a look at the documentation for std::StrictTotallyOrdered. 
+Can you guess what it describes?
+
+It describes the requirements for types that are comparable via `<`, `<=`, `>` and `>=`.
+This is useful so that you can sort a text over the alphabet, for example.
+
+\assignment{Excercise}
+Implement the four compare operators *as free functions* and verify that your type models std::StrictTotallyOrdered.
+\endassignment
+\solution
+\snippet alphabet_custom_steps.cpp compare
+\endsolution
+
+The next concept is more interesting for us: seqan3::Semialphabet requires the *rank* interface
+that we have introduced in the beginning of this tutorial. If we define the member functions `to_rank`,
+`assign_rank` and `value_size` for our type, SeqAn automatically exposes them to the respective global
+functions `seqan3::to_rank`, `seqan3::assign_rank` and `seqan3::alphabet_size`.
+\snippet alphabet_custom_steps.cpp semialphabet
+
+\assignment{Excercise}
+Now that you have a feeling for concepts, have a look at seqan3::Alphabet and make your type 
+also model the full seqan3::Alphabet concept. If you keep the suggested naming, SeqAn will automatically expose 
+the members to the respective global functions that model the concept.
+
+1. Define the [char_type](\ref seqan3::alphabet_base::char_type) for your alphabet (the type that you want to emit when calling 
+   [to_char()](\ref seqan3::alphabet_base::to_char)).
+2. Implement the member functions [to_char()](\ref seqan3::alphabet_base::to_char) and 
+   [assign_char(char_type const)](\ref seqan3::alphabet_base::assign_char).
+3. Implement the static member function [char_is_valid(char_type const)](\ref seqan3::alphabet_base::char_is_valid).
+4. Implement the member function [assign_char_strict(char_type const)](\ref seqan3::alphabet_base::assign_char_strict) 
+   that throws seqan3::invalid_char_assignment, if [char_is_valid](\ref seqan3::alphabet_base::char_is_valid) 
+   evaluates to false.
+\endassignment
+\solution
+\snippet alphabet_custom_steps.cpp alphabet
+\endsolution
+
+Now the seqan3::Alphabet concept should be modelled successfully:
+\snippet alphabet_custom_steps.cpp alphabet_concept
+
+In reality, you do not need to define all the functions you have learned in this exercise manually. 
+Instead, you can inherit you type from seqan3::alphabet_base and just define the char-rank conversion
+in both directions. Read the documentation of seqan3::alphabet_base fo details. 
