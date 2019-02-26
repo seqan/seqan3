@@ -7,6 +7,7 @@
 
 #include <type_traits>
 
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -103,8 +104,10 @@ TYPED_TEST_P(fm_index_collection_test, serialization)
 TYPED_TEST_P(fm_index_collection_test, concept_check)
 {
     EXPECT_TRUE(FmIndex<TypeParam>);
-    EXPECT_TRUE(FmIndexTraits<fm_index_default_traits>);
-    EXPECT_TRUE(BiFmIndexTraits<bi_fm_index_default_traits>);
+    if constexpr (detail::is_type_specialisation_of_v<TypeParam, bi_fm_index>)
+    {
+        EXPECT_TRUE(BiFmIndex<TypeParam>);
+    }
 }
 
 TYPED_TEST_P(fm_index_collection_test, empty_text)
