@@ -115,11 +115,11 @@ private:
 
         // The begin coordinate in the current column begins at it - begin(matrix).
         // The end coordinate ends at it - begin(matrix) + current_band_size
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_begin{column_index_type{current_column_index},
                       row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
                                                                                current_matrix_iter))}};
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
@@ -155,7 +155,7 @@ private:
 
         // Put the iterator to the position where the traceback starts.
         auto direction_iter = std::ranges::begin(trace_matrix);
-        std::advance(direction_iter, end_coordinate.first_seq_pos * band_size +
+        std::ranges::advance(direction_iter, end_coordinate.first_seq_pos * band_size +
                                      end_coordinate.second_seq_pos);
 
         // Parse the trace until interrupt.
@@ -217,7 +217,7 @@ private:
                                            band_size)};
         auto r = row_index_type{
                 static_cast<uint_fast32_t>(std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) %
-                                        band_size)};
+                                           band_size)};
 
         // Validate correct coordinates.
         auto begin_coordinate = map_banded_coordinate_to_range_position(

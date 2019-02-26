@@ -226,7 +226,7 @@ public:
         static_assert(std::is_signed_v<diff_type>,  "Only signed types can be used to test the band parameters.");
 
         if (static_cast<diff_type>(band.lower_bound) >
-            std::ranges::distance(seqan3::begin(first_range), seqan3::end(first_range)))
+            std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range)))
         {
             throw invalid_alignment_configuration
             {
@@ -235,7 +235,7 @@ public:
         }
 
         if (static_cast<diff_type>(std::abs(band.upper_bound)) >
-            std::ranges::distance(seqan3::begin(second_range), seqan3::end(second_range)))
+            std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range)))
         {
             throw invalid_alignment_configuration
             {
@@ -325,14 +325,14 @@ private:
     {
         auto col = this->current_column();
 
-        this->init_origin_cell(*seqan3::begin(col), cache);
+        this->init_origin_cell(*std::ranges::begin(col), cache);
 
         ranges::for_each(col | ranges::view::drop_exactly(1), [&cache, this](auto && cell)
         {
             this->init_column_cell(std::forward<decltype(cell)>(cell), cache);
         });
 
-        auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+        auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
         std::ignore = trace;
         if constexpr (is_banded)
         {
@@ -369,7 +369,7 @@ private:
             this->next_column();
 
             auto col = this->current_column();
-            this->init_row_cell(*seqan3::begin(col), cache);
+            this->init_row_cell(*std::ranges::begin(col), cache);
 
             auto second_range_it = std::ranges::begin(second_range);
             ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
@@ -379,7 +379,7 @@ private:
             });
 
             // Prepare last cell for tracking the optimum.
-            auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+            auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
             std::ignore = trace;
             alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
             this->check_score_last_row(current, get<3>(cache));
@@ -418,9 +418,9 @@ private:
         {
             this->next_column(); // Move to the next column.
             auto col = this->current_column();
-            this->init_row_cell(*seqan3::begin(col), cache); // initialise first row of dp matrix.
+            this->init_row_cell(*std::ranges::begin(col), cache); // initialise first row of dp matrix.
 
-            auto second_range_it = seqan3::begin(second_range);
+            auto second_range_it = std::ranges::begin(second_range);
             ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
                 this->compute_cell(std::forward<decltype(cell)>(cell),
@@ -431,7 +431,7 @@ private:
 
             if (this->band_touches_last_row())  // TODO [[unlikely]]
             {
-                auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+                auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
                 std::ignore = trace;
                 alignment_optimum current{get<0>(get<0>(std::move(cell))),
                                           static_cast<alignment_coordinate>(coordinate)};
@@ -452,7 +452,7 @@ private:
 
             // Move the second_range_it to the correct position depending on the current band position.
             auto second_range_it = std::ranges::begin(second_range);
-            std::advance(second_range_it, this->second_range_begin_offset());
+            std::ranges::advance(second_range_it, this->second_range_begin_offset());
 
             // Initialise the first cell of the current band.
             this->compute_first_band_cell(*std::ranges::begin(col),
@@ -471,7 +471,7 @@ private:
 
             if (this->band_touches_last_row()) // TODO [[unlikely]]
             {
-                auto [cell, coordinate, trace] = *std::ranges::prev(seqan3::end(col));
+                auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
                 std::ignore = trace;
                 alignment_optimum current{get<0>(get<0>(std::move(cell))),
                                           static_cast<alignment_coordinate>(coordinate)};
@@ -518,8 +518,8 @@ private:
             for (auto const & gap_elem : gap_segments)
             {
                 // insert_gap(aligned_sequence, gap.position + offset, gap.size);
-                auto it = seqan3::begin(aligned_sequence);
-                std::advance(it, (gap_elem.position - normalise) + offset);
+                auto it = std::ranges::begin(aligned_sequence);
+                std::ranges::advance(it, (gap_elem.position - normalise) + offset);
                 aligned_sequence.insert(it, gap_elem.size, gap{});
                 offset += gap_elem.size;
             }
@@ -531,10 +531,10 @@ private:
             end_coordinate = this->map_banded_coordinate_to_range_position(end_coordinate);
 
         // Get the subrange over the first sequence according to the begin and end coordinate.
-        auto it_first_seq_begin = seqan3::begin(first_range);
-        std::advance(it_first_seq_begin, begin_coordinate.first_seq_pos);
-        auto it_first_seq_end = seqan3::begin(first_range);
-        std::advance(it_first_seq_end, end_coordinate.first_seq_pos);
+        auto it_first_seq_begin = std::ranges::begin(first_range);
+        std::ranges::advance(it_first_seq_begin, begin_coordinate.first_seq_pos);
+        auto it_first_seq_end = std::ranges::begin(first_range);
+        std::ranges::advance(it_first_seq_end, end_coordinate.first_seq_pos);
 
         using first_subrange_type = seqan3::view::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
         auto first_subrange = first_subrange_type{it_first_seq_begin, it_first_seq_end};
@@ -544,10 +544,10 @@ private:
         fill_aligned_sequence(first_aligned_seq, first_gap_segments, begin_coordinate.first_seq_pos);
 
         // Get the subrange over the second sequence according to the begin and end coordinate.
-        auto it_second_seq_begin = seqan3::begin(second_range);
-        std::advance(it_second_seq_begin, begin_coordinate.second_seq_pos);
-        auto it_second_seq_end = seqan3::begin(second_range);
-        std::advance(it_second_seq_end, end_coordinate.second_seq_pos);
+        auto it_second_seq_begin = std::ranges::begin(second_range);
+        std::ranges::advance(it_second_seq_begin, begin_coordinate.second_seq_pos);
+        auto it_second_seq_end = std::ranges::begin(second_range);
+        std::ranges::advance(it_second_seq_end, end_coordinate.second_seq_pos);
 
         using second_subrange_type = seqan3::view::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
         auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};

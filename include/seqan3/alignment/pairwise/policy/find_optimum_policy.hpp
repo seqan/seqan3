@@ -146,7 +146,7 @@ protected:
         }
         else  // Only check the last cell for the global alignment.
         {
-            auto && last = *std::ranges::prev(seqan3::end(rng));
+            auto && last = *std::ranges::prev(std::ranges::end(rng));
             optimum = std::max(alignment_optimum<score_t>{get<0>(get<0>(last)),
                                                           static_cast<alignment_coordinate>(get<1>(last))},
                                optimum,

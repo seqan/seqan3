@@ -32,21 +32,20 @@ TEST(advanceable_alignment_coordinate, row_index_type)
 
 TEST(advanceable_alignment_coordinate, construction)
 {
-    EXPECT_TRUE(std::is_default_constructible<detail::advanceable_alignment_coordinate<size_t>>::value);
-    EXPECT_TRUE(std::is_copy_constructible<detail::advanceable_alignment_coordinate<size_t>>::value);
-    EXPECT_TRUE(std::is_copy_assignable<detail::advanceable_alignment_coordinate<size_t>>::value);
-    EXPECT_TRUE(std::is_move_constructible<detail::advanceable_alignment_coordinate<size_t>>::value);
-    EXPECT_TRUE(std::is_move_assignable<detail::advanceable_alignment_coordinate<size_t>>::value);
-    EXPECT_TRUE(std::is_destructible<detail::advanceable_alignment_coordinate<size_t>>::value);
+    EXPECT_TRUE(std::is_default_constructible<detail::advanceable_alignment_coordinate<>>::value);
+    EXPECT_TRUE(std::is_copy_constructible<detail::advanceable_alignment_coordinate<>>::value);
+    EXPECT_TRUE(std::is_copy_assignable<detail::advanceable_alignment_coordinate<>>::value);
+    EXPECT_TRUE(std::is_move_constructible<detail::advanceable_alignment_coordinate<>>::value);
+    EXPECT_TRUE(std::is_move_assignable<detail::advanceable_alignment_coordinate<>>::value);
+    EXPECT_TRUE(std::is_destructible<detail::advanceable_alignment_coordinate<>>::value);
 }
 
 TEST(advanceable_alignment_coordinate, construction_with_different_state)
 {
-    detail::advanceable_alignment_coordinate<size_t, detail::advanceable_alignment_coordinate_state::row>
+    detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>
         ro{detail::column_index_type{2u}, detail::row_index_type{3u}};
 
-    detail::advanceable_alignment_coordinate<size_t,
-        detail::advanceable_alignment_coordinate_state::none> no{ro};
+    detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none> no{ro};
 
     EXPECT_EQ(no.first_seq_pos, static_cast<size_t>(2));
     EXPECT_EQ(no.second_seq_pos, static_cast<size_t>(3));
@@ -56,13 +55,11 @@ TEST(advanceable_alignment_coordinate, type_deduction)
 {
     detail::advanceable_alignment_coordinate def_co{};
     EXPECT_TRUE((std::is_same_v<decltype(def_co),
-                    detail::advanceable_alignment_coordinate<size_t,
-                        detail::advanceable_alignment_coordinate_state::none>>));
+                    detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>>));
 
     detail::advanceable_alignment_coordinate co{detail::column_index_type{2u}, detail::row_index_type{3u}};
     EXPECT_TRUE((std::is_same_v<decltype(co),
-                    detail::advanceable_alignment_coordinate<size_t,
-                        detail::advanceable_alignment_coordinate_state::none>>));
+                    detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>>));
 }
 
 TEST(advanceable_alignment_coordinate, access)
@@ -79,14 +76,11 @@ TEST(advanceable_alignment_coordinate, access)
 TEST(advanceable_alignment_coordinate, weakly_equality_comparable_concept)
 {
     using not_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::none>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>;
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::row>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
     using column_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::column>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
     EXPECT_TRUE(std::EqualityComparable<not_incrementable>);
     EXPECT_TRUE(std::EqualityComparable<row_incrementable>);
@@ -96,8 +90,7 @@ TEST(advanceable_alignment_coordinate, weakly_equality_comparable_concept)
 TEST(advanceable_alignment_coordinate, equality)
 {
     using test_type =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::none>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>;
 
     test_type t1{detail::column_index_type{10u}, detail::row_index_type{5u}};
     test_type t2{detail::column_index_type{5u}, detail::row_index_type{5u}};
@@ -112,8 +105,7 @@ TEST(advanceable_alignment_coordinate, equality)
 TEST(advanceable_alignment_coordinate, inequality)
 {
     using test_type =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::none>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>;
 
     test_type t1{detail::column_index_type{10u}, detail::row_index_type{5u}};
     test_type t2{detail::column_index_type{5u}, detail::row_index_type{5u}};
@@ -128,14 +120,11 @@ TEST(advanceable_alignment_coordinate, inequality)
 TEST(advanceable_alignment_coordinate, incremental_concept)
 {
     using not_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::none>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>;
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::row>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
     using column_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::column>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
     EXPECT_FALSE(std::WeaklyIncrementable<not_incrementable>);
     EXPECT_TRUE(std::WeaklyIncrementable<row_incrementable>);
@@ -145,8 +134,7 @@ TEST(advanceable_alignment_coordinate, incremental_concept)
 TEST(advanceable_alignment_coordinate, increment_row)
 {
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::row>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
 
     row_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co = ++co;
@@ -165,8 +153,7 @@ TEST(advanceable_alignment_coordinate, increment_row)
 TEST(advanceable_alignment_coordinate, increment_col)
 {
     using col_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::column>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co = ++co;
@@ -185,8 +172,7 @@ TEST(advanceable_alignment_coordinate, increment_col)
 TEST(advanceable_alignment_coordinate, decrement_row)
 {
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::row>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
 
     row_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co += 4;
@@ -208,8 +194,7 @@ TEST(advanceable_alignment_coordinate, decrement_row)
 TEST(advanceable_alignment_coordinate, decrement_col)
 {
     using col_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::column>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co += 4;
@@ -231,8 +216,7 @@ TEST(advanceable_alignment_coordinate, decrement_col)
 TEST(advanceable_alignment_coordinate, advance_row)
 {
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::row>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
 
     row_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
 
@@ -248,8 +232,7 @@ TEST(advanceable_alignment_coordinate, advance_row)
 TEST(advanceable_alignment_coordinate, advance_col)
 {
     using col_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::column>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co = co + 4;
@@ -264,8 +247,7 @@ TEST(advanceable_alignment_coordinate, advance_col)
 TEST(advanceable_alignment_coordinate, iota_column_index)
 {
     using col_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::column>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co_begin{detail::column_index_type{0u}, detail::row_index_type{0u}};
     col_incrementable co_end{detail::column_index_type{5u}, detail::row_index_type{0u}};
@@ -282,8 +264,7 @@ TEST(advanceable_alignment_coordinate, iota_column_index)
 TEST(advanceable_alignment_coordinate, iota_row_index)
 {
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::row>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
 
     row_incrementable co_begin{detail::column_index_type{0u}, detail::row_index_type{0u}};
     row_incrementable co_end{detail::column_index_type{0u}, detail::row_index_type{5u}};
@@ -307,14 +288,11 @@ TEST(alignment_coordinate, basic)
     EXPECT_TRUE(std::is_destructible<alignment_coordinate>::value);
 
     using not_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::none>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>;
     using row_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::row>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::row>;
     using col_incrementable =
-        detail::advanceable_alignment_coordinate<size_t,
-            detail::advanceable_alignment_coordinate_state::column>;
+        detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::column>;
 
     not_incrementable co_not{detail::column_index_type{10u}, detail::row_index_type{5u}};
     col_incrementable co_col{detail::column_index_type{10u}, detail::row_index_type{5u}};

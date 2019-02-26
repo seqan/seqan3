@@ -26,7 +26,7 @@ bool run_test(config_t const & cfg)
 {
     auto r = setup();
     auto fn = detail::alignment_configurator::configure(r, cfg);
-    auto && [seq1, seq2] = *seqan3::begin(r);
+    auto && [seq1, seq2] = *std::ranges::begin(r);
 
     return fn(seq1, seq2).get_score() == 0;
 }

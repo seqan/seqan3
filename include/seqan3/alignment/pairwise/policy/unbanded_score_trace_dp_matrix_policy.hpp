@@ -119,14 +119,14 @@ private:
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column()
     {
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_begin{column_index_type{current_column_index}, row_index_type{0u}};
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
 
         return ranges::view::zip(std::span{score_matrix},
                                  ranges::view::iota(col_begin, col_end),
-                                 std::span{&(*trace_matrix_iter), dimension_second_range});
+                                 std::span{std::addressof(*trace_matrix_iter), dimension_second_range});
     }
 
     //!\brief Moves internal matrix pointer to the next column.
@@ -149,9 +149,9 @@ private:
         std::deque<gap_segment> second_segments{};
 
         // Put the iterator to the position where the traceback starts.
-        auto direction_iter = seqan3::begin(trace_matrix);
-        std::advance(direction_iter, end_coordinate.first_seq_pos * dimension_second_range +
-                                     end_coordinate.second_seq_pos);
+        auto direction_iter = std::ranges::begin(trace_matrix);
+        std::ranges::advance(direction_iter,
+                             end_coordinate.first_seq_pos * dimension_second_range + end_coordinate.second_seq_pos);
 
         // Parse the trace until interrupt.
         while (*direction_iter != trace_directions::none)
@@ -167,7 +167,7 @@ private:
                 static_cast<bool>(*direction_iter & trace_directions::up_open))
             {
                 // Get the current column index (note the column based layout)
-                size_t pos = std::ranges::distance(seqan3::begin(trace_matrix), direction_iter) /
+                size_t pos = std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) /
                              dimension_second_range;
                 gap_segment gap{pos, 0u};
 
@@ -189,7 +189,7 @@ private:
                 static_cast<bool>(*direction_iter & trace_directions::left_open))
             {
                 // Get the current row index (note the column based layout)
-                size_t pos = std::ranges::distance(seqan3::begin(trace_matrix), direction_iter) %
+                size_t pos = std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) %
                              dimension_second_range;
                 gap_segment gap{pos, 0u};
 
@@ -207,9 +207,9 @@ private:
         }
 
         // Get begin coordinate.
-        auto c = column_index_type{std::ranges::distance(seqan3::begin(trace_matrix), direction_iter) /
+        auto c = column_index_type{std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) /
                                    dimension_second_range};
-        auto r = row_index_type{std::ranges::distance(seqan3::begin(trace_matrix), direction_iter) %
+        auto r = row_index_type{std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) %
                                 dimension_second_range};
 
         return std::tuple{alignment_coordinate{column_index_type{std::move(c)}, row_index_type{std::move(r)}},

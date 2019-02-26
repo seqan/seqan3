@@ -43,7 +43,7 @@ struct alignment_optimum
 /*!\name Type deduction guides
  * \{
  */
-
+//!\brief Default constructed objects deduce to `int32_t`.
 alignment_optimum() -> alignment_optimum<int32_t>;
 
 template <Arithmetic score_t>

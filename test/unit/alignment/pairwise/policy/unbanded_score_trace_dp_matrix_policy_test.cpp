@@ -94,7 +94,7 @@ TYPED_TEST(unbanded_score_trace_test, current_column)
 
     auto zip_view = mock.current_column();
 
-    EXPECT_EQ(seqan3::size(zip_view), seq2.size() + 1);
+    EXPECT_EQ(std::ranges::size(zip_view), seq2.size() + 1);
 
     using value_t = seqan3::value_type_t<decltype(zip_view)>;
     EXPECT_EQ(std::tuple_size_v<value_t>, 3u);
@@ -145,5 +145,5 @@ TYPED_TEST(unbanded_score_trace_test, next_column)
         EXPECT_TRUE((std::get<2>(entry) == seqan3::detail::trace_directions::none));
     }
 
-    EXPECT_EQ(seqan3::size(zip_view_3), seq2.size() + 1);
+    EXPECT_EQ(std::ranges::size(zip_view_3), seq2.size() + 1);
 }

@@ -75,11 +75,11 @@ private:
         auto & [score_entry, coordinate, trace_value] = current_cell;
         auto & [current_entry, next_entry] = score_entry;
         auto & [main_score, hz_score, hz_trace] = current_entry;
-        auto const & [_ignore, prev_hz_score, prev_hz_trace]= next_entry;
+        auto const & [prev_main_score, prev_hz_score, prev_hz_trace]= next_entry;
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & [tmp, vt_score, vt_trace] = prev_cell;
 
-        std::ignore = _ignore;
+        std::ignore = prev_main_score;
 
         //TODO For the local alignment we might be able to use GCC overlow builtin arithmetics, which
         // allows us to check if overflow/underflow would happen. Not sure, if this helps with the performance though.

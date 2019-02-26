@@ -85,8 +85,8 @@ public:
     template <typename first_range_t, typename second_range_t, typename band_t>
     constexpr void allocate_matrix(first_range_t & first_range, second_range_t & second_range, band_t const & band)
     {
-        dimension_first_range  = std::distance(seqan3::begin(first_range), seqan3::end(first_range)) + 1;
-        dimension_second_range = std::distance(seqan3::begin(second_range), seqan3::end(second_range)) + 1;
+        dimension_first_range  = std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range)) + 1;
+        dimension_second_range = std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range)) + 1;
 
         // If upper_bound is negative, set it to 0 and trim the second sequences accordingly.
         band_column_index = std::max(static_cast<uint_fast32_t>(band.upper_bound), static_cast<uint_fast32_t>(0));
@@ -106,7 +106,7 @@ public:
         get<2>(score_matrix.back()) = trace_directions::none;
         current_column_index = 0;
         // Position the iterator to the right offset within the band.
-        current_matrix_iter = seqan3::begin(score_matrix) + band_column_index;
+        current_matrix_iter = std::ranges::begin(score_matrix) + band_column_index;
     }
 
     //!\brief Returns the current column of the alignment matrix.
@@ -116,11 +116,11 @@ public:
 
         assert(span > 0u);  // The span must always be greater than 0.
 
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_begin{column_index_type{current_column_index},
-                      row_index_type{static_cast<size_t>(std::ranges::distance(seqan3::begin(score_matrix),
+                      row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
                                                                                current_matrix_iter))}};
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
@@ -137,7 +137,7 @@ public:
         // Update the current_column_index.
         base_t::next_column();
         // Still in the initialisation phase and need to update the current matrix iterator until begin is reached.
-        if (current_matrix_iter != seqan3::begin(score_matrix))
+        if (current_matrix_iter != std::ranges::begin(score_matrix))
             --current_matrix_iter;
     }
 
@@ -153,11 +153,11 @@ public:
         // than the first term in the equation above.
         assert(remaining_column_size > 0);
 
-        using const_iter = typename score_matrix_type::const_iterator;
+        // using const_iter = typename score_matrix_type::const_iterator;
         // The current band size is the min of the remaining column size and the size of the current span of the band.
         return std::min(static_cast<uint_fast32_t>(remaining_column_size),
                         static_cast<uint_fast32_t>(
-                                std::distance<const_iter>(current_matrix_iter, seqan3::end(score_matrix)) - 1));
+                                std::ranges::distance(current_matrix_iter, std::ranges::end(score_matrix)) - 1));
     }
 
     /*!\brief Computes the begin offset of the second_range within the vertical dimension of banded matrix.
@@ -204,8 +204,8 @@ public:
     {
         using band_type = decltype(band.lower_bound);
 
-        band_type dimension_first = std::distance(seqan3::begin(first_range), seqan3::end(first_range));
-        band_type dimension_second = std::distance(seqan3::begin(second_range), seqan3::end(second_range));
+        band_type dimension_first = std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range));
+        band_type dimension_second = std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range));
 
         auto trim_first_range = [&]() constexpr
         {

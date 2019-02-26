@@ -79,9 +79,9 @@ TEST(banded_score_dp_matrix_policy, allocate_matrix)
     EXPECT_EQ(mock.dimension_second_range, 18u);
     EXPECT_EQ(mock.band_column_index, 5u);
     EXPECT_EQ(mock.band_row_index, 3u);
-    EXPECT_NE(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_NE(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
 
-    auto last_cell = *std::ranges::prev(seqan3::end(mock.score_matrix));
+    auto last_cell = *std::ranges::prev(std::ranges::end(mock.score_matrix));
     EXPECT_EQ(std::get<0>(last_cell), decltype(mock)::INF);
     EXPECT_EQ(std::get<1>(last_cell), decltype(mock)::INF);
 }
@@ -91,26 +91,26 @@ TEST(banded_score_dp_matrix_policy, next_column)
     auto mock = mock_factory();
 
     EXPECT_EQ(mock.current_column_index, 0u);
-    EXPECT_NE(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_NE(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
 
     mock.next_column();
     EXPECT_EQ(mock.current_column_index, 1u);
-    EXPECT_NE(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_NE(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
     mock.next_column();
     EXPECT_EQ(mock.current_column_index, 2u);
-    EXPECT_NE(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_NE(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
     mock.next_column();
     EXPECT_EQ(mock.current_column_index, 3u);
-    EXPECT_NE(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_NE(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
     mock.next_column();
     EXPECT_EQ(mock.current_column_index, 4u);
-    EXPECT_NE(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_NE(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
     mock.next_column();
     EXPECT_EQ(mock.current_column_index, 5u);
-    EXPECT_EQ(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_EQ(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
     mock.next_column();
     EXPECT_EQ(mock.current_column_index, 6u);
-    EXPECT_EQ(mock.current_matrix_iter, seqan3::begin(mock.score_matrix));
+    EXPECT_EQ(mock.current_matrix_iter, std::ranges::begin(mock.score_matrix));
 }
 
 TEST(banded_score_dp_matrix_policy, current_band_size)
@@ -153,7 +153,7 @@ TEST(banded_score_dp_matrix_policy, current_column)
     auto col = mock.current_column() | detail::view_get_score_column;
 
     EXPECT_EQ(std::tuple_size_v<value_type_t<decltype(col)>>, 2u);
-    EXPECT_EQ(seqan3::size(col), 4u);
+    EXPECT_EQ(std::ranges::size(col), 4u);
 
     // Writing into the first value means writing into the second value
     for (auto && tpl : col)
@@ -169,8 +169,8 @@ TEST(banded_score_dp_matrix_policy, current_column)
         EXPECT_EQ((std::tie(first, second)), (std::tuple{-1, -1}));
     }
 
-    EXPECT_EQ(std::get<0>(std::get<1>(*std::ranges::prev(seqan3::end(col)))), decltype(mock)::INF);
-    EXPECT_EQ(std::get<1>(std::get<1>(*std::ranges::prev(seqan3::end(col)))), decltype(mock)::INF);
+    EXPECT_EQ(std::get<0>(std::get<1>(*std::ranges::prev(std::ranges::end(col)))), decltype(mock)::INF);
+    EXPECT_EQ(std::get<1>(std::get<1>(*std::ranges::prev(std::ranges::end(col)))), decltype(mock)::INF);
 }
 
 TEST(banded_score_dp_matrix_policy, second_range_begin_offset)
@@ -224,7 +224,7 @@ TEST(banded_score_dp_matrix_policy, trim_sequences)
         auto [t_seq1, t_seq2] = mock.trim_sequences(seq1, seq2, band);
         EXPECT_TRUE(ranges::equal(t_seq1, seq1));
         EXPECT_TRUE(ranges::equal(t_seq2, seq2));
-        EXPECT_EQ(seqan3::size(t_seq1), seqan3::size(t_seq2));
+        EXPECT_EQ(std::ranges::size(t_seq1), std::ranges::size(t_seq2));
     }
 
     {

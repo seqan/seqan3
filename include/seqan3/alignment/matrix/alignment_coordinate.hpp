@@ -21,55 +21,29 @@
 
 namespace seqan3::detail
 {
-/*!\brief A strong type for designated initialisation of the column index of the seqan3::detail::alignment_coordinate.
- * \ingroup alignment_matrix
- * \tparam index_t The type of the index; must model std::UnsignedIntegral.
- */
-template <std::UnsignedIntegral index_t>
-struct column_index_type : detail::strong_type<index_t, column_index_type<index_t>>
+//!\brief A strong type for designated initialisation of the column index of the seqan3::detail::alignment_coordinate.
+//!\ingroup alignment_matrix
+struct column_index_type : detail::strong_type<size_t, column_index_type>
 {
     //!!\brief Introduce base class constructor into this type's definition.
-    using detail::strong_type<index_t, column_index_type<index_t>>::strong_type;
+    using detail::strong_type<size_t, column_index_type>::strong_type;
 };
 
-/*!\name Type deduction guides
- * \{
- */
-//!\brief The default constructed element deduces to `size_t`.
-column_index_type() -> column_index_type<size_t>;
-//!\brief Deduces the position type from the constructor argument.
-template <std::UnsignedIntegral index_t>
-column_index_type(index_t const) -> column_index_type<size_t>;
-//!\}
-
-/*!\brief A strong type for designated initialisation of the row index of the seqan3::detail::alignment_coordinate.
- * \ingroup alignment_matrix
- * \tparam index_t The type of the index; must model std::UnsignedIntegral.
- */
-template <std::UnsignedIntegral index_t>
-struct row_index_type : detail::strong_type<index_t, row_index_type<index_t>>
+//!\brief A strong type for designated initialisation of the row index of the seqan3::detail::alignment_coordinate.
+//!\ingroup alignment_matrix
+struct row_index_type : detail::strong_type<size_t, row_index_type>
 {
     //!!\brief Introduce base class constructor into this type's definition.
-    using detail::strong_type<index_t, row_index_type<index_t>>::strong_type;
+    using detail::strong_type<size_t, row_index_type>::strong_type;
 };
-
-/*!\name Type deduction guides
- * \{
- */
-//!\brief The default constructed element deduces to `size_t`.
-row_index_type() -> row_index_type<size_t>;
-//!\brief Deduces the position type from the constructor argument.
-template <std::UnsignedIntegral index_t>
-row_index_type(index_t const) -> row_index_type<size_t>;
-//!\}
 
 /*!\brief Represents a state to specify the implementation of the seqan3::detail::advanceable_alignment_coordinate
  * \ingroup alignment_matrix
  *
  * \details
  *
- * The class seqan3::detail::alignment_coordinate can be extended with an incrementable and decrementable policy
- * such that it can be used as a value type inside of a iota_view. This state offers three policies: none, which
+ * The class seqan3::detail::advanceable_alignment_coordinate can be extended with an incrementable and decrementable
+ * policy such that it can be used as a value type inside of a iota_view. This state offers three policies: none, which
  * leaves the functionality of seqan3::detail::alignment_coordinate untouched; column, which adds the respective
  * functionality only for the column index and row, which adds the respective functionality only for the row index.
  */
@@ -86,7 +60,6 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
 /*!\brief Implements an internal alignment coordinate that can be used as an argument to the std::ranges::iota_view.
  * \ingroup alignment_matrix
  * \implements std::EqualityComparable
- * \tparam index_t  The type of the sequence index; must model std::UnsignedIntegral.
  * \tparam states   A non-type template flag to enable a specific advanceable policy.
  *                  See seqan3::detail::advanceable_alignment_coordinate_state
  *
@@ -97,10 +70,9 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
  * Unfortunately, the current range implementation does not preserve std::ranges::BidirectionalRange properties,
  * so we need to model the full advanceable concept in order to preserve the std::ranges::RandomAccessRange properties.
  * This, however, can be relaxed if the range implementation fully complies with the current standard draft for Ranges,
- * as increment and decrement would be enough.
+ * as increment and decrement would be enough and ranges::view::iota would preserve std::ranges::BidirectionalRange.
  */
-template <std::UnsignedIntegral index_t,
-          advanceable_alignment_coordinate_state state = advanceable_alignment_coordinate_state::none>
+template <advanceable_alignment_coordinate_state state = advanceable_alignment_coordinate_state::none>
 class advanceable_alignment_coordinate
 {
 public:
@@ -108,10 +80,10 @@ public:
     //!\name Member types
     //!\{
     //!\brief Defines the difference type to model the std::WeaklyIncrementable concept.
-    using difference_type = std::make_signed_t<index_t>;
+    using difference_type = std::make_signed_t<size_t>;
     //!\}
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr advanceable_alignment_coordinate() noexcept = default;
@@ -122,17 +94,21 @@ public:
     ~advanceable_alignment_coordinate() noexcept = default;
 
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
-    template <typename _index_t, advanceable_alignment_coordinate_state _state>
-        requires std::Same<_index_t, index_t> && !std::Same<_state, state>
-    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<_index_t, _state> const & other) :
+    template <advanceable_alignment_coordinate_state _state>
+    //!\cond
+        requires !std::Same<_state, state>
+    //!\endcond
+    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<_state> const & other) :
         first_seq_pos{other.first_seq_pos},
         second_seq_pos{other.second_seq_pos}
     {}
 
     //!\brief Move-constructs from another advanceable_alignment_coordinate with a different policy.
-    template <typename _index_t, advanceable_alignment_coordinate_state _state>
-        requires std::Same<_index_t, index_t> && !std::Same<_state, state>
-    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<_index_t, _state> && other) :
+    template <advanceable_alignment_coordinate_state _state>
+    //!\cond
+        requires !std::Same<_state, state>
+    //!\endcond
+    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<_state> && other) :
         first_seq_pos{std::move(other.first_seq_pos)},
         second_seq_pos{std::move(other.second_seq_pos)}
     {}
@@ -141,8 +117,8 @@ public:
      * \param c_idx The respective column index within the matrix. Of type seqan3::detail::column_index_type.
      * \param r_idx The respective row index within the matrix. Of type seqan3::detail::row_index_type.
      */
-    constexpr advanceable_alignment_coordinate(column_index_type<index_t> const c_idx,
-                                               row_index_type<index_t> const r_idx) noexcept :
+    constexpr advanceable_alignment_coordinate(column_index_type const c_idx,
+                                               row_index_type const r_idx) noexcept :
         first_seq_pos{c_idx.get()},
         second_seq_pos{r_idx.get()}
     {}
@@ -169,7 +145,6 @@ public:
      *        seqan3::detail::advanceable_alignment_coordinate_state::none.
      * \{
      */
-
     constexpr advanceable_alignment_coordinate & operator++(/*pre-increment*/) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
@@ -287,20 +262,10 @@ public:
     //!\}
 
     //!\brief The begin/end position of the alignment in the first sequence.
-    index_t first_seq_pos{};
+    size_t first_seq_pos{};
     //!\brief The begin/end position of the alignment in the second sequence.
-    index_t second_seq_pos{};
+    size_t second_seq_pos{};
 };
-
-/*!\name Type deduction guides
- * \{
- */
-advanceable_alignment_coordinate() -> advanceable_alignment_coordinate<size_t>;
-//!\brief Deduces the position type from the constructor.
-template <std::UnsignedIntegral index_t>
-advanceable_alignment_coordinate(column_index_type<index_t> const, row_index_type<index_t> const) ->
-    advanceable_alignment_coordinate<size_t>;
-//!\}
 
 } // namespace seqan3::detail
 
@@ -319,17 +284,17 @@ namespace seqan3
  */
 class alignment_coordinate
 //!\cond DEV
-    : public detail::advanceable_alignment_coordinate<size_t>
+    : public detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>
 //!\endcond
 {
     //!\cond DEV
     //!\brief The type of the base class.
-    using base_t = detail::advanceable_alignment_coordinate<size_t>;
+    using base_t = detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>;
     //!\endcond
 
 public:
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr alignment_coordinate() = default;
@@ -349,14 +314,11 @@ public:
     {}
 
     /*!\brief Construction from the respective column and row indices.
-     * \tparam index_t The index type used to store the column and row position.
      * \param[in] c_idx The respective column index within the matrix. Of type seqan3::detail::column_index_type.
      * \param[in] r_idx The respective row index within the matrix. Of type seqan3::detail::row_index_type.
      */
-    template <typename index_t>
-    constexpr alignment_coordinate(detail::column_index_type<index_t> const c_idx,
-                                   detail::row_index_type<index_t> const r_idx) noexcept :
-        base_t{c_idx, r_idx}
+    constexpr alignment_coordinate(detail::column_index_type const c_idx,
+                                   detail::row_index_type const r_idx) noexcept : base_t{c_idx, r_idx}
     {}
     //!\endcond
     //!\}

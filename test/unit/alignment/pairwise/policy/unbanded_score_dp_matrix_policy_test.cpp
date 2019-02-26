@@ -90,7 +90,7 @@ TYPED_TEST(unbanded_score_matrix_test, current_column)
 
     auto zip_view = mock.current_column();
 
-    EXPECT_EQ(seqan3::size(zip_view), seq2.size() + 1);
+    EXPECT_EQ(std::ranges::size(zip_view), seq2.size() + 1);
     EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(std::get<0>(zip_view[0]))>, TypeParam>));
     EXPECT_TRUE(seqan3::detail::decays_to_ignore_v<std::remove_reference_t<decltype(std::get<2>(zip_view[0]))>>);
 }
@@ -136,9 +136,9 @@ TYPED_TEST(unbanded_score_matrix_test, test_concepts)
     EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(zip_view)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(zip_view)>);
 
-    auto it = seqan3::begin(zip_view);
+    auto it = std::ranges::begin(zip_view);
     EXPECT_TRUE(std::BidirectionalIterator<decltype(it)>);
 
-    auto it_e = seqan3::end(zip_view);
+    auto it_e = std::ranges::end(zip_view);
     EXPECT_TRUE(std::BidirectionalIterator<decltype(it_e)>);
 }

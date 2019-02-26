@@ -84,9 +84,9 @@ private:
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column() noexcept
     {
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_begin{column_index_type{current_column_index}, row_index_type{0u}};
-        advanceable_alignment_coordinate<size_t, advanceable_alignment_coordinate_state::row>
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
 
         return ranges::view::zip(std::span{score_matrix},

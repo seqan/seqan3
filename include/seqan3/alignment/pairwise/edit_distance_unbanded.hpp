@@ -480,7 +480,7 @@ public:
     {
         size_t col = database.size() - 1;
         if constexpr(is_semi_global)
-            col = std::distance(begin(database), _best_score_col);
+            col = std::ranges::distance(begin(database), _best_score_col);
 
         return {column_index_type{col}, row_index_type{query.size() - 1}};
     }
