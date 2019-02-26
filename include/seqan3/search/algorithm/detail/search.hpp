@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/search/algorithm/configuration/all.hpp>
 #include <seqan3/search/algorithm/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/algorithm/detail/search_trivial.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
@@ -129,7 +130,11 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
     }
     else
     {
-        std::vector<typename index_t::size_type> hits;
+        using hit_t = std::conditional_t<index_t::is_collection,
+                                         std::pair<typename index_t::size_type, typename index_t::size_type>,
+                                         typename index_t::size_type>;
+        std::vector<hit_t> hits;
+
         if constexpr (cfg_t::template exists<search_cfg::mode<detail::search_mode_best>>())
         {
             // only one cursor is reported but it might contain more than one text position
@@ -179,9 +184,12 @@ inline auto search_all(index_t const & index, queries_t & queries, configuration
     // delegate params: text_position (or cursor). we will withhold all hits of one query anyway to filter
     //                  duplicates. more efficient to call delegate once with one vector instead of calling
     //                  delegate for each hit separately at once.
+    using text_pos_t = std::conditional_t<index_t::is_collection,
+                                          std::pair<typename index_t::size_type, typename index_t::size_type>,
+                                          typename index_t::size_type>;
     using hit_t = std::conditional_t<cfg_t::template exists<search_cfg::output<detail::search_output_index_cursor>>(),
                                      typename index_t::cursor_type,
-                                     typename index_t::size_type>;
+                                     text_pos_t>;
 
     if constexpr (std::ranges::ForwardRange<queries_t> && std::ranges::RandomAccessRange<value_type_t<queries_t>>)
     {
