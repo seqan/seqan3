@@ -14,7 +14,9 @@
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/filter.hpp>
 
+#include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/view/pairwise_combine.hpp>
+#include <seqan3/range/view/take.hpp>
 #include <seqan3/std/view/reverse.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
@@ -80,7 +82,16 @@ TYPED_TEST_CASE(pairwise_combine_iterator_test, test_types);
 TYPED_TEST(pairwise_combine_iterator_test, concepts)
 {
     EXPECT_TRUE(std::ForwardIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
-    EXPECT_TRUE(std::BidirectionalIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
+
+    if constexpr (std::BidirectionalIterator<std::ranges::iterator_t<TypeParam>>)
+    {
+        EXPECT_TRUE(std::BidirectionalIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
+    }
+
+    if constexpr (std::RandomAccessIterator<std::ranges::iterator_t<TypeParam>>)
+    {
+        EXPECT_TRUE(std::RandomAccessIterator<std::ranges::iterator_t<typename TestFixture::view_t>>);
+    }
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, construction)
@@ -94,7 +105,7 @@ TYPED_TEST(pairwise_combine_iterator_test, construction)
     EXPECT_TRUE(std::is_nothrow_copy_assignable_v<iterator_t>);
     EXPECT_TRUE(std::is_nothrow_move_assignable_v<iterator_t>);
     EXPECT_TRUE(std::is_nothrow_destructible_v<iterator_t>);
-    EXPECT_TRUE((std::is_nothrow_constructible_v<iterator_t, underlying_iter_t, underlying_iter_t>));
+    EXPECT_TRUE((std::is_nothrow_constructible_v<iterator_t, underlying_iter_t, underlying_iter_t, underlying_iter_t>));
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, associated_types)
@@ -144,7 +155,7 @@ TYPED_TEST(pairwise_combine_iterator_test, dereference)
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
     auto r = this->resource();
-    iterator_t it{r.begin(), r.end()};
+    iterator_t it{r.begin(), r.begin(), r.end()};
 
     EXPECT_EQ(*it, (std::tuple{'a', 'b'}));
 
@@ -159,7 +170,7 @@ TYPED_TEST(pairwise_combine_iterator_test, pre_increment)
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
     auto r = this->resource();
-    iterator_t it{r.begin(), r.end()};
+    iterator_t it{r.begin(), r.begin(), r.end()};
 
     EXPECT_EQ(*(++it), (std::tuple{'a', 'c'}));
 }
@@ -169,7 +180,7 @@ TYPED_TEST(pairwise_combine_iterator_test, post_increment)
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
     auto r = this->resource();
-    iterator_t it{r.begin(), r.end()};
+    iterator_t it{r.begin(), r.begin(), r.end()};
 
     EXPECT_EQ(*(it++), (std::tuple{'a', 'b'}));
     EXPECT_EQ(*it, (std::tuple{'a', 'c'}));
@@ -180,9 +191,12 @@ TYPED_TEST(pairwise_combine_iterator_test, pre_decrement)
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
     auto r = this->resource();
-    iterator_t it{std::ranges::prev(r.end()), r.end()};
+    iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
 
-    EXPECT_EQ(*(--it), (std::tuple{'c', 'd'}));
+    if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+    {
+        EXPECT_EQ(*(--it), (std::tuple{'c', 'd'}));
+    }
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, post_decrement)
@@ -190,11 +204,14 @@ TYPED_TEST(pairwise_combine_iterator_test, post_decrement)
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
     auto r = this->resource();
-    iterator_t it{std::ranges::prev(r.end()), r.end()};
+    iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
 
-    --it;
-    EXPECT_EQ(*(it--), (std::tuple{'c', 'd'}));
-    EXPECT_EQ(*it, (std::tuple{'b', 'd'}));
+    if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+    {
+        --it;
+        EXPECT_EQ(*(it--), (std::tuple{'c', 'd'}));
+        EXPECT_EQ(*it, (std::tuple{'b', 'd'}));
+    }
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, equality)
@@ -202,11 +219,104 @@ TYPED_TEST(pairwise_combine_iterator_test, equality)
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
     auto r = this->resource();
-    iterator_t it{r.begin(), r.end()};
+    iterator_t it{r.begin(), r.begin(), r.end()};
 
     iterator_t it_2 = it++;
     EXPECT_EQ(it, it);
     EXPECT_NE(it, it_2);
+}
+
+TYPED_TEST(pairwise_combine_iterator_test, subscript)
+{
+    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+    auto r = this->resource();
+    iterator_t it{r.begin(), r.begin(), r.end()};
+
+    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    {
+        EXPECT_EQ(it[0], (std::tuple{'a', 'b'}));
+        EXPECT_EQ(it[1], (std::tuple{'a', 'c'}));
+        EXPECT_EQ(it[2], (std::tuple{'a', 'd'}));
+        EXPECT_EQ(it[3], (std::tuple{'b', 'c'}));
+        EXPECT_EQ(it[4], (std::tuple{'b', 'd'}));
+        EXPECT_EQ(it[5], (std::tuple{'c', 'd'}));
+    }
+}
+
+TYPED_TEST(pairwise_combine_iterator_test, advance_n)
+{
+    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+    auto r = this->resource();
+    iterator_t it{r.begin(), r.begin(), r.end()};
+
+    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    {
+        it = it + 1;
+        EXPECT_EQ(*it, (std::tuple{'a', 'c'}));
+        it += 2;
+        EXPECT_EQ(*it, (std::tuple{'b', 'c'}));
+        it = 2 + it;
+        EXPECT_EQ(*it, (std::tuple{'c', 'd'}));
+    }
+}
+
+TYPED_TEST(pairwise_combine_iterator_test, decrement_n)
+{
+    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+    auto r = this->resource();
+    iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
+
+    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    {
+        it = it - 2;
+        EXPECT_EQ(*it, (std::tuple{'b', 'd'}));
+        it -= 3;
+        EXPECT_EQ(*it, (std::tuple{'a', 'c'}));
+    }
+}
+
+TYPED_TEST(pairwise_combine_iterator_test, distance)
+{
+    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+    auto r = this->resource();
+    iterator_t it_1{r.begin(), r.begin(), r.end()};
+    iterator_t it_2{std::ranges::prev(r.end()), r.begin(), r.end()};
+
+    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    {
+        EXPECT_EQ(it_2 - it_1, 6);
+        --it_2;
+        EXPECT_EQ(it_2 - it_1, 5);
+        ++it_1;
+        EXPECT_EQ(it_2 - it_1, 4);
+    }
+}
+
+TYPED_TEST(pairwise_combine_iterator_test, order)
+{
+    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+    auto r = this->resource();
+    iterator_t it_1{std::ranges::prev(r.begin()), r.begin(), r.end()};
+    iterator_t it_2{std::ranges::prev(r.begin()), r.begin(), r.end()};
+    ++it_2;
+
+    if constexpr (std::StrictTotallyOrdered<decltype(r.begin())>)
+    {
+        EXPECT_FALSE(it_1 < it_1);
+        EXPECT_TRUE(it_1 <= it_1);
+        EXPECT_FALSE(it_1 > it_1);
+        EXPECT_TRUE(it_1 >= it_1);
+
+        EXPECT_TRUE(it_1 < it_2);
+        EXPECT_TRUE(it_1 <= it_2);
+        EXPECT_FALSE(it_1 > it_2);
+        EXPECT_FALSE(it_1 >= it_2);
+    }
 }
 
 TYPED_TEST(pairwise_combine_test, view_concept)
@@ -303,4 +413,25 @@ TEST(pairwise_combine_test, filter_input)
     EXPECT_TRUE(ranges::equal(cmp, std::vector<std::tuple<char, char>>{{'a', 'b'}, {'a', 'c'}, {'a', 'd'},
                                                                        {'b', 'c'}, {'b', 'd'},
                                                                        {'c', 'd'}}));
+}
+
+TEST(pairwise_combine_test, const_source)
+{
+    std::vector orig{'a', 'b', 'c', 'd'};
+    std::vector<char> const c_orig{orig};
+    seqan3::detail::pairwise_combine_view v{c_orig};
+
+    using ref_t = typename std::iterator_traits<std::ranges::iterator_t<decltype(v)>>::reference;
+    std::vector<ref_t> cmp;
+
+    for (auto r : v)
+        cmp.push_back(r);
+
+    auto it = std::ranges::begin(cmp);
+    EXPECT_EQ(*it, (std::tuple{'a', 'b'}));
+    EXPECT_EQ(*++it, (std::tuple{'a', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'a', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'b', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'b', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'c', 'd'}));
 }
