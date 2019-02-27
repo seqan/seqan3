@@ -323,6 +323,17 @@ TYPED_TEST(pairwise_combine_test, view_concept)
 {
     EXPECT_TRUE(std::ranges::ForwardRange<typename TestFixture::view_t>);
     EXPECT_TRUE(std::ranges::View<typename TestFixture::view_t>);
+
+    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
+    {
+        EXPECT_TRUE(std::ranges::BidirectionalRange<typename TestFixture::view_t>);
+    }
+
+    if constexpr (std::ranges::RandomAccessRange<TypeParam>)
+    {
+        EXPECT_TRUE(std::ranges::SizedRange<typename TestFixture::view_t>);
+        EXPECT_TRUE(std::ranges::RandomAccessRange<typename TestFixture::view_t>);
+    }
 }
 
 TYPED_TEST(pairwise_combine_test, basic_construction)
@@ -379,6 +390,17 @@ TYPED_TEST(pairwise_combine_test, iterate_reverse)
         cmp.push_back(r);
 
     EXPECT_TRUE(ranges::equal(cmp, this->expect() | seqan3::view::reverse));
+}
+
+TYPED_TEST(pairwise_combine_test, size)
+{
+    auto v = this->create_view();
+
+    if constexpr (std::ranges::RandomAccessRange<decltype(v)>)
+    {
+        EXPECT_EQ(std::ranges::size(v), 6u);
+        EXPECT_EQ(v.size(), 6u);
+    }
 }
 
 TEST(pairwise_combine_test, filter_output)

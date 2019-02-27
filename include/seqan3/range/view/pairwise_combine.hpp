@@ -479,6 +479,31 @@ public:
     }
     //!\}
 
+    /*!\name Capacity
+     * \{
+     */
+
+     /*!\brief Returns the size of the range.
+      *
+      * \details
+      *
+      * The size can only be computed when the entire range models std::ranges::RandomAccessRange.
+      *
+      * ### Complexity
+      *
+      * Constant.
+      *
+      * ### Exceptions
+      *
+      * No-throw guarantee.
+      */
+    constexpr size_t size() const noexcept
+         requires std::RandomAccessIterator<iterator_type>
+     {
+         return static_cast<size_t>(cend() - cbegin());
+     }
+    //!\}
+
 private:
 
     //!\brief The underling range.
