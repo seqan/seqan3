@@ -5,9 +5,11 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
 // -----------------------------------------------------------------------------------------------------
 
+#include <fstream>
+
 #include <gtest/gtest.h>
 
-#include <range/v3/view/remove_if.hpp>
+#include <seqan3/std/view/filter.hpp>
 #include <range/v3/algorithm/equal.hpp>
 
 #include <seqan3/argument_parser/all.hpp>
@@ -27,6 +29,10 @@ const char * argv1[] = {"./help_add_test", "-h"};
 const char * argv2[] = {"./help_add_test", "-hh"};
 const char * argv3[] = {"./help_add_test", "--version"};
 
+std::string version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "."
+                          + std::to_string(SEQAN3_VERSION_MINOR) + "."
+                          + std::to_string(SEQAN3_VERSION_PATCH);
+
 TEST(help_page_printing, short_help)
 {
     // Empty call with no options given. For detail::format_short_help
@@ -35,12 +41,11 @@ TEST(help_page_printing, short_help)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("empty_options"
-                           "============="
-                           "empty_options synopsis"
-                           "Try -h or --help for more information.");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "empty_options"
+               "============="
+               "empty_options synopsis"
+               "Try -h or --help for more information.";
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, no_information)
@@ -50,14 +55,13 @@ TEST(help_page_printing, no_information)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("test_parser"
-                                       "==========="
-                                       "VERSION"
-                                       "Last update:"
-                                       "test_parser version:"
-                                       "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "test_parser"
+               "==========="
+               "VERSION"
+               "Last update:"
+               "test_parser version:"
+               "SeqAn version: " + version_str;
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_short_copyright)
@@ -68,17 +72,16 @@ TEST(help_page_printing, with_short_copyright)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(short_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("test_parser"
-                           "==========="
-                           "VERSION"
-                           "Last update:"
-                           "test_parser version:"
-                           "SeqAn version: 3.0.0"
-                           "LEGAL"
-                           "test_parser Copyright: short"
-                           "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "test_parser"
+               "==========="
+               "VERSION"
+               "Last update:"
+               "test_parser version:"
+               "SeqAn version: " + version_str +
+               "LEGAL"
+               "test_parser Copyright: short"
+               "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.";
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_long_copyright)
@@ -88,17 +91,16 @@ TEST(help_page_printing, with_long_copyright)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(long_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("test_parser"
-                           "==========="
-                           "VERSION"
-                           "Last update:"
-                           "test_parser version:"
-                           "SeqAn version: 3.0.0"
-                           "LEGAL"
-                           "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
-                           "For full copyright and/or warranty information see --copyright.");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "test_parser"
+               "==========="
+               "VERSION"
+               "Last update:"
+               "test_parser version:"
+               "SeqAn version: " + version_str +
+               "LEGAL"
+               "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
+               "For full copyright and/or warranty information see --copyright.";
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_citation)
@@ -108,28 +110,16 @@ TEST(help_page_printing, with_citation)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(citation.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("test_parser"
-                           "==========="
-                           "VERSION"
-                           "Last update:"
-                           "test_parser version:"
-                           "SeqAn version: 3.0.0"
-                           "LEGAL"
-                           "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
-                           "In your academic works please cite: citation");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
-
-    // Tests the --copyright call. TODO: should be uncommented/fixed after --copyright is actually implemented.
-    // const char * argvCopyright[] = {"./copyright", "--copyright"};
-    // argument_parser copyright("copyright", 2, argvCopyright);
-    // copyright.info.long_copyright = "long copyright";
-    // testing::internal::CaptureStdout();
-    // EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    // std_cout = testing::internal::GetCapturedStdout();
-    // expected = "whatever is expected";
-    // EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               // expected | ranges::view::remove_if(is_space)));
+    expected = "test_parser"
+               "==========="
+               "VERSION"
+               "Last update:"
+               "test_parser version:"
+               "SeqAn version: " + version_str +
+               "LEGAL"
+               "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
+               "In your academic works please cite: citation";
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, empty_advanced_help)
@@ -139,14 +129,13 @@ TEST(help_page_printing, empty_advanced_help)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser2.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("test_parser_2"
-                           "============="
-                           "VERSION"
-                           "Last update:"
-                           "test_parser_2 version:"
-                           "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "test_parser_2"
+               "============="
+               "VERSION"
+               "Last update:"
+               "test_parser_2 version:"
+               "SeqAn version: " + version_str;
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, empty_version_call)
@@ -156,14 +145,13 @@ TEST(help_page_printing, empty_version_call)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser3.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("version"
-                           "======="
-                           "VERSION"
-                           "Last update:"
-                           "version version:"
-                           "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "version"
+               "======="
+               "VERSION"
+               "Last update:"
+               "version version:"
+               "SeqAn version: " + version_str;
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, version_call)
@@ -177,16 +165,15 @@ TEST(help_page_printing, version_call)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser4.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("versionURL"
-                           "=========="
-                           "VERSION"
-                           "Last update:"
-                           "versionURL version:"
-                           "SeqAn version: 3.0.0"
-                           "URL"
-                           "www.seqan.de");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "versionURL"
+               "=========="
+               "VERSION"
+               "Last update:"
+               "versionURL version:"
+               "SeqAn version: " + version_str +
+               "URL"
+               "www.seqan.de";
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, do_not_print_hidden_options)
@@ -198,15 +185,14 @@ TEST(help_page_printing, do_not_print_hidden_options)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser5.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("hidden"
-                           "======"
-                           "OPTIONS"
-                           "VERSION"
-                           "Last update:"
-                           "hidden version:"
-                           "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "hidden"
+               "======"
+               "OPTIONS"
+               "VERSION"
+               "Last update:"
+               "hidden version:"
+               "SeqAn version: " + version_str;
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
 }
 
 TEST(help_page_printing, full_information)
@@ -226,31 +212,98 @@ TEST(help_page_printing, full_information)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = std::string("full - so short"
-                           "==============="
-                           "SYNOPSIS"
-                           "full synopsis"
-                           "full synopsis2"
-                           "DESCRIPTION"
-                           "description"
-                           "description2"
-                           "POSITIONAL ARGUMENTS"
-                           "ARGUMENT-1 (List of std::string's)"
-                           "this is a positional option."
-                           "OPTIONS"
-                           "-i, --int (signed 32 bit integer)"
-                           "this is a int option."
-                           "-f, --flag"
-                           "this is a flag."
-                           "EXAMPLES"
-                           "example"
-                           "example2"
-                           "VERSION"
-                           "Last update:"
-                           "full version:"
-                           "SeqAn version: 3.0.0");
-    EXPECT_TRUE(ranges::equal((std_cout | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    expected = "full - so short"
+               "==============="
+               "SYNOPSIS"
+               "full synopsis"
+               "full synopsis2"
+               "DESCRIPTION"
+               "description"
+               "description2"
+               "POSITIONAL ARGUMENTS"
+               "ARGUMENT-1 (List of std::string's)"
+               "this is a positional option."
+               "OPTIONS"
+               "-i, --int (signed 32 bit integer)"
+               "this is a int option."
+               "-f, --flag"
+               "this is a flag."
+               "EXAMPLES"
+               "example"
+               "example2"
+               "VERSION"
+               "Last update:"
+               "full version:"
+               "SeqAn version: " + version_str;
+    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+}
 
-   // EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+TEST(help_page_printing, copyright)
+{
+    // Tests the --copyright call.
+    const char * argvCopyright[] = {"./copyright", "--copyright"};
+    argument_parser copyright("myApp", 2, argvCopyright);
+
+    std::ifstream license_file{std::string{{SEQAN_INCLUDE_DIR}} + "/../LICENSE"};
+    std::string license_string{(std::istreambuf_iterator<char>(license_file)),
+                                std::istreambuf_iterator<char>()};
+
+    // Test --copyright with empty short and long copyright info.
+    {
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std_cout = testing::internal::GetCapturedStdout();
+
+        expected = "================================================================================\n"
+                   "Copyright information for myApp:\n"
+                   "--------------------------------------------------------------------------------\n"
+                   "myApp copyright information not available.\n"
+                   "================================================================================\n"
+                   "This program contains SeqAn3 code licensed under the following terms:\n"
+                   "--------------------------------------------------------------------------------\n"
+                   + license_string;
+
+        EXPECT_EQ(std_cout, expected);
+    }
+
+    // Test --copyright with a non-empty short copyright and an empty long copyright.
+    copyright.info.short_copyright = "short copyright line 1\nshort copyright line 2";
+    {
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std_cout = testing::internal::GetCapturedStdout();
+
+        expected = "================================================================================\n"
+                   "Copyright information for myApp:\n"
+                   "--------------------------------------------------------------------------------\n"
+                   "myApp full copyright information not available. Displaying short copyright information instead:\n"
+                   "short copyright line 1\n"
+                   "short copyright line 2\n"
+                   "================================================================================\n"
+                   "This program contains SeqAn3 code licensed under the following terms:\n"
+                   "--------------------------------------------------------------------------------\n"
+                   + license_string;
+
+        EXPECT_EQ(std_cout, expected);
+    }
+
+    // Test --copyright with a non-empty short copyright and a non-empty long copyright.
+    copyright.info.long_copyright = "long copyright line 1\nlong copyright line 2";
+    {
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std_cout = testing::internal::GetCapturedStdout();
+
+        expected = "================================================================================\n"
+                   "Copyright information for myApp:\n"
+                   "--------------------------------------------------------------------------------\n"
+                   "long copyright line 1\n"
+                   "long copyright line 2\n"
+                   "================================================================================\n"
+                   "This program contains SeqAn3 code licensed under the following terms:\n"
+                   "--------------------------------------------------------------------------------\n"
+                   + license_string;
+
+        EXPECT_EQ(std_cout, expected);
+    }
 }
