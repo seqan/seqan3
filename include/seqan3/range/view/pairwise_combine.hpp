@@ -30,6 +30,10 @@ namespace seqan3::detail
  * This view will provide a convenient way to iterate over all pairwise combinations of a given source range
  * while the order of selection does not matter. A source range with `n` elements will therefore have `n choose 2`
  * possible combinations.
+ *
+ * ### Example
+ *
+ * \include test/snippet/range/view/pairwise_combine.cpp
  */
 template <std::ranges::View source_range_type>
 //!\cond
@@ -578,6 +582,10 @@ namespace seqan3::view
  * ### Thread safety
  *
  * Concurrent access to this view, e.g. while iterating over it, is not thread-safe and must be protected externally.
+ *
+ * ### Example
+ *
+ * \include test/snippet/range/view/pairwise_combine.cpp
  *
  * \hideinitializer
  */
