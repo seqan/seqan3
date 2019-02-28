@@ -30,7 +30,8 @@ MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 SORT_BRIEF_DOCS        = YES
 TOC_INCLUDE_HEADINGS   = 2
-HTML_EXTRA_STYLESHEET = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
+HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
+INPUT_ENCODING         = UTF-8
 
 PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "CEREAL_LOAD_FUNCTION_NAME=load" \
@@ -45,6 +46,7 @@ TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=http://en.cppreference.
 EXCLUDE_SYMBOLS        = seqan3::contrib
 
 FORMULA_FONTSIZE       = 14
+HTML_DYNAMIC_SECTIONS  = YES
 
 ## detect headers without extensions (in std module)
 EXTENSION_MAPPING      = .no_extension=C++
