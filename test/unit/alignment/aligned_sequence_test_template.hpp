@@ -32,7 +32,7 @@ TYPED_TEST_P(aligned_sequence, fulfills_concept)
 
 TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
 {
-    using unaligned_seq_type = detail::unaligned_seq_t<TypeParam>;
+    using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned{};
 
     if constexpr (sequence_container_concept<unaligned_seq_type>)

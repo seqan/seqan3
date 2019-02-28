@@ -68,13 +68,16 @@ namespace seqan3
  *
  * ### The seqan3::gap_decorator_anchor_set::iterator type
  *
- * \attention The iterator of the seqan3::gap_decorator_anchor_set does not model the std::LegacyInputIterator because
- * it has no operator->. Note that it does model the std::ranges::InputIterator.
+ * \attention The iterator of the seqan3::gap_decorator_anchor_set does not model the
+ *            [Cpp17InputIterator](https://en.cppreference.com/w/cpp/named_req/InputIterator) requirements of the
+ *            STL because dereferencing the iterator returns a proxy and no operator-> is provided.
+ *            Note that it does model the std::ranges::InputIterator.
  *
  */
-template <std::ranges::RandomAccessRange inner_type>
+template <std::ranges::ViewableRange inner_type>
 //!\cond
-    requires std::ranges::SizedRange<inner_type>
+    requires std::ranges::RandomAccessRange<inner_type> && std::ranges::SizedRange<inner_type> &&
+             (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::View<inner_type>)
 //!\endcond
 class gap_decorator_anchor_set
 {
@@ -368,7 +371,12 @@ public:
     ~gap_decorator_anchor_set() = default;
 
     //!\brief Construct with the ungapped range type.
-    constexpr gap_decorator_anchor_set(inner_type const & range) : ungapped_view{view::all(range)} {}
+    template <typename other_range_t>
+         requires !std::Same<other_range_t, gap_decorator_anchor_set> &&
+                  std::Same<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
+                  std::ranges::ViewableRange<other_range_t> // at end, otherwise it competes with the move ctor
+    gap_decorator_anchor_set(other_range_t && range) : ungapped_view{view::all(std::forward<inner_type>(range))}
+    {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
     // !\}
 
     /*!\brief Returns the total length of the aligned sequence.
@@ -525,7 +533,11 @@ public:
      * \param[in,out] dec       The decorator to modify.
      * \param[in]     unaligned The unaligned sequence to assign.
      */
-    friend void assign_unaligned(gap_decorator_anchor_set & dec, unaligned_seq_type & unaligned)
+    template <typename unaligned_seq_t> // generic template to use forwarding reference
+    //!\cond
+        requires std::Constructible<gap_decorator_anchor_set, unaligned_seq_t>
+    //!\endcond
+    friend void assign_unaligned(gap_decorator_anchor_set & dec, unaligned_seq_t && unaligned)
     {
         dec = unaligned;
     }
@@ -782,11 +794,23 @@ private:
     }
 
     //!\brief Stores a (copy of a) view to the ungapped, underlying sequence.
-    decltype(view::all(std::declval<inner_type const &>())) ungapped_view{};
+    decltype(view::all(std::declval<inner_type &&>())) ungapped_view{};
 
     //!\brief Set storing the anchor gaps.
     anchor_set_type anchors{};
 };
+
+/*!\name Type deduction guides
+ * \{
+ */
+//!\brief Ranges (not views!) always deduce to `const & range_type` since they are access-only anyway.
+template <std::ranges::ViewableRange urng_t>
+gap_decorator_anchor_set(urng_t && range) -> gap_decorator_anchor_set<std::remove_reference_t<urng_t> const &>;
+
+//!\brief Views always deduce to their respective type because they are copied.
+template <std::ranges::View urng_t>
+gap_decorator_anchor_set(urng_t range) -> gap_decorator_anchor_set<urng_t>;
+//!\}
 
 } // namespace seqan
 
