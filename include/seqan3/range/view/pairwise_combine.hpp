@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include <seqan3/range/concept.hpp>
+#include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/view/view_all.hpp>
 
@@ -80,7 +81,7 @@ private:
 
         /*!\brief Constructs the iterator from the current source iterator and the end iterator of the source range.
          * \param[in] iter     The iterator pointing to current element within the source range.
-         * \param[in] beign_it The iterator pointing to begin of the source range. Only needed if
+         * \param[in] begin_it The iterator pointing to begin of the source range. Only needed if
          *                     `source_iterator_type` models std::RandomAccessIterator.
          * \param[in] end_it   The iterator pointing to end of the source range.
          *
@@ -304,8 +305,7 @@ private:
 
     private:
 
-        /*!\brief Sets the iterator to the given index.
-         * \param[in] index The index to set the iterator to.
+        /*!\brief Returns the index for the current iterator position.
          *
          * \details
          *
@@ -316,6 +316,24 @@ private:
          * (see https://stackoverflow.com/questions/27086195/linear-index-upper-triangular-matrix).
          * Given these properties, one can compute the matrix index (i, j) from the linearised matrix index and vice
          * versa.
+         */
+        constexpr size_t to_index() const
+            noexcept(noexcept(std::ranges::distance(std::declval<source_iterator_type &>(),
+                                                    std::declval<source_iterator_type &>())))
+        //!\cond
+            requires std::RandomAccessIterator<source_iterator_type>
+        //!\endcond
+        {
+            size_t src_size = std::ranges::distance(begin_it, end_it);
+            size_t index_i = std::ranges::distance(begin_it, first_it);
+            size_t index_j = std::ranges::distance(begin_it, second_it);
+            return (src_size * (src_size - 1)/2) - (src_size - index_i) * ((src_size - index_i) - 1)/2 +
+                   index_j - index_i - 1;
+        }
+
+        /*!\brief Sets the iterator to the given index.
+         * \param[in] index The index to set the iterator to.
+         * \copydetails to_index()
          */
         constexpr void from_index(size_t const index)
             noexcept(noexcept(std::declval<source_iterator_type &>() - std::declval<source_iterator_type &>()) &&
@@ -331,21 +349,6 @@ private:
                              ((src_size - index_i) - 1)/2;
             first_it = begin_it + index_i;
             second_it = begin_it + index_j;
-        }
-
-        //!\brief Returns the index for the current iterator position.
-        //!\copydetails from_index
-        constexpr size_t to_index() const
-            noexcept(noexcept(std::declval<source_iterator_type &>() - std::declval<source_iterator_type &>()))
-        //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
-        //!\endcond
-        {
-            size_t src_size = end_it - begin_it;
-            size_t index_i = first_it - begin_it;
-            size_t index_j = second_it - begin_it;
-            return (src_size * (src_size - 1)/2) - (src_size - index_i) * ((src_size - index_i) - 1)/2 +
-                   index_j - index_i - 1;
         }
 
         //!\brief The iterator pointing to the first element of the pairwise combination.
@@ -483,25 +486,27 @@ public:
      * \{
      */
 
-     /*!\brief Returns the size of the range.
-      *
-      * \details
-      *
-      * The size can only be computed when the entire range models std::ranges::RandomAccessRange.
-      *
-      * ### Complexity
-      *
-      * Constant.
-      *
-      * ### Exceptions
-      *
-      * No-throw guarantee.
-      */
+    /*!\brief Returns the size of the range.
+     *
+     * \details
+     *
+     * The size can only be computed when the entire range models std::ranges::RandomAccessRange.
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
     constexpr size_t size() const noexcept
-         requires std::RandomAccessIterator<iterator_type>
-     {
-         return static_cast<size_t>(cend() - cbegin());
-     }
+    //!\cond
+        requires std::RandomAccessIterator<iterator_type>
+    //!\endcond
+    {
+        return static_cast<size_t>(cend() - cbegin());
+    }
     //!\}
 
 private:
@@ -519,7 +524,7 @@ private:
 
 //!\brief Deduces the source range type from the passed view.
 template <std::ranges::View other_type>
-pairwise_combine_view(other_type && view) -> pairwise_combine_view<other_type>;
+pairwise_combine_view(other_type view) -> pairwise_combine_view<std::remove_reference_t<other_type>>;
 
 //!\brief Deduces the source range type from the passed range.
 template <std::ranges::Range range_type>
@@ -528,3 +533,55 @@ pairwise_combine_view(range_type & range) -> pairwise_combine_view<decltype(std:
 //!\}
 
 } // namespace seqan3::detail
+
+namespace seqan3::view
+{
+/*!\name General purpose views
+ * \{
+ */
+
+/*!\brief             A view adapter that generates all pairwise combinations of the elements of the source range.
+ * \tparam urng_t     The type of the range being processed. See below for requirements.
+ * \param[in] urange  The range being processed.
+ * \returns           A range over all pairwise combinations. See below for the properties of the returned range.
+ * \ingroup view
+ *
+ * \details
+ *
+ * This view generates two-element tuples representing all possible combinations of the elements of the source range
+ * while ignoring the order of the elements. If the source range has less than two elements the returned range is empty,
+ * otherwise the size of the returned view corresponds to the binomial coefficient `n choose 2`, where `n` is the
+ * size of the source range. The reference type of this range is a tuple over the reference type of the source range.
+ * Constness will not be propagated to the reference types of the source range.
+ *
+ * ### View properties
+ *
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                       |
+ * |---------------------------------|:-------------------------------------:|:--------------------------------------------------------------------:|
+ * | std::ranges::InputRange         |                                       | *undefined*                                                          |
+ * | std::ranges::ForwardRange       | *required*                            | *preserved*                                                          |
+ * | std::ranges::BidirectionalRange |                                       | *preserved*                                                          |
+ * | std::ranges::RandomAccessRange  |                                       | *preserved*                                                          |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                                                               |
+ * |                                 |                                       |                                                                      |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                                         |
+ * | std::ranges::View               |                                       | *guaranteed*                                                         |
+ * | std::ranges::SizedRange         |                                       | *guaranteed* iff urng_t models std::RandomAccessRange                |
+ * | std::ranges::CommonRange        |                                       | *guaranteed*                                                         |
+ * | std::ranges::OutputRange        |                                       | *lost*                                                               |
+ * | seqan3::const_iterable_concept  |                                       | *preserved*                                                          |
+ * |                                 |                                       |                                                                      |
+ * | seqan3::reference_t             |                                       | std::tuple<seqan3::reference_t<urng_t>, seqan3::reference_t<urng_t>> |
+ *
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ *
+ * ### Thread safety
+ *
+ * Concurrent access to this view, e.g. while iterating over it, is not thread-safe and must be protected externally.
+ *
+ * \hideinitializer
+ */
+inline constexpr auto pairwise_combine = detail::generic_pipable_view_adaptor<detail::pairwise_combine_view>{};
+
+//!\}
+} // namespace seqan3::view

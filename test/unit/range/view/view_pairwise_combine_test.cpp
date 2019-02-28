@@ -403,45 +403,59 @@ TYPED_TEST(pairwise_combine_test, size)
     }
 }
 
-TEST(pairwise_combine_test, filter_output)
+TEST(pairwise_combine_fn_test, filter_output)
 {
     std::vector orig{'a', 'b', 'x', 'c', 'd'};
-        seqan3::detail::pairwise_combine_view v{orig};
 
-    using ref_t = seqan3::reference_t<decltype(v)>;
+    auto v = orig | seqan3::view::pairwise_combine;
+
+    using ref_t = typename std::iterator_traits<std::ranges::iterator_t<decltype(v)>>::reference;
     std::vector<ref_t> cmp;
 
-    for (auto r : v | ranges::view::filter([](auto tpl) { return !((std::get<0>(tpl) == 'x') ||
-                                                                  (std::get<1>(tpl) == 'x')); }))
+    auto v_filter = v | ranges::view::filter([](auto tpl)
+                        {
+                            return !((std::get<0>(tpl) == 'x') || (std::get<1>(tpl) == 'x'));
+                        });
+
+    for (auto r : v_filter)
         cmp.push_back(r);
 
-    EXPECT_TRUE(ranges::equal(cmp, std::vector<std::tuple<char, char>>{{'a', 'b'}, {'a', 'c'}, {'a', 'd'},
-                                                                       {'b', 'c'}, {'b', 'd'},
-                                                                       {'c', 'd'}}));
+    auto it = std::ranges::begin(cmp);
+    EXPECT_EQ(*it, (std::tuple{'a', 'b'}));
+    EXPECT_EQ(*++it, (std::tuple{'a', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'a', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'b', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'b', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'c', 'd'}));
 }
 
-TEST(pairwise_combine_test, filter_input)
+TEST(pairwise_combine_fn_test, filter_input)
 {
     std::vector orig{'a', 'b', 'x', 'c', 'd'};
     auto v_filter = orig | ranges::view::filter([](char c) { return c != 'x'; });
-    seqan3::detail::pairwise_combine_view v{std::move(v_filter)};
 
-    using ref_t = seqan3::reference_t<decltype(v)>;
+    auto v = v_filter | seqan3::view::pairwise_combine;
+
+    using ref_t = typename std::iterator_traits<std::ranges::iterator_t<decltype(v)>>::reference;
     std::vector<ref_t> cmp;
 
     for (auto r : v)
         cmp.push_back(r);
 
-    EXPECT_TRUE(ranges::equal(cmp, std::vector<std::tuple<char, char>>{{'a', 'b'}, {'a', 'c'}, {'a', 'd'},
-                                                                       {'b', 'c'}, {'b', 'd'},
-                                                                       {'c', 'd'}}));
+    auto it = std::ranges::begin(cmp);
+    EXPECT_EQ(*it, (std::tuple{'a', 'b'}));
+    EXPECT_EQ(*++it, (std::tuple{'a', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'a', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'b', 'c'}));
+    EXPECT_EQ(*++it, (std::tuple{'b', 'd'}));
+    EXPECT_EQ(*++it, (std::tuple{'c', 'd'}));
 }
 
-TEST(pairwise_combine_test, const_source)
+TEST(pairwise_combine_fn_test, const_source)
 {
     std::vector orig{'a', 'b', 'c', 'd'};
     std::vector<char> const c_orig{orig};
-    seqan3::detail::pairwise_combine_view v{c_orig};
+    auto v = c_orig | seqan3::view::pairwise_combine;
 
     using ref_t = typename std::iterator_traits<std::ranges::iterator_t<decltype(v)>>::reference;
     std::vector<ref_t> cmp;
