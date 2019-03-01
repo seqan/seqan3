@@ -1,4 +1,5 @@
 #include <seqan3/argument_parser/all.hpp>
+#include <seqan3/std/filesystem>
 
 int main(int argc, const char ** argv)
 {
@@ -6,7 +7,7 @@ int main(int argc, const char ** argv)
 
     std::string file_name;
 
-    seqan3::regex_validator<std::string> absolute_path_validator("(/[^/]+)+/.*\\.[^/\\.]+$");
+    seqan3::regex_validator absolute_path_validator("(/[^/]+)+/.*\\.[^/\\.]+$");
     seqan3::file_ext_validator my_file_ext_validator({"sa", "so"});
 
     myparser.add_option(file_name, 'f', "file","Give me a file name/path.",

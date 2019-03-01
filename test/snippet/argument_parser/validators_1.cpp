@@ -7,7 +7,7 @@ int main(int argc, const char ** argv)
     seqan3::argument_parser myparser("Test", argc, argv); // initialize
 
     int myint;
-    seqan3::arithmetic_range_validator<int> my_validator{2, 10};
+    seqan3::arithmetic_range_validator my_validator{2, 10};
 
     myparser.add_option(myint,'i',"integer","Give me a number.",
                         seqan3::option_spec::DEFAULT, my_validator);

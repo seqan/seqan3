@@ -1,17 +1,17 @@
 //! [usage]
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/std/filesystem>
 
 int main(int argc, const char ** argv)
 {
     seqan3::argument_parser myparser("Test", argc, argv); // initialize
 
     std::filesystem::path myfile;
-    seqan3::file_existance_validator my_validator{};
 
     myparser.add_option(myfile,'f',"file","Give me a filename.",
-                        seqan3::option_spec::DEFAULT, my_validator);
+                        seqan3::option_spec::DEFAULT, seqan3::file_existance_validator());
+    //![validator_call]
 
     // an exception will be thrown if the user specifies a filename that does not exist
     try
