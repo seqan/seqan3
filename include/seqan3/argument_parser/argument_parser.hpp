@@ -526,27 +526,16 @@ private:
     }
 
     /*!\brief Checks whether the long identifier has already been used before.
-    * \param[in] long_id The long identifier of the command line option/flag.
+    * \param[in] id The long identifier of the command line option/flag.
     * \returns `true` if an option or flag with the long identifier exists or `false`
     *          otherwise.
     */
-    bool id_exists(std::string const & long_id)
+    template <typename id_type>
+    bool id_exists(id_type const & id)
     {
-        if (long_id.empty())
+        if (detail::format_parse::is_empty_id(id))
             return false;
-        return(!(used_option_ids.insert(long_id)).second);
-    }
-
-    /*!\brief Checks whether the short identifier has already been used before.
-    * \param[in] short_id The short identifier of the command line option/flag.
-    * \returns `true` if an option or flag with the identifier exists or `false`
-    *          otherwise.
-    */
-    bool id_exists(char const short_id)
-    {
-        if (short_id == '\0')
-            return false;
-        return(!(used_option_ids.insert(std::string(1, short_id))).second);
+        return (!(used_option_ids.insert(std::string({id}))).second);
     }
 
     /*!\brief Verifies that the short and the long identifiers are correctly formatted.
@@ -578,7 +567,7 @@ private:
                           if (!(allowed(c) || is_char<'-'>(c)))
                               throw parser_design_error("Long identifiers may only contain alphanumeric characters, '_', '-', or '@'.");
                       });
-        if (short_id == '\0' && long_id.empty())
+        if (detail::format_parse::is_empty_id(short_id) && detail::format_parse::is_empty_id(long_id))
             throw parser_design_error("Option Identifiers cannot both be empty.");
     }
 

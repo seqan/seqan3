@@ -173,6 +173,16 @@ public:
     void add_list_item(std::string const &, std::string const &) {}
     //!\endcond
 
+    //!\brief Checks whether \p id is empty.
+    template <typename id_type>
+    static bool is_empty_id(id_type const & id)
+    {
+        if constexpr (std::Same<remove_cvref_t<id_type>, std::string>)
+            return id.empty();
+        else // char
+            return is_char<'\0'>(id);
+    }
+
 private:
     /*!\brief Initializes the format_parse on construction.
      *
@@ -224,7 +234,10 @@ private:
     template <typename id_type>
     std::vector<std::string>::iterator find_option_id(std::vector<std::string>::iterator const begin_it, id_type const & id)
     {
-        return(std::find_if(begin_it, end_of_options_it,
+        if (is_empty_id(id))
+            return end_of_options_it;
+
+        return (std::find_if(begin_it, end_of_options_it,
             [&] (const std::string & v)
             {
                 size_t id_size{(prepend_dash(id)).size()};
