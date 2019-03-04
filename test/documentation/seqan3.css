@@ -199,6 +199,55 @@ div.solution {
 }
 
 #nav-tree .item {
-    padding-bottom: 7px;
-    line-height: 25px;
+    padding-top: 2px;
+    padding-bottom: 3px;
+    line-height: 18px;
+}
+
+#nav-tree .selected {
+    color: #1E227D;
+    text-shadow: none;
+    background-image: none;
+    background-color: rgb(193, 201, 225);
+}
+
+/* Side nav bar styles: */
+#nav-tree .label a { /*default*/
+    color: #3D578C;
+    font-size: 10pt;
+}
+
+/* make all important pages bold */
+#nav-tree .label a[class^="modules"][class$="html"],
+#nav-tree .label a[class^="group"][class$="html"],
+#nav-tree .label a[class^="usergroup"][class$="html"],
+#nav-tree .label a[class^="namespace"][class$="html"],
+#nav-tree .label a[class="nolink"],
+#nav-tree .label a[class="annotated.html"],
+#nav-tree .label a[class="hierarchy.html"],
+#nav-tree .label a[class="index.html"],
+#nav-tree .label a[class="files.html"] {
+    color: #3D578C;
+    font-weight: bolder;
+}
+
+/* add icons */
+#nav-tree .label a[class^="group"][class$="html"]::before {
+    content: "📁 "; /*Note: first character is a utf8 symbol (U+1F4C1)*/
+}
+
+#nav-tree .label a[class^="namespace"][class$="html"]::before {
+    content: "📦 "; /*Note: first character is a utf8 symbol (U+1F4E6)*/
+}
+
+/* add Concept and Class suffix */
+#nav-tree .label a[class^="interface"][class$="html"]::after {
+    content: " Concept";
+    color: grey;
+}
+
+#nav-tree .label a[class^="class"][class$="html"]::after,
+#nav-tree .label a[class^="struct"][class$="html"]::after {
+    content: " Class";
+    color: grey;
 }
