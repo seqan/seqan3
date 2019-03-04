@@ -4,13 +4,13 @@
 
 In this tutorial we look at alphabets and you will learn how to work with nucleotides and amino acids in SeqAn3.
 We guide you through the most important properties of SeqAn's alphabets and show you related concepts.
-After completion you will be able to use the alphabets inside of STL containers and to implement your own alphabet.
+After completion, you will be able to use the alphabets inside of STL containers and to implement your own alphabet.
 
 \tutorial_head{Moderate, 60 min, \ref setup, [Concepts](https://en.cppreference.com/w/cpp/language/constraints)}
 
 The links on this page mostly point straight into the API documentation, which you should use as a reference.
 The code examples and exercises are designed to provide some practical experience with our interface
-as well as code basis for your own program development.
+as well as a code basis for your own program development.
 
 [TOC]
 
@@ -40,7 +40,8 @@ Adenine (A), Cytosine (C), Guanine (G), Thymine (T, only DNA) and Uracil (U, onl
 In SeqAn the alphabets seqan3::dna4 and seqan3::rna4 contain exactly the four respective nucleotides.
 The trailed number in the alphabets' name represents the number of entities the alphabet holds –
 we denote this number as *alphabet size*.
-For instance, the alphabet seqan3::dna5 contains the additional symbol 'N' to refer to an unknown nucleotide.
+For instance, the alphabet seqan3::dna5 represents five entities as it contains the additional symbol 'N'
+to refer to an unknown nucleotide.
 
 <br/>
 
@@ -51,15 +52,15 @@ Let's look at some example code, which demonstrates how characters of the seqan3
 
 We have shown three solutions for assigning variables of alphabet type.
 1. Assignment by character literal, i.e. appending the operator `_dna4` to the respective char symbol. <br/>
-   This is the handiest way, as it can be used temporary (without creating a variable) as well.
-2. Assignment by char via the global function seqan3::assign_char. <br/>
+   This is the handiest way, as it can be used temporarily (without creating a variable) as well.
+2. Assignment by `char` via the global function seqan3::assign_char. <br/>
    This is useful if the assignment target already exists, e.g. in a sequence vector.
 3. Assignment by rank via the global function seqan3::assign_rank. <br/>
    May be used when the *rank* is known.
 
 <br/>
 
-## The rank of a symbol
+## The rank of an alphabet symbol
 The rank of a symbol is a number in range \[0..alphabet_size), where each number is paired with
 an alphabet symbol by a bijective function. For instance in seqan3::dna4 the bijection is
 <br/> `A ⟼ 0` <br/> `C ⟼ 1` <br/> `G ⟼ 2` <br/> `T ⟼ 3`.
@@ -71,23 +72,54 @@ unsigned type that is required for storing the values of the alphabet.
 
 <br/>
 
+## The char representation of an alphabet symbol
+
+Our alphabets also have a character representation, because it is more intuitive to work
+with them than using the rank. Each alphabet symbol is represented by its respective character
+whenever possible (`A ⟼ 'A'`). Analogously to the rank, SeqAn provides the function 
+seqan3::to_char for converting a symbol to its character representation.
+
+\snippet alphabet_main.cpp char
+
+Above you have seen that you can assign an alphabet symbol from a character with seqan3::from_char. 
+In contrast to the rank interface, this assignment is not a bijection, because the whole spectrum of available
+chars is mapped to values inside the alphabet. For instance, assigning to seqan3::dna4 from any character other
+than `C`, `G` or `T` results in the value 'A'_dna4 and assigning from any character except `A`, `C`, `G` or `T`
+to seqan3::dna5 results in the value 'N'_dna5. You can avoid the implicit conversion by using
+seqan3::assign_char_strict, which throws seqan3::invalid_char_assignment on invalid characters.
+
+\snippet alphabet_main.cpp char_strict
+
+<br/>
+
 ## Obtaining the alphabet size
 You can retrieve the alphabet size by accessing the class member variable `value_size`,
-which is implemented (but not required) in all seqan3::Alphabet instances.
-However, through the concept it is guaranteed that a global seqan3::alphabet_size_v constant exists.
+which is implemented in all seqan3::Alphabet instances.
 \snippet alphabet_main.cpp size
 
 <br/>
 
 ---
 
-# Containers over alphabets
+## Containers over alphabets
 
 In SeqAn you can use the STL containers to model e.g. sequences, sets or mappings with our alphabets.
-For sequences we recommend the std::vector with one of SeqAn's alphabet types. Instead of building a map from
-characters with logarithmic access times, the rank representation can be used straight as an array index
-with constant access time. In the following exercise you can practise the use of alphabet containers together
-with the previously discussed functions.
+The following example shows some exemplary contexts for their use. 
+For **sequences** we recommend the std::vector with one of SeqAn's alphabet types. 
+Please note how easily a sequence can be created via the string literal.
+\snippet alphabet_main.cpp containers
+
+<br/>
+
+---
+
+## Example
+
+To wrap up this section on the nucleotide alphabet, the following exercise will let you 
+practise the use of a SeqAn alphabet and its related functions.
+It will also show you a handy advantage of using a vector over an alphabet instead 
+of using `std::string`: The rank representation can be used straight as an array
+index (opposed to e.g. using a map with logarithmic access times).
 
 \assignment{Excercise: GC content of a sequence}
 An important property of DNA and RNA molecules is the *GC content*,
@@ -96,10 +128,10 @@ Given the nucleotide counts \f$n_A\f$, \f$n_T\f$, \f$n_G\f$, \f$n_C\f$ the GC co
 \f[ c = \frac{n_G + n_C}{n_A + n_T + n_G + n_C} \f]
 Write a program that
 1. reads a sequence as command line argument into a vector of seqan3::dna5,
-2. counts the number of occurrences for each nucleotide and
+2. counts the number of occurrences for each nucleotide in an array of size `alphabet size` and
 3. calculates the GC content.
 
-The seqan3::dna5 type ensures that invalid characters in the input sequence are converted 'N'.
+The seqan3::dna5 type ensures that invalid characters in the input sequence are converted to 'N'.
 Note that these characters should not influence the GC content.
 \endassignment
 \solution
@@ -129,7 +161,7 @@ it as a template function as shown above. The problem is that in this way the fu
 and RNA alphabets – for which this function is useful – but also any other type, like `float` or `std::string`.
 
 The solution is to *constrain* the function to a certain set of alphabets, namely nucleotide alphabets.
-To achieve this, SeqAn defines a concept seqan3::NucleotideAlphabet, where is specified how nucleotide
+To achieve this, SeqAn defines a concept seqan3::NucleotideAlphabet that specifies how nucleotide
 alphabets look like, so the compiler can decide, whether a given type is valid or not. In our example
 we can now require that the given `alphabet_type` is a nucleotide alphabet.
 
@@ -178,9 +210,8 @@ some wildcard characters. For details read the seqan3::Aminoacid page.
 
 ## Structure and quality alphabets
 
-The alphabets for structure and quality are usually sequence *annotations*, as they describe additional
-properties of the respective sequence. Therefore, they usually build a
-[Cartesian Composition](\ref seqan3::cartesian_composition) with a nucleotide or amino acid alphabet.
+The alphabets for structure and quality are sequence *annotations*, as they describe additional
+properties of the respective sequence. 
 We distinguish three types:
 1. Quality alphabet for nucleotides. The values are produced by sequencing machines and represent the probability
    that a nucleobase was recorded incorrectly. The characters are most commonly found in FASTQ files.
@@ -190,6 +221,11 @@ We distinguish three types:
    [Dot Bracket](\ref seqan3::dot_bracket3) and [WUSS](\ref seqan3::wuss) formats.
 3. Protein structure alphabet. The [DSSP](\ref seqan3::dssp9) format represents secondary structure elements like
    alpha helices and turns.
+
+You can build a [Cartesian Compositions](\ref seqan3::cartesian_composition) with a nucleotide and quality 
+alphabet, or nucleotide / amino acid and structure alphabet that stores both information together. 
+For the use cases just described we offer pre-defined composites: (list qualified, structured_aa, structured_rna). 
+See our API documentation for a detailed description of each.
 
 <br/>
 
@@ -214,15 +250,7 @@ In this section we want to implement a seqan3::Alphabet that consists of the cha
 strong and weak nucleobases. 
 
 Let's start with a simple struct that only holds the alphabet's rank value: 
-~~~cpp
-#include <seqan3/alphabet/concept.hpp> // for seqan3::Alphabet concept checks
-
-struct dna2
-{
-    using rank_type = uint8_t;
-    rank_type rank{};
-};
-~~~
+\snippet alphabet_dna2_struct.cpp struct
 
 But if you want SeqAn's algorithms to accept it as an alphabet, you need to make sure that your type
 satisfies the requirements of the seqan3::Alphabet concept. A quick check can reveal that this is not the case:
@@ -241,20 +269,20 @@ static_assert(seqan3::Semialphabet<dna2>);      // compiler error
 static_assert(seqan3::Alphabet<dna2>);          // compiler error
 ~~~
 
-You should see that your type models none of the concepts. 
+You should see that your type models none of the concepts. Let's change this one by one.
 For std::Regular we need to make our alphabet [equality comparable](\ref std::EqualityComparable)
 by implementing the (in-)equality operators (as free functions).
-\snippet alphabet_custom_steps.cpp equality
+\snippet alphabet_dna2_steps.cpp equality
 
 \assignment{Excercise}
 Implement the inequality operator (!=) for `dna2`.
 \endassignment
 \solution
-\snippet alphabet_custom_steps.cpp inequality
+\snippet alphabet_dna2_steps.cpp inequality
 \endsolution
 
 We see that our type now models std::Regular.
-\snippet alphabet_custom_steps.cpp regular
+\snippet alphabet_dna2_steps.cpp regular
 
 Let's have a look at the documentation for std::StrictTotallyOrdered. 
 Can you guess what it describes?
@@ -266,14 +294,14 @@ This is useful so that you can sort a text over the alphabet, for example.
 Implement the four compare operators *as free functions* and verify that your type models std::StrictTotallyOrdered.
 \endassignment
 \solution
-\snippet alphabet_custom_steps.cpp compare
+\snippet alphabet_dna2_steps.cpp compare
 \endsolution
 
 The next concept is more interesting for us: seqan3::Semialphabet requires the *rank* interface
 that we have introduced in the beginning of this tutorial. If we define the member functions `to_rank`,
 `assign_rank` and `value_size` for our type, SeqAn automatically exposes them to the respective global
 functions `seqan3::to_rank`, `seqan3::assign_rank` and `seqan3::alphabet_size`.
-\snippet alphabet_custom_steps.cpp semialphabet
+\snippet alphabet_dna2_steps.cpp semialphabet
 
 \assignment{Excercise}
 Now that you have a feeling for concepts, have a look at seqan3::Alphabet and make your type 
@@ -290,11 +318,11 @@ the members to the respective global functions that model the concept.
    evaluates to false.
 \endassignment
 \solution
-\snippet alphabet_custom_steps.cpp alphabet
+\snippet alphabet_dna2_steps.cpp alphabet
 \endsolution
 
 Now the seqan3::Alphabet concept should be modelled successfully:
-\snippet alphabet_custom_steps.cpp alphabet_concept
+\snippet alphabet_dna2_steps.cpp alphabet_concept
 
 In reality, you do not need to define all the functions you have learned in this exercise manually. 
 Instead, you can inherit you type from seqan3::alphabet_base and just define the char-rank conversion
