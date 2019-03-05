@@ -7,7 +7,7 @@
 
         <tab type="user" visible="yes" title="Setup" url="@ref setup" intro=""/>
         <tab type="usergroup" visible="yes" title="Tutorial" intro="">
-            <tab type="user"  visible="yes" title="A first example" url="@ref tutorial_first_example" intro=""/>
+            <tab type="user"  visible="yes" title="First steps"     url="@ref tutorial_first_example" intro=""/>
             <tab type="user"  visible="yes" title="Alphabets"       url="@ref tutorial_alphabets"     intro=""/>
         </tab>
         <tab type="usergroup" visible="yes" title="Notes" intro="">
