@@ -95,7 +95,7 @@ private:
     }
 
     //!\brief Moves internal matrix pointer to the next column.
-    constexpr void next_column() noexcept
+    constexpr void go_next_column() noexcept
     {
         ++current_column_index;
     }

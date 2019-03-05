@@ -31,7 +31,7 @@ public:
     // Make member functions available for testing
     using base_t::allocate_matrix;
     using base_t::current_column;
-    using base_t::next_column;
+    using base_t::go_next_column;
 
     using base_t::dimension_first_range;
     using base_t::dimension_second_range;
@@ -102,7 +102,7 @@ TYPED_TEST(unbanded_score_trace_test, current_column)
     EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(zip_view)>);
 }
 
-TYPED_TEST(unbanded_score_trace_test, next_column)
+TYPED_TEST(unbanded_score_trace_test, go_next_column)
 {
     std::string seq1{"garfieldthecat"};
     std::string seq2{"garfieldthefatcat"};
@@ -133,7 +133,7 @@ TYPED_TEST(unbanded_score_trace_test, next_column)
     EXPECT_EQ(mock.current_column_index, 0u);
 
     // Go to next active column and check if active column has moved.
-    mock.next_column();
+    mock.go_next_column();
     auto zip_view_3 = mock.current_column();
 
     row_index = 0;

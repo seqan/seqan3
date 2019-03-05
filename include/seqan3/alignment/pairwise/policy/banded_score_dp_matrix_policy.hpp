@@ -132,10 +132,10 @@ public:
     }
 
     //!\brief Moves internal matrix pointer to the next column.
-    constexpr void next_column() noexcept
+    constexpr void go_next_column() noexcept
     {
         // Update the current_column_index.
-        base_t::next_column();
+        base_t::go_next_column();
         // Still in the initialisation phase and need to update the current matrix iterator until begin is reached.
         if (current_matrix_iter != std::ranges::begin(score_matrix))
             --current_matrix_iter;
@@ -229,12 +229,13 @@ public:
      */
     constexpr auto map_banded_coordinate_to_range_position(alignment_coordinate coordinate) const noexcept
     {
+        using as_int_t = std::make_signed_t<decltype(coordinate.first_seq_pos)>;
         // Refine the row coordinate to match the original sequence coordinates since the first position of the
         // trace matrix is shifted by the value of the band_column_index, i.e. the upper bound of the band.
         //
         // case 1: ends in column before the band_column_index: subtract the offset from the actual row coordinate.
         // case 2: ends in column after the band_column_index: add the offset to the actual row coordinate.
-        coordinate.second_seq_pos += static_cast<int32_t>(coordinate.first_seq_pos - band_column_index);
+        coordinate.second_seq_pos += static_cast<as_int_t>(coordinate.first_seq_pos - band_column_index);
         return coordinate;
     }
 

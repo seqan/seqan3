@@ -346,7 +346,7 @@ private:
         });
 
         auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
-        std::ignore = trace;
+        (void) trace;
         if constexpr (is_banded)
         {
             alignment_optimum current{get<0>(get<0>(std::move(cell))), static_cast<alignment_coordinate>(coordinate)};
@@ -379,7 +379,7 @@ private:
         ranges::for_each(first_range, [&, this](auto seq1_value)
         {
             // Move internal matrix to next column.
-            this->next_column();
+            this->go_next_column();
 
             auto col = this->current_column();
             this->init_row_cell(*std::ranges::begin(col), cache);
@@ -393,13 +393,14 @@ private:
 
             // Prepare last cell for tracking the optimum.
             auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
-            std::ignore = trace;
+            (void) trace;
             alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
             this->check_score_last_row(current, get<3>(cache));
         });
 
         // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
-        auto last_column_view = this->current_column() | ranges::view::transform([](auto && entry) {
+        auto last_column_view = this->current_column() | ranges::view::transform([](auto && entry)
+            {
             using std::get;
             return std::tuple{get<0>(std::forward<decltype(entry)>(entry)),
                               get<1>(std::forward<decltype(entry)>(entry))};
@@ -429,7 +430,7 @@ private:
 
         ranges::for_each(first_range | view::take_exactly(this->band_column_index), [&, this](auto first_range_value)
         {
-            this->next_column(); // Move to the next column.
+            this->go_next_column(); // Move to the next column.
             auto col = this->current_column();
             this->init_row_cell(*std::ranges::begin(col), cache); // initialise first row of dp matrix.
 
@@ -445,7 +446,7 @@ private:
             if (this->band_touches_last_row())  // TODO [[unlikely]]
             {
                 auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
-                std::ignore = trace;
+                (void) trace;
                 alignment_optimum current{get<0>(get<0>(std::move(cell))),
                                           static_cast<alignment_coordinate>(coordinate)};
                 this->check_score_last_row(current, get<3>(cache));
@@ -460,7 +461,7 @@ private:
         ranges::for_each(first_range | ranges::view::drop_exactly(this->band_column_index),
         [&, this](auto first_range_value)
         {
-            this->next_column(); // Move to the next column.
+            this->go_next_column(); // Move to the next column.
             auto col = this->current_column();
 
             // Move the second_range_it to the correct position depending on the current band position.
@@ -485,7 +486,7 @@ private:
             if (this->band_touches_last_row()) // TODO [[unlikely]]
             {
                 auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
-                std::ignore = trace;
+                (void) trace;
                 alignment_optimum current{get<0>(get<0>(std::move(cell))),
                                           static_cast<alignment_coordinate>(coordinate)};
                 this->check_score_last_row(current, get<3>(cache));

@@ -130,9 +130,9 @@ private:
     }
 
     //!\brief Moves internal matrix pointer to the next column.
-    constexpr void next_column() noexcept
+    constexpr void go_next_column() noexcept
     {
-        base_t::next_column();
+        base_t::go_next_column();
         trace_matrix_iter += dimension_second_range;
     }
 

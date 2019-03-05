@@ -30,7 +30,7 @@ public:
     // Expose member function for testing
     using base_t::allocate_matrix;
     using base_t::current_column;
-    using base_t::next_column;
+    using base_t::go_next_column;
 
     using base_t::dimension_first_range;
     using base_t::dimension_second_range;
@@ -95,7 +95,7 @@ TYPED_TEST(unbanded_score_matrix_test, current_column)
     EXPECT_TRUE(seqan3::detail::decays_to_ignore_v<std::remove_reference_t<decltype(std::get<2>(zip_view[0]))>>);
 }
 
-TYPED_TEST(unbanded_score_matrix_test, next_column)
+TYPED_TEST(unbanded_score_matrix_test, go_next_column)
 {
     std::string seq1{"garfieldthecat"};
     std::string seq2{"garfieldthefatcat"};
@@ -114,7 +114,7 @@ TYPED_TEST(unbanded_score_matrix_test, next_column)
 
     EXPECT_EQ(mock.current_column_index, 0u);
     // Go to next active column and check if active column has moved.
-    mock.next_column();
+    mock.go_next_column();
     auto zip_view_2 = mock.current_column();
     size_t row_index = 0;
     for (auto const entry : zip_view_2)

@@ -37,7 +37,7 @@ struct row_index_type : detail::strong_type<size_t, row_index_type>
     using detail::strong_type<size_t, row_index_type>::strong_type;
 };
 
-/*!\brief Represents a state to specify the implementation of the seqan3::detail::advanceable_alignment_coordinate
+/*!\brief Represents a state to specify the implementation of the seqan3::detail::advanceable_alignment_coordinate.
  * \ingroup alignment_matrix
  *
  * \details
@@ -94,21 +94,21 @@ public:
     ~advanceable_alignment_coordinate() noexcept = default;
 
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
-    template <advanceable_alignment_coordinate_state _state>
+    template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires !std::Same<_state, state>
+        requires !std::Same<other_state, state>
     //!\endcond
-    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<_state> const & other) :
+    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> const & other) :
         first_seq_pos{other.first_seq_pos},
         second_seq_pos{other.second_seq_pos}
     {}
 
     //!\brief Move-constructs from another advanceable_alignment_coordinate with a different policy.
-    template <advanceable_alignment_coordinate_state _state>
+    template <advanceable_alignment_coordinate_state other_state>
     //!\cond
-        requires !std::Same<_state, state>
+        requires !std::Same<other_state, state>
     //!\endcond
-    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<_state> && other) :
+    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> && other) :
         first_seq_pos{std::move(other.first_seq_pos)},
         second_seq_pos{std::move(other.second_seq_pos)}
     {}
@@ -252,7 +252,7 @@ public:
               not available if the policy was set to seqan3::detail::advanceable_alignment_coordinate_state::none.
      */
     constexpr friend advanceable_alignment_coordinate operator+(difference_type const offset,
-                                         advanceable_alignment_coordinate const & me) noexcept
+                                                                advanceable_alignment_coordinate const & me) noexcept
     //!\cond
         requires state != advanceable_alignment_coordinate_state::none
     //!\endcond
@@ -275,11 +275,14 @@ namespace seqan3
 /*!\brief Represents the begin/end of the pairwise alignment in the respective sequences.
  * \ingroup alignment_matrix
  *
- * \details
  * \if DEV
+ * \details
  * This class only gives access to the respective positions of the sequences and is meant for
- * the user interface. For the implementation of the alignment algorithms the
- * seqan3::detail::advanceable_alignment_coordinate is used.
+ * the user interface. The additional complexity of an advanceable coorindate using the
+ * seqan3::detail::advanceable_alignment_coordinate is only necessary for the implementation of the pairwise
+ * alignment algorithm. Within in the algorithm the coordinate is used in combination with a seqan3::view::iota to
+ * keep track of the current position within the alignment matrix. For the user, however, this interface adds no
+ * benefit as they are only interested in the begin/end coordinates for the respective alignment.
  * \endif
  */
 class alignment_coordinate
@@ -305,20 +308,15 @@ public:
     ~alignment_coordinate() = default;
 
     //!\cond DEV
-    //!\brief Constructs from the seqan3::detail::advanceable_alignment_coordinate base class.
+    //!\brief Inherit the constructor from the base class.
+    using base_t::base_t;
+
+    // !\brief Constructs from the seqan3::detail::advanceable_alignment_coordinate base class.
     constexpr alignment_coordinate(base_t const & base) : base_t{base}
     {}
 
     //!\brief Constructs from the seqan3::detail::advanceable_alignment_coordinate base class.
     constexpr alignment_coordinate(base_t && base) : base_t{std::move(base)}
-    {}
-
-    /*!\brief Construction from the respective column and row indices.
-     * \param[in] c_idx The respective column index within the matrix. Of type seqan3::detail::column_index_type.
-     * \param[in] r_idx The respective row index within the matrix. Of type seqan3::detail::row_index_type.
-     */
-    constexpr alignment_coordinate(detail::column_index_type const c_idx,
-                                   detail::row_index_type const r_idx) noexcept : base_t{c_idx, r_idx}
     {}
     //!\endcond
     //!\}

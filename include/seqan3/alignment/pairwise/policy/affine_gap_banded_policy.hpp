@@ -79,7 +79,7 @@ private:
         auto & [prev_cell, gap_open, gap_extend, opt] = cache;
         auto & [tmp, vt_score, vt_trace] = prev_cell;
 
-        std::ignore = prev_main_score;
+        (void) prev_main_score;
 
         //TODO For the local alignment we might be able to use GCC overlow builtin arithmetics, which
         // allows us to check if overflow/underflow would happen. Not sure, if this helps with the performance though.
@@ -142,7 +142,7 @@ private:
         auto const & prev_hz_trace = get<2>(next_entry);
         auto & [tmp, vt_score, vt_trace] = get<0>(cache);
 
-        std::ignore = tmp;
+        (void) tmp;
 
         // Compute the diagonal score and the compare with the previous horizontal value.
         main_score += score;

@@ -63,7 +63,7 @@
  * ----------------- | ----------------------- | ---------------------------------------------------------------------------- |
  * `allocate_matrix` | &Oslash;                | `void`                                                                       |
  * `current_column`  | &Oslash;                | *implementation defined* - see below                                         |
- * `next_column`     | &Oslash;                | `void`                                                                       |
+ * `go_next_column`  | &Oslash;                | `void`                                                                       |
  * `parse_traceback` | `alignment_coordinate`  | `tuple<alignment_coordinate, tuple<deque<gap_segment>, deque<gap_segment>>>` |
  *
  * - allocate_matrix:
@@ -78,7 +78,7 @@
  *     is at least a std::ranges::ForwardRange over the traceback matrix or std::ignore if the traceback shall not
  *     be computed.
  *
- * - next_column:
+ * - go_next_column:
  *
  *     Is called at the end of a column computation and moves internal matrix pointers to the next column.
  *

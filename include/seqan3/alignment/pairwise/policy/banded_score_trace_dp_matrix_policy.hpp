@@ -131,9 +131,9 @@ private:
     }
 
     //!\brief Moves internal matrix pointer to the next column.
-    constexpr void next_column() noexcept
+    constexpr void go_next_column() noexcept
     {
-        base_t::next_column();
+        base_t::go_next_column();
         // Move trace back pointer to begin of next column
         trace_matrix_iter = std::ranges::begin(trace_matrix) + band_size * current_column_index;
         // As long as we shift the band towards the band_column_index, jump to the correct begin.
