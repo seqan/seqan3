@@ -23,13 +23,13 @@ namespace seqan3::detail
 {
 /*!\brief Generates all pairwise combinations of the elements in the source range.
  * \ingroup view
- * \tparam source_range_type The type of the source range; must model std::ranges::View, std::ranges::ForwardRange
+ * \tparam source_range_type The type of the source range; must model std::ranges::View, std::ranges::ForwardRange and
+ *                           std::ranges::CommonRange.
  *
  * \details
  *
- * This view will provide a convenient way to iterate over all pairwise combinations of a given source range
- * while the order of selection does not matter. A source range with `n` elements will therefore have `n choose 2`
- * possible combinations.
+ * This view will provide a convenient way to iterate over all pairwise combinations of the elements of the source
+ * range (in no defined order). A source range with `n` elements will therefore have `n choose 2` possible combinations.
  *
  * ### Example
  *
@@ -37,7 +37,7 @@ namespace seqan3::detail
  */
 template <std::ranges::View source_range_type>
 //!\cond
-    requires  std::ranges::ForwardRange<source_range_type>
+    requires  std::ranges::ForwardRange<source_range_type> && std::ranges::CommonRange<source_range_type>
 // !\endcond
 class pairwise_combine_view : public ranges::view_interface<pairwise_combine_view<source_range_type>>
 {
@@ -53,6 +53,9 @@ private:
      * This iterator models the iterator category of the `source_iterator_type`. It maintains a pair of iterators on
      * the source range that move over all pairwise combinations of elements. The end is reached, when the second
      * iterator points to the end of the source range and the first iterator to the last element of the range.
+     * Also note that this iterator does not model std::LegacyIterator, also known as `Cpp17Iterator` since it
+     * does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable with
+     * some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
      */
     class iterator_type
     {
@@ -124,7 +127,7 @@ private:
         //!\endcond
         {
             from_index(index);
-            return this->operator*();
+            return **this;
         }
         //!\}
 
@@ -322,15 +325,14 @@ private:
          * versa.
          */
         constexpr size_t to_index() const
-            noexcept(noexcept(std::ranges::distance(std::declval<source_iterator_type &>(),
-                                                    std::declval<source_iterator_type &>())))
+            noexcept(noexcept(std::declval<source_iterator_type &>() - std::declval<source_iterator_type &>()))
         //!\cond
             requires std::RandomAccessIterator<source_iterator_type>
         //!\endcond
         {
-            size_t src_size = std::ranges::distance(begin_it, end_it);
-            size_t index_i = std::ranges::distance(begin_it, first_it);
-            size_t index_j = std::ranges::distance(begin_it, second_it);
+            size_t src_size = end_it - begin_it;
+            size_t index_i = first_it - begin_it;
+            size_t index_j = second_it - begin_it;
             return (src_size * (src_size - 1)/2) - (src_size - index_i) * ((src_size - index_i) - 1)/2 +
                    index_j - index_i - 1;
         }
@@ -378,49 +380,84 @@ public:
     ~pairwise_combine_view() = default;
 
     /*!\brief Constructs from a view.
-     * \param[in] range A rvalue reference to the source view.
+     * \param[in] range The source range to be wrapped. Of type `source_range_type`.
      *
      * \details
      *
-     * During construction the iterator pointing to the last element of the view is cached. This optimises
-     * the call to end if the source range models only ForwardRange. Otherwise the call to end will be
+     * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
+     * This optimises the call to end if the source range models only ForwardRange. Otherwise the call to end will be
      * linear in the number of elements of the source range.
+     *
+     * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
+     *            take forever to reach the last element of the view.
+     *
+     * ### Complexity
+     *
+     * Constant if `source_range_type` models std::ranges::BidirectionalRange, otherwise linear.
      */
-    explicit constexpr pairwise_combine_view(source_range_type && range) : src_range{std::move(range)}
+    constexpr pairwise_combine_view(source_range_type range) : src_range{std::move(range)}
     {
         // Check if range is empty.
-        if (std::ranges::begin(src_range) == std::ranges::end(src_range))
+        if (std::ranges::empty(src_range))
         {
             back_iterator = std::ranges::end(src_range);
         }
         else
         {
-            if constexpr (std::ranges::BidirectionalRange<source_range_type> &&
-                          std::ranges::CommonRange<source_range_type>)
-            {
+            if constexpr (std::ranges::BidirectionalRange<source_range_type>)
+            { // Simply take one before the end. We can do this as we require source_range_type to be a common range.
                 back_iterator = std::ranges::prev(std::ranges::end(src_range));
             }
             else
-            {  // Cannot decrement so we invoke linear pass until we get to the last element.
-                size_t size = std::distance(src_range);
+            { // For all other cases we need to set the back_iterator in linear time to the correct position.
                 back_iterator = std::ranges::begin(src_range);
-                std::advance(back_iterator, size - 1);
+                if constexpr (std::ranges::SizedRange<source_range_type>)
+                {
+                    std::ranges::advance(back_iterator, std::ranges::size(src_range) - 1);
+                }
+                else // We don't have the size, so we need to increment until one before the end in a linear pass.
+                {
+                    auto tmp_it = back_iterator;
+                    do
+                    {
+                        back_iterator = tmp_it;
+                    } while (++tmp_it != std::ranges::end(src_range));
+                }
             }
         }
     }
 
-    /*!\brief Constructs from a range.
-     * \param[in] range A lvalue reference to the source range.
+    /*!\brief Constructs from a view.
+     * \tparam    other_range_t  The type of the range to be wrapped with seqan3::detail::pairwise_combine_view;
+     *                           must model std::ranges::ViewableRange and source_range_type must be constructible
+     *                           with other_range wrapped in view::all.
+     * \param[in] range          The source range to be wrapped.
      *
      * \details
      *
-     * Wraps the passed range in a ref_view in order to store lvalue references to ranges (non-views) as a view
-     * and delegate to the view constructor above.
+     * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
+     * This optimises the call to end if the source range models only ForwardRange. Otherwise the call to end will be
+     * linear in the number of elements of the source range.
+     *
+     * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
+     *            take forever to reach the last element of the view.
+     *
+     * ### Complexity
+     *
+     * Constant if `other_range_t` models std::ranges::BidirectionalRange, otherwise linear.
      */
-    template <typename other_range_type>
-    explicit constexpr pairwise_combine_view(other_range_type & range) : pairwise_combine_view{view::all(range)}
+    template <typename other_range_t>
+    //!\cond
+        requires !std::Same<remove_cvref_t<other_range_t>, pairwise_combine_view> &&
+                 std::ranges::ViewableRange<other_range_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
+                 std::Constructible<source_range_type, ranges::ref_view<std::remove_reference_t<other_range_t>>>
+            //TODO: Investigate: the following expression is equivalent to the one above but raises a weird assertion in
+            //      the ranges adaptor suggesting that the pairwise_combine_view is not a ViewableRange.
+            //      std::Constructible<source_range_type, decltype(view::all(std::declval<other_range_t &&>()))>
+    //!\endcond
+    constexpr pairwise_combine_view(other_range_t && range) :
+        pairwise_combine_view{view::all(std::forward<other_range_t>(range))}
     {}
-    //!\}
 
     /*!\name Iterators
      * \{
@@ -452,7 +489,7 @@ public:
     //!\copydoc begin()
     constexpr iterator_type cbegin() const noexcept
     {
-        return iterator_type{std::ranges::begin(src_range), std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return begin();
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -482,34 +519,7 @@ public:
     //!\copydoc end()
     constexpr iterator_type cend() const noexcept
     {
-        return iterator_type{back_iterator, std::ranges::begin(src_range), std::ranges::end(src_range)};
-    }
-    //!\}
-
-    /*!\name Capacity
-     * \{
-     */
-
-    /*!\brief Returns the size of the range.
-     *
-     * \details
-     *
-     * The size can only be computed when the entire range models std::ranges::RandomAccessRange.
-     *
-     * ### Complexity
-     *
-     * Constant.
-     *
-     * ### Exceptions
-     *
-     * No-throw guarantee.
-     */
-    constexpr size_t size() const noexcept
-    //!\cond
-        requires std::RandomAccessIterator<iterator_type>
-    //!\endcond
-    {
-        return static_cast<size_t>(cend() - cbegin());
+        return end();
     }
     //!\}
 
@@ -522,18 +532,17 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::detail::pairwise_combine_view
  * \{
  */
 
-//!\brief Deduces the source range type from the passed view.
-template <std::ranges::View other_type>
-pairwise_combine_view(other_type view) -> pairwise_combine_view<std::remove_reference_t<other_type>>;
+//!\brief Deduces the correct template type from a view.
+template <std::ranges::View other_range_t>
+pairwise_combine_view(other_range_t range) -> pairwise_combine_view<other_range_t>;
 
-//!\brief Deduces the source range type from the passed range.
-template <std::ranges::Range range_type>
-    requires !std::ranges::View<range_type>
-pairwise_combine_view(range_type & range) -> pairwise_combine_view<decltype(std::declval<range_type &>() | view::all)>;
+//!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in seqan3::view::all.
+template <std::ranges::ViewableRange other_range_t>
+pairwise_combine_view(other_range_t && range) ->
+    pairwise_combine_view<decltype(view::all(std::declval<other_range_t &&>()))>;
 //!\}
 
 } // namespace seqan3::detail
@@ -544,25 +553,36 @@ namespace seqan3::view
  * \{
  */
 
-/*!\brief             A view adapter that generates all pairwise combinations of the elements of the source range.
+/*!\brief             A view adapter that generates all pairwise combinations of the elements of the underlying range.
  * \tparam urng_t     The type of the range being processed. See below for requirements.
  * \param[in] urange  The range being processed.
- * \returns           A range over all pairwise combinations. See below for the properties of the returned range.
+ * \returns           A view over all pairwise combinations of the elements of the underlying range.
+ *                    See below for the properties of the returned range.
  * \ingroup view
  *
  * \details
  *
- * This view generates two-element tuples representing all possible combinations of the elements of the source range
- * while ignoring the order of the elements. If the source range has less than two elements the returned range is empty,
- * otherwise the size of the returned view corresponds to the binomial coefficient `n choose 2`, where `n` is the
- * size of the source range. The reference type of this range is a tuple over the reference type of the source range.
- * Constness will not be propagated to the reference types of the source range.
+ * This view generates two-element tuples representing all unique combinations of the elements of the underlying range
+ * (the order of the elements does not matter). If the underlying range has less than two elements the returned range is
+ * empty, otherwise the size of the returned range corresponds to the binomial coefficient `n choose 2`, where `n` is
+ * the size of the underlying range. The reference type of this range is a tuple over the reference type of the
+ * underlying range. This range is const-iterable as long as the underlying range is iterable (const-ness of this range
+ * will not be propagated to the underlying range).
+ * In order to receive the end iterator in constant time an iterator pointing to the last element of the underlying
+ * range will be cached upon construction of this view. This construction takes linear time for underlying ranges that
+ * do not model std::ranges::BidirectionalRange.
+ *
+ * ### Iterator
+ *
+ * The returned iterator from begin does not model std::LegacyIterator, also known as `Cpp17Iterator` since it
+ * does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable within
+ * some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                       |
+ * | range concepts and reference_t  | `urng_t` (source range type)          | `rrng_t` (returned range type)                                       |
  * |---------------------------------|:-------------------------------------:|:--------------------------------------------------------------------:|
- * | std::ranges::InputRange         |                                       | *undefined*                                                          |
+ * | std::ranges::InputRange         | *required*                            | *preserved*                                                          |
  * | std::ranges::ForwardRange       | *required*                            | *preserved*                                                          |
  * | std::ranges::BidirectionalRange |                                       | *preserved*                                                          |
  * | std::ranges::RandomAccessRange  |                                       | *preserved*                                                          |
@@ -570,8 +590,8 @@ namespace seqan3::view
  * |                                 |                                       |                                                                      |
  * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                                         |
  * | std::ranges::View               |                                       | *guaranteed*                                                         |
- * | std::ranges::SizedRange         |                                       | *guaranteed* iff urng_t models std::RandomAccessRange                |
- * | std::ranges::CommonRange        |                                       | *guaranteed*                                                         |
+ * | std::ranges::SizedRange         |                                       | *preserved*                                                          |
+ * | std::ranges::CommonRange        | *required*                            | *guaranteed*                                                         |
  * | std::ranges::OutputRange        |                                       | *lost*                                                               |
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                                          |
  * |                                 |                                       |                                                                      |
@@ -581,11 +601,14 @@ namespace seqan3::view
  *
  * ### Thread safety
  *
- * Concurrent access to this view, e.g. while iterating over it, is not thread-safe and must be protected externally.
+ * Concurrent access to this view, e.g. while iterating over it, is thread-safe and must not be protected externally.
  *
  * ### Example
  *
  * \include test/snippet/range/view/pairwise_combine.cpp
+ *
+ * \attention This view cannot be chained immediately with an infinite range, because upon construction it will
+ *            take forever to reach the last element of the view.
  *
  * \hideinitializer
  */

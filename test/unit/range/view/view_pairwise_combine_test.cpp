@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <forward_list>
 #include <list>
 #include <utility>
 #include <vector>
@@ -25,8 +26,8 @@ class pairwise_combine_base_test : public ::testing::Test
 {
 public:
 
-    using view_t       = decltype(seqan3::detail::pairwise_combine_view{std::declval<t &>()});
-    using const_view_t = decltype(seqan3::detail::pairwise_combine_view{std::declval<t const &>()});
+    using view_t       = decltype(seqan3::detail::pairwise_combine_view{seqan3::view::all(std::declval<t &>())});
+    using const_view_t = decltype(seqan3::detail::pairwise_combine_view{seqan3::view::all(std::declval<t const &>())});
 
     auto create_view()
     {
@@ -47,11 +48,20 @@ protected:
 
     void SetUp() override
     {
-        container.push_back('a');
-        container.push_back('b');
-        container.push_back('c');
-        container.push_back('d');
-
+        if constexpr (seqan3::detail::is_type_specialisation_of_v<t, std::forward_list>)
+        {
+            container.push_front('d');
+            container.push_front('c');
+            container.push_front('b');
+            container.push_front('a');
+        }
+        else
+        {
+            container.push_back('a');
+            container.push_back('b');
+            container.push_back('c');
+            container.push_back('d');
+        }
         res.push_back(std::tuple{'a', 'b'});
         res.push_back(std::tuple{'a', 'c'});
         res.push_back(std::tuple{'a', 'd'});
@@ -74,7 +84,7 @@ template <typename t>
 class pairwise_combine_iterator_test : public pairwise_combine_base_test<t>
 {};
 
-using test_types = ::testing::Types<std::vector<char>, std::list<char>>;
+using test_types = ::testing::Types<std::vector<char>, std::list<char>, std::forward_list<char>>;
 
 TYPED_TEST_CASE(pairwise_combine_test, test_types);
 TYPED_TEST_CASE(pairwise_combine_iterator_test, test_types);
@@ -188,29 +198,35 @@ TYPED_TEST(pairwise_combine_iterator_test, post_increment)
 
 TYPED_TEST(pairwise_combine_iterator_test, pre_decrement)
 {
-    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
-
-    auto r = this->resource();
-    iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
-
-    if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
     {
-        EXPECT_EQ(*(--it), (std::tuple{'c', 'd'}));
+        using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+        auto r = this->resource();
+        iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
+
+        if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+        {
+            EXPECT_EQ(*(--it), (std::tuple{'c', 'd'}));
+        }
     }
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, post_decrement)
 {
-    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
-
-    auto r = this->resource();
-    iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
-
-    if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
     {
-        --it;
-        EXPECT_EQ(*(it--), (std::tuple{'c', 'd'}));
-        EXPECT_EQ(*it, (std::tuple{'b', 'd'}));
+        using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+        auto r = this->resource();
+        iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
+
+        if constexpr (std::BidirectionalIterator<decltype(r.begin())>)
+        {
+            --it;
+            EXPECT_EQ(*(it--), (std::tuple{'c', 'd'}));
+            EXPECT_EQ(*it, (std::tuple{'b', 'd'}));
+        }
     }
 }
 
@@ -264,13 +280,13 @@ TYPED_TEST(pairwise_combine_iterator_test, advance_n)
 
 TYPED_TEST(pairwise_combine_iterator_test, decrement_n)
 {
-    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
-
-    auto r = this->resource();
-    iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
-
-    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    if constexpr (std::ranges::RandomAccessRange<TypeParam>)
     {
+        using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+        auto r = this->resource();
+        iterator_t it{std::ranges::prev(r.end()), r.begin(), r.end()};
+
         it = it - 2;
         EXPECT_EQ(*it, (std::tuple{'b', 'd'}));
         it -= 3;
@@ -280,14 +296,14 @@ TYPED_TEST(pairwise_combine_iterator_test, decrement_n)
 
 TYPED_TEST(pairwise_combine_iterator_test, distance)
 {
-    using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
-
-    auto r = this->resource();
-    iterator_t it_1{r.begin(), r.begin(), r.end()};
-    iterator_t it_2{std::ranges::prev(r.end()), r.begin(), r.end()};
-
-    if constexpr (std::RandomAccessIterator<decltype(r.begin())>)
+    if constexpr (std::ranges::RandomAccessRange<TypeParam>)
     {
+        using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
+
+        auto r = this->resource();
+        iterator_t it_1{r.begin(), r.begin(), r.end()};
+        iterator_t it_2{std::ranges::prev(r.end()), r.begin(), r.end()};
+
         EXPECT_EQ(it_2 - it_1, 6);
         --it_2;
         EXPECT_EQ(it_2 - it_1, 5);
@@ -301,8 +317,8 @@ TYPED_TEST(pairwise_combine_iterator_test, order)
     using iterator_t = std::ranges::iterator_t<typename TestFixture::view_t>;
 
     auto r = this->resource();
-    iterator_t it_1{std::ranges::prev(r.begin()), r.begin(), r.end()};
-    iterator_t it_2{std::ranges::prev(r.begin()), r.begin(), r.end()};
+    iterator_t it_1{r.begin(), r.begin(), r.end()};
+    iterator_t it_2{r.begin(), r.begin(), r.end()};
     ++it_2;
 
     if constexpr (std::StrictTotallyOrdered<decltype(r.begin())>)
@@ -323,6 +339,7 @@ TYPED_TEST(pairwise_combine_test, view_concept)
 {
     EXPECT_TRUE(std::ranges::ForwardRange<typename TestFixture::view_t>);
     EXPECT_TRUE(std::ranges::View<typename TestFixture::view_t>);
+    EXPECT_FALSE((std::ranges::OutputRange<typename TestFixture::view_t, std::tuple<char &, char &>>));
 
     if constexpr (std::ranges::BidirectionalRange<TypeParam>)
     {
@@ -371,7 +388,7 @@ TYPED_TEST(pairwise_combine_test, end)
 TYPED_TEST(pairwise_combine_test, iterate)
 {
     auto v = this->create_view();
-    using ref_t = seqan3::reference_t<decltype(v)>;
+    using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
     std::vector<ref_t> cmp;
 
     for (auto r : v)
@@ -382,21 +399,24 @@ TYPED_TEST(pairwise_combine_test, iterate)
 
 TYPED_TEST(pairwise_combine_test, iterate_reverse)
 {
-    auto v = this->create_view();
-    using ref_t = seqan3::reference_t<decltype(v)>;
-    std::vector<ref_t> cmp;
+    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
+    {
+        auto v = this->create_view();
+        using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
+        std::vector<ref_t> cmp;
 
-    for (auto r : v | seqan3::view::reverse)
-        cmp.push_back(r);
+        for (auto r : v | seqan3::view::reverse)
+            cmp.push_back(r);
 
-    EXPECT_TRUE(ranges::equal(cmp, this->expect() | seqan3::view::reverse));
+        EXPECT_TRUE(ranges::equal(cmp, this->expect() | seqan3::view::reverse));
+    }
 }
 
 TYPED_TEST(pairwise_combine_test, size)
 {
     auto v = this->create_view();
 
-    if constexpr (std::ranges::RandomAccessRange<decltype(v)>)
+    if constexpr (std::ranges::SizedRange<decltype(v)>)
     {
         EXPECT_EQ(std::ranges::size(v), 6u);
         EXPECT_EQ(v.size(), 6u);
@@ -409,7 +429,7 @@ TEST(pairwise_combine_fn_test, filter_output)
 
     auto v = orig | seqan3::view::pairwise_combine;
 
-    using ref_t = typename std::iterator_traits<std::ranges::iterator_t<decltype(v)>>::reference;
+    using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
     std::vector<ref_t> cmp;
 
     auto v_filter = v | ranges::view::filter([](auto tpl)
@@ -436,7 +456,7 @@ TEST(pairwise_combine_fn_test, filter_input)
 
     auto v = v_filter | seqan3::view::pairwise_combine;
 
-    using ref_t = typename std::iterator_traits<std::ranges::iterator_t<decltype(v)>>::reference;
+    using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
     std::vector<ref_t> cmp;
 
     for (auto r : v)
