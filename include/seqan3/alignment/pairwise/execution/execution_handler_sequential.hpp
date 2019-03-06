@@ -15,6 +15,7 @@
 #include <functional>
 
 #include <seqan3/core/platform.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
@@ -29,14 +30,30 @@ public:
     /*!\name Execution
      * \{
      */
-    //!\brief Invokes the passed alignment instance in a blocking manner.
-    template <typename func_result_t, typename first_range_t, typename second_range_t>
-    void execute(std::function<func_result_t(first_range_t const &, second_range_t const &)> func,
-                 first_range_t const & first_range,
-                 second_range_t const & second_range,
-                 std::function<void(decltype(func(first_range, second_range)))> delegate)
+    /*!\brief Invokes the passed alignment instance in a blocking manner.
+     * \tparam fn_type           The callable that needs to be invoked; must model std::Invocable with first_range_type
+     *                           and second_range_type.
+     * \tparam first_range_type  The type of the first range.
+     * \tparam second_range_type The type of the second range.
+     * \tparam delegate_type     The type of the callable invoked on the std::invoke_result of `fn_type`; must model
+     *                           std::Invocable.
+     *
+     * \param[in] func         The callable invoking the alignment algorithm.
+     * \param[in] first_range  The first range.
+     * \param[in] second_range The second range.
+     * \param[in] delegate     The callable invoked with the result of the alignment.
+     */
+    template <typename fn_type, typename first_range_type, typename second_range_type, typename delegate_type>
+    //!\cond
+        requires std::Invocable<fn_type, first_range_type, second_range_type> &&
+                 std::Invocable<delegate_type, std::invoke_result_t<fn_type, first_range_type, second_range_type>>
+    //!\endcond
+    void execute(fn_type && func,
+                 first_range_type && first_range,
+                 second_range_type && second_range,
+                 delegate_type && delegate)
     {
-        delegate(func(first_range, second_range));
+        delegate(func(std::forward<first_range_type>(first_range), std::forward<second_range_type>(second_range)));
     }
     //!\}
 };

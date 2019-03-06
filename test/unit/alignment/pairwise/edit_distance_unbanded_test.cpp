@@ -212,16 +212,16 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);
     EXPECT_EQ(trace_matrix.rows(), query.size()+1);
-    EXPECT_EQ(begin_coordinate.seq1_pos, fixture.begin_coordinate.seq1_pos);
-    EXPECT_EQ(begin_coordinate.seq2_pos, fixture.begin_coordinate.seq2_pos);
-    EXPECT_EQ(end_coordinate.seq1_pos, fixture.end_coordinate.seq1_pos);
-    EXPECT_EQ(end_coordinate.seq2_pos, fixture.end_coordinate.seq2_pos);
+    EXPECT_EQ(begin_coordinate.first_seq_pos, fixture.begin_coordinate.first_seq_pos);
+    EXPECT_EQ(begin_coordinate.second_seq_pos, fixture.begin_coordinate.second_seq_pos);
+    EXPECT_EQ(end_coordinate.first_seq_pos, fixture.end_coordinate.first_seq_pos);
+    EXPECT_EQ(end_coordinate.second_seq_pos, fixture.end_coordinate.second_seq_pos);
     EXPECT_EQ(trace_matrix, fixture.trace_matrix);
     EXPECT_EQ(alignment.score(), fixture.score);
 
     auto && [gapped_database, gapped_query] = alignment.alignment();
-    EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.gapped_sequence1);
-    EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.gapped_sequence2);
+    EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.aligned_sequence1);
+    EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.aligned_sequence2);
 }
 
 TYPED_TEST_P(edit_distance_unbanded, trace)
@@ -236,8 +236,8 @@ TYPED_TEST_P(edit_distance_unbanded, trace)
     auto alignment = edit_distance<word_type>(database, query, align_cfg);
 
     auto && [gapped_database, gapped_query] = alignment.alignment();
-    EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.gapped_sequence1);
-    EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.gapped_sequence2);
+    EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.aligned_sequence1);
+    EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.aligned_sequence2);
 }
 
 REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded, score, score_matrix, trace_matrix, trace);

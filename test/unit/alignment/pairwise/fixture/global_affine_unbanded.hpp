@@ -28,6 +28,9 @@ inline constexpr auto align_config = align_cfg::mode{align_cfg::global_alignment
 
 static auto dna4_01 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -39,10 +42,10 @@ static auto dna4_01 = []()
         "ACGTACGTA"_dna4,
         align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         -18,
-        "AACCGGTTAACCGGTT",
-        "A-C-G-T-A-C-G-TA",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{15, 8},
+        "AACCGGTTAACCG---GTT",
+        "A----------CGTACGTA",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -76,16 +79,19 @@ static auto dna4_01 = []()
 
 static auto dna4_02 = []()
 {
+    using detail::column_index_type;
+    using detail::row_index_type;
+
     return alignment_fixture
     {
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
         align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
         -18,
-        "A-C-G-T-A-C-G-TA",
-        "AACCGGTTAACCGGTT",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{8, 15},
+        "ACGTAC----------GTA",
+        "A---ACCGGTTAACCGGTT",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T

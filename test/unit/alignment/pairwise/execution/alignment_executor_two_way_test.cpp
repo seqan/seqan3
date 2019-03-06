@@ -15,6 +15,7 @@
 
 #include <seqan3/alignment/pairwise/execution/alignment_executor_two_way.hpp>
 #include <seqan3/range/view/persist.hpp>
+#include <seqan3/test/pretty_printing.hpp>
 
 struct dummy_alignment
 {
@@ -36,7 +37,7 @@ struct dummy_alignment
 // Some globally defined test types
 inline static std::tuple single{std::string{"AACGTACGT"}, std::string{"ATCGTCCGT"}};
 inline static std::vector<decltype(single)> collection{5, single};
-inline static std::function<size_t(std::string const &, std::string const &)> fn{dummy_alignment{}};
+inline static std::function<size_t(std::string &, std::string &)> fn{dummy_alignment{}};
 
 using namespace seqan3;
 
@@ -67,11 +68,12 @@ TEST(alignment_executor_two_way, type_deduction)
 TEST(alignment_executor_two_way, bump)
 {
     detail::alignment_executor_two_way exec{collection, fn};
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
+
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
@@ -79,7 +81,7 @@ TEST(alignment_executor_two_way, in_avail)
 {
     detail::alignment_executor_two_way exec{collection, fn};
     EXPECT_EQ(exec.in_avail(), 0u);
-    EXPECT_EQ(exec.bump(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_EQ(exec.in_avail(), 0u);
 }
 
@@ -87,35 +89,35 @@ TEST(alignment_executor_two_way, lvalue_single_view)
 {
     auto v = ranges::view::single(single);
     detail::alignment_executor_two_way exec{v, fn};
-    EXPECT_EQ(exec.bump(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
 TEST(alignment_executor_two_way, rvalue_single_view)
 {
     detail::alignment_executor_two_way exec{ranges::view::single(single), fn};
-    EXPECT_EQ(exec.bump(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
 TEST(alignment_executor_two_way, lvalue_collection)
 {
     detail::alignment_executor_two_way exec{collection, fn};
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }
 
 TEST(alignment_executor_two_way, rvalue_collection_view)
 {
     detail::alignment_executor_two_way exec{collection | view::persist, fn};
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
-    EXPECT_EQ(exec.bump(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
+    EXPECT_EQ(exec.bump().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.bump()));
 }

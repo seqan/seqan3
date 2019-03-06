@@ -39,7 +39,7 @@ private:
     //!\brief Befriends the derived type.
     friend derived_t;
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */
@@ -62,22 +62,37 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        // Call get twice since the banded score column is a zipped range and we need to access the main column.
+        auto & [main_score, hz_score, hz_trace] = get<0>(get<0>(current_cell));
+        auto & trace_value = get<2>(current_cell);
         auto & vt_score = get<1>(get<0>(cache));
+        auto & vt_trace = get<2>(get<0>(cache));
 
         main_score = 0;
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
+        {
             vt_score = 0;
+            vt_trace = trace_directions::none;
+        }
         else
+        {
             vt_score = get<1>(cache);
-
+            vt_trace = trace_directions::up_open;
+        }
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
+        {
             hz_score = 0;
+            hz_trace = trace_directions::none;
+        }
         else
+        {
             hz_score = get<1>(cache);
+            hz_trace = trace_directions::left_open;
+        }
+        trace_value = trace_directions::none;
     }
 
     /*!\brief Initialises a cell in the first column of the dynamic programming matrix.
@@ -91,18 +106,28 @@ private:
     {
         using std::get;
 
-        auto & [main_score, hz_score] = get<0>(current_cell);
+        // Call get twice since the banded score column is a zipped range and we need to access the main column.
+        auto & [main_score, hz_score, hz_trace] = get<0>(get<0>(current_cell));
+        auto & trace_value = get<2>(current_cell);
         auto & vt_score = get<1>(get<0>(cache));
+        auto & vt_trace = get<2>(get<0>(cache));
 
         main_score = vt_score;
+        trace_value = vt_trace;
 
         // Initialise the vertical matrix cell according to the traits settings.
         if constexpr (traits_type::free_second_leading_t::value)
+        {
             vt_score = 0;
+            vt_trace = trace_directions::none;
+        }
         else
+        { // previous vertical + gap extension
             vt_score += get<2>(cache);
-
-        hz_score = main_score + get<1>(cache);
+            vt_trace = trace_directions::up;
+        }
+        hz_score = main_score + get<1>(cache); // gap_opening cost
+        hz_trace = trace_directions::left_open;
     }
 
     /*!\brief Initialises a cell in the first row of the current band.
@@ -114,23 +139,35 @@ private:
     template <typename cell_t, typename cache_t>
     constexpr auto init_row_cell(cell_t && current_cell, cache_t & cache) const noexcept
     {
-        auto & [current_entry, next_entry] = current_cell; // Split into current entry and next entry.
+        auto & [current_entry, next_entry] = get<0>(current_cell); // Split into current entry and next entry.
+        auto & trace_value = get<2>(current_cell);  // the trace value to store.
         auto & main_score = get<0>(current_entry);  // current_entry stores current score to be updated.
-        auto & hz_score = get<1>(next_entry);  // next_entry stores last horizontal value (shifted by one).
+        auto & hz_trace = get<2>(current_entry); // store trace for the next horizontal computation.
+        auto const & prev_hz_score = get<1>(next_entry);  // get the previous horizontal score.
+        auto const & prev_hz_trace = get<2>(next_entry);  // get the previous horizontal trace.
         auto & vt_score = get<1>(get<0>(cache));
+        auto & vt_trace = get<2>(get<0>(cache));
 
-        main_score = hz_score;
-        vt_score += main_score + get<1>(cache); // gap opening cost + gap extension cost.
+        main_score = prev_hz_score;
+        trace_value = prev_hz_trace;
+        vt_score += main_score + get<1>(cache); // gap opening cost
+        vt_trace = trace_directions::up_open;
 
         // Initialise the horizontal matrix cell according to the traits settings.
         if constexpr (traits_type::free_first_leading_t::value)
+        {
             get<1>(current_entry) = 0;
+            hz_trace = trace_directions::none;
+        }
         else
-            get<1>(current_entry) = hz_score + get<2>(cache);
+        {
+            get<1>(current_entry) = prev_hz_score + get<2>(cache);
+            hz_trace = trace_directions::left;
+        }
     }
 
     /*!\brief Balances the total score based on the band parameters and the alignment configuration.
-     * \tparam        score_type       The type of the score to update.
+     * \tparam        optimum_type     The type of the optimum to update.
      * \tparam        band_type        The type of the band.
      * \tparam        gap_scheme_type  The type of the gap_scheme.
      * \param[in,out] total  The total score to update.
@@ -142,20 +179,20 @@ private:
      * Depending on the band position and the alignment configuration updates the total score
      * of the alignment. It adds the score for initialising the matrix with a gap until the begin of the band.
      */
-    template <typename score_type, typename band_type, typename gap_scheme_type>
-    constexpr void balance_leading_gaps(score_type & total,
+    template <typename optimum_type, typename band_type, typename gap_scheme_type>
+    constexpr void balance_leading_gaps(optimum_type & total,
                                         band_type const & band,
                                         gap_scheme_type const & scheme) const noexcept
     {
         if constexpr (!traits_type::free_second_leading_t::value)
         {  // Band starts inside of second sequence.
             if (0 > band.upper_bound)
-                total += scheme.score(std::abs(band.upper_bound));
+                total.score += scheme.score(std::abs(band.upper_bound));
         }
         if constexpr (!traits_type::free_first_leading_t::value)
         { // Band starts inside of first sequence.
             if (band.lower_bound > 0)
-                total += scheme.score(band.lower_bound);
+                total.score += scheme.score(band.lower_bound);
         }
     }
 };

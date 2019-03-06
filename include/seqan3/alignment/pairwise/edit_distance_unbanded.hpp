@@ -480,9 +480,9 @@ public:
     {
         size_t col = database.size() - 1;
         if constexpr(is_semi_global)
-            col = std::distance(begin(database), _best_score_col);
+            col = std::ranges::distance(begin(database), _best_score_col);
 
-        return {col, query.size() - 1};
+        return {column_index_type{col}, row_index_type{query.size() - 1}};
     }
 
     //!\brief Return the alignment, i.e. the actual base pair matching.
@@ -599,7 +599,7 @@ template <typename config_t>
 class edit_distance_wrapper
 {
 public:
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */
@@ -638,9 +638,7 @@ public:
                                                                 remove_cvref_t<second_range_t>,
                                                                 remove_cvref_t<config_t>>::type;
 
-        pairwise_alignment_edit_distance_unbanded algo{std::forward<first_range_t>(first_range),
-                                                       std::forward<second_range_t>(second_range),
-                                                       *cfg_ptr};
+        pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr};
         align_result<result_t> res{};
         return algo(res);
     }

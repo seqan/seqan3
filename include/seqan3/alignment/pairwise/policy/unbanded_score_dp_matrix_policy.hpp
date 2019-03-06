@@ -6,18 +6,25 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::unbanded_dp_matrix_policy.
+ * \brief Provides seqan3::detail::unbanded_score_dp_matrix_policy.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <vector>
-#include <utility>
+#include <tuple>
 
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/repeat_n.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip.hpp>
+
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/range/shortcuts.hpp>
+#include <seqan3/std/span.hpp>
+#include <seqan3/std/view/common.hpp>
 
 namespace seqan3::detail
 {
@@ -28,7 +35,7 @@ namespace seqan3::detail
  * \tparam allocator_t The allocator type used for allocating the dynamic programming matrix.
  */
 template <typename derived_t, typename allocator_t>
-class unbanded_dp_matrix_policy
+class unbanded_score_dp_matrix_policy
 {
 private:
 
@@ -44,16 +51,16 @@ private:
     using score_matrix_type = std::vector<cell_type, allocator_t>;
     //!\}
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr unbanded_dp_matrix_policy()                                              = default;
-    constexpr unbanded_dp_matrix_policy(unbanded_dp_matrix_policy const &)             = default;
-    constexpr unbanded_dp_matrix_policy(unbanded_dp_matrix_policy &&)                  = default;
-    constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy const &) = default;
-    constexpr unbanded_dp_matrix_policy & operator=(unbanded_dp_matrix_policy &&)      = default;
-    ~unbanded_dp_matrix_policy()                                                       = default;
+    constexpr unbanded_score_dp_matrix_policy() = default;
+    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy const &) = default;
+    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy &&) = default;
+    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy const &) = default;
+    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy &&) = default;
+    ~unbanded_score_dp_matrix_policy() = default;
     //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.
@@ -63,26 +70,32 @@ private:
      * \param[in] second_range The first sequence (or packed sequences).
      */
     template <typename first_range_t, typename second_range_t>
-    constexpr void allocate_score_matrix(first_range_t && first_range, second_range_t && second_range)
+    constexpr void allocate_matrix(first_range_t & first_range, second_range_t & second_range)
     {
-        dimension_first_range = std::ranges::size(first_range);
-        dimension_second_range = std::ranges::size(second_range);
+        dimension_first_range = std::ranges::distance(first_range) + 1;
+        dimension_second_range = std::ranges::distance(second_range) + 1;
 
         current_column_index = 0;
 
         // We use only one column to compute the score.
-        score_matrix.resize(dimension_second_range + 1);
+        score_matrix.resize(dimension_second_range);
     }
 
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column() noexcept
     {
-        using iter_t = std::ranges::iterator_t<decltype(score_matrix)>;
-        return view::subrange<iter_t, iter_t>{std::ranges::begin(score_matrix), std::ranges::end(score_matrix)};
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
+            col_begin{column_index_type{current_column_index}, row_index_type{0u}};
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
+            col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
+
+        return ranges::view::zip(std::span{score_matrix},
+                                 ranges::view::iota(col_begin, col_end),
+                                 ranges::view::repeat_n(std::ignore, dimension_second_range) | view::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.
-    constexpr void next_column() noexcept
+    constexpr void go_next_column() noexcept
     {
         ++current_column_index;
     }
@@ -96,4 +109,17 @@ private:
     //!\brief The index of the active column.
     size_t current_column_index = 0;
 };
+
+/*!\brief Returns only the score column of the current matrix column.
+ *
+ * \details
+ *
+ * This helper view is used as long as view::get is broken for nested zip-views.
+ * See https://github.com/seqan/seqan3/issues/745 for more details.
+ */
+inline const auto view_get_score_column = ranges::view::transform([](auto && elem)
+{
+    using std::get;
+    return get<0>(std::forward<decltype(elem)>(elem));
+});
 } // namespace seqan3::detail
