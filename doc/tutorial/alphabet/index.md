@@ -37,7 +37,7 @@ This is a detailed introduction to the Alphabet module and demonstrates its main
 
 Nucleotides are the components of (Deoxy)Ribonucleic acid (DNA/RNA) and contain one of the nucleobases
 Adenine (A), Cytosine (C), Guanine (G), Thymine (T, only DNA) and Uracil (U, only RNA).
-In SeqAn the alphabets seqan3::dna4 and seqan3::rna4 contain exactly the four respective nucleotides.
+In SeqAn3 the alphabets seqan3::dna4 and seqan3::rna4 contain exactly the four respective nucleotides.
 The trailed number in the alphabets' name represents the number of entities the alphabet holds –
 we denote this number as *alphabet size*.
 For instance, the alphabet seqan3::dna5 represents five entities as it contains the additional symbol 'N'
@@ -52,7 +52,7 @@ Let's look at some example code, which demonstrates how characters of the seqan3
 
 We have shown three solutions for assigning variables of alphabet type.
 1. Assignment by character literal, i.e. appending the operator `_dna4` to the respective char symbol. <br/>
-   This is the handiest way, as it can be used temporarily (without creating a variable) as well.
+   This is the handiest way, as it can be also used as a temporary object.
 2. Assignment by `char` via the global function seqan3::assign_char. <br/>
    This is useful if the assignment target already exists, e.g. in a sequence vector.
 3. Assignment by rank via the global function seqan3::assign_rank. <br/>
@@ -62,7 +62,8 @@ We have shown three solutions for assigning variables of alphabet type.
 
 ## The rank of an alphabet symbol
 The rank of a symbol is a number in range \[0..alphabet_size), where each number is paired with
-an alphabet symbol by a bijective function. For instance in seqan3::dna4 the bijection is
+an alphabet symbol by a bijective function. In SeqAn3 the rank is always determined by the lexicographical
+order of the alphabet characters. For instance in seqan3::dna4 the bijection is
 <br/> `A ⟼ 0` <br/> `C ⟼ 1` <br/> `G ⟼ 2` <br/> `T ⟼ 3`.
 
 SeqAn provides the function seqan3::to_rank for converting a symbol to its rank value,
@@ -133,6 +134,10 @@ Write a program that
 
 The seqan3::dna5 type ensures that invalid characters in the input sequence are converted to 'N'.
 Note that these characters should not influence the GC content.
+
+Pass the sequences `CATTACAG` (3/8 = 37.5%) and `ANNAGAT` (1/5 = 20%) to your program and check
+if your results are correct.
+
 \endassignment
 \solution
 \snippet alphabet_gc_content.cpp exercise
@@ -213,26 +218,26 @@ some wildcard characters. For details read the seqan3::Aminoacid page.
 The alphabets for structure and quality are sequence *annotations*, as they describe additional
 properties of the respective sequence. 
 We distinguish three types:
-1. Quality alphabet for nucleotides. The values are produced by sequencing machines and represent the probability
+1. **Quality alphabet for nucleotides**. The values are produced by sequencing machines and represent the probability
    that a nucleobase was recorded incorrectly. The characters are most commonly found in FASTQ files.
    See seqan3::Quality for details.
-2. RNA structure alphabets. They describe RNA nucleobases as unpaired or up-/downstream paired and can be found
+2. **RNA structure alphabets**. They describe RNA nucleobases as unpaired or up-/downstream paired and can be found
    in annotated RNA sequence and alignment files (e.g. Stockholm format). Currently we provide the
    [Dot Bracket](\ref seqan3::dot_bracket3) and [WUSS](\ref seqan3::wuss) formats.
-3. Protein structure alphabet. The [DSSP](\ref seqan3::dssp9) format represents secondary structure elements like
+3. **Protein structure alphabet**. The [DSSP](\ref seqan3::dssp9) format represents secondary structure elements like
    alpha helices and turns.
 
-You can build a [Cartesian Compositions](\ref seqan3::cartesian_composition) with a nucleotide and quality 
-alphabet, or nucleotide / amino acid and structure alphabet that stores both information together. 
-For the use cases just described we offer pre-defined composites: (list qualified, structured_aa, structured_rna). 
-See our API documentation for a detailed description of each.
+You can build a [Cartesian Compositions](\ref seqan3::cartesian_composition) with a nucleotide and quality
+alphabet, or nucleotide / amino acid and structure alphabet that stores both information together.
+For the use cases just described we offer pre-defined composites (seqan3::qualified, seqan3::structured_rna,
+seqan3::structured_aa). See our API documentation for a detailed description of each.
 
 <br/>
 
 ## Gap alphabet
 
 The seqan3::gap alphabet is the smallest alphabet in SeqAn, consisting of the gap character only.
-It is used in a [Union Composition](\ref seqan3::union_composition) with a nucleotide or amino acid alphabet
+It is most often used in a [Union Composition](\ref seqan3::union_composition) with a nucleotide or amino acid alphabet
 to represent gapped sequences, e.g. in alignments. To create a gapped alphabet simply use seqan3::gapped<> with
 the alphabet type you want to extend.
 \snippet alphabet_main.cpp gapped
@@ -275,7 +280,7 @@ by implementing the (in-)equality operators (as free functions).
 \snippet alphabet_dna2_steps.cpp equality
 
 \assignment{Excercise}
-Implement the inequality operator (!=) for `dna2`.
+Copy the source code for the equality operator and implement the inequality operator (`operator!=()`) for `dna2`.
 \endassignment
 \solution
 \snippet alphabet_dna2_steps.cpp inequality
@@ -326,4 +331,4 @@ Now the seqan3::Alphabet concept should be modelled successfully:
 
 In reality, you do not need to define all the functions you have learned in this exercise manually. 
 Instead, you can inherit you type from seqan3::alphabet_base and just define the char-rank conversion
-in both directions. Read the documentation of seqan3::alphabet_base fo details. 
+in both directions. Read the documentation of seqan3::alphabet_base for details. 
