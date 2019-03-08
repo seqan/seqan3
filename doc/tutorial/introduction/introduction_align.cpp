@@ -14,8 +14,8 @@
 
 //! [alignment_include]
 #include <tuple>                                                          // for std::make_pair
-#include <seqan3/alignment/pairwise/align_pairwise.hpp>                   // for align_pairwise
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp> // for alignment stream operator
+#include <seqan3/alignment/pairwise/align_pairwise.hpp>                   // for align_pairwise
 //! [alignment_include]
 
 //! [index_search_include]
@@ -29,18 +29,18 @@ int main()
     auto tmp_dir = std::filesystem::temp_directory_path();
     {
         // Create a /tmp/my.fasta file.
-        sequence_file_output sfo{tmp_dir/"seq.fasta"};
-        sfo.emplace_back("ACGTGATG"_dna4, std::string{"seq1"});
-        sfo.emplace_back("AGTGATACT"_dna4, std::string{"seq2"});
+        sequence_file_output file_out{tmp_dir/"seq.fasta"};
+        file_out.emplace_back("ACGTGATG"_dna4, std::string{"seq1"});
+        file_out.emplace_back("AGTGATACT"_dna4, std::string{"seq2"});
     }
 
 //! [sequence_input]
     // Initialise a file input object with a FastA file.
-    sequence_file_input sfi{tmp_dir/"seq.fasta"};
+    sequence_file_input file_in{tmp_dir/"seq.fasta"};
 
     // Retrieve the sequences and ids.
-    auto & seqs = get<field::SEQ>(sfi);
-    auto & ids  = get<field::ID>(sfi);
+    auto & seqs = get<field::SEQ>(file_in);
+    auto & ids  = get<field::ID>(file_in);
 
     // Print the content of the retrieved vectors.
     debug_stream << seqs << '\n';   // => [ACGTGATG,AGTGATACT]
@@ -71,4 +71,5 @@ int main()
     // Search the TAG motiv in the index and print the positions, where it is found.
     debug_stream << search(index, "TAG"_dna4) << '\n';   // => [13,17]
 //! [index_search]
+    std::filesystem::remove(tmp_dir/"seq.fasta");
 }
