@@ -30,7 +30,15 @@ Most good tutorials start with an easy *Hello World!* program. So have a look:
 
 \snippet introduction_hello_world.cpp hello
 
-Now you may ask, why we do not use std::cout or std::cerr for console output.
+\note
+This is a code snippet. You will see many code snippets in our documentation.
+Most of them are compilable as-is, but some are only valid in their context,
+e.g. they depend on other code snippets given before/after the current one or
+other statements implied by the text. You can copy'n'paste freely from these examples,
+this implies no copyright-obligations (however distributing SeqAn3 or an application
+using it does, see "Copyright and Citing").
+
+You may ask, why we do not use std::cout or std::cerr for console output.
 Actually, for the given text it does not make a difference since seqan3::debug_stream prints to std::cerr as well.
 However, the debug stream provides convenient output for SeqAn's types as well as widely used data structures
 (e.g. std::vector), which is especially helpful when you debug or develop your program
@@ -45,9 +53,54 @@ Then print the vector with seqan3::debug_stream. Does your program also work wit
 \endsolution
 
 \note
-You may have spotted that the blue coloured keywords link you directly to the respective API documentation.
+This is an exercise with solution. You will find exercises in the tutorials to practise the discussed contents.
+We believe that programming them will help you to memorise better and makes the tutorials more interesting and
+interactive. The solutions provide the intended use; but often there are multiple ways to solve an exercise,
+so don't worry too much if your solution is different from ours.
+
+<br>
+
+---
+
+# Parse command line arguments
+
+After we have seen the *Hello World!* program, we want to go a bit further and parse arguments from the command line.
+The following snippet shows you how this is done in SeqAn3. Here the program expects a string argument in the
+program call and prints it to your terminal.
+
+\snippet introduction_argument_parser.cpp argparse
+
+Implementing a program with seqan3::argument_parser requires three steps:
+1. Initialise the seqan3::argument_parser with your program's name and pass the `argc` and `argv` variables.
+2. Register (positional) options in the parser object. In this way it knows which options to expect and
+   it can generate the help page for your program. You will learn more about the option types in the *Argument Parser
+   Tutorial*.
+3. Run the parser. As it throws exceptions on wrong user behaviour, it should be surrounded with a try-catch block.
+
+You will see that the entered text is now in the buffer variable `input`. The argument parser provides way more
+functionality than we can show at this point, e.g. validation of arguments and different option types. We refer you
+to the respective tutorial if you want to know more.
+
+\note
+You may have spotted that the blue coloured keywords link you directly to the respective **API documentation**.
 This is helpful if you need further information on a function, concept or class. We recommend you to open them
 in separate browser tabs such that you can easily switch back to the tutorial.
+
+## Modules in SeqAn3
+
+You have just been introduced to one of the **Modules** of SeqAn3, the *Argument Parser*.
+Modules structure the SeqAn3 library into logical units, as there are for instance `alignment`, `alphabet`,
+`argument_parser`, `io`, `search` and some more. See the *API Reference (Modules)* section in the
+navigation column for a complete overview.
+
+Some modules consist of submodules and the module structure is represented by the file hierarchy in the `include`
+directory. Whenever you use functions of a module, make sure to `include` the (sub-)module's header file.
+Each directory in the SeqAn sources contains an `all.hpp` file which includes all the functionality
+of the respective (sub-) module.
+
+\note
+If you remember the name of a function or class, but don't know which (sub-)module it belongs to,
+you can enter it in the search bar (top-right).
 
 <br>
 
@@ -55,16 +108,18 @@ in separate browser tabs such that you can easily switch back to the tutorial.
 
 # Read sequence files
 
-SeqAn3 provides fast and easy access to biological file formats.
+Let's look at some functions of the IO module: SeqAn3 provides fast and easy access to biological file formats.
 The following code example demonstrates the interface of seqan3::sequence_file_input.
 
 \snippet introduction_align.cpp sequence_input_include
 \snippet introduction_align.cpp sequence_input
 
 Can you imagine anything easier? After you have initialised the instance with a filename,
-you can simply query the data of interest using the get function. The available fields are
-`SEQ`, `ID` and `QUAL` to retrieve sequences, ids and qualities, respectively. The latter is empty
-unless you read FastQ files. The appropriate file format is detected by SeqAn from your file name suffix.
+you can simply step through the file in a for loop and retrieve the fields via 
+[structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding).
+The returned fields are `SEQ`, `ID` and `QUAL` to retrieve sequences, ids and qualities, respectively.
+The latter is empty unless you read FastQ files. The appropriate file format is detected by SeqAn from
+your filename's suffix.
 
 Here is the content of `seq.fasta`, so you can try it out!
 
@@ -74,6 +129,20 @@ ACGTGATG
 >seq2
 AGTGATACT
 ~~~
+
+\assignment{Exercise: Read a FastA file}
+Combine the code from above to read a FastA file and store its sequences in a std::vector of type seqan3::dna5_vector
+(which is a common DNA sequence type in SeqAn3). Use the argument parser for obtaining the filename as command line
+argument to your program (e.g. call `./myprogram seq.fasta`).
+\endassignment
+\solution
+\snippet introduction_read_fasta.cpp read
+\endsolution
+
+Note that the same code can also read FastQ files and the `qual` variable will not be empty then. If you like, try it!
+
+\note
+SeqAn3 uses `snake_case` for almost everything, also class names. Only C++ concepts are named using `CamelCase`.
 
 <br>
 
@@ -98,23 +167,10 @@ you wish to compute a traceback or not. The configurations have their own namesp
 be piped for building combinations. Check the alignment tutorial if you want to learn more.
 
 \note
-Every directory in the SeqAn sources contains an `all.hpp` file which includes all the functionality
-of the respective (sub-) module. Thus, if you are working with several alignment methods, you can simply
-include `seqan3/alignment/all.hpp` instead of naming each file individually.
+We use a lot of Modern C++ in SeqAn3 so some things might look alien at first,
+e.g. type templates are used like ordinary types in many situations (no `<>`).
+We also always use `{}` to initialise objects and not `()` which is only used for function calls.
+In general the style should be much easier for newcomers.
 
-<br>
-
----
-
-# Indexed searching
-At the end of this introduction tutorial, we want to present you another efficient algorithm in SeqAn:
-The following code example shows you the steps for performing rapid searches in an indexed genome sequence.
-As index we use the FM index here. After creation we want to query the positions of the motif *TAG* inside
-a given sequence.
-
-\snippet introduction_align.cpp index_search_include
-\snippet introduction_align.cpp index_search
-
-For more information on indexing and searching we refer you to the *Index Tutorial*. We hope you got a rough
-overview on how the SeqAn3 interface has developed since version 2 and you are now free to continue with the
-tutorials of your interest.
+Now that you reached the end of this first tutorial, you know how SeqAn3 code looks like and you are able
+to write some first code fragments. Let's go more into detail with the module-based tutorials!
