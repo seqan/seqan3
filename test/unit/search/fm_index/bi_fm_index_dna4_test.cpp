@@ -10,3 +10,14 @@
 
 INSTANTIATE_TYPED_TEST_CASE_P(dna4, fm_index_test, bi_fm_index<std::vector<dna4>>);
 INSTANTIATE_TYPED_TEST_CASE_P(dna4_collection, fm_index_collection_test, bi_fm_index<std::vector<std::vector<dna4>>>);
+
+TEST(fm_index_test, additional_concepts)
+{
+    EXPECT_TRUE(BiFmIndexTraits<bi_fm_index_default_traits>);
+    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::string>>);
+}
+
+TEST(fm_index_collection_test, additional_concepts)
+{
+    EXPECT_TRUE(BiFmIndex<bi_fm_index<std::vector<std::string>>>);
+}

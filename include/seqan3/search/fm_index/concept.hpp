@@ -16,9 +16,9 @@
 
 #include <sdsl/suffix_arrays.hpp>
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/concept.hpp>
+#include <seqan3/range/container/concept.hpp>
 
 namespace seqan3::detail
 {
@@ -129,10 +129,12 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
     typename t::size_type;
     typename t::cursor_type;
 
+    requires sequence_container_concept<typename t::text_type>;
+
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;
 
-    requires requires (t index, std::vector<value_type_t<typename t::text_type>> const text)
+    requires requires (t index, typename t::text_type const text)
     {
         { t(text) };
         { index.construct(text) } -> void;
