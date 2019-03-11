@@ -33,31 +33,6 @@ namespace seqan3::detail
 {
 //!\cond
 template <typename align_config_t>
-SEQAN3_CONCEPT semi_global_config_concept =
-    std::remove_reference_t<align_config_t>::template exists<align_cfg::aligned_ends>() &&
-requires (align_config_t & cfg)
-{
-    requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
-            template is_static<0>();
-    requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
-            template is_static<1>();
-    requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
-            template get_static<0>();
-    requires std::remove_reference_t<
-        decltype(cfg.template value_or<align_cfg::aligned_ends>(align_cfg::end_gaps{align_cfg::none_ends_free}))>::
-            template get_static<1>();
-};
-
-template <typename align_config_t>
-SEQAN3_CONCEPT global_config_concept = requires (align_config_t & cfg)
-{
-    requires cfg.template exists<align_cfg::mode<detail::global_alignment_type>>();
-};
-
-template <typename align_config_t>
 SEQAN3_CONCEPT max_errors_concept = requires (align_config_t & cfg)
 {
     requires cfg.template exists<align_cfg::max_error>();
@@ -71,6 +46,10 @@ template <typename traits_type>
 SEQAN3_CONCEPT edit_distance_trait_concept = requires
 {
     typename std::remove_reference_t<traits_type>::word_type;
+    typename std::remove_reference_t<traits_type>::is_semi_global_type;
+
+    // Must be a boolean integral constant.
+    requires std::Same<typename std::remove_reference_t<traits_type>::is_semi_global_type::value_type, bool>;
 };
 
 /*!\brief The default traits type for the edit distance algorithm.
@@ -80,6 +59,8 @@ struct default_edit_distance_trait_type
 {
     //!\brief The default word type.
     using word_type = uint64_t;
+    //!\brief Semi global alignment is disabled by default.
+    using is_semi_global_type = std::false_type;
 };
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
@@ -139,15 +120,14 @@ private:
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
     static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
     //!\brief Whether the alignment is a semi-global alignment or not.
-    static constexpr bool is_semi_global = detail::semi_global_config_concept<align_config_t>;
+    static constexpr bool is_semi_global = traits_t::is_semi_global_type::value;
     //!\brief Whether the alignment is a global alignment or not.
-    static constexpr bool is_global = detail::global_config_concept<align_config_t> && !is_semi_global;
+    static constexpr bool is_global = !is_semi_global;
 
     //!\brief How to pre-initialize hp.
     static constexpr word_type hp0 = is_global ? 1 : 0;
 
     static_assert(8 * sizeof(word_type) <= 64, "we assume at most uint64_t as word_type");
-    static_assert((is_global && !is_semi_global) || (!is_global && is_semi_global), "Either set global or semi-global");
 
     //!\brief The score of the current column.
     score_type _score{};
@@ -228,8 +208,12 @@ public:
      * \param[in] _database \copydoc database
      * \param[in] _query    \copydoc query
      * \param[in] _config   \copydoc config
+     * \param[in] _traits   The traits object. Only the type information will be used.
      */
-    pairwise_alignment_edit_distance_unbanded(database_t && _database, query_t && _query, align_config_t _config) :
+    pairwise_alignment_edit_distance_unbanded(database_t && _database,
+                                              query_t && _query,
+                                              align_config_t _config,
+                                              traits_t const & SEQAN3_DOXYGEN_ONLY(_traits) = traits_t{}) :
         database{std::forward<database_t>(_database)},
         query{std::forward<query_t>(_query)},
         config{std::forward<align_config_t>(_config)},
@@ -595,7 +579,7 @@ pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && que
  * of the edit distance algorithm, while the interface is unified with the execution model of the pairwise alignment
  * algorithms.
  */
-template <typename config_t>
+template <typename config_t, typename traits_t = default_edit_distance_trait_type>
 class edit_distance_wrapper
 {
 public:
@@ -638,7 +622,7 @@ public:
                                                                 remove_cvref_t<second_range_t>,
                                                                 remove_cvref_t<config_t>>::type;
 
-        pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr};
+        pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, traits_t{}};
         align_result<result_t> res{};
         return algo(res);
     }

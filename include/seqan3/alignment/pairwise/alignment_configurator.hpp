@@ -204,7 +204,7 @@ public:
      */
     template <std::ranges::ForwardRange sequences_t, typename config_t>
     //!\cond
-        requires tuple_like_concept<value_type_t<std::remove_reference_t<sequences_t>>> && 
+        requires tuple_like_concept<value_type_t<std::remove_reference_t<sequences_t>>> &&
                  is_type_specialisation_of_v<remove_cvref_t<config_t>, configuration>
     //!\endcond
     static constexpr auto configure(sequences_t && SEQAN3_DOXYGEN_ONLY(seq_range), config_t const & cfg)
@@ -247,8 +247,12 @@ public:
         auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
         auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
 
-        // Check if edit distance can be used?
-        if (gaps.get_gap_open_score() == 0)
+        auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+
+        // Only use edit distance if ...
+        if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
+            !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
+            align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
         {
             // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
             //       option via the scheme.
@@ -282,10 +286,56 @@ private:
         if constexpr (config_t::template exists<align_cfg::band>())
             throw invalid_alignment_configuration{"Banded alignments are yet not supported."};
 
-        if constexpr (config_t::template exists<align_cfg::aligned_ends>())
-            throw invalid_alignment_configuration{"Free end gaps is not yet supported."};
+        // ----------------------------------------------------------------------------
+        // Configure semi-global alignment
+        // ----------------------------------------------------------------------------
 
-        return function_wrapper_t{edit_distance_wrapper<remove_cvref_t<config_t>>{cfg}};
+        // Get the value for the sequence ends configuration.
+        auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+        using align_ends_cfg_t = remove_cvref_t<decltype(align_ends_cfg)>;
+
+        auto configure_edit_traits = [&](auto is_semi_global)
+        {
+            struct edit_traits_type
+            {
+                using word_type           [[maybe_unused]] = uint_fast64_t;
+                using is_semi_global_type [[maybe_unused]] = remove_cvref_t<decltype(is_semi_global)>;
+            };
+
+            return function_wrapper_t{edit_distance_wrapper<remove_cvref_t<config_t>, edit_traits_type>{cfg}};
+        };
+
+        // Check if it has free ends set for the first sequence trailing gaps.
+        auto has_free_ends_trailing = [&](auto first) constexpr
+        {
+            if constexpr (!decltype(first)::value)
+            {
+                return configure_edit_traits(std::false_type{});
+            }
+            else if constexpr (align_ends_cfg_t::template is_static<1>())
+            {
+                return configure_edit_traits(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
+            }
+            else // Resolve correct property at runtime.
+            {
+                if (align_ends_cfg[1])
+                    return configure_edit_traits(std::true_type{});
+                else
+                    return configure_edit_traits(std::false_type{});
+            }
+        };
+
+        // Check if it has free ends set for the first sequence leading gaps.
+        // If possible use static information.
+        if constexpr (align_ends_cfg_t::template is_static<0>())
+            return has_free_ends_trailing(std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>{});
+        else // Resolve correct property at runtime.
+        {
+            if (align_ends_cfg[0])
+                return has_free_ends_trailing(std::true_type{});
+            else
+                return has_free_ends_trailing(std::false_type{});
+        }
     }
 
     /*!\brief Configures the dynamic programming matrix initialisation accoring to seqan3::align_cfg::aligned_ends
