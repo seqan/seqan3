@@ -79,7 +79,7 @@ namespace seqan3
 {
 
 /*!\brief Stores the alignment results and gives access to score, alignment and the begin and end coordinates.
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  * \tparam align_result_traits The type of the traits object.
  *
  * \details

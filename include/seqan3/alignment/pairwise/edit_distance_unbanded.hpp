@@ -65,7 +65,7 @@ SEQAN3_CONCEPT max_errors_concept = requires (align_config_t & cfg)
 //!\endcond
 
 /*!\todo Document me
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  */
 template <typename traits_type>
 SEQAN3_CONCEPT edit_distance_trait_concept = requires
