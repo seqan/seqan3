@@ -21,59 +21,61 @@
 
 namespace seqan3::detail
 {
-/*!\brief Generates all pairwise combinations of the elements in the source range.
+/*!\brief Generates all pairwise combinations of the elements in the underlying range.
  * \ingroup view
- * \tparam source_range_type The type of the source range; must model std::ranges::View, std::ranges::ForwardRange and
- *                           std::ranges::CommonRange.
+ * \tparam underlying_range_type The type of the underlying range; must model std::ranges::View,
+ *                               std::ranges::ForwardRange and std::ranges::CommonRange.
  *
  * \details
  *
- * This view will provide a convenient way to iterate over all pairwise combinations of the elements of the source
- * range (in no defined order). A source range with `n` elements will therefore have `n choose 2` possible combinations.
+ * This view will provide a convenient way to iterate over all pairwise combinations of the elements of the underlying
+ * range (in no defined order). A underlying range with `n` elements will therefore have `n choose 2` possible
+ * combinations.
  *
  * ### Example
  *
  * \include test/snippet/range/view/pairwise_combine.cpp
  */
-template <std::ranges::View source_range_type>
+template <std::ranges::View underlying_range_type>
 //!\cond
-    requires  std::ranges::ForwardRange<source_range_type> && std::ranges::CommonRange<source_range_type>
+    requires  std::ranges::ForwardRange<underlying_range_type> && std::ranges::CommonRange<underlying_range_type>
 // !\endcond
-class pairwise_combine_view : public ranges::view_interface<pairwise_combine_view<source_range_type>>
+class pairwise_combine_view : public ranges::view_interface<pairwise_combine_view<underlying_range_type>>
 {
 private:
 
-    //!\brief Alias type for the iterator over the source range.
-    using source_iterator_type = std::ranges::iterator_t<source_range_type>;
+    //!\brief Alias type for the iterator over the underlying range.
+    using underlying_iterator_type = std::ranges::iterator_t<underlying_range_type>;
 
     /*!\brief The internal iterator type.
      *
      * \details
      *
-     * This iterator models the iterator category of the `source_iterator_type`. It maintains a pair of iterators on
-     * the source range that move over all pairwise combinations of elements. The end is reached, when the second
-     * iterator points to the end of the source range and the first iterator to the last element of the range.
-     * Also note that this iterator does not model std::LegacyIterator, also known as `Cpp17Iterator` since it
-     * does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable with
-     * some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
+     * This iterator models the iterator category of the `underlying_iterator_type`. It maintains a pair of iterators on
+     * the underlying range that move over all pairwise combinations of elements. The end is reached, when the second
+     * iterator points to the end of the underlying range and the first iterator to the last element of the range.
+     * Also note that this iterator does not model [Cpp17Iterator](https://en.cppreference.com/w/cpp/named_req/Iterator),
+     * also known as `Cpp17Iterator` since it does not return a reference to the represented type but a prvalue.
+     * Thus this iterator might not be usable with some legacy algorithms of the STL. But it is guaranteed to work with
+     * the ranges algorithms.
      */
     class iterator_type
     {
     private:
-        //!\brief Alias for the value type of the source iterator type.
-        using source_val_t = typename std::iterator_traits<source_iterator_type>::value_type;
-        //!\brief Alias for the reference type of the source iterator type.
-        using source_ref_t = typename std::iterator_traits<source_iterator_type>::reference;
+        //!\brief Alias for the value type of the underlying iterator type.
+        using underlying_val_t = typename std::iterator_traits<underlying_iterator_type>::value_type;
+        //!\brief Alias for the reference type of the underlying iterator type.
+        using underlying_ref_t = typename std::iterator_traits<underlying_iterator_type>::reference;
     public:
 
         /*!\name Associated types
          * \{
          */
         using difference_type   = std::ptrdiff_t;
-        using value_type        = std::tuple<source_val_t, source_val_t>;
-        using reference         = std::tuple<source_ref_t, source_ref_t>;
+        using value_type        = std::tuple<underlying_val_t, underlying_val_t>;
+        using reference         = std::tuple<underlying_ref_t, underlying_ref_t>;
         using pointer           = void;
-        using iterator_category = typename std::iterator_traits<source_iterator_type>::iterator_category;
+        using iterator_category = typename std::iterator_traits<underlying_iterator_type>::iterator_category;
         //!\}
 
         /*!\name Constructors, destructor and assignment
@@ -86,20 +88,21 @@ private:
         constexpr iterator_type & operator=(iterator_type &&) = default;
         ~iterator_type() = default;
 
-        /*!\brief Constructs the iterator from the current source iterator and the end iterator of the source range.
-         * \param[in] iter     The iterator pointing to current element within the source range.
-         * \param[in] begin_it The iterator pointing to begin of the source range. Only needed if
-         *                     `source_iterator_type` models std::RandomAccessIterator.
-         * \param[in] end_it   The iterator pointing to end of the source range.
+        /*!\brief Constructs the iterator from the current underlying iterator and the end iterator of the underlying
+         *        range.
+         * \param[in] iter     The iterator pointing to current element within the underlying range.
+         * \param[in] begin_it The iterator pointing to begin of the underlying range. Only needed if
+         *                     `underlying_iterator_type` models std::RandomAccessIterator.
+         * \param[in] end_it   The iterator pointing to end of the underlying range.
          *
          * \details
          *
-         * Constructs the iterator by caching the end of the source range and setting the first iterator to the
+         * Constructs the iterator by caching the end of the underlying range and setting the first iterator to the
          * given position and the second to the first incremented by one.
          */
-        constexpr iterator_type(source_iterator_type iter,
-                                source_iterator_type begin_it,
-                                source_iterator_type end_it) noexcept :
+        constexpr iterator_type(underlying_iterator_type iter,
+                                underlying_iterator_type begin_it,
+                                underlying_iterator_type end_it) noexcept :
             first_it{iter},
             second_it{++iter},
             begin_it{begin_it},
@@ -112,7 +115,7 @@ private:
          */
          //!\brief Accesses the pointed-to element
         constexpr reference operator*() const
-            noexcept(noexcept(*std::declval<source_iterator_type>()))
+            noexcept(noexcept(*std::declval<underlying_iterator_type>()))
         {
             return {*first_it, *second_it};
         }
@@ -123,7 +126,7 @@ private:
         constexpr reference operator[](size_t const index)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             from_index(index);
@@ -136,7 +139,7 @@ private:
          */
         //!\brief Pre-increment operator.
         constexpr iterator_type & operator++(/*pre-increment*/)
-            noexcept(noexcept(++std::declval<source_iterator_type &>()))
+            noexcept(noexcept(++std::declval<underlying_iterator_type &>()))
         {
             if (++second_it == end_it)
             {
@@ -149,18 +152,18 @@ private:
 
         //!\brief Post-increment operator.
         constexpr iterator_type operator++(int /*post-increment*/)
-            noexcept(noexcept(std::declval<source_iterator_type &>()++))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>()++))
         {
             iterator_type tmp{*this};
             ++*this;
             return tmp;
         }
 
-        //!\brief Pre-decrement operator; `source_iterator_type` must model std::BidirectionalIterator.
+        //!\brief Pre-decrement operator; `underlying_iterator_type` must model std::BidirectionalIterator.
         constexpr iterator_type & operator--(/*pre-decrement*/)
-            noexcept(noexcept(--std::declval<source_iterator_type &>()))
+            noexcept(noexcept(--std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::BidirectionalIterator<source_iterator_type>
+            requires std::BidirectionalIterator<underlying_iterator_type>
         //!\endcond
         {
             if (--second_it == first_it)
@@ -172,11 +175,11 @@ private:
             return *this;
         }
 
-        //!\brief Post-decrement operator; `source_iterator_type` must model std::BidirectionalIterator.
+        //!\brief Post-decrement operator; `underlying_iterator_type` must model std::BidirectionalIterator.
         constexpr iterator_type operator--(int /*post-decrement*/)
-            noexcept(noexcept(std::declval<source_iterator_type &>()--))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>()--))
         //!\cond
-            requires std::BidirectionalIterator<source_iterator_type>
+            requires std::BidirectionalIterator<underlying_iterator_type>
         //!\endcond
         {
             iterator_type tmp{*this};
@@ -184,66 +187,72 @@ private:
             return tmp;
         }
 
-        //!\brief Advances the iterator by the given offset; `source_iterator_type` must model std::RandomAccessIterator.
+        //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
+        //!\      std::RandomAccessIterator.
         constexpr iterator_type & operator+=(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             from_index(to_index() + offset);
             return *this;
         }
 
-        //!\brief Advances the iterator by the given offset; `source_iterator_type` must model std::RandomAccessIterator.
+        //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
+        //!\      std::RandomAccessIterator.
         constexpr iterator_type operator+(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>() += 1))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             iterator_type tmp{*this};
             return (tmp += offset);
         }
 
-        //!\brief Advances the iterator by the given offset; `source_iterator_type` must model std::RandomAccessIterator.
+        //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
+        //!\      std::RandomAccessIterator.
         constexpr friend iterator_type operator+(difference_type const offset, iterator_type iter)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             iter.from_index(iter.to_index() + offset);
             return iter;
         }
 
-        //!\brief Decrements the iterator by the given offset; `source_iterator_type` must model std::RandomAccessIterator.
+        //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
+        //!\      std::RandomAccessIterator.
         constexpr iterator_type & operator-=(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             from_index(to_index() - offset);
             return *this;
         }
 
-        //!\brief Decrements the iterator by the given offset; `source_iterator_type` must model std::RandomAccessIterator.
+        //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
+        //!\      std::RandomAccessIterator.
         constexpr iterator_type operator-(difference_type const offset)
             noexcept(noexcept(std::declval<iterator_type &>() -= 1))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             iterator_type tmp{*this};
             return (tmp -= offset);
         }
 
-        //!\brief Computes the distance between two iterators; `source_iterator_type` must model std::RandomAccessIterator.
+        //!\brief Computes the distance between two iterators; `underlying_iterator_type` must model
+        //!\      std::RandomAccessIterator.
         constexpr friend difference_type operator-(iterator_type const & lhs, iterator_type const & rhs)
             noexcept(noexcept(std::declval<iterator_type &>().to_index()))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             return static_cast<difference_type>(lhs.to_index() - rhs.to_index());
@@ -251,59 +260,59 @@ private:
         //!\}
 
         /*!\name Comparison operators
-         * \brief These operators are available if the `source_iterator_type` models std::EqualityComparable or
+         * \brief These operators are available if the `underlying_iterator_type` models std::EqualityComparable or
          *        std::StrictTotallyOrdered respectively.
          * \{
          */
         constexpr friend bool operator==(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<source_iterator_type &>() == std::declval<source_iterator_type &>()))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() == std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::EqualityComparable<source_iterator_type>
+            requires std::EqualityComparable<underlying_iterator_type>
         //!\endcond
         {
             return std::tie(lhs.first_it, lhs.second_it) == std::tie(rhs.first_it, rhs.second_it);
         }
 
         constexpr friend bool operator!=(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<source_iterator_type &>() != std::declval<source_iterator_type &>()))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() != std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::EqualityComparable<source_iterator_type>
+            requires std::EqualityComparable<underlying_iterator_type>
         //!\endcond
         {
             return !(lhs == rhs);
         }
 
         constexpr friend bool operator<(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<source_iterator_type &>() < std::declval<source_iterator_type &>()))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() < std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::StrictTotallyOrdered<source_iterator_type>
+            requires std::StrictTotallyOrdered<underlying_iterator_type>
         //!\endcond
         {
             return std::tie(lhs.first_it, lhs.second_it) < std::tie(rhs.first_it, rhs.second_it);
         }
 
         constexpr friend bool operator>(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<source_iterator_type &>() > std::declval<source_iterator_type &>()))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() > std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::StrictTotallyOrdered<source_iterator_type>
+            requires std::StrictTotallyOrdered<underlying_iterator_type>
         //!\endcond
         {
             return std::tie(lhs.first_it, lhs.second_it) > std::tie(rhs.first_it, rhs.second_it);
         }
 
         constexpr friend bool operator<=(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<source_iterator_type &>() <= std::declval<source_iterator_type &>()))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() <= std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::StrictTotallyOrdered<source_iterator_type>
+            requires std::StrictTotallyOrdered<underlying_iterator_type>
         //!\endcond
         {
             return std::tie(lhs.first_it, lhs.second_it) <= std::tie(rhs.first_it, rhs.second_it);
         }
 
         constexpr friend bool operator>=(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<source_iterator_type &>() >= std::declval<source_iterator_type &>()))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() >= std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::StrictTotallyOrdered<source_iterator_type>
+            requires std::StrictTotallyOrdered<underlying_iterator_type>
         //!\endcond
         {
             return std::tie(lhs.first_it, lhs.second_it) >= std::tie(rhs.first_it, rhs.second_it);
@@ -325,9 +334,9 @@ private:
          * versa.
          */
         constexpr size_t to_index() const
-            noexcept(noexcept(std::declval<source_iterator_type &>() - std::declval<source_iterator_type &>()))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             size_t src_size = end_it - begin_it;
@@ -342,10 +351,10 @@ private:
          * \copydetails to_index()
          */
         constexpr void from_index(size_t const index)
-            noexcept(noexcept(std::declval<source_iterator_type &>() - std::declval<source_iterator_type &>()) &&
-                     noexcept(std::declval<source_iterator_type &>() + 1))
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()) &&
+                     noexcept(std::declval<underlying_iterator_type &>() + 1))
         //!\cond
-            requires std::RandomAccessIterator<source_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
         {
             size_t src_size = end_it - begin_it;
@@ -358,13 +367,13 @@ private:
         }
 
         //!\brief The iterator pointing to the first element of the pairwise combination.
-        source_iterator_type first_it{};
+        underlying_iterator_type first_it{};
         //!\brief The iterator pointing to the second element of the pairwise combination.
-        source_iterator_type second_it{};
-        //!\brief The begin of the source range.
-        source_iterator_type begin_it{};
-        //!\brief The end of the source range.
-        source_iterator_type end_it{};
+        underlying_iterator_type second_it{};
+        //!\brief The begin of the underlying range.
+        underlying_iterator_type begin_it{};
+        //!\brief The end of the underlying range.
+        underlying_iterator_type end_it{};
     };
 
 public:
@@ -380,22 +389,22 @@ public:
     ~pairwise_combine_view() = default;
 
     /*!\brief Constructs from a view.
-     * \param[in] range The source range to be wrapped. Of type `source_range_type`.
+     * \param[in] range The underlying range to be wrapped. Of type `underlying_range_type`.
      *
      * \details
      *
      * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
-     * This optimises the call to end if the source range models only ForwardRange. Otherwise the call to end will be
-     * linear in the number of elements of the source range.
+     * This optimises the call to end if the underlying range models only ForwardRange. Otherwise the call to end will be
+     * linear in the number of elements of the underlying range.
      *
      * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
      *            take forever to reach the last element of the view.
      *
      * ### Complexity
      *
-     * Constant if `source_range_type` models std::ranges::BidirectionalRange, otherwise linear.
+     * Constant if `underlying_range_type` models std::ranges::BidirectionalRange, otherwise linear.
      */
-    constexpr pairwise_combine_view(source_range_type range) : src_range{std::move(range)}
+    constexpr pairwise_combine_view(underlying_range_type range) : src_range{std::move(range)}
     {
         // Check if range is empty.
         if (std::ranges::empty(src_range))
@@ -404,14 +413,14 @@ public:
         }
         else
         {
-            if constexpr (std::ranges::BidirectionalRange<source_range_type>)
-            { // Simply take one before the end. We can do this as we require source_range_type to be a common range.
+            if constexpr (std::ranges::BidirectionalRange<underlying_range_type>)
+            { // Simply take one before the end. We can do this as we require underlying_range_type to be a common range.
                 back_iterator = std::ranges::prev(std::ranges::end(src_range));
             }
             else
             { // For all other cases we need to set the back_iterator in linear time to the correct position.
                 back_iterator = std::ranges::begin(src_range);
-                if constexpr (std::ranges::SizedRange<source_range_type>)
+                if constexpr (std::ranges::SizedRange<underlying_range_type>)
                 {
                     std::ranges::advance(back_iterator, std::ranges::size(src_range) - 1);
                 }
@@ -429,15 +438,15 @@ public:
 
     /*!\brief Constructs from a view.
      * \tparam    other_range_t  The type of the range to be wrapped with seqan3::detail::pairwise_combine_view;
-     *                           must model std::ranges::ViewableRange and source_range_type must be constructible
+     *                           must model std::ranges::ViewableRange and underlying_range_type must be constructible
      *                           with other_range wrapped in view::all.
-     * \param[in] range          The source range to be wrapped.
+     * \param[in] range          The underlying range to be wrapped.
      *
      * \details
      *
      * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
-     * This optimises the call to end if the source range models only ForwardRange. Otherwise the call to end will be
-     * linear in the number of elements of the source range.
+     * This optimises the call to end if the underlying range models only ForwardRange. Otherwise the call to end will be
+     * linear in the number of elements of the underlying range.
      *
      * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
      *            take forever to reach the last element of the view.
@@ -450,10 +459,10 @@ public:
     //!\cond
         requires !std::Same<remove_cvref_t<other_range_t>, pairwise_combine_view> &&
                  std::ranges::ViewableRange<other_range_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
-                 std::Constructible<source_range_type, ranges::ref_view<std::remove_reference_t<other_range_t>>>
+                 std::Constructible<underlying_range_type, ranges::ref_view<std::remove_reference_t<other_range_t>>>
             //TODO: Investigate: the following expression is equivalent to the one above but raises a weird assertion in
             //      the ranges adaptor suggesting that the pairwise_combine_view is not a ViewableRange.
-            //      std::Constructible<source_range_type, decltype(view::all(std::declval<other_range_t &&>()))>
+            //      std::Constructible<underlying_range_type, decltype(view::all(std::declval<other_range_t &&>()))>
     //!\endcond
     constexpr pairwise_combine_view(other_range_t && range) :
         pairwise_combine_view{view::all(std::forward<other_range_t>(range))}
@@ -526,9 +535,9 @@ public:
 private:
 
     //!\brief The underling range.
-    source_range_type src_range{};
-    //!\brief The cached iterator pointing to the last element of the source range.
-    std::ranges::iterator_t<source_range_type> back_iterator{};
+    underlying_range_type src_range{};
+    //!\brief The cached iterator pointing to the last element of the underlying range.
+    std::ranges::iterator_t<underlying_range_type> back_iterator{};
 };
 
 /*!\name Type deduction guides
@@ -580,7 +589,7 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (source range type)          | `rrng_t` (returned range type)                                       |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                       |
  * |---------------------------------|:-------------------------------------:|:--------------------------------------------------------------------:|
  * | std::ranges::InputRange         | *required*                            | *preserved*                                                          |
  * | std::ranges::ForwardRange       | *required*                            | *preserved*                                                          |
