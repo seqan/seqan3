@@ -20,10 +20,6 @@ changes in the language in recent years, we recommend the following resources:**
 
 [TOC]
 
-<br>
-
----
-
 # Hello World!
 
 Most good tutorials start with an easy *Hello World!* program. So have a look:
@@ -58,10 +54,6 @@ We believe that programming them will help you to memorise better and makes the 
 interactive. The solutions provide the intended use; but often there are multiple ways to solve an exercise,
 so don't worry too much if your solution is different from ours.
 
-<br>
-
----
-
 # Parse command line arguments
 
 After we have seen the *Hello World!* program, we want to go a bit further and parse arguments from the command line.
@@ -94,17 +86,16 @@ Modules structure the SeqAn3 library into logical units, as there are for instan
 navigation column for a complete overview.
 
 Some modules consist of submodules and the module structure is represented by the file hierarchy in the `include`
-directory. Whenever you use functions of a module, make sure to `include` the (sub-)module's header file.
+directory. Whenever you use functions of a module, make sure to `include` the correct header file.
 Each directory in the SeqAn sources contains an `all.hpp` file which includes all the functionality
 of the respective (sub-) module.
+For small examples and quick prototyping, you can just include these `all.hpp`-headers.
+However, for larger projects we recommend you include only the necessary headers, because this will reduce the
+compile time measurably.
 
 \note
 If you remember the name of a function or class, but don't know which (sub-)module it belongs to,
 you can enter it in the search bar (top-right).
-
-<br>
-
----
 
 # Read sequence files
 
@@ -144,10 +135,6 @@ Note that the same code can also read FastQ files and the `qual` variable will n
 \note
 SeqAn3 uses `snake_case` for almost everything, also class names. Only C++ concepts are named using `CamelCase`.
 
-<br>
-
----
-
 # Align two sequences
 
 We have two sequences from the file above now – so let us align them.
@@ -164,7 +151,7 @@ algorithm which then executes all alignments in parallel and stores the results 
 objects. The second argument to seqan3::align_pairwise is the *configuration* which allows you to specify
 a lot of parameters for the alignment computation, for instance score functions, banded alignment and whether
 you wish to compute a traceback or not. The configurations have their own namespace seqan3::align_cfg and can
-be piped for building combinations. Check the alignment tutorial if you want to learn more.
+be ORed for building combinations. Check out the alignment tutorial if you want to learn more.
 
 \note
 We use a lot of Modern C++ in SeqAn3 so some things might look alien at first,
