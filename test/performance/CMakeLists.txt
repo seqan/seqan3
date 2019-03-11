@@ -10,25 +10,18 @@ project (seqan3_test_performance CXX)
 
 include (../seqan3-test.cmake)
 
-macro (seqan3_benchmark target_cpp)
-    # $target_cpp = "pod_tuple_benchmark.cpp"
-    #   * will register the global TARGET name "pod_tuple_benchmark" and
-    #   * will register the benchmark name "core_pod_tuple" if
-    #     pod_tuple_benchmark.cpp is in benchmark/core/
-    #
-    # NOTE(marehr): ".+/benchmark/" REGEX is greedy, that means
-    # /benchmark/benchmark/benchmark/hello_benchmark.cpp will result in an empty `benchmark_path`
-    string (REGEX REPLACE "_benchmark.cpp$" "" target_name ${target_cpp})
-    string (REGEX REPLACE ".+/test/" "" benchmark_path ${CMAKE_CURRENT_LIST_DIR})
-    set (target "${target_name}_benchmark")
+macro (seqan3_benchmark benchmark_cpp)
+    file (RELATIVE_PATH benchmark "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_LIST_DIR}/${benchmark_cpp}")
+    seqan3_test_component (target "${benchmark}" TARGET_NAME)
+    seqan3_test_component (test_name "${benchmark}" TEST_NAME)
 
-    add_executable (${target} ${target_cpp})
+    add_executable (${target} ${benchmark_cpp})
     target_link_libraries (${target} seqan3::test::performance)
-    add_test (NAME "${benchmark_path}/${target}" COMMAND ${target})
+    add_test (NAME "${test_name}" COMMAND ${target})
 
-    unset (target_name)
-    unset (benchmark_path)
+    unset (benchmark)
     unset (target)
+    unset (test_name)
 endmacro ()
 
 seqan3_require_ccache ()

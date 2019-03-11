@@ -76,22 +76,14 @@ add_custom_command(
     COMMENT "Open ${PROJECT_BINARY_DIR}/html/index.html in your browser to view the coverage report."
 )
 
-# overload seqan3_test to fit
-macro (seqan3_test target_cpp)
-    # $target_cpp = "pod_tuple_test.cpp"
-    #   * will register the global TARGET name "pod_tuple_test" and
-    #   * will register the test case name "core_pod_tuple" if
-    #     pod_tuple_test.cpp is in test/core/
-    #
-    # NOTE(marehr): ".+/test/" REGEX is greedy, that means
-    # /test/test/test/hello_test.cpp will result in an empty `test_path`
-    string (REGEX REPLACE "_test.cpp$" "" target_name ${target_cpp})
-    string (REGEX REPLACE ".+/test/" "" test_path ${CMAKE_CURRENT_LIST_DIR})
-    set (target "${target_name}_coverage_test")
+macro (seqan3_test unit_test_cpp)
+    file (RELATIVE_PATH unit_test "${CMAKE_SOURCE_DIR}/../unit" "${CMAKE_CURRENT_LIST_DIR}/${unit_test_cpp}")
+    seqan3_test_component (target "${unit_test}" TARGET_NAME)
+    seqan3_test_component (test_name "${unit_test}" TEST_NAME)
 
-    add_executable (${target} ${target_cpp})
+    add_executable (${target} ${unit_test_cpp})
     target_link_libraries (${target} seqan3::test::coverage)
-    add_test (NAME "${test_path}/${target}" COMMAND ${target})
+    add_test (NAME "${test_name}" COMMAND ${target})
 
     # any change of a target will invalidate the coverage result;
     # NOTE that this is a GLOBAL variable, because a normal
@@ -99,9 +91,9 @@ macro (seqan3_test target_cpp)
     # CMakeLists.txt goes out of scope due to a `add_subdirectory`
     set_property(GLOBAL APPEND PROPERTY GLOBAL_TEST_COVERAGE_ALL_TESTS ${target})
 
-    unset (target_name)
-    unset (test_path)
+    unset (unit_test)
     unset (target)
+    unset (test_name)
 endmacro ()
 
 seqan3_require_ccache ()
