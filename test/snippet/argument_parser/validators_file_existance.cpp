@@ -7,6 +7,7 @@ int main(int argc, const char ** argv)
 {
     seqan3::argument_parser myparser("Test", argc, argv); // initialize
 
+    //![validator_call]
     std::filesystem::path myfile;
 
     myparser.add_option(myfile,'f',"file","Give me a filename.",
