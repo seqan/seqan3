@@ -32,6 +32,8 @@ int main(int argc, char * argv[])
     for (auto & [ seq, id, qual ] : file_in)
     {
         sequences.push_back(seq);
+        (void) id;   // unused
+        (void) qual; // unused
     }
 }
 //! [read]
