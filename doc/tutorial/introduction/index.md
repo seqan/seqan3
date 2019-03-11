@@ -151,7 +151,7 @@ algorithm which then executes all alignments in parallel and stores the results 
 objects. The second argument to seqan3::align_pairwise is the *configuration* which allows you to specify
 a lot of parameters for the alignment computation, for instance score functions, banded alignment and whether
 you wish to compute a traceback or not. The configurations have their own namespace seqan3::align_cfg and can
-be ORed for building combinations. Check out the alignment tutorial if you want to learn more.
+be combined via the logical OR operator (`|`) for building combinations. Check out the alignment tutorial if you want to learn more.
 
 \note
 We use a lot of Modern C++ in SeqAn3 so some things might look alien at first,
