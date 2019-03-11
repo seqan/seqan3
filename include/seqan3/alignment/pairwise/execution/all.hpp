@@ -17,6 +17,6 @@
 #include <seqan3/alignment/pairwise/execution/execution_handler_sequential.hpp>
 
 /*!\defgroup execution Execution
- * \ingroup pairwise
+ * \ingroup pairwise_alignment
  * \brief Provides execution handler and executors for pairwise alignments.
  */
