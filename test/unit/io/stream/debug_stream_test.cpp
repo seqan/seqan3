@@ -148,6 +148,11 @@ TEST(debug_stream, tuple)
     EXPECT_EQ(o.str(), "(32,dummy)(32)(2,(3,2))");
 }
 
+struct make_variant_valueless_helper
+{
+    operator int() { throw 42; }
+};
+
 TEST(debug_stream, variant)
 {
     std::ostringstream o;
@@ -175,4 +180,36 @@ TEST(debug_stream, variant)
     my_stream << std::variant<double, std::string>{std::string{"tmp"}};
     o.flush();
     EXPECT_EQ(o.str(), "3.3foobar4.2tmp");
+
+    /*valueless*/
+    std::variant<double, int> v3;
+
+    try
+    {
+        v3.emplace<1>(make_variant_valueless_helper()); // v may be valueless
+    }
+    catch (int e)
+    {}
+
+    my_stream << v3;
+    o.flush();
+    EXPECT_EQ(o.str(), "3.3foobar4.2tmp<VALUELESS_VARIANT>");
+}
+
+TEST(debug_stream, optional)
+{
+    std::ostringstream o;
+    debug_stream_type my_stream{o};
+
+    std::optional<size_t> op;
+
+    my_stream << op;
+    o.flush();
+    EXPECT_EQ(o.str(), "<VALUELESS_OPTIONAL>");
+
+    op = 3u;
+
+    my_stream << op;
+    o.flush();
+    EXPECT_EQ(o.str(), "<VALUELESS_OPTIONAL>3");
 }
