@@ -98,20 +98,12 @@ They are incredibly useful and you will find them throughout the library.
 A key feature of views is that whatever transformation they apply, they do so at the moment you request an
 element, not when the view is created.
 
-```cpp
-std::vector vec{1, 2, 3, 4, 5, 6};
-auto v = std::view::reverse(vec);
-```
+\snippet doc/tutorial/ranges/range_snippets.cpp def
 
 Here `v` is a view; creating it neither changes `vec`, nor does `v` store any elements.
 The time it takes to construct `v` and its size in memory is independent of the size of `vec`.
 
-```cpp
-std::vector vec{1, 2, 3, 4, 5, 6};
-auto v = std::view::reverse(vec);
-
-std::cout << v[0] << '\n';
-```
+\snippet doc/tutorial/ranges/range_snippets.cpp all
 
 This will print "6", but the important thing is that resolving the first element of `v` to the last element of `vec`
 happens **on-demand**.
@@ -122,9 +114,9 @@ expensive transformation, it will have to do so repeatedly if the same element i
 ## Combinability
 
 You may have wondered why we wrote
-```cpp
-auto v = std::view::reverse(vec);
-```
+
+\snippet doc/tutorial/ranges/range_snippets.cpp rev_def
+
 and not
 ```cpp
 std::view::reverse v{vec};
@@ -136,12 +128,7 @@ The exact type of this view is hidden behind the `auto` statement.
 This has the advantage, that we don't need to worry about the template arguments of the view type, but more importantly
 the adaptor has an additional feature: it can be *chained* with other adaptors!
 
-```cpp
-std::vector vec{1, 2, 3, 4, 5, 6};
-auto v = vec | std::view::reverse | std::view::drop(2);
-
-std::cout << v[0] << '\n';
-```
+\snippet doc/tutorial/ranges/range_snippets.cpp piped
 
 What will this print?
 \hint
@@ -154,9 +141,9 @@ Note that accessing the 0th element of the view is still lazy, determining which
 of access.
 
 \assignment{Exercise: Fun with views I}
-Look up the documentation of seqan3::view::transform and seqan3::view::filter.
+Look up the documentation of std::view::transform and std::view::filter.
 Both take a Invocable object as parameter, e.g. a lambda function.
-seqan3::view::transform applies the lambda on each element in the underlying range and seqan3::view::filter
+std::view::transform applies the lambda on each element in the underlying range and std::view::filter
 filter "removes" those elements that its lambda function evaluates to false for.
 
 What does this imply for argument types and return types of the lambda functions?
@@ -172,17 +159,11 @@ remaining (even) values, i.e.
 std::vector vec{1, 2, 3, 4, 5, 6};
 auto v = vec | // ...?
 
-std::cout << v[0] << '\n'; // should print 4
+std::cout << *v.begin() << '\n'; // should print 4
 ```
 \endassignment
 \solution
-```cpp
-std::vector vec{1, 2, 3, 4, 5, 6};
-auto v = vec | seqan3::view::filter(   [] (auto const i) { return i % 2 == 0; })
-             | seqan3::view::transform([] (auto const i) { return i*i; });
-
-std::cout << v[0] << '\n'; // prints 4
-```
+\snippet doc/tutorial/ranges/range_snippets.cpp solution1
 \endsolution
 
 ## View concepts
@@ -201,13 +182,7 @@ the second in memory (but instead before the second).
 Perhaps surprising to some, many views also model std::ranges::OutputRange if the underlying range does, i.e. **views
 are not read-only**:
 
-```cpp
-std::vector vec{1, 2, 3, 4, 5, 6};
-auto v = vec | std::view::reverse | std::view::drop(2);
-
-std::cout << v[0] << '\n';
-v[0] = 42;                  // now vec == {1, 2, 3, 42, 5, 6 } !!
-```
+\snippet doc/tutorial/ranges/range_snippets.cpp assign_through
 
 \assignment{Exercise: Fun with views II}
 Have a look at the solution to the previous exercise (filter+transform).
@@ -251,7 +226,6 @@ values are created on-demand and are not stored in memory at all.
 \endsolution
 
 We provide overview tables for all our view adaptors that document which concepts are modelled by the views they return.
-Have a look at
 
 ## Views in the standard library and in SeqAn
 
@@ -260,12 +234,12 @@ Most views provided by SeqAn3 are specific to biological operations, like seqan3
 based on the quality or seqan3::view::complement which generates the complement of a nucleotide sequence.
 But SeqAn3 also provides some general purpose views.
 
-Have a look at the \link view View-submodule \endlink to get an overview of SeqAn's views and also read through the detailled description on
-that page now that you had a more gentle introduction.
+Have a look at the \link view View-submodule \endlink to get an overview of SeqAn's views and also read through the
+detailed description on that page now that you had a more gentle introduction.
 
 \assignment{Exercise: Fun with views III}
 Create a small program that
-  1. reads a string from the user via std::cin
+  1. reads a string from the command line (first argument to the program)
   2. "converts" the string to a range of seqan3::dna5 (Bonus: throw an exception if loss of information occurs)
   3. prints the string and it's reverse complement
   4. prints the six-frame translation of the string
@@ -273,27 +247,7 @@ Create a small program that
 Use views to implement steps 2.-4.
 \endassignment
 \solution
-```cpp
-#include <iostream>
-#include <seqan3/range/view/all.hpp>
-#include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/std/ranges>
-
-int main()
-{
-    std::string s;
-
-    std::cin >> s;
-
-    auto s_as_dna = s | seqan3::view::char_to<seqan3::dna5>;
-    // Bonus:
-    //auto s_as_dna = s | seqan3::view::transform([] (char const c) { return seqan3::assign_char_strict(seqan3::dna5{}, c); });
-
-    seqan3::debug_stream << "Original: " << s_as_dna << '\n';
-    seqan3::debug_stream << "RevComp:  " << (s_as_dna | seqan3::view::reverse | seqan3::view::complement) << '\n';
-    seqan3::debug_stream << "Frames:   " << (s_as_dna | seqan3::view::translate) << '\n';
-}
-```
+\include doc/tutorial/ranges/range_solution3.cpp
 \endsolution
 
 # Containers
@@ -305,7 +259,7 @@ For certain use-cases we have introduced our own containers, though.
 All standard library containers model std::ranges::ForwardRange (see above), but we have introduced container
 concepts that encompass more of a containers interface.
 Have a look at the API documentation of seqan3::container_concept and unfold the inheritance diagram.
-What can you learn about the different refinements and their relation to the range concepts??
+What can you learn about the different refinements and their relation to the range concepts?
 
 ## The bitcompressed vector
 
