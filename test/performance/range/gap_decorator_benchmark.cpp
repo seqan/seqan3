@@ -20,8 +20,222 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/decorator/all.hpp>
+#include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/std/ranges>
+
+//#include "gapped_sequence.hpp"
+
+namespace seqan3
+{
+/* Mocked gap decorator using a modifyable container of the union type of gap and
+ * alphabet. This class serves for comparison with decorators that take a reference
+ * to the underlying sequence and do not modify it.
+ */
+template<std::ranges::RandomAccessRange inner_type>
+    requires std::ranges::SizedRange<inner_type>
+class gapped_sequence
+{
+private:
+    using inner_sequence_type = typename std::vector<gapped<value_type_t<inner_type>>>;
+    inner_sequence_type gapseq;
+
+    class gapped_sequence_iterator
+    {
+    private:
+        typename std::add_pointer_t<gapped_sequence const> host{nullptr};
+        void jump(typename gapped_sequence::size_type const new_pos)
+        {
+            assert(new_pos <= host->size());
+            pos = new_pos;
+        }
+    public:
+        typename gapped_sequence::size_type pos{0u};
+
+        using difference_type = typename gapped_sequence::difference_type;
+        using value_type = typename gapped_sequence::value_type;
+        using reference = typename gapped_sequence::const_reference;
+        using const_reference = reference;
+        using pointer = value_type *;
+        using iterator_category = std::bidirectional_iterator_tag;
+
+        constexpr gapped_sequence_iterator() = default;
+        constexpr gapped_sequence_iterator(gapped_sequence_iterator const &) = default;
+        constexpr gapped_sequence_iterator & operator=(gapped_sequence_iterator const &) = default;
+        constexpr gapped_sequence_iterator (gapped_sequence_iterator &&) = default;
+        constexpr gapped_sequence_iterator & operator=(gapped_sequence_iterator &&) = default;
+        ~gapped_sequence_iterator() = default;
+
+        explicit constexpr gapped_sequence_iterator(gapped_sequence const & host_) : host(&host_) {}
+
+        constexpr gapped_sequence_iterator(gapped_sequence const & host_,
+            typename gapped_sequence::size_type const pos_) : host(&host_)
+        {
+            jump(pos_);
+        }
+
+        constexpr gapped_sequence_iterator & operator++() noexcept
+        {
+            ++pos;
+            return *this;
+        }
+
+        constexpr gapped_sequence_iterator & operator--() noexcept
+        {
+            --pos;
+            return *this;
+        }
+
+        constexpr gapped_sequence_iterator operator++(int) noexcept
+        {
+            gapped_sequence_iterator cpy{*this};
+            ++(*this);
+            return cpy;
+        }
+
+        constexpr gapped_sequence_iterator operator--(int) noexcept
+        {
+            gapped_sequence_iterator cpy{*this};
+            --(*this);
+            return cpy;
+        }
+
+        constexpr reference operator*() const noexcept
+        {
+            return host->at(pos);
+        }
+
+        constexpr pointer operator->() const noexcept
+        {
+            return &(host->at(pos));
+        }
+
+        constexpr friend bool operator==(gapped_sequence_iterator const & lhs,
+                                         gapped_sequence_iterator const & rhs)
+        {
+            return lhs.pos == rhs.pos;
+        }
+
+        constexpr friend bool operator!=(gapped_sequence_iterator const & lhs,
+                                         gapped_sequence_iterator const & rhs)
+        {
+            return lhs.pos != rhs.pos;
+        }
+
+        constexpr friend bool operator<(gapped_sequence_iterator const & lhs,
+                                        gapped_sequence_iterator const & rhs)
+        {
+            return lhs.pos < rhs.pos;
+        }
+
+        constexpr friend bool operator>(gapped_sequence_iterator const & lhs,
+                                        gapped_sequence_iterator const & rhs)
+        {
+            return lhs.pos > rhs.pos;
+        }
+
+        constexpr friend bool operator<=(gapped_sequence_iterator const & lhs,
+                                         gapped_sequence_iterator const & rhs)
+        {
+            return lhs.pos <= rhs.pos;
+        }
+
+        constexpr friend bool operator>=(gapped_sequence_iterator const & lhs,
+                                         gapped_sequence_iterator const & rhs)
+        {
+            return lhs.pos >= rhs.pos;
+        }
+    };
+public:
+    using value_type = gapped<value_type_t<inner_type>>;
+    using reference = value_type;
+    using const_reference = reference;
+    using size_type = size_type_t<inner_type>;
+    using difference_type = difference_type_t<inner_type>;
+    using iterator = gapped_sequence_iterator;
+    using const_iterator = iterator;
+    using ungapped_range_type = inner_type;
+
+    constexpr gapped_sequence() = default;
+    constexpr gapped_sequence(gapped_sequence const &) = default;
+    constexpr gapped_sequence & operator=(gapped_sequence const &) = default;
+    constexpr gapped_sequence(gapped_sequence && rhs) = default;
+    constexpr gapped_sequence & operator=(gapped_sequence && rhs) = default;
+    ~gapped_sequence() = default;
+    constexpr gapped_sequence(inner_type const & range)
+    {
+        for (auto elem : range)
+            gapseq.push_back(gapped<value_type_t<inner_type>>{elem});
+    }
+
+    size_type size() const noexcept
+    {
+        return gapseq.size();
+    }
+
+    iterator insert_gap(iterator const it, size_type const count = 1)
+    {
+        std::vector<gap> gaps(count, gap{});
+        auto gapseq_it = gapseq.begin() + it.pos;
+        gapseq.insert(gapseq_it, gaps.begin(), gaps.end());
+        return it;
+    }
+
+    iterator erase_gap(iterator const it)
+    {
+        if ((*it) != gap{})
+            throw gap_erase_failure{"The range to be erased does not correspond to a consecutive gap."};
+        auto end_it = std::next(it);
+        return erase_gap(it, end_it);
+    }
+
+    iterator erase_gap(iterator const first, iterator const last)
+    {
+        for (auto it = first; it < last; ++it)
+        {
+            if (*it != gap{})
+                throw gap_erase_failure{"There is no gap to erase in range."};
+        }
+        typename inner_sequence_type::iterator it1 = gapseq.begin() + first.pos;
+        typename inner_sequence_type::iterator it2 = gapseq.begin() + last.pos;
+        gapseq.erase(it1, it2);
+        return first;
+    }
+
+    iterator begin() const noexcept
+    {
+        return iterator{*this};
+    }
+
+    const_iterator cbegin() const noexcept
+    {
+        return const_iterator{*this};
+    }
+
+    reference at(size_type const i)
+    {
+        if (i >= size())
+            throw std::out_of_range{"Trying to access element behind the last in gap_decorator."};
+        return (*this)[i];
+    }
+
+    const_reference at(size_type const i) const
+    {
+        if (i >= size())
+            throw std::out_of_range{"Trying to access element behind the last in gap_decorator."};
+        return (*this)[i];
+    }
+
+    constexpr reference operator[](size_type const i) const noexcept
+    {
+        return gapseq[i];
+    }
+};
+
+} // namespace seqan3
 
 using namespace seqan3;
 
@@ -158,7 +372,7 @@ static void read_left2right(benchmark::State& state)
         state.PauseTiming();
         size_t pos = op_ctr % seq_len;
         state.ResumeTiming();
-        [[maybe_unused]] auto val = gap_decorator[pos];
+        benchmark::DoNotOptimize(gap_decorator[pos]);
         state.PauseTiming();
         ++op_ctr;
         state.ResumeTiming();
@@ -168,8 +382,10 @@ static void read_left2right(benchmark::State& state)
 
 // 1 a) Read from left to right in ungapped sequence
 BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set, std::vector, dna4, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_left2right, gapped_sequence, std::vector, dna4, false)->Range(1<<2, 1<<15);
 // 1 b) Read from left to right in gapped sequence
 BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_left2right, gapped_sequence, std::vector, dna4, true)->Range(1<<2, 1<<15);
 
 // ============================================================================
 //  read at random position
@@ -216,7 +432,7 @@ static void read_random(benchmark::State& state)
         state.PauseTiming();
         pos = uni_dis(generator);
         state.ResumeTiming();
-        [[maybe_unused]] auto val = gap_decorator[pos];
+        benchmark::DoNotOptimize(gap_decorator[pos]);
         state.PauseTiming();
         ++op_ctr;
         state.ResumeTiming();
@@ -224,10 +440,13 @@ static void read_random(benchmark::State& state)
     state.counters["read_op"] = op_ctr;
 }
 
+
 // 2 a) Read at random position in ungapped sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set, std::vector, dna4, false)->Range(1<<2, 1<<12);
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set, std::vector, dna4, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_random, gapped_sequence, std::vector, dna4, false)->Range(1<<2, 1<<15);
 // 2 b) Read at random position in gapped sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<12);
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_random, gapped_sequence, std::vector, dna4, true)->Range(1<<2, 1<<15);
 
 // ============================================================================
 //  insert left to right
@@ -274,8 +493,10 @@ static void insert_left2right(benchmark::State& state)
 
 // 3 a) Insert gaps of length 1 from left to right into ungapped sequence
 BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set, std::vector, dna4, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_left2right, gapped_sequence, std::vector, dna4, false)->Range(1<<2, 1<<15);
 // 3 b) Insert gaps of length 1 from left to right into gapped sequence
 BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_left2right, gapped_sequence, std::vector, dna4, true)->Range(1<<2, 1<<15);
 
 // ============================================================================
 //  insert right to left
@@ -322,8 +543,10 @@ static void insert_right2left(benchmark::State& state)
 
 // 4 a) Insert gaps of length 1 from left to right into ungapped sequence
 BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set, std::vector, dna4, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_right2left, gapped_sequence, std::vector, dna4, false)->Range(1<<2, 1<<15);
 // 4 b) Insert gaps of length 1 from left to right into gapped sequence
 BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_right2left, gapped_sequence, std::vector, dna4, true)->Range(1<<2, 1<<15);
 
 // ============================================================================
 //  insert at random position
@@ -373,8 +596,10 @@ static void insert_random(benchmark::State& state)
 
 // 5 a) Insert gaps of length 1 at random position into ungapped sequence
 BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set, std::vector, dna4, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_random, gapped_sequence, std::vector, dna4, false)->Range(1<<2, 1<<15);
 // 5 b) Insert gaps of length 1 at random position into gapped sequence
 BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_random, gapped_sequence, std::vector, dna4, true)->Range(1<<2, 1<<15);
 
 // ============================================================================
 //  delete at random position
@@ -426,7 +651,9 @@ static void delete_random(benchmark::State& state)
 
 // 6 a) Erase gaps at random position from initially ungapped sequence
 BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set, std::vector, dna4, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(delete_random, gapped_sequence, std::vector, dna4, false)->Range(1<<2, 1<<15);
 // 6 b) Erase gaps at random position from initially gapped sequence
 BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(delete_random, gapped_sequence, std::vector, dna4, true)->Range(1<<2, 1<<15);
 
 BENCHMARK_MAIN();
