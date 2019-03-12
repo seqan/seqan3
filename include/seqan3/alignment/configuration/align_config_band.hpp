@@ -20,10 +20,22 @@
 namespace seqan3::align_cfg
 {
 
-/*!\brief A configuration element for alignment bands.
+/*!\brief Configuration element for setting the band.
  * \ingroup configuration
  *
- * \tparam band_t The underlying band class; must be a band data structure.
+ * \tparam band_t The type of the band.
+ *
+ * \details
+ *
+ * Configures the banded alignment algorithm. Currently only seqan3::static_band is allowed as argument.
+ * If no band is configured for the alignment algorithm the full alignment matrix will be computed.
+ * Before executing the algorithm the band is tested for valid settings, e.g. that the upper bound is not smaller than
+ * the lower bound, or the band is not shifted out of the alignment matrix. If an invalid setting is detected, a
+ * seqan3::invalid_alignment_configuration exception will be thrown.
+ *
+ * ### Example
+ *
+ * \snippet test/snippet/alignment/configuration/align_cfg_band_example.cpp example
  */
 template <typename band_t>
 //!\cond
