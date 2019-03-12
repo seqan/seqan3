@@ -62,6 +62,11 @@ TEST(alignment_configurator, configure_edit_banded)
                  invalid_alignment_configuration);
 }
 
+TEST(alignment_configurator, configure_edit_max_error)
+{
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::max_error{3u}));
+}
+
 TEST(alignment_configurator, configure_affine_global)
 {
     auto cfg = align_cfg::mode{align_cfg::global_alignment} |
@@ -69,6 +74,16 @@ TEST(alignment_configurator, configure_affine_global)
                align_cfg::scoring{nucleotide_scoring_scheme{}};
 
     EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_global_max_error)
+{
+    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::max_error{5u};
+
+    EXPECT_THROW(run_test(cfg), invalid_alignment_configuration);
 }
 
 TEST(alignment_configurator, configure_affine_global_end_position)

@@ -39,7 +39,7 @@ namespace seqan3::align_cfg
  * edit distance algorithm is only triggered for \ref seqan3::align_cfg::global_alignment "global alignments" and
  * \ref seqan3::align_cfg::end_gaps::seq1_ends_free "semi-global alignments" with free ends in the first sequence.
  *
- * \snippet snippet/alignment/configuration/align_cfg_edit_example.cpp semi_global
+ * \snippet test/snippet/alignment/configuration/align_cfg_edit_example.cpp semi_global
  *
  * The performance of the algorithm can further be improved if the number of maximal errors (edits) is known by using
  * the align_cfg::max_error configuration.
