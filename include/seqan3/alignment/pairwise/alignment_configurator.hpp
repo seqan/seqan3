@@ -207,66 +207,77 @@ public:
         requires tuple_like_concept<value_type_t<std::remove_reference_t<sequences_t>>> &&
                  is_type_specialisation_of_v<remove_cvref_t<config_t>, configuration>
     //!\endcond
-    static constexpr auto configure(sequences_t && SEQAN3_DOXYGEN_ONLY(seq_range), config_t const & cfg)
+    static constexpr auto configure([[maybe_unused]] sequences_t && seq_range, config_t const & cfg)
     {
-        // ----------------------------------------------------------------------------
-        // Configure the type-erased alignment function.
-        // ----------------------------------------------------------------------------
 
-        using first_seq_t = std::tuple_element_t<0, value_type_t<std::remove_reference_t<sequences_t>>>;
-        using second_seq_t = std::tuple_element_t<1, value_type_t<std::remove_reference_t<sequences_t>>>;
-
-        // Select the result type based on the sequences and the configuration.
-        using result_t = align_result<typename align_result_selector<std::remove_reference_t<first_seq_t>,
-                                                                     std::remove_reference_t<second_seq_t>,
-                                                                     config_t>::type>;
-        // Define the function wrapper type.
-        using function_wrapper_t = std::function<result_t(first_seq_t &, second_seq_t &)>;
-
-        // ----------------------------------------------------------------------------
-        // Test some basic preconditions
-        // ----------------------------------------------------------------------------
-
-        using alignment_contract_t = alignment_contract<remove_cvref_t<sequences_t>, config_t>;
-
-        static_assert(alignment_contract_t::expects_tuple_like_value_type(),
-                      "Alignment configuration error: "
-                      "The value type of the sequence ranges must model the seqan3::detail::tuple_like_concept "
-                      "and must contain exactly 2 elements.");
-
-        static_assert(alignment_contract_t::expects_valid_scoring_scheme(),
-                      "Alignment configuration error: "
-                      "Either the scoring scheme was not configured or the given scoring scheme cannot be invoked with "
-                      "the value types of the passed sequences.");
-
-        // ----------------------------------------------------------------------------
-        // Configure the algorithm
-        // ----------------------------------------------------------------------------
-
-        // Use default edit distance if gaps are not set.
-        auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
-        auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
-
-        auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
-
-        // Only use edit distance if ...
-        if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
-            !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
-            align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
+        if constexpr (!config_t::template exists<align_cfg::result>())
         {
-            // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
-            //       option via the scheme.
-            if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
-                                                      nucleotide_scoring_scheme>)
-            {
-                if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
-                    (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                    return configure_edit_distance<function_wrapper_t>(cfg);
-            }
-        }
+            // ----------------------------------------------------------------------------
+            // Set the default result value to be computed.
+            // ----------------------------------------------------------------------------
 
-        // Configure the alignment algorithm.
-        return configure_free_ends_initialisation<function_wrapper_t>(cfg);
+            return configure(std::forward<sequences_t>(seq_range), cfg | align_cfg::result{align_cfg::with_score});
+        }
+        else
+        {
+            // ----------------------------------------------------------------------------
+            // Configure the type-erased alignment function.
+            // ----------------------------------------------------------------------------
+
+            using first_seq_t = std::tuple_element_t<0, value_type_t<std::remove_reference_t<sequences_t>>>;
+            using second_seq_t = std::tuple_element_t<1, value_type_t<std::remove_reference_t<sequences_t>>>;
+
+            // Select the result type based on the sequences and the configuration.
+            using result_t = align_result<typename align_result_selector<std::remove_reference_t<first_seq_t>,
+                                                                         std::remove_reference_t<second_seq_t>,
+                                                                         config_t>::type>;
+            // Define the function wrapper type.
+            using function_wrapper_t = std::function<result_t(first_seq_t &, second_seq_t &)>;
+
+            // ----------------------------------------------------------------------------
+            // Test some basic preconditions
+            // ----------------------------------------------------------------------------
+
+            using alignment_contract_t = alignment_contract<remove_cvref_t<sequences_t>, config_t>;
+
+            static_assert(alignment_contract_t::expects_tuple_like_value_type(),
+                          "Alignment configuration error: "
+                          "The value type of the sequence ranges must model the seqan3::detail::tuple_like_concept "
+                          "and must contain exactly 2 elements.");
+
+            static_assert(alignment_contract_t::expects_valid_scoring_scheme(),
+                          "Alignment configuration error: "
+                          "Either the scoring scheme was not configured or the given scoring scheme cannot be invoked with "
+                          "the value types of the passed sequences.");
+
+            // ----------------------------------------------------------------------------
+            // Configure the algorithm
+            // ----------------------------------------------------------------------------
+
+            // Use default edit distance if gaps are not set.
+            auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
+            auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
+            auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+
+            // Only use edit distance if ...
+            if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
+                !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
+                align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
+            {
+                // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
+                //       option via the scheme.
+                if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
+                                                          nucleotide_scoring_scheme>)
+                {
+                    if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
+                        (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
+                        return configure_edit_distance<function_wrapper_t>(cfg);
+                }
+            }
+
+            // Configure the alignment algorithm.
+            return configure_free_ends_initialisation<function_wrapper_t>(cfg);
+        }
     }
 
 private:
