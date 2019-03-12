@@ -44,10 +44,8 @@ class pairwise_combine_view : public ranges::view_interface<pairwise_combine_vie
 {
 private:
 
-    //!\brief Alias type for the iterator over the underlying range.
-    using underlying_iterator_type = std::ranges::iterator_t<underlying_range_type>;
-
     /*!\brief The internal iterator type.
+     * \tparam range_type The type of the range this iterator is operating on.
      *
      * \details
      *
@@ -55,13 +53,22 @@ private:
      * the underlying range that move over all pairwise combinations of elements. The end is reached, when the second
      * iterator points to the end of the underlying range and the first iterator to the last element of the range.
      * Also note that this iterator does not model [Cpp17Iterator](https://en.cppreference.com/w/cpp/named_req/Iterator),
-     * also known as `Cpp17Iterator` since it does not return a reference to the represented type but a prvalue.
+     * since it does not return a reference to the represented type but a prvalue.
      * Thus this iterator might not be usable with some legacy algorithms of the STL. But it is guaranteed to work with
      * the ranges algorithms.
      */
+    template <typename range_type>
     class iterator_type
     {
     private:
+
+        //!\brief Friend declaration for iterator with different range const-ness.
+        template <typename other_range_type>
+            requires std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+        friend class iterator_type;
+
+        //!\brief Alias type for the iterator over the passed range type.
+        using underlying_iterator_type = std::ranges::iterator_t<range_type>;
         //!\brief Alias for the value type of the underlying iterator type.
         using underlying_val_t = typename std::iterator_traits<underlying_iterator_type>::value_type;
         //!\brief Alias for the reference type of the underlying iterator type.
@@ -107,6 +114,20 @@ private:
             second_it{++iter},
             begin_it{begin_it},
             end_it{end_it}
+        {}
+
+        /*!\brief Constructs const iterator from non-const iterator.
+         * \param[in] other The non-const iterator to construct from.
+         *
+         * \details
+         *
+         * Allows construction of a const iterator (operating on a const range) from a non-const iterator.
+         * This special constructor is needed as it is not covered by the standard copy and move constructors.
+         */
+        template <std::ConvertibleTo<range_type &> other_range_type>
+            requires std::Same<std::remove_const_t<other_range_type>, std::remove_const_t<range_type>>
+        constexpr iterator_type(iterator_type<other_range_type> other) noexcept :
+            iterator_type{std::move(other.first_it), std::move(other.begin_it), std::move(other.end_it)}
         {}
         //!\}
 
@@ -214,7 +235,7 @@ private:
         //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
         //!\      std::RandomAccessIterator.
         constexpr friend iterator_type operator+(difference_type const offset, iterator_type iter)
-            noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
+            noexcept(noexcept(std::declval<iterator_type<range_type> &>().from_index(1)))
         //!\cond
             requires std::RandomAccessIterator<underlying_iterator_type>
         //!\endcond
@@ -249,13 +270,15 @@ private:
 
         //!\brief Computes the distance between two iterators; `underlying_iterator_type` must model
         //!\      std::RandomAccessIterator.
-        constexpr friend difference_type operator-(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<iterator_type &>().to_index()))
+        template <typename other_range_type>
         //!\cond
-            requires std::RandomAccessIterator<underlying_iterator_type>
+            requires std::RandomAccessIterator<underlying_iterator_type> &&
+                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        constexpr difference_type operator-(iterator_type<other_range_type> const & rhs) const
+            noexcept(noexcept(std::declval<iterator_type &>().to_index()))
         {
-            return static_cast<difference_type>(lhs.to_index() - rhs.to_index());
+            return static_cast<difference_type>(to_index() - rhs.to_index());
         }
         //!\}
 
@@ -264,58 +287,78 @@ private:
          *        std::StrictTotallyOrdered respectively.
          * \{
          */
-        constexpr friend bool operator==(iterator_type const & lhs, iterator_type const & rhs)
+        //NOTE: The comparison operators should be implemented as friends, but due to a bug in gcc friend function
+        // cannot yet be constrained. To avoid unexpected errors with the comparison all operators are implemented as
+        // direct members and not as friends.
+        template <typename other_range_type>
+        //!\cond
+            requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
+                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+        //!\endcond
+        constexpr bool operator==(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() == std::declval<underlying_iterator_type &>()))
-        //!\cond
-            requires std::EqualityComparable<underlying_iterator_type>
-        //!\endcond
         {
-            return std::tie(lhs.first_it, lhs.second_it) == std::tie(rhs.first_it, rhs.second_it);
+            return std::tie(first_it, second_it) == std::tie(rhs.first_it, rhs.second_it);
         }
 
-        constexpr friend bool operator!=(iterator_type const & lhs, iterator_type const & rhs)
+        template <typename other_range_type>
+        //!\cond
+            requires std::EqualityComparableWith<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
+                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+        //!\endcond
+        constexpr bool operator!=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() != std::declval<underlying_iterator_type &>()))
-        //!\cond
-            requires std::EqualityComparable<underlying_iterator_type>
-        //!\endcond
         {
-            return !(lhs == rhs);
+            return !(*this == rhs);
         }
 
-        constexpr friend bool operator<(iterator_type const & lhs, iterator_type const & rhs)
+        template <typename other_range_type>
+        //!\cond
+            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+                                                   std::ranges::iterator_t<other_range_type>> &&
+                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+        //!\endcond
+        constexpr bool operator<(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() < std::declval<underlying_iterator_type &>()))
-        //!\cond
-            requires std::StrictTotallyOrdered<underlying_iterator_type>
-        //!\endcond
         {
-            return std::tie(lhs.first_it, lhs.second_it) < std::tie(rhs.first_it, rhs.second_it);
+            return std::tie(first_it, second_it) < std::tie(rhs.first_it, rhs.second_it);
         }
 
-        constexpr friend bool operator>(iterator_type const & lhs, iterator_type const & rhs)
+        template <typename other_range_type>
+        //!\cond
+            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+                                                   std::ranges::iterator_t<other_range_type>> &&
+                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+        //!\endcond
+        constexpr bool operator>(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() > std::declval<underlying_iterator_type &>()))
-        //!\cond
-            requires std::StrictTotallyOrdered<underlying_iterator_type>
-        //!\endcond
+
         {
-            return std::tie(lhs.first_it, lhs.second_it) > std::tie(rhs.first_it, rhs.second_it);
+            return std::tie(first_it, second_it) > std::tie(rhs.first_it, rhs.second_it);
         }
 
-        constexpr friend bool operator<=(iterator_type const & lhs, iterator_type const & rhs)
+        template <typename other_range_type>
+        //!\cond
+            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+                                                   std::ranges::iterator_t<other_range_type>> &&
+                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+        //!\endcond
+        constexpr bool operator<=(iterator_type<other_range_type> const & rhs) const
             noexcept(noexcept(std::declval<underlying_iterator_type &>() <= std::declval<underlying_iterator_type &>()))
-        //!\cond
-            requires std::StrictTotallyOrdered<underlying_iterator_type>
-        //!\endcond
         {
-            return std::tie(lhs.first_it, lhs.second_it) <= std::tie(rhs.first_it, rhs.second_it);
+            return std::tie(first_it, second_it) <= std::tie(rhs.first_it, rhs.second_it);
         }
 
-        constexpr friend bool operator>=(iterator_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() >= std::declval<underlying_iterator_type &>()))
+        template <typename other_range_type>
         //!\cond
-            requires std::StrictTotallyOrdered<underlying_iterator_type>
+            requires std::StrictTotallyOrderedWith<underlying_iterator_type,
+                                                   std::ranges::iterator_t<other_range_type>> &&
+                     std::Same<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
         //!\endcond
+        constexpr bool operator>=(iterator_type<other_range_type> const & rhs) const
+            noexcept(noexcept(std::declval<underlying_iterator_type &>() >= std::declval<underlying_iterator_type &>()))
         {
-            return std::tie(lhs.first_it, lhs.second_it) >= std::tie(rhs.first_it, rhs.second_it);
+            return std::tie(first_it, second_it) >= std::tie(rhs.first_it, rhs.second_it);
         }
         //!\}
 
@@ -378,6 +421,15 @@ private:
 
 public:
 
+    //!\name Member types
+    //!\{
+    //!\brief The iterator type.
+    using iterator = iterator_type<underlying_range_type>;
+    //!\brief The const iterator type. Evaluates to void if the underlying range is not const iterable.
+    using const_iterator = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
+                                                     void>;
+    //!\}
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -404,7 +456,7 @@ public:
      *
      * Constant if `underlying_range_type` models std::ranges::BidirectionalRange, otherwise linear.
      */
-    constexpr pairwise_combine_view(underlying_range_type range) : src_range{std::move(range)}
+    explicit constexpr pairwise_combine_view(underlying_range_type range) : src_range{std::move(range)}
     {
         // Check if range is empty.
         if (std::ranges::empty(src_range))
@@ -464,7 +516,7 @@ public:
             //      the ranges adaptor suggesting that the pairwise_combine_view is not a ViewableRange.
             //      std::Constructible<underlying_range_type, decltype(view::all(std::declval<other_range_t &&>()))>
     //!\endcond
-    constexpr pairwise_combine_view(other_range_t && range) :
+    explicit constexpr pairwise_combine_view(other_range_t && range) :
         pairwise_combine_view{view::all(std::forward<other_range_t>(range))}
     {}
 
@@ -484,19 +536,25 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr iterator_type begin() noexcept
+    constexpr iterator begin() noexcept
     {
-        return iterator_type{std::ranges::begin(src_range), std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return iterator{std::ranges::begin(src_range), std::ranges::begin(src_range), std::ranges::end(src_range)};
     }
 
     //!\copydoc begin()
-    constexpr iterator_type begin() const noexcept
+    constexpr const_iterator begin() const noexcept
+    //!\cond
+        requires const_iterable_concept<underlying_range_type>
+    //!\endcond
     {
-        return iterator_type{std::ranges::begin(src_range), std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return {std::ranges::begin(src_range), std::ranges::begin(src_range), std::ranges::end(src_range)};
     }
 
     //!\copydoc begin()
-    constexpr iterator_type cbegin() const noexcept
+    constexpr const_iterator cbegin() const noexcept
+    //!\cond
+        requires const_iterable_concept<underlying_range_type>
+    //!\endcond
     {
         return begin();
     }
@@ -514,19 +572,25 @@ public:
      *
      * No-throw guarantee.
      */
-    constexpr iterator_type end() noexcept
+    constexpr iterator end() noexcept
     {
-        return iterator_type{back_iterator, std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return {back_iterator, std::ranges::begin(src_range), std::ranges::end(src_range)};
     }
 
     //!\copydoc end()
-    constexpr iterator_type end() const noexcept
+    constexpr const_iterator end() const noexcept
+    //!\cond
+        requires const_iterable_concept<underlying_range_type>
+    //!\endcond
     {
-        return iterator_type{back_iterator, std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return {back_iterator, std::ranges::begin(src_range), std::ranges::end(src_range)};
     }
 
     //!\copydoc end()
-    constexpr iterator_type cend() const noexcept
+    constexpr const_iterator cend() const noexcept
+    //!\cond
+        requires const_iterable_concept<underlying_range_type>
+    //!\endcond
     {
         return end();
     }
@@ -572,20 +636,19 @@ namespace seqan3::view
  * \details
  *
  * This view generates two-element tuples representing all unique combinations of the elements of the underlying range
- * (the order of the elements does not matter). If the underlying range has less than two elements the returned range is
+ * (the order of the elements is undefined). If the underlying range has less than two elements the returned range is
  * empty, otherwise the size of the returned range corresponds to the binomial coefficient `n choose 2`, where `n` is
  * the size of the underlying range. The reference type of this range is a tuple over the reference type of the
- * underlying range. This range is const-iterable as long as the underlying range is iterable (const-ness of this range
- * will not be propagated to the underlying range).
+ * underlying range.
  * In order to receive the end iterator in constant time an iterator pointing to the last element of the underlying
  * range will be cached upon construction of this view. This construction takes linear time for underlying ranges that
  * do not model std::ranges::BidirectionalRange.
  *
  * ### Iterator
  *
- * The returned iterator from begin does not model std::LegacyIterator, also known as `Cpp17Iterator` since it
- * does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable within
- * some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
+ * The returned iterator from begin does not model [Cpp17Iterator](https://en.cppreference.com/w/cpp/named_req/Iterator)
+ * since it does not return a reference to the represented type but a prvalue. Thus this iterator might not be usable
+ * within some legacy algorithms of the STL. But it is guaranteed to work with the ranges algorithms.
  *
  * ### View properties
  *

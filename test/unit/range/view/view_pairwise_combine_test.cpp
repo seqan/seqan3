@@ -116,6 +116,19 @@ TYPED_TEST(pairwise_combine_iterator_test, construction)
     EXPECT_TRUE(std::is_nothrow_move_assignable_v<iterator_t>);
     EXPECT_TRUE(std::is_nothrow_destructible_v<iterator_t>);
     EXPECT_TRUE((std::is_nothrow_constructible_v<iterator_t, underlying_iter_t, underlying_iter_t, underlying_iter_t>));
+
+    using const_itertor_t = std::ranges::iterator_t<typename TestFixture::view_t const>;
+    EXPECT_TRUE((std::is_nothrow_constructible_v<const_itertor_t, iterator_t>));
+
+    auto r = this->resource();
+    iterator_t it{r.begin(), r.begin(), r.end()};
+
+    const_itertor_t cit{it};
+    EXPECT_EQ(it, cit);
+
+    const_itertor_t cit2{};
+    cit2 = it;
+    EXPECT_EQ(cit, cit2);
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, associated_types)
