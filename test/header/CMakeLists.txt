@@ -10,6 +10,8 @@ project (seqan3_header_test CXX)
 
 include (../seqan3-test.cmake)
 
+option (SEQAN3_FULL_HEADER_TEST "Test seqan3 headers as well as the headers of external libraries" OFF)
+
 # We compile each header twice in separate compilation units. Each alone is
 # sufficient to test that the header is functional, but both are needed to check
 # for link errors, which can happen if the header accidentally defines a
@@ -95,15 +97,19 @@ seqan3_require_test ()
 seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include")
 seqan3_header_test (seqan3_test "${SEQAN3_CLONE_DIR}/test/include")
 
-# contains deprecated headers that produce an error when included
-target_compile_definitions (seqan3_test_header INTERFACE RANGES_DISABLE_DEPRECATED_WARNINGS=1)
-seqan3_header_test (range-v3 "${SEQAN3_CLONE_DIR}/submodules/range-v3/include")
+if (SEQAN3_FULL_HEADER_TEST)
 
-# not self-contained headers; error: extra ‘;’ [-Werror=pedantic]
-# seqan3_header_test (lemon "${SEQAN3_CLONE_DIR}/submodules/lemon/include")
+    # contains deprecated headers that produce an error when included
+    target_compile_definitions (seqan3_test_header INTERFACE RANGES_DISABLE_DEPRECATED_WARNINGS=1)
+    seqan3_header_test (range-v3 "${SEQAN3_CLONE_DIR}/submodules/range-v3/include")
 
-# not self-contained headers
-# seqan3_header_test (cereal "${SEQAN3_CLONE_DIR}/submodules/cereal/include")
+    # not self-contained headers; error: extra ‘;’ [-Werror=pedantic]
+    # seqan3_header_test (lemon "${SEQAN3_CLONE_DIR}/submodules/lemon/include")
 
-# not self-contained headers; multiple defined symbols
-# seqan3_header_test (sdsl-lite "${SEQAN3_CLONE_DIR}/submodules/sdsl-lite/include")
+    # not self-contained headers
+    # seqan3_header_test (cereal "${SEQAN3_CLONE_DIR}/submodules/cereal/include")
+
+    # not self-contained headers; multiple defined symbols
+    # seqan3_header_test (sdsl-lite "${SEQAN3_CLONE_DIR}/submodules/sdsl-lite/include")
+
+endif ()
