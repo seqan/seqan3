@@ -196,7 +196,7 @@ SEQAN3_CONCEPT aligned_sequence_concept =
     Alphabet<value_type_t<t>> &&
     WeaklyAssignable<reference_t<t>, gap const &> &&
     requires { typename detail::unaligned_seq_t<t>; } &&
-    requires (t v, detail::unaligned_seq_t<t> & unaligned)
+    requires (t v, detail::unaligned_seq_t<t> unaligned)
     {
         { insert_gap(v, v.begin()) } -> typename t::iterator; // global functions for generic usability
         { insert_gap(v, v.begin(), 2) } -> typename t::iterator;
