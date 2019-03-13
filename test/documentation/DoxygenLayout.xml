@@ -12,6 +12,7 @@
             <tab type="user"  visible="yes" title="C++ Concepts"    url="@ref tutorial_concepts"      intro=""/>
             <tab type="user"  visible="yes" title="Alphabets"       url="@ref tutorial_alphabets"     intro=""/>
             <tab type="user"  visible="yes" title="Ranges"          url="@ref tutorial_ranges"        intro=""/>
+            <tab type="user"  visible="yes" title="Sequence file I/O" url="@ref tutorial_sequence_file" intro=""/>
         </tab>
         <tab type="usergroup" visible="yes" title="Notes" intro="">
             <tab type="user" visible="yes" title="API stability" url="@ref notes_stability" intro=""/>
