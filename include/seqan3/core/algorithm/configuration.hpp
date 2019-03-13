@@ -157,9 +157,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) & noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(*this).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\copydoc value_or
@@ -167,9 +172,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) const & noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(*this).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\copydoc value_or
@@ -177,9 +187,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) && noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(std::move(*this)).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\copydoc value_or
@@ -187,9 +202,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) const && noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(std::move(*this)).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\copydoc value_or
@@ -197,9 +217,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) & noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(*this).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\copydoc value_or
@@ -207,9 +232,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) const & noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(*this).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\copydoc value_or
@@ -217,9 +247,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) && noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(std::move(*this)).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\copydoc value_or
@@ -227,9 +262,14 @@ public:
     constexpr decltype(auto) value_or(default_t && default_value) const && noexcept
     {
         if constexpr (exists<query_t>())
+        {
             return get<query_t>(std::move(*this)).value;
+        }
         else
-            return std::forward<default_t>(default_value);
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
+            return static_cast<ret_type>(default_value);
+        }
     }
 
     //!\brief Checks if the given type exists in the tuple.
