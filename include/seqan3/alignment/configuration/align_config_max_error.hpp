@@ -18,7 +18,7 @@
 namespace seqan3::align_cfg
 {
 /*!\brief Sets the maximal errors allowed during an edit distance computation.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  *
  * \details
  *
