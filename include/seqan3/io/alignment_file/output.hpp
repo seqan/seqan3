@@ -297,7 +297,7 @@ public:
         // open stream
         stream.open(_file_name, std::ios_base::out | std::ios::binary);
         if (!stream.is_open())
-            throw file_open_error{"Could not open file for writing."};
+            throw file_open_error{"Could not open file " + _file_name.string() + " for reading."};
 
         // initialise format handler or throw if format is not found
         detail::set_format(format, _file_name);
