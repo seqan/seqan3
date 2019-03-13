@@ -23,7 +23,7 @@
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/std/span.hpp>
+#include <seqan3/std/span>
 #include <seqan3/std/view/common.hpp>
 
 namespace seqan3::detail

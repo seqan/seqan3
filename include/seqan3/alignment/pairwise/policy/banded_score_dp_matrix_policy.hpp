@@ -25,7 +25,7 @@
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span.hpp>
+#include <seqan3/std/span>
 #include <seqan3/std/view/common.hpp>
 
 namespace seqan3::detail

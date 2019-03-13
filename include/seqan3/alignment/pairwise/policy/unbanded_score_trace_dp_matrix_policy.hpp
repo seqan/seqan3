@@ -22,7 +22,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/view/persist.hpp>
-#include <seqan3/std/span.hpp>
+#include <seqan3/std/span>
 
 namespace seqan3::detail
 {
