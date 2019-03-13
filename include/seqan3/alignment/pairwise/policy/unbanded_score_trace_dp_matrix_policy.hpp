@@ -124,8 +124,8 @@ private:
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
 
-        return ranges::view::zip(std::span{score_matrix},
-                                 ranges::view::iota(col_begin, col_end),
+        return std::view::zip(std::span{score_matrix},
+                                 std::view::iota(col_begin, col_end),
                                  std::span{std::addressof(*trace_matrix_iter), dimension_second_range});
     }
 

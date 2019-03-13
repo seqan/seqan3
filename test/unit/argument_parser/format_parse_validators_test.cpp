@@ -166,8 +166,8 @@ TEST(validator_test, arithmetic_range_validator_success)
                            "    Last update: "
                            "    test_parser version: "
                            "    SeqAn version: ") + seqan3_version;
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+                               expected | std::view::filter(!is_space)));
 
     // option - double value
     double double_option_value;
@@ -325,8 +325,8 @@ TEST(validator_test, value_list_validator_success)
                            "    Last update: "
                            "    test_parser version: "
                            "    SeqAn version: ") + seqan3_version;
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+                               expected | std::view::filter(!is_space)));
 }
 
 TEST(validator_test, value_list_validator_error)

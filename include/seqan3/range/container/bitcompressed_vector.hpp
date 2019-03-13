@@ -28,7 +28,6 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/subrange.hpp>
 
 namespace seqan3
 {
@@ -754,7 +753,7 @@ public:
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
 
-        auto v = view::subrange<begin_iterator_type, end_iterator_type>{begin_it, end_it}
+        auto v = std::ranges::subrange<begin_iterator_type, end_iterator_type>{begin_it, end_it}
                | view::convert<value_type>
                | view::to_rank;
         data.insert(data.begin() + pos_as_num, seqan3::begin(v), seqan3::end(v));

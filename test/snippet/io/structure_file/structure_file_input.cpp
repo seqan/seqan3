@@ -5,7 +5,7 @@
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/range/view/get.hpp>
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -156,7 +156,7 @@ for (auto & [ id, structured_seq ] : fin) // note that the order is now differen
 //! [filter_criteria]
 structure_file_in fin{tmp_dir/"input.dbn"};
 
-auto minimum_length5_filter = view::filter([] (auto const & rec)
+auto minimum_length5_filter = std::view::filter([] (auto const & rec)
 {
     return size(get<field::SEQ>(rec)) >= 5;
 });

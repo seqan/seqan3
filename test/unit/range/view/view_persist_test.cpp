@@ -16,9 +16,7 @@
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/concepts>
-#include <seqan3/std/view/filter.hpp>
-#include <seqan3/std/view/reverse.hpp>
-#include <seqan3/std/view/common.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -41,7 +39,7 @@ TEST(view_persist, delegate_to_view_all)
     // combinability
     auto v3 = vec | view::persist | ranges::view::unique;
     EXPECT_EQ("fo", std::string{v3});
-    std::string v3b = vec | view::reverse | view::persist | ranges::view::unique;
+    std::string v3b = vec | std::view::reverse | view::persist | ranges::view::unique;
     EXPECT_EQ("of", v3b);
 }
 
@@ -58,7 +56,7 @@ TEST(view_persist, wrap_temporary)
     // combinability
     auto v3 = std::string{"foo"} | view::persist | ranges::view::unique;
     EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = std::string{"foo"} | view::persist | view::filter(is_char<'o'>) | ranges::view::unique;
+    std::string v3b = std::string{"foo"} | view::persist | std::view::filter(is_char<'o'>) | ranges::view::unique;
     EXPECT_EQ("o", v3b);
 }
 

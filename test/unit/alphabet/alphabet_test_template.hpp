@@ -162,7 +162,7 @@ TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example f
 TYPED_TEST_P(alphabet, global_assign_char_strict)
 {
     for (underlying_char_t<TypeParam> c :
-         ranges::view::iota(ptrdiff_t{std::numeric_limits<underlying_char_t<TypeParam>>::min()},
+         std::view::iota(ptrdiff_t{std::numeric_limits<underlying_char_t<TypeParam>>::min()},
                             ptrdiff_t{std::numeric_limits<underlying_char_t<TypeParam>>::max()} + 1))
     {
         if (char_is_valid_for<TypeParam>(c))

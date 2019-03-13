@@ -13,7 +13,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 
@@ -32,7 +31,7 @@ TEST(view_to_rank, basic)
 
     // combinability
     std::vector<unsigned> cmp2{0, 4, 0, 2, 4, 4, 4, 1, 0};
-    std::vector<unsigned> v3 = vec | view::to_rank | view::reverse;
+    std::vector<unsigned> v3 = vec | view::to_rank | std::view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 

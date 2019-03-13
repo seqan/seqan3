@@ -765,7 +765,7 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<reference_t<structured_seq_type>>)
             {
-                auto zipped = ranges::view::zip(structured_seq, id, bpp, energy, react, react_error, comment, offset);
+                auto zipped = std::view::zip(structured_seq, id, bpp, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
                 {
@@ -784,7 +784,7 @@ protected:
             }
             else
             {
-                auto zipped = ranges::view::zip(seq, id, bpp, structure, energy, react, react_error, comment, offset);
+                auto zipped = std::view::zip(seq, id, bpp, structure, energy, react, react_error, comment, offset);
 
                 for (auto && v : zipped)
                 {

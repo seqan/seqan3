@@ -145,7 +145,7 @@ TYPED_TEST(nucleotide, view_translate)
         EXPECT_TRUE((std::ranges::equal(v9[i], cmp6[i])));
 
     // combinability
-    auto v10 = vec | view::complement | view::translate(translation_frames::FWD_REV_0) | ranges::view::take(1);
+    auto v10 = vec | view::complement | view::translate(translation_frames::FWD_REV_0) | std::view::take(1);
     // == [[C,M,H,A]]
     EXPECT_EQ(v10.size(), cmp7.size());
     for (unsigned i = 0; i < v10.size(); i++)

@@ -13,7 +13,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 
@@ -32,7 +31,7 @@ TEST(view_to_char, basic)
 
     // combinability
     std::string cmp2{"ATAGTTTCA"};
-    std::string v3 = vec | view::to_char | view::reverse;
+    std::string v3 = vec | view::to_char | std::view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 

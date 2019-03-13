@@ -23,7 +23,7 @@
 #include <seqan3/std/filesystem>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concepts>
-#include <seqan3/std/view/view_all.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -191,7 +191,7 @@ public:
     void operator()(value_type const & cmp) const
     {
         if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
-            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", view::all(values), "."));
+            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", std::view::all(values), "."));
     }
 
     /*!\brief Tests whether every element in \p range lies inside values.
@@ -211,7 +211,7 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("Value must be one of ", view::all(values), ".");
+        return detail::to_string("Value must be one of ", std::view::all(values), ".");
     }
 
 private:
@@ -279,7 +279,7 @@ public:
         ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
         if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
             throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
-                                                            view::all(extensions), "."));
+                                                            std::view::all(extensions), "."));
     }
 
     /*!\brief Tests whether every value of v lies inside extensions.
@@ -300,7 +300,7 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("File name extension must be one of ", view::all(extensions), ".");
+        return detail::to_string("File name extension must be one of ", std::view::all(extensions), ".");
     }
 
 private:

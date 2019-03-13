@@ -20,7 +20,7 @@
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 //![include_filter]
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 //![include_filter]
 
 struct write_file_dummy_struct

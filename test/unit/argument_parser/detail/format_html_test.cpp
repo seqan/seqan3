@@ -46,8 +46,8 @@ TEST(html_test, html)
                            "<strong>SeqAn version:</strong> 3.0.0<br>"
                            "<br>"
                            "</body></html>");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+                               expected | std::view::filter(!is_space)));
 
    // Full html help page.
    argument_parser parser1("program_full_options", 3, argv0);
@@ -125,6 +125,6 @@ TEST(html_test, html)
                           "<strong>In your academic works please cite:</strong> citation<br>"
                           "For full copyright and/or warranty information see <tt>--copyright</tt>."
                           "</body></html>");
-   EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+   EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
                               expected | ranges::view::remove_if(is_space)));
 }

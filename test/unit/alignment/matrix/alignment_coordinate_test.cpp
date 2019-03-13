@@ -251,7 +251,7 @@ TEST(advanceable_alignment_coordinate, iota_column_index)
 
     col_incrementable co_begin{detail::column_index_type{0u}, detail::row_index_type{0u}};
     col_incrementable co_end{detail::column_index_type{5u}, detail::row_index_type{0u}};
-    auto v = ranges::view::iota(co_begin, co_end);
+    auto v = std::view::iota(co_begin, co_end);
 
     EXPECT_TRUE((std::Same<decltype(v.begin()), decltype(v.end())>));
     EXPECT_EQ((*(--v.end())).first_seq_pos, 4u);
@@ -268,7 +268,7 @@ TEST(advanceable_alignment_coordinate, iota_row_index)
 
     row_incrementable co_begin{detail::column_index_type{0u}, detail::row_index_type{0u}};
     row_incrementable co_end{detail::column_index_type{0u}, detail::row_index_type{5u}};
-    auto v = ranges::view::iota(co_begin, co_end);
+    auto v = std::view::iota(co_begin, co_end);
 
     EXPECT_TRUE((std::Same<decltype(v.begin()), decltype(v.end())>));
     EXPECT_EQ((*(--v.end())).second_seq_pos, 4u);

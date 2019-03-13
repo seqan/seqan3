@@ -24,7 +24,7 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/span>
-#include <seqan3/std/view/common.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -89,9 +89,9 @@ private:
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_end{column_index_type{current_column_index}, row_index_type{dimension_second_range}};
 
-        return ranges::view::zip(std::span{score_matrix},
-                                 ranges::view::iota(col_begin, col_end),
-                                 ranges::view::repeat_n(std::ignore, dimension_second_range) | view::common);
+        return std::view::zip(std::span{score_matrix},
+                                 std::view::iota(col_begin, col_end),
+                                 ranges::view::repeat_n(std::ignore, dimension_second_range) | std::view::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.

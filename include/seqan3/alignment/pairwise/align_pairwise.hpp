@@ -34,7 +34,6 @@
 
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/common.hpp>
 
 namespace seqan3
 {
@@ -63,7 +62,7 @@ constexpr auto align_pairwise(seq_t && seq, alignment_config_t && config)
     static_assert(std::tuple_size_v<std::remove_reference_t<seq_t>> == 2,
                   "Expects exactly two sequences for pairwise alignments.");
 
-    return align_pairwise(ranges::view::single(std::forward<seq_t>(seq)) | view::common,
+    return align_pairwise(ranges::view::single(std::forward<seq_t>(seq)) | std::view::common,
                           std::forward<alignment_config_t>(config));
 }
 //!\endcond

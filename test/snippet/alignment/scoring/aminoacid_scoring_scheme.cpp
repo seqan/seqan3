@@ -43,7 +43,7 @@ std::vector<aa27> two = "ANIMATOR"_aa27;
 aminoacid_scoring_scheme scheme{aminoacid_similarity_matrix::BLOSUM62};
 
 int score = 0;
-for (auto pair : ranges::view::zip(one, two))
+for (auto pair : std::view::zip(one, two))
     score += scheme.score(std::get<0>(pair), std::get<1>(pair));
 debug_stream << "Score: " << score << "\n"; // 4 + -3 + 4 + -3 + 4 + 5 + -1 + 5 = 15
 //! [score sequences]

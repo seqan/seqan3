@@ -45,7 +45,7 @@ int main()
     sequence_file_input fin{tmp_dir/"my.fastq", fields<field::ID, field::SEQ_QUAL>{}};
     sequence_file_output fout{tmp_dir/"trimmed.fastq", fields<field::ID, field::SEQ_QUAL>{}};
 
-    auto trimming = view::transform([] (auto & rec)
+    auto trimming = std::view::transform([] (auto & rec)
     {
         get<field::SEQ_QUAL>(rec) = (get<field::SEQ_QUAL>(rec)
                                   | view::take_until([] (auto chr) { return chr.to_phred() <= 10; }));

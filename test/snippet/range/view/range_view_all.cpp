@@ -1,6 +1,6 @@
 #include <seqan3/range/view/all.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -25,17 +25,17 @@ dna4_vector complemented = vec_view2;
 assert(complemented == "TGCCAG"_dna4);
 
 // or immediately create on container
-dna4_vector reversed = vec | view::reverse;
+dna4_vector reversed = vec | std::view::reverse;
 assert(reversed == "CTGGCA"_dna4);
 //! [retransform]
 
 //! [composability]
 // views can be composed iteratively
-auto vec_view3 = vec | view::reverse;
+auto vec_view3 = vec | std::view::reverse;
 auto vec_view4 = vec_view3 | view::complement;
 
 // or in one line similar to the unix command line
-auto vec_view5 = vec | view::complement | view::reverse;
+auto vec_view5 = vec | view::complement | std::view::reverse;
 
 // vec_view4 and vec_view5 are the reverse complement of "ACGGTC": "GACCGT"
 //! [composability]

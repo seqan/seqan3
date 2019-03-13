@@ -104,7 +104,7 @@ fout.header().comments.push_back("This is a comment");
 //! [io_pipeline]
 //! \todo Uncomment once seqan3::alignment_file_input is implemented.
 // alignment_file_input{tmp_dir/"input.sam"} | view::persist
-//                                           | ranges::view::take(5) // take only the first 5 records
+//                                           | std::view::take(5) // take only the first 5 records
 //                                           | alignment_file_output{tmp_dir/"output.sam"};
 //! [io_pipeline]
 }

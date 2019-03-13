@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/range/view/detail.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::view
 {
@@ -28,7 +28,7 @@ namespace seqan3::view
  *
  * If you pass a range to a view that view performs some transformation on that range. If the range passed is
  * multi-dimensional (i.e. a range-of-ranges) that transformation happens on the outermost range. So if you
- * call view::reverse on a range-of-dna-ranges, it will revert *the order* of the dna-ranges, but leave
+ * call std::view::reverse on a range-of-dna-ranges, it will revert *the order* of the dna-ranges, but leave
  * the dna-ranges themselves unchanged.
  *
  * In some cases this is not desirable or even possible, i.e. seqan3::view::complement performs it's operation on
@@ -134,7 +134,7 @@ public:
      *
      * \details
      *
-     * Recurses and calls view::transform if the underlying range is a range-of-ranges.
+     * Recurses and calls std::view::transform if the underlying range is a range-of-ranges.
      */
 
     template <typename urng_t, typename ...arg_types>
@@ -142,7 +142,7 @@ public:
     {
         if constexpr (std::ranges::InputRange<urng_t> && std::ranges::InputRange<reference_t<urng_t>>)
         {
-            return urange | view::transform(
+            return urange | std::view::transform(
                 [argos = std::tuple<arg_types...>(std::forward<arg_types>(args)...), this] (auto && subrange)
                 {
                     return impl_expand(std::forward<decltype(subrange)>(subrange),

@@ -105,7 +105,7 @@ struct read : public ::testing::Test
     void bpp_test(std::vector<uint8_t> const & bpp_comp)
     {
         size_t cnt = 0ul;
-        auto interaction_sets = bpp | ranges::view::remove_if([] (auto & set) { return set.size() != 1; });
+        auto interaction_sets = bpp | std::view::filter([] (auto & set) { return set.size() == 1; });
         for (auto & iset : interaction_sets)
         {
             EXPECT_EQ(iset.size(), 1u);

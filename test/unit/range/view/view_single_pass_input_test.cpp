@@ -308,7 +308,7 @@ TYPED_TEST(single_pass_input, fn_functional)
     // use case 1: functional;
     TypeParam p{this->data};
 
-    auto view = ranges::view::take(view::single_pass_input(p), 3);
+    auto view = std::view::take(view::single_pass_input(p), 3);
 
     auto it = view.begin();
     if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
@@ -331,7 +331,7 @@ TYPED_TEST(single_pass_input, fn_pipeable)
 {
     TypeParam p{this->data};
 
-    auto view = p | view::single_pass_input | ranges::view::take(3);
+    auto view = p | view::single_pass_input | std::view::take(3);
     auto it = view.begin();
     if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
     {

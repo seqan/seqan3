@@ -25,7 +25,6 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3
 {
@@ -375,7 +374,7 @@ public:
          requires !std::Same<other_range_t, gap_decorator_anchor_set> &&
                   std::Same<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
                   std::ranges::ViewableRange<other_range_t> // at end, otherwise it competes with the move ctor
-    gap_decorator_anchor_set(other_range_t && range) : ungapped_view{view::all(std::forward<inner_type>(range))}
+    gap_decorator_anchor_set(other_range_t && range) : ungapped_view{std::view::all(std::forward<inner_type>(range))}
     {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
     // !\}
 
@@ -794,7 +793,7 @@ private:
     }
 
     //!\brief Stores a (copy of a) view to the ungapped, underlying sequence.
-    decltype(view::all(std::declval<inner_type &&>())) ungapped_view{};
+    decltype(std::view::all(std::declval<inner_type &&>())) ungapped_view{};
 
     //!\brief Set storing the anchor gaps.
     anchor_set_type anchors{};

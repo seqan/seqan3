@@ -307,7 +307,7 @@ that have an average quality of at least 40.
 
 Hints:
 * You may want to (but do not need to) use `std::accumulate` when aggregating values.
-* You need the following includes for view::filter
+* You need the following includes for std::view::filter
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_filter
 * You need the following includes for ranges::view::take
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_ranges_take
