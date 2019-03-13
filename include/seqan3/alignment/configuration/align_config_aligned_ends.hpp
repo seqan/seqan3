@@ -26,7 +26,7 @@ namespace seqan3::align_cfg
 {
 
 /*!\brief A mixin class which can maintain a static or a dynamic bool state.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam value_t    The value type to be represented. Must be of type std::true_type, std::false_type or `bool`.
  * \tparam _is_static A boolean that evaluates to true only if `value_t` is a std::integral_constant.
  * \tparam _value     A boolean that captures the value of `value_t`, iff `_is_static` is `true`. Otherwise false.
@@ -73,7 +73,7 @@ public:
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for aligning the front of the first sequence with a gap.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
  * \details
@@ -111,7 +111,7 @@ first_seq_leading(value_t) -> first_seq_leading<value_t>;
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for a aligning the back of the first sequence with a gap.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
  * \copydetails seqan3::align_cfg::first_seq_leading
@@ -142,7 +142,7 @@ first_seq_trailing(value_t) -> first_seq_trailing<value_t>;
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for a aligning the front of the second sequence with a gap.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
  * \copydetails seqan3::align_cfg::first_seq_leading
@@ -173,7 +173,7 @@ second_seq_leading(value_t) -> second_seq_leading<value_t>;
 // ----------------------------------------------------------------------------
 
 /*!\brief The penalty configuration for a aligning the back of the second sequence with a gap.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
  * \copydetails seqan3::align_cfg::first_seq_leading
@@ -204,7 +204,7 @@ second_seq_trailing(value_t) -> second_seq_trailing<value_t>;
 // ----------------------------------------------------------------------------
 
 /*!\brief Wraps the sequence end-gap specifiers and provides ordered access to the respective values.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam ends_t A parameter pack containing at most 4 sequence end-gap specifier.
  *
  * \details
@@ -413,7 +413,7 @@ end_gaps(ends_t && ...) -> end_gaps<std::remove_reference_t<ends_t>...>;
 // ----------------------------------------------------------------------------
 
 /*!\brief The configuration for aligned sequence ends.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam end_gaps_t The type of the end-gaps. Must be of type seqan3::align_cfg::end_gaps.
  *
  * \details

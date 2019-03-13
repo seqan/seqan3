@@ -21,7 +21,7 @@
 namespace seqan3::align_cfg
 {
 /*!\brief A configuration element for the gap scheme.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam gap_scheme_t The type of the underlying gap scheme. Must satisfy the seqan3::gap_scheme_concept.
  *
  * \details

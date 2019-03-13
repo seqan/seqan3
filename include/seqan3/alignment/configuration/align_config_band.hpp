@@ -21,7 +21,7 @@ namespace seqan3::align_cfg
 {
 
 /*!\brief Configuration element for setting the band.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  *
  * \tparam band_t The type of the band.
  *

@@ -20,26 +20,26 @@ namespace seqan3::detail
 {
 
 /*!\brief Triggers score-only computation of the sequence alignment.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  */
 struct with_score_type
 {};
 
 /*!\brief Triggers score computation and determines the end position of the sequence alignment.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  */
 struct with_end_position_type
 {};
 
 /*!\brief Triggers score computation and determines begin and end position of the sequence alignment.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  */
 struct with_begin_position_type
 {};
 
 /*!\brief Triggers score computation and determines the end position of the sequence alignment as well as the
  *        full traceback.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  */
 struct with_trace_type
 {};
@@ -63,7 +63,7 @@ inline constexpr detail::with_begin_position_type with_begin_position{};
 inline constexpr detail::with_trace_type with_trace{};
 
 /*!\brief Sets the result of the alignment computation.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam with_type  The type used to specify which feature should be computed during the pairwise alignment.
  *                    Defaults to seqan3::detail::with_score_type.
  *

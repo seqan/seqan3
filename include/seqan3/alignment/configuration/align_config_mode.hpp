@@ -19,7 +19,7 @@
 namespace seqan3::detail
 {
 //!\brief A strong type to select the global alignment mode.
-//!\ingroup configuration
+//!\ingroup alignment_configuration
 struct global_alignment_type
 {
     //!\privatesection
@@ -33,7 +33,7 @@ namespace seqan3::align_cfg
 {
 
 /*!\brief Helper variable to select the global alignment.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  *
  * \details
  *
