@@ -66,6 +66,8 @@ namespace seqan3
  * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
  * **SeqAn implements version 1.6 of the SAM specification**.
  *
+ * Take a look at our tutorial \ref tutorial_alignment_file for a walk through of how to read alignment files.
+ *
  * ### Fields
  *
  * The SAM format provides the following fields:

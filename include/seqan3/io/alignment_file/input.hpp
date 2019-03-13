@@ -474,7 +474,7 @@ private:
 
 public:
     //!\brief The type of field::ALIGNMENT (default: std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>).
-    using alignment_type = std::pair<gap_decorator<ref_sequence_type>, alignment_query_type>;
+    using alignment_type = std::tuple<gap_decorator<ref_sequence_type>, alignment_query_type>;
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types = type_list<sequence_type,

@@ -151,7 +151,7 @@ The first three fields are retrieved by default (and in that order!).
 The last field may be selected to directly store sequence and qualities in a more memory-efficient
 combined container (see seqan3::qualified).
 This is more advanced than what we cover here,
-but if you are still interested you can take a look at the *Alignment File Tutorial*
+but if you are still interested you can take a look at the tutorial \ref tutorial_alignment_file
 which introduces reading a file with custom selected fields.
 
 # Reading a sequence file
@@ -321,7 +321,7 @@ To remind you what you have learned in the \ref tutorial_ranges tutorial before,
 a view is not applied immediately but **lazy evaluated**.
 That means your file is still parsed record by record and not at once.
 
-## Reading paired-end reads
+## Reading paired-end reads {#sequence_file_section_fun_with_ranges}
 
 In modern Next Generation Sequencing experiments you often have paired-end read data
 which is split into two files.
