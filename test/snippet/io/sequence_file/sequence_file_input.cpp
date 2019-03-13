@@ -173,7 +173,7 @@ sequence_file_input fin{tmp_dir/"my.fasta"};
 
 auto minimum_length5_filter = view::filter([] (auto const & rec)
 {
-    return size(get<field::SEQ>(rec)) >= 5;
+    return std::ranges::size(get<field::SEQ>(rec)) >= 5;
 });
 
 for (auto & rec : fin | minimum_length5_filter) // only record with sequence length >= 5 will "appear"
