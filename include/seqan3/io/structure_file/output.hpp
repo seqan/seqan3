@@ -270,7 +270,7 @@ public:
         primary_stream{new std::ofstream{filename, std::ios_base::out | std::ios::binary}, stream_deleter_default}
     {
         if (!primary_stream->good())
-            throw file_open_error{"Could not open file for writing."};
+            throw file_open_error{"Could not open file " + filename.string() + " for reading."};
 
         // possibly add intermediate compression stream
         secondary_stream = detail::make_secondary_ostream(*primary_stream, filename);
