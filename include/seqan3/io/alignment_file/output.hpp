@@ -413,8 +413,8 @@ public:
                      detail::get_or<field::REF_ID>(r, std::string_view{}),
                      detail::get_or<field::REF_OFFSET>(r, -1), // 1 is added in format SAM
                      detail::get_or<field::ALIGNMENT>(r, default_align_t{}),
-                     detail::get_or<field::MAPQ>(r, 0u),
                      detail::get_or<field::FLAG>(r, 0u),
+                     detail::get_or<field::MAPQ>(r, 0u),
                      detail::get_or<field::MATE>(r, default_mate_t{}),
                      detail::get_or<field::TAGS>(r, sam_tag_dictionary{}),
                      detail::get_or<field::EVALUE>(r, 0u),
@@ -461,8 +461,8 @@ public:
                      detail::get_or<selected_field_ids::index_of(field::REF_ID)>(t, std::string_view{}),
                      detail::get_or<selected_field_ids::index_of(field::REF_OFFSET)>(t, -1), // 1 is added in format SAM
                      detail::get_or<selected_field_ids::index_of(field::ALIGNMENT)>(t, default_align_t{}),
-                     detail::get_or<selected_field_ids::index_of(field::MAPQ)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::FLAG)>(t, 0u),
+                     detail::get_or<selected_field_ids::index_of(field::MAPQ)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::MATE)>(t, default_mate_t{}),
                      detail::get_or<selected_field_ids::index_of(field::TAGS)>(t, sam_tag_dictionary{}),
                      detail::get_or<selected_field_ids::index_of(field::EVALUE)>(t, 0u),
