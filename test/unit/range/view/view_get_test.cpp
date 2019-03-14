@@ -17,7 +17,7 @@
 #include <seqan3/range/view/get.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/range/view/complement.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -90,11 +90,11 @@ TEST(view_get, advanced)
     // combinability
     std::vector<masked<dna4>> cmprev{{'T'_dna4, mask::UNMASKED}, {'G'_dna4, mask::MASKED},
                                      {'C'_dna4, mask::UNMASKED}, {'A'_dna4, mask::MASKED}};
-    std::vector<masked<dna4>> revtest = t | view::get<0> | view::reverse;
+    std::vector<masked<dna4>> revtest = t | view::get<0> | std::view::reverse;
     EXPECT_EQ(cmprev, revtest);
 
     std::vector<dna4> cmprev2{'T'_dna4, 'G'_dna4, 'C'_dna4, 'A'_dna4};
-    std::vector<dna4> revtest2 = t | view::get<0> | view::get<0> | view::reverse;
+    std::vector<dna4> revtest2 = t | view::get<0> | view::get<0> | std::view::reverse;
     EXPECT_EQ(cmprev2, revtest2);
 
     // reference check
@@ -162,7 +162,7 @@ TEST(view_get, nested_zip_view)
 {
     std::vector vec1{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-    auto get_view = ranges::view::zip(ranges::view::zip(vec1, vec1), vec1) | view::get<0>;
+    auto get_view = std::view::zip(ranges::view::zip(vec1, vec1), vec1) | view::get<0>;
 
     for (auto && elem : get_view)
         std::get<0>(elem) = -1;

@@ -5,7 +5,7 @@
 #include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/view/get.hpp>
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -171,7 +171,7 @@ for (auto & [ id, seq_qual ] : fin) // the order is now different, "id" comes fi
 //! [file_view]
 sequence_file_input fin{tmp_dir/"my.fasta"};
 
-auto minimum_length5_filter = view::filter([] (auto const & rec)
+auto minimum_length5_filter = std::view::filter([] (auto const & rec)
 {
     return std::ranges::size(get<field::SEQ>(rec)) >= 5;
 });

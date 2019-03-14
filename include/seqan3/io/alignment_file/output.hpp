@@ -551,7 +551,7 @@ public:
      * ```cpp
      * alignment_file_in{"input.sam"} | view::minimum_average_quality_filter(20)
      *                                | view::minimum_alignment_length_filter(50)
-     *                                | ranges::view::take(5)
+     *                                | std::view::take(5)
      *                                | alignment_file_output{"output.sam"};
      * ```
      */

@@ -1,13 +1,13 @@
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/take.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 namespace seqan3::view
 {
-inline auto const deep_reverse = deep{view::reverse};
-inline auto const deep_take = deep{view::take};
-inline auto const deep_take1 = deep{view::take(1)};
+inline auto const deep_reverse = deep{std::view::reverse};
+inline auto const deep_take = deep{std::view::take};
+inline auto const deep_take1 = deep{std::view::take(1)};
 }
 
 using namespace seqan3;
@@ -17,9 +17,9 @@ int main()
 {
 std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
 
-auto r = foo | view::reverse;             // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
+auto r = foo | std::view::reverse;             // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
 
-auto d = foo | view::deep{view::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
+auto d = foo | view::deep{std::view::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
 
 auto e = foo | view::deep_reverse;                // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
 
@@ -30,14 +30,14 @@ auto e = foo | view::deep_reverse;                // == [ [T,T,T,A,A,A], [G,G,G,
 //! [no_param]
 std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
 
-auto r = foo | view::reverse;             // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
+auto r = foo | std::view::reverse;             // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
 
-auto d = foo | view::deep{view::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
+auto d = foo | view::deep{std::view::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
 
 // You can also create a permanent alias:
 namespace view
 {
-inline auto const deep_reverse = deep{view::reverse};
+inline auto const deep_reverse = deep{std::view::reverse};
 }
 
 auto e = foo | view::deep_reverse;        // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
@@ -50,7 +50,7 @@ std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
 
 auto t = foo | view::take(1);             // == [ [A,A,A,T,T,T] ]
 
-auto d = foo | view::deep{view::take}(1); // == [ [A], [C] ]
+auto d = foo | view::deep{std::view::take}(1); // == [ [A], [C] ]
 // constructor arguments passed via {} and arguments to underlying view passed via ()
 
 auto e = foo | view::deep_take(1);                // == [ [A], [C] ]
@@ -62,7 +62,7 @@ auto e = foo | view::deep_take(1);                // == [ [A], [C] ]
 //! [with_param]
 std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
 
-auto t = foo | ranges::view::take(1);             // == [ [A,A,A,T,T,T] ]
+auto t = foo | std::view::take(1);             // == [ [A,A,A,T,T,T] ]
 
 auto d = foo | view::deep{ranges::view::take}(1); // == [ [A], [C] ]
 // constructor arguments passed via {} and arguments to underlying view passed via ()
@@ -89,7 +89,7 @@ std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
 
 auto t = foo | view::take(1);             // == [ [A,A,A,T,T,T] ]
 
-auto d = foo | view::deep{view::take(1)}; // == [ [A], [C] ]
+auto d = foo | view::deep{std::view::take(1)}; // == [ [A], [C] ]
 // constructor arguments passed via {} and arguments to underlying view hardcoded inside
 
 auto e = foo | view::deep_take1;                  // == [ [A], [C] ]
@@ -101,7 +101,7 @@ auto e = foo | view::deep_take1;                  // == [ [A], [C] ]
 //! [wrap_args]
 std::vector<dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
 
-auto t = foo | ranges::view::take(1);             // == [ [A,A,A,T,T,T] ]
+auto t = foo | std::view::take(1);             // == [ [A,A,A,T,T,T] ]
 
 auto d = foo | view::deep{ranges::view::take(1)}; // == [ [A], [C] ]
 // constructor arguments passed via {} and arguments to underlying view hardcoded inside

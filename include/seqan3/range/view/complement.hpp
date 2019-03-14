@@ -14,7 +14,7 @@
 
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/range/view/deep.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::view
 {
@@ -62,7 +62,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 
-inline auto const complement = deep{view::transform([] (auto && in)
+inline auto const complement = deep{std::view::transform([] (auto && in)
 {
     static_assert(NucleotideAlphabet<std::remove_const_t<decltype(in)>>,
                   "The innermost value type must satisfy the NucleotideAlphabet.");

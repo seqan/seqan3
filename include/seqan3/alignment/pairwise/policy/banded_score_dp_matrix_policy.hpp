@@ -26,7 +26,6 @@
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
-#include <seqan3/std/view/common.hpp>
 
 namespace seqan3::detail
 {
@@ -124,11 +123,11 @@ public:
             col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
-        auto zip_score = ranges::view::zip(std::span{std::addressof(*current_matrix_iter), span},
+        auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
                                            std::span{std::addressof(*(current_matrix_iter + 1)), span});
-        return ranges::view::zip(std::move(zip_score),
-                                 ranges::view::iota(col_begin, col_end),
-                                 ranges::view::repeat_n(std::ignore, span) | view::common);
+        return std::view::zip(std::move(zip_score),
+                                 std::view::iota(col_begin, col_end),
+                                 ranges::view::repeat_n(std::ignore, span) | std::view::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.

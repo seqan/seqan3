@@ -24,7 +24,6 @@
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3::detail
 {
@@ -189,7 +188,7 @@ private:
     template <std::ranges::ViewableRange urng_t>
     static auto impl(urng_t && urange)
     {
-        return view::all(std::forward<urng_t>(urange));
+        return std::view::all(std::forward<urng_t>(urange));
     }
 
     /*!\brief       For ranges that are not views and not lvalue-references, call view_persist's constructor.

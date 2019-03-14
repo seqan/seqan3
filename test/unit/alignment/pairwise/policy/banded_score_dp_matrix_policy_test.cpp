@@ -120,7 +120,7 @@ TEST(banded_score_dp_matrix_policy, current_band_size)
     auto mock = mock_factory(static_band{lower_bound{-7}, upper_bound{5}});
 
     // Current band size is band_row_index + 1.
-    for (auto s : ranges::view::iota(0u, 6u))
+    for (auto s : std::view::iota(0u, 6u))
     {
         // Band increases by one as long as it is
         EXPECT_EQ(mock.current_band_size(), 8 + s);
@@ -128,7 +128,7 @@ TEST(banded_score_dp_matrix_policy, current_band_size)
     }
 
     // After that the band size does not change until the end of second range is reached.
-    for ([[maybe_unused]] auto s : ranges::view::iota(6u, 11u))
+    for ([[maybe_unused]] auto s : std::view::iota(6u, 11u))
     {
         // Band increases by one as long as it is
         EXPECT_EQ(mock.current_band_size(), 13u);
@@ -136,7 +136,7 @@ TEST(banded_score_dp_matrix_policy, current_band_size)
     }
 
     // When the band reaches the end it will be decreased by one
-    for (auto s : ranges::view::iota(11u, 14u))
+    for (auto s : std::view::iota(11u, 14u))
     {
         // Band increases by one as long as it is
         EXPECT_EQ(mock.current_band_size(), 13 - (s - 10u));
@@ -231,7 +231,7 @@ TEST(banded_score_dp_matrix_policy, trim_sequences)
         static_band band{lower_bound{3}, upper_bound{4}};
 
         auto [t_seq1, t_seq2] = mock.trim_sequences(seq1, seq2, band);
-        EXPECT_TRUE(ranges::equal(t_seq1, seq1 | ranges::view::drop(2)));
+        EXPECT_TRUE(ranges::equal(t_seq1, seq1 | std::view::drop(2)));
         EXPECT_TRUE(ranges::equal(t_seq2, seq2 | view::take_exactly(7)));
     }
 
@@ -240,6 +240,6 @@ TEST(banded_score_dp_matrix_policy, trim_sequences)
 
         auto [t_seq1, t_seq2] = mock.trim_sequences(seq1, seq2, band);
         EXPECT_TRUE(ranges::equal(t_seq1, seq1 | view::take_exactly(7)));
-        EXPECT_TRUE(ranges::equal(t_seq2, seq2 | ranges::view::drop(2)));
+        EXPECT_TRUE(ranges::equal(t_seq2, seq2 | std::view::drop(2)));
     }
 }

@@ -13,7 +13,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 
@@ -32,7 +31,7 @@ TEST(view_convert, basic)
 
     // combinability
     std::vector<bool> cmp2{1, 1, 1, 0, 0, 1, 0, 1, 1};
-    std::vector<bool> v3 = vec | view::convert<bool> | view::reverse;
+    std::vector<bool> v3 = vec | view::convert<bool> | std::view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 
@@ -51,7 +50,7 @@ TEST(view_convert, explicit_conversion)
 
     // combinability
     dna4_vector cmp2{"AGGATAGCA"_dna4};
-    dna4_vector v3 = vec | view::convert<dna4> | view::reverse;
+    dna4_vector v3 = vec | view::convert<dna4> | std::view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 

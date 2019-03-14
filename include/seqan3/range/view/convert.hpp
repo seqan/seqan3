@@ -14,7 +14,7 @@
 
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/std/concepts>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::view
 {
@@ -59,7 +59,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <typename out_t>
-auto const convert = view::transform([] (auto const & in) -> out_t
+auto const convert = std::view::transform([] (auto const & in) -> out_t
 {
     if constexpr (ImplicitlyConvertibleTo<std::remove_reference_t<decltype(in)>, out_t>)
         return in;

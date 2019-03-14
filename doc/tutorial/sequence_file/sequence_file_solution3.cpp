@@ -44,7 +44,7 @@ write_file_dummy_struct go{};
 
 #include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/std/filesystem>
 
 using namespace seqan3;
@@ -55,14 +55,14 @@ int main()
 
     sequence_file_input fin{tmp_dir/"my.fastq"};
 
-    auto minimum_quality_filter = view::filter([] (auto const & rec)
+    auto minimum_quality_filter = std::view::filter([] (auto const & rec)
     {
-        auto qual = get<field::QUAL>(rec) | view::transform([] (auto q) { return q.to_phred(); });
+        auto qual = get<field::QUAL>(rec) | std::view::transform([] (auto q) { return q.to_phred(); });
         double sum = ranges::accumulate(qual.begin(), qual.end(), 0);
         return sum / std::ranges::size(qual) >= 40;
     });
 
-    for (auto & rec : fin | minimum_quality_filter | ranges::view::take(2))
+    for (auto & rec : fin | minimum_quality_filter | std::view::take(2))
     {
         debug_stream << "ID: " << get<field::ID>(rec) << '\n';
     }

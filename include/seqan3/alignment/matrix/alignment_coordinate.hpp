@@ -70,7 +70,7 @@ enum struct advanceable_alignment_coordinate_state : uint8_t
  * Unfortunately, the current range implementation does not preserve std::ranges::BidirectionalRange properties,
  * so we need to model the full advanceable concept in order to preserve the std::ranges::RandomAccessRange properties.
  * This, however, can be relaxed if the range implementation fully complies with the current standard draft for Ranges,
- * as increment and decrement would be enough and ranges::view::iota would preserve std::ranges::BidirectionalRange.
+ * as increment and decrement would be enough and std::view::iota would preserve std::ranges::BidirectionalRange.
  */
 template <advanceable_alignment_coordinate_state state = advanceable_alignment_coordinate_state::none>
 class advanceable_alignment_coordinate

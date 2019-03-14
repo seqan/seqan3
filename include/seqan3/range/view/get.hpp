@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/std/view/transform.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::view
 {
@@ -58,7 +58,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <size_t index>
-inline auto const get = view::transform([] (auto && in) -> decltype(auto)
+inline auto const get = std::view::transform([] (auto && in) -> decltype(auto)
 {
     using std::get;
     using seqan3::get;

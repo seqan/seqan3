@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 #include <range/v3/algorithm/equal.hpp>
 
 #include <seqan3/argument_parser/all.hpp>
@@ -45,7 +45,7 @@ TEST(help_page_printing, short_help)
                "============="
                "empty_options synopsis"
                "Try -h or --help for more information.";
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, no_information)
@@ -61,7 +61,7 @@ TEST(help_page_printing, no_information)
                "Last update:"
                "test_parser version:"
                "SeqAn version: " + version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_short_copyright)
@@ -81,7 +81,7 @@ TEST(help_page_printing, with_short_copyright)
                "LEGAL"
                "test_parser Copyright: short"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.";
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_long_copyright)
@@ -100,7 +100,7 @@ TEST(help_page_printing, with_long_copyright)
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "For full copyright and/or warranty information see --copyright.";
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, with_citation)
@@ -119,7 +119,7 @@ TEST(help_page_printing, with_citation)
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "In your academic works please cite: citation";
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, empty_advanced_help)
@@ -135,7 +135,7 @@ TEST(help_page_printing, empty_advanced_help)
                "Last update:"
                "test_parser_2 version:"
                "SeqAn version: " + version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, empty_version_call)
@@ -151,7 +151,7 @@ TEST(help_page_printing, empty_version_call)
                "Last update:"
                "version version:"
                "SeqAn version: " + version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, version_call)
@@ -173,7 +173,7 @@ TEST(help_page_printing, version_call)
                "SeqAn version: " + version_str +
                "URL"
                "www.seqan.de";
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, do_not_print_hidden_options)
@@ -192,7 +192,7 @@ TEST(help_page_printing, do_not_print_hidden_options)
                "Last update:"
                "hidden version:"
                "SeqAn version: " + version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, full_information)
@@ -235,7 +235,7 @@ TEST(help_page_printing, full_information)
                "Last update:"
                "full version:"
                "SeqAn version: " + version_str;
-    EXPECT_TRUE(ranges::equal((std_cout | view::filter(!is_space)), expected | view::filter(!is_space)));
+    EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, copyright)

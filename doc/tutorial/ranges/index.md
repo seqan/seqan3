@@ -277,7 +277,7 @@ Use views to implement steps 2.-4.
 #include <iostream>
 #include <seqan3/range/view/all.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 
 int main()
 {

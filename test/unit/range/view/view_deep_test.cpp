@@ -17,11 +17,10 @@
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
 
 namespace seqan3::view
 {
-inline auto const deep_reverse = deep{view::reverse};
+inline auto const deep_reverse = deep{std::view::reverse};
 inline auto const deep_take = deep{ranges::view::take};
 inline auto const deep_take2 = deep{ranges::view::take(2)};
 }
@@ -37,7 +36,7 @@ TEST(view_deep_reverse, basic)
     dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    dna5_vector v0 = foo | view::deep{view::reverse};
+    dna5_vector v0 = foo | view::deep{std::view::reverse};
     EXPECT_EQ(v0, "ATGCA"_dna5);
 
     // pipe notation
@@ -49,7 +48,7 @@ TEST(view_deep_reverse, basic)
     EXPECT_EQ(v2, "ATGCA"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_reverse | view::reverse;
+    dna5_vector v3 = foo | view::deep_reverse | std::view::reverse;
     EXPECT_EQ(v3, "ACGTA"_dna5);
 }
 
@@ -121,7 +120,7 @@ TEST(view_deep_take, basic)
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take(2) | view::reverse;
+    dna5_vector v3 = foo | view::deep_take(2) | std::view::reverse;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 
@@ -166,7 +165,7 @@ TEST(view_deep_take2, basic)
     EXPECT_EQ(v2, "AC"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::deep_take2 | view::reverse;
+    dna5_vector v3 = foo | view::deep_take2 | std::view::reverse;
     EXPECT_EQ(v3, "CA"_dna5);
 }
 

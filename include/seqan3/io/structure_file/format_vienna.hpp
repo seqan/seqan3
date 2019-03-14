@@ -42,8 +42,6 @@
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
@@ -130,7 +128,7 @@ public:
               offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
         using stream_it_t = std::istreambuf_iterator<typename stream_type::char_type>;
-        auto stream_view = view::subrange<stream_it_t, stream_it_t>{stream_it_t{stream}, stream_it_t{}};
+        auto stream_view = std::ranges::subrange<stream_it_t, stream_it_t>{stream_it_t{stream}, stream_it_t{}};
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;
@@ -140,7 +138,7 @@ public:
             {
                 if (options.truncate_ids)
                 {
-                    std::ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
+                    std::ranges::copy(stream_view | std::view::drop_while(is_id || is_blank) // skip leading >
                                                   | view::take_until_or_throw(is_cntrl || is_blank)
                                                   | view::char_to<value_type_t<id_type>>,
                                       std::back_inserter(id));
@@ -148,7 +146,7 @@ public:
                 }
                 else
                 {
-                    std::ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank) // skip leading >
+                    std::ranges::copy(stream_view | std::view::drop_while(is_id || is_blank) // skip leading >
                                                   | view::take_line_or_throw
                                                   | view::char_to<value_type_t<id_type>>,
                                       std::back_inserter(id));
@@ -175,8 +173,8 @@ public:
         {
             auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
             std::ranges::copy(stream_view | view::take_line_or_throw                      // until end of line
-                                          | ranges::view::remove_if(is_space || is_digit) // ignore whitespace and numbers
-                                          | ranges::view::transform([is_legal_seq](char const c)
+                                          | std::view::filter(!(is_space || is_digit)) // ignore whitespace and numbers
+                                          | std::view::transform([is_legal_seq](char const c)
                                             {
                                                 if (!is_legal_seq(c))                    // enforce legal alphabet
                                                 {
@@ -236,7 +234,7 @@ public:
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
             std::string e_str = stream_view | view::take_line
-                                            | ranges::view::remove_if(is_space || is_char<'('> || is_char<')'>);
+                                            | std::view::filter(!(is_space || is_char<'('> || is_char<')'>));
             if (!e_str.empty())
             {
                 size_t num_processed;
@@ -366,7 +364,7 @@ private:
     {
         auto constexpr is_legal_structure = is_in_alphabet<alph_type>;
         return stream_view | view::take_until(is_space) // until whitespace
-                           | ranges::view::transform([is_legal_structure](char const c)
+                           | std::view::transform([is_legal_structure](char const c)
                              {
                                  if (!is_legal_structure(c))
                                  {

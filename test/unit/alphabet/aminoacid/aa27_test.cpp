@@ -41,7 +41,7 @@ TEST(aa27, assign_char)
         '*'_aa27, 'X'_aa27
     };
 
-    for (auto [ chr, alp ] : ranges::view::zip(chars, alphabets))
+    for (auto [ chr, alp ] : std::view::zip(chars, alphabets))
         EXPECT_EQ((assign_char(aa27{}, chr)), alp);
 }
 
@@ -63,7 +63,7 @@ TEST(aa27, to_char)
         '*'_aa27, 'X'_aa27
     };
 
-    for (auto [ alp, chr ] : ranges::view::zip(alphabets, chars))
+    for (auto [ alp, chr ] : std::view::zip(alphabets, chars))
         EXPECT_EQ(to_char(alp), chr);
 }
 
@@ -117,6 +117,6 @@ TEST(literals, vector)
 TEST(aa27, char_is_valid)
 {
     constexpr auto validator = is_alpha || is_char<'*'>;
-    for (char c : ranges::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
+    for (char c : std::view::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
         EXPECT_EQ(aa27::char_is_valid(c), validator(c));
 }

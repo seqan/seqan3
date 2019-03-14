@@ -41,7 +41,7 @@ struct trim_fn
         requires std::ranges::InputRange<irng_t> && QualityAlphabet<value_type_t<std::decay_t<irng_t>>>
     //!\endcond
     {
-        return ranges::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
+        return std::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
         {
             return to_phred(std::forward<decltype(value)>(value)) >= threshold;
         });

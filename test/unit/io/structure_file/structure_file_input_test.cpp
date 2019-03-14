@@ -20,7 +20,7 @@
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/std/iterator>
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
@@ -258,7 +258,7 @@ struct structure_file_input_read : public ::testing::Test
     void bpp_test(bpp_type & bpp, std::vector<uint8_t> const & bpp_comp)
     {
         size_t idx = 0ul;
-        auto interactions = bpp | ranges::view::remove_if([] (auto & set) { return set.size() != 1; });
+        auto interactions = bpp | std::view::filter([] (auto & set) { return set.size() == 1; });
         for (auto & elem : interactions)
         {
             EXPECT_EQ(elem.begin()->second, bpp_comp[idx++]);

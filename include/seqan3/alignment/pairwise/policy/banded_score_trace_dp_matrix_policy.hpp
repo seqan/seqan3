@@ -123,10 +123,10 @@ private:
             col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
-        auto zip_score = ranges::view::zip(std::span{std::addressof(*current_matrix_iter), span},
+        auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
                                            std::span{std::addressof(*(current_matrix_iter + 1)), span});
-        return ranges::view::zip(std::move(zip_score),
-                                 ranges::view::iota(col_begin, col_end),
+        return std::view::zip(std::move(zip_score),
+                                 std::view::iota(col_begin, col_end),
                                  std::span{std::addressof(*trace_matrix_iter), span});
     }
 

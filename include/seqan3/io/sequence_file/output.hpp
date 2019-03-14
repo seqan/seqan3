@@ -683,7 +683,7 @@ protected:
         {
             if constexpr (!detail::decays_to_ignore_v<reference_t<seq_quals_t>>)
             {
-                auto zipped = ranges::view::zip(seq_quals, ids);
+                auto zipped = std::view::zip(seq_quals, ids);
 
                 for (auto && v : zipped)
                     f.write(*secondary_stream,
@@ -694,7 +694,7 @@ protected:
             }
             else
             {
-                auto zipped = ranges::view::zip(seqs, ids, quals);
+                auto zipped = std::view::zip(seqs, ids, quals);
 
                 for (auto && v : zipped)
                     f.write(*secondary_stream, options, std::get<0>(v), std::get<1>(v), std::get<2>(v));

@@ -15,7 +15,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 
@@ -34,7 +33,7 @@ TEST(view_char_to, basic)
 
     // combinability
     dna5_vector cmp2{"ATAGTTTCA"_dna5};
-    dna5_vector v3 = vec | view::char_to<dna5> | view::reverse;
+    dna5_vector v3 = vec | view::char_to<dna5> | std::view::reverse;
     EXPECT_EQ(cmp2, v3);
 }
 

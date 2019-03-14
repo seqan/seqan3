@@ -32,7 +32,6 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/subrange.hpp>
 
 namespace seqan3::detail
 {
@@ -399,7 +398,7 @@ private:
         });
 
         // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
-        auto last_column_view = this->current_column() | ranges::view::transform([](auto && entry)
+        auto last_column_view = this->current_column() | std::view::transform([](auto && entry)
             {
             using std::get;
             return std::tuple{get<0>(std::forward<decltype(entry)>(entry)),
@@ -493,7 +492,7 @@ private:
             }
         });
         // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
-        auto last_column_view = this->current_column() | ranges::view::transform([](auto && entry) {
+        auto last_column_view = this->current_column() | std::view::transform([](auto && entry) {
             using std::get;
             return std::tuple{get<0>(get<0>(std::forward<decltype(entry)>(entry))),
                               get<1>(std::forward<decltype(entry)>(entry))};
@@ -550,7 +549,7 @@ private:
         auto it_first_seq_end = std::ranges::begin(first_range);
         std::ranges::advance(it_first_seq_end, end_coordinate.first_seq_pos);
 
-        using first_subrange_type = seqan3::view::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
+        using first_subrange_type = std::ranges::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
         auto first_subrange = first_subrange_type{it_first_seq_begin, it_first_seq_end};
 
         // Create and fill the aligned_sequence for the first sequence.
@@ -563,7 +562,7 @@ private:
         auto it_second_seq_end = std::ranges::begin(second_range);
         std::ranges::advance(it_second_seq_end, end_coordinate.second_seq_pos);
 
-        using second_subrange_type = seqan3::view::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
+        using second_subrange_type = std::ranges::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
         auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};
 
         // Create and fill the aligned_sequence for the second sequence.

@@ -14,8 +14,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
 #include <seqan3/range/view/to_char.hpp>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/view/view_all.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/std/ranges>
 #include <seqan3/test/pretty_printing.hpp>
 
@@ -27,7 +26,7 @@ using decorator_t = gap_decorator_anchor_set<std::vector<dna4> const &>;
 
 const std::vector<dna4> dummy_obj{}; // dummy lvalue for type declaration of views
 using decorator_t2 = gap_decorator_anchor_set<
-                         decltype(view::subrange<decltype(dummy_obj.begin()),
+                         decltype(std::ranges::subrange<decltype(dummy_obj.begin()),
                                                  decltype(dummy_obj.begin())>{dummy_obj.begin(), dummy_obj.end()})>;
 
 
@@ -52,7 +51,7 @@ public:
     // will be initialised differently than the naive vector<gapped<dna>>.
     void initialise_typed_test_container(decorator_t2 & container, dna4_vector const & target)
     {
-        container = view::subrange<decltype(target.begin()), decltype(target.end())>{target.begin(), target.end()};
+        container = std::ranges::subrange<decltype(target.begin()), decltype(target.end())>{target.begin(), target.end()};
     }
 };
 
@@ -311,7 +310,7 @@ TEST(gap_decorator_anchor_set, decorator_on_views)
 {
     std::vector<dna4> v{"ACTG"_dna4};
 
-    auto sub = view::subrange<decltype(v.begin()), decltype(v.begin())>{v.begin()+1, v.begin()+3};
+    auto sub = std::ranges::subrange<decltype(v.begin()), decltype(v.begin())>{v.begin()+1, v.begin()+3};
     gap_decorator_anchor_set dec{sub};
 
     EXPECT_EQ(dec.size(), 2u);

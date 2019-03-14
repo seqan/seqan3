@@ -39,8 +39,6 @@
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
@@ -109,8 +107,8 @@ public:
               qual_type                                                              & qualities)
     {
         using stream_char_t = typename stream_type::char_type;
-        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
-                                          decltype(std::istreambuf_iterator<stream_char_t>{})>
+        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
+                                                 decltype(std::istreambuf_iterator<stream_char_t>{})>
                             {std::istreambuf_iterator<stream_char_t>{stream},
                              std::istreambuf_iterator<stream_char_t>{}};
 
@@ -153,11 +151,11 @@ public:
 
         /* Sequence */
         auto seq_view = stream_view | view::take_until_or_throw(is_char<'+'>)    // until 2nd ID line
-                                    | ranges::view::remove_if(is_space);           // ignore whitespace
+                                    | std::view::filter(!is_space);           // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            std::ranges::copy(seq_view | view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+            std::ranges::copy(seq_view | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                     {
                                         if (!is_legal_alph(c))
                                         {
@@ -192,7 +190,7 @@ public:
         detail::consume(stream_view | view::take_line_or_throw);
 
         /* Qualities */
-        auto qview = stream_view | ranges::view::remove_if(is_space)                  // this consumes trailing newline
+        auto qview = stream_view | std::view::filter(!is_space)                  // this consumes trailing newline
                                  | view::take_exactly_or_throw(sequence_size_after - sequence_size_before);
         if constexpr (seq_qual_combined)
         {

@@ -15,7 +15,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/complement.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
 
 using namespace seqan3;
 
@@ -32,7 +31,7 @@ TEST(view_complement, basic)
     EXPECT_EQ(v2, "TGCAT"_dna5);
 
     // combinability
-    dna5_vector v3 = foo | view::complement | view::reverse;
+    dna5_vector v3 = foo | view::complement | std::view::reverse;
     EXPECT_EQ(v3, "TACGT"_dna5);
 }
 

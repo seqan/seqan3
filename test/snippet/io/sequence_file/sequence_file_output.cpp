@@ -5,7 +5,7 @@
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/range/view/persist.hpp>
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -133,12 +133,12 @@ sequence_file_input{tmp_dir/"input.fastq"} | sequence_file_output{tmp_dir/"outpu
 //! [view_pipeline]
 
 // minimum_average_quality_filter and minimum_sequence_length_filter need to be implemented first
-auto minimum_sequence_length_filter = view::filter([] (auto rec)
+auto minimum_sequence_length_filter = std::view::filter([] (auto rec)
 {
     return size(get<field::SEQ>(rec)) >= 50;
 });
 
-auto minimum_average_quality_filter = view::filter([] (auto const & rec)
+auto minimum_average_quality_filter = std::view::filter([] (auto const & rec)
 {
     double qual_sum{0}; // summation of the qualities
     for (auto chr : get<field::QUAL>(rec))
@@ -150,7 +150,7 @@ auto minimum_average_quality_filter = view::filter([] (auto const & rec)
 sequence_file_input{tmp_dir/"input.fastq"} | view::persist
                                            | minimum_average_quality_filter
                                            | minimum_sequence_length_filter
-                                           | ranges::view::take(5)
+                                           | std::view::take(5)
                                            | sequence_file_output{tmp_dir/"output.fasta"};
 //! [view_pipeline]
 }

@@ -23,7 +23,7 @@
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/iterator>
-#include <seqan3/std/view/filter.hpp>
+#include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
