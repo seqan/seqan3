@@ -16,6 +16,7 @@
 
 using namespace seqan3;
 using namespace seqan3::search_cfg;
+using namespace std::string_literals;
 
 template <typename T>
 class search_test : public ::testing::Test
@@ -25,9 +26,19 @@ public:
     T index{text};
 };
 
-using fm_index_types = ::testing::Types<fm_index<std::vector<dna4>>, bi_fm_index<std::vector<dna4>>>;
+template <typename T>
+class search_string_test : public ::testing::Test
+{
+public:
+    std::string text{"Garfield the fat cat."};
+    T index{text};
+};
+
+using fm_index_types        = ::testing::Types<fm_index<std::vector<dna4>>, bi_fm_index<std::vector<dna4>>>;
+using fm_index_string_types = ::testing::Types<fm_index<std::string>, bi_fm_index<std::string>>;
 
 TYPED_TEST_CASE(search_test, fm_index_types);
+TYPED_TEST_CASE(search_string_test, fm_index_string_types);
 
 TYPED_TEST(search_test, error_free)
 {
@@ -320,6 +331,43 @@ TYPED_TEST(search_test, search_strategy_strata)
     //     configuration const cfg = max_total_error{1} | strategy_strata{1};
     //     EXPECT_EQ(uniquify(search(this->index, "CCGT"_dna4, cfg)), (hits_result_t{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
     // }
+}
+
+TYPED_TEST(search_string_test, error_free_string)
+{
+    using hits_result_t = std::vector<typename TypeParam::size_type>;
+
+    {
+        // successful and unsuccesful exact search without cfg
+        EXPECT_EQ(uniquify(search(this->index, "at"s)), (hits_result_t{14, 18}));
+        EXPECT_EQ(uniquify(search(this->index, "Jon"s)), (hits_result_t{}));
+    }
+}
+
+TYPED_TEST(search_string_test, error_free_raw)
+{
+    using hits_result_t = std::vector<typename TypeParam::size_type>;
+
+    {
+        // successful and unsuccesful exact search without cfg
+        EXPECT_EQ(uniquify(search(this->index, "at")), (hits_result_t{14, 18}));
+        EXPECT_EQ(uniquify(search(this->index, "Jon")), (hits_result_t{}));
+    }
+}
+
+TYPED_TEST(search_string_test, multiple_queries_string)
+{
+    using hits_result_t = std::vector<std::vector<typename TypeParam::size_type>>;
+    std::vector<std::string> const queries{"at", "Jon"};
+
+    EXPECT_EQ(uniquify(search(this->index, queries)), (hits_result_t{{14, 18}, {}})); // 2 and 0 hits
+}
+
+TYPED_TEST(search_string_test, multiple_queries_raw)
+{
+    using hits_result_t = std::vector<std::vector<typename TypeParam::size_type>>;
+
+    EXPECT_EQ(uniquify(search(this->index, {"at", "Jon"})), (hits_result_t{{14, 18}, {}})); // 2 and 0 hits
 }
 
 // TYPED_TEST(search_test, return_iterator_index)
