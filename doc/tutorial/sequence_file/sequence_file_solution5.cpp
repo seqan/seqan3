@@ -11,15 +11,23 @@ auto file_raw = R"//![fastq_file](
 @seq1
 CGATCGATC
 +
-IIIIII!!!
+IIIIIIIII
 @seq2
-AGCGATCGAGGAATATAT
+AGCG
 +
-IIIIHHGIII!!!!!!!!
+IIII
 @seq3
 AGCTAGCAGCGATCG
 +
-IIIIIHII!!!!!!!
+IIIIIHIIJJIIIII
+@seq4
+AGC
++
+III
+@seq5
+AGCTAGCAGCGATCG
++
+IIIIIHIIJJIIIII
 )//![fastq_file]";
 
         std::ofstream file{std::filesystem::temp_directory_path()/"my.fastq"};
@@ -33,25 +41,27 @@ write_file_dummy_struct go{};
 //![solution]
 #include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/range/view/take_until.hpp>  // view::take_until
+#include <seqan3/range/view/persist.hpp>
 #include <seqan3/std/filesystem>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
 int main()
 {
-    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path();
+    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    sequence_file_input fin{tmp_dir/"my.fastq", fields<field::ID, field::SEQ_QUAL>{}};
-    sequence_file_output fout{tmp_dir/"trimmed.fastq", fields<field::ID, field::SEQ_QUAL>{}};
+    sequence_file_input fin{tmp_dir/"my.fastq"};
+    sequence_file_output fout{tmp_dir/"output.fastq"};
 
-    auto trimming = std::view::transform([] (auto & rec)
+    auto length_filter = std::view::filter([] (auto & rec)
     {
-        get<field::SEQ_QUAL>(rec) = (get<field::SEQ_QUAL>(rec)
-                                  | view::take_until([] (auto chr) { return chr.to_phred() <= 10; }));
-        return rec;
+        return std::ranges::size(get<field::SEQ>(rec)) >= 5;
     });
 
-    fout = fin | trimming;
+    fout = fin | length_filter;
+
+    // This would also work:
+    // fin | length_filter | fout;
 }
 //![solution]
