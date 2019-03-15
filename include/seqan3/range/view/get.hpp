@@ -57,7 +57,7 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/get.cpp usage
  * \hideinitializer
  */
-template <size_t index>
+template <auto index>
 inline auto const get = std::view::transform([] (auto && in) -> decltype(auto)
 {
     using std::get;
