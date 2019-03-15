@@ -16,7 +16,6 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <range/v3/view/iota.hpp>
 #include <range/v3/view/slice.hpp>
 
 #include <seqan3/alphabet/all.hpp>
@@ -504,8 +503,8 @@ public:
     {
         assert(index != nullptr);
 
-        auto first = seq.begin();
-        auto last = seq.end();
+        auto first = std::ranges::begin(seq);
+        auto last = std::ranges::end(seq);
 
     #ifndef NDEBUG
         fwd_cursor_last_used = (first != last); // only if seq was not empty
@@ -568,8 +567,8 @@ public:
         assert(index != nullptr);
 
         auto rev_seq = std::view::reverse(seq);
-        auto first = rev_seq.begin();
-        auto last = rev_seq.end();
+        auto first = std::ranges::begin(rev_seq);
+        auto last = std::ranges::end(rev_seq);
 
     #ifndef NDEBUG
         if (first != last) // only if seq was not empty

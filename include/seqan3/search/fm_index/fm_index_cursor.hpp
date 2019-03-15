@@ -17,8 +17,6 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <range/v3/view/iota.hpp>
-#include <range/v3/view/join.hpp>
 #include <range/v3/view/slice.hpp>
 
 #include <seqan3/alphabet/all.hpp>
@@ -313,9 +311,8 @@ public:
     //!\endcond
     bool extend_right(seq_t && seq) noexcept
     {
-        auto first = seq.begin();
-        auto last = seq.end();
-
+        auto first = std::ranges::begin(seq);
+        auto last = std::ranges::end(seq);
         assert(index != nullptr); // range must not be empty!
 
         size_type _lb = node.lb, _rb = node.rb;
