@@ -163,12 +163,14 @@ public:
     //!\brief Default constructor. Accessing member functions on a default constructed object is undefined behavior.
     //        Default construction is necessary to make this class semi-regular and e.g., to allow construction of
     //        std::array of iterators.
-    fm_index_cursor() noexcept = default;
-    fm_index_cursor(fm_index_cursor const &) noexcept = default;
-    fm_index_cursor & operator=(fm_index_cursor const &) noexcept = default;
-    fm_index_cursor(fm_index_cursor &&) noexcept = default;
-    fm_index_cursor & operator=(fm_index_cursor &&) noexcept = default;
+    fm_index_cursor() noexcept = default;                                    //!< Default constructor.
+    fm_index_cursor(fm_index_cursor const &) noexcept = default;             //!< Copy constructor.
+    fm_index_cursor & operator=(fm_index_cursor const &) noexcept = default; //!< Copy assignment.
+    fm_index_cursor(fm_index_cursor &&) noexcept = default;                  //!< Move constructor.
+    fm_index_cursor & operator=(fm_index_cursor &&) noexcept = default;      //!< Move assignment.
+    ~fm_index_cursor() = default;                                            //!< Destructor.
 
+    //! \brief Construct from given index.
     fm_index_cursor(index_t const & _index) noexcept : index(&_index), node({0, _index.index.size() - 1, 0, 0}),
                                                        sigma(_index.index.sigma - is_collection)
     {}

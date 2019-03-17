@@ -244,12 +244,14 @@ public:
     //!\brief Default constructor. Accessing member functions on a default constructed object is undefined behavior.
     //        Default construction is necessary to make this class semi-regular and e.g., to allow construction of
     //        std::array of cursors.
-    bi_fm_index_cursor() noexcept = default;
-    bi_fm_index_cursor(bi_fm_index_cursor const &) noexcept = default;
-    bi_fm_index_cursor & operator=(bi_fm_index_cursor const &) noexcept = default;
-    bi_fm_index_cursor(bi_fm_index_cursor &&) noexcept = default;
-    bi_fm_index_cursor & operator=(bi_fm_index_cursor &&) noexcept = default;
+    bi_fm_index_cursor() noexcept = default;                                       //!< Default constructor.
+    bi_fm_index_cursor(bi_fm_index_cursor const &) noexcept = default;             //!< Copy constructor.
+    bi_fm_index_cursor & operator=(bi_fm_index_cursor const &) noexcept = default; //!< Copy assignment.
+    bi_fm_index_cursor(bi_fm_index_cursor &&) noexcept = default;                  //!< Move constructor.
+    bi_fm_index_cursor & operator=(bi_fm_index_cursor &&) noexcept = default;      //!< Move assignment.
+    ~bi_fm_index_cursor() = default;                                               //!< Destructor.
 
+    //! \brief Construct from given index.
     bi_fm_index_cursor(index_t const & _index) noexcept : index(&_index),
                                                           fwd_lb(0), fwd_rb(_index.size() - 1),
                                                           rev_lb(0), rev_rb(_index.size() - 1),

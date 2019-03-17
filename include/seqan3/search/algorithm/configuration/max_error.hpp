@@ -80,12 +80,12 @@ public:
      * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr max_error()                              noexcept = default;
-    constexpr max_error(max_error const &)             noexcept = default;
-    constexpr max_error(max_error &&)                  noexcept = default;
-    constexpr max_error & operator=(max_error const &) noexcept = default;
-    constexpr max_error & operator=(max_error &&)      noexcept = default;
-    ~max_error()                                       noexcept = default;
+    constexpr max_error()                              noexcept = default; //!< Default constructor.
+    constexpr max_error(max_error const &)             noexcept = default; //!< Copy constructor.
+    constexpr max_error(max_error &&)                  noexcept = default; //!< Move constructor.
+    constexpr max_error & operator=(max_error const &) noexcept = default; //!< Copy assignment.
+    constexpr max_error & operator=(max_error &&)      noexcept = default; //!< Move assignment.
+    ~max_error()                                       noexcept = default; //!< Destructor.
 
     /*!\brief Constructs the object from a set of error specifiers.
      * \tparam    errors_t A template parameter pack with the error types.
