@@ -28,7 +28,7 @@ int main()
     // Configure the alignment kernel.
     auto config = align_cfg::mode{align_cfg::global_alignment} |
                   align_cfg::scoring{nucleotide_scoring_scheme{}} |
-                  align_cfg::aligned_ends{align_cfg::seq2_ends_free};
+                  align_cfg::aligned_ends{seq2_ends_free};
 
     for (auto const & res : align_pairwise(source, config))
         debug_stream << "Score: " << res.get_score() << '\n';

@@ -19,7 +19,7 @@ template <typename T>
 class alignment_configuration_test : public ::testing::Test
 {};
 
-using test_types = ::testing::Types<align_cfg::aligned_ends<std::remove_const_t<decltype(align_cfg::all_ends_free)>>,
+using test_types = ::testing::Types<align_cfg::aligned_ends<std::remove_const_t<decltype(all_ends_free)>>,
                                     align_cfg::band<static_band>,
                                     align_cfg::gap<gap_scheme<>>,
                                     align_cfg::max_error,

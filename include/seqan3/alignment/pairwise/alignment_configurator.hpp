@@ -257,7 +257,7 @@ public:
             // Use default edit distance if gaps are not set.
             auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
             auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
-            auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+            auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(none_ends_free);
 
             // Only use edit distance if ...
             if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
@@ -310,7 +310,7 @@ private:
         // ----------------------------------------------------------------------------
 
         // Get the value for the sequence ends configuration.
-        auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+        auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(none_ends_free);
         using align_ends_cfg_t = remove_cvref_t<decltype(align_ends_cfg)>;
 
         auto configure_edit_traits = [&](auto is_semi_global)
@@ -435,7 +435,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     // ----------------------------------------------------------------------------
 
     // Get the value for the sequence ends configuration.
-    auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+    auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(none_ends_free);
     using align_ends_cfg_t = decltype(align_ends_cfg);
 
     // This lambda augments the initialisation policy of the alignment algorithm
@@ -497,7 +497,7 @@ template <typename function_wrapper_t, typename ...policies_t, typename config_t
 constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum_search(config_t const & cfg)
 {
     // Get the value for the sequence ends configuration.
-    auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+    auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(none_ends_free);
     using align_ends_cfg_t = decltype(align_ends_cfg);
 
     // This lambda augments the find optimum policy of the alignment algorithm with the

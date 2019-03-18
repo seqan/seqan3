@@ -8,8 +8,7 @@ int main()
     using namespace seqan3;
 
     // Create an end_gaps object with one user defined static value and one user defined non-static value.
-    align_cfg::end_gaps eg{align_cfg::first_seq_leading{std::true_type{}},
-                           align_cfg::second_seq_leading{true}};
+    end_gaps eg{first_seq_leading{std::true_type{}}, second_seq_leading{true}};
 
     // Check if the first_seq_leading parameter contains static information.
     if constexpr (decltype(eg)::is_static<0>())
@@ -38,20 +37,19 @@ int main()
     using namespace seqan3;
 
     // Setup for overlap alignment.
-    align_cfg::aligned_ends overlap{align_cfg::all_ends_free};
+    align_cfg::aligned_ends overlap{all_ends_free};
 
     // Setup for global alignment.
-    align_cfg::aligned_ends global{align_cfg::none_ends_free};
+    align_cfg::aligned_ends global{none_ends_free};
 
     // Setup for semi-global alignment with free-end gaps in the first sequence.
-    align_cfg::aligned_ends semi_seq1{align_cfg::seq1_ends_free};
+    align_cfg::aligned_ends semi_seq1{seq1_ends_free};
 
     // Setup for semi-global alignment with free-end gaps in the second sequence.
-    align_cfg::aligned_ends semi_seq2{align_cfg::seq2_ends_free};
+    align_cfg::aligned_ends semi_seq2{seq2_ends_free};
 
     // Custom settings.
-    align_cfg::aligned_ends custom{align_cfg::end_gaps{align_cfg::first_seq_leading{std::true_type{}},
-                                                       align_cfg::second_seq_leading{std::true_type{}}}};
+    align_cfg::aligned_ends custom{end_gaps{first_seq_leading{std::true_type{}}, second_seq_leading{std::true_type{}}}};
 //! [aligned_ends]
 
     (void) overlap;

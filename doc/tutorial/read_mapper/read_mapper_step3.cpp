@@ -43,7 +43,7 @@ void map_reads(std::filesystem::path const & query_path,
 
 //! [alignment_config]
     configuration const align_config = align_cfg::edit |
-                                       align_cfg::aligned_ends{align_cfg::seq1_ends_free} |
+                                       align_cfg::aligned_ends{seq1_ends_free} |
                                        align_cfg::result{align_cfg::with_trace};
 //! [alignment_config]
 

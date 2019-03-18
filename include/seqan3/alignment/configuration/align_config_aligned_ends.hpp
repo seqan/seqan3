@@ -22,7 +22,7 @@
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
 
-namespace seqan3::align_cfg
+namespace seqan3
 {
 
 /*!\brief A mixin class which can maintain a static or a dynamic bool state.
@@ -34,7 +34,7 @@ namespace seqan3::align_cfg
  * \details
  *
  * This mixin base class provides an optional pattern regarding the static state of the represented value.
- * If the mixin is constructed from an std::integral_constant it will hold an static state of the wrapped value.
+ * If the mixin is constructed from an std::integral_constant, it will hold an static state of the wrapped value.
  * In the other case, when constructing it from a boolean, the state of the value will be dynamic.
  */
 template <typename value_t,
@@ -85,9 +85,9 @@ public:
  * Using a `bool` allows to dynamically set the value if the option is only known at runtime. If the option is
  * already known at compile time the static version will be the preferred option.
  *
- * \see first_seq_trailing
- * \see second_seq_leading
- * \see second_seq_trailing
+ * \see seqan3::first_seq_trailing
+ * \see seqan3::second_seq_leading
+ * \see seqan3::second_seq_trailing
  */
 template <typename value_t>
 struct first_seq_leading : public seq_end_gap_base<value_t>
@@ -98,7 +98,7 @@ struct first_seq_leading : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::first_seq_leading
+ * \relates seqan3::first_seq_leading
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -114,7 +114,7 @@ first_seq_leading(value_t) -> first_seq_leading<value_t>;
  * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::align_cfg::first_seq_leading
+ * \copydetails seqan3::first_seq_leading
  *
  * \see first_seq_leading
  * \see second_seq_leading
@@ -129,7 +129,7 @@ struct first_seq_trailing : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::first_seq_trailing
+ * \relates seqan3::first_seq_trailing
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -145,7 +145,7 @@ first_seq_trailing(value_t) -> first_seq_trailing<value_t>;
  * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::align_cfg::first_seq_leading
+ * \copydetails seqan3::first_seq_leading
  *
  * \see first_seq_leading
  * \see first_seq_trailing
@@ -160,7 +160,7 @@ struct second_seq_leading : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::second_seq_leading
+ * \relates seqan3::second_seq_leading
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -176,7 +176,7 @@ second_seq_leading(value_t) -> second_seq_leading<value_t>;
  * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
- * \copydetails seqan3::align_cfg::first_seq_leading
+ * \copydetails seqan3::first_seq_leading
  *
  * \see first_seq_leading
  * \see first_seq_trailing
@@ -191,7 +191,7 @@ struct second_seq_trailing : public seq_end_gap_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::second_seq_trailing
+ * \relates seqan3::second_seq_trailing
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
@@ -210,8 +210,8 @@ second_seq_trailing(value_t) -> second_seq_trailing<value_t>;
  * \details
  *
  * A wrapper for providing ordered access to the end-gap specifiers independent of the input order.
- * The possible input types can be: seqan3::align_cfg::first_seq_leading, seqan3::align_cfg::first_seq_trailing,
- * seqan3::align_cfg::second_seq_leading and seqan3::align_cfg::second_seq_trailing.
+ * The possible input types can be: seqan3::first_seq_leading, seqan3::first_seq_trailing,
+ * seqan3::second_seq_leading and seqan3::second_seq_trailing.
  * The types in the parameter pack `ends_t` are deduced by the corresponding constructor argument.
  * If a specifier is not set it will default to `false` and thus the respective end-gap will be penalised in the
  * pairwise alignment.
@@ -236,10 +236,10 @@ second_seq_trailing(value_t) -> second_seq_trailing<value_t>;
  * the alignment algorithm since the runtime information need to be translated into static information for the alignment
  * algorithm.
  *
- * \see seqan3::align_cfg::first_seq_leading
- * \see seqan3::align_cfg::first_seq_trailing
- * \see seqan3::align_cfg::second_seq_leading
- * \see seqan3::align_cfg::second_seq_trailing
+ * \see seqan3::first_seq_leading
+ * \see seqan3::first_seq_trailing
+ * \see seqan3::second_seq_leading
+ * \see seqan3::second_seq_trailing
  */
 template <typename ...ends_t>
 //!\cond
@@ -312,8 +312,8 @@ public:
      *
      * The sequence end-gap specifier are stored in an ordered fashion. The following position mapping will be used
      * to access the respective values:
-     * seqan3::align_cfg::first_seq_leading &rarr; 0; seqan3::align_cfg::first_seq_trailing &rarr; 1;
-     * seqan3::align_cfg::second_seq_leading &rarr; 2; seqan3::align_cfg::second_seq_trailing &rarr; 3.
+     * seqan3::first_seq_leading &rarr; 0; seqan3::first_seq_trailing &rarr; 1;
+     * seqan3::second_seq_leading &rarr; 2; seqan3::second_seq_trailing &rarr; 3.
      *
      * \returns `true` if the respective sequence end-gap is set to be free, `false` otherwise.
      */
@@ -330,8 +330,8 @@ public:
      *
      * The sequence end-gap specifier are stored in an ordered fashion. The following position mapping will be used
      * to access the respective values:
-     * seqan3::align_cfg::first_seq_leading &rarr; 0; seqan3::align_cfg::first_seq_trailing &rarr; 1;
-     * seqan3::align_cfg::second_seq_leading &rarr; 2; seqan3::align_cfg::second_seq_trailing &rarr; 3.
+     * seqan3::first_seq_leading &rarr; 0; seqan3::first_seq_trailing &rarr; 1;
+     * seqan3::second_seq_leading &rarr; 2; seqan3::second_seq_trailing &rarr; 3.
      *
      * \returns `true` if the respective sequence end-gap is set to be free, `false` otherwise.
      */
@@ -398,60 +398,13 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::end_gaps
+ * \relates seqan3::end_gaps
  * \{
  */
 
 //!\brief Deduces the end-gap specifier from the constructor arguments.
 template <typename ... ends_t>
 end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
-
-//!\}
-
-// ----------------------------------------------------------------------------
-// aligned_ends
-// ----------------------------------------------------------------------------
-
-/*!\brief The configuration for aligned sequence ends.
- * \ingroup alignment_configuration
- * \tparam end_gaps_t The type of the end-gaps. Must be of type seqan3::align_cfg::end_gaps.
- *
- * \details
- *
- * This configuration element configures the aligned ends to further refine the global alignment algorithm.
- * Particularly, the ends of the alignment can be penalised with gap costs or not. For example, the semi-global
- * alignment does not penalise the leading and trailing gaps of one sequence while it does for the other sequence.
- *
- * The class is instantiated with an object of seqan3::align_cfg::end_gaps. The user can configure each of the
- * gap specifier separately, such that it allows for maximal flexibility to configure the alignment algorithm.
- * However, there are also predefined \ref predefined_end_gap_configurations "configurations", which should be
- * preferred whenever possible.
- *
- * If this configuration element is not specified for the alignment algorithm, it will automatically default to
- * \ref seqan3::align_cfg::end_gaps::none_ends_free "none_ends_free", which computes a global alignment.
- *
- * ### Example
- *
- * \snippet snippet/alignment/configuration/align_cfg_aligned_ends_example.cpp aligned_ends
- */
-template <typename end_gaps_t>
-//!\cond
-    requires detail::is_type_specialisation_of_v<end_gaps_t, end_gaps>
-//!\endcond
-struct aligned_ends : public pipeable_config_element<aligned_ends<end_gaps_t>, end_gaps_t>
-{
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::aligned_ends};
-};
-
-/*!\name Type deduction guides
- * \relates seqan3::align_cfg::aligned_ends
- * \{
- */
-//!\brief Deduces the end-gaps object type from the constructor argument.
-template <typename end_gaps_t>
-aligned_ends(end_gaps_t) -> aligned_ends<std::remove_reference_t<end_gaps_t>>;
 //!\}
 
 // ----------------------------------------------------------------------------
@@ -461,7 +414,7 @@ aligned_ends(end_gaps_t) -> aligned_ends<std::remove_reference_t<end_gaps_t>>;
 /*!\name Predefined end-gaps configurations
  * \anchor predefined_end_gap_configurations
  * \brief These variables are pre-configured end-gaps that are frequently used in pairwise sequence alignments.
- * \relates seqan3::align_cfg::end_gaps
+ * \relates seqan3::end_gaps
  * \{
  */
 
@@ -553,3 +506,54 @@ inline constexpr end_gaps seq2_ends_free{first_seq_leading<std::false_type>{},
                                          second_seq_trailing<std::true_type>{}};
 //!\}
 } // namespace seqan3
+
+namespace seqan3::align_cfg
+{
+
+// ----------------------------------------------------------------------------
+// aligned_ends
+// ----------------------------------------------------------------------------
+
+/*!\brief The configuration for aligned sequence ends.
+ * \ingroup alignment_configuration
+ * \tparam end_gaps_t The type of the end-gaps. Must be of type seqan3::end_gaps.
+ *
+ * \details
+ *
+ * This configuration element configures the aligned ends to further refine the global alignment algorithm.
+ * Particularly, the ends of the alignment can be penalised with gap costs or not. For example, the semi-global
+ * alignment does not penalise the leading and trailing gaps of one sequence while it does for the other sequence.
+ *
+ * The class is instantiated with an object of seqan3::end_gaps. The user can configure each of the
+ * gap specifier separately, such that it allows for maximal flexibility to configure the alignment algorithm.
+ * However, there are also predefined \ref predefined_end_gap_configurations "configurations", which should be
+ * preferred whenever possible.
+ *
+ * If this configuration element is not specified for the alignment algorithm, it will automatically default to
+ * \ref seqan3::end_gaps::none_ends_free "none_ends_free", which computes a global alignment.
+ *
+ * ### Example
+ *
+ * \snippet snippet/alignment/configuration/align_cfg_aligned_ends_example.cpp aligned_ends
+ */
+template <typename end_gaps_t>
+//!\cond
+    requires detail::is_type_specialisation_of_v<end_gaps_t, end_gaps>
+//!\endcond
+struct aligned_ends : public pipeable_config_element<aligned_ends<end_gaps_t>, end_gaps_t>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::align_config_id id{detail::align_config_id::aligned_ends};
+};
+
+/*!\name Type deduction guides
+ * \relates seqan3::align_cfg::aligned_ends
+ * \{
+ */
+//!\brief Deduces the end-gaps object type from the constructor argument.
+template <typename end_gaps_t>
+aligned_ends(end_gaps_t) -> aligned_ends<std::remove_reference_t<end_gaps_t>>;
+//!\}
+
+} // namespace seqan3::align_cfg
