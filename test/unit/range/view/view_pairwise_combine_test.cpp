@@ -18,7 +18,6 @@
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/view/pairwise_combine.hpp>
 #include <seqan3/range/view/take.hpp>
-#include <seqan3/std/view/reverse.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 template <typename t>
@@ -26,8 +25,9 @@ class pairwise_combine_base_test : public ::testing::Test
 {
 public:
 
-    using view_t       = decltype(seqan3::detail::pairwise_combine_view{seqan3::view::all(std::declval<t &>())});
-    using const_view_t = decltype(seqan3::detail::pairwise_combine_view{seqan3::view::all(std::declval<t const &>())});
+    using view_t       = decltype(seqan3::detail::pairwise_combine_view{std::ranges::view::all(std::declval<t &>())});
+    using const_view_t = decltype(seqan3::detail::pairwise_combine_view{
+                                    std::ranges::view::all(std::declval<t const &>())});
 
     auto create_view()
     {
@@ -350,20 +350,14 @@ TYPED_TEST(pairwise_combine_iterator_test, order)
 
 TYPED_TEST(pairwise_combine_test, view_concept)
 {
+    EXPECT_TRUE(std::ranges::InputRange<typename TestFixture::view_t>);
     EXPECT_TRUE(std::ranges::ForwardRange<typename TestFixture::view_t>);
     EXPECT_TRUE(std::ranges::View<typename TestFixture::view_t>);
     EXPECT_FALSE((std::ranges::OutputRange<typename TestFixture::view_t, std::tuple<char &, char &>>));
-
-    if constexpr (std::ranges::BidirectionalRange<TypeParam>)
-    {
-        EXPECT_TRUE(std::ranges::BidirectionalRange<typename TestFixture::view_t>);
-    }
-
-    if constexpr (std::ranges::RandomAccessRange<TypeParam>)
-    {
-        EXPECT_TRUE(std::ranges::SizedRange<typename TestFixture::view_t>);
-        EXPECT_TRUE(std::ranges::RandomAccessRange<typename TestFixture::view_t>);
-    }
+    EXPECT_EQ(std::ranges::BidirectionalRange<TypeParam>,
+              std::ranges::BidirectionalRange<typename TestFixture::view_t>);
+    EXPECT_EQ(std::ranges::SizedRange<TypeParam>, std::ranges::SizedRange<typename TestFixture::view_t>);
+    EXPECT_EQ(std::ranges::RandomAccessRange<TypeParam>, std::ranges::RandomAccessRange<typename TestFixture::view_t>);
 }
 
 TYPED_TEST(pairwise_combine_test, basic_construction)
@@ -418,10 +412,10 @@ TYPED_TEST(pairwise_combine_test, iterate_reverse)
         using ref_t = seqan3::reference_t<std::ranges::iterator_t<decltype(v)>>;
         std::vector<ref_t> cmp;
 
-        for (auto r : v | seqan3::view::reverse)
+        for (auto r : v | std::ranges::view::reverse)
             cmp.push_back(r);
 
-        EXPECT_TRUE(ranges::equal(cmp, this->expect() | seqan3::view::reverse));
+        EXPECT_TRUE(ranges::equal(cmp, this->expect() | std::ranges::view::reverse));
     }
 }
 

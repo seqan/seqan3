@@ -17,7 +17,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/view_all.hpp>
 
 namespace seqan3::detail
 {
@@ -421,23 +420,39 @@ private:
 
 public:
 
-    //!\name Member types
+    //!\name Associated types
     //!\{
     //!\brief The iterator type.
-    using iterator = iterator_type<underlying_range_type>;
+    using iterator          = iterator_type<underlying_range_type>;
     //!\brief The const iterator type. Evaluates to void if the underlying range is not const iterable.
-    using const_iterator = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
-                                                     void>;
+    using const_iterator    = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
+                                                        void>;
+    //!\brief The reference_type.
+    using reference         = typename iterator::reference;
+    //!\brief The const_reference type is equal to the reference type.
+    using const_reference   = reference;
+    //!\brief The value_type (which equals the reference_type with any references removed).
+    using value_type        = typename iterator::value_type;
+    //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
+    using size_type         = detail::transformation_trait_or_t<seqan3::size_type<underlying_range_type>, void>;
+    //!\brief A signed integer type, usually std::ptrdiff_t.
+    using difference_type   = difference_type_t<iterator>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
+    //!\brief Default Default-Constructor.
     constexpr pairwise_combine_view() = default;
+    //!\brief Default Copy-Constructor.
     constexpr pairwise_combine_view(pairwise_combine_view const &) = default;
+    //!\brief Default Move-Constructor.
     constexpr pairwise_combine_view(pairwise_combine_view &&) = default;
+    //!\brief Default Copy-Assignment.
     constexpr pairwise_combine_view & operator=(pairwise_combine_view const &) = default;
+    //!\brief Default Move-Assignment.
     constexpr pairwise_combine_view & operator=(pairwise_combine_view &&) = default;
+    //!\brief Default Destructor.
     ~pairwise_combine_view() = default;
 
     /*!\brief Constructs from a view.
@@ -456,25 +471,25 @@ public:
      *
      * Constant if `underlying_range_type` models std::ranges::BidirectionalRange, otherwise linear.
      */
-    explicit constexpr pairwise_combine_view(underlying_range_type range) : src_range{std::move(range)}
+    explicit constexpr pairwise_combine_view(underlying_range_type range) : u_range{std::move(range)}
     {
         // Check if range is empty.
-        if (std::ranges::empty(src_range))
+        if (std::ranges::empty(u_range))
         {
-            back_iterator = std::ranges::end(src_range);
+            back_iterator = std::ranges::end(u_range);
         }
         else
         {
             if constexpr (std::ranges::BidirectionalRange<underlying_range_type>)
             { // Simply take one before the end. We can do this as we require underlying_range_type to be a common range.
-                back_iterator = std::ranges::prev(std::ranges::end(src_range));
+                back_iterator = std::ranges::prev(std::ranges::end(u_range));
             }
             else
             { // For all other cases we need to set the back_iterator in linear time to the correct position.
-                back_iterator = std::ranges::begin(src_range);
+                back_iterator = std::ranges::begin(u_range);
                 if constexpr (std::ranges::SizedRange<underlying_range_type>)
                 {
-                    std::ranges::advance(back_iterator, std::ranges::size(src_range) - 1);
+                    std::ranges::advance(back_iterator, std::ranges::size(u_range) - 1);
                 }
                 else // We don't have the size, so we need to increment until one before the end in a linear pass.
                 {
@@ -482,7 +497,7 @@ public:
                     do
                     {
                         back_iterator = tmp_it;
-                    } while (++tmp_it != std::ranges::end(src_range));
+                    } while (++tmp_it != std::ranges::end(u_range));
                 }
             }
         }
@@ -491,7 +506,7 @@ public:
     /*!\brief Constructs from a view.
      * \tparam    other_range_t  The type of the range to be wrapped with seqan3::detail::pairwise_combine_view;
      *                           must model std::ranges::ViewableRange and underlying_range_type must be constructible
-     *                           with other_range wrapped in view::all.
+     *                           with other_range wrapped in std::ranges::view::all.
      * \param[in] range          The underlying range to be wrapped.
      *
      * \details
@@ -514,10 +529,10 @@ public:
                  std::Constructible<underlying_range_type, ranges::ref_view<std::remove_reference_t<other_range_t>>>
             //TODO: Investigate: the following expression is equivalent to the one above but raises a weird assertion in
             //      the ranges adaptor suggesting that the pairwise_combine_view is not a ViewableRange.
-            //      std::Constructible<underlying_range_type, decltype(view::all(std::declval<other_range_t &&>()))>
+            //      std::Constructible<underlying_range_type, decltype(std::ranges::view::all(std::declval<other_range_t &&>()))>
     //!\endcond
     explicit constexpr pairwise_combine_view(other_range_t && range) :
-        pairwise_combine_view{view::all(std::forward<other_range_t>(range))}
+        pairwise_combine_view{std::ranges::view::all(std::forward<other_range_t>(range))}
     {}
 
     /*!\name Iterators
@@ -538,7 +553,7 @@ public:
      */
     constexpr iterator begin() noexcept
     {
-        return iterator{std::ranges::begin(src_range), std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
 
     //!\copydoc begin()
@@ -547,7 +562,7 @@ public:
         requires const_iterable_concept<underlying_range_type>
     //!\endcond
     {
-        return {std::ranges::begin(src_range), std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
 
     //!\copydoc begin()
@@ -574,7 +589,7 @@ public:
      */
     constexpr iterator end() noexcept
     {
-        return {back_iterator, std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
 
     //!\copydoc end()
@@ -583,7 +598,7 @@ public:
         requires const_iterable_concept<underlying_range_type>
     //!\endcond
     {
-        return {back_iterator, std::ranges::begin(src_range), std::ranges::end(src_range)};
+        return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
     }
 
     //!\copydoc end()
@@ -596,10 +611,23 @@ public:
     }
     //!\}
 
+    /*!\name Capacity
+     * \{
+     */
+    //!\brief Computes the size based on the size of the underlying range.
+    constexpr size_type size() const noexcept
+    //!\cond
+        requires std::ranges::SizedRange<underlying_range_type>
+    //!\endcond
+    {
+        return (std::ranges::size(u_range) * (std::ranges::size(u_range) - 1) / 2);
+    }
+    //!\}
+
 private:
 
     //!\brief The underling range.
-    underlying_range_type src_range{};
+    underlying_range_type u_range{};
     //!\brief The cached iterator pointing to the last element of the underlying range.
     std::ranges::iterator_t<underlying_range_type> back_iterator{};
 };
@@ -612,10 +640,10 @@ private:
 template <std::ranges::View other_range_t>
 pairwise_combine_view(other_range_t range) -> pairwise_combine_view<other_range_t>;
 
-//!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in seqan3::view::all.
+//!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::ranges::view::all.
 template <std::ranges::ViewableRange other_range_t>
 pairwise_combine_view(other_range_t && range) ->
-    pairwise_combine_view<decltype(view::all(std::declval<other_range_t &&>()))>;
+    pairwise_combine_view<decltype(std::ranges::view::all(std::declval<other_range_t &&>()))>;
 //!\}
 
 } // namespace seqan3::detail
@@ -626,7 +654,7 @@ namespace seqan3::view
  * \{
  */
 
-/*!\brief             A view adapter that generates all pairwise combinations of the elements of the underlying range.
+/*!\brief             A view adaptor that generates all pairwise combinations of the elements of the underlying range.
  * \tparam urng_t     The type of the range being processed. See below for requirements.
  * \param[in] urange  The range being processed.
  * \returns           A view over all pairwise combinations of the elements of the underlying range.
