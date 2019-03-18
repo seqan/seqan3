@@ -8,7 +8,7 @@ int main()
     using namespace seqan3;
 
     // Create an end_gaps object with one user defined static value and one user defined non-static value.
-    end_gaps eg{front_end_first{std::true_type{}}, second_seq_leading{true}};
+    end_gaps eg{front_end_first{std::true_type{}}, front_end_second{true}};
 
     // Check if the front_end_first parameter contains static information.
     if constexpr (decltype(eg)::is_static<0>())
@@ -49,7 +49,7 @@ int main()
     align_cfg::aligned_ends semi_seq2{seq2_ends_free};
 
     // Custom settings.
-    align_cfg::aligned_ends custom{end_gaps{front_end_first{std::true_type{}}, second_seq_leading{std::true_type{}}}};
+    align_cfg::aligned_ends custom{end_gaps{front_end_first{std::true_type{}}, front_end_second{std::true_type{}}}};
 //! [aligned_ends]
 
     (void) overlap;
