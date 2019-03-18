@@ -81,6 +81,12 @@ public:
             return false;
         }
     }
+
+    //!\brief Expects alignment configurations.
+    constexpr static bool expects_alignment_configuration()
+    {
+        return alignment_config_type::template exists<align_cfg::mode>();
+    }
 };
 
 /*!\brief Configures the alignment algorithm given the sequences and the configuration object.
@@ -239,6 +245,10 @@ public:
             // ----------------------------------------------------------------------------
 
             using alignment_contract_t = alignment_contract<remove_cvref_t<sequences_t>, config_t>;
+
+            static_assert(alignment_contract_t::expects_alignment_configuration(),
+                          "Alignment configuration error: "
+                          "The alignment can only be configured with alignment configurations.");
 
             static_assert(alignment_contract_t::expects_tuple_like_value_type(),
                           "Alignment configuration error: "
