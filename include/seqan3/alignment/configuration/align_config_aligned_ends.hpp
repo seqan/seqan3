@@ -85,7 +85,7 @@ public:
  * Using a `bool` allows to dynamically set the value if the option is only known at runtime. If the option is
  * already known at compile time the static version will be the preferred option.
  *
- * \see seqan3::first_seq_trailing
+ * \see seqan3::back_end_first
  * \see seqan3::second_seq_leading
  * \see seqan3::second_seq_trailing
  */
@@ -107,10 +107,10 @@ front_end_first(value_t) -> front_end_first<value_t>;
 //!\}
 
 // ----------------------------------------------------------------------------
-// first_seq_trailing
+// back_end_first
 // ----------------------------------------------------------------------------
 
-/*!\brief The penalty configuration for a aligning the back of the first sequence with a gap.
+/*!\brief The penalty configuration for aligning the back of the first sequence with a gap.
  * \ingroup alignment_configuration
  * \tparam value_t The type of the value to be wrapped. Can be of type std::true_type, std::false_type or bool.
  *
@@ -121,7 +121,7 @@ front_end_first(value_t) -> front_end_first<value_t>;
  * \see second_seq_trailing
  */
 template <typename value_t>
-struct first_seq_trailing : public sequence_end_gap_specifier_base<value_t>
+struct back_end_first : public sequence_end_gap_specifier_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -129,12 +129,12 @@ struct first_seq_trailing : public sequence_end_gap_specifier_base<value_t>
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::first_seq_trailing
+ * \relates seqan3::back_end_first
  * \{
  */
 //!\brief Deduces the template argument from the type of the wrapped value.
 template <typename value_t>
-first_seq_trailing(value_t) -> first_seq_trailing<value_t>;
+back_end_first(value_t) -> back_end_first<value_t>;
 //!\}
 
 // ----------------------------------------------------------------------------
@@ -148,7 +148,7 @@ first_seq_trailing(value_t) -> first_seq_trailing<value_t>;
  * \copydetails seqan3::front_end_first
  *
  * \see front_end_first
- * \see first_seq_trailing
+ * \see back_end_first
  * \see second_seq_trailing
  */
 template <typename value_t>
@@ -179,7 +179,7 @@ second_seq_leading(value_t) -> second_seq_leading<value_t>;
  * \copydetails seqan3::front_end_first
  *
  * \see front_end_first
- * \see first_seq_trailing
+ * \see back_end_first
  * \see second_seq_leading
  */
 template <typename value_t>
@@ -210,7 +210,7 @@ second_seq_trailing(value_t) -> second_seq_trailing<value_t>;
  * \details
  *
  * A wrapper for providing ordered access to the end-gap specifiers independent of the input order.
- * The possible input types can be: seqan3::front_end_first, seqan3::first_seq_trailing,
+ * The possible input types can be: seqan3::front_end_first, seqan3::back_end_first,
  * seqan3::second_seq_leading and seqan3::second_seq_trailing.
  * The types in the parameter pack `ends_t` are deduced by the corresponding constructor argument.
  * If a specifier is not set it will default to `false` and thus the respective end-gap will be penalised in the
@@ -237,7 +237,7 @@ second_seq_trailing(value_t) -> second_seq_trailing<value_t>;
  * algorithm.
  *
  * \see seqan3::front_end_first
- * \see seqan3::first_seq_trailing
+ * \see seqan3::back_end_first
  * \see seqan3::second_seq_leading
  * \see seqan3::second_seq_trailing
  */
@@ -245,7 +245,7 @@ template <typename ...ends_t>
 //!\cond
     requires sizeof...(ends_t) <= 4 &&
              ((detail::is_type_specialisation_of_v<ends_t, front_end_first> ||
-               detail::is_type_specialisation_of_v<ends_t, first_seq_trailing> ||
+               detail::is_type_specialisation_of_v<ends_t, back_end_first> ||
                detail::is_type_specialisation_of_v<ends_t, second_seq_leading>  ||
                detail::is_type_specialisation_of_v<ends_t, second_seq_trailing>) && ...)
 //!\endcond
@@ -312,7 +312,7 @@ public:
      *
      * The sequence end-gap specifier are stored in an ordered fashion. The following position mapping will be used
      * to access the respective values:
-     * seqan3::front_end_first &rarr; 0; seqan3::first_seq_trailing &rarr; 1;
+     * seqan3::front_end_first &rarr; 0; seqan3::back_end_first &rarr; 1;
      * seqan3::second_seq_leading &rarr; 2; seqan3::second_seq_trailing &rarr; 3.
      *
      * \returns `true` if the respective sequence end-gap is set to be free, `false` otherwise.
@@ -330,7 +330,7 @@ public:
      *
      * The sequence end-gap specifier are stored in an ordered fashion. The following position mapping will be used
      * to access the respective values:
-     * seqan3::front_end_first &rarr; 0; seqan3::first_seq_trailing &rarr; 1;
+     * seqan3::front_end_first &rarr; 0; seqan3::back_end_first &rarr; 1;
      * seqan3::second_seq_leading &rarr; 2; seqan3::second_seq_trailing &rarr; 3.
      *
      * \returns `true` if the respective sequence end-gap is set to be free, `false` otherwise.
@@ -433,7 +433,7 @@ end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
  * ```
  */
 inline constexpr end_gaps all_ends_free{front_end_first<std::true_type>{},
-                                        first_seq_trailing<std::true_type>{},
+                                        back_end_first<std::true_type>{},
                                         second_seq_leading<std::true_type>{},
                                         second_seq_trailing<std::true_type>{}};
 
@@ -455,7 +455,7 @@ inline constexpr end_gaps all_ends_free{front_end_first<std::true_type>{},
  * ```
  */
 inline constexpr end_gaps none_ends_free{front_end_first<std::false_type>{},
-                                         first_seq_trailing<std::false_type>{},
+                                         back_end_first<std::false_type>{},
                                          second_seq_leading<std::false_type>{},
                                          second_seq_trailing<std::false_type>{}};
 
@@ -478,7 +478,7 @@ inline constexpr end_gaps none_ends_free{front_end_first<std::false_type>{},
  * ```
  */
 inline constexpr end_gaps seq1_ends_free{front_end_first<std::true_type>{},
-                                         first_seq_trailing<std::true_type>{},
+                                         back_end_first<std::true_type>{},
                                          second_seq_leading<std::false_type>{},
                                          second_seq_trailing<std::false_type>{}};
 
@@ -501,7 +501,7 @@ inline constexpr end_gaps seq1_ends_free{front_end_first<std::true_type>{},
  * ```
  */
 inline constexpr end_gaps seq2_ends_free{front_end_first<std::false_type>{},
-                                         first_seq_trailing<std::false_type>{},
+                                         back_end_first<std::false_type>{},
                                          second_seq_leading<std::true_type>{},
                                          second_seq_trailing<std::true_type>{}};
 //!\}
