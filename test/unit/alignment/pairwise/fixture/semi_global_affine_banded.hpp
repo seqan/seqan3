@@ -30,7 +30,7 @@ inline constexpr auto align_config = align_cfg::mode{align_cfg::global_alignment
                                      align_cfg::band{static_band{lower_bound{-4}, upper_bound{8}}};
 
 inline constexpr auto align_config_semi_seq1 = align_config | align_cfg::aligned_ends{first_ends_free};
-inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned_ends{seq2_ends_free};
+inline constexpr auto align_config_semi_seq2 = align_config | align_cfg::aligned_ends{second_ends_free};
 
 static auto dna4_semi_seq1_a = []()
 {

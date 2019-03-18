@@ -12,7 +12,7 @@ int main()
     auto cfg_fast = align_cfg::edit | align_cfg::aligned_ends{first_ends_free};
 
     // Computes semi global edit distance using slower standard pairwise algorithm.
-    auto cfg_slow = align_cfg::edit | align_cfg::aligned_ends{seq2_ends_free};
+    auto cfg_slow = align_cfg::edit | align_cfg::aligned_ends{second_ends_free};
 //! [semi_global]
     (void) cfg_fast;
     (void) cfg_slow;

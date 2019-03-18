@@ -483,7 +483,7 @@ inline constexpr end_gaps first_ends_free{front_end_first<std::true_type>{},
                                           back_end_second<std::false_type>{}};
 
 // ----------------------------------------------------------------------------
-// seq2_ends_free
+// second_ends_free
 // ----------------------------------------------------------------------------
 
 /*!\brief Ends for the second sequence are free.
@@ -500,10 +500,10 @@ inline constexpr end_gaps first_ends_free{front_end_first<std::true_type>{},
  * TTTTTACGT---ATGTCCCCC
  * ```
  */
-inline constexpr end_gaps seq2_ends_free{front_end_first<std::false_type>{},
-                                         back_end_first<std::false_type>{},
-                                         front_end_second<std::true_type>{},
-                                         back_end_second<std::true_type>{}};
+inline constexpr end_gaps second_ends_free{front_end_first<std::false_type>{},
+                                           back_end_first<std::false_type>{},
+                                           front_end_second<std::true_type>{},
+                                           back_end_second<std::true_type>{}};
 //!\}
 } // namespace seqan3
 
@@ -525,12 +525,12 @@ namespace seqan3::align_cfg
  * alignment does not penalise the leading and trailing gaps of one sequence while it does for the other sequence.
  *
  * The class is instantiated with an object of seqan3::end_gaps. The user can configure each of the
- * gap specifier separately, such that it allows for maximal flexibility to configure the alignment algorithm.
- * However, there are also predefined \ref predefined_end_gap_configurations "configurations", which should be
+ * gap specifier separately allowing for maximal flexibility when configuring the alignment algorithm.
+ * However, there are also predefined \ref predefined_end_gap_configurations "configurations" which should be
  * preferred whenever possible.
  *
  * If this configuration element is not specified for the alignment algorithm, it will automatically default to
- * \ref seqan3::end_gaps::none_ends_free "none_ends_free", which computes a global alignment.
+ * \ref seqan3::end_gaps::none_ends_free "none_ends_free" which computes a global alignment.
  *
  * ### Example
  *

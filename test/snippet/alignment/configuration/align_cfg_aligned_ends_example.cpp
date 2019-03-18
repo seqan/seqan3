@@ -46,7 +46,7 @@ int main()
     align_cfg::aligned_ends semi_seq1{first_ends_free};
 
     // Setup for semi-global alignment with free-end gaps in the second sequence.
-    align_cfg::aligned_ends semi_seq2{seq2_ends_free};
+    align_cfg::aligned_ends semi_seq2{second_ends_free};
 
     // Custom settings.
     align_cfg::aligned_ends custom{end_gaps{front_end_first{std::true_type{}}, front_end_second{std::true_type{}}}};

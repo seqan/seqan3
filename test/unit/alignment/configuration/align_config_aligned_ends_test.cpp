@@ -328,13 +328,13 @@ TEST(end_gaps, first_ends_free)
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(first_ends_free)>, test>), true);
 }
 
-TEST(end_gaps, seq2_ends_free)
+TEST(end_gaps, second_ends_free)
 {
     using test = end_gaps<front_end_first<std::false_type>,
                           back_end_first<std::false_type>,
                           front_end_second<std::true_type>,
                           back_end_second<std::true_type>>;
-    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(seq2_ends_free)>, test>), true);
+    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(second_ends_free)>, test>), true);
 }
 
 TEST(align_cfg_aligned_ends, is_aggregate)
