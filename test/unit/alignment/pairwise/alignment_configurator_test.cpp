@@ -53,7 +53,7 @@ TEST(alignment_configurator, configure_edit_trace)
 
 TEST(alignment_configurator, configure_edit_semi)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::aligned_ends{seq1_ends_free}));
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::aligned_ends{first_ends_free}));
 }
 
 TEST(alignment_configurator, configure_edit_banded)

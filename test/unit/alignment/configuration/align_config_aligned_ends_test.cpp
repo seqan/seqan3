@@ -319,13 +319,13 @@ TEST(end_gaps, none_ends_free)
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(none_ends_free)>, test>), true);
 }
 
-TEST(end_gaps, seq1_ends_free)
+TEST(end_gaps, first_ends_free)
 {
     using test = end_gaps<front_end_first<std::true_type>,
                           back_end_first<std::true_type>,
                           front_end_second<std::false_type>,
                           back_end_second<std::false_type>>;
-    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(seq1_ends_free)>, test>), true);
+    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(first_ends_free)>, test>), true);
 }
 
 TEST(end_gaps, seq2_ends_free)
@@ -352,7 +352,7 @@ TEST(align_cfg_aligned_ends, id)
 
 TEST(align_cfg_aligned_ends, value)
 {
-    align_cfg::aligned_ends cfg{seq1_ends_free};
+    align_cfg::aligned_ends cfg{first_ends_free};
     using type = decltype(cfg.value);
 
     using test = end_gaps<front_end_first<std::true_type>,

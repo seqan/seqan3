@@ -460,7 +460,7 @@ inline constexpr end_gaps none_ends_free{front_end_first<std::false_type>{},
                                          back_end_second<std::false_type>{}};
 
 // ----------------------------------------------------------------------------
-// seq1_ends_free
+// first_ends_free
 // ----------------------------------------------------------------------------
 
 /*!\brief Ends of the first sequence are free.
@@ -477,10 +477,10 @@ inline constexpr end_gaps none_ends_free{front_end_first<std::false_type>{},
  * -----ACGTAAAACGT-----
  * ```
  */
-inline constexpr end_gaps seq1_ends_free{front_end_first<std::true_type>{},
-                                         back_end_first<std::true_type>{},
-                                         front_end_second<std::false_type>{},
-                                         back_end_second<std::false_type>{}};
+inline constexpr end_gaps first_ends_free{front_end_first<std::true_type>{},
+                                          back_end_first<std::true_type>{},
+                                          front_end_second<std::false_type>{},
+                                          back_end_second<std::false_type>{}};
 
 // ----------------------------------------------------------------------------
 // seq2_ends_free

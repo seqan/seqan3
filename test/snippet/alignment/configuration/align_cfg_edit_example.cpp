@@ -9,7 +9,7 @@ int main()
     using namespace seqan3;
 
     // Computes semi global edit distance using fast-bit vector algorithm.
-    auto cfg_fast = align_cfg::edit | align_cfg::aligned_ends{seq1_ends_free};
+    auto cfg_fast = align_cfg::edit | align_cfg::aligned_ends{first_ends_free};
 
     // Computes semi global edit distance using slower standard pairwise algorithm.
     auto cfg_slow = align_cfg::edit | align_cfg::aligned_ends{seq2_ends_free};

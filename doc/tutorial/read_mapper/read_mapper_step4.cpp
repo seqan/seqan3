@@ -53,7 +53,7 @@ void map_reads(std::filesystem::path const & query_path,
                                         search_cfg::mode{search_cfg::all_best};
 
     configuration const align_config = align_cfg::edit |
-                                       align_cfg::aligned_ends{seq1_ends_free} |
+                                       align_cfg::aligned_ends{first_ends_free} |
                                        align_cfg::result{align_cfg::with_trace};
 
     for (auto & [query, id, qual] : query_in)
