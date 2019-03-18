@@ -39,8 +39,8 @@ private:
     }
 };
 
-using static_end_gap_types = ::testing::Types<first_seq_leading<std::true_type>,
-                                              first_seq_leading<std::false_type>,
+using static_end_gap_types = ::testing::Types<front_end_first<std::true_type>,
+                                              front_end_first<std::false_type>,
                                               first_seq_trailing<std::true_type>,
                                               first_seq_trailing<std::false_type>,
                                               second_seq_leading<std::true_type>,
@@ -54,7 +54,7 @@ template <typename type>
 class dynamic_end_gap_test : public ::testing::Test
 {};
 
-using dynamic_end_gap_types = ::testing::Types<first_seq_leading<bool>,
+using dynamic_end_gap_types = ::testing::Types<front_end_first<bool>,
                                                first_seq_trailing<bool>,
                                                second_seq_leading<bool>,
                                                second_seq_trailing<bool>>;
@@ -67,20 +67,20 @@ TEST(sequence_end_gap_specifier_base, aggregate)
     EXPECT_TRUE((std::is_aggregate_v<dummy_gap<bool>>));
 }
 
-TEST(first_seq_leading, deduction)
+TEST(front_end_first, deduction)
 {
     { // static
-        first_seq_leading tmp{std::true_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), first_seq_leading<std::true_type>>), true);
-        first_seq_leading tmp2{std::false_type{}};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), first_seq_leading<std::false_type>>), true);
+        front_end_first tmp{std::true_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), front_end_first<std::true_type>>), true);
+        front_end_first tmp2{std::false_type{}};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), front_end_first<std::false_type>>), true);
     }
 
     { // dynamic
-        first_seq_leading tmp{true};
-        EXPECT_EQ((std::is_same_v<decltype(tmp), first_seq_leading<bool>>), true);
-        first_seq_leading tmp2{false};
-        EXPECT_EQ((std::is_same_v<decltype(tmp2), first_seq_leading<bool>>), true);
+        front_end_first tmp{true};
+        EXPECT_EQ((std::is_same_v<decltype(tmp), front_end_first<bool>>), true);
+        front_end_first tmp2{false};
+        EXPECT_EQ((std::is_same_v<decltype(tmp2), front_end_first<bool>>), true);
     }
 }
 
@@ -174,44 +174,44 @@ TEST(end_gaps, construction)
     }
 
     { // one element
-        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<first_seq_leading<std::true_type>>>));
-        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<first_seq_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<front_end_first<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<front_end_first<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<front_end_first<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<front_end_first<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<front_end_first<std::true_type>>>));
 
-        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<first_seq_leading<std::true_type>>>));
+        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<front_end_first<std::true_type>>>));
     }
 
     { // four elements
-        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+        EXPECT_TRUE((std::is_nothrow_default_constructible_v<end_gaps<front_end_first<std::true_type>,
                                                                       second_seq_leading<bool>,
                                                                       first_seq_trailing<std::false_type>,
                                                                       second_seq_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+        EXPECT_TRUE((std::is_nothrow_copy_constructible_v<end_gaps<front_end_first<std::true_type>,
                                                                    second_seq_leading<bool>,
                                                                    first_seq_trailing<std::false_type>,
                                                                    second_seq_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+        EXPECT_TRUE((std::is_nothrow_move_constructible_v<end_gaps<front_end_first<std::true_type>,
                                                                    second_seq_leading<bool>,
                                                                    first_seq_trailing<std::false_type>,
                                                                    second_seq_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<first_seq_leading<std::true_type>,
+        EXPECT_TRUE((std::is_nothrow_copy_assignable_v<end_gaps<front_end_first<std::true_type>,
                                                                 second_seq_leading<bool>,
                                                                 first_seq_trailing<std::false_type>,
                                                                 second_seq_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<first_seq_leading<std::true_type>,
+        EXPECT_TRUE((std::is_nothrow_move_assignable_v<end_gaps<front_end_first<std::true_type>,
                                                                 second_seq_leading<bool>,
                                                                 first_seq_trailing<std::false_type>,
                                                                 second_seq_trailing<bool>>>));
-        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<first_seq_leading<std::true_type>,
+        EXPECT_TRUE((std::is_nothrow_constructible_v<end_gaps<front_end_first<std::true_type>,
                                                               second_seq_leading<bool>,
                                                               first_seq_trailing<std::false_type>,
                                                               second_seq_trailing<bool>>>));
     }
 
     { // from lvalue
-        first_seq_leading fsl{std::true_type{}};
+        front_end_first fsl{std::true_type{}};
         EXPECT_TRUE(end_gaps{fsl}[0]);
     }
 }
@@ -230,8 +230,8 @@ TEST(end_gaps, deduction)
     }
 
     { // multiple elements
-        end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
-        using foo = end_gaps<second_seq_trailing<bool>, first_seq_leading<std::true_type>, second_seq_leading<std::false_type>>;
+        end_gaps eg{second_seq_trailing{true}, front_end_first{std::true_type{}}, second_seq_leading{std::false_type{}}};
+        using foo = end_gaps<second_seq_trailing<bool>, front_end_first<std::true_type>, second_seq_leading<std::false_type>>;
         EXPECT_EQ((std::is_same_v<decltype(eg), foo>), true);
     }
 }
@@ -248,7 +248,7 @@ TEST(end_gaps, access)
     }
 
     { // custom
-        end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
+        end_gaps eg{second_seq_trailing{true}, front_end_first{std::true_type{}}, second_seq_leading{std::false_type{}}};
 
         EXPECT_EQ(eg[0], true);
         EXPECT_EQ(eg[1], false);
@@ -273,7 +273,7 @@ TEST(end_gaps, static_query)
     }
 
     { // custom
-        end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
+        end_gaps eg{second_seq_trailing{true}, front_end_first{std::true_type{}}, second_seq_leading{std::false_type{}}};
 
         constexpr bool seq1_l = decltype(eg)::is_static<0>();
         constexpr bool seq1_t = decltype(eg)::is_static<1>();
@@ -289,7 +289,7 @@ TEST(end_gaps, static_query)
 
 TEST(end_gaps, static_access)
 {
-    end_gaps eg{second_seq_trailing{true}, first_seq_leading{std::true_type{}}, second_seq_leading{std::false_type{}}};
+    end_gaps eg{second_seq_trailing{true}, front_end_first{std::true_type{}}, second_seq_leading{std::false_type{}}};
 
     constexpr bool seq1_l = decltype(eg)::get_static<0>();
     constexpr bool seq2_l = decltype(eg)::get_static<2>();
@@ -302,7 +302,7 @@ TEST(end_gaps, static_access)
 
 TEST(end_gaps, all_ends_free)
 {
-    using test = end_gaps<first_seq_leading<std::true_type>,
+    using test = end_gaps<front_end_first<std::true_type>,
                           first_seq_trailing<std::true_type>,
                           second_seq_leading<std::true_type>,
                           second_seq_trailing<std::true_type>>;
@@ -311,7 +311,7 @@ TEST(end_gaps, all_ends_free)
 
 TEST(end_gaps, none_ends_free)
 {
-    using test = end_gaps<first_seq_leading<std::false_type>,
+    using test = end_gaps<front_end_first<std::false_type>,
                           first_seq_trailing<std::false_type>,
                           second_seq_leading<std::false_type>,
                           second_seq_trailing<std::false_type>>;
@@ -321,7 +321,7 @@ TEST(end_gaps, none_ends_free)
 
 TEST(end_gaps, seq1_ends_free)
 {
-    using test = end_gaps<first_seq_leading<std::true_type>,
+    using test = end_gaps<front_end_first<std::true_type>,
                           first_seq_trailing<std::true_type>,
                           second_seq_leading<std::false_type>,
                           second_seq_trailing<std::false_type>>;
@@ -330,7 +330,7 @@ TEST(end_gaps, seq1_ends_free)
 
 TEST(end_gaps, seq2_ends_free)
 {
-    using test = end_gaps<first_seq_leading<std::false_type>,
+    using test = end_gaps<front_end_first<std::false_type>,
                           first_seq_trailing<std::false_type>,
                           second_seq_leading<std::true_type>,
                           second_seq_trailing<std::true_type>>;
@@ -355,7 +355,7 @@ TEST(align_cfg_aligned_ends, value)
     align_cfg::aligned_ends cfg{seq1_ends_free};
     using type = decltype(cfg.value);
 
-    using test = end_gaps<first_seq_leading<std::true_type>,
+    using test = end_gaps<front_end_first<std::true_type>,
                           first_seq_trailing<std::true_type>,
                           second_seq_leading<std::false_type>,
                           second_seq_trailing<std::false_type>>;
