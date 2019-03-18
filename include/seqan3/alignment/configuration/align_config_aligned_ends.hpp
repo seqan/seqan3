@@ -292,13 +292,13 @@ public:
     ~end_gaps()                                      noexcept = default;
 
     //!\brief Construction from at least one sequence end-gap specifier.
-    constexpr end_gaps(ends_t && ...args) noexcept
+    constexpr end_gaps(ends_t const ...args) noexcept
         requires sizeof...(ends_t) > 0
     {
         detail::for_each_value([this](auto e)
         {
             values[remove_cvref_t<decltype(e)>::id()] = e();
-        }, std::forward<ends_t>(args)...);
+        }, args...);
     }
     //\!}
 
@@ -404,7 +404,7 @@ private:
 
 //!\brief Deduces the end-gap specifier from the constructor arguments.
 template <typename ... ends_t>
-end_gaps(ends_t && ...) -> end_gaps<std::remove_reference_t<ends_t>...>;
+end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
 
 //!\}
 

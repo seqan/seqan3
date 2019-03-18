@@ -209,6 +209,11 @@ TEST(end_gaps, construction)
                                                               first_seq_trailing<std::false_type>,
                                                               second_seq_trailing<bool>>>));
     }
+
+    { // from lvalue
+        first_seq_leading fsl{std::true_type{}};
+        EXPECT_TRUE(end_gaps{fsl}[0]);
+    }
 }
 
 TEST(end_gaps, deduction)
