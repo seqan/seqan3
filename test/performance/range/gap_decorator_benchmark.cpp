@@ -27,16 +27,15 @@
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/std/ranges>
 
-//#include "gapped_sequence.hpp"
-
 namespace seqan3
 {
 /* Mocked gap decorator using a modifyable container of the union type of gap and
  * alphabet. This class serves for comparison with decorators that take a reference
  * to the underlying sequence and do not modify it.
  */
-template<std::ranges::RandomAccessRange inner_type>
-    requires std::ranges::SizedRange<inner_type>
+template<std::ranges::ViewableRange inner_type>
+requires std::ranges::RandomAccessRange<inner_type> && std::ranges::SizedRange<inner_type> &&
+         (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::View<inner_type>)
 class gapped_sequence
 {
 private:
@@ -165,6 +164,7 @@ public:
     constexpr gapped_sequence(gapped_sequence && rhs) = default;
     constexpr gapped_sequence & operator=(gapped_sequence && rhs) = default;
     ~gapped_sequence() = default;
+    // upon construction by reference create local sequence
     constexpr gapped_sequence(inner_type const & range)
     {
         for (auto elem : range)
@@ -345,9 +345,10 @@ template <template <typename> typename gap_decorator_t,
        template<typename> typename ungapped_range_t, typename alphabet_t, bool gapped_flag>
 static void read_left2right(benchmark::State& state)
 {
+    using range_reference_t = const ungapped_range_t<alphabet_t> &;
     unsigned int seq_len = state.range(0);
-    using size_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::size_type;
-    using iterator_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::iterator;
+    using size_type = typename gap_decorator_t<range_reference_t>::size_type;
+    using iterator_type = typename gap_decorator_t<range_reference_t>::iterator;
     using sequence_type = ungapped_range_t<alphabet_t>;
     sequence_type seq(seq_len, 'A'_dna4);
 
@@ -360,11 +361,11 @@ static void read_left2right(benchmark::State& state)
         resize<size_type, sequence_type>(gaps, seq, seq_len);
 
     // initialize with (truncated) sequence and insert gaps from left to right
-    gap_decorator_t<ungapped_range_t<alphabet_t>> gap_decorator(seq);
+    gap_decorator_t<range_reference_t> gap_decorator(seq);
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, iterator_type, gap_decorator_t<ungapped_range_t<alphabet_t>>>(gaps, gap_decorator);
+        insert_gaps<size_type, iterator_type, gap_decorator_t<range_reference_t>>(gaps, gap_decorator);
 
     size_t op_ctr = 0;
     for (auto _ : state)
@@ -387,6 +388,7 @@ BENCHMARK_TEMPLATE(read_left2right, gapped_sequence, std::vector, dna4, false)->
 BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set, std::vector, dna4, true)->Range(1<<2, 1<<15);
 BENCHMARK_TEMPLATE(read_left2right, gapped_sequence, std::vector, dna4, true)->Range(1<<2, 1<<15);
 
+
 // ============================================================================
 //  read at random position
 // ============================================================================
@@ -397,13 +399,15 @@ BENCHMARK_TEMPLATE(read_left2right, gapped_sequence, std::vector, dna4, true)->R
  * seq_len              final sequence length including gap symbols
  * gapped_flag          operate on already gapped (true) or ungapped sequence (false)
  */
+
 template <template <typename> typename gap_decorator_t,
           template<typename> typename ungapped_range_t, typename alphabet_t, bool gapped_flag>
 static void read_random(benchmark::State& state)
 {
+    using range_reference_t = const ungapped_range_t<alphabet_t> &;
     unsigned int seq_len = state.range(0);
-    using size_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::size_type;
-    using iterator_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::iterator;
+    using size_type = typename gap_decorator_t<range_reference_t>::size_type;
+    using iterator_type = typename gap_decorator_t<range_reference_t>::iterator;
     using sequence_type = ungapped_range_t<alphabet_t>;
     sequence_type seq(seq_len, 'A'_dna4);
 
@@ -416,11 +420,11 @@ static void read_random(benchmark::State& state)
         resize<size_type, sequence_type>(gaps, seq, seq_len);
 
     // initialize with (truncated) sequence and insert gaps from left to right
-    gap_decorator_t<ungapped_range_t<alphabet_t>> gap_decorator(seq);
+    gap_decorator_t<range_reference_t> gap_decorator(seq);
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, iterator_type, gap_decorator_t<ungapped_range_t<alphabet_t>>>(gaps, gap_decorator);
+        insert_gaps<size_type, iterator_type, gap_decorator_t<range_reference_t>>(gaps, gap_decorator);
 
     std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
     std::uniform_real_distribution<> uni_dis(0.0, static_cast<double>(seq_len));
@@ -455,9 +459,10 @@ template <template <typename> typename gap_decorator_t,
        template<typename> typename ungapped_range_t, typename alphabet_t, bool gapped_flag>
 static void insert_left2right(benchmark::State& state)
 {
+    using range_reference_t = const ungapped_range_t<alphabet_t> &;
     unsigned int seq_len = state.range(0);
-    using size_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::size_type;
-    using iterator_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::iterator;
+    using size_type = typename gap_decorator_t<range_reference_t>::size_type;
+    using iterator_type = typename gap_decorator_t<range_reference_t>::iterator;
     using sequence_type = ungapped_range_t<alphabet_t>;
     sequence_type seq(seq_len, 'A'_dna4);
 
@@ -470,11 +475,11 @@ static void insert_left2right(benchmark::State& state)
         resize<size_type, sequence_type>(gaps, seq, seq_len);
 
     // initialize with (truncated) sequence and insert gaps from left to right
-    gap_decorator_t<ungapped_range_t<alphabet_t>> gap_decorator(seq);
+    gap_decorator_t<range_reference_t> gap_decorator(seq);
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, iterator_type, gap_decorator_t<ungapped_range_t<alphabet_t>>>(gaps, gap_decorator);
+        insert_gaps<size_type, iterator_type, gap_decorator_t<range_reference_t>>(gaps, gap_decorator);
 
     size_t op_ctr = 0;
     for (auto _ : state)
@@ -505,9 +510,10 @@ template <template <typename> typename gap_decorator_t,
        template<typename> typename ungapped_range_t, typename alphabet_t, bool gapped_flag>
 static void insert_right2left(benchmark::State& state)
 {
+    using range_reference_t = const ungapped_range_t<alphabet_t> &;
     unsigned int seq_len = state.range(0);
-    using size_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::size_type;
-    using iterator_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::iterator;
+    using size_type = typename gap_decorator_t<range_reference_t>::size_type;
+    using iterator_type = typename gap_decorator_t<range_reference_t>::iterator;
     using sequence_type = ungapped_range_t<alphabet_t>;
     sequence_type seq(seq_len, 'A'_dna4);
 
@@ -520,11 +526,11 @@ static void insert_right2left(benchmark::State& state)
         resize<size_type, sequence_type>(gaps, seq, seq_len);
 
     // initialize with (truncated) sequence and insert gaps from left to right
-    gap_decorator_t<ungapped_range_t<alphabet_t>> gap_decorator(seq);
+    gap_decorator_t<range_reference_t> gap_decorator(seq);
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, iterator_type, gap_decorator_t<ungapped_range_t<alphabet_t>>>(gaps, gap_decorator);
+        insert_gaps<size_type, iterator_type, gap_decorator_t<range_reference_t>>(gaps, gap_decorator);
 
     size_t op_ctr = 0;
     for (auto _ : state)
@@ -555,9 +561,10 @@ template <template <typename> typename gap_decorator_t,
        template<typename> typename ungapped_range_t, typename alphabet_t, bool gapped_flag>
 static void insert_random(benchmark::State& state)
 {
+    using range_reference_t = const ungapped_range_t<alphabet_t> &;
     unsigned int seq_len = state.range(0);
-    using size_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::size_type;
-    using iterator_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::iterator;
+    using size_type = typename gap_decorator_t<range_reference_t>::size_type;
+    using iterator_type = typename gap_decorator_t<range_reference_t>::iterator;
     using sequence_type = ungapped_range_t<alphabet_t>;
     sequence_type seq(seq_len, 'A'_dna4);
 
@@ -570,11 +577,11 @@ static void insert_random(benchmark::State& state)
         resize<size_type, sequence_type>(gaps, seq, seq_len);
 
     // initialize with (truncated) sequence and insert gaps from left to right
-    gap_decorator_t<ungapped_range_t<alphabet_t>> gap_decorator(seq);
+    gap_decorator_t<range_reference_t> gap_decorator(seq);
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, iterator_type, gap_decorator_t<ungapped_range_t<alphabet_t>>>(gaps, gap_decorator);
+        insert_gaps<size_type, iterator_type, gap_decorator_t<range_reference_t>>(gaps, gap_decorator);
 
     std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
     std::uniform_real_distribution<> uni_dis(0.0, static_cast<double>(seq_len));
@@ -608,9 +615,10 @@ template <template <typename> typename gap_decorator_t,
        template<typename> typename ungapped_range_t, typename alphabet_t, bool gapped_flag>
 static void delete_random(benchmark::State& state)
 {
+    using range_reference_t = const ungapped_range_t<alphabet_t> &;
     unsigned int seq_len = state.range(0);
-    using size_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::size_type;
-    using iterator_type = typename gap_decorator_t<ungapped_range_t<alphabet_t>>::iterator;
+    using size_type = typename gap_decorator_t<range_reference_t>::size_type;
+    using iterator_type = typename gap_decorator_t<range_reference_t>::iterator;
     using sequence_type = ungapped_range_t<alphabet_t>;
     sequence_type seq(seq_len, 'A'_dna4);
 
@@ -623,11 +631,11 @@ static void delete_random(benchmark::State& state)
         resize<size_type, sequence_type>(gaps, seq, seq_len);
 
     // initialize with (truncated) sequence and insert gaps from left to right
-    gap_decorator_t<ungapped_range_t<alphabet_t>> gap_decorator(seq);
+    gap_decorator_t<range_reference_t> gap_decorator(seq);
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, iterator_type, gap_decorator_t<ungapped_range_t<alphabet_t>>>(gaps, gap_decorator);
+        insert_gaps<size_type, iterator_type, gap_decorator_t<range_reference_t>>(gaps, gap_decorator);
 
     std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
     std::uniform_real_distribution<> uni_dis(0.0, static_cast<double>(seq_len));
