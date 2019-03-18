@@ -19,7 +19,7 @@ using namespace seqan3;
 using namespace seqan3::align_cfg;
 
 template <typename value_t>
-struct dummy_gap : seq_end_gap_base<value_t>
+struct dummy_gap : sequence_end_gap_specifier_base<value_t>
 {};
 
 template <typename type>
@@ -61,7 +61,7 @@ using dynamic_end_gap_types = ::testing::Types<first_seq_leading<bool>,
 
 TYPED_TEST_CASE(dynamic_end_gap_test, dynamic_end_gap_types);
 
-TEST(seq_end_gap_base, aggregate)
+TEST(sequence_end_gap_specifier_base, aggregate)
 {
     EXPECT_TRUE((std::is_aggregate_v<dummy_gap<std::true_type>>));
     EXPECT_TRUE((std::is_aggregate_v<dummy_gap<bool>>));

@@ -43,7 +43,7 @@ template <typename value_t,
 //!\cond
     requires std::Same<value_t, std::true_type> || std::Same<value_t, std::false_type> || std::Same<value_t, bool>
 //!\endcond
-struct seq_end_gap_base
+struct sequence_end_gap_specifier_base
 {
 protected:
 
@@ -90,7 +90,7 @@ public:
  * \see seqan3::second_seq_trailing
  */
 template <typename value_t>
-struct first_seq_leading : public seq_end_gap_base<value_t>
+struct first_seq_leading : public sequence_end_gap_specifier_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -121,7 +121,7 @@ first_seq_leading(value_t) -> first_seq_leading<value_t>;
  * \see second_seq_trailing
  */
 template <typename value_t>
-struct first_seq_trailing : public seq_end_gap_base<value_t>
+struct first_seq_trailing : public sequence_end_gap_specifier_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -152,7 +152,7 @@ first_seq_trailing(value_t) -> first_seq_trailing<value_t>;
  * \see second_seq_trailing
  */
 template <typename value_t>
-struct second_seq_leading : public seq_end_gap_base<value_t>
+struct second_seq_leading : public sequence_end_gap_specifier_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
@@ -183,7 +183,7 @@ second_seq_leading(value_t) -> second_seq_leading<value_t>;
  * \see second_seq_leading
  */
 template <typename value_t>
-struct second_seq_trailing : public seq_end_gap_base<value_t>
+struct second_seq_trailing : public sequence_end_gap_specifier_base<value_t>
 {
     //!\privatesection
     //!\brief An internal id to allow consistency checks with other gap specifiers.
