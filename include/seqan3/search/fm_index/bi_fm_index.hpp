@@ -15,11 +15,11 @@
 #include <utility>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -81,9 +81,9 @@ public:
     using text_type = text_t;
     //!\brief The type of the forward indexed text.
     using rev_text_type = std::conditional_t<is_collection,
-                                             decltype(*text | view::deep{view::reverse} | view::deep{view::persist}
-                                                            | view::reverse),
-                                             decltype(*text | view::reverse)>;
+                                             decltype(*text | view::deep{std::view::reverse} | view::deep{view::persist}
+                                                            | std::view::reverse),
+                                             decltype(*text | std::view::reverse)>;
     //!\}
 
 protected:
@@ -209,21 +209,21 @@ public:
 
         this->text = &text;
         if constexpr(is_collection)
-            rev_text = text | view::deep{view::reverse} | view::deep{view::persist} | view::reverse;
+            rev_text = text | view::deep{std::view::reverse} | view::deep{view::persist} | std::view::reverse;
         else
-            rev_text = view::reverse(text);
+            rev_text = std::view::reverse(text);
         fwd_fm.construct(text);
         rev_fm.construct(rev_text);
 
         // does not work yet. segmentation fault in bi_fm_index_cursor snippet
         // bi_fm_index tmp;
         // tmp.text = &text;
-        // tmp.rev_text = view::reverse(*tmp.text);
+        // tmp.rev_text = std::view::reverse(*tmp.text);
         // tmp.fwd_fm.construct(*tmp.text);
         // tmp.rev_fm.construct(tmp.rev_text);
         // std::swap(*this, tmp);
         // this->text = &text;
-        // rev_text = view::reverse(text);
+        // rev_text = std::view::reverse(text);
     }
 
     //!\overload
@@ -343,12 +343,12 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool load(filesystem::path const & path)
+    bool load(std::filesystem::path const & path)
     {
-        filesystem::path path_fwd{path};
-        filesystem::path path_rev{path};
-        path_fwd += filesystem::path{".fwd"};
-        path_rev += filesystem::path{".rev"};
+        std::filesystem::path path_fwd{path};
+        std::filesystem::path path_rev{path};
+        path_fwd += std::filesystem::path{".fwd"};
+        path_rev += std::filesystem::path{".rev"};
         return fwd_fm.load(path_fwd) && rev_fm.load(path_rev);
     }
 
@@ -364,12 +364,12 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool store(filesystem::path const & path) const
+    bool store(std::filesystem::path const & path) const
     {
-        filesystem::path path_fwd{path};
-        filesystem::path path_rev{path};
-        path_fwd += filesystem::path{".fwd"};
-        path_rev += filesystem::path{".rev"};
+        std::filesystem::path path_fwd{path};
+        std::filesystem::path path_rev{path};
+        path_fwd += std::filesystem::path{".fwd"};
+        path_rev += std::filesystem::path{".rev"};
         return fwd_fm.store(path_fwd) && rev_fm.store(path_rev);
     }
 

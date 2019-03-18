@@ -22,7 +22,7 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -567,7 +567,7 @@ public:
     {
         assert(index != nullptr);
 
-        auto rev_seq = view::reverse(seq);
+        auto rev_seq = std::view::reverse(seq);
         auto first = rev_seq.begin();
         auto last = rev_seq.end();
 
@@ -879,7 +879,7 @@ public:
 
         size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
         size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return *index->text | ranges::view::join | ranges::view::slice(query_begin, query_begin + query_length());
+        return *index->text | std::view::join | ranges::view::slice(query_begin, query_begin + query_length());
     }
 
     //!\copydoc query()
@@ -973,8 +973,8 @@ public:
     {
         assert(index != nullptr);
 
-        return ranges::view::iota(fwd_lb, fwd_lb + count())
-             | view::transform([*this, _offset = offset()] (auto sa_pos)
+        return std::view::iota(fwd_lb, fwd_lb + count())
+             | std::view::transform([*this, _offset = offset()] (auto sa_pos)
                {
                    return _offset - index->fwd_fm.index[sa_pos];
                });
@@ -988,12 +988,12 @@ public:
     {
         assert(index != nullptr);
 
-        return ranges::view::iota(fwd_lb, fwd_lb + count())
-               | view::transform([*this, _offset = offset()] (auto sa_pos)
+        return std::view::iota(fwd_lb, fwd_lb + count())
+               | std::view::transform([*this, _offset = offset()] (auto sa_pos)
                {
                    return _offset - index->fwd_fm.index[sa_pos];
                })
-               | view::transform([*this] (auto loc)
+               | std::view::transform([*this] (auto loc)
                {
                    size_type sequence_rank = index->fwd_fm.text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->fwd_fm.text_begin_ss.select(sequence_rank);

@@ -20,7 +20,7 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_base.hpp>
@@ -79,7 +79,7 @@ private:
     static constexpr bool is_banded = std::remove_reference_t<config_t>::template exists<align_cfg::band>();
 
 public:
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
      */
@@ -128,13 +128,17 @@ public:
      * and at most \f$ O(N^2) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t const & first_range, second_range_t const & second_range)
+    auto operator()(first_range_t && first_range, second_range_t && second_range)
         requires !is_banded
     {
         assert(cfg_ptr != nullptr);
 
+        // ----------------------------------------------------------------------------
+        // Initialise dp algorithm.
+        // ----------------------------------------------------------------------------
+
         // We need to allocate the score_matrix and maybe the trace_matrix.
-        this->allocate_score_matrix(first_range, second_range);
+        this->allocate_matrix(first_range, second_range);
 
         // Initialise cache variables to keep frequently used variables close to the CPU registers.
         auto cache = this->make_cache(cfg_ptr->template value_or<align_cfg::gap>(gap_scheme{gap_score{-1},
@@ -142,15 +146,46 @@ public:
 
         initialise_matrix(cache);
 
+        // ----------------------------------------------------------------------------
+        // Compute the unbanded alignment.
+        // ----------------------------------------------------------------------------
+
         compute_matrix(first_range, second_range, cache);
+
+        // ----------------------------------------------------------------------------
+        // Cleanup and prepare the alignment result.
+        // ----------------------------------------------------------------------------
 
         using result_t = typename align_result_selector<first_range_t, second_range_t, config_t>::type;
         result_t res{};
 
         // Choose what needs to be computed.
-        if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_score_type>>())
         {
-            res.score = get<3>(cache);
+            res.score = get<3>(cache).score;
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = get<3>(cache).coordinate;
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
+        { // At the moment we also compute the traceback even if only the begin coordinate was requested.
+          // This can be later optimised by computing the reverse alignment in a narrow band in linear memory.
+          // Especially for the SIMD version this might be more efficient.
+            res.score = get<3>(cache).score;
+            res.end_coordinate = get<3>(cache).coordinate;
+            res.begin_coordinate = get<0>(compute_traceback(first_range,
+                                                            second_range,
+                                                            get<3>(cache).coordinate));
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = get<3>(cache).coordinate;
+            std::tie(res.begin_coordinate, res.alignment) = compute_traceback(first_range,
+                                                                              second_range,
+                                                                              get<3>(cache).coordinate);
         }
         return align_result{res};
     }
@@ -183,7 +218,7 @@ public:
      * and at most \f$ O(N*k) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t const & first_range, second_range_t const & second_range)
+    auto operator()(first_range_t && first_range, second_range_t && second_range)
         requires is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -202,7 +237,7 @@ public:
         static_assert(std::is_signed_v<diff_type>,  "Only signed types can be used to test the band parameters.");
 
         if (static_cast<diff_type>(band.lower_bound) >
-            std::ranges::distance(seqan3::begin(first_range), seqan3::end(first_range)))
+            std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range)))
         {
             throw invalid_alignment_configuration
             {
@@ -211,7 +246,7 @@ public:
         }
 
         if (static_cast<diff_type>(std::abs(band.upper_bound)) >
-            std::ranges::distance(seqan3::begin(second_range), seqan3::end(second_range)))
+            std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range)))
         {
             throw invalid_alignment_configuration
             {
@@ -262,7 +297,31 @@ public:
 
         if constexpr (config_t::template exists<align_cfg::result<detail::with_score_type>>())
         {
-            res.score = get<3>(cache);
+            res.score = get<3>(cache).score;
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
+        { // At the moment we also compute the traceback even if only the begin coordinate was requested.
+          // This can be later optimised by computing the reverse alignment in linear memory from the maximum.
+          // Especially for the SIMD version this might be more efficient.
+            res.score = get<3>(cache).score;
+            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+            res.begin_coordinate =
+                get<0>(compute_traceback(first_range,
+                                         second_range,
+                                         get<3>(cache).coordinate));
+        }
+        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        {
+            res.score = get<3>(cache).score;
+            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+            std::tie(res.begin_coordinate, res.alignment) = compute_traceback(first_range,
+                                                                              second_range,
+                                                                              get<3>(cache).coordinate);
         }
         return align_result{res};
     }
@@ -275,19 +334,28 @@ private:
     template <typename cache_t>
     void initialise_matrix(cache_t & cache)
     {
+        // Get the current dynamic programming matrix.
         auto col = this->current_column();
 
-        this->init_origin_cell(*seqan3::begin(col), cache);
+        this->init_origin_cell(*std::ranges::begin(col), cache);
 
         ranges::for_each(col | ranges::view::drop_exactly(1), [&cache, this](auto && cell)
         {
             this->init_column_cell(std::forward<decltype(cell)>(cell), cache);
         });
 
+        auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
+        (void) trace;
         if constexpr (is_banded)
-            this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(col)))), get<3>(cache));
+        {
+            alignment_optimum current{get<0>(get<0>(std::move(cell))), static_cast<alignment_coordinate>(coordinate)};
+            this->check_score_last_row(current, get<3>(cache));
+        }
         else
-            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(col))), get<3>(cache));
+        {
+            alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
+            this->check_score_last_row(current, get<3>(cache));
+        }
     }
 
     /*!\brief Compute the alignment by iterating over the dynamic programming matrix in a column wise manner.
@@ -301,26 +369,42 @@ private:
     template <typename first_range_t,
               typename second_range_t,
               typename cache_t>
-    void compute_matrix(first_range_t const & first_range,
-                        second_range_t const & second_range,
+    void compute_matrix(first_range_t & first_range,
+                        second_range_t & second_range,
                         cache_t & cache)
     {
         using std::get;
         auto const & score_scheme = get<align_cfg::scoring>(*cfg_ptr).value;
         ranges::for_each(first_range, [&, this](auto seq1_value)
         {
+            // Move internal matrix to next column.
+            this->go_next_column();
+
             auto col = this->current_column();
-            this->init_row_cell(*seqan3::begin(col), cache);
+            this->init_row_cell(*std::ranges::begin(col), cache);
 
             auto second_range_it = std::ranges::begin(second_range);
-            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto & cell)
+            ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
                 this->compute_cell(cell, cache, score_scheme.score(seq1_value, *second_range_it));
                 ++second_range_it;
             });
-            this->check_score_last_row(get<0>(*std::ranges::prev(seqan3::end(col))), get<3>(cache));
+
+            // Prepare last cell for tracking the optimum.
+            auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
+            (void) trace;
+            alignment_optimum current{get<0>(std::move(cell)), static_cast<alignment_coordinate>(coordinate)};
+            this->check_score_last_row(current, get<3>(cache));
         });
-        this->check_score_last_column(this->current_column(), get<3>(cache));
+
+        // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
+        auto last_column_view = this->current_column() | std::view::transform([](auto && entry)
+            {
+            using std::get;
+            return std::tuple{get<0>(std::forward<decltype(entry)>(entry)),
+                              get<1>(std::forward<decltype(entry)>(entry))};
+        });
+        this->check_score_last_column(last_column_view, get<3>(cache));
     }
 
     /*!\brief Compute the alignment by iterating over the banded dynamic programming matrix in a column wise manner.
@@ -334,8 +418,8 @@ private:
     template <typename first_range_t,
               typename second_range_t,
               typename cache_t>
-    void compute_banded_matrix(first_range_t const & first_range,
-                               second_range_t const & second_range,
+    void compute_banded_matrix(first_range_t & first_range,
+                               second_range_t & second_range,
                                cache_t & cache)
     {
         auto const & score_scheme = get<align_cfg::scoring>(*cfg_ptr).value;
@@ -345,12 +429,11 @@ private:
 
         ranges::for_each(first_range | view::take_exactly(this->band_column_index), [&, this](auto first_range_value)
         {
-            this->next_column(); // Move to the next column.
+            this->go_next_column(); // Move to the next column.
             auto col = this->current_column();
+            this->init_row_cell(*std::ranges::begin(col), cache); // initialise first row of dp matrix.
 
-            this->init_row_cell(*seqan3::begin(col), cache); // initialise first row of dp matrix.
-
-            auto second_range_it = seqan3::begin(second_range);
+            auto second_range_it = std::ranges::begin(second_range);
             ranges::for_each(col | ranges::view::drop_exactly(1), [&, this] (auto && cell)
             {
                 this->compute_cell(std::forward<decltype(cell)>(cell),
@@ -360,7 +443,13 @@ private:
             });
 
             if (this->band_touches_last_row())  // TODO [[unlikely]]
-                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(col)))), get<3>(cache));
+            {
+                auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
+                (void) trace;
+                alignment_optimum current{get<0>(get<0>(std::move(cell))),
+                                          static_cast<alignment_coordinate>(coordinate)};
+                this->check_score_last_row(current, get<3>(cache));
+            }
         });
 
         // ----------------------------------------------------------------------------
@@ -371,12 +460,12 @@ private:
         ranges::for_each(first_range | ranges::view::drop_exactly(this->band_column_index),
         [&, this](auto first_range_value)
         {
-            this->next_column(); // Move to the next column.
+            this->go_next_column(); // Move to the next column.
             auto col = this->current_column();
 
             // Move the second_range_it to the correct position depending on the current band position.
             auto second_range_it = std::ranges::begin(second_range);
-            std::advance(second_range_it, this->second_range_begin_offset());
+            std::ranges::advance(second_range_it, this->second_range_begin_offset());
 
             // Initialise the first cell of the current band.
             this->compute_first_band_cell(*std::ranges::begin(col),
@@ -394,9 +483,93 @@ private:
             });
 
             if (this->band_touches_last_row()) // TODO [[unlikely]]
-                this->check_score_last_row(get<0>(get<0>(*std::ranges::prev(seqan3::end(col)))), get<3>(cache));
+            {
+                auto [cell, coordinate, trace] = *std::ranges::prev(std::ranges::end(col));
+                (void) trace;
+                alignment_optimum current{get<0>(get<0>(std::move(cell))),
+                                          static_cast<alignment_coordinate>(coordinate)};
+                this->check_score_last_row(current, get<3>(cache));
+            }
         });
-        this->check_score_last_column(this->current_column() | view::get<0>, get<3>(cache));
+        // Prepare the last column for tracking the optimum: Only get the current score cell and the coordinate.
+        auto last_column_view = this->current_column() | std::view::transform([](auto && entry) {
+            using std::get;
+            return std::tuple{get<0>(get<0>(std::forward<decltype(entry)>(entry))),
+                              get<1>(std::forward<decltype(entry)>(entry))};
+        });
+        this->check_score_last_column(last_column_view, get<3>(cache));
+    }
+
+    /*!\brief Computes the traceback if requested.
+    * \tparam    first_range_t  The type of the first sequence (or packed sequences).
+    * \tparam    second_range_t The type of the second sequence (or packed sequences).
+    * \param[in] first_range    The first sequence.
+    * \param[in] second_range   The second sequence.
+    * \param[in] end_coordinate The end coordinate within the matrix where the traceback starts.
+    *
+    * \details
+    *
+    * First parses the traceback and computes the gap segments for the sequences. Then applies the gap segments
+    * to the infix of the corresponding range and return the aligned sequence.
+    */
+    template <typename first_range_t, typename second_range_t>
+    auto compute_traceback(first_range_t & first_range,
+                           second_range_t & second_range,
+                           alignment_coordinate end_coordinate)
+    {
+        using first_seq_value_type = value_type_t<first_range_t>;
+        using second_seq_value_type = value_type_t<second_range_t>;
+
+        // Parse the traceback
+        auto [begin_coordinate, first_gap_segments, second_gap_segments] = this->parse_traceback(end_coordinate);
+
+        auto fill_aligned_sequence = [](auto & aligned_sequence, auto & gap_segments, size_t const normalise)
+        {
+            assert(normalise <= gap_segments[0].position);
+
+            size_t offset = 0;
+            for (auto const & gap_elem : gap_segments)
+            {
+                // insert_gap(aligned_sequence, gap.position + offset, gap.size);
+                auto it = std::ranges::begin(aligned_sequence);
+                std::ranges::advance(it, (gap_elem.position - normalise) + offset);
+                aligned_sequence.insert(it, gap_elem.size, gap{});
+                offset += gap_elem.size;
+            }
+        };
+
+        // In banded case we need to refine the end coordinate to map to the correct position within the
+        // second range.
+        if constexpr (is_banded)
+            end_coordinate = this->map_banded_coordinate_to_range_position(end_coordinate);
+
+        // Get the subrange over the first sequence according to the begin and end coordinate.
+        auto it_first_seq_begin = std::ranges::begin(first_range);
+        std::ranges::advance(it_first_seq_begin, begin_coordinate.first_seq_pos);
+        auto it_first_seq_end = std::ranges::begin(first_range);
+        std::ranges::advance(it_first_seq_end, end_coordinate.first_seq_pos);
+
+        using first_subrange_type = std::ranges::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
+        auto first_subrange = first_subrange_type{it_first_seq_begin, it_first_seq_end};
+
+        // Create and fill the aligned_sequence for the first sequence.
+        std::vector<gapped<first_seq_value_type>> first_aligned_seq{first_subrange};
+        fill_aligned_sequence(first_aligned_seq, first_gap_segments, begin_coordinate.first_seq_pos);
+
+        // Get the subrange over the second sequence according to the begin and end coordinate.
+        auto it_second_seq_begin = std::ranges::begin(second_range);
+        std::ranges::advance(it_second_seq_begin, begin_coordinate.second_seq_pos);
+        auto it_second_seq_end = std::ranges::begin(second_range);
+        std::ranges::advance(it_second_seq_end, end_coordinate.second_seq_pos);
+
+        using second_subrange_type = std::ranges::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
+        auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};
+
+        // Create and fill the aligned_sequence for the second sequence.
+        std::vector<gapped<second_seq_value_type>> second_aligned_seq{second_subrange};
+        fill_aligned_sequence(second_aligned_seq, second_gap_segments, begin_coordinate.second_seq_pos);
+
+        return std::tuple{begin_coordinate, std::tuple{first_aligned_seq, second_aligned_seq}};
     }
 
     //!\brief The alignment configuration stored on the heap.

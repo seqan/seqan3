@@ -1,7 +1,7 @@
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -20,7 +20,7 @@ auto v = vec | view::convert<bool>; // == [1, 1, 0, 1, 0, 0, 1, 1, 1];
 std::vector<bool> v2(view::convert<bool>(vec));
 
 // combinability
-auto v3 = vec | view::convert<bool> | view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
+auto v3 = vec | view::convert<bool> | std::view::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
 //! [int_to_bool]
 (void) v;
 (void) v2;

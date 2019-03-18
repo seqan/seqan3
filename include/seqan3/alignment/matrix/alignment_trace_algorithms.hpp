@@ -41,8 +41,8 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    size_t row = end_coordinate.seq2_pos + 1;
-    size_t col = end_coordinate.seq1_pos + 1;
+    size_t row = end_coordinate.second_seq_pos + 1;
+    size_t col = end_coordinate.first_seq_pos + 1;
 
     assert(row < matrix.rows());
     assert(col < matrix.cols());
@@ -73,7 +73,7 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
         }
     }
 
-    return {std::max<size_t>(col, 1) - 1, std::max<size_t>(row, 1) - 1};
+    return {column_index_type{std::max<size_t>(col, 1) - 1}, row_index_type{std::max<size_t>(row, 1) - 1}};
 }
 
 /*!\brief Compute the trace from a trace matrix.
@@ -111,8 +111,8 @@ alignment_trace(database_t && database,
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    size_t col = end_coordinate.seq1_pos + 1;
-    size_t row = end_coordinate.seq2_pos + 1;
+    size_t col = end_coordinate.first_seq_pos + 1;
+    size_t row = end_coordinate.second_seq_pos + 1;
 
     assert(row <= query.size());
     assert(col <= database.size());

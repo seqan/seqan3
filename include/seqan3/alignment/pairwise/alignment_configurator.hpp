@@ -94,7 +94,7 @@ private:
      * \tparam config_type The configuration for which to select the correct matrix policy.
      * \tparam trait_types A template parameter pack with additional traits to augment the selected policy.
      */
-    template <typename config_type, typename ... trait_types>
+    template <typename config_type, typename score_allocator_t, typename trace_allocator_t>
     struct select_matrix_policy
     {
     private:
@@ -103,10 +103,29 @@ private:
         template <typename config_t>
         static constexpr auto select() noexcept
         {
-            if constexpr (config_t::template exists<align_cfg::band>())
-                return deferred_crtp_base<banded_score_dp_matrix_policy, trait_types...>{};
+            // Check whether traceback was requested or not.
+            if constexpr (std::is_same_v<typename trace_allocator_t::value_type, ignore_t>)
+            {  // No traceback
+                if constexpr (config_t::template exists<align_cfg::band>())
+                    return deferred_crtp_base<banded_score_dp_matrix_policy, score_allocator_t>{};
+                else
+                    return deferred_crtp_base<unbanded_score_dp_matrix_policy, score_allocator_t>{};
+            }
             else
-                return deferred_crtp_base<unbanded_dp_matrix_policy, trait_types...>{};
+            {  // requested traceback
+                if constexpr (config_t::template exists<align_cfg::band>())
+                {
+                    return deferred_crtp_base<banded_score_trace_dp_matrix_policy,
+                                              score_allocator_t,
+                                              trace_allocator_t>{};
+                }
+                else
+                {
+                    return deferred_crtp_base<unbanded_score_trace_dp_matrix_policy,
+                                              score_allocator_t,
+                                              trace_allocator_t>{};
+                }
+            }
         }
 
     public:
@@ -166,81 +185,107 @@ public:
     /*!\brief Configures the algorithm.
      * \tparam sequences_t The range type containing the sequence pairs; must model std::ranges::ForwardRange.
      * \tparam config_t    The alignment configuration type; must be a specialisation of seqan3::configuration.
-     * \param[in]     seq_range The range over the sequence pairs.
+     * \param[in]     seq_range The range over the sequences; The value type must model seqan3::tuple_like_concept.
      * \param[in,out] cfg       The configuration object.
+     *
+     * \returns std::function wrapper of the configured alignment algorithm.
+     *
+     * \details
+     *
+     * This function reads the seqan3::configuration object and generates the corresponding alignment algorithm type.
+     * During this process some runtime configurations are converted to static configurations if required. The return
+     * type is a std::function which is generated in the following way:
+     *
+     * \snippet snippet/alignment/pairwise/alignment_configurator.cpp result
+     *
+     * The arguments to the function object are two ranges, which always need to be passed as lvalue references.
+     * Note that even if they are not passed as const lvalue reference (which is not possible, since not all views are
+     * const-iterable), they are not modified within the alignment algorithm.
      */
     template <std::ranges::ForwardRange sequences_t, typename config_t>
     //!\cond
-        requires is_type_specialisation_of_v<remove_cvref_t<config_t>, configuration>
+        requires tuple_like_concept<value_type_t<std::remove_reference_t<sequences_t>>> &&
+                 is_type_specialisation_of_v<remove_cvref_t<config_t>, configuration>
     //!\endcond
-    static constexpr auto configure(sequences_t seq_range, config_t const & cfg)
+    static constexpr auto configure([[maybe_unused]] sequences_t && seq_range, config_t const & cfg)
     {
-        // ----------------------------------------------------------------------------
-        // Configure the type-erased alignment function.
-        // ----------------------------------------------------------------------------
 
-        using first_seq_t  = std::remove_reference_t<std::tuple_element_t<
-                                                        0,
-                                                        remove_cvref_t<decltype(*seqan3::begin(seq_range))>>>;
-        using second_seq_t = std::remove_reference_t<std::tuple_element_t<
-                                                        1,
-                                                        remove_cvref_t<decltype(*seqan3::begin(seq_range))>>>;
-
-        // Select the result type based on the sequences and the configuration.
-        using result_t = align_result<typename align_result_selector<first_seq_t, second_seq_t, config_t>::type>;
-        // Define the function wrapper type.
-        using function_wrapper_t = std::function<result_t(first_seq_t const &, second_seq_t const &)>;
-
-        // ----------------------------------------------------------------------------
-        // Test some basic preconditions
-        // ----------------------------------------------------------------------------
-
-        using alignment_contract_t = alignment_contract<remove_cvref_t<sequences_t>, config_t>;
-
-        static_assert(alignment_contract_t::expects_tuple_like_value_type(),
-                      "Alignment configuration error: "
-                      "The value type of the sequence ranges must model the seqan3::detail::tuple_like_concept "
-                      "and must contain exactly 2 elements.");
-
-        static_assert(alignment_contract_t::expects_valid_scoring_scheme(),
-                      "Alignment configuration error: "
-                      "Either the scoring scheme was not configured or the given scoring scheme cannot be invoked with "
-                      "the value types of the passed sequences.");
-
-        // ----------------------------------------------------------------------------
-        // Configure the algorithm
-        // ----------------------------------------------------------------------------
-
-        // Use default edit distance if gaps are not set.
-        auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
-        auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
-
-        // Check if edit distance can be used?
-        if (gaps.get_gap_open_score() == 0)
+        if constexpr (!config_t::template exists<align_cfg::result>())
         {
-            // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
-            //       option via the scheme.
-            if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
-                                                      nucleotide_scoring_scheme>)
-            {
-                if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
-                    (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                    return configure_edit_distance<function_wrapper_t>(cfg);
-            }
+            // ----------------------------------------------------------------------------
+            // Set the default result value to be computed.
+            // ----------------------------------------------------------------------------
+
+            return configure(std::forward<sequences_t>(seq_range), cfg | align_cfg::result{align_cfg::with_score});
         }
+        else
+        {
+            // ----------------------------------------------------------------------------
+            // Configure the type-erased alignment function.
+            // ----------------------------------------------------------------------------
 
-        // ----------------------------------------------------------------------------
-        // Unsupported configurations
-        // ----------------------------------------------------------------------------
+            using first_seq_t = std::tuple_element_t<0, value_type_t<std::remove_reference_t<sequences_t>>>;
+            using second_seq_t = std::tuple_element_t<1, value_type_t<std::remove_reference_t<sequences_t>>>;
 
-        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
-            throw invalid_alignment_configuration{"Computing the begin position is yet not supported."};
+            // Select the result type based on the sequences and the configuration.
+            using result_t = align_result<typename align_result_selector<std::remove_reference_t<first_seq_t>,
+                                                                         std::remove_reference_t<second_seq_t>,
+                                                                         config_t>::type>;
+            // Define the function wrapper type.
+            using function_wrapper_t = std::function<result_t(first_seq_t &, second_seq_t &)>;
 
-        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
-            throw invalid_alignment_configuration{"Computing the traceback is yet not supported."};
+            // ----------------------------------------------------------------------------
+            // Test some basic preconditions
+            // ----------------------------------------------------------------------------
 
-        // Configure the alignment algorithm.
-        return configure_free_ends_initialisation<function_wrapper_t>(cfg);
+            using alignment_contract_t = alignment_contract<remove_cvref_t<sequences_t>, config_t>;
+
+            static_assert(alignment_contract_t::expects_tuple_like_value_type(),
+                          "Alignment configuration error: "
+                          "The value type of the sequence ranges must model the seqan3::detail::tuple_like_concept "
+                          "and must contain exactly 2 elements.");
+
+            static_assert(alignment_contract_t::expects_valid_scoring_scheme(),
+                          "Alignment configuration error: "
+                          "Either the scoring scheme was not configured or the given scoring scheme cannot be invoked with "
+                          "the value types of the passed sequences.");
+
+            // ----------------------------------------------------------------------------
+            // Configure the algorithm
+            // ----------------------------------------------------------------------------
+
+            // Use default edit distance if gaps are not set.
+            auto const & gaps = cfg.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}});
+            auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
+            auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+
+            // Only use edit distance if ...
+            if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
+                !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
+                align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
+            {
+                // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
+                //       option via the scheme.
+                if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
+                                                          nucleotide_scoring_scheme>)
+                {
+                    if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
+                        (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
+                        return configure_edit_distance<function_wrapper_t>(cfg);
+                }
+            }
+
+            // ----------------------------------------------------------------------------
+            // Check if invalid configuration was used.
+            // ----------------------------------------------------------------------------
+
+            // Do not allow max error configuration for alignments not computing the edit distance.
+            if (config_t::template exists<align_cfg::max_error>())
+                throw invalid_alignment_configuration{"The align_cfg::max_error configuration is only allowed for "
+                                                      "the specific edit distance computation."};
+            // Configure the alignment algorithm.
+            return configure_free_ends_initialisation<function_wrapper_t>(cfg);
+        }
     }
 
 private:
@@ -260,10 +305,56 @@ private:
         if constexpr (config_t::template exists<align_cfg::band>())
             throw invalid_alignment_configuration{"Banded alignments are yet not supported."};
 
-        if constexpr (config_t::template exists<align_cfg::aligned_ends>())
-            throw invalid_alignment_configuration{"Free end gaps is not yet supported."};
+        // ----------------------------------------------------------------------------
+        // Configure semi-global alignment
+        // ----------------------------------------------------------------------------
 
-        return function_wrapper_t{edit_distance_wrapper<remove_cvref_t<config_t>>{cfg}};
+        // Get the value for the sequence ends configuration.
+        auto align_ends_cfg = cfg.template value_or<align_cfg::aligned_ends>(align_cfg::none_ends_free);
+        using align_ends_cfg_t = remove_cvref_t<decltype(align_ends_cfg)>;
+
+        auto configure_edit_traits = [&](auto is_semi_global)
+        {
+            struct edit_traits_type
+            {
+                using word_type           [[maybe_unused]] = uint_fast64_t;
+                using is_semi_global_type [[maybe_unused]] = remove_cvref_t<decltype(is_semi_global)>;
+            };
+
+            return function_wrapper_t{edit_distance_wrapper<remove_cvref_t<config_t>, edit_traits_type>{cfg}};
+        };
+
+        // Check if it has free ends set for the first sequence trailing gaps.
+        auto has_free_ends_trailing = [&](auto first) constexpr
+        {
+            if constexpr (!decltype(first)::value)
+            {
+                return configure_edit_traits(std::false_type{});
+            }
+            else if constexpr (align_ends_cfg_t::template is_static<1>())
+            {
+                return configure_edit_traits(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
+            }
+            else // Resolve correct property at runtime.
+            {
+                if (align_ends_cfg[1])
+                    return configure_edit_traits(std::true_type{});
+                else
+                    return configure_edit_traits(std::false_type{});
+            }
+        };
+
+        // Check if it has free ends set for the first sequence leading gaps.
+        // If possible use static information.
+        if constexpr (align_ends_cfg_t::template is_static<0>())
+            return has_free_ends_trailing(std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>{});
+        else // Resolve correct property at runtime.
+        {
+            if (align_ends_cfg[0])
+                return has_free_ends_trailing(std::true_type{});
+            else
+                return has_free_ends_trailing(std::false_type{});
+        }
     }
 
     /*!\brief Configures the dynamic programming matrix initialisation accoring to seqan3::align_cfg::aligned_ends
@@ -295,6 +386,20 @@ private:
     template <typename function_wrapper_t, typename ...policies_t, typename config_t>
     static constexpr function_wrapper_t configure_free_ends_optimum_search(config_t const & cfg);
 
+    /*!\brief Determines the trace type.
+     * \tparam config_t The configuration type.
+     */
+    template <typename config_t>
+    struct configure_trace_type
+    {
+        //!\brief If traceback is enabled resolves to seqan3::detail::trace_directions,
+        //!\      otherwise seqan3::detail::ignore_t.
+        using type = std::conditional_t<config_t::template exists<align_cfg::result<with_trace_type>>() ||
+                                        config_t::template exists<align_cfg::result<with_begin_position_type>>(),
+                                        trace_directions,
+                                        ignore_t>;
+    };
+
 };
 
 //!\cond
@@ -307,14 +412,17 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     // score and cell type
     // ----------------------------------------------------------------------------
 
-    using score_type = int;
-    using cell_type = std::tuple<score_type, score_type>;
+    using score_type = int32_t;
+    using trace_type = typename configure_trace_type<config_t>::type;
+    using cell_type = std::tuple<score_type, score_type, trace_type>;
 
     // ----------------------------------------------------------------------------
     // dynamic programming matrix
     // ----------------------------------------------------------------------------
 
-    using dp_matrix_t = typename select_matrix_policy<config_t, std::allocator<cell_type>>::type;
+    using dp_matrix_t = typename select_matrix_policy<config_t,
+                                                      std::allocator<cell_type>,
+                                                      std::allocator<trace_type>>::type;
 
     // ----------------------------------------------------------------------------
     // affine gap kernel

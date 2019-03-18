@@ -18,6 +18,7 @@
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/charconv>
 
 namespace seqan3::detail
 {
@@ -172,6 +173,16 @@ public:
     void add_list_item(std::string const &, std::string const &) {}
     //!\endcond
 
+    //!\brief Checks whether \p id is empty.
+    template <typename id_type>
+    static bool is_empty_id(id_type const & id)
+    {
+        if constexpr (std::Same<remove_cvref_t<id_type>, std::string>)
+            return id.empty();
+        else // char
+            return is_char<'\0'>(id);
+    }
+
 private:
     /*!\brief Initializes the format_parse on construction.
      *
@@ -223,7 +234,10 @@ private:
     template <typename id_type>
     std::vector<std::string>::iterator find_option_id(std::vector<std::string>::iterator const begin_it, id_type const & id)
     {
-        return(std::find_if(begin_it, end_of_options_it,
+        if (is_empty_id(id))
+            return end_of_options_it;
+
+        return (std::find_if(begin_it, end_of_options_it,
             [&] (const std::string & v)
             {
                 size_t id_size{(prepend_dash(id)).size()};
@@ -323,10 +337,8 @@ private:
         value.push_back(tmp);
     }
 
-    /*!\brief Tries to cast an input string into a (integral) value and tests for overflow errors.
-     *
-     * \tparam option_t Must be stream-convertible.
-     *
+    /*!\brief Tries to cast an input string into an arithmetic value.
+     * \tparam option_t  The optiona value type; must model seqan3::Arithmetic.
      * \param[out] value Stores the casted value.
      * \param[in]  in    The input argument to be casted.
      *
@@ -335,34 +347,47 @@ private:
      *
      * \details
      *
-     * This function tests for possible overflow errors:
-     * It first casts into a signed long long int (to also catch negative values for unsigned ints)
-     * and then checks the min-max range given by numeric limits.
-     * Exception: Due to using signed long long int, this does not catch overflow errors
-     * for unsigned long int's but that kind of large a number will hopefully never be supplied
-     * via the command line..
+     * This function delegates to std::from_chars.
      */
-    template <std::Integral option_t>
+    template <Arithmetic option_t>
     //!\cond
         requires IStream<std::istringstream, option_t>
     //!\endcond
     void retrieve_value(option_t & value, std::string const & in)
     {
-        int64_t tmp;
-        std::istringstream stream{in};
-        stream >> tmp;
+        auto res = std::from_chars(&in[0], &in[in.size()], value);
 
-        if (stream.fail() || !stream.eof()) // !stream.eof() catches 13a as wrong
-            throw type_conversion_failed("Argument " + in + " could not be casted to type " +
-                                         get_type_name_as_string(value) + ".");
-
-        if (tmp > static_cast<int64_t>(std::numeric_limits<option_t>::max()) ||
-            tmp < static_cast<int64_t>(std::numeric_limits<option_t>::min()))
+        if (res.ec == std::errc::result_out_of_range)
             throw overflow_error_on_conversion("Argument " + in + " is not in integer range [" +
                                                std::to_string(std::numeric_limits<option_t>::min()) + "," +
                                                std::to_string(std::numeric_limits<option_t>::max()) + "].");
+        else if (res.ec == std::errc::invalid_argument || res.ptr != &in[in.size()])
+            throw type_conversion_failed("Argument " + in + " could not be casted to type " +
+                                         get_type_name_as_string(value) + ".");
+    }
 
-        value = static_cast<option_t>(tmp);
+    /*!\brief Tries to cast an input string into boleand value.
+     * \param[out] value Stores the casted value.
+     * \param[in]  in    The input argument to be casted.
+     *
+     * \throws seqan3::type_conversion_failed
+     *
+     * \details
+     *
+     * This function delegates to std::from_chars.
+     */
+    void retrieve_value(bool & value, std::string const & in)
+    {
+        if (in == "0")
+            value = false;
+        else if (in == "1")
+            value = true;
+        else if (in == "true")
+            value = true;
+        else if (in == "false")
+            value = false;
+        else
+            throw type_conversion_failed("Argument '" + in + "' could not be casted to boolean.");
     }
 
     /*!\brief Handles value retrieval for options based on different kev value pairs.
@@ -721,7 +746,7 @@ private:
     std::vector<std::string> argv;
     //!\brief Number of command line arguments.
     int argc;
-    //!\brief Artificial end of argv if -- was seen.
+    //!\brief Artificial end of argv if \-- was seen.
     std::vector<std::string>::iterator end_of_options_it;
 };
 

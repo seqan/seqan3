@@ -120,7 +120,7 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  */
 // just implement the interface
 
-/*!\fn semi_alphabet_type && seqan3::assign_rank(semi_alphabet_type && alph, rank_type const rank) noexcept
+/*!\fn semi_alphabet_type & seqan3::assign_rank(semi_alphabet_type & alph, rank_type const rank) noexcept
  * \brief Returns the alphabet letter's value in rank representation.
  * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
@@ -135,6 +135,11 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  *   * Assigning rank values that are larger than or equal to the alphabet's size may be undefined behaviour.
  *   * Implementations that wish to avoid undefined behaviour cannot throw exceptions, but may use contracts or
  *     assertions, or simply convert all invalid rank values to valid ones.
+ */
+// just implement the interface
+
+/*!\fn semi_alphabet_type seqan3::assign_rank(semi_alphabet_type && alph, rank_type const rank) noexcept
+ * \overload
  */
 // just implement the interface
 //!\}
@@ -192,7 +197,7 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  */
 // just implement the interface
 
-/*!\fn alphabet_type && seqan3::assign_char(alphabet_type && alph, char_type const chr) noexcept
+/*!\fn alphabet_type & seqan3::assign_char(alphabet_type & alph, char_type const chr) noexcept
  * \brief Assigns a character value to an alphabet object.
  * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
@@ -211,7 +216,12 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  */
 // just implement the interface
 
-/*!\fn alphabet_type && seqan3::assign_char_strict(alphabet_type && alph, char_type const chr)
+/*!\fn alphabet_type seqan3::assign_char(alphabet_type && alph, char_type const chr) noexcept
+ * \overload
+ */
+// just implement the interface
+
+/*!\fn alphabet_type & seqan3::assign_char_strict(alphabet_type & alph, char_type const chr)
  * \brief Assigns a character value to an alphabet object.
  * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
@@ -225,6 +235,11 @@ using underlying_char_t = typename underlying_char<alphabet_type>::type;
  * Typical implementations of this function throw seqan3::invalid_char_assignment if seqan3::char_is_valid_for returns
  * `false` and call seqan3::assign_char otherwise, but as it is not required that seqan3::char_is_valid_for ever return
  * `false` for a given alphabet, this function may also be implemented as simply forwarding to seqan3::assign_char.
+ */
+// just implement the interface
+
+/*!\fn alphabet_type seqan3::assign_char_strict(alphabet_type && alph, char_type const chr)
+ * \overload
  */
 // just implement the interface
 

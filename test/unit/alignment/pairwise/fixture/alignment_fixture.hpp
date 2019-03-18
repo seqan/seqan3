@@ -3,16 +3,16 @@
 
 #include <limits>
 
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
 
 namespace seqan3
 {}
 
 namespace seqan3::test::alignment::fixture
 {
-
-using detail::alignment_coordinate;
 
 static constexpr auto INF = std::numeric_limits<int>::max();
 
@@ -25,34 +25,56 @@ static constexpr auto UL = U | L;
 static constexpr auto DL = D | L;
 static constexpr auto DUL = D | U | L;
 
-template <typename sequence1_t, typename sequence2_t, typename config_t,
-          typename score_t, typename score_matrix_t, typename trace_matrix_t>
+template <typename sequence1_t,
+          typename sequence2_t,
+          typename config_t,
+          typename score_t,
+          typename score_matrix_t,
+          typename trace_matrix_t>
 struct alignment_fixture
 {
     template <typename trace_t>
-    alignment_fixture(
-        sequence1_t && _sequence1,
-        sequence2_t && _sequence2,
-        config_t _config,
-        score_t _score,
-        std::string _gapped_sequence1,
-        std::string _gapped_sequence2,
-        alignment_coordinate _begin_coordinate,
-        alignment_coordinate _end_coordinate,
-        std::vector<score_t> _score_vector,
-        std::vector<trace_t> _trace_vector
-    ) : sequence1{_sequence1},
+    alignment_fixture(sequence1_t && _sequence1,
+                      sequence2_t && _sequence2,
+                      config_t _config,
+                      score_t _score,
+                      std::string _aligned_sequence1,
+                      std::string _aligned_sequence2,
+                      alignment_coordinate _begin_coordinate,
+                      alignment_coordinate _end_coordinate,
+                      std::vector<score_t> _score_vector,
+                      std::vector<trace_t> _trace_vector) :
+        sequence1{_sequence1},
         sequence2{_sequence2},
         config{_config},
         score{_score},
-        gapped_sequence1{_gapped_sequence1},
-        gapped_sequence2{_gapped_sequence2},
+        aligned_sequence1{_aligned_sequence1},
+        aligned_sequence2{_aligned_sequence2},
         begin_coordinate{_begin_coordinate},
         end_coordinate{_end_coordinate},
         score_matrix{std::move(_score_vector), sequence2.size()+1, sequence1.size()+1},
         trace_matrix{std::move(_trace_vector), sequence2.size()+1, sequence1.size()+1}
-    {
-    }
+    {}
+
+    alignment_fixture(sequence1_t && _sequence1,
+                      sequence2_t && _sequence2,
+                      config_t _config,
+                      score_t _score,
+                      std::string _aligned_sequence1,
+                      std::string _aligned_sequence2,
+                      alignment_coordinate _begin_coordinate,
+                      alignment_coordinate _end_coordinate) :
+        alignment_fixture(std::forward<sequence1_t>(_sequence1),
+                          std::forward<sequence2_t>(_sequence2),
+                          _config,
+                          _score,
+                          _aligned_sequence1,
+                          _aligned_sequence2,
+                          _begin_coordinate,
+                          _end_coordinate,
+                          std::vector<score_t>{},
+                          std::vector<detail::trace_directions>{})
+    {}
 
     sequence1_t sequence1;
     sequence2_t sequence2;
@@ -60,36 +82,47 @@ struct alignment_fixture
     config_t config;
 
     score_t score;
-    std::string gapped_sequence1;
-    std::string gapped_sequence2;
+    std::string aligned_sequence1;
+    std::string aligned_sequence2;
 
     alignment_coordinate begin_coordinate;
     alignment_coordinate end_coordinate;
     score_matrix_t score_matrix;
     trace_matrix_t trace_matrix;
-
 };
 
 template <typename sequence1_t, typename sequence2_t, typename config_t, typename score_t, typename trace_t>
-alignment_fixture(
-    sequence1_t && _sequence1,
-    sequence2_t && _sequence2,
-    config_t _config,
-    score_t _score,
-    std::string _gapped_sequence1,
-    std::string _gapped_sequence2,
-    alignment_coordinate _begin_coordinate,
-    alignment_coordinate _end_coordinate,
-    std::vector<score_t> _score_vector,
-    std::vector<trace_t> _trace_vector
-)
--> alignment_fixture<
-    sequence1_t,
-    sequence2_t,
-    config_t,
-    score_t,
-    detail::alignment_score_matrix<std::vector<score_t>>,
-    detail::alignment_trace_matrix<std::vector<trace_t>>
->;
+alignment_fixture(sequence1_t && _sequence1,
+                  sequence2_t && _sequence2,
+                  config_t _config,
+                  score_t _score,
+                  std::string _aligned_sequence1,
+                  std::string _aligned_sequence2,
+                  alignment_coordinate _begin_coordinate,
+                  alignment_coordinate _end_coordinate,
+                  std::vector<score_t> _score_vector,
+                  std::vector<trace_t> _trace_vector)
+-> alignment_fixture<sequence1_t,
+                     sequence2_t,
+                     config_t,
+                     score_t,
+                     detail::alignment_score_matrix<std::vector<score_t>>,
+                     detail::alignment_trace_matrix<std::vector<trace_t>>>;
+
+template <typename sequence1_t, typename sequence2_t, typename config_t, typename score_t>
+alignment_fixture(sequence1_t && _sequence1,
+                  sequence2_t && _sequence2,
+                  config_t _config,
+                  score_t _score,
+                  std::string _aligned_sequence1,
+                  std::string _aligned_sequence2,
+                  alignment_coordinate _begin_coordinate,
+                  alignment_coordinate _end_coordinate)
+-> alignment_fixture<sequence1_t,
+                     sequence2_t,
+                     config_t,
+                     score_t,
+                     detail::alignment_score_matrix<std::vector<score_t>>,
+                     detail::alignment_trace_matrix<std::vector<detail::trace_directions>>>;
 
 } // namespace seqan3::test::alignment::fixture

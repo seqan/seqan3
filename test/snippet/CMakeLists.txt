@@ -10,41 +10,37 @@ project (seqan3_test_snippet CXX)
 
 include (../seqan3-test.cmake)
 
-macro (seqan3_snippet target_cpp snippet_full_path)
-    # $target_cpp = "pod_tuple_snippet.cpp"
-    #   * will register the global TARGET name "pod_tuple_snippet" and
-    #   * will register the test case name "core_pod_tuple" if
-    #     pod_tuple_snippet.cpp is in test/core/
-    #
-    # NOTE(marehr): ".+/test/" REGEX is greedy, that means
-    # /test/test/test/hello_snippet.cpp will result in an empty `test_path`
-    string (REGEX REPLACE ".cpp$" "" target_name ${target_cpp})
-    string (REGEX REPLACE ".+/test/" "" test_path ${snippet_full_path})
-    string (REGEX REPLACE ".+/test/snippet/" "" source_path ${snippet_full_path})
-    set (target "${target_name}_snippet")
+macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
+    seqan3_test_component (snippet_target_name "${snippet}" TARGET_NAME)
+    seqan3_test_component (snippet_test_name "${snippet}" TEST_NAME)
+    seqan3_test_component (snippet_target_path "${snippet}" TARGET_PATH)
+    set (target "${snippet_target_name}_snippet")
 
-    add_executable (${target} ${source_path}/${target_cpp})
+    add_executable (${target} "${snippet_base_path}/${snippet}")
     target_link_libraries (${target} seqan3::test::unit)
+    target_compile_options (${target} PUBLIC "-Wno-unused-variable")
     set_target_properties(${target}
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${source_path}"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${snippet_target_path}"
     )
 
-    add_test (NAME "${test_path}/${target}" COMMAND ${target})
+    add_test (NAME "${test_name_prefix}/${snippet_test_name}_snippet" COMMAND ${target})
 
-    unset (target_name)
-    unset (test_path)
+    unset (snippet_target_name)
+    unset (snippet_test_name)
+    unset (snippet_target_path)
     unset (target)
+endmacro ()
+
+macro (seqan3_snippets test_name_prefix snippet_base_path)
+    seqan3_test_files (snippet_files "${snippet_base_path}" "*.cpp")
+    foreach (snippet ${snippet_files})
+        seqan3_snippet("${test_name_prefix}" "${snippet}" "${snippet_base_path}")
+    endforeach ()
 endmacro ()
 
 seqan3_require_ccache ()
 seqan3_require_test ()
 
-# add all snippets
-file(GLOB_RECURSE snippets "*.cpp")
-foreach(snippet ${snippets})
-    get_filename_component(target_cpp "${snippet}" NAME)
-    get_filename_component(snippet_full_path "${snippet}" DIRECTORY)
-
-    seqan3_snippet("${target_cpp}" "${snippet_full_path}")
-endforeach()
+seqan3_snippets ("doc/snippet" "${CMAKE_SOURCE_DIR}/../../doc")
+seqan3_snippets ("snippet" "${CMAKE_SOURCE_DIR}")

@@ -40,7 +40,7 @@ std::vector<dna15> two = "ATACTA"_dna15;
 nucleotide_scoring_scheme scheme; // hamming distance is default
 
 int score = 0;
-for (auto pair : ranges::view::zip(one, two))
+for (auto pair : std::view::zip(one, two))
     score += scheme.score(std::get<0>(pair), std::get<1>(pair));
 debug_stream << "Score: " << score << "\n"; // == 0 - 1 + 0 - 1 + 0 + 0 = -2
 //! [score sequences]

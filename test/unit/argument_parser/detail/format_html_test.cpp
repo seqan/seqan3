@@ -28,7 +28,7 @@ TEST(html_test, html)
     const char * argv0[] = {"./help_add_test", "--export-help", "html"};
     argument_parser parser0("empty_options", 3, argv0);
     testing::internal::CaptureStdout();
-    EXPECT_THROW(parser0.parse(), parser_interruption);
+    EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     stdout = testing::internal::GetCapturedStdout();
     expected = std::string("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" http://www.w3.org/TR/html4/strict.dtd\">"
                            "<html lang=\"en\">"
@@ -46,8 +46,8 @@ TEST(html_test, html)
                            "<strong>SeqAn version:</strong> 3.0.0<br>"
                            "<br>"
                            "</body></html>");
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
-                               expected | ranges::view::remove_if(is_space)));
+    EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+                               expected | std::view::filter(!is_space)));
 
    // Full html help page.
    argument_parser parser1("program_full_options", 3, argv0);
@@ -69,7 +69,7 @@ TEST(html_test, html)
    parser1.info.examples.push_back("example");
    parser1.info.examples.push_back("example2");
    testing::internal::CaptureStdout();
-   EXPECT_THROW(parser1.parse(), parser_interruption);
+   EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
    stdout = testing::internal::GetCapturedStdout();
    expected = std::string("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" http://www.w3.org/TR/html4/strict.dtd\">"
                           "<html lang=\"en\">"
@@ -96,16 +96,16 @@ TEST(html_test, html)
                           "</p>"
                           "<h2>Positional Arguments</h2>"
                           "<dl>"
-                          "<dt><strong>ARGUMENT 2</strong> List of <em>STRING</em>'s</dt>"
+                          "<dt><strong>ARGUMENT 2</strong> (<em>List</em> of <em>std::string</em>'s)</dt>"
                           "<dd>this is a positional option. </dd>"
-                          "<dt><strong>ARGUMENT 2</strong> List of <em>STRING</em>'s</dt>"
+                          "<dt><strong>ARGUMENT 2</strong> (<em>List</em> of <em>std::string</em>'s)</dt>"
                           "<dd>this is a positional option. </dd>"
                           "</dl>"
                           "<h2>Options</h2>"
                           "<dl>"
-                          "<dt><strong>-i</strong>, <strong>--int</strong> <em>INT (32 bit)</em></dt>"
+                          "<dt><strong>-i</strong>, <strong>--int</strong> (<em>signed 32 bit integer</em>)</dt>"
                           "<dd>this is a int option. </dd>"
-                          "<dt><strong>-j</strong>, <strong>--jint</strong> <em>INT (32 bit)</em></dt>"
+                          "<dt><strong>-j</strong>, <strong>--jint</strong> (<em>signed 32 bit integer</em>)</dt>"
                           "<dd>this is a int option. </dd>"
                           "<dt><strong>-f</strong>, <strong>--flag</strong></dt>"
                           "<dd>this is a flag.</dd>"
@@ -125,6 +125,6 @@ TEST(html_test, html)
                           "<strong>In your academic works please cite:</strong> citation<br>"
                           "For full copyright and/or warranty information see <tt>--copyright</tt>."
                           "</body></html>");
-   EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+   EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
                               expected | ranges::view::remove_if(is_space)));
 }

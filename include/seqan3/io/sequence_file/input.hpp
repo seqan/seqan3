@@ -28,7 +28,7 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
@@ -154,19 +154,7 @@ SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
  *
  * This example will make the file read into a smaller alphabet and a compressed container:
  *
- * ```cpp
- * struct my_traits : sequence_file_input_default_traits_dna
- * {
- *     using sequence_alphabet = dna4;                        // instead of dna5
- *
- *     template <typename alph>
- *     using sequence_container = bitcompressed_vector<alph>; // must be defined as a template!
- * };
- *
- * sequence_file_input<my_traits> fin{"/tmp/my.fasta"};
- *
- * //...
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp trait_overwrite
  */
 struct sequence_file_input_default_traits_dna
 {
@@ -250,26 +238,9 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * ```cpp
- * sequence_file_input fin{"/tmp/my.fasta"}; // FastA with DNA sequences assumed, regular std::ifstream taken as stream
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp template_deduction
  * Reading from an std::istringstream:
- * ```cpp
- * std::string input
- * {
- *     "> TEST1\n"
- *     "ACGT\n"
- *     "> Test2\n"
- *     "AGGCTGN\n"
- *     "> Test3\n"
- *     "GGAGTATAATATATATATATATAT\n"
- * };
- *
- * std::istringstream iss(input);
- *
- * sequence_file_input fin{std::move(iss), sequence_file_format_fasta{}};
- * //              ^ no need to specify the template arguments
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp istringstream
  *
  * Note that this is not the same as writing `sequence_file_input<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -279,40 +250,20 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
  *
- * ```cpp
- * sequence_file_input<sequence_file_default_traits_aa> fin{"/tmp/my.fasta"};
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp aminoacid
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
  * seqan3::sequence_file_default_traits_dna for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction so if you want to read amino acids **and**
  * want to read from a string stream you need to give all types yourself:
  *
- * ```cpp
- *
- *  // ... input had amino acid sequences
- * std::istringstream iss(input);
- *
- * sequence_file_input<sequence_file_default_traits_aa,
- *                  fields<field::SEQ, field::ID, field::QUAL>,
- *                  type_list<sequence_file_format_fasta>,
- *                  std::istringstream> fin{std::move(iss), sequence_file_format_fasta{}};
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp template_specification
  *
  * ### Reading record-wise
  *
  * You can iterate over this file record-wise:
  *
- * ```cpp
- * sequence_file_input fin{"/tmp/my.fasta"};
- *
- * for (auto & rec : fin)
- * {
- *     std::cout << "ID:  " << get<field::ID>(rec) << '\n';
- *     std::cout << "SEQ: " << (get<field::SEQ>(rec) | view::to_char) << '\n'; // sequence is converted to char on-the-fly
- *     // a quality field also exists, but is not printed, because we know it's empty for FastA files.
- * }
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_iter
  *
  * In the above example, rec has the type \ref record_type which is a specialisation of seqan3::record and behaves
  * like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field based interface on
@@ -323,15 +274,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
  * to store it somewhere without copying:
  *
- * ```cpp
- * sequence_file_input fin{"/tmp/my.fasta"};
- *
- * using record_type = typename decltype(fin)::record_type;
- * std::vector<record_type> records;
- *
- * for (auto & rec : fin)
- *     records.push_back(std::move(rec));
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp auto_ref
  *
  * ### Reading record-wise (decomposed records)
  *
@@ -339,16 +282,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
  * to decompose the record into its elements:
  *
- * ```cpp
- * sequence_file_input fin{"/tmp/my.fasta"};
- *
- * for (auto & [ seq, id, qual ] : fin)
- * {
- *     std::cout << "ID:  " << id << '\n';
- *     std::cout << "SEQ: " << (seq | view::to_char) << '\n'; // sequence is converted to char on-the-fly
- *     // qual is empty for FastA files
- * }
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp decomposed
  *
  * In this case you immediately get the two elements of the tuple: `seq` of \ref sequence_type and `id` of
  * \ref id_type. **But beware: with structured bindings you do need to get the order of elements correctly!**
@@ -360,17 +294,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * combined field for SEQ and QUAL (see above). Or to never actually read the QUAL, if you don't need it.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
- * ```cpp
- * sequence_file_input fin{"/tmp/my.fasta", fields<field::ID, field::SEQ_QUAL>{}};
- *
- * for (auto & [ id, seq_qual ] : fin) // note that the order is now different, "id" comes first, because it was specified first
- * {
- *     std::cout << "ID:  " << id << '\n';
- *     // sequence and qualities are part of the same vector, of type std::vector<dna5q>
- *     std::cout << "SEQ: "  << (seq | view::get<0> | view::to_char) << '\n'; // sequence string is extracted and converted to char  on-the-fly
- *     std::cout << "QUAL: " << (seq | view::get<1> | view::to_char) << '\n'; // quality string is extracted and converted to char  on-the-fly
- * }
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp custom_fields
  *
  * When reading a file, all fields not present in the file (but requested implicitly or via the `selected_field_ids`
  * parameter) are ignored.
@@ -380,19 +304,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * Since SeqAn files are ranges, you can also create views over files. A useful example is to filter the records
  * based on certain criteria, e.g. minimum length of the sequence field:
  *
- * ```cpp
- * sequence_file_input fin{"/tmp/my.fasta"};
- *
- * auto minimum_length5_filter = view::filter([] (auto const & rec)
- * {
- *     return size(get<field::SEQ>(rec)) >= 5;
- * });
- *
- * for (auto & rec : fin | minimum_length5_filter) // only record with sequence length >= 5 will "appear"
- * {
- *     // ...
- * }
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp file_view
  *
  * ### End of file
  *
@@ -406,23 +318,8 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * This interface is less flexible, but can save you copy operations in certain scenarios, given that
  * you have sufficient memory to load the entire file at once:
  *
- * ```cpp
- *
- * struct data_storage_t
- * {
- *     concatenated_sequences<dna5_vector>  sequences;
- *     concatenated_sequences<std::string>  ids;
- * };
- *
- * data_storage_t data_storage; // a global or globally used variable in your program
- *
- * // ... in your file reading function:
- *
- * sequence_file_input fin{"/tmp/my.fasta"};
- *
- * data_storage.sequences = std::move(get<field::SEQ>(fin)); // we move the buffer directly into our storage
- * data_storage.ids = std::move(get<field::ID>(fin)); // we move the buffer directly into our storage
- * ```
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp data_storage
+ * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp col_read
  *
  * Note that for this to make sense, your storage data types need to be identical to the corresponding column types
  * of the file. If you require different column types you can specify you own traits, see
@@ -499,7 +396,7 @@ public:
     //!\brief The type of field::SEQ_QUAL (std::vector <seqan3::dna5q> by default).
     using sequence_quality_type = typename traits_type::
                                     template sequence_container<qualified<typename traits_type::sequence_alphabet,
-                                                                                    typename traits_type::quality_alphabet>>;
+                                                                          typename traits_type::quality_alphabet>>;
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types           = type_list<sequence_type, id_type, quality_type, sequence_quality_type>;
@@ -521,7 +418,7 @@ public:
     //!\brief Column type of field::QUAL (seqan3::concatenated_sequences<quality_type> by default).
     using quality_column_type           = typename traits_type::template quality_container_container<quality_type>;
     //!\brief Column type of field::SEQ_QUAL (seqan3::concatenated_sequences<sequence_quality_type> by default).
-    using sequence_quality_column_type  = typename traits_type::template id_container_container<sequence_quality_type>;
+    using sequence_quality_column_type  = typename traits_type::template sequence_container_container<sequence_quality_type>;
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_column_types            = type_list<sequence_column_type,
                                                     id_column_type,
@@ -588,12 +485,12 @@ public:
      * the file is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    sequence_file_input(filesystem::path filename,
+    sequence_file_input(std::filesystem::path filename,
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
     {
         if (!primary_stream->good())
-            throw file_open_error{"Could not open file for reading."};
+            throw file_open_error{"Could not open file " + filename.string() + " for reading."};
 
         // possibly add intermediate compression stream
         secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
@@ -709,27 +606,14 @@ public:
      * This function returns a reference to the currently buffered record, it is identical to dereferencing begin(),
      * but begin also always points to the current record on single pass input ranges:
      *
-     * ```cpp
-     * sequence_file_input fin{"/tmp/my.fasta"};
-     * auto it = begin(fin);
-     *
-     * // the following are equivalent:
-     * auto & rec0 = *it;
-     * auto & rec1 = fin.front();
-     *
-     * // both become invalid after incrementing "it"!
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp return_record
      *
      * It most situations using the iterator interface or a range-based for-loop are preferable to using front(),
      * because you can only move to the next record via the iterator.
      *
      * In any case, don't forget the reference! If you want to save the data from the record elsewhere, use move:
      *
-     * ```cpp
-     * sequence_file_input fin{"/tmp/my.fasta"};
-     *
-     * auto rec0 = std::move(fin.front());
-     * ```
+     * \snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_move
      *
      * ### Complexity
      *

@@ -27,6 +27,29 @@ TYPED_TEST_CASE_P(aligned_sequence);
 TYPED_TEST_P(aligned_sequence, fulfills_concept)
 {
     EXPECT_TRUE((aligned_sequence_concept<TypeParam>));
+    EXPECT_FALSE((aligned_sequence_concept<std::vector<dna4>>));
+}
+
+TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
+{
+    using unaligned_seq_type = remove_cvref_t<detail::unaligned_seq_t<TypeParam>>;
+    unaligned_seq_type unaligned{};
+
+    if constexpr (sequence_container_concept<unaligned_seq_type>)
+    {
+        unaligned.resize(seq.size());
+        std::copy(seq.begin(), seq.end(), begin(unaligned));
+    }
+    else // type is view, happens for gap_decorator tests
+        unaligned = unaligned_seq_type{seq};
+
+    TypeParam aligned{};
+
+    assign_unaligned(aligned, unaligned);
+
+    EXPECT_EQ(aligned.size(), unaligned.size());
+    EXPECT_EQ(*aligned.begin(), *unaligned.begin());
+    EXPECT_EQ(*std::ranges::next(begin(aligned)), *(unaligned.begin() + 1));
 }
 
 TYPED_TEST_P(aligned_sequence, insert_one_gap)
@@ -257,6 +280,7 @@ TYPED_TEST_P(aligned_sequence, cigar_string)
 
 REGISTER_TYPED_TEST_CASE_P(aligned_sequence,
                            fulfills_concept,
+                           assign_unaligned_sequence,
                            insert_one_gap,
                            insert_multiple_gaps,
                            insert_zero_gaps,

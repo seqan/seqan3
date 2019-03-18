@@ -17,8 +17,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/range/view/detail.hpp>
-#include <seqan3/std/view/all.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -48,7 +47,7 @@ private:
     //!\endcond
     static auto impl(urng_t && urange, size_t const k)
     {
-        return std::forward<urng_t>(urange) | ranges::view::sliding(k) | view::transform(
+        return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::view::transform(
         [] (auto const in)
         {
             std::hash<decltype(in)> h{};

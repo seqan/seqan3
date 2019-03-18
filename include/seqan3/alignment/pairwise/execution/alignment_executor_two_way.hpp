@@ -144,7 +144,7 @@ public:
     //!\brief Checks whether the end of the input resource was reached.
     bool is_eof() noexcept
     {
-        return seqan3::begin(resource) == seqan3::end(resource);
+        return std::ranges::begin(resource) == std::ranges::end(resource);
     }
     //!\}
 
@@ -171,20 +171,20 @@ private:
             return eof;
 
         // Reset the get pointer.
-        setg(seqan3::begin(buffer), seqan3::end(buffer));
+        setg(std::ranges::begin(buffer), std::ranges::end(buffer));
 
         // Apply the alignment execution.
         // TODO: Adapt for async behavior for parallel execution handler.
         size_t count = 0;
-        for (auto resource_iter = seqan3::begin(resource);
+        for (auto resource_iter = std::ranges::begin(resource);
              count < in_avail() && !is_eof(); ++count, ++resource_iter, ++gptr)
         {
-            auto const & [first_seq, second_seq] = *resource_iter;
+            auto && [first_seq, second_seq] = *resource_iter;
             exec_handler.execute(kernel, first_seq, second_seq, [this](auto && res){ *gptr = std::move(res); });
         }
 
         // Update the available get position if the buffer was consumed completely.
-        setg(seqan3::begin(buffer), seqan3::begin(buffer) + count);
+        setg(std::ranges::begin(buffer), std::ranges::begin(buffer) + count);
 
         return in_avail();
     }
@@ -198,7 +198,7 @@ private:
     void init_buffer()
     {
         buffer.resize(1);
-        setg(seqan3::end(buffer), seqan3::end(buffer));
+        setg(std::ranges::end(buffer), std::ranges::end(buffer));
     }
     //!\}
 

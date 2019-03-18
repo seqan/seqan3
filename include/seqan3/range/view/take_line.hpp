@@ -28,7 +28,7 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/type_traits>
-#include <seqan3/std/view/view_all.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -366,7 +366,7 @@ private:
     template <std::ranges::ViewableRange urng_t>
     static auto impl(urng_t && urange)
     {
-        return impl(view::all(std::forward<urng_t>(urange)));
+        return impl(std::view::all(std::forward<urng_t>(urange)));
     }
 };
 

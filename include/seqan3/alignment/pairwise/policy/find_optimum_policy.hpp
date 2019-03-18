@@ -16,6 +16,7 @@
 
 #include <range/v3/algorithm/for_each.hpp>
 
+#include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/core/metafunction/deferred_crtp_base.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/concepts>
@@ -63,7 +64,7 @@ private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend derived_t;
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr find_optimum_policy() = default;
@@ -78,7 +79,7 @@ protected:
 
     /*!\brief Checks every cell of the dynamic programming matrix.
      * \tparam score_t The type of the score.
-     * \param[in]     val       The current value.
+     * \param[in]     current   The current value.
      * \param[in,out] optimum   The current optimum to compare with.
      *
      * \details
@@ -86,16 +87,19 @@ protected:
      * This function resolves to a "NO-OP" function if the trait for searching every cell is set to std::false_type.
      */
     template <typename score_t>
-    constexpr void check_score([[maybe_unused]] score_t const val,
-                               [[maybe_unused]] score_t & optimum) const noexcept
+    constexpr void check_score([[maybe_unused]] alignment_optimum<score_t> const & current,
+                               [[maybe_unused]] alignment_optimum<score_t> & optimum) const noexcept
     {
         if constexpr (traits_type::find_in_every_cell_type::value)
-            optimum = std::max(optimum, val);
+        {
+            optimum = std::max(current, optimum, alignment_optimum_compare_less{});
+        }
+
     }
 
     /*!\brief Checks a cell of the last row of the dynamic programming matrix.
      * \tparam score_t The type of the score.
-     * \param[in]     val       The current value.
+     * \param[in]     current   The current value.
      * \param[in,out] optimum   The current optimum to compare with.
      *
      * \details
@@ -105,11 +109,11 @@ protected:
      * takes care of calling this function for the appropriate cells.
      */
     template <typename score_t>
-    constexpr void check_score_last_row([[maybe_unused]] score_t const val,
-                                        [[maybe_unused]] score_t & optimum) const noexcept
+    constexpr void check_score_last_row([[maybe_unused]] alignment_optimum<score_t> const & current,
+                                        [[maybe_unused]] alignment_optimum<score_t> & optimum) const noexcept
     {
         if constexpr (traits_type::find_in_last_row_type::value)
-            optimum = std::max(optimum, val);
+            optimum = std::max(current, optimum, alignment_optimum_compare_less{});
     }
 
     /*!\brief Checks the complete last column for the optimal score.
@@ -125,40 +129,47 @@ protected:
      * Due to a column based iteration layout the entire last column can be searched at once.
      */
     template <std::ranges::BidirectionalRange rng_t, typename score_t>
-    constexpr void check_score_last_column(rng_t && rng, score_t & optimum) const noexcept
+    constexpr void check_score_last_column(rng_t const & rng,
+                                           alignment_optimum<score_t> & optimum) const noexcept
     {
         using std::get;
         // Only check the entire column if it was configured to search here.
         if constexpr (traits_type::find_in_last_column_type::value)
         {
-            ranges::for_each(rng, [&](auto && tpl)
+            ranges::for_each(rng, [&](auto && entry)
             {
-                optimum = std::max(optimum, get<0>(tpl));
+                optimum = std::max(alignment_optimum<score_t>{get<0>(get<0>(entry)),
+                                                              static_cast<alignment_coordinate>(get<1>(entry))},
+                                   optimum,
+                                   alignment_optimum_compare_less{});
             });
         }
         else  // Only check the last cell for the global alignment.
         {
-            auto val = get<0>(*std::ranges::prev(seqan3::end(rng)));
-            optimum = std::max(optimum, val);
+            auto && last = *std::ranges::prev(std::ranges::end(rng));
+            optimum = std::max(alignment_optimum<score_t>{get<0>(get<0>(last)),
+                                                          static_cast<alignment_coordinate>(get<1>(last))},
+                               optimum,
+                               alignment_optimum_compare_less{});
         }
     }
 
     /*!\brief Balances the total score of the alignment depending on the band settings and the alignment configuration.
-     * \tparam score_type      The type of the score.
+     * \tparam optimum_type    The type of the matrix optimum.
      * \tparam dimension_type  The type of the matrix dimensions.
      * \tparam band_type       The type of the band.
      * \tparam gap_scheme_type The type of the gap_scheme.
      * \param[in,out] total            The total score to be updated.
-     * \param[in]     dimension_first  The horizontal matrix dimension.
-     * \param[in]     dimension_second The vertical matrix dimension.
+     * \param[in]     dimension_first  The matrix dimension in horizontal direction (size of first range + 1).
+     * \param[in]     dimension_second The matrix dimension in vertical direction (size of second range + 1).
      * \param[in]     band             The band.
      * \param[in]     scheme           The gap scheme to get the score for the trailing gap.
      */
-    template <typename score_type,
+    template <typename optimum_type,
               typename dimension_type,
               typename band_type,
               typename gap_scheme_type>
-    constexpr void balance_trailing_gaps([[maybe_unused]] score_type & total,
+    constexpr void balance_trailing_gaps([[maybe_unused]] optimum_type & total,
                                          [[maybe_unused]] dimension_type const dimension_first,
                                          [[maybe_unused]] dimension_type const dimension_second,
                                          [[maybe_unused]] band_type const & band,
@@ -174,7 +185,7 @@ protected:
                                              static_cast<cmp_int_type>(dimension_first));
 
             assert(gap_size >= 0);
-            total += scheme.score(gap_size);
+            total.score += scheme.score(gap_size);
         }
 
         // Only balance score if max is not searched in entire last column.
@@ -186,7 +197,7 @@ protected:
                                              static_cast<cmp_int_type>(dimension_second));
 
             assert(gap_size >= 0);
-            total += scheme.score(gap_size);
+            total.score += scheme.score(gap_size);
         }
     }
 };

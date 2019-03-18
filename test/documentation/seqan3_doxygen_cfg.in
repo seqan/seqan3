@@ -10,6 +10,7 @@ INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
 STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
 STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
 EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
+IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}
 
 ## DOT SUPPORT
 HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
@@ -29,7 +30,8 @@ MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 SORT_BRIEF_DOCS        = YES
 TOC_INCLUDE_HEADINGS   = 2
-HTML_EXTRA_STYLESHEET = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
+HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
+INPUT_ENCODING         = UTF-8
 
 PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "CEREAL_LOAD_FUNCTION_NAME=load" \
@@ -43,6 +45,8 @@ TAGFILES               += "${SEQAN3_DOXYGEN_STD_TAGFILE}=http://en.cppreference.
 
 EXCLUDE_SYMBOLS        = seqan3::contrib
 
+FORMULA_FONTSIZE       = 14
+HTML_DYNAMIC_SECTIONS  = YES
 
 ## detect headers without extensions (in std module)
 EXTENSION_MAPPING      = .no_extension=C++
@@ -57,8 +61,11 @@ EXCLUDE_SYMBOLS        += ${SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS}
 ## Custom doxygen commands
 ALIASES += tutorial_head{4}="<table><tr><th>Difficulty</th><td>\1</td></tr><tr><th>Duration</th><td>\2</td></tr><tr><th>Prerequisite tutorials</th><td>\3</td></tr><tr><th>Recommended reading</th><td>\4</td></tr></table>"
 
-ALIASES += assignment{1}="\htmlonly <div class=\"alert\" style=\"padding: 10px; background-color: #dce2ef; border-left: 6px solid #2f436a;\"><h4>\1</h4>\endhtmlonly"
-ALIASES += endassignment="\htmlonly</div>\endhtmlonly"
+ALIASES += assignment{1}="\htmlonly <div class=\"assignemnt\"><h4>\1</h4><div class=\"assignment_content\">\endhtmlonly"
+ALIASES += endassignment="\htmlonly</div></div>\endhtmlonly"
 
-ALIASES += solution="\htmlonly <div class=\"alert\" style=\"padding: 10px; background-color: #ccff99; border-left: 6px solid #408000;\"> <details><summary><b>Solution</b></summary> \endhtmlonly"
+ALIASES += solution="\htmlonly <div class=\"solution\"> <details><summary><b>Solution</b></summary> \endhtmlonly"
 ALIASES += endsolution="\htmlonly </details> </div> \endhtmlonly"
+
+ALIASES += hint="\htmlonly <div class=\"assignment\"> <details><summary><b>Hint</b></summary> \endhtmlonly"
+ALIASES += endhint="\htmlonly </details> </div> \endhtmlonly"

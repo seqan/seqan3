@@ -86,6 +86,15 @@ is_xdigit('e');  // returns true.
 //! [is_xdigit]
 
 {
+//! [operator]
+char chr{'1'};
+auto constexpr my_cond = is_char<'%'> || is_digit;
+bool is_percent = my_cond(chr); // is_percent == true
+//! [operator]
+(void) is_percent;
+}
+
+{
 //! [parse_asserter]
 std::istringstream istr{"ATZE"};
 
@@ -101,4 +110,3 @@ while (it != std::istream_iterator<char>{})
 }
 
 }
-

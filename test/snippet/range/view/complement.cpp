@@ -1,6 +1,6 @@
 #include <seqan3/range/view/complement.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -16,7 +16,7 @@ auto v = foo | view::complement;                                  // == "TGCAT"
 dna5_vector v2(view::complement(foo));                            // == "TGCAT"
 
 // generate the reverse complement:
-dna5_vector v3 = foo | view::complement | view::reverse;          // == "TACGT"
+dna5_vector v3 = foo | view::complement | std::view::reverse;          // == "TACGT"
 //! [usage]
 (void) v;
 (void) v2;

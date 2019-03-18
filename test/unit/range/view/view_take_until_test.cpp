@@ -16,8 +16,6 @@
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
-#include <seqan3/std/view/common.hpp>
 
 using namespace seqan3;
 
@@ -39,7 +37,7 @@ void do_test(adaptor_t const & adaptor, fun_t && fun, std::string const & vec)
     // combinability
     auto v3 = vec | adaptor(fun) | ranges::view::unique;
     EXPECT_EQ("fo", std::string(v3));
-    std::string v3b = vec | view::reverse | adaptor(fun) | ranges::view::unique;
+    std::string v3b = vec | std::view::reverse | adaptor(fun) | ranges::view::unique;
     EXPECT_EQ("rab", v3b);
 }
 

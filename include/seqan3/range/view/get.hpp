@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/std/view/transform.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::view
 {
@@ -58,13 +58,18 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <size_t index>
-inline auto const get = view::transform([] (auto && in) -> decltype(auto)
+inline auto const get = std::view::transform([] (auto && in) -> decltype(auto)
 {
     using std::get;
     using seqan3::get;
     static_assert(tuple_like_concept<decltype(in)>,
                   "You may only pass ranges to view::get whose reference_t models the tuple_like_concept.");
-    return get<index>(std::forward<decltype(in)>(in));
+
+    // we need to explicitly remove && around temporaries to return values as values (and not as rvalue references)
+    // we cannot simply cast to std::tuple_element_t (or set that as return value), because some tuples, like
+    // our cartesian_composition alphabets do not return that type when get is called on them (they return a proxy)
+    using ret_type = remove_rvalue_reference_t<decltype(get<index>(std::forward<decltype(in)>(in)))>;
+    return static_cast<ret_type>(get<index>(std::forward<decltype(in)>(in)));
 });
 
 //!\}

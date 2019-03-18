@@ -18,7 +18,7 @@
 #include <range/v3/view/join.hpp>
 
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/to_rank.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
@@ -26,8 +26,6 @@
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/reverse.hpp>
-#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
@@ -253,7 +251,7 @@ public:
 
         std::ranges::copy(text
                           | view::to_rank
-                          | view::transform([] (uint8_t const r)
+                          | std::view::transform([] (uint8_t const r)
                           {
                               if constexpr (alphabet_size_v<char_type> == 256)
                               {
@@ -264,7 +262,7 @@ public:
                               }
                               return r + 1;
                           })
-                          | view::reverse,
+                          | std::view::reverse,
                           seqan3::begin(tmp_text)); // reverse and increase rank by one
 
         sdsl::construct_im(index, tmp_text, 0);
@@ -326,7 +324,7 @@ public:
                                    | view::deep{view::to_rank}
                                    | view::deep
                                    {
-                                       view::transform([] (uint8_t const r)
+                                       std::view::transform([] (uint8_t const r)
                                        {
                                            if constexpr (alphabet_size_v<char_type> >= 255)
                                            {
@@ -339,17 +337,17 @@ public:
                                            return r + 1;
                                        })
                                    }
-                                   | ranges::view::join(delimiter);
+                                   | std::view::join(delimiter);
 
-        std::ranges::copy((tmp | view::reverse), seqan3::begin(tmp_text));
+        std::ranges::copy((tmp | std::view::reverse), seqan3::begin(tmp_text));
 
         //!\todo Replace with this once this does not cause debug builds to exceed max memory on travis
         // std::ranges::copy(text
         //                   | view::deep{view::to_rank}
-        //                   | view::deep{view::transform([] (uint8_t const r) { return r + 1; })} // increase rank
-        //                   | view::deep{view::reverse}
-        //                   | view::reverse
-        //                   | ranges::view::join(delimiter), // join with delimiter
+        //                   | view::deep{std::view::transform([] (uint8_t const r) { return r + 1; })} // increase rank
+        //                   | view::deep{std::view::reverse}
+        //                   | std::view::reverse
+        //                   | std::view::join(delimiter), // join with delimiter
         //                   seqan3::begin(tmp_text));
 
         sdsl::construct_im(index, tmp_text, 0);
@@ -436,12 +434,31 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool load(filesystem::path const & path)
+    bool load(std::filesystem::path const & path)
     {
-        sdsl_index_type tmp;
-        if (sdsl::load_from_file(tmp, path))
+        std::filesystem::path tb_path{path};
+        std::filesystem::path tb_ss_path{path};
+        std::filesystem::path tb_rs_path{path};
+        tb_path += ".tb";
+        tb_ss_path += ".tbss";
+        tb_rs_path += ".tbrs";
+
+        sdsl_index_type tmp_index;
+        sdsl::sd_vector<> tmp_text_begin;
+        sdsl::select_support_sd<1> tmp_text_begin_ss;
+        sdsl::rank_support_sd<1> tmp_text_begin_rs;
+
+        if (sdsl::load_from_file(tmp_index, path) &&
+            sdsl::load_from_file(tmp_text_begin, tb_path) &&
+            sdsl::load_from_file(tmp_text_begin_ss, tb_ss_path) &&
+            sdsl::load_from_file(tmp_text_begin_rs, tb_rs_path))
         {
-            std::swap(this->index, tmp);
+            std::swap(this->index, tmp_index);
+            std::swap(this->text_begin, tmp_text_begin);
+            std::swap(this->text_begin_ss, tmp_text_begin_ss);
+            std::swap(this->text_begin_rs, tmp_text_begin_rs);
+            text_begin_ss.set_vector(&text_begin);
+            text_begin_rs.set_vector(&text_begin);
             return true;
         }
         return false;
@@ -459,9 +476,19 @@ public:
      *
      * Strong exception guarantee.
      */
-    bool store(filesystem::path const & path) const
+    bool store(std::filesystem::path const & path) const
     {
-        return sdsl::store_to_file(index, path);
+        std::filesystem::path tb_path{path};
+        std::filesystem::path tb_ss_path{path};
+        std::filesystem::path tb_rs_path{path};
+        tb_path += ".tb";
+        tb_ss_path += ".tbss";
+        tb_rs_path += ".tbrs";
+
+        return sdsl::store_to_file(index, path) &&
+               sdsl::store_to_file(text_begin, tb_path) &&
+               sdsl::store_to_file(text_begin_ss, tb_ss_path) &&
+               sdsl::store_to_file(text_begin_rs, tb_rs_path);
     }
 
 };

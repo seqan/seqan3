@@ -33,10 +33,6 @@ int main(int argc, char ** argv)
         std::cerr << ext.what() << "\n";
         return -1;
     }
-    catch (seqan3::parser_interruption const &) // expected behaviour on special requests (e.g. `--help`)
-    {
-        return 0;
-    }
 
     // organize ...
 

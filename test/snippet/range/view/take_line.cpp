@@ -3,7 +3,7 @@
 #include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
-#include <seqan3/std/view/reverse.hpp>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -21,7 +21,7 @@ std::string vec{"foo\nbar"};
 auto v = vec | view::take_line;
 debug_stream << v << '\n'; // [f,o,o]
 
-auto v2 = vec | view::reverse | view::take_line;
+auto v2 = vec | std::view::reverse | view::take_line;
 debug_stream << v2 << '\n'; // [r,a,b]
 debug_stream << v2 << '\n'; // [r,a,b] (parsing it again gives us the same result)
 //! [behaviour]

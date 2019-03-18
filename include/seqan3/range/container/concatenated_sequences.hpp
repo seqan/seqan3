@@ -27,8 +27,6 @@
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/common.hpp>
-#include <seqan3/std/view/subrange.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/vector.hpp>
@@ -891,7 +889,7 @@ public:
             return begin() + pos_as_num;
 
         /* TODO implement view::flat_repeat_n that is like
-         *  ranges::view::repeat_n(value, count) | ranges::view::join | ranges::view::bounded;
+         *  ranges::view::repeat_n(value, count) | std::view::join | ranges::view::bounded;
          * but preserves random access and size.
          *
          * then do
@@ -907,7 +905,7 @@ public:
 
         data_values.reserve(data_values.size() + count * value_len);
         auto placeholder = ranges::view::repeat_n(value_type_t<rng_type>{}, count * value_len)
-                         | view::common;
+                         | std::view::common;
         // insert placeholder so the tail is moved once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            seqan3::begin(placeholder),
@@ -972,7 +970,7 @@ public:
         if (last - first == 0)
             return begin() + pos_as_num;
 
-        auto const ilist = view::subrange<begin_iterator_type, end_iterator_type>(first,
+        auto const ilist = std::ranges::subrange<begin_iterator_type, end_iterator_type>(first,
                                                                                   last,
                                                                                   std::distance(first, last));
 
@@ -997,7 +995,7 @@ public:
 
         // adapt values of inserted region
         auto placeholder = ranges::view::repeat_n(value_type_t<value_type>{}, full_len)
-                         | view::common;
+                         | std::view::common;
         // insert placeholder so the tail is moved only once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            seqan3::begin(placeholder),

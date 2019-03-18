@@ -19,10 +19,11 @@
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/std/concepts>
-#include <seqan3/std/view/view_all.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -72,19 +73,14 @@ namespace seqan3
 //!\cond
 template <typename validator_type>
 SEQAN3_CONCEPT validator_concept = std::Copyable<remove_cvref_t<validator_type>> &&
-                            requires(validator_type validator,
-                                     typename std::remove_reference_t<validator_type>::value_type value)
+                                   requires(validator_type validator,
+                                            typename std::remove_reference_t<validator_type>::value_type value)
 {
     typename std::remove_reference_t<validator_type>::value_type;
 
     { validator(value) } -> void;
     { validator.get_help_page_message() } -> std::string;
 };
-//!\endcond
-
-//!\cond
-template <typename option_value_type>
-class arithmetic_range_validator;
 //!\endcond
 
 /*!\brief A validator that checks whether a number is inside a given range.
@@ -101,12 +97,11 @@ class arithmetic_range_validator;
  *
  * \snippet test/snippet/argument_parser/validators_1.cpp usage
  */
-template <Arithmetic option_value_type>
-class arithmetic_range_validator<option_value_type>
+class arithmetic_range_validator
 {
 public:
     //!\brief The type of value that this validator invoked upon.
-    using value_type = option_value_type;
+    using value_type = double;
 
     /*!\brief The constructor.
      * \param[in] min_ Minimum set for the range to test.
@@ -116,7 +111,7 @@ public:
         min{min_}, max{max_}
     {}
 
-    /*!\brief Tests whether cmp lies inside [min,max].
+    /*!\brief Tests whether cmp lies inside [`min`, `max`].
      * \param cmp The input value to check.
      * \throws parser_invalid_argument
      */
@@ -125,6 +120,21 @@ public:
         if (!((cmp <= max) && (cmp >= min)))
             throw parser_invalid_argument(detail::to_string("Validation Failed - Value ", cmp,
                                                             " is not in range [", min, ",", max, "]."));
+    }
+
+    /*!\brief Tests whether every element in \p range lies inside [`min`, `max`].
+     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange. The value type must model
+     *                    seqan3::Arithmetic.
+     * \param  range      The input range to iterate over and check every element.
+     * \throws parser_invalid_argument
+     */
+    template <std::ranges::ForwardRange range_type>
+    //!\cond
+        requires Arithmetic<value_type_t<range_type>>
+    //!\endcond
+    void operator()(range_type const & range) const
+    {
+        std::for_each(range.begin(), range.end(), [&] (auto cmp) { (*this)(cmp); });
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -140,55 +150,6 @@ private:
     //!\brief Maximum of the range to test.
     value_type max{};
 };
-
-//!\cond
-template <container_concept option_value_type>
-    requires Arithmetic<typename option_value_type::value_type>
-class arithmetic_range_validator<option_value_type>
-{
-public:
-    //!\brief Type of values that are tested by validator (container)
-    using value_type = option_value_type;
-    //!\brief Underlying type of the container
-    using inner_value_type = typename value_type::value_type;
-
-    /*!\brief The constructor.
-     * \param[in] min_ Minimum set for the range to test.
-     * \param[in] max_ Maximum set for the range to test.
-     */
-    arithmetic_range_validator(inner_value_type const min_,
-                               inner_value_type const max_) :
-        min{min_}, max{max_}
-    {}
-
-    /*!\brief Tests whether cmp lies inside [min,max].
-     * \param cmp The input value to check.
-     * \throws parser_invalid_argument
-     */
-    void operator()(value_type const & cmp) const
-    {
-        std::for_each(cmp.begin(), cmp.end(), [&] (auto cmp_v)
-            {
-                if (!((cmp_v <= max) && (cmp_v >= min)))
-                    throw parser_invalid_argument(detail::to_string("Validation Failed - Value ", cmp_v,
-                                                                    " is not in range [", min, ",", max, "]."));
-            });
-    }
-
-    //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
-    {
-        return detail::to_string("Value must be in range [", min, ",", max, "].");
-    }
-
-private:
-    //!\brief Minimum of the range to test.
-    inner_value_type min{};
-
-    //!\brief Maximum of the range to test.
-    inner_value_type max{};
-};
-//!\endcond
 
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
@@ -212,69 +173,14 @@ public:
     /*!\brief Constructing from a vector.
      * \param[in] v The vector of valid values to test.
      */
-    value_list_validator(std::vector<option_value_type> const & v) :
+    value_list_validator(std::vector<value_type> const & v) :
         values{v}
     {}
 
     /*!\brief Constructing from an initializer_list.
      * \param[in] v The initializer_list of valid values to test.
      */
-    value_list_validator(std::initializer_list<option_value_type> const & v) :
-        values{v}
-    {}
-
-    /*!\brief Tests whether cmp lies inside values.
-     * \param cmp The input value to check.
-     * \throws parser_invalid_argument
-     */
-    void operator()(option_value_type const & cmp) const
-    {
-        if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
-            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", view::all(values), "."));
-    }
-
-    //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
-    {
-        return detail::to_string("Value must be one of ", view::all(values), ".");
-    }
-
-private:
-
-    //!\brief Minimum of the range to test.
-    std::vector<option_value_type> values;
-};
-
-/*!\brief A validator that checks if each value in a container appears in a list of valid values.
- * \ingroup argument_parser
- * \implements seqan3::validator_concept
- * \extends seqan3::value_list_validator
- *
- * \tparam option_value_type The container type. Must satisfy the seqan3::container_concept.
- */
-template <container_concept option_value_type>
-//!\cond
-    requires !std::is_same_v<option_value_type, std::string>
-//!\endcond
-class value_list_validator<option_value_type>
-{
-public:
-    //!\brief Type of values that are tested by validator (container)
-    using value_type = option_value_type;
-    //!\brief Underlying type of the container
-    using inner_value_type = typename value_type::value_type;
-
-    /*!\brief Constructing from a vector.
-     * \param[in] v The vector of valid values to test.
-     */
-    value_list_validator(std::vector<inner_value_type> const & v) :
-        values{v}
-    {}
-
-    /*!\brief Constructing from an initializer_list.
-     * \param[in] v The initializer_list of valid values to test.
-     */
-    value_list_validator(std::initializer_list<inner_value_type> const & v) :
+    value_list_validator(std::initializer_list<value_type> const & v) :
         values{v}
     {}
 
@@ -284,25 +190,50 @@ public:
      */
     void operator()(value_type const & cmp) const
     {
-        std::for_each(cmp.begin(), cmp.end(), [&] (auto cmp_v)
-            {
-                if (!(std::find(values.begin(), values.end(), cmp_v) != values.end()))
-                    throw parser_invalid_argument(detail::to_string("Value ", cmp_v, " is not one of ",
-                                                                view::all(values), "."));
-            });
+        if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
+            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not one of ", std::view::all(values), "."));
+    }
+
+    /*!\brief Tests whether every element in \p range lies inside values.
+     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange.
+     * \param  range      The input range to iterate over and check every element.
+     * \throws parser_invalid_argument
+     */
+    template <std::ranges::ForwardRange range_type>
+    //!\cond
+        requires std::CommonReference<value_type_t<range_type>, value_type>
+    //!\endcond
+    void operator()(range_type const & range) const
+    {
+        std::for_each(range.begin(), range.end(), [&] (auto cmp) { (*this)(cmp); });
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("Value must be one of ", view::all(values), ".");
+        return detail::to_string("Value must be one of ", std::view::all(values), ".");
     }
 
 private:
 
     //!\brief Minimum of the range to test.
-    std::vector<inner_value_type> values;
+    std::vector<value_type> values;
 };
+
+/*!\brief Type deduction guides
+ * \relates seqan3::value_list_validator
+ * \{
+ */
+template <Arithmetic option_value_type>
+value_list_validator(std::vector<option_value_type> const & v) -> value_list_validator<double>;
+
+template <Arithmetic option_value_type>
+value_list_validator(std::initializer_list<option_value_type> const & v) -> value_list_validator<double>;
+
+value_list_validator(std::vector<const char *> const & v) -> value_list_validator<std::string>;
+
+value_list_validator(std::initializer_list<const char *> const & v) -> value_list_validator<std::string>;
+//!\}
 
 /*!\brief A validator that checks if a filenames has one of the valid extensions.
  * \ingroup argument_parser
@@ -315,6 +246,8 @@ private:
  * exception whenever a given filename (string) is not in the given extension list.
  *
  * \snippet test/snippet/argument_parser/validators_3.cpp usage
+ *
+ * \note The validator works on every type that can be implicitly cast to std::filesystem::path.
  */
 class file_ext_validator
 {
@@ -340,17 +273,26 @@ public:
      * \param path The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(filesystem::path const & path) const
+    void operator()(std::filesystem::path const & path) const
     {
         std::string ext{path.extension().string()};
         ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
         if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
             throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
-                                                            view::all(extensions), "."));
+                                                            std::view::all(extensions), "."));
     }
 
-    //!\brief Tests whether every value of v lies inside extensions.
-    void operator()(std::vector<std::string> const & v) const
+    /*!\brief Tests whether every value of v lies inside extensions.
+     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
+     *                    have a common reference with std::filesystem::path.
+     * \param  v          The input range to iterate over and check every element.
+     * \throws parser_invalid_argument
+     */
+    template <std::ranges::ForwardRange range_type>
+    //!\cond
+        requires std::CommonReference<value_type_t<range_type>, std::filesystem::path>
+    //!\endcond
+    void operator()(range_type const & v) const
     {
         std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
     }
@@ -358,7 +300,7 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("File name extension must be one of ", view::all(extensions), ".");
+        return detail::to_string("File name extension must be one of ", std::view::all(extensions), ".");
     }
 
 private:
@@ -380,20 +322,29 @@ class file_existance_validator
 {
 public:
     //!\brief Type of values that are tested by validator
-    using value_type = filesystem::path;
+    using value_type = std::string;
 
     /*!\brief Tests whether path exists.
      * \param path The input value to check.
      * \throws parser_invalid_argument
      */
-    void operator()(filesystem::path const & path) const
+    void operator()(std::filesystem::path const & path) const
     {
-        if (!(filesystem::exists(path)))
+        if (!(std::filesystem::exists(path)))
             throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
     }
 
-    //!\brief Tests whether every filename in list v exists.
-    void operator()(std::vector<filesystem::path> const & v) const
+    /*!\brief Tests whether every filename in list \p v exists.
+     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
+     *                    have a common reference with std::filesystem::path.
+     * \param  v          The input range to iterate over and check every element.
+     * \throws parser_invalid_argument
+     */
+    template <std::ranges::ForwardRange range_type>
+    //!\cond
+        requires std::CommonReference<value_type_t<range_type>, std::filesystem::path>
+    //!\endcond
+    void operator()(range_type const & v) const
     {
          std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
     }
@@ -404,11 +355,6 @@ public:
         return detail::to_string("The file is checked for existence.");
     }
 };
-
-//!\cond
-template <typename option_value_type>
-class regex_validator;
-//!\endcond
 
 /*!\brief A validator that checks if a matches a regular expression pattern.
  * \ingroup argument_parser
@@ -421,13 +367,13 @@ class regex_validator;
  * validator will call std::regex_match on the command line argument.
  * Note: A regex_match will only return true if the strings matches the pattern
  * completely (in contrast to regex_search which also matches substrings).
+ *
  * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
- * exception whenever a given filename (string) is not in the given extension list.
+ * exception whenever string does not match the pattern.
  *
  * \snippet test/snippet/argument_parser/validators_4.cpp usage
  */
-template <>
-class regex_validator<std::string>
+class regex_validator
 {
 public:
     //!\brief Type of values that are tested by validator.
@@ -451,45 +397,19 @@ public:
             throw parser_invalid_argument(detail::to_string("Value ", cmp, " did not match the pattern ", pattern, "."));
     }
 
-    //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
-    {
-        return detail::to_string("Value must match the pattern '", pattern, "'.");
-    }
-
-private:
-    //!\brief The pattern to match.
-    std::string pattern;
-};
-
-/*!\brief A validator that checks if each value in a container satisfies a regex expression.
- * \ingroup argument_parser
- * \implements seqan3::validator_concept
- * \extends seqan3::regex_validator
- */
-template <>
-class regex_validator<std::vector<std::string>>
-{
-public:
-    //!\brief Type of values that are tested by validator.
-    using value_type = std::vector<std::string>;
-    /*!\brief Constructing from a vector.
-     * \param[in] pattern_ The vector of valid values to test.
-     */
-    regex_validator(std::string const & pattern_) :
-        pattern{pattern_}
-    {}
-
-    /*!\brief Tests whether cmp lies inside values.
-     * \param[in] cmp The value to validate.
+    /*!\brief Tests whether every filename in list v matches the pattern.
+     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
+     *                    have a common reference with std::string.
+     * \param  v          The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
-    void operator()(value_type const & cmp) const
+    template <std::ranges::ForwardRange range_type>
+    //!\cond
+        requires std::CommonReference<value_type_t<range_type>, value_type>
+    //!\endcond
+    void operator()(range_type const & v) const
     {
-        std::regex rgx(pattern);
-        for (auto const & cmp_v : cmp)
-            if (!std::regex_match(cmp_v, rgx))
-                throw parser_invalid_argument(detail::to_string("Value ", cmp_v, " did not match the pattern ", pattern, "."));
+         std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
@@ -502,13 +422,6 @@ private:
     //!\brief The pattern to match.
     std::string pattern;
 };
-
-/*!\brief Type deduction guides
- * \relates seqan3::regex_validator
- * \{
- */
- regex_validator(char const *) -> regex_validator<std::string>;
- //!\}
 
 namespace detail
 {

@@ -29,7 +29,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/type_traits>
-#include <seqan3/std/view/view_all.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -357,7 +357,7 @@ private:
     template <std::ranges::ViewableRange urng_t, typename fun_t>
     static auto impl(urng_t && urange, fun_t && fun)
     {
-        return impl(view::all(std::forward<urng_t>(urange)), std::forward<fun_t>(fun));
+        return impl(std::view::all(std::forward<urng_t>(urange)), std::forward<fun_t>(fun));
     }
 };
 
@@ -410,9 +410,9 @@ namespace seqan3::view
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * This view only *preserves* certain concepts if the specified functor models
- * seqan3::regular_std::Invocable<fun_t, reference_t<urng_t>, i.e.
+ * std::RegularInvocable<fun_t, reference_t<urng_t>, i.e.
  * applying the functor doesn't change the functor. If the functor only models std::Invocable and not
- * seqan3::regular_invocable_concept these concepts are *lost*.
+ * std::RegularInvocable these concepts are *lost*.
  *
  * ### Example
  *

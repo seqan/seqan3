@@ -17,12 +17,24 @@
 
 namespace seqan3::align_cfg
 {
-/*!\brief A configuration element for maximal errors.
- * \ingroup configuration
+/*!\brief Sets the maximal errors allowed during an edit distance computation.
+ * \ingroup alignment_configuration
+ *
+ * \details
+ *
+ * This configuration can only be used for computing the \ref seqan3::align_cfg::edit "edit distance".
+ * It restricts the number of substitutions, insertions, and deletions within the alignment to the given value and
+ * can thereby speed up the edit distance computation.
+ * A typical use case is to verify a candidate region during read mapping where the number of maximal errors is given
+ * beforehand. If this configuration is used for an alignment algorithm that does not compute the edit distance, a
+ * seqan3::invalid_alignment_configuration exception will be thrown.
+ *
+ * ### Example
+ *
+ * \snippet test/snippet/alignment/configuration/align_cfg_max_error_example.cpp example
  */
-class max_error : public pipeable_config_element<max_error, uint32_t>
+struct max_error : public pipeable_config_element<max_error, uint32_t>
 {
-public:
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::max_error};

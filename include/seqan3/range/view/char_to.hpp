@@ -15,7 +15,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/range/view/deep.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::view
 {
@@ -62,7 +62,7 @@ namespace seqan3::view
  * \hideinitializer
  */
 template <Alphabet alphabet_type>
-inline auto const char_to = deep{view::transform([] (auto && in)
+inline auto const char_to = deep{std::view::transform([] (auto && in)
 {
     static_assert(std::is_same_v<remove_cvref_t<decltype(in)>, remove_cvref_t<underlying_char_t<alphabet_type>>>,
                     "The innermost value type must be the underlying char type of alphabet_type.");

@@ -1,113 +1,256 @@
 import hudson.triggers.TimerTrigger;
 
+// ============================================================================
+// Global properties
+// ============================================================================
+
+// Start build every night between 1:00-4:59
+// Keep only last 10 builds
+properties([
+    pipelineTriggers(
+        [cron(env.BRANCH_NAME == 'master' ? 'H H(1-4) * * *' : '')]
+    ),
+    buildDiscarder(
+        logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10')
+    )
+])
+
 // Checks whether the current build was triggered by cron job.
 // We need this to check, whether we want to trigger a deployment
 // step for a stable nightly build.
-def isTriggeredByCron()
+def is_triggered_by_cron()
 {
     for (cause in currentBuild.rawBuild.getCauses())
     {
         if (cause instanceof TimerTrigger.TimerTriggerCause)
-            return "cron"
-
-        return "other"
+            return true
+        return false
     }
 }
 
-// Start the pipeline.
-pipeline {
-    agent any
-    triggers {  // Additional trigger to build nightly only on master.
-        cron(BRANCH_NAME == 'master' ? "H 1 * * *" : "")
+// Check if this build is a nightly build (only master supports building periodically)
+Boolean is_nightly = is_triggered_by_cron()
+
+// ============================================================================
+// Define test functions
+// ============================================================================
+
+/* Executes unit tests
+ * \param slave_name   The name of the slave this test is executed on; String
+ * \param compiler     The name of the compiler to use; String
+ * \param build_type   The build type to use [Debug, Release]; String
+ * \param model        The model [Nightly, Continuous]; String
+ * \param with_cereal  Whether to build with cereal support; Boolean
+ */
+def run_unit_tests(slave_name, compiler, build_type, model, with_cereal)
+{
+    def build_name
+    def cxx
+    def disable_cereal
+    def workspace
+    def platform
+
+    stage ('initialise')
+    {
+        workspace = pwd()
+        echo workspace
+        // Clean the workspace before building.
+        deleteDir()
+
+        build_name = "$slave_name $compiler cereal-$with_cereal $build_type $env.BRANCH_NAME Build-$env.BUILD_NUMBER"
+        disable_cereal = with_cereal ? 'OFF' : 'ON'
+        platform = sh(script: 'uname -s', returnStdout: true).trim()
+
+        sh 'git clone https://github.com/seqan/seqan3-infrastructure.git seqan3-infra'
+        cxx = sh(script: "which $compiler", returnStdout: true).trim()
+
+        // Perform checkout in specific location.
+        // The relative folder structure is important for the ctest script.
+        dir('checkout')
+        {
+            checkout scm
+        }
     }
-    environment {  // Prepare environment for build.
-        BUILD_TRIGGER = "${isTriggeredByCron()}"
-    }
-    stages {
-        stage ('Configure') { // TODO(rrahn): Check if really needed.
-            steps {
-                script {
-                    echo "The pushed branch: ${BRANCH_NAME}"
+
+    try
+    {
+        // Prepare environment and run ctest step.
+        withEnv(["BUILDNAME=$build_name",
+                 "PLATFORM=$platform",
+                 "MODEL=$model",
+                 "TEST_MODEL=unit",
+                 "WORKSPACE=$workspace",
+                 "SITE_NAME=jenkins",
+                 "DISABLE_CEREAL=$disable_cereal",
+                 "CTEST_BUILD_TYPE=$build_type",
+                 "CXX=$cxx"])
+        {
+            stage('run')
+            {
+                dir(workspace)
+                {
+                    sh "ctest --no-compress-output -VV -S $workspace/seqan3-infra/ctest/seqan3_jenkins.cmake"
                 }
             }
         }
-        stage ('Test') { // Perform CI tests.
-            parallel {
-                stage ('unit') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_unit_tests_unix', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
-                    }
-                }
-                stage ('doc') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_doc_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
-                    }
-                }
-                stage ('header') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_header_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
-                    }
-                }
-                stage ('memory') {
-                    steps {
-                        echo "TODO: Perform memory tests."
-                    }
-                }
-                stage ('coverage') {
-                    steps {
-                        echo "TODO: Perform coverage tests."
-                    }
-                }
-                stage ('performance') {
-                    agent none
-                    steps {
-                        build job: 'pipeline_performance_tests', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}")], quietPeriod: 0
+    }
+    catch (Exception ex)
+    {
+        currentBuild.result = 'failure'
+        if (env.CHANGE_ID)
+            pullRequest.createStatus(status: 'failure',
+                                     context: 'continuous-integration/jenkins/pr-merge',
+                                     description: 'Running ctest failed.')
+        throw ex
+    }
+}
+
+// ============================================================================
+// Define unit test matrix
+// ============================================================================
+
+// Configure unit tests. Add platforms here but adapt the inner loop of the matrix setup to call instantiate and
+// setup the right agent.
+def axis_agent = ["ubuntu"]
+def axis_compiler = ["g++-7", "g++-8"] // g++-9, clang-concepts
+def axis_cereal = [true, false]
+def axis_build_type =["Release", "Debug"]
+def tasks = [:]
+
+// The following nested for loops define the compiler matrix for the unit tests.
+// First iterate over all supported compiler versions
+// If the compilers do not match on the respective platform either use a different scope to
+// iterate over them or define some kind of map to point to the right compiler name per platform.
+for(int i = 0; i < axis_compiler.size(); ++i)
+{
+    def axis_compiler_value = axis_compiler[i]
+    def subTasks = [:] // defines subtask per compiler; later we can make it per platform.
+    for(int j = 0; j < axis_cereal.size(); ++j)  // Whether to use cereal or not
+    {
+        def axis_cereal_value = axis_cereal[j]
+        for (int k = 0; k < axis_build_type.size(); ++k) // Whether to build in release or debug mode
+        {
+            def axis_build_type_value = axis_build_type[k]
+            // Only build nightlies in debug and release mode
+            if (!is_nightly && (axis_build_type_value == "Release"))
+                continue
+
+            def test_model = is_nightly ? 'Nightly' : 'Continuous'
+            def label = "ubuntu_${axis_compiler_value}_cereal-${axis_cereal_value}_$axis_build_type_value"
+            subTasks[label] =
+            {
+                // Add node per platform here.
+                // They might differ in the usage and setup.
+                // Run on nodes matching labels 'ubuntu' and the compiler axis value.
+                // Only run g++-8 on ubuntu 1804 due to some linker errors on the ported package from ubuntu 1604
+                def platform = (axis_compiler_value == 'g++-8' ? 'ubuntu_1804' : 'ubuntu')
+                node("$platform && $axis_compiler_value")
+                {
+                    // For docker nodes we need to define the workspace explicitly, as they use a mounted
+                    // volume on the filesystem which is shared by all docker instances. Since the docker executor
+                    // doesn't know the other running instances it cannot locking the workspace.
+                    ws("$env.SEQAN_BASE_DIR/ws/$env.JOB_NAME/$env.DOCKER_SLAVE_NAME/$label")
+                    {
+                        stage('install')
+                        {
+                            sh """
+                                sudo apt-get update
+                                sudo apt-get install -y $axis_compiler_value cmake git zlib1g-dev libbz2-dev
+                            """
+
+                        }
+                        run_unit_tests(env.DOCKER_SLAVE_NAME,
+                                       axis_compiler_value,
+                                       axis_build_type_value,
+                                       test_model,
+                                       axis_cereal_value)
                     }
                 }
             }
         }
-        stage ('Deploy') { // conditional deploy step.
-            agent none
-            when { // only execute if nightly build on 'master' branch or if seqan was tagged with a new release.
-                beforeAgent true
-                anyOf {
-                    allOf {
-                        branch 'master'
-                        environment name: 'BUILD_TRIGGER', value: 'cron'
-                    }
-                    // tag "seqan-*"  // TODO: Currently breaks the pipeline: see https://issues.jenkins-ci.org/browse/JENKINS-52554
-                }
+    }
+    tasks["ubuntu-${axis_compiler_value}"] =
+    {
+        parallel subTasks
+    }
+}
+
+/* TODO sanitizer builds
+ * g++-7 sanitizer options
+ */
+
+/* TODO doc builds
+ * user develop
+ */
+
+/* TODO coverage build
+ * g++-8 debug mode
+ */
+
+/* TODO valgrind build
+ *
+ */
+
+/* TODO performance build
+ * g++-7, g++-8 [, g++-9] [, clang-concpets]
+ */
+
+// ============================================================================
+// Execute build matrix
+// ============================================================================
+
+// This is the main stage that executes all jobs registered in the tasks map
+// All steps are executed in parallel. If the contention on the agents are to high
+// consider moving some tasks out into another stage that runs after this one.
+stage ("matrix")
+{
+    parallel tasks
+}
+
+// ============================================================================
+// Cleanup steps executed in the nightly builds
+// ============================================================================
+
+// Invokes some cleanup steps for the docker builds.
+if (is_nightly)
+{
+    stage ("cleanup")
+    {
+        // On the docker nodes we need to regularly check if the a pull request was closed in order
+        // to remove the workspace which is stored persistently on the docker server.
+        node("ubuntu_1604 || ubuntu_1804")
+        {
+            // Get all open PRs and scan their PR number
+            String pulls = sh(script: "curl -X GET https://api.github.com/repos/seqan/seqan3/pulls", returnStdout: true).trim()
+            def change_ids = pulls.findAll(/number": (\d+),/)
+            {
+                match -> match[1]
             }
-            stages {
-                stage ('package nightly stable') {
-                    when {
-                        beforeAgent true
-                        branch 'master'
-                        environment name: 'BUILD_TRIGGER', value: 'cron'
-                    }
-                    steps {
-                        script {
-                            build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'ON')], quietPeriod: 0
+
+            dir("$env.SEQAN_BASE_DIR/ws/seqan3_build_pipeline")
+            {
+                def cache_folders = sh(returnStdout: true, script: 'ls').trim().split()
+
+                // Scan all existing folders if there is still a open PR for this.
+                for (folder in cache_folders)
+                {
+                    def keep_alive = false
+                    for (id in change_ids)
+                    {
+                        if (folder ==~ /^(?i)pr.${id}$/)
+                        {
+                            keep_alive = true
                         }
                     }
-                }
-                // stage ('package release') {
-                    // when {
-                        // beforeAgent true
-                        // tag "seqan-*"
-                    // }
-                    // steps {
-                        // script {
-                            // build job: 'pipeline_deploy', parameters: [string(name: 'COMMIT_SHA', value: "${GIT_COMMIT}"), string(name: 'SEQAN3_NIGHTLY_STABLE', value: 'OFF')], quietPeriod: 0
-                        // }
-                    // }
-                // }
-                stage ('acceptance test') {
-                    steps {
-                        echo "TODO: perform acceptance test"
+
+                    // If there isn't a direct match we can safely delete this workspace.
+                    if (!keep_alive)
+                    {
+                        dir (folder)
+                        {
+                            echo "Removing diretory " + pwd()
+                            deleteDir()
+                        }
                     }
                 }
             }

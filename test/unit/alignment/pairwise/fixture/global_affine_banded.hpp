@@ -49,36 +49,8 @@ static auto dna4_01 = []()
         -18,
         "A---ACCGGTTAACCGGTT",
         "ACGTAC----------GTA",
-        alignment_coordinate{0, 0},
-        alignment_coordinate{15, 8},
-        std::vector
-        {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
-        /*A*/  1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-        /*C*/  2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-        /*G*/  3,  2,  2,  2,  2,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
-        /*T*/  4,  3,  3,  3,  3,  3,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-        /*A*/  5,  4,  3,  4,  4,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
-        /*C*/  6,  5,  4,  3,  4,  5,  5,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
-        /*G*/  7,  6,  5,  4,  4,  4,  5,  6,  6,  6,  6,  6,  6,  6,  7,  8,  9,
-        /*T*/  8,  7,  6,  5,  5,  5,  5,  5,  6,  7,  7,  7,  7,  7,  7,  7,  8,
-        /*A*/  9,  8,  7,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8,  8,  8,  8,  8
-        },
-        std::vector
-        {
-        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
-        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
-        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
-        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,
-        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,
-        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,
-        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D
-        }
+        alignment_coordinate{detail::column_index_type{0u}, detail::row_index_type{0u}},
+        alignment_coordinate{detail::column_index_type{16u}, detail::row_index_type{9u}}
     };
 }();
 

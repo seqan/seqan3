@@ -28,7 +28,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, begin)
 {
     using text_t = typename TypeParam::index_type::text_type;
     text_t text{"AACGATCGGA"_dna4, "AACGATCGGA"_dna4};
-    auto rev_text = text | view::deep{view::reverse} | view::deep{view::persist};
+    auto rev_text = text | view::deep{std::view::reverse} | view::deep{view::persist};
 
     using fm_fwd_t = fm_index<text_t>;
     using fm_rev_t = fm_index<decltype(rev_text)>;

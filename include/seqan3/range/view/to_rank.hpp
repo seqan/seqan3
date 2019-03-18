@@ -14,7 +14,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/range/view/deep.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::view
 {
@@ -60,7 +60,7 @@ namespace seqan3::view
  * often implemented as `unsigned char` and thus will not be printed as a number by default.
  * \hideinitializer
  */
-inline auto const to_rank = deep{view::transform([] (auto const in) noexcept
+inline auto const to_rank = deep{std::view::transform([] (auto const in) noexcept
 {
     static_assert(Alphabet<remove_cvref_t<decltype(in)>>, "The value type of seqan3::view::to_rank must model the seqan3::Alphabet.");
     return seqan3::to_rank(in);

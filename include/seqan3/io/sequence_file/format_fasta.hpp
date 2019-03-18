@@ -41,8 +41,6 @@
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/subrange.hpp>
-#include <seqan3/std/view/transform.hpp>
 
 namespace seqan3
 {
@@ -117,7 +115,7 @@ public:
               qual_type                                                              & SEQAN3_DOXYGEN_ONLY(qualities))
     {
         using stream_char_t = typename stream_type::char_type;
-        auto stream_view = view::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
+        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
                                           decltype(std::istreambuf_iterator<stream_char_t>{})>
                             {std::istreambuf_iterator<stream_char_t>{stream},
                              std::istreambuf_iterator<stream_char_t>{}};
@@ -197,7 +195,7 @@ protected:
         {
             if (options.truncate_ids)
             {
-                std::ranges::copy(stream_view | ranges::view::drop_while(is_id || is_blank)     // skip leading >
+                std::ranges::copy(stream_view | std::view::drop_while(is_id || is_blank)     // skip leading >
                                               | view::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
                                               | view::char_to<value_type_t<id_type>>,
                                   std::back_inserter(id));                                      // … ^A is old delimiter
@@ -208,7 +206,7 @@ protected:
             else
             {
                 std::ranges::copy(stream_view | view::take_line_or_throw                                        // read line
-                                              | ranges::view::drop_while(is_id || is_blank)                     // skip leading >
+                                              | std::view::drop_while(is_id || is_blank)                     // skip leading >
                                               | view::char_to<value_type_t<id_type>>,
                                   std::back_inserter(id));
             }
@@ -233,8 +231,8 @@ protected:
         {
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
             std::ranges::copy(stream_view | view::take_until(is_id)                      // until next header (or end)
-                                          | ranges::view::remove_if(is_space || is_digit)// ignore whitespace and numbers
-                                          | view::transform([is_legal_alph] (char const c)
+                                          | std::view::filter(!(is_space || is_digit))// ignore whitespace and numbers
+                                          | std::view::transform([is_legal_alph] (char const c)
                                             {
                                                 if (!is_legal_alph(c))
                                                 {
@@ -285,7 +283,7 @@ protected:
         {
             std::ranges::copy(seq | view::to_char
                              | ranges::view::chunk(options.fasta_letters_per_line)
-                             | ranges::view::join(options.add_carriage_return
+                             | std::view::join(options.add_carriage_return
                                                     ? std::string_view{"\r\n"}
                                                     : std::string_view{"\n"}),
                          stream_it);

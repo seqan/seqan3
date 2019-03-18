@@ -21,8 +21,21 @@
 namespace seqan3::align_cfg
 {
 
-/*!\brief The configuration for scoring class.
+/*!\brief Sets the scoring scheme for the alignment algorithm.
+ * \ingroup configuration
  * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::scoring_scheme_concept.
+ *
+ * \details
+ *
+ * The scoring scheme allows to specify how two symbols of an alphabet are scored inside of the alignment algorithm.
+ * The scheme depends on the alphabet type of the passed sequences and must be chosen accordingly.
+ * During the configuration of the pairwise alignment algorithm a static assert is triggered if the scoring scheme
+ * is not compatible with the given alphabet types. Accordingly, this configuration cannot
+ * be defaulted since it depends on the sequences and must be given as a minimal configuration.
+ *
+ * ### Example
+ *
+ * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
  */
 template <typename scoring_scheme_t>
 struct scoring : public pipeable_config_element<scoring<scoring_scheme_t>, scoring_scheme_t>

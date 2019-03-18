@@ -6,7 +6,7 @@ using namespace seqan3;
 int main()
 {
     // I only want to print the mapping position (field::REF_OFFSET) and flag:
-    alignment_file_output fout{filesystem::temp_directory_path()/"my.sam", fields<field::REF_OFFSET, field::FLAG>{}};
+    alignment_file_output fout{std::filesystem::temp_directory_path()/"my.sam", fields<field::REF_OFFSET, field::FLAG>{}};
 
     unsigned mapping_pos{1300};
     unsigned flag{0};

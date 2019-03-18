@@ -26,8 +26,7 @@
 #include <seqan3/search/fm_index/detail/csa_alphabet_strategy.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
-#include <seqan3/std/view/filter.hpp>
-#include <seqan3/std/view/transform.hpp>
+#include <seqan3/std/ranges>
 
 // namespace seqan3::detail
 // {
@@ -470,7 +469,7 @@ public:
 
         size_type const loc = offset() - index->index[node.lb];
         size_type const query_begin = loc - index->text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return *index->text | ranges::view::join | ranges::view::slice(query_begin, query_begin + query_length());
+        return *index->text | std::view::join | ranges::view::slice(query_begin, query_begin + query_length());
     }
 
     //!\copydoc query()
@@ -564,8 +563,8 @@ public:
     {
         assert(index != nullptr);
 
-        return ranges::view::iota(node.lb, node.lb + count())
-               | view::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; });
+        return std::view::iota(node.lb, node.lb + count())
+               | std::view::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; });
     }
 
     //!\overload
@@ -576,9 +575,9 @@ public:
     {
         assert(index != nullptr);
 
-        return ranges::view::iota(node.lb, node.lb + count())
-               | view::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; })
-               | view::transform([*this] (auto loc)
+        return std::view::iota(node.lb, node.lb + count())
+               | std::view::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; })
+               | std::view::transform([*this] (auto loc)
                {
                    size_type sequence_rank = index->text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->text_begin_ss.select(sequence_rank);

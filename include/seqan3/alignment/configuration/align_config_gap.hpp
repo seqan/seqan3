@@ -20,9 +20,22 @@
 
 namespace seqan3::align_cfg
 {
-/*!\brief A configuration element for gaps.
- * \ingroup configuration
+/*!\brief A configuration element for the gap scheme.
+ * \ingroup alignment_configuration
  * \tparam gap_scheme_t The type of the underlying gap scheme. Must satisfy the seqan3::gap_scheme_concept.
+ *
+ * \details
+ *
+ * Configures the gap scheme for the alignment algorithm. The gap scheme determines how gaps are penalised inside
+ * of the alignment algorithm. If the gap scheme is not configured, it will default to a linear gap scheme initialised
+ * with edit distance. Note that the gap open score is used as an additional score. This means that the score for
+ * opening a gap during the affine alignment execution is the sum of the gap score and the gap open score.
+ *
+ * ### Example
+ *
+ * \snippet test/snippet/alignment/configuration/align_cfg_gap_example.cpp example
+ *
+ * \see seqan3::gap_scheme
  */
 template <gap_scheme_concept gap_scheme_t>
 struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>

@@ -5,7 +5,7 @@ using namespace seqan3;
 
 int main()
 {
-    alignment_file_output fout{filesystem::temp_directory_path()/"my.sam"};
+    alignment_file_output fout{std::filesystem::temp_directory_path()/"my.sam"};
 
     auto file_it = fout.begin();
 

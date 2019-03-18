@@ -179,7 +179,7 @@ public:
     //!\cond
         requires (IStream<std::istringstream, option_type> ||
                   IStream<std::istringstream, typename option_type::value_type>) &&
-                  std::is_same_v<typename validator_type::value_type, option_type>
+                  std::Invocable<validator_type, option_type>
     //!\endcond
     void add_option(option_type & value,
                     char const short_id,
@@ -238,7 +238,7 @@ public:
     //!\cond
         requires (IStream<std::istringstream, option_type> ||
                   IStream<std::istringstream, typename option_type::value_type>) &&
-                  std::is_same_v<typename validator_type::value_type, option_type>
+                  std::Invocable<validator_type, option_type>
     //!\endcond
     void add_positional_option(option_type & value,
                                std::string const & desc,
@@ -255,10 +255,11 @@ public:
      * \attention The function must be called at the very end of all parser
      * related code and should be enclosed in a try catch block.
      *
+     * \throws seqan3::parser_design_error if the this function was already called before.
+     *
      * \throws seqan3::option_declared_multiple_times if an option that is not a list was declared multiple times.
      * \throws seqan3::overflow_error_on_conversion if the numeric argument would cause an overflow error when
      *                                              converted into the expected type.
-     * \throws seqan3::parser_interruption on special user request (e.g. --help or --version).
      * \throws seqan3::parser_invalid_argument if the user provided wrong arguments.
      * \throws seqan3::required_option_missing if the user did not provide a required option.
      * \throws seqan3::too_many_arguments if the command line call contained more arguments than expected.
@@ -272,40 +273,29 @@ public:
      * starts to process the command line for specified options, flags and
      * positional options.
      *
-     * The parser behaves differently when the given command line (`argv`)
-     * contains the following keywords (in order of checking) :
+     * If the given command line input (`argv`) contains the following keywords (in order of checking), the parser
+     * will exit (std::exit) with error code 0 after doing the following:
      *
-     * - **-h/--help** Prints the help page and throws
-     *                 a seqan3::parser_interruption.
-     * - **-hh/--advanced-help** Prints the help page including advanced options
-     *                           and throws a seqan3::parser_interruption.
-     * - **--version** Prints the version information and throws
-     *                 a seqan3::parser_interruption.
-     * - **--export-help [format]** Prints the application description in the
-     *                              given format (html/man/ctd) and throws a
-     *                              seqan3::parser_interruption.
+     * - **-h/\--help** Prints the help page.
+     * - **-hh/\--advanced-help** Prints the help page including advanced options.
+     * - <b>\--version</b> Prints the version information.
+     * - <b>\--export-help [format]</b> Prints the application description in the given format (html/man/ctd).
      *
-     * For example you can call your application binary like this:
-     * ```console
-     * MaxMuster$ ./my_app --export-help html > my_app.html
-     * ```
+     * Example:
      *
-     * Note: We throw a parser_interruption exception to ensure that the
-     * application/program is not executed when the user requests special
-     * behaviour.
-     * You should therefore enclose this function into a try catch block,
-     * customizing the behaviour of your application parser:
+     * \note Since the argument parser may throw, you should always wrap `parse()` into a try-catch block.
      *
      * \snippet test/snippet/argument_parser/argument_parser_2.cpp usage
      *
-     * For example a help call gives the following output:
+     * The code above gives the following output when calling `--help`:
+     *
      * ```console
      * MaxMuster$ ./age_app --help
      * The-Age-App
      * ===========
      *
      * OPTIONS
-     *     -a, --user-age INT (32 bit)
+     *     -a, --user-age (signed 32 bit integer)
      *           Please specify your age.
      *
      * VERSION
@@ -321,10 +311,12 @@ public:
      * ```console
      * MaxMuster$ ./age_app --foo
      * The Age App - [PARSER ERROR] Unknown option --foo. Please see -h/--help for more information.
-     * MaxMuster$
+     * ```
+     *
+     * ```console
      * MaxMuster$ ./age_app -a abc
      * The Age App - [PARSER ERROR] Value cast failed for option -a: Argument abc
-     *                              could not be casted to type INT (32 bit).
+     *                              could not be casted to type (signed 32 bit integer).
      * ```
      */
     void parse()
@@ -422,11 +414,11 @@ public:
      *           Specify the names of the penguins.
      *
      * OPTIONS
-     *     -d, --day INT (32 bit)
+     *     -d, --day (signed 32 bit integer)
      *           Please specify your preferred day.
-     *     -m, --month INT (32 bit)
+     *     -m, --month (signed 32 bit integer)
      *           Please specify your preferred month.
-     *     -y, --year INT (32 bit)
+     *     -y, --year (signed 32 bit integer)
      *           Please specify your preferred year.
      *
      * EXAMPLES
@@ -468,16 +460,16 @@ private:
      *
      * - **no arguments** If no arguments are provided on the commandline, the
      *                    seqan3::detail::format_short_help is set.
-     * - **-h/--help** sets the format to seqan3::detail::format_help
-     * - **-hh/--advanced-help** sets the format to seqan3::detail::format_help
+     * - **-h/\--help** sets the format to seqan3::detail::format_help
+     * - **-hh/\--advanced-help** sets the format to seqan3::detail::format_help
      *                           and show_advanced_options to `true`.
-     * - **--version** sets the format to seqan3::detail::format_version.
-     * - **-export-help html** sets the format to seqan3::detail::format_html.
-     * - **-export-help man** sets the format to seqan3::detail::format_man.
-     * - **-export-help ctd** sets the format to seqan3::detail::format_ctd.
+     * - <b>\--version</b> sets the format to seqan3::detail::format_version.
+     * - <b>\--export-help html</b> sets the format to seqan3::detail::format_html.
+     * - <b>\--export-help man</b> sets the format to seqan3::detail::format_man.
+     * - <b>\--export-help ctd</b> sets the format to seqan3::detail::format_ctd.
      * - else the format is that to seqan3::detail::format_parse
      *
-     * If `-export-help` is specified with a value other than html/man or ctd
+     * If `--export-help` is specified with a value other than html/man or ctd
      * a parser_invalid_argument is thrown.
      */
     void init(int const argc, char const * const * const  argv)
@@ -523,33 +515,27 @@ private:
                                             "Value of --export-help must be one of [html, man, ctd]");
                 return;
             }
+            else if (arg == "--copyright")
+            {
+                format = detail::format_copyright();
+                return;
+            }
         }
 
         format = detail::format_parse(argc, argv);
     }
 
     /*!\brief Checks whether the long identifier has already been used before.
-    * \param[in] long_id The long identifier of the command line option/flag.
+    * \param[in] id The long identifier of the command line option/flag.
     * \returns `true` if an option or flag with the long identifier exists or `false`
     *          otherwise.
     */
-    bool id_exists(std::string const & long_id)
+    template <typename id_type>
+    bool id_exists(id_type const & id)
     {
-        if (long_id.empty())
+        if (detail::format_parse::is_empty_id(id))
             return false;
-        return(!(used_option_ids.insert(long_id)).second);
-    }
-
-    /*!\brief Checks whether the short identifier has already been used before.
-    * \param[in] short_id The short identifier of the command line option/flag.
-    * \returns `true` if an option or flag with the identifier exists or `false`
-    *          otherwise.
-    */
-    bool id_exists(char const short_id)
-    {
-        if (short_id == '\0')
-            return false;
-        return(!(used_option_ids.insert(std::string(1, short_id))).second);
+        return (!(used_option_ids.insert(std::string({id}))).second);
     }
 
     /*!\brief Verifies that the short and the long identifiers are correctly formatted.
@@ -581,7 +567,7 @@ private:
                           if (!(allowed(c) || is_char<'-'>(c)))
                               throw parser_design_error("Long identifiers may only contain alphanumeric characters, '_', '-', or '@'.");
                       });
-        if (short_id == '\0' && long_id.empty())
+        if (detail::format_parse::is_empty_id(short_id) && detail::format_parse::is_empty_id(long_id))
             throw parser_design_error("Option Identifiers cannot both be empty.");
     }
 
@@ -594,11 +580,12 @@ private:
                  detail::format_short_help,
                  detail::format_version,
                  detail::format_html,
-                 detail::format_man/*,
+                 detail::format_man,
+                 detail::format_copyright/*,
                  detail::format_ctd*/> format{detail::format_help(0)};
 
     //!\brief List of option/flag identifiers that are already used.
-    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version"};
+    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
 };
 
 } // namespace seqan3

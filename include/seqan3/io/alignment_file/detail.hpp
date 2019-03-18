@@ -149,7 +149,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
     unsigned tmp_length{0};
 
     // go through alignment columns
-    for (auto column : ranges::view::zip(ref_seq, query_seq))
+    for (auto column : std::view::zip(ref_seq, query_seq))
     {
         char next_op = compare_aligned_values(std::get<0>(column), std::get<1>(column), extended_cigar);
 

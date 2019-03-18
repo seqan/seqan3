@@ -43,7 +43,10 @@ using global_affine_banded_types
 
 using semi_global_affine_banded_types
     = ::testing::Types<
-        param<&semi_global::affine::banded::dna4_01>
+        param<&semi_global::affine::banded::dna4_semi_seq1_a>,
+        //param<&semi_global::affine::banded::dna4_semi_seq1_b>,
+        param<&semi_global::affine::banded::dna4_semi_seq2_a>,
+        param<&semi_global::affine::banded::dna4_semi_seq2_b>
     >;
 
 TYPED_TEST_P(global_affine_banded, score)
@@ -61,7 +64,58 @@ TYPED_TEST_P(global_affine_banded, score)
     EXPECT_EQ((*std::ranges::begin(alignment)).get_score(), fixture.score);
 }
 
-REGISTER_TYPED_TEST_CASE_P(global_affine_banded, score);
+TYPED_TEST_P(global_affine_banded, end_position)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_end_position};
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+
+    auto res = *std::ranges::begin(alignment);
+    EXPECT_EQ(res.get_score(), fixture.score);
+
+    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+}
+
+TYPED_TEST_P(global_affine_banded, begin_position)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_begin_position};
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+
+    auto res = *std::ranges::begin(alignment);
+    EXPECT_EQ(res.get_score(), fixture.score);
+
+    EXPECT_EQ(res.get_begin_coordinate(), fixture.begin_coordinate);
+    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+}
+
+TYPED_TEST_P(global_affine_banded, trace)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_trace};
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+
+    auto res = *std::ranges::begin(alignment);
+    EXPECT_EQ(res.get_score(), fixture.score);
+    EXPECT_EQ(res.get_begin_coordinate(), fixture.begin_coordinate);
+    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+    EXPECT_TRUE(ranges::equal(get<0>(res.get_alignment()) | view::to_char, fixture.aligned_sequence1));
+    EXPECT_TRUE(ranges::equal(get<1>(res.get_alignment()) | view::to_char, fixture.aligned_sequence2));
+}
+
+REGISTER_TYPED_TEST_CASE_P(global_affine_banded, score, end_position, begin_position, trace);
 
 // work around a bug that you can't specify more than 50 template arguments to ::testing::types
 INSTANTIATE_TYPED_TEST_CASE_P(global, global_affine_banded, global_affine_banded_types);

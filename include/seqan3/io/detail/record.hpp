@@ -55,14 +55,7 @@ SEQAN3_CONCEPT fields_concept = is_value_specialisation_of_v<t, fields>;
  *
  * ### Example
  *
- * ```cpp
- * using types         = type_list<std::string, dna4_vector, std::vector<phred42>>;
- * using types_as_ids  = fields<field::ID,      field::SEQ,  field::QUAL>;
- * using selected_ids  = fields<field::QUAL, field::ID>;
- *
- * using selected_types = detail::select_types_with_ids_t<types, types_as_ids, selected_ids>;
- * // resolves to type_list<std::vector<phred42>, std::string>>
- * ```
+ * \snippet test/snippet/io/detail/detail_record.cpp usage
  */
 template <typename field_types,
           typename field_types_as_ids,

@@ -32,7 +32,7 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
@@ -449,28 +449,11 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * file has a certain format.
  *
  * In most cases the template parameters are deduced completely automatically:
- * ```cpp
- * structure_file_in sf{"/tmp/my.dbn"}; // Vienna with RNA sequences assumed, regular std::ifstream taken as stream
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp auto_temp_deduc
  *
  * Reading from an std::istringstream:
  *
- * ```cpp
- * std::string const input
- * {
- *     ">S.cerevisiae_tRNA-PHE M10740/1-73\n"
- *     "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA\n"
- *     "(((((((..((((........)))).((((.........)))).....(((((.......)))))))))))). (-17.50)\n"
- *     "> example\n"
- *     "UUGGAGUACACAACCUGUACACUCUUUC\n"
- *     "..(((((..(((...)))..)))))... (-3.71)\n"
- * };
- *
- * std::istringstream iss(input);
- *
- * structure_file_in fin{std::move(iss), structure_file_format_vienna{}};
- * //              ^ no need to specify the template arguments
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp stringstream_read
  *
  * Note that this is not the same as writing `structure_file_in<>` (with angle brackets). In the latter case they are
  * explicitly set to their default values, in the former case
@@ -480,40 +463,20 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  *
  * In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
  *
- * ```cpp
- * structure_file_in<structure_file_default_traits_aa> fin{"/tmp/my.dbn"};
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp arg_spec
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
  * seqan3::structure_file_default_traits_rna for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction so if you want to read amino acids **and**
  * want to read from a string stream you need to give all types yourself:
  *
- * ```cpp
- *
- *  // ... input had amino acid sequences
- * std::istringstream iss(input);
- *
- * structure_file_in<structure_file_default_traits_aa,
- *                   fields<field::SEQ, field::ID, field::STRUCTURE>,
- *                   type_list<structure_file_format_vienna>,
- *                   std::istringstream> fin{std::move(iss), structure_file_format_vienna{}};
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp trait_def
  *
  * ### Reading record-wise
  *
  * You can iterate over this file record-wise:
  *
- * ```cpp
- * structure_file_in fin{"/tmp/my.dbn"};
- *
- * for (auto & rec : fin)
- * {
- *     std::cout << "ID: " << get<field::ID>(rec) << '\n';
- *     std::cout << "SEQ: " << (get<field::SEQ>(rec) | view::to_char) << '\n'; // sequence is converted to char on-the-fly
- *     std::cout << "STRUCTURE: " << (get<field::STRUCTURE>(rec) | view::to_char) << '\n';
- * }
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp record_iter
  *
  * In the above example, rec has the type \ref record_type which is a specialisation of seqan3::record and behaves
  * like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field based interface on
@@ -524,15 +487,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
  * to store it somewhere without copying:
  *
- * ```cpp
- * structure_file_in fin{"/tmp/my.dbn"};
- *
- * using record_type = typename decltype(fin)::record_type;
- * std::vector<record_type> records;
- *
- * for (auto & rec : fin)
- *     records.push_back(std::move(rec));
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp data_out
  *
  * ### Reading record-wise (decomposed records)
  *
@@ -540,16 +495,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
  * to decompose the record into its elements:
  *
- * ```cpp
- * structure_file_in fin{"/tmp/my.dbn"};
- *
- * for (auto & [ seq, id, structure ] : fin)
- * {
- *     std::cout << "ID: " << id << '\n';
- *     std::cout << "SEQ: " << (seq | view::to_char) << '\n'; // sequence is converted to char on-the-fly
- *     std::cout << "STRUCTURE: " << (structure | view::to_char) << '\n';
- * }
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp structured_bindings
  *
  * In this case you immediately get the three elements of the tuple: `seq` of \ref seq_type, `id` of
  * \ref id_type and `structure` of \ref structure_type. **But beware: with structured bindings you do need
@@ -562,17 +508,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * combined field for SEQ and STRUCTURE (see above). Or to never actually read the STRUCTURE, if you don't need it.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
- * ```cpp
- * structure_file_in fin{"/tmp/my.dbn", fields<field::ID, field::STRUCTURED_SEQ>{}};
- *
- * for (auto & [ id, structured_seq ] : fin) // note that the order is now different, "id" comes first, because it was specified first
- * {
- *     std::cout << "ID: " << id << '\n';
- *     // sequence and structure are part of the same vector, of type std::vector<structured_rna<rna5, wuss51>>
- *     std::cout << "SEQ: "  << (structured_seq | view::get<0> | view::to_char) << '\n'; // sequence string is extracted and converted to char on-the-fly
- *     std::cout << "STRUCTURE: " << (structured_seq | view::get<1> | view::to_char) << '\n'; // structure string is extracted and converted to char on-the-fly
- * }
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp skip_fields
  *
  * When reading a file, all fields not present in the file (but requested implicitly or via the `selected_field_ids`
  * parameter) are ignored.
@@ -582,19 +518,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * Since SeqAn files are ranges, you can also create views over files. A useful example is to filter the records
  * based on certain criteria, e.g. minimum length of the sequence field:
  *
- * ```cpp
- * structure_file_in fin{"/tmp/my.dbn"};
- *
- * auto minimum_length5_filter = view::filter([] (auto const & rec)
- * {
- *     return size(get<field::SEQ>(rec)) >= 5;
- * });
- *
- * for (auto & rec : fin | minimum_length5_filter) // only record with sequence length >= 5 will "appear"
- * {
- *     // ...
- * }
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp filter_criteria
  *
  * ### End of file
  *
@@ -608,25 +532,8 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * This interface is less flexible, but can save you copy operations in certain scenarios, given that
  * you have sufficient memory to load the entire file at once:
  *
- * ```cpp
- *
- * struct data_storage_t
- * {
- *     concatenated_sequences<rna5_vector>         sequences;
- *     concatenated_sequences<std::string>         ids;
- *     concatenated_sequences<std::vector<wuss51>> structures;
- * };
- *
- * data_storage_t data_storage; // a global or globally used variable in your program
- *
- * // ... in your file reading function:
- *
- * structure_file_in fin{"/tmp/my.dbn"};
- *
- * data_storage.sequences = std::move(get<field::SEQ>(fin)); // we move the buffer directly into our storage
- * data_storage.ids = std::move(get<field::ID>(fin)); // we move the buffer directly into our storage
- * data_storage.structures = std::move(get<field::STRUCTURE>(fin)); // we move the buffer directly into our storage
- * ```
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp data_storage
+ * \snippet test/snippet/io/structure_file/structure_file_input.cpp col_read
  *
  * Note that for this to make sense, your storage data types need to be identical to the corresponding column types
  * of the file. If you require different column types you can specify you own traits, see
@@ -825,12 +732,12 @@ public:
      * the file is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    structure_file_in(filesystem::path filename,
+    structure_file_in(std::filesystem::path filename,
                       selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ifstream{filename, std::ios_base::in | std::ios::binary}, stream_deleter_default}
     {
         if (!primary_stream->good())
-            throw file_open_error{"Could not open file for reading."};
+            throw file_open_error{"Could not open file " + filename.string() + " for reading."};
 
         // possibly add intermediate decompression stream
         secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
@@ -937,27 +844,14 @@ public:
      * This function returns a reference to the currently buffered record, it is identical to dereferencing begin(),
      * but begin also always points to the current record on single pass input ranges:
      *
-     * ```cpp
-     * structure_file_in fin{"/tmp/my.dbn"};
-     * auto it = begin(fin);
-     *
-     * // the following are equivalent:
-     * auto & rec0 = *it;
-     * auto & rec1 = fin.front();
-     *
-     * // both become invalid after incrementing "it"!
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_input.cpp ref_return
      *
      * It most situations using the iterator interface or a range-based for-loop are preferable to using front(),
      * because you can only move to the next record via the iterator.
      *
      * In any case, don't forget the reference! If you want to save the data from the record elsewhere, use move:
      *
-     * ```cpp
-     * structure_file_in fin{"/tmp/my.dbn"};
-     *
-     * auto rec0 = std::move(fin.front());
-     * ```
+     * \snippet test/snippet/io/structure_file/structure_file_input.cpp move
      *
      * ### Complexity
      *

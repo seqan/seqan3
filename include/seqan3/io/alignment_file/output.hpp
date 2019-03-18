@@ -29,7 +29,7 @@
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/io/filesystem.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/std/ranges>
@@ -91,11 +91,11 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp filename_construction
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
  *
  * Writing to std::cout:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp format_construction
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
  *
  * Note that this is not the same as writing `alignment_file_output<>`
  * (with angle brackets). In the latter case they are explicitly set to their
@@ -153,29 +153,20 @@ namespace seqan3
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * \snippet test/snippet/io/alignment_file/output.cpp write_range
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
  *
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn3:
  *
- * \todo TODO introduce snippet once seqan3:;alignment_file_in is implemented.
+ * \todo Introduce snippet once seqan3::alignment_file_in is implemented.
  *
- * ```cpp
- * // file format conversion in one line:
- * alignment_file_output fout{"output.sam"} = sequence_file_in{"input.sam"};
- *
- * // or in pipe notation:
- * sequence_file_in{"input.sam"} | alignment_file_output{"output.sam"};
- * ```
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp input_range
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * ```cpp
- * sequence_file_in{"input.sam"} | ranges::view::take(5) // take only the first 5 records
- *                               | alignment_file_output{"output.sam"};
- * ```
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp io_pipeline
  *
  * ### Formats
  *
@@ -294,19 +285,19 @@ public:
      *
      * In most cases the template parameters are deduced completely automatically:
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp filename_construction
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction
      *
      * Writing with custom selected fields:
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp format_construction
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
      */
-    alignment_file_output(filesystem::path const & _file_name,
+    alignment_file_output(std::filesystem::path const & _file_name,
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{})
     {
         // open stream
         stream.open(_file_name, std::ios_base::out | std::ios::binary);
         if (!stream.is_open())
-            throw file_open_error{"Could not open file for writing."};
+            throw file_open_error{"Could not open file " + _file_name.string() + " for reading."};
 
         // initialise format handler or throw if format is not found
         detail::set_format(format, _file_name);
@@ -413,8 +404,8 @@ public:
                      detail::get_or<field::REF_ID>(r, std::string_view{}),
                      detail::get_or<field::REF_OFFSET>(r, -1), // 1 is added in format SAM
                      detail::get_or<field::ALIGNMENT>(r, default_align_t{}),
-                     detail::get_or<field::MAPQ>(r, 0u),
                      detail::get_or<field::FLAG>(r, 0u),
+                     detail::get_or<field::MAPQ>(r, 0u),
                      detail::get_or<field::MATE>(r, default_mate_t{}),
                      detail::get_or<field::TAGS>(r, sam_tag_dictionary{}),
                      detail::get_or<field::EVALUE>(r, 0u),
@@ -461,8 +452,8 @@ public:
                      detail::get_or<selected_field_ids::index_of(field::REF_ID)>(t, std::string_view{}),
                      detail::get_or<selected_field_ids::index_of(field::REF_OFFSET)>(t, -1), // 1 is added in format SAM
                      detail::get_or<selected_field_ids::index_of(field::ALIGNMENT)>(t, default_align_t{}),
-                     detail::get_or<selected_field_ids::index_of(field::MAPQ)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::FLAG)>(t, 0u),
+                     detail::get_or<selected_field_ids::index_of(field::MAPQ)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::MATE)>(t, default_mate_t{}),
                      detail::get_or<selected_field_ids::index_of(field::TAGS)>(t, sam_tag_dictionary{}),
                      detail::get_or<selected_field_ids::index_of(field::EVALUE)>(t, 0u),
@@ -517,18 +508,7 @@ public:
      *
      * ### Example
      *
-     * ```cpp
-     * alignment_file_output fout{"/tmp/my.sam"};
-     *
-     * std::vector<std::tuple<dna5_vector, std::string>> range
-     * {
-     *     { "ACGT"_dna5, "First" },
-     *     { "NATA"_dna5, "2nd" },
-     *     { "GATA"_dna5, "Third" }
-     * }; // a range of "records"
-     *
-     * fout = range; // will iterate over the records and write them
-     * ```
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp range
      */
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
@@ -562,7 +542,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp write_range
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp write_range
      *
      * This is especially useful in combination with file-based filters:
      *
@@ -571,7 +551,7 @@ public:
      * ```cpp
      * alignment_file_in{"input.sam"} | view::minimum_average_quality_filter(20)
      *                                | view::minimum_alignment_length_filter(50)
-     *                                | ranges::view::take(5)
+     *                                | std::view::take(5)
      *                                | alignment_file_output{"output.sam"};
      * ```
      */
@@ -615,7 +595,7 @@ public:
      *
      * ### Example
      *
-     * \snippet test/snippet/io/alignment_file/output.cpp set_header
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp set_header
      *
      * \sa seqan3::alignment_file_header
      */

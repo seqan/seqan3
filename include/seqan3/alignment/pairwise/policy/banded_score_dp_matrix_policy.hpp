@@ -15,13 +15,17 @@
 #include <limits>
 #include <memory>
 
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/repeat_n.hpp>
 #include <range/v3/view/slice.hpp>
 #include <range/v3/view/zip.hpp>
 
-#include <seqan3/alignment/pairwise/policy/unbanded_dp_matrix_policy.hpp>
+#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span.hpp>
+#include <seqan3/std/span>
 
 namespace seqan3::detail
 {
@@ -33,12 +37,12 @@ namespace seqan3::detail
  */
 template <typename derived_t, typename allocator_type>
 class banded_score_dp_matrix_policy :
-    public unbanded_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>
+    public unbanded_score_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>
 {
 private:
 
     //!\brief The type of the base.
-    using base_t = unbanded_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>;
+    using base_t = unbanded_score_dp_matrix_policy<banded_score_dp_matrix_policy<derived_t, allocator_type>,  allocator_type>;
 
     //!\brief Befriend CRTP derived type.
     friend derived_t;
@@ -56,7 +60,7 @@ private:
     static constexpr std::tuple_element_t<0, cell_type> INF =
         std::numeric_limits<std::tuple_element_t<0, cell_type>>::lowest() / 2;
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
     constexpr banded_score_dp_matrix_policy() = default;
@@ -78,10 +82,10 @@ public:
      * \param[in] band         The band.
      */
     template <typename first_range_t, typename second_range_t, typename band_t>
-    constexpr void allocate_matrix(first_range_t && first_range, second_range_t && second_range, band_t const & band)
+    constexpr void allocate_matrix(first_range_t & first_range, second_range_t & second_range, band_t const & band)
     {
-        dimension_first_range  = std::distance(seqan3::begin(first_range), seqan3::end(first_range)) + 1;
-        dimension_second_range = std::distance(seqan3::begin(second_range), seqan3::end(second_range)) + 1;
+        dimension_first_range  = std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range)) + 1;
+        dimension_second_range = std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range)) + 1;
 
         // If upper_bound is negative, set it to 0 and trim the second sequences accordingly.
         band_column_index = std::max(static_cast<uint_fast32_t>(band.upper_bound), static_cast<uint_fast32_t>(0));
@@ -89,29 +93,50 @@ public:
         band_row_index = std::abs(std::min(static_cast<int_fast32_t>(band.lower_bound),
                                            static_cast<int_fast32_t>(0)));
 
+        band_size = band_column_index + band_row_index + 1;
+
         // Reserve one more cell to deal with last cell in the banded column which needs only the diagonal and up cell.
         // TODO: introduce specific named cell types with initialisation values.
-        score_matrix.resize(band_column_index + band_row_index + 2, cell_type{INF, INF});
+        score_matrix.resize(band_size + 1);
+
+        using std::get;
+        get<0>(score_matrix.back()) = INF;
+        get<1>(score_matrix.back()) = INF;
+        get<2>(score_matrix.back()) = trace_directions::none;
         current_column_index = 0;
         // Position the iterator to the right offset within the band.
-        current_matrix_iter = seqan3::begin(score_matrix) + band_column_index;
+        current_matrix_iter = std::ranges::begin(score_matrix) + band_column_index;
     }
 
     //!\brief Returns the current column of the alignment matrix.
     constexpr auto current_column() noexcept
     {
+        auto span = current_band_size();
+
+        assert(span > 0u);  // The span must always be greater than 0.
+
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
+            col_begin{column_index_type{current_column_index},
+                      row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
+                                                                               current_matrix_iter))}};
+        advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
+            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
+
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
-        return ranges::view::zip(std::span{std::addressof(*current_matrix_iter), current_band_size()},
-                                 std::span{std::addressof(*(current_matrix_iter + 1)), current_band_size()});
+        auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
+                                           std::span{std::addressof(*(current_matrix_iter + 1)), span});
+        return std::view::zip(std::move(zip_score),
+                                 std::view::iota(col_begin, col_end),
+                                 ranges::view::repeat_n(std::ignore, span) | std::view::common);
     }
 
     //!\brief Moves internal matrix pointer to the next column.
-    constexpr void next_column() noexcept
+    constexpr void go_next_column() noexcept
     {
         // Update the current_column_index.
-        base_t::next_column();
+        base_t::go_next_column();
         // Still in the initialisation phase and need to update the current matrix iterator until begin is reached.
-        if (current_matrix_iter != seqan3::begin(score_matrix))
+        if (current_matrix_iter != std::ranges::begin(score_matrix))
             --current_matrix_iter;
     }
 
@@ -127,11 +152,11 @@ public:
         // than the first term in the equation above.
         assert(remaining_column_size > 0);
 
-        using const_iter = typename score_matrix_type::const_iterator;
+        // using const_iter = typename score_matrix_type::const_iterator;
         // The current band size is the min of the remaining column size and the size of the current span of the band.
         return std::min(static_cast<uint_fast32_t>(remaining_column_size),
                         static_cast<uint_fast32_t>(
-                                std::distance<const_iter>(current_matrix_iter, seqan3::end(score_matrix)) - 1));
+                                std::ranges::distance(current_matrix_iter, std::ranges::end(score_matrix)) - 1));
     }
 
     /*!\brief Computes the begin offset of the second_range within the vertical dimension of banded matrix.
@@ -172,30 +197,45 @@ public:
     * sequences are trimmed, such that the band starts in the origin and ends in the sink.
     */
     template <typename first_range_t, typename second_range_t, typename band_t>
-    constexpr auto trim_sequences(first_range_t && first_range,
-                                  second_range_t && second_range,
+    constexpr auto trim_sequences(first_range_t & first_range,
+                                  second_range_t & second_range,
                                   band_t const & band) const noexcept
     {
         using band_type = decltype(band.lower_bound);
 
-        band_type dimension_first = std::distance(seqan3::begin(first_range), seqan3::end(first_range));
-        band_type dimension_second = std::distance(seqan3::begin(second_range), seqan3::end(second_range));
+        band_type dimension_first = std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range));
+        band_type dimension_second = std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range));
 
         auto trim_first_range = [&]() constexpr
         {
             size_t begin_pos = std::max(band.lower_bound - 1, static_cast<band_type>(0));
             size_t end_pos = std::min(band.upper_bound + dimension_second, dimension_first);
-            return std::forward<first_range_t>(first_range) | ranges::view::slice(begin_pos, end_pos);
+            return first_range | ranges::view::slice(begin_pos, end_pos);
         };
 
         auto trim_second_range = [&]() constexpr
         {
             size_t begin_pos = std::abs(std::min(band.upper_bound + 1, static_cast<band_type>(0)));
             size_t end_pos = std::min(dimension_first - band.lower_bound, dimension_second);
-            return std::forward<second_range_t>(second_range) | ranges::view::slice(begin_pos, end_pos);
+            return second_range | ranges::view::slice(begin_pos, end_pos);
         };
 
         return std::tuple{trim_first_range(), trim_second_range()};
+    }
+
+    /*!\brief Refines the coordinate for the banded matrix to map the actual sequence position.
+     * \param coordinate The coordinate to refine.
+     */
+    constexpr auto map_banded_coordinate_to_range_position(alignment_coordinate coordinate) const noexcept
+    {
+        using as_int_t = std::make_signed_t<decltype(coordinate.first_seq_pos)>;
+        // Refine the row coordinate to match the original sequence coordinates since the first position of the
+        // trace matrix is shifted by the value of the band_column_index, i.e. the upper bound of the band.
+        //
+        // case 1: ends in column before the band_column_index: subtract the offset from the actual row coordinate.
+        // case 2: ends in column after the band_column_index: add the offset to the actual row coordinate.
+        coordinate.second_seq_pos += static_cast<as_int_t>(coordinate.first_seq_pos - band_column_index);
+        return coordinate;
     }
 
 private:
@@ -211,6 +251,8 @@ private:
     uint_fast32_t band_column_index{};
     //!\brief The row index where the lower band of the band starts.
     uint_fast32_t band_row_index{};
+    //!\brief The full dimension of the band.
+    uint_fast32_t band_size{};
 };
 
 } // namespace seqan3::detail

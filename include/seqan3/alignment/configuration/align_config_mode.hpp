@@ -18,8 +18,8 @@
 
 namespace seqan3::detail
 {
-//!\brief Selects the global alignment mode.
-//!\ingroup configuration
+//!\brief A strong type to select the global alignment mode.
+//!\ingroup alignment_configuration
 struct global_alignment_type
 {
     //!\privatesection
@@ -32,22 +32,42 @@ struct global_alignment_type
 namespace seqan3::align_cfg
 {
 
-//!\brief Selects global alignment mode.
-//!\ingroup configuration
+/*!\brief Helper variable to select the global alignment.
+ * \ingroup alignment_configuration
+ *
+ * \details
+ *
+ * ### Example
+ *
+ * \snippet snippet/alignment/configuration/align_cfg_mode_example.cpp global
+ */
 inline constexpr detail::global_alignment_type global_alignment;
 
-/*!\brief A configuration element for global alignment.
+/*!\brief Sets the alignment mode.
  * \ingroup configuration
+ * \tparam mode_type The type of the alignment mode.
+ *
+ * \details
+ *
+ * The alignment algorithm can be categorised in different modes. For example, the local and the
+ * \ref align_cfg::global_alignment "global" alignment are two different modes, while the semi-global alignment
+ * is a variation of the global alignment. This differentiation makes it possible to define a subset of configurations
+ * that can work with a particular mode. Since it is not possible to guess what the desired mode for a user is, this
+ * configuration must be provided for the alignment algorithm and cannot be defaulted.
+ *
+ * ### Example
+ *
+ * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
  */
-template <typename alignment_t>
+template <typename mode_type>
 //!\cond
-    requires std::Same<remove_cvref_t<alignment_t>, detail::global_alignment_type>
+    requires std::Same<remove_cvref_t<mode_type>, detail::global_alignment_type>
 //!\endcond
-struct mode : public pipeable_config_element<mode<alignment_t>, alignment_t>
+struct mode : public pipeable_config_element<mode<mode_type>, mode_type>
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{alignment_t::id};
+    static constexpr detail::align_config_id id{mode_type::id};
 };
 
 /*!\name Type deduction guides
@@ -55,7 +75,7 @@ struct mode : public pipeable_config_element<mode<alignment_t>, alignment_t>
  * \{
  */
 //!\brief Deduces the alignment mode from the given constructor argument.
-template <typename alignment_t>
-mode(alignment_t) -> mode<alignment_t>;
+template <typename mode_type>
+mode(mode_type) -> mode<mode_type>;
 //!}
 } // namespace seqan3::align_cfg

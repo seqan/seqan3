@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/stream/debug_stream.hpp>
 
 namespace seqan3
 {
@@ -123,7 +124,8 @@ requires (OStream<std::iostream, std::remove_reference_t<value_type>> && ...)
 std::string to_string(value_type && ...values)
 {
     std::stringstream stream;
-    (stream << ... << std::forward<value_type>(values));
+    debug_stream_type dstream{stream};
+    (dstream << ... << std::forward<value_type>(values));
     return stream.str();
 }
 
