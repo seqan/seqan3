@@ -182,6 +182,11 @@ using SEQAN3_DOXYGEN_ONLY(begin =) ::ranges::begin;
  */
 using SEQAN3_DOXYGEN_ONLY(end =) ::ranges::end;
 
+/*!\typedef std::ranges::data
+ * \brief Alias for ranges::data. Returns a pointer the block of data of a ContiguousRange.
+ */
+using SEQAN3_DOXYGEN_ONLY(data =) ::ranges::data;
+
 /*!\typedef std::ranges::size
  * \brief Alias for ranges::size. Obtains the size of a range whose size can be calculated in constant time.
  */
@@ -312,6 +317,9 @@ constexpr bool enable_view<type> = static_cast<bool>(seqan3::detail::enable_view
 namespace std::ranges
 {
 
+//!\brief Named template parameter of std::ranges::subrange.
+using subrange_kind = ::ranges::subrange_kind;
+
 /*!\brief Create a view from a pair of iterator and sentinel.
  * \tparam   it_t Type of the iterator; must model std::Iterator.
  * \tparam  sen_t Type of the sentinel; must model std::Sentinel with it_t.
@@ -357,8 +365,10 @@ namespace std::ranges
  * \snippet test/snippet/std/view/subrange.cpp example
  * \hideinitializer
  */
-template <std::Iterator it_t, std::Sentinel<it_t> sen_t>
-using subrange = ::ranges::subrange<it_t, sen_t>;
+template <std::Iterator it_t,
+          std::Sentinel<it_t> sen_t,
+          subrange_kind k = std::SizedSentinel<sen_t, it_t> ? subrange_kind::sized : subrange_kind::unsized>
+using subrange = ::ranges::subrange<it_t, sen_t, k>;
 
 } // namespace std::ranges
 
