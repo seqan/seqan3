@@ -5,7 +5,11 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
 // -----------------------------------------------------------------------------------------------------
 
+#include <deque>
 #include <iostream>
+#include <list>
+#include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -35,7 +39,7 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("foo", std::string(v));
 
     // function notation
-    std::string v2 = adaptor(vec, 3);
+    std::string v2{adaptor(vec, 3)};
     EXPECT_EQ("foo", v2);
 
     // combinability
@@ -48,7 +52,7 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
 template <typename adaptor_t>
 void do_concepts(adaptor_t && adaptor, bool const exactly)
 {
-    std::string vec{"foobar"};
+    std::vector vec{1, 2, 3};
     EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec)>);
@@ -57,7 +61,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
     EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), char>));
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), int>));
 
     auto v1 = vec | adaptor;
 
@@ -66,10 +70,10 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_EQ(std::ranges::SizedRange<decltype(v1)>, exactly);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), int>));
 
     auto v2 = vec | view::single_pass_input | adaptor;
 
@@ -81,7 +85,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_EQ(std::ranges::SizedRange<decltype(v2)>, exactly);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
     EXPECT_FALSE(const_iterable_concept<decltype(v2)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), char>));
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), int>));
 }
 
 // ============================================================================
@@ -106,6 +110,74 @@ TEST(view_take, underlying_is_shorter)
     std::string v;
     EXPECT_NO_THROW(( v = vec | view::single_pass_input | view::take(4) )); // full parsing on conversion
     EXPECT_EQ("foo", v);
+}
+
+TEST(view_take, overloads)
+{
+    {   // string overload
+        std::string urange{"foobar"};
+
+        auto v = view::take(urange, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_TRUE((std::ranges::equal(v, urange.substr(0,3))));
+    }
+
+    {   // stringview overload
+        std::string_view urange{"foobar"};
+
+        auto v = view::take(urange, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_TRUE((std::ranges::equal(v, urange.substr(0,3))));
+    }
+
+    {   // contiguous overload
+        std::vector<int> urange{1, 2, 3, 4, 5, 6};
+
+        auto v = view::take(urange, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+    }
+
+    {   // contiguous overload
+        std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
+
+        auto v = view::take(urange, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+    }
+
+    {   // random-access overload
+        std::deque<int> urange{1, 2, 3, 4, 5, 6};
+
+        auto v = view::take(urange, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
+                                                                  typename std::deque<int>::iterator>>));
+        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+    }
+
+    {   // generic overload (bidirectional container)
+        std::list<int> urange{1, 2, 3, 4, 5, 6};
+
+        auto v = view::take(urange, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v), detail::view_take<std::ranges::all_view<std::list<int> &>, false, false>>));
+        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+    }
+
+    {   // generic overload (view)
+        std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
+
+        auto v = urange | std::view::filter([] (int) { return true; });
+        auto v2 = view::take(v, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v2), detail::view_take<decltype(v), false, false>>));
+        EXPECT_TRUE((std::ranges::equal(v2, std::vector{1, 2, 3})));
+    }
 }
 
 // ============================================================================
