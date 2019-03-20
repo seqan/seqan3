@@ -118,8 +118,7 @@ public:
     void operator()(value_type const & cmp) const
     {
         if (!((cmp <= max) && (cmp >= min)))
-            throw parser_invalid_argument(detail::to_string("Validation Failed - Value ", cmp,
-                                                            " is not in range [", min, ",", max, "]."));
+            throw parser_invalid_argument(detail::to_string("Value ", cmp, " is not in range [", min, ",", max, "]."));
     }
 
     /*!\brief Tests whether every element in \p range lies inside [`min`, `max`].

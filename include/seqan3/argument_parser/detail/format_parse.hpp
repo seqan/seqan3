@@ -219,6 +219,21 @@ private:
         return ("-" + std::string(1, short_id));
     }
 
+    /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.
+    * \param[in] short_id The name of the short identifier.
+    * \param[in] long_id  The name of the long identifier.
+    * \returns The short_id prepended with a single dash and the long_id prepended with a double dash, separated by '/'.
+    */
+    std::string combine_option_names(char const short_id, std::string const & long_id)
+    {
+        if (short_id == '\0')
+            return prepend_dash(long_id);
+        else if (long_id.empty())
+            return prepend_dash(short_id);
+        else // both are set (note: both cannot be empty, this is caught before)
+            return prepend_dash(short_id) + "/" + prepend_dash(long_id);
+    }
+
     /*!\brief Finds the position of a short/long identifier in format_parse::argv.
      *
      * \param[in] begin_it The iterator where to start the search of the identifier.
@@ -486,7 +501,7 @@ private:
 
         if (find_option_id(it, id) != end_of_options_it) // should not be found again
            throw option_declared_multiple_times("Option " + prepend_dash(id) +
-                                                "is no list/container but declared multiple times.");
+                                                " is no list/container but declared multiple times.");
 
        return (it != end_of_options_it); // first search was successful or not
     }
@@ -612,7 +627,7 @@ private:
         // if value is no container we need to check for multiple declarations
         if (short_id_is_set && long_id_is_set &&
             !(sequence_container_concept<option_type> && !std::is_same_v<option_type, std::string>))
-            throw option_declared_multiple_times("Option " + prepend_dash(short_id) + "/" + prepend_dash(long_id) +
+            throw option_declared_multiple_times("Option " + combine_option_names(short_id, long_id) +
                                                  " is no list/container but specified multiple times");
 
         if (short_id_is_set || long_id_is_set)
@@ -623,15 +638,15 @@ private:
             }
             catch (std::exception & ex)
             {
-                throw validation_failed(std::string("Validation failed for option ") + prepend_dash(short_id) + "/" +
-                                        prepend_dash(long_id) + ": " + ex.what());
+                throw validation_failed(std::string("Validation failed for option ") +
+                                        combine_option_names(short_id, long_id) + ": " + ex.what());
             }
         }
         else // option is not set
         {
             // check if option is required
             if (spec & option_spec::REQUIRED)
-                throw required_option_missing("Option " + prepend_dash(short_id) + "/" + prepend_dash(long_id) +
+                throw required_option_missing("Option " + combine_option_names(short_id, long_id) +
                                               " is required but not set.");
         }
     }

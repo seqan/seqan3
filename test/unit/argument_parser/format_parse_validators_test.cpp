@@ -452,9 +452,9 @@ TEST(validator_test, regex_validator_error)
     std::vector<std::string> option_vector;
 
     // option
-    const char * argv[] = {"./argument_parser_test", "-s", "sally"};
+    const char * argv[] = {"./argument_parser_test", "--string-option", "sally"};
     argument_parser parser("test_parser", 3, argv);
-    parser.add_option(option_value, 's', "string-option", "desc",
+    parser.add_option(option_value, '\0', "string-option", "desc",
                       option_spec::DEFAULT, regex_validator("tt"));
 
     EXPECT_THROW(parser.parse(), validation_failed);
@@ -479,7 +479,7 @@ TEST(validator_test, regex_validator_error)
     option_vector.clear();
     const char * argv4[] = {"./argument_parser_test", "-s", "gh", "-s", "tt"};
     argument_parser parser4("test_parser", 5, argv4);
-    parser4.add_option(option_vector, 's', "string-option", "desc",
+    parser4.add_option(option_vector, 's', "", "desc",
                        option_spec::DEFAULT, regex_validator("tt"));
 
     EXPECT_THROW(parser4.parse(), validation_failed);
