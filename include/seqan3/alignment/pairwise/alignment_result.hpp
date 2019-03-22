@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_result.
+ * \brief Provides seqan3::alignment_result.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
@@ -30,7 +30,7 @@ template <typename id_t,
           typename end_coord_t = std::nullopt_t *,
           typename begin_coord_t = std::nullopt_t *,
           typename alignment_t = std::nullopt_t *>
-struct align_result_value_type
+struct alignment_result_value_type
 {
     //! \brief The alignment identifier.
     id_t id{};
@@ -49,28 +49,28 @@ struct align_result_value_type
  * \{
  */
  //! \brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
-align_result_value_type()
-    -> align_result_value_type<std::nullopt_t *, std::nullopt_t *>;
+alignment_result_value_type()
+    -> alignment_result_value_type<std::nullopt_t *, std::nullopt_t *>;
 
 //! \brief Type deduction for id and score only.
 template <typename id_t, typename score_t>
-align_result_value_type(id_t, score_t)
-    -> align_result_value_type<id_t, score_t>;
+alignment_result_value_type(id_t, score_t)
+    -> alignment_result_value_type<id_t, score_t>;
 
 //! \brief Type deduction for id, score and end coordinate.
 template <typename id_t, typename score_t, typename end_coord_t>
-align_result_value_type(id_t, score_t, end_coord_t)
-    -> align_result_value_type<id_t, score_t, end_coord_t>;
+alignment_result_value_type(id_t, score_t, end_coord_t)
+    -> alignment_result_value_type<id_t, score_t, end_coord_t>;
 
 //! \brief Type deduction for id, score, end coordinate and begin coordinate.
 template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t>
-align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t)
-    -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t>;
+alignment_result_value_type(id_t, score_t, end_coord_t, begin_coord_t)
+    -> alignment_result_value_type<id_t, score_t, end_coord_t, begin_coord_t>;
 
 //! \brief Type deduction for id, score, end coordinate, begin coordinate and alignment.
 template <typename id_t, typename score_t, typename end_coord_t, typename begin_coord_t, typename alignment_t>
-align_result_value_type(id_t, score_t, end_coord_t, begin_coord_t, alignment_t)
-    -> align_result_value_type<id_t, score_t, end_coord_t, begin_coord_t, alignment_t>;
+alignment_result_value_type(id_t, score_t, end_coord_t, begin_coord_t, alignment_t)
+    -> alignment_result_value_type<id_t, score_t, end_coord_t, begin_coord_t, alignment_t>;
 //!\}
 
 } // namespace seqan3::detail
@@ -80,7 +80,7 @@ namespace seqan3
 
 /*!\brief Stores the alignment results and gives access to score, alignment and the begin and end coordinates.
  * \ingroup pairwise_alignment
- * \tparam align_result_traits The type of the traits object.
+ * \tparam alignment_result_traits The type of the traits object.
  *
  * \details
  *
@@ -90,15 +90,15 @@ namespace seqan3
  * the sequences and the alignment can be calculated. When accessing a field that
  * has not been calculated, an assertion will fail during compilation.
  */
-template <typename align_result_traits>
+template <typename alignment_result_traits>
 //!\cond
-    requires detail::is_type_specialisation_of_v<align_result_traits, detail::align_result_value_type>
+    requires detail::is_type_specialisation_of_v<alignment_result_traits, detail::alignment_result_value_type>
 //!\endcond
-class align_result
+class alignment_result
 {
 private:
     //! \brief Traits object that contains the actual alignment result data.
-    align_result_traits data;
+    alignment_result_traits data;
 
     /*!\name Member types
      * \brief Local definition of the types contained in the `data` object.
@@ -123,20 +123,20 @@ public:
      * \brief Constructor to pass the alignment result traits.
      * \param[in] value The alignment results.
      */
-    align_result(align_result_traits value) : data(value) {};
+    alignment_result(alignment_result_traits value) : data(value) {};
 
     //! \brief Default constructor.
-    align_result() = default;
+    alignment_result() = default;
     //! \brief Default copy constructor.
-    align_result(align_result const &) = default;
+    alignment_result(alignment_result const &) = default;
     //! \brief Default move constructor.
-    align_result(align_result &&) = default;
+    alignment_result(alignment_result &&) = default;
     //! \brief Default copy assignment.
-    align_result & operator=(align_result const &) = default;
+    alignment_result & operator=(alignment_result const &) = default;
     //! \brief Default move assignment.
-    align_result & operator=(align_result &&) = default;
+    alignment_result & operator=(alignment_result &&) = default;
     //! \brief Default destructor.
-    ~align_result() = default;
+    ~alignment_result() = default;
     //!\}
 
     /*!\name Access functions

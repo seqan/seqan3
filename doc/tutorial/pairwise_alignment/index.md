@@ -54,7 +54,7 @@ provides the scoring scheme that should be used to score a pair of sequence char
 
 Now we are going to call seqan3::align_pairwise. This interface requires two arguments: a tuple or a range of tuples
 with exactly two elements and the configuration object. Independent of the number of pairwise alignment jobs submitted
-to the algorithm it always returns a range over seqan3::align_result. Later we will see how we can use a
+to the algorithm it always returns a range over seqan3::alignment_result. Later we will see how we can use a
 continuation interface which calls a user-defined function rather than iterating over the results sequentially.
 Finally we output the score for the computed alignment.
 
@@ -72,7 +72,7 @@ of the four sequences and output the results.
 \include doc/tutorial/pairwise_alignment/simple_global_alignment_solution_1.cpp
 
 First we create the vector of seqan3::dna4 sequences. We keep the configuration as is and then modify the initial code
-to a range-based for loop looping over the alignment results. Since the seqan3::align_result is a class template and the
+to a range-based for loop looping over the alignment results. Since the seqan3::alignment_result is a class template and the
 template parameters are determined during the configuration step we use auto as the result type.
 The current result is cached inside of the lazy range and we capture the result as `const &` in order to not tamper with
 the result values.
@@ -152,7 +152,7 @@ The seqan3::align_cfg::result regulates the outcome of the alignment algorithm. 
 will be computed. To obtain also the alignment or the begin and end coordinates of the alignment the
 seqan3::align_cfg::result has to be configured accordingly.
 Depending on the configuration the algorithm choses the most efficient implementation to obtain the requested result.
-The result can be finally examined using the seqan3::align_result class.
+The result can be finally examined using the seqan3::alignment_result class.
 
 \todo repeat the protein alignment and print the alignment usign the debug stream.
 

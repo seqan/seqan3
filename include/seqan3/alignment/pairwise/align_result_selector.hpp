@@ -52,36 +52,36 @@ struct align_result_selector
             if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                     with_back_coordinate_type>)
             {
-                return align_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate>{};
+                return alignment_result_value_type<uint32_t,
+                                                   score_type,
+                                                   alignment_coordinate>{};
             }
             else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                          with_front_coordinate_type>)
             {
-                return align_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate,
-                                               alignment_coordinate>{};
+                return alignment_result_value_type<uint32_t,
+                                                   score_type,
+                                                   alignment_coordinate,
+                                                   alignment_coordinate>{};
             }
             else if constexpr (std::Same<remove_cvref_t<decltype(get<align_cfg::result>(configuration_t{}).value)>,
                                          with_alignment_type>)
             {
-                return align_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate,
-                                               alignment_coordinate,
-                                               std::tuple<std::vector<first_seq_value_type>,
-                                                          std::vector<second_seq_value_type>>>{};
+                return alignment_result_value_type<uint32_t,
+                                                   score_type,
+                                                   alignment_coordinate,
+                                                   alignment_coordinate,
+                                                   std::tuple<std::vector<first_seq_value_type>,
+                                                              std::vector<second_seq_value_type>>>{};
             }
             else
             {
-                return align_result_value_type<uint32_t, score_type>{};
+                return alignment_result_value_type<uint32_t, score_type>{};
             }
         }
         else
         {
-            return align_result_value_type<uint32_t, score_type>{};
+            return alignment_result_value_type<uint32_t, score_type>{};
         }
     }
 

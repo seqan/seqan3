@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
 namespace seqan3::detail
@@ -80,7 +80,7 @@ namespace seqan3::align_cfg
  * computing in addition the \ref seqan3::align_cfg::result::with_back_coordinate "end position", computing in
  * addition the \ref seqan3::align_cfg::result::with_front_coordinate "begin position", and finally also
  * computing the \ref seqan3::align_cfg::result::with_alignment "alignment".
- * These settings will directly affect the contents of the seqan3::align_result object which is returned by the
+ * These settings will directly affect the contents of the seqan3::alignment_result object which is returned by the
  * alignment algorithm.
  *
  * ### Example
@@ -89,8 +89,10 @@ namespace seqan3::align_cfg
  */
 template <typename with_type = detail::with_score_type>
 //!\cond
-    requires std::Same<with_type, detail::with_score_type> || std::Same<with_type, detail::with_back_coordinate_type> ||
-             std::Same<with_type, detail::with_front_coordinate_type> || std::Same<with_type, detail::with_alignment_type>
+    requires std::Same<with_type, detail::with_score_type> ||
+             std::Same<with_type, detail::with_back_coordinate_type> ||
+             std::Same<with_type, detail::with_front_coordinate_type> ||
+             std::Same<with_type, detail::with_alignment_type>
 //!\endcond
 class result : public pipeable_config_element<result<with_type>, with_type>
 {

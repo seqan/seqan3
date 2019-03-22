@@ -147,7 +147,7 @@ generic interface.
 
 The algorithm returns a range of result objects – which is the reason for the loop here (in this case the range
 has length 1). Instead of passing a single pair of sequences, we could give a vector of sequence pairs to the
-algorithm which then executes all alignments in parallel and stores the results in various seqan3::align_result
+algorithm which then executes all alignments in parallel and stores the results in various seqan3::alignment_result
 objects. The second argument to seqan3::align_pairwise is the *configuration* which allows you to specify
 a lot of parameters for the alignment computation, for instance score functions, banded alignment and whether
 you wish to compute a traceback or not. The configurations have their own namespace seqan3::align_cfg and can

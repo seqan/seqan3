@@ -24,7 +24,7 @@
 #include <seqan3/alignment/matrix/alignment_trace_algorithms.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
-#include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
@@ -115,7 +115,7 @@ private:
     using query_alphabet_type = std::remove_reference_t<reference_t<query_type>>;
 
     //TODO Make it dynamic.
-    // using result_type = align_result<type_list<uint32_t, int>>;
+    // using result_type = alignment_result<type_list<uint32_t, int>>;
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
     static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
@@ -406,7 +406,7 @@ public:
      * \returns A reference to the filled alignment result.
      */
     template <typename result_value_type>
-    align_result<result_value_type> & operator()(align_result<result_value_type> & res)
+    alignment_result<result_value_type> & operator()(alignment_result<result_value_type> & res)
     {
         _compute();
         result_value_type res_vt{};
@@ -430,7 +430,7 @@ public:
         {
             res_vt.alignment = alignment_trace(database, query, matrix, res_vt.end_coordinate);
         }
-        res = align_result<result_value_type>{res_vt};
+        res = alignment_result<result_value_type>{res_vt};
         return res;
     }
 
@@ -623,7 +623,7 @@ public:
                                                                 remove_cvref_t<config_t>>::type;
 
         pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, traits_t{}};
-        align_result<result_t> res{};
+        alignment_result<result_t> res{};
         return algo(res);
     }
 

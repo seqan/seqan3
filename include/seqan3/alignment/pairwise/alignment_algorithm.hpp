@@ -187,7 +187,7 @@ public:
                                                                               second_range,
                                                                               get<3>(cache).coordinate);
         }
-        return align_result{res};
+        return alignment_result{res};
     }
 
     /*!\brief Invokes the banded alignment computation given two sequences.
@@ -323,7 +323,7 @@ public:
                                                                               second_range,
                                                                               get<3>(cache).coordinate);
         }
-        return align_result{res};
+        return alignment_result{res};
     }
 private:
 

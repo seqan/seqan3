@@ -35,7 +35,7 @@ TEST(alignment_selector, align_result_selector)
 
     { // test case I
         auto cfg = align_cfg::edit;
-        using _t = align_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+        using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
@@ -43,7 +43,7 @@ TEST(alignment_selector, align_result_selector)
 
     { // test case II
         auto cfg = align_cfg::edit | align_cfg::result{with_score};
-        using _t = align_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+        using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
@@ -51,7 +51,7 @@ TEST(alignment_selector, align_result_selector)
 
     { // test case III
         auto cfg = align_cfg::edit | align_cfg::result{with_alignment};
-        using _t = align_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+        using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
         using gapped_seq1_t = std::vector<gapped<dna4>>;
         using gapped_seq2_t = std::vector<gapped<dna4>>;

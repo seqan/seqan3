@@ -13,7 +13,7 @@ int main()
     using second_seq_t = std::tuple_element_t<1, value_type_t<std::remove_reference_t<sequences_t>>>;
 
     // Select the result type based on the sequences and the configuration.
-    using result_t = align_result<typename align_result_selector<std::remove_reference_t<first_seq_t>,
+    using result_t = alignment_result<typename align_result_selector<std::remove_reference_t<first_seq_t>,
                                                                  std::remove_reference_t<second_seq_t>,
                                                                  config_t>::type>;
     // Define the function wrapper type.
