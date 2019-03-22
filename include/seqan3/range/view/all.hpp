@@ -85,7 +85,7 @@
  * <sub>
  * An exception to this rule are views that don't work on an underlying range and can only be
  * placed at the beginning of a pipe of operations; they do not need an adaptor, because their constructor is
- * sufficient. This is not relevant for the documention, though, we always document `view::foo`, independent of
+ * sufficient. This is not relevant for the documentation, though, we always document `view::foo`, independent of
  * whether `view::foo` is the adaptor that returns the "foo type" or whether `view::foo` is the "foo type".
  * </sub>
  *

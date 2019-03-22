@@ -44,10 +44,9 @@ namespace seqan3
  *                            before mentioned tuple concept.
  * \tparam alignment_config_t The type of the alignment configuration; must be a seqan3::configuration.
  * \param[in] seq             A tuple with two sequences or an input range over such tuples.
- * \param[in] config          A configuration object containing \ref alignment_configuration
+ * \param[in] config          The object storing the alignment configuration.
  *                            "alignment configurations".
- * \return Depending on the configuration, the return type of align_pairwise is either `void` if the alignment was
- * configured to call a delegate on each hit or a seqan3::alignment_range over the alignment results.
+ * \return A seqan3::alignment_range.
  *
  * \details
  *
@@ -55,7 +54,7 @@ namespace seqan3
  * The pairs can be any class template that models the seqan3::tuple_like_concept.
  * In case of calling the alignment with a single tuple, the value is passed as a std::view::single to the range
  * aware interface. In this case the passed class must be std::CopyConstructible and both element types of the tuple
- * must model in std::ranges::ViewableRange because it is copied into the std::view::single. The same
+ * must model std::ranges::ViewableRange because it is copied into the std::view::single. The same
  * is true, if the input range is a temporary non-view range.
  * Accordingly, the following example wouldn't compile:
  * ```cpp
@@ -66,8 +65,8 @@ namespace seqan3
  *
  * ### Accessing the alignment results
  *
- * For each sequence pair one or more \ref seqan3::align_result "seqan3::align_result"s can be computed.
- * The align_pairwise function returns an seqan3::alignment_range which can be used to iterate over the
+ * For each sequence pair one or more \ref seqan3::align_result's can be computed.
+ * The seqan3::align_pairwise function returns an seqan3::alignment_range which can be used to iterate over the
  * alignments. The alignments are then computed on-demand when iterating over the results.
  *
  * The following snippets demonstrate the single element and the range based interface.
@@ -84,7 +83,7 @@ namespace seqan3
  * ### Complexity
  *
  * The complexity depends on the configured algorithm. For the \ref seqan3::align_cfg::edit "edit distance"
- * the following worst cases over two input sequences of size \f$ N \f$ can be assumed:
+ * the following worst case over two input sequences of size \f$ N \f$ can be assumed:
  *
  * | Computing        | Runtime           | Space            |
  * |------------------|-------------------|------------------|
@@ -95,7 +94,7 @@ namespace seqan3
  *
  * \f$ w \f$ is the size of a machine word.
  *
- * For all other algorithms that compute the standard dynamic programming algorithm the following worst cases hold:
+ * For all other algorithms that compute the standard dynamic programming algorithm the following worst case holds:
  *
  * | Computing        | Runtime         | Space          |
  * |------------------|-----------------|----------------|
@@ -104,7 +103,7 @@ namespace seqan3
  * | front coordinate | \f$ O(N^2) \f$  | \f$ O(N^2) \f$ |
  * | alignment        | \f$ O(N^2) \f$  | \f$ O(N^2) \f$ |
  *
- * In the banded case following worst case holds:
+ * In the banded case the worst case is modified as follows:
  *
  * | Computing        | Runtime         | Space          |
  * |------------------|-----------------|----------------|
