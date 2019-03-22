@@ -33,36 +33,45 @@
 
 namespace seqan3::detail
 {
-//!\cond
+//!\brief A helper concept to test for correct input in seqan3::align_pairwise.
+//!\ingroup pairwise_alignment
 template <typename value_t>
-SEQAN3_CONCEPT align_pairwise_value_concept =
+SEQAN3_CONCEPT AlignPairwiseValue =
     tuple_like_concept<value_t> &&
     std::tuple_size_v<value_t> == 2 &&
     std::ranges::ForwardRange<std::tuple_element_t<0, value_t>> &&
     std::ranges::ForwardRange<std::tuple_element_t<1, value_t>>;
 
+//!\brief A helper concept to test for correct single value input in seqan3::align_pairwise.
+//!\ingroup pairwise_alignment
+//!\see seqan3::detail::AlignPairwiseValue
+//!\see seqan3::detail::AlignPairwiseRangeInputConcept
 template <typename value_t>
-SEQAN3_CONCEPT align_pairwise_single_input_concept =
-    align_pairwise_value_concept<value_t> &&
+SEQAN3_CONCEPT AlignPairwiseSingleInput =
+    AlignPairwiseValue<value_t> &&
     std::ranges::ViewableRange<std::tuple_element_t<0, value_t>> &&
     std::ranges::ViewableRange<std::tuple_element_t<1, value_t>>;
 
-// Only use input ranges whose value type models align_pairwise_value_concept and
-// whose reference type is an lvalue reference and the range itself models ViewableRange or
-// the reference type is a prvalue and it models align_pairwise_single_input_concept.
-// This covers all typical use cases:
-// a) A lvalue range, whose reference type is a tuple like lvalue reference,
-// b) A range, whose reference type is a tuple over viewable ranges.
-// This covers also transforming and non-transforming views (e.g. std::ranges::view::zip, or view::take).
-// Only a temporary non-view range piped with view::persist can't be handled securely.
+/*!\brief A helper concept to test for correct range input in seqan3::align_pairwise.
+ * \ingroup pairwise_alignment
+ *
+ * \details
+ *
+ * Only use input ranges whose value type models seqan3::detail::AlignPairwiseValue and
+ * whose reference type is an lvalue reference and the range itself models std::ranges::ViewableRange or
+ * the reference type is a prvalue and it models seqan3::detail::AlignPairwiseSingleInput.
+ * This covers all typical use cases:
+ * a) A lvalue range, whose reference type is a tuple like lvalue reference,
+ * b) A range, whose reference type is a tuple over viewable ranges.
+ * This covers also transforming and non-transforming views (e.g. std::ranges::view::zip, or view::take).
+ * Only a temporary non-view range piped with view::persist can't be handled securely.
+ */
 template <typename range_t>
-SEQAN3_CONCEPT align_pairwise_range_input_concept =
+SEQAN3_CONCEPT AlignPairwiseRangeInputConcept =
     std::ranges::InputRange<std::remove_reference_t<range_t>> &&
-    align_pairwise_value_concept<value_type_t<std::remove_reference_t<range_t>>> &&
+    AlignPairwiseValue<value_type_t<range_t>> &&
     ((std::ranges::ViewableRange<range_t> && std::is_lvalue_reference_v<reference_t<range_t>>) ||
-     align_pairwise_single_input_concept<std::remove_reference_t<reference_t<range_t>>>);
-
-//!\endcond
+     AlignPairwiseSingleInput<std::remove_reference_t<reference_t<range_t>>>);
 
 /*!\brief Provides several contracts to test when configuring the alignment algorithm.
  * \ingroup pairwise_alignment
@@ -240,7 +249,7 @@ public:
      * Note that even if they are not passed as const lvalue reference (which is not possible, since not all views are
      * const-iterable), they are not modified within the alignment algorithm.
      */
-    template <align_pairwise_range_input_concept sequences_t, typename config_t>
+    template <AlignPairwiseRangeInputConcept sequences_t, typename config_t>
     //!\cond
         requires is_type_specialisation_of_v<config_t, configuration>
     //!\endcond

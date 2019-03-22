@@ -8,17 +8,15 @@ using namespace seqan3;
 
 int main()
 {
-
     std::vector vec{std::pair{"AGTGCTACG"_dna4, "ACGTGCGACTAG"_dna4},
                     std::pair{"AGTAGACTACG"_dna4, "ACGTACGACACG"_dna4},
                     std::pair{"AGTTACGAC"_dna4, "AGTAGCGATCG"_dna4}};
 
     // Compute the alignment of a single pair.
-    for (auto const & res : align_pairwise(vec[0], align_cfg::edit))
+    for (auto const & res : align_pairwise(std::tie(vec[0].first, vec[0].second), align_cfg::edit))
         debug_stream << "The score: " << res.get_score() << "\n";
 
     // Compute the alignment over a range of pairs.
     for (auto const & res : align_pairwise(vec, align_cfg::edit))
         debug_stream << "The score: " << res.get_score() << "\n";
-
 }

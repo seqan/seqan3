@@ -45,7 +45,6 @@ namespace seqan3
  * \tparam alignment_config_t The type of the alignment configuration; must be a seqan3::configuration.
  * \param[in] seq             A tuple with two sequences or an input range over such tuples.
  * \param[in] config          The object storing the alignment configuration.
- *                            "alignment configurations".
  * \return A seqan3::alignment_range.
  *
  * \details
@@ -120,10 +119,9 @@ namespace seqan3
  * i.e. it is safe to call in parallel with the same input under the condition that the input sequences do not change
  * when being iterated over.
  */
-template <typename sequence_t,
-          typename alignment_config_t>
+template <typename sequence_t, typename alignment_config_t>
 //!\cond
-    requires detail::align_pairwise_single_input_concept<std::remove_reference_t<sequence_t>> &&
+    requires detail::AlignPairwiseSingleInput<std::remove_reference_t<sequence_t>> &&
              std::CopyConstructible<std::remove_reference_t<sequence_t>> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 //!\endcond
@@ -139,10 +137,11 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
     return align_pairwise(std::view::single(std::forward<sequence_t>(seq)), config);
 }
 
-//!\copydoc align_pairwise
-template <detail::align_pairwise_range_input_concept sequence_t, typename alignment_config_t>
+//!\overload
+template <typename sequence_t, typename alignment_config_t>
 //!\cond
-    requires detail::is_type_specialisation_of_v<alignment_config_t, configuration>
+    requires detail::AlignPairwiseRangeInputConcept<sequence_t> &&
+             detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 //!\endcond
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
