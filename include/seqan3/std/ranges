@@ -24,6 +24,8 @@
 #include <range/v3/iterator/stream_iterators.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/equal.hpp>
+#include <range/v3/algorithm/fill.hpp>
+#include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/algorithm/sort.hpp>
 #include <range/v3/view/all.hpp>
 #include <range/v3/view/any_view.hpp>
@@ -196,6 +198,16 @@ using SEQAN3_DOXYGEN_ONLY(size =) ::ranges::size;
  * \brief Alias for ranges::copy. Copies a range of elements to a new location.
  */
 using SEQAN3_DOXYGEN_ONLY(copy =) ::ranges::copy;
+
+/*!\typedef std::ranges::for_each
+ * \brief Alias for ranges::for_each. Applies a function object to the elements of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(for_each =) ::ranges::for_each;
+
+/*!\typedef std::ranges::fill
+ * \brief Alias for ranges::fill. Assigns a value to the elements of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(fill =) ::ranges::fill;
 
 /*!\typedef std::ranges::empty
  * \brief Alias for ranges::empty. Checks whether a range is empty.
