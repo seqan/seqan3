@@ -15,15 +15,13 @@
 #include <limits>
 #include <memory>
 
-#include <range/v3/view/iota.hpp>
 #include <range/v3/view/repeat_n.hpp>
-#include <range/v3/view/slice.hpp>
-#include <range/v3/view/zip.hpp>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
@@ -210,14 +208,14 @@ public:
         {
             size_t begin_pos = std::max(band.lower_bound - 1, static_cast<band_type>(0));
             size_t end_pos = std::min(band.upper_bound + dimension_second, dimension_first);
-            return first_range | ranges::view::slice(begin_pos, end_pos);
+            return first_range | view::slice(begin_pos, end_pos);
         };
 
         auto trim_second_range = [&]() constexpr
         {
             size_t begin_pos = std::abs(std::min(band.upper_bound + 1, static_cast<band_type>(0)));
             size_t end_pos = std::min(dimension_first - band.lower_bound, dimension_second);
-            return second_range | ranges::view::slice(begin_pos, end_pos);
+            return second_range | view::slice(begin_pos, end_pos);
         };
 
         return std::tuple{trim_first_range(), trim_second_range()};
