@@ -95,7 +95,7 @@
  *
  * **Source-only views:** Most views operate on an underlying range and return a (modified) range, i.e. they can be placed
  * at the beginning, middle or end of a "pipe" of view operations. However, some views are limited to being at
- * the front ("source"), e.g. `ranges::view::single`, `ranges::view::concat` and `ranges::view::ints`. These views
+ * the front ("source"), e.g. `std::view::single`, `ranges::view::concat` and `ranges::view::ints`. These views
  * are marked as "source-only" and have no `urng_t` column in the second table.
  *
  * **Sink-only views:** The opposite of a *source-only view*. It can only be placed at the end of a pipe, i.e.
