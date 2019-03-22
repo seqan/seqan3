@@ -29,8 +29,8 @@ TEST(alignment_optimum, type_deduction)
     EXPECT_TRUE((std::is_same_v<decltype(def_ao), detail::alignment_optimum<int32_t>>));
 
     alignment_coordinate coordinate{};
-    coordinate.first_seq_pos = 2u;
-    coordinate.second_seq_pos = 3u;
+    coordinate.first = 2u;
+    coordinate.second = 3u;
     detail::alignment_optimum ao{10, coordinate};
     EXPECT_TRUE((std::is_same_v<decltype(ao), detail::alignment_optimum<int32_t>>));
 }
@@ -40,16 +40,16 @@ TEST(alignment_optimum, access)
     detail::alignment_optimum def_ao{};
 
     EXPECT_EQ(def_ao.score, std::numeric_limits<int32_t>::lowest());
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.first_seq_pos), static_cast<size_t>(0));
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.second_seq_pos), static_cast<size_t>(0));
+    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.first), static_cast<size_t>(0));
+    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.second), static_cast<size_t>(0));
 
     alignment_coordinate coordinate{};
-    coordinate.first_seq_pos = 2u;
-    coordinate.second_seq_pos = 3u;
+    coordinate.first = 2u;
+    coordinate.second = 3u;
     detail::alignment_optimum ao{10, coordinate};
     EXPECT_EQ(ao.score, 10);
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.first_seq_pos), static_cast<size_t>(2));
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.second_seq_pos), static_cast<size_t>(3));
+    EXPECT_EQ(static_cast<size_t>(ao.coordinate.first), static_cast<size_t>(2));
+    EXPECT_EQ(static_cast<size_t>(ao.coordinate.second), static_cast<size_t>(3));
 }
 
 TEST(alignment_optimum, max)
@@ -57,19 +57,19 @@ TEST(alignment_optimum, max)
     detail::alignment_optimum def_ao{};
 
     EXPECT_EQ(def_ao.score, std::numeric_limits<int32_t>::lowest());
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.first_seq_pos), static_cast<size_t>(0));
-    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.second_seq_pos), static_cast<size_t>(0));
+    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.first), static_cast<size_t>(0));
+    EXPECT_EQ(static_cast<size_t>(def_ao.coordinate.second), static_cast<size_t>(0));
 
     alignment_coordinate coordinate{};
-    coordinate.first_seq_pos = 2u;
-    coordinate.second_seq_pos = 3u;
+    coordinate.first = 2u;
+    coordinate.second = 3u;
     detail::alignment_optimum ao{10, coordinate};
     EXPECT_EQ(ao.score, 10);
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.first_seq_pos), static_cast<size_t>(2));
-    EXPECT_EQ(static_cast<size_t>(ao.coordinate.second_seq_pos), static_cast<size_t>(3));
+    EXPECT_EQ(static_cast<size_t>(ao.coordinate.first), static_cast<size_t>(2));
+    EXPECT_EQ(static_cast<size_t>(ao.coordinate.second), static_cast<size_t>(3));
 
     auto val = std::max(def_ao, ao, detail::alignment_optimum_compare_less{});
     EXPECT_EQ(ao.score, 10);
-    EXPECT_EQ(static_cast<size_t>(val.coordinate.first_seq_pos), static_cast<size_t>(2));
-    EXPECT_EQ(static_cast<size_t>(val.coordinate.second_seq_pos), static_cast<size_t>(3));
+    EXPECT_EQ(static_cast<size_t>(val.coordinate.first), static_cast<size_t>(2));
+    EXPECT_EQ(static_cast<size_t>(val.coordinate.second), static_cast<size_t>(3));
 }

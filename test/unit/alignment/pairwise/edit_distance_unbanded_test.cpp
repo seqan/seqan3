@@ -219,10 +219,10 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);
     EXPECT_EQ(trace_matrix.rows(), query.size()+1);
-    EXPECT_EQ(begin_coordinate.first_seq_pos, fixture.begin_coordinate.first_seq_pos);
-    EXPECT_EQ(begin_coordinate.second_seq_pos, fixture.begin_coordinate.second_seq_pos);
-    EXPECT_EQ(end_coordinate.first_seq_pos, fixture.end_coordinate.first_seq_pos);
-    EXPECT_EQ(end_coordinate.second_seq_pos, fixture.end_coordinate.second_seq_pos);
+    EXPECT_EQ(begin_coordinate.first, fixture.begin_coordinate.first);
+    EXPECT_EQ(begin_coordinate.second, fixture.begin_coordinate.second);
+    EXPECT_EQ(end_coordinate.first, fixture.end_coordinate.first);
+    EXPECT_EQ(end_coordinate.second, fixture.end_coordinate.second);
     EXPECT_EQ(trace_matrix, fixture.trace_matrix);
     EXPECT_EQ(alignment.score(), fixture.score);
 

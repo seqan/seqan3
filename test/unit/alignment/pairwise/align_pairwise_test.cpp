@@ -45,8 +45,8 @@ TEST(align_pairwise, single_rng_lvalue)
         for (auto && res : align_pairwise(p, cfg))
         {
             EXPECT_EQ(res.get_score(), -4);
-            EXPECT_EQ(res.get_end_coordinate().first_seq_pos, 7u);
-            EXPECT_EQ(res.get_end_coordinate().second_seq_pos, 8u);
+            EXPECT_EQ(res.get_end_coordinate().first, 7u);
+            EXPECT_EQ(res.get_end_coordinate().second, 8u);
             auto && [gap1, gap2] = res.get_alignment();
             EXPECT_EQ(std::string{gap1 | view::to_char}, "ACGTGATG--");
             EXPECT_EQ(std::string{gap2 | view::to_char}, "A-GTGATACT");

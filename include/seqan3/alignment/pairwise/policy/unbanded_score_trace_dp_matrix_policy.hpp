@@ -151,7 +151,7 @@ private:
         // Put the iterator to the position where the traceback starts.
         auto direction_iter = std::ranges::begin(trace_matrix);
         std::ranges::advance(direction_iter,
-                             end_coordinate.first_seq_pos * dimension_second_range + end_coordinate.second_seq_pos);
+                             end_coordinate.first * dimension_second_range + end_coordinate.second);
 
         // Parse the trace until interrupt.
         while (*direction_iter != trace_directions::none)

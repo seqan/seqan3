@@ -120,7 +120,7 @@ private:
                       row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
                                                                                current_matrix_iter))}};
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
-            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
+            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
         auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
@@ -155,8 +155,8 @@ private:
 
         // Put the iterator to the position where the traceback starts.
         auto direction_iter = std::ranges::begin(trace_matrix);
-        std::ranges::advance(direction_iter, end_coordinate.first_seq_pos * band_size +
-                                     end_coordinate.second_seq_pos);
+        std::ranges::advance(direction_iter, end_coordinate.first * band_size +
+                                     end_coordinate.second);
 
         // Parse the trace until interrupt.
         while (*direction_iter != trace_directions::none)
@@ -222,11 +222,11 @@ private:
         // Validate correct coordinates.
         auto begin_coordinate = map_banded_coordinate_to_range_position(
                 alignment_coordinate{column_index_type{c}, row_index_type{r}});
-        assert(begin_coordinate.first_seq_pos >= 0u);
-        assert(begin_coordinate.first_seq_pos <= end_coordinate.first_seq_pos);
+        assert(begin_coordinate.first >= 0u);
+        assert(begin_coordinate.first <= end_coordinate.first);
 
-        assert(begin_coordinate.second_seq_pos >= 0u);
-        assert(begin_coordinate.second_seq_pos <= map_banded_coordinate_to_range_position(end_coordinate).second_seq_pos);
+        assert(begin_coordinate.second >= 0u);
+        assert(begin_coordinate.second <= map_banded_coordinate_to_range_position(end_coordinate).second);
 
         return std::tuple{begin_coordinate, first_segments, second_segments};
     }

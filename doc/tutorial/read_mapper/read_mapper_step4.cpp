@@ -67,7 +67,7 @@ void map_reads(std::filesystem::path const & query_path,
             for (auto && alignment : align_pairwise(std::tie(text_view, query), align_config))
             {
                 auto aligned_sequence = alignment.get_alignment();
-                size_t ref_offset = alignment.get_begin_coordinate().first_seq_pos + 2 + start;
+                size_t ref_offset = alignment.get_begin_coordinate().first + 2 + start;
                 size_t map_qual = 60u + alignment.get_score();
 
                 sam_out.emplace_back(query, id, storage.ids[idx], ref_offset, aligned_sequence, qual, map_qual);

@@ -47,8 +47,8 @@ TEST(advanceable_alignment_coordinate, construction_with_different_state)
 
     detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none> no{ro};
 
-    EXPECT_EQ(no.first_seq_pos, static_cast<size_t>(2));
-    EXPECT_EQ(no.second_seq_pos, static_cast<size_t>(3));
+    EXPECT_EQ(no.first, static_cast<size_t>(2));
+    EXPECT_EQ(no.second, static_cast<size_t>(3));
 }
 
 TEST(advanceable_alignment_coordinate, type_deduction)
@@ -65,12 +65,12 @@ TEST(advanceable_alignment_coordinate, type_deduction)
 TEST(advanceable_alignment_coordinate, access)
 {
     detail::advanceable_alignment_coordinate def_co{};
-    EXPECT_EQ(def_co.first_seq_pos, static_cast<size_t>(0));
-    EXPECT_EQ(def_co.second_seq_pos, static_cast<size_t>(0));
+    EXPECT_EQ(def_co.first, static_cast<size_t>(0));
+    EXPECT_EQ(def_co.second, static_cast<size_t>(0));
 
     detail::advanceable_alignment_coordinate co{detail::column_index_type{2u}, detail::row_index_type{3u}};
-    EXPECT_EQ(co.first_seq_pos, static_cast<size_t>(2));
-    EXPECT_EQ(co.second_seq_pos, static_cast<size_t>(3));
+    EXPECT_EQ(co.first, static_cast<size_t>(2));
+    EXPECT_EQ(co.second, static_cast<size_t>(3));
 }
 
 TEST(advanceable_alignment_coordinate, weakly_equality_comparable_concept)
@@ -138,16 +138,16 @@ TEST(advanceable_alignment_coordinate, increment_row)
 
     row_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co = ++co;
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 1u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 1u);
     auto co_tmp = co++;
-    EXPECT_EQ(co_tmp.first_seq_pos, 0u);
-    EXPECT_EQ(co_tmp.second_seq_pos, 1u);
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 2u);
+    EXPECT_EQ(co_tmp.first, 0u);
+    EXPECT_EQ(co_tmp.second, 1u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 2u);
     co += 4;
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 6u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 6u);
 }
 
 TEST(advanceable_alignment_coordinate, increment_col)
@@ -157,16 +157,16 @@ TEST(advanceable_alignment_coordinate, increment_col)
 
     col_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co = ++co;
-    EXPECT_EQ(co.first_seq_pos, 1u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co.first, 1u);
+    EXPECT_EQ(co.second, 0u);
     auto co_tmp = co++;
-    EXPECT_EQ(co_tmp.first_seq_pos, 1u);
-    EXPECT_EQ(co_tmp.second_seq_pos, 0u);
-    EXPECT_EQ(co.first_seq_pos, 2u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co_tmp.first, 1u);
+    EXPECT_EQ(co_tmp.second, 0u);
+    EXPECT_EQ(co.first, 2u);
+    EXPECT_EQ(co.second, 0u);
     co += 4;
-    EXPECT_EQ(co.first_seq_pos, 6u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co.first, 6u);
+    EXPECT_EQ(co.second, 0u);
 }
 
 TEST(advanceable_alignment_coordinate, decrement_row)
@@ -177,18 +177,18 @@ TEST(advanceable_alignment_coordinate, decrement_row)
     row_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co += 4;
     auto co_tmp = co--;
-    EXPECT_EQ(co_tmp.first_seq_pos, 0u);
-    EXPECT_EQ(co_tmp.second_seq_pos, 4u);
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 3u);
+    EXPECT_EQ(co_tmp.first, 0u);
+    EXPECT_EQ(co_tmp.second, 4u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 3u);
 
     co = --co;
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 2u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 2u);
 
     co -= 2;
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 0u);
 }
 
 TEST(advanceable_alignment_coordinate, decrement_col)
@@ -199,18 +199,18 @@ TEST(advanceable_alignment_coordinate, decrement_col)
     col_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co += 4;
     auto co_tmp = co--;
-    EXPECT_EQ(co_tmp.first_seq_pos, 4u);
-    EXPECT_EQ(co_tmp.second_seq_pos, 0u);
-    EXPECT_EQ(co.first_seq_pos, 3u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co_tmp.first, 4u);
+    EXPECT_EQ(co_tmp.second, 0u);
+    EXPECT_EQ(co.first, 3u);
+    EXPECT_EQ(co.second, 0u);
 
     co = --co;
-    EXPECT_EQ(co.first_seq_pos, 2u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co.first, 2u);
+    EXPECT_EQ(co.second, 0u);
 
     co -= 2;
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 0u);
 }
 
 TEST(advanceable_alignment_coordinate, advance_row)
@@ -221,12 +221,12 @@ TEST(advanceable_alignment_coordinate, advance_row)
     row_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
 
     co = co + 4;
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 4u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 4u);
 
     co = 4 + co;
-    EXPECT_EQ(co.first_seq_pos, 0u);
-    EXPECT_EQ(co.second_seq_pos, 8u);
+    EXPECT_EQ(co.first, 0u);
+    EXPECT_EQ(co.second, 8u);
 }
 
 TEST(advanceable_alignment_coordinate, advance_col)
@@ -236,12 +236,12 @@ TEST(advanceable_alignment_coordinate, advance_col)
 
     col_incrementable co{detail::column_index_type{0u}, detail::row_index_type{0u}};
     co = co + 4;
-    EXPECT_EQ(co.first_seq_pos, 4u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co.first, 4u);
+    EXPECT_EQ(co.second, 0u);
 
     co = 4 + co;
-    EXPECT_EQ(co.first_seq_pos, 8u);
-    EXPECT_EQ(co.second_seq_pos, 0u);
+    EXPECT_EQ(co.first, 8u);
+    EXPECT_EQ(co.second, 0u);
 }
 
 TEST(advanceable_alignment_coordinate, iota_column_index)
@@ -254,11 +254,11 @@ TEST(advanceable_alignment_coordinate, iota_column_index)
     auto v = std::view::iota(co_begin, co_end);
 
     EXPECT_TRUE((std::Same<decltype(v.begin()), decltype(v.end())>));
-    EXPECT_EQ((*(--v.end())).first_seq_pos, 4u);
+    EXPECT_EQ((*(--v.end())).first, 4u);
 
     size_t test = 0u;
     for (auto coordinate : v)
-        EXPECT_EQ(coordinate.first_seq_pos, test++);
+        EXPECT_EQ(coordinate.first, test++);
 }
 
 TEST(advanceable_alignment_coordinate, iota_row_index)
@@ -271,11 +271,11 @@ TEST(advanceable_alignment_coordinate, iota_row_index)
     auto v = std::view::iota(co_begin, co_end);
 
     EXPECT_TRUE((std::Same<decltype(v.begin()), decltype(v.end())>));
-    EXPECT_EQ((*(--v.end())).second_seq_pos, 4u);
+    EXPECT_EQ((*(--v.end())).second, 4u);
 
     size_t test = 0u;
     for (auto coordinate : v)
-        EXPECT_EQ(coordinate.second_seq_pos, test++);
+        EXPECT_EQ(coordinate.second, test++);
 }
 
 TEST(alignment_coordinate, basic)
@@ -299,18 +299,18 @@ TEST(alignment_coordinate, basic)
     row_incrementable co_row{detail::column_index_type{10u}, detail::row_index_type{5u}};
 
     alignment_coordinate test1{co_not};
-    EXPECT_EQ(test1.first_seq_pos, 10u);
-    EXPECT_EQ(test1.second_seq_pos, 5u);
+    EXPECT_EQ(test1.first, 10u);
+    EXPECT_EQ(test1.second, 5u);
 
     alignment_coordinate test2{co_col};
-    EXPECT_EQ(test2.first_seq_pos, 10u);
-    EXPECT_EQ(test2.second_seq_pos, 5u);
+    EXPECT_EQ(test2.first, 10u);
+    EXPECT_EQ(test2.second, 5u);
 
     alignment_coordinate test3{co_row};
-    EXPECT_EQ(test3.first_seq_pos, 10u);
-    EXPECT_EQ(test3.second_seq_pos, 5u);
+    EXPECT_EQ(test3.first, 10u);
+    EXPECT_EQ(test3.second, 5u);
 
     alignment_coordinate test4{detail::column_index_type{10u}, detail::row_index_type{5u}};
-    EXPECT_EQ(test4.first_seq_pos, 10u);
-    EXPECT_EQ(test4.second_seq_pos, 5u);
+    EXPECT_EQ(test4.first, 10u);
+    EXPECT_EQ(test4.second, 5u);
 }

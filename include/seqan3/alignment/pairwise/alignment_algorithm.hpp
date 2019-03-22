@@ -545,29 +545,29 @@ private:
 
         // Get the subrange over the first sequence according to the begin and end coordinate.
         auto it_first_seq_begin = std::ranges::begin(first_range);
-        std::ranges::advance(it_first_seq_begin, begin_coordinate.first_seq_pos);
+        std::ranges::advance(it_first_seq_begin, begin_coordinate.first);
         auto it_first_seq_end = std::ranges::begin(first_range);
-        std::ranges::advance(it_first_seq_end, end_coordinate.first_seq_pos);
+        std::ranges::advance(it_first_seq_end, end_coordinate.first);
 
         using first_subrange_type = std::ranges::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
         auto first_subrange = first_subrange_type{it_first_seq_begin, it_first_seq_end};
 
         // Create and fill the aligned_sequence for the first sequence.
         std::vector<gapped<first_seq_value_type>> first_aligned_seq{first_subrange};
-        fill_aligned_sequence(first_aligned_seq, first_gap_segments, begin_coordinate.first_seq_pos);
+        fill_aligned_sequence(first_aligned_seq, first_gap_segments, begin_coordinate.first);
 
         // Get the subrange over the second sequence according to the begin and end coordinate.
         auto it_second_seq_begin = std::ranges::begin(second_range);
-        std::ranges::advance(it_second_seq_begin, begin_coordinate.second_seq_pos);
+        std::ranges::advance(it_second_seq_begin, begin_coordinate.second);
         auto it_second_seq_end = std::ranges::begin(second_range);
-        std::ranges::advance(it_second_seq_end, end_coordinate.second_seq_pos);
+        std::ranges::advance(it_second_seq_end, end_coordinate.second);
 
         using second_subrange_type = std::ranges::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
         auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};
 
         // Create and fill the aligned_sequence for the second sequence.
         std::vector<gapped<second_seq_value_type>> second_aligned_seq{second_subrange};
-        fill_aligned_sequence(second_aligned_seq, second_gap_segments, begin_coordinate.second_seq_pos);
+        fill_aligned_sequence(second_aligned_seq, second_gap_segments, begin_coordinate.second);
 
         return std::tuple{begin_coordinate, std::tuple{first_aligned_seq, second_aligned_seq}};
     }
