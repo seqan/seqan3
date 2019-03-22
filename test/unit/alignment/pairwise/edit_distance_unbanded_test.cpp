@@ -214,15 +214,15 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
     using traits_t = test_traits_type<typename TypeParam::word_type, typename TypeParam::is_semi_global_type>;
     auto alignment = edit_distance<traits_t>(database, query, align_cfg);
     auto trace_matrix = alignment.trace_matrix();
-    auto begin_coordinate = alignment.begin_coordinate();
-    auto end_coordinate = alignment.end_coordinate();
+    auto front_coordinate = alignment.front_coordinate();
+    auto back_coordinate = alignment.back_coordinate();
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);
     EXPECT_EQ(trace_matrix.rows(), query.size()+1);
-    EXPECT_EQ(begin_coordinate.first, fixture.begin_coordinate.first);
-    EXPECT_EQ(begin_coordinate.second, fixture.begin_coordinate.second);
-    EXPECT_EQ(end_coordinate.first, fixture.end_coordinate.first);
-    EXPECT_EQ(end_coordinate.second, fixture.end_coordinate.second);
+    EXPECT_EQ(front_coordinate.first, fixture.front_coordinate.first);
+    EXPECT_EQ(front_coordinate.second, fixture.front_coordinate.second);
+    EXPECT_EQ(back_coordinate.first, fixture.back_coordinate.first);
+    EXPECT_EQ(back_coordinate.second, fixture.back_coordinate.second);
     EXPECT_EQ(trace_matrix, fixture.trace_matrix);
     EXPECT_EQ(alignment.score(), fixture.score);
 

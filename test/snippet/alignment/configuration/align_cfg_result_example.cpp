@@ -8,13 +8,13 @@ int main()
     // Compute only the score.
     align_cfg::result cfg_score{with_score};
 
-    // Compute the score and the end coordinate.
+    // Compute the score and the back coordinate.
     align_cfg::result cfg_end{with_back_coordinate};
 
-    // Compute the score, the end coordinate and the begin coordinate.
+    // Compute the score, the back coordinate and the front coordinate.
     align_cfg::result cfg_begin{with_front_coordinate};
 
-    // Compute the score, the end coordinate, the begin coordinate and the alignment.
+    // Compute the score, the back coordinate, the front coordinate and the alignment.
     align_cfg::result cfg_alignment{with_alignment};
 
 //! [example]

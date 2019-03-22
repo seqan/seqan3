@@ -282,7 +282,7 @@ namespace seqan3
  * seqan3::detail::advanceable_alignment_coordinate is only necessary for the implementation of the pairwise
  * alignment algorithm. Within in the algorithm the coordinate is used in combination with a seqan3::view::iota to
  * keep track of the current position within the alignment matrix. For the user, however, this interface adds no
- * benefit as they are only interested in the begin/end coordinates for the respective alignment.
+ * benefit as they are only interested in the front/back coordinates for the respective alignment.
  * \endif
  */
 class alignment_coordinate

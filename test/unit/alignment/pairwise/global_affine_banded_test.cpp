@@ -61,7 +61,7 @@ TYPED_TEST_P(global_affine_banded, score)
     // TODO Make test work with ranges.
     auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
 
-    EXPECT_EQ((*std::ranges::begin(alignment)).get_score(), fixture.score);
+    EXPECT_EQ((*std::ranges::begin(alignment)).score(), fixture.score);
 }
 
 TYPED_TEST_P(global_affine_banded, end_position)
@@ -75,9 +75,9 @@ TYPED_TEST_P(global_affine_banded, end_position)
     auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
 
     auto res = *std::ranges::begin(alignment);
-    EXPECT_EQ(res.get_score(), fixture.score);
+    EXPECT_EQ(res.score(), fixture.score);
 
-    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+    EXPECT_EQ(res.back_coordinate(), fixture.back_coordinate);
 }
 
 TYPED_TEST_P(global_affine_banded, begin_position)
@@ -91,10 +91,10 @@ TYPED_TEST_P(global_affine_banded, begin_position)
     auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
 
     auto res = *std::ranges::begin(alignment);
-    EXPECT_EQ(res.get_score(), fixture.score);
+    EXPECT_EQ(res.score(), fixture.score);
 
-    EXPECT_EQ(res.get_begin_coordinate(), fixture.begin_coordinate);
-    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
+    EXPECT_EQ(res.front_coordinate(), fixture.front_coordinate);
+    EXPECT_EQ(res.back_coordinate(), fixture.back_coordinate);
 }
 
 TYPED_TEST_P(global_affine_banded, trace)
@@ -108,11 +108,11 @@ TYPED_TEST_P(global_affine_banded, trace)
     auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
 
     auto res = *std::ranges::begin(alignment);
-    EXPECT_EQ(res.get_score(), fixture.score);
-    EXPECT_EQ(res.get_begin_coordinate(), fixture.begin_coordinate);
-    EXPECT_EQ(res.get_end_coordinate(), fixture.end_coordinate);
-    EXPECT_TRUE(ranges::equal(get<0>(res.get_alignment()) | view::to_char, fixture.aligned_sequence1));
-    EXPECT_TRUE(ranges::equal(get<1>(res.get_alignment()) | view::to_char, fixture.aligned_sequence2));
+    EXPECT_EQ(res.score(), fixture.score);
+    EXPECT_EQ(res.front_coordinate(), fixture.front_coordinate);
+    EXPECT_EQ(res.back_coordinate(), fixture.back_coordinate);
+    EXPECT_TRUE(ranges::equal(get<0>(res.alignment()) | view::to_char, fixture.aligned_sequence1));
+    EXPECT_TRUE(ranges::equal(get<1>(res.alignment()) | view::to_char, fixture.aligned_sequence2));
 }
 
 REGISTER_TYPED_TEST_CASE_P(global_affine_banded, score, end_position, begin_position, trace);

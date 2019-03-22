@@ -28,7 +28,7 @@ bool run_test(config_t const & cfg)
     auto fn = detail::alignment_configurator::configure(r, cfg);
     auto && [seq1, seq2] = *std::ranges::begin(r);
 
-    return fn(seq1, seq2).get_score() == 0;
+    return fn(seq1, seq2).score() == 0;
 }
 
 TEST(alignment_configurator, configure_edit)

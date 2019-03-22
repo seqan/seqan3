@@ -85,7 +85,7 @@
  * - parse_traceback:
  *
  *     This function is only required if the alignment is requested. It gets the coordinate where the traceback
- *     should be started and returns a tuple with the begin coordinate and the two iterable ranges containing
+ *     should be started and returns a tuple with the front coordinate and the two iterable ranges containing
  *     seqan3::detail::gap_segment s. These gap segments store the gaps within the first sequence and the second
  *     sequence respectively.
  *

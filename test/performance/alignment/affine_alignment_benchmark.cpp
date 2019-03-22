@@ -172,7 +172,7 @@ void seqan3_affine_dna4_collection(benchmark::State & state)
     for (auto _ : state)
     {
         for (auto && rng : align_pairwise(vec, cfg))
-            rng.get_score();
+            rng.score();
     }
 }
 
@@ -228,7 +228,7 @@ void seqan3_affine_dna4_trace_collection(benchmark::State & state)
     for (auto _ : state)
     {
         for (auto && rng : align_pairwise(vec, cfg))
-            rng.get_score();
+            rng.score();
     }
 }
 

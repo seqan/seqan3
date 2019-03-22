@@ -415,20 +415,20 @@ public:
             res_vt.score = score();
         }
 
-        if constexpr (!std::is_same_v<decltype(res_vt.end_coordinate), std::nullopt_t *>)
+        if constexpr (!std::is_same_v<decltype(res_vt.back_coordinate), std::nullopt_t *>)
         {
-            res_vt.end_coordinate = end_coordinate();
+            res_vt.back_coordinate = back_coordinate();
         }
 
         [[maybe_unused]] alignment_trace_matrix matrix = trace_matrix();
-        if constexpr (!std::is_same_v<decltype(res_vt.begin_coordinate), std::nullopt_t *>)
+        if constexpr (!std::is_same_v<decltype(res_vt.front_coordinate), std::nullopt_t *>)
         {
-            res_vt.begin_coordinate = alignment_begin_coordinate(matrix, res_vt.end_coordinate);
+            res_vt.front_coordinate = alignment_front_coordinate(matrix, res_vt.back_coordinate);
         }
 
         if constexpr (!std::is_same_v<decltype(res_vt.alignment), std::nullopt_t *>)
         {
-            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.end_coordinate);
+            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.back_coordinate);
         }
         res = alignment_result<result_value_type>{res_vt};
         return res;
@@ -453,14 +453,14 @@ public:
     }
 
     //!\brief Return the begin position of the alignment
-    alignment_coordinate begin_coordinate() const noexcept
+    alignment_coordinate front_coordinate() const noexcept
     {
-        alignment_coordinate end = end_coordinate();
-        return alignment_begin_coordinate(trace_matrix(), end);
+        alignment_coordinate end = back_coordinate();
+        return alignment_front_coordinate(trace_matrix(), end);
     }
 
     //!\brief Return the end position of the alignment
-    alignment_coordinate end_coordinate() const noexcept
+    alignment_coordinate back_coordinate() const noexcept
     {
         size_t col = database.size() - 1;
         if constexpr(is_semi_global)
@@ -472,7 +472,7 @@ public:
     //!\brief Return the alignment, i.e. the actual base pair matching.
     auto alignment() const noexcept
     {
-        return alignment_trace(database, query, trace_matrix(), end_coordinate());
+        return alignment_trace(database, query, trace_matrix(), back_coordinate());
     }
 };
 

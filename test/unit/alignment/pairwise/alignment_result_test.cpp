@@ -66,16 +66,16 @@ TYPED_TEST(alignment_result_test, get_id)
 
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), id_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_id()), id_t>));
-        EXPECT_EQ(tmp.get_id(), 1u);
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), id_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).id()), id_t>));
+        EXPECT_EQ(tmp.id(), 1u);
     }
 
     {
         alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_id(), 1u);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), id_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_id()), id_t>));
+        EXPECT_EQ(tmp.id(), 1u);
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), id_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).id()), id_t>));
     }
 }
 
@@ -86,57 +86,57 @@ TYPED_TEST(alignment_result_test, get_score)
 
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_score(), 0);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), score_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_score()), score_t>));
+        EXPECT_EQ(tmp.score(), 0);
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), score_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).score()), score_t>));
     }
 
     {
         alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_score(), 0);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), score_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_score()), score_t>));
+        EXPECT_EQ(tmp.score(), 0);
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), score_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).score()), score_t>));
     }
 
 }
 
-TYPED_TEST(alignment_result_test, end_coordinate)
+TYPED_TEST(alignment_result_test, back_coordinate)
 {
-    using coord_t = decltype(std::declval<TypeParam>().end_coordinate);
+    using coord_t = decltype(std::declval<TypeParam>().back_coordinate);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_end_coordinate(), (coord_t{10ul, 10ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t const &>));
+        EXPECT_EQ(tmp.back_coordinate(), (coord_t{10ul, 10ul}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.back_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).back_coordinate()), coord_t const &>));
     }
 
     {
         alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_end_coordinate(), (coord_t{10ul, 10ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_end_coordinate()), coord_t const &>));
+        EXPECT_EQ(tmp.back_coordinate(), (coord_t{10ul, 10ul}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.back_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).back_coordinate()), coord_t const &>));
     }
 }
 
-TYPED_TEST(alignment_result_test, begin_coordinate)
+TYPED_TEST(alignment_result_test, front_coordinate)
 {
-    using coord_t = decltype(std::declval<TypeParam>().begin_coordinate);
+    using coord_t = decltype(std::declval<TypeParam>().front_coordinate);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, gap{}, 'C'_dna4, gap{}, gap{}, 'A'_dna4};
 
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_begin_coordinate(), (coord_t{0ul, 0ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t const &>));
+        EXPECT_EQ(tmp.front_coordinate(), (coord_t{0ul, 0ul}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.front_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).front_coordinate()), coord_t const &>));
     }
 
     {
         alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_begin_coordinate(), (coord_t{0ul, 0ul}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_begin_coordinate()), coord_t const &>));
+        EXPECT_EQ(tmp.front_coordinate(), (coord_t{0ul, 0ul}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.front_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).front_coordinate()), coord_t const &>));
     }
 }
 
@@ -147,31 +147,31 @@ TYPED_TEST(alignment_result_test, alignment)
 
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_alignment(), (alignment_t{seq, seq}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_alignment()), alignment_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_alignment()), alignment_t const &>));
+        EXPECT_EQ(tmp.alignment(), (alignment_t{seq, seq}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.alignment()), alignment_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).alignment()), alignment_t const &>));
     }
 
     {
         alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.get_alignment(), (alignment_t{seq, seq}));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_alignment()), alignment_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).get_alignment()), alignment_t const &>));
+        EXPECT_EQ(tmp.alignment(), (alignment_t{seq, seq}));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.alignment()), alignment_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).alignment()), alignment_t const &>));
     }
 
     if constexpr (tuple_like_concept<alignment_t>)
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(std::string{std::get<0>(tmp.get_alignment()) | view::persist | view::to_char},
+        EXPECT_EQ(std::string{std::get<0>(tmp.alignment()) | view::persist | view::to_char},
                   std::string{"AT-C--A"});
-        EXPECT_EQ(std::string{std::get<1>(tmp.get_alignment()) | view::persist | view::to_char},
+        EXPECT_EQ(std::string{std::get<1>(tmp.alignment()) | view::persist | view::to_char},
                   std::string{"AT-C--A"});
     }
     else
     {
         alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(std::string{(tmp.get_alignment()[0]) | view::persist | view::to_char}, std::string{"AT-C--A"});
-        EXPECT_EQ(std::string{(tmp.get_alignment()[1]) | view::persist | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{(tmp.alignment()[0]) | view::persist | view::to_char}, std::string{"AT-C--A"});
+        EXPECT_EQ(std::string{(tmp.alignment()[1]) | view::persist | view::to_char}, std::string{"AT-C--A"});
     }
 }
 
@@ -180,25 +180,25 @@ TEST(alignment_result_test, reduced_type)
     {
         detail::alignment_result_value_type tr{2u, 5};
         alignment_result tmp(tr);
-        EXPECT_EQ(tmp.get_id(), 2u);
-        EXPECT_EQ(tmp.get_score(), 5);
+        EXPECT_EQ(tmp.id(), 2u);
+        EXPECT_EQ(tmp.score(), 5);
     }
 
     {
         detail::alignment_result_value_type tr{2, 5.0f, std::pair<int, int>{1, -1}};
         alignment_result tmp(tr);
-        EXPECT_EQ(tmp.get_id(), 2);
-        EXPECT_FLOAT_EQ(tmp.get_score(), 5.0f);
-        EXPECT_EQ((tmp.get_end_coordinate()), (std::pair<int, int>{1, -1}));
+        EXPECT_EQ(tmp.id(), 2);
+        EXPECT_FLOAT_EQ(tmp.score(), 5.0f);
+        EXPECT_EQ((tmp.back_coordinate()), (std::pair<int, int>{1, -1}));
     }
 
     {
         detail::alignment_result_value_type tr{2, 5.0f, std::pair<int, int>{1, -1}, std::pair<int, int>{10, -10}};
         alignment_result tmp(tr);
-        EXPECT_EQ(tmp.get_id(), 2);
-        EXPECT_FLOAT_EQ(tmp.get_score(), 5.0f);
-        EXPECT_EQ((tmp.get_end_coordinate()), (std::pair<int, int>{1, -1}));
-        EXPECT_EQ((tmp.get_begin_coordinate()), (std::pair<int, int>{10, -10}));
+        EXPECT_EQ(tmp.id(), 2);
+        EXPECT_FLOAT_EQ(tmp.score(), 5.0f);
+        EXPECT_EQ((tmp.back_coordinate()), (std::pair<int, int>{1, -1}));
+        EXPECT_EQ((tmp.front_coordinate()), (std::pair<int, int>{10, -10}));
     }
 }
 
@@ -210,17 +210,17 @@ TEST(alignment_result_test, type_deduction)
 
         detail::alignment_result_value_type tr{2, 5.0, coord_t{1, -1}, coord_t{10,-10}, seq};
         alignment_result tmp(tr);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), int>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), double>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_begin_coordinate()), coord_t const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_alignment()), std::vector<gapped<rna5>> const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.back_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.front_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.alignment()), std::vector<gapped<rna5>> const &>));
 
-        EXPECT_EQ(tmp.get_id(), 2);
-        EXPECT_DOUBLE_EQ(tmp.get_score(), 5.0);
-        EXPECT_EQ((tmp.get_end_coordinate()), (coord_t{1, -1}));
-        EXPECT_EQ((tmp.get_begin_coordinate()), (coord_t{10, -10}));
-        EXPECT_EQ(tmp.get_alignment(), seq);
+        EXPECT_EQ(tmp.id(), 2);
+        EXPECT_DOUBLE_EQ(tmp.score(), 5.0);
+        EXPECT_EQ((tmp.back_coordinate()), (coord_t{1, -1}));
+        EXPECT_EQ((tmp.front_coordinate()), (coord_t{10, -10}));
+        EXPECT_EQ(tmp.alignment(), seq);
     }
 
     {
@@ -228,16 +228,16 @@ TEST(alignment_result_test, type_deduction)
 
         detail::alignment_result_value_type tr{2, 5.0, coord_t{1, -1}};
         alignment_result tmp(tr);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), int>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), double>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_end_coordinate()), coord_t const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.back_coordinate()), coord_t const &>));
     }
 
     {
         detail::alignment_result_value_type tr{2, 5.0};
         alignment_result tmp(tr);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_id()), int>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.get_score()), double>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
     }
 }
 

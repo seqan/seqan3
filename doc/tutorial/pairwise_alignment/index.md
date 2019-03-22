@@ -149,7 +149,7 @@ alignment algorithm.
 ## Alignment result
 
 The seqan3::align_cfg::result regulates the outcome of the alignment algorithm. In the default case only the score
-will be computed. To obtain also the alignment or the begin and end coordinates of the alignment the
+will be computed. To obtain also the alignment or the front and back coordinates of the alignment the
 seqan3::align_cfg::result has to be configured accordingly.
 Depending on the configuration the algorithm choses the most efficient implementation to obtain the requested result.
 The result can be finally examined using the seqan3::alignment_result class.

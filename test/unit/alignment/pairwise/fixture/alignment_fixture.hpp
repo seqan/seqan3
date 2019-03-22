@@ -40,8 +40,8 @@ struct alignment_fixture
                       score_t _score,
                       std::string _aligned_sequence1,
                       std::string _aligned_sequence2,
-                      alignment_coordinate _begin_coordinate,
-                      alignment_coordinate _end_coordinate,
+                      alignment_coordinate _front_coordinate,
+                      alignment_coordinate _back_coordinate,
                       std::vector<score_t> _score_vector,
                       std::vector<trace_t> _trace_vector) :
         sequence1{_sequence1},
@@ -50,8 +50,8 @@ struct alignment_fixture
         score{_score},
         aligned_sequence1{_aligned_sequence1},
         aligned_sequence2{_aligned_sequence2},
-        begin_coordinate{_begin_coordinate},
-        end_coordinate{_end_coordinate},
+        front_coordinate{_front_coordinate},
+        back_coordinate{_back_coordinate},
         score_matrix{std::move(_score_vector), sequence2.size()+1, sequence1.size()+1},
         trace_matrix{std::move(_trace_vector), sequence2.size()+1, sequence1.size()+1}
     {}
@@ -62,16 +62,16 @@ struct alignment_fixture
                       score_t _score,
                       std::string _aligned_sequence1,
                       std::string _aligned_sequence2,
-                      alignment_coordinate _begin_coordinate,
-                      alignment_coordinate _end_coordinate) :
+                      alignment_coordinate _front_coordinate,
+                      alignment_coordinate _back_coordinate) :
         alignment_fixture(std::forward<sequence1_t>(_sequence1),
                           std::forward<sequence2_t>(_sequence2),
                           _config,
                           _score,
                           _aligned_sequence1,
                           _aligned_sequence2,
-                          _begin_coordinate,
-                          _end_coordinate,
+                          _front_coordinate,
+                          _back_coordinate,
                           std::vector<score_t>{},
                           std::vector<detail::trace_directions>{})
     {}
@@ -85,8 +85,8 @@ struct alignment_fixture
     std::string aligned_sequence1;
     std::string aligned_sequence2;
 
-    alignment_coordinate begin_coordinate;
-    alignment_coordinate end_coordinate;
+    alignment_coordinate front_coordinate;
+    alignment_coordinate back_coordinate;
     score_matrix_t score_matrix;
     trace_matrix_t trace_matrix;
 };
@@ -98,8 +98,8 @@ alignment_fixture(sequence1_t && _sequence1,
                   score_t _score,
                   std::string _aligned_sequence1,
                   std::string _aligned_sequence2,
-                  alignment_coordinate _begin_coordinate,
-                  alignment_coordinate _end_coordinate,
+                  alignment_coordinate _front_coordinate,
+                  alignment_coordinate _back_coordinate,
                   std::vector<score_t> _score_vector,
                   std::vector<trace_t> _trace_vector)
 -> alignment_fixture<sequence1_t,
@@ -116,8 +116,8 @@ alignment_fixture(sequence1_t && _sequence1,
                   score_t _score,
                   std::string _aligned_sequence1,
                   std::string _aligned_sequence2,
-                  alignment_coordinate _begin_coordinate,
-                  alignment_coordinate _end_coordinate)
+                  alignment_coordinate _front_coordinate,
+                  alignment_coordinate _back_coordinate)
 -> alignment_fixture<sequence1_t,
                      sequence2_t,
                      config_t,

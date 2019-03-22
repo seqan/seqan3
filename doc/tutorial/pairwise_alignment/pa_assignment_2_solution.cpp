@@ -31,5 +31,5 @@ int main()
                   align_cfg::aligned_ends{free_ends_second};
 
     for (auto const & res : align_pairwise(source, config))
-        debug_stream << "Score: " << res.get_score() << '\n';
+        debug_stream << "Score: " << res.score() << '\n';
 }

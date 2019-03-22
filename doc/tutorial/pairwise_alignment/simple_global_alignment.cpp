@@ -18,5 +18,5 @@ int main()
 
     // Invoke the pairwise alignment which returns a lazy range over alignment results.
     auto & res = *(align_pairwise(std::tie(s1, s2), config).begin());
-    debug_stream << "Score: " << res.get_score() << '\n';
+    debug_stream << "Score: " << res.score() << '\n';
 }

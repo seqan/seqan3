@@ -137,12 +137,12 @@ private:
     }
 
     /*!\brief Parses the traceback starting from the given coordinate.
-     * \param end_coordinate The coordinate from where to start the traceback.
+     * \param back_coordinate The coordinate from where to start the traceback.
      *
-     * \returns A tuple containing the begin coordinate and a tuple with all seqan3::detail::gap_segment s for the
+     * \returns A tuple containing the front coordinate and a tuple with all seqan3::detail::gap_segment s for the
      *          first sequence and the second sequence.
      */
-    constexpr auto parse_traceback(alignment_coordinate const & end_coordinate)
+    constexpr auto parse_traceback(alignment_coordinate const & back_coordinate)
     {
         // Store the trace segments.
         std::deque<gap_segment> first_segments{};
@@ -151,7 +151,7 @@ private:
         // Put the iterator to the position where the traceback starts.
         auto direction_iter = std::ranges::begin(trace_matrix);
         std::ranges::advance(direction_iter,
-                             end_coordinate.first * dimension_second_range + end_coordinate.second);
+                             back_coordinate.first * dimension_second_range + back_coordinate.second);
 
         // Parse the trace until interrupt.
         while (*direction_iter != trace_directions::none)
@@ -206,7 +206,7 @@ private:
             }
         }
 
-        // Get begin coordinate.
+        // Get front coordinate.
         auto c = column_index_type{std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) /
                                    dimension_second_range};
         auto r = row_index_type{std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) %
