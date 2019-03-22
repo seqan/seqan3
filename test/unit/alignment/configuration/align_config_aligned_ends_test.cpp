@@ -300,41 +300,41 @@ TEST(end_gaps, static_access)
     EXPECT_EQ(eg[2], false);
 }
 
-TEST(end_gaps, all_ends_free)
+TEST(end_gaps, free_ends_all)
 {
     using test = end_gaps<front_end_first<std::true_type>,
                           back_end_first<std::true_type>,
                           front_end_second<std::true_type>,
                           back_end_second<std::true_type>>;
-    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(all_ends_free)>, test>), true);
+    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(free_ends_all)>, test>), true);
 }
 
-TEST(end_gaps, none_ends_free)
+TEST(end_gaps, free_ends_none)
 {
     using test = end_gaps<front_end_first<std::false_type>,
                           back_end_first<std::false_type>,
                           front_end_second<std::false_type>,
                           back_end_second<std::false_type>>;
 
-    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(none_ends_free)>, test>), true);
+    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(free_ends_none)>, test>), true);
 }
 
-TEST(end_gaps, first_ends_free)
+TEST(end_gaps, free_ends_first)
 {
     using test = end_gaps<front_end_first<std::true_type>,
                           back_end_first<std::true_type>,
                           front_end_second<std::false_type>,
                           back_end_second<std::false_type>>;
-    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(first_ends_free)>, test>), true);
+    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(free_ends_first)>, test>), true);
 }
 
-TEST(end_gaps, second_ends_free)
+TEST(end_gaps, free_ends_second)
 {
     using test = end_gaps<front_end_first<std::false_type>,
                           back_end_first<std::false_type>,
                           front_end_second<std::true_type>,
                           back_end_second<std::true_type>>;
-    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(second_ends_free)>, test>), true);
+    EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(free_ends_second)>, test>), true);
 }
 
 TEST(align_cfg_aligned_ends, is_aggregate)
@@ -344,7 +344,7 @@ TEST(align_cfg_aligned_ends, is_aggregate)
 
 TEST(align_cfg_aligned_ends, id)
 {
-    align_cfg::aligned_ends cfg{all_ends_free};
+    align_cfg::aligned_ends cfg{free_ends_all};
 
     EXPECT_EQ(static_cast<uint8_t>(decltype(cfg)::id),
               static_cast<uint8_t>(detail::align_config_id::aligned_ends));
@@ -352,7 +352,7 @@ TEST(align_cfg_aligned_ends, id)
 
 TEST(align_cfg_aligned_ends, value)
 {
-    align_cfg::aligned_ends cfg{first_ends_free};
+    align_cfg::aligned_ends cfg{free_ends_first};
     using type = decltype(cfg.value);
 
     using test = end_gaps<front_end_first<std::true_type>,
@@ -376,7 +376,7 @@ TEST(align_cfg_aligned_ends, value)
 TEST(align_cfg_aligned_ends, configuration)
 {
     {
-        align_cfg::aligned_ends elem{all_ends_free};
+        align_cfg::aligned_ends elem{free_ends_all};
         configuration cfg{elem};
 
         EXPECT_EQ((get<align_cfg::aligned_ends>(cfg).value[0]), true);
@@ -386,7 +386,7 @@ TEST(align_cfg_aligned_ends, configuration)
     }
 
     {
-        configuration cfg{align_cfg::aligned_ends{all_ends_free}};
+        configuration cfg{align_cfg::aligned_ends{free_ends_all}};
 
         EXPECT_EQ((get<align_cfg::aligned_ends>(cfg).value[0]), true);
         EXPECT_EQ((get<align_cfg::aligned_ends>(cfg).value[1]), true);

@@ -37,16 +37,16 @@ int main()
     using namespace seqan3;
 
     // Setup for overlap alignment.
-    align_cfg::aligned_ends overlap{all_ends_free};
+    align_cfg::aligned_ends overlap{free_ends_all};
 
     // Setup for global alignment.
-    align_cfg::aligned_ends global{none_ends_free};
+    align_cfg::aligned_ends global{free_ends_none};
 
     // Setup for semi-global alignment with free-end gaps in the first sequence.
-    align_cfg::aligned_ends semi_seq1{first_ends_free};
+    align_cfg::aligned_ends semi_seq1{free_ends_first};
 
     // Setup for semi-global alignment with free-end gaps in the second sequence.
-    align_cfg::aligned_ends semi_seq2{second_ends_free};
+    align_cfg::aligned_ends semi_seq2{free_ends_second};
 
     // Custom settings.
     align_cfg::aligned_ends custom{end_gaps{front_end_first{std::true_type{}}, front_end_second{std::true_type{}}}};

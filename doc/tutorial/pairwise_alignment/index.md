@@ -161,7 +161,7 @@ The result can be finally examined using the seqan3::align_result class.
 There is also a shortcut for computing the edit distance for two sequences. The edit distance is a special metric
 to count the number of edit operations between two sequences. It can be solved with a fast bit-vector algorithm.
 To compute the edit-distance you can use the shortcut seqan3::align_cfg::edit. This only works for nucleotide
-sequences. It can be further refined using seqan3::align_cfg::end_gaps::first_ends_free and the
+sequences. It can be further refined using seqan3::align_cfg::end_gaps::free_ends_first and the
 seqan3::align_cfg::max_error configuration.
 
 \todo Compute all pairwise edit operations of the sequences and filter out every alignment with a score higher than 5

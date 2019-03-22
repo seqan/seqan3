@@ -408,7 +408,7 @@ end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
 //!\}
 
 // ----------------------------------------------------------------------------
-// all_ends_free
+// free_ends_all
 // ----------------------------------------------------------------------------
 
 /*!\name Predefined end-gaps configurations
@@ -432,13 +432,13 @@ end_gaps(ends_t const & ...) -> end_gaps<ends_t...>;
  * TTTTTACGTA------
  * ```
  */
-inline constexpr end_gaps all_ends_free{front_end_first<std::true_type>{},
+inline constexpr end_gaps free_ends_all{front_end_first<std::true_type>{},
                                         back_end_first<std::true_type>{},
                                         front_end_second<std::true_type>{},
                                         back_end_second<std::true_type>{}};
 
 // ----------------------------------------------------------------------------
-// none_ends_free
+// free_ends_none
 // ----------------------------------------------------------------------------
 
 /*!\brief All ends are penalised.
@@ -454,13 +454,13 @@ inline constexpr end_gaps all_ends_free{front_end_first<std::true_type>{},
  * AAAACGTATAGACCGT
  * ```
  */
-inline constexpr end_gaps none_ends_free{front_end_first<std::false_type>{},
+inline constexpr end_gaps free_ends_none{front_end_first<std::false_type>{},
                                          back_end_first<std::false_type>{},
                                          front_end_second<std::false_type>{},
                                          back_end_second<std::false_type>{}};
 
 // ----------------------------------------------------------------------------
-// first_ends_free
+// free_ends_first
 // ----------------------------------------------------------------------------
 
 /*!\brief Ends of the first sequence are free.
@@ -477,13 +477,13 @@ inline constexpr end_gaps none_ends_free{front_end_first<std::false_type>{},
  * -----ACGTAAAACGT-----
  * ```
  */
-inline constexpr end_gaps first_ends_free{front_end_first<std::true_type>{},
+inline constexpr end_gaps free_ends_first{front_end_first<std::true_type>{},
                                           back_end_first<std::true_type>{},
                                           front_end_second<std::false_type>{},
                                           back_end_second<std::false_type>{}};
 
 // ----------------------------------------------------------------------------
-// second_ends_free
+// free_ends_second
 // ----------------------------------------------------------------------------
 
 /*!\brief Ends for the second sequence are free.
@@ -500,7 +500,7 @@ inline constexpr end_gaps first_ends_free{front_end_first<std::true_type>{},
  * TTTTTACGT---ATGTCCCCC
  * ```
  */
-inline constexpr end_gaps second_ends_free{front_end_first<std::false_type>{},
+inline constexpr end_gaps free_ends_second{front_end_first<std::false_type>{},
                                            back_end_first<std::false_type>{},
                                            front_end_second<std::true_type>{},
                                            back_end_second<std::true_type>{}};
@@ -516,7 +516,7 @@ namespace seqan3::align_cfg
 
 /*!\brief The configuration for aligned sequence ends.
  * \ingroup alignment_configuration
- * \tparam end_gaps_t The type of the end-gaps. Must be of type seqan3::end_gaps.
+ * \tparam end_gaps_t The type of the end-gaps. Must be a specialisation of seqan3::end_gaps.
  *
  * \details
  *
@@ -530,7 +530,7 @@ namespace seqan3::align_cfg
  * preferred whenever possible.
  *
  * If this configuration element is not specified for the alignment algorithm, it will automatically default to
- * \ref seqan3::end_gaps::none_ends_free "none_ends_free" which computes a global alignment.
+ * \ref seqan3::end_gaps::free_ends_none "free_ends_none" which computes a global alignment.
  *
  * ### Example
  *

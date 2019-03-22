@@ -13,7 +13,7 @@
 namespace seqan3::test::alignment::fixture::semi_global::edit_distance::unbanded
 {
 
-inline constexpr auto align_config = align_cfg::edit | align_cfg::aligned_ends{first_ends_free};
+inline constexpr auto align_config = align_cfg::edit | align_cfg::aligned_ends{free_ends_first};
 
 static auto dna4_01 = []()
 {
