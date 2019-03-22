@@ -18,7 +18,7 @@ void run_text_single()
                                         search_cfg::mode{search_cfg::all_best};
     configuration const align_config = align_cfg::edit |
                                        align_cfg::aligned_ends{free_ends_first} |
-                                       align_cfg::result{align_cfg::with_trace};
+                                       align_cfg::result{align_cfg::with_alignment};
 
     auto results = search(index, query, search_config);
 
@@ -55,7 +55,7 @@ void run_text_collection()
                                         search_cfg::mode{search_cfg::all_best};
     configuration const align_config = align_cfg::edit |
                                        align_cfg::aligned_ends{free_ends_first} |
-                                       align_cfg::result{align_cfg::with_trace};
+                                       align_cfg::result{align_cfg::with_alignment};
 
     auto results = search(index, query, search_config);
 

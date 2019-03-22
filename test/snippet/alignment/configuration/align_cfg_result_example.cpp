@@ -9,13 +9,13 @@ int main()
     align_cfg::result cfg_score{align_cfg::with_score};
 
     // Compute the score and the end coordinate.
-    align_cfg::result cfg_end{align_cfg::with_end_position};
+    align_cfg::result cfg_end{align_cfg::with_back_coordinate};
 
     // Compute the score, the end coordinate and the begin coordinate.
-    align_cfg::result cfg_begin{align_cfg::with_begin_position};
+    align_cfg::result cfg_begin{align_cfg::with_front_coordinate};
 
     // Compute the score, the end coordinate, the begin coordinate and the alignment.
-    align_cfg::result cfg_alignment{align_cfg::with_trace};
+    align_cfg::result cfg_alignment{align_cfg::with_alignment};
 
 //! [example]
     (void) cfg_score;

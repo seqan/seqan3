@@ -21,9 +21,9 @@ struct align_cfg_result_test : public ::testing::Test
 };
 
 using test_types = ::testing::Types<detail::with_score_type,
-                                    detail::with_end_position_type,
-                                    detail::with_begin_position_type,
-                                    detail::with_trace_type>;
+                                    detail::with_back_coordinate_type,
+                                    detail::with_front_coordinate_type,
+                                    detail::with_alignment_type>;
 
 TYPED_TEST_CASE(align_cfg_result_test, test_types);
 
@@ -41,17 +41,17 @@ auto type_to_variable()
     {
         return with_score;
     }
-    else if constexpr (std::is_same_v<type, detail::with_end_position_type>)
+    else if constexpr (std::is_same_v<type, detail::with_back_coordinate_type>)
     {
-        return with_end_position;
+        return with_back_coordinate;
     }
-    else if constexpr (std::is_same_v<type, detail::with_begin_position_type>)
+    else if constexpr (std::is_same_v<type, detail::with_front_coordinate_type>)
     {
-        return with_begin_position;
+        return with_front_coordinate;
     }
     else
     {
-        return with_trace;
+        return with_alignment;
     }
 }
 

@@ -164,12 +164,12 @@ public:
         {
             res.score = get<3>(cache).score;
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_back_coordinate_type>>())
         {
             res.score = get<3>(cache).score;
             res.end_coordinate = get<3>(cache).coordinate;
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_front_coordinate_type>>())
         { // At the moment we also compute the traceback even if only the begin coordinate was requested.
           // This can be later optimised by computing the reverse alignment in a narrow band in linear memory.
           // Especially for the SIMD version this might be more efficient.
@@ -179,7 +179,7 @@ public:
                                                             second_range,
                                                             get<3>(cache).coordinate));
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_alignment_type>>())
         {
             res.score = get<3>(cache).score;
             res.end_coordinate = get<3>(cache).coordinate;
@@ -299,12 +299,12 @@ public:
         {
             res.score = get<3>(cache).score;
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_back_coordinate_type>>())
         {
             res.score = get<3>(cache).score;
             res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_front_coordinate_type>>())
         { // At the moment we also compute the traceback even if only the begin coordinate was requested.
           // This can be later optimised by computing the reverse alignment in linear memory from the maximum.
           // Especially for the SIMD version this might be more efficient.
@@ -315,7 +315,7 @@ public:
                                          second_range,
                                          get<3>(cache).coordinate));
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_alignment_type>>())
         {
             res.score = get<3>(cache).score;
             res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);

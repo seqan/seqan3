@@ -41,7 +41,7 @@ TEST(align_pairwise, single_rng_lvalue)
     }
 
     {  // the trace
-        configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
+        configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_alignment};
         for (auto && res : align_pairwise(p, cfg))
         {
             EXPECT_EQ(res.get_score(), -4);
@@ -71,7 +71,7 @@ TEST(align_pairwise, single_view_lvalue)
         }
     }
     {  // the trace
-        configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
+        configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_alignment};
 
         for (auto && res : align_pairwise(v, cfg))
         {
@@ -92,7 +92,7 @@ TEST(align_pairwise, multiple_rng_lvalue)
     auto p = std::make_pair(seq1, seq2);
     std::vector<decltype(p)> vec{10, p};
 
-    configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
+    configuration cfg = align_cfg::edit | align_cfg::result{align_cfg::with_alignment};
     for (auto && res : align_pairwise(vec, cfg))
     {
         EXPECT_EQ(res.get_score(), -4);

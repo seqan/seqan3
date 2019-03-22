@@ -394,8 +394,8 @@ private:
     {
         //!\brief If traceback is enabled resolves to seqan3::detail::trace_directions,
         //!\      otherwise seqan3::detail::ignore_t.
-        using type = std::conditional_t<config_t::template exists<align_cfg::result<with_trace_type>>() ||
-                                        config_t::template exists<align_cfg::result<with_begin_position_type>>(),
+        using type = std::conditional_t<config_t::template exists<align_cfg::result<with_alignment_type>>() ||
+                                        config_t::template exists<align_cfg::result<with_front_coordinate_type>>(),
                                         trace_directions,
                                         ignore_t>;
     };

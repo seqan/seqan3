@@ -50,7 +50,7 @@ TEST(alignment_selector, align_result_selector)
     }
 
     { // test case III
-        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
+        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_alignment};
         using _t = align_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
         using gapped_seq1_t = std::vector<gapped<dna4>>;
