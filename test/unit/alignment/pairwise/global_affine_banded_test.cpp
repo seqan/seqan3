@@ -53,7 +53,7 @@ TYPED_TEST_P(global_affine_banded, score)
 {
     auto const & fixture = this->fixture();
     // We only compute the score.
-    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_score};
+    auto align_cfg = fixture.config | align_cfg::result{with_score};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -67,7 +67,7 @@ TYPED_TEST_P(global_affine_banded, score)
 TYPED_TEST_P(global_affine_banded, end_position)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_back_coordinate};
+    auto align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -83,7 +83,7 @@ TYPED_TEST_P(global_affine_banded, end_position)
 TYPED_TEST_P(global_affine_banded, begin_position)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_front_coordinate};
+    auto align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -100,7 +100,7 @@ TYPED_TEST_P(global_affine_banded, begin_position)
 TYPED_TEST_P(global_affine_banded, trace)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config | align_cfg::result{align_cfg::with_alignment};
+    auto align_cfg = fixture.config | align_cfg::result{with_alignment};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;

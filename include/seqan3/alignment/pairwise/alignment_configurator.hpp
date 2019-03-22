@@ -216,7 +216,7 @@ public:
             // Set the default result value to be computed.
             // ----------------------------------------------------------------------------
 
-            return configure(std::forward<sequences_t>(seq_range), cfg | align_cfg::result{align_cfg::with_score});
+            return configure(std::forward<sequences_t>(seq_range), cfg | align_cfg::result{with_score});
         }
         else
         {

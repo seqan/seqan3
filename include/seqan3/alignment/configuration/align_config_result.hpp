@@ -44,9 +44,9 @@ struct with_front_coordinate_type
 struct with_alignment_type
 {};
 
-} // namespace seqan3
+} // namespace seqan3::detail
 
-namespace seqan3::align_cfg
+namespace seqan3
 {
 
 //!\brief Helper variable used to select score-only computation.
@@ -61,6 +61,11 @@ inline constexpr detail::with_front_coordinate_type with_front_coordinate{};
 //!\brief Helper Variable used to select trace computation.
 //!\relates seqan3::align_cfg::result
 inline constexpr detail::with_alignment_type with_alignment{};
+
+} // namespace seqan3
+
+namespace seqan3::align_cfg
+{
 
 /*!\brief Sets the result of the alignment computation.
  * \ingroup alignment_configuration
