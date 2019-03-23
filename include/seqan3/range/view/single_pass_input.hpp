@@ -18,7 +18,6 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/view/view_all.hpp>
 
 //-----------------------------------------------------------------------------
 // Implementation of single pass input view.
@@ -41,19 +40,24 @@ class single_pass_input_view : public ranges::view_interface<single_pass_input_v
 {
 private:
 
-    //!\brief The pure range type without any reference type.
-    using pure_range_type    = std::remove_reference_t<urng_t>;
     //!\brief The iterator type for the underlying range.
-    using urng_iterator_type = std::ranges::iterator_t<pure_range_type>;
+    using urng_iterator_type = std::ranges::iterator_t<urng_t>;
 
     //!\brief Friend declaration for seqan3::detail::single_pass_input_iterator.
     template <typename view_t>
     friend class single_pass_input_iterator;
 
-    //!\brief The underlying range.
-    urng_t             urng;
-    //!\brief The cached iterator of the underlying range.
-    urng_iterator_type cached_urng_iter{};
+    //!\brief An internal state to capture the underlying range and a cached iterator.
+    struct state
+    {
+        //!\brief The underlying range.
+        urng_t             urng;
+        //!\brief The cached iterator of the underlying range.
+        urng_iterator_type cached_urng_iter = std::ranges::begin(urng);
+    };
+
+    //!\brief Manages the internal state.
+    std::shared_ptr<state> state_ptr{};
 
 public:
     /*!\name Member types
@@ -64,7 +68,7 @@ public:
     //!\brief Const iterator type is `void`, as iterating over this view as `const` is explicitly forbidden.
     using const_iterator    = void;
     //!\brief The sentinel type.
-    using sentinel          = std::ranges::sentinel_t<pure_range_type>;
+    using sentinel          = std::ranges::sentinel_t<urng_t>;
     //!\brief Value type.
     using value_type        = typename iterator::value_type;
     //!\brief Always returns immutable reference type, since single_pass_input cannot change the underlying values.
@@ -77,24 +81,33 @@ public:
      * \{
      * \brief All standard functions are explicitly defaulted.
      */
+    //!\brief Default default-constructor.
     constexpr single_pass_input_view() = default;
+    //!\brief Default copy-constructor.
     constexpr single_pass_input_view(single_pass_input_view const &) = default;
+    //!\brief Default move-constructor.
     constexpr single_pass_input_view(single_pass_input_view &&) = default;
+    //!\brief Default copy-assignment.
     constexpr single_pass_input_view & operator=(single_pass_input_view const &) = default;
+    //!\brief Default move-assignment
     constexpr single_pass_input_view & operator=(single_pass_input_view &&) = default;
+    //!\brief Default destructor.
     ~single_pass_input_view() = default;
 
     //!\brief Construction from the underlying view.
-    // template <std::ranges::View _urng_t>
     explicit single_pass_input_view(urng_t _urng) :
-        urng{std::move(_urng)},
-        cached_urng_iter{seqan3::begin(urng)}
+        state_ptr{new state{std::move(_urng)}}
     {}
 
-    //!\brief Construction from InputRange type.
-    template <std::ranges::InputRange _urng_t>
-    explicit single_pass_input_view(_urng_t & _urng) :
-        single_pass_input_view{view::all(_urng)}
+    //!\brief Construction from std::ranges::ViewableRange.
+    template <typename other_urng_t>
+    //!\cond
+    requires !std::Same<remove_cvref_t<other_urng_t>, single_pass_input_view> &&
+             std::ranges::ViewableRange<other_urng_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
+             std::Constructible<urng_t, ranges::ref_view<std::remove_reference_t<other_urng_t>>>
+    //!\endcond
+    explicit single_pass_input_view(other_urng_t && _urng) :
+        single_pass_input_view{std::view::all(_urng)}
     {}
     //!\}
 
@@ -122,7 +135,7 @@ public:
     //!\brief Returns a sentinel.
     sentinel end()
     {
-        return {seqan3::end(urng)};
+        return {seqan3::end(state_ptr->urng)};
     }
 
     //!\brief Const version of end is deleted, since the underlying view_state must be mutable.
@@ -137,10 +150,11 @@ public:
  * \relates seqan3::detail::single_pass_input_view
  * \{
  */
-//!\brief Deduces the single_pass_input_view from the underlying range.
-template <std::ranges::InputRange _urng_t>
-single_pass_input_view(_urng_t &) ->
-    single_pass_input_view<decltype(view::all(std::declval<_urng_t &>()))>;
+
+//!\brief Deduces the single_pass_input_view from the underlying range if it is a std::ranges::ViewableRange.
+template <std::ranges::ViewableRange urng_t>
+single_pass_input_view(urng_t &&) ->
+    single_pass_input_view<std::ranges::all_view<urng_t>>;
 //!\}
 } // seqan3::detail
 
@@ -168,7 +182,7 @@ class single_pass_input_iterator<single_pass_input_view<view_type>>
     //!\brief The pointer to the associated view.
     single_pass_input_view<view_type> * view_ptr{};
 
-    //!\ Friend declaration to give seqan3::detail::single_pass_input_sentinel access to members of this class.
+    //!\brief Friend declaration to give seqan3::detail::single_pass_input_sentinel access to members of this class.
     template <typename input_view_type>
     friend class single_pass_input_iterator;
 
@@ -177,7 +191,7 @@ class single_pass_input_iterator<single_pass_input_view<view_type>>
 
 public:
 
-    /*!\name Member types
+    /*!\name Associated types
      * \{
      */
     //!\brief Difference type.
@@ -221,6 +235,15 @@ public:
     {
         return *cached();
     }
+
+    //!\brief Returns pointer to the pointed-to object.
+    pointer operator->() const noexcept
+    //!\cond
+        requires !std::is_void_v<pointer>
+    //!\endcond
+    {
+        return std::addressof(*cached());
+    }
     //!\}
 
     /*!\name Iterator operations
@@ -234,27 +257,29 @@ public:
     }
 
     //!\brief Post-increment.
-    void operator++(int) noexcept
+    auto operator++(int) noexcept
     {
-        ++(*this);
+        if constexpr (std::OutputIterator<base_iterator_type, reference> &&
+                      std::CopyConstructible<base_iterator_type>)
+        {
+            single_pass_input_iterator tmp{*this};
+            ++(*this);
+            return tmp;
+        }
+        else
+        {
+            ++(*this);
+        }
     }
     //!\}
 
     /*!\name Comparison operators
      * \{
      */
-    //!\brief Compares iterator with sentinel.
+    //!\brief Compares for equality with sentinel.
     constexpr bool operator==(sentinel_type const & s) const noexcept
     {
-        if (view_ptr->view_state_ptr != nullptr)
-            return cached() == s;
-        return true;
-    }
-
-    //!\copydoc operator==
-    constexpr bool operator!=(sentinel_type const & rhs) const noexcept
-    {
-        return !(*this == rhs);
+        return cached() == s;
     }
 
     //!\copydoc operator==
@@ -265,7 +290,13 @@ public:
         return rhs == s;
     }
 
-    //!\copydoc operator==
+    //!\brief Compares for inequality with sentinel.
+    constexpr bool operator!=(sentinel_type const & rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
+
+    //!\copydoc operator!=
     friend constexpr bool
     operator!=(sentinel_type const & s,
                single_pass_input_iterator<single_pass_input_view<view_type>> const & rhs) noexcept
@@ -279,7 +310,7 @@ protected:
     //!\brief Gives access to the cached iterator.
     base_iterator_type & cached() const noexcept
     {
-        return view_ptr->cached_urng_iter;
+        return view_ptr->state_ptr->cached_urng_iter;
     }
 };
 }  // seqan3::detail
