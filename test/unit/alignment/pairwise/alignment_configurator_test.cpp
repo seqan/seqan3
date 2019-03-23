@@ -53,7 +53,7 @@ TEST(alignment_configurator, configure_edit_trace)
 
 TEST(alignment_configurator, configure_edit_semi)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::aligned_ends{align_cfg::seq1_ends_free}));
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::aligned_ends{free_ends_first}));
 }
 
 TEST(alignment_configurator, configure_edit_banded)
@@ -160,7 +160,7 @@ TEST(alignment_configurator, configure_affine_global_semi)
     auto cfg = align_cfg::mode{align_cfg::global_alignment} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
-               align_cfg::aligned_ends{align_cfg::all_ends_free};
+               align_cfg::aligned_ends{free_ends_all};
 
     EXPECT_TRUE(run_test(cfg));
 }
