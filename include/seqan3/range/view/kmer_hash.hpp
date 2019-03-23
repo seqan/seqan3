@@ -43,7 +43,7 @@ private:
      */
     template <std::ranges::ViewableRange urng_t>
     //!\cond
-        requires Semialphabet<reference_t<urng_t>>
+        requires Semialphabet<delete_const_t<reference_t<urng_t>>>
     //!\endcond
     static auto impl(urng_t && urange, size_t const k)
     {
