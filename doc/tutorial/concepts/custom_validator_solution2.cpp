@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
     myparser.add_option(variable, 'i', "", "An int that is a square", seqan3::option_spec::DEFAULT,
                         custom_validator{}); // ← your validator is used!
 
-    myparser.add_option(variable, 'j', "", "An int that is a square and within [0,20].", seqan3::option_spec::DEFAULT,
+    myparser.add_option(variable2, 'j', "", "An int that is a square and within [0,20].", seqan3::option_spec::DEFAULT,
                         custom_validator{} | seqan3::arithmetic_range_validator{0, 20}); // ← now it's chained
 
     try
