@@ -21,7 +21,10 @@ namespace std
  * \ingroup alphabet
  * \tparam alphabet_t The type of character to hash; Must model seqan3::Semialphabet.
  */
-template <seqan3::Semialphabet alphabet_t>
+template <typename alphabet_t>
+    //!\cond
+    requires seqan3::Semialphabet<seqan3::delete_const_t<alphabet_t>>
+    //!\endcond
 struct hash<alphabet_t>
 {
     /*!\brief Compute the hash for a character.
@@ -45,7 +48,7 @@ struct hash<alphabet_t>
  */
 template <ranges::InputRange urng_t>
     //!\cond
-    requires seqan3::Semialphabet<seqan3::reference_t<urng_t>>
+    requires seqan3::Semialphabet<seqan3::delete_const_t<seqan3::reference_t<urng_t>>>
     //!\endcond
 struct hash<urng_t>
 {
