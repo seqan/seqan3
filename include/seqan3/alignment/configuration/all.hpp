@@ -94,7 +94,7 @@
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *</tr>
  *<tr>
- *<th style="border: 1px solid black"> 3: seqan3::align_cfg::global_alignment </th>
+ *<th style="border: 1px solid black"> 3: seqan3::global_alignment </th>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>

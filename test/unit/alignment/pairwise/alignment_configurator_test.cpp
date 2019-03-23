@@ -69,7 +69,7 @@ TEST(alignment_configurator, configure_edit_max_error)
 
 TEST(alignment_configurator, configure_affine_global)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}};
 
@@ -78,7 +78,7 @@ TEST(alignment_configurator, configure_affine_global)
 
 TEST(alignment_configurator, configure_affine_global_max_error)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::max_error{5u};
@@ -88,7 +88,7 @@ TEST(alignment_configurator, configure_affine_global_max_error)
 
 TEST(alignment_configurator, configure_affine_global_end_position)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{align_cfg::with_end_position};
@@ -98,7 +98,7 @@ TEST(alignment_configurator, configure_affine_global_end_position)
 
 TEST(alignment_configurator, configure_affine_global_begin_position)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{align_cfg::with_begin_position};
@@ -108,7 +108,7 @@ TEST(alignment_configurator, configure_affine_global_begin_position)
 
 TEST(alignment_configurator, configure_affine_global_trace)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::result{align_cfg::with_trace};
@@ -119,7 +119,7 @@ TEST(alignment_configurator, configure_affine_global_trace)
 TEST(alignment_configurator, configure_affine_global_banded)
 {
     {
-        auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+        auto cfg = align_cfg::mode{global_alignment} |
                    align_cfg::scoring{nucleotide_scoring_scheme{}} |
                    align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                    align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
@@ -128,7 +128,7 @@ TEST(alignment_configurator, configure_affine_global_banded)
     }
 
     {  // invalid band
-        auto cfg_base = align_cfg::mode{align_cfg::global_alignment} |
+        auto cfg_base = align_cfg::mode{global_alignment} |
                         align_cfg::scoring{nucleotide_scoring_scheme{}} |
                         align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
         auto cfg_lower = cfg_base | align_cfg::band{static_band{lower_bound{-10}, upper_bound{-5}}};
@@ -141,7 +141,7 @@ TEST(alignment_configurator, configure_affine_global_banded)
 
 TEST(alignment_configurator, configure_affine_global_banded_with_trace)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
@@ -157,7 +157,7 @@ TEST(alignment_configurator, configure_affine_global_banded_with_trace)
 
 TEST(alignment_configurator, configure_affine_global_semi)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::aligned_ends{free_ends_all};

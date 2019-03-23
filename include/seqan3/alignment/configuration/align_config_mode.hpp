@@ -29,7 +29,7 @@ struct global_alignment_type
 
 } // namespace seqan3::detail
 
-namespace seqan3::align_cfg
+namespace seqan3
 {
 
 /*!\brief Helper variable to select the global alignment.
@@ -43,14 +43,19 @@ namespace seqan3::align_cfg
  */
 inline constexpr detail::global_alignment_type global_alignment;
 
+} // namespace seqan3
+
+namespace seqan3::align_cfg
+{
+
 /*!\brief Sets the alignment mode.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam mode_type The type of the alignment mode.
  *
  * \details
  *
  * The alignment algorithm can be categorised in different modes. For example, the local and the
- * \ref align_cfg::global_alignment "global" alignment are two different modes, while the semi-global alignment
+ * \ref global_alignment "global" alignment are two different modes, while the semi-global alignment
  * is a variation of the global alignment. This differentiation makes it possible to define a subset of configurations
  * that can work with a particular mode. Since it is not possible to guess what the desired mode for a user is, this
  * configuration must be provided for the alignment algorithm and cannot be defaulted.

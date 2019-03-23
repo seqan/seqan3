@@ -72,7 +72,7 @@ auto generate_sequence_seqan2(size_t const len = 500,
 
 void seqan3_affine_dna4(benchmark::State & state)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
                align_cfg::result{align_cfg::with_score};
@@ -112,7 +112,7 @@ BENCHMARK(seqan2_affine_dna4);
 
 void seqan3_affine_dna4_trace(benchmark::State & state)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
                align_cfg::result{align_cfg::with_trace};
@@ -154,7 +154,7 @@ BENCHMARK(seqan2_affine_dna4_trace);
 
 void seqan3_affine_dna4_collection(benchmark::State & state)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
                align_cfg::result{align_cfg::with_score};
@@ -210,7 +210,7 @@ BENCHMARK(seqan2_affine_dna4_collection);
 
 void seqan3_affine_dna4_trace_collection(benchmark::State & state)
 {
-    auto cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}} |
                align_cfg::result{align_cfg::with_trace};

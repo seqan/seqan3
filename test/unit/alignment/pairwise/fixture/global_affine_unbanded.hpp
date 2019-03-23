@@ -23,7 +23,7 @@
 namespace seqan3::test::alignment::fixture::global::affine::unbanded
 {
 
-inline constexpr auto align_config = align_cfg::mode{align_cfg::global_alignment} |
+inline constexpr auto align_config = align_cfg::mode{global_alignment} |
                                      align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
 
 static auto dna4_01 = []()

@@ -27,7 +27,7 @@ int main()
     }
 
     // Configure the alignment kernel.
-    auto config = align_cfg::mode{align_cfg::global_alignment} |
+    auto config = align_cfg::mode{global_alignment} |
                   align_cfg::scoring{aminoacid_scoring_scheme{aminoacid_similarity_matrix::BLOSUM62}} |
                   align_cfg::aligned_ends{free_ends_second};
 
