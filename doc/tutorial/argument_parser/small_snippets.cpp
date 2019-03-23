@@ -55,9 +55,9 @@ parser.add_option(list_variable, 'n', "names", "Give me some names.");
 {
 argument_parser parser("Example Parser", argc, argv);
 //![positional_option_list]
-std::string variable1{};
+std::string variable{};
 std::vector<std::string> list_variable{};
-parser.add_positional_option(list_variable, "Give me a single variable.");
+parser.add_positional_option(variable, "Give me a single variable.");
 parser.add_positional_option(list_variable, "Give me one or more variables!.");
 //![positional_option_list]
 }
