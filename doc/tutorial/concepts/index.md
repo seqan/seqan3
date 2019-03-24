@@ -313,7 +313,3 @@ Also give a nice description for the help page.
 \endsolution
 
 You have now written your own type that is compatible with our constrained interfaces!
-
-## seqan3::Alphabet
-
-TODO

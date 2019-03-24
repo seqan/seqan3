@@ -188,7 +188,7 @@ You can now use the variables from `args` to add the following inside of the `in
 3. Add a positional option to the parser that sets the variable `file_path` so our program knows the location of the data file to read in.
 4. Add an option `-y/--year` that sets the variable `year`, which will enable our program to filter the data by only including a season if it got released after the value `year`.
 5. Add an option `-a/--aggregate-by` that sets the variable `aggregate_by`, which will enable our program choose between aggregating by mean or median.
-6. Add a flag `-H/--header-is-set` that sets the variable `notation`, which lets the program know whether it should ignore the first line in the file.
+6. Add a flag `-H/--header-is-set` that sets the variable `header_is_set`, which lets the program know whether it should ignore the first line in the file.
 
 Take a look at the help page again after you've done all of the above. You will notice that your options have been automatically included. **Copy and paste the example data file from the introduction** and check if your options are set correctly by trying the following few calls:
 
@@ -300,7 +300,7 @@ Option -n/--name is required but not set.
 
 ## Advanced and hidden options
 
-Additionally to the *requried* tag, there is also the possibility of **declaring an option as advanced or hidden**.
+Additionally to the *required* tag, there is also the possibility of **declaring an option as advanced or hidden**.
 
 Set an option/flag to advanced, if you do not want the option to be displayed in the normal help page (`-h/--help`). Instead, the advanced options are only displayed when calling `-hh/--advanced-help`. This can be helpful, if you want to avoid to bloat your help page with too much information for inexperienced users of your application, but still provide thorough information on demand.
 
@@ -407,7 +407,7 @@ Add a seqan3::file_existance_validator to the first positional option that expec
 On construction, the validator receives a pattern for a regular expression.
 The pattern variable will be used for constructing an std::regex and the validator will call std::regex_match on the command line argument.
 
-Note that a regex_match will only return true if the string matches the pattern completely (in contrast to regex_search which also matches substrings). The struct then acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename (string) is not in the given extension list.
+Note that a regex_match will only return true if the string matches the pattern completely (in contrast to regex_search which also matches substrings). The validator throws a seqan3::parser_invalid_argument exception whenever a given parameter does not match the given regular expression.
 
 \snippet test/snippet/argument_parser/validators_4.cpp validator_call
 
