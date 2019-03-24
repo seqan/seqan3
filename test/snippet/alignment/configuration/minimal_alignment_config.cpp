@@ -9,7 +9,7 @@ using namespace seqan3;
 
 int main()
 {
-    auto min_cfg = align_cfg::mode{align_cfg::global_alignment} |
+    auto min_cfg = align_cfg::mode{global_alignment} |
                    align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}};
 
     for (auto res : align_pairwise(std::pair{"ACGT"_dna4, "ACCT"_dna4}, min_cfg))

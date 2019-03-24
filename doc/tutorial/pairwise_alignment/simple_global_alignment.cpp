@@ -13,7 +13,7 @@ int main()
     dna4_vector s2 = "ACGAAGACCGAT"_dna4;
 
     // Configure the alignment kernel.
-    auto config = align_cfg::mode{align_cfg::global_alignment} |
+    auto config = align_cfg::mode{global_alignment} |
                   align_cfg::scoring{nucleotide_scoring_scheme{}};
 
     // Invoke the pairwise alignment which returns a lazy range over alignment results.

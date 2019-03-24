@@ -26,7 +26,7 @@ int main()
     }
 
     // Configure the alignment kernel.
-    auto config = align_cfg::mode{align_cfg::global_alignment} |
+    auto config = align_cfg::mode{global_alignment} |
                   align_cfg::scoring{nucleotide_scoring_scheme{}};
 
     for (auto const & res : align_pairwise(source, config))

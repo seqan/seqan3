@@ -100,7 +100,7 @@ for the alignment live in the special namespace seqan3::align_cfg.
 ## Global and semi-global alignment
 
 The most straightforward algorithm is the global alignment which can be configured using the seqan3::align_cfg::mode
-together with seqan3::align_cfg::global_alignment as the constructor argument to the configuration element.
+together with seqan3::global_alignment as the constructor argument to the configuration element.
 The seqan3::align_cfg::mode must be given as a minimal configuration together with the seqan3::align_cfg::scoring.
 The global alignment can be further refined by setting the seqan3::align_cfg::aligned_ends option.
 The aligned ends specify wether or not gaps at the end of the sequences are penalised.
