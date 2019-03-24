@@ -69,3 +69,5 @@ ALIASES += endsolution="\htmlonly </details> </div> \endhtmlonly"
 
 ALIASES += hint="\htmlonly <div class=\"assignment\"> <details><summary><b>Hint</b></summary> \endhtmlonly"
 ALIASES += endhint="\htmlonly </details> </div> \endhtmlonly"
+
+ALIASES += strike{1}="\htmlonly<div style='color:red;text-decoration:line-through'>\1</div>\endhtmlonly"
