@@ -44,7 +44,7 @@ void map_reads(std::filesystem::path const & query_path,
 //! [alignment_config]
     configuration const align_config = align_cfg::edit |
                                        align_cfg::aligned_ends{free_ends_first} |
-                                       align_cfg::result{align_cfg::with_trace};
+                                       align_cfg::result{with_alignment};
 //! [alignment_config]
 
     for (auto & [query, id, qual] : query_in | view::take(20))
@@ -57,9 +57,9 @@ void map_reads(std::filesystem::path const & query_path,
 
             for (auto && alignment : align_pairwise(std::tie(text_view, query), align_config))
             {
-                auto && [aligned_database, aligned_query] = alignment.get_alignment();
+                auto && [aligned_database, aligned_query] = alignment.alignment();
                 debug_stream << "id:       " << id << '\n';
-                debug_stream << "score:    " << alignment.get_score() << '\n';
+                debug_stream << "score:    " << alignment.score() << '\n';
                 debug_stream << "database: " << aligned_database << '\n';
                 debug_stream << "query:    "  << aligned_query << '\n';
                 debug_stream << "=============\n";

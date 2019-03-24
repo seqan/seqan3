@@ -22,7 +22,7 @@
 #include <range/v3/view/single.hpp>
 
 #include <seqan3/alignment/configuration/all.hpp>
-#include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/execution/all.hpp>
 

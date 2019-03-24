@@ -164,30 +164,30 @@ public:
         {
             res.score = get<3>(cache).score;
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_back_coordinate_type>>())
         {
             res.score = get<3>(cache).score;
-            res.end_coordinate = get<3>(cache).coordinate;
+            res.back_coordinate = get<3>(cache).coordinate;
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
-        { // At the moment we also compute the traceback even if only the begin coordinate was requested.
+        if constexpr (config_t::template exists<align_cfg::result<with_front_coordinate_type>>())
+        { // At the moment we also compute the traceback even if only the front coordinate was requested.
           // This can be later optimised by computing the reverse alignment in a narrow band in linear memory.
           // Especially for the SIMD version this might be more efficient.
             res.score = get<3>(cache).score;
-            res.end_coordinate = get<3>(cache).coordinate;
-            res.begin_coordinate = get<0>(compute_traceback(first_range,
+            res.back_coordinate = get<3>(cache).coordinate;
+            res.front_coordinate = get<0>(compute_traceback(first_range,
                                                             second_range,
                                                             get<3>(cache).coordinate));
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_alignment_type>>())
         {
             res.score = get<3>(cache).score;
-            res.end_coordinate = get<3>(cache).coordinate;
-            std::tie(res.begin_coordinate, res.alignment) = compute_traceback(first_range,
+            res.back_coordinate = get<3>(cache).coordinate;
+            std::tie(res.front_coordinate, res.alignment) = compute_traceback(first_range,
                                                                               second_range,
                                                                               get<3>(cache).coordinate);
         }
-        return align_result{res};
+        return alignment_result{res};
     }
 
     /*!\brief Invokes the banded alignment computation given two sequences.
@@ -299,31 +299,31 @@ public:
         {
             res.score = get<3>(cache).score;
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_end_position_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_back_coordinate_type>>())
         {
             res.score = get<3>(cache).score;
-            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+            res.back_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_begin_position_type>>())
-        { // At the moment we also compute the traceback even if only the begin coordinate was requested.
+        if constexpr (config_t::template exists<align_cfg::result<with_front_coordinate_type>>())
+        { // At the moment we also compute the traceback even if only the front coordinate was requested.
           // This can be later optimised by computing the reverse alignment in linear memory from the maximum.
           // Especially for the SIMD version this might be more efficient.
             res.score = get<3>(cache).score;
-            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
-            res.begin_coordinate =
+            res.back_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+            res.front_coordinate =
                 get<0>(compute_traceback(first_range,
                                          second_range,
                                          get<3>(cache).coordinate));
         }
-        if constexpr (config_t::template exists<align_cfg::result<with_trace_type>>())
+        if constexpr (config_t::template exists<align_cfg::result<with_alignment_type>>())
         {
             res.score = get<3>(cache).score;
-            res.end_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
-            std::tie(res.begin_coordinate, res.alignment) = compute_traceback(first_range,
+            res.back_coordinate = this->map_banded_coordinate_to_range_position(get<3>(cache).coordinate);
+            std::tie(res.front_coordinate, res.alignment) = compute_traceback(first_range,
                                                                               second_range,
                                                                               get<3>(cache).coordinate);
         }
-        return align_result{res};
+        return alignment_result{res};
     }
 private:
 
@@ -505,7 +505,7 @@ private:
     * \tparam    second_range_t The type of the second sequence (or packed sequences).
     * \param[in] first_range    The first sequence.
     * \param[in] second_range   The second sequence.
-    * \param[in] end_coordinate The end coordinate within the matrix where the traceback starts.
+    * \param[in] back_coordinate The back coordinate within the matrix where the traceback starts.
     *
     * \details
     *
@@ -515,13 +515,13 @@ private:
     template <typename first_range_t, typename second_range_t>
     auto compute_traceback(first_range_t & first_range,
                            second_range_t & second_range,
-                           alignment_coordinate end_coordinate)
+                           alignment_coordinate back_coordinate)
     {
         using first_seq_value_type = value_type_t<first_range_t>;
         using second_seq_value_type = value_type_t<second_range_t>;
 
         // Parse the traceback
-        auto [begin_coordinate, first_gap_segments, second_gap_segments] = this->parse_traceback(end_coordinate);
+        auto [front_coordinate, first_gap_segments, second_gap_segments] = this->parse_traceback(back_coordinate);
 
         auto fill_aligned_sequence = [](auto & aligned_sequence, auto & gap_segments, size_t const normalise)
         {
@@ -538,38 +538,38 @@ private:
             }
         };
 
-        // In banded case we need to refine the end coordinate to map to the correct position within the
+        // In banded case we need to refine the back coordinate to map to the correct position within the
         // second range.
         if constexpr (is_banded)
-            end_coordinate = this->map_banded_coordinate_to_range_position(end_coordinate);
+            back_coordinate = this->map_banded_coordinate_to_range_position(back_coordinate);
 
-        // Get the subrange over the first sequence according to the begin and end coordinate.
+        // Get the subrange over the first sequence according to the front and back coordinate.
         auto it_first_seq_begin = std::ranges::begin(first_range);
-        std::ranges::advance(it_first_seq_begin, begin_coordinate.first_seq_pos);
+        std::ranges::advance(it_first_seq_begin, front_coordinate.first);
         auto it_first_seq_end = std::ranges::begin(first_range);
-        std::ranges::advance(it_first_seq_end, end_coordinate.first_seq_pos);
+        std::ranges::advance(it_first_seq_end, back_coordinate.first);
 
         using first_subrange_type = std::ranges::subrange<decltype(it_first_seq_begin), decltype(it_first_seq_end)>;
         auto first_subrange = first_subrange_type{it_first_seq_begin, it_first_seq_end};
 
         // Create and fill the aligned_sequence for the first sequence.
         std::vector<gapped<first_seq_value_type>> first_aligned_seq{first_subrange};
-        fill_aligned_sequence(first_aligned_seq, first_gap_segments, begin_coordinate.first_seq_pos);
+        fill_aligned_sequence(first_aligned_seq, first_gap_segments, front_coordinate.first);
 
-        // Get the subrange over the second sequence according to the begin and end coordinate.
+        // Get the subrange over the second sequence according to the front and back coordinate.
         auto it_second_seq_begin = std::ranges::begin(second_range);
-        std::ranges::advance(it_second_seq_begin, begin_coordinate.second_seq_pos);
+        std::ranges::advance(it_second_seq_begin, front_coordinate.second);
         auto it_second_seq_end = std::ranges::begin(second_range);
-        std::ranges::advance(it_second_seq_end, end_coordinate.second_seq_pos);
+        std::ranges::advance(it_second_seq_end, back_coordinate.second);
 
         using second_subrange_type = std::ranges::subrange<decltype(it_second_seq_begin), decltype(it_second_seq_end)>;
         auto second_subrange = second_subrange_type{it_second_seq_begin, it_second_seq_end};
 
         // Create and fill the aligned_sequence for the second sequence.
         std::vector<gapped<second_seq_value_type>> second_aligned_seq{second_subrange};
-        fill_aligned_sequence(second_aligned_seq, second_gap_segments, begin_coordinate.second_seq_pos);
+        fill_aligned_sequence(second_aligned_seq, second_gap_segments, front_coordinate.second);
 
-        return std::tuple{begin_coordinate, std::tuple{first_aligned_seq, second_aligned_seq}};
+        return std::tuple{front_coordinate, std::tuple{first_aligned_seq, second_aligned_seq}};
     }
 
     //!\brief The alignment configuration stored on the heap.

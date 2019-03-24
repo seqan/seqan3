@@ -13,5 +13,5 @@ int main()
                    align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}};
 
     for (auto res : align_pairwise(std::pair{"ACGT"_dna4, "ACCT"_dna4}, min_cfg))
-        debug_stream << res.get_score() << '\n';
+        debug_stream << res.score() << '\n';
 }

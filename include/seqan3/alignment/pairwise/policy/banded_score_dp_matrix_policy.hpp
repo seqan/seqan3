@@ -118,7 +118,7 @@ public:
                       row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
                                                                                current_matrix_iter))}};
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
-            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
+            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
         auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
@@ -226,13 +226,13 @@ public:
      */
     constexpr auto map_banded_coordinate_to_range_position(alignment_coordinate coordinate) const noexcept
     {
-        using as_int_t = std::make_signed_t<decltype(coordinate.first_seq_pos)>;
+        using as_int_t = std::make_signed_t<decltype(coordinate.first)>;
         // Refine the row coordinate to match the original sequence coordinates since the first position of the
         // trace matrix is shifted by the value of the band_column_index, i.e. the upper bound of the band.
         //
         // case 1: ends in column before the band_column_index: subtract the offset from the actual row coordinate.
         // case 2: ends in column after the band_column_index: add the offset to the actual row coordinate.
-        coordinate.second_seq_pos += static_cast<as_int_t>(coordinate.first_seq_pos - band_column_index);
+        coordinate.second += static_cast<as_int_t>(coordinate.first - band_column_index);
         return coordinate;
     }
 

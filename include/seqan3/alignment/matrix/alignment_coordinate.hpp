@@ -99,8 +99,8 @@ public:
         requires !std::Same<other_state, state>
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> const & other) :
-        first_seq_pos{other.first_seq_pos},
-        second_seq_pos{other.second_seq_pos}
+        first{other.first},
+        second{other.second}
     {}
 
     //!\brief Move-constructs from another advanceable_alignment_coordinate with a different policy.
@@ -109,8 +109,8 @@ public:
         requires !std::Same<other_state, state>
     //!\endcond
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate<other_state> && other) :
-        first_seq_pos{std::move(other.first_seq_pos)},
-        second_seq_pos{std::move(other.second_seq_pos)}
+        first{std::move(other.first)},
+        second{std::move(other.second)}
     {}
 
     /*!\brief Construction from the respective column and row indices.
@@ -119,8 +119,8 @@ public:
      */
     constexpr advanceable_alignment_coordinate(column_index_type const c_idx,
                                                row_index_type const r_idx) noexcept :
-        first_seq_pos{c_idx.get()},
-        second_seq_pos{r_idx.get()}
+        first{c_idx.get()},
+        second{r_idx.get()}
     {}
     //!\}
 
@@ -128,8 +128,8 @@ public:
      constexpr friend bool operator==(advanceable_alignment_coordinate const & lhs,
                                       advanceable_alignment_coordinate const & rhs) noexcept
      {
-         return (lhs.first_seq_pos == rhs.first_seq_pos) &&
-                (lhs.second_seq_pos == rhs.second_seq_pos);
+         return (lhs.first == rhs.first) &&
+                (lhs.second == rhs.second);
      }
 
      constexpr friend bool operator!=(advanceable_alignment_coordinate const & lhs,
@@ -151,9 +151,9 @@ public:
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
-            ++this->first_seq_pos;
+            ++this->first;
         else
-            ++this->second_seq_pos;
+            ++this->second;
         return *this;
     }
 
@@ -173,9 +173,9 @@ public:
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
-            --this->first_seq_pos;
+            --this->first;
         else
-            --this->second_seq_pos;
+            --this->second;
         return *this;
     }
 
@@ -195,9 +195,9 @@ public:
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
-            this->first_seq_pos += offset;
+            this->first += offset;
         else
-            this->second_seq_pos += offset;
+            this->second += offset;
         return *this;
     }
 
@@ -207,9 +207,9 @@ public:
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
-            this->first_seq_pos -= offset;
+            this->first -= offset;
         else
-            this->second_seq_pos -= offset;
+            this->second -= offset;
         return *this;
     }
 
@@ -239,9 +239,9 @@ public:
     //!\endcond
     {
         if constexpr (state == advanceable_alignment_coordinate_state::column)
-            return this->first_seq_pos - other.first_seq_pos;
+            return this->first - other.first;
         else
-            return this->second_seq_pos - other.second_seq_pos;
+            return this->second - other.second;
     }
     //!\}
 
@@ -261,10 +261,10 @@ public:
     }
     //!\}
 
-    //!\brief The begin/end position of the alignment in the first sequence.
-    size_t first_seq_pos{};
-    //!\brief The begin/end position of the alignment in the second sequence.
-    size_t second_seq_pos{};
+    //!\brief The front/back position of the alignment in the first sequence.
+    size_t first{};
+    //!\brief The front/back position of the alignment in the second sequence.
+    size_t second{};
 };
 
 } // namespace seqan3::detail
@@ -282,7 +282,7 @@ namespace seqan3
  * seqan3::detail::advanceable_alignment_coordinate is only necessary for the implementation of the pairwise
  * alignment algorithm. Within in the algorithm the coordinate is used in combination with a seqan3::view::iota to
  * keep track of the current position within the alignment matrix. For the user, however, this interface adds no
- * benefit as they are only interested in the begin/end coordinates for the respective alignment.
+ * benefit as they are only interested in the front/back coordinates for the respective alignment.
  * \endif
  */
 class alignment_coordinate
@@ -321,13 +321,13 @@ public:
     //!\endcond
     //!\}
 
-    using base_t::first_seq_pos;
-    using base_t::second_seq_pos;
+    using base_t::first;
+    using base_t::second;
 
     //!\brief The begin/end position of the alignment in the first sequence.
-    SEQAN3_DOXYGEN_ONLY(size_t first_seq_pos;)
+    SEQAN3_DOXYGEN_ONLY(size_t first;)
     //!\brief The begin/end position of the alignment in the second sequence.
-    SEQAN3_DOXYGEN_ONLY(size_t second_seq_pos;)
+    SEQAN3_DOXYGEN_ONLY(size_t second;)
 };
 
 /*!\brief A seqan3::alignment_coordinate can be printed to the seqan3::debug_stream.
@@ -348,7 +348,7 @@ template <typename coordinate_type>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type const & c)
 {
-    s << std::tie(c.first_seq_pos, c.second_seq_pos);
+    s << std::tie(c.first, c.second);
     return s;
 }
 

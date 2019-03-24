@@ -164,7 +164,7 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
 {
     using algorithm_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_cfg_t, traits_type>;
 
-    auto result = align_result{detail::align_result_value_type{}};
+    auto result = alignment_result{detail::alignment_result_value_type{}};
     auto alignment = algorithm_t{database, query, align_cfg};
 
     // compute alignment
@@ -214,15 +214,15 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
     using traits_t = test_traits_type<typename TypeParam::word_type, typename TypeParam::is_semi_global_type>;
     auto alignment = edit_distance<traits_t>(database, query, align_cfg);
     auto trace_matrix = alignment.trace_matrix();
-    auto begin_coordinate = alignment.begin_coordinate();
-    auto end_coordinate = alignment.end_coordinate();
+    auto front_coordinate = alignment.front_coordinate();
+    auto back_coordinate = alignment.back_coordinate();
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);
     EXPECT_EQ(trace_matrix.rows(), query.size()+1);
-    EXPECT_EQ(begin_coordinate.first_seq_pos, fixture.begin_coordinate.first_seq_pos);
-    EXPECT_EQ(begin_coordinate.second_seq_pos, fixture.begin_coordinate.second_seq_pos);
-    EXPECT_EQ(end_coordinate.first_seq_pos, fixture.end_coordinate.first_seq_pos);
-    EXPECT_EQ(end_coordinate.second_seq_pos, fixture.end_coordinate.second_seq_pos);
+    EXPECT_EQ(front_coordinate.first, fixture.front_coordinate.first);
+    EXPECT_EQ(front_coordinate.second, fixture.front_coordinate.second);
+    EXPECT_EQ(back_coordinate.first, fixture.back_coordinate.first);
+    EXPECT_EQ(back_coordinate.second, fixture.back_coordinate.second);
     EXPECT_EQ(trace_matrix, fixture.trace_matrix);
     EXPECT_EQ(alignment.score(), fixture.score);
 

@@ -35,34 +35,34 @@ TEST(alignment_selector, align_result_selector)
 
     { // test case I
         auto cfg = align_cfg::edit;
-        using _t = align_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+        using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
     }
 
     { // test case II
-        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_score};
-        using _t = align_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+        auto cfg = align_cfg::edit | align_cfg::result{with_score};
+        using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
     }
 
     { // test case III
-        auto cfg = align_cfg::edit | align_cfg::result{align_cfg::with_trace};
-        using _t = align_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
+        auto cfg = align_cfg::edit | align_cfg::result{with_alignment};
+        using _t = alignment_result<typename detail::align_result_selector<seq1_t, seq2_t, decltype(cfg)>::type>;
 
         using gapped_seq1_t = std::vector<gapped<dna4>>;
         using gapped_seq2_t = std::vector<gapped<dna4>>;
 
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_id()), uint32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_score()), int32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_end_coordinate()),
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().back_coordinate()),
                                     alignment_coordinate const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_begin_coordinate()),
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().front_coordinate()),
                                     alignment_coordinate const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().get_alignment()),
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().alignment()),
                                     std::tuple<gapped_seq1_t, gapped_seq2_t> const &>));
     }
 }

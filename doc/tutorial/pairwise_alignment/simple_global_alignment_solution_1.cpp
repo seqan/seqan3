@@ -30,5 +30,5 @@ int main()
                   align_cfg::scoring{nucleotide_scoring_scheme{}};
 
     for (auto const & res : align_pairwise(source, config))
-        debug_stream << "Score: " << res.get_score() << '\n';
+        debug_stream << "Score: " << res.score() << '\n';
 }

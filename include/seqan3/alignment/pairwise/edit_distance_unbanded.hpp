@@ -24,7 +24,7 @@
 #include <seqan3/alignment/matrix/alignment_trace_algorithms.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
-#include <seqan3/alignment/pairwise/align_result.hpp>
+#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
@@ -115,7 +115,7 @@ private:
     using query_alphabet_type = std::remove_reference_t<reference_t<query_type>>;
 
     //TODO Make it dynamic.
-    // using result_type = align_result<type_list<uint32_t, int>>;
+    // using result_type = alignment_result<type_list<uint32_t, int>>;
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
     static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
@@ -406,7 +406,7 @@ public:
      * \returns A reference to the filled alignment result.
      */
     template <typename result_value_type>
-    align_result<result_value_type> & operator()(align_result<result_value_type> & res)
+    alignment_result<result_value_type> & operator()(alignment_result<result_value_type> & res)
     {
         _compute();
         result_value_type res_vt{};
@@ -415,22 +415,22 @@ public:
             res_vt.score = score();
         }
 
-        if constexpr (!std::is_same_v<decltype(res_vt.end_coordinate), std::nullopt_t *>)
+        if constexpr (!std::is_same_v<decltype(res_vt.back_coordinate), std::nullopt_t *>)
         {
-            res_vt.end_coordinate = end_coordinate();
+            res_vt.back_coordinate = back_coordinate();
         }
 
         [[maybe_unused]] alignment_trace_matrix matrix = trace_matrix();
-        if constexpr (!std::is_same_v<decltype(res_vt.begin_coordinate), std::nullopt_t *>)
+        if constexpr (!std::is_same_v<decltype(res_vt.front_coordinate), std::nullopt_t *>)
         {
-            res_vt.begin_coordinate = alignment_begin_coordinate(matrix, res_vt.end_coordinate);
+            res_vt.front_coordinate = alignment_front_coordinate(matrix, res_vt.back_coordinate);
         }
 
         if constexpr (!std::is_same_v<decltype(res_vt.alignment), std::nullopt_t *>)
         {
-            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.end_coordinate);
+            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.back_coordinate);
         }
-        res = align_result<result_value_type>{res_vt};
+        res = alignment_result<result_value_type>{res_vt};
         return res;
     }
 
@@ -453,14 +453,14 @@ public:
     }
 
     //!\brief Return the begin position of the alignment
-    alignment_coordinate begin_coordinate() const noexcept
+    alignment_coordinate front_coordinate() const noexcept
     {
-        alignment_coordinate end = end_coordinate();
-        return alignment_begin_coordinate(trace_matrix(), end);
+        alignment_coordinate end = back_coordinate();
+        return alignment_front_coordinate(trace_matrix(), end);
     }
 
     //!\brief Return the end position of the alignment
-    alignment_coordinate end_coordinate() const noexcept
+    alignment_coordinate back_coordinate() const noexcept
     {
         size_t col = database.size() - 1;
         if constexpr(is_semi_global)
@@ -472,7 +472,7 @@ public:
     //!\brief Return the alignment, i.e. the actual base pair matching.
     auto alignment() const noexcept
     {
-        return alignment_trace(database, query, trace_matrix(), end_coordinate());
+        return alignment_trace(database, query, trace_matrix(), back_coordinate());
     }
 };
 
@@ -623,7 +623,7 @@ public:
                                                                 remove_cvref_t<config_t>>::type;
 
         pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, traits_t{}};
-        align_result<result_t> res{};
+        alignment_result<result_t> res{};
         return algo(res);
     }
 

@@ -125,8 +125,8 @@ TYPED_TEST(unbanded_score_trace_test, go_next_column)
     for (auto const entry : zip_view_2)
     {
         EXPECT_TRUE((std::get<0>(entry) == std::tuple{10, -10}));
-        EXPECT_EQ(std::get<1>(entry).first_seq_pos,  0u);
-        EXPECT_EQ(std::get<1>(entry).second_seq_pos,  row_index++);
+        EXPECT_EQ(std::get<1>(entry).first,  0u);
+        EXPECT_EQ(std::get<1>(entry).second,  row_index++);
         EXPECT_TRUE((std::get<2>(entry) == seqan3::detail::trace_directions::diagonal));
     }
 
@@ -140,8 +140,8 @@ TYPED_TEST(unbanded_score_trace_test, go_next_column)
     for (auto const entry : zip_view_3)
     {
         EXPECT_TRUE((std::get<0>(entry) == std::tuple{10, -10}));
-        EXPECT_EQ(std::get<1>(entry).first_seq_pos,  1u);
-        EXPECT_EQ(std::get<1>(entry).second_seq_pos,  row_index++);
+        EXPECT_EQ(std::get<1>(entry).first,  1u);
+        EXPECT_EQ(std::get<1>(entry).second,  row_index++);
         EXPECT_TRUE((std::get<2>(entry) == seqan3::detail::trace_directions::none));
     }
 

@@ -28,7 +28,7 @@ bool run_test(config_t const & cfg)
     auto fn = detail::alignment_configurator::configure(r, cfg);
     auto && [seq1, seq2] = *std::ranges::begin(r);
 
-    return fn(seq1, seq2).get_score() == 0;
+    return fn(seq1, seq2).score() == 0;
 }
 
 TEST(alignment_configurator, configure_edit)
@@ -38,17 +38,17 @@ TEST(alignment_configurator, configure_edit)
 
 TEST(alignment_configurator, configure_edit_end_position)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{align_cfg::with_end_position}));
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{with_back_coordinate}));
 }
 
 TEST(alignment_configurator, configure_edit_begin_position)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{align_cfg::with_begin_position}));
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{with_front_coordinate}));
 }
 
 TEST(alignment_configurator, configure_edit_trace)
 {
-    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{align_cfg::with_trace}));
+    EXPECT_TRUE(run_test(align_cfg::edit | align_cfg::result{with_alignment}));
 }
 
 TEST(alignment_configurator, configure_edit_semi)
@@ -91,7 +91,7 @@ TEST(alignment_configurator, configure_affine_global_end_position)
     auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
-               align_cfg::result{align_cfg::with_end_position};
+               align_cfg::result{with_back_coordinate};
 
     EXPECT_TRUE(run_test(cfg));
 }
@@ -101,7 +101,7 @@ TEST(alignment_configurator, configure_affine_global_begin_position)
     auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
-               align_cfg::result{align_cfg::with_begin_position};
+               align_cfg::result{with_front_coordinate};
 
     EXPECT_TRUE(run_test(cfg));
 }
@@ -111,7 +111,7 @@ TEST(alignment_configurator, configure_affine_global_trace)
     auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
-               align_cfg::result{align_cfg::with_trace};
+               align_cfg::result{with_alignment};
 
     EXPECT_TRUE(run_test(cfg));
 }
@@ -139,16 +139,16 @@ TEST(alignment_configurator, configure_affine_global_banded)
     }
 }
 
-TEST(alignment_configurator, configure_affine_global_banded_with_trace)
+TEST(alignment_configurator, configure_affine_global_banded_with_alignment)
 {
     auto cfg = align_cfg::mode{global_alignment} |
                align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                align_cfg::scoring{nucleotide_scoring_scheme{}} |
                align_cfg::band{static_band{lower_bound{-1}, upper_bound{1}}};
 
-    auto cfg_trace = cfg | align_cfg::result{align_cfg::with_trace};
-    auto cfg_begin = cfg | align_cfg::result{align_cfg::with_begin_position};
-    auto cfg_end = cfg | align_cfg::result{align_cfg::with_end_position};
+    auto cfg_trace = cfg | align_cfg::result{with_alignment};
+    auto cfg_begin = cfg | align_cfg::result{with_front_coordinate};
+    auto cfg_end = cfg | align_cfg::result{with_back_coordinate};
 
     EXPECT_TRUE(run_test(cfg_end));
     EXPECT_TRUE(run_test(cfg_trace));
