@@ -64,7 +64,7 @@ namespace seqan3
  *
  * ### Accessing the alignment results
  *
- * For each sequence pair one or more \ref seqan3::align_result's can be computed.
+ * For each sequence pair one or more \ref seqan3::alignment_result "seqan3::alignment_result"s can be computed.
  * The seqan3::align_pairwise function returns an seqan3::alignment_range which can be used to iterate over the
  * alignments. The alignments are then computed on-demand when iterating over the results.
  *
@@ -137,12 +137,10 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
     return align_pairwise(std::view::single(std::forward<sequence_t>(seq)), config);
 }
 
-//!\overload
-template <typename sequence_t, typename alignment_config_t>
 //!\cond
+template <typename sequence_t, typename alignment_config_t>
     requires detail::AlignPairwiseRangeInputConcept<sequence_t> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
-//!\endcond
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
     // Pipe with view::persist to allow rvalue non-view ranges.
@@ -154,5 +152,6 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
     // Return the range over the alignments.
     return alignment_range{std::move(exec)};
 }
+//!\endcond
 
 } // namespace seqan3

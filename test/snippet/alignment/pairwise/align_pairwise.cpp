@@ -14,9 +14,9 @@ int main()
 
     // Compute the alignment of a single pair.
     for (auto const & res : align_pairwise(std::tie(vec[0].first, vec[0].second), align_cfg::edit))
-        debug_stream << "The score: " << res.get_score() << "\n";
+        debug_stream << "The score: " << res.score() << "\n";
 
     // Compute the alignment over a range of pairs.
     for (auto const & res : align_pairwise(vec, align_cfg::edit))
-        debug_stream << "The score: " << res.get_score() << "\n";
+        debug_stream << "The score: " << res.score() << "\n";
 }
