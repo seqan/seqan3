@@ -309,9 +309,8 @@ protected:
         for (unsigned i = 0; i < meta.synopsis.size(); ++i)
         {
             std::string text = "\\fB";
-            text.append(meta.app_name);
-            text.append("\\fP ");
             text.append(meta.synopsis[i]);
+            text.insert(text.find_first_of(" \t"), "\\fP");
 
             print_line(text, false);
         }
