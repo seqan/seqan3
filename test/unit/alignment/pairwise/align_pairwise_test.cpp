@@ -42,8 +42,10 @@ TEST(align_pairwise, single_rng_lvalue)
 
     {  // the alignment
         configuration cfg = align_cfg::edit | align_cfg::result{with_alignment};
+        unsigned idx = 0;
         for (auto && res : align_pairwise(p, cfg))
         {
+            EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.back_coordinate().first, 7u);
             EXPECT_EQ(res.back_coordinate().second, 8u);
