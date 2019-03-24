@@ -119,11 +119,11 @@ public:
         // Only total is set so we set all other errors to the total limit.
         if constexpr (((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) == 1)
         {
-            ranges::fill(base_t::value | ranges::view::slice(1, 4), base_t::value[0]);
+            ranges::fill(base_t::value | view::slice(1, 4), base_t::value[0]);
         } // otherwise if total is not set but any other field is set than use total as the sum of all set errors.
         else if constexpr (!((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) > 0)
         {
-            base_t::value[0] = std::min(1., ranges::accumulate(base_t::value | ranges::view::slice(1, 4), .0));
+            base_t::value[0] = std::min(1., ranges::accumulate(base_t::value | view::slice(1, 4), .0));
         }
     }
     //!}

@@ -49,16 +49,16 @@ namespace seqan3::view
  * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
  * | std::ranges::View               |                                       | *guaranteed*                                       |
  * | std::ranges::SizedRange         |                                       | ***guaranteed***                                   |
- * | std::ranges::CommonRange        |                                       | *lost*                                             |
- * | std::ranges::OutputRange        |                                       | *preserved*                                        |
+ * | std::ranges::CommonRange        |                                       | *preserved*                                        |
+ * | std::ranges::OutputRange        |                                       | *preserved* except if `urng_t` is std::basic_string|
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * The difference to seqan3::view::take is that this view always exposes size information (while
- * seqan3::view::take never does so). You should only use this if you know that the underlying range will always be
+ * The difference to seqan3::view::take is that this view always exposes size information – even if the underlying
+ * range is not sized. You should only use this if you know that the underlying range will always be
  * at least `size` long.
  *
  * For seqan3::view::take_exactly if the underlying range is shorter than `size`, the behaviour is undefined.
@@ -68,17 +68,11 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/take_exactly.cpp usage
- *
- * The behaviour differs when the underlying sequence is shorter:
- *
- * \snippet test/snippet/range/view/take_exactly.cpp shorter_sequence
+ * \include test/snippet/range/view/take_exactly.cpp
  *
  * \hideinitializer
  */
 inline auto constexpr take_exactly = detail::take_fn<true, false>{};
-
-//!\}
 
 // ============================================================================
 //  view::take_exactly_or_throw (adaptor instance definition)

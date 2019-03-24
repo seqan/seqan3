@@ -1,0 +1,5 @@
+seqan3_benchmark(view_all_benchmark.cpp)
+seqan3_benchmark(view_drop_benchmark.cpp)
+seqan3_benchmark(view_drop_view_take_benchmark.cpp)
+seqan3_benchmark(view_take_benchmark.cpp)
+seqan3_benchmark(view_take_until_benchmark.cpp)

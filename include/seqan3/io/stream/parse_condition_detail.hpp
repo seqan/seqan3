@@ -344,7 +344,7 @@ struct is_in_interval_type : public parse_condition_base<is_in_interval_type<int
     {
         data_t ret{};
 
-        for (uint8_t i = interval_first; i <= interval_last; ++i)
+        for (size_t i = interval_first; i <= static_cast<size_t>(interval_last); ++i)
             ret[i] = true;
 
         return ret;

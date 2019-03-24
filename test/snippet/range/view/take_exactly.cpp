@@ -1,34 +1,21 @@
-#include <iostream>
-
+#include <string>
 #include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/range/view/take_exactly.hpp>
+#include <seqan3/range/view/take_exactly.hpp>           // provides view::take_exactly and view::take_exactly_or_throw
 
 using namespace seqan3;
 
 int main()
 {
+    std::string vec{"foobar"};
+    auto v = vec | view::take_exactly(3);               // or view::take_exactly_or_throw
+    debug_stream << v << '\n';                          // "foo"
+    debug_stream << std::ranges::size(v) << '\n';       // 3
 
-{
-//! [usage]
-std::string vec{"foobar"};
-auto v = vec | view::take_exactly(3);        // or view::take_exactly_or_throw
-debug_stream << v << '\n';                      // [f,o,o]
-debug_stream << std::ranges::size(v) << v << '\n';   // 3
-//! [usage]
-}
 
-{
-//! [shorter_sequence]
-std::string vec{"foo"};
-auto v = vec | view::take_exactly(4);
-debug_stream << v << '\n';                          // [f,o,o]
-debug_stream << std::ranges::size(v) << v << '\n';       // 4 <- here be dragons!
-try
-{
-    auto v2 = vec | view::take_exactly_or_throw(4);  // throws immediately on construction
-}
-catch (std::invalid_argument &)
-{}
-//! [shorter_sequence]
-}
+    auto v2 = vec | view::take_exactly(9);
+    debug_stream << std::ranges::size(v2) << '\n';      // 9 <- here be dragons!
+//     debug_stream << v2 << '\n';                      // possibly memory access violation
+
+//     auto v3 = vec | view::take_exactly_or_throw(9);  // safe, throws immediately on construction
+
 }
