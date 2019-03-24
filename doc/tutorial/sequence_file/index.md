@@ -325,7 +325,7 @@ Test your program on the following FASTQ file:
 
 \snippet doc/tutorial/sequence_file/sequence_file_solution3.cpp fastq_file
 
-It should output `seq1` and `seq3`.
+It should output `seq1`, `seq3` and `seq5`.
 
 \endassignment
 \solution
