@@ -4,7 +4,7 @@
 
 int main(int argc, const char ** argv)
 {
-    seqan3::argument_parser myparser("Test", argc, argv); // initialize
+    seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
     //![validator_call]
     int myint;
