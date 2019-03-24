@@ -21,7 +21,7 @@ struct dummy_alignment
 {
 
     template <typename first_seq_t, typename second_seq_t>
-    constexpr auto operator()(first_seq_t && first_seq, second_seq_t && second_seq) const
+    constexpr auto operator()(size_t const, first_seq_t && first_seq, second_seq_t && second_seq) const
     {
         size_t count = 0;
         ranges::for_each(ranges::view::zip(first_seq, second_seq), [&](auto && tpl)
@@ -37,7 +37,7 @@ struct dummy_alignment
 // Some globally defined test types
 inline static std::tuple single{std::string{"AACGTACGT"}, std::string{"ATCGTCCGT"}};
 inline static std::vector<decltype(single)> collection{5, single};
-inline static std::function<size_t(std::string &, std::string &)> fn{dummy_alignment{}};
+inline static std::function<size_t(size_t const, std::string &, std::string &)> fn{dummy_alignment{}};
 
 using namespace seqan3;
 

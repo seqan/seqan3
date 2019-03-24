@@ -103,6 +103,7 @@ public:
     /*!\brief Invokes the actual alignment computation given two sequences.
      * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
      * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \param[in] idx            The index of the current processed sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
      *
@@ -127,7 +128,7 @@ public:
      * and at most \f$ O(N^2) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t && first_range, second_range_t && second_range)
+    auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires !is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -158,6 +159,7 @@ public:
         using result_t = typename align_result_selector<first_range_t, second_range_t, config_t>::type;
         result_t res{};
 
+        res.id = idx;
         // Choose what needs to be computed.
         if constexpr (config_t::template exists<align_cfg::result<with_score_type>>())
         {
@@ -192,6 +194,7 @@ public:
     /*!\brief Invokes the banded alignment computation given two sequences.
      * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model std::ForwardRange.
      * \tparam    second_range_t The type of the second sequence (or packed sequences); must model std::ForwardRange.
+     * \param[in] idx            The index of the current processed sequence pair.
      * \param[in] first_range    The first sequence (or packed sequences).
      * \param[in] second_range   The second sequence (or packed sequences).
      *
@@ -217,7 +220,7 @@ public:
      * and at most \f$ O(N*k) \f$ space.
      */
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
-    auto operator()(first_range_t && first_range, second_range_t && second_range)
+    auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
         requires is_banded
     {
         assert(cfg_ptr != nullptr);
@@ -282,6 +285,7 @@ public:
         using result_t = typename align_result_selector<first_range_t, second_range_t, config_t>::type;
         result_t res{};
 
+        res.id = idx;
         // Balance the score with possible leading/trailing gaps depending on the
         // band settings.
         this->balance_leading_gaps(get<3>(cache), band, gap);
