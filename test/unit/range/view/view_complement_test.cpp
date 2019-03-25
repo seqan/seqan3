@@ -9,8 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/complement.hpp>
@@ -33,6 +31,20 @@ TEST(view_complement, basic)
     // combinability
     dna5_vector v3 = foo | view::complement | std::view::reverse;
     EXPECT_EQ(v3, "TACGT"_dna5);
+
+    dna5_vector const bar{"ACGTA"_dna5};
+
+    // const pipe notation
+    dna5_vector v4 = bar | view::complement;
+    EXPECT_EQ(v4, "TGCAT"_dna5);
+
+    // const function notation
+    dna5_vector v5(view::complement(bar));
+    EXPECT_EQ(v5, "TGCAT"_dna5);
+
+    // const combinability
+    dna5_vector v6 = bar | view::complement | std::view::reverse;
+    EXPECT_EQ(v6, "TACGT"_dna5);
 }
 
 TEST(view_complement, deep_view)
@@ -44,6 +56,14 @@ TEST(view_complement, deep_view)
     ASSERT_EQ(size(v), 2u);
     EXPECT_TRUE((std::ranges::equal(v[0], "TGCAT"_dna5)));
     EXPECT_TRUE((std::ranges::equal(v[1], "ACGTA"_dna5)));
+
+    std::vector<dna5_vector> const bar{"ACGTA"_dna5, "TGCAT"_dna5};
+
+    auto v2 = bar | view::complement;
+
+    ASSERT_EQ(size(v2), 2u);
+    EXPECT_TRUE((std::ranges::equal(v2[0], "TGCAT"_dna5)));
+    EXPECT_TRUE((std::ranges::equal(v2[1], "ACGTA"_dna5)));
 }
 
 TEST(view_complement, concepts)
@@ -70,4 +90,27 @@ TEST(view_complement, concepts)
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), char>));
+
+    dna5_vector const vec2{"ACGTA"_dna5};
+    EXPECT_TRUE(std::ranges::InputRange<decltype(vec2)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec2)>);
+    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec2)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec2)>);
+    EXPECT_FALSE(std::ranges::View<decltype(vec2)>);
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec2)>);
+    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec2)>);
+    EXPECT_TRUE(const_iterable_concept<decltype(vec2)>);
+    EXPECT_FALSE((std::ranges::OutputRange<decltype(vec2), dna5>));
+
+    auto v2 = vec2 | view::complement;
+    EXPECT_TRUE(std::ranges::InputRange<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::View<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::SizedRange<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::CommonRange<decltype(v2)>);
+    EXPECT_TRUE(const_iterable_concept<decltype(v2)>);
+    EXPECT_FALSE((std::ranges::OutputRange<decltype(v2), dna5>));
+    EXPECT_FALSE((std::ranges::OutputRange<decltype(v2), char>));
 }
