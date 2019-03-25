@@ -233,7 +233,7 @@ TYPED_TEST_P(alphabet, hash)
         std::hash<TypeParam> h{};
         if constexpr (std::Same<TypeParam, char>)
         {
-            for (uint64_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
+            for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
             {
                 assign_rank(t0, i);
                 ASSERT_EQ(h(t0), i);
@@ -241,7 +241,7 @@ TYPED_TEST_P(alphabet, hash)
         }
         else
         {
-            for (uint64_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
+            for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
             {
                 assign_rank(t0, i);
                 ASSERT_EQ(h(t0), i);
@@ -251,10 +251,34 @@ TYPED_TEST_P(alphabet, hash)
     {
         std::vector<TypeParam> text;
         text.reserve(4);
-        for (uint64_t i = 0; i < 4; ++i)
+        for (size_t i = 0; i < 4; ++i)
         {
             text.push_back(assign_rank(TypeParam{}, 0));
         }
+        std::hash<decltype(text)> h{};
+        ASSERT_EQ(h(text), 0u);
+    }
+    {
+        std::hash<TypeParam const> h{};
+        if constexpr (std::Same<TypeParam, char>)
+        {
+            for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
+            {
+                TypeParam const t0 = assign_rank(TypeParam{}, i);
+                ASSERT_EQ(h(t0), i);
+            }
+        }
+        else
+        {
+            for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
+            {
+                TypeParam const t0 = assign_rank(TypeParam{}, i);
+                ASSERT_EQ(h(t0), i);
+            }
+        }
+    }
+    {
+        std::vector<TypeParam> const text(4, assign_rank(TypeParam{}, 0));
         std::hash<decltype(text)> h{};
         ASSERT_EQ(h(text), 0u);
     }

@@ -20,7 +20,7 @@
 
 using namespace seqan3;
 
-TEST(metafunction, remove_cvref_)
+TEST(metafunction, remove_cvref_t)
 {
     EXPECT_TRUE((std::is_same_v<int, remove_cvref_t<int>>));
     EXPECT_TRUE((std::is_same_v<int, remove_cvref_t<int const>>));
@@ -35,4 +35,20 @@ TEST(metafunction, remove_cvref_)
     EXPECT_FALSE((std::is_same_v<int, remove_cvref_t<int[3]>>));    // type stays same
     EXPECT_FALSE((std::is_same_v<int*, remove_cvref_t<int[3]>>));   // type stays same
     // the last example would be true for std::decay_t
+}
+
+TEST(metafunction, delete_const_t)
+{
+    EXPECT_TRUE((std::is_same_v<int, 		 delete_const_t<int>>));
+    EXPECT_TRUE((std::is_same_v<int, 		 delete_const_t<int const>>));
+    EXPECT_TRUE((std::is_same_v<int volatile, 	 delete_const_t<int volatile>>));
+    EXPECT_TRUE((std::is_same_v<int &, 		 delete_const_t<int &>>));
+    EXPECT_TRUE((std::is_same_v<int &&, 	 delete_const_t<int &&>>));
+    EXPECT_TRUE((std::is_same_v<int &, 		 delete_const_t<int const &>>));
+    EXPECT_TRUE((std::is_same_v<int &&, 	 delete_const_t<int const &&>>));
+    EXPECT_TRUE((std::is_same_v<int volatile &&, delete_const_t<int const volatile &&>>));
+    EXPECT_TRUE((std::is_same_v<int *, 		 delete_const_t<int *>>));
+    EXPECT_TRUE((std::is_same_v<int *, 		 delete_const_t<int const *>>));
+    EXPECT_TRUE((std::is_same_v<int volatile *,  delete_const_t<int const volatile *>>));
+    EXPECT_TRUE((std::is_same_v<char const *, 	 delete_const_t<char const * const>>));
 }
