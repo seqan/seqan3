@@ -263,8 +263,7 @@ What can you learn about the different refinements and their relation to the ran
 
 ## The bitcompressed vector
 
-If you followed the alphabet tutorial closely, you will know that seqan3::dna4 needs only two bits to represent it's
-state.
+If you followed the alphabet tutorial closely, you will know that seqan3::dna4 needs only two bits to represent it's state.
 However, single objects are always at least a byte (eight bits) big in C++.
 To store sequences of small alphabets more space-efficiently, we have developed seqan3::bitcompressed_vector.
 
@@ -272,11 +271,18 @@ Open the API documentation of seqan3::bitcompressed_vector, display the inherita
 interface overview and the detailed description.
 
 \assignment{Exercise: The bitcompressed vector}
-Create two small programs that each ask the user for a size and then create a vector of seqan3::dna4 of that size.
-One program shall use std::vector, the other shall use seqan3::bitcompressed_vector.
+Create a small program that asks the user for a size and then creates a vector of seqan3::dna4 of that size.
+Add an argument parser flag that allows the user to decide whether std::vector or seqan3::bitcompressed_vector is used.
+After creating the vector, print its size.
 
-Measure the amount of main memory that your programs use (this depends on your operating system, on UNIX the commands
-`top` and `/usr/bin/time` may be of help).
+Measure and compare the amount of main memory that your program uses depending on the vector implementation.
+On Unix based systems use `/usr/bin/time -v <program> <args>` and look for "Maximum resident set size".
+(Not to be confused with the built-in Bash time command! So use the full path `/usr/bin/time`)
 
-Are your results as expected?
+On MacOS/BSD use `/usr/bin/time -l <program> <args>`, looking for "maximum resident set size".
+
+\note This command diplays the peak memory usage and only gives you a first impression. You can use valgrind if you want to have a more detailed analysis of your memory consumption.
 \endassignment
+\solution
+\include doc/tutorial/ranges/range_solution4.cpp
+\endsolution
