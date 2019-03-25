@@ -156,7 +156,7 @@ TEST(validator_test, arithmetic_range_validator_success)
 
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string my_stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
                            "==========="
                            "POSITIONAL ARGUMENTS"
@@ -166,7 +166,7 @@ TEST(validator_test, arithmetic_range_validator_success)
                            "    Last update: "
                            "    test_parser version: "
                            "    SeqAn version: ") + seqan3_version;
-    EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+    EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
                                expected | std::view::filter(!is_space)));
 
     // option - double value
@@ -315,7 +315,7 @@ TEST(validator_test, value_list_validator_success)
 
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string my_stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
                            "==========="
                            "OPTIONS"
@@ -325,7 +325,7 @@ TEST(validator_test, value_list_validator_success)
                            "    Last update: "
                            "    test_parser version: "
                            "    SeqAn version: ") + seqan3_version;
-    EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+    EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
                                expected | std::view::filter(!is_space)));
 }
 
@@ -432,7 +432,7 @@ TEST(validator_test, regex_validator_success)
 
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    std::string stdout = testing::internal::GetCapturedStdout();
+    std::string my_stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
                            "==========="
                            "OPTIONS"
@@ -442,7 +442,7 @@ TEST(validator_test, regex_validator_success)
                            "    Last update: "
                            "    test_parser version: "
                            "    SeqAn version: ") + seqan3_version;
-    EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+    EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
 }
 
@@ -566,7 +566,7 @@ TEST(validator_test, chaining_validators)
 
         testing::internal::CaptureStdout();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-        std::string stdout = testing::internal::GetCapturedStdout();
+        std::string my_stdout = testing::internal::GetCapturedStdout();
         std::string expected = std::string("test_parser"
                                "==========="
                                "OPTIONS"
@@ -578,7 +578,7 @@ TEST(validator_test, chaining_validators)
                                "    Last update: "
                                "    test_parser version: "
                                "    SeqAn version: ") + seqan3_version;
-        EXPECT_TRUE(ranges::equal((stdout   | ranges::view::remove_if(is_space)),
+        EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
                                    expected | ranges::view::remove_if(is_space)));
     }
 }

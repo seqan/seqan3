@@ -18,7 +18,7 @@ using namespace seqan3;
 
 TEST(html_test, html)
 {
-    std::string stdout;
+    std::string my_stdout;
     std::string expected;
     int option_value;
     bool flag_value;
@@ -29,7 +29,7 @@ TEST(html_test, html)
     argument_parser parser0("empty_options", 3, argv0);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    stdout = testing::internal::GetCapturedStdout();
+    my_stdout = testing::internal::GetCapturedStdout();
     expected = std::string("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" http://www.w3.org/TR/html4/strict.dtd\">"
                            "<html lang=\"en\">"
                            "<head>"
@@ -46,7 +46,7 @@ TEST(html_test, html)
                            "<strong>SeqAn version:</strong> 3.0.0<br>"
                            "<br>"
                            "</body></html>");
-    EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+    EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
                                expected | std::view::filter(!is_space)));
 
    // Full html help page.
@@ -70,7 +70,7 @@ TEST(html_test, html)
    parser1.info.examples.push_back("example2");
    testing::internal::CaptureStdout();
    EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-   stdout = testing::internal::GetCapturedStdout();
+   my_stdout = testing::internal::GetCapturedStdout();
    expected = std::string("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" http://www.w3.org/TR/html4/strict.dtd\">"
                           "<html lang=\"en\">"
                           "<head>"
@@ -125,6 +125,6 @@ TEST(html_test, html)
                           "<strong>In your academic works please cite:</strong> citation<br>"
                           "For full copyright and/or warranty information see <tt>--copyright</tt>."
                           "</body></html>");
-   EXPECT_TRUE(ranges::equal((stdout   | std::view::filter(!is_space)),
+   EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
                               expected | ranges::view::remove_if(is_space)));
 }
