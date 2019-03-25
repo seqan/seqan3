@@ -122,7 +122,7 @@ void random_access(benchmark::State & state)
     std::vector<size_t> access_positions;
     access_positions.resize(1'000'000);
     std::mt19937 gen(42);
-    std::uniform_int_distribution<size_t> dis(0, 1'000'000);
+    std::uniform_int_distribution<size_t> dis(0, 1'000'000 - 1);
 
     for (size_t i = 0; i < 1'000'000; ++i)
         access_positions[i] = dis(gen);
