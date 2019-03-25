@@ -7,8 +7,8 @@
 //! [include_aligned_ends]
 
 //! [include_scoring_scheme]
-#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 //! [include_scoring_scheme]
 
 //! [include_gap_scheme]
@@ -25,7 +25,7 @@
 //! [include_band]
 
 //! [include_edit]
-#include <seqan3/alignment/configuration/edit.hpp>
+#include <seqan3/alignment/configuration/align_config_edit.hpp>
 //! [include_edit]
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
@@ -37,13 +37,13 @@ int main()
 //! [aligned_ends]
 using namespace seqan3;
 
-align_cfg::first_seq_leading fsl{std::true_type{}};
-align_cfg::first_seq_trailing fst{std::false_type{}};
-align_cfg::second_seq_leading ssl{true};
-align_cfg::second_seq_trailing sst{false};
+front_end_first fef{std::true_type{}};
+back_end_first bef{std::false_type{}};
+front_end_second fes{true};
+back_end_second bes{false};
 
-auto cfg_1 = align_cfg::aligned_ends{align_cfg::end_gaps{fsl, fst, ssl, sst}};
-auto cfg_2 = align_cfg::aligned_ends{align_cfg::end_gaps{fsl, ssl}};
+auto cfg_1 = align_cfg::aligned_ends{end_gaps{fef, bef, fes, bes}};
+auto cfg_2 = align_cfg::aligned_ends{end_gaps{fef, fes}};
 //! [aligned_ends]
 (void) cfg_1;
 (void) cfg_2;
@@ -85,7 +85,7 @@ auto gap_open = g.get_gap_open_score(); // gap_open == -10
 using namespace seqan3;
 
 // Configure the alignment to only compute the score.
-auto cfg = align_cfg::result{align_cfg::with_score};
+auto cfg = align_cfg::result{with_score};
 //! [result]
 (void) cfg;
 }
