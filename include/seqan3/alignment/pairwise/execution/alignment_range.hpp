@@ -67,12 +67,7 @@ class alignment_range
         /*!\name Read
          * \{
          */
-        reference operator*() noexcept
-        {
-            return range_ptr->cache;
-        }
-
-        value_type const & operator*() const noexcept
+        reference operator*() const noexcept
         {
             return range_ptr->cache;
         }
