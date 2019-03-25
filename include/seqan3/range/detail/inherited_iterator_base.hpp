@@ -142,9 +142,9 @@ public:
         requires std::InputIterator<base_t>
     //!\endcond
     {
-        inherited_iterator_base cpy{*this};
+        derived_t cpy{*this};
         ++(*this_derived());
-        return static_cast<derived_t>(cpy);
+        return cpy;
     }
 
     //!\brief Pre-decrement, return updated iterator.
@@ -163,9 +163,9 @@ public:
         requires std::BidirectionalIterator<base_t>
     //!\endcond
     {
-        inherited_iterator_base cpy{*this};
-        --(*this);
-        return static_cast<derived_t>(cpy);
+        derived_t cpy{*this};
+        --(*this_derived());
+        return cpy;
     }
 
     //!\brief Move iterator to the right.
@@ -184,7 +184,7 @@ public:
         requires std::RandomAccessIterator<base_t>
     //!\endcond
     {
-        derived_t cpy{*this_derived()};
+        derived_t cpy{*this};
         return cpy += skip;
     }
 
@@ -203,8 +203,7 @@ public:
         requires std::RandomAccessIterator<base_t>
     //!\endcond
     {
-        *this_to_base() -= skip;
-        return *this_derived();
+        return *this_derived() += -skip;
     }
 
     //!\brief Return decremented copy of this iterator.
@@ -213,7 +212,7 @@ public:
         requires std::RandomAccessIterator<base_t>
     //!\endcond
     {
-        derived_t cpy{*this_derived()};
+        derived_t cpy{*this};
         return cpy -= skip;
     }
 
@@ -259,12 +258,12 @@ public:
     }
 
     //!\brief Return underlying container value currently pointed at.
-    constexpr reference operator[](std::make_signed_t<difference_type> const n) const noexcept(noexcept(base_t{}[0]))
+    constexpr decltype(auto) operator[](std::make_signed_t<difference_type> const n) const noexcept(noexcept(base_t{}[0]))
     //!\cond
         requires std::RandomAccessIterator<base_t>
     //!\endcond
     {
-        return this_to_base()[n];
+        return *(*this_derived() + n);
     }
     //!\}
 
