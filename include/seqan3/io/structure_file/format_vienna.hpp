@@ -250,12 +250,6 @@ public:
             detail::consume(stream_view | view::take_line);
         }
         detail::consume(stream_view | view::take_until(!is_space));
-
-        // make sure "buffer at end" implies "stream at end"
-        if ((stream_it_t{stream} == stream_it_t{}) && (!stream.eof()))
-        {
-            stream.get(); // triggers error in stream and sets eof
-        }
     }
 
     //!\copydoc seqan3::StructureFileOutputFormat::write
