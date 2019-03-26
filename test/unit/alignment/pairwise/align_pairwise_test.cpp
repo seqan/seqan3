@@ -30,7 +30,7 @@ TEST(align_pairwise, single_rng_lvalue)
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
-    auto p = std::make_pair(seq1, seq2);
+    auto p = std::tie(seq1, seq2);
 
     {  // the score
         configuration cfg = align_cfg::edit | align_cfg::result{with_score};
@@ -60,7 +60,6 @@ TEST(align_pairwise, single_view_lvalue)
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
-    // auto p = std::make_pair(seq1, seq2);
     auto v = ranges::view::single(std::tie(seq1, seq2)) | std::view::common;
 
     {  // the score
@@ -89,7 +88,7 @@ TEST(align_pairwise, multiple_rng_lvalue)
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
-    auto p = std::make_pair(seq1, seq2);
+    auto p = std::tie(seq1, seq2);
     std::vector<decltype(p)> vec{10, p};
 
     configuration cfg = align_cfg::edit | align_cfg::result{with_alignment};

@@ -33,6 +33,45 @@
 
 namespace seqan3::detail
 {
+//!\brief A helper concept to test for correct input in seqan3::align_pairwise.
+//!\ingroup pairwise_alignment
+template <typename value_t>
+SEQAN3_CONCEPT AlignPairwiseValue =
+    tuple_like_concept<value_t> &&
+    std::tuple_size_v<value_t> == 2 &&
+    std::ranges::ForwardRange<std::tuple_element_t<0, value_t>> &&
+    std::ranges::ForwardRange<std::tuple_element_t<1, value_t>>;
+
+//!\brief A helper concept to test for correct single value input in seqan3::align_pairwise.
+//!\ingroup pairwise_alignment
+//!\see seqan3::detail::AlignPairwiseValue
+//!\see seqan3::detail::AlignPairwiseRangeInputConcept
+template <typename value_t>
+SEQAN3_CONCEPT AlignPairwiseSingleInput =
+    AlignPairwiseValue<value_t> &&
+    std::ranges::ViewableRange<std::tuple_element_t<0, value_t>> &&
+    std::ranges::ViewableRange<std::tuple_element_t<1, value_t>>;
+
+/*!\brief A helper concept to test for correct range input in seqan3::align_pairwise.
+ * \ingroup pairwise_alignment
+ *
+ * \details
+ *
+ * Only use input ranges whose value type models seqan3::detail::AlignPairwiseValue and
+ * whose reference type is an lvalue reference and the range itself models std::ranges::ViewableRange or
+ * the reference type is a prvalue and it models seqan3::detail::AlignPairwiseSingleInput.
+ * This covers all typical use cases:
+ * a) A lvalue range, whose reference type is a tuple like lvalue reference,
+ * b) A range, whose reference type is a tuple over viewable ranges.
+ * This covers also transforming and non-transforming views (e.g. std::ranges::view::zip, or view::take).
+ * Only a temporary non-view range piped with view::persist can't be handled securely.
+ */
+template <typename range_t>
+SEQAN3_CONCEPT AlignPairwiseRangeInputConcept =
+    std::ranges::InputRange<std::remove_reference_t<range_t>> &&
+    AlignPairwiseValue<value_type_t<range_t>> &&
+    ((std::ranges::ViewableRange<range_t> && std::is_lvalue_reference_v<reference_t<range_t>>) ||
+     AlignPairwiseSingleInput<std::remove_reference_t<reference_t<range_t>>>);
 
 /*!\brief Provides several contracts to test when configuring the alignment algorithm.
  * \ingroup pairwise_alignment
@@ -51,10 +90,12 @@ private:
     /*!\brief Auxiliary member types
      * \{
      */
+     //!\brief Range type with removed references.
+     using unref_range_type = std::remove_reference_t<range_type>;
      //!\brief The type of the first sequence.
-    using first_seq_t  = std::tuple_element_t<0, value_type_t<std::ranges::iterator_t<range_type>>>;
+    using first_seq_t  = std::tuple_element_t<0, value_type_t<std::ranges::iterator_t<unref_range_type>>>;
     //!\brief The type of the second sequence.
-    using second_seq_t = std::tuple_element_t<1, value_type_t<std::ranges::iterator_t<range_type>>>;
+    using second_seq_t = std::tuple_element_t<1, value_type_t<std::ranges::iterator_t<unref_range_type>>>;
     //!\}
 
 public:
@@ -62,7 +103,7 @@ public:
     constexpr static bool expects_tuple_like_value_type()
     {
         return tuple_like_concept<alignment_config_type> &&
-               std::tuple_size_v<value_type_t<std::ranges::iterator_t<range_type>>> == 2;
+               std::tuple_size_v<value_type_t<std::ranges::iterator_t<unref_range_type>>> == 2;
     }
 
     //!\brief Tests whether the scoring scheme is set and can be invoked with the sequences passed.
@@ -73,13 +114,20 @@ public:
             using scoring_type = std::remove_reference_t<
                                     decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
                                  >;
-            return static_cast<bool>(scoring_scheme_concept<scoring_type, value_type_t<first_seq_t>,
-                                                                          value_type_t<second_seq_t>>);
+            return static_cast<bool>(scoring_scheme_concept<scoring_type,
+                                                            value_type_t<first_seq_t>,
+                                                            value_type_t<second_seq_t>>);
         }
         else
         {
             return false;
         }
+    }
+
+    //!\brief Expects alignment configurations.
+    constexpr static bool expects_alignment_configuration()
+    {
+        return alignment_config_type::template exists<align_cfg::mode>();
     }
 };
 
@@ -185,8 +233,7 @@ public:
     /*!\brief Configures the algorithm.
      * \tparam sequences_t The range type containing the sequence pairs; must model std::ranges::ForwardRange.
      * \tparam config_t    The alignment configuration type; must be a specialisation of seqan3::configuration.
-     * \param[in]     seq_range The range over the sequences; The value type must model seqan3::tuple_like_concept.
-     * \param[in,out] cfg       The configuration object.
+     * \param[in] cfg      The configuration object.
      *
      * \returns std::function wrapper of the configured alignment algorithm.
      *
@@ -202,12 +249,11 @@ public:
      * Note that even if they are not passed as const lvalue reference (which is not possible, since not all views are
      * const-iterable), they are not modified within the alignment algorithm.
      */
-    template <std::ranges::ForwardRange sequences_t, typename config_t>
+    template <AlignPairwiseRangeInputConcept sequences_t, typename config_t>
     //!\cond
-        requires tuple_like_concept<value_type_t<std::remove_reference_t<sequences_t>>> &&
-                 is_type_specialisation_of_v<remove_cvref_t<config_t>, configuration>
+        requires is_type_specialisation_of_v<config_t, configuration>
     //!\endcond
-    static constexpr auto configure([[maybe_unused]] sequences_t && seq_range, config_t const & cfg)
+    static constexpr auto configure(config_t const & cfg)
     {
 
         if constexpr (!config_t::template exists<align_cfg::result>())
@@ -216,7 +262,7 @@ public:
             // Set the default result value to be computed.
             // ----------------------------------------------------------------------------
 
-            return configure(std::forward<sequences_t>(seq_range), cfg | align_cfg::result{with_score});
+            return configure<sequences_t>(cfg | align_cfg::result{with_score});
         }
         else
         {
@@ -238,7 +284,11 @@ public:
             // Test some basic preconditions
             // ----------------------------------------------------------------------------
 
-            using alignment_contract_t = alignment_contract<remove_cvref_t<sequences_t>, config_t>;
+            using alignment_contract_t = alignment_contract<sequences_t, config_t>;
+
+            static_assert(alignment_contract_t::expects_alignment_configuration(),
+                          "Alignment configuration error: "
+                          "The alignment can only be configured with alignment configurations.");
 
             static_assert(alignment_contract_t::expects_tuple_like_value_type(),
                           "Alignment configuration error: "

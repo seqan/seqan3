@@ -58,7 +58,7 @@ TYPED_TEST_P(global_affine_unbanded, score)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
 
     EXPECT_EQ((*std::ranges::begin(alignment)).score(), fixture.score);
 }
@@ -71,7 +71,7 @@ TYPED_TEST_P(global_affine_unbanded, end_position)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
 
     auto res = *std::ranges::begin(alignment);
     EXPECT_EQ(res.score(), fixture.score);
@@ -86,7 +86,7 @@ TYPED_TEST_P(global_affine_unbanded, begin_position)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
 
     auto res = *std::ranges::begin(alignment);
     EXPECT_EQ(res.score(), fixture.score);
@@ -102,7 +102,7 @@ TYPED_TEST_P(global_affine_unbanded, trace)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    auto alignment = align_pairwise(std::pair{database, query}, align_cfg);
+    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
 
     auto res = *std::ranges::begin(alignment);
     EXPECT_EQ(res.score(), fixture.score);

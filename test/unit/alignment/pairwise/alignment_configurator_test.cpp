@@ -25,7 +25,7 @@ template <typename config_t>
 bool run_test(config_t const & cfg)
 {
     auto r = setup();
-    auto fn = detail::alignment_configurator::configure(r, cfg);
+    auto fn = detail::alignment_configurator::configure<decltype(r)>(cfg);
     auto && [seq1, seq2] = *std::ranges::begin(r);
 
     return fn(seq1, seq2).score() == 0;
