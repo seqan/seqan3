@@ -82,12 +82,12 @@ public:
      * \brief The standard functions are explicitly defaulted.
      * \{
      */
-    debug_stream_type() = default;
-    debug_stream_type(debug_stream_type const &) = default;
-    debug_stream_type(debug_stream_type &&) = default;
-    debug_stream_type & operator= (debug_stream_type const &) = default;
-    debug_stream_type & operator= (debug_stream_type &&) = default;
-    ~debug_stream_type() = default;
+    debug_stream_type() = default;                                       //!< Defaulted
+    debug_stream_type(debug_stream_type const &) = default;              //!< Defaulted
+    debug_stream_type(debug_stream_type &&) = default;                   //!< Defaulted
+    debug_stream_type & operator= (debug_stream_type const &) = default; //!< Defaulted
+    debug_stream_type & operator= (debug_stream_type &&) = default;      //!< Defaulted
+    ~debug_stream_type() = default;                                      //!< Defaulted
 
     //!\brief Construction from an output stream.
     constexpr explicit debug_stream_type(std::ostream & out) : stream{&out}

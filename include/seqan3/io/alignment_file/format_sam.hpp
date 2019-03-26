@@ -118,15 +118,16 @@ class alignment_file_format_sam
 {
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief Rule of five explicitly defaulted.
      * \{
      */
-    alignment_file_format_sam() = default;
+    alignment_file_format_sam() = default;                                         //!< Defaulted
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     alignment_file_format_sam(alignment_file_format_sam const &) = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
     alignment_file_format_sam & operator=(alignment_file_format_sam const &) = delete;
-    alignment_file_format_sam(alignment_file_format_sam &&) = default;
-    alignment_file_format_sam & operator=(alignment_file_format_sam &&) = default;
-    ~alignment_file_format_sam() = default;
+    alignment_file_format_sam(alignment_file_format_sam &&) = default;             //!< Defaulted
+    alignment_file_format_sam & operator=(alignment_file_format_sam &&) = default; //!< Defaulted
+    ~alignment_file_format_sam() = default;                                        //!< Defaulted
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
