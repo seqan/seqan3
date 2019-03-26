@@ -55,12 +55,12 @@ private:
      * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr unbanded_score_dp_matrix_policy() = default;
-    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy const &) = default;
-    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy &&) = default;
-    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy const &) = default;
-    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy &&) = default;
-    ~unbanded_score_dp_matrix_policy() = default;
+    constexpr unbanded_score_dp_matrix_policy() = default;                                                    //!< Defaulted
+    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy const &) = default;             //!< Defaulted
+    constexpr unbanded_score_dp_matrix_policy(unbanded_score_dp_matrix_policy &&) = default;                  //!< Defaulted
+    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy const &) = default; //!< Defaulted
+    constexpr unbanded_score_dp_matrix_policy & operator=(unbanded_score_dp_matrix_policy &&) = default;      //!< Defaulted
+    ~unbanded_score_dp_matrix_policy() = default;                                                             //!< Defaulted
     //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.

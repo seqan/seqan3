@@ -285,11 +285,11 @@ public:
             std::remove_reference_t<ends_t>::static_value), ..., 0);
     }
 
-    constexpr end_gaps(end_gaps const &)             noexcept = default;
-    constexpr end_gaps(end_gaps &&)                  noexcept = default;
-    constexpr end_gaps & operator=(end_gaps const &) noexcept = default;
-    constexpr end_gaps & operator=(end_gaps &&)      noexcept = default;
-    ~end_gaps()                                      noexcept = default;
+    constexpr end_gaps(end_gaps const &)             noexcept = default; //!< Defaulted
+    constexpr end_gaps(end_gaps &&)                  noexcept = default; //!< Defaulted
+    constexpr end_gaps & operator=(end_gaps const &) noexcept = default; //!< Defaulted
+    constexpr end_gaps & operator=(end_gaps &&)      noexcept = default; //!< Defaulted
+    ~end_gaps()                                      noexcept = default; //!< Defaulted
 
     //!\brief Construction from at least one sequence end-gap specifier.
     constexpr end_gaps(ends_t const ...args) noexcept

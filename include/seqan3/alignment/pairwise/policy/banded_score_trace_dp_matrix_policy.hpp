@@ -81,12 +81,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr banded_score_trace_dp_matrix_policy() = default;
-    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy const &) = default;
-    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy &&) = default;
-    constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy const &) = default;
-    constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy &&) = default;
-    ~banded_score_trace_dp_matrix_policy() = default;
+    constexpr banded_score_trace_dp_matrix_policy() = default;                                                        //!< Defaulted
+    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy const &) = default;             //!< Defaulted
+    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy &&) = default;                  //!< Defaulted
+    constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy const &) = default; //!< Defaulted
+    constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy &&) = default;      //!< Defaulted
+    ~banded_score_trace_dp_matrix_policy() = default;                                                                 //!< Defaulted
     //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.

@@ -89,10 +89,10 @@ public:
      */
     alignment_executor_two_way() = delete;
     alignment_executor_two_way(alignment_executor_two_way const &) = delete;
-    alignment_executor_two_way(alignment_executor_two_way &&) = default;
+    alignment_executor_two_way(alignment_executor_two_way &&) = default;              //!< Defaulted
     alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete;
-    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;
-    ~alignment_executor_two_way() = default;
+    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default; //!< Defaulted
+    ~alignment_executor_two_way() = default;                                          //!< Defaulted
 
     //!\brief Constructs this executor with the passed range of alignment instances.
     alignment_executor_two_way(resource_t && resrc,

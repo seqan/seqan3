@@ -49,12 +49,12 @@ private:
      * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr affine_gap_policy() noexcept = default;
-    constexpr affine_gap_policy(affine_gap_policy const &) noexcept = default;
-    constexpr affine_gap_policy(affine_gap_policy &&) noexcept = default;
-    constexpr affine_gap_policy & operator=(affine_gap_policy const &) noexcept = default;
-    constexpr affine_gap_policy & operator=(affine_gap_policy &&) noexcept = default;
-    ~affine_gap_policy() noexcept = default;
+    constexpr affine_gap_policy() noexcept = default;                                      //!< Defaulted
+    constexpr affine_gap_policy(affine_gap_policy const &) noexcept = default;             //!< Defaulted
+    constexpr affine_gap_policy(affine_gap_policy &&) noexcept = default;                  //!< Defaulted
+    constexpr affine_gap_policy & operator=(affine_gap_policy const &) noexcept = default; //!< Defaulted
+    constexpr affine_gap_policy & operator=(affine_gap_policy &&) noexcept = default;      //!< Defaulted
+    ~affine_gap_policy() noexcept = default;                                               //!< Defaulted
     //!\}
 
     /*!\brief Computes the score of the current cell.

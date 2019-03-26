@@ -71,12 +71,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr static_band()                                noexcept = default;
-    constexpr static_band(static_band const &)             noexcept = default;
-    constexpr static_band(static_band &&)                  noexcept = default;
-    constexpr static_band & operator=(static_band const &) noexcept = default;
-    constexpr static_band & operator=(static_band &&)      noexcept = default;
-    ~static_band()                                         noexcept = default;
+    constexpr static_band()                                noexcept = default; //!< Defaulted
+    constexpr static_band(static_band const &)             noexcept = default; //!< Defaulted
+    constexpr static_band(static_band &&)                  noexcept = default; //!< Defaulted
+    constexpr static_band & operator=(static_band const &) noexcept = default; //!< Defaulted
+    constexpr static_band & operator=(static_band &&)      noexcept = default; //!< Defaulted
+    ~static_band()                                         noexcept = default; //!< Defaulted
 
     /*!\brief Construction from seqan3::lower_bound and seqan3::upper_bound.
      * \tparam input_value_t The input type of the lower and upper band boundaries.
