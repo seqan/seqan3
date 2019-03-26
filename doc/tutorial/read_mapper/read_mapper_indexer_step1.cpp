@@ -22,7 +22,7 @@ void initialise_argument_parser(argument_parser & parser, cmd_arguments & args)
     parser.info.short_description = "Creates an index over a reference.";
     parser.info.version = "1.0.0";
     parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.", option_spec::REQUIRED,
-                      file_ext_validator({"fa","fasta"}) | seqan3::file_existance_validator{});
+                      file_ext_validator({"fa","fasta"}) | seqan3::path_existence_validator{});
     parser.add_option(args.index_path, 'o', "output", "The output index file path.", option_spec::DEFAULT,
                       file_ext_validator{{"index"}});
 }

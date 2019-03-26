@@ -34,46 +34,114 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(validator_concept<value_list_validator<std::string>>);
     EXPECT_TRUE(validator_concept<regex_validator>);
     EXPECT_TRUE(validator_concept<file_ext_validator>);
-    EXPECT_TRUE(validator_concept<file_existance_validator>);
+    EXPECT_TRUE(validator_concept<path_existence_validator>);
 
     EXPECT_TRUE(validator_concept<decltype(file_ext_validator{{"t"}} | regex_validator{".*"})>);
 }
 
 TEST(validator_test, no_file)
 {
-    std::filesystem::path p{"./sandbox.fasta"};
-    std::string s{"./stonebox.fasta"};
-    file_existance_validator my_validator{};
-    EXPECT_THROW(my_validator(p), parser_invalid_argument);
-    EXPECT_THROW(my_validator(s), parser_invalid_argument);
+    // file
+    {
+        std::filesystem::path p{"./sandbox.fasta"};
+        std::string s{"./stonebox.fasta"};
+        path_existence_validator my_validator{};
+        EXPECT_THROW(my_validator(p), parser_invalid_argument);
+        EXPECT_THROW(my_validator(s), parser_invalid_argument);
 
-    std::filesystem::path file_in_path;
+        std::filesystem::path file_in_path;
 
-     // option
-     const char * argv[] = {"./argument_parser_test", "-i", "./sandbox.fasta"};
-     argument_parser parser("test_parser", 3, argv);
-     parser.add_option(file_in_path, 'i', "int-option", "desc",
-                       option_spec::DEFAULT, file_existance_validator());
+        // option
+        const char * argv[] = {"./argument_parser_test", "-i", "./sandbox.fasta"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(file_in_path, 'i', "int-option", "desc",
+                          option_spec::DEFAULT, path_existence_validator{});
 
-     EXPECT_THROW(parser.parse(), parser_invalid_argument);
+        EXPECT_THROW(parser.parse(), parser_invalid_argument);
+    }
+
+    // directory
+    {
+        std::filesystem::path p{"./sandbox/"};
+        std::string s{"./stonebox/"};
+        path_existence_validator my_validator{};
+        EXPECT_THROW(my_validator(p), parser_invalid_argument);
+        EXPECT_THROW(my_validator(s), parser_invalid_argument);
+
+        std::filesystem::path dir_in_path;
+
+        // option
+        const char * argv[] = {"./argument_parser_test", "-i", "./sandbox/"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(dir_in_path, 'i', "int-option", "desc",
+                          option_spec::DEFAULT, path_existence_validator{});
+
+        EXPECT_THROW(parser.parse(), parser_invalid_argument);
+    }
 }
 
 TEST(validator_test, file_exists)
 {
-    test::tmp_filename tmp_file_name{"testbox.fasta"};
-    std::ofstream tmp_file(tmp_file_name.get_path());
-    file_existance_validator my_validator{};
-    EXPECT_NO_THROW(my_validator(tmp_file_name.get_path()));
+    test::tmp_filename tmp_name{"testbox.fasta"};
 
-    std::filesystem::path file_in_path;
+    // file
+    {
+        std::ofstream tmp_file(tmp_name.get_path());
+        path_existence_validator my_validator{};
+        EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
 
-    // option
-    const char * argv[] = {"./argument_parser_test", "-i", tmp_file_name.get_path().c_str()};
-    argument_parser parser("test_parser", 3, argv);
-    parser.add_option(file_in_path, 'i', "int-option", "desc",
-                      option_spec::DEFAULT, file_existance_validator());
+        std::filesystem::path file_in_path;
 
-    EXPECT_NO_THROW(parser.parse());
+        // option
+        std::filesystem::path path =  tmp_name.get_path();
+        const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(file_in_path, 'i', "int-option", "desc",
+                          option_spec::DEFAULT, path_existence_validator{});
+
+        EXPECT_NO_THROW(parser.parse());
+    }
+
+    // directory
+    {
+        std::ofstream tmp_dir(tmp_name.get_path().parent_path());
+        path_existence_validator my_validator{};
+        EXPECT_NO_THROW(my_validator(tmp_name.get_path().parent_path()));
+
+        std::filesystem::path dir_in_path;
+
+        // option
+        std::filesystem::path path = tmp_name.get_path().parent_path();
+        const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(dir_in_path, 'i', "int-option", "desc",
+                          option_spec::DEFAULT, path_existence_validator{});
+
+        EXPECT_NO_THROW(parser.parse());
+    }
+
+    {
+        // get help page message
+        std::filesystem::path path;
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        argument_parser parser("test_parser", 2, argv);
+        parser.add_positional_option(path, "desc", path_existence_validator{});
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string("test_parser"
+                               "==========="
+                               "POSITIONAL ARGUMENTS"
+                               "    ARGUMENT-1 (std::filesystem::path)"
+                               "          desc The file or directory is checked for existence."
+                               "VERSION"
+                               "    Last update: "
+                               "    test_parser version: "
+                               "    SeqAn version: ") + seqan3_version;
+
+        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    }
 }
 
 TEST(validator_test, arithmetic_range_validator_success)
