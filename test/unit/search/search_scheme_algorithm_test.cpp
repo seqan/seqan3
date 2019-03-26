@@ -29,7 +29,7 @@
 using namespace seqan3;
 
 template <typename text_t>
-inline void test_search_hamming(auto it, text_t const & text, auto const & search, uint64_t const query_length,
+inline void test_search_hamming(auto index, text_t const & text, auto const & search, uint64_t const query_length,
                                 std::vector<uint8_t> const & error_distribution, time_t const seed,
                                 auto const & blocks_length, auto const & ordered_blocks_length,
                                 uint64_t const start_pos)
@@ -41,6 +41,7 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
 
     // Modify query s.t. it has errors matching error_distribution.
     auto query = orig_query;
+    auto it = index.begin();
     uint64_t current_blocks_length = 0;
     for (uint8_t block = 0; block < search.blocks(); ++block)
     {
@@ -133,8 +134,9 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
     // Find all hits using search schemes.
     detail::search_ss<false>(it, query, start_pos, start_pos + 1, 0, 0, true, search, blocks_length, error_left,
                              delegate_ss);
+    
     // Find all hits using trivial backtracking.
-    detail::search_trivial<false>(it, query, 0, error_left, delegate_trivial);
+    detail::search_trivial<false>(index, query, error_left, delegate_trivial);
 
     // Eliminate hits that we are not interested in (based on the search and chosen error distribution)
     hits_ss.erase(std::remove_if(hits_ss.begin(), hits_ss.end(), remove_predicate_ss), hits_ss.end());
@@ -203,7 +205,7 @@ inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, ti
 
                     for (auto && error_distribution : error_distributions[search_id])
                     {
-                        test_search_hamming(index.begin(), text, search_scheme[search_id], query_length,
+                        test_search_hamming(index, text, search_scheme[search_id], query_length,
                                             error_distribution, seed, blocks_length, ordered_blocks_length, start_pos);
                     }
                 }

@@ -259,6 +259,23 @@ TYPED_TEST(search_test, error_levenshtein)
     }
 }
 
+TYPED_TEST(search_test, error_indel_no_substitution)
+{
+    using hits_result_t = std::vector<typename TypeParam::size_type>;
+
+    {
+        // Match one mismatch with 1 insertion and deletion since mismatches are not allowed.
+        configuration const cfg = max_error{total{2}, deletion{2}, insertion{2}};
+        EXPECT_EQ(uniquify(search("GTACCTAC"_dna4, this->index, cfg)), (hits_result_t{2}));
+    }
+
+    {
+        // Enumerate a deletion and match one mismatch with 1 insertion and deletion since mismatches are not allowed.
+        configuration const cfg = max_error{total{3}, deletion{3}, insertion{3}};
+        EXPECT_EQ(uniquify(search("GTATCCTAC"_dna4, this->index, cfg)), (hits_result_t{2}));
+    }
+}
+
 TYPED_TEST(search_test, search_strategy_all)
 {
     using hits_result_t = std::vector<typename TypeParam::size_type>;
@@ -278,15 +295,72 @@ TYPED_TEST(search_test, search_strategy_best)
 {
     using hits_result_t = std::vector<typename TypeParam::size_type>;
 
+    hits_result_t possible_hits{0, 4, 8}; // any of 0, 4, 8 ... 1, 5, 9 are not best hits
     {
         configuration const cfg = max_error{total{1}} | mode{best};
 
-        hits_result_t possible_hits{0, 4, 8}; // any of 0, 4, 8 ... 1, 5, 9 are not best hits
         hits_result_t result = search("ACGT"_dna4, this->index, cfg);
         ASSERT_EQ(result.size(), 1u);
         EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
 
         EXPECT_EQ(search("AAAA"_dna4, this->index, cfg), (hits_result_t{})); // no hit
+    }
+
+    { // Find best match with 1 insertion at the end.
+        configuration const cfg = max_error{total{1}, insertion{1}} | mode{best};
+
+        hits_result_t result = search("ACGTT"_dna4, this->index, cfg);
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+    }
+
+    {  // Find best match with a match at the end, allowing a insertion.
+        configuration const cfg = max_error{total{1}, insertion{1}} | mode{best};
+
+        hits_result_t result = search("ACGT"_dna4, this->index, cfg);
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+    }
+
+    {  // Find best match with a deletion.
+        configuration const cfg = max_error{total{1}, deletion{1}} | mode{best};
+
+        hits_result_t result = search("AGT"_dna4, this->index, cfg);
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+    }
+
+    { // Find best match with a match at the end, allowing a deletion.
+        configuration const cfg = max_error{total{1}, deletion{1}} | mode{best};
+
+        hits_result_t result = search("ACGT"_dna4, this->index, cfg);
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+    }
+
+    {  // Find best match with a substitution at the end.
+        configuration const cfg = max_error{total{1}, substitution{1}} | mode{best};
+
+        hits_result_t result = search("ACGC"_dna4, this->index, cfg);
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+    }
+
+    {  // Find best match with a match at the end, allowing a substitution.
+        configuration const cfg = max_error{total{1}, substitution{1}} | mode{best};
+
+        hits_result_t result = search("ACGT"_dna4, this->index, cfg);
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits.begin(), possible_hits.end(), result[0]) != possible_hits.end());
+    }
+
+    {  // Find best match with 2 deletions.
+        hits_result_t possible_hits2d{0, 4}; // any of 0, 4 ... 1, 5 are not best hits
+        configuration const cfg = max_error{total{2}, deletion{2}} | mode{best};
+
+        hits_result_t result = search("AGTAGT"_dna4, this->index, cfg);
+        ASSERT_EQ(result.size(), 1u);
+        EXPECT_TRUE(std::find(possible_hits2d.begin(), possible_hits2d.end(), result[0]) != possible_hits2d.end());
     }
 }
 
