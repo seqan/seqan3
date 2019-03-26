@@ -341,8 +341,8 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
             // No deletion at the beginning of the leftmost block.
             // No deletion at the end of the rightmost block.
             if (error_left.deletion > 0 &&
-                !(go_right && (rb == 1 || rb == query.size() + 1)) &&
-                !(!go_right && (lb == 0 || lb == query.size())))
+                !(go_right && (rb == 1 || rb == std::ranges::size(query) + 1)) &&
+                !(!go_right && (lb == 0 || lb == std::ranges::size(query))))
             {
                 search_param error_left3{error_left};
                 error_left3.total--;
@@ -370,7 +370,7 @@ inline bool search_ss(cursor_t cur, query_t & query,
     uint8_t const min_error_left_in_block = std::max(search.l[block_id] - errors_spent, 0); // NOTE: changed
 
     // Done.
-    if (min_error_left_in_block == 0 && lb == 0 && rb == query.size() + 1)
+    if (min_error_left_in_block == 0 && lb == 0 && rb == std::ranges::size(query) + 1)
     {
         delegate(cur);
         return true;
@@ -459,7 +459,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
                       search_scheme_t const & search_scheme, delegate_t && delegate)
 {
     // retrieve cumulative block lengths and starting position
-    auto const block_info = search_scheme_block_info(search_scheme, query.size());
+    auto const block_info = search_scheme_block_info(search_scheme, std::ranges::size(query));
 
     for (uint8_t search_id = 0; search_id < search_scheme.size(); ++search_id)
     {

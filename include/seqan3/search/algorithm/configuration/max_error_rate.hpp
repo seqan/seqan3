@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include <range/v3/algorithm/fill.hpp>
-#include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/view/slice.hpp>
 
@@ -110,7 +108,7 @@ public:
         }, std::forward<errors_t>(errors)...);
 
         // check correct values.
-        ranges::for_each(base_t::value, [](auto error_elem)
+        std::ranges::for_each(base_t::value, [](auto error_elem)
         {
             if (0.0 > error_elem  || error_elem > 1.0)
                 throw std::invalid_argument("Error rates must be between 0 and 1.");
@@ -119,7 +117,7 @@ public:
         // Only total is set so we set all other errors to the total limit.
         if constexpr (((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) == 1)
         {
-            ranges::fill(base_t::value | view::slice(1, 4), base_t::value[0]);
+            std::ranges::fill(base_t::value | view::slice(1, 4), base_t::value[0]);
         } // otherwise if total is not set but any other field is set than use total as the sum of all set errors.
         else if constexpr (!((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) > 0)
         {

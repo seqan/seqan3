@@ -14,9 +14,6 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/join.hpp>
-
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/range/shortcuts.hpp>

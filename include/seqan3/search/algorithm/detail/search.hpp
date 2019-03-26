@@ -62,7 +62,7 @@ inline auto search_single(index_t const & index, query_t & query, configuration_
         auto & [total, subs, ins, del] = max_error;
         std::tie(total, subs, ins, del) = std::apply([& query] (auto && ... args)
             {
-                return std::tuple{(args * query.size())...};
+                return std::tuple{(args * std::ranges::size(query))...};
             }, get<search_cfg::max_error_rate>(cfg).value);
     }
 
