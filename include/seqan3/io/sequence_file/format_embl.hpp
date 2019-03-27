@@ -18,10 +18,7 @@
 #include <vector>
 
 #include <range/v3/view/chunk.hpp>
-#include <range/v3/view/join.hpp>
-#include <range/v3/view/remove_if.hpp>
 #include <range/v3/view/repeat_n.hpp>
-#include <range/v3/view/take_while.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/metafunction/range.hpp>
@@ -41,8 +38,8 @@
 namespace seqan3
 {
 /*!\brief       The EMBL format.
- * \implements  SequenceFileInputFormat
- * \implements  SequenceFileOutputFormat
+ * \implements  seqan3::SequenceFileInputFormat
+ * \implements  seqan3::SequenceFileOutputFormat
  * \ingroup     sequence
  *
  * \details
@@ -106,14 +103,14 @@ public:
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
         auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<char>{stream}),
-                                          decltype(std::istreambuf_iterator<char>{})>
-                            {std::istreambuf_iterator<char>{stream},
-                             std::istreambuf_iterator<char>{}};
-        auto stream_it = ranges::begin(stream_view);
+                                                 decltype(std::istreambuf_iterator<char>{})>
+                           {std::istreambuf_iterator<char>{stream},
+                            std::istreambuf_iterator<char>{}};
+        auto stream_it = std::ranges::begin(stream_view);
 
         std::string idbuffer;
         std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                     std::back_inserter(idbuffer));
+                          std::back_inserter(idbuffer));
         if (idbuffer != "ID")
             throw parse_error{"An entry has to start with the code word ID."};
 
@@ -125,7 +122,7 @@ public:
                 do
                 {
                     std::ranges::copy(stream_view | view::take_until_or_throw(is_char<'S'>)
-                                             | view::char_to<value_type_t<id_type>>,
+                                                  | view::char_to<value_type_t<id_type>>,
                                  std::back_inserter(id));
                     id.push_back(*stream_it);
                     ++stream_it;
@@ -136,19 +133,19 @@ public:
             else
             {
                 // ID
-                detail::consume(stream_view | ranges::view::take_while(is_blank));
+                detail::consume(stream_view | view::take_until(!is_blank));
 
                 // read id
                 if (options.truncate_ids)
                 {
                     std::ranges::copy(stream_view | view::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
-                                             | view::char_to<value_type_t<id_type>>,
+                                                  | view::char_to<value_type_t<id_type>>,
                                  std::back_inserter(id));
                 }
                 else
                 {
                     std::ranges::copy(stream_view | view::take_until_or_throw(is_char<';'>)
-                                             | view::char_to<value_type_t<id_type>>,
+                                                  | view::char_to<value_type_t<id_type>>,
                                  std::back_inserter(id));
                 }
             }
@@ -169,8 +166,7 @@ public:
         auto constexpr is_end = is_char<'/'> ;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto seq_view = stream_view | ranges::view::remove_if(is_space || is_digit)
-            // ignore whitespace and numbers
+            auto seq_view = stream_view | std::view::filter(!(is_space || is_digit)) // ignore whitespace and numbers
                                         | view::take_until_or_throw(is_end);   // until //
 
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
@@ -196,13 +192,6 @@ public:
         ++stream_it;
         ++stream_it;
         ++stream_it;
-
-        // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<char>{stream} == std::istreambuf_iterator<char>{}) &&
-            (!stream.eof()))
-        {
-            stream.get(); // triggers error in stream and sets eof
-        }
     }
 
     //!\copydoc SequenceFileOutputFormat::write
@@ -216,8 +205,7 @@ public:
                id_type                              && id,
                qual_type                            && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-
-        ranges::ostreambuf_iterator stream_it{stream};
+        std::ranges::ostreambuf_iterator stream_it{stream};
         [[maybe_unused]] size_t sequence_size = 0;
         [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
@@ -269,8 +257,8 @@ public:
             for (auto chunk : seqChunk)
             {
                 std::ranges::copy(chunk | view::to_char
-                                   | ranges::view::chunk(10)
-                                   | ranges::view::join(' '), stream_it);
+                                        | ranges::view::chunk(10)
+                                        | std::view::join(' '), stream_it);
                 ++i;
                 stream_it = ' ';
                 bp = std::min(sequence_size, bp + 60);
@@ -284,7 +272,6 @@ public:
             stream_it = '\n';
         }
     }
-
 };
 
 } // namespace seqan3
