@@ -81,7 +81,7 @@ private:
         using value_type        = std::tuple<underlying_val_t, underlying_val_t>;
         using reference         = std::tuple<underlying_ref_t, underlying_ref_t>;
         using pointer           = void;
-        using iterator_category = typename std::iterator_traits<underlying_iterator_type>::iterator_category;
+        using iterator_category = iterator_tag_t<underlying_iterator_type>;
         //!\}
 
         /*!\name Constructors, destructor and assignment
