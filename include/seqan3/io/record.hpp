@@ -164,14 +164,14 @@ public:
     using base_type = detail::transfer_template_args_onto_t<field_types, std::tuple>;
 
     /*!\name Constructors, destructor and assignment
-     * \brief Rule of five explicitly defaulted.
      * \{
      */
-    record() = default;
-    record(record const &) = default;
-    record & operator=(record const &) = default;
-    record(record &&) = default;
-    record & operator=(record &&) = default;
+    record() = default;                           //!< Defaulted
+    record(record const &) = default;             //!< Defaulted
+    record & operator=(record const &) = default; //!< Defaulted
+    record(record &&) = default;                  //!< Defaulted
+    record & operator=(record &&) = default;      //!< Defaulted
+    ~record() = default;                          //!< Defaulted
 
     //!\brief Inherit std::tuple's constructors.
     using base_type::base_type;
