@@ -115,7 +115,7 @@ public:
         print_header();
 
         print_section("Synopsis");
-        _print_synopsis();
+        print_synopsis();
 
         if (!meta.description.empty())
         {
@@ -232,14 +232,13 @@ private:
     }
 
     //!\brief Prints a help page synopsis in HTML format section to std::cout.
-    void _print_synopsis()
+    void print_synopsis()
     {
         for (unsigned i = 0; i < meta.synopsis.size(); ++i)
         {
             std::string text = "\\fB";
-            text.append(meta.app_name);
-            text.append("\\fP ");
             text.append(meta.synopsis[i]);
+            text.insert(text.find_first_of(" \t"), "\\fP");
 
             print_line(text, false);
         }

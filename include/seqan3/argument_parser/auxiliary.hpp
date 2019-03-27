@@ -99,7 +99,9 @@ struct argument_parser_meta_data // holds all meta information
      *        is separated by a new line.
      */
     std::vector<std::string> description;
-    //!\brief Add lines of usage to the synopsis section of the help page (e.g. "[OPTIONS] FILE1 FILE1").
+    /*!\brief Add lines of usage to the synopsis section of the help page (e.g. 
+     *        "./my_read_mapper [OPTIONS] FILE1 FILE1").
+     */
     std::vector<std::string> synopsis;
     /*!\brief Provide some examples on how to use your tool and what standard
      *        parameters might be appropriate in different cases (e.g.

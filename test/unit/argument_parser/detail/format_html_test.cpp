@@ -51,8 +51,8 @@ TEST(html_test, html)
 
    // Full html help page.
    argument_parser parser1("program_full_options", 3, argv0);
-   parser1.info.synopsis.push_back("synopsis");
-   parser1.info.synopsis.push_back("synopsis2");
+   parser1.info.synopsis.push_back("./some_binary_name synopsis");
+   parser1.info.synopsis.push_back("./some_binary_name synopsis2");
    parser1.info.description.push_back("description");
    parser1.info.description.push_back("description2");
    parser1.info.short_description = "short description";
@@ -82,9 +82,9 @@ TEST(html_test, html)
                           "<div>short description</div>"
                           "<h2>Synopsis</h2>"
                           "<p>"
-                          "<strong>program_full_options</strong> synopsis"
+                          "<strong>./some_binary_name</strong> synopsis"
                           "<br />"
-                          "<strong>program_full_options</strong> synopsis2"
+                          "<strong>./some_binary_name</strong> synopsis2"
                           "<br />"
                           "</p>"
                           "<h2>Description</h2>"
