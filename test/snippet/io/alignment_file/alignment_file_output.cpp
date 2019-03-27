@@ -20,10 +20,32 @@ alignment_file_output fout{tmp_dir/"my.sam"}; // SAM format detected, std::ofstr
 }
 
 {
+//! [filename_construction_with_ref_info]
+std::vector<std::string> ref_ids{"ref1", "ref2"};
+std::vector<size_t>      ref_lenghts{1234, 5678};
+
+alignment_file_output fout{tmp_dir/"my.sam", ref_ids, ref_lenghts};
+//! [filename_construction_with_ref_info]
+}
+
+{
 //! [format_construction]
 // no need to specify the template arguments <...> for format specialization:
 alignment_file_output fout{tmp_dir/"my.sam", fields<field::MAPQ>{}};
 //! [format_construction]
+}
+
+{
+//! [set_header]
+std::vector<std::string> ref_ids{"ref1", "ref2"};
+std::vector<size_t>      ref_lenghts{1234, 5678};
+
+// always give reference information if you want to have your header properly initialised
+alignment_file_output fout{tmp_dir/"my.sam", ref_ids, ref_lenghts};
+
+// add information to the header of the file.
+fout.header().comments.push_back("This is a comment");
+//! [set_header]
 }
 
 {
@@ -42,24 +64,14 @@ fout = range; // will iterate over the records and write them
 }
 
 {
-//! [set_header]
-alignment_file_output fout{tmp_dir/"my.sam"};
-
-// add information to the header of the file.
-fout.header().comments.push_back("This is a comment");
-//! [set_header]
-}
-
-{
 //! [custom_fields]
-//! \todo Uncomment once seqan3::alignment_file_input is implemented.
-// alignment_file_input  fin{"input.sam", fields<field::REF_OFFSET, field::FLAG>{}};
-// alignment_file_output fout{"output.sam"}; // doesn't have to match the configuration
+alignment_file_input  fin{tmp_dir/"my.sam", fields<field::REF_OFFSET, field::FLAG>{}};
+alignment_file_output fout{tmp_dir/"output.sam"}; // doesn't have to match the configuration
 
-// for (auto & r : fin)
-// {
-//     fout.push_back(r); // copy all the records.
-// }
+for (auto & r : fin)
+{
+    fout.push_back(r); // copy all the records.
+}
 //! [custom_fields]
 }
 
@@ -86,26 +98,24 @@ fout.header().comments.push_back("This is a comment");
 
 {
 //! [input_range]
-//! \todo Uncomment once seqan3::alignment_file_input is implemented.
-// // copying a file in one line:
-// alignment_file_output{tmp_dir/"output.sam"} = alignment_file_input{tmp_dir/"input.sam"};
+// copying a file in one line:
+alignment_file_output{tmp_dir/"output.sam"} = alignment_file_input{tmp_dir/"input.sam"};
 
 // with alignment_file_output as a variable:
-// alignment_file_output fout{tmp_dir/"output.sam"};
-// alignment_file_input fin{tmp_dir/"input.sam"};
-// fout = fin;
+alignment_file_output fout{tmp_dir/"output.sam"};
+alignment_file_input fin{tmp_dir/"input.sam"};
+fout = fin;
 
-// // or in pipe notation:
-// alignment_file_input{tmp_dir/"input.sam"} | alignment_file_output{tmp_dir/"output.sam"};
+// or in pipe notation:
+alignment_file_input{tmp_dir/"input.sam"} | alignment_file_output{tmp_dir/"output.sam"};
 //! [input_range]
 }
 
 {
 //! [io_pipeline]
-//! \todo Uncomment once seqan3::alignment_file_input is implemented.
-// alignment_file_input{tmp_dir/"input.sam"} | view::persist
-//                                           | std::view::take(5) // take only the first 5 records
-//                                           | alignment_file_output{tmp_dir/"output.sam"};
+alignment_file_input{tmp_dir/"input.sam"} | view::persist
+                                          | std::view::take(5) // take only the first 5 records
+                                          | alignment_file_output{tmp_dir/"output.sam"};
 //! [io_pipeline]
 }
 

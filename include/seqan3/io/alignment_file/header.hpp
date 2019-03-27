@@ -12,18 +12,56 @@
 
 #pragma once
 
+#include <deque>
 #include <unordered_map>
 #include <vector>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/core/metafunction/pre.hpp>
+#include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
 
+class alignment_file_format_sam;
+
 //!\brief Stores the header information of alignment files.
 //!\ingroup alignment_file
-struct alignment_file_header
+template <std::ranges::ForwardRange ref_ids_type = std::deque<std::string>>
+class alignment_file_header
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    //!\brief Default constructor is defaulted.
+    alignment_file_header() = default;
+    //!\brief Copy construction is defaulted.
+    alignment_file_header(alignment_file_header const &) = default;
+    //!\brief Copy assignment is defaulted.
+    alignment_file_header & operator=(alignment_file_header const &) = default;
+    //!\brief Move construction is defaulted.
+    alignment_file_header(alignment_file_header &&) = default;
+    //!\brief Move assignment is defaulted.
+    alignment_file_header & operator=(alignment_file_header &&) = default;
+    //!\brief Destructor is defaulted.
+    ~alignment_file_header() = default;
+
+    /*!\brief Construct from a range of reference ids which redirects the `ref_ids_ptr` member (non-owning).
+     * \param[in] ref_ids The range over reference ids to redirect the pointer at.
+     */
+    alignment_file_header(ref_ids_type & ref_ids) :
+        ref_ids_ptr{&ref_ids, ref_ids_deleter_noop}
+    {}
+
+    /*!\brief Construct from a rvalue range of reference ids which is moved into the `ref_ids_ptr` (owning).
+     * \param[in] ref_ids The range over reference ids to own.
+     */
+    alignment_file_header(ref_ids_type && ref_ids) :
+        ref_ids_ptr{new ref_ids_type{std::move(ref_ids)}, ref_ids_deleter_default}
+    {}
+    //!\}
+
     //!\brief Stores information of the program/tool that was used to create the file.
     struct program_info_t
     {
@@ -35,27 +73,64 @@ struct alignment_file_header
         std::string version;           //!< The program/tool version.
     };
 
-    std::string format_version;     //!< The file format version. Note: this is overwritten by our formats on output.
-    std::string sorting{"unknown"}; //!< The sorting state of the file. SAM: [unknown, unsorted, queryname, coordinate].
-    std::string grouping{"none"};   //!< The grouping state of the file. SAM: [none, query, reference].
+    std::string format_version; //!< The file format version. Note: this is overwritten by our formats on output.
+    std::string sorting;        //!< The sorting of the file. SAM: [unknown, unsorted, queryname, coordinate].
+    std::string subsorting;     //!< The sub-sorting of the file. SAM: [unknown, unsorted, queryname, coordinate](:[A-Za-z0-9_-]+)+.
+    std::string grouping;       //!< The grouping of the file. SAM: [none, query, reference].
 
     std::vector<program_info_t> program_infos; //!< The list of program information.
 
     std::vector<std::string> comments;         //!< The list of comments.
 
-    /*!\brief The Reference Dictionary. (used by the SAM/BAM format)
+private:
+    //!\brief The type of the internal ref_ids pointer. Allows dynamically setting ownership management.
+    using ref_ids_ptr_t = std::unique_ptr<ref_ids_type, std::function<void(ref_ids_type*)>>;
+    //!\brief Stream deleter that does nothing (no ownership assumed).
+    static void ref_ids_deleter_noop(ref_ids_type *) {}
+    //!\brief Stream deleter with default behaviour (ownership assumed).
+    static void ref_ids_deleter_default(ref_ids_type * ptr) { delete ptr; }
+    //!\brief The key's type of ref_dict.
+    using key_type = std::ranges::all_view<reference_t<ref_ids_type>>;
+    //!\brief The pointer to reference ids information (non-owning if reference information is given).
+    ref_ids_ptr_t ref_ids_ptr{new ref_ids_type{}, ref_ids_deleter_default};
+
+public:
+    /*!/brief The range of reference ids.
      *
      * \details
      *
-     * The reference dictionary stores the reference name, its length and
+     * This member function gives you access to the range of reference ids.
+     *
+     * When reading a file, there are three scenarios:
+     * 1) Reference id information is provided on construction. In this case, no copy is made but this function
+     *    gives you a reference to the provided range. When reading the header or the records, their reference
+     *    information will be checked against the given input.
+     * 2) No reference information is provided on construction but the \@SQ tags are present in the header.
+     *    In this case, the reference id information is extracted from the header and this member function provides
+     *    access to them. When reading the records, their reference id information will be checked against the header
+     *    information.
+     * 3) No reference information is provided on construction an no \@SQ tags are present in the header.
+     *    In this case, the reference information is parsed from the records field::REF_ID and stored in the header.
+     *    This member function then provides access to the unique list of reference ids encountered in the records.
+     */
+    ref_ids_type & ref_ids()
+    {
+        return *ref_ids_ptr;
+    }
+
+    /*!\brief The reference information. (used by the SAM/BAM format)
+     *
+     * \details
+     *
+     * The reference information store the length (\@LN tag) and
      * additional information of each reference sequence in the file. The record
-     * may (SAM) or must (BAM) then store only the index of the reference.
+     * must then store only the index of the reference.
      * The name and length information are required if the header is provided
      * and each reference sequence that is referred to in any of the records
      * must be present in the dictionary, otherwise a seqan3::format_error will
      * be thrown upon reading or writing a file.
      *
-     * The additional information (2nd tuple entry) for the SAM format must follow
+     * The additional information (2nd tuple entry) must model
      * the following formatting rules: The information is given in a tab separated
      * TAG:VALUE format, where TAG must be one of [AH, AN, AS, m5, SP, UR].
      * The following information and rules apply for each tag (taken from the SAM specs):
@@ -80,7 +155,10 @@ struct alignment_file_header
      *         protocols, e.g http:  or ftp:. If it does not start with one of these
      *         protocols, it is assumed to be a file-system path |
      */
-    std::unordered_map<std::string, std::tuple<uint32_t, std::string>> ref_dict;
+    std::vector<std::tuple<int32_t, std::string>> ref_id_info{};
+
+    //!\brief The mapping of reference id to position in the ref_ids() range and the ref_id_info range.
+    std::unordered_map<key_type, int32_t, std::hash<key_type>, detail::view_equality_fn> ref_dict{};
 
     /*!\brief The Read Group Dictionary. (used by the SAM/BAM format)
      *

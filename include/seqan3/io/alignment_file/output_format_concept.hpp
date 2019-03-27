@@ -7,7 +7,7 @@
 
 /*!\file
  * \brief Provides seqan3::AlignmentFileOutputFormat and auxiliary classes.
- * \author Svenja Mehringer <avenja.mehringer AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
@@ -42,30 +42,30 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT AlignmentFileOutputFormat =
-    requires (t                                                               & v,
-              std::ofstream                                                   & stream,
-              alignment_file_output_options                                   & options,
-              std::unique_ptr<alignment_file_header>                          & header_ptr,
-              dna5_vector                                                     & seq,
-              std::vector<phred42>                                            & qual,
-              std::string                                                     & id,
-              uint8_t                                                         & offset,
-              dna5_vector                                                     & ref_seq,
-              std::string                                                     & ref_id,
-              uint32_t                                                        & ref_offset,
-              std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>> & align,
-              uint16_t                                                        & flag,
-              uint16_t                                                        & mapq,
-              std::tuple<std::string, uint32_t, uint32_t>                     & mate, // mate_ref_id, mate_ref_offset, mate_tlen
-              sam_tag_dictionary                                              & tag_dict,
-              double                                                          & e_value,
-              double                                                          & bit_score)
+    requires (t                                                                    & v,
+              std::ofstream                                                        & stream,
+              alignment_file_output_options                                        & options,
+              alignment_file_header<>                                              & header,
+              dna5_vector                                                          & seq,
+              std::vector<phred42>                                                 & qual,
+              std::string                                                          & id,
+              int32_t                                                              & offset,
+              dna5_vector                                                          & ref_seq,
+              std::optional<int32_t>                                               & ref_id,
+              std::optional<int32_t>                                               & ref_offset,
+              std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>>      & align,
+              uint16_t                                                             & flag,
+              uint8_t                                                              & mapq,
+              std::tuple<std::optional<int32_t>, std::optional<int32_t>, uint32_t> & mate,
+              sam_tag_dictionary                                                   & tag_dict,
+              double                                                               & e_value,
+              double                                                               & bit_score)
 {
     t::file_extensions;
 
     { v.write(stream,
               options,
-              header_ptr,
+              header,
               seq,
               qual,
               id,
@@ -92,7 +92,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
 
 /*!\fn void write(stream_type                            &  stream,
                   alignment_file_output_options const    &  options,
-                  std::unique_ptr<alignment_file_header> & header_ptr,
+                  alignment_file_header<>                & header,
                   seq_type                               && seq,
                   qual_type                              && qual,
                   id_type                                && id,
@@ -127,7 +127,7 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
  *
  * \param[in,out] stream     The output stream to write into.
  * \param[in]     options    File specific options passed to the format.
- * \param[in]     header_ptr A pointer to the header object of the file.
+ * \param[in]     header     A pointer to the header object of the file.
  * \param[in]     seq        The data for seqan3::field::SEQ, i.e. the query sequence.
  * \param[in]     qual       The data for seqan3::field::QUAL, e.g. the query quality sequence.
  * \param[in]     id         The data for seqan3::field::ID, e.g. the read id.

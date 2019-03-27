@@ -16,6 +16,9 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/range/view/single_pass_input.hpp>
+#include <seqan3/range/view/take_until.hpp>
+#include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -23,6 +26,17 @@
 
 namespace seqan3::detail
 {
+//!\brief Comparator that is able two compare two views
+struct view_equality_fn
+{
+    //!\brief Compares to ranges by delegating to std::ranges::equal.
+    template <std::ranges::ForwardRange rng1_type, std::ranges::ForwardRange rng2_type>
+    constexpr bool operator()(rng1_type && rng1, rng2_type && rng2) const
+    {
+        return std::ranges::equal(rng1, rng2);
+    }
+};
+
 /*!\brief Compares two aligned sequence values and returns their CIGAR operation.
  * \ingroup alignment_file
  * \tparam reference_char_type Must be equality comparable to seqan3::gap.
@@ -50,7 +64,7 @@ namespace seqan3::detail
  * ... - ...
  * ```
  * In this case, the function seqan3::detail::compare_aligned_values will return
- * seqan3::'D', since the query char is "deleted".
+ * 'D' since the query char is "deleted".
  *
  * The next alignment column shows the reference char ('C') on top and a
  * query char ('G') at the bottom.
@@ -131,7 +145,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
                              bool const extended_cigar = false)
 {
     if (ref_seq.size() != query_seq.size())
-        throw std::logic_error("The aligned sequences must have the same length.");
+        throw std::logic_error{"The aligned sequences must have the same length."};
 
     std::ostringstream result;
 
@@ -174,8 +188,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
     return result.str();
 }
 
-/*!\brief Transforms an alignment represented by two aligned sequences into the
- *        corresponding CIGAR string.
+/*!\brief Creates a CIGAR string (SAM format) given an alignment represented by two aligned sequences.
  * \ingroup alignment_file
  *
  * \tparam alignment_type  Must model the seqan3::tuple_like_concept and must
