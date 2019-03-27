@@ -17,6 +17,9 @@
 // TODO(rrahn): At support for Windows platforms, when we support it.
 #if defined(__APPLE__)
 #include <unistd.h>
+#elif defined(_WIN32)
+#include <cstring>
+#include <io.h>
 #else  // other unix systems
 #include <stdlib.h>
 #endif
@@ -27,6 +30,18 @@ namespace seqan3
 {
 namespace test
 {
+#if defined(_WIN32)
+inline char * mkdtemp(char * template_name)
+{
+    if (_mktemp_s(template_name, strlen(template_name) + 1))
+        return nullptr;
+
+    if (std::filesystem::create_directories(template_name))
+        return template_name;
+
+    return nullptr;
+}
+#endif
 
 /// \cond
 /*!\brief Creates and maintains a std::filesystem::path to a temporary file.

@@ -113,22 +113,22 @@ TEST(validator_test, input_file)
         std::filesystem::path file_in_path;
 
         // option
-        std::filesystem::path path = tmp_name.get_path();
+        std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(file_in_path, 'i', "int-option", "desc",
                           option_spec::DEFAULT, input_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
-        EXPECT_EQ(file_in_path.string(), path.string());
+        EXPECT_EQ(file_in_path.string(), path);
     }
 
     { // file list.
         std::vector<std::filesystem::path> input_files;
 
         // option
-        std::filesystem::path path = tmp_name.get_path();
-        std::filesystem::path path_2 = tmp_name_2.get_path();
+        std::string const & path = tmp_name.get_path().string();
+        std::string const & path_2 = tmp_name_2.get_path().string();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_2.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
@@ -136,8 +136,8 @@ TEST(validator_test, input_file)
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(input_files.size(), 2u);
-        EXPECT_EQ(input_files[0].string(), path.string());
-        EXPECT_EQ(input_files[1].string(), path_2.string());
+        EXPECT_EQ(input_files[0].string(), path);
+        EXPECT_EQ(input_files[1].string(), path_2);
     }
 
     { // get help page message
@@ -210,22 +210,22 @@ TEST(validator_test, output_file)
         std::filesystem::path file_out_path;
 
         // option
-        std::filesystem::path path = tmp_name.get_path();
+        std::string const & path = tmp_name.get_path().string();
         const char * argv[] = {"./argument_parser_test", "-o", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(file_out_path, 'o', "out-option", "desc",
                           option_spec::DEFAULT, output_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
-        EXPECT_EQ(file_out_path.string(), path.string());
+        EXPECT_EQ(file_out_path.string(), path);
     }
 
     { // file list.
         std::vector<std::filesystem::path> output_files;
 
         // option
-        std::filesystem::path path = tmp_name.get_path();
-        std::filesystem::path path_3 = tmp_name_3.get_path();
+        std::string const & path = tmp_name.get_path().string();
+        std::string const & path_3 = tmp_name_3.get_path().string();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_3.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
@@ -233,8 +233,8 @@ TEST(validator_test, output_file)
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(output_files.size(), 2u);
-        EXPECT_EQ(output_files[0].string(), path.string());
-        EXPECT_EQ(output_files[1].string(), path_3.string());
+        EXPECT_EQ(output_files[0].string(), path);
+        EXPECT_EQ(output_files[1].string(), path_3);
     }
 
     // get help page message
@@ -289,13 +289,14 @@ TEST(validator_test, input_directory)
             std::filesystem::path dir_in_path;
 
             // option
-            const char * argv[] = {"./argument_parser_test", "-i", p.c_str()};
+            std::string const & path = p.string();
+            const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
             argument_parser parser{"test_parser", 3, argv, false};
             parser.add_option(dir_in_path, 'i', "input-option", "desc",
                               option_spec::DEFAULT, input_directory_validator{});
 
             EXPECT_NO_THROW(parser.parse());
-            EXPECT_EQ(p.string(), dir_in_path.string());
+            EXPECT_EQ(path, dir_in_path.string());
         }
     }
 
@@ -335,13 +336,14 @@ TEST(validator_test, output_directory)
         std::filesystem::path dir_out_path;
 
         // option
-        const char * argv[] = {"./argument_parser_test", "-o", p.c_str()};
+        std::string const & path = p.string();
+        const char * argv[] = {"./argument_parser_test", "-o", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(dir_out_path, 'o', "output-option", "desc",
                           option_spec::DEFAULT, output_directory_validator{});
 
         EXPECT_NO_THROW(parser.parse());
-        EXPECT_EQ(p.string(), dir_out_path.string());
+        EXPECT_EQ(path, dir_out_path.string());
     }
 
     {
@@ -940,7 +942,8 @@ TEST(validator_test, chaining_validators)
 
     // option
     {
-        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
+        std::string const & path = tmp_name.get_path().string();
+        const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
@@ -948,11 +951,11 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, tmp_name.get_path().string());
+        EXPECT_EQ(option_value, path);
     }
 
     {
-        auto rel_path = tmp_name.get_path().relative_path();
+        auto rel_path = tmp_name.get_path().relative_path().string();
         const char * argv[] = {"./argument_parser_test", "-s", rel_path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
@@ -962,8 +965,8 @@ TEST(validator_test, chaining_validators)
     }
 
     {
-
-        const char * argv[] = {"./argument_parser_test", "-s", invalid_extension.c_str()};
+        std::string const & path = invalid_extension.string();
+        const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
@@ -973,7 +976,8 @@ TEST(validator_test, chaining_validators)
 
     // with temporary validators
     {
-        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
+        std::string const & path = tmp_name.get_path().string();
+        const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
@@ -983,12 +987,13 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, tmp_name.get_path().string());
+        EXPECT_EQ(option_value, path);
     }
 
     // three validators
     {
-        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
+        std::string const & path = tmp_name.get_path().string();
+        const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
@@ -999,7 +1004,7 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, tmp_name.get_path().string());
+        EXPECT_EQ(option_value, path);
     }
 
     // help page message
@@ -1031,7 +1036,8 @@ TEST(validator_test, chaining_validators)
     // chaining with a container option value type
     {
         std::vector<std::string> option_list_value{};
-        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
+        std::string const & path = tmp_name.get_path().string();
+        const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         argument_parser parser{"test_parser", 3, argv, false};
         parser.add_option(option_list_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
@@ -1040,6 +1046,6 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_list_value[0], tmp_name.get_path().string());
+        EXPECT_EQ(option_list_value[0], path);
     }
 }
