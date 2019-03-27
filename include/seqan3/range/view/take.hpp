@@ -457,7 +457,8 @@ private:
      */
     template <std::ranges::ViewableRange urng_t>
     //!\cond
-        requires std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>
+        requires std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t> &&
+                 std::is_lvalue_reference_v<urng_t>
     //!\endcond
     static auto impl(urng_t && urange, size_t target_size)
     {
@@ -591,15 +592,17 @@ namespace seqan3::view
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                          | `rrng_t` (returned range type)                     |
- * |:---------------------------------------------------------:|:--------------------------------------------------:|
- * | std::basic_string *or* std::basic_string_view             | std::basic_string_view                             |
- * | std::ranges::SizedRange && std::ranges::ContiguousRange   | std::span                                          |
- * | std::ranges::SizedRange && std::ranges::RandomAccessRange | std::ranges::subrange                              |
- * | *else*                                                    | *implementation defined type*                      |
+ * | `urng_t` (underlying range type)                                                      | `rrng_t` (returned range type)|
+ * |:-------------------------------------------------------------------------------------:|:-----------------------------:|
+ * | std::basic_string *or* std::basic_string_view                                         | std::basic_string_view        |
+ * | std::ranges::SizedRange && std::ranges::ContiguousRange                               | std::span                     |
+ * | std::ranges::SizedRange && std::ranges::RandomAccessRange && std::is_lvalue reference | std::ranges::subrange         |
+ * | *else*                                                                                | *implementation defined type* |
  *
  * This adaptor is different from std::view::take in that it performs type erasure for some underlying ranges.
- * It returns exactly the type specified above.
+ * It returns exactly the type specified above. For a std::ranges::SizedRange and std::ranges::RandomAccessRange, the `urng_t`
+ * must satisfy std::is_lvalue_reference_v, as otherwise, a subrange over a temporary iterator is created which has
+ * undefined behavior.
  *
  * Some benchmarks have shown that it is also faster than std::view::take for pure forward and input ranges.
  *

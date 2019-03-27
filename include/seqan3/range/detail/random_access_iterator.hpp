@@ -43,7 +43,7 @@ class random_access_iterator_base
 {
 protected:
     //!\brief Iterator stores pointer to underlying container structure.
-    typename std::add_pointer_t<range_type> host{nullptr};
+    std::add_pointer_t<range_type> host{nullptr};
     //!\brief Use container's size_type as a position.
     using position_type = typename range_type::size_type;
     //!\brief Store position index for container.
