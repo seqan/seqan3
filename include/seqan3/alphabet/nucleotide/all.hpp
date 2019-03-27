@@ -119,8 +119,8 @@
  * |   M      | A *or* C               |     K      |
  * |   R      | A *or* G               |     Y      |
  * |   W      | A *or* T               |     W      |
- * |   Y      | C *or* T               |     S      |
- * |   S      | C *or* G               |     R      |
+ * |   Y      | C *or* T               |     R      |
+ * |   S      | C *or* G               |     S      |
  * |   K      | G *or* T               |     M      |
  * |   V      | A *or* C *or* G        |     B      |
  * |   H      | A *or* C *or* T        |     D      |
