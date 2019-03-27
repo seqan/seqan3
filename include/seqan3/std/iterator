@@ -286,6 +286,19 @@ SEQAN3_CONCEPT RandomAccessIterator = BidirectionalIterator<i> &&
                                     ::ranges::RandomAccessIterator<i>;
 //!\endcond
 
+/*!\interface std::ContiguousIterator <>
+ * \extends std::RandomAccessIterator
+ * \brief The concept ContiguousIterator refines std::RandomAccessIterator by requiring that for every iterator
+ *        `i` and distance `n` where `(a + n)` is a valid iterator `*(a + n)` is equivalent to
+ *        `*(std::addressof(*a) + n)`.
+ * \sa https://en.cppreference.com/w/cpp/iterator/ContiguousIterator
+ */
+//!\cond
+template <typename i>
+SEQAN3_CONCEPT ContiguousIterator = RandomAccessIterator<i> &&
+                                    ::ranges::ContiguousIterator<i>;
+//!\endcond
+
 //!\} // Iterator Concepts.
 
 }  // namespace std

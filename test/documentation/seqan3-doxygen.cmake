@@ -41,7 +41,7 @@ ExternalProject_Add (
     DOWNLOAD_NAME "html-book.tar.xz"
     DOWNLOAD_NO_EXTRACT YES
     BINARY_DIR "${PROJECT_BINARY_DIR}"
-    CONFIGURE_COMMAND tar -xf "html-book.tar.xz" "cppreference-doxygen-web.tag.xml"
+    CONFIGURE_COMMAND /bin/sh -c "xzcat html-book.tar.xz | tar -xf - cppreference-doxygen-web.tag.xml"
     BUILD_COMMAND rm "html-book.tar.xz"
     INSTALL_COMMAND ""
 )

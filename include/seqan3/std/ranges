@@ -269,6 +269,12 @@ using SEQAN3_DOXYGEN_ONLY(ostream_iterator =) ::ranges::ostream_iterator;
 * \brief Alias for ranges::iter_move. Casts the result of dereferencing an object to its associated rvalue reference type/
 */
 using SEQAN3_DOXYGEN_ONLY(iter_move =) ::ranges::iter_move;
+
+/*!\typedef std::ranges::view_interface
+* \brief Alias for ranges::view_interface.
+*/
+template <typename urng_t>
+using view_interface = ::ranges::view_interface<urng_t>;
 //!\}
 } // namespace std::ranges
 
