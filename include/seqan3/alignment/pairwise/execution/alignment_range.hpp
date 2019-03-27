@@ -143,9 +143,9 @@ public:
      * \{
      */
     alignment_range() = default;                                   //!< Defaulted
-    alignment_range(alignment_range const &) = delete;             //!< Deleted
+    alignment_range(alignment_range const &) = delete;             //!< This is a move-only type.
     alignment_range(alignment_range &&) = default;                 //!< Defaulted
-    alignment_range & operator=(alignment_range const &) = delete; //!< Deleted
+    alignment_range & operator=(alignment_range const &) = delete; //!< This is a move-only type.
     alignment_range & operator=(alignment_range &&) = default;     //!< Defaulted
     ~alignment_range() = default;                                  //!< Defaulted
 

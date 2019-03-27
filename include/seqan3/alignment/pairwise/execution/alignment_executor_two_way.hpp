@@ -87,10 +87,10 @@ public:
      * \brief The class is not copy-constructible or copy-assignable but allows move construction and assignment.
      * \{
      */
-    alignment_executor_two_way() = delete;                                               //!< Deleted
-    alignment_executor_two_way(alignment_executor_two_way const &) = delete;             //!< Deleted
+    alignment_executor_two_way() = delete;                                               //!< This is a move-only type.
+    alignment_executor_two_way(alignment_executor_two_way const &) = delete;             //!< This is a move-only type.
     alignment_executor_two_way(alignment_executor_two_way &&) = default;                 //!< Defaulted
-    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete; //!< Deleted
+    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete; //!< This is a move-only type.
     alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;    //!< Defaulted
     ~alignment_executor_two_way() = default;                                             //!< Defaulted
 

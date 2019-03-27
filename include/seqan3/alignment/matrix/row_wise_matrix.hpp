@@ -37,15 +37,14 @@ public:
     using entry_type = entry_t;
 
     /*!\name Constructors, destructor and assignment
-     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
-     * and destructor are implicitly defined.
      * \{
      */
-     row_wise_matrix() = default;
-     row_wise_matrix(row_wise_matrix const &) = default;
-     row_wise_matrix(row_wise_matrix &&) = default;
-     row_wise_matrix & operator=(row_wise_matrix const &) = default;
-     row_wise_matrix & operator=(row_wise_matrix &&) = default;
+     row_wise_matrix() = default;                                    //!< Defaulted
+     row_wise_matrix(row_wise_matrix const &) = default;             //!< Defaulted
+     row_wise_matrix(row_wise_matrix &&) = default;                  //!< Defaulted
+     row_wise_matrix & operator=(row_wise_matrix const &) = default; //!< Defaulted
+     row_wise_matrix & operator=(row_wise_matrix &&) = default;      //!< Defaulted
+     ~row_wise_matrix() = default;                                   //!< Defaulted
     /*!\brief Construct the matrix out of the *entries*, the *rows*,
      *        and the *cols*.
      * \param entries The entry values as a flat std::vector <#entry_type>.
