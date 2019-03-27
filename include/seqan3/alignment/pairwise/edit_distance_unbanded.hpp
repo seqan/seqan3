@@ -194,15 +194,18 @@ private:
 public:
 
     /*!\name Constructors, destructor and assignment
-     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
-     * and destructor are implicitly defined.
      * \{
      */
+     //!\brief The class template parameter may resolve to an lvalue reference which prohibits default constructibility.
      pairwise_alignment_edit_distance_unbanded() = delete;
+     //!\brief Defaulted
      pairwise_alignment_edit_distance_unbanded(pairwise_alignment_edit_distance_unbanded const &) = default;
-     pairwise_alignment_edit_distance_unbanded(pairwise_alignment_edit_distance_unbanded &&) = default;
+     pairwise_alignment_edit_distance_unbanded(pairwise_alignment_edit_distance_unbanded &&) = default; //!< Defaulted
+     //!\brief Defaulted
      pairwise_alignment_edit_distance_unbanded & operator=(pairwise_alignment_edit_distance_unbanded const &) = default;
+     //!\brief Defaulted
      pairwise_alignment_edit_distance_unbanded & operator=(pairwise_alignment_edit_distance_unbanded &&) = default;
+     ~pairwise_alignment_edit_distance_unbanded() = default;                                           //!< Defaulted
 
     /*!\brief Constructor
      * \param[in] _database \copydoc database
@@ -584,15 +587,14 @@ class edit_distance_wrapper
 {
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr edit_distance_wrapper() = default;
-    constexpr edit_distance_wrapper(edit_distance_wrapper const &) = default;
-    constexpr edit_distance_wrapper(edit_distance_wrapper &&) = default;
-    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper const &) = default;
-    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper &&) = default;
-    ~edit_distance_wrapper() = default;
+    constexpr edit_distance_wrapper() = default;                                          //!< Defaulted
+    constexpr edit_distance_wrapper(edit_distance_wrapper const &) = default;             //!< Defaulted
+    constexpr edit_distance_wrapper(edit_distance_wrapper &&) = default;                  //!< Defaulted
+    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper const &) = default; //!< Defaulted
+    constexpr edit_distance_wrapper & operator=(edit_distance_wrapper &&) = default;      //!< Defaulted
+    ~edit_distance_wrapper() = default;                                                   //!< Defaulted
 
     /*!\brief Constructs the wrapper with the passed configuration.
      * \param cfg The configuration to be passed to the algorithm.
@@ -647,15 +649,14 @@ public:
     static constexpr size_t word_size = sizeof(word_type)*8;
 
     /*!\name Constructors, destructor and assignment
-     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
-     * and destructor are implicitly defined.
      * \{
      */
-    alignment_score_matrix() = default;
-    alignment_score_matrix(alignment_score_matrix const &) = default;
-    alignment_score_matrix(alignment_score_matrix &&) = default;
-    alignment_score_matrix & operator=(alignment_score_matrix const &) = default;
-    alignment_score_matrix & operator=(alignment_score_matrix &&) = default;
+    alignment_score_matrix() = default;                                           //!< Defaulted
+    alignment_score_matrix(alignment_score_matrix const &) = default;             //!< Defaulted
+    alignment_score_matrix(alignment_score_matrix &&) = default;                  //!< Defaulted
+    alignment_score_matrix & operator=(alignment_score_matrix const &) = default; //!< Defaulted
+    alignment_score_matrix & operator=(alignment_score_matrix &&) = default;      //!< Defaulted
+    ~alignment_score_matrix() = default;                                          //!< Defaulted
 
     alignment_score_matrix(alignment_type const & alignment) :
         base_score_matrix_type
@@ -715,15 +716,14 @@ public:
     using base_trace_matrix_type = alignment_trace_matrix<database_t const &, query_t const &, align_config_t, score_matrix_type>;
 
     /*!\name Constructors, destructor and assignment
-     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
-     * and destructor are implicitly defined.
      * \{
      */
-    alignment_trace_matrix() = default;
-    alignment_trace_matrix(alignment_trace_matrix const &) = default;
-    alignment_trace_matrix(alignment_trace_matrix &&) = default;
-    alignment_trace_matrix & operator=(alignment_trace_matrix const &) = default;
-    alignment_trace_matrix & operator=(alignment_trace_matrix &&) = default;
+    alignment_trace_matrix() = default;                                           //!< Defaulted
+    alignment_trace_matrix(alignment_trace_matrix const &) = default;             //!< Defaulted
+    alignment_trace_matrix(alignment_trace_matrix &&) = default;                  //!< Defaulted
+    alignment_trace_matrix & operator=(alignment_trace_matrix const &) = default; //!< Defaulted
+    alignment_trace_matrix & operator=(alignment_trace_matrix &&) = default;      //!< Defaulted
+    ~alignment_trace_matrix() = default;                                          //!< Defaulted
 
     alignment_trace_matrix(alignment_type const & alignment) :
         base_trace_matrix_type{alignment.database, alignment.query, alignment.config, score_matrix_type{alignment}}

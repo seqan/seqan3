@@ -80,15 +80,14 @@ private:
 
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr alignment_algorithm()                                        = default;
-    constexpr alignment_algorithm(alignment_algorithm const &)             = default;
-    constexpr alignment_algorithm(alignment_algorithm &&)                  = default;
-    constexpr alignment_algorithm & operator=(alignment_algorithm const &) = default;
-    constexpr alignment_algorithm & operator=(alignment_algorithm &&)      = default;
-    ~alignment_algorithm()                                                 = default;
+    constexpr alignment_algorithm()                                        = default; //!< Defaulted
+    constexpr alignment_algorithm(alignment_algorithm const &)             = default; //!< Defaulted
+    constexpr alignment_algorithm(alignment_algorithm &&)                  = default; //!< Defaulted
+    constexpr alignment_algorithm & operator=(alignment_algorithm const &) = default; //!< Defaulted
+    constexpr alignment_algorithm & operator=(alignment_algorithm &&)      = default; //!< Defaulted
+    ~alignment_algorithm()                                                 = default; //!< Defaulted
 
     /*!\brief Constructs the algorithm with the passed configuration.
      * \param cfg The configuration to be passed to the algorithm.

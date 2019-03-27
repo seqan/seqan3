@@ -125,18 +125,12 @@ public:
      */
     alignment_result(alignment_result_traits value) : data(value) {};
 
-    //! \brief Default constructor.
-    alignment_result() = default;
-    //! \brief Default copy constructor.
-    alignment_result(alignment_result const &) = default;
-    //! \brief Default move constructor.
-    alignment_result(alignment_result &&) = default;
-    //! \brief Default copy assignment.
-    alignment_result & operator=(alignment_result const &) = default;
-    //! \brief Default move assignment.
-    alignment_result & operator=(alignment_result &&) = default;
-    //! \brief Default destructor.
-    ~alignment_result() = default;
+    alignment_result() = default;                                     //!< Defaulted
+    alignment_result(alignment_result const &) = default;             //!< Defaulted
+    alignment_result(alignment_result &&) = default;                  //!< Defaulted
+    alignment_result & operator=(alignment_result const &) = default; //!< Defaulted
+    alignment_result & operator=(alignment_result &&) = default;      //!< Defaulted
+    ~alignment_result() = default;                                    //!< Defaulted
     //!\}
 
     /*!\name Access functions
