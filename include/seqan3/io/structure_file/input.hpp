@@ -968,14 +968,12 @@ protected:
     //!\brief Tell the format to move to the next record and update the buffer.
     void read_next_record()
     {
-        if (at_end)
-            return;
-
         // clear the record
         record_buffer.clear();
 
         // at end if we could not read further
-        if (secondary_stream->eof())
+        if ((std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
+             std::istreambuf_iterator<stream_char_type>{}))
         {
             at_end = true;
             return;

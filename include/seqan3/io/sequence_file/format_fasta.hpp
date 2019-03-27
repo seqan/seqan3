@@ -124,13 +124,6 @@ public:
 
         // Sequence
         read_seq(stream_view, options, sequence);
-
-        // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<stream_char_t>{stream} == std::istreambuf_iterator<stream_char_t>{}) &&
-            (!stream.eof()))
-        {
-            stream.get(); // triggers error in stream and sets eof
-        }
     }
 
     //!\copydoc SequenceFileOutputFormat::write
