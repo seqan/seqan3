@@ -162,20 +162,22 @@ namespace seqan3::view
  * This view is a **deep view:** Given a range-of-range as input (as opposed to just a range), it will apply
  * the transformation on the innermost range (instead of the outermost range).
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
- * |---------------------------------|:-------------------------------------:|:-------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                     |
- * | std::ranges::ForwardRange       |                                       | *preserved*                     |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                     |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                     |
- * |                                 |                                       |                                 |
- * | std::ranges::View               |                                       | *guaranteed*                    |
- * | std::ranges::SizedRange         |                                       | *lost*                          |
- * | std::ranges::CommonRange        |                                       | *lost*                          |
- * | std::ranges::OutputRange        |                                       | *preserved*                     |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                     |
- * |                                 |                                       |                                 |
- * | seqan3::reference_t             | seqan3::QualityAlphabet               | seqan3::reference_t<urng_t>     |
+ * | range concepts and reference_t  | `urng_t` (underlying range type) | `rrng_t` (returned range type) |
+ * |---------------------------------|:--------------------------------:|:------------------------------:|
+ * | std::ranges::InputRange         | *required*                       | *preserved*                    |
+ * | std::ranges::ForwardRange       |                                  | *preserved*                    |
+ * | std::ranges::BidirectionalRange |                                  | *preserved*                    |
+ * | std::ranges::RandomAccessRange  |                                  | *preserved*                    |
+ * | std::ranges::ContiguousRange    |                                  | *preserved*                    |
+ * |                                 |                                  |                                |
+ * | std::ranges::ViewableRange      | *required*                       | *guaranteed*                   |
+ * | std::ranges::View               |                                  | *guaranteed*                   |
+ * | std::ranges::SizedRange         |                                  | *lost*                         |
+ * | std::ranges::CommonRange        |                                  | *lost*                         |
+ * | std::ranges::OutputRange        |                                  | *preserved*                    |
+ * | seqan3::const_iterable_concept  |                                  | *preserved*                    |
+ * |                                 |                                  |                                |
+ * | seqan3::reference_t             | seqan3::QualityAlphabet          | seqan3::reference_t<urng_t>    |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

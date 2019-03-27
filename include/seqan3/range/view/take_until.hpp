@@ -390,22 +390,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       |                                       | depends on functor (see below)                     |
- * | std::ranges::BidirectionalRange |                                       | depends on functor (see below)                     |
- * | std::ranges::RandomAccessRange  |                                       | depends on functor (see below)                     |
- * | std::ranges::ContiguousRange    |                                       | depends on functor (see below)                     |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *lost*                                             |
- * | std::ranges::CommonRange        |                                       | *lost*                                             |
- * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | depends on functor (see below)                     |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
+ * | range concepts and reference_t  | `urng_t` (underlying range type) | `rrng_t` (returned range type) |
+ * |---------------------------------|:--------------------------------:|:------------------------------:|
+ * | std::ranges::InputRange         | *required*                       | *preserved*                    |
+ * | std::ranges::ForwardRange       |                                  | depends on functor (see below) |
+ * | std::ranges::BidirectionalRange |                                  | depends on functor (see below) |
+ * | std::ranges::RandomAccessRange  |                                  | depends on functor (see below) |
+ * | std::ranges::ContiguousRange    |                                  | depends on functor (see below) |
+ * |                                 |                                  |                                |
+ * | std::ranges::ViewableRange      | *required*                       | *guaranteed*                   |
+ * | std::ranges::View               |                                  | *guaranteed*                   |
+ * | std::ranges::SizedRange         |                                  | *lost*                         |
+ * | std::ranges::CommonRange        |                                  | *lost*                         |
+ * | std::ranges::OutputRange        |                                  | *preserved*                    |
+ * | seqan3::const_iterable_concept  |                                  | depends on functor (see below) |
+ * |                                 |                                  |                                |
+ * | seqan3::reference_t             |                                  | seqan3::reference_t<urng_t>    |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *

@@ -321,22 +321,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       | *required*                            | *preserved*                                        |
- * | std::ranges::BidirectionalRange | *required*                            | *preserved*                                        |
- * | std::ranges::RandomAccessRange  | *required*                            | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
- * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | seqan3::aa27                                       |
+ * | range concepts and reference_t  | `urng_t` (underlying range type) | `rrng_t` (returned range type) |
+ * |---------------------------------|:--------------------------------:|:------------------------------:|
+ * | std::ranges::InputRange         | *required*                       | *preserved*                    |
+ * | std::ranges::ForwardRange       | *required*                       | *preserved*                    |
+ * | std::ranges::BidirectionalRange | *required*                       | *preserved*                    |
+ * | std::ranges::RandomAccessRange  | *required*                       | *preserved*                    |
+ * | std::ranges::ContiguousRange    |                                  | *lost*                         |
+ * |                                 |                                  |                                |
+ * | std::ranges::ViewableRange      | *required*                       | *guaranteed*                   |
+ * | std::ranges::View               |                                  | *guaranteed*                   |
+ * | std::ranges::SizedRange         | *required*                       | *preserved*                    |
+ * | std::ranges::CommonRange        |                                  | *guaranteed*                   |
+ * | std::ranges::OutputRange        |                                  | *lost*                         |
+ * | seqan3::const_iterable_concept  | *required*                       | *preserved*                    |
+ * |                                 |                                  |                                |
+ * | seqan3::reference_t             | seqan3::NucleotideAlphabet       | seqan3::aa27                   |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
@@ -602,22 +602,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       | *required*                            | *preserved*                                        |
- * | std::ranges::BidirectionalRange | *required*                            | *preserved*                                        |
- * | std::ranges::RandomAccessRange  | *required*                            | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *lost*                                             |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
- * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
+ * | range concepts and reference_t  | `urng_t` (underlying range type) | `rrng_t` (returned range type)                                                 |
+ * |---------------------------------|:--------------------------------:|:------------------------------------------------------------------------------:|
+ * | std::ranges::InputRange         | *required*                       | *preserved*                                                                    |
+ * | std::ranges::ForwardRange       | *required*                       | *preserved*                                                                    |
+ * | std::ranges::BidirectionalRange | *required*                       | *preserved*                                                                    |
+ * | std::ranges::RandomAccessRange  | *required*                       | *preserved*                                                                    |
+ * | std::ranges::ContiguousRange    |                                  | *lost*                                                                         |
+ * |                                 |                                  |                                                                                |
+ * | std::ranges::ViewableRange      | *required*                       | *guaranteed*                                                                   |
+ * | std::ranges::View               |                                  | *guaranteed*                                                                   |
+ * | std::ranges::SizedRange         | *required*                       | *preserved*                                                                    |
+ * | std::ranges::CommonRange        |                                  | *guaranteed*                                                                   |
+ * | std::ranges::OutputRange        |                                  | *lost*                                                                         |
+ * | seqan3::const_iterable_concept  | *required*                       | *preserved*                                                                    |
+ * |                                 |                                  |                                                                                |
+ * | seqan3::reference_t             | seqan3::NucleotideAlphabet       | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.

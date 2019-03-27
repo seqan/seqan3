@@ -32,20 +32,22 @@ namespace seqan3::view
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
- * |---------------------------------|:-------------------------------------:|:-------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                     |
- * | std::ranges::ForwardRange       |                                       | *preserved*                     |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                     |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                     |
- * |                                 |                                       |                                 |
- * | std::ranges::View               |                                       | *guaranteed*                    |
- * | std::ranges::SizedRange         |                                       | *preserved*                     |
- * | std::ranges::CommonRange        |                                       | *preserved*                     |
- * | std::ranges::OutputRange        |                                       | *lost*                          |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                     |
- * |                                 |                                       |                                 |
- * | seqan3::reference_t             | seqan3::ConvertibleTo<out_t>          | `out_t`                         |
+ * | range concepts and reference_t  | `urng_t` (underlying range type) | `rrng_t` (returned range type) |
+ * |---------------------------------|:--------------------------------:|:------------------------------:|
+ * | std::ranges::InputRange         | *required*                       | *preserved*                    |
+ * | std::ranges::ForwardRange       |                                  | *preserved*                    |
+ * | std::ranges::BidirectionalRange |                                  | *preserved*                    |
+ * | std::ranges::RandomAccessRange  |                                  | *preserved*                    |
+ * | std::ranges::ContiguousRange    |                                  | *lost*                         |
+ * |                                 |                                  |                                |
+ * | std::ranges::ViewableRange      | *required*                       | *guaranteed*                   |
+ * | std::ranges::View               |                                  | *guaranteed*                   |
+ * | std::ranges::SizedRange         |                                  | *preserved*                    |
+ * | std::ranges::CommonRange        |                                  | *preserved*                    |
+ * | std::ranges::OutputRange        |                                  | *lost*                         |
+ * | seqan3::const_iterable_concept  |                                  | *preserved*                    |
+ * |                                 |                                  |                                |
+ * | seqan3::reference_t             | seqan3::ConvertibleTo<out_t>     | `out_t`                        |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
