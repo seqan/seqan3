@@ -86,12 +86,15 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr advanceable_alignment_coordinate() noexcept = default;                                                     //!< Defaulted
-    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate const &) noexcept = default;             //!< Defaulted
-    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate &&) noexcept = default;                  //!< Defaulted
-    constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate const &) noexcept = default; //!< Defaulted
-    constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate &&) noexcept = default;      //!< Defaulted
-    ~advanceable_alignment_coordinate() noexcept = default;                                                              //!< Defaulted
+    constexpr advanceable_alignment_coordinate() noexcept = default;                                    //!< Defaulted
+    //!\brief Defaulted
+    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate const &) noexcept = default;
+    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate &&) noexcept = default; //!< Defaulted
+    //!\brief Defaulted
+    constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate const &) noexcept = default;
+    //!\brief Defaulted
+    constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate &&) noexcept = default;
+    ~advanceable_alignment_coordinate() noexcept = default;                                             //!< Defaulted
 
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
