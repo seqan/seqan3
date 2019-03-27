@@ -240,4 +240,187 @@ std::string get_cigar_string(alignment_type && alignment,
                             query_start_pos, query_end_pos, extended_cigar);
 }
 
+/*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
+ * \ingroup alignment_file
+ * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
+ *                          std::ranges::InputRange.
+ * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
+ *
+ * \returns A tuple of size five containing (1) std::vector of operation-count pairs, e.g. (M, 3), that describe
+ *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length, (4) The number of
+ *          soft clipped bases at the start of the alignment and (5) the number of bases at the end of the alignment.
+ *
+ * \details
+ *
+ * For example, the view over the cigar string "1S4M1D2M2S" will return `{[(M,4), (D,1), (M,2)], 7, 6, 1, 2}`.
+ */
+template <std::ranges::InputRange cigar_input_type>
+std::tuple<std::vector<std::pair<char, size_t>>, size_t, size_t, size_t, size_t>
+parse_cigar(cigar_input_type && cigar_input)
+{
+    std::vector<std::pair<char, size_t>> operations{};
+    size_t sc_begin_count{}; // number of soft clipped bases at the beginning
+    size_t sc_end_count{};   // number of soft clipped bases at the end
+    std::array<char, 20> buffer{}; // buffer to parse numbers with from_chars. Biggest number should fit in uint64_t
+    char cigar_op{'\0'};
+    size_t cigar_count{0};
+    size_t ref_length{0}, seq_length{0}; // length of aligned part for ref and query
+
+    auto update_lengths_fn = [&ref_length, &seq_length, &cigar_op, &cigar_count] ()
+        {
+            if (is_char<'M'>(cigar_op) || is_char<'='>(cigar_op) || is_char<'X'>(cigar_op))
+            {
+                ref_length += cigar_count;
+                seq_length += cigar_count;
+            }
+            else if (is_char<'D'>(cigar_op) || is_char<'N'>(cigar_op))
+            {
+                ref_length += cigar_count;
+            }
+            else if (is_char<'I'>(cigar_op))
+            {
+                seq_length += cigar_count;
+            }
+            else // illegal character
+            {
+                if (is_char<'P'>(cigar_op))
+                    throw format_error{"We do currently not support cigar operation 'P'."};
+                else
+                    throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+            }
+        };
+
+    // transform input into a signle input view if it isn't already
+    auto cigar_view = cigar_input | view::single_pass_input;
+
+    // check hard/soft clipping at the beginning manually
+    // -----------------------------------------------------------------------------------------------------------------
+    auto [ignore, buffer_end] = std::ranges::copy(cigar_view | view::take_until_or_throw(!is_digit), buffer.data());
+    (void) ignore;
+
+    cigar_op = *std::ranges::begin(cigar_view);
+    std::ranges::next(std::ranges::begin(cigar_view));
+
+    if (is_char<'H'>(cigar_op)) // hard clipping is ignored. parse the next operation
+    {
+        auto [ignore2, buffer_end2] = std::ranges::copy(cigar_view
+                                                        | view::take_until_or_throw(!is_digit), buffer.data());
+        buffer_end = buffer_end2;
+        (void) ignore2;
+
+        cigar_op = *std::ranges::begin(cigar_view);
+        std::ranges::next(std::ranges::begin(cigar_view));
+    }
+
+    if (std::from_chars(buffer.begin(), buffer_end, cigar_count).ec != std::errc{})
+        throw format_error{"Corrupted cigar string encountered"};
+
+    if (is_char<'S'>(cigar_op)) // check for soft clipping at the beginning
+    {
+        sc_begin_count = cigar_count;
+    }
+    else
+    {
+        update_lengths_fn();
+        operations.push_back({cigar_op, cigar_count});
+    }
+
+    // parse the rest of the cigar
+    // -----------------------------------------------------------------------------------------------------------------
+    while (std::ranges::begin(cigar_view) != std::ranges::end(cigar_view)) // until stream is not empty
+    {
+        buffer_end = (std::ranges::copy(cigar_view | view::take_until_or_throw(!is_digit), buffer.data())).out;
+        cigar_op = *std::ranges::begin(cigar_view);
+        std::ranges::next(std::ranges::begin(cigar_view));
+
+        if (std::from_chars(buffer.begin(), buffer_end, cigar_count).ec != std::errc{})
+            throw format_error{"Corrupted cigar string encountered"};
+
+        if (is_char<'S'>(cigar_op)) // we are at the end, hard clipping afterwards can be ignored
+        {
+            sc_end_count = cigar_count;
+            return {operations, ref_length, seq_length, sc_begin_count, sc_end_count};
+        }
+        update_lengths_fn();
+        operations.push_back({cigar_op, cigar_count});
+    }
+    return {operations, ref_length, seq_length, sc_begin_count, sc_end_count};
+}
+
+/*!\brief Transforms a std::vector of operation-count pairs (representing the cigar string).
+ * \ingroup alignment_file
+ *
+ * \tparam alignment_type The type of alignment; must model seqan3::tuple_like_concept and all tuple element types
+ *                        must model seqan3::aligned_sequence_concept.
+ *
+ * \param[in,out] alignment  The alignment to fill with gaps according to the cigar information.
+ * \param[in]     cigar      The cigar information given as a std::vector of operation-count pairs.
+ *
+ * \details
+ *
+ * ### Example:
+ *
+ * Given the following cigar string "4M2I5M2D1M", the cigar information extracted by seqan3::detail::parse_cigar
+ * would be "[(M,4), (I,2), (M,5), (D,2), (M,1)]". Given those cigar information, and an alignment variable containing
+ * the two unaligned sequences "(ATGGCGTAGAGC, ATGCCCCGTTGC)", the alignment will be filled with the following gaps:
+ *
+ * ```
+ * ATGG--CGTAGAGC
+ * |||   ||| |  |
+ * ATGCCCCGTTG--C
+ * ```
+ */
+template <tuple_like_concept alignment_type>
+//!\cond
+    requires std::tuple_size_v<remove_cvref_t<alignment_type>> == 2 &&
+             detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_type>>
+//!\endcond
+void alignment_from_cigar(alignment_type & alignment, std::vector<std::pair<char, size_t>> const & cigar)
+{
+    using std::get;
+    auto current_ref_pos  = std::ranges::begin(get<0>(alignment));
+    auto current_read_pos = std::ranges::begin(get<1>(alignment));
+
+    for (auto [cigar_op, cigar_count] : cigar)
+    {
+        if (is_char<'M'>(cigar_op) || is_char<'='>(cigar_op) || is_char<'X'>(cigar_op))
+        {
+            std::ranges::advance(current_ref_pos , cigar_count);
+            std::ranges::advance(current_read_pos, cigar_count);
+        }
+        else if (is_char<'D'>(cigar_op) || is_char<'N'>(cigar_op)) // insert gaps into read
+        {
+            assert(std::distance(current_read_pos, std::ranges::end(get<1>(alignment))) >= 0);
+            current_read_pos = insert_gap(get<1>(alignment), current_read_pos, cigar_count);
+            ++current_read_pos;
+            std::ranges::advance(current_ref_pos , cigar_count);
+        }
+        else if (is_char<'I'>(cigar_op)) // Insert gaps into ref
+        {
+            assert(std::ranges::distance(current_ref_pos, std::ranges::end(get<0>(alignment))) >= 0);
+            current_ref_pos = insert_gap(get<0>(alignment), current_ref_pos, cigar_count);
+            ++current_ref_pos;
+            std::ranges::advance(current_read_pos, cigar_count);
+        }
+        else // illegal character
+        {
+            if (is_char<'P'>(cigar_op))
+                throw format_error{"We do currently not support cigar operation 'P'."};
+            else
+                throw format_error{std::string{"Illegal cigar operation: "} + std::string{cigar_op}};
+        }
+    }
+}
+
+//!\brief A functor that always throws when calling `operator()` (needed for the alignment "dummy" sequence).
+struct access_restrictor_fn
+{
+    //!\brief Always throws a std::logic_error when called.
+    template <typename chr_t>
+    [[noreturn]] chr_t operator()(chr_t) const
+    {
+         throw std::logic_error{"Access is not allowed because there is no sequence information."};
+    }
+};
+
 } // namespace seqan3::detail
