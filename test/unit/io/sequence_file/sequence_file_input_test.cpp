@@ -133,7 +133,7 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 {
     using comp0 = sequence_file_input_default_traits_dna;
     using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
-    using comp2 = type_list<sequence_file_format_fasta, sequence_file_format_fastq>;
+    using comp2 = type_list<sequence_file_format_fasta, sequence_file_format_fastq, sequence_file_format_sam>;
     using comp3 = char;
 
     /* default template args */
@@ -188,7 +188,8 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq>>));// changed
+                                                                              sequence_file_format_fastq,
+                                                                              sequence_file_format_sam>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -200,7 +201,8 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq>>));// changed
+                                                                              sequence_file_format_fastq,
+                                                                              sequence_file_format_sam>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -502,4 +504,3 @@ TEST_F(sequence_file_input_f, read_empty_bz2_file)
     EXPECT_TRUE(fin.begin() == fin.end());
 }
 #endif
-

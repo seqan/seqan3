@@ -36,6 +36,7 @@
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 namespace seqan3
@@ -336,7 +337,8 @@ template <
                                                                                           field::ID,
                                                                                           field::QUAL>,
     detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<sequence_file_format_fasta,
-                                                                                             sequence_file_format_fastq
+                                                                                             sequence_file_format_fastq,
+                                                                                             sequence_file_format_sam
                                                                                              /*, ...*/>,
     char_concept                               stream_char_type_   = char>
 class sequence_file_input

@@ -33,6 +33,7 @@
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/view/convert.hpp>
@@ -52,7 +53,7 @@ namespace seqan3
  * can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
  * seqan3::SequenceFileOutputFormat).
- * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of the underlying stream device(s); must model seqan3::Char.
  * \details
  *
  * ### Introduction
@@ -158,7 +159,7 @@ namespace seqan3
 
 template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
-              type_list<sequence_file_format_fasta, sequence_file_format_fastq>,
+              type_list<sequence_file_format_fasta, sequence_file_format_fastq, sequence_file_format_sam>,
           char_concept stream_char_type_ = char>
 class sequence_file_output
 {
