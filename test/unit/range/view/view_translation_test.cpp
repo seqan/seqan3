@@ -24,6 +24,8 @@
 #include <seqan3/range/view/translation.hpp>
 #include <seqan3/std/ranges>
 
+#include "view_concept_check.hpp"
+
 using namespace seqan3;
 // using namespace seqan3::view;
 
@@ -190,41 +192,29 @@ TYPED_TEST(nucleotide, view_translate_container_conversion)
 
 TYPED_TEST(nucleotide, view_translate_single_concepts)
 {
+    using namespace seqan3::test;
     std::string const in{"ACGTACGTACGTA"};
     std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-
     auto v1 = vec | view::translate_single(translation_frames::FWD_FRAME_0);
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE((std::is_same_v<aa27, value_type_t<decltype(v1)>>));
-    EXPECT_TRUE((std::is_same_v<aa27, reference_t<decltype(v1)>>));
+
+    EXPECT_TRUE((preserved<decltype(vec), decltype(v1)>({Input, Forward, Bidirectional, RandomAccess, Sized,
+                                                         ConstIterable})));
+    EXPECT_TRUE((guaranteed<decltype(vec), decltype(v1)>({View})));
+    EXPECT_TRUE(weak_guaranteed<decltype(v1)>({Viewable, Common}));
+    EXPECT_TRUE((lost<decltype(vec), decltype(v1)>({Contiguous, Output})));
 }
 
 TYPED_TEST(nucleotide, view_translate_concepts)
 {
+    using namespace seqan3::test;
+
     std::string const in{"ACGTACGTACGTA"};
     std::vector<TypeParam> vec = in | view::char_to<TypeParam>;
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-
     auto v1 = vec | view::translate(translation_frames::FWD_REV_0);
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<value_type_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::SizedRange<value_type_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::View<value_type_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::SizedRange<reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::View<reference_t<decltype(v1)>>);
+
+    EXPECT_TRUE((preserved<decltype(vec), decltype(v1)>({Input, Forward, Bidirectional, RandomAccess, Sized,
+                                                         ConstIterable})));
+    EXPECT_TRUE((guaranteed<decltype(vec), decltype(v1)>({View})));
+    EXPECT_TRUE(weak_guaranteed<decltype(v1)>({Viewable, Common}));
+    EXPECT_TRUE((lost<decltype(vec), decltype(v1)>({Contiguous, Output})));
 }

@@ -18,6 +18,8 @@
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
 
+#include "view_concept_check.hpp"
+
 namespace seqan3::view
 {
 inline auto const deep_reverse = deep{std::view::reverse};
@@ -65,38 +67,27 @@ TEST(view_deep_reverse, deep)
 
 TEST(view_deep_reverse, concepts)
 {
+
+    using namespace seqan3::test;
     std::vector<dna5_vector> vec{"ACGTA"_dna5, "TGCAT"_dna5};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_FALSE(std::ranges::View<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5_vector>));
-
     auto v1 = vec | view::deep_reverse;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5_vector>)); // view temporary returned in deep case
-
     auto v_elem = v1[0];
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v_elem)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v_elem)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v_elem)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v_elem)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v_elem)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v_elem)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v_elem)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v_elem)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v_elem), dna5>));
+
+    // --- View ---
+
+    EXPECT_TRUE((preserved<decltype(vec), decltype(v1)>({Input, Forward, Bidirectional, RandomAccess, Sized, Common, 
+                                                         ConstIterable})));
+    EXPECT_TRUE((guaranteed<decltype(vec), decltype(v1)>({View})));
+    EXPECT_TRUE(weak_guaranteed<decltype(v1)>({Viewable}));
+    EXPECT_TRUE((lost<decltype(vec), decltype(v1)>({Contiguous, Output})));
+
+    // --- Underlying element ---
+
+    EXPECT_TRUE((preserved<decltype(vec), decltype(v_elem)>({Input, Forward, Bidirectional, RandomAccess, Sized, Common, 
+                                                         Output, ConstIterable})));
+    EXPECT_TRUE((guaranteed<decltype(vec), decltype(v_elem)>({View})));
+    EXPECT_TRUE(weak_guaranteed<decltype(v_elem)>({Viewable}));
+    EXPECT_TRUE((lost<decltype(vec), decltype(v_elem)>({Contiguous})));
 }
 
 // ------------------------------------------------------------------

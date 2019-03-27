@@ -14,6 +14,8 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/ranges>
 
+#include "view_concept_check.hpp"
+
 using namespace seqan3;
 
 TEST(view_rank_to, basic)
@@ -37,26 +39,12 @@ TEST(view_rank_to, basic)
 
 TEST(view_rank_to, concepts)
 {
+    using namespace seqan3::test;
     std::vector<unsigned> vec{0,1,3,3,3,2,0,3,0};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_FALSE(std::ranges::View<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), unsigned>));
-
     auto v1 = vec | view::rank_to<dna5>;
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
-    EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), unsigned>));
+
+    EXPECT_TRUE((preserved<decltype(vec), decltype(v1)>({Input, Forward, Bidirectional, RandomAccess, Sized, Common, 
+                                                         ConstIterable})));
+    EXPECT_TRUE((guaranteed<decltype(vec), decltype(v1)>({View, Viewable})));
+    EXPECT_TRUE((lost<decltype(vec), decltype(v1)>({Contiguous, Output})));
 }

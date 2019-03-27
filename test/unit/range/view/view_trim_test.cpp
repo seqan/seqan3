@@ -15,6 +15,8 @@
 #include <seqan3/range/view/trim.hpp>
 #include <seqan3/std/ranges>
 
+#include "view_concept_check.hpp"
+
 using namespace seqan3;
 using namespace seqan3::view;
 
@@ -68,19 +70,14 @@ TEST(view_trim, qualified)
 
 TEST(view_trim, concepts)
 {
+    using namespace seqan3::test;
     std::vector<dna5q> vec{{'A'_dna5, phred42{40}}, {'G'_dna5, phred42{40}}, {'G'_dna5, phred42{30}}, {'A'_dna5, phred42{20}}, {'T'_dna5, phred42{10}}};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5q>));
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
-
     auto v1 = vec | view::trim(20u);
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), dna5q>));
-    EXPECT_TRUE(!std::ranges::SizedRange<decltype(v1)>);
+
+    //TODO Contiguous should be preserved, but isn't
+    EXPECT_TRUE((preserved<decltype(vec), decltype(v1)>(
+        {Input, Forward, Bidirectional, RandomAccess/*, Contiguous*/, Output, ConstIterable})));
+    EXPECT_TRUE((guaranteed<decltype(vec), decltype(v1)>({View})));
+    EXPECT_TRUE(weak_guaranteed<decltype(v1)>({Viewable}));
+    EXPECT_TRUE((lost<decltype(vec), decltype(v1)>({Sized, Common})));
 }

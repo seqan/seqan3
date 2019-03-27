@@ -12,11 +12,14 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/unique.hpp>
 
+#include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/view/persist.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
+
+#include "view_concept_check.hpp"
 
 using namespace seqan3;
 
@@ -79,26 +82,11 @@ TEST(view_persist, const_)
 
 TEST(view_persist, concepts)
 {
-    std::string vec{"foobar"};
-    EXPECT_TRUE(std::ranges::InputRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(std::string{"foo"})>);
-    EXPECT_FALSE(std::ranges::View<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(const_iterable_concept<decltype(std::string{"foo"})>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(std::string{"foo"}), char>));
-
+    using namespace seqan3::test;
     auto v1 = std::string{"foo"} | view::persist;
 
-    EXPECT_TRUE(std::ranges::InputRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::ForwardRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::BidirectionalRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::RandomAccessRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::View<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
-    EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
+    EXPECT_TRUE((preserved<std::string, decltype(v1)>({Input, Forward, Bidirectional, RandomAccess, Contiguous, Sized, 
+                                                         Common, Output, ConstIterable})));
+    EXPECT_TRUE((guaranteed<std::string, decltype(v1)>({View, Viewable})));
+    EXPECT_TRUE((weak_guaranteed<decltype(v1)>({Viewable})));
 }
