@@ -364,10 +364,10 @@ You may give less fields than are selected if the actual format you are writing 
 
 Use your code (or the solution) from the previous exercise.
 Iterate over the records with a for loop and instead of just printing the ids,
-write out **all** the records that satisfy the filter to a new file called `output.fasta`.
+write out **all** the records that satisfy the filter to a new file called `output.fastq`.
 
 Test your code on the same FASTQ file.
-The file `output.fasta` should contain the following records:
+The file `output.fastq` should contain the following records:
 
 ```
 @seq1
