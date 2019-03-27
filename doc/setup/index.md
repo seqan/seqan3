@@ -38,14 +38,14 @@ brew install gcc@7
 sudo port install gcc-7
 ```
 
-**Linux/MacOS** using [conda](https://conda.io)
+**Linux** using [conda](https://conda.io)
 ```
 conda create -n gcc7 -c quantstack gcc-7 libgcc-7
 conda activate gcc7
 ```
 This will put GCC-7 in a separate environment called `gcc7` which can be activated via `conda activate gcc7` and deactivated via `conda deactivate gcc7`.
 
-\note \htmlonly <div class=\"assignment\"> <details><summary><b>For MacOS</b></summary> \endhtmlonly If you encounter the error <code>/usr/lib/x86_64-linux-gnu/libstdc++.so.6: version 'CXXABI_1.3.11' not found</code>, you have to set the LD_LIBRARY_PATH:
+\note \htmlonly <div class=\"assignment\"> <details><summary><b>Known Issue:</b></summary> \endhtmlonly If you encounter the error <code>/usr/lib/x86_64-linux-gnu/libstdc++.so.6: version 'CXXABI_1.3.11' not found</code>, you have to set the LD_LIBRARY_PATH:
 ```
 export LD_LIBRARY_PATH=/home/user/miniconda3/envs/gcc7/lib/
 ```
@@ -106,8 +106,7 @@ project (seqan3_tutorial CXX)
 set(SeqAn3_DIR "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
 find_package (SeqAn3 REQUIRED)
 
-add_executable (hello_world
-                hello_world.cpp)
+add_executable (hello_world hello_world.cpp)
 
 target_link_libraries (hello_world seqan3::seqan3)
 ```
@@ -147,3 +146,22 @@ In this case you can try to export the Path:
 export PATH=/util/bin:$PATH
 ```
 and try running cmake again.
+
+# Adding a new source file to your project
+
+If you create a new `cpp` file and want to compile it, you need to add another `add_executable` and
+`target_link_libraries` directive to you `CMakeLists.txt`.
+For example, after adding `another_program.cpp` your `CMakeLists.txt` may look like this:
+```cmake
+cmake_minimum_required (VERSION 3.4)
+project (seqan3_tutorial CXX)
+
+set(SeqAn3_DIR "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
+find_package (SeqAn3 REQUIRED)
+
+add_executable (hello_world hello_world.cpp)
+add_executable (another_program another_program.cpp)
+
+target_link_libraries (hello_world seqan3::seqan3)
+target_link_libraries (another_program seqan3::seqan3)
+```
