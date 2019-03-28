@@ -45,7 +45,7 @@ protected:
     //!\brief Iterator stores pointer to underlying container structure.
     typename std::add_pointer_t<range_type> host{nullptr};
     //!\brief Use container's size_type as a position.
-    using position_type = typename range_type::size_type;
+    using position_type = std::make_unsigned_t<typename range_type::difference_type>;
     //!\brief Store position index for container.
     position_type pos{static_cast<position_type>(0)};
 
@@ -131,7 +131,7 @@ public:
     //!\endcond
     constexpr bool operator!=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
-        return pos != rhs.pos;
+        return !(*this == rhs);
     }
 
     template <typename range_type2>
