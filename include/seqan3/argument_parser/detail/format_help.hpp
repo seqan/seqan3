@@ -37,212 +37,29 @@ namespace seqan3::detail
  * Thus the calls are stored (parser_set_up_calls and positional_option_calls)
  * and only evaluated when calling format_help::parse().
  */
-class format_help : public format_base
+class format_help : public format_help_base<format_help>
 {
+    //!\brief The CRTP base class type.
+    using base_type = format_help_base<format_help>;
+
+    //!\brief Befriend the base class to give access to the private member functions.
+    friend base_type;
+
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief The (default) constructors.
      * \{
      */
-    format_help() = default;
-    format_help(format_help const & pf) = default;
-    format_help & operator=(format_help const & pf) = default;
-    format_help(format_help &&) = default;
-    format_help & operator=(format_help &&) = default;
+    format_help() = default;                                   //!< Defaulted.
+    format_help(format_help const & pf) = default;             //!< Defaulted.
+    format_help & operator=(format_help const & pf) = default; //!< Defaulted.
+    format_help(format_help &&) = default;                     //!< Defaulted.
+    format_help & operator=(format_help &&) = default;         //!< Defaulted.
+    ~format_help() = default;                                  //!< Defaulted.
 
-    /*!\brief Initializes a format_help object.
-     *
-     * \param advanced Set to `true` to show advanced options.
-     */
-    format_help(bool advanced) :
-        show_advanced_options(advanced)
-    {}
-
-    //!\brief The destructor.
-    ~format_help() = default;
+    //!\copydoc format_help_base(bool)
+    format_help(bool const advanced) : base_type{advanced}
+    {};
     //!\}
-
-    /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
-     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  desc      The description of the option.
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
-     */
-    template <typename option_type, typename validator_type>
-    void add_option(option_type & value,
-                    char const short_id,
-                    std::string const & long_id,
-                    std::string const & desc,
-                    option_spec const & spec,
-                    validator_type && validator)
-    {
-        parser_set_up_calls.push_back([this, &value, short_id, long_id, desc, spec, validator]()
-        {
-            if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
-                print_list_item(prep_id_for_help(short_id, long_id) + " " + option_type_and_list_info(value),
-                                 (desc + " " + validator.get_help_page_message()));
-        });
-    }
-
-    /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
-     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
-     * \param[in]  desc     The description of the flag.
-     * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
-     */
-    void add_flag(bool & /*value*/,
-                  char const short_id,
-                  std::string const & long_id,
-                  std::string const & desc,
-                  option_spec const & spec)
-    {
-        parser_set_up_calls.push_back([this, short_id, long_id, desc, spec] ()
-        {
-            if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
-                print_list_item(prep_id_for_help(short_id, long_id), desc);
-        });
-    }
-
-    /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  desc      The description of the positional option.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
-     */
-    template <typename option_type, typename validator_type>
-    void add_positional_option(option_type & value,
-                               std::string const & desc,
-                               validator_type & validator)
-    {
-        positional_option_calls.push_back([this, &value, desc, validator] ()
-        {
-            ++positional_option_count;
-            std::string key{"\\fBARGUMENT-" + std::to_string(positional_option_count) + "\\fP " + option_type_and_list_info(value)};
-            print_list_item(key, (desc + " " + validator.get_help_page_message()));
-        });
-    }
-
-    /*!\brief Initiates the printing of the help page to std::cout.
-     * \param[in] parser_meta The meta information that are needed for a detailed help page.
-     */
-    void parse(argument_parser_meta_data & parser_meta)
-    {
-        meta = parser_meta;
-
-        print_header();
-
-        if (!meta.synopsis.empty())
-        {
-            print_section("Synopsis");
-            print_synopsis();
-        }
-
-        if (!meta.description.empty())
-        {
-            print_section("Description");
-            for (auto desc : meta.description)
-                print_line(desc);
-        }
-
-        // add positional options if specified
-        if (!positional_option_calls.empty())
-            print_section("Positional Arguments");
-
-        // each call will evaluate the function print_list_item()
-        for (auto f : positional_option_calls)
-            f();
-
-        // add options and flags if specified
-        if (!parser_set_up_calls.empty())
-            print_section("Options");
-
-        // each call will evaluate the function print_list_item()
-        for (auto f : parser_set_up_calls)
-            f();
-
-        if (!meta.examples.empty())
-        {
-            print_section("Examples");
-            for (auto example : meta.examples)
-                print_line(example);
-        }
-
-        print_footer();
-
-        std::exit(EXIT_SUCCESS); // program should not continue from here
-    }
-
-    /*!\brief Adds a print_section call to parser_set_up_calls.
-     * \param[in] title The title of the section of the help page.
-     */
-    void add_section(std::string const & title)
-    {
-        parser_set_up_calls.push_back([this, title] ()
-        {
-            print_section(title);
-        });
-    }
-
-    /*!\brief Adds a print_subsection call to parser_set_up_calls.
-     * \param[in] title The title of the subsection of the help page.
-     */
-    void add_subsection(std::string const & title)
-    {
-        parser_set_up_calls.push_back([this, title] ()
-        {
-            print_subsection(title);
-        });
-    }
-
-    /*!\brief Adds a print_line call to parser_set_up_calls.
-     * \param[in] text The line text to be printed to the help page.
-     * \param[in] line_is_paragraph True if you want a new line at the end.
-     */
-    void add_line(std::string const & text, bool line_is_paragraph)
-    {
-        parser_set_up_calls.push_back([this, text, line_is_paragraph] ()
-        {
-            print_line(text, line_is_paragraph);
-        });
-    }
-
-    /*!\brief Adds a seqan3::print_list_item call to parser_set_up_calls.
-     * \param[in] key The key of the key-value pair list item.
-     * \param[in] desc The key of the key-value pair list item.
-     */
-    void add_list_item(std::string const & key, std::string const & desc)
-    {
-        parser_set_up_calls.push_back([this, key, desc] ()
-        {
-            print_list_item(key, desc);
-        });
-    }
-
-    /*!\brief Stores all meta information about the application
-     *
-     * \details
-     *
-     * This needs to be a member of format_parse, because it needs to present
-     * (not filled) when the parser_set_up_calls vector is filled, since all
-     * printing functions need some meta information.
-     * The member variable itself is filled when copied over from the argument_parser
-     * when calling format_parse::parse. That way all the information needed are
-     * there, when the actual printing starts.
-     *
-     * This function is not private because it is needed for short but nicely
-     * formatted (error) output to the command line.
-     */
-    argument_parser_meta_data meta;
 
 protected:
     //!\privatesection
@@ -303,19 +120,6 @@ protected:
         std::cout << '\n';
     }
 
-    //!\brief Prints a help page synopsis section to std::cout.
-    void print_synopsis()
-    {
-        for (unsigned i = 0; i < meta.synopsis.size(); ++i)
-        {
-            std::string text = "\\fB";
-            text.append(meta.synopsis[i]);
-            text.insert(text.find_first_of(" \t"), "\\fP");
-
-            print_line(text, false);
-        }
-    }
-
     /*!\brief Prints a help page section to std::cout.
      * \param[in] title The title of the subsection of the help page.
      */
@@ -354,14 +158,6 @@ protected:
         std::fill_n(out, layout.leftPadding, ' ');
         print_text(text, layout, layout.leftPadding);
         prev_was_paragraph = line_is_paragraph;
-    }
-
-    /*!\brief Prints a text to std::cout.
-     * \param[in] text The line of text to print to the help page.
-     */
-    void print_line(std::string const & text)
-    {
-        print_line(text, true);
     }
 
     /*!\brief Prints a help page list_item to std::cout.
@@ -625,16 +421,8 @@ protected:
             std::cout << '\n';
     }
 
-    //!\brief Vector of functions that stores all calls except add_positional_option.
-    std::vector<std::function<void()>> parser_set_up_calls;
-    //!\brief Vector of functions that stores add_positional_option calls.
-    std::vector<std::function<void()>> positional_option_calls; // singled out to be printed on top
-    //!\brief Keeps track of the number of positional options
-    unsigned positional_option_count{0};
     //!\brief Needed for correct formatting while calling different print functions.
     bool prev_was_paragraph{false};
-    //!\brief Whether to show advanced options or not.
-    bool show_advanced_options{false};
     //!\brief Stores the relevant parameters of the documentation on the screen.
     console_layout_struct layout;
 };
@@ -663,7 +451,7 @@ public:
         if (!parser_meta.synopsis.empty())
             print_synopsis();
 
-        print_line("Try -h or --help for more information.\n");
+        print_line("Try -h or --help for more information.\n", true);
 
         std::exit(EXIT_SUCCESS);
     }
@@ -681,78 +469,6 @@ public:
 class format_version : public format_help
 {
 public:
-     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. 'i').
-     * \param[in]  long_id   The long identifier for the option (e.g. "integer").
-     * \param[in]  desc      The description of the option.
-     * \param[in]  spec      Advanced option specification. see seqan3::option_spec.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
-     */
-    template <typename option_type, typename validator_type>
-    void add_option(option_type & value,
-                    char const short_id,
-                    std::string const & long_id,
-                    std::string const & desc,
-                    option_spec const & spec,
-                    validator_type && validator)
-    {
-        parser_set_up_calls.push_back([this, &value, short_id, long_id, desc, spec, validator]()
-        {
-            if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
-                print_list_item(prep_id_for_help(short_id, long_id) + " " + option_type_and_list_info(value),
-                                 (desc + " " + validator.get_help_page_message()));
-        });
-    }
-
-    /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \param[out] value    The variable in which to store the given command line argument
-     *                      (which is only needed for the interface here).
-     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
-     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
-     * \param[in]  desc     The description of the flag.
-     * \param[in]  spec     Advanced flag specification. see seqan3::option_spec.
-     */
-    void add_flag(bool & value,
-                  char const short_id,
-                  std::string const & long_id,
-                  std::string const & desc,
-                  option_spec const & spec)
-    {
-        parser_set_up_calls.push_back([this, &value, short_id, long_id, desc, spec] ()
-        {
-            if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
-                print_list_item(prep_id_for_help(short_id, long_id), desc);
-        });
-    }
-
-    /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
-     *
-     * \tparam option_type    The type of variable in which to store the given command line argument.
-     * \tparam validator_type The type of validator applied to the value after parsing.
-     *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  desc      The description of the positional option.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
-     */
-    template <typename option_type, typename validator_type>
-    void add_positional_option(option_type & value,
-                               std::string const & desc,
-                               validator_type && validator)
-    {
-        positional_option_calls.push_back([this, &value, desc, validator]()
-        {
-            ++positional_option_count;
-            std::string key{"\\fBARGUMENT " + std::to_string(positional_option_count) + "\\fP " + option_type_and_list_info(value)};
-            print_list_item(key, (desc + " " + validator.get_help_page_message()));
-        });
-    }
-
     /*!\brief Initiates the printing of the version information to std::cout.
      * \param[in] parser_meta The meta information that are needed for a detailed version information.
      */
