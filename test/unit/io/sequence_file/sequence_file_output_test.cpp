@@ -165,11 +165,7 @@ TEST(general, default_template_args_and_deduction_guides)
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
-                                                                              format_fasta,
-                                                                              format_fastq,
-                                                                              format_genbank,
-                                                                              format_sam>>));                // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -179,11 +175,7 @@ TEST(general, default_template_args_and_deduction_guides)
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_embl,
-                                                                              format_fasta,
-                                                                              format_fastq,
-                                                                              format_genbank,
-                                                                              format_sam>>));                // changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -206,6 +198,39 @@ TEST(general, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, fields<field::SEQ>>));                   // changed
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<format_fasta>>));              // changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
+    }
+}
+
+TEST(general, valid_file_extensions)
+{
+    {  // Single format
+        sequence_file_output fout{std::ostringstream{}, sequence_file_format_fasta{}};
+
+        EXPECT_TRUE(std::ranges::equal(decltype(fout)::valid_file_extensions(),
+                                       sequence_file_format_fasta::file_extensions));
+    }
+
+    {  // All formats
+        // get all extensions.
+        auto all_extensions = sequence_file_output<>::valid_file_extensions();
+
+        // define testing lambda
+        auto cmp_lambda = [&all_extensions] (auto & source)
+        {
+            return std::find(all_extensions.begin(), all_extensions.end(), source);
+        };
+
+        // Test fasta extensions
+        for (std::string & ext : sequence_file_format_fasta::file_extensions)
+            EXPECT_NE(cmp_lambda(ext), all_extensions.end());
+
+        // Test embl extensions
+        for (std::string & ext : sequence_file_format_embl::file_extensions)
+            EXPECT_NE(cmp_lambda(ext), all_extensions.end());
+
+        // Test sam extensions
+        for (std::string & ext : sequence_file_format_sam::file_extensions)
+            EXPECT_NE(cmp_lambda(ext), all_extensions.end());
     }
 }
 

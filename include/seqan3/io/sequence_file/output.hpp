@@ -21,6 +21,7 @@
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/zip.hpp>
 
+#include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/concept/tuple.hpp>
@@ -602,6 +603,19 @@ public:
     }
     //!\}
 
+    //!\brief Returns a list of valid file extensions.
+    //!\returns std::vector over std::string with all valid file extensions specified by `valid_formats`.
+    static std::vector<std::string> valid_file_extensions()
+    {
+        std::vector<std::string> extensions;
+        detail::for_each_type([&extensions] (auto t_identity)
+        {
+            using format_t = typename decltype(t_identity)::type;
+            std::ranges::copy(format_t::file_extensions, std::back_inserter(extensions));
+        }, valid_formats{});
+        return extensions;
+    }
+
     //!\brief The options are public and its members can be set directly.
     sequence_file_output_options options;
 
@@ -730,7 +744,25 @@ protected:
  * \{
  */
 
-//!\brief Deduction of the selected fields, the file format and the stream type.
+//!\brief Deduction guide for given stream and file format.
+template <OStream2                 stream_t,
+          SequenceFileOutputFormat file_format>
+sequence_file_output(stream_t &,
+                     file_format const &)
+    -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_t>::char_type>;
+
+//!\overload
+template <OStream2                 stream_t,
+          SequenceFileOutputFormat file_format>
+sequence_file_output(stream_t &&,
+                     file_format const &)
+    -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids.
+                            type_list<file_format>,
+                            typename std::remove_reference_t<stream_t>::char_type>;
+
+//!\brief Deduction guide for given stream, file format and field ids.
 template <OStream2                 stream_t,
           SequenceFileOutputFormat file_format,
           detail::Fields           selected_field_ids>

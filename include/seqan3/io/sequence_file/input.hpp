@@ -25,6 +25,7 @@
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
+#include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
@@ -709,6 +710,19 @@ public:
     }
     //!\}
 
+    //!\brief Returns a list of valid file extensions.
+    //!\returns std::vector over std::string with all valid file extensions specified by `valid_formats`.
+    static std::vector<std::string> valid_file_extensions()
+    {
+        std::vector<std::string> extensions;
+        detail::for_each_type([&extensions] (auto t_identity)
+        {
+            using format_t = typename decltype(t_identity)::type;
+            std::ranges::copy(format_t::file_extensions, std::back_inserter(extensions));
+        }, valid_formats{});
+        return extensions;
+    }
+
     //!\brief The options are public and its members can be set directly.
     sequence_file_input_options<typename traits_type::sequence_legal_alphabet,
                              selected_field_ids::contains(field::SEQ_QUAL)> options;
@@ -819,7 +833,27 @@ protected:
  * \{
  */
 
-//!\brief Deduction of the selected fields, the file format and the stream type.
+//!\brief Deduces the sequence input file type from the stream and the format.
+template <IStream2                           stream_type,
+          SequenceFileInputFormat            file_format>
+sequence_file_input(stream_type & stream,
+                    file_format const &)
+    -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
+                           typename sequence_file_input<>::selected_field_ids,  // default field ids.
+                           type_list<file_format>,
+                           typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\overload
+template <IStream2                           stream_type,
+          SequenceFileInputFormat            file_format>
+sequence_file_input(stream_type && stream,
+                    file_format const &)
+   -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
+                          typename sequence_file_input<>::selected_field_ids,  // default field ids.
+                          type_list<file_format>,
+                          typename std::remove_reference_t<stream_type>::char_type>;
+
+//!\brief Deduces the sequence input file type from the stream, the format and the field ids.
 template <IStream2                           stream_type,
           SequenceFileInputFormat            file_format,
           detail::Fields                     selected_field_ids>
