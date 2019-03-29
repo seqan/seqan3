@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
+
 #include <fstream>
 
 #include <range/v3/view/remove_if.hpp>
@@ -13,9 +14,9 @@
 
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/io/stream/parse_condition.hpp>
 #include <seqan3/range/view/persist.hpp>
+#include <seqan3/std/filesystem>
 #include <seqan3/test/tmp_filename.hpp>
 
 using namespace seqan3;
@@ -74,6 +75,118 @@ TEST(validator_test, file_exists)
                       option_spec::DEFAULT, file_existance_validator());
 
     EXPECT_NO_THROW(parser.parse());
+}
+
+TEST(validator_test, file_ext_validator)
+{
+    std::string option_value;
+    std::vector<std::string> option_vector;
+    file_ext_validator case_sensitive_file_ext_validator({"sAm", "FASTQ", "fasta" }, true);
+    file_ext_validator case_insensitive_file_ext_validator({"sAm", "FASTQ", "fasta"}, false);
+    file_ext_validator no_extension_file_ext_validator({""});
+    file_ext_validator default_file_ext_validator({"sAm", "FASTQ", "fasta"});
+
+    // check case insensitive validator => success
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sam"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, case_insensitive_file_ext_validator);
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "/absolute/path/file.sam");
+    }
+
+    // check case sensitive validator => failure
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sam"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, case_sensitive_file_ext_validator);
+
+        EXPECT_THROW(parser.parse(), validation_failed);
+    }
+
+    // check default (case insensitive) validator => success
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.FaStQ"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, default_file_ext_validator);
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "/absolute/path/file.FaStQ");    
+    }
+
+    // check case sensitive validator => success
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.FASTQ"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, case_sensitive_file_ext_validator);
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "/absolute/path/file.FASTQ");    
+    }
+
+    // check case insensitive validator => failure
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.bAm"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, case_insensitive_file_ext_validator);
+
+        EXPECT_THROW(parser.parse(), validation_failed);
+    }
+
+    // check no file suffix => failure
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, case_sensitive_file_ext_validator);
+
+        EXPECT_THROW(parser.parse(), validation_failed);
+    }
+
+    // check file suffix with no_ext_validator => failure
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.txt"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, no_extension_file_ext_validator);
+
+        EXPECT_THROW(parser.parse(), validation_failed);
+    }
+
+    // check trailing dot with no_ext_validator => failure
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file."};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, no_extension_file_ext_validator);
+
+        EXPECT_THROW(parser.parse(), validation_failed);
+    }
+
+    // check no file extension with no_ext_validator => success
+    {
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT, no_extension_file_ext_validator);
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "/absolute/path/file");        
+    }
 }
 
 TEST(validator_test, arithmetic_range_validator_success)

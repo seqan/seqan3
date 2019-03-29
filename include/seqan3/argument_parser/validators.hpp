@@ -20,9 +20,10 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/range/view/to_lower.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
 namespace seqan3
@@ -256,17 +257,27 @@ public:
 
     /*!\brief Constructing from a vector.
      * \param[in] v The vector of valid file extensions to test (e.g. {"fa", "fasta"}).
+     * \param[in] c Case sensitivity flag. Set true for case sensitivity. Default: false (case insensitive).
+     *              
+     * For case insensitivity, everything is converted to lower case characters.
      */
-    file_ext_validator(std::vector<std::string> const & v) :
-        extensions{v}
-    {}
+    file_ext_validator(std::vector<std::string> const & v, bool const c = false) :
+        case_sensitive{c}
+    {
+        extensions = c ? v : std::vector<std::string>{v | view::to_lower};
+    }
 
     /*!\brief Constructing from an initializer_list.
      * \param[in] v The initializer_list of valid file extensions to test (e.g. {"fa", "fasta"}).
+     * \param[in] c Case sensitivity flag. Set true for case sensitivity. Default: false (case insensitive).
+     *              
+     * For case insensitivity, everything is converted to lower case characters.
      */
-    file_ext_validator(std::initializer_list<std::string> const & v) :
-        extensions{v}
-    {}
+    file_ext_validator(std::initializer_list<std::string> const & v, bool const c = false) :
+        case_sensitive{c}
+    {
+        extensions = c ? v : std::vector<std::string>{v | view::to_lower};
+    }
 
     /*!\brief Tests whether the filepath \p path ends with a valid extension.
      * \param path The input value to check.
@@ -275,7 +286,12 @@ public:
     void operator()(std::filesystem::path const & path) const
     {
         std::string ext{path.extension().string()};
-        ext = ext.substr(std::min(1, static_cast<int>(ext.size()))); // drop '.' if extension is non-empty
+        ext = ext.substr(std::min(1, std::max(0, static_cast<int>(ext.size()) - 1))); // drop '.' if ext is non-empty
+
+        // extensions were transformed to lower case during construction,so do the same for input path
+        if (!case_sensitive)
+            ext = std::string{ext | view::to_lower};
+
         if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
             throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
                                                             std::view::all(extensions), "."));
@@ -305,6 +321,9 @@ public:
 private:
     //!\brief Stores valid file extensions.
     std::vector<std::string> extensions;
+
+    //!\brief True if file extension is case sensitive
+    bool case_sensitive;
 };
 
 /*!\brief A validator that checks if a file exists.
