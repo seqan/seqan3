@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::alignment_file_in_options.
+ * \brief Provides helper data structures for the seqan3::alignment_file_output.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -17,12 +17,8 @@
 namespace seqan3
 {
 
-//!\brief The options type defines various option members that influence the behaviour of all or some formats.
-//!\ingroup alignment_file
-template <typename sequence_legal_alphabet>
-struct alignment_file_input_options
-{
-    // options to define
-};
+//!\brief Type tag which indicates that no reference information has been passed to the alignment file on construction.
+struct ref_info_not_given
+{};
 
-} // namespace seqan3
+}

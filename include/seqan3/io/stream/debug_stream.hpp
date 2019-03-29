@@ -325,7 +325,28 @@ template <typename variant_type>
 inline debug_stream_type & operator<<(debug_stream_type & s, variant_type && v)
 {
     if (!v.valueless_by_exception())
-        std::visit([&s](auto&& arg){s << arg;}, v);
+        std::visit([&s] (auto && arg) {s << arg;}, v);
+    else
+        s << "<VALUELESS_VARIANT>";
+    return s;
+}
+
+/*!\brief A std::optional can be printed by printing its value or nothing if valueless.
+ * \tparam    optional_type The underlying type of the optional.
+ * \param[in] s             The seqan3::debug_stream.
+ * \param[in] arg           The std::optional.
+ * \relates seqan3::debug_stream_type
+ */
+template <typename optional_type>
+//!\cond
+    requires detail::is_type_specialisation_of_v<remove_cvref_t<optional_type>, std::optional>
+//!\endcond
+inline debug_stream_type & operator<<(debug_stream_type & s, optional_type && arg)
+{
+    if (arg.has_value())
+        s << *arg;
+    else
+        s << "<VALUELESS_OPTIONAL>";
     return s;
 }
 

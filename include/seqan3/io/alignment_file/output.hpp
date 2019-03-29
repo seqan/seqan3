@@ -7,7 +7,7 @@
 
 /*!\file
  * \brief Provides seqan3::alignment_file_output and corresponding traits classes.
- * \author Svenja Mehringer <avenja.mehringer AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
@@ -24,6 +24,7 @@
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
+#include <seqan3/io/alignment_file/misc.hpp>
 #include <seqan3/io/alignment_file/output_format_concept.hpp>
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
@@ -134,17 +135,8 @@ namespace seqan3
  * use that information instead of the template argument**. This is especially handy when reading from one file and
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
- * \todo TODO introduce snippet once seqan3:;alignment_file_in is implemented.
+ * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp custom_fields
  *
- * ```cpp
- * alignment_file_in  fin{"input.sam", fields<field::REF_OFFSET, field::FLAG>{}};
- * alignment_file_output fout{"output.sam"}; // doesn't have to match the configuration
- *
- * for (auto & r : fin)
- * {
- *         fout.push_back(r); // copy all the records.
- * }
- * ```
  * This will copy the FLAG and REF_OFFSET value into the new output file. Note that the other SAM columns in the
  * output file will be defaulted, so unless you specify to read all SAM columns (see seqan3::alignment_file_format_sam)
  * the output file will not be equal to the input file.
@@ -159,8 +151,6 @@ namespace seqan3
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn3:
- *
- * \todo Introduce snippet once seqan3::alignment_file_in is implemented.
  *
  * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp input_range
  *
@@ -192,9 +182,9 @@ template <detail::fields_concept selected_field_ids_ =
                      field::HEADER_PTR>,
           detail::TypeListOfAlignmentFileOutputFormats valid_formats_ =
               type_list<alignment_file_format_sam/*,
-                        alignment_file_format_bam,
-                        alignment_file_format_blast_tabular*/>,
-          OStream<char> stream_type_ = std::ofstream>
+                        alignment_file_format_bam,*/>,
+          OStream<char> stream_type_ = std::ofstream,
+          typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
 {
 public:
@@ -308,17 +298,101 @@ public:
      * \param[in] _stream    The stream to operate on (this must be std::move'd in!).
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
-     *
-     * \details
      */
     template <AlignmentFileOutputFormat file_format>
     alignment_file_output(stream_type             && _stream,
                           file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        stream{std::move(_stream)}, format{file_format{}}
+        stream{std::move(_stream)},
+        format{file_format{}}
     {
         static_assert(meta::in<valid_formats, file_format>::value,
                       "You selected a format that is not in the valid_formats of this file.");
+    }
+
+    /*!\brief Construct from filename.
+     * \tparam ref_ids_type_    The type of range over reference ids; must model std::ForwardRange.
+     * \tparam ref_lengths_type The type of range over reference lengths; must model std::ForwardRange.
+     *
+     * \param[in] _file_name    Path to the file you wish to open.
+     * \param[in] ref_ids       A range over reference ids.
+     * \param[in] ref_lengths   A range over lengths of reference sequences (same order as ref_ids).
+     * \param[in] fields_tag    A seqan3::fields tag. [optional]
+     *
+     * \details
+     *
+     * In addition to the file name, you may specify a custom seqan3::fields type which may be easier than
+     * defining all the template parameters.
+     *
+     * ### Example:
+     *
+     * In most cases the template parameters are deduced completely automatically:
+     *
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp filename_construction_with_ref_info
+     *
+     * Writing with custom selected fields:
+     *
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp format_construction
+     */
+    template <typename ref_ids_type_, std::ranges::ForwardRange ref_lengths_type>
+    //!\cond
+        requires std::Same<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
+    //!\endcond
+    alignment_file_output(std::filesystem::path const & _file_name,
+                          ref_ids_type_              && ref_ids,
+                          ref_lengths_type           && ref_lengths,
+                          selected_field_ids    const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        alignment_file_output{_file_name, selected_field_ids{}}
+
+    {
+        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
+
+        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
+
+        // fill ref_dict
+        for (size_t idx = 0; idx < std::ranges::size(ref_ids); ++idx)
+        {
+            header_ptr->ref_id_info.push_back({ref_lengths[idx], ""});
+            header_ptr->ref_dict[(header_ptr->ref_ids()[idx])] = idx;
+        }
+    }
+
+    /*!\brief Construct from an existing stream and with specified format.
+     * \tparam file_format      The format of the file in the stream, must satisfy seqan3::AlignmentFileOutputFormat.
+     * \tparam ref_ids_type_    The type of range over reference ids; must model std::ForwardRange.
+     * \tparam ref_lengths_type The type of range over reference lengths; must model std::ForwardRange.
+     *
+     * \param[in] _stream       The stream to operate on (this must be std::move'd in!).
+     * \param[in] ref_ids       A range over reference ids.
+     * \param[in] ref_lengths   A range over lengths of reference sequences (same order as ref_ids).
+     * \param[in] format_tag    The file format tag.
+     * \param[in] fields_tag    A seqan3::fields tag. [optional]
+     *
+     * \details
+     */
+    template <AlignmentFileOutputFormat file_format,
+              typename ref_ids_type_, // generic type to capture lvalue references
+              std::ranges::ForwardRange ref_lengths_type>
+    //!\cond
+        requires std::Same<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
+    //!\endcond
+    alignment_file_output(stream_type             && _stream,
+                          ref_ids_type_           && ref_ids,
+                          ref_lengths_type        && ref_lengths,
+                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        alignment_file_output{std::move(_stream), file_format{}, selected_field_ids{}}
+    {
+        assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
+
+        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
+
+        // fill ref_dict
+        for (uint32_t idx = 0; idx < std::ranges::size(ref_ids); ++idx)
+        {
+            header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
+            header_ptr->ref_dict[header_ptr->ref_ids()[idx]] = idx;
+        }
     }
     //!\}
 
@@ -393,7 +467,7 @@ public:
     //!\endcond
     {
         using default_align_t = std::pair<std::basic_string_view<gapped<char>>, std::basic_string_view<gapped<char>>>;
-        using default_mate_t  = std::tuple<std::string_view, uint32_t, uint32_t>;
+        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         write_record(detail::get_or<field::HEADER_PTR>(r, nullptr),
                      detail::get_or<field::SEQ>(r, std::string_view{}),
@@ -401,8 +475,8 @@ public:
                      detail::get_or<field::ID>(r, std::string_view{}),
                      detail::get_or<field::OFFSET>(r, 0u),
                      detail::get_or<field::REF_SEQ>(r, std::string_view{}),
-                     detail::get_or<field::REF_ID>(r, std::string_view{}),
-                     detail::get_or<field::REF_OFFSET>(r, -1), // 1 is added in format SAM
+                     detail::get_or<field::REF_ID>(r, std::ignore),
+                     detail::get_or<field::REF_OFFSET>(r, std::optional<int32_t>{}),
                      detail::get_or<field::ALIGNMENT>(r, default_align_t{}),
                      detail::get_or<field::FLAG>(r, 0u),
                      detail::get_or<field::MAPQ>(r, 0u),
@@ -440,7 +514,7 @@ public:
     //!\endcond
     {
         using default_align_t = std::pair<std::basic_string_view<gapped<char>>, std::basic_string_view<gapped<char>>>;
-        using default_mate_t  = std::tuple<std::string_view, uint32_t, uint32_t>;
+        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or<selected_field_ids::index_of(field::HEADER_PTR)>(t, nullptr),
@@ -449,8 +523,8 @@ public:
                      detail::get_or<selected_field_ids::index_of(field::ID)>(t, std::string_view{}),
                      detail::get_or<selected_field_ids::index_of(field::OFFSET)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::REF_SEQ)>(t, std::string_view{}),
-                     detail::get_or<selected_field_ids::index_of(field::REF_ID)>(t, std::string_view{}),
-                     detail::get_or<selected_field_ids::index_of(field::REF_OFFSET)>(t, -1), // 1 is added in format SAM
+                     detail::get_or<selected_field_ids::index_of(field::REF_ID)>(t, std::ignore),
+                     detail::get_or<selected_field_ids::index_of(field::REF_OFFSET)>(t, std::optional<int32_t>{}),
                      detail::get_or<selected_field_ids::index_of(field::ALIGNMENT)>(t, default_align_t{}),
                      detail::get_or<selected_field_ids::index_of(field::FLAG)>(t, 0u),
                      detail::get_or<selected_field_ids::index_of(field::MAPQ)>(t, 0u),
@@ -546,14 +620,8 @@ public:
      *
      * This is especially useful in combination with file-based filters:
      *
-     * \todo TODO Implement the snippet once seqan3::alignment_file_in is implemented
+     * \snippet test/snippet/io/alignment_file/alignment_file_output.cpp io_pipeline
      *
-     * ```cpp
-     * alignment_file_in{"input.sam"} | view::minimum_average_quality_filter(20)
-     *                                | view::minimum_alignment_length_filter(50)
-     *                                | std::view::take(5)
-     *                                | alignment_file_output{"output.sam"};
-     * ```
      */
     template <typename rng_t>
     friend alignment_file_output & operator|(rng_t && range, alignment_file_output & f)
@@ -599,19 +667,17 @@ public:
      *
      * \sa seqan3::alignment_file_header
      */
-    alignment_file_header & header()
+    auto & header()
     {
-        if (header_ptr == nullptr)
-            header_ptr = std::unique_ptr<alignment_file_header>(new alignment_file_header);
+        if constexpr (std::Same<ref_ids_type, ref_info_not_given>)
+            throw std::logic_error{"Please construct your file with reference id and length information in order "
+                                   "to properly initialise the header before accessing it."};
 
         return *header_ptr;
     }
 
 protected:
     //!\privatesection
-
-    //!\brief The file header object.
-    std::unique_ptr<alignment_file_header> header_ptr{nullptr};
 
     //!\brief Path of the file that the stream operates on.
     std::string file_name;
@@ -625,24 +691,31 @@ protected:
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
 
-    //!\brief Write record to format.
-    template <typename ...pack_type>
-    void write_record(alignment_file_header const * hdr_ptr, pack_type && ...remainder)
-    {
-        if (header_ptr == nullptr && hdr_ptr != nullptr)
-            header_ptr = std::unique_ptr<alignment_file_header>(new alignment_file_header(*hdr_ptr));
+    //!\brief The header type, which specilised with ref_ids_type if reference information are given.
+    using header_type = alignment_file_header<std::conditional_t<std::Same<ref_ids_type, ref_info_not_given>,
+                                              std::vector<std::string>,
+                                              ref_ids_type>>;
 
+    //!\brief The file header object (will be set on construction).
+    std::unique_ptr<header_type> header_ptr;
+
+    //!\brief Write record to format.
+    template <typename record_header_ptr_t, typename ...pack_type>
+    void write_record(record_header_ptr_t && record_header_ptr, pack_type && ...remainder)
+    {
         static_assert((sizeof...(pack_type) == 14), "Wrong parameter list passed to write_record.");
 
         assert(!format.valueless_by_exception());
 
         std::visit([&] (auto & f)
         {
-            f.write(stream,
-                    options,
-                    header_ptr,
-                    std::forward<pack_type>(remainder)...);
-
+            // use header from record if explicitly given, e.g. file_out = file_in
+            if constexpr (!std::Same<record_header_ptr_t, std::nullptr_t>)
+                f.write(stream, options, *record_header_ptr, std::forward<pack_type>(remainder)...);
+            else if constexpr (std::Same<ref_ids_type, ref_info_not_given>)
+                f.write(stream, options, std::ignore, std::forward<pack_type>(remainder)...);
+            else
+                f.write(stream, options, *header_ptr, std::forward<pack_type>(remainder)...);
         }, format);
     }
 
@@ -654,13 +727,71 @@ protected:
  * \relates seqan3::alignment_file_output
  * \{
  */
+template <detail::fields_concept    selected_field_ids>
+alignment_file_output(std::filesystem::path &&, selected_field_ids const &)
+    -> alignment_file_output<selected_field_ids,
+                             typename alignment_file_output<>::valid_formats,
+                             typename alignment_file_output<>::stream_type,
+                             ref_info_not_given>;
+
 template <OStream<char>             stream_type,
           AlignmentFileOutputFormat file_format,
-          detail::fields_concept            selected_field_ids>
+          detail::fields_concept    selected_field_ids>
 alignment_file_output(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
-                         type_list<file_format>,
-                         std::remove_reference_t<stream_type>>;
+                             type_list<file_format>,
+                             std::remove_reference_t<stream_type>,
+                             ref_info_not_given>;
+
+template <detail::fields_concept    selected_field_ids,
+          std::ranges::ForwardRange ref_ids_type,
+          std::ranges::ForwardRange ref_lengths_type>
+alignment_file_output(std::filesystem::path &&,
+                      ref_ids_type &&,
+                      ref_lengths_type &&,
+                      selected_field_ids const &)
+    -> alignment_file_output<selected_field_ids,
+                             typename alignment_file_output<>::valid_formats,
+                             typename alignment_file_output<>::stream_type,
+                             std::remove_reference_t<ref_ids_type>>;
+
+template <std::ranges::ForwardRange ref_ids_type,
+          std::ranges::ForwardRange ref_lengths_type>
+alignment_file_output(std::filesystem::path &&,
+                      ref_ids_type &&,
+                      ref_lengths_type &&)
+    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
+                             typename alignment_file_output<>::valid_formats,
+                             typename alignment_file_output<>::stream_type,
+                             std::remove_reference_t<ref_ids_type>>;
+
+template <OStream<char>             stream_type,
+          std::ranges::ForwardRange ref_ids_type,
+          std::ranges::ForwardRange ref_lengths_type,
+          AlignmentFileOutputFormat file_format,
+          detail::fields_concept    selected_field_ids>
+alignment_file_output(stream_type && _stream,
+                      ref_ids_type &&,
+                      ref_lengths_type &&,
+                      file_format const &,
+                      selected_field_ids const &)
+    -> alignment_file_output<selected_field_ids,
+                             type_list<file_format>,
+                             std::remove_reference_t<stream_type>,
+                             std::remove_reference_t<ref_ids_type>>;
+
+template <OStream<char>             stream_type,
+          std::ranges::ForwardRange ref_ids_type,
+          std::ranges::ForwardRange ref_lengths_type,
+          AlignmentFileOutputFormat file_format>
+alignment_file_output(stream_type && _stream,
+                      ref_ids_type &&,
+                      ref_lengths_type &&,
+                      file_format const &)
+    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
+                             type_list<file_format>,
+                             std::remove_reference_t<stream_type>,
+                             std::remove_reference_t<ref_ids_type>>;
 //!\}
 
 } // namespace seqan3

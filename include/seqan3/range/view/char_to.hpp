@@ -64,8 +64,8 @@ namespace seqan3::view
 template <Alphabet alphabet_type>
 inline auto const char_to = deep{std::view::transform([] (auto && in)
 {
-    static_assert(std::is_same_v<remove_cvref_t<decltype(in)>, remove_cvref_t<underlying_char_t<alphabet_type>>>,
-                    "The innermost value type must be the underlying char type of alphabet_type.");
+    static_assert(std::CommonReference<decltype(in), underlying_char_t<alphabet_type>>,
+                  "The innermost value type must have a common reference to underlying char type of alphabet_type.");
     // call element-wise assign_char from the Alphabet
     return assign_char(alphabet_type{}, in);
 })};

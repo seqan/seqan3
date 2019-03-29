@@ -13,7 +13,7 @@
 #include <range/v3/view/filter.hpp>
 
 #include <seqan3/io/alignment_file/output.hpp>
-// #include <seqan3/io/alignment_file/input.hpp>
+#include <seqan3/io/alignment_file/input.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/range/view/convert.hpp>
 #include <seqan3/range/view/to_char.hpp>
@@ -338,6 +338,87 @@ TEST(row, different_fields_in_record_and_file)
     EXPECT_EQ(fout.get_stream().str(), expected_out);
 }
 
+TEST(row, print_header_in_file)
+{
+    std::vector<std::string> ref_ids{"ref1", "ref2"};
+    std::vector<int32_t>     ref_len{234511, 243243};
+
+    alignment_file_output fout{std::ostringstream{},
+                               ref_ids,
+                               ref_len,
+                               alignment_file_format_sam{},
+                               fields<field::ID>{}};
+
+    fout.emplace_back(std::string("read1"));
+
+    fout.get_stream().flush();
+
+    std::string const expected_out
+    {
+        "@HD\tVN:1.6\n"
+        "@SQ\tSN:ref1\tLN:234511\n"
+        "@SQ\tSN:ref2\tLN:243243\n"
+        "read1\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n" // empty read
+    };
+
+    EXPECT_EQ(fout.get_stream().str(), expected_out);
+}
+
+TEST(row, print_header_in_record)
+{
+    std::vector<std::string> const ref_ids{"ref1", "ref2"};
+    std::vector<int32_t>     const ref_len{234511, 243243};
+
+    alignment_file_header header{ref_ids};
+
+    header.ref_id_info.push_back({ref_len[0], ""});
+    header.ref_id_info.push_back({ref_len[1], ""});
+    header.ref_dict[ref_ids[0]] = 0;
+    header.ref_dict[ref_ids[1]] = 1;
+
+    // no file header present
+    {
+        alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}, fields<field::HEADER_PTR>{}};
+
+        fout.emplace_back(&header);
+
+        fout.get_stream().flush();
+
+        std::string const expected_out
+        {
+           "@HD\tVN:1.6\n"
+           "@SQ\tSN:ref1\tLN:234511\n"
+           "@SQ\tSN:ref2\tLN:243243\n"
+            "*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n" // empty read
+        };
+
+        EXPECT_EQ(fout.get_stream().str(), expected_out);
+    }
+
+    // file header present but record header pointer is favoured
+    {
+        alignment_file_output fout{std::ostringstream{},
+                                   std::vector<std::string>{"other_ref1", "other_ref2"},
+                                   std::vector<int32_t>{12, 13},
+                                   alignment_file_format_sam{},
+                                   fields<field::HEADER_PTR>{}};
+
+        fout.emplace_back(&header);
+
+        fout.get_stream().flush();
+
+        std::string const expected_out
+        {
+           "@HD\tVN:1.6\n"
+           "@SQ\tSN:ref1\tLN:234511\n"
+           "@SQ\tSN:ref2\tLN:243243\n"
+            "*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n" // empty read
+        };
+
+        EXPECT_EQ(fout.get_stream().str(), expected_out);
+    }
+}
+
 // ----------------------------------------------------------------------------
 // rows
 // ----------------------------------------------------------------------------
@@ -374,12 +455,52 @@ TEST(rows, assign_range_of_tuples)
 
 TEST(rows, assign_alignment_file_in)
 {
-    // TODO when input is implemented
+    std::vector<std::string> ref_ids{"ref"};
+    std::vector<dna4_vector> ref_seqs{"ACTAGCTAGGAGGACTAGCATCGATC"_dna4};
+
+    std::string comp =
+R"(@HD	VN:1.6	SO:unknown	GO:none
+@SQ	SN:ref	LN:26
+@PG	ID:prog1	PN:cool_program
+@CO	This is a comment.
+read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
+read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
+read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+)";
+
+    alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, alignment_file_format_sam{}};
+    alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}};
+
+    fout = fin;
+
+    fout.get_stream().flush();
+
+    EXPECT_EQ(fout.get_stream().str(), comp);
 }
 
 TEST(rows, assign_alignment_file_pipes)
 {
-    // TODO when input is implemented
+    std::vector<std::string> const ref_ids{"ref"};
+    std::vector<dna4_vector> const ref_seqs{"ACTAGCTAGGAGGACTAGCATCGATC"_dna4};
+
+    std::string comp =
+R"(@HD	VN:1.6	SO:unknown	GO:none
+@SQ	SN:ref	LN:26
+@PG	ID:prog1	PN:cool_program
+@CO	This is a comment.
+read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	NM:i:7
+read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
+read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
+)";
+
+    alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, alignment_file_format_sam{}};
+    alignment_file_output fout{std::ostringstream{}, alignment_file_format_sam{}};
+
+    fin | fout;
+
+    fout.get_stream().flush();
+
+    EXPECT_EQ(fout.get_stream().str(), comp);
 }
 
 TEST(rows, convert_sam_to_blast)
