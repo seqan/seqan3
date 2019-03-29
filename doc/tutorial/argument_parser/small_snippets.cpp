@@ -72,10 +72,10 @@ parser.add_option(required_variable, 'n', "name", "I really need a name.", optio
 
 {
 argument_parser parser("Example Parser", argc, argv);
-//![file_existence_validator]
+//![path_existence_validator]
 parser.add_positional_option(args.file_path, "Please provide a tab separated data file.",
-                             file_existance_validator());
-//![file_existence_validator]
+                             path_existence_validator{});
+//![path_existence_validator]
 }
 
 }

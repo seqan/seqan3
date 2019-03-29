@@ -326,33 +326,33 @@ private:
     bool case_sensitive;
 };
 
-/*!\brief A validator that checks if a file exists.
+/*!\brief A validator that checks if a path (file or directory) exists.
  * \ingroup argument_parser
  *
  * \details
  *
  * The struct then acts as a functor that throws a seqan3::parser_invalid_argument
- * exception whenever a given filename (string) does not exist.
+ * exception whenever a given path (file or directory) does not exist.
  *
- * \snippet test/snippet/argument_parser/validators_file_existance.cpp usage
+ * \snippet test/snippet/argument_parser/validators_path_existence.cpp usage
  */
-class file_existance_validator
+class path_existence_validator
 {
 public:
     //!\brief Type of values that are tested by validator
     using value_type = std::string;
 
-    /*!\brief Tests whether path exists.
+    /*!\brief Tests whether path (file or directory) exists.
      * \param path The input value to check.
      * \throws parser_invalid_argument
      */
     void operator()(std::filesystem::path const & path) const
     {
         if (!(std::filesystem::exists(path)))
-            throw parser_invalid_argument(detail::to_string("File ", path, " does not exist."));
+            throw parser_invalid_argument(detail::to_string("The file or directory ", path, " does not exist."));
     }
 
-    /*!\brief Tests whether every filename in list \p v exists.
+    /*!\brief Tests whether every path (file or directory) in list \p v exists.
      * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
      *                    have a common reference with std::filesystem::path.
      * \param  v          The input range to iterate over and check every element.
@@ -370,7 +370,7 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return detail::to_string("The file is checked for existence.");
+        return detail::to_string("The file or directory is checked for existence.");
     }
 };
 

@@ -389,17 +389,17 @@ The validator throws a seqan3::parser_invalid_argument exception whenever a give
 
 \snippet test/snippet/argument_parser/validators_3.cpp validator_call
 
-### The seqan3::file_existance_validator
+### The seqan3::path_existence_validator
 
-The validator throws a seqan3::parser_invalid_argument exception whenever a given filename (string) does not exist.
+The validator throws a seqan3::parser_invalid_argument exception whenever a given path (string) does not exist.
 
-\snippet test/snippet/argument_parser/validators_file_existance.cpp validator_call
+\snippet test/snippet/argument_parser/validators_path_existence.cpp validator_call
 
 \assignment{Assignment 8}
-Add a seqan3::file_existance_validator to the first positional option that expects the `file_path`.
+Add a seqan3::path_existence_validator to the first positional option that expects the `file_path`.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/small_snippets.cpp file_existence_validator
+\snippet doc/tutorial/argument_parser/small_snippets.cpp path_existence_validator
 \endsolution
 
 ### The seqan3::regex_validator
@@ -423,9 +423,8 @@ For this purpose you can chain a seqan3::regex_validator to a seqan3::file_ext_v
 You can chain as many validators as you want, they will be evaluated one after the other from left to right (first to last).
 
 \assignment{Assignment 9}
-Add a seqan3::file_ext_validator to the first positional option that expects the `file_path` by chaining it to the already present seqan3::file_existance_validator. The file extensions of your application should be restricted to `tsv` since we expect tab separated files.
+Add a seqan3::file_ext_validator to the first positional option that expects the `file_path` by chaining it to the already present seqan3::path_existence_validator. The file extensions of your application should be restricted to `tsv` since we expect tab separated files.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution6.cpp file_existence_validator
+\snippet doc/tutorial/argument_parser/solution6.cpp path_existence_validator
 \endsolution
-
