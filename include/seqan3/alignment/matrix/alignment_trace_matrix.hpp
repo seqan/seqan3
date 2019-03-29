@@ -90,15 +90,14 @@ public:
     using entry_type = trace_directions;
 
     /*!\name Constructors, destructor and assignment
-     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
-     * and destructor are implicitly defined.
      * \{
      */
-     alignment_trace_matrix() = default;
-     alignment_trace_matrix(alignment_trace_matrix const &) = default;
-     alignment_trace_matrix(alignment_trace_matrix &&) = default;
-     alignment_trace_matrix & operator=(alignment_trace_matrix const &) = default;
-     alignment_trace_matrix & operator=(alignment_trace_matrix &&) = default;
+     alignment_trace_matrix() = default;                                           //!< Defaulted
+     alignment_trace_matrix(alignment_trace_matrix const &) = default;             //!< Defaulted
+     alignment_trace_matrix(alignment_trace_matrix &&) = default;                  //!< Defaulted
+     alignment_trace_matrix & operator=(alignment_trace_matrix const &) = default; //!< Defaulted
+     alignment_trace_matrix & operator=(alignment_trace_matrix &&) = default;      //!< Defaulted
+     ~alignment_trace_matrix() = default;                                          //!< Defaulted
 
     /*!\brief Construct the trace matrix by using a score_matrix.
      * \param database     The database sequence.

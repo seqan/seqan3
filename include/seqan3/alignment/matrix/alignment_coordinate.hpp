@@ -86,12 +86,15 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr advanceable_alignment_coordinate() noexcept = default;
+    constexpr advanceable_alignment_coordinate() noexcept = default;                                    //!< Defaulted
+    //!\brief Defaulted
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate const &) noexcept = default;
-    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate &&) noexcept = default;
+    constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate &&) noexcept = default; //!< Defaulted
+    //!\brief Defaulted
     constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate const &) noexcept = default;
+    //!\brief Defaulted
     constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate &&) noexcept = default;
-    ~advanceable_alignment_coordinate() noexcept = default;
+    ~advanceable_alignment_coordinate() noexcept = default;                                             //!< Defaulted
 
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
@@ -300,12 +303,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alignment_coordinate() = default;
-    constexpr alignment_coordinate(alignment_coordinate const &) = default;
-    constexpr alignment_coordinate(alignment_coordinate &&) = default;
-    constexpr alignment_coordinate & operator=(alignment_coordinate const &) = default;
-    constexpr alignment_coordinate & operator=(alignment_coordinate &&) = default;
-    ~alignment_coordinate() = default;
+    constexpr alignment_coordinate() = default;                                         //!< Defaulted
+    constexpr alignment_coordinate(alignment_coordinate const &) = default;             //!< Defaulted
+    constexpr alignment_coordinate(alignment_coordinate &&) = default;                  //!< Defaulted
+    constexpr alignment_coordinate & operator=(alignment_coordinate const &) = default; //!< Defaulted
+    constexpr alignment_coordinate & operator=(alignment_coordinate &&) = default;      //!< Defaulted
+    ~alignment_coordinate() = default;                                                  //!< Defaulted
 
     //!\cond DEV
     //!\brief Inherit the constructor from the base class.

@@ -87,12 +87,12 @@ public:
      * \brief The class is not copy-constructible or copy-assignable but allows move construction and assignment.
      * \{
      */
-    alignment_executor_two_way() = delete;
-    alignment_executor_two_way(alignment_executor_two_way const &) = delete;
-    alignment_executor_two_way(alignment_executor_two_way &&) = default;
-    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete;
-    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;
-    ~alignment_executor_two_way() = default;
+    alignment_executor_two_way() = delete;                                               //!< This is a move-only type.
+    alignment_executor_two_way(alignment_executor_two_way const &) = delete;             //!< This is a move-only type.
+    alignment_executor_two_way(alignment_executor_two_way &&) = default;                 //!< Defaulted
+    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete; //!< This is a move-only type.
+    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;    //!< Defaulted
+    ~alignment_executor_two_way() = default;                                             //!< Defaulted
 
     //!\brief Constructs this executor with the passed range of alignment instances.
     alignment_executor_two_way(resource_t && resrc,

@@ -67,12 +67,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr find_optimum_policy() = default;
-    constexpr find_optimum_policy(find_optimum_policy const &) = default;
-    constexpr find_optimum_policy(find_optimum_policy &&) = default;
-    constexpr find_optimum_policy & operator=(find_optimum_policy const &) = default;
-    constexpr find_optimum_policy & operator=(find_optimum_policy &&) = default;
-    ~find_optimum_policy() = default;
+    constexpr find_optimum_policy() = default;                                        //!< Defaulted
+    constexpr find_optimum_policy(find_optimum_policy const &) = default;             //!< Defaulted
+    constexpr find_optimum_policy(find_optimum_policy &&) = default;                  //!< Defaulted
+    constexpr find_optimum_policy & operator=(find_optimum_policy const &) = default; //!< Defaulted
+    constexpr find_optimum_policy & operator=(find_optimum_policy &&) = default;      //!< Defaulted
+    ~find_optimum_policy() = default;                                                 //!< Defaulted
     //!\}
 
 protected:

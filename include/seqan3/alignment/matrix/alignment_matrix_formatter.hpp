@@ -194,15 +194,15 @@ public:
     alignment_matrix_format symbols;
 
     /*!\name Constructors, destructor and assignment
-     * The copy-constructor, move-constructor, copy-assignment, move-assignment,
-     * and destructor are implicitly defined.
      * \{
      */
-     alignment_matrix_formatter() = delete;
-     alignment_matrix_formatter(alignment_matrix_formatter const &) = default;
-     alignment_matrix_formatter(alignment_matrix_formatter &&) = default;
-     alignment_matrix_formatter & operator=(alignment_matrix_formatter const &) = default;
-     alignment_matrix_formatter & operator=(alignment_matrix_formatter &&) = default;
+     alignment_matrix_formatter() = delete;                                                //!< Matrix taken as ref.
+     alignment_matrix_formatter(alignment_matrix_formatter const &) = default;             //!< Defaulted
+     alignment_matrix_formatter(alignment_matrix_formatter &&) = default;                  //!< Defaulted
+     alignment_matrix_formatter & operator=(alignment_matrix_formatter const &) = default; //!< Defaulted
+     alignment_matrix_formatter & operator=(alignment_matrix_formatter &&) = default;      //!< Defaulted
+     ~alignment_matrix_formatter() = default;                                              //!< Defaulted
+
     /*!\brief Construct the matrix out of the *entries*, the *rows*,
      *        and the *cols*.
      * \param _matrix  \copydoc matrix

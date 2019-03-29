@@ -23,6 +23,7 @@ namespace seqan3
  * \tparam alignment_executor_type The buffer type for the alignment stream.
  *
  * \details
+ * \attention This class considers moveable-only ranges.
  *
  * Provides a stream-like range interface over the alignments instances that are computed in a
  * seqan3::detail::alignment_executor_two_way executor.
@@ -52,12 +53,12 @@ class alignment_range
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr iterator_type() noexcept = default;
-        constexpr iterator_type(iterator_type const &) noexcept = default;
-        constexpr iterator_type(iterator_type &&) noexcept = default;
-        constexpr iterator_type & operator=(iterator_type const &) noexcept = default;
-        constexpr iterator_type & operator=(iterator_type &&) noexcept = default;
-        ~iterator_type() = default;
+        constexpr iterator_type() noexcept = default;                                  //!< Defaulted
+        constexpr iterator_type(iterator_type const &) noexcept = default;             //!< Defaulted
+        constexpr iterator_type(iterator_type &&) noexcept = default;                  //!< Defaulted
+        constexpr iterator_type & operator=(iterator_type const &) noexcept = default; //!< Defaulted
+        constexpr iterator_type & operator=(iterator_type &&) noexcept = default;      //!< Defaulted
+        ~iterator_type() = default;                                                    //!< Defaulted
 
         //!\brief Construct from alignment stream.
         constexpr iterator_type(alignment_range & range) noexcept : range_ptr(&range)
@@ -141,12 +142,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_range() = default;
-    alignment_range(alignment_range const &) = delete;
-    alignment_range(alignment_range &&) = default;
-    alignment_range & operator=(alignment_range const &) = delete;
-    alignment_range & operator=(alignment_range &&) = default;
-    ~alignment_range() = default;
+    alignment_range() = default;                                   //!< Defaulted
+    alignment_range(alignment_range const &) = delete;             //!< This is a move-only type.
+    alignment_range(alignment_range &&) = default;                 //!< Defaulted
+    alignment_range & operator=(alignment_range const &) = delete; //!< This is a move-only type.
+    alignment_range & operator=(alignment_range &&) = default;     //!< Defaulted
+    ~alignment_range() = default;                                  //!< Defaulted
 
     //!\brief Explicit deletion to forbid copy construction of the underlying executor.
     explicit alignment_range(alignment_executor_type const & _alignment_executor) = delete;

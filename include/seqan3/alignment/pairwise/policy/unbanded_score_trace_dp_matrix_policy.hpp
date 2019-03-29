@@ -92,12 +92,15 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr unbanded_score_trace_dp_matrix_policy() = default;
+    constexpr unbanded_score_trace_dp_matrix_policy() = default;                                         //!< Defaulted
+    //!\brief Defaulted
     constexpr unbanded_score_trace_dp_matrix_policy(unbanded_score_trace_dp_matrix_policy const &) = default;
-    constexpr unbanded_score_trace_dp_matrix_policy(unbanded_score_trace_dp_matrix_policy &&) = default;
+    constexpr unbanded_score_trace_dp_matrix_policy(unbanded_score_trace_dp_matrix_policy &&) = default; //!< Defaulted
+    //!\brief Defaulted
     constexpr unbanded_score_trace_dp_matrix_policy & operator=(unbanded_score_trace_dp_matrix_policy const &) = default;
+    //!\brief Defaulted
     constexpr unbanded_score_trace_dp_matrix_policy & operator=(unbanded_score_trace_dp_matrix_policy &&) = default;
-    ~unbanded_score_trace_dp_matrix_policy() = default;
+    ~unbanded_score_trace_dp_matrix_policy() = default;                                                  //!< Defaulted
     //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.
