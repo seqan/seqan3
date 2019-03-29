@@ -121,7 +121,7 @@ private:
         using value_type            = typename std::iterator_traits<base_base_t>::value_type;
         using reference             = typename std::iterator_traits<base_base_t>::reference;
         using pointer               = typename std::iterator_traits<base_base_t>::pointer;
-        using iterator_category     = typename std::iterator_traits<base_base_t>::iterator_category;
+        using iterator_category     = iterator_tag_t<base_base_t>;
         //!\}
 
         /*!\name Comparison operators
