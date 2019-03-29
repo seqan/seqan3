@@ -44,10 +44,19 @@ private:
     //!\brief Befriend the base class so it can call impl().
     friend base_t;
 
+    template <std::ranges::ViewableRange urng_t>
+    static auto impl(urng_t && urange, size_t drop_size)
+    {
+        return std::forward<urng_t>(urange) | std::view::drop(drop_size);
+    }
+
     /*!\brief       Call the view's constructor with the underlying view as argument.
      * \returns     An instance of std::ranges::subrange.
      */
     template <std::ranges::ViewableRange urng_t>
+    //!\cond
+        requires std::is_lvalue_reference_v<urng_t> && !std::ranges::ContiguousRange<urng_t>
+    //!\endcond
     static auto impl(urng_t && urange, size_t drop_size)
     {
         auto b = std::ranges::begin(urange);
@@ -179,14 +188,16 @@ namespace seqan3::view
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                          | `rrng_t` (returned range type)                     |
- * |:---------------------------------------------------------:|:--------------------------------------------------:|
- * | std::basic_string *or* std::basic_string_view             | std::basic_string_view                             |
- * | std::ranges::SizedRange && std::ranges::ContiguousRange   | std::span                                          |
- * | *else*                                                    | std::ranges::subrange                              |
+ * | `urng_t` (underlying range type)                            | `rrng_t` (returned range type)                     |
+ * |:-----------------------------------------------------------:|:--------------------------------------------------:|
+ * | std::basic_string *or* std::basic_string_view               | std::basic_string_view                             |
+ * | std::ranges::SizedRange && std::ranges::ContiguousRange     | std::span                                          |
+ * | std::is_lvalue_reference_v && !std::ranges::ContiguousRange | std::ranges::subrange                              |
+ * | *else*                                                      | std::view::drop                                    |
  *
  * The adaptor is different from std::view::drop in that it performs type erasure for some underlying ranges.
- * It returns exactly the type specified above.
+ * It returns exactly the type specified above. For a range type which is not a std::ranges::ContiguousRange and
+ * does not satisfy std::is_lvalue_reference_v, std::view::drop is called instead.
  *
  * ### Complexity
  *
