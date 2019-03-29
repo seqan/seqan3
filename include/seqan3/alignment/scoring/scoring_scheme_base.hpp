@@ -119,11 +119,11 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr scoring_scheme_base(scoring_scheme_base const &) noexcept = default;
-    constexpr scoring_scheme_base(scoring_scheme_base &&) noexcept = default;
-    constexpr scoring_scheme_base & operator=(scoring_scheme_base const &) noexcept = default;
-    constexpr scoring_scheme_base & operator=(scoring_scheme_base &&) noexcept = default;
-    ~scoring_scheme_base() noexcept = default;
+    constexpr scoring_scheme_base(scoring_scheme_base const &) noexcept = default;             //!< Defaulted
+    constexpr scoring_scheme_base(scoring_scheme_base &&) noexcept = default;                  //!< Defaulted
+    constexpr scoring_scheme_base & operator=(scoring_scheme_base const &) noexcept = default; //!< Defaulted
+    constexpr scoring_scheme_base & operator=(scoring_scheme_base &&) noexcept = default;      //!< Defaulted
+    ~scoring_scheme_base() noexcept = default;                                                 //!< Defaulted
 
     //!\brief The default constructor (delegates to set_hamming_distance()).
     constexpr scoring_scheme_base() noexcept

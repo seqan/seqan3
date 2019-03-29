@@ -40,15 +40,16 @@ private:
     friend derived_t;
 
     /*!\name Constructors, destructor and assignment
-     * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr affine_gap_banded_init_policy() noexcept = default;
-    constexpr affine_gap_banded_init_policy(affine_gap_banded_init_policy const &) noexcept = default;
-    constexpr affine_gap_banded_init_policy(affine_gap_banded_init_policy &&) noexcept = default;
+    constexpr affine_gap_banded_init_policy() noexcept = default;                                      //!< Defaulted
+    constexpr affine_gap_banded_init_policy(affine_gap_banded_init_policy const &) noexcept = default; //!< Defaulted
+    constexpr affine_gap_banded_init_policy(affine_gap_banded_init_policy &&) noexcept = default;      //!< Defaulted
+    //!\brief Defaulted
     constexpr affine_gap_banded_init_policy & operator=(affine_gap_banded_init_policy const &) noexcept = default;
+    //!\brief Defaulted
     constexpr affine_gap_banded_init_policy & operator=(affine_gap_banded_init_policy &&) noexcept = default;
-    ~affine_gap_banded_init_policy() noexcept = default;
+    ~affine_gap_banded_init_policy() noexcept = default;                                               //!< Defaulted
     //!\}
 
     /*!\brief Initialises the origin of the dynamic programming matrix.
