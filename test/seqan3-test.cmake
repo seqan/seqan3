@@ -76,6 +76,7 @@ add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
 # needed for header test cases in seqan3/test/header
 add_library (seqan3_test_header INTERFACE)
 target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
+target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
 add_library (seqan3::test::header ALIAS seqan3_test_header)
 
 # ----------------------------------------------------------------------------
@@ -177,7 +178,7 @@ macro (seqan3_require_benchmark)
         gbenchmark_project
         PREFIX gbenchmark_project
         GIT_REPOSITORY "https://github.com/google/benchmark.git"
-        GIT_TAG "v1.4.1"
+        GIT_TAG "b8ca0c42179b7b5d656494e61dda8b861057122f"
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
         UPDATE_DISCONNECTED yes
