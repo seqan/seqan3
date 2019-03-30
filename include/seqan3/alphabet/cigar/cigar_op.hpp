@@ -1,48 +1,16 @@
-// ============================================================================
-//                 SeqAn - The Library for Sequence Analysis
-// ============================================================================
-//
-// Copyright (c) 2006-2018, Knut Reinert & Freie Universitaet Berlin
-// Copyright (c) 2016-2018, Knut Reinert & MPI Molekulare Genetik
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of Knut Reinert or the FU Berlin nor the names of
-//       its contributors may be used to endorse or promote products derived
-//       from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL KNUT REINERT OR THE FU BERLIN BE LIABLE
-// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-// OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-// DAMAGE.
-//
-// ============================================================================
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
 
 /*!\file
  * \brief Introduces the cigar_op alphabet.
- * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 
 #pragma once
-
-#include <array>
-#include <cassert>
-#include <cstdint>
-#include <type_traits>
 
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
 
@@ -69,68 +37,68 @@ namespace seqan3
  * value.
  *
  * Example usage:
- * \snippet test/snippet/alphabet/cigar/cigar_op.cpp general
+ * \include test/snippet/alphabet/cigar/cigar_op.cpp
  *
  * \note Usually you do not want to manipulate cigar elements and vectors on
  *       your own but convert an alignment to a cigar and back. See
  *       seqan3::get_cigar_vector for how to convert two aligned sequences into
- *       an cigar_vector.
+ *       a cigar_vector.
  */
 class cigar_op : public alphabet_base<cigar_op, 9, char>
 {
 private:
-	//!\brief The base class.
-	using base_t = alphabet_base<cigar_op, 9, char>;
+    //!\brief The base class.
+    using base_t = alphabet_base<cigar_op, 9, char>;
 
-	//!\cond \brief Befriend seqan3::alphabet_base.
-	friend base_t;
-	//!\endcond
+    //!\cond \brief Befriend seqan3::alphabet_base.
+    friend base_t;
+    //!\endcond
 
 public:
-	/*!\name Constructors, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr cigar_op() noexcept : base_t{} {}
-    constexpr cigar_op(cigar_op const &) = default;
-    constexpr cigar_op(cigar_op &&) = default;
-    constexpr cigar_op & operator=(cigar_op const &) = default;
-    constexpr cigar_op & operator=(cigar_op &&) = default;
-    ~cigar_op() = default;
+    constexpr cigar_op()                             noexcept = default; //!< Defaulted.
+    constexpr cigar_op(cigar_op const &)             noexcept = default; //!< Defaulted.
+    constexpr cigar_op(cigar_op &&)                  noexcept = default; //!< Defaulted.
+    constexpr cigar_op & operator=(cigar_op const &) noexcept = default; //!< Defaulted.
+    constexpr cigar_op & operator=(cigar_op &&)      noexcept = default; //!< Defaulted.
+    ~cigar_op()                                      noexcept = default; //!< Defaulted.
     //!\}
 
 protected:
-	//!\privatesection
+    //!\privatesection
 
     //!\brief Value to char conversion table.
-	static constexpr char_type rank_to_char[value_size]
-	{
-		'M',
-		'D',
-		'I',
-		'S',
-		'H',
-		'N',
-		'P',
-		'X',
-		'='
-	};
+    static constexpr char_type rank_to_char[value_size]
+    {
+        'M',
+        'D',
+        'I',
+        'S',
+        'H',
+        'N',
+        'P',
+        'X',
+        '='
+    };
 
-	//!\brief Char to value conversion table.
-	static constexpr std::array<rank_type, 256> char_to_rank
-	{
-		[] () constexpr
-		{
-			std::array<rank_type, 256> ret{};
+    //!\brief Char to value conversion table.
+    static constexpr std::array<rank_type, 256> char_to_rank
+    {
+        [] () constexpr
+        {
+            std::array<rank_type, 256> ret{};
 
-			// reverse mapping for characters
-			for (size_t rnk = 0u; rnk < value_size; ++rnk)
-			{
-				ret[rank_to_char[rnk] ] = rnk;
-			}
+            // reverse mapping for characters
+            for (size_t rnk = 0u; rnk < value_size; ++rnk)
+            {
+            	ret[rank_to_char[rnk] ] = rnk;
+            }
 
-			return ret;
-		}()
-	};
+            return ret;
+        }()
+    };
 };
 
 // ------------------------------------------------------------------
@@ -145,9 +113,9 @@ protected:
  * \relates seqan3::cigar_op
  * \returns seqan3::cigar_op
  */
-cigar_op operator""_cigar_op(char const c) noexcept
+inline cigar_op operator""_cigar_op(char const c) noexcept
 {
-    return cigar_op{}.assign_char_strict(c);
+    return cigar_op{}.assign_char_strictly(c);
 }
 //!\}
 } // namespace seqan3

@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -20,7 +20,8 @@
   *
   * \par Introduction
   *
-  * CIGAR strings are combinations of count values and CIGAR operations. This submodule has two different
+  * CIGAR strings are combinations of count values and CIGAR operations, representing an alignment as a sequence of
+  * edit operations. This submodule has two different
   * alphabets. One is the seqan3::cigar_op alphabet, which is a base seqan3::alphabet implementation. This
   * contains all valid symbols contained in CIGAR strings. The other alphabet is the seqan3::cigar alphabet, which
   * is a seqan3::cartesian_composition implementation. This combines the seqan3::cigar_op alphabet with a count value,
@@ -39,3 +40,4 @@
   * | P      | Padding (silent deletion from padded reference)                                                 |
   * | =      | Sequence match                                                                                  |
   * | X      | Sequence mismatch                                                                               |
+  */
