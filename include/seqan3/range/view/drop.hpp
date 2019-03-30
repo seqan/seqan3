@@ -44,6 +44,10 @@ private:
     //!\brief Befriend the base class so it can call impl().
     friend base_t;
 
+    /*!\brief       This constructor is used when urange is not an l-value reference
+     *              and is not a ContiguousRange.
+     * \returns     An instance of std::view::drop.
+    */
     template <std::ranges::ViewableRange urng_t>
     static auto impl(urng_t && urange, size_t drop_size)
     {
@@ -188,12 +192,12 @@ namespace seqan3::view
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                            | `rrng_t` (returned range type)                     |
- * |:-----------------------------------------------------------:|:--------------------------------------------------:|
- * | std::basic_string *or* std::basic_string_view               | std::basic_string_view                             |
- * | std::ranges::SizedRange && std::ranges::ContiguousRange     | std::span                                          |
- * | std::is_lvalue_reference_v && !std::ranges::ContiguousRange | std::ranges::subrange                              |
- * | *else*                                                      | std::view::drop                                    |
+ * | `urng_t` (underlying range type)                             | `rrng_t` (returned range type)                     |
+ * |:------------------------------------------------------------:|:--------------------------------------------------:|
+ * | std::basic_string *or* std::basic_string_view                | std::basic_string_view                             |
+ * | std::ranges::SizedRange && std::ranges::ContiguousRange      | std::span                                          |
+ * | std::is_lvalue_reference_v && ! std::ranges::ContiguousRange | std::ranges::subrange                              |
+ * | *else*                                                       | std::view::drop                                    |
  *
  * The adaptor is different from std::view::drop in that it performs type erasure for some underlying ranges.
  * It returns exactly the type specified above. For a range type which is not a std::ranges::ContiguousRange and
