@@ -263,7 +263,7 @@ What can you learn about the different refinements and their relation to the ran
 
 ## The bitcompressed vector
 
-If you followed the alphabet tutorial closely, you will know that seqan3::dna4 needs only two bits to represent it's state.
+If you followed the alphabet tutorial closely, you will know that seqan3::dna4 needs only two bits to represent its state.
 However, single objects are always at least a byte (eight bits) big in C++.
 To store sequences of small alphabets more space-efficiently, we have developed seqan3::bitcompressed_vector.
 
@@ -276,12 +276,12 @@ Add an argument parser flag that allows the user to decide whether std::vector o
 After creating the vector, print its size.
 
 Measure and compare the amount of main memory that your program uses depending on the vector implementation.
-On Unix based systems use `/usr/bin/time -v <program> <args>` and look for "Maximum resident set size".
+On Linux based systems use `/usr/bin/time -v <program> <args>` and look for "Maximum resident set size".
 (Not to be confused with the built-in Bash time command! So use the full path `/usr/bin/time`)
 
-On MacOS/BSD use `/usr/bin/time -l <program> <args>`, looking for "maximum resident set size".
+On macOS and BSD use `/usr/bin/time -l <program> <args>` and look for "maximum resident set size".
 
-\note This command diplays the peak memory usage and only gives you a first impression. You can use valgrind if you want to have a more detailed analysis of your memory consumption.
+\note This command diplays the peak memory usage and only gives you a first impression. You can use [valgrind](http://valgrind.org/docs/manual/ms-manual.html) if you want to have a more detailed analysis of your memory consumption.
 \endassignment
 \solution
 \include doc/tutorial/ranges/range_solution4.cpp
