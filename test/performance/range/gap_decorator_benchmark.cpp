@@ -176,11 +176,11 @@ static void read_left2right(benchmark::State& state)
 }
 
 // 1 a) Read from left to right in ungapped sequence
-BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<18);
 // 1 b) Read from left to right in gapped sequence
-BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(read_left2right, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<18);
 
 // ============================================================================
 //  read at random position
@@ -237,11 +237,11 @@ static void read_random(benchmark::State& state)
 }
 
 // 2 a) Read at random position in ungapped sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<18);
 // 2 b) Read at random position in gapped sequence
-BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<18);
 
 // ============================================================================
 //  insert left to right
@@ -288,11 +288,11 @@ static void insert_left2right(benchmark::State& state)
 }
 
 // 3 a) Insert gaps of length 1 from left to right into ungapped sequence
-BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<18);
 // 3 b) Insert gaps of length 1 from left to right into gapped sequence
-BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_left2right, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(insert_left2right, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<18);
 
 // ============================================================================
 //  insert right to left
@@ -339,11 +339,11 @@ static void insert_right2left(benchmark::State& state)
 }
 
 // 4 a) Insert gaps of length 1 from left to right into ungapped sequence
-BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<18);
 // 4 b) Insert gaps of length 1 from left to right into gapped sequence
-BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<18);
 
 // ============================================================================
 //  insert at random position
@@ -393,11 +393,11 @@ static void insert_random(benchmark::State& state)
 }
 
 // 5 a) Insert gaps of length 1 at random position into ungapped sequence
-BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<18);
 // 5 b) Insert gaps of length 1 at random position into gapped sequence
-BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<18);
 
 // ============================================================================
 //  delete at random position
@@ -451,10 +451,10 @@ static void delete_random(benchmark::State& state)
 }
 
 // 6 a) Erase gaps at random position from initially ungapped sequence
-BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<18);
 // 6 b) Erase gaps at random position from initially gapped sequence
-BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
-BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<18);
+BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<18);
 
 BENCHMARK_MAIN();
