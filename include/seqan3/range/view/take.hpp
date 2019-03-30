@@ -458,7 +458,7 @@ private:
     template <std::ranges::ViewableRange urng_t>
     //!\cond
         requires std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t> &&
-                 std::is_lvalue_reference_v<urng_t>
+                 std::is_lvalue_reference_v<urng_t> && !std::ranges::ContiguousRange<urng_t>
     //!\endcond
     static auto impl(urng_t && urange, size_t target_size)
     {
