@@ -1033,12 +1033,13 @@ protected:
                 else if (is_char<'S'>(*std::ranges::begin(stream_view)))     // SS (sub-order) tag
                     who = std::addressof(hdr.subsorting);
                 else
-                    throw format_error{std::string("Illegal SAM header tag: S" + (*std::ranges::begin(stream_view)))};
+                    throw format_error{std::string{"Illegal SAM header tag: S"} +
+                                       std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
             }
             else if (!is_char<'G'>(*std::ranges::begin(stream_view)))        // GO (grouping) tag
             {
-                throw format_error{std::string("Illegal SAM header tag in @HG starting with:" +
-                                  (*std::ranges::begin(stream_view)))};
+                throw format_error{std::string{"Illegal SAM header tag in @HG starting with:"} +
+                                   std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
             }
 
             parse_tag_value(*who);
@@ -1141,8 +1142,8 @@ protected:
                     }
                     else if (!is_char<'V'>(*std::ranges::begin(stream_view))) // VN (version) tag
                     {
-                        throw format_error{std::string("Illegal SAM header tag starting with:" +
-                                          (*std::ranges::begin(stream_view)))};
+                        throw format_error{std::string{"Illegal SAM header tag starting with:"} +
+                                           std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
                     }
 
                     parse_tag_value(*who);
@@ -1164,8 +1165,8 @@ protected:
             }
             else
             {
-                throw format_error{std::string("Illegal SAM header tag starting with:" +
-                                              (*std::ranges::begin(stream_view)))};
+                throw format_error{std::string{"Illegal SAM header tag starting with:"} +
+                                   std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
             }
         }
     }
