@@ -157,12 +157,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    bi_fm_index() = default;
-    bi_fm_index(bi_fm_index const &) = default;
-    bi_fm_index & operator=(bi_fm_index const &) = default;
-    bi_fm_index(bi_fm_index &&) = default;
-    bi_fm_index & operator=(bi_fm_index &&) = default;
-    ~bi_fm_index() = default;
+    bi_fm_index() = default;                                //!< Default constructor.
+    bi_fm_index(bi_fm_index const &) = default;             //!< Copy constructor.
+    bi_fm_index & operator=(bi_fm_index const &) = default; //!< Copy assignment.
+    bi_fm_index(bi_fm_index &&) = default;                  //!< Move constructor.
+    bi_fm_index & operator=(bi_fm_index &&) = default;      //!< Move assignment.
+    ~bi_fm_index() = default;                               //!< Destructor.
 
     /*!\brief Constructor that immediately constructs the index given a range.
      *        The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.

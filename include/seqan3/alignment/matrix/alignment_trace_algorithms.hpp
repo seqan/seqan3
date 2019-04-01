@@ -23,26 +23,26 @@
 namespace seqan3::detail
 {
 
-/*!\brief Compute the begin coordinate.
+/*!\brief Compute the front coordinate.
  * \ingroup alignment_matrix
  * \tparam    trace_matrix_t The type of the trace matrix.
- * \param[in] matrix         The trace matrix.
- * \param[in] end_coordinate Where the trace in the matrix ends.
- * \returns Returns the begin coordinate.
+ * \param[in] matrix          The trace matrix.
+ * \param[in] back_coordinate Where the trace in the matrix ends.
+ * \returns Returns the front coordinate.
  */
  template <typename trace_matrix_t>
  //!\cond
      requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
               std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
  //!\endcond
-inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
-                                                       alignment_coordinate const end_coordinate)
+inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
+                                                       alignment_coordinate const back_coordinate)
 {
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    size_t row = end_coordinate.second_seq_pos + 1;
-    size_t col = end_coordinate.first_seq_pos + 1;
+    size_t row = back_coordinate.second + 1;
+    size_t col = back_coordinate.first + 1;
 
     assert(row < matrix.rows());
     assert(col < matrix.cols());
@@ -88,7 +88,7 @@ inline alignment_coordinate alignment_begin_coordinate(trace_matrix_t && matrix,
  * \param[in] database                   The database sequence.
  * \param[in] query                      The query sequence.
  * \param[in] matrix                     The trace matrix.
- * \param[in] end_coordinate             Where the trace in the matrix ends.
+ * \param[in] back_coordinate            Where the trace in the matrix ends.
  * \returns Returns a seqan3::aligned_sequence.
  */
 template <
@@ -105,14 +105,14 @@ inline std::pair<std::vector<gapped_database_alphabet_t>, std::vector<gapped_que
 alignment_trace(database_t && database,
                 query_t && query,
                 trace_matrix_t && matrix,
-                alignment_coordinate const end_coordinate)
+                alignment_coordinate const back_coordinate)
 {
     constexpr auto N = trace_directions::none;
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
-    size_t col = end_coordinate.first_seq_pos + 1;
-    size_t row = end_coordinate.second_seq_pos + 1;
+    size_t col = back_coordinate.first + 1;
+    size_t row = back_coordinate.second + 1;
 
     assert(row <= query.size());
     assert(col <= database.size());

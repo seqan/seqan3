@@ -91,12 +91,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr gap_scheme() noexcept = default;
-    constexpr gap_scheme(gap_scheme const &) noexcept = default;
-    constexpr gap_scheme(gap_scheme &&) noexcept = default;
-    constexpr gap_scheme & operator=(gap_scheme const &) noexcept = default;
-    constexpr gap_scheme & operator=(gap_scheme &&) noexcept = default;
-    ~gap_scheme() noexcept = default;
+    constexpr gap_scheme() noexcept = default;                               //!< Defaulted
+    constexpr gap_scheme(gap_scheme const &) noexcept = default;             //!< Defaulted
+    constexpr gap_scheme(gap_scheme &&) noexcept = default;                  //!< Defaulted
+    constexpr gap_scheme & operator=(gap_scheme const &) noexcept = default; //!< Defaulted
+    constexpr gap_scheme & operator=(gap_scheme &&) noexcept = default;      //!< Defaulted
+    ~gap_scheme() noexcept = default;                                        //!< Defaulted
 
     /*!\brief Constructor for the Affine gap costs model (delegates to set_affine()).
      * \copydetails set_affine()

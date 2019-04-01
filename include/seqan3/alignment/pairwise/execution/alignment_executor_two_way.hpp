@@ -43,7 +43,8 @@ template <std::ranges::ViewableRange resource_t,
           typename alignment_algorithm_t,
           typename execution_handler_t = execution_handler_sequential>
 //!\cond
-    requires std::ranges::InputRange<std::remove_reference_t<resource_t>>
+    requires std::ranges::InputRange<resource_t> &&
+             std::CopyConstructible<alignment_algorithm_t>
 //!\endcond
 class alignment_executor_two_way
 {
@@ -52,7 +53,7 @@ private:
      * \{
      */
     //!\brief The underlying resource type.
-    using resource_type       = detail::single_pass_input_view<resource_t>;
+    using resource_type       = decltype(view::single_pass_input(std::declval<resource_t>()));
     //!\brief The value type of the resource.
     using resource_value_type = value_type_t<resource_type>;
     //!\}
@@ -86,18 +87,18 @@ public:
      * \brief The class is not copy-constructible or copy-assignable but allows move construction and assignment.
      * \{
      */
-    alignment_executor_two_way() = delete;
-    alignment_executor_two_way(alignment_executor_two_way const &) = delete;
-    alignment_executor_two_way(alignment_executor_two_way &&) = default;
-    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete;
-    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;
-    ~alignment_executor_two_way() = default;
+    alignment_executor_two_way() = delete;                                               //!< This is a move-only type.
+    alignment_executor_two_way(alignment_executor_two_way const &) = delete;             //!< This is a move-only type.
+    alignment_executor_two_way(alignment_executor_two_way &&) = default;                 //!< Defaulted
+    alignment_executor_two_way & operator=(alignment_executor_two_way const &) = delete; //!< This is a move-only type.
+    alignment_executor_two_way & operator=(alignment_executor_two_way && ) = default;    //!< Defaulted
+    ~alignment_executor_two_way() = default;                                             //!< Defaulted
 
     //!\brief Constructs this executor with the passed range of alignment instances.
     alignment_executor_two_way(resource_t && resrc,
                                alignment_algorithm_t fn) :
-        resource{view::single_pass_input(std::forward<resource_t>(resrc))},
-        kernel{fn}
+        resource{std::forward<resource_t &&>(resrc)},
+        kernel{std::move(fn)}
     {
         init_buffer();
     }

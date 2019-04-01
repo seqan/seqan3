@@ -24,6 +24,8 @@
 #include <range/v3/iterator/stream_iterators.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/equal.hpp>
+#include <range/v3/algorithm/fill.hpp>
+#include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/algorithm/sort.hpp>
 #include <range/v3/view/all.hpp>
 #include <range/v3/view/any_view.hpp>
@@ -35,6 +37,7 @@
 #include <range/v3/view/istream.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/reverse.hpp>
+#include <range/v3/view/single.hpp>
 #include <range/v3/view/split.hpp>
 #include <range/v3/view/subrange.hpp>
 #include <range/v3/view/take.hpp>
@@ -182,6 +185,11 @@ using SEQAN3_DOXYGEN_ONLY(begin =) ::ranges::begin;
  */
 using SEQAN3_DOXYGEN_ONLY(end =) ::ranges::end;
 
+/*!\typedef std::ranges::data
+ * \brief Alias for ranges::data. Returns a pointer the block of data of a ContiguousRange.
+ */
+using SEQAN3_DOXYGEN_ONLY(data =) ::ranges::data;
+
 /*!\typedef std::ranges::size
  * \brief Alias for ranges::size. Obtains the size of a range whose size can be calculated in constant time.
  */
@@ -191,6 +199,16 @@ using SEQAN3_DOXYGEN_ONLY(size =) ::ranges::size;
  * \brief Alias for ranges::copy. Copies a range of elements to a new location.
  */
 using SEQAN3_DOXYGEN_ONLY(copy =) ::ranges::copy;
+
+/*!\typedef std::ranges::for_each
+ * \brief Alias for ranges::for_each. Applies a function object to the elements of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(for_each =) ::ranges::for_each;
+
+/*!\typedef std::ranges::fill
+ * \brief Alias for ranges::fill. Assigns a value to the elements of a range.
+ */
+using SEQAN3_DOXYGEN_ONLY(fill =) ::ranges::fill;
 
 /*!\typedef std::ranges::empty
  * \brief Alias for ranges::empty. Checks whether a range is empty.
@@ -251,6 +269,12 @@ using SEQAN3_DOXYGEN_ONLY(ostream_iterator =) ::ranges::ostream_iterator;
 * \brief Alias for ranges::iter_move. Casts the result of dereferencing an object to its associated rvalue reference type/
 */
 using SEQAN3_DOXYGEN_ONLY(iter_move =) ::ranges::iter_move;
+
+/*!\typedef std::ranges::view_interface
+* \brief Alias for ranges::view_interface.
+*/
+template <typename urng_t>
+using view_interface = ::ranges::view_interface<urng_t>;
 //!\}
 } // namespace std::ranges
 
@@ -312,6 +336,9 @@ constexpr bool enable_view<type> = static_cast<bool>(seqan3::detail::enable_view
 namespace std::ranges
 {
 
+//!\brief Named template parameter of std::ranges::subrange.
+using subrange_kind = ::ranges::subrange_kind;
+
 /*!\brief Create a view from a pair of iterator and sentinel.
  * \tparam   it_t Type of the iterator; must model std::Iterator.
  * \tparam  sen_t Type of the sentinel; must model std::Sentinel with it_t.
@@ -357,8 +384,10 @@ namespace std::ranges
  * \snippet test/snippet/std/view/subrange.cpp example
  * \hideinitializer
  */
-template <std::Iterator it_t, std::Sentinel<it_t> sen_t>
-using subrange = ::ranges::subrange<it_t, sen_t>;
+template <std::Iterator it_t,
+          std::Sentinel<it_t> sen_t,
+          subrange_kind k = std::SizedSentinel<sen_t, it_t> ? subrange_kind::sized : subrange_kind::unsized>
+using subrange = ::ranges::subrange<it_t, sen_t, k>;
 
 } // namespace std::ranges
 
@@ -741,6 +770,41 @@ inline constexpr auto join = ::ranges::view::join;
  * \hideinitializer
  */
 inline constexpr auto reverse = ::ranges::view::reverse;
+
+/*!\brief               Given a value, produces a view that contains exactly one element.
+ * \tparam value_t      Type of the value; must model std::CopyConstructible.
+ * \param[in] value     The value to create the view for.
+ * \returns             A range that contains one element with the specified value.
+ * \ingroup ranges
+ *
+ * \details
+ *
+ * ### View properties
+ *
+ * This view is **source-only**, it can only be at the beginning of a pipe of range transformations.
+ *
+ * | range concepts and reference_t  | `rrng_t` (returned range type)  |
+ * |---------------------------------|:-------------------------------:|
+ * | std::ranges::InputRange         | *guaranteed*                    |
+ * | std::ranges::ForwardRange       | *guaranteed*                    |
+ * | std::ranges::BidirectionalRange | *guaranteed*                    |
+ * | std::ranges::RandomAccessRange  | *guaranteed*                    |
+ * | std::ranges::ContiguousRange    | *guaranteed*                    |
+ * |                                 |                                 |
+ * | std::ranges::ViewableRange      | *guaranteed*                    |
+ * | std::ranges::View               | *guaranteed*                    |
+ * | std::ranges::SizedRange         | *guaranteed*                    |
+ * | std::ranges::CommonRange        | *guaranteed*                    |
+ * | std::ranges::OutputRange        | *guaranteed*                    |
+ * | seqan3::const_iterable_concept  | *guaranteed*                    |
+ * |                                 |                                 |
+ * | seqan3::reference_t             | value_t &                       |
+ *
+ * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
+ *
+ * \hideinitializer
+ */
+inline constexpr auto single = ::ranges::view::single;
 
 /*!\brief               Takes a View and a delimiter, and splits the View into subranges on the delimiter.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is

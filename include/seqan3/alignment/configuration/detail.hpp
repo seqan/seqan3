@@ -25,7 +25,7 @@ enum struct align_config_id : uint8_t
     aligned_ends, //!< ID for the \ref seqan3::align_cfg::aligned_ends "aligned_ends" option.
     band, //!< ID for the \ref seqan3::align_cfg::band "band" option.
     gap, //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
-    global, //!< ID for the \ref seqan3::align_cfg::global_alignment "global alignment" option.
+    global, //!< ID for the \ref seqan3::global_alignment "global alignment" option.
     max_error, //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
     result, //!< ID for the \ref seqan3::align_cfg::result "result" option.
     scoring, //!< ID for the \ref seqan3::align_cfg::scoring "scoring" option.

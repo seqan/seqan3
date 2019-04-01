@@ -34,8 +34,10 @@
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_sam.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 namespace seqan3
@@ -333,11 +335,13 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
 template <
     SequenceFileInputTraits                    traits_type_        = sequence_file_input_default_traits_dna,
     detail::fields_concept                     selected_field_ids_ = fields<field::SEQ,
-                                                                                          field::ID,
-                                                                                          field::QUAL>,
-    detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<sequence_file_format_fasta,
-                                                                                             sequence_file_format_fastq
-                                                                                             /*, ...*/>,
+                                                                            field::ID,
+                                                                            field::QUAL>,
+    detail::TypeListOfSequenceFileInputFormats valid_formats_      = type_list<sequence_file_format_embl,
+                                                                               sequence_file_format_fasta,
+                                                                               sequence_file_format_fastq,
+                                                                               sequence_file_format_sam
+                                                                               /*, ...*/>,
     char_concept                               stream_char_type_   = char>
 class sequence_file_input
 {
@@ -730,14 +734,12 @@ protected:
     //!\brief Tell the format to move to the next record and update the buffer.
     void read_next_record()
     {
-        if (at_end)
-            return;
-
         // clear the record
         record_buffer.clear();
 
         // at end if we could not read further
-        if (secondary_stream->eof())
+        if ((std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
+             std::istreambuf_iterator<stream_char_type>{}))
         {
             at_end = true;
             return;

@@ -15,15 +15,13 @@
 #include <limits>
 #include <memory>
 
-#include <range/v3/view/iota.hpp>
 #include <range/v3/view/repeat_n.hpp>
-#include <range/v3/view/slice.hpp>
-#include <range/v3/view/zip.hpp>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/policy/unbanded_score_dp_matrix_policy.hpp>
 #include <seqan3/range/shortcuts.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
@@ -63,12 +61,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr banded_score_dp_matrix_policy() = default;
-    constexpr banded_score_dp_matrix_policy(banded_score_dp_matrix_policy const &) = default;
-    constexpr banded_score_dp_matrix_policy(banded_score_dp_matrix_policy &&) = default;
-    constexpr banded_score_dp_matrix_policy & operator=(banded_score_dp_matrix_policy const &) = default;
-    constexpr banded_score_dp_matrix_policy & operator=(banded_score_dp_matrix_policy &&) = default;
-    ~banded_score_dp_matrix_policy() = default;
+    constexpr banded_score_dp_matrix_policy() = default;                                                  //!< Defaulted
+    constexpr banded_score_dp_matrix_policy(banded_score_dp_matrix_policy const &) = default;             //!< Defaulted
+    constexpr banded_score_dp_matrix_policy(banded_score_dp_matrix_policy &&) = default;                  //!< Defaulted
+    constexpr banded_score_dp_matrix_policy & operator=(banded_score_dp_matrix_policy const &) = default; //!< Defaulted
+    constexpr banded_score_dp_matrix_policy & operator=(banded_score_dp_matrix_policy &&) = default;      //!< Defaulted
+    ~banded_score_dp_matrix_policy() = default;                                                           //!< Defaulted
     //!\}
 
 public:
@@ -120,7 +118,7 @@ public:
                       row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
                                                                                current_matrix_iter))}};
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
-            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
+            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
         auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
@@ -210,14 +208,14 @@ public:
         {
             size_t begin_pos = std::max(band.lower_bound - 1, static_cast<band_type>(0));
             size_t end_pos = std::min(band.upper_bound + dimension_second, dimension_first);
-            return first_range | ranges::view::slice(begin_pos, end_pos);
+            return first_range | view::slice(begin_pos, end_pos);
         };
 
         auto trim_second_range = [&]() constexpr
         {
             size_t begin_pos = std::abs(std::min(band.upper_bound + 1, static_cast<band_type>(0)));
             size_t end_pos = std::min(dimension_first - band.lower_bound, dimension_second);
-            return second_range | ranges::view::slice(begin_pos, end_pos);
+            return second_range | view::slice(begin_pos, end_pos);
         };
 
         return std::tuple{trim_first_range(), trim_second_range()};
@@ -228,13 +226,13 @@ public:
      */
     constexpr auto map_banded_coordinate_to_range_position(alignment_coordinate coordinate) const noexcept
     {
-        using as_int_t = std::make_signed_t<decltype(coordinate.first_seq_pos)>;
+        using as_int_t = std::make_signed_t<decltype(coordinate.first)>;
         // Refine the row coordinate to match the original sequence coordinates since the first position of the
         // trace matrix is shifted by the value of the band_column_index, i.e. the upper bound of the band.
         //
         // case 1: ends in column before the band_column_index: subtract the offset from the actual row coordinate.
         // case 2: ends in column after the band_column_index: add the offset to the actual row coordinate.
-        coordinate.second_seq_pos += static_cast<as_int_t>(coordinate.first_seq_pos - band_column_index);
+        coordinate.second += static_cast<as_int_t>(coordinate.first - band_column_index);
         return coordinate;
     }
 

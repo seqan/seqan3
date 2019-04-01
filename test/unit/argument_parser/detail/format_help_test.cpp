@@ -37,13 +37,13 @@ TEST(help_page_printing, short_help)
 {
     // Empty call with no options given. For detail::format_short_help
     argument_parser parser0("empty_options", 1, argv0);
-    parser0.info.synopsis.push_back("synopsis");
+    parser0.info.synopsis.push_back("./some_binary_name synopsis");
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "empty_options"
                "============="
-               "empty_options synopsis"
+               "./some_binary_name synopsis"
                "Try -h or --help for more information.";
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
@@ -199,8 +199,8 @@ TEST(help_page_printing, full_information)
 {
     // Add synopsis, description, short description, positional option, option, flag, and example.
     argument_parser parser6("full", 2, argv1);
-    parser6.info.synopsis.push_back("synopsis");
-    parser6.info.synopsis.push_back("synopsis2");
+    parser6.info.synopsis.push_back("./some_binary_name synopsis");
+    parser6.info.synopsis.push_back("./some_binary_name synopsis2");
     parser6.info.description.push_back("description");
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
@@ -215,8 +215,8 @@ TEST(help_page_printing, full_information)
     expected = "full - so short"
                "==============="
                "SYNOPSIS"
-               "full synopsis"
-               "full synopsis2"
+               "./some_binary_name synopsis"
+               "./some_binary_name synopsis2"
                "DESCRIPTION"
                "description"
                "description2"

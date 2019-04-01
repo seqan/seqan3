@@ -10,6 +10,8 @@ project (seqan3_header_test CXX)
 
 include (../seqan3-test.cmake)
 
+option (SEQAN3_FULL_HEADER_TEST "Test seqan3 headers as well as the headers of external libraries" OFF)
+
 # We compile each header twice in separate compilation units. Each alone is
 # sufficient to test that the header is functional, but both are needed to check
 # for link errors, which can happen if the header accidentally defines a
@@ -59,6 +61,7 @@ macro (seqan3_header_test component header_base_path)
 #include <${header}>
 #include <${header}>
 #include <gtest/gtest.h>
+#include <benchmark/benchmark.h>
 TEST(${header_test_name_safe}) {}")
             # test that seqan3 headers include platform.hpp
             if ("${component}" MATCHES "seqan3")
@@ -70,11 +73,15 @@ TEST(${header_test_name_safe}) {}")
 
             add_library (${header_target} OBJECT "${header_target_source}")
             # NOTE: a simple target_link_libraries (${header_target} seqan3::test::header)
-            # is not possible for OBJECT libraries
-            target_compile_options (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_OPTIONS>)
-            target_compile_definitions (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_DEFINITIONS>)
-            target_include_directories (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_INCLUDE_DIRECTORIES>)
-            add_dependencies (${header_target} gtest)
+            # is not possible for OBJECT libraries before cmake 3.12
+            if (CMAKE_VERSION VERSION_LESS 3.12)
+                target_compile_options (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_OPTIONS>)
+                target_compile_definitions (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_COMPILE_DEFINITIONS>)
+                target_include_directories (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_INCLUDE_DIRECTORIES>)
+                target_link_libraries (${header_target} PRIVATE $<TARGET_PROPERTY:seqan3::test::header,INTERFACE_LINK_LIBRARIES>)
+            else ()
+                target_link_libraries (${header_target} seqan3::test::header)
+            endif ()
 
             target_sources (${target} PRIVATE $<TARGET_OBJECTS:${header_target}>)
         endforeach ()
@@ -90,20 +97,25 @@ TEST(${header_test_name_safe}) {}")
 endmacro ()
 
 seqan3_require_ccache ()
+seqan3_require_benchmark ()
 seqan3_require_test ()
 
 seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include")
 seqan3_header_test (seqan3_test "${SEQAN3_CLONE_DIR}/test/include")
 
-# contains deprecated headers that produce an error when included
-target_compile_definitions (seqan3_test_header INTERFACE RANGES_DISABLE_DEPRECATED_WARNINGS=1)
-seqan3_header_test (range-v3 "${SEQAN3_CLONE_DIR}/submodules/range-v3/include")
+if (SEQAN3_FULL_HEADER_TEST)
 
-# not self-contained headers; error: extra ‘;’ [-Werror=pedantic]
-# seqan3_header_test (lemon "${SEQAN3_CLONE_DIR}/submodules/lemon/include")
+    # contains deprecated headers that produce an error when included
+    target_compile_definitions (seqan3_test_header INTERFACE RANGES_DISABLE_DEPRECATED_WARNINGS=1)
+    seqan3_header_test (range-v3 "${SEQAN3_CLONE_DIR}/submodules/range-v3/include")
 
-# not self-contained headers
-# seqan3_header_test (cereal "${SEQAN3_CLONE_DIR}/submodules/cereal/include")
+    # not self-contained headers; error: extra ‘;’ [-Werror=pedantic]
+    # seqan3_header_test (lemon "${SEQAN3_CLONE_DIR}/submodules/lemon/include")
 
-# not self-contained headers; multiple defined symbols
-# seqan3_header_test (sdsl-lite "${SEQAN3_CLONE_DIR}/submodules/sdsl-lite/include")
+    # not self-contained headers
+    # seqan3_header_test (cereal "${SEQAN3_CLONE_DIR}/submodules/cereal/include")
+
+    # not self-contained headers; multiple defined symbols
+    # seqan3_header_test (sdsl-lite "${SEQAN3_CLONE_DIR}/submodules/sdsl-lite/include")
+
+endif ()

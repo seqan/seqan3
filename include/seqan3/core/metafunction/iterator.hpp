@@ -113,6 +113,110 @@ struct size_type<it_t>
 
 // see specialisation for ranges in core/metafunction/range.hpp
 
+// ----------------------------------------------------------------------------
+// iterator_tag
+// ----------------------------------------------------------------------------
+
+/*!\brief Type metafunction that deduces the
+ * [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled
+ * concept [Type metafunction].
+ * \tparam it_t The type to operate on.
+ *
+ * <table>
+ *   <tr>
+ *     <th>Modelled concept</th>
+ *     <th>iterator_tag<it_t>::type</th>
+ *   </tr>
+ *   <tr>
+ *     <td>\ref std::InputIterator "std::InputIterator<it_t>"</td>
+ *     <td>std::input_iterator_tag</td>
+ *   </tr>
+ *   <tr>
+ *     <td>\ref std::InputIterator "!std::InputIterator<it_t>" &amp;&amp;
+ *         \ref std::OutputIterator "std::OutputIterator<it_t, value_type<it_t>>"</td>
+ *     <td>std::output_iterator_tag</td>
+ *   </tr>
+ *   <tr>
+ *     <td>\ref std::ForwardIterator "std::ForwardIterator<it_t>"</td>
+ *     <td>std::forward_iterator_tag</td>
+ *   </tr>
+ *   <tr>
+ *     <td>\ref std::BidirectionalIterator "std::BidirectionalIterator<it_t>"</td>
+ *     <td>std::bidirectional_iterator_tag</td>
+ *   </tr>
+ *   <tr>
+ *     <td>\ref std::RandomAccessIterator "std::RandomAccessIterator<it_t>"</td>
+ *     <td>std::random_access_iterator_tag</td>
+ *   </tr>
+ * </table>
+ *
+ * \attention
+ * If [std::iterator_traits<it_t>::iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_traits)
+ * is defined for a type `it_t`, this metafunction acts as an alias for it.
+ * If it is not defined and no concepts are modelled, iterator_tag<it_t>::type is not defined.
+ */
+template <typename it_t>
+struct iterator_tag
+{
+SEQAN3_DOXYGEN_ONLY(
+    //!\brief The [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags).
+    using type = iterator_category;
+)
+};
+
+//!\cond
+template <typename it_t>
+    requires requires { typename std::iterator_traits<it_t>::iterator_category; }
+struct iterator_tag<it_t>
+{
+    using type = typename std::iterator_traits<it_t>::iterator_category;
+};
+
+template <std::InputIterator it_t>
+    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+struct iterator_tag<it_t>
+{
+    using type = std::input_iterator_tag;
+};
+
+template <typename it_t>
+    requires !std::InputIterator<it_t> && std::OutputIterator<it_t, value_type_t<it_t>> &&
+             !requires { typename std::iterator_traits<it_t>::iterator_category; }
+struct iterator_tag<it_t>
+{
+    using type = std::output_iterator_tag;
+};
+
+template <std::ForwardIterator it_t>
+    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+struct iterator_tag<it_t>
+{
+    using type = std::forward_iterator_tag;
+};
+
+template <std::BidirectionalIterator it_t>
+    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+struct iterator_tag<it_t>
+{
+    using type = std::bidirectional_iterator_tag;
+};
+
+template <std::RandomAccessIterator it_t>
+    requires !requires { typename std::iterator_traits<it_t>::iterator_category; }
+struct iterator_tag<it_t>
+{
+    using type = std::random_access_iterator_tag;
+};
+//!\endcond
+
+/*!\brief Return the `iterator_category` type of the input type [Type metafunction, shortcut].
+ * \tparam it_t The type to operate on.
+ */
+template <typename it_t>
+//!\cond
+    requires requires { typename iterator_tag<it_t>::type; }
+//!\endcond
+using iterator_tag_t = typename iterator_tag<it_t>::type;
 //!\}
 
 } // namespace seqan3

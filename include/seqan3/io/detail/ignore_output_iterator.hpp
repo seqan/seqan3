@@ -42,16 +42,15 @@ public:
     using iterator_category = std::output_iterator_tag;
     //!\}
 
-    /*!\name Constructor, destructor and assignment
+    /*!\name Constructors, destructor and assignment
      * \{
-     * \brief All non-user defined constructors are explicitly defaulted.
      */
-    ignore_output_iterator() = default;
-    ignore_output_iterator(ignore_output_iterator const &) = default;
-    ignore_output_iterator(ignore_output_iterator &&) = default;
-    ignore_output_iterator & operator= (ignore_output_iterator const &) = default;
-    ignore_output_iterator & operator= (ignore_output_iterator &&) = default;
-    ~ignore_output_iterator() = default;
+    ignore_output_iterator() = default;                                            //!< Defaulted
+    ignore_output_iterator(ignore_output_iterator const &) = default;              //!< Defaulted
+    ignore_output_iterator(ignore_output_iterator &&) = default;                   //!< Defaulted
+    ignore_output_iterator & operator= (ignore_output_iterator const &) = default; //!< Defaulted
+    ignore_output_iterator & operator= (ignore_output_iterator &&) = default;      //!< Defaulted
+    ~ignore_output_iterator() = default;                                           //!< Defaulted
     //!\}
 
     /*!\name Member functions

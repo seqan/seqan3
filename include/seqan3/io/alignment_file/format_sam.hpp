@@ -7,35 +7,39 @@
 
 /*!\file
  * \brief Provides the seqan3::alignment_file_format_sam class.
- * \author Svenja Mehringer <avenja.mehringer AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <iterator>
 #include <string>
-#include <string_view>
 #include <vector>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/remove_if.hpp>
+#include <range/v3/view/repeat_n.hpp>
 
+#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
-// #include <seqan3/io/alignment/input_options.hpp>
+#include <seqan3/io/alignment_file/input_options.hpp>
 #include <seqan3/io/alignment_file/output_options.hpp>
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
+#include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/view/char_to.hpp>
-#include <seqan3/range/view/get.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/to_char.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -62,15 +66,15 @@ namespace seqan3
  * seqan3::field::ID, seqan3::field::REF_SEQ, seqan3::field::REF_ID
  * seqan3::field::REF_OSSFET, seqan3::field::OFFSET, seqan3::field::FLAG,
  * seqan3::field::MAPQ and seqan3::field::MATE.
- * In addition there is the seqan3::field::HEADER_PTR, which is usually not set but
- * needed to provide the range-based functionality of the file.
+ * In addition there is the seqan3::field::HEADER_PTR, which is usually only used internally
+ * to provide the range-based functionality of the file.
  *
  * **None of the fields are required** when writing but will be defaulted
  * to '0' for numeric fields and '*' for other fields.
  *
  * ### SAM format columns -> fields
  *
- * As many users will be accustomed to the columns of the SAM format, here is a
+ * Since many users will be accustomed to the columns of the SAM format, here is a
  * mapping of the common SAM format columns to the SeqAn3 record fields:
  *
  * | #  | SAM Column ID |  FIELD name                                       |
@@ -105,28 +109,25 @@ namespace seqan3
  * If a non-recoverable format violation is encountered on reading, or you specify
  * invalid values/combinations when writing, seqan3::format_error is thrown.
  *
- * Note: All sequence like fields in SAM (e.g. field::SEQ) are truncated at the
- *       the first white space character (see seqan3::is_space) to ensure a
- *       correct format.
- *
  * ### Header implementation
  *
- * The SAM header is printed once in the beginning, before the first record is
- * written.
+ * The SAM header (if present) is read/written once in the beginning before the
+ * first record is read/written.
  */
 class alignment_file_format_sam
 {
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief Rule of five explicitly defaulted.
      * \{
      */
-    alignment_file_format_sam() = default;
+    alignment_file_format_sam() = default;                                         //!< Defaulted
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     alignment_file_format_sam(alignment_file_format_sam const &) = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
     alignment_file_format_sam & operator=(alignment_file_format_sam const &) = delete;
-    alignment_file_format_sam(alignment_file_format_sam &&) = default;
-    alignment_file_format_sam & operator=(alignment_file_format_sam &&) = default;
-    ~alignment_file_format_sam() = default;
+    alignment_file_format_sam(alignment_file_format_sam &&) = default;             //!< Defaulted
+    alignment_file_format_sam & operator=(alignment_file_format_sam &&) = default; //!< Defaulted
+    ~alignment_file_format_sam() = default;                                        //!< Defaulted
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
@@ -135,8 +136,11 @@ public:
         { "sam" },
     };
 
-    //!\copydoc AlignmentFileOutputFormat::write
-    template <typename stream_type,
+    //!\copydoc AlignmentFileInputFormat::read
+    template <typename stream_type,     // constraints checked by file
+              typename seq_legal_alph_type,
+              typename ref_seqs_type,
+              typename ref_ids_type,
               typename seq_type,
               typename id_type,
               typename offset_type,
@@ -151,23 +155,311 @@ public:
               typename tag_dict_type,
               typename e_value_type,
               typename bit_score_type>
+    void read(stream_type                                             & stream,
+              alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+              ref_seqs_type                                           & ref_seqs,
+              alignment_file_header<ref_ids_type>                     & header,
+              seq_type                                                & seq,
+              qual_type                                               & qual,
+              id_type                                                 & id,
+              offset_type                                             & offset,
+              ref_seq_type                                            & SEQAN3_DOXYGEN_ONLY(ref_seq),
+              ref_id_type                                             & ref_id,
+              ref_offset_type                                         & ref_offset,
+              align_type                                              & align,
+              flag_type                                               & flag,
+              mapq_type                                               & mapq,
+              mate_type                                               & mate,
+              tag_dict_type                                           & tag_dict,
+              e_value_type                                            & SEQAN3_DOXYGEN_ONLY(e_value),
+              bit_score_type                                          & SEQAN3_DOXYGEN_ONLY(bit_score))
+    {
+        static_assert(detail::decays_to_ignore_v<ref_offset_type> ||
+                      detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
+                      "The ref_offset must be a specialisation of std::optional.");
+
+        using stream_buf_t = std::istreambuf_iterator<typename stream_type::char_type>;
+        auto stream_view = std::ranges::subrange<decltype(stream_buf_t{stream}), decltype(stream_buf_t{})>
+                               {stream_buf_t{stream}, stream_buf_t{}};
+
+        auto next_field = view::take_until_or_throw(is_char<'\t'>);
+
+        // these variables need to be stored to compute the ALIGNMENT
+        int32_t ref_offset_tmp{};
+        value_type_t<decltype(header.ref_ids())> ref_id_tmp{};
+        [[maybe_unused]] int32_t offset_tmp{};
+        [[maybe_unused]] int32_t soft_clipping_end{};
+        [[maybe_unused]] std::vector<std::pair<char, size_t>> cigar{};
+        [[maybe_unused]] int32_t ref_length{0}, seq_length{0}; // length of aligned part for ref and query
+
+        // Header
+        // -------------------------------------------------------------------------------------------------------------
+        if (is_char<'@'>(*std::ranges::begin(stream_view))) // we always read the header if present
+        {
+            read_header(stream_view, header, ref_seqs);
+
+            if (stream_buf_t{stream} == stream_buf_t{}) // file has no records
+                return;
+        }
+
+        // Fields 1-5: ID FLAG REF_ID REF_OFFSET MAPQ
+        // -------------------------------------------------------------------------------------------------------------
+        read_field(stream_view | next_field, id);
+        std::ranges::next(std::ranges::begin(stream_view)); // skip tab
+
+        read_field(stream_view | next_field, flag);
+        std::ranges::next(std::ranges::begin(stream_view));
+
+        read_field(stream_view | next_field, ref_id_tmp);
+        check_and_assign_ref_id(ref_id, ref_id_tmp, header, ref_seqs);
+
+        std::ranges::next(std::ranges::begin(stream_view));
+
+        read_field(stream_view | next_field, ref_offset_tmp);
+        std::ranges::next(std::ranges::begin(stream_view));
+
+        if (ref_offset_tmp > 0)
+            ref_offset = --ref_offset_tmp; // SAM format is 1-based but SeqAn operates 0-based
+        else if (ref_offset_tmp < 0)
+            throw format_error{"No negative values are allowed for field::REF_OFFSET."};
+        // ref_offset_tmp == 0 indicates an unmapped read -> out-param ref_offset (std::optional) will not be filled
+
+        read_field(stream_view | next_field, mapq);
+        std::ranges::next(std::ranges::begin(stream_view));
+
+        // Field 6: CIGAR
+        // -------------------------------------------------------------------------------------------------------------
+        if constexpr (!detail::decays_to_ignore_v<align_type>)
+        {
+            if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
+            {
+                std::tie(cigar, ref_length, seq_length, offset_tmp, soft_clipping_end) =
+                    parse_cigar(stream_view | next_field);
+            }
+            else
+            {
+                std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
+            }
+        }
+        else
+        {
+            detail::consume(stream_view | next_field);
+        }
+
+        offset = offset_tmp;
+        std::ranges::next(std::ranges::begin(stream_view));
+
+        // Field 7-9: (RNEXT PNEXT TLEN) = MATE
+        // -------------------------------------------------------------------------------------------------------------
+        if constexpr (!detail::decays_to_ignore_v<mate_type>)
+        {
+            value_type_t<decltype(header.ref_ids())> tmp_mate_ref_id{};
+            read_field(stream_view | next_field, tmp_mate_ref_id); // RNEXT
+
+            if (tmp_mate_ref_id == "=") // indicates "same as ref id"
+            {
+                if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
+                    get<0>(mate) = ref_id;
+                else
+                    check_and_assign_ref_id(get<0>(mate), ref_id_tmp, header, ref_seqs);
+            }
+            else
+            {
+                check_and_assign_ref_id(get<0>(mate), tmp_mate_ref_id, header, ref_seqs);
+            }
+
+            std::ranges::next(std::ranges::begin(stream_view));
+
+            int32_t tmp_pnext{};
+            read_field(stream_view | next_field, tmp_pnext); // PNEXT
+
+            if (tmp_pnext > 0)
+                get<1>(mate) = --tmp_pnext; // SAM format is 1-based but SeqAn operates 0-based.
+            else if (tmp_pnext < 0)
+                throw format_error{"No negative values are allowed at the mate mapping position."};
+            // tmp_pnext == 0 indicates an unmapped mate -> do not fill std::optional get<1>(mate)
+
+            std::ranges::next(std::ranges::begin(stream_view));
+
+            read_field(stream_view | next_field, get<2>(mate)); // TLEN
+            std::ranges::next(std::ranges::begin(stream_view));
+        }
+        else
+        {
+            for (size_t i = 0; i < 3u; ++i)
+            {
+                detail::consume(stream_view | next_field);
+                std::ranges::next(std::ranges::begin(stream_view));
+            }
+        }
+
+        // Field 10: Sequence
+        // -------------------------------------------------------------------------------------------------------------
+        if (!is_char<'*'>(*std::ranges::begin(stream_view))) // sequence information is given
+        {
+            auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
+            auto seq_stream = stream_view | next_field
+                                          | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+                                            {
+                                                if (!is_legal_alph(c))
+                                                    throw format_error{std::string{"Encountered an unexpected letter: "} +
+                                                                      is_legal_alph.msg.string() +
+                                                                      " evaluated to false on " +
+                                                                      detail::make_printable(c)};
+                                                return c;
+                                            });
+
+            if constexpr (detail::decays_to_ignore_v<seq_type>)
+            {
+                if constexpr (!detail::decays_to_ignore_v<align_type>)
+                {
+                    static_assert(sequence_container_concept<std::remove_reference_t<decltype(get<1>(align))>>,
+                                  "If you want to read ALIGNMENT but not SEQ, the alignment"
+                                  " object must store a sequence container at the second (query) position.");
+
+                    if (!cigar.empty()) // only parse alignment if cigar information was given
+                    {
+
+                        auto tmp_iter = std::ranges::begin(seq_stream);
+                        std::ranges::advance(tmp_iter, offset_tmp);
+
+                        for (; seq_length > 0; --seq_length) // seq_length is not needed anymore
+                        {
+                            get<1>(align).push_back(value_type_t<decltype(get<1>(align))>{}.assign_char(*tmp_iter));
+                            ++tmp_iter;
+                        }
+
+                        std::ranges::advance(tmp_iter, soft_clipping_end);
+
+                        assert(std::ranges::begin(seq_stream) == std::ranges::end(seq_stream));
+                    }
+                    else
+                    {
+                        get<1>(align) = std::remove_reference_t<decltype(get<1>(align))>{}; // empty container
+                    }
+                }
+                else
+                {
+                    detail::consume(seq_stream);
+                }
+            }
+            else
+            {
+                read_field(seq_stream, seq);
+
+                if constexpr (!detail::decays_to_ignore_v<align_type>)
+                {
+                    assign_unaligned(get<1>(align),
+                                     seq | view::slice(static_cast<decltype(std::ranges::size(seq))>(offset_tmp),
+                                                       std::ranges::size(seq) - soft_clipping_end));
+                }
+            }
+        }
+        else
+        {
+            std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
+        }
+        std::ranges::next(std::ranges::begin(stream_view));
+
+        // Field 11:  Quality
+        // -------------------------------------------------------------------------------------------------------------
+        auto const tab_or_end = is_char<'\t'> || is_char<'\r'> || is_char<'\n'>;
+        read_field(stream_view | view::take_until_or_throw(tab_or_end), qual);
+
+        // All remaining optional fields if any: SAM tags dictionary
+        // -------------------------------------------------------------------------------------------------------------
+        while (is_char<'\t'>(*std::ranges::begin(stream_view))) // read all tags if present
+        {
+            std::ranges::next(std::ranges::begin(stream_view));
+            read_field(stream_view | view::take_until_or_throw(tab_or_end), tag_dict);
+        }
+
+        if (is_char<'\r'>(*std::ranges::begin(stream_view)))    // protect against '\r\n'
+            std::ranges::next(std::ranges::begin(stream_view)); // skip '\r'
+        std::ranges::next(std::ranges::begin(stream_view));     // skip newline
+
+        // DONE READING - wrap up
+        // -------------------------------------------------------------------------------------------------------------
+        // Alignment object construction
+        // Note that the query sequence in get<1>(align) has already been filled while reading Field 10.
+        if constexpr (!detail::decays_to_ignore_v<align_type>)
+        {
+            if (!cigar.empty() && !std::ranges::empty(get<1>(align))) // only parse alignment if cigar and seq was given
+            {
+                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
+                {
+                    assert(header.ref_dict.count(ref_id_tmp) != 0); // taken care of in check_and_assign_ref_id()
+
+                    size_t pos = header.ref_dict[ref_id_tmp]; // get index for reference sequence
+
+                    assert(static_cast<size_t>(ref_offset_tmp + ref_length) <= std::ranges::size(ref_seqs[pos]));
+
+                    // copy over unaligned reference sequence part
+                    assign_unaligned(get<0>(align),
+                                     ref_seqs[pos] | view::slice(ref_offset_tmp, ref_offset_tmp + ref_length));
+                }
+                else
+                {
+                    using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
+                    auto dummy_seq    = ranges::view::repeat_n(value_type_t<unaligned_t>{}, ref_length)
+                                      | std::view::transform(detail::access_restrictor_fn{});
+                    static_assert(std::Same<unaligned_t, decltype(dummy_seq)>,
+                                  "No reference information was given so the type of the first alignment tuple position"
+                                  "must have an unaligned sequence type of a dummy sequence ("
+                                  "ranges::view::repeat_n(dna5{}, size_t{}) | "
+                                  "std::view::transform(detail::access_restrictor_fn{}))");
+
+                    assign_unaligned(get<0>(align), dummy_seq); // assign dummy sequence
+                }
+
+                // insert gaps according to the cigar information
+                detail::alignment_from_cigar(align, cigar);
+            }
+            else // not enough information for an alignment, assign an empty view/dummy_sequence
+            {
+                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference info given
+                {
+                    assert(std::ranges::size(ref_seqs) > 0); // we assume that the given ref info is not empty
+                    assign_unaligned(get<0>(align), ref_seqs[0] | view::slice(0, 0));
+                }
+                else
+                {
+                    using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
+                    assign_unaligned(get<0>(align), ranges::view::repeat_n(value_type_t<unaligned_t>{}, 0)
+                                                    | std::view::transform(detail::access_restrictor_fn{}));
+                }
+            }
+        }
+    }
+
+    //!\copydoc AlignmentFileOutputFormat::write
+    template <typename stream_type,
+              typename header_type,
+              typename seq_type,
+              typename id_type,
+              typename ref_seq_type,
+              typename ref_id_type,
+              typename align_type,
+              typename qual_type,
+              typename mate_type,
+              typename tag_dict_type>
     void write(stream_type                            &  stream,
                alignment_file_output_options const    &  options,
-               std::unique_ptr<alignment_file_header> &  header_ptr,
+               header_type                            && header,
                seq_type                               && seq,
                qual_type                              && qual,
                id_type                                && id,
-               offset_type                            && offset,
+               int32_t                                   offset,
                ref_seq_type                           && SEQAN3_DOXYGEN_ONLY(ref_seq),
                ref_id_type                            && ref_id,
-               ref_offset_type                        && ref_offset,
+               std::optional<int32_t>                    ref_offset,
                align_type                             && align,
-               flag_type                              && flag,
-               mapq_type                              && mapq,
+               uint16_t                                  flag,
+               uint8_t                                   mapq,
                mate_type                              && mate,
                tag_dict_type                          && tag_dict,
-               e_value_type                           && SEQAN3_DOXYGEN_ONLY(e_value),
-               bit_score_type                         && SEQAN3_DOXYGEN_ONLY(bit_score))
+               double                                    SEQAN3_DOXYGEN_ONLY(e_value),
+               double                                    SEQAN3_DOXYGEN_ONLY(bit_score))
     {
         /* Note the following general things:
          *
@@ -195,24 +487,24 @@ public:
                       "The id object must be a std::ranges::ForwardRange over "
                       "letters that model seqan3::Alphabet.");
 
-        static_assert(std::UnsignedIntegral<remove_cvref_t<offset_type>>,
-                      "The offset object must be a std::UnsignedIntegral.");
-
         static_assert((std::ranges::ForwardRange<ref_seq_type>    &&
                       Alphabet<value_type_t<remove_cvref_t<ref_seq_type>>>),
                       "The ref_seq object must be a std::ranges::ForwardRange "
                       "over letters that model seqan3::Alphabet.");
 
-        static_assert((std::ranges::ForwardRange<ref_id_type>     &&
-                      Alphabet<value_type_t<remove_cvref_t<ref_id_type>>>),
-                      "The ref_id object must be a std::ranges::ForwardRange "
-                      "over letters that model seqan3::Alphabet.");
+        if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
+        {
+            static_assert((std::ranges::ForwardRange<ref_id_type> ||
+                           std::Integral<std::remove_reference_t<ref_id_type>> ||
+                           detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>),
+                          "The ref_id object must be a std::ranges::ForwardRange "
+                          "over letters that model seqan3::Alphabet.");
 
-        static_assert(std::Integral<remove_cvref_t<ref_offset_type>>, // -1 is given default to evaluate to 0
-                      "The ref_offset object must be an std::Integral >= 0.");
-
-        if (((ref_offset + 1) < 0))
-            throw format_error("The ref_offset object must be an std::Integral >= 0.");
+            if constexpr (std::Integral<remove_cvref_t<ref_id_type>> ||
+                          detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>)
+                static_assert(!detail::decays_to_ignore_v<header_type>,
+                              "If you give indices as reference id information the header must also be present.");
+        }
 
         static_assert(tuple_like_concept<remove_cvref_t<align_type>>,
                       "The align object must be a std::pair of two ranges whose "
@@ -224,12 +516,6 @@ public:
                       "The align object must be a std::pair of two ranges whose "
                       "value_type is comparable to seqan3::gap");
 
-        static_assert(std::UnsignedIntegral<remove_cvref_t<flag_type>>,
-                      "The flag object must be a std::UnsignedIntegral.");
-
-        static_assert(std::UnsignedIntegral<remove_cvref_t<mapq_type>>,
-                      "The mapq object must be a std::UnsignedIntegral.");
-
         static_assert((std::ranges::ForwardRange<qual_type>       &&
                        Alphabet<value_type_t<remove_cvref_t<qual_type>>>),
                       "The qual object must be a std::ranges::ForwardRange "
@@ -238,17 +524,24 @@ public:
         static_assert(tuple_like_concept<remove_cvref_t<mate_type>>,
                       "The mate object must be a std::tuple of size 3 with "
                       "1) a std::ranges::ForwardRange with a value_type modelling seqan3::Alphabet, "
-                      "2) an std::UnsignedIntegral, and"
-                      "3) an std::UnsignedIntegral.");
+                      "2) a std::Integral or std::optional<std::Integral>, and "
+                      "3) a std::Integral.");
 
-        static_assert((std::ranges::ForwardRange<decltype(std::get<0>(mate))>                     &&
-                      Alphabet<value_type_t<remove_cvref_t<decltype(std::get<0>(mate))>>> &&
-                      std::UnsignedIntegral<remove_cvref_t<decltype(std::get<1>(mate))>>          &&
-                      std::UnsignedIntegral<remove_cvref_t<decltype(std::get<2>(mate))>>),
+        static_assert(((std::ranges::ForwardRange<decltype(std::get<0>(mate))>     ||
+                        std::Integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
+                        detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>) &&
+                      (std::Integral<remove_cvref_t<decltype(std::get<1>(mate))>> ||
+                       detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>) &&
+                      std::Integral<remove_cvref_t<decltype(std::get<2>(mate))>>),
                       "The mate object must be a std::tuple of size 3 with "
                       "1) a std::ranges::ForwardRange with a value_type modelling seqan3::Alphabet, "
-                      "2) an std::UnsignedIntegral, and"
-                      "3) an std::UnsignedIntegral.");
+                      "2) a std::Integral or std::optional<std::Integral>, and "
+                      "3) a std::Integral.");
+
+        if constexpr (std::Integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
+                      detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>)
+            static_assert(!detail::decays_to_ignore_v<header_type>,
+                          "If you give indices as mate reference id information the header must also be present.");
 
         static_assert(std::Same<remove_cvref_t<tag_dict_type>, sam_tag_dictionary>,
                       "The tag_dict object must be of type seqan3::sam_tag_dictionary.");
@@ -256,24 +549,36 @@ public:
         // ---------------------------------------------------------------------
         // logical Requirements
         // ---------------------------------------------------------------------
-        if (!empty(get<1>(align)) && empty(seq))
-            throw format_error("If you specify an align object you must also specify the seq object. "
-                               "Hint: Check if offset needs to be set to if soft-clipping is present.");
-
-        if (options.sam_require_header && (header_ptr != nullptr) && !empty(ref_id))
+        if constexpr (!detail::decays_to_ignore_v<header_type> &&
+                      !detail::decays_to_ignore_v<ref_id_type> &&
+                      !std::Integral<std::remove_reference_t<ref_id_type>> &&
+                      !detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
         {
-            if ((header_ptr->ref_dict).count(std::string(ref_id)) == 0) // no reference id matched
-                throw format_error(std::string("The ref_id '") + std::string(ref_id) +
-                                   "' was not in the list of references");
+            static_assert(ImplicitlyConvertibleTo<ref_id_type &, typename decltype(header.ref_dict)::key_type>,
+                      "The ref_id type is not convertible to the reference id information stored in the "
+                      "reference dictionary of the header object.");
+
+            if (options.sam_require_header && !std::ranges::empty(ref_id))
+            {
+                if ((header.ref_dict).count(ref_id) == 0) // no reference id matched
+                    throw format_error{std::string("The ref_id '") + std::string(ref_id) +
+                                       "' was not in the list of references"};
+            }
         }
+
+        if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
+            throw format_error{"The ref_offset object must be an std::Integral >= 0."};
 
         // ---------------------------------------------------------------------
         // Writing the Header on first call
         // ---------------------------------------------------------------------
-        if (options.sam_require_header && !written_header && (header_ptr != nullptr))
+        if constexpr (!detail::decays_to_ignore_v<header_type>)
         {
-            write_header(stream, options, header_ptr);
-            written_header = true;
+            if (options.sam_require_header && !written_header)
+            {
+                write_header(stream, options, header);
+                written_header = true;
+            }
         }
 
         // ---------------------------------------------------------------------
@@ -286,32 +591,25 @@ public:
 
         stream << separator;
 
-        stream << std::forward<flag_type>(flag) << separator;
+        stream << flag << separator;
 
-        write_range(stream_it, std::forward<ref_id_type>(ref_id));
-
-        stream << separator;
-
-        stream << (ref_offset + 1) << separator; // SAM is 1 based
-
-        stream << std::forward<mapq_type>(mapq) << separator;
-
-        if (!empty(get<1>(align)))
+        if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
         {
-            // compute possible distance from alignment end to sequence end
-            // which indicates soft clipping at the end.
-            // This should be replace by a free count_gaps function for
-            // aligned sequences which is more efficient if possible.
-            size_t off_end{seq.size() - offset};
-            for (auto chr : get<1>(align))
-                if (chr == gap{})
-                    ++off_end;
-            off_end -= (get<1>(align)).size();
-
-            write_range(stream_it,
-                        detail::get_cigar_string(std::forward<align_type>(align),
-                                                 std::forward<offset_type>(offset),
-                                                 off_end));
+            if constexpr (std::Integral<std::remove_reference_t<ref_id_type>>)
+            {
+                write_range(stream_it, (header.ref_ids())[ref_id]);
+            }
+            else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
+            {
+                if (ref_id.has_value())
+                    write_range(stream_it, (header.ref_ids())[ref_id.value()]);
+                else
+                    stream << '*';
+            }
+            else
+            {
+                write_range(stream_it, std::forward<ref_id_type>(ref_id));
+            }
         }
         else
         {
@@ -320,13 +618,63 @@ public:
 
         stream << separator;
 
-        write_range(stream_it, get<0>(std::forward<mate_type>(mate)));
+        if (ref_offset.has_value())
+            stream << (ref_offset.value() + 1) << separator; // SAM is 1 based
+        else
+            stream << '0' << separator;                      // 0 indicates unmapped read if optional is not set
+
+        stream << static_cast<unsigned>(mapq) << separator;
+
+        if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
+        {
+            // compute possible distance from alignment end to sequence end
+            // which indicates soft clipping at the end.
+            // This should be replace by a free count_gaps function for
+            // aligned sequences which is more efficient if possible.
+            size_t off_end{std::ranges::size(seq) - offset};
+            for (auto chr : get<1>(align))
+                if (chr == gap{})
+                    ++off_end;
+            off_end -= std::ranges::size(get<1>(align));
+
+            write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
+        }
+        else
+        {
+            stream << '*';
+        }
 
         stream << separator;
 
-        stream << get<1>(std::forward<mate_type>(mate)) << separator;
+        if constexpr (std::Integral<std::remove_reference_t<decltype(get<0>(mate))>>)
+        {
+            write_range(stream_it, (header.ref_ids())[get<0>(mate)]);
+        }
+        else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<decltype(get<0>(mate))>, std::optional>)
+        {
+            if (get<0>(mate).has_value())
+                write_range(stream_it, (header.ref_ids())[get<0>(mate).value()]);
+            else
+                stream << '*';
+        }
+        else
+            write_range(stream_it, get<0>(mate));
 
-        stream << get<2>(std::forward<mate_type>(mate)) << separator;
+        stream << separator;
+
+        if constexpr (detail::is_type_specialisation_of_v<remove_cvref_t<decltype(get<1>(mate))>, std::optional>)
+        {
+            if (get<1>(mate).has_value())
+                stream << (get<1>(mate).value() + 1) << separator; // SAM is 1 based
+            else
+                stream << '0' << separator;                        // 0 indicates unmapped read if optional is not set
+        }
+        else
+        {
+            stream << get<1>(mate) << separator;
+        }
+
+        stream << get<2>(mate) << separator;
 
         write_range(stream_it, std::forward<seq_type>(seq));
 
@@ -344,8 +692,484 @@ protected:
     //!\brief The format version string.
     static constexpr char format_version[4] = "1.6";
 
-    //!\brief A variable that tracks whether the header_ptr as been written or not.
+    //!\brief A buffer used when parsing arithmetic values with std::from_chars.
+    std::array<char, 316> buffer{}; // Doubles can be up to 316 characters
+
+    //!\brief A variable that tracks whether the content of header has been written or not.
     bool written_header{false};
+
+    //!\brief Tracks whether reference information (\@SR tag) were found in the header
+    bool ref_info_present_in_header{false};
+
+    /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
+     * \tparam ref_id_type             The type of the reference id (usually a view::all over ref_id_tmp_type).
+     * \tparam ref_id_tmp_type         The type of the temporary parsed id (Same type as reference ids in header).
+     * \tparam header_type             The type of the alignment header.
+     * \tparam ref_seqs_type  A tag whether the reference information were given or not (std::ignore or not).
+     *
+     * \param[in, out] ref_id      The reference id to be filled.
+     * \param[in, out] ref_id_tmp  The temporary of the parsed reference id.
+     * \param[in, out] header      The header object that stores the reference id information.
+     */
+    template <typename ref_id_type,
+              typename ref_id_tmp_type,
+              typename header_type,
+              typename ref_seqs_type>
+    void check_and_assign_ref_id(ref_id_type            & ref_id,
+                                 ref_id_tmp_type        & ref_id_tmp,
+                                 header_type            & header,
+                                 ref_seqs_type & /*tag*/)
+    {
+        if (!std::ranges::empty(ref_id_tmp)) // otherwise the std::optional will not be filled
+        {
+            auto search = header.ref_dict.find(ref_id_tmp);
+
+            if (search == header.ref_dict.end())
+            {
+                if constexpr(detail::decays_to_ignore_v<ref_seqs_type>) // no reference information given
+                {
+                    if (ref_info_present_in_header)
+                    {
+                        throw format_error{"Unknown reference id found in record which is not present in the header."};
+                    }
+                    else
+                    {
+                        header.ref_ids().push_back(ref_id_tmp);
+                        auto pos = std::ranges::size(header.ref_ids()) - 1;
+                        header.ref_dict[header.ref_ids()[pos]] = pos;
+                        ref_id = pos;
+                    }
+                }
+                else
+                {
+                    throw format_error{"Unknown reference id found in record which is not present in the given ids."};
+                }
+            }
+            else
+            {
+                ref_id = search->second;
+            }
+        }
+    }
+
+    /*!\brief Decays to detail::consume for std::ignore.
+     * \tparam stream_view_type  The type of the stream as a view.
+     *
+     * \param[in, out] stream_view  The stream view to consume.
+     * \param[in, out] target       A std::ignore placeholder.
+     */
+    template <typename stream_view_type>
+    void read_field(stream_view_type && stream_view, detail::ignore_t const & SEQAN3_DOXYGEN_ONLY(target))
+    {
+        detail::consume(stream_view);
+    }
+
+    /*!\brief Reads a range by copying from stream_view to target, converting values with seqan3::view::char_to.
+     * \tparam stream_view_type  The type of the stream as a view.
+     * \tparam target_range_type The type of range to parse from input; must model std::ranges::ForwardRange.
+     *
+     * \param[in, out] stream_view  The stream view to iterate over.
+     * \param[in, out] target       The range to store the parsed sequence.
+     */
+    template <typename stream_view_type, std::ranges::ForwardRange target_range_type>
+    void read_field(stream_view_type && stream_view, target_range_type & target)
+    {
+        if (!is_char<'*'>(*std::ranges::begin(stream_view)))
+            std::ranges::copy(stream_view | view::char_to<value_type_t<target_range_type>>,
+                              std::back_inserter(target));
+        else
+            std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
+
+        assert(std::ranges::begin(stream_view) == std::ranges::end(stream_view)); // consumed everything
+    }
+
+    /*!\brief Reads arithmetic fields using std::from_chars.
+     * \tparam stream_view_type The type of the stream as a view.
+     * \tparam target_type      The type of value to parse from input; must model seqan3::Arithmetic.
+     *
+     * \param[in, out] stream_view  The stream view to iterate over.
+     * \param[in, out] target       The arithmetic value object to store the parsed value.
+     *
+     * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
+     *         of type target_type.
+     */
+    template <typename stream_view_type, Arithmetic target_type>
+    void read_field(stream_view_type && stream_view, target_type & target)
+    {
+        // unfortunately std::from_chars only accepts char const * so we need a buffer.
+        auto [ignore, end] = std::ranges::copy(stream_view, buffer.data());
+        (void) ignore;
+        std::from_chars_result res = std::from_chars(buffer.begin(), end, target);
+
+        if (res.ec == std::errc::invalid_argument || res.ptr != end)
+            throw format_error{std::string("[CORRUPTED SAM FILE] The string '") + std::string(buffer.begin(), end) +
+                                           "' could not be cast into type " +
+                                           detail::get_display_name_v<target_type>.string()};
+
+        if (res.ec == std::errc::result_out_of_range)
+            throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(buffer.begin(), end) +
+                                           "' into type " + detail::get_display_name_v<target_type>.string() +
+                                           " would cause an overflow."};
+    }
+
+    /*!\brief Delegate parsing of std::optional types to parsing of the inner value type.
+     * \tparam stream_view_type     The type of the stream as a view.
+     * \tparam optional_value_type  The inner type of a the std::optional type of \p target.
+     *
+     * \param[in, out] stream_view  The stream view to iterate over.
+     * \param[in, out] target       The std::optional object to store the parsed value.
+     *
+     * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
+     *         of type target_type.
+     */
+    template <typename stream_view_type, typename optional_value_type>
+    void read_field(stream_view_type && stream_view, std::optional<optional_value_type> & target)
+    {
+        optional_value_type tmp;
+        read_field(std::forward<stream_view_type>(stream_view), tmp);
+        target = tmp;
+    }
+
+    /*!\brief Reads a list of values separated by comma as it is the case for SAM tag arrays.
+     * \tparam stream_view_type The type of the stream as a view.
+     * \tparam value_type       The type of values to be stored in the tag array.
+     *
+     * \param[in, out] variant      A std::variant object to store the tag arrays.
+     * \param[in, out] stream_view  The stream view to iterate over.
+     * \param[in]      value        A temporary value that determines the underlying type of the tag array.
+     *
+     * \details
+     *
+     * Reading the tags is done according to the official
+     * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
+     *
+     * The function throws a seqan3::format_error if any unknown tag type was encountered. It will also fail if the
+     * format is not in a correct state (e.g. required fields are not given), but throwing might occur downstream of
+     * the actual error.
+     */
+    template <typename stream_view_type, typename value_type>
+    void read_sam_dict_vector(seqan3::detail::sam_tag_variant & variant,
+                              stream_view_type && stream_view,
+                              value_type value)
+    {
+        std::vector<value_type> tmp_vector;
+        while (std::ranges::begin(stream_view) != ranges::end(stream_view)) // not fully consumed yet
+        {
+            read_field(stream_view | view::take_until(is_char<','>), value);
+            tmp_vector.push_back(value);
+
+            if (is_char<','>(*std::ranges::begin(stream_view)))
+                std::ranges::next(std::ranges::begin(stream_view)); // skip ','
+        }
+        variant = std::move(tmp_vector);
+    }
+
+    /*!\brief Reads the optional tag fields into the seqan3::sam_tag_dictionary.
+     * \tparam stream_view_type   The type of the stream as a view.
+     *
+     * \param[in, out] stream_view  The stream view to iterate over.
+     * \param[in, out] target       The seqan3::sam_tag_dictionary to store the tag information.
+     *
+     * \throws seqan3::format_error if any unexpected character or format is encountered.
+     *
+     * \details
+     *
+     * Reading the tags is done according to the official
+     * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
+     *
+     * The function throws a seqan3::format_error if any unknown tag type was encountered. It will also fail if the
+     * format is not in a correct state (e.g. required fields are not given), but throwing might occur downstream of
+     * the actual error.
+     */
+    template <typename stream_view_type>
+    void read_field(stream_view_type && stream_view, sam_tag_dictionary & target)
+    {
+        /* Every SAM tag has the format "[TAG]:[TYPE_ID]:[VALUE]", where TAG is a two letter
+           name tag which is converted to a unique integer identifier and TYPE_ID is one character in [A,i,Z,H,B,f]
+           describing the type for the upcoming VALUES. If TYPE_ID=='B' it signals an array of comma separated
+           VALUE's and the inner value type is identified by the character following ':', one of [cCsSiIf].
+        */
+        uint16_t tag = static_cast<uint16_t>(*std::ranges::begin(stream_view)) << 8;
+        std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
+        tag += static_cast<uint16_t>(*std::ranges::begin(stream_view));
+        std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
+        std::ranges::next(std::ranges::begin(stream_view)); // skip ':'
+        char type_id = *std::ranges::begin(stream_view);
+        std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
+        std::ranges::next(std::ranges::begin(stream_view)); // skip ':'
+
+        switch (type_id)
+        {
+            case 'A' : // char
+            {
+                target[tag] = static_cast<char>(*std::ranges::begin(stream_view));
+                std::ranges::next(std::ranges::begin(stream_view)); // skip char that has been read
+                break;
+            }
+            case 'i' : // int32_t
+            {
+                int32_t tmp;
+                read_field(stream_view, tmp);
+                target[tag] = tmp;
+                break;
+            }
+            case 'f' : // float
+            {
+                float tmp;
+                read_field(stream_view, tmp);
+                target[tag] = tmp;
+                break;
+            }
+            case 'Z' : // string
+            {
+                target[tag] = std::string(stream_view);
+                break;
+            }
+            case 'H' :
+            {
+                // TODO
+                break;
+            }
+            case 'B' : // Array. Value type depends on second char [cCsSiIf]
+            {
+                char array_value_type_id = *std::ranges::begin(stream_view);
+                std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
+                std::ranges::next(std::ranges::begin(stream_view)); // skip first ','
+
+                switch (array_value_type_id)
+                {
+                    case 'c' : // int8_t
+                    {
+                        read_sam_dict_vector(target[tag], stream_view, int8_t{});
+                        break;
+                    }
+                    case 'C' : // uint8_t
+                    {
+                        read_sam_dict_vector(target[tag], stream_view, uint8_t{});
+                        break;
+                    }
+                    case 's' : // int16_t
+                    {
+                        read_sam_dict_vector(target[tag], stream_view, int16_t{});
+                        break;
+                    }
+                    case 'S' : // uint16_t
+                    {
+                        read_sam_dict_vector(target[tag], stream_view, uint16_t{});
+                        break;
+                    }
+                    case 'i' : // int32_t
+                    {
+                        read_sam_dict_vector(target[tag], stream_view, int32_t{});
+                        break;
+                    }
+                    case 'I' : // uint32_t
+                    {
+                        read_sam_dict_vector(target[tag], stream_view, uint32_t{});
+                        break;
+                    }
+                    case 'f' : // float
+                    {
+                        read_sam_dict_vector(target[tag], stream_view, float{});
+                        break;
+                    }
+                    default:
+                        throw format_error{std::string("The first character in the numerical ") +
+                                           "id of a SAM tag must be one of [cCsSiIf] but " + array_value_type_id +
+                                           " was given."};
+                }
+                break;
+            }
+            default:
+                throw format_error{std::string("The second character in the numerical id of a "
+                                   "SAM tag must be one of [A,i,Z,H,B,f] but ") + type_id + "was given."};
+        }
+    }
+
+    /*!\brief Reads the SAM header.
+     * \tparam stream_view_type     The type of the stream as a view.
+     * \param[in, out] stream_view  The stream view to iterate over.
+     * \param[in, out] hdr          The header (as a pointer) to store the parsed values.
+     *
+     * \throws seqan3::format_error if any unexpected character or format is encountered.
+     *
+     * \details
+     *
+     * Reading the header format is done according to the official
+     * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
+     *
+     * The function throws a seqan3::format_error if any unknown tag was encountered. It will also fail if the format is
+     * not in a correct state (e.g. required fields are not given), but throwing might occur downstream of the actual
+     * error.
+     */
+    template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
+    void read_header(stream_view_type && stream_view,
+                     alignment_file_header<ref_ids_type> & hdr,
+                     ref_seqs_type & /*ref_id_to_pos_map*/)
+    {
+        auto parse_tag_value = [&stream_view, this] (auto & value) // helper function to parse the next tag value
+        {
+            detail::consume(stream_view | view::take_until_or_throw(is_char<':'>)); // skip tag name
+            std::ranges::next(std::ranges::begin(stream_view));                     // skip ':'
+            read_field(stream_view | view::take_until_or_throw(is_char<'\t'> || is_char<'\n'>), value);
+        };
+
+        // @HQ line
+        // -------------------------------------------------------------------------------------------------------------
+        parse_tag_value(hdr.format_version); // parse required VN (version) tag
+
+        // The SO, SS and GO tag are optional and can appear in any order
+        while (is_char<'\t'>(*std::ranges::begin(stream_view)))
+        {
+            std::ranges::next(std::ranges::begin(stream_view));              // skip tab
+            std::string * who = std::addressof(hdr.grouping);
+
+            if (is_char<'S'>(*std::ranges::begin(stream_view)))
+            {
+                std::ranges::next(std::ranges::begin(stream_view));          // skip S
+
+                if (is_char<'O'>(*std::ranges::begin(stream_view)))          // SO (sorting) tag
+                    who = std::addressof(hdr.sorting);
+                else if (is_char<'S'>(*std::ranges::begin(stream_view)))     // SS (sub-order) tag
+                    who = std::addressof(hdr.subsorting);
+                else
+                    throw format_error{std::string{"Illegal SAM header tag: S"} +
+                                       std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+            }
+            else if (!is_char<'G'>(*std::ranges::begin(stream_view)))        // GO (grouping) tag
+            {
+                throw format_error{std::string{"Illegal SAM header tag in @HG starting with:"} +
+                                   std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+            }
+
+            parse_tag_value(*who);
+        }
+        std::ranges::next(std::ranges::begin(stream_view));                  // skip newline
+
+        // The rest of the header lines
+        // -------------------------------------------------------------------------------------------------------------
+        while (is_char<'@'>(*std::ranges::begin(stream_view)))
+        {
+            std::ranges::next(std::ranges::begin(stream_view));              // skip @
+
+            if (is_char<'S'>(*std::ranges::begin(stream_view)))              // SQ (sequence dictionary) tag
+            {
+                ref_info_present_in_header = true;
+                std::string id;
+                std::tuple<int32_t, std::string> info{};
+
+                parse_tag_value(id);                                         // parse required SN (sequence name) tag
+                std::ranges::next(std::ranges::begin(stream_view));          // skip tab or newline
+                parse_tag_value(get<0>(info));                               // parse required LN (length) tag
+
+                if (is_char<'\t'>(*std::ranges::begin(stream_view)))         // read rest of the tags
+                {
+                    std::ranges::next(std::ranges::begin(stream_view));      // skip tab
+                    read_field(stream_view | view::take_until_or_throw(is_char<'\n'>), get<1>(info));
+                }
+                std::ranges::next(std::ranges::begin(stream_view));          // skip newline
+
+                /* If reference information were given, the ids exist and we can fill ref_dict directly.
+                 * If not, wee need to update the ids first and fill the reference dictionary afterwards. */
+                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given
+                {
+                    auto id_it = hdr.ref_dict.find(id);
+
+                    if (id_it == hdr.ref_dict.end())
+                        throw format_error{"Unknown reference name found in SAM header."};
+
+                    auto & given_ref_info = hdr.ref_id_info[id_it->second];
+
+                    if (std::get<0>(given_ref_info) != std::get<0>(info))
+                        throw format_error{"Provided reference has unequal length as specified in the header."};
+
+                    hdr.ref_id_info[id_it->second] = std::move(info);
+                }
+                else
+                {
+                    static_assert(!detail::is_type_specialisation_of_v<decltype(hdr.ref_ids()), std::deque>,
+                                  "The range over reference ids must be of type std::deque such that "
+                                  "pointers are not invalidated.");
+
+                    hdr.ref_ids().push_back(id);
+                    hdr.ref_id_info.push_back(info);
+                    hdr.ref_dict[(hdr.ref_ids())[(hdr.ref_ids()).size() - 1]] = (hdr.ref_ids()).size() - 1;
+                }
+            }
+            else if (is_char<'R'>(*std::ranges::begin(stream_view)))         // RG (read group) tag
+            {
+                std::pair<std::string, std::string> tmp{};
+
+                parse_tag_value(get<0>(tmp));                                // read required ID tag
+
+                if (is_char<'\t'>(*std::ranges::begin(stream_view)))         // read rest of the tags
+                {
+                    std::ranges::next(std::ranges::begin(stream_view));
+                    read_field(stream_view | view::take_until_or_throw(is_char<'\n'>), get<1>(tmp));
+                }
+                std::ranges::next(std::ranges::begin(stream_view));          // skip newline
+
+                hdr.read_groups.emplace_back(std::move(tmp));
+            }
+            else if (is_char<'P'>(*std::ranges::begin(stream_view)))         // PG (program) tag
+            {
+                typename alignment_file_header<ref_ids_type>::program_info_t tmp{};
+
+                parse_tag_value(tmp.id);                                     // read required ID tag
+
+                // The PN, CL, PP, DS, VN are optional tags and can be given in any order.
+                while (is_char<'\t'>(*std::ranges::begin(stream_view)))
+                {
+                    std::ranges::next(std::ranges::begin(stream_view));      // skip tab
+                    std::string * who = &tmp.version;
+
+                    if (is_char<'P'>(*std::ranges::begin(stream_view)))
+                    {
+                        std::ranges::next(std::ranges::begin(stream_view));  // skip P
+
+                        if (is_char<'N'>(*std::ranges::begin(stream_view)))  // PN (program name) tag
+                            who = &tmp.name;
+                        else                                                 // PP (previous program) tag
+                            who = &tmp.previous;
+                    }
+                    else if (is_char<'C'>(*std::ranges::begin(stream_view))) // CL (command line) tag
+                    {
+                        who = &tmp.command_line_call;
+                    }
+                    else if (is_char<'D'>(*std::ranges::begin(stream_view))) // DS (description) tag
+                    {
+                        who = &tmp.description;
+                    }
+                    else if (!is_char<'V'>(*std::ranges::begin(stream_view))) // VN (version) tag
+                    {
+                        throw format_error{std::string{"Illegal SAM header tag starting with:"} +
+                                           std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+                    }
+
+                    parse_tag_value(*who);
+                }
+                std::ranges::next(std::ranges::begin(stream_view));          // skip newline
+
+                hdr.program_infos.emplace_back(std::move(tmp));
+            }
+            else if (is_char<'C'>(*std::ranges::begin(stream_view)))         // CO (comment) tag
+            {
+                std::string tmp;
+                std::ranges::next(std::ranges::begin(stream_view)); // skip C
+                std::ranges::next(std::ranges::begin(stream_view)); // skip O
+                std::ranges::next(std::ranges::begin(stream_view)); // skip :
+                read_field(stream_view | view::take_until_or_throw(is_char<'\n'>), tmp);
+                std::ranges::next(std::ranges::begin(stream_view)); // skip newline
+
+                hdr.comments.emplace_back(std::move(tmp));
+            }
+            else
+            {
+                throw format_error{std::string{"Illegal SAM header tag starting with:"} +
+                                   std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+            }
+        }
+    }
 
     /*!\brief Writes a field value to the stream.
      * \tparam stream_it_t The stream iterator type.
@@ -360,10 +1184,22 @@ protected:
     //!\endcond
     void write_range(stream_it_t & stream_it, field_type && field_value)
     {
-        if (empty(field_value))
+        if (std::ranges::empty(field_value))
             stream_it = '*';
         else
             std::ranges::copy(field_value | view::to_char | view::take_until(is_space), stream_it);
+    }
+
+    /*!\brief Writes a field value to the stream.
+     * \tparam stream_it_t The stream iterator type.
+     *
+     * \param[in,out] stream_it   The stream iterator to print to.
+     * \param[in]     field_value The value to print.
+     */
+    template <typename stream_it_t>
+    void write_range(stream_it_t & stream_it, char const * const field_value)
+    {
+        write_range(stream_it, std::string_view{field_value});
     }
 
     /*!\brief Writes the optional fields of the seqan3::sam_tag_dictionary.
@@ -412,131 +1248,135 @@ protected:
         }
     }
 
-    /*!\brief Writes the SAM header_ptr.
+    /*!\brief Writes the SAM header.
      * \tparam stream_t   The stream type.
      *
      * \param[in,out] stream  The stream to print to.
      * \param[in]     options The options to alter printing.
-     * \param[in]     header_ptr  The header_ptr (as a pointer) to print.
+     * \param[in]     header  The header to print.
      *
-     * \throws seqan3::format_error if the header_ptr object contains the wrong
+     * \throws seqan3::format_error if the header object contains the wrong
      *         information or the contents are ill-formed.
      *
      * \details
      *
-     * Before writing the header_ptr, the contents are checked for correctness
+     * Before writing the header, the contents are checked for correctness
      * according to the rules of the official
      * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
      */
-    template <typename stream_t>
+    template <typename stream_t, typename ref_ids_type>
     void write_header(stream_t & stream,
                       alignment_file_output_options const & options,
-                      std::unique_ptr<alignment_file_header> & header_ptr)
+                      alignment_file_header<ref_ids_type> & header)
     {
-        if (header_ptr != nullptr)
+        // -----------------------------------------------------------------
+        // Check Header
+        // -----------------------------------------------------------------
+
+        // (@HD) Check header line
+        // The format version string will be taken from the local member variable
+        if (!header.sorting.empty() &&
+            !(header.sorting == "unknown"   ||
+              header.sorting == "unsorted"  ||
+              header.sorting == "queryname" ||
+              header.sorting == "coordinate" ))
+            throw format_error{"SAM format error: The header.sorting member must be "
+                               "one of [unknown, unsorted, queryname, coordinate]."};
+
+        if (!header.grouping.empty() &&
+            !(header.grouping == "none"   ||
+              header.grouping == "query"  ||
+              header.grouping == "reference"))
+            throw format_error{"SAM format error: The header.grouping member must be "
+                               "one of [none, query, reference]."};
+
+        // (@SQ) Check Reference Sequence Dictionary lines
+
+        // TODO
+
+        // - sorting order be one of ...
+        // - grouping can be one of ...
+        // - reference names must be unique
+        // - ids of read groups must be unique
+        // - program ids need to be unique
+        // many more small semantic things, like fits REGEX
+
+        // -----------------------------------------------------------------
+        // Write Header
+        // -----------------------------------------------------------------
+        std::ranges::ostreambuf_iterator stream_it{stream};
+
+        // (@HD) Write header line [required].
+        stream << "@HD\tVN:";
+        stream << format_version;
+
+        if (!header.sorting.empty())
+            stream << "\tSO:" << header.sorting;
+
+        if (!header.subsorting.empty())
+            stream << "\tSS:" << header.subsorting;
+
+        if (!header.grouping.empty())
+            stream << "\tGO:" << header.grouping;
+
+        detail::write_eol(stream_it, options.add_carriage_return);
+
+        // (@SQ) Write Reference Sequence Dictionary lines [required].
+        for (auto const & [ref_name, ref_info] : std::view::zip(header.ref_ids(), header.ref_id_info))
         {
-            // -----------------------------------------------------------------
-            // Check Header
-            // -----------------------------------------------------------------
+            stream << "@SQ\tSN:";
 
-            // (@HD) Check header_ptr line
-            // The format version string will be taken from the local member variable
-            if (!(header_ptr->sorting == "unknown"   ||
-                  header_ptr->sorting == "unsorted"  ||
-                  header_ptr->sorting == "queryname" ||
-                  header_ptr->sorting == "coordinate" ))
-                throw format_error{"SAM format error: The header_ptr->sorting member must be "
-                                   "one of [unknown, unsorted, queryname, coordinate]."};
+            std::ranges::copy(ref_name, stream_it);
 
-            if (!(header_ptr->grouping == "none"   ||
-                  header_ptr->grouping == "query"  ||
-                  header_ptr->grouping == "reference"))
-                throw format_error{"SAM format error: The header_ptr->grouping member must be "
-                                   "one of [none, query, reference]."};
+            stream << "\tLN:" << get<0>(ref_info);
 
-            // (@SQ) Check Reference Sequence Dictionary lines
-
-            // TODO
-
-            // - sorting order be one of ...
-            // - grouping can be one of ...
-            // - reference names must be unique
-            // - ids of read groups must be unique
-            // - program ids need to be unique
-            // many more small semantic things, like fits REGEX
-
-            // -----------------------------------------------------------------
-            // Write Header
-            // -----------------------------------------------------------------
-            std::ranges::ostreambuf_iterator stream_it{stream};
-
-            // (@HD) Write header_ptr line [required].
-            stream << "@HD\tVN:";
-            stream << format_version;
-
-            if (!header_ptr->sorting.empty())
-                stream << "\tSO:" << header_ptr->sorting;
-
-            if (!header_ptr->grouping.empty())
-                stream << "\tGO:" << header_ptr->grouping;
+            if (!get<1>(ref_info).empty())
+                stream << "\t" << get<1>(ref_info);
 
             detail::write_eol(stream_it, options.add_carriage_return);
+        }
 
-            // (@SQ) Write Reference Sequence Dictionary lines [required].
-            for (auto const & [ref_name, ref_info] : header_ptr->ref_dict)
-            {
-                stream << "@SQ"
-                       << "\tSN:" << ref_name
-                       << "\tLN:" << get<0>(ref_info);
+        // Write read group (@RG) lines if specified.
+        for (auto const & read_group : header.read_groups)
+        {
+            stream << "@RG"
+                   << "\tID:" << get<0>(read_group);
 
-                if (!get<1>(ref_info).empty())
-                    stream << "\t" << get<1>(ref_info);
+            if (!get<1>(read_group).empty())
+                stream << "\t" << get<1>(read_group);
 
-                detail::write_eol(stream_it, options.add_carriage_return);
-            }
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
 
-            // Write read group (@RG) lines if specified.
-            for (auto const & read_group : header_ptr->read_groups)
-            {
-                stream << "@RG"
-                       << "\tID:" << get<0>(read_group);
+        // Write program (@PG) lines if specified.
+        for (auto const & program : header.program_infos)
+        {
+            stream << "@PG"
+                   << "\tID:" << program.id;
 
-                if (!get<1>(read_group).empty())
-                    stream << "\t" << get<1>(read_group);
+            if (!program.name.empty())
+                stream << "\tPN:" << program.name;
 
-                detail::write_eol(stream_it, options.add_carriage_return);
-            }
+            if (!program.command_line_call.empty())
+                stream << "\tCL:" << program.command_line_call;
 
-            // Write program (@PG) lines if specified.
-            for (auto const & program : header_ptr->program_infos)
-            {
-                stream << "@PG"
-                       << "\tID:" << program.id;
+            if (!program.previous.empty())
+                stream << "\tPP:" << program.previous;
 
-                if (!program.name.empty())
-                    stream << "\tPN:" << program.name;
+            if (!program.description.empty())
+                stream << "\tDS:" << program.description;
 
-                if (!program.command_line_call.empty())
-                    stream << "\tCL:" << program.command_line_call;
+            if (!program.version.empty())
+                stream << "\tVN:" << program.version;
 
-                if (!program.previous.empty())
-                    stream << "\tPP:" << program.previous;
+            detail::write_eol(stream_it, options.add_carriage_return);
+        }
 
-                if (!program.description.empty())
-                    stream << "\tDS:" << program.description;
-
-                if (!program.version.empty())
-                    stream << "\tVN:" << program.version;
-
-                detail::write_eol(stream_it, options.add_carriage_return);
-            }
-
-            // Write comment (@CO) lines if specified.
-            for (auto const & comment : header_ptr->comments)
-            {
-                stream << "@CO\t" << comment;
-                detail::write_eol(stream_it, options.add_carriage_return);
-            }
+        // Write comment (@CO) lines if specified.
+        for (auto const & comment : header.comments)
+        {
+            stream << "@CO\t" << comment;
+            detail::write_eol(stream_it, options.add_carriage_return);
         }
     }
 };

@@ -40,15 +40,15 @@ int main()
     std::vector<seqan3::dna5_vector> sequences{"ACGTGATG"_dna5, "AGTGATACT"_dna5};
 //! [alignment]
     // Call a pairwise alignment with edit distance and traceback.
-    for (auto && res : align_pairwise(std::make_pair(sequences[0], sequences[1]),
-                                      align_cfg::edit | align_cfg::result{align_cfg::with_trace}))
+    for (auto && res : align_pairwise(std::tie(sequences[0], sequences[1]),
+                                      align_cfg::edit | align_cfg::result{with_alignment}))
     {
         // Print the resulting score and the alignment.
-        debug_stream << res.get_score() << '\n';              // => -4
-        debug_stream << res.get_alignment() << '\n';          // =>       0     .    :
-                                                              //            ACGTGATG--
-                                                              //            | |||||
-                                                              //            A-GTGATACT
+        debug_stream << res.score() << '\n';              // => -4
+        debug_stream << res.alignment() << '\n';          // =>       0     .    :
+                                                          //            ACGTGATG--
+                                                          //            | |||||
+                                                          //            A-GTGATACT
     }
 //! [alignment]
     return 0;

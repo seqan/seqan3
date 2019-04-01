@@ -24,7 +24,7 @@
 namespace seqan3::test::alignment::fixture::global::affine::banded
 {
 
-inline constexpr auto align_config = align_cfg::mode{align_cfg::global_alignment} |
+inline constexpr auto align_config = align_cfg::mode{global_alignment} |
                                      align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
                                      align_cfg::band{static_band{lower_bound{-3}, upper_bound{8}}};
 

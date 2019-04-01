@@ -74,7 +74,6 @@ TEST_F(sequence_file_input_f, construct_by_filename)
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
         EXPECT_NO_THROW( sequence_file_input<>{filename.get_path()} );
@@ -102,7 +101,6 @@ TEST_F(sequence_file_input_f, construct_by_filename)
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
         EXPECT_NO_THROW(( sequence_file_input<sequence_file_input_default_traits_dna,
@@ -135,7 +133,8 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 {
     using comp0 = sequence_file_input_default_traits_dna;
     using comp1 = fields<field::SEQ, field::ID, field::QUAL>;
-    using comp2 = type_list<sequence_file_format_fasta, sequence_file_format_fastq>;
+    using comp2 = type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
+                            sequence_file_format_sam>;
     using comp3 = char;
 
     /* default template args */
@@ -153,7 +152,6 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
         sequence_file_input fin{filename.get_path()};
@@ -171,7 +169,6 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << "> ID\nACGT\n"; // must contain at least one record
         }
 
         sequence_file_input fin{filename.get_path(), fields<field::SEQ>{}};
@@ -191,8 +188,10 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_embl,
+                                                                              sequence_file_format_fasta,
+                                                                              sequence_file_format_fastq,
+                                                                              sequence_file_format_sam>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -203,8 +202,10 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
-        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta,
-                                                                              sequence_file_format_fastq>>));// changed
+        EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_embl,
+                                                                              sequence_file_format_fasta,
+                                                                              sequence_file_format_fastq,
+                                                                              sequence_file_format_sam>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
     }
 
@@ -232,6 +233,23 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      type_list<sequence_file_format_fasta>>));// changed
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   wchar_t>));                              // changed
     }
+}
+
+TEST_F(sequence_file_input_f, empty_file)
+{
+    test::tmp_filename filename{"empty.fasta"};
+    std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+
+    sequence_file_input fin{filename.get_path()};
+
+    EXPECT_EQ(fin.begin(), fin.end());
+}
+
+TEST_F(sequence_file_input_f, empty_stream)
+{
+    sequence_file_input fin{std::istringstream{std::string{}}, sequence_file_format_fasta{}};
+
+    EXPECT_EQ(fin.begin(), fin.end());
 }
 
 TEST_F(sequence_file_input_f, record_reading)
@@ -430,6 +448,19 @@ TEST_F(sequence_file_input_f, decompression_by_stream_gz)
 
     decompression_impl(*this, fin);
 }
+
+TEST_F(sequence_file_input_f, read_empty_gz_file)
+{
+    std::string empty_zipped_file
+    {
+        '\x1f', '\x8b', '\x08', '\x08', '\x5a', '\x07', '\x98', '\x5c',
+        '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+    };
+    sequence_file_input fin{std::istringstream{empty_zipped_file}, sequence_file_format_fasta{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
+}
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -464,5 +495,15 @@ TEST_F(sequence_file_input_f, decompression_by_stream_bz2)
 
     decompression_impl(*this, fin);
 }
-#endif
 
+TEST_F(sequence_file_input_f, read_empty_bz2_file)
+{
+    std::string empty_zipped_file
+    {
+        '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
+    };
+    sequence_file_input fin{std::istringstream{empty_zipped_file}, sequence_file_format_fasta{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
+}
+#endif

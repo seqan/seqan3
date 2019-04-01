@@ -80,15 +80,16 @@ class sequence_file_format_fasta
 {
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief Rule of five explicitly defaulted.
      * \{
      */
-    sequence_file_format_fasta() = default;
+    sequence_file_format_fasta() = default;                                          //!< Defaulted
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     sequence_file_format_fasta(sequence_file_format_fasta const &) = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
     sequence_file_format_fasta & operator=(sequence_file_format_fasta const &) = delete;
-    sequence_file_format_fasta(sequence_file_format_fasta &&) = default;
-    sequence_file_format_fasta & operator=(sequence_file_format_fasta &&) = default;
-    ~sequence_file_format_fasta() = default;
+    sequence_file_format_fasta(sequence_file_format_fasta &&) = default;             //!< Defaulted
+    sequence_file_format_fasta & operator=(sequence_file_format_fasta &&) = default; //!< Defaulted
+    ~sequence_file_format_fasta() = default;                                         //!< Defaulted
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
@@ -124,13 +125,6 @@ public:
 
         // Sequence
         read_seq(stream_view, options, sequence);
-
-        // make sure "buffer at end" implies "stream at end"
-        if ((std::istreambuf_iterator<stream_char_t>{stream} == std::istreambuf_iterator<stream_char_t>{}) &&
-            (!stream.eof()))
-        {
-            stream.get(); // triggers error in stream and sets eof
-        }
     }
 
     //!\copydoc SequenceFileOutputFormat::write

@@ -15,10 +15,9 @@
 
 #include <type_traits>
 
-#include <range/v3/view/drop_exactly.hpp>
-
 #include <seqan3/range/concept.hpp>
 #include <seqan3/search/algorithm/detail/search_common.hpp>
+#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -52,10 +51,10 @@ inline bool search_trivial(cursor_t cur, query_t & query, typename cursor_t::siz
                            search_param const error_left, delegate_t && delegate) noexcept(noexcept(delegate))
 {
     // Exact case (end of query sequence or no errors left)
-    if (query_pos == query.size() || error_left.total == 0)
+    if (query_pos == std::ranges::size(query) || error_left.total == 0)
     {
         // If not at end of query sequence, try searching the remaining suffix without any errors.
-        if (query_pos == query.size() || cur.extend_right(ranges::view::drop_exactly(query, query_pos)))
+        if (query_pos == std::ranges::size(query) || cur.extend_right(std::view::drop(query, query_pos)))
         {
             delegate(cur);
             return true;

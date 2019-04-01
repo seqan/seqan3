@@ -55,6 +55,9 @@ template <FmIndex index_t, typename queries_t, typename configuration_t>
 //!\endcond
 inline auto search(index_t const & index, queries_t && queries, configuration_t const & cfg)
 {
+    static_assert(ImplicitlyConvertibleTo<innermost_value_type_t<queries_t>, typename index_t::char_type>,
+                  "The alphabets of index and query are not compatible.");
+
     using cfg_t = remove_cvref_t<configuration_t>;
 
     if constexpr (cfg_t::template exists<search_cfg::max_error>())
@@ -95,6 +98,25 @@ inline auto search(index_t const & index, queries_t && queries, configuration_t 
     }
 }
 
+//! \overload
+template <FmIndex index_t, typename configuration_t>
+inline auto search(index_t const & index, char const * const queries, configuration_t const & cfg)
+{
+    return search(index, std::string_view{queries}, cfg);
+}
+
+//! \overload
+template <FmIndex index_t, typename configuration_t>
+inline auto search(index_t const & index,
+                   std::initializer_list<char const * const> const & queries,
+                   configuration_t const & cfg)
+{
+    std::vector<std::string_view> query;
+    query.reserve(std::ranges::size(queries));
+    std::ranges::for_each(queries, [&query] (char const * const q) { query.push_back(std::string_view{q}); });
+    return search(index, query, cfg);
+}
+
 /*!\brief Search a query or a range of queries in an index.
  *        It will not allow for any errors and will output all matches as positions in the text.
  * \tparam index_t    Must model seqan3::FmIndex.
@@ -119,6 +141,9 @@ template <FmIndex index_t, typename queries_t>
 //!\endcond
 inline auto search(index_t const & index, queries_t && queries)
 {
+    static_assert(ImplicitlyConvertibleTo<innermost_value_type_t<queries_t>, typename index_t::char_type>,
+                  "The alphabets of index and query are not compatible.");
+
     configuration const default_cfg = search_cfg::max_error{search_cfg::total{0},
                                                             search_cfg::substitution{0},
                                                             search_cfg::insertion{0},
@@ -126,6 +151,23 @@ inline auto search(index_t const & index, queries_t && queries)
                                             | search_cfg::output{search_cfg::text_position}
                                             | search_cfg::mode{search_cfg::all};
     return search(index, queries, default_cfg);
+}
+
+//! \overload
+template <FmIndex index_t>
+inline auto search(index_t const & index, char const * const queries)
+{
+    return search(index, std::string_view{queries});
+}
+
+//! \overload
+template <FmIndex index_t>
+inline auto search(index_t const & index, std::initializer_list<char const * const> const & queries)
+{
+    std::vector<std::string_view> query;
+    query.reserve(std::ranges::size(queries));
+    std::ranges::for_each(queries, [&query] (char const * const q) { query.push_back(std::string_view{q}); });
+    return search(index, query);
 }
 
 //!\}

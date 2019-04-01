@@ -10,11 +10,11 @@
 #include <vector>
 #include <type_traits>
 
-#include <range/v3/view/zip.hpp>
-#include <range/v3/view/take.hpp>
-#include <range/v3/istream_range.hpp>
+#include <range/v3/view/slice.hpp>
 
 #include <seqan3/range/view/single_pass_input.hpp>
+#include <seqan3/range/view/persist.hpp>
+#include <seqan3/range/view/take.hpp>
 #include <seqan3/std/ranges>
 
 template <typename rng_type>
@@ -24,6 +24,7 @@ class single_pass_input : public ::testing::Test
     virtual void SetUp()
     {
         data = get_data();
+        cmp_data = get_data();
     }
 
     auto get_data()
@@ -36,11 +37,11 @@ class single_pass_input : public ::testing::Test
         {
             return rng_type{1, 2, 3, 4, 5};
         }
-        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, ranges::istream_view<char>>)
+        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::ranges::istream_view<char>>)
         {
             return std::istringstream{"12345"};
         }
-        else if constexpr (std::is_same_v<rng_type, ranges::istream_view<int>>)
+        else if constexpr (std::is_same_v<rng_type, std::ranges::istream_view<int>>)
         {
             return std::istringstream{"1 2 3 4 5"};
         }
@@ -49,14 +50,15 @@ class single_pass_input : public ::testing::Test
 public:
 
     decltype(std::declval<single_pass_input>().get_data()) data;
+    decltype(std::declval<single_pass_input>().get_data()) cmp_data;
 };
 
 // add all <out_rng,in_rng> pairs here.
 using underlying_range_types = ::testing::Types<std::vector<char>,
                                                 std::vector<int>,
                                                 std::vector<char> const,
-                                                ranges::istream_view<char>,
-                                                ranges::istream_view<int>>;
+                                                std::ranges::istream_view<char>,
+                                                std::ranges::istream_view<int>>;
 
 TYPED_TEST_CASE(single_pass_input, underlying_range_types);
 
@@ -64,19 +66,25 @@ using namespace seqan3;
 
 TYPED_TEST(single_pass_input, view_concept)
 {
-    using view_t = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
+    using rng_t = decltype(std::declval<TypeParam &>() | std::view::all);
+    using view_t = detail::single_pass_input_view<rng_t>;
     EXPECT_TRUE((std::is_base_of_v<ranges::view_base, view_t>));
-
     EXPECT_TRUE((std::Sentinel<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
     EXPECT_TRUE(std::ranges::Range<view_t>);
     EXPECT_TRUE(std::ranges::View<view_t>);
     EXPECT_TRUE(std::ranges::InputRange<view_t>);
+    EXPECT_EQ((std::ranges::OutputRange<view_t, reference_t<view_t>>),
+              (std::ranges::OutputRange<rng_t, reference_t<rng_t>>));
+    EXPECT_FALSE(std::ranges::CommonRange<view_t>);
     EXPECT_FALSE(std::ranges::ForwardRange<view_t>);
+    EXPECT_FALSE(std::ranges::BidirectionalRange<view_t>);
+    EXPECT_FALSE(std::ranges::RandomAccessRange<view_t>);
 }
 
 TYPED_TEST(single_pass_input, view_construction)
 {
-    using view_t = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
+    using rng_t = decltype(std::declval<TypeParam>() | view::persist);
+    using view_t = detail::single_pass_input_view<rng_t>;
     EXPECT_TRUE(std::is_default_constructible_v<view_t>);
     EXPECT_TRUE(std::is_copy_constructible_v<view_t>);
     EXPECT_TRUE(std::is_move_constructible_v<view_t>);
@@ -84,13 +92,13 @@ TYPED_TEST(single_pass_input, view_construction)
     EXPECT_TRUE(std::is_move_assignable_v<view_t>);
     EXPECT_TRUE(std::is_destructible_v<view_t>);
 
-    {  // from lvalue
+    {  // from lvalue container
         TypeParam p{this->data};
         [[maybe_unused]] detail::single_pass_input_view v{p};
     }
 
-    {  // from rvalue
-        [[maybe_unused]] detail::single_pass_input_view v{TypeParam{this->data}};
+    {  // from view
+        [[maybe_unused]] detail::single_pass_input_view v{TypeParam{this->data} | view::persist};
     }
 }
 
@@ -117,28 +125,28 @@ TYPED_TEST(single_pass_input, view_end)
     EXPECT_TRUE((std::is_same_v<decltype(view.end()), sentinel_type>));
 }
 
-TYPED_TEST(single_pass_input, default_construction)
-{
-    detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>> v{};
-    EXPECT_TRUE(seqan3::begin(v) == seqan3::end(v));
-}
-
 TYPED_TEST(single_pass_input, view_iterate)
 {
     TypeParam p{this->data};
 
-    detail::single_pass_input_view view{p};
-
     if constexpr (std::is_base_of_v<std::ios_base, decltype(this->data)>)
     {
+        // Single pass input is only movable.
+        detail::single_pass_input_view view{std::move(p)};
+
+        TypeParam tmp{this->cmp_data};
+        auto tmp_it = tmp.begin();
         for (auto && elem : view)
         {
-            EXPECT_EQ(elem, *p.begin());
+            EXPECT_EQ(elem, *tmp_it);
+            ++tmp_it;
         }
     }
     else
     {
-        auto zipper = ranges::zip_view(p, view);
+        detail::single_pass_input_view view{p};
+        TypeParam tmp{this->cmp_data};
+        auto zipper = std::view::zip(tmp, std::move(view));
         for (auto it = zipper.begin(); it != zipper.end(); ++it)
         {
             EXPECT_EQ(std::get<0>(*it), std::get<1>(*it));
@@ -148,14 +156,14 @@ TYPED_TEST(single_pass_input, view_iterate)
 
 TYPED_TEST(single_pass_input, iterator_concepts)
 {
-    using view_type = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
+    using view_type = detail::single_pass_input_view<decltype(std::declval<TypeParam>() | view::persist)>;
     EXPECT_TRUE((std::InputIterator<std::ranges::iterator_t<view_type>>));
     EXPECT_FALSE((std::ForwardIterator<std::ranges::iterator_t<view_type>>));
 }
 
 TYPED_TEST(single_pass_input, iterator_construction)
 {
-    using view_type = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
+    using view_type = detail::single_pass_input_view<decltype(std::declval<TypeParam>() | view::persist)>;
     using iterator_type = std::ranges::iterator_t<view_type>;
     EXPECT_TRUE(std::is_default_constructible_v<iterator_type>);
     EXPECT_TRUE(std::is_copy_constructible_v<iterator_type>);
@@ -197,7 +205,6 @@ TYPED_TEST(single_pass_input, iterator_post_increment)
     detail::single_pass_input_view view{p};
 
     auto it = view.begin();
-    EXPECT_TRUE((std::Same<decltype(it++), void>));
 
     if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
     {
@@ -261,7 +268,7 @@ TYPED_TEST(single_pass_input, iterator_neq_comparison)
 
 TYPED_TEST(single_pass_input, sentinel_concepts)
 {
-    using view_type     = detail::single_pass_input_view<std::add_lvalue_reference_t<TypeParam>>;
+    using view_type     = detail::single_pass_input_view<decltype(std::declval<TypeParam>() | view::persist)>;
     using iterator_type = std::ranges::iterator_t<view_type>;
     using sentinel_type = std::ranges::sentinel_t<view_type>;
 
@@ -308,9 +315,9 @@ TYPED_TEST(single_pass_input, fn_functional)
     // use case 1: functional;
     TypeParam p{this->data};
 
-    auto view = std::view::take(view::single_pass_input(p), 3);
-
+    auto view = p | view::single_pass_input | view::take(3);
     auto it = view.begin();
+
     if constexpr (std::is_same_v<value_type_t<TypeParam>, char>)
     {
         EXPECT_EQ(*it,   '1');

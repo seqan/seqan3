@@ -43,8 +43,8 @@ void map_reads(std::filesystem::path const & query_path,
 
 //! [alignment_config]
     configuration const align_config = align_cfg::edit |
-                                       align_cfg::aligned_ends{align_cfg::seq1_ends_free} |
-                                       align_cfg::result{align_cfg::with_trace};
+                                       align_cfg::aligned_ends{free_ends_first} |
+                                       align_cfg::result{with_alignment};
 //! [alignment_config]
 
     for (auto & [query, id, qual] : query_in | view::take(20))
@@ -57,9 +57,9 @@ void map_reads(std::filesystem::path const & query_path,
 
             for (auto && alignment : align_pairwise(std::tie(text_view, query), align_config))
             {
-                auto && [aligned_database, aligned_query] = alignment.get_alignment();
+                auto && [aligned_database, aligned_query] = alignment.alignment();
                 debug_stream << "id:       " << id << '\n';
-                debug_stream << "score:    " << alignment.get_score() << '\n';
+                debug_stream << "score:    " << alignment.score() << '\n';
                 debug_stream << "database: " << aligned_database << '\n';
                 debug_stream << "query:    "  << aligned_query << '\n';
                 debug_stream << "=============\n";
@@ -96,9 +96,9 @@ void initialise_argument_parser(argument_parser & parser, cmd_arguments & args)
     parser.info.short_description = "Map reads against a reference.";
     parser.info.version = "1.0.0";
     parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.", option_spec::REQUIRED,
-                      file_ext_validator({"fa","fasta"}) | seqan3::file_existance_validator{});
+                      file_ext_validator({"fa","fasta"}) | seqan3::path_existence_validator{});
     parser.add_option(args.query_path, 'q', "query", "The path to the query.", option_spec::REQUIRED,
-                      file_ext_validator({"fq","fastq"}) | seqan3::file_existance_validator{});
+                      file_ext_validator({"fq","fastq"}) | seqan3::path_existence_validator{});
     parser.add_option(args.index_path, 'i', "index", "The path to the index.", option_spec::REQUIRED,
                       file_ext_validator({"index"}));
     parser.add_option(args.sam_path, 'o', "output", "The output SAM file path.", option_spec::DEFAULT,

@@ -47,7 +47,7 @@ constexpr auto get_inline_variable()
 {
     if constexpr (std::is_same_v<type, detail::global_alignment_type>)
     {
-        return align_cfg::global_alignment;
+        return global_alignment;
     }
     else
     {

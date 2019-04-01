@@ -103,7 +103,7 @@ auto add(t1 const v1, t2 const v2)
 
 (2) The "intermediate syntax":
 ```cpp
-template <std::Integral t1, std::Integral t2>                   // one constraint per type
+template <std::Integral t1, std::Integral t2>                       // one constraint per type
 auto add(t1 const v1, t2 const v2)
 {
     return v1 + v2;
@@ -112,7 +112,7 @@ auto add(t1 const v1, t2 const v2)
 
 (3) The "terse syntax":
 ```cpp
-auto add(std::Integral auto const v1, std::Integral const v2)   // one constraint per type
+auto add(std::Integral auto const v1, std::Integral auto const v2)  // one constraint per type
 {
     return v1 + v2;
 }
@@ -300,7 +300,7 @@ Try to think of the correct behaviour of this program.
 
 It should print "Yeah!" for the arguments `-i 0`, `-i 4`, or `-i 144`; and/or `-j 0` or `-j 4`.
 
-It should fail for the arguments `-i 1`; and/or `-j 144` or `-j 1`.
+It should fail for the arguments `-i 3`; and/or `-j 144` or `-j 3`.
 
 \assignment{Exercise: Custom validator II}
 Implement your validator fully, i.e. make it throw seqan3::parser_invalid_argument if the number provided is not a

@@ -5,7 +5,7 @@ You will get an overview of how file Input/Output is handled in seqan3 and learn
 sequence files. This tutorial is a walk-through with links into the API documentation and also meant as a
 source for copy-and-paste code.
 
-\tutorial_head{Easy, 30 min, \ref setup\, alphabets\, ranges, [POSIX conventions](https://www.math.uni-hamburg.de/doc/java/tutorial/essential/attributes/_posix.html)}
+\tutorial_head{Easy, 90 min, \ref setup "Setup"\, \ref tutorial_ranges\, \ref tutorial_alphabets "Alphabets",}
 
 [TOC]
 
@@ -63,24 +63,10 @@ or seqan3::sequence_file_default_traits_aa for reading `dna` and `protein` seque
 Opening and closing files is also handled automatically.
 If a file cannot be opened for reading or writing, a seqan3::file_open_error is thrown.
 
-# Sequence Files {#section_sequence_files}
+# Sequence file formats
 
 Sequence files are the most generic and common biological files.
-Well-known formats include FASTA and FASTQ,
-but some may also be interested in treating SAM or BAM files as sequence files, discarding the alignment.
-The Sequence file abstraction supports reading four different fields:
-
-  1. seqan3::field::SEQ
-  2. seqan3::field::ID
-  3. seqan3::field::QUAL
-  4. seqan3::field::SEQ_QUAL (sequence and qualities in one range, see seqan3::qualified for details)
-
-The first three fields are retrieved by default (and in that order!).
-The last field may be selected to have sequence and qualities directly stored in a more memory-efficient
-combined container.
-If you select the last field you may not select seqan3::field::SEQ or seqan3::field::QUAL.
-
-# Sequence file formats
+Well-known formats include FASTA and FASTQ.
 
 ### FASTA format
 
@@ -92,6 +78,9 @@ CCCCCCCCCCCCCCC
 >seq2
 CGATCGATC
 ```
+
+In SeqAn3 we provide the seqan3::sequence_file_format_fasta to read sequence files in FASTA format.
+
 ### FASTQ format
 
 A FASTQ record contains an additional quality value for each sequence character. Here is an example of a FASTQ file:
@@ -107,15 +96,17 @@ CGATCGATC
 IIIIIIIII
 ```
 
+In SeqAn3 we provide the seqan3::sequence_file_format_fastq to read sequence files in FASTA format.
+
 ### File extensions
 
 The formerly introduced formats can be identified by the following file name extensions
 (this is important for automatic format detection from a file name as you will learn in the next section).
 
-| File Format  | File Extensions   |
-| -------------|-------------------|
-| FASTA        |   `.fa`, `.fasta`, `.fna`, `.ffn`, `.ffa`, `.frn` |
-| FASTQ        |   `.fq`, `.fastq` |
+| File Format | SeqAn3 format class                | File Extensions                                   |
+| ------------| -----------------------------------|---------------------------------------------------|
+| FASTA       | seqan3::sequence_file_format_fasta |   `.fa`, `.fasta`, `.fna`, `.ffn`, `.ffa`, `.frn` |
+| FASTQ       | seqan3::sequence_file_format_fastq |   `.fq`, `.fastq`                                 |
 
 You can access the valid file extension via the `file_extension` member variable in a format:
 
@@ -124,6 +115,22 @@ You can access the valid file extension via the `file_extension` member variable
 You can also customise this list if you want to allow different or additional file extensions:
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp modify_file_extensions
+
+# Fields {#section_sequence_files}
+
+The Sequence file abstraction supports reading four different fields:
+
+  1. seqan3::field::SEQ
+  2. seqan3::field::ID
+  3. seqan3::field::QUAL
+  4. seqan3::field::SEQ_QUAL
+
+The first three fields are retrieved by default (and in that order!).
+The last field may be selected to directly store sequence and qualities in a more memory-efficient
+combined container (see seqan3::qualified).
+This is more advanced than what we cover here,
+but if you are still interested you can take a look at the *Alignment File Tutorial*
+which introduces reading a file with custom selected fields.
 
 # Reading a sequence file
 
@@ -153,8 +160,11 @@ The seqan3::sequence_file_input needs to know the types of the data you are read
 (e.g. that your sequence is a `dna` sequence) at **compile-time**.
 These necessary types are defined in the  **traits type** argument (seqan3::sequence_file_input::traits_type)
 which by default is set to seqan3::sequence_file_input_default_traits_dna.
-We thereby assume that you want to read the sequence into a std::vector over a seqan3::dna5 alphabet
-and store the sequence names/id in a std::string.
+
+We thereby assume that
+* you want to read the sequence into a std::vector over a seqan3::dna5 alphabet,
+* store the sequence names/id in a std::string and
+* the qualities in a std::vector over the seqan3::phred42 alphabet.
 
 In case you want to read a **protein** sequence instead we also provide the
 seqan3::sequence_file_input_default_traits_aa traits type which sets the SEQ field to a std::vector over
@@ -174,15 +184,13 @@ our file objects behave like ranges so you can use a range based for loop to con
 
 \snippet test/snippet/io/sequence_file/sequence_file_input.cpp record_iter
 
+\attention An input file is a **single input range**, which means you can only iterate over it **once**!
+
 In the above example, `rec` has the type seqan3::sequence_file_input::record_type
 which is a specialisation of seqan3::record and behaves like an std::tuple
 (that's why we can access it via `get`).
 
 \note It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
-      Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
-      to store it somewhere without copying:
-      \snippet test/snippet/io/sequence_file/sequence_file_input.cpp auto_ref
-
 
 Since the return type seqan3::record behaves like a tuple, you can also use
 [structured bindings](http://en.cppreference.com/w/cpp/language/structured_binding)
@@ -229,47 +237,38 @@ QUAL: IIIIHHGIIIIHHGIIIH
 ```
 \endsolution
 
-## Reading only a subset of information
+## The record type
 
-In some cases, you might be only interested in a subset of your data,
-e.g. you only need the sequence information but not the id and quality.
-For this purpose, you can specialise the seqan3::sequence_file_input::selected_fields type by giving an
-additional seqan3::fields object to the constructor.
+In the examples above, we always use `auto` to deduce the record type automatically.
+In case you need the type explicitly, e.g. if you want to store the records in a variable,
+you can access the type member seqan3::sequence_file_input::record_type.
 
-\attention The **order** of the field tags in your seqan3::fields object will determine
-           the order of values stored in the record type!
+\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp record_type
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp custom_fields
+You can move the record out of the file if you want to store it somewhere without copying.
 
-<a name="assignment_reading_seq_qual"></a>
-\assignment{Exercise: Reading a FASTQ file into a SEQ_QUAL object}
+\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp record_type2
 
-While working on the same FASTQ file from assignment 1,
-create a new program that reads in the `ID` and the `SEQ_QUAL` object and
-prints the sequence and quality information to the command line.
-Take a look at the seqan3::qualified type on how to handle the combination of sequence and quality information.
+\assignment{Exercise: Storing records in a std::vector}
 
-\hint
-Pipe the seqan3::view::get on the `SEQ_QUAL` object to access the sequence or quality information .
-\endhint
+Create a small program that reads in a FASTA file and stores all the records in a std::vector.
+
+After reading, print the vector (this works natively with the seqan3::debug_stream).
+
+Test your program with the following file:
+
+\snippet doc/tutorial/sequence_file/sequence_file_solution2.cpp fasta_file
+
+It should print the following:
+
+```console
+[(AGCT,seq1,),(CGATCGA,seq2,)]
+```
+Note that the quality (third tuple element) is empty because we are reading a FASTA file.
 
 \endassignment
 \solution
-
 \snippet doc/tutorial/sequence_file/sequence_file_solution2.cpp solution
-
-The code will print the following:
-```bash
-ID:  seq1
-SEQ: AGCTAGCAGCGATCG
-QUAL: IIIIIHIIIIIIIII
-ID:  seq2
-SEQ: CGATCGATC
-QUAL: IIIIIIIII
-ID:  seq3
-SEQ: AGCGATCGAGGAATATAT
-QUAL: IIIIHHGIIIIHHGIIIH
-```
 \endsolution
 
 # Sequence files as views
@@ -277,50 +276,57 @@ QUAL: IIIIHHGIIIIHHGIIIH
 Since SeqAn files are ranges, you can also create views over files.
 This enables us to create solutions for lot of use cases using only a few lines of code.
 
-## Reading a file in batches
+## Reading a file in chunks
 
-A common use case is to read chunks from a file instead of the whole file at once.
+A common use case is to read chunks from a file instead of the whole file at once or line by line.
 
-You can do so easily on a file range by using the seqan3::view::take.
+You can do so easily on a file range by using the ranges::view::chunk.
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp read_in_batches
 
-The example above will iterate over the file, by reading 2 records at a time.
-If no two records are available any more, it will just print the remaining single record.
+The example above will iterate over the file by reading 10 records at a time.
+If no 10 records are available any more, it will just print the remaining records.
 
 ## Applying a filter to a file
 
 In some occasions you are only interested in sequence records that fulfill a certain criteria,
-e.g. having a minimum sequence length or a minimum quality.
-Just like in the example with the *take* view you can use std::ranges::filter for this purpose:
+e.g. having a minimum sequence length or a minimum average quality.
+Just like in the example with *ranges::view::chunk* you can use *std::ranges::filter* for this purpose:
 
-\snippet test/snippet/io/sequence_file/sequence_file_input.cpp file_view
+\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp quality_filter
 
-To remind you what you have learned in the ranges & views tutorial before,
+To remind you what you have learned in the \ref tutorial_ranges tutorial before,
 a view is not applied immediately but **lazy evaluated**.
 That means your file is still parsed record by record and not at once.
 
-\assignment{Exercise: Fun with ranges}
+## Reading paired-end reads
 
-Implement a small program that reads in a FASTQ file and outputs the first 2 sequences
-that have an average quality of at least 40.
+In modern Next Generation Sequencing experiments you often have paired-end read data
+which is split into two files.
+The read pairs are identified by their identical name/id
+and that their position in the two files is the same.
+
+If you want to handle one pair of reads at a time, you can do so easily with a std::view::zip.
+
+\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp paired_reads
+
+\assignment{Exercise: Fun with file ranges}
+
+Implement a small program that reads in a FASTQ file and prints the first 2 sequences
+that have a length of at least 5.
 
 Hints:
-* You may want to (but do not need to) use `std::accumulate` when aggregating values.
-* You need the following includes for std::view::filter
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_filter
-* You need the following includes for ranges::view::take
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_ranges_take
+* You can use `std::ranges::size` to retrieve the size of a range.
+* You need the following includes for std::view::filter and std::take
+\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_ranges
+
 
 Test your program on the following FASTQ file:
 
 \snippet doc/tutorial/sequence_file/sequence_file_solution3.cpp fastq_file
 
-It should output:
-```console
-seq1
-seq3
-```
+It should output `seq1` and `seq3`.
+
 \endassignment
 \solution
 \snippet doc/tutorial/sequence_file/sequence_file_solution3.cpp solution
@@ -354,36 +360,28 @@ second seqan3::field::ID and the third one seqan3::field::QUAL.
 You may give less fields than are selected if the actual format you are writing to can cope with less
 (e.g. for FastA it is sufficient to give sequence and name information).
 
-Of course you can customise the seqan3::sequence_file_output::selected_field_ids as well.
+\assignment{Exercise: Writing a FASTQ file}
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp writing_custom_fields
+Use your code (or the solution) from the previous exercise.
+Iterate over the records with a for loop and instead of just printing the ids,
+write out **all** the records that satisfy the filter to a new file called `output.fasta`.
 
-\assignment{Exercise: Naive quality trimming}
-
-Implement a naive quality trimming approach
-that reads in a FASTQ file and writes out another FASTQ file with the trimmed reads.
-The quality trimming should scan the reads from left to right
-and cut off the sequence whenever the quality drops below 10 (phred score).
-
-Test your code on the following file:
-
-\snippet doc/tutorial/sequence_file/sequence_file_solution4.cpp fastq_file
-
-It should create a new file that looks like this:
+Test your code on the same FASTQ file.
+The file `output.fasta` should contain the following records:
 
 ```
 @seq1
-CGATCG
+CGATCGATC
 +
-IIIIII
-@seq2
-AGCGATCGAG
-+
-IIIIHHGIII
+IIIIIIIII
 @seq3
-AGCTAGCA
+AGCTAGCAGCGATCG
 +
-IIIIIHII
+IIIIIHIIJJIIIII
+@seq5
+AGCTAGCAGCGATCG
++
+IIIIIHIIJJIIIII
 ```
 
 \endassignment
@@ -393,15 +391,15 @@ IIIIIHII
 
 ## Files as views
 
-Again we want to point out a convenient advantages of modelling files as ranges.
-In the "reading a file" section you already saw a few examples of how to pipe a view into
+Again we want to point out a convenient advantage of modelling files as ranges.
+In the "reading a file" section you already saw a few examples of how to pipe a view onto
 a seqan3::sequence_file_input object. In the same way you can pipe the output file:
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp piping_in_out
 
-\assignment{Exercise: Naive quality trimming 2 }
+\assignment{Exercise: Fun with file ranges 2}
 
-Copy and paste the solution of the previous exercise and remove the for loop in favour of a pipe notation.
+Working on your solution from the previous exercise, try to remove the for loop in favour of a pipe notation.
 
 The result should be the same.
 

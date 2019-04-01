@@ -15,8 +15,6 @@
 #include <ios>
 #include <type_traits>
 
-#include <range/v3/iterator/associated_types.hpp>
-
 #include <seqan3/core/platform.hpp>
 
 namespace seqan3

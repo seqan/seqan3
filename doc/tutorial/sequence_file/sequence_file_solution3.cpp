@@ -13,17 +13,17 @@ CGATCGATC
 +
 IIIIIIIII
 @seq2
-AGCGATCGAGGAATATAT
+AGCG
 +
-IIIIHHGIIIIHHGIIIH
+IIII
 @seq3
 AGCTAGCAGCGATCG
 +
 IIIIIHIIJJIIIII
 @seq4
-AGCGATCGAGGAATATAT
+AGC
 +
-IIIIHHGIIIIHHGIIIH
+III
 @seq5
 AGCTAGCAGCGATCG
 +
@@ -39,13 +39,11 @@ IIIIIHIIJJIIIII
 write_file_dummy_struct go{};
 
 //![solution]
-#include <range/v3/numeric/accumulate.hpp>   // ranges::accumulate
-#include <range/v3/view/take.hpp>            // ranges::take
-
 #include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/range/view/get.hpp>
 #include <seqan3/std/filesystem>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 
@@ -55,16 +53,23 @@ int main()
 
     sequence_file_input fin{tmp_dir/"my.fastq"};
 
-    auto minimum_quality_filter = std::view::filter([] (auto const & rec)
+    auto length_filter = std::view::filter([] (auto const & rec)
     {
-        auto qual = get<field::QUAL>(rec) | std::view::transform([] (auto q) { return q.to_phred(); });
-        double sum = ranges::accumulate(qual.begin(), qual.end(), 0);
-        return sum / std::ranges::size(qual) >= 40;
+        return std::ranges::size(get<field::SEQ>(rec)) >= 5;
     });
 
-    for (auto & rec : fin | minimum_quality_filter | std::view::take(2))
-    {
-        debug_stream << "ID: " << get<field::ID>(rec) << '\n';
-    }
+    // you can use a for loop
+
+    // for (auto & rec : fin | length_filter | std::view::take(2))
+    // {
+    //     debug_stream << "ID: " << get<field::ID>(rec) << '\n';
+    // }
+
+    // But you can also do this :)
+    std::vector<std::string> ids = std::move(fin | length_filter | std::view::take(2) | view::get<field::ID>);
+    // Note that you need to know the type of id (std::string)
+    // We use move to avoid copying
+
+    debug_stream << ids << std::endl;
 }
 //![solution]

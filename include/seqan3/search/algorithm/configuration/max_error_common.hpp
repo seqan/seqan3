@@ -40,9 +40,11 @@ struct total : detail::strong_type<value_t, total<value_t>, detail::strong_type_
  * \relates seqan3::search_cfg::total
  * \{
  */
+//! \brief Deduces to `uint8_t` for all types modelling std::Integral.
 template <std::Integral value_t>
 total(value_t) -> total<uint8_t>;
 
+//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
 template <typename value_t>
 //!\cond
     requires FloatingPoint<value_t>
@@ -72,9 +74,11 @@ struct substitution : detail::strong_type<value_t, substitution<value_t>, detail
  * \relates seqan3::search_cfg::substitution
  * \{
  */
+//! \brief Deduces to `uint8_t` for all types modelling std::Integral.
 template <std::Integral value_t>
 substitution(value_t) -> substitution<uint8_t>;
 
+//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
 template <typename value_t>
 //!\cond
     requires FloatingPoint<value_t>
@@ -103,9 +107,11 @@ struct insertion : detail::strong_type<value_t, insertion<value_t>, detail::stro
  * \relates seqan3::search_cfg::total
  * \{
  */
+//! \brief Deduces to `uint8_t` for all types modelling std::Integral.
 template <std::Integral value_t>
 insertion(value_t) -> insertion<uint8_t>;
 
+//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
 template <typename value_t>
 //!\cond
     requires FloatingPoint<value_t>
@@ -134,9 +140,11 @@ struct deletion : detail::strong_type<value_t, deletion<value_t>, detail::strong
  * \relates seqan3::search_cfg::deletion
  * \{
  */
+//! \brief Deduces to `uint8_t` for Integral types.
 template <std::Integral value_t>
 deletion(value_t) -> deletion<uint8_t>;
 
+//! \brief Deduces to `double` for all types modelling seqan3::FloatingPoint.
 template <typename value_t>
 //!\cond
     requires FloatingPoint<value_t>

@@ -81,12 +81,14 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr banded_score_trace_dp_matrix_policy() = default;
-    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy const &) = default;
-    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy &&) = default;
+    constexpr banded_score_trace_dp_matrix_policy() = default;                                            //!< Defaulted
+    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy const &) = default; //!< Defaulted
+    constexpr banded_score_trace_dp_matrix_policy(banded_score_trace_dp_matrix_policy &&) = default;      //!< Defaulted
+    //!\brief Defaulted
     constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy const &) = default;
+    //!\brief Defaulted 
     constexpr banded_score_trace_dp_matrix_policy & operator=(banded_score_trace_dp_matrix_policy &&) = default;
-    ~banded_score_trace_dp_matrix_policy() = default;
+    ~banded_score_trace_dp_matrix_policy() = default;                                                     //!< Defaulted
     //!\}
 
     /*!\brief Allocates the memory for the dynamic programming matrix given the two sequences.
@@ -113,14 +115,14 @@ private:
 
         assert(span > 0u);  // The span must always be greater than 0.
 
-        // The begin coordinate in the current column begins at it - begin(matrix).
-        // The end coordinate ends at it - begin(matrix) + current_band_size
+        // The front coordinate in the current column begins at it - begin(matrix).
+        // The back coordinate ends at it - begin(matrix) + current_band_size
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
             col_begin{column_index_type{current_column_index},
                       row_index_type{static_cast<size_t>(std::ranges::distance(std::ranges::begin(score_matrix),
                                                                                current_matrix_iter))}};
         advanceable_alignment_coordinate<advanceable_alignment_coordinate_state::row>
-            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second_seq_pos + span}};
+            col_end{column_index_type{current_column_index}, row_index_type{col_begin.second + span}};
 
         // Return zip view over current column and current column shifted by one to access the previous horizontal.
         auto zip_score = std::view::zip(std::span{std::addressof(*current_matrix_iter), span},
@@ -142,12 +144,12 @@ private:
     }
 
     /*!\brief Parses the traceback starting from the given coordinate.
-     * \param end_coordinate The coordinate from where to start the traceback.
+     * \param back_coordinate The coordinate from where to start the traceback.
      *
-     * \returns A tuple containing the begin coordinate and a tuple with all seqan3::detail::gap_segment s for the
+     * \returns A tuple containing the front coordinate and a tuple with all seqan3::detail::gap_segment's for the
      *          first sequence and the second sequence.
      */
-    constexpr auto parse_traceback(alignment_coordinate const & end_coordinate) const
+    constexpr auto parse_traceback(alignment_coordinate const & back_coordinate) const
     {
         // Store the trace segments.
         std::deque<gap_segment> first_segments{};
@@ -155,8 +157,8 @@ private:
 
         // Put the iterator to the position where the traceback starts.
         auto direction_iter = std::ranges::begin(trace_matrix);
-        std::ranges::advance(direction_iter, end_coordinate.first_seq_pos * band_size +
-                                     end_coordinate.second_seq_pos);
+        std::ranges::advance(direction_iter, back_coordinate.first * band_size +
+                                     back_coordinate.second);
 
         // Parse the trace until interrupt.
         while (*direction_iter != trace_directions::none)
@@ -211,7 +213,7 @@ private:
             }
         }
 
-        // Get begin coordinate.
+        // Get front coordinate.
         auto c = column_index_type{
                 static_cast<uint_fast32_t>(std::ranges::distance(std::ranges::begin(trace_matrix), direction_iter) /
                                            band_size)};
@@ -220,15 +222,15 @@ private:
                                            band_size)};
 
         // Validate correct coordinates.
-        auto begin_coordinate = map_banded_coordinate_to_range_position(
+        auto front_coordinate = map_banded_coordinate_to_range_position(
                 alignment_coordinate{column_index_type{c}, row_index_type{r}});
-        assert(begin_coordinate.first_seq_pos >= 0u);
-        assert(begin_coordinate.first_seq_pos <= end_coordinate.first_seq_pos);
+        assert(front_coordinate.first >= 0u);
+        assert(front_coordinate.first <= back_coordinate.first);
 
-        assert(begin_coordinate.second_seq_pos >= 0u);
-        assert(begin_coordinate.second_seq_pos <= map_banded_coordinate_to_range_position(end_coordinate).second_seq_pos);
+        assert(front_coordinate.second >= 0u);
+        assert(front_coordinate.second <= map_banded_coordinate_to_range_position(back_coordinate).second);
 
-        return std::tuple{begin_coordinate, first_segments, second_segments};
+        return std::tuple{front_coordinate, first_segments, second_segments};
     }
 
     //!\brief Helper function to print the trace matrix; for debugging only.

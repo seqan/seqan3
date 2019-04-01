@@ -44,6 +44,7 @@ struct structure_file_input_class : public ::testing::Test
     test::tmp_filename create_file(char const * contents)
     {
         test::tmp_filename filename{"structure_file_input_constructor.dbn"};
+
         {
             std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
             filecreator << contents; // must contain at least one record
@@ -66,7 +67,12 @@ TEST_F(structure_file_input_class, construct_by_filename)
 {
     /* just the filename */
     {
-        test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
+        test::tmp_filename filename{"structure_file_input_constructor.dbn"};
+
+        {
+            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+        }
+
         EXPECT_NO_THROW(structure_file_in<>{filename.get_path()});
     }
 
@@ -285,6 +291,23 @@ struct structure_file_input_read : public ::testing::Test
 #endif
 };
 
+TEST_F(structure_file_input_read, empty_file)
+{
+    test::tmp_filename filename{"empty.dbn"};
+    std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+
+    structure_file_in fin{filename.get_path()};
+
+    EXPECT_EQ(fin.begin(), fin.end());
+}
+
+TEST_F(structure_file_input_read, empty_stream)
+{
+    structure_file_in fin{std::istringstream{std::string{}}, structure_file_format_vienna{}};
+
+    EXPECT_EQ(fin.begin(), fin.end());
+}
+
 TEST_F(structure_file_input_read, record_general)
 {
     /* record based reading */
@@ -493,6 +516,19 @@ TEST_F(structure_file_input_read, decompression_by_stream_gz)
 
     decompression_impl(fin);
 }
+
+TEST_F(structure_file_input_read, read_empty_gz_file)
+{
+    std::string empty_zipped_file
+    {
+        '\x1f', '\x8b', '\x08', '\x08', '\x5a', '\x07', '\x98', '\x5c',
+        '\x00', '\x03', '\x66', '\x6f', '\x6f', '\x00', '\x03', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00'
+    };
+    structure_file_in fin{std::istringstream{empty_zipped_file}, structure_file_format_vienna{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
+}
 #endif
 
 #ifdef SEQAN3_HAS_BZIP2
@@ -533,5 +569,16 @@ TEST_F(structure_file_input_read, decompression_by_stream_bz2)
     structure_file_in fin{std::istringstream{input_bz2}, structure_file_format_vienna{}};
 
     decompression_impl(fin);
+}
+
+TEST_F(structure_file_input_read, read_empty_bz2_file)
+{
+    std::string empty_zipped_file
+    {
+        '\x42', '\x5a', '\x68', '\x39', '\x17', '\x72', '\x45', '\x38', '\x50', '\x90', '\x00', '\x00', '\x00', '\x00'
+    };
+    structure_file_in fin{std::istringstream{empty_zipped_file}, structure_file_format_vienna{}};
+
+    EXPECT_TRUE(fin.begin() == fin.end());
 }
 #endif

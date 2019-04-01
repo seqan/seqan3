@@ -85,14 +85,16 @@ class structure_file_format_vienna
 {
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief Rule of five explicitly defaulted.
      * \{
      */
-    structure_file_format_vienna() = default;
+    structure_file_format_vienna() = default;                                            //!< Defaulted
+    //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
     structure_file_format_vienna(structure_file_format_vienna const &) = delete;
+    //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
     structure_file_format_vienna & operator=(structure_file_format_vienna const &) = delete;
-    structure_file_format_vienna(structure_file_format_vienna &&) = default;
-    structure_file_format_vienna & operator=(structure_file_format_vienna &&) = default;
+    structure_file_format_vienna(structure_file_format_vienna &&) = default;             //!< Defaulted
+    structure_file_format_vienna & operator=(structure_file_format_vienna &&) = default; //!< Defaulted
+    ~ structure_file_format_vienna() = default;                                          //!< Defaulted
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
@@ -250,12 +252,6 @@ public:
             detail::consume(stream_view | view::take_line);
         }
         detail::consume(stream_view | view::take_until(!is_space));
-
-        // make sure "buffer at end" implies "stream at end"
-        if ((stream_it_t{stream} == stream_it_t{}) && (!stream.eof()))
-        {
-            stream.get(); // triggers error in stream and sets eof
-        }
     }
 
     //!\copydoc seqan3::StructureFileOutputFormat::write

@@ -1,13 +1,10 @@
 #include <iostream>
 #include <fstream>
 
+#include <range/v3/numeric/accumulate.hpp>   // ranges::accumulate
 //![include_ranges_chunk]
 #include <range/v3/view/chunk.hpp>
 //![include_ranges_chunk]
-#include <range/v3/view/filter.hpp>
-//![include_ranges_take]
-#include <range/v3/view/take.hpp>
-//![include_ranges_take]
 
 #include <seqan3/io/stream/parse_condition.hpp>
 //![include]
@@ -17,11 +14,9 @@
 #include <seqan3/io/stream/debug_stream.hpp>
 //![include_debug_stream]
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/view/persist.hpp>
-#include <seqan3/range/view/single_pass_input.hpp>
-//![include_filter]
+//![include_ranges]
 #include <seqan3/std/ranges>
-//![include_filter]
+//![include_ranges]
 
 struct write_file_dummy_struct
 {
@@ -88,23 +83,34 @@ sequence_file_input<sequence_file_input_default_traits_aa> fin{"/tmp/my.fasta"};
 }
 
 {
-//![custom_fields]
-sequence_file_input fin{"/tmp/my.fastq", fields<field::SEQ>{}};
+//![record_type]
+sequence_file_input fin{"/tmp/my.fastq"};
+using record_type = typename decltype(fin)::record_type;
 
-for (auto & rec : fin)
-{
-    debug_stream << "SEQ:  "  << get<field::SEQ>(rec) << '\n';
-    // won't work: get<field::ID>(rec)
-    // won't work: get<field::QUAL>(rec)
+// Because `fin` is a range, we can access the first element by dereferencing fin.begin()
+record_type rec = *fin.begin();
+//![record_type]
 }
 
-// or with structured bindings:
-
-for (auto & [ seq ] : fin)
 {
-    debug_stream << "SEQ:  "  << seq << '\n';
+sequence_file_input fin{"/tmp/my.fastq"};
+using record_type = typename decltype(fin)::record_type;
+//![record_type2]
+record_type rec = std::move(*fin.begin()); // avoid copying
+//![record_type2]
 }
-//![custom_fields]
+
+{
+//![paired_reads]
+sequence_file_input fin1{"/tmp/my.fastq"};
+sequence_file_input fin2{"/tmp/my.fastq"}; // for simplicity we take the same file
+
+for (auto && [rec1, rec2] : std::view::zip(fin1, fin2)) // && is important! because view::zip returns temporaries
+{
+    if (get<field::ID>(rec1) != get<field::ID>(rec2))
+        throw std::runtime_error("Oh oh your pairs don't match.");
+}
+//![paired_reads]
 }
 
 {
@@ -121,14 +127,22 @@ for (auto && records : fin | ranges::view::chunk(10)) // && is important! becaus
 }
 
 {
-//![writing_custom_fields]
-sequence_file_output fout{"/tmp/output.fasta", fields<field::ID, field::SEQ>{}}; // now the order is changed
+//![quality_filter]
+sequence_file_input fin{"/tmp/my.fastq"};
 
-std::string id{"test_id"};
-dna5_vector seq{"ACGT"_dna5};
+// std::view::filter takes a function object (a lambda in this case) as input that returns a boolean
+auto minimum_quality_filter = std::view::filter([] (auto const & rec)
+{
+    auto qual = get<field::QUAL>(rec) | std::view::transform([] (auto q) { return q.to_phred(); });
+    double sum = ranges::accumulate(qual.begin(), qual.end(), 0);
+    return sum / std::ranges::size(qual) >= 40; // minimum average quality >= 40
+});
 
-fout.emplace_back(id, seq);          // first ID then SEQ !
-//![writing_custom_fields]
+for (auto & rec : fin | minimum_quality_filter)
+{
+    debug_stream << "ID: " << get<field::ID>(rec) << '\n';
+}
+//![quality_filter]
 }
 
 {

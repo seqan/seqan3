@@ -14,9 +14,6 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/join.hpp>
-
 #include <seqan3/core/metafunction/range.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/range/shortcuts.hpp>
@@ -188,12 +185,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    fm_index() = default;
-    fm_index(fm_index const &) = default;
-    fm_index & operator=(fm_index const &) = default;
-    fm_index(fm_index &&) = default;
-    fm_index & operator=(fm_index &&) = default;
-    ~fm_index() = default;
+    fm_index() = default;                             //!< Default constructor.
+    fm_index(fm_index const &) = default;             //!< Copy constructor.
+    fm_index & operator=(fm_index const &) = default; //!< Copy assignment.
+    fm_index(fm_index &&) = default;                  //!< Move constructor.
+    fm_index & operator=(fm_index &&) = default;      //!< Move assignment.
+    ~fm_index() = default;                            //!< Destructor.
 
     /*!\brief Constructor that immediately constructs the index given a range.
               The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.

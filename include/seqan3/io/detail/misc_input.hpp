@@ -24,6 +24,7 @@
     #include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
 #include <seqan3/std/concepts>
+#include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail

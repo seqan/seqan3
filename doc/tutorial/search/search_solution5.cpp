@@ -17,8 +17,8 @@ void run_text_single()
     configuration const search_config = search_cfg::max_error{search_cfg::total{1}} |
                                         search_cfg::mode{search_cfg::all_best};
     configuration const align_config = align_cfg::edit |
-                                       align_cfg::aligned_ends{align_cfg::seq1_ends_free} |
-                                       align_cfg::result{align_cfg::with_trace};
+                                       align_cfg::aligned_ends{free_ends_first} |
+                                       align_cfg::result{with_alignment};
 
     auto results = search(index, query, search_config);
 
@@ -30,10 +30,10 @@ void run_text_single()
         size_t start = pos ? pos - 1 : 0;
         std::span text_view{std::data(text) + start, query.size() + 1};
 
-        for (auto && alignment : align_pairwise(std::tie(text_view, query), align_config))
+        for (auto && res : align_pairwise(std::tie(text_view, query), align_config))
         {
-            auto && [aligned_database, aligned_query] = alignment.get_alignment();
-            debug_stream << "score:    " << alignment.get_score() << '\n';
+            auto && [aligned_database, aligned_query] = res.alignment();
+            debug_stream << "score:    " << res.score() << '\n';
             debug_stream << "database: " << aligned_database << '\n';
             debug_stream << "query:    "  << aligned_query << '\n';
             debug_stream << "=============\n";
@@ -54,8 +54,8 @@ void run_text_collection()
     configuration const search_config = search_cfg::max_error{search_cfg::total{1}} |
                                         search_cfg::mode{search_cfg::all_best};
     configuration const align_config = align_cfg::edit |
-                                       align_cfg::aligned_ends{align_cfg::seq1_ends_free} |
-                                       align_cfg::result{align_cfg::with_trace};
+                                       align_cfg::aligned_ends{free_ends_first} |
+                                       align_cfg::result{with_alignment};
 
     auto results = search(index, query, search_config);
 
@@ -67,10 +67,10 @@ void run_text_collection()
         size_t start = pos ? pos - 1 : 0;
         std::span text_view{std::data(text[idx]) + start, query.size() + 1};
 
-        for (auto && alignment : align_pairwise(std::tie(text_view, query), align_config))
+        for (auto && res : align_pairwise(std::tie(text_view, query), align_config))
         {
-            auto && [aligned_database, aligned_query] = alignment.get_alignment();
-            debug_stream << "score:    " << alignment.get_score() << '\n';
+            auto && [aligned_database, aligned_query] = res.alignment();
+            debug_stream << "score:    " << res.score() << '\n';
             debug_stream << "database: " << aligned_database << '\n';
             debug_stream << "query:    "  << aligned_query << '\n';
             debug_stream << "=============\n";

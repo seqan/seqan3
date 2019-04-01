@@ -17,6 +17,9 @@
             <tab type="user"  visible="yes" title="Index and Search"       url="@ref tutorial_index_search"     intro=""/>
             <tab type="user"  visible="yes" title="Implement your own read mapper"  url="@ref tutorial_read_mapper" intro=""/>
         </tab>
+        <tab type="usergroup" visible="yes" title="HowTos" intro="">
+            <tab type="user" visible="yes" title="Write your own view" url="\ref howto_write_a_view" intro=""/>
+        </tab>
         <tab type="usergroup" visible="yes" title="Notes" intro="">
             <tab type="user" visible="yes" title="API stability" url="@ref notes_stability" intro=""/>
             <tab type="user" visible="yes" title="Serialisation" url="@ref notes_serialisation" intro=""/>

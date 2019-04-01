@@ -13,13 +13,11 @@
 
 #pragma once
 
-#include <range/v3/algorithm/fill.hpp>
-#include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/view/slice.hpp>
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 #include <seqan3/search/algorithm/configuration/max_error_common.hpp>
 
@@ -80,12 +78,12 @@ public:
      * \brief Defaulted all standard constructor.
      * \{
      */
-    constexpr max_error()                              noexcept = default;
-    constexpr max_error(max_error const &)             noexcept = default;
-    constexpr max_error(max_error &&)                  noexcept = default;
-    constexpr max_error & operator=(max_error const &) noexcept = default;
-    constexpr max_error & operator=(max_error &&)      noexcept = default;
-    ~max_error()                                       noexcept = default;
+    constexpr max_error()                              noexcept = default; //!< Default constructor.
+    constexpr max_error(max_error const &)             noexcept = default; //!< Copy constructor.
+    constexpr max_error(max_error &&)                  noexcept = default; //!< Move constructor.
+    constexpr max_error & operator=(max_error const &) noexcept = default; //!< Copy assignment.
+    constexpr max_error & operator=(max_error &&)      noexcept = default; //!< Move assignment.
+    ~max_error()                                       noexcept = default; //!< Destructor.
 
     /*!\brief Constructs the object from a set of error specifiers.
      * \tparam    errors_t A template parameter pack with the error types.
@@ -109,11 +107,11 @@ public:
         // Only total is set so we set all other errors to the total limit.
         if constexpr (((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) == 1)
         {
-            ranges::fill(base_t::value | ranges::view::slice(1, 4), base_t::value[0]);
+            std::ranges::fill(base_t::value | view::slice(1, 4), base_t::value[0]);
         } // otherwise if total is not set but any other field is set than use total as the sum of all set errors.
         else if constexpr (!((std::remove_reference_t<errors_t>::_id() == 0) || ...) && sizeof...(errors) > 0)
         {
-            base_t::value[0] = std::min(static_cast<uint8_t>(255), ranges::accumulate(base_t::value | ranges::view::slice(1, 4),
+            base_t::value[0] = std::min(static_cast<uint8_t>(255), ranges::accumulate(base_t::value | view::slice(1, 4),
                                                                               static_cast<uint8_t>(0)));
         }
     }

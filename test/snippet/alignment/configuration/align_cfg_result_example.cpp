@@ -6,16 +6,16 @@ int main()
     using namespace seqan3;
 
     // Compute only the score.
-    align_cfg::result cfg_score{align_cfg::with_score};
+    align_cfg::result cfg_score{with_score};
 
-    // Compute the score and the end coordinate.
-    align_cfg::result cfg_end{align_cfg::with_end_position};
+    // Compute the score and the back coordinate.
+    align_cfg::result cfg_end{with_back_coordinate};
 
-    // Compute the score, the end coordinate and the begin coordinate.
-    align_cfg::result cfg_begin{align_cfg::with_begin_position};
+    // Compute the score, the back coordinate and the front coordinate.
+    align_cfg::result cfg_begin{with_front_coordinate};
 
-    // Compute the score, the end coordinate, the begin coordinate and the alignment.
-    align_cfg::result cfg_alignment{align_cfg::with_trace};
+    // Compute the score, the back coordinate, the front coordinate and the alignment.
+    align_cfg::result cfg_alignment{with_alignment};
 
 //! [example]
     (void) cfg_score;

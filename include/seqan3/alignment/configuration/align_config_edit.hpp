@@ -23,7 +23,7 @@ namespace seqan3::align_cfg
 {
 
 /*!\brief Shortcut for edit distance configuration.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  *
  * \details
  *
@@ -36,8 +36,8 @@ namespace seqan3::align_cfg
  *
  * Under the hood SeqAn uses a [fast bit-vector algorithm](https://dl.acm.org/citation.cfm?id=316550) to compute the
  * edit distance whenever possible. This depends on the final alignment configuration. Currently, the fast
- * edit distance algorithm is only triggered for \ref seqan3::align_cfg::global_alignment "global alignments" and
- * \ref seqan3::align_cfg::end_gaps::seq1_ends_free "semi-global alignments" with free ends in the first sequence.
+ * edit distance algorithm is only triggered for \ref seqan3::global_alignment "global alignments" and
+ * \ref seqan3::end_gaps::free_ends_first "semi-global alignments" with free ends in the first sequence.
  *
  * \snippet test/snippet/alignment/configuration/align_cfg_edit_example.cpp semi_global
  *

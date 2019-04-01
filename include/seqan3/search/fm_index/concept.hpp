@@ -62,7 +62,6 @@ SEQAN3_CONCEPT SdslIndex = requires (t sdsl_index)
  * \{
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::detail::SdslIndex
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me.
@@ -105,7 +104,6 @@ SEQAN3_CONCEPT FmIndexTraits = requires (t v)
  * \{
  *
  * \typedef typename t::sdsl_index_type sdsl_index_type
- * \memberof seqan3::FmIndexTraits
  * \brief Declares the type of the underlying SDSL index. Must satisfy the seqan3::detail::SdslIndex.
  *
  * \}
@@ -155,19 +153,15 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
  * \{
  *
  * \typedef typename t::text_type text_type
- * \memberof seqan3::FmIndex
  * \brief Type of the indexed text.
  *
  * \typedef typename t::char_type char_type
- * \memberof seqan3::FmIndex
  * \brief Type of the underlying character of text_type.
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::FmIndex
  * \brief Type for representing the size of the indexed text.
  *
  * \typedef typename t::cursor_type cursor_type
- * \memberof seqan3::FmIndex
  * \brief Type of the unidirectional FM index cursor.
  *
  * \todo Write me!
@@ -221,11 +215,9 @@ SEQAN3_CONCEPT FmIndexCursor = std::Semiregular<t> && requires (t cur)
  * \{
  *
  * \typedef typename t::index_type index_type
- * \memberof seqan3::FmIndexCursor
  * \brief Type of the underlying SeqAn FM index (not the underlying SDSL index).
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::FmIndexCursor
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me!
@@ -259,12 +251,10 @@ SEQAN3_CONCEPT BiFmIndexTraits = requires (t v)
  * \{
  *
  * \typedef typename t::fm_index_traits fm_index_traits
- * \memberof seqan3::BiFmIndexTraits
  * \brief Declares the type of the underlying unidirectional FM index on the original text.
  *        Must satisfy seqan3::FmIndexTraits.
  *
  * \typedef typename t::rev_fm_index_traits rev_fm_index_traits
- * \memberof seqan3::BiFmIndexTraits
  * \brief Declares the type of the underlying unidirectional FM index on the reversed text.
  *        Must satisfy seqan3::FmIndexTraits.
  *
@@ -301,15 +291,12 @@ SEQAN3_CONCEPT BiFmIndex = FmIndex<t> && requires (t index)
  * \{
  *
  * \typedef typename t::cursor_type cursor_type
- * \memberof seqan3::BiFmIndex
  * \brief Type of the bidirectional FM index cursor.
  *
  * \typedef typename t::fwd_cursor_type fwd_cursor_type
- * \memberof seqan3::BiFmIndex
  * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the original text.
  *
  * \typedef typename t::rev_cursor_type rev_cursor_type
- * \memberof seqan3::BiFmIndex
  * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the reversed text.
  *
  * \todo Write me!
@@ -352,11 +339,9 @@ SEQAN3_CONCEPT BiFmIndexCursor = FmIndexCursor<t> && requires (t cur)
  * \{
  *
  * \typedef typename t::index_type index_type
- * \memberof seqan3::BiFmIndexCursor
  * \brief Type of the underlying SeqAn FM index (not the underlying SDSL index).
  *
  * \typedef typename t::size_type size_type
- * \memberof seqan3::BiFmIndexCursor
  * \brief Type for representing the size of the indexed text.
  *
  * \todo Write me!
