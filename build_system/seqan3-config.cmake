@@ -477,15 +477,6 @@ if ((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") OR
     set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} rt)
 endif ()
 
-# libpthread TODO (h-2): re-evaluate whether we do complete static linking in the future
-if (UNIX AND NOT APPLE)
-    # pthread flag (without -l) also defines macros on some platforms
-    set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} -pthread")
-    # need to explicitly link lpthread with whole-archive because Debian strips bits from the library
-    # that are required for C++14 threading, resulting in broken static builds
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")
-endif ()
-
 # libexecinfo -- implicit
 check_include_file_cxx (execinfo.h _SEQAN3_HAVE_EXECINFO)
 mark_as_advanced (_SEQAN3_HAVE_EXECINFO)
