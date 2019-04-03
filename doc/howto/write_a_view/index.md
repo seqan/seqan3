@@ -431,11 +431,15 @@ This adaptor type does not yet provide the ability to combine multiple adaptors 
 handles ranges as left-hand-side input to `operator|`.
 
 Our example adaptor type definition is rather simple, but for views/adaptors that take more parameters it gets quite
-complicated quickly. Therefore SeqAn provides a convenience template that does all of this for you:
+complicated quickly. Therefore SeqAn provides some convenience templates for you:
 ```cpp
+// in our example, this is all you need:
 //                                      your view type goes here ↓
-using my_view_fn = seqan3::detail::generic_pipable_view_adaptor<my_view>;
+using my_view_fn = seqan3::detail::adaptor_for_view_without_args<my_view>;
 ```
+
+See `seqan3::detail::adaptor_base`, `seqan3::detail::adaptor_for_view_without_args` and
+`seqan3::detail::adaptor_from_functor` for more details.
 
 ### Adaptor object definition
 
