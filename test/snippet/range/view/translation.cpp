@@ -44,7 +44,7 @@ auto v9 = vec | view::complement | view::translate_single(translation_frames::RE
 auto v10 = vec | view::complement | view::translate_single;                                       // == [C,M,H,A]
 
 // combinability with default parameter
-// auto v12 = vec | view::complement | view::translate_single();                                     // == [C,M,H,A]
+auto v12 = vec | view::complement | view::translate_single();                                     // == [C,M,H,A]
 //! [dna5]
 
 {

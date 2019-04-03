@@ -41,6 +41,11 @@ TEST(view_persist, delegate_to_view_all)
     EXPECT_EQ("fo", std::string{v3});
     std::string v3b = vec | std::view::reverse | view::persist | ranges::view::unique;
     EXPECT_EQ("of", v3b);
+
+    // store combined
+    auto a1 = view::persist | ranges::view::unique;
+    auto v5 = vec | a1;
+    EXPECT_EQ("fo", std::string{v5});
 }
 
 TEST(view_persist, wrap_temporary)

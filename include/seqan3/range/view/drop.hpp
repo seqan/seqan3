@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
@@ -30,25 +31,19 @@ namespace seqan3::detail
 
 /*!\brief View adaptor definition for view::drop and view::drop_or_throw.
  */
-class drop_fn : public pipable_adaptor_base<drop_fn>
+struct drop_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<drop_fn>;
-
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
-
-private:
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
+    //!\brief Store the argument and return a range adaptor closure object.
+    constexpr auto operator()(size_t drop_size) const noexcept
+    {
+        return detail::adaptor_from_functor{*this, drop_size};
+    }
 
     /*!\brief       Call the view's constructor with the underlying view as argument.
      * \returns     An instance of std::ranges::subrange.
      */
     template <std::ranges::ViewableRange urng_t>
-    static auto impl(urng_t && urange, size_t drop_size)
+    constexpr auto operator()(urng_t && urange, size_t drop_size) const noexcept
     {
         auto b = std::ranges::begin(urange);
 
@@ -86,7 +81,7 @@ private:
     //!\cond
         requires std::ranges::ContiguousRange<urng_t> && std::ranges::SizedRange<urng_t>
     //!\endcond
-    static auto impl(urng_t && urange, size_t drop_size)
+    constexpr auto operator()(urng_t && urange, size_t drop_size) const noexcept
     {
         drop_size = std::min(drop_size, std::ranges::size(urange));
         return std::span{std::ranges::data(urange) + drop_size, std::ranges::size(urange) - drop_size};
@@ -100,7 +95,7 @@ private:
         requires std::ranges::ContiguousRange<urng_t> && std::ranges::SizedRange<urng_t> &&
                  is_type_specialisation_of_v<std::remove_reference_t<urng_t>, std::basic_string_view>
     //!\endcond
-    static auto impl(urng_t && urange, size_t drop_size)
+    constexpr auto operator()(urng_t && urange, size_t drop_size) const noexcept
     {
         drop_size = std::min(drop_size, std::ranges::size(urange));
         return urange.substr(drop_size);
@@ -110,8 +105,8 @@ private:
      * \returns     A std::basic_string_view over the input.
      */
     template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> & urange,
-                                                         size_t drop_size)
+    constexpr std::basic_string_view<char_t, traits_t>
+    operator()(std::basic_string<char_t, traits_t, alloc_t> & urange, size_t drop_size) const noexcept
     {
         drop_size = std::min(drop_size, std::ranges::size(urange));
         return {std::ranges::data(urange) + drop_size, std::ranges::size(urange) - drop_size};
@@ -119,8 +114,8 @@ private:
 
     //!\overload
     template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> const & urange,
-                                                         size_t drop_size)
+    constexpr std::basic_string_view<char_t, traits_t>
+    operator()(std::basic_string<char_t, traits_t, alloc_t> const & urange, size_t drop_size) const noexcept
     {
         drop_size = std::min(drop_size, std::ranges::size(urange));
         return {std::ranges::data(urange) + drop_size, std::ranges::size(urange) - drop_size};
@@ -128,8 +123,8 @@ private:
 
     //!\overload
     template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> const && urange,
-                                                         size_t drop_size) = delete;
+    constexpr std::basic_string_view<char_t, traits_t>
+    operator()(std::basic_string<char_t, traits_t, alloc_t> const && urange, size_t drop_size) const = delete;
 };
 
 } // namespace seqan3::detail

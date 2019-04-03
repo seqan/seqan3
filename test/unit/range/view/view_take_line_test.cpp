@@ -159,8 +159,7 @@ TEST(view_take_line, reverse_bug)
     EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
 
-    // Either of these build-fail on GCC7 and GCC8
-//     auto v2 = v1 | ranges::view::reverse;
-//     auto v2 = ranges::reverse_view{v1};
+    // No build failure, but wrong results:
+//     auto v2 = v1 | std::view::reverse;
 //     EXPECT_EQ("oof", std::string(v2));
 }

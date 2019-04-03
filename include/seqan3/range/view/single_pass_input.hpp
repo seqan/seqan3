@@ -35,9 +35,11 @@ class single_pass_input_iterator;
  * \implements std::ranges::InputRange
  * \ingroup view
  */
+//![view_def]
 template <std::ranges::View urng_t>
-class single_pass_input_view : public ranges::view_interface<single_pass_input_view<urng_t>>
+class single_pass_input_view : public std::ranges::view_interface<single_pass_input_view<urng_t>>
 {
+//![view_def]
 private:
 
     //!\brief The iterator type for the underlying range.
@@ -319,6 +321,7 @@ protected:
 // View shortcut for functor.
 //-----------------------------------------------------------------------------
 
+//![adaptor_def]
 namespace seqan3::view
 {
 /*!\name General purpose views
@@ -370,7 +373,8 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/single_pass_input.cpp usage
  * \hideinitializer
  */
-inline constexpr auto single_pass_input = detail::generic_pipable_view_adaptor<detail::single_pass_input_view>{};
+inline constexpr auto single_pass_input = detail::adaptor_for_view_without_args<detail::single_pass_input_view>{};
 
 //!\}
 } // namespace seqan3::view
+//![adaptor_def]

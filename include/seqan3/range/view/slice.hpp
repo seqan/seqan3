@@ -33,25 +33,19 @@ namespace seqan3::detail
 // ============================================================================
 
 //!\brief View adaptor definition for view::slice.
-class slice_fn : public pipable_adaptor_base<slice_fn>
+struct slice_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<slice_fn>;
-
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
-
-private:
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
+    //!\brief Store the arguments and return a range adaptor closure object.
+    constexpr auto operator()(ptrdiff_t begin_pos, ptrdiff_t end_pos) const noexcept
+    {
+        return detail::adaptor_from_functor{*this, begin_pos, end_pos};
+    }
 
     /*!\brief       Call the view's constructor with the underlying view as argument.
      * \returns     An instance of seqan3::detail::view_slice.
      */
     template <std::ranges::ViewableRange urng_t>
-    static auto impl(urng_t && urange, ptrdiff_t begin_pos, ptrdiff_t end_pos)
+    constexpr auto operator()(urng_t && urange, ptrdiff_t begin_pos, ptrdiff_t end_pos) const
     {
         if constexpr (std::ranges::SizedRange<urng_t>)
         {

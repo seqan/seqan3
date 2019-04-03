@@ -166,13 +166,14 @@ view_persist(urng_t &&) -> view_persist<std::remove_reference_t<urng_t>>;
 //  persist_fn (adaptor definition)
 // ============================================================================
 
+//![adaptor_def]
 /*!\brief View adaptor definition for view::persist.
  */
-class persist_fn : public pipable_adaptor_base<persist_fn>
+class persist_fn : public adaptor_base<persist_fn>
 {
 private:
     //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<persist_fn>;
+    using base_t = adaptor_base<persist_fn>;
 
 public:
     //!\brief Inherit the base class's Constructors.
@@ -201,6 +202,7 @@ private:
         return view_persist{std::move(urange)};
     }
 };
+//![adaptor_def]
 
 } // namespace seqan3::detail
 

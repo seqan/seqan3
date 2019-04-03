@@ -28,8 +28,38 @@
 #include <seqan3/std/ranges>
 #include <seqan3/range/container/concept.hpp>
 
+// ============================================================================
+//  forwards
+// ============================================================================
+
+namespace seqan3::detail
+{
+
+template <typename urng_t>
+//!\cond
+    requires std::ranges::SizedRange<urng_t> &&
+             std::ranges::RandomAccessRange<urng_t> &&
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+class view_translate;
+
+template <typename urng_t>
+//!\cond
+    requires std::ranges::SizedRange<urng_t> &&
+             std::ranges::RandomAccessRange<urng_t> &&
+             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
+//!\endcond
+class view_translate_single;
+
+} // namespace seqan3::detail
+
+// ============================================================================
+//  translation_frames
+// ============================================================================
+
 namespace seqan3
 {
+
 //!\brief Specialisation values for single and multiple translation frames.
 enum class translation_frames : uint8_t
 {
@@ -50,10 +80,63 @@ enum class translation_frames : uint8_t
 //!\brief Enable bitwise operators for enum translation_frames.
 template<>
 constexpr bool add_enum_bitwise_operators<translation_frames> = true;
+
 }
 
 namespace seqan3::detail
 {
+
+// ============================================================================
+//  translate_fn (adaptor definition for both views)
+// ============================================================================
+
+/*!\brief Definition of the range adaptor object type for seqan3::view::translate and seqan3::view::translate_single.
+ * \tparam single Switch between seqan3::view::translate and seqan3::view::translate_single.
+ */
+template <bool single>
+struct translate_fn
+{
+    //!\brief The default frames parameter for the translation view adaptors.
+    static constexpr translation_frames default_frames = single ?
+                                                         translation_frames::FWD_FRAME_0 :
+                                                         translation_frames::SIX_FRAME;
+
+    //!\brief Store the argument and return a range adaptor closure object.
+    constexpr auto operator()(translation_frames const tf = default_frames) const
+    {
+        return detail::adaptor_from_functor{*this, tf};
+    }
+
+    //!\brief Directly return an instance of the view, initialised with the given parameters.
+    template <std::ranges::Range urng_t>
+    constexpr auto operator()(urng_t && urange, translation_frames const tf = default_frames) const
+    {
+        static_assert(std::ranges::ViewableRange<urng_t>,
+            "The range parameter to view::translate[_single] cannot be a temporary of a non-view range.");
+        static_assert(std::ranges::SizedRange<urng_t>,
+            "The range parameter to view::translate[_single] must model std::ranges::SizedRange.");
+        static_assert(std::ranges::RandomAccessRange<urng_t>,
+            "The range parameter to view::translate[_single] must model std::ranges::RandomAccessRange.");
+        static_assert(NucleotideAlphabet<reference_t<urng_t>>,
+            "The range parameter to view::translate[_single] must be over elements of seqan3::NucleotideAlphabet.");
+
+        if constexpr (single)
+            return detail::view_translate_single{std::forward<urng_t>(urange), tf};
+        else
+            return detail::view_translate{std::forward<urng_t>(urange), tf};
+    }
+
+    //!\brief This adaptor is usuable without setting the frames parameter in which case the default is chosen.
+    template <std::ranges::Range urng_t>
+    constexpr friend auto operator|(urng_t && urange, translate_fn const & me)
+    {
+        return me(std::forward<urng_t>(urange));
+    }
+};
+
+// ============================================================================
+//  view_translate_single (range definition)
+// ============================================================================
 
 /*!\brief The return type of seqan3::view::translate_single.
  * \implements std::ranges::View
@@ -301,6 +384,10 @@ view_translate_single(urng_t &&) -> view_translate_single<urng_t>;
 
 } // namespace seqan3::detail
 
+// ============================================================================
+//  translate_single (adaptor object)
+// ============================================================================
+
 namespace seqan3::view
 {
 
@@ -348,14 +435,17 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/translation.cpp dna5
  * \hideinitializer
  */
-inline constexpr auto translate_single =deep{detail::generic_pipable_view_adaptor<detail::view_translate_single>{}};
+inline constexpr auto translate_single = deep{detail::translate_fn<true>{}};
 
-//!\}
+} // seqan3::view
 
-} // namespace seqan3::view
+// ============================================================================
+//  view_translate (range definition)
+// ============================================================================
 
 namespace seqan3::detail
 {
+
 /*!\brief The return type of seqan3::view::translate.
  * \implements std::ranges::View
  * \implements std::ranges::SizedRange
@@ -569,18 +659,13 @@ template <typename urng_t>
              std::ranges::RandomAccessRange<urng_t> &&
              NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
 //!\endcond
-view_translate(urng_t &&, translation_frames const) -> view_translate<urng_t>;
-
-//!\brief Class template argument deduction for view_translate with default translation_frames.
-template <typename urng_t>
-//!\cond
-    requires std::ranges::SizedRange<urng_t> &&
-             std::ranges::RandomAccessRange<urng_t> &&
-             NucleotideAlphabet<std::decay_t<reference_t<std::decay_t<urng_t>>>>
-//!\endcond
-view_translate(urng_t &&) -> view_translate<urng_t>;
+view_translate(urng_t &&, translation_frames const = translation_frames{}) -> view_translate<urng_t>;
 
 } // namespace seqan3::detail
+
+// ============================================================================
+//  translate (adaptor object)
+// ============================================================================
 
 namespace seqan3::view
 {
@@ -629,7 +714,7 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/translation.cpp usage
  * \hideinitializer
  */
-inline constexpr auto translate = deep{detail::generic_pipable_view_adaptor<detail::view_translate>{}};
+inline constexpr auto translate = deep{detail::translate_fn<false>{}};
 //!\}
 
 } // namespace seqan3::view

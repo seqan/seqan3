@@ -49,9 +49,9 @@ TYPED_TEST(nucleotide, view_translate_single)
     EXPECT_TRUE((std::ranges::equal(v1, cmp1)));
 
     // default parameter translation_frames
-//     auto v2 = vec | view::translate_single();
+    auto v2 = vec | view::translate_single();
     // == [T,Y,V,R]
-//     EXPECT_TRUE((std::ranges::equal(v2, cmp1));
+    EXPECT_TRUE((std::ranges::equal(v2, cmp1)));
 
     // single frame translation
     auto v3 = vec | view::translate_single(translation_frames::FWD_FRAME_0);
@@ -89,11 +89,11 @@ TYPED_TEST(nucleotide, view_translate)
         EXPECT_TRUE((std::ranges::equal(v1[i], cmp4[i])));
 
     // default parameter translation_frames
-//     auto v2 = vec | view::translate();
+    auto v2 = vec | view::translate();
     // == [[T,Y,V,R]]
-//     EXPECT_EQ(v2.size(), cmp4.size());
-//     for (unsigned i = 0; i < v2.size(); i++)
-//         EXPECT_TRUE((std::ranges::equal(v2[i], cmp4[i])));
+    EXPECT_EQ(v2.size(), cmp4.size());
+    for (unsigned i = 0; i < v2.size(); i++)
+        EXPECT_TRUE((std::ranges::equal(v2[i], cmp4[i])));
 
     // single frame translation
     auto v3 = vec | view::translate(translation_frames::FWD_FRAME_0);

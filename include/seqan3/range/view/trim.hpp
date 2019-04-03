@@ -12,11 +12,10 @@
 
 #pragma once
 
-#include <range/v3/view/take_while.hpp>
-
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/metafunction/all.hpp>
 #include <seqan3/range/view/deep.hpp>
+#include <seqan3/range/view/take_until.hpp>
 #include <seqan3/std/ranges>
 
 namespace seqan3::detail
@@ -25,113 +24,48 @@ namespace seqan3::detail
 /*!\brief The underlying type of seqan3::view::trim.
  * \ingroup view
  *
- * Under the hood this delegates to ranges::view::take_while.
+ * Under the hood this delegates to view::take_until.
  */
 struct trim_fn
 {
+    //!\brief Store the argument and return a range adaptor closure object.
+    template <typename threshold_t>
+    constexpr auto operator()(threshold_t const threshold) const
+    {
+        static_assert(QualityAlphabet<remove_cvref_t<threshold_t>> || std::Integral<threshold_t>,
+                      "The threshold must either be a quality alphabet or an integral type "
+                      "in which case it is compared with the underlying phred type.");
+
+        return adaptor_from_functor{*this, threshold};
+    }
+
     /*!\brief Trim based on minimum phred score.
      * \tparam irng_t The type of the range being processed. See seqan3::view::trim for requirements.
      * \param irange The range being processed.
      * \param threshold The minimum quality as a phred score [integral type].
      */
-    template <typename irng_t>
-    auto operator()(irng_t && irange,
-                    underlying_phred_t<value_type_t<std::decay_t<irng_t>>> const threshold) const
-    //!\cond
-        requires std::ranges::InputRange<irng_t> && QualityAlphabet<value_type_t<std::decay_t<irng_t>>>
-    //!\endcond
+    template <std::ranges::InputRange irng_t, typename threshold_t>
+    constexpr auto operator()(irng_t && irange, threshold_t const threshold) const
     {
-        return std::view::take_while(std::forward<irng_t>(irange), [threshold] (auto && value)
+        static_assert(QualityAlphabet<std::remove_reference_t<reference_t<irng_t>>>,
+                      "view:trim can only operate on ranges over seqan3::QualityAlphabet.");
+        static_assert(std::Same<remove_cvref_t<threshold_t>, remove_cvref_t<reference_t<irng_t>>> ||
+                      std::Integral<remove_cvref_t<threshold_t>>,
+                      "The threshold must either be a letter of the underlying alphabet or an integral type "
+                      "in which case it is compared with the underlying phred type.");
+
+        return view::take_until(std::forward<irng_t>(irange), [threshold] (auto const value)
         {
-            return to_phred(std::forward<decltype(value)>(value)) >= threshold;
+            if constexpr (std::Same<remove_cvref_t<threshold_t>, remove_cvref_t<reference_t<irng_t>>>)
+            {
+                return to_phred(value) < to_phred(threshold);
+            }
+            else
+            {
+                using c_t = std::common_type_t<decltype(to_phred(value)), threshold_t>;
+                return static_cast<c_t>(to_phred(value)) < static_cast<c_t>(threshold);
+            }
         });
-    }
-
-    /*!\brief Trim based on value_type.
-     * \tparam irng_t The type of the range being processed. See seqan3::view::trim for requirements.
-     * \param irange The range being processed.
-     * \param threshold The minimum quality given by a value of the ranges type.
-     */
-    template <typename irng_t>
-    auto operator()(irng_t && irange,
-                    std::decay_t<value_type_t<std::decay_t<irng_t>>> const threshold) const
-    //!\cond
-        requires std::ranges::InputRange<irng_t> && QualityAlphabet<value_type_t<std::decay_t<irng_t>>>
-    //!\endcond
-    {
-        return (*this)(std::forward<irng_t>(irange), to_phred(threshold));
-    }
-
-    /*!\brief A functor that behaves like a named version of std::bind around seqan3::detail::trim_fn::operator().
-     * \tparam threshold_t Must be an integral type or satisfy the seqan3::QualityAlphabet.
-     *
-     * \details
-     *
-     * * The single-parameter-operator() of trim_fn would normally return a bound two-parameter-operator() via
-     * std::bind.
-     * * trim_fn's friend operator| would take this as second argument via decltype(std::bind(...)) so that it
-     * is specific to this overload.
-     * * However, since the type of the threshold parameter is a template argument, we need function template
-     * overloading. This doesn't work with decltype() and the actual return type of std::bind is implementation
-     * defined.
-     * * So we have this helper class template which behaves exactly the same, but has a distinct (named) type.
-     *
-     * \attention You should never instantiate this manually.
-     */
-    template <typename threshold_t>
-    struct delegate
-    {
-        //!\brief The intermediately stored threshold.
-        threshold_t const threshold;
-        //!\brief Reference to the parent
-        trim_fn const & parent;
-
-        //!\brief The operator() that only takes the range as argument and forwards to the two-parameter operator().
-        template <typename irng_t>
-        auto operator()(irng_t && irange) const
-        {
-            return parent(std::forward<irng_t>(irange), threshold);
-        }
-    };
-
-    /*!\brief Range-less interface for use with the pipe notation.
-     * \tparam threshold_t Must be an integral type or satisfy the seqan3::QualityAlphabet.
-     * \param threshold The minimum quality given by a value of the range's value type.
-     *
-     * \details
-     *
-     * Binds to one of the other interfaces and forwards the threshold.
-     */
-    template <typename threshold_t>
-    delegate<threshold_t> operator()(threshold_t const threshold) const
-    //!\cond
-        requires std::is_integral_v<std::decay_t<threshold_t>> || QualityAlphabet<std::decay_t<threshold_t>>
-    //!\endcond
-    {
-        return delegate<threshold_t>{threshold, *this};
-        // this doesn't work here, see seqan3::detail::trim_fn::delegate.
-        //return std::bind(trim_fn(), std::placeholders::_1, threshold);
-    }
-
-    /*!\brief Pipe operator that enables view-typical use of pipe notation.
-     * \tparam irng_t The type of the range being processed. See seqan3::view::trim for requirements.
-     * \tparam threshold_t Must be of `irng_t`'s `value_type` or that `value_type`'s seqan3::underlying_phred_t.
-     * \param irange The range being processed as left argument of the pipe.
-     * \param bound_view The result of the single-argument operator() (interface with bound threshold parameter).
-     */
-    template <typename irng_t,
-              typename threshold_t>
-    //!\cond
-        requires std::ranges::InputRange<irng_t> && QualityAlphabet<value_type_t<std::decay_t<irng_t>>> &&
-                 (std::is_same_v<std::decay_t<threshold_t>,
-                                 std::decay_t<value_type_t<std::decay_t<irng_t>>>> ||
-                  std::is_convertible_v<std::decay_t<threshold_t>,
-                                        underlying_phred_t<std::decay_t<value_type_t<std::decay_t<irng_t>>>>>)
-    //!\endcond
-    friend auto operator|(irng_t && irange,
-                          seqan3::detail::trim_fn::delegate<threshold_t> const & bound_view)
-    {
-        return bound_view(std::forward<irng_t>(irange));
     }
 };
 

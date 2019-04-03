@@ -16,6 +16,7 @@
 
 #include <seqan3/core/metafunction/iterator.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
@@ -428,25 +429,19 @@ view_take(urng_t && , size_t) -> view_take<std::ranges::all_view<urng_t>, exactl
  * \tparam or_throw Whether to throw an exception when the input is exhausted before the end is reached.
  */
 template <bool exactly, bool or_throw>
-class take_fn : public pipable_adaptor_base<take_fn<exactly, or_throw>>
+struct take_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<take_fn<exactly, or_throw>>;
-
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
-
-private:
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
+    //!\brief Store the arguments and return a range adaptor closure object.
+    constexpr auto operator()(size_t const size) const
+    {
+        return adaptor_from_functor{*this, size};
+    }
 
     /*!\brief       Call the view's constructor with the underlying view as argument.
      * \returns     An instance of seqan3::detail::view_take.
      */
     template <std::ranges::ViewableRange urng_t>
-    static auto impl(urng_t && urange, size_t target_size)
+    constexpr auto operator()(urng_t && urange, size_t target_size) const
     {
         size_check(urange, target_size);
         return view_take<std::ranges::all_view<urng_t>, exactly, or_throw>{std::forward<urng_t>(urange), target_size};
@@ -459,7 +454,7 @@ private:
     //!\cond
         requires std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t>
     //!\endcond
-    static auto impl(urng_t && urange, size_t target_size)
+    constexpr auto operator()(urng_t && urange, size_t target_size) const
     {
         size_check(urange, target_size);
         return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
@@ -477,7 +472,7 @@ private:
     //!\cond
         requires std::ranges::ContiguousRange<urng_t> && std::ranges::SizedRange<urng_t>
     //!\endcond
-    static auto impl(urng_t && urange, size_t target_size)
+    constexpr auto operator()(urng_t && urange, size_t target_size) const
     {
         size_check(urange, target_size);
         return std::span{std::ranges::data(urange), target_size};
@@ -491,7 +486,7 @@ private:
         requires std::ranges::ContiguousRange<urng_t> && std::ranges::SizedRange<urng_t> &&
                  is_type_specialisation_of_v<std::remove_reference_t<urng_t>, std::basic_string_view>
     //!\endcond
-    static auto impl(urng_t && urange, size_t target_size)
+    constexpr auto operator()(urng_t && urange, size_t target_size) const
     {
         size_check(urange, target_size);
         return urange.substr(0, target_size);
@@ -501,8 +496,8 @@ private:
      * \returns     A std::basic_string_view over the input.
      */
     template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> & urange,
-                                                         size_t target_size)
+    constexpr std::basic_string_view<char_t, traits_t>
+    operator()(std::basic_string<char_t, traits_t, alloc_t> & urange, size_t target_size) const
     {
         size_check(urange, target_size);
         return {std::ranges::data(urange), target_size};
@@ -510,8 +505,8 @@ private:
 
     //!\overload
     template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> const & urange,
-                                                         size_t target_size)
+    constexpr std::basic_string_view<char_t, traits_t>
+    operator()(std::basic_string<char_t, traits_t, alloc_t> const & urange, size_t target_size) const
     {
         size_check(urange, target_size);
         return {std::ranges::data(urange), target_size};
@@ -519,8 +514,8 @@ private:
 
     //!\overload
     template <typename char_t, typename traits_t, typename alloc_t>
-    static std::basic_string_view<char_t, traits_t> impl(std::basic_string<char_t, traits_t, alloc_t> const && urange,
-                                                         size_t target_size) = delete;
+    constexpr std::basic_string_view<char_t, traits_t>
+    operator()(std::basic_string<char_t, traits_t, alloc_t> const && urange, size_t target_size) = delete;
 
     //!\brief Verify that size is valid for throwing adaptor and do round to bound for SizedRanges.
     template <typename urng_t>
@@ -582,7 +577,7 @@ namespace seqan3::view
  * | std::ranges::View               |                                       | *guaranteed*                                        |
  * | std::ranges::SizedRange         |                                       | *preserved*                                         |
  * | std::ranges::CommonRange        |                                       | *preserved*                                         |
- * | std::ranges::OutputRange        |                                       | *preserved* unless `urng_t` is std::basic_string   |
+ * | std::ranges::OutputRange        |                                       | *preserved* unless `urng_t` is std::basic_string    |
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                         |
  * |                                 |                                       |                                                     |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                         |
