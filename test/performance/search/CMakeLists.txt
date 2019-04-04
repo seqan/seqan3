@@ -1,0 +1,1 @@
+seqan3_benchmark(index_construction_benchmark.cpp)
