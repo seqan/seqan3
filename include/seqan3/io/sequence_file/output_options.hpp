@@ -37,9 +37,14 @@ struct sequence_file_output_options
      *        recommended ("\r\n" for line-ending).
      */
     bool        add_carriage_return     = false;
+<<<<<<< HEAD
 
     //!\brief Complete header given for embl or genbank
     bool        embl_genbank_complete_header  = false;
+=======
+    //!\brief Complete header given for embl or genbank
+    bool        complete_header  = false;
+>>>>>>> [FEATURE] Genbank IO Sequence file
 };
 
 } // namespace seqan3
