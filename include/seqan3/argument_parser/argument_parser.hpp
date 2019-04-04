@@ -476,7 +476,7 @@ private:
     {
         if (argc <= 1) // no arguments provided
         {
-            format = detail::format_short_help();
+            format = detail::format_short_help{};
             return;
         }
 
@@ -486,17 +486,17 @@ private:
 
             if (arg == "-h" || arg == "--help")
             {
-                format = detail::format_help(false);
+                format = detail::format_help{false};
                 return;
             }
             else if (arg == "-hh" || arg == "--advanced-help")
             {
-                format = detail::format_help(true);
+                format = detail::format_help{true};
                 return;
             }
             else if (arg == "--version")
             {
-                format = detail::format_version();
+                format = detail::format_version{};
                 return;
             }
             else if (arg == "--export-help")
@@ -504,12 +504,12 @@ private:
                 std::string export_format{argv[i+1]};
 
                 if (export_format == "html")
-                    format = detail::format_html();
+                    format = detail::format_html{};
                 else if (export_format == "man")
-                    format = detail::format_man();
+                    format = detail::format_man{};
                 // TODO (smehringer) use when CTD support is available
                 // else if (export_format == "ctd")
-                //     format = detail::format_ctd();
+                //     format = detail::format_ctd{};
                 else
                     throw validation_failed("Validation Failed. "
                                             "Value of --export-help must be one of [html, man, ctd]");
@@ -517,7 +517,7 @@ private:
             }
             else if (arg == "--copyright")
             {
-                format = detail::format_copyright();
+                format = detail::format_copyright{};
                 return;
             }
         }
