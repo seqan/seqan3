@@ -762,4 +762,19 @@ TEST(validator_test, chaining_validators)
         EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
                                    expected | ranges::view::remove_if(is_space)));
     }
+
+    // chaining with a container option value type
+    {
+        std::vector<std::string> option_list_value{};
+        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(option_list_value, 's', "string-option", "desc",
+                          option_spec::DEFAULT,
+                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | file_ext_validator{"sa", "so"});
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_list_value[0], "/absolute/path/file.sa");
+    }
 }

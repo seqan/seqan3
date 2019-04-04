@@ -201,7 +201,7 @@ public:
      */
     template <std::ranges::ForwardRange range_type>
     //!\cond
-        requires std::CommonReference<value_type_t<range_type>, value_type>
+        requires std::ConvertibleTo<value_type_t<range_type>, value_type const &>
     //!\endcond
     void operator()(range_type const & range) const
     {
@@ -299,13 +299,13 @@ public:
 
     /*!\brief Tests whether every value of v lies inside extensions.
      * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
-     *                    have a common reference with std::filesystem::path.
+     *                    be convertible to std::filesystem::path.
      * \param  v          The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
     template <std::ranges::ForwardRange range_type>
     //!\cond
-        requires std::CommonReference<value_type_t<range_type>, std::filesystem::path>
+        requires std::ConvertibleTo<value_type_t<range_type>, std::filesystem::path const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
@@ -354,13 +354,13 @@ public:
 
     /*!\brief Tests whether every path (file or directory) in list \p v exists.
      * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
-     *                    have a common reference with std::filesystem::path.
+     *                    be convertible to std::filesystem::path.
      * \param  v          The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
     template <std::ranges::ForwardRange range_type>
     //!\cond
-        requires std::CommonReference<value_type_t<range_type>, std::filesystem::path>
+        requires std::ConvertibleTo<value_type_t<range_type>, std::filesystem::path const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
@@ -417,13 +417,13 @@ public:
 
     /*!\brief Tests whether every filename in list v matches the pattern.
      * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
-     *                    have a common reference with std::string.
+     *                    be convertible to std::string.
      * \param  v          The input range to iterate over and check every element.
      * \throws parser_invalid_argument
      */
     template <std::ranges::ForwardRange range_type>
     //!\cond
-        requires std::CommonReference<value_type_t<range_type>, value_type>
+        requires std::ConvertibleTo<value_type_t<range_type>, value_type const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
@@ -514,13 +514,18 @@ public:
     //!\}
 
     /*!\brief Calls the operator() of each validator on the value cmp.
-     * \param[in] cmp The value to validate.
+     * \tparam cmp_type The type of value to validate; must be invokable with each of the validator members.
+     * \param[in] cmp   The value to validate.
      *
      * This function delegates to the validation of both of the chained validators
      * by calling their operator() one after the other. The behaviour depends on
      * the chained validators which may throw on input error.
      */
-    void operator()(value_type const & cmp) const
+    template <typename cmp_type>
+    //!\cond
+        requires std::Invocable<validator1_type, cmp_type const> && std::Invocable<validator2_type, cmp_type const>
+    //!\endcond
+    void operator()(cmp_type const & cmp) const
     {
         vali1(cmp);
         vali2(cmp);
