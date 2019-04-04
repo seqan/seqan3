@@ -55,12 +55,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred42() noexcept : base_t{} {}
-    constexpr phred42(phred42 const &) = default;
-    constexpr phred42(phred42 &&) = default;
-    constexpr phred42 & operator=(phred42 const &) = default;
-    constexpr phred42 & operator=(phred42 &&) = default;
-    ~phred42() = default;
+    constexpr phred42()                             noexcept = default; //!< Defaulted
+    constexpr phred42(phred42 const &)              noexcept = default; //!< Defaulted
+    constexpr phred42(phred42 &&)                   noexcept = default; //!< Defaulted
+    constexpr phred42 & operator=(phred42 const &)  noexcept = default; //!< Defaulted
+    constexpr phred42 & operator=(phred42 &&)       noexcept = default; //!< Defaulted
+    ~phred42()                                      noexcept = default; //!< Defaulted
 
     //!\brief Construct from phred value.
     constexpr phred42(phred_type const p) : base_t{p} {}

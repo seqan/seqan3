@@ -74,12 +74,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr wuss() noexcept : base_t{} {}
-    constexpr wuss(wuss const &) = default;
-    constexpr wuss(wuss &&) = default;
-    constexpr wuss & operator=(wuss const &) = default;
-    constexpr wuss & operator=(wuss &&) = default;
-    ~wuss() = default;
+    constexpr wuss()                         noexcept = default; //!< Defaulted
+    constexpr wuss(wuss const &)             noexcept = default; //!< Defaulted
+    constexpr wuss(wuss &&)                  noexcept = default; //!< Defaulted
+    constexpr wuss & operator=(wuss const &) noexcept = default; //!< Defaulted
+    constexpr wuss & operator=(wuss &&)      noexcept = default; //!< Defaulted
+    ~wuss()                                  noexcept = default; //!< Defaulted
     //!\}
 
     /*!\name RNA structure properties

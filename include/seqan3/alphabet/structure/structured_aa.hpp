@@ -70,12 +70,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr structured_aa() noexcept : base_type{} {}
-    constexpr structured_aa(structured_aa const &) = default;
-    constexpr structured_aa(structured_aa &&) = default;
-    constexpr structured_aa & operator =(structured_aa const &) = default;
-    constexpr structured_aa & operator =(structured_aa &&) = default;
-    ~structured_aa() = default;
+    constexpr structured_aa()                                    noexcept = default; //!< Defaulted
+    constexpr structured_aa(structured_aa const &)               noexcept = default; //!< Defaulted
+    constexpr structured_aa(structured_aa &&)                    noexcept = default; //!< Defaulted
+    constexpr structured_aa & operator =(structured_aa const &)  noexcept = default; //!< Defaulted
+    constexpr structured_aa & operator =(structured_aa &&)       noexcept = default; //!< Defaulted
+    ~structured_aa()                                             noexcept = default; //!< Defaulted
 
     using base_type::base_type; // Inherit non-default constructors
 

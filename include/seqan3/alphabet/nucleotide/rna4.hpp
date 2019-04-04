@@ -57,12 +57,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr rna4() noexcept : base_t{} {}
-    constexpr rna4(rna4 const &) = default;
-    constexpr rna4(rna4 &&) = default;
-    constexpr rna4 & operator=(rna4 const &) = default;
-    constexpr rna4 & operator=(rna4 &&) = default;
-    ~rna4() = default;
+    constexpr rna4()                          noexcept = default; //!< Defaulted
+    constexpr rna4(rna4 const &)              noexcept = default; //!< Defaulted
+    constexpr rna4(rna4 &&)                   noexcept = default; //!< Defaulted
+    constexpr rna4 & operator=(rna4 const &)  noexcept = default; //!< Defaulted
+    constexpr rna4 & operator=(rna4 &&)       noexcept = default; //!< Defaulted
+    ~rna4()                                   noexcept = default; //!< Defaulted
 
     using base_t::base_t;
 
