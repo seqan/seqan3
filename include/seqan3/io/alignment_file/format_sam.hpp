@@ -618,10 +618,8 @@ public:
 
         stream << separator;
 
-        if (ref_offset.has_value())
-            stream << (ref_offset.value() + 1) << separator; // SAM is 1 based
-        else
-            stream << '0' << separator;                      // 0 indicates unmapped read if optional is not set
+        // SAM is 1 based, 0 indicates unmapped read if optional is not set
+        stream << (ref_offset.value_or(-1) + 1) << separator;
 
         stream << static_cast<unsigned>(mapq) << separator;
 
@@ -664,10 +662,8 @@ public:
 
         if constexpr (detail::is_type_specialisation_of_v<remove_cvref_t<decltype(get<1>(mate))>, std::optional>)
         {
-            if (get<1>(mate).has_value())
-                stream << (get<1>(mate).value() + 1) << separator; // SAM is 1 based
-            else
-                stream << '0' << separator;                        // 0 indicates unmapped read if optional is not set
+            // SAM is 1 based, 0 indicates unmapped read if optional is not set
+            stream << (get<1>(mate).value_or(-1) + 1) << separator;
         }
         else
         {
