@@ -278,13 +278,13 @@ public:
 private:
 
     //!\brief Cast this to derived type.
-    derived_t* this_derived()
+    constexpr derived_t* this_derived()
     {
         return static_cast<derived_t*>(this);
     }
 
     //!\copydoc this_derived
-    derived_t const * this_derived() const
+    constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);
     }
