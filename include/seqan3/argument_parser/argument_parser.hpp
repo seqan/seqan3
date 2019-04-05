@@ -470,7 +470,7 @@ private:
      * If `--export-help` is specified with a value other than html/man or ctd
      * a parser_invalid_argument is thrown.
      */
-    void init(int const argc, char const * const * const  argv)
+    void init(int const argc, char const * const * const argv)
     {
         if (argc <= 1) // no arguments provided
         {
@@ -497,9 +497,20 @@ private:
                 format = detail::format_version{};
                 return;
             }
-            else if (arg == "--export-help")
+            else if (arg.substr(0, 13) == "--export-help") // --export-help=man is also allowed
             {
-                std::string export_format{argv[i+1]};
+                std::string export_format;
+
+                if (arg.size() > 13)
+                {
+                    export_format = arg.substr(14);
+                }
+                else
+                {
+                    if (argc < i + 1)
+                        throw parser_invalid_argument{"Option --export-help must be followed by a value."};
+                    export_format = {argv[i+1]};
+                }
 
                 if (export_format == "html")
                     format = detail::format_html{};
@@ -509,8 +520,9 @@ private:
                 // else if (export_format == "ctd")
                 //     format = detail::format_ctd{};
                 else
-                    throw validation_failed("Validation Failed. "
-                                            "Value of --export-help must be one of [html, man, ctd]");
+                    throw validation_failed{"Validation failed for option --export-help: "
+                                            "Value must be one of [html, man]"};
+                init_standard_options();
                 return;
             }
             else if (arg == "--copyright")

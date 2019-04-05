@@ -16,13 +16,10 @@
 
 using namespace seqan3;
 
-TEST(html_test, html)
+TEST(html_format, empty_information)
 {
     std::string my_stdout;
     std::string expected;
-    int option_value;
-    bool flag_value;
-    std::vector<std::string> pos_opt_value;
 
     // Empty html help page.
     const char * argv0[] = {"./help_add_test", "--export-help", "html"};
@@ -47,7 +44,24 @@ TEST(html_test, html)
                            "</body></html>");
     EXPECT_EQ(my_stdout, expected);
 
+    const char * argv1[] = {"./help_add_test", "--export-help=html"};
+    argument_parser parser1("empty_options", 2, argv1);
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    my_stdout = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(my_stdout, expected);
+}
+
+TEST(html_format, full_information_information)
+{
+    std::string my_stdout;
+    std::string expected;
+    int option_value{5};
+    bool flag_value;
+    std::vector<std::string> pos_opt_value{};
+
    // Full html help page.
+   const char * argv0[] = {"./help_add_test", "--export-help", "html"};
    argument_parser parser1("program_full_options", 3, argv0);
    parser1.info.synopsis.push_back("./some_binary_name synopsis");
    parser1.info.synopsis.push_back("./some_binary_name synopsis2");
@@ -132,4 +146,20 @@ TEST(html_test, html)
                           "For full copyright and/or warranty information see <tt>--copyright</tt>.\n"
                           "</body></html>");
    EXPECT_EQ(my_stdout, expected);
+}
+
+TEST(export_help, parse_error)
+{
+    const char * argv[]  = {"./help_add_test", "--export-help"};
+    const char * argv2[] = {"./help_add_test", "--export-help=atml"};
+    const char * argv3[] = {"./help_add_test", "--export-help", "atml"};
+
+    // no value after --export-help
+    EXPECT_THROW((argument_parser{"test_parser", 2, argv}), parser_invalid_argument);
+
+    // wrong value after --export-help
+    EXPECT_THROW((argument_parser{"test_parser", 2, argv2}), validation_failed);
+
+    // wrong value after --export-help
+    EXPECT_THROW((argument_parser{"test_parser", 3, argv3}), validation_failed);
 }
