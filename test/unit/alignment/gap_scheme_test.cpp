@@ -13,17 +13,7 @@
 
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/gap_scheme_concept.hpp>
-
-#if SEQAN3_WITH_CEREAL
-#include <seqan3/test/tmp_filename.hpp>
-
-#include <fstream>
-
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/portable_binary.hpp>
-#include <cereal/archives/xml.hpp>
-#endif // SEQAN3_WITH_CEREAL
+#include <seqan3/test/cereal.hpp>
 
 using namespace seqan3;
 
@@ -141,44 +131,13 @@ TEST(gap_scheme, score)
     EXPECT_EQ(scheme.score(5), -21);
 }
 
-#if SEQAN3_WITH_CEREAL
-template <typename in_archive_t, typename out_archive_t, typename TypeParam>
-void do_serialisation(TypeParam const l)
-{
-    // This makes sure the file is also deleted if an exception is thrown in one of the tests below
-    // Generate unique file name.
-    test::tmp_filename filename{"scoring_scheme_cereal_test"};
-
-    {
-        std::ofstream os{filename.get_path(), std::ios::binary};
-        out_archive_t oarchive{os};
-        oarchive(l);
-    }
-
-    {
-        TypeParam in_l{};
-        std::ifstream is{filename.get_path(), std::ios::binary};
-        in_archive_t iarchive{is};
-        iarchive(in_l);
-        EXPECT_EQ(l, in_l);
-    }
-}
-
 TEST(gap_scheme, serialisation)
 {
     gap_scheme scheme1;
+    
     scheme1.set_linear(gap_score{-3});
-
-    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (scheme1);
-    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(scheme1);
-    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (scheme1);
-    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (scheme1);
+    test::do_serialisation(scheme1);
 
     scheme1.set_affine(gap_score{-3}, gap_open_score{-6});
-
-    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (scheme1);
-    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(scheme1);
-    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (scheme1);
-    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (scheme1);
+    test::do_serialisation(scheme1);
 }
-#endif // SEQAN3_WITH_CEREAL

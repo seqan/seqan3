@@ -71,9 +71,7 @@ You can also index text collections (e.g. genomes with multiple chromosomes or p
 
 \snippet doc/tutorial/search/search_small_snippets.cpp text_collection
 
-The indices can also be stored and loaded from disk.<br>
-Both seqan3::fm_index::store and seqan3::fm_index::load return a `bool` indicating whether the operation was
-successful.
+The indices can also be stored and loaded from disk by using cereal.
 
 \snippet doc/tutorial/search/search_small_snippets.cpp store
 
@@ -88,15 +86,14 @@ You are given the text
 dna4_vector text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
 \endcode
 Create a seqan3::fm_index over the reference, store the index and load the index into a new seqan3::fm_index object.
-Print whether the store and load operations were successful.
+Print whether the indices are identical or differ.
 \endassignment
 
 \solution
 \snippet doc/tutorial/search/search_solution1.cpp solution
 **Expected output:**
 ```console
-Index stored successfully.
-Index loaded successfully.
+The indices are identical!
 ```
 \endsolution
 

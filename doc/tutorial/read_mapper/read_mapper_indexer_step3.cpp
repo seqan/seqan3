@@ -1,3 +1,10 @@
+#include <seqan3/core/platform.hpp>
+#if SEQAN3_WITH_CEREAL
+//![complete]
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
@@ -30,8 +37,11 @@ void create_index(std::filesystem::path const & index_path,
 //! [create_index]
 {
     bi_fm_index index{storage.seqs};
-    if (!index.store(index_path))
-        throw std::runtime_error{"Could not store the index"};
+    {
+        std::ofstream os{index_path, std::ios::binary};
+        cereal::BinaryOutputArchive oarchive{os};
+        oarchive(index);
+    }
 }
 
 void run_program(std::filesystem::path const & reference_path,
@@ -81,3 +91,5 @@ int main(int argc, char const ** argv)
 
     return 0;
 }
+//![complete]
+#endif //SEQAN3_WITH_CEREAL
