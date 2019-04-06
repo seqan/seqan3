@@ -388,17 +388,38 @@ public:
         return size() == 0;
     }
 
-    // operator== not implemented by sdsl indices yet
-    // bool operator==(fm_index const & rhs) const noexcept
-    // {
-    //     return index == rhs.index;
-    // }
+    /*!\brief Compares two indices.
+     * \returns `true` if the indices are equal, false otherwise.
+     *
+     * ### Complexity
+     *
+     * Linear.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    bool operator==(fm_index const & rhs) const noexcept
+    {
+        // (void) rhs;
+        return (index == rhs.index) && (text_begin == rhs.text_begin);
+    }
 
-    // operator== not implemented by sdsl indices yet
-    // bool operator!=(fm_index const & rhs) const noexcept
-    // {
-    //     return !(*this == rhs);
-    // }
+    /*!\brief Compares two indices.
+     * \returns `true` if the indices are unequal, false otherwise.
+     *
+     * ### Complexity
+     *
+     * Linear.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    bool operator!=(fm_index const & rhs) const noexcept
+    {
+        return !(*this == rhs);
+    }
 
     /*!\brief Returns a seqan3::fm_index_cursor on the index that can be used for searching.
      *        \if DEV
@@ -419,74 +440,24 @@ public:
         return {*this};
     }
 
-    /*!\brief Loads the index from disk. Temporary function until cereal is supported.
-     *        \todo cereal
-     * \returns `true` if the index was successfully loaded from disk.
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::CerealArchive.
+     * \param archive The archive being serialised from/to.
      *
-     * ### Complexity
-     *
-     * Linear.
-     *
-     * ### Exceptions
-     *
-     * Strong exception guarantee.
+     * \attention These functions are never called directly, see \ref serialisation for more details.
      */
-    bool load(std::filesystem::path const & path)
+    template <CerealArchive archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
     {
-        std::filesystem::path tb_path{path};
-        std::filesystem::path tb_ss_path{path};
-        std::filesystem::path tb_rs_path{path};
-        tb_path += ".tb";
-        tb_ss_path += ".tbss";
-        tb_rs_path += ".tbrs";
-
-        sdsl_index_type tmp_index;
-        sdsl::sd_vector<> tmp_text_begin;
-        sdsl::select_support_sd<1> tmp_text_begin_ss;
-        sdsl::rank_support_sd<1> tmp_text_begin_rs;
-
-        if (sdsl::load_from_file(tmp_index, path) &&
-            sdsl::load_from_file(tmp_text_begin, tb_path) &&
-            sdsl::load_from_file(tmp_text_begin_ss, tb_ss_path) &&
-            sdsl::load_from_file(tmp_text_begin_rs, tb_rs_path))
-        {
-            std::swap(this->index, tmp_index);
-            std::swap(this->text_begin, tmp_text_begin);
-            std::swap(this->text_begin_ss, tmp_text_begin_ss);
-            std::swap(this->text_begin_rs, tmp_text_begin_rs);
-            text_begin_ss.set_vector(&text_begin);
-            text_begin_rs.set_vector(&text_begin);
-            return true;
-        }
-        return false;
+        archive(index);
+        archive(text_begin);
+        archive(text_begin_ss);
+        text_begin_ss.set_vector(&text_begin);
+        archive(text_begin_rs);
+        text_begin_rs.set_vector(&text_begin);
     }
-
-    /*!\brief Stores the index to disk. Temporary function until cereal is supported.
-     *        \todo cereal
-     * \returns `true` if the index was successfully stored to disk.
-     *
-     * ### Complexity
-     *
-     * Linear.
-     *
-     * ### Exceptions
-     *
-     * Strong exception guarantee.
-     */
-    bool store(std::filesystem::path const & path) const
-    {
-        std::filesystem::path tb_path{path};
-        std::filesystem::path tb_ss_path{path};
-        std::filesystem::path tb_rs_path{path};
-        tb_path += ".tb";
-        tb_ss_path += ".tbss";
-        tb_rs_path += ".tbrs";
-
-        return sdsl::store_to_file(index, path) &&
-               sdsl::store_to_file(text_begin, tb_path) &&
-               sdsl::store_to_file(text_begin_ss, tb_ss_path) &&
-               sdsl::store_to_file(text_begin_rs, tb_rs_path);
-    }
+    //!\endcond
 
 };
 

@@ -12,19 +12,8 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/exception.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
+#include <seqan3/test/cereal.hpp>
 #include <seqan3/test/pretty_printing.hpp>
-
-#if SEQAN3_WITH_CEREAL
-#include <seqan3/test/tmp_filename.hpp>
-
-#include <fstream>
-
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/portable_binary.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/vector.hpp>
-#endif // SEQAN3_WITH_CEREAL
 
 using namespace seqan3;
 
@@ -284,50 +273,18 @@ TYPED_TEST_P(alphabet, hash)
     }
 }
 
-#if SEQAN3_WITH_CEREAL
-template <typename in_archive_t, typename out_archive_t, typename TypeParam>
-void do_serialisation(TypeParam const l, std::vector<TypeParam> const & vec)
-{
-    // Generate unique file name.
-    test::tmp_filename filename{"alphabet_cereal_test"};
-    {
-        std::ofstream os{filename.get_path(), std::ios::binary};
-        out_archive_t oarchive{os};
-        oarchive(l);
-        oarchive(vec);
-    }
-
-    {
-        TypeParam in_l{};
-        std::vector<TypeParam> in_vec;
-
-        std::ifstream is{filename.get_path(), std::ios::binary};
-        in_archive_t iarchive{is};
-        iarchive(in_l);
-        iarchive(in_vec);
-        EXPECT_EQ(l, in_l);
-        EXPECT_EQ(vec, in_vec);
-    }
-}
-#endif // SEQAN3_WITH_CEREAL
-
 TYPED_TEST_P(alphabet, serialisation)
 {
-#if SEQAN3_WITH_CEREAL
     TypeParam letter;
 
     assign_rank(letter, 1 % alphabet_size_v<TypeParam>);
+    test::do_serialisation(letter);
 
     std::vector<TypeParam> vec;
     vec.resize(10);
     for (unsigned i = 0; i < 10; ++i)
         assign_rank(vec[i], i % alphabet_size_v<TypeParam>);
-
-    do_serialisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>(letter, vec);
-    do_serialisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(letter, vec);
-    do_serialisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>(letter, vec);
-    do_serialisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>(letter, vec);
-#endif // SEQAN3_WITH_CEREAL
+    test::do_serialisation(vec);
 }
 
 REGISTER_TYPED_TEST_CASE_P(alphabet, alphabet_size, default_value_constructor, global_assign_rank, global_to_rank,

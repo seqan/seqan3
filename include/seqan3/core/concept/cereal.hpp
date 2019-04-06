@@ -142,7 +142,9 @@ SEQAN3_CONCEPT Cerealisable =
     cereal::traits::is_input_serializable<value_t, input_archive_t>::value &&
     cereal::traits::is_output_serializable<value_t, output_archive_t>::value;
 #else
-template <typename t>
+template <typename value_t,
+          typename input_archive_t = void,
+          typename output_archive_t = void>
 SEQAN3_CONCEPT Cerealisable = false;
 #endif
 //!\endcond

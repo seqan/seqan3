@@ -1,3 +1,10 @@
+#include <seqan3/core/platform.hpp>
+#if SEQAN3_WITH_CEREAL
+//![complete]
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/argument_parser/all.hpp>
@@ -33,8 +40,11 @@ void map_reads(std::filesystem::path const & query_path,
                uint8_t const errors)
 {
     bi_fm_index<std::vector<std::vector<dna5>>> index;
-    if (!index.load(index_path))
-        throw std::runtime_error{"Could not load index"};
+    {
+        std::ifstream is{index_path, std::ios::binary};
+        cereal::BinaryInputArchive iarchive{is};
+        iarchive(index);
+    }
 
     sequence_file_input query_in{query_path};
 
@@ -128,3 +138,5 @@ int main(int argc, char const ** argv)
 
     return 0;
 }
+//![complete]
+#endif //SEQAN3_WITH_CEREAL

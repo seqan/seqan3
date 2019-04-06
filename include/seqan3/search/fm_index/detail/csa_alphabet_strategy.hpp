@@ -162,6 +162,30 @@ namespace sdsl
             m_C.load(in);
             read_member(m_sigma, in);
         }
+
+        template <typename archive_t>
+        void CEREAL_SAVE_FUNCTION_NAME(archive_t & ar) const
+        {
+            ar(CEREAL_NVP(m_C));
+            ar(CEREAL_NVP(m_sigma));
+        }
+
+        template <typename archive_t>
+        void CEREAL_LOAD_FUNCTION_NAME(archive_t & ar)
+        {
+            ar(CEREAL_NVP(m_C));
+            ar(CEREAL_NVP(m_sigma));
+        }
+
+        bool operator==(plain_byte_alphabet const & other) const noexcept
+        {
+            return (m_C == other.m_C) && (m_sigma == other.m_sigma);
+        }
+
+        bool operator!=(plain_byte_alphabet const & other) const noexcept
+        {
+            return !(*this == other);
+        }
         //!\endcond
     };
 

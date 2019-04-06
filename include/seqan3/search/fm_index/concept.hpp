@@ -142,9 +142,6 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
 
     { index.size()  } -> typename t::size_type;
     { index.empty() } -> bool;
-
-    { index.load(std::string{})  } -> bool;
-    { index.store(std::string{}) } -> bool;
 };
 //!\endcond
 /*!\name Requirements for seqan3::FmIndex
