@@ -29,9 +29,23 @@ const char * argv1[] = {"./help_add_test", "-h"};
 const char * argv2[] = {"./help_add_test", "-hh"};
 const char * argv3[] = {"./help_add_test", "--version"};
 
-std::string version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "."
-                          + std::to_string(SEQAN3_VERSION_MINOR) + "."
-                          + std::to_string(SEQAN3_VERSION_PATCH);
+std::string const basic_options_str = "OPTIONS"
+                                      "Basic options:"
+                                      "-h, --help Prints the help page."
+                                      "-hh, --advanced-help Prints the help page including advanced options."
+                                      "--version Prints the version information."
+                                      "--copyright Prints the copyright/license information."
+                                      "--export-help (std::string) Export the help page information. "
+                                                                   "Value must be one of [html, man].";
+
+std::string const version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "."
+                                + std::to_string(SEQAN3_VERSION_MINOR) + "."
+                                + std::to_string(SEQAN3_VERSION_PATCH);
+
+std::string const basic_version_str = "VERSION"
+                                      "Last update:"
+                                      "test_parser version:"
+                                      "SeqAn version: " + version_str;
 
 TEST(help_page_printing, short_help)
 {
@@ -56,11 +70,9 @@ TEST(help_page_printing, no_information)
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser"
-               "==========="
-               "VERSION"
-               "Last update:"
-               "test_parser version:"
-               "SeqAn version: " + version_str;
+               "===========" +
+               basic_options_str +
+               basic_version_str;
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
@@ -73,11 +85,9 @@ TEST(help_page_printing, with_short_copyright)
     EXPECT_EXIT(short_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser"
-               "==========="
-               "VERSION"
-               "Last update:"
-               "test_parser version:"
-               "SeqAn version: " + version_str +
+               "===========" +
+               basic_options_str +
+               basic_version_str +
                "LEGAL"
                "test_parser Copyright: short"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.";
@@ -92,11 +102,9 @@ TEST(help_page_printing, with_long_copyright)
     EXPECT_EXIT(long_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser"
-               "==========="
-               "VERSION"
-               "Last update:"
-               "test_parser version:"
-               "SeqAn version: " + version_str +
+               "===========" +
+               basic_options_str +
+               basic_version_str +
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "For full copyright and/or warranty information see --copyright.";
@@ -111,11 +119,9 @@ TEST(help_page_printing, with_citation)
     EXPECT_EXIT(citation.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser"
-               "==========="
-               "VERSION"
-               "Last update:"
-               "test_parser version:"
-               "SeqAn version: " + version_str +
+               "===========" +
+               basic_options_str +
+               basic_version_str +
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
                "In your academic works please cite: citation";
@@ -125,39 +131,34 @@ TEST(help_page_printing, with_citation)
 TEST(help_page_printing, empty_advanced_help)
 {
     // Empty help call with -hh
-    argument_parser parser2("test_parser_2", 2, argv2);
+    argument_parser parser2("test_parser", 2, argv2);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser2.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = "test_parser_2"
-               "============="
-               "VERSION"
-               "Last update:"
-               "test_parser_2 version:"
-               "SeqAn version: " + version_str;
+    expected = "test_parser"
+               "===========" +
+               basic_options_str +
+               basic_version_str;
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, empty_version_call)
 {
     // Empty version call
-    argument_parser parser3("version", 2, argv3);
+    argument_parser parser3("test_parser", 2, argv3);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser3.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = "version"
-               "======="
-               "VERSION"
-               "Last update:"
-               "version version:"
-               "SeqAn version: " + version_str;
+    expected = "test_parser"
+               "===========" +
+               basic_version_str;
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, version_call)
 {
     // Version call with url and options.
-    argument_parser parser4("versionURL", 2, argv3);
+    argument_parser parser4("test_parser", 2, argv3);
     parser4.info.url = "www.seqan.de";
     parser4.add_option(option_value, 'i', "int", "this is a int option.");
     parser4.add_flag(flag_value, 'f', "flag", "this is a flag.");
@@ -165,12 +166,9 @@ TEST(help_page_printing, version_call)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser4.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = "versionURL"
-               "=========="
-               "VERSION"
-               "Last update:"
-               "versionURL version:"
-               "SeqAn version: " + version_str +
+    expected = "test_parser"
+               "===========" +
+               basic_version_str +
                "URL"
                "www.seqan.de";
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
@@ -179,26 +177,23 @@ TEST(help_page_printing, version_call)
 TEST(help_page_printing, do_not_print_hidden_options)
 {
     // Add an option and request help.
-    argument_parser parser5("hidden", 2, argv1);
+    argument_parser parser5("test_parser", 2, argv1);
     parser5.add_option(option_value, 'i', "int", "this is a int option.", option_spec::HIDDEN);
     parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", option_spec::HIDDEN);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser5.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = "hidden"
-               "======"
-               "OPTIONS"
-               "VERSION"
-               "Last update:"
-               "hidden version:"
-               "SeqAn version: " + version_str;
+    expected = "test_parser"
+               "===========" +
+               basic_options_str +
+               basic_version_str;
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
 TEST(help_page_printing, full_information)
 {
     // Add synopsis, description, short description, positional option, option, flag, and example.
-    argument_parser parser6("full", 2, argv1);
+    argument_parser parser6("test_parser", 2, argv1);
     parser6.info.synopsis.push_back("./some_binary_name synopsis");
     parser6.info.synopsis.push_back("./some_binary_name synopsis2");
     parser6.info.description.push_back("description");
@@ -215,8 +210,8 @@ TEST(help_page_printing, full_information)
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser6.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
-    expected = "full - so short"
-               "==============="
+    expected = "test_parser - so short"
+               "======================"
                "SYNOPSIS"
                "./some_binary_name synopsis"
                "./some_binary_name synopsis2"
@@ -225,8 +220,8 @@ TEST(help_page_printing, full_information)
                "description2"
                "POSITIONAL ARGUMENTS"
                "ARGUMENT-1 (List of std::string's)"
-               "this is a positional option."
-               "OPTIONS"
+               "this is a positional option." +
+               basic_options_str +
                "-i, --int (signed 32 bit integer)"
                "this is a int option."
                "FLAGS"
@@ -236,11 +231,8 @@ TEST(help_page_printing, full_information)
                "this is a flag."
                "EXAMPLES"
                "example"
-               "example2"
-               "VERSION"
-               "Last update:"
-               "full version:"
-               "SeqAn version: " + version_str;
+               "example2" +
+               basic_version_str;
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 

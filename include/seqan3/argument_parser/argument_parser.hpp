@@ -485,11 +485,13 @@ private:
             if (arg == "-h" || arg == "--help")
             {
                 format = detail::format_help{false};
+                init_standard_options();
                 return;
             }
             else if (arg == "-hh" || arg == "--advanced-help")
             {
                 format = detail::format_help{true};
+                init_standard_options();
                 return;
             }
             else if (arg == "--version")
@@ -533,6 +535,20 @@ private:
         }
 
         format = detail::format_parse(argc, argv);
+    }
+
+    //!\brief Adds standard options to the help page.
+    void init_standard_options()
+    {
+        add_subsection("Basic options:");
+        add_list_item("\\fB-h\\fP, \\fB--help\\fP", "Prints the help page.");
+        add_list_item("\\fB-hh\\fP, \\fB--advanced-help\\fP",
+                                    "Prints the help page including advanced options.");
+        add_list_item("\\fB--version\\fP", "Prints the version information.");
+        add_list_item("\\fB--copyright\\fP", "Prints the copyright/license information.");
+        add_list_item("\\fB--export-help\\fP (std::string)",
+                                    "Export the help page information. Value must be one of [html, man].");
+        add_subsection(""); // add a new line (todo smehringer) add a add_newline() function
     }
 
     /*!\brief Checks whether the long identifier has already been used before.

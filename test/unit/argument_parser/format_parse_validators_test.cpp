@@ -21,6 +21,20 @@
 
 using namespace seqan3;
 
+std::string const basic_options_str = "OPTIONS"
+                                      "Basic options:"
+                                      "-h, --help Prints the help page."
+                                      "-hh, --advanced-help Prints the help page including advanced options."
+                                      "--version Prints the version information."
+                                      "--copyright Prints the copyright/license information."
+                                      "--export-help (std::string) Export the help page information. "
+                                                                   "Value must be one of [html, man].";
+
+std::string const basic_version_str = "VERSION"
+                                      "Last update:"
+                                      "test_parser version:"
+                                      "SeqAn version: " + seqan3_version;
+
 TEST(validator_test, fullfill_concept)
 {
     EXPECT_FALSE(validator_concept<int>);
@@ -135,11 +149,9 @@ TEST(validator_test, file_exists)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc The file or directory is checked for existence."
-                               "VERSION"
-                               "    Last update: "
-                               "    test_parser version: "
-                               "    SeqAn version: ") + seqan3_version;
+                               "          desc The file or directory is checked for existence." +
+                               basic_options_str +
+                               basic_version_str);
 
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
     }
@@ -187,7 +199,7 @@ TEST(validator_test, file_ext_validator)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.FaStQ");    
+        EXPECT_EQ(option_value, "/absolute/path/file.FaStQ");
     }
 
     // check case sensitive validator => success
@@ -200,7 +212,7 @@ TEST(validator_test, file_ext_validator)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.FASTQ");    
+        EXPECT_EQ(option_value, "/absolute/path/file.FASTQ");
     }
 
     // check case insensitive validator => failure
@@ -253,7 +265,7 @@ TEST(validator_test, file_ext_validator)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file");        
+        EXPECT_EQ(option_value, "/absolute/path/file");
     }
 }
 
@@ -342,11 +354,9 @@ TEST(validator_test, arithmetic_range_validator_success)
                            "==========="
                            "POSITIONAL ARGUMENTS"
                            "    ARGUMENT-1 (List of signed 32 bit integer's)"
-                           "          desc Value must be in range [-20,20]."
-                           "VERSION"
-                           "    Last update: "
-                           "    test_parser version: "
-                           "    SeqAn version: ") + seqan3_version;
+                           "          desc Value must be in range [-20,20]." +
+                           basic_options_str +
+                           basic_version_str);
     EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
                                expected | std::view::filter(!is_space)));
 
@@ -498,14 +508,11 @@ TEST(validator_test, value_list_validator_success)
     EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std::string my_stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
-                           "==========="
-                           "OPTIONS"
+                           "===========" +
+                           basic_options_str +
                            "    -i, --int-option (List of signed 32 bit integer's)"
-                           "          desc Value must be one of [-10,48,50]."
-                           "VERSION"
-                           "    Last update: "
-                           "    test_parser version: "
-                           "    SeqAn version: ") + seqan3_version;
+                           "          desc Value must be one of [-10,48,50]." +
+                           basic_version_str);
     EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
                                expected | std::view::filter(!is_space)));
 }
@@ -615,14 +622,11 @@ TEST(validator_test, regex_validator_success)
     EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std::string my_stdout = testing::internal::GetCapturedStdout();
     std::string expected = std::string("test_parser"
-                           "==========="
-                           "OPTIONS"
+                           "===========" +
+                           basic_options_str +
                            "    -s, --string-option (List of std::string's)"
-                           "          desc Value must match the pattern '[a-zA-Z]+@[a-zA-Z]+\\.com'."
-                           "VERSION"
-                           "    Last update: "
-                           "    test_parser version: "
-                           "    SeqAn version: ") + seqan3_version;
+                           "          desc Value must match the pattern '[a-zA-Z]+@[a-zA-Z]+\\.com'." +
+                           basic_version_str);
     EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
                                expected | ranges::view::remove_if(is_space)));
 }
@@ -749,16 +753,13 @@ TEST(validator_test, chaining_validators)
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         std::string my_stdout = testing::internal::GetCapturedStdout();
         std::string expected = std::string("test_parser"
-                               "==========="
-                               "OPTIONS"
+                               "===========" +
+                               basic_options_str +
                                "    -s, --string-option (std::string)"
                                "          desc Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'. "
                                "          File name extension must be one of [sa,so]."
-                               "          Value must match the pattern '.*'."
-                               "VERSION"
-                               "    Last update: "
-                               "    test_parser version: "
-                               "    SeqAn version: ") + seqan3_version;
+                               "          Value must match the pattern '.*'." +
+                               basic_version_str);
         EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
                                    expected | ranges::view::remove_if(is_space)));
     }
