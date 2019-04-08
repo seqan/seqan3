@@ -15,7 +15,6 @@
 #include <seqan3/range/decorator/gap_decorator_anchor_set.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
-#include <seqan3/std/ranges>
 #include <seqan3/test/pretty_printing.hpp>
 
 #include "../../alignment/aligned_sequence_test_template.hpp"
@@ -28,7 +27,6 @@ const std::vector<dna4> dummy_obj{}; // dummy lvalue for type declaration of vie
 using decorator_t2 = gap_decorator_anchor_set<
                          decltype(std::ranges::subrange<decltype(dummy_obj.begin()),
                                                  decltype(dummy_obj.begin())>{dummy_obj.begin(), dummy_obj.end()})>;
-
 
 using test_types = ::testing::Types<decorator_t, decorator_t2>;
 
