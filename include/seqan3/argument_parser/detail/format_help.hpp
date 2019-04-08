@@ -51,7 +51,7 @@ public:
      */
     format_help() = default;                                   //!< Defaulted.
     format_help(format_help const & pf) = default;             //!< Defaulted.
-    format_help & operator=(format_help const & pf) = default; //!< Defaulted.
+    format_help & operator=(format_help const &) = default;    //!< Defaulted.
     format_help(format_help &&) = default;                     //!< Defaulted.
     format_help & operator=(format_help &&) = default;         //!< Defaulted.
     ~format_help() = default;                                  //!< Defaulted.
@@ -156,7 +156,7 @@ protected:
 
         std::ostream_iterator<char> out(std::cout);
         std::fill_n(out, layout.leftPadding, ' ');
-        print_text(text, layout, layout.leftPadding);
+        print_text(text, layout.leftPadding);
         prev_was_paragraph = line_is_paragraph;
     }
 
@@ -191,7 +191,7 @@ protected:
             pos = 0;
         }
         std::fill_n(out, layout.rightColumnTab - pos, ' ');
-        print_text(desc, layout, layout.rightColumnTab);
+        print_text(desc, layout.rightColumnTab);
 
         prev_was_paragraph = false;
     }
@@ -364,12 +364,9 @@ protected:
 
     /*!\brief Prints text with correct line wrapping to the command line (std::cout).
      * \param[in] text   The string to print on the command line.
-     * \param[in] layout The command line parameters (e.g. padding) for correct printing.
      * \param[in] tab    The position offset (indentation) to start printing at.
      */
-    void print_text(std::string const & text,
-                    console_layout_struct const & layout,
-                    unsigned const tab)
+    void print_text(std::string const & text, unsigned const tab)
     {
         unsigned pos = tab;
         std::ostream_iterator<char> out(std::cout);
@@ -424,7 +421,7 @@ protected:
     //!\brief Needed for correct formatting while calling different print functions.
     bool prev_was_paragraph{false};
     //!\brief Stores the relevant parameters of the documentation on the screen.
-    console_layout_struct layout;
+    console_layout_struct layout{};
 };
 
 /*!\brief The format that prints a short help message to std::cout.

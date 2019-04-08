@@ -217,7 +217,7 @@ private:
      * \param[in] advanced Set to `true` to show advanced options.
      */
     format_help_base(bool const advanced) :
-        show_advanced_options(advanced)
+        show_advanced_options{advanced}
     {}
     //!\}
 
@@ -246,8 +246,8 @@ public:
         {
             if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
                   derived_t().print_list_item(prep_id_for_help(short_id, long_id) +
-                                                                     " " + option_type_and_list_info(value),
-                                 (desc + " " + validator.get_help_page_message()));
+                                              " " + option_type_and_list_info(value),
+                                              (desc + " " + validator.get_help_page_message()));
         });
     }
 

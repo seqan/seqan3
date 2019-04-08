@@ -205,6 +205,9 @@ TEST(help_page_printing, full_information)
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
+    parser6.add_section("Flags");
+    parser6.add_subsection("SubFlags");
+    parser6.add_line("here come all the flags");
     parser6.add_flag(flag_value, 'f', "flag", "this is a flag.");
     parser6.add_positional_option(pos_opt_value, "this is a positional option.");
     parser6.info.examples.push_back("example");
@@ -226,6 +229,9 @@ TEST(help_page_printing, full_information)
                "OPTIONS"
                "-i, --int (signed 32 bit integer)"
                "this is a int option."
+               "FLAGS"
+               "SubFlags"
+               "here come all the flags"
                "-f, --flag"
                "this is a flag."
                "EXAMPLES"
