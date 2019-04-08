@@ -226,6 +226,9 @@ public:
     span<byte, span_extent * sizeof(element_type)> as_writeable_bytes() const noexcept
     { return {reinterpret_cast<byte *>(data()), size_bytes()}; }
 
+    friend constexpr iterator begin(span s) noexcept { return s.begin(); }
+    friend constexpr iterator end(span s) noexcept { return s.end(); }
+
 private:
     pointer data_;
 
@@ -380,6 +383,9 @@ public:
 
     span<byte, dynamic_extent> as_writeable_bytes() const noexcept
     { return {reinterpret_cast<byte *>(data()), size_bytes()}; }
+
+    friend constexpr iterator begin(span s) noexcept { return s.begin(); }
+    friend constexpr iterator end(span s) noexcept { return s.end(); }
 
 private:
     pointer    data_;
