@@ -172,7 +172,7 @@ SEQAN3_CONCEPT View = Range<type> && ::ranges::View<type>;
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT ViewableRange = Range<type> && (std::is_lvalue_reference_v<type> || View<type>);
+SEQAN3_CONCEPT ViewableRange = Range<type> && ::ranges::ViewableRange<type>;
 //!\endcond
 
 /*!\typedef std::ranges::begin;

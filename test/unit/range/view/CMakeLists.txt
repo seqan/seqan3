@@ -1,6 +1,6 @@
 add_subdirectories()
 
-seqan3_test(generic_pipable_view_adaptor_test.cpp)
+seqan3_test(adaptor_base_test.cpp)
 seqan3_test(view_all_test.cpp)
 seqan3_test(view_char_to_test.cpp)
 seqan3_test(view_complement_test.cpp)

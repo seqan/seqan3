@@ -636,14 +636,10 @@ private:
  * \{
  */
 
-//!\brief Deduces the correct template type from a view.
-template <std::ranges::View other_range_t>
-pairwise_combine_view(other_range_t range) -> pairwise_combine_view<other_range_t>;
-
 //!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::ranges::view::all.
 template <std::ranges::ViewableRange other_range_t>
 pairwise_combine_view(other_range_t && range) ->
-    pairwise_combine_view<decltype(std::ranges::view::all(std::declval<other_range_t &&>()))>;
+    pairwise_combine_view<std::ranges::all_view<other_range_t>>;
 //!\}
 
 } // namespace seqan3::detail
@@ -712,7 +708,7 @@ namespace seqan3::view
  *
  * \hideinitializer
  */
-inline constexpr auto pairwise_combine = detail::generic_pipable_view_adaptor<detail::pairwise_combine_view>{};
+inline constexpr auto pairwise_combine = detail::adaptor_for_view_without_args<detail::pairwise_combine_view>{};
 
 //!\}
 } // namespace seqan3::view

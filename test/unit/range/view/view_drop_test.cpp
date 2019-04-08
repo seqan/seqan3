@@ -46,6 +46,16 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("obar", std::string(v3));
     std::string v3b = vec | std::view::reverse | adaptor(3) | ranges::view::unique;
     EXPECT_EQ("of", v3b);
+
+    // store arg
+    auto a0 = adaptor(3);
+    auto v4 = vec | a0;
+    EXPECT_EQ("bar", std::string(v4));
+
+    // store combined
+    auto a1 = adaptor(1) | adaptor(1) | ranges::view::unique;
+    auto v5 = vec | a1;
+    EXPECT_EQ("obar", std::string(v5));
 }
 
 template <typename adaptor_t>

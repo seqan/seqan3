@@ -45,6 +45,21 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("o", std::string(v3));
     std::string v3b = vec | std::view::reverse | adaptor(1, 4) | ranges::view::unique;
     EXPECT_EQ("abo", v3b);
+
+    // store arg
+    auto a0 = adaptor(1, 4);
+    auto v4 = vec | a0;
+    EXPECT_EQ("oob", std::string(v4));
+
+    // store combined
+    auto a1 = adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
+    auto v5 = vec | a1;
+    EXPECT_EQ("o", std::string(v5));
+
+    // store combined in middle
+    auto a2 = std::view::reverse | adaptor(1, 4) | ranges::view::unique;
+    auto v6 = vec | a2;
+    EXPECT_EQ("abo", std::string(v6));
 }
 
 template <typename adaptor_t>

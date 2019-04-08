@@ -29,11 +29,11 @@ namespace seqan3::detail
 
 /*!\brief View adaptor definition for view::all.
  */
-class all_fn : public pipable_adaptor_base<all_fn>
+class all_fn : public adaptor_base<all_fn>
 {
 private:
     //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<all_fn>;
+    using base_t = adaptor_base<all_fn>;
 
 public:
     //!\brief Inherit the base class's Constructors.

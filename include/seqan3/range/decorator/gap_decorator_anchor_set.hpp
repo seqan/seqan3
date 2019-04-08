@@ -804,6 +804,9 @@ private:
  */
 //!\brief Ranges (not views!) always deduce to `const & range_type` since they are access-only anyway.
 template <std::ranges::ViewableRange urng_t>
+//!\cond
+    requires !std::ranges::View<std::remove_reference_t<urng_t>>
+//!\endcond
 gap_decorator_anchor_set(urng_t && range) -> gap_decorator_anchor_set<std::remove_reference_t<urng_t> const &>;
 
 //!\brief Views always deduce to their respective type because they are copied.

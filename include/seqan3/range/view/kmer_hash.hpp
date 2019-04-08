@@ -25,15 +25,15 @@ namespace seqan3::detail
 //  kmer_hash_fn (adaptor definition)
 // ============================================================================
 
-//!\brief View adaptor definition for view::kmer_hash.
-class kmer_hash_fn : public pipable_adaptor_base<kmer_hash_fn>
+//![adaptor_def]
+//!\brief view::kmer_hash's range adaptor object type (non-closure).
+struct kmer_hash_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<kmer_hash_fn>;
-
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
+    //!\brief Store the argument and return a range adaptor closure object.
+    constexpr auto operator()(size_t const k) const noexcept
+    {
+        return detail::adaptor_from_functor{*this, k};
+    }
 
     /*!\brief            Call the view's constructor with the underlying view as argument.
      * \param[in] urange The input range to process. Must model std::ranges::ViewableRange and the reference type of the
@@ -45,7 +45,7 @@ private:
     //!\cond
         requires Semialphabet<delete_const_t<reference_t<urng_t>>>
     //!\endcond
-    static auto impl(urng_t && urange, size_t const k)
+    constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
     {
         return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::view::transform(
         [] (auto const in)
@@ -54,11 +54,8 @@ private:
             return h(in);
         });
     }
-
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
 };
+//![adaptor_def]
 
 } // namespace seqan3::detail
 
