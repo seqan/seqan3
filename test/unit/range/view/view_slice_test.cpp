@@ -97,7 +97,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::View<decltype(v2)>);
     EXPECT_EQ(std::ranges::SizedRange<decltype(v2)>, exactly);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v2)>);          // resolves subrange
+    EXPECT_FALSE(const_iterable_concept<decltype(v2)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), int>));
 }
 
@@ -128,7 +128,7 @@ TEST(view_slice, underlying_is_shorter)
 TEST(view_slice, type_erasure)
 {
     {   // string overload
-        std::string urange{"foobar"};
+        std::string const urange{"foobar"};
 
         auto v = view::slice(urange, 1, 4);
 

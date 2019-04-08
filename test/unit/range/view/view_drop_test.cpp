@@ -93,8 +93,8 @@ void do_concepts(adaptor_t && adaptor)
     EXPECT_TRUE(std::ranges::View<decltype(v2)>);
     EXPECT_FALSE(std::ranges::SizedRange<decltype(v2)>);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v2)>); // because this is always subrange
-//     EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), int>)); //TODO why fail?
+    EXPECT_FALSE(const_iterable_concept<decltype(v2)>);
+    EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), int>));
 }
 
 // ============================================================================
@@ -121,10 +121,10 @@ TEST(view_drop, underlying_is_shorter)
     EXPECT_EQ("ar", v);
 }
 
-TEST(view_drop, overloads)
+TEST(view_drop, type_erasure)
 {
     {   // string overload
-        std::string urange{"foobar"};
+        std::string const urange{"foobar"};
 
         auto v = view::drop(urange, 3);
 
@@ -169,25 +169,22 @@ TEST(view_drop, overloads)
         EXPECT_TRUE((std::ranges::equal(v, std::vector{4, 5, 6})));
     }
 
-    {   // generic overload (bidirectional container)
+    {   // no type erasure (bidirectional container)
         std::list<int> urange{1, 2, 3, 4, 5, 6};
 
         auto v = view::drop(urange, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::ranges::subrange<typename std::list<int>::iterator,
-                                                                  typename std::list<int>::iterator,
-                                                                  std::ranges::subrange_kind::sized>>));
+        EXPECT_TRUE((std::Same<decltype(v), decltype(std::view::drop(urange, 3))>));
         EXPECT_TRUE((std::ranges::equal(v, std::vector{4, 5, 6})));
     }
 
-    {   // generic overload (view)
+    {   // no type erasure (input view)
         std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
 
         auto v = urange | std::view::filter([] (int) { return true; });
         auto v2 = view::drop(v, 3);
 
-        EXPECT_TRUE((std::Same<decltype(v2), std::ranges::subrange<std::ranges::iterator_t<decltype(v)>,
-                                                                   std::ranges::sentinel_t<decltype(v)>>>));
+        EXPECT_TRUE((std::Same<decltype(v2), decltype(std::view::drop(v, 3))>));
         EXPECT_TRUE((std::ranges::equal(v2, std::vector{4, 5, 6})));
     }
 }

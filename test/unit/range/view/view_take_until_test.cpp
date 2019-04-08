@@ -16,6 +16,7 @@
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/std/ranges>
+#include <seqan3/std/span>
 
 using namespace seqan3;
 
@@ -39,6 +40,14 @@ void do_test(adaptor_t const & adaptor, fun_t && fun, std::string const & vec)
     EXPECT_EQ("fo", std::string(v3));
     std::string v3b = vec | std::view::reverse | adaptor(fun) | ranges::view::unique;
     EXPECT_EQ("rab", v3b);
+
+    // pointer as iterator
+    std::span s{std::ranges::data(vec), vec.size()};
+    auto v4 = s | adaptor(fun);
+    EXPECT_EQ("foo", std::string(v4));
+
+    // comparability against self
+    EXPECT_TRUE(std::ranges::equal(v,v));
 }
 
 template <typename adaptor_t>
