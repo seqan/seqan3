@@ -182,7 +182,7 @@ public:
         auto stream_view = std::ranges::subrange<decltype(stream_buf_t{stream}), decltype(stream_buf_t{})>
                                {stream_buf_t{stream}, stream_buf_t{}};
 
-        auto next_field = view::take_until_or_throw(is_char<'\t'>);
+        auto field_view = stream_view | view::take_until_or_throw_and_consume(is_char<'\t'>);
 
         // these variables need to be stored to compute the ALIGNMENT
         int32_t ref_offset_tmp{};
@@ -204,19 +204,14 @@ public:
 
         // Fields 1-5: ID FLAG REF_ID REF_OFFSET MAPQ
         // -------------------------------------------------------------------------------------------------------------
-        read_field(stream_view | next_field, id);
-        std::ranges::next(std::ranges::begin(stream_view)); // skip tab
+        read_field(field_view, id);
 
-        read_field(stream_view | next_field, flag);
-        std::ranges::next(std::ranges::begin(stream_view));
+        read_field(field_view, flag);
 
-        read_field(stream_view | next_field, ref_id_tmp);
+        read_field(field_view, ref_id_tmp);
         check_and_assign_ref_id(ref_id, ref_id_tmp, header, ref_seqs);
 
-        std::ranges::next(std::ranges::begin(stream_view));
-
-        read_field(stream_view | next_field, ref_offset_tmp);
-        std::ranges::next(std::ranges::begin(stream_view));
+        read_field(field_view, ref_offset_tmp);
 
         if (ref_offset_tmp > 0)
             ref_offset = --ref_offset_tmp; // SAM format is 1-based but SeqAn operates 0-based
@@ -224,8 +219,7 @@ public:
             throw format_error{"No negative values are allowed for field::REF_OFFSET."};
         // ref_offset_tmp == 0 indicates an unmapped read -> out-param ref_offset (std::optional) will not be filled
 
-        read_field(stream_view | next_field, mapq);
-        std::ranges::next(std::ranges::begin(stream_view));
+        read_field(field_view, mapq);
 
         // Field 6: CIGAR
         // -------------------------------------------------------------------------------------------------------------
@@ -234,27 +228,26 @@ public:
             if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
             {
                 std::tie(cigar, ref_length, seq_length, offset_tmp, soft_clipping_end) =
-                    parse_cigar(stream_view | next_field);
+                    parse_cigar(field_view);
             }
             else
             {
-                std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
+                std::ranges::next(std::ranges::begin(field_view)); // skip '*'
             }
         }
         else
         {
-            detail::consume(stream_view | next_field);
+            detail::consume(field_view);
         }
 
         offset = offset_tmp;
-        std::ranges::next(std::ranges::begin(stream_view));
 
         // Field 7-9: (RNEXT PNEXT TLEN) = MATE
         // -------------------------------------------------------------------------------------------------------------
         if constexpr (!detail::decays_to_ignore_v<mate_type>)
         {
             value_type_t<decltype(header.ref_ids())> tmp_mate_ref_id{};
-            read_field(stream_view | next_field, tmp_mate_ref_id); // RNEXT
+            read_field(field_view, tmp_mate_ref_id); // RNEXT
 
             if (tmp_mate_ref_id == "=") // indicates "same as ref id"
             {
@@ -268,10 +261,8 @@ public:
                 check_and_assign_ref_id(get<0>(mate), tmp_mate_ref_id, header, ref_seqs);
             }
 
-            std::ranges::next(std::ranges::begin(stream_view));
-
             int32_t tmp_pnext{};
-            read_field(stream_view | next_field, tmp_pnext); // PNEXT
+            read_field(field_view, tmp_pnext); // PNEXT
 
             if (tmp_pnext > 0)
                 get<1>(mate) = --tmp_pnext; // SAM format is 1-based but SeqAn operates 0-based.
@@ -279,17 +270,13 @@ public:
                 throw format_error{"No negative values are allowed at the mate mapping position."};
             // tmp_pnext == 0 indicates an unmapped mate -> do not fill std::optional get<1>(mate)
 
-            std::ranges::next(std::ranges::begin(stream_view));
-
-            read_field(stream_view | next_field, get<2>(mate)); // TLEN
-            std::ranges::next(std::ranges::begin(stream_view));
+            read_field(field_view, get<2>(mate)); // TLEN
         }
         else
         {
             for (size_t i = 0; i < 3u; ++i)
             {
-                detail::consume(stream_view | next_field);
-                std::ranges::next(std::ranges::begin(stream_view));
+                detail::consume(field_view);
             }
         }
 
@@ -298,16 +285,15 @@ public:
         if (!is_char<'*'>(*std::ranges::begin(stream_view))) // sequence information is given
         {
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            auto seq_stream = stream_view | next_field
-                                          | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
-                                            {
-                                                if (!is_legal_alph(c))
-                                                    throw format_error{std::string{"Encountered an unexpected letter: "} +
-                                                                      is_legal_alph.msg.string() +
-                                                                      " evaluated to false on " +
-                                                                      detail::make_printable(c)};
-                                                return c;
-                                            });
+            auto seq_stream = field_view | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
+                                           {
+                                               if (!is_legal_alph(c))
+                                                   throw format_error{std::string{"Encountered an unexpected letter: "} +
+                                                                     is_legal_alph.msg.string() +
+                                                                     " evaluated to false on " +
+                                                                     detail::make_printable(c)};
+                                               return c;
+                                           });
 
             if constexpr (detail::decays_to_ignore_v<seq_type>)
             {
@@ -330,8 +316,6 @@ public:
                         }
 
                         std::ranges::advance(tmp_iter, soft_clipping_end);
-
-                        assert(std::ranges::begin(seq_stream) == std::ranges::end(seq_stream));
                     }
                     else
                     {
@@ -357,9 +341,8 @@ public:
         }
         else
         {
-            std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
+            std::ranges::next(std::ranges::begin(field_view)); // skip '*'
         }
-        std::ranges::next(std::ranges::begin(stream_view));
 
         // Field 11:  Quality
         // -------------------------------------------------------------------------------------------------------------
@@ -370,13 +353,11 @@ public:
         // -------------------------------------------------------------------------------------------------------------
         while (is_char<'\t'>(*std::ranges::begin(stream_view))) // read all tags if present
         {
-            std::ranges::next(std::ranges::begin(stream_view));
+            std::ranges::next(std::ranges::begin(stream_view)); // skip tab
             read_field(stream_view | view::take_until_or_throw(tab_or_end), tag_dict);
         }
 
-        if (is_char<'\r'>(*std::ranges::begin(stream_view)))    // protect against '\r\n'
-            std::ranges::next(std::ranges::begin(stream_view)); // skip '\r'
-        std::ranges::next(std::ranges::begin(stream_view));     // skip newline
+        detail::consume(stream_view | view::take_until(!(is_char<'\r'> || is_char<'\n'>))); // consume new line
 
         // DONE READING - wrap up
         // -------------------------------------------------------------------------------------------------------------
@@ -775,8 +756,6 @@ protected:
                               std::back_inserter(target));
         else
             std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
-
-        assert(std::ranges::begin(stream_view) == std::ranges::end(stream_view)); // consumed everything
     }
 
     /*!\brief Reads arithmetic fields using std::from_chars.
@@ -971,14 +950,14 @@ protected:
                     }
                     default:
                         throw format_error{std::string("The first character in the numerical ") +
-                                           "id of a SAM tag must be one of [cCsSiIf] but " + array_value_type_id +
-                                           " was given."};
+                                           "id of a SAM tag must be one of [cCsSiIf] but '" + array_value_type_id +
+                                           "' was given."};
                 }
                 break;
             }
             default:
                 throw format_error{std::string("The second character in the numerical id of a "
-                                   "SAM tag must be one of [A,i,Z,H,B,f] but ") + type_id + "was given."};
+                                   "SAM tag must be one of [A,i,Z,H,B,f] but '") + type_id + "' was given."};
         }
     }
 
