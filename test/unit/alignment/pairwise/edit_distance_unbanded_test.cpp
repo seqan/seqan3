@@ -228,8 +228,7 @@ TYPED_TEST_P(edit_distance_unbanded, back_coordinate)
     auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
     auto back_coordinate = alignment.back_coordinate();
 
-    EXPECT_EQ(back_coordinate.first, fixture.back_coordinate.first);
-    EXPECT_EQ(back_coordinate.second, fixture.back_coordinate.second);
+    EXPECT_EQ(back_coordinate, fixture.back_coordinate);
 }
 
 TYPED_TEST_P(edit_distance_unbanded, front_coordinate)
@@ -243,8 +242,7 @@ TYPED_TEST_P(edit_distance_unbanded, front_coordinate)
     auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
     auto front_coordinate = alignment.front_coordinate();
 
-    EXPECT_EQ(front_coordinate.first, fixture.front_coordinate.first);
-    EXPECT_EQ(front_coordinate.second, fixture.front_coordinate.second);
+    EXPECT_EQ(front_coordinate, fixture.front_coordinate);
 }
 
 TYPED_TEST_P(edit_distance_unbanded, alignment)
