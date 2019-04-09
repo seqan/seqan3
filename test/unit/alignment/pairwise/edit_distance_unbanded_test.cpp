@@ -158,10 +158,11 @@ using semi_global_edit_distance_max_errors_unbanded_types
         param_semi<&semi_global::edit_distance::max_errors::unbanded::aa27_01T_e255, uint64_t>
     >;
 
-template <typename traits_type, typename database_t, typename query_t, typename align_cfg_t>
+template <typename TypeParam, typename database_t, typename query_t, typename align_cfg_t>
 auto edit_distance(database_t && database, query_t && query, align_cfg_t && align_cfg)
 {
-    using algorithm_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_cfg_t, traits_type>;
+    using traits_t = test_traits_type<typename TypeParam::word_type, typename TypeParam::is_semi_global_type>;
+    using algorithm_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_cfg_t, traits_t>;
 
     auto result = alignment_result{detail::alignment_result_value_type{}};
     auto alignment = algorithm_t{database, query, align_cfg};
@@ -179,8 +180,7 @@ TYPED_TEST_P(edit_distance_unbanded, score)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    using traits_t = test_traits_type<typename TypeParam::word_type, typename TypeParam::is_semi_global_type>;
-    auto alignment = edit_distance<traits_t>(database, query, align_cfg);
+    auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
     EXPECT_EQ(alignment.score(), fixture.score);
 }
 
@@ -192,8 +192,7 @@ TYPED_TEST_P(edit_distance_unbanded, score_matrix)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    using traits_t = test_traits_type<typename TypeParam::word_type, typename TypeParam::is_semi_global_type>;
-    auto alignment = edit_distance<traits_t>(database, query, align_cfg);
+    auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
     auto score_matrix = alignment.score_matrix();
 
     EXPECT_EQ(score_matrix.cols(), database.size()+1);
@@ -210,24 +209,42 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    using traits_t = test_traits_type<typename TypeParam::word_type, typename TypeParam::is_semi_global_type>;
-    auto alignment = edit_distance<traits_t>(database, query, align_cfg);
+    auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
     auto trace_matrix = alignment.trace_matrix();
-    auto front_coordinate = alignment.front_coordinate();
-    auto back_coordinate = alignment.back_coordinate();
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);
     EXPECT_EQ(trace_matrix.rows(), query.size()+1);
-    EXPECT_EQ(front_coordinate.first, fixture.front_coordinate.first);
-    EXPECT_EQ(front_coordinate.second, fixture.front_coordinate.second);
+    EXPECT_EQ(trace_matrix, fixture.trace_matrix);
+}
+
+TYPED_TEST_P(edit_distance_unbanded, back_coordinate)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config;
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
+    auto back_coordinate = alignment.back_coordinate();
+
     EXPECT_EQ(back_coordinate.first, fixture.back_coordinate.first);
     EXPECT_EQ(back_coordinate.second, fixture.back_coordinate.second);
-    EXPECT_EQ(trace_matrix, fixture.trace_matrix);
-    EXPECT_EQ(alignment.score(), fixture.score);
+}
 
-    auto && [gapped_database, gapped_query] = alignment.alignment();
-    EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.aligned_sequence1);
-    EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.aligned_sequence2);
+TYPED_TEST_P(edit_distance_unbanded, front_coordinate)
+{
+    auto const & fixture = this->fixture();
+    auto align_cfg = fixture.config;
+
+    std::vector database = fixture.sequence1;
+    std::vector query = fixture.sequence2;
+
+    auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
+    auto front_coordinate = alignment.front_coordinate();
+
+    EXPECT_EQ(front_coordinate.first, fixture.front_coordinate.first);
+    EXPECT_EQ(front_coordinate.second, fixture.front_coordinate.second);
 }
 
 TYPED_TEST_P(edit_distance_unbanded, alignment)
@@ -238,15 +255,14 @@ TYPED_TEST_P(edit_distance_unbanded, alignment)
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
-    using traits_t = test_traits_type<typename TypeParam::word_type, typename TypeParam::is_semi_global_type>;
-    auto alignment = edit_distance<traits_t>(database, query, align_cfg);
+    auto alignment = edit_distance<TypeParam>(database, query, align_cfg);
 
     auto && [gapped_database, gapped_query] = alignment.alignment();
     EXPECT_EQ(std::string{gapped_database | view::to_char}, fixture.aligned_sequence1);
     EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.aligned_sequence2);
 }
 
-REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded, score, score_matrix, trace_matrix, alignment);
+REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded, score, score_matrix, trace_matrix, back_coordinate, front_coordinate, alignment);
 
 // work around a bug that you can't specify more than 50 template arguments to ::testing::types
 INSTANTIATE_TYPED_TEST_CASE_P(global, edit_distance_unbanded, global_edit_distance_unbanded_types);
