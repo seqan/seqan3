@@ -241,12 +241,12 @@ public:
 
         if constexpr(use_max_errors)
         {
-            // localMaxErrors either stores the maximal number of _score (me.max_errors) or the needle size minus one.
+            // local_max_errors either stores the maximal number of _score (me.max_errors) or the needle size minus one.
             // It is used for the mask computation and setting the initial score (the minus one is there because of the Ukkonen trick).
-            size_t localMaxErrors = std::min<size_t>(max_errors, query.size() - 1);
-            score_mask = (word_type)1 << (localMaxErrors % word_size);
-            last_block = std::min(localMaxErrors / word_size, block_count - 1);
-            _score = localMaxErrors + 1;
+            size_t local_max_errors = std::min<size_t>(max_errors, query.size() - 1);
+            score_mask = (word_type)1 << (local_max_errors % word_size);
+            last_block = std::min(local_max_errors / word_size, block_count - 1);
+            _score = local_max_errors + 1;
             _best_score = _score;
         }
 
@@ -458,8 +458,8 @@ public:
     //!\brief Return the begin position of the alignment
     alignment_coordinate front_coordinate() const noexcept
     {
-        alignment_coordinate end = back_coordinate();
-        return alignment_front_coordinate(trace_matrix(), end);
+        alignment_coordinate back = back_coordinate();
+        return alignment_front_coordinate(trace_matrix(), back);
     }
 
     //!\brief Return the end position of the alignment

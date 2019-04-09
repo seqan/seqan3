@@ -13,13 +13,11 @@
 namespace seqan3::test::alignment::fixture::global::edit_distance::max_errors::unbanded
 {
 
-inline constexpr auto align_config = align_cfg::edit | align_cfg::max_error{255};
+using detail::column_index_type;
+using detail::row_index_type;
 
 static auto dna4_01_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -29,7 +27,7 @@ static auto dna4_01_e255 = []()
         // A-C-G-T-A-C-G-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255},
         -8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
@@ -68,9 +66,6 @@ static auto dna4_01_e255 = []()
 
 static auto dna4_01T_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -80,7 +75,7 @@ static auto dna4_01T_e255 = []()
         // AACCGGTTAACCGGTT
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255},
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
@@ -133,9 +128,6 @@ static auto dna4_01T_e255 = []()
 
 static auto dna4_02_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -145,7 +137,7 @@ static auto dna4_02_e255 = []()
         // A-C-G-TA--C-G-TA
         "AACCGGTAAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255},
         -8,
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
@@ -184,9 +176,6 @@ static auto dna4_02_e255 = []()
 
 static auto aa27_01_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -196,7 +185,7 @@ static auto aa27_01_e255 = []()
         // U-W-R-I-U-W-R-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255},
         -8,
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
@@ -235,9 +224,6 @@ static auto aa27_01_e255 = []()
 
 static auto aa27_01T_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -247,7 +233,7 @@ static auto aa27_01T_e255 = []()
         // UUWWRRIIUUWWRRII
         "UWRIUWRIU"_aa27,
         "UUWWRRIIUUWWRRII"_aa27,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255},
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",

@@ -1,4 +1,3 @@
-
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
@@ -231,7 +230,7 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
     EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.aligned_sequence2);
 }
 
-TYPED_TEST_P(edit_distance_unbanded, trace)
+TYPED_TEST_P(edit_distance_unbanded, alignment)
 {
     auto const & fixture = this->fixture();
     auto align_cfg = fixture.config;
@@ -247,7 +246,7 @@ TYPED_TEST_P(edit_distance_unbanded, trace)
     EXPECT_EQ(std::string{gapped_query | view::to_char}, fixture.aligned_sequence2);
 }
 
-REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded, score, score_matrix, trace_matrix, trace);
+REGISTER_TYPED_TEST_CASE_P(edit_distance_unbanded, score, score_matrix, trace_matrix, alignment);
 
 // work around a bug that you can't specify more than 50 template arguments to ::testing::types
 INSTANTIATE_TYPED_TEST_CASE_P(global, edit_distance_unbanded, global_edit_distance_unbanded_types);

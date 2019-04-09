@@ -14,15 +14,11 @@
 namespace seqan3::test::alignment::fixture::semi_global::edit_distance::max_errors::unbanded
 {
 
-inline constexpr auto align_config = align_cfg::edit |
-                                     align_cfg::aligned_ends{free_ends_first} |
-                                     align_cfg::max_error{255};
+using detail::column_index_type;
+using detail::row_index_type;
 
 static auto dna4_01_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 5 (3 deletions, 1 insertion, 1 substitutions)
@@ -32,7 +28,7 @@ static auto dna4_01_e255 = []()
         // ---------ACGTACG-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
@@ -71,9 +67,6 @@ static auto dna4_01_e255 = []()
 
 static auto dna4_01T_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -83,7 +76,7 @@ static auto dna4_01T_e255 = []()
         // AACCGGTTAACCGGTT
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
@@ -136,9 +129,6 @@ static auto dna4_01T_e255 = []()
 
 static auto dna4_02_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 4 (3 deletions, 1 insertion)
@@ -148,7 +138,7 @@ static auto dna4_02_e255 = []()
         // -ACGTACG-TA-----------
         "AACCGGTAAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
@@ -187,9 +177,6 @@ static auto dna4_02_e255 = []()
 
 static auto aa27_01_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 5 (3 deletions, 1 insertion, 1 substitutions)
@@ -199,7 +186,7 @@ static auto aa27_01_e255 = []()
         // ---------UWRIUWR-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
@@ -238,9 +225,6 @@ static auto aa27_01_e255 = []()
 
 static auto aa27_01T_e255 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -250,7 +234,7 @@ static auto aa27_01T_e255 = []()
         // UUWWRRIIUUWWRRII
         "UWRIUWRIU"_aa27,
         "UUWWRRIIUUWWRRII"_aa27,
-        align_config,
+        align_cfg::edit | align_cfg::max_error{255} | align_cfg::aligned_ends{free_ends_first},
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
