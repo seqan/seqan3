@@ -29,3 +29,18 @@ void PrintTo (t const & v, std::ostream * out)
 //!\endcond
 
 } // namespace seqan3
+
+namespace seqan3::detail
+{
+
+//!\cond DEV
+//!\brief Overload for the googletest PrintTo function that always delegates to our debug_stream.
+template <typename t>
+    requires true // tricks the compiler to consider this as more specialized than googletests generic PrintTo
+void PrintTo (t const & v, std::ostream * out)
+{
+    ::seqan3::PrintTo(v, out);
+}
+//!\endcond
+
+} // namespace seqan3::detail
