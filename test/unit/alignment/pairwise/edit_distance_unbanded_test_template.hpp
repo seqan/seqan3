@@ -15,6 +15,8 @@
 
 #include "fixture/alignment_fixture.hpp"
 
+#include <seqan3/test/pretty_printing.hpp>
+
 using namespace seqan3;
 using namespace seqan3::detail;
 using namespace seqan3::test::alignment::fixture;
