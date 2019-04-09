@@ -405,3 +405,5 @@ inline debug_stream_type & operator<<(debug_stream_type & s, rng_t && r)
 //!\}
 
 } // namespace seqan3
+
+#include <seqan3/io/stream/detail/debug_stream_alignment_matrix.hpp>

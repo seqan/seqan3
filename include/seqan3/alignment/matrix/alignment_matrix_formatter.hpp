@@ -248,8 +248,8 @@ public:
      * \param[in,out]  cout            print formatted #matrix into this ostream
      * \param[in]      column_width    width of each cell, std::nullopt defaults to auto_width()
      */
-    template <typename database_t, typename query_t, typename char_t, typename traits_t>
-    void format(database_t && database, query_t && query, std::basic_ostream<char_t, traits_t> & cout, std::optional<size_t> const column_width) const noexcept
+    template <typename database_t, typename query_t, typename oostream_t>
+    void format(database_t && database, query_t && query, oostream_t & cout, std::optional<size_t> const column_width) const noexcept
     {
         size_t const _column_width = column_width.has_value() ? column_width.value() : auto_width();
 
@@ -378,4 +378,4 @@ alignment_matrix_formatter(alignment_matrix_t const &) -> alignment_matrix_forma
 template<typename alignment_matrix_t>
 alignment_matrix_formatter(alignment_matrix_t const &, alignment_matrix_format) -> alignment_matrix_formatter<alignment_matrix_t>;
 //!\}
-} // namespace seqan3
+} // namespace seqan3::detail
