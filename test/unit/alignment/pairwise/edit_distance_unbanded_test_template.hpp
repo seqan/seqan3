@@ -1,3 +1,5 @@
+#pragma once
+
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
@@ -6,10 +8,7 @@
 
 #include <seqan3/range/view/to_char.hpp>
 
-#include "fixture/global_edit_distance_unbanded.hpp"
-#include "fixture/global_edit_distance_max_errors_unbanded.hpp"
-#include "fixture/semi_global_edit_distance_unbanded.hpp"
-#include "fixture/semi_global_edit_distance_max_errors_unbanded.hpp"
+#include "fixture/alignment_fixture.hpp"
 
 using namespace seqan3;
 using namespace seqan3::detail;
