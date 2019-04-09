@@ -492,12 +492,15 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
         advance_score(hp, hn, score_mask);
 
         if constexpr(use_max_errors)
-            if (_score <= max_errors && on_hit())
+        {
+            // updating the last active cell
+            if (update_last_active_cell())
             {
                 add_state();
                 ++database_it;
                 return true;
             }
+        }
 
         add_state();
         ++database_it;
