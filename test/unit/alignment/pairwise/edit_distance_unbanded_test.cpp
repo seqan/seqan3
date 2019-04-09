@@ -197,7 +197,7 @@ TYPED_TEST_P(edit_distance_unbanded, score_matrix)
 
     EXPECT_EQ(score_matrix.cols(), database.size()+1);
     EXPECT_EQ(score_matrix.rows(), query.size()+1);
-    EXPECT_EQ(score_matrix, fixture.score_matrix);
+    EXPECT_EQ(score_matrix, fixture.score_matrix());
     EXPECT_EQ(alignment.score(), fixture.score);
 }
 
@@ -214,7 +214,7 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
 
     EXPECT_EQ(trace_matrix.cols(), database.size()+1);
     EXPECT_EQ(trace_matrix.rows(), query.size()+1);
-    EXPECT_EQ(trace_matrix, fixture.trace_matrix);
+    EXPECT_EQ(trace_matrix, fixture.trace_matrix());
 }
 
 TYPED_TEST_P(edit_distance_unbanded, back_coordinate)
