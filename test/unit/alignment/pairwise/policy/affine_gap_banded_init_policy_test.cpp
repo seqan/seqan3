@@ -19,6 +19,7 @@ class affine_gap_banded_init_policy_mock :
 public:
     using base_t = seqan3::detail::affine_gap_banded_init_policy<affine_gap_banded_init_policy_mock>;
 
+    using base_t::base_t;
     using base_t::init_origin_cell;
     using base_t::init_column_cell;
     using base_t::init_row_cell;

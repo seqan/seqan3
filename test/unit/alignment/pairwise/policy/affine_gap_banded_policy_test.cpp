@@ -28,6 +28,7 @@ class affine_gap_banded_policy_mock :
 public:
     using base_t = seqan3::detail::affine_gap_banded_policy<affine_gap_banded_policy_mock<cell_type>, cell_type>;
 
+    using base_t::base_t;
     using base_t::compute_cell;
     using base_t::make_cache;
     using base_t::compute_first_band_cell;
