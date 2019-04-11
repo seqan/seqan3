@@ -444,7 +444,7 @@ protected:
     //!\brief Keeps track of the number of positional options
     unsigned positional_option_count{0};
     //!\brief Whether to show advanced options or not.
-    bool show_advanced_options{false};
+    bool show_advanced_options{true};
 };
 
 } // namespace seqan3::detail
