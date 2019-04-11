@@ -157,12 +157,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alphabet_proxy() noexcept : base_t{} {}
-    constexpr alphabet_proxy(alphabet_proxy const &) = default;
-    constexpr alphabet_proxy(alphabet_proxy &&) = default;
-    constexpr alphabet_proxy & operator=(alphabet_proxy const &) = default;
-    constexpr alphabet_proxy & operator=(alphabet_proxy &&) = default;
-    ~alphabet_proxy() = default;
+    constexpr alphabet_proxy() noexcept : base_t{} {}                       //!< Defaulted.
+    constexpr alphabet_proxy(alphabet_proxy const &) = default;             //!< Defaulted.
+    constexpr alphabet_proxy(alphabet_proxy &&) = default;                  //!< Defaulted.
+    constexpr alphabet_proxy & operator=(alphabet_proxy const &) = default; //!< Defaulted.
+    constexpr alphabet_proxy & operator=(alphabet_proxy &&) = default;      //!< Defaulted.
+    ~alphabet_proxy() = default;                                            //!< Defaulted.
 
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept

@@ -246,12 +246,12 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr component_proxy() : base_t{}, parent{} {}
-        constexpr component_proxy(component_proxy const &) = default;
-        constexpr component_proxy(component_proxy &&) = default;
-        constexpr component_proxy & operator=(component_proxy const &) = default;
-        constexpr component_proxy & operator=(component_proxy &&) = default;
-        ~component_proxy() = default;
+        constexpr component_proxy() : base_t{}, parent{} {}                        //!< Defaulted.
+        constexpr component_proxy(component_proxy const &) = default;              //!< Defaulted.
+        constexpr component_proxy(component_proxy &&) = default;                   //!< Defaulted.
+        constexpr component_proxy & operator=(component_proxy const &) = default;  //!< Defaulted.
+        constexpr component_proxy & operator=(component_proxy &&) = default;       //!< Defaulted.
+        ~component_proxy() = default;                                              //!< Defaulted.
 
         constexpr component_proxy(alphabet_type const l, cartesian_composition & p) :
             base_t{l}, parent{&p}

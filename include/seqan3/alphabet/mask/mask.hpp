@@ -44,12 +44,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr mask() : base_t{} {}
-    constexpr mask(mask const &) = default;
-    constexpr mask(mask &&) = default;
-    constexpr mask & operator=(mask const &) = default;
-    constexpr mask & operator=(mask &&) = default;
-    ~mask() = default;
+    constexpr mask() : base_t{} {}                      //!< Defaulted.
+    constexpr mask(mask const &) = default;             //!< Defaulted.
+    constexpr mask(mask &&) = default;                  //!< Defaulted.
+    constexpr mask & operator=(mask const &) = default; //!< Defaulted.
+    constexpr mask & operator=(mask &&) = default;      //!< Defaulted.
+    ~mask() = default;                                  //!< Defaulted.
     //!\}
 
     /*!\name Boolean values
