@@ -40,12 +40,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aminoacid_base() : base_t{} {}
-    constexpr aminoacid_base(aminoacid_base const &) = default;
-    constexpr aminoacid_base(aminoacid_base &&) = default;
-    constexpr aminoacid_base & operator=(aminoacid_base const &) = default;
-    constexpr aminoacid_base & operator=(aminoacid_base &&) = default;
-    ~aminoacid_base() = default;
+    constexpr aminoacid_base() : base_t{} {}                                 //!< Defaulted.
+    constexpr aminoacid_base(aminoacid_base const &) = default;              //!< Defaulted.
+    constexpr aminoacid_base(aminoacid_base &&) = default;                   //!< Defaulted.
+    constexpr aminoacid_base & operator=(aminoacid_base const &) = default;  //!< Defaulted.
+    constexpr aminoacid_base & operator=(aminoacid_base &&) = default;       //!< Defaulted.
+    ~aminoacid_base() = default;                                             //!< Defaulted.
     //!\}
 
     //!\brief Befriend the derived class so it can instantiate.

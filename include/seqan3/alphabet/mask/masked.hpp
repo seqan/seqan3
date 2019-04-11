@@ -59,12 +59,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr masked() : base_type{} {}
-    constexpr masked(masked const &) = default;
-    constexpr masked(masked &&) = default;
-    constexpr masked & operator =(masked const &) = default;
-    constexpr masked & operator =(masked &&) = default;
-    ~masked() = default;
+    constexpr masked() : base_type{} {}                      //!< Defaulted.
+    constexpr masked(masked const &) = default;              //!< Defaulted.
+    constexpr masked(masked &&) = default;                   //!< Defaulted.
+    constexpr masked & operator =(masked const &) = default; //!< Defaulted.
+    constexpr masked & operator =(masked &&) = default;      //!< Defaulted.
+    ~masked() = default;                                     //!< Defaulted.
 
     using base_type::base_type; // Inherit non-default constructors
 

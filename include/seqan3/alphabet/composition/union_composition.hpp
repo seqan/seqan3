@@ -214,12 +214,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr union_composition() noexcept : base_t{} {}
-    constexpr union_composition(union_composition const &) = default;
-    constexpr union_composition(union_composition &&) = default;
-    constexpr union_composition & operator=(union_composition const &) = default;
-    constexpr union_composition & operator=(union_composition &&) = default;
-    ~union_composition() = default;
+    constexpr union_composition() noexcept : base_t{} {}                           //!< Defaulted.
+    constexpr union_composition(union_composition const &) = default;              //!< Defaulted.
+    constexpr union_composition(union_composition &&) = default;                   //!< Defaulted.
+    constexpr union_composition & operator=(union_composition const &) = default;  //!< Defaulted.
+    constexpr union_composition & operator=(union_composition &&) = default;       //!< Defaulted.
+    ~union_composition() = default;                                                //!< Defaulted.
 
     /*!\brief Construction via the value of an alternative.
      * \tparam alternative_t One of the alternative types.

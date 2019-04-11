@@ -69,12 +69,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alphabet_base() noexcept : rank{} {}
-    constexpr alphabet_base(alphabet_base const &) = default;
-    constexpr alphabet_base(alphabet_base &&) = default;
-    constexpr alphabet_base & operator=(alphabet_base const &) = default;
-    constexpr alphabet_base & operator=(alphabet_base &&) = default;
-    ~alphabet_base() = default;
+    constexpr alphabet_base() noexcept : rank{} {}                        //!< Defaulted.
+    constexpr alphabet_base(alphabet_base const &) = default;             //!< Defaulted.
+    constexpr alphabet_base(alphabet_base &&) = default;                  //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base const &) = default; //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base &&) = default;      //!< Defaulted.
+    ~alphabet_base() = default;                                           //!< Defaulted.
     //!\}
 
     /*!\name Read functions
@@ -302,12 +302,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alphabet_base() noexcept = default;
-    constexpr alphabet_base(alphabet_base const &) = default;
-    constexpr alphabet_base(alphabet_base &&) = default;
-    constexpr alphabet_base & operator=(alphabet_base const &) = default;
-    constexpr alphabet_base & operator=(alphabet_base &&) = default;
-    ~alphabet_base() = default;
+    constexpr alphabet_base() noexcept = default;                         //!< Defaulted.
+    constexpr alphabet_base(alphabet_base const &) = default;             //!< Defaulted.
+    constexpr alphabet_base(alphabet_base &&) = default;                  //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base const &) = default; //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base &&) = default;      //!< Defaulted.
+    ~alphabet_base() = default;                                           //!< Defaulted.
     //!\}
 
     /*!\name Read functions
