@@ -53,12 +53,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred63()                             noexcept = default; //!< Defaulted
-    constexpr phred63(phred63 const &)              noexcept = default; //!< Defaulted
-    constexpr phred63(phred63 &&)                   noexcept = default; //!< Defaulted
-    constexpr phred63 & operator=(phred63 const &)  noexcept = default; //!< Defaulted
-    constexpr phred63 & operator=(phred63 &&)       noexcept = default; //!< Defaulted
-    ~phred63()                                      noexcept = default; //!< Defaulted
+    constexpr phred63()                             noexcept = default; //!< Defaulted.
+    constexpr phred63(phred63 const &)              noexcept = default; //!< Defaulted.
+    constexpr phred63(phred63 &&)                   noexcept = default; //!< Defaulted.
+    constexpr phred63 & operator=(phred63 const &)  noexcept = default; //!< Defaulted.
+    constexpr phred63 & operator=(phred63 &&)       noexcept = default; //!< Defaulted.
+    ~phred63()                                      noexcept = default; //!< Defaulted.
 
     //!\brief Construct from phred value.
     constexpr phred63(phred_type const p) : base_t{p} {}

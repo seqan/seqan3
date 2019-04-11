@@ -46,12 +46,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr nucleotide_base()                                    noexcept = default; //!< Defaulted
-    constexpr nucleotide_base(nucleotide_base const &)             noexcept = default; //!< Defaulted
-    constexpr nucleotide_base(nucleotide_base &&)                  noexcept = default; //!< Defaulted
-    constexpr nucleotide_base & operator=(nucleotide_base const &) noexcept = default; //!< Defaulted
-    constexpr nucleotide_base & operator=(nucleotide_base &&)      noexcept = default; //!< Defaulted
-    ~nucleotide_base()                                             noexcept = default; //!< Defaulted
+    constexpr nucleotide_base()                                    noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base(nucleotide_base const &)             noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base(nucleotide_base &&)                  noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base & operator=(nucleotide_base const &) noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base & operator=(nucleotide_base &&)      noexcept = default; //!< Defaulted.
+    ~nucleotide_base()                                             noexcept = default; //!< Defaulted.
     //!\}
 
     //! Befriend the derived_type so it can instantiate.

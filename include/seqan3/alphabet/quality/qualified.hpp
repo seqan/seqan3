@@ -78,12 +78,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr qualified() noexcept : base_type{} {}
-    constexpr qualified(qualified const &) = default;
-    constexpr qualified(qualified &&) = default;
-    constexpr qualified & operator =(qualified const &) = default;
-    constexpr qualified & operator =(qualified &&) = default;
-    ~qualified() = default;
+    constexpr qualified()                               noexcept = default; //!< Defaulted.
+    constexpr qualified(qualified const &)              noexcept = default; //!< Defaulted.
+    constexpr qualified(qualified &&)                   noexcept = default; //!< Defaulted.
+    constexpr qualified & operator =(qualified const &) noexcept = default; //!< Defaulted.
+    constexpr qualified & operator =(qualified &&)      noexcept = default; //!< Defaulted.
+    ~qualified()                                        noexcept = default; //!< Defaulted.
 
     using base_type::base_type; // Inherit non-default constructors
 

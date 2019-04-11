@@ -61,12 +61,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dna5()                          noexcept = default; //!< Defaulted
-    constexpr dna5(dna5 const &)              noexcept = default; //!< Defaulted
-    constexpr dna5(dna5 &&)                   noexcept = default; //!< Defaulted
-    constexpr dna5 & operator=(dna5 const &)  noexcept = default; //!< Defaulted
-    constexpr dna5 & operator=(dna5 &&)       noexcept = default; //!< Defaulted
-    ~dna5()                                   noexcept = default; //!< Defaulted
+    constexpr dna5()                          noexcept = default; //!< Defaulted.
+    constexpr dna5(dna5 const &)              noexcept = default; //!< Defaulted.
+    constexpr dna5(dna5 &&)                   noexcept = default; //!< Defaulted.
+    constexpr dna5 & operator=(dna5 const &)  noexcept = default; //!< Defaulted.
+    constexpr dna5 & operator=(dna5 &&)       noexcept = default; //!< Defaulted.
+    ~dna5()                                   noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
 

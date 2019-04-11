@@ -42,12 +42,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr quality_base()                                  noexcept = default; //!< Defaulted
-    constexpr quality_base(quality_base const &)              noexcept = default; //!< Defaulted
-    constexpr quality_base(quality_base &&)                   noexcept = default; //!< Defaulted
-    constexpr quality_base & operator=(quality_base const &)  noexcept = default; //!< Defaulted
-    constexpr quality_base & operator=(quality_base &&)       noexcept = default; //!< Defaulted
-    ~quality_base()                                           noexcept = default; //!< Defaulted
+    constexpr quality_base()                                  noexcept = default; //!< Defaulted.
+    constexpr quality_base(quality_base const &)              noexcept = default; //!< Defaulted.
+    constexpr quality_base(quality_base &&)                   noexcept = default; //!< Defaulted.
+    constexpr quality_base & operator=(quality_base const &)  noexcept = default; //!< Defaulted.
+    constexpr quality_base & operator=(quality_base &&)       noexcept = default; //!< Defaulted.
+    ~quality_base()                                           noexcept = default; //!< Defaulted.
 
     //!\brief Allow construction from the phred value.
     constexpr quality_base(phred_type const p) noexcept
