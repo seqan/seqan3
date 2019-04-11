@@ -128,15 +128,13 @@ class argument_parser
 {
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief All standard constructors are explicitly defaulted except the
-     *        default constructor which is deleted.
      * \{
      */
-    argument_parser() = delete;
-    argument_parser(argument_parser const &) = default;
-    argument_parser & operator=(argument_parser const &) = default;
-    argument_parser(argument_parser &&) = default;
-    argument_parser & operator=(argument_parser &&) = default;
+    argument_parser() = delete;                                     //!< Deleted.
+    argument_parser(argument_parser const &) = default;             //!< Defaulted.
+    argument_parser & operator=(argument_parser const &) = default; //!< Defaulted.
+    argument_parser(argument_parser &&) = default;                  //!< Defaulted.
+    argument_parser & operator=(argument_parser &&) = default;      //!< Defaulted.
 
     /*!\brief Initializes an argument_parser object from the command line arguments.
      *

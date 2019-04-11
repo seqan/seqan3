@@ -258,7 +258,7 @@ public:
     /*!\brief Constructing from a vector.
      * \param[in] v The vector of valid file extensions to test (e.g. {"fa", "fasta"}).
      * \param[in] c Case sensitivity flag. Set true for case sensitivity. Default: false (case insensitive).
-     *              
+     *
      * For case insensitivity, everything is converted to lower case characters.
      */
     file_ext_validator(std::vector<std::string> const & v, bool const c = false) :
@@ -270,7 +270,7 @@ public:
     /*!\brief Constructing from an initializer_list.
      * \param[in] v The initializer_list of valid file extensions to test (e.g. {"fa", "fasta"}).
      * \param[in] c Case sensitivity flag. Set true for case sensitivity. Default: false (case insensitive).
-     *              
+     *
      * For case insensitivity, everything is converted to lower case characters.
      */
     file_ext_validator(std::initializer_list<std::string> const & v, bool const c = false) :
@@ -494,12 +494,11 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    //!\brief The default constructor is explicitly deleted.
-    validator_chain_adaptor() = delete;
-    validator_chain_adaptor(validator_chain_adaptor const & pf) = default;
-    validator_chain_adaptor & operator=(validator_chain_adaptor const & pf) = default;
-    validator_chain_adaptor(validator_chain_adaptor &&) = default;
-    validator_chain_adaptor & operator=(validator_chain_adaptor &&) = default;
+    validator_chain_adaptor() = delete;                                                //!< Deleted.
+    validator_chain_adaptor(validator_chain_adaptor const & pf) = default;             //!< Defaulted.
+    validator_chain_adaptor & operator=(validator_chain_adaptor const & pf) = default; //!< Defaulted.
+    validator_chain_adaptor(validator_chain_adaptor &&) = default;                     //!< Defaulted.
+    validator_chain_adaptor & operator=(validator_chain_adaptor &&) = default;         //!< Defaulted.
 
     /*!\brief Constructing from two validators.
      * \param[in] vali1_ Some validator to be chained to vali2_.

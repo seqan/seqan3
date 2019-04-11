@@ -51,14 +51,13 @@ class format_parse : public format_base
 {
 public:
     /*!\name Constructors, destructor and assignment
-     * \brief The (default) constructors.
      * \{
      */
-    format_parse() = delete;
-    format_parse(format_parse const & pf) = default;
-    format_parse & operator=(format_parse const & pf) = default;
-    format_parse(format_parse &&) = default;
-    format_parse & operator=(format_parse &&) = default;
+    format_parse() = delete;                                     //!< Deleted.
+    format_parse(format_parse const & pf) = default;             //!< Defaulted.
+    format_parse & operator=(format_parse const & pf) = default; //!< Defaulted.
+    format_parse(format_parse &&) = default;                     //!< Defaulted.
+    format_parse & operator=(format_parse &&) = default;         //!< Defaulted.
 
     /*!\brief The constructor of the parse format.
      * \param[in] argc_ The number of command line arguments.
