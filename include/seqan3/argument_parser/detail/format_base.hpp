@@ -247,7 +247,8 @@ public:
             if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
                   derived_t().print_list_item(prep_id_for_help(short_id, long_id) +
                                               " " + option_type_and_list_info(value),
-                                              (desc + " " + validator.get_help_page_message()));
+                                              desc + detail::to_string(" Default: ", value, ". ") +
+                                              validator.get_help_page_message());
         });
     }
 
@@ -288,9 +289,10 @@ public:
         positional_option_calls.push_back([this, &value, desc, validator] ()
         {
             ++positional_option_count;
-            std::string key{"\\fBARGUMENT-" + std::to_string(positional_option_count) +
-                            "\\fP " + option_type_and_list_info(value)};
-            derived_t().print_list_item(key, (desc + " " + validator.get_help_page_message()));
+            derived_t().print_list_item(detail::to_string("\\fBARGUMENT-", positional_option_count, "\\fP ",
+                                                          option_type_and_list_info(value)),
+                                        desc + detail::to_string(" Default: ", value, ". ") +
+                                        validator.get_help_page_message());
         });
     }
 

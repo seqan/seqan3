@@ -21,9 +21,9 @@ using namespace seqan3;
 // reused global variables
 std::string std_cout;
 std::string expected;
-int option_value;
-bool flag_value;
-std::vector<std::string> pos_opt_value;
+int option_value{5};
+bool flag_value{};
+std::vector<std::string> pos_opt_value{};
 const char * argv0[] = {"./help_add_test"};
 const char * argv1[] = {"./help_add_test", "-h"};
 const char * argv2[] = {"./help_add_test", "-hh"};
@@ -220,10 +220,10 @@ TEST(help_page_printing, full_information)
                "description2"
                "POSITIONAL ARGUMENTS"
                "ARGUMENT-1 (List of std::string's)"
-               "this is a positional option." +
+               "this is a positional option. Default: []." +
                basic_options_str +
                "-i, --int (signed 32 bit integer)"
-               "this is a int option."
+               "this is a int option. Default: 5."
                "FLAGS"
                "SubFlags"
                "here come all the flags"
