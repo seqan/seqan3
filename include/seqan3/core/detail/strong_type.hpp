@@ -123,12 +123,12 @@ public:
      * \brief The standard functions are explicitly defaulted.
      * \{
      */
-    constexpr strong_type() = default;
-    constexpr strong_type(strong_type const &) = default;
-    constexpr strong_type(strong_type &&) = default;
-    constexpr strong_type & operator= (strong_type const &) = default;
-    constexpr strong_type & operator= (strong_type &&) = default;
-    ~strong_type() = default;
+    constexpr strong_type()                                 noexcept = default; //!< Defaulted.
+    constexpr strong_type(strong_type const &)              noexcept = default; //!< Defaulted.
+    constexpr strong_type(strong_type &&)                   noexcept = default; //!< Defaulted.
+    constexpr strong_type & operator= (strong_type const &) noexcept = default; //!< Defaulted.
+    constexpr strong_type & operator= (strong_type &&)      noexcept = default; //!< Defaulted.
+    ~strong_type()                                          noexcept = default; //!< Defaulted.
 
     //!\brief Construction from underlying value type.
     constexpr explicit strong_type(value_t _value) : value(std::move(_value))

@@ -93,12 +93,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr configuration()                                  = default;
-    constexpr configuration(configuration const &)             = default;
-    constexpr configuration(configuration &&)                  = default;
-    constexpr configuration & operator=(configuration const &) = default;
-    constexpr configuration & operator=(configuration &&)      = default;
-    ~configuration()                                           = default;
+    constexpr configuration()                                  = default; //!< Defaulted.
+    constexpr configuration(configuration const &)             = default; //!< Defaulted.
+    constexpr configuration(configuration &&)                  = default; //!< Defaulted.
+    constexpr configuration & operator=(configuration const &) = default; //!< Defaulted.
+    constexpr configuration & operator=(configuration &&)      = default; //!< Defaulted.
+    ~configuration()                                           = default; //!< Defaulted.
 
     /*!\brief Constructs a configuration from a single configuration element.
      * \param elem The element to store.
