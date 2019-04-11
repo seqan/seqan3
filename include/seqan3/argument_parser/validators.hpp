@@ -12,12 +12,12 @@
 
 #pragma once
 
-#include <sstream>
 #include <regex>
+#include <sstream>
 
-#include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/range/container/concept.hpp>
