@@ -57,12 +57,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr rna5() noexcept : base_t{} {}
-    constexpr rna5(rna5 const &) = default;
-    constexpr rna5(rna5 &&) = default;
-    constexpr rna5 & operator=(rna5 const &) = default;
-    constexpr rna5 & operator=(rna5 &&) = default;
-    ~rna5() = default;
+    constexpr rna5()                          noexcept = default; //!< Defaulted.
+    constexpr rna5(rna5 const &)              noexcept = default; //!< Defaulted.
+    constexpr rna5(rna5 &&)                   noexcept = default; //!< Defaulted.
+    constexpr rna5 & operator=(rna5 const &)  noexcept = default; //!< Defaulted.
+    constexpr rna5 & operator=(rna5 &&)       noexcept = default; //!< Defaulted.
+    ~rna5()                                   noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
 

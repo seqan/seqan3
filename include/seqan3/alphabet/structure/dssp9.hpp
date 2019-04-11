@@ -68,12 +68,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dssp9() noexcept : base_t{} {}
-    constexpr dssp9(dssp9 const &) = default;
-    constexpr dssp9(dssp9 &&) = default;
-    constexpr dssp9 & operator=(dssp9 const &) = default;
-    constexpr dssp9 & operator=(dssp9 &&) = default;
-    ~dssp9() = default;
+    constexpr dssp9()                           noexcept = default; //!< Defaulted.
+    constexpr dssp9(dssp9 const &)              noexcept = default; //!< Defaulted.
+    constexpr dssp9(dssp9 &&)                   noexcept = default; //!< Defaulted.
+    constexpr dssp9 & operator=(dssp9 const &)  noexcept = default; //!< Defaulted.
+    constexpr dssp9 & operator=(dssp9 &&)       noexcept = default; //!< Defaulted.
+    ~dssp9()                                    noexcept = default; //!< Defaulted.
     //!\}
 
 protected:

@@ -70,12 +70,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr structured_rna() noexcept : base_type{} {}
-    constexpr structured_rna(structured_rna const &) = default;
-    constexpr structured_rna(structured_rna &&) = default;
-    constexpr structured_rna & operator =(structured_rna const &) = default;
-    constexpr structured_rna & operator =(structured_rna &&) = default;
-    ~structured_rna() = default;
+    constexpr structured_rna()                                    noexcept = default; //!< Defaulted.
+    constexpr structured_rna(structured_rna const &)              noexcept = default; //!< Defaulted.
+    constexpr structured_rna(structured_rna &&)                   noexcept = default; //!< Defaulted.
+    constexpr structured_rna & operator =(structured_rna const &) noexcept = default; //!< Defaulted.
+    constexpr structured_rna & operator =(structured_rna &&)      noexcept = default; //!< Defaulted.
+    ~structured_rna()                                             noexcept = default; //!< Defaulted.
 
     using base_type::base_type; // Inherit non-default constructors
 

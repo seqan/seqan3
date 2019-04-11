@@ -53,12 +53,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred68legacy() noexcept : base_t{} {}
-    constexpr phred68legacy(phred68legacy const &) = default;
-    constexpr phred68legacy(phred68legacy &&) = default;
-    constexpr phred68legacy & operator=(phred68legacy const &) = default;
-    constexpr phred68legacy & operator=(phred68legacy &&) = default;
-    ~phred68legacy() = default;
+    constexpr phred68legacy()                                   noexcept = default; //!< Defaulted.
+    constexpr phred68legacy(phred68legacy const &)              noexcept = default; //!< Defaulted.
+    constexpr phred68legacy(phred68legacy &&)                   noexcept = default; //!< Defaulted.
+    constexpr phred68legacy & operator=(phred68legacy const &)  noexcept = default; //!< Defaulted.
+    constexpr phred68legacy & operator=(phred68legacy &&)       noexcept = default; //!< Defaulted.
+    ~phred68legacy()                                            noexcept = default; //!< Defaulted.
 
     //!\brief Construct from phred value.
     constexpr phred68legacy(phred_type const p) : base_t{p} {}

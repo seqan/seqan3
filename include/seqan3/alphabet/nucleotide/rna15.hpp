@@ -59,12 +59,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr rna15() noexcept : base_t{} {}
-    constexpr rna15(rna15 const &) = default;
-    constexpr rna15(rna15 &&) = default;
-    constexpr rna15 & operator=(rna15 const &) = default;
-    constexpr rna15 & operator=(rna15 &&) = default;
-    ~rna15() = default;
+    constexpr rna15()                           noexcept = default; //!< Defaulted.
+    constexpr rna15(rna15 const &)              noexcept = default; //!< Defaulted.
+    constexpr rna15(rna15 &&)                   noexcept = default; //!< Defaulted.
+    constexpr rna15 & operator=(rna15 const &)  noexcept = default; //!< Defaulted.
+    constexpr rna15 & operator=(rna15 &&)       noexcept = default; //!< Defaulted.
+    ~rna15()                                    noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
 
