@@ -350,10 +350,12 @@ public:
     /*!\brief Adds an help page text line to the seqan3::argument_parser.
      * \param[in] text The text to print.
      * \param[in] line_is_paragraph Whether to insert as paragraph
-     *            or just a line (only one line break if not a paragraph).
-     * \details This only affects the help page and other output formats.
+     *            or just a line (Default: false).
+     * \details
+     * If the line is not a paragraph (false), only one line break is appended, otherwise two line breaks are appended.
+     * This only affects the help page and other output formats.
      */
-    void add_line(std::string const & text, bool line_is_paragraph)
+    void add_line(std::string const & text, bool line_is_paragraph = false)
     {
         std::visit([&] (auto & f) { f.add_line(text, line_is_paragraph); }, format);
     }
