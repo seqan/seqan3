@@ -21,6 +21,7 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/range/view/drop.hpp>
 #include <seqan3/range/view/to_lower.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/filesystem>
@@ -359,6 +360,233 @@ public:
     std::string get_help_page_message() const
     {
         return detail::to_string("The file or directory is checked for existence.");
+    }
+};
+
+/*!\brief An abstract base class for the file validators.
+ * \ingroup argument_parser
+ *
+ * \details
+ *
+ * Provides some common interface for seqan3::input_file_validator and the seqan3::output_file_validator.
+ * This class cannot not be instantiated directly but can only be used as a CRTP-base class.
+ */
+template <typename derived_t>
+class file_validator_base
+{
+
+private:
+
+    //!\brief Befriend the derived class.
+    friend derived_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    file_validator_base() = default;                                        //!< Defaulted.
+    file_validator_base(file_validator_base const &) = default;             //!< Defaulted.
+    file_validator_base(file_validator_base &&) = default;                  //!< Defaulted.
+    file_validator_base & operator=(file_validator_base const &) = default; //!< Defaulted.
+    file_validator_base & operator=(file_validator_base &&) = default;      //!< Defaulted.
+    ~file_validator_base() = default;                                       //!< Defaulted.
+
+    /*!\brief Constructs from a set of valid extensions.
+     * \param[in] extensions The valid extensions to validate for.
+     */
+    file_validator_base(std::vector<std::string> extensions) : extensions{std::move(extensions)}
+    {}
+    //!\}
+
+public:
+
+    //!\brief Type of values that are tested by validator.
+    using value_type = std::filesystem::path;
+
+    /*!\brief Tests whether file exists.
+     * \param path The input value to check.
+     * \throws parser_invalid_argument
+     */
+    void operator()(std::filesystem::path const & path) const
+    {
+        // Check if extension is available.
+        if (!path.has_extension())
+            throw parser_invalid_argument(detail::to_string("The given filename ", path.string(),
+                                                            " has no extension."));
+
+        // Call derived type validation procedure.
+        static_cast<derived_t const &>(*this).validate_path_impl(path);
+
+        // If no valid extensions are given we can safely return here.
+        if (extensions.empty())
+            return;
+
+        // Drop the dot.
+        std::string tmp_str = path.extension().string();
+        auto drop_less_ext = tmp_str | view::drop(1);
+
+        // Compares the extensions in lower case.
+        auto cmp_lambda = [&] (std::string const & cmp)
+        {
+            return std::ranges::equal(cmp | view::to_lower, drop_less_ext | view::to_lower);
+        };
+
+        // Check if requested extension is present.
+        if (auto res = std::find_if(extensions.begin(), extensions.end(), cmp_lambda); res == extensions.end())
+        {
+            throw parser_invalid_argument(detail::to_string("Expected on of the following valid extensions: ",
+                                                             std::view::all(extensions), ". Got ",
+                                                             std::string{std::ranges::begin(drop_less_ext),
+                                                                         std::ranges::end(drop_less_ext)},
+                                                             " instead."));
+        }
+    }
+
+    /*!\brief Tests whether every path in list \p v exists.
+     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
+     *                    be convertible to std::filesystem::path.
+     * \param  v          The input range to iterate over and check every element.
+     * \throws parser_invalid_argument
+     */
+    template <std::ranges::ForwardRange range_type>
+    //!\cond
+        requires std::ConvertibleTo<value_type_t<range_type>, std::filesystem::path const &>
+    //!\endcond
+    void operator()(range_type const & v) const
+    {
+         std::for_each(v.begin(), v.end(), [&] (auto cmp) { this->operator()(cmp); });
+    }
+
+private:
+
+    //!\brief Stores the extensions.
+    std::vector<std::string> extensions{};
+};
+
+/*!\brief A validator that checks if a given path is a valid input file.
+ * \ingroup argument_parser
+ * \implements seqan3::validator_concept
+ *
+ * \details
+ *
+ * On construction, the validator must receive a list (std::vector over std::string) of valid file extensions.
+ * The struct than acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename
+ * (sts::string) is not in the given list of valid file extensions or if the file does not exist.
+ *
+ * \snippet test/snippet/argument_parser/validators_input_file.cpp usage
+ *
+ * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
+ */
+class input_file_validator : public file_validator_base<input_file_validator>
+{
+private:
+
+    //!\brief The type of the base class.
+    using base_t = file_validator_base<input_file_validator>;
+
+    //!\brief Befriends the base class.
+    friend base_t;
+
+public:
+    //!\brief Type of values that are tested by the validator.
+    using base_t::value_type;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    input_file_validator() = default;                                         //!< Defaulted.
+    input_file_validator(input_file_validator const &) = default;             //!< Defaulted.
+    input_file_validator(input_file_validator &&) = default;                  //!< Defaulted.
+    input_file_validator & operator=(input_file_validator const &) = default; //!< Defaulted.
+    input_file_validator & operator=(input_file_validator &&) = default;      //!< Defaulted.
+    ~input_file_validator() = default;                                        //!< Defaulted.
+
+    /*!\brief Constructs from a set of valid extensions.
+     * \param[in] extensions The valid extensions to validate for.
+     */
+    input_file_validator(std::vector<std::string> extensions) : base_t{std::move(extensions)}
+    {}
+    //!\}
+
+    //!\brief Returns a message that can be appended to the (positional) options help page info.
+    std::string get_help_page_message() const
+    {
+        return detail::to_string("Input file formats: ", base_t::extensions | std::view::join(std::string{", "}), ".");
+    }
+
+private:
+
+    /*!\brief Tests whether file exists.
+     * \param path The input value to check.
+     * \throws parser_invalid_argument
+     */
+    void validate_path_impl(std::filesystem::path const & path) const
+    {
+        if (!std::filesystem::exists(path))
+            throw parser_invalid_argument(detail::to_string("The file ", path, " does not exist."));
+    }
+};
+
+/*!\brief A validator that checks if a given path is a valid output file.
+ * \ingroup argument_parser
+ * \implements seqan3::validator_concept
+ *
+ * \details
+ *
+ * On construction, the validator must receive a list (std::vector over std::string) of valid file extensions.
+ * The struct than acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename
+ * (sts::string) is not in the given list of valid file extensions or if the file already exist.
+ *
+ * \snippet test/snippet/argument_parser/validators_output_file.cpp usage
+ *
+ * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
+ */
+class output_file_validator : public file_validator_base<output_file_validator>
+{
+private:
+
+    //!\brief The type of the base class.
+    using base_t = file_validator_base<output_file_validator>;
+
+    //!\brief Befriends the base class.
+    friend base_t;
+
+public:
+    //!\brief Type of values that are tested by validator.
+    using base_t::value_type;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    output_file_validator() = default;                                            //!< Defaulted.
+    output_file_validator(output_file_validator const &) = default;               //!< Defaulted.
+    output_file_validator(output_file_validator &&) = default;                    //!< Defaulted.
+    output_file_validator & operator=(output_file_validator const &) = default;   //!< Defaulted.
+    output_file_validator & operator=(output_file_validator &&) = default;        //!< Defaulted.
+    ~output_file_validator() = default;                                           //!< Defaulted.
+
+    /*!\brief Constructs from a set of valid extensions.
+     * \param[in] extensions The valid extensions to validate for.
+     */
+    output_file_validator(std::vector<std::string> extensions) : base_t{std::move(extensions)}
+    {}
+    //!\}
+
+    //!\brief Returns a message that can be appended to the (positional) options help page info.
+    std::string get_help_page_message() const
+    {
+        return detail::to_string("Output file formats: ", base_t::extensions | std::view::join(std::string{", "}), ".");
+    }
+
+private:
+
+    /*!\brief Tests whether file already exists.
+     * \param path The filename to check.
+     * \throws parser_invalid_argument
+     */
+    void validate_path_impl(std::filesystem::path const & path) const
+    {
+        if (std::filesystem::exists(path))
+            throw parser_invalid_argument(detail::to_string("The file ", path, " already exists."));
     }
 };
 
