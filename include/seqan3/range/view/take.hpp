@@ -84,12 +84,12 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        iterator_type() = default;
-        constexpr iterator_type(iterator_type const & rhs) = default;
-        constexpr iterator_type(iterator_type && rhs) = default;
-        constexpr iterator_type & operator=(iterator_type const & rhs) = default;
-        constexpr iterator_type & operator=(iterator_type && rhs) = default;
-        ~iterator_type() = default;
+        iterator_type()                                                noexcept = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type const & rhs)             noexcept = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type && rhs)                  noexcept = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type const & rhs) noexcept = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type && rhs)      noexcept = default; //!< Defaulted.
+        ~iterator_type()                                               noexcept = default; //!< Defaulted.
 
         //!\brief Constructor that delegates to the CRTP layer.
         iterator_type(base_base_t const & it) :
@@ -260,12 +260,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_take() = default;
-    constexpr view_take(view_take const & rhs) = default;
-    constexpr view_take(view_take && rhs) = default;
-    constexpr view_take & operator=(view_take const & rhs) = default;
-    constexpr view_take & operator=(view_take && rhs) = default;
-    ~view_take() = default;
+    view_take()                                            = default; //!< Defaulted.
+    constexpr view_take(view_take const & rhs)             = default; //!< Defaulted.
+    constexpr view_take(view_take && rhs)                  = default; //!< Defaulted.
+    constexpr view_take & operator=(view_take const & rhs) = default; //!< Defaulted.
+    constexpr view_take & operator=(view_take && rhs)      = default; //!< Defaulted.
+    ~view_take()                                           = default; //!< Defaulted.
 
     /*!\brief Construct from another View.
      * \param[in] _urange The underlying range.

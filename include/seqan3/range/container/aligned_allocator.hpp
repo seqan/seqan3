@@ -77,12 +77,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    aligned_allocator() = default;
-    aligned_allocator(aligned_allocator const &) = default;
-    aligned_allocator(aligned_allocator &&) = default;
-    aligned_allocator& operator=(aligned_allocator const &) = default;
-    aligned_allocator& operator=(aligned_allocator &&) = default;
-    ~aligned_allocator() = default;
+    aligned_allocator()                                     = default; //!< Defaulted.
+    aligned_allocator(aligned_allocator const &)            = default; //!< Defaulted.
+    aligned_allocator(aligned_allocator &&)                 = default; //!< Defaulted.
+    aligned_allocator& operator=(aligned_allocator const &) = default; //!< Defaulted.
+    aligned_allocator& operator=(aligned_allocator &&)      = default; //!< Defaulted.
+    ~aligned_allocator()                                    = default; //!< Defaulted.
 
     template <class other_value_type>
     constexpr aligned_allocator(aligned_allocator<other_value_type, alignment> const &) noexcept

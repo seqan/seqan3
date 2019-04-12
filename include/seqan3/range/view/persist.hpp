@@ -73,12 +73,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_persist() = default;
-    constexpr view_persist(view_persist const & rhs) = default;
-    constexpr view_persist(view_persist && rhs) = default;
-    constexpr view_persist & operator=(view_persist const & rhs) = default;
-    constexpr view_persist & operator=(view_persist && rhs) = default;
-    ~view_persist() = default;
+    view_persist()                                               noexcept = default; //!< Defaulted.
+    constexpr view_persist(view_persist const & rhs)             noexcept = default; //!< Defaulted.
+    constexpr view_persist(view_persist && rhs)                  noexcept = default; //!< Defaulted.
+    constexpr view_persist & operator=(view_persist const & rhs) noexcept = default; //!< Defaulted.
+    constexpr view_persist & operator=(view_persist && rhs)      noexcept = default; //!< Defaulted.
+    ~view_persist()                                              noexcept = default; //!< Defaulted.
 
     /*!\brief Construct from another range.
      * \param[in] _urange The underlying range.
