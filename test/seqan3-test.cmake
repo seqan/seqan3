@@ -178,7 +178,7 @@ macro (seqan3_require_benchmark)
         gbenchmark_project
         PREFIX gbenchmark_project
         GIT_REPOSITORY "https://github.com/google/benchmark.git"
-        GIT_TAG "b8ca0c42179b7b5d656494e61dda8b861057122f"
+        GIT_TAG "415835e03e5e78b5c17b450903c553a079214879"
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
         UPDATE_DISCONNECTED yes
