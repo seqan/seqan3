@@ -60,12 +60,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    inherited_iterator_base() = default;
-    constexpr inherited_iterator_base(inherited_iterator_base const & rhs) = default;
-    constexpr inherited_iterator_base(inherited_iterator_base && rhs) = default;
-    constexpr inherited_iterator_base & operator=(inherited_iterator_base const & rhs) = default;
-    constexpr inherited_iterator_base & operator=(inherited_iterator_base && rhs) = default;
-    ~inherited_iterator_base() = default;
+    inherited_iterator_base()                                                          = default; //!< Defaulted.
+    constexpr inherited_iterator_base(inherited_iterator_base const & rhs)             = default; //!< Defaulted.
+    constexpr inherited_iterator_base(inherited_iterator_base && rhs)                  = default; //!< Defaulted.
+    constexpr inherited_iterator_base & operator=(inherited_iterator_base const & rhs) = default; //!< Defaulted.
+    constexpr inherited_iterator_base & operator=(inherited_iterator_base && rhs)      = default; //!< Defaulted.
+    ~inherited_iterator_base()                                                         = default; //!< Defaulted.
 
     inherited_iterator_base(base_t it) : base_t{it} {}
     //!\}

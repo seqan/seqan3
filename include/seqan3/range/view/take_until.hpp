@@ -93,12 +93,12 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        iterator_type() = default;
-        constexpr iterator_type(iterator_type const & rhs) = default;
-        constexpr iterator_type(iterator_type && rhs) = default;
-        constexpr iterator_type & operator=(iterator_type const & rhs) = default;
-        constexpr iterator_type & operator=(iterator_type && rhs) = default;
-        ~iterator_type() = default;
+        iterator_type()                                                = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type const & rhs)             = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type && rhs)                  = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type && rhs)      = default; //!< Defaulted.
+        ~iterator_type()                                               = default; //!< Defaulted.
 
         //!\brief Constructor that delegates to the CRTP layer.
         iterator_type(base_base_t const & it) :
@@ -330,12 +330,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_take_until() = default;
-    constexpr view_take_until(view_take_until const & rhs) = default;
-    constexpr view_take_until(view_take_until && rhs) = default;
-    constexpr view_take_until & operator=(view_take_until const & rhs) = default;
-    constexpr view_take_until & operator=(view_take_until && rhs) = default;
-    ~view_take_until() = default;
+    view_take_until()                                                  = default; //!< Defaulted.
+    constexpr view_take_until(view_take_until const & rhs)             = default; //!< Defaulted.
+    constexpr view_take_until(view_take_until && rhs)                  = default; //!< Defaulted.
+    constexpr view_take_until & operator=(view_take_until const & rhs) = default; //!< Defaulted.
+    constexpr view_take_until & operator=(view_take_until && rhs)      = default; //!< Defaulted.
+    ~view_take_until()                                                 = default; //!< Defaulted.
 
     /*!\brief Construct from another range.
      * \param[in] _urange The underlying range.

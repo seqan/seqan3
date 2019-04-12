@@ -190,12 +190,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_translate_single() = default;
-    constexpr view_translate_single(view_translate_single const & rhs) = default;
-    constexpr view_translate_single(view_translate_single && rhs) = default;
-    constexpr view_translate_single & operator=(view_translate_single const & rhs) = default;
-    constexpr view_translate_single & operator=(view_translate_single && rhs) = default;
-    ~view_translate_single() = default;
+    view_translate_single()                                                        noexcept = default; //!< Defaulted.
+    constexpr view_translate_single(view_translate_single const & rhs)             noexcept = default; //!< Defaulted.
+    constexpr view_translate_single(view_translate_single && rhs)                  noexcept = default; //!< Defaulted.
+    constexpr view_translate_single & operator=(view_translate_single const & rhs) noexcept = default; //!< Defaulted.
+    constexpr view_translate_single & operator=(view_translate_single && rhs)      noexcept = default; //!< Defaulted.
+    ~view_translate_single()                                                       noexcept = default; //!< Defaulted.
 
     /*!\brief Construct from another range.
      * \param[in] urange The underlying range.
@@ -516,12 +516,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_translate() = default;
-    constexpr view_translate(view_translate const & rhs) = default;
-    constexpr view_translate(view_translate && rhs) = default;
-    constexpr view_translate & operator=(view_translate const & rhs) = default;
-    constexpr view_translate & operator=(view_translate && rhs) = default;
-    ~view_translate() = default;
+    view_translate()                                                 noexcept = default; //!< Defaulted.
+    constexpr view_translate(view_translate const & rhs)             noexcept = default; //!< Defaulted.
+    constexpr view_translate(view_translate && rhs)                  noexcept = default; //!< Defaulted.
+    constexpr view_translate & operator=(view_translate const & rhs) noexcept = default; //!< Defaulted.
+    constexpr view_translate & operator=(view_translate && rhs)      noexcept = default; //!< Defaulted.
+    ~view_translate()                                                noexcept = default; //!< Defaulted.
 
     /*!\brief Construct from another range.
      * \param[in] urange The underlying range (of ranges).

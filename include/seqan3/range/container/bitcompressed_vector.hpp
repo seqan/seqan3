@@ -113,15 +113,14 @@ private:
         using base_t::operator=;
 
         /*!\name Constructors, destructor and assignment
-         * \brief All are explicitly defaulted.
          * \{
          */
-        constexpr reference_proxy_type() noexcept : base_t{}, internal_proxy{} {}
-        constexpr reference_proxy_type(reference_proxy_type const &) = default;
-        constexpr reference_proxy_type(reference_proxy_type &&) = default;
-        constexpr reference_proxy_type & operator=(reference_proxy_type const &) = default;
-        constexpr reference_proxy_type & operator=(reference_proxy_type &&) = default;
-        ~reference_proxy_type() = default;
+        constexpr reference_proxy_type()                                         noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type const &)             noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type &&)                  noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type & operator=(reference_proxy_type const &) noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type & operator=(reference_proxy_type &&)      noexcept = default; //!< Defaulted.
+        ~reference_proxy_type()                                                  noexcept = default; //!< Defaulted.
 
         //!\brief Initialise from internal proxy type.
         reference_proxy_type(internal_proxy_type const & internal) noexcept :
@@ -170,12 +169,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    bitcompressed_vector() = default;
-    constexpr bitcompressed_vector(bitcompressed_vector const &) = default;
-    constexpr bitcompressed_vector(bitcompressed_vector &&) = default;
-    constexpr bitcompressed_vector & operator=(bitcompressed_vector const &) = default;
-    constexpr bitcompressed_vector & operator=(bitcompressed_vector &&) = default;
-    ~bitcompressed_vector() = default;
+    bitcompressed_vector()                                                   = default; //!< Defaulted.
+    constexpr bitcompressed_vector(bitcompressed_vector const &)             = default; //!< Defaulted.
+    constexpr bitcompressed_vector(bitcompressed_vector &&)                  = default; //!< Defaulted.
+    constexpr bitcompressed_vector & operator=(bitcompressed_vector const &) = default; //!< Defaulted.
+    constexpr bitcompressed_vector & operator=(bitcompressed_vector &&)      = default; //!< Defaulted.
+    ~bitcompressed_vector()                                                  = default; //!< Defaulted.
 
     /*!\brief Construct from a different range.
      * \tparam other_range_t The type of range to construct from; must satisfy std::ranges::InputRange and

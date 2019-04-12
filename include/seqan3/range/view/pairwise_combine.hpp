@@ -87,12 +87,12 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr iterator_type() = default;
-        constexpr iterator_type(iterator_type const &) = default;
-        constexpr iterator_type(iterator_type &&) = default;
-        constexpr iterator_type & operator=(iterator_type const &) = default;
-        constexpr iterator_type & operator=(iterator_type &&) = default;
-        ~iterator_type() = default;
+        constexpr iterator_type()                                  noexcept = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type const &)             noexcept = default; //!< Defaulted.
+        constexpr iterator_type(iterator_type &&)                  noexcept = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type const &) noexcept = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type &&)      noexcept = default; //!< Defaulted.
+        ~iterator_type()                                           noexcept = default; //!< Defaulted.
 
         /*!\brief Constructs the iterator from the current underlying iterator and the end iterator of the underlying
          *        range.
