@@ -14,15 +14,15 @@
 
 #include <cmath>
 
-#include <range/v3/view/split.hpp>
 #include <range/v3/view/join.hpp>
+#include <range/v3/view/split.hpp>
 
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
-#include <seqan3/range/view/view_all.hpp>
+#include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/range/view/persist.hpp>
-#include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
@@ -249,41 +249,42 @@ view_interleave(urng_t &&, size_t, inserted_rng_t &&)
 //  interleave_fn (adaptor definition)
 // ============================================================================
 
-/*!\brief View adaptor definition for view::interleave.
+/*!\brief view::interleave's range adaptor object type (non-closure).
  */
-class interleave_fn : public pipable_adaptor_base<interleave_fn>
+struct interleave_fn
 {
-private:
-    //!\brief Type of the CRTP-base.
-    using base_t = pipable_adaptor_base<interleave_fn>;
-
-public:
-    //!\brief Inherit the base class's Constructors.
-    using base_t::base_t;
-
-private:
-    //!\brief Befriend the base class so it can call impl().
-    friend base_t;
-
-    /*!\brief       For ranges that are viewable, delegate to std::view::all.
-     * \returns     An instance of std::view::all.
-     */
-    template <std::ranges::RandomAccessRange urng_t, std::ranges::RandomAccessRange inserted_rng_t,
-              std::Integral size_type>
-        requires std::ranges::SizedRange<urng_t> &&
-                 std::ranges::SizedRange<inserted_rng_t>
-    static auto impl(urng_t && urange, size_type size, inserted_rng_t && i)
+    //!\brief Store the argument and return a range adaptor closure object.
+    template <std::ranges::ForwardRange inserted_rng_t, std::Integral size_type>
+    constexpr auto operator()(size_type const size, inserted_rng_t && i) const noexcept
     {
-        return view_interleave{urange, size, i};
+        return detail::adaptor_from_functor{*this, size, std::forward<inserted_rng_t>(i)};
     }
 
-    /*!\brief       For ranges that are not views and not lvalue-references, call view_interleave's constructor.
-     * \returns     An instance of seqan3::detail::view_interleave.
+    /*!\brief            Call the view's constructor with the underlying view as argument.
+     * \param[in] urange The input range to process. Must model std::ranges::ForwardRange and std::ranges::ViewableRange.
+     * \param[in] i      The inserted range to process. Must model std::ranges::ForwardRange.
+     * \param[in] size   The step size for insertion into the input range.
+     * \returns          A range of with the inserted range interleaved into the underlying range at the specified intervals.
      */
-    template <std::ranges::ForwardRange urng_t, std::ranges::ForwardRange inserted_rng_t, std::Integral size_type>
-    static auto impl(urng_t && urange, size_type size, inserted_rng_t && i)
+    template <std::ranges::Range urng_t, std::ranges::Range inserted_rng_t, std::Integral size_type>
+    constexpr auto operator()(urng_t && urange, size_type const size, inserted_rng_t && i) const noexcept
     {
-        return ranges::view::split(urange, size) | ranges::view::join(i);
+        static_assert(std::ranges::ForwardRange<urng_t>,
+            "The underlying range parameter in view::interleave must model std::ranges::ForwardRange.");
+        static_assert(std::ranges::ViewableRange<urng_t>,
+            "The underlying range parameter in view::interleave must model std::ranges::ViewableRange.");
+        static_assert(std::ranges::ForwardRange<inserted_rng_t>,
+            "The range to be inserted by view::interleave must model std::ranges::ForwardRange.");
+        if constexpr (std::ranges::RandomAccessRange<urng_t> && std::ranges::SizedRange<urng_t> &&
+                      std::ranges::RandomAccessRange<inserted_rng_t> && std::ranges::SizedRange<inserted_rng_t>)
+        {
+            return detail::view_interleave{std::forward<urng_t>(urange), size, std::forward<inserted_rng_t>(i)};
+        }
+        else
+        {
+            return ranges::view::split(std::forward<urng_t>(urange), size) |
+                   ranges::view::join(std::forward<inserted_rng_t>(i));
+        }
     }
 };
 
@@ -341,7 +342,7 @@ namespace seqan3::view
  * \snippet test/snippet/range/view/interleave.cpp general
  * \hideinitializer
  */
-inline constexpr auto interleave =detail::generic_pipable_view_adaptor<detail::view_interleave>{};
+inline auto constexpr interleave = detail::interleave_fn{};
 
 //!\}
 
