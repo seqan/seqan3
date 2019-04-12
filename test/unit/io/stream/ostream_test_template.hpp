@@ -44,7 +44,9 @@ TYPED_TEST_P(ostream, output)
     std::ifstream fi{filename.get_path(), std::ios::binary};
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
-    EXPECT_EQ(buffer, TestFixture::compressed);
+    // Ignore the OS flag
+    EXPECT_EQ(buffer.substr(0,9), TestFixture::compressed.substr(0,9));
+    EXPECT_EQ(buffer.substr(11), TestFixture::compressed.substr(11));
 }
 
 TYPED_TEST_P(ostream, output_type_erased)
@@ -62,7 +64,9 @@ TYPED_TEST_P(ostream, output_type_erased)
     std::ifstream fi{filename.get_path(), std::ios::binary};
     std::string buffer{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
 
-    EXPECT_EQ(buffer, TestFixture::compressed);
+    // Ignore the OS flag
+    EXPECT_EQ(buffer.substr(0,9), TestFixture::compressed.substr(0,9));
+    EXPECT_EQ(buffer.substr(11), TestFixture::compressed.substr(11));
 }
 
 REGISTER_TYPED_TEST_CASE_P(ostream, concept_check, output, output_type_erased);

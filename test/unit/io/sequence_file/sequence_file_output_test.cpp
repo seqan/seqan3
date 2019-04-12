@@ -475,7 +475,9 @@ void compression_by_filename_impl(test::tmp_filename & filename, std::string_vie
         buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
     }
 
-    EXPECT_EQ(buffer, expected);
+    // Ignore the OS flag
+    EXPECT_EQ(buffer.substr(0,9), expected.substr(0,9));
+    EXPECT_EQ(buffer.substr(11), expected.substr(11));
 }
 
 template <typename comp_stream_t>
@@ -518,7 +520,10 @@ TEST(compression, by_stream_gz)
         compression_by_stream_impl(compout);
     }
 
-    EXPECT_EQ(out.str(), expected_gz);
+    // Ignore the OS flag
+    std::string buffer(out.str());
+    EXPECT_EQ(buffer.substr(0,9), expected_gz.substr(0,9));
+    EXPECT_EQ(buffer.substr(11), expected_gz.substr(11));
 }
 #endif
 

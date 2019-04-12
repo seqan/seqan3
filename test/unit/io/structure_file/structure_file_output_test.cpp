@@ -435,7 +435,9 @@ struct structure_file_output_compression : public structure_file_output_write
             std::ifstream fi{filename.get_path(), std::ios::binary};
             buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
         }
-        EXPECT_EQ(buffer, expected);
+        // Ignore the OS flag
+        EXPECT_EQ(buffer.substr(0,9), expected.substr(0,9));
+        EXPECT_EQ(buffer.substr(11), expected.substr(11));
     }
 
     template<typename comp_stream_t>
@@ -481,7 +483,10 @@ TEST_F(structure_file_output_compression, by_stream_gz)
         contrib::gz_ostream compout{out};
         compression_by_stream_impl(compout);
     }
-    EXPECT_EQ(out.str(), expected_gz);
+    // Ignore the OS flag
+    std::string buffer(out.str());
+    EXPECT_EQ(buffer.substr(0,9), expected_gz.substr(0,9));
+    EXPECT_EQ(buffer.substr(11), expected_gz.substr(11));
 }
 #endif
 
