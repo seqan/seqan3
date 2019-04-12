@@ -156,6 +156,177 @@ TEST(validator_test, file_exists)
     }
 }
 
+TEST(validator_test, input_file)
+{
+    test::tmp_filename tmp_name{"testbox.fasta"};
+    test::tmp_filename tmp_name_2{"testbox_2.fasta"};
+
+    std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
+
+    std::ofstream tmp_file(tmp_name.get_path());
+    std::ofstream tmp_file_2(tmp_name_2.get_path());
+
+    { // single file
+
+        { // empty list of file.
+            input_file_validator my_validator{};
+            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
+        }
+
+        { // file already exists.
+            std::filesystem::path does_not_exists{tmp_name.get_path()};
+            does_not_exists.replace_extension(".bam");
+            input_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(does_not_exists), parser_invalid_argument);
+        }
+
+        { // file has wrong format.
+            input_file_validator my_validator{std::vector{std::string{"sam"}}};
+                EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+        }
+
+        { // file has no extension.
+            std::filesystem::path does_not_exists{tmp_name.get_path()};
+            does_not_exists.replace_extension();
+            input_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(does_not_exists), parser_invalid_argument);
+        }
+
+        std::filesystem::path file_in_path;
+
+        // option
+        std::filesystem::path path = tmp_name.get_path();
+        const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(file_in_path, 'i', "int-option", "desc",
+                          option_spec::DEFAULT, input_file_validator{formats});
+
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_EQ(file_in_path.string(), path.string());
+    }
+
+    { // file list.
+        std::vector<std::filesystem::path> input_files;
+
+        // option
+        std::filesystem::path path = tmp_name.get_path();
+        std::filesystem::path path_2 = tmp_name_2.get_path();
+
+        const char * argv[] = {"./argument_parser_test", path.c_str(), path_2.c_str()};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_positional_option(input_files, "desc", input_file_validator{formats});
+
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_EQ(input_files.size(), 2u);
+        EXPECT_EQ(input_files[0].string(), path.string());
+        EXPECT_EQ(input_files[1].string(), path_2.string());
+    }
+
+    { // get help page message
+        std::filesystem::path path;
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        argument_parser parser("test_parser", 2, argv);
+        parser.add_positional_option(path, "desc", input_file_validator{formats});
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string{"test_parser"
+                               "==========="
+                               "POSITIONAL ARGUMENTS"
+                               "    ARGUMENT-1 (std::filesystem::path)"
+                               "          desc Default: \"\". Input file formats: fa, sam, fasta."} +
+                               basic_options_str +
+                               basic_version_str;
+        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    }
+}
+
+TEST(validator_test, output_file)
+{
+    test::tmp_filename tmp_name{"testbox.fasta"};
+    test::tmp_filename tmp_name_2{"testbox_2.fasta"};
+    test::tmp_filename tmp_name_3{"testbox_3.fa"};
+
+    std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
+
+    { // single file
+
+        { // empty list of file.
+            output_file_validator my_validator{};
+            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
+        }
+
+        { // file does not exist.
+            std::ofstream tmp_file_2(tmp_name_2.get_path());
+            std::filesystem::path does_not_exists{tmp_name_2.get_path()};
+            output_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(does_not_exists), parser_invalid_argument);
+        }
+
+        { // file has wrong format.
+            output_file_validator my_validator{std::vector{std::string{"sam"}}};
+                EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+        }
+
+        { // file has no extension.
+            std::filesystem::path no_extension{tmp_name.get_path()};
+            no_extension.replace_extension();
+            output_file_validator my_validator{formats};
+            EXPECT_THROW(my_validator(no_extension), parser_invalid_argument);
+        }
+
+        std::filesystem::path file_out_path;
+
+        // option
+        std::filesystem::path path = tmp_name.get_path();
+        const char * argv[] = {"./argument_parser_test", "-o", path.c_str()};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(file_out_path, 'o', "out-option", "desc",
+                          option_spec::DEFAULT, output_file_validator{formats});
+
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_EQ(file_out_path.string(), path.string());
+    }
+
+    { // file list.
+        std::vector<std::filesystem::path> output_files;
+
+        // option
+        std::filesystem::path path = tmp_name.get_path();
+        std::filesystem::path path_3 = tmp_name_3.get_path();
+
+        const char * argv[] = {"./argument_parser_test", path.c_str(), path_3.c_str()};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_positional_option(output_files, "desc", output_file_validator{formats});
+
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_EQ(output_files.size(), 2u);
+        EXPECT_EQ(output_files[0].string(), path.string());
+        EXPECT_EQ(output_files[1].string(), path_3.string());
+    }
+
+    // get help page message
+    {
+        std::filesystem::path path;
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        argument_parser parser("test_parser", 2, argv);
+        parser.add_positional_option(path, "desc", output_file_validator{formats});
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string{"test_parser"
+                               "==========="
+                               "POSITIONAL ARGUMENTS"
+                               "    ARGUMENT-1 (std::filesystem::path)"
+                               "          desc Default: \"\". Output file formats: fa, sam, fasta."} +
+                               basic_options_str +
+                               basic_version_str;
+        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    }
+}
+
 TEST(validator_test, file_ext_validator)
 {
     std::string option_value{};
