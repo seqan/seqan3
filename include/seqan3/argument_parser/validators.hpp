@@ -315,54 +315,6 @@ private:
     bool case_sensitive;
 };
 
-/*!\brief A validator that checks if a path (file or directory) exists.
- * \ingroup argument_parser
- *
- * \details
- *
- * The struct then acts as a functor that throws a seqan3::parser_invalid_argument
- * exception whenever a given path (file or directory) does not exist.
- *
- * \snippet test/snippet/argument_parser/validators_path_existence.cpp usage
- */
-class path_existence_validator
-{
-public:
-    //!\brief Type of values that are tested by validator
-    using value_type = std::string;
-
-    /*!\brief Tests whether path (file or directory) exists.
-     * \param path The input value to check.
-     * \throws parser_invalid_argument
-     */
-    void operator()(std::filesystem::path const & path) const
-    {
-        if (!(std::filesystem::exists(path)))
-            throw parser_invalid_argument(detail::to_string("The file or directory ", path, " does not exist."));
-    }
-
-    /*!\brief Tests whether every path (file or directory) in list \p v exists.
-     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
-     *                    be convertible to std::filesystem::path.
-     * \param  v          The input range to iterate over and check every element.
-     * \throws parser_invalid_argument
-     */
-    template <std::ranges::ForwardRange range_type>
-    //!\cond
-        requires std::ConvertibleTo<value_type_t<range_type>, std::filesystem::path const &>
-    //!\endcond
-    void operator()(range_type const & v) const
-    {
-         std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
-    }
-
-    //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
-    {
-        return detail::to_string("The file or directory is checked for existence.");
-    }
-};
-
 /*!\brief An abstract base class for the file and directory validators.
  * \ingroup argument_parser
  *
