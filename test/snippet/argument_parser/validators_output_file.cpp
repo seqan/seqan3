@@ -15,7 +15,8 @@ int main(int argc, const char ** argv)
     //! [validator_call]
 
     // an exception will be thrown if the user specifies a filename
-    // that does not have one of the extensions ["fa","fasta"]
+    // that does not have one of the extensions ["fa","fasta"],
+    // if the file already exists, or if the file is not writable.
     try
     {
         myparser.parse();
