@@ -47,10 +47,13 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(validator_concept<arithmetic_range_validator>);
     EXPECT_TRUE(validator_concept<value_list_validator<double>>);
     EXPECT_TRUE(validator_concept<value_list_validator<std::string>>);
+    EXPECT_TRUE(validator_concept<input_file_validator>);
+    EXPECT_TRUE(validator_concept<output_file_validator>);
+    EXPECT_TRUE(validator_concept<input_directory_validator>);
+    EXPECT_TRUE(validator_concept<output_directory_validator>);
     EXPECT_TRUE(validator_concept<regex_validator>);
-    EXPECT_TRUE(validator_concept<file_ext_validator>);
 
-    EXPECT_TRUE(validator_concept<decltype(file_ext_validator{{"t"}} | regex_validator{".*"})>);
+    EXPECT_TRUE(validator_concept<decltype(input_file_validator{{"t"}} | regex_validator{".*"})>);
 }
 
 TEST(validator_test, input_file)
@@ -329,118 +332,6 @@ TEST(validator_test, output_directory)
                                basic_version_str;
 
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
-    }
-}
-
-TEST(validator_test, file_ext_validator)
-{
-    std::string option_value{};
-    std::vector<std::string> option_vector{};
-    file_ext_validator case_sensitive_file_ext_validator({"sAm", "FASTQ", "fasta" }, true);
-    file_ext_validator case_insensitive_file_ext_validator({"sAm", "FASTQ", "fasta"}, false);
-    file_ext_validator no_extension_file_ext_validator({""});
-    file_ext_validator default_file_ext_validator({"sAm", "FASTQ", "fasta"});
-
-    // check case insensitive validator => success
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sam"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, case_insensitive_file_ext_validator);
-
-        testing::internal::CaptureStderr();
-        EXPECT_NO_THROW(parser.parse());
-        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.sam");
-    }
-
-    // check case sensitive validator => failure
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sam"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, case_sensitive_file_ext_validator);
-
-        EXPECT_THROW(parser.parse(), validation_failed);
-    }
-
-    // check default (case insensitive) validator => success
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.FaStQ"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, default_file_ext_validator);
-
-        testing::internal::CaptureStderr();
-        EXPECT_NO_THROW(parser.parse());
-        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.FaStQ");
-    }
-
-    // check case sensitive validator => success
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.FASTQ"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, case_sensitive_file_ext_validator);
-
-        testing::internal::CaptureStderr();
-        EXPECT_NO_THROW(parser.parse());
-        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.FASTQ");
-    }
-
-    // check case insensitive validator => failure
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.bAm"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, case_insensitive_file_ext_validator);
-
-        EXPECT_THROW(parser.parse(), validation_failed);
-    }
-
-    // check no file suffix => failure
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, case_sensitive_file_ext_validator);
-
-        EXPECT_THROW(parser.parse(), validation_failed);
-    }
-
-    // check file suffix with no_ext_validator => failure
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.txt"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, no_extension_file_ext_validator);
-
-        EXPECT_THROW(parser.parse(), validation_failed);
-    }
-
-    // check trailing dot with no_ext_validator => failure
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file."};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, no_extension_file_ext_validator);
-
-        EXPECT_THROW(parser.parse(), validation_failed);
-    }
-
-    // check no file extension with no_ext_validator => success
-    {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file"};
-        argument_parser parser("test_parser", 3, argv);
-        parser.add_option(option_value, 's', "string-option", "desc",
-                          option_spec::DEFAULT, no_extension_file_ext_validator);
-
-        testing::internal::CaptureStderr();
-        EXPECT_NO_THROW(parser.parse());
-        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file");
     }
 }
 
@@ -851,7 +742,7 @@ TEST(validator_test, chaining_validators)
     std::string option_value{};
     std::vector<std::string> option_vector{};
     regex_validator absolute_path_validator("(/[^/]+)+/.*\\.[^/\\.]+$");
-    file_ext_validator my_file_ext_validator({"sa", "so"});
+    output_file_validator my_file_ext_validator({"sa", "so"});
 
     // option
     {
@@ -891,7 +782,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          file_ext_validator{{"sa", "so"}});
+                          output_file_validator{{"sa", "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -906,7 +797,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          file_ext_validator{{"sa", "so"}} |
+                          output_file_validator{{"sa", "so"}} |
                           regex_validator{".*"});
 
         testing::internal::CaptureStderr();
@@ -922,21 +813,21 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          file_ext_validator{{"sa", "so"}} |
+                          output_file_validator{{"sa", "so"}} |
                           regex_validator{".*"});
 
         testing::internal::CaptureStdout();
         option_value.clear();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         std::string my_stdout = testing::internal::GetCapturedStdout();
-        std::string expected = std::string("test_parser"
+        std::string expected = std::string{"test_parser"
                                "===========" +
                                basic_options_str +
                                "    -s, --string-option (std::string)"
-                               "          desc Default: . Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'. "
-                               "          File name extension must be one of [sa,so]."
-                               "          Value must match the pattern '.*'." +
-                               basic_version_str);
+                               "          desc Default:. Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'. "
+                               "          Output file formats:  sa, so."
+                               "          Value must match the pattern '.*'."} +
+                               basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
                                    expected | ranges::view::remove_if(is_space)));
     }
@@ -948,7 +839,7 @@ TEST(validator_test, chaining_validators)
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_list_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
-                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | file_ext_validator{{"sa", "so"}});
+                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | output_file_validator{{"sa", "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());

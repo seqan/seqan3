@@ -236,85 +236,6 @@ value_list_validator(std::vector<const char *> const & v) -> value_list_validato
 value_list_validator(std::initializer_list<const char *> const & v) -> value_list_validator<std::string>;
 //!\}
 
-/*!\brief A validator that checks if a filenames has one of the valid extensions.
- * \ingroup argument_parser
- * \implements seqan3::validator_concept
- *
- * \details
- *
- * On construction, the validator must receive a list (vector) of valid file extensions.
- * The struct than acts as a functor, that throws a seqan3::parser_invalid_argument
- * exception whenever a given filename (string) is not in the given extension list.
- *
- * \snippet test/snippet/argument_parser/validators_3.cpp usage
- *
- * \note The validator works on every type that can be implicitly cast to std::filesystem::path.
- */
-class file_ext_validator
-{
-public:
-    //!\brief Type of values that are tested by validator
-    using value_type = std::string;
-
-    /*!\brief Constructing from a vector.
-     * \param[in] v The vector of valid file extensions to test (e.g. {"fa", "fasta"}).
-     * \param[in] c Case sensitivity flag. Set true for case sensitivity. Default: false (case insensitive).
-     *
-     * For case insensitivity, everything is converted to lower case characters.
-     */
-    file_ext_validator(std::vector<std::string> const & v, bool const c = false) :
-        case_sensitive{c}
-    {
-        extensions = c ? v : std::vector<std::string>{v | view::to_lower};
-    }
-
-    /*!\brief Tests whether the filepath \p path ends with a valid extension.
-     * \param path The input value to check.
-     * \throws parser_invalid_argument
-     */
-    void operator()(std::filesystem::path const & path) const
-    {
-        std::string ext{path.extension().string()};
-        ext = ext.substr(std::min(1, std::max(0, static_cast<int>(ext.size()) - 1))); // drop '.' if ext is non-empty
-
-        // extensions were transformed to lower case during construction,so do the same for input path
-        if (!case_sensitive)
-            ext = std::string{ext | view::to_lower};
-
-        if (!(std::find(extensions.begin(), extensions.end(), ext) != extensions.end()))
-            throw parser_invalid_argument(detail::to_string("Extension ", ext, " is not one of ",
-                                                            std::view::all(extensions), "."));
-    }
-
-    /*!\brief Tests whether every value of v lies inside extensions.
-     * \tparam range_type The type of range to check; must model std::ranges::ForwardRange and the value type must
-     *                    be convertible to std::filesystem::path.
-     * \param  v          The input range to iterate over and check every element.
-     * \throws parser_invalid_argument
-     */
-    template <std::ranges::ForwardRange range_type>
-    //!\cond
-        requires std::ConvertibleTo<value_type_t<range_type>, std::filesystem::path const &>
-    //!\endcond
-    void operator()(range_type const & v) const
-    {
-        std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
-    }
-
-    //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
-    {
-        return detail::to_string("File name extension must be one of ", std::view::all(extensions), ".");
-    }
-
-private:
-    //!\brief Stores valid file extensions.
-    std::vector<std::string> extensions;
-
-    //!\brief True if file extension is case sensitive
-    bool case_sensitive;
-};
-
 /*!\brief An abstract base class for the file and directory validators.
  * \ingroup argument_parser
  *
@@ -855,7 +776,7 @@ private:
  * For example you may want a file name that only accepts absolute paths but
  * also must have one out of some given file extensions.
  * For this purpose you can chain a seqan3::regex_validator to a
- * seqan3::file_ext_validator like this:
+ * seqan3::input_file_validator like this:
  *
  * \include test/snippet/argument_parser/validators_chaining.cpp
  *

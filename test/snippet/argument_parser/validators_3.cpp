@@ -11,11 +11,12 @@ int main(int argc, const char ** argv)
     std::filesystem::path myfile;
 
     myparser.add_option(myfile,'f',"file","Give me a filename.",
-                        seqan3::option_spec::DEFAULT, seqan3::file_ext_validator{{"fa","fasta"}});
+                        seqan3::option_spec::DEFAULT, seqan3::input_file_validator{{"fa","fasta"}});
     //![validator_call]
 
     // an exception will be thrown if the user specifies a filename
-    // that does not have one of the extensions ["fa","fasta"]
+    // that does not have one of the extensions ["fa","fasta"],
+    // does not exists, or is not readable.
     try
     {
         myparser.parse();
