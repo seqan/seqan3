@@ -78,10 +78,10 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
     parser.info.short_description = "Aggregate average Game of Thrones viewers by season.";
     parser.info.version = "1.0.0";
 
-    //![path_existence_validator]
-    parser.add_positional_option(args.file_path, "Please provide a tab separated data file.",
-                                 path_existence_validator{} | file_ext_validator({"tsv"}) );
-    //![path_existence_validator]
+    //![file_validator]
+    parser.add_positional_option(args.file_path, "Please provide a tab separated seasons file.",
+                                 regex_validator{".*seasons\\..+$"} | input_file_validator({"tsv"}) );
+    //![file_validator]
 
     //![arithmetic_range_validator]
     parser.add_option(args.seasons, 's', "season", "Choose the seasons to aggregate.",

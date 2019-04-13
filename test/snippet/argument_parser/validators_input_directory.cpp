@@ -1,3 +1,4 @@
+//! [usage]
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/std/filesystem>
@@ -6,13 +7,14 @@ int main(int argc, const char ** argv)
 {
     seqan3::argument_parser myparser("Test", argc, argv); // initialize
 
+    //! [validator_call]
     std::filesystem::path myfile;
 
     myparser.add_option(myfile,'d',"dir","The directory containing the input files.",
                         seqan3::option_spec::DEFAULT, seqan3::input_directory_validator());
+    //! [validator_call]
 
-    // an exception will be thrown if the user specifies a filename
-    // that does not have one of the extensions ["fa","fasta"]
+    // an exception will be thrown if the user specifies a directory name without trailing directory separator.
     try
     {
         myparser.parse();
@@ -26,3 +28,4 @@ int main(int argc, const char ** argv)
     seqan3::debug_stream << "filename given by user passed validation: " << myfile << "\n";
     return 0;
 }
+//! [usage]

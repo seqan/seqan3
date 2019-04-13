@@ -402,7 +402,7 @@ private:
 public:
 
     //!\brief Type of values that are tested by validator.
-    using value_type = std::filesystem::path;
+    using value_type = std::string;
 
     /*!\brief Tests if the given path is a valid input, respectively output, file or directory.
      * \param path The path to validate.
@@ -474,7 +474,7 @@ private:
  * The struct than acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename
  * (sts::string) is not in the given list of valid file extensions or if the file does not exist.
  *
- * \include test/snippet/argument_parser/validators_input_file.cpp
+ * \snippet test/snippet/argument_parser/validators_input_file.cpp usage
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -538,7 +538,7 @@ private:
  * The struct than acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given filename
  * (sts::string) is not in the given list of valid file extensions or if the file already exist.
  *
- * \include test/snippet/argument_parser/validators_output_file.cpp
+ * \snippet test/snippet/argument_parser/validators_output_file.cpp usage
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -601,7 +601,7 @@ private:
  * The struct than acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given directory
  * (std::filesystem::path) does not exist or the specified path is a filename.
  *
- * \include test/snippet/argument_parser/validators_input_directory.cpp
+ * \snippet test/snippet/argument_parser/validators_input_directory.cpp usage
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */
@@ -661,7 +661,7 @@ private:
  * The struct than acts as a functor that throws a seqan3::parser_invalid_argument exception whenever a given directory
  * (std::filesystem::path) already exist or the specified path is a filename.
  *
- * \include test/snippet/argument_parser/validators_output_directory.cpp
+ * \snippet test/snippet/argument_parser/validators_output_directory.cpp usage
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
  */

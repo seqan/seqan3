@@ -382,24 +382,46 @@ Add a seqan3::value_list_validator to the `-a/--aggregate-by` option that sets t
 \snippet doc/tutorial/argument_parser/solution6.cpp value_list_validator
 \endsolution
 
-### The seqan3::file_ext_validator
+### The file validator
 
-On construction, the validator receives a list (vector) of valid file extensions.
-The validator throws a seqan3::parser_invalid_argument exception whenever a given filename (string) is not in the given extension list.
+SeqAn3 offers two file validator types: the seqan3::input_file_validator and the seqan3::output_file_validator.
+On construction, the validator receives a list (vector) of valid file extensions that are tested against the extension
+of the parsed option value.
+The validator throws a seqan3::parser_invalid_argument exception whenever a given filename's extension is not in the given list of valid extensions or if the specified path does not name a file but a directory. In addition, the
+seqan3::input_file_validator checks if the file already exists, while on the opposite the seqan3::output_file_validator
+checks if the file does not already exists in order to prevent overwriting an already existing file.
 
-\snippet test/snippet/argument_parser/validators_3.cpp validator_call
+Using the seqan3::input_file_validator:
 
-### The seqan3::path_existence_validator
+\snippet test/snippet/argument_parser/validators_input_file.cpp validator_call
 
-The validator throws a seqan3::parser_invalid_argument exception whenever a given path (string) does not exist.
+Using the seqan3::output_file_validator:
 
-\snippet test/snippet/argument_parser/validators_path_existence.cpp validator_call
+\snippet test/snippet/argument_parser/validators_output_file.cpp validator_call
+
+### The directory validator
+
+In addition to the file validator types, SeqAn3 offers directory validator types. These are useful if one needs
+to provide an input directory (using the seqan3::input_directory_validator) or output directory
+(using the seqan3::output_directory_validator) where multiple files need to be read from or written too.
+The validators throw a seqan3::parser_invalid_argument exception whenever the parsed path contains a filename with an 
+extension. The seqan3::input_directory_validator also tests if the directory already exists and throws if this is not
+the case.
+
+Using the seqan3::input_directory_validator:
+
+\snippet test/snippet/argument_parser/validators_input_directory.cpp validator_call
+
+Using the seqan3::output_directory_validator:
+
+\snippet test/snippet/argument_parser/validators_output_directory.cpp validator_call
 
 \assignment{Assignment 8}
-Add a seqan3::path_existence_validator to the first positional option that expects the `file_path`.
+Add a validator to the first positional option that expects a file formatted with tab separated values.
+Store the result in `file_path`.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/small_snippets.cpp path_existence_validator
+\snippet doc/tutorial/argument_parser/small_snippets.cpp input_file_validator
 \endsolution
 
 ### The seqan3::regex_validator
@@ -416,15 +438,15 @@ Note that a regex_match will only return true if the string matches the pattern 
 You can also chain validators using the pipe operator (`|`). The pipe operator is the AND operation for two validators, which means that a value must pass both validators in order to be accepted by the combined validator.
 
 For example, you may want a file name that only accepts absolute paths, but also must have one out of a list of given file extensions.
-For this purpose you can chain a seqan3::regex_validator to a seqan3::file_ext_validator:
+For this purpose you can chain a seqan3::regex_validator to a seqan3::input_file_validator:
 
 \snippet test/snippet/argument_parser/validators_chaining.cpp validator_call
 
 You can chain as many validators as you want, they will be evaluated one after the other from left to right (first to last).
 
 \assignment{Assignment 9}
-Add a seqan3::file_ext_validator to the first positional option that expects the `file_path` by chaining it to the already present seqan3::path_existence_validator. The file extensions of your application should be restricted to `tsv` since we expect tab separated files.
+Add a seqan3::regex_validator to the first positional option that expects the `file_path` by chaining it to the already present seqan3::input_file_validator. The parsed file name should have a suffix called `seasons`.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution6.cpp path_existence_validator
+\snippet doc/tutorial/argument_parser/solution6.cpp file_validator
 \endsolution
