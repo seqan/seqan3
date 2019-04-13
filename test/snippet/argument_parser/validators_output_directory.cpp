@@ -8,8 +8,8 @@ int main(int argc, const char ** argv)
 
     std::filesystem::path myfile;
 
-    myparser.add_option(myfile,'f',"file","The input file containing the sequences.",
-                        seqan3::option_spec::DEFAULT, seqan3::input_file_validator({"fa","fasta"}));
+    myparser.add_option(myfile,'d',"dir","The output directory for storing the files.",
+                        seqan3::option_spec::DEFAULT, seqan3::output_directory_validator());
 
     // an exception will be thrown if the user specifies a filename
     // that does not have one of the extensions ["fa","fasta"]

@@ -327,6 +327,114 @@ TEST(validator_test, output_file)
     }
 }
 
+TEST(validator_test, input_directory)
+{
+    test::tmp_filename tmp_name{"testbox.fasta"};
+
+    { // directory
+
+        { // has filename
+            std::ofstream tmp_dir(tmp_name.get_path());
+            input_directory_validator my_validator{};
+            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+        }
+
+        { // read directory
+            std::filesystem::path p = tmp_name.get_path();
+            p.remove_filename();
+            std::ofstream tmp_dir(p);
+            input_directory_validator my_validator{};
+            my_validator(p);
+            EXPECT_NO_THROW(my_validator(p));
+
+            std::filesystem::path dir_in_path;
+
+            // option
+            const char * argv[] = {"./argument_parser_test", "-i", p.c_str()};
+            argument_parser parser("test_parser", 3, argv);
+            parser.add_option(dir_in_path, 'i', "input-option", "desc",
+                              option_spec::DEFAULT, input_directory_validator{});
+
+            EXPECT_NO_THROW(parser.parse());
+            EXPECT_EQ(p.string(), dir_in_path.string());
+        }
+    }
+
+    {
+        // get help page message
+        std::filesystem::path path;
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        argument_parser parser("test_parser", 2, argv);
+        parser.add_positional_option(path, "desc", input_directory_validator{});
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string{"test_parser"
+                               "==========="
+                               "POSITIONAL ARGUMENTS"
+                               "    ARGUMENT-1 (std::filesystem::path)"
+                               "          desc Default: \"\". The input directory must exist and end with a valid directory separator."} +
+                               basic_options_str +
+                               basic_version_str;
+
+        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    }
+}
+
+TEST(validator_test, output_directory)
+{
+    test::tmp_filename tmp_name{"testbox.fasta"};
+
+    { // directory
+
+        { // read directory
+            std::filesystem::path p = tmp_name.get_path();
+            p.remove_filename();
+            output_directory_validator my_validator{};
+            my_validator(p);
+            EXPECT_NO_THROW();
+
+            std::filesystem::path dir_out_path;
+
+            // option
+            const char * argv[] = {"./argument_parser_test", "-o", p.c_str()};
+            argument_parser parser("test_parser", 3, argv);
+            parser.add_option(dir_out_path, 'o', "output-option", "desc",
+                              option_spec::DEFAULT, output_directory_validator{});
+
+            EXPECT_NO_THROW(parser.parse());
+            EXPECT_EQ(p.string(), dir_out_path.string());
+        }
+
+        { // has filename
+            output_directory_validator my_validator{};
+            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+        }
+    }
+
+    {
+        // get help page message
+        std::filesystem::path path;
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        argument_parser parser("test_parser", 2, argv);
+        parser.add_positional_option(path, "desc", output_directory_validator{});
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string{"test_parser"
+                               "==========="
+                               "POSITIONAL ARGUMENTS"
+                               "    ARGUMENT-1 (std::filesystem::path)"
+                               "          desc Default: \"\". The output directory must not exist and end with a valid directory separator."} +
+                               basic_options_str +
+                               basic_version_str;
+
+        EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
+    }
+}
+
 TEST(validator_test, file_ext_validator)
 {
     std::string option_value{};
