@@ -11,6 +11,7 @@
  */
 #pragma once
 
+#include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
@@ -25,7 +26,7 @@
  * \par Introduction
  * Amino acid sequences are an important part of bioinformatic data processing and used by many applications
  * and while it is possible to represent them in a regular std::string, it makes sense to have specialised data
- * structures in most cases. This sub-module offers the 27 letter aminoacid alphabet as well as a reduced version
+ * structures in most cases. This sub-module offers the 27 letter aminoacid alphabet as well as three reduced versions
  * that can be used with regular container and ranges.
  * The 27 letter amino acid alphabet contains the 20 canonical amino acids, 2 additional proteinogenic amino acids
  * (Pyrrolysine and Selenocysteine) and a termination letter (*). Additionally 4 wildcard letters are offered which
@@ -33,35 +34,35 @@
  * Leucine). See also https://en.wikipedia.org/wiki/Amino_acid for more information about the amino acid alphabet.
  *
  * \par Conversions
- * | Amino acid name            | Three letter code | One letter code | Remapped in\n seqan3::aa20      |
- * |----------------------------|-------------------|-----------------|---------------------------------|
- * |    Alanine                 | Ala               | A               | A                               |
- * |    Arginine                | Arg               | R               | R                               |
- * |    Asparagine              | Asn               | N               | N                               |
- * |    Aspartic acid           | Asp               | D               | D                               |
- * |    Cysteine                | Cys               | C               | C                               |
- * |    Tyrosine                | Tyr               | Y               | Y                               |
- * |    Glutamic acid           | Glu               | E               | E                               |
- * |    Glutamine               | Gln               | Q               | Q                               |
- * |    Glycine                 | Gly               | G               | G                               |
- * |    Histidine               | His               | H               | H                               |
- * |    Isoleucine              | Ile               | I               | I                               |
- * |    Leucine                 | leu               | L               | L                               |
- * |    Lysine                  | Lys               | K               | K                               |
- * |    Methionine              | Met               | M               | M                               |
- * |    Phenylalanine           | Phe               | F               | F                               |
- * |    Proline                 | Pro               | P               | P                               |
- * |    Serine                  | Ser               | S               | S                               |
- * |    Threonine               | Thr               | T               | T                               |
- * |    Tryptophan              | Trp               | W               | W                               |
- * |    Valine                  | Val               | V               | V                               |
- * |    Selenocysteine          | Sec               | U               | <span style="color:red">C</span>|
- * |    Pyrrolysine             | Pyl               | O               | <span style="color:red">K</span>|
- * | Asparagine or aspartic acid| Asx               | B               | <span style="color:red">D</span>|
- * | Glutamine or glutamic acid | Glx               | Z               | <span style="color:red">E</span>|
- * |    Leucine or Isoleucine   | Xle               | J               | <span style="color:red">L</span>|
- * |    Unknown                 | Xaa               | X               | <span style="color:red">S</span>|
- * |    Stop Codon              | N/A               | *               | <span style="color:red">W</span>|
+ * | Amino acid name            | Three letter code | One letter code | Remapped in\n seqan3::aa20      | Remapped in\n seqan3::aa10murphy |
+ * |----------------------------|-------------------|-----------------|---------------------------------|----------------------------------|
+ * |    Alanine                 | Ala               | A               | A                               | A                                |
+ * |    Arginine                | Arg               | R               | R                               | <span style="color:red">K</span> |
+ * |    Asparagine              | Asn               | N               | N                               | <span style="color:red">B</span> |
+ * |    Aspartic acid           | Asp               | D               | D                               | <span style="color:red">B</span> |
+ * |    Cysteine                | Cys               | C               | C                               | C                                |
+ * |    Tyrosine                | Tyr               | Y               | Y                               | <span style="color:red">F</span> |
+ * |    Glutamic acid           | Glu               | E               | E                               | <span style="color:red">B</span> |
+ * |    Glutamine               | Gln               | Q               | Q                               | <span style="color:red">B</span> |
+ * |    Glycine                 | Gly               | G               | G                               | G                                |
+ * |    Histidine               | His               | H               | H                               | H                                |
+ * |    Isoleucine              | Ile               | I               | I                               | I                                |
+ * |    Leucine                 | leu               | L               | L                               | <span style="color:red">I</span> |
+ * |    Lysine                  | Lys               | K               | K                               | K                                |
+ * |    Methionine              | Met               | M               | M                               | <span style="color:red">I</span> |
+ * |    Phenylalanine           | Phe               | F               | F                               | F                                |
+ * |    Proline                 | Pro               | P               | P                               | P                                |
+ * |    Serine                  | Ser               | S               | S                               | S                                |
+ * |    Threonine               | Thr               | T               | T                               | <span style="color:red">s</span> |
+ * |    Tryptophan              | Trp               | W               | W                               | <span style="color:red">F</span> |
+ * |    Valine                  | Val               | V               | V                               | <span style="color:red">I</span> |
+ * |    Selenocysteine          | Sec               | U               | <span style="color:red">C</span>| <span style="color:red">C</span> |
+ * |    Pyrrolysine             | Pyl               | O               | <span style="color:red">K</span>| <span style="color:red">K</span> |
+ * | Asparagine or aspartic acid| Asx               | B               | <span style="color:red">D</span>| B                                |
+ * | Glutamine or glutamic acid | Glx               | Z               | <span style="color:red">E</span>| <span style="color:red">B</span> |
+ * |    Leucine or Isoleucine   | Xle               | J               | <span style="color:red">L</span>| <span style="color:red">I</span> |
+ * |    Unknown                 | Xaa               | X               | <span style="color:red">S</span>| <span style="color:red">S</span> |
+ * |    Stop Codon              | N/A               | *               | <span style="color:red">W</span>| <span style="color:red">F</span> |
  *
  * All amino acid alphabets provide static value members (like an enum) for all amino acids in the form of the
  * one-letter representation.
