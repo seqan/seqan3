@@ -26,7 +26,7 @@ namespace seqan3::detail
 /*!\brief How many bits has a type?
  * \ingroup core
  *
- * \tparam type_t The type to determine the number of bits..
+ * \tparam type_t The type to determine the number of bits.
  */
 template <typename type_t>
 constexpr auto max_bits = min_viable_uint_v<8u * sizeof(type_t)>;
@@ -71,7 +71,7 @@ constexpr size_t next_power_of_two(size_t n)
 /*!\brief Returns the position of the most significant bit (counting from right to left).
  * \ingroup core
  *
- * \param[in] n A unsigned number.
+ * \param[in] n An unsigned integer.
  *
  * \attention *n = 0* is a special case and is undefined behaviour.
  *
