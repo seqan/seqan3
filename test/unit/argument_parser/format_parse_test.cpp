@@ -17,6 +17,10 @@ TEST(parse_type_test, add_option_short_id)
 
     const char * argv[] = {"./argument_parser_test", "-s", "option_string"};
     argument_parser parser("test_parser", 3, argv);
+    parser.add_section("My options");       // no-op for code coverage
+    parser.add_subsection("My suboptions"); // no-op for code coverage
+    parser.add_line("line");                // no-op for code coverage
+    parser.add_list_item("list", "item");   // no-op for code coverage
     parser.add_option(option_value, 's', "string-option", "this is a string option.");
 
     testing::internal::CaptureStderr();

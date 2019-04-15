@@ -350,10 +350,12 @@ public:
     /*!\brief Adds an help page text line to the seqan3::argument_parser.
      * \param[in] text The text to print.
      * \param[in] line_is_paragraph Whether to insert as paragraph
-     *            or just a line (only one line break if not a paragraph).
-     * \details This only affects the help page and other output formats.
+     *            or just a line (Default: false).
+     * \details
+     * If the line is not a paragraph (false), only one line break is appended, otherwise two line breaks are appended.
+     * This only affects the help page and other output formats.
      */
-    void add_line(std::string const & text, bool line_is_paragraph)
+    void add_line(std::string const & text, bool line_is_paragraph = false)
     {
         std::visit([&] (auto & f) { f.add_line(text, line_is_paragraph); }, format);
     }
@@ -470,7 +472,7 @@ private:
      * If `--export-help` is specified with a value other than html/man or ctd
      * a parser_invalid_argument is thrown.
      */
-    void init(int const argc, char const * const * const  argv)
+    void init(int const argc, char const * const * const argv)
     {
         if (argc <= 1) // no arguments provided
         {
@@ -485,11 +487,13 @@ private:
             if (arg == "-h" || arg == "--help")
             {
                 format = detail::format_help{false};
+                init_standard_options();
                 return;
             }
             else if (arg == "-hh" || arg == "--advanced-help")
             {
                 format = detail::format_help{true};
+                init_standard_options();
                 return;
             }
             else if (arg == "--version")
@@ -497,9 +501,20 @@ private:
                 format = detail::format_version{};
                 return;
             }
-            else if (arg == "--export-help")
+            else if (arg.substr(0, 13) == "--export-help") // --export-help=man is also allowed
             {
-                std::string export_format{argv[i+1]};
+                std::string export_format;
+
+                if (arg.size() > 13)
+                {
+                    export_format = arg.substr(14);
+                }
+                else
+                {
+                    if (argc < i + 1)
+                        throw parser_invalid_argument{"Option --export-help must be followed by a value."};
+                    export_format = {argv[i+1]};
+                }
 
                 if (export_format == "html")
                     format = detail::format_html{};
@@ -509,8 +524,9 @@ private:
                 // else if (export_format == "ctd")
                 //     format = detail::format_ctd{};
                 else
-                    throw validation_failed("Validation Failed. "
-                                            "Value of --export-help must be one of [html, man, ctd]");
+                    throw validation_failed{"Validation failed for option --export-help: "
+                                            "Value must be one of [html, man]"};
+                init_standard_options();
                 return;
             }
             else if (arg == "--copyright")
@@ -521,6 +537,20 @@ private:
         }
 
         format = detail::format_parse(argc, argv);
+    }
+
+    //!\brief Adds standard options to the help page.
+    void init_standard_options()
+    {
+        add_subsection("Basic options:");
+        add_list_item("\\fB-h\\fP, \\fB--help\\fP", "Prints the help page.");
+        add_list_item("\\fB-hh\\fP, \\fB--advanced-help\\fP",
+                                    "Prints the help page including advanced options.");
+        add_list_item("\\fB--version\\fP", "Prints the version information.");
+        add_list_item("\\fB--copyright\\fP", "Prints the copyright/license information.");
+        add_list_item("\\fB--export-help\\fP (std::string)",
+                                    "Export the help page information. Value must be one of [html, man].");
+        add_subsection(""); // add a new line (todo smehringer) add a add_newline() function
     }
 
     /*!\brief Checks whether the long identifier has already been used before.

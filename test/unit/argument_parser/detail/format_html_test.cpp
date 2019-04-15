@@ -16,13 +16,10 @@
 
 using namespace seqan3;
 
-TEST(html_test, html)
+TEST(html_format, empty_information)
 {
     std::string my_stdout;
     std::string expected;
-    int option_value;
-    bool flag_value;
-    std::vector<std::string> pos_opt_value;
 
     // Empty html help page.
     const char * argv0[] = {"./help_add_test", "--export-help", "html"};
@@ -39,6 +36,21 @@ TEST(html_test, html)
                            "<body>\n"
                            "<h1>empty_options</h1>\n"
                            "<div></div>\n"
+                           "<h2>Options</h2>\n"
+                           "<h3>Basic options:</h3>\n"
+                           "<dl>\n"
+                           "<dt><strong>-h</strong>, <strong>--help</strong></dt>\n"
+                           "<dd>Prints the help page.</dd>\n"
+                           "<dt><strong>-hh</strong>, <strong>--advanced-help</strong></dt>\n"
+                           "<dd>Prints the help page including advanced options.</dd>\n"
+                           "<dt><strong>--version</strong></dt>\n"
+                           "<dd>Prints the version information.</dd>\n"
+                           "<dt><strong>--copyright</strong></dt>\n"
+                           "<dd>Prints the copyright/license information.</dd>\n"
+                           "<dt><strong>--export-help</strong> (std::string)</dt>\n"
+                           "<dd>Export the help page information. Value must be one of [html, man].</dd>\n"
+                           "</dl>\n"
+                           "<h3></h3>\n"
                            "<h2>Version</h2>\n"
                            "<strong>Last update:</strong> <br>\n"
                            "<strong>empty_options version:</strong> <br>\n"
@@ -47,7 +59,24 @@ TEST(html_test, html)
                            "</body></html>");
     EXPECT_EQ(my_stdout, expected);
 
+    const char * argv1[] = {"./help_add_test", "--export-help=html"};
+    argument_parser parser1("empty_options", 2, argv1);
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    my_stdout = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(my_stdout, expected);
+}
+
+TEST(html_format, full_information_information)
+{
+    std::string my_stdout;
+    std::string expected;
+    int option_value{5};
+    bool flag_value;
+    std::vector<std::string> pos_opt_value{};
+
    // Full html help page.
+   const char * argv0[] = {"./help_add_test", "--export-help", "html"};
    argument_parser parser1("program_full_options", 3, argv0);
    parser1.info.synopsis.push_back("./some_binary_name synopsis");
    parser1.info.synopsis.push_back("./some_binary_name synopsis2");
@@ -96,16 +125,30 @@ TEST(html_test, html)
                           "<h2>Positional Arguments</h2>\n"
                           "<dl>\n"
                           "<dt><strong>ARGUMENT-1</strong> (<em>List</em> of <em>std::string</em>'s)</dt>\n"
-                          "<dd>this is a positional option. </dd>\n"
+                          "<dd>this is a positional option. Default: []. </dd>\n"
                           "<dt><strong>ARGUMENT-2</strong> (<em>List</em> of <em>std::string</em>'s)</dt>\n"
-                          "<dd>this is a positional option. </dd>\n"
+                          "<dd>this is a positional option. Default: []. </dd>\n"
                           "</dl>\n"
                           "<h2>Options</h2>\n"
+                          "<h3>Basic options:</h3>\n"
+                          "<dl>\n"
+                          "<dt><strong>-h</strong>, <strong>--help</strong></dt>\n"
+                          "<dd>Prints the help page.</dd>\n"
+                          "<dt><strong>-hh</strong>, <strong>--advanced-help</strong></dt>\n"
+                          "<dd>Prints the help page including advanced options.</dd>\n"
+                          "<dt><strong>--version</strong></dt>\n"
+                          "<dd>Prints the version information.</dd>\n"
+                          "<dt><strong>--copyright</strong></dt>\n"
+                          "<dd>Prints the copyright/license information.</dd>\n"
+                          "<dt><strong>--export-help</strong> (std::string)</dt>\n"
+                          "<dd>Export the help page information. Value must be one of [html, man].</dd>\n"
+                          "</dl>\n"
+                          "<h3></h3>\n"
                           "<dl>\n"
                           "<dt><strong>-i</strong>, <strong>--int</strong> (<em>signed 32 bit integer</em>)</dt>\n"
-                          "<dd>this is a int option. </dd>\n"
+                          "<dd>this is a int option. Default: 5. </dd>\n"
                           "<dt><strong>-j</strong>, <strong>--jint</strong> (<em>signed 32 bit integer</em>)</dt>\n"
-                          "<dd>this is a int option. </dd>\n"
+                          "<dd>this is a int option. Default: 5. </dd>\n"
                           "<dt><strong>-f</strong>, <strong>--flag</strong></dt>\n"
                           "<dd>this is a flag.</dd>\n"
                           "<dt><strong>-k</strong>, <strong>--kflag</strong></dt>\n"
@@ -132,4 +175,20 @@ TEST(html_test, html)
                           "For full copyright and/or warranty information see <tt>--copyright</tt>.\n"
                           "</body></html>");
    EXPECT_EQ(my_stdout, expected);
+}
+
+TEST(export_help, parse_error)
+{
+    const char * argv[]  = {"./help_add_test", "--export-help"};
+    const char * argv2[] = {"./help_add_test", "--export-help=atml"};
+    const char * argv3[] = {"./help_add_test", "--export-help", "atml"};
+
+    // no value after --export-help
+    EXPECT_THROW((argument_parser{"test_parser", 2, argv}), parser_invalid_argument);
+
+    // wrong value after --export-help
+    EXPECT_THROW((argument_parser{"test_parser", 2, argv2}), validation_failed);
+
+    // wrong value after --export-help
+    EXPECT_THROW((argument_parser{"test_parser", 3, argv3}), validation_failed);
 }
