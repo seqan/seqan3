@@ -15,6 +15,7 @@
 
 #include <meta/meta.hpp>
 
+#include <climits>
 #include <utility>
 
 #include <seqan3/core/detail/int_types.hpp>
@@ -29,7 +30,7 @@ namespace seqan3::detail
  * \tparam type_t The type to determine the number of bits.
  */
 template <typename type_t>
-constexpr auto max_bits = min_viable_uint_v<8u * sizeof(type_t)>;
+constexpr auto sizeof_bits = min_viable_uint_v<CHAR_BIT * sizeof(type_t)>;
 
 /*!\brief Is this number a power of two.
  * \ingroup core
@@ -83,11 +84,11 @@ constexpr uint8_t bit_scan_reverse(unsigned_t n)
     assert(n > 0); // n == 0 might have undefined behaviour
 #if defined(__GNUC__)
     if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
-        return max_bits<unsigned long long> - __builtin_clzll(n) - 1;
+        return sizeof_bits<unsigned long long> - __builtin_clzll(n) - 1;
     else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
-        return max_bits<unsigned long> - __builtin_clzl(n) - 1;
+        return sizeof_bits<unsigned long> - __builtin_clzl(n) - 1;
     else
-        return max_bits<unsigned> - __builtin_clz(n) - 1;
+        return sizeof_bits<unsigned> - __builtin_clz(n) - 1;
 #else
     uint8_t i = 0;
     for (; n != 0; n >>= 1, ++i);

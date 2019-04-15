@@ -15,16 +15,16 @@ using namespace seqan3::detail;
 
 static constexpr size_t max_iterations = 1 << 15;
 
-TEST(bit_manipulation, max_bits)
+TEST(bit_manipulation, sizeof_bits)
 {
-    EXPECT_EQ(max_bits<int8_t>, 8);
-    EXPECT_EQ(max_bits<uint8_t>, 8);
-    EXPECT_EQ(max_bits<int16_t>, 16);
-    EXPECT_EQ(max_bits<uint16_t>, 16);
-    EXPECT_EQ(max_bits<int32_t>, 32);
-    EXPECT_EQ(max_bits<uint32_t>, 32);
-    EXPECT_EQ(max_bits<int64_t>, 64);
-    EXPECT_EQ(max_bits<uint64_t>, 64);
+    EXPECT_EQ(sizeof_bits<int8_t>, 8);
+    EXPECT_EQ(sizeof_bits<uint8_t>, 8);
+    EXPECT_EQ(sizeof_bits<int16_t>, 16);
+    EXPECT_EQ(sizeof_bits<uint16_t>, 16);
+    EXPECT_EQ(sizeof_bits<int32_t>, 32);
+    EXPECT_EQ(sizeof_bits<uint32_t>, 32);
+    EXPECT_EQ(sizeof_bits<int64_t>, 64);
+    EXPECT_EQ(sizeof_bits<uint64_t>, 64);
 }
 
 TEST(bit_manipulation, is_power_of_two)
