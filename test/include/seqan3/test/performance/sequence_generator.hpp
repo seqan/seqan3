@@ -38,7 +38,7 @@ auto generate_sequence(size_t const len = 500,
 
     size_t length = dis_length(gen);
     for (size_t l = 0; l < length; ++l)
-        sequence.push_back(alphabet_t{}.assign_rank(dis_alpha(gen)));
+        sequence.push_back(assign_rank(alphabet_t{}, dis_alpha(gen)));
 
     return sequence;
 }
