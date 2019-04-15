@@ -84,18 +84,18 @@ TYPED_TEST_CASE(unsigned_operations, unsigned_types);
 TYPED_TEST(unsigned_operations, bit_scan_reverse)
 {
     using unsigned_t = TypeParam;
-    constexpr size_t one = bit_scan_reverse<unsigned_t>(0b0001);
-    constexpr size_t two1 = bit_scan_reverse<unsigned_t>(0b0010);
-    constexpr size_t two2 = bit_scan_reverse<unsigned_t>(0b0011);
-    constexpr size_t three1 = bit_scan_reverse<unsigned_t>(0b0101);
-    constexpr size_t three2 = bit_scan_reverse<unsigned_t>(0b0111);
-    constexpr size_t eight = bit_scan_reverse<unsigned_t>(0b10010010);
-    EXPECT_EQ(one, 1u);
+    constexpr size_t zero = bit_scan_reverse<unsigned_t>(0b0001);
+    constexpr size_t one1 = bit_scan_reverse<unsigned_t>(0b0010);
+    constexpr size_t one2 = bit_scan_reverse<unsigned_t>(0b0011);
+    constexpr size_t two1 = bit_scan_reverse<unsigned_t>(0b0101);
+    constexpr size_t two2 = bit_scan_reverse<unsigned_t>(0b0111);
+    constexpr size_t seven = bit_scan_reverse<unsigned_t>(0b10010010);
+    EXPECT_EQ(zero, 0u);
+    EXPECT_EQ(one1, 1u);
+    EXPECT_EQ(one2, 1u);
     EXPECT_EQ(two1, 2u);
     EXPECT_EQ(two2, 2u);
-    EXPECT_EQ(three1, 3u);
-    EXPECT_EQ(three2, 3u);
-    EXPECT_EQ(eight, 8u);
+    EXPECT_EQ(seven, 7u);
 
     for (uint8_t position = 0; position < 8u * sizeof(unsigned_t); ++position)
     {
@@ -103,7 +103,7 @@ TYPED_TEST(unsigned_operations, bit_scan_reverse)
         unsigned_t end = start << 1u;
         for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
         {
-            EXPECT_EQ(bit_scan_reverse(n), position+1) << "The position of the msb of " << n << " should be " << (position+1);
+            EXPECT_EQ(bit_scan_reverse(n), position) << "The position of the msb of " << n << " should be " << position;
         }
     }
 }

@@ -83,15 +83,15 @@ constexpr uint8_t bit_scan_reverse(unsigned_t n)
     assert(n > 0); // n == 0 might have undefined behaviour
 #if defined(__GNUC__)
     if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
-        return max_bits<unsigned long long> - __builtin_clzll(n);
+        return max_bits<unsigned long long> - __builtin_clzll(n) - 1;
     else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
-        return max_bits<unsigned long> - __builtin_clzl(n);
+        return max_bits<unsigned long> - __builtin_clzl(n) - 1;
     else
-        return max_bits<unsigned> - __builtin_clz(n);
+        return max_bits<unsigned> - __builtin_clz(n) - 1;
 #else
     uint8_t i = 0;
     for (; n != 0; n >>= 1, ++i);
-    return i;
+    return i - 1;
 #endif
 }
 
