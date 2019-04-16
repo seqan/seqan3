@@ -39,7 +39,8 @@ void sample(std::vector<size_type> & gap_vector, size_type size)
     generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_real_distribution<double> uni(0.0, 1.0);
     std::array<double,10> cumsum = {0.6395, 0.8263, 0.8871, 0.9257, 0.9544, 0.9709, 0.9813, 0.9890, 0.9955, 1.0000};
-    for (size_type i = 0; i < size; ++i){
+    for (size_type i = 0; i < size; ++i)
+    {
         double y = uni(generator);
         gap_vector[i] = y;
         auto it = std::find_if(cumsum.begin(), cumsum.end(), [y](double i){return y <= i;});
@@ -69,7 +70,9 @@ void resize(std::vector<size_type> & gaps, sequence_type & seq, unsigned int seq
     while (gap_pos < gaps.size() && gap_acc + letter_acc < seq_len)
     {
         if (!gaps[gap_pos])
+        {
             ++letter_acc;
+        }
         else
         {
             if (letter_acc + gap_acc + gaps[gap_pos] > seq_len)
@@ -80,7 +83,9 @@ void resize(std::vector<size_type> & gaps, sequence_type & seq, unsigned int seq
                 break;
             }
             else
+            {
                 gap_acc += gaps[gap_pos];
+            }
         }
         ++gap_pos;
     }
@@ -98,11 +103,11 @@ void resize(std::vector<size_type> & gaps, sequence_type & seq, unsigned int seq
  * gaps             reference to gap vector
  * gap_decorator    reference to gap decorator
  */
-template<typename size_type, typename gap_decorator_t>
-void insert_gaps(std::vector<size_type> & gaps, gap_decorator_t & gap_decorator)
+template<typename gap_decorator_t>
+void insert_gaps(std::vector<typename gap_decorator_t::size_type> & gaps, gap_decorator_t & gap_decorator)
 {
-    [[maybe_unused]] size_type gap_acc = 0;
-    for (size_type i = 0; i < gaps.size(); ++i)
+    typename gap_decorator_t::size_type gap_acc = 0;
+    for (typename gap_decorator_t::size_type i = 0; i < gaps.size(); ++i)
     {
         if (gaps[i])
         {
@@ -132,19 +137,20 @@ static void read_left2right(benchmark::State& state)
 
     // vector of sampled gap lengths for each position
     std::vector<size_type> gaps(seq_len, 0);
-    sample<size_type>(gaps, seq_len);
 
     // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
     if constexpr(gapped_flag)
+    {
+        sample<size_type>(gaps, seq_len);
         resize<size_type, sequence_type>(gaps, seq, seq_len);
-
+    }
     // initialize with (truncated) sequence and insert gaps from left to right
     gap_decorator_t gap_decorator;
     assign_unaligned(gap_decorator, seq);
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, gap_decorator_t>(gaps, gap_decorator);
+        insert_gaps<gap_decorator_t>(gaps, gap_decorator);
 
     size_t op_ctr = 0;
     for (auto _ : state)
@@ -180,11 +186,13 @@ static void insert_left2right(benchmark::State& state)
 
     // vector of sampled gap lengths for each position
     std::vector<size_type> gaps(seq_len, 0);
-    sample<size_type>(gaps, seq_len);
 
     // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
     if constexpr(gapped_flag)
+    {
+        sample<size_type>(gaps, seq_len);
         resize<size_type, sequence_type>(gaps, seq, seq_len);
+    }
 
     // initialize with (truncated) sequence and insert gaps from left to right
     gap_decorator_t gap_decorator;
@@ -192,7 +200,7 @@ static void insert_left2right(benchmark::State& state)
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, gap_decorator_t>(gaps, gap_decorator);
+        insert_gaps<gap_decorator_t>(gaps, gap_decorator);
 
     size_t op_ctr = 0;
     for (auto _ : state)
@@ -230,11 +238,13 @@ static void insert_right2left(benchmark::State& state)
 
     // vector of sampled gap lengths for each position
     std::vector<size_type> gaps(seq_len, 0);
-    sample<size_type>(gaps, seq_len);
 
     // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
     if constexpr(gapped_flag)
+    {
+        sample<size_type>(gaps, seq_len);
         resize<size_type, sequence_type>(gaps, seq, seq_len);
+    }
 
     // initialize with (truncated) sequence and insert gaps from left to right
     gap_decorator_t gap_decorator;
@@ -242,7 +252,7 @@ static void insert_right2left(benchmark::State& state)
 
     // insert gaps before starting benchmark
     if constexpr(gapped_flag)
-        insert_gaps<size_type, gap_decorator_t>(gaps, gap_decorator);
+        insert_gaps<gap_decorator_t>(gaps, gap_decorator);
 
     size_t op_ctr = 0;
     for (auto _ : state)
@@ -266,5 +276,177 @@ BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, false)->Range(1
 // 3 b) Insert gaps of length 1 from left to right into gapped sequence
 BENCHMARK_TEMPLATE(insert_right2left, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
 BENCHMARK_TEMPLATE(insert_right2left, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+
+// ============================================================================
+//  read at random position
+// ============================================================================
+/* Parameters:
+ * gap_decorator_t      gap decorator class, e.g. gap_decorator_anchor_set
+ * gapped_flag          operate on already gapped (true) or ungapped sequence (false)
+ */
+template <typename gap_decorator_t, bool gapped_flag>
+static void read_random(benchmark::State& state)
+{
+    unsigned int seq_len = state.range(0);
+    using size_type = typename gap_decorator_t::size_type;
+    using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
+    sequence_type seq(seq_len, 'A'_dna4);
+
+    // vector of sampled gap lengths for each position
+    std::vector<size_type> gaps(seq_len, 0);
+
+    // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
+    if constexpr(gapped_flag)
+    {
+        sample<size_type>(gaps, seq_len);
+        resize<size_type, sequence_type>(gaps, seq, seq_len);
+    }
+
+    // initialize with (truncated) sequence and insert gaps from left to right
+    gap_decorator_t gap_decorator;
+    assign_unaligned(gap_decorator, seq);
+
+    // insert gaps before starting benchmark
+    if constexpr(gapped_flag)
+        insert_gaps<gap_decorator_t>(gaps, gap_decorator);
+
+    std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
+    std::uniform_real_distribution<> uni_dis(0.0, static_cast<double>(seq_len));
+
+    size_t pos = 0;
+    size_t op_ctr = 0;
+    for (auto _ : state)
+    {
+        state.PauseTiming();
+        pos = uni_dis(generator);
+        state.ResumeTiming();
+        benchmark::DoNotOptimize(gap_decorator[pos]);
+        state.PauseTiming();
+        ++op_ctr;
+        state.ResumeTiming();
+    }
+    state.counters["read_op"] = op_ctr;
+}
+
+// 4 a) Read at random position in ungapped sequence
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+// 4 b) Read at random position in gapped sequence
+BENCHMARK_TEMPLATE(read_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(read_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+
+// ============================================================================
+//  insert at random position
+// ============================================================================
+template <typename gap_decorator_t, bool gapped_flag>
+static void insert_random(benchmark::State& state)
+{
+    unsigned int seq_len = state.range(0);
+    using size_type = typename gap_decorator_t::size_type;
+    using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
+    sequence_type seq(seq_len, 'A'_dna4);
+
+    // vector of sampled gap lengths for each position
+    std::vector<size_type> gaps(seq_len, 0);
+
+    // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
+    if constexpr(gapped_flag)
+    {
+        sample<size_type>(gaps, seq_len);
+        resize<size_type, sequence_type>(gaps, seq, seq_len);
+    }
+
+    // initialize with (truncated) sequence and insert gaps from left to right
+    gap_decorator_t gap_decorator;
+    assign_unaligned(gap_decorator, seq);
+
+    // insert gaps before starting benchmark
+    if constexpr(gapped_flag)
+        insert_gaps<gap_decorator_t>(gaps, gap_decorator);
+
+    std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
+    std::uniform_real_distribution<> uni_dis(0.0, static_cast<double>(seq_len));
+
+    size_t op_ctr = 0;
+    for (auto _ : state)
+    {
+        state.PauseTiming();
+        size_t pos = uni_dis(generator);
+        auto it = std::ranges::begin(gap_decorator);
+        std::ranges::advance(it, pos);
+        state.ResumeTiming();
+        insert_gap(gap_decorator, it, 1);
+        state.PauseTiming();
+        ++op_ctr;
+        state.ResumeTiming();
+    }
+    state.counters["insert_op"] = op_ctr;
+}
+
+// 5 a) Insert gaps of length 1 at random position into ungapped sequence
+BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+// 5 b) Insert gaps of length 1 at random position into gapped sequence
+BENCHMARK_TEMPLATE(insert_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(insert_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
+
+// ============================================================================
+//  delete at random position
+// ============================================================================
+template <typename gap_decorator_t, bool gapped_flag>
+static void delete_random(benchmark::State& state)
+{
+    unsigned int seq_len = state.range(0);
+    using size_type = typename gap_decorator_t::size_type;
+    using sequence_type = remove_cvref_t<detail::unaligned_seq_t<gap_decorator_t>>;
+    sequence_type seq(seq_len, 'A'_dna4);
+
+    // vector of sampled gap lengths for each position
+    std::vector<size_type> gaps(seq_len, 0);
+
+    // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
+    if constexpr(gapped_flag)
+    {
+        sample<size_type>(gaps, seq_len);
+        resize<size_type, sequence_type>(gaps, seq, seq_len);
+    }
+
+    // initialize with (truncated) sequence and insert gaps from left to right
+    gap_decorator_t gap_decorator;
+    assign_unaligned(gap_decorator, seq);
+
+    // insert gaps before starting benchmark
+    if constexpr(gapped_flag)
+        insert_gaps<gap_decorator_t>(gaps, gap_decorator);
+
+    std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
+    std::uniform_real_distribution<> uni_dis(0.0, static_cast<double>(seq_len));
+
+    size_t op_ctr = 0;
+    for (auto _ : state)
+    {
+        state.PauseTiming();
+        size_t pos = uni_dis(generator);
+        auto first = std::ranges::begin(gap_decorator);
+        std::ranges::advance(first, pos);
+        first = insert_gap(gap_decorator, first, 2);
+        auto last = std::ranges::begin(gap_decorator);
+        last = first;
+        std::ranges::advance(last, 2);
+        state.ResumeTiming();
+        erase_gap(gap_decorator, first, last);
+        state.PauseTiming();
+        ++op_ctr;
+        state.ResumeTiming();
+    }
+    state.counters["delete_op"] = op_ctr;
+}
+
+// 6 a) Erase gaps at random position from initially ungapped sequence
+BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set<const std::vector<dna4> &>, false)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, false)->Range(1<<2, 1<<15);
+// 6 b) Erase gaps at random position from initially gapped sequence
+BENCHMARK_TEMPLATE(delete_random, gap_decorator_anchor_set<const std::vector<dna4> &>, true)->Range(1<<2, 1<<15);
+BENCHMARK_TEMPLATE(delete_random, std::vector<gapped<dna4>>, true)->Range(1<<2, 1<<15);
 
 BENCHMARK_MAIN();
