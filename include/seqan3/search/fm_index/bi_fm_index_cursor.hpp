@@ -16,10 +16,9 @@
 
 #include <sdsl/suffix_trees.hpp>
 
-#include <range/v3/view/slice.hpp>
-
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/metafunction/range.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/std/ranges>
 
@@ -867,7 +866,7 @@ public:
         assert(index != nullptr && index->text != nullptr);
 
         size_type const query_begin = offset() - index->fwd_fm.index[fwd_lb];
-        return *index->text | ranges::view::slice(query_begin, query_begin + query_length());
+        return *index->text | view::slice(query_begin, query_begin + query_length());
     }
 
     //!\overload
@@ -880,7 +879,7 @@ public:
 
         size_type const loc = offset() - index->fwd_fm.index[fwd_lb];
         size_type const query_begin = loc - index->fwd_fm.text_begin_rs.rank(loc + 1) + 1; // Substract delimiters
-        return *index->text | std::view::join | ranges::view::slice(query_begin, query_begin + query_length());
+        return *index->text | std::view::join | view::slice(query_begin, query_begin + query_length());
     }
 
     //!\copydoc query()

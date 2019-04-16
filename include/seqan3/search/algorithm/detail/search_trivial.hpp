@@ -54,7 +54,7 @@ inline bool search_trivial(cursor_t cur, query_t & query, typename cursor_t::siz
     if (query_pos == std::ranges::size(query) || error_left.total == 0)
     {
         // If not at end of query sequence, try searching the remaining suffix without any errors.
-        if (query_pos == std::ranges::size(query) || cur.extend_right(std::view::drop(query, query_pos)))
+        if (query_pos == std::ranges::size(query) || cur.extend_right(view::drop(query, query_pos)))
         {
             delegate(cur);
             return true;

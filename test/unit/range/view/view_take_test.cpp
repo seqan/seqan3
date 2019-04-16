@@ -47,6 +47,9 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("fo", std::string(v3));
     std::string v3b = vec | std::view::reverse | adaptor(3) | ranges::view::unique;
     EXPECT_EQ("rab", v3b);
+
+    // comparability against self
+    EXPECT_TRUE(std::ranges::equal(v,v));
 }
 
 template <typename adaptor_t>
@@ -112,10 +115,10 @@ TEST(view_take, underlying_is_shorter)
     EXPECT_EQ("foo", v);
 }
 
-TEST(view_take, overloads)
+TEST(view_take, type_erasure)
 {
-    {   // string overload
-        std::string urange{"foobar"};
+    {   // string const overload
+        std::string const urange{"foobar"};
 
         auto v = view::take(urange, 3);
 
@@ -178,6 +181,17 @@ TEST(view_take, overloads)
         EXPECT_TRUE((std::Same<decltype(v2), detail::view_take<decltype(v), false, false>>));
         EXPECT_TRUE((std::ranges::equal(v2, std::vector{1, 2, 3})));
     }
+
+    {   // generic overload (random access, non-sized, pointer as iterator)
+        std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
+
+        auto v0 = std::span{urange};
+        auto v1 = v0 | std::view::take_while([] (int i) { return i < 6; });
+        auto v2 = view::take(v1, 3);
+
+        EXPECT_TRUE((std::Same<decltype(v2), detail::view_take<decltype(v1), false, false>>));
+        EXPECT_TRUE((std::ranges::equal(v2, std::vector{1, 2, 3})));
+    }
 }
 
 // ============================================================================
@@ -225,6 +239,10 @@ TEST(view_take_exactly_or_throw, underlying_is_shorter)
 {
     std::string vec{"foo"};
     EXPECT_THROW(( view::take_exactly_or_throw(vec, 4) ),
+                   std::invalid_argument); // no parsing, but throws in adaptor
+
+    std::list l{'f', 'o', 'o'};
+    EXPECT_THROW(( detail::view_take<std::ranges::all_view<std::list<char> &>, true, true>(l, 4) ),
                    std::invalid_argument); // no parsing, but throws on construction
 
     std::string v;

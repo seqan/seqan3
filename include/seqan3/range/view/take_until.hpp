@@ -91,9 +91,10 @@ private:
 
     public:
         /*!\name Constructors, destructor and assignment
+         * \brief Exceptions specification is implicitly inherited.
          * \{
          */
-        iterator_type()                                                = default; //!< Defaulted.
+        constexpr iterator_type()                                      = default; //!< Defaulted.
         constexpr iterator_type(iterator_type const & rhs)             = default; //!< Defaulted.
         constexpr iterator_type(iterator_type && rhs)                  = default; //!< Defaulted.
         constexpr iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
@@ -101,13 +102,16 @@ private:
         ~iterator_type()                                               = default; //!< Defaulted.
 
         //!\brief Constructor that delegates to the CRTP layer.
-        iterator_type(base_base_t const & it) :
-            base_t{it}
+        iterator_type(base_base_t it) noexcept(noexcept(base_t{it})) :
+            base_t{std::move(it)}
         {}
 
         //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-        iterator_type(base_base_t it, fun_ref_t _fun, sentinel_type /*not used here, only by the consuming iterator*/) :
-            base_t{it}, fun{_fun} {}
+        iterator_type(base_base_t it,
+                      fun_ref_t _fun,
+                      sentinel_type /*only used by the consuming iterator*/) noexcept(noexcept(base_t{it})) :
+            base_t{std::move(it)}, fun{_fun}
+        {}
         //!\}
 
         /*!\name Associated types
@@ -125,15 +129,23 @@ private:
          * \brief We define comparison against self and against the sentinel.
          * \{
          */
-        bool operator==(iterator_type const & rhs) const noexcept(!or_throw)
+        //!\brief Delegate comparison to base_base_t.
+        bool operator==(iterator_type const & rhs) const
+            noexcept(noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
+        //!\cond
             requires std::ForwardIterator<base_base_t>
+        //!\endcond
         {
-            return static_cast<base_base_t>(*this) == static_cast<base_base_t>(rhs);
+            return *this->this_to_base() == *rhs.this_to_base();
         }
 
-        bool operator==(sentinel_type const & rhs) const noexcept(!or_throw)
+        //!\brief Evaluate functor, possibly throw.
+        bool operator==(sentinel_type const & rhs) const
+            noexcept(!or_throw &&
+                     noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()) &&
+                     noexcept(fun(std::declval<reference>())))
         {
-            if (static_cast<base_base_t>(*this) == rhs) // [[unlikely]]
+            if (*this->this_to_base() == rhs) // [[unlikely]]
             {
                 if constexpr (or_throw)
                     throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
@@ -144,23 +156,33 @@ private:
             return fun(**this);
         }
 
-        friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(!or_throw)
+        //!\brief Switch lhs and rhs for comparison.
+        friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs)
+            noexcept(noexcept(rhs == lhs))
         {
             return rhs == lhs;
         }
 
-        bool operator!=(sentinel_type const & rhs) const noexcept(!or_throw)
+        //!\brief Switch lhs and rhs for comparison.
+        bool operator!=(sentinel_type const & rhs) const
+            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
             return !(*this == rhs);
         }
 
-        bool operator!=(iterator_type const & rhs) const noexcept(!or_throw)
+        //!\brief Delegate comparison to base_base_t.
+        bool operator!=(iterator_type const & rhs) const
+            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
+        //!\cond
             requires std::ForwardIterator<base_base_t>
+        //!\endcond
         {
-            return static_cast<base_base_t>(*this) != static_cast<base_base_t>(rhs);
+            return !(*this == rhs);
         }
 
-        friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(!or_throw)
+        //!\brief Switch lhs and rhs for comparison.
+        friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs)
+            noexcept(noexcept(rhs != lhs))
         {
             return rhs != lhs;
         }
@@ -196,28 +218,31 @@ private:
 
     public:
         /*!\name Constructors, destructor and assignment
+         * \brief Exceptions specification is implicitly inherited.
          * \{
          */
         //!\brief Defaulted.
-        constexpr iterator_type_consume_input()                                                    noexcept = default;
+        constexpr iterator_type_consume_input()                                                    = default;
         //!\brief Defaulted.
-        constexpr iterator_type_consume_input(iterator_type_consume_input const & rhs)             noexcept = default;
+        constexpr iterator_type_consume_input(iterator_type_consume_input const & rhs)             = default;
         //!\brief Defaulted.
-        constexpr iterator_type_consume_input(iterator_type_consume_input && rhs)                  noexcept = default;
+        constexpr iterator_type_consume_input(iterator_type_consume_input && rhs)                  = default;
         //!\brief Defaulted.
-        constexpr iterator_type_consume_input & operator=(iterator_type_consume_input const & rhs) noexcept = default;
+        constexpr iterator_type_consume_input & operator=(iterator_type_consume_input const & rhs) = default;
         //!\brief Defaulted.
-        constexpr iterator_type_consume_input & operator=(iterator_type_consume_input && rhs)      noexcept = default;
+        constexpr iterator_type_consume_input & operator=(iterator_type_consume_input && rhs)      = default;
         //!\brief Defaulted.
-        ~iterator_type_consume_input()                                                             noexcept = default;
+        ~iterator_type_consume_input()                                                             = default;
 
         //!\brief Constructor that delegates to the CRTP layer.
-        iterator_type_consume_input(base_base_t const & it) :
-            base_t{it}
+        iterator_type_consume_input(base_base_t it) noexcept(noexcept(base_t{it})) :
+            base_t{std::move(it)}
         {}
 
         //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-        iterator_type_consume_input(base_base_t it, fun_ref_t _fun, sentinel_type sen) :
+        iterator_type_consume_input(base_base_t it,
+                                    fun_ref_t _fun,
+                                    sentinel_type sen) noexcept(noexcept(base_t{it})) :
             base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
         {}
         //!\}
@@ -238,14 +263,17 @@ private:
          * \{
          */
         //!\brief Override pre-increment to implement consuming behaviour.
-        iterator_type_consume_input & operator++() noexcept(!or_throw)
+        iterator_type_consume_input & operator++()
+            noexcept(noexcept(++std::declval<base_t &>()) &&
+                     noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
+                     noexcept(fun(std::declval<reference>())))
         {
-            ++static_cast<base_base_t &>(*this);
+            base_t::operator++();
 
-            while ((static_cast<base_base_t &>(*this) != stored_end) && fun(**this))
+            while ((*this->this_to_base() != stored_end) && fun(**this))
             {
                 at_end_gracefully = true;
-                ++static_cast<base_base_t &>(*this);
+                base_t::operator++();
             }
 
             return *this;
@@ -253,6 +281,8 @@ private:
 
         //!\brief Post-increment implemented via pre-increment.
         iterator_type_consume_input operator++(int)
+            noexcept(noexcept(++std::declval<iterator_type_consume_input &>()) &&
+                     std::is_nothrow_copy_constructible_v<iterator_type_consume_input>)
         {
             iterator_type_consume_input cpy{*this};
             ++(*this);
@@ -265,12 +295,15 @@ private:
          * \{
          */
         //!\brief Return the saved at_end state.
-        bool operator==(sentinel_type const & rhs) const noexcept(!or_throw)
+        bool operator==(sentinel_type const & rhs) const
+            noexcept(!or_throw &&
+                     noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
+                     noexcept(fun(std::declval<reference>())))
         {
             if (at_end_gracefully)
                 return true;
 
-            if (static_cast<base_base_t const &>(*this) == rhs)
+            if (*this->this_to_base() == rhs)
             {
                 if constexpr (or_throw)
                     throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
@@ -282,19 +315,22 @@ private:
         }
 
         //!\brief Return the saved at_end state.
-        friend bool operator==(sentinel_type const & lhs, iterator_type_consume_input const & rhs) noexcept(!or_throw)
+        friend bool operator==(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
+            noexcept(noexcept(rhs == lhs))
         {
             return rhs == lhs;
         }
 
         //!\brief Return the saved at_end state.
-        bool operator!=(sentinel_type const & rhs) const noexcept(!or_throw)
+        bool operator!=(sentinel_type const & rhs) const
+            noexcept(noexcept(std::declval<iterator_type_consume_input &>() == rhs))
         {
             return !(*this == rhs);
         }
 
         //!\brief Return the saved at_end state.
-        friend bool operator!=(sentinel_type const & lhs, iterator_type_consume_input const & rhs) noexcept(!or_throw)
+        friend bool operator!=(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
+            noexcept(noexcept(rhs != lhs))
         {
             return rhs != lhs;
         }

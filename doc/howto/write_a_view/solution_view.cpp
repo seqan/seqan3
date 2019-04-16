@@ -9,9 +9,9 @@
 using namespace seqan3;
 
 /* The iterator template */
-template <std::ranges::ForwardRange urng_t>     // CRTP derivation ↓
-struct my_iterator : seqan3::detail::inherited_iterator_base<my_iterator<urng_t>,
-                                                             std::ranges::iterator_t<urng_t>>
+template <std::ranges::ForwardRange urng_t>            // CRTP derivation ↓
+class my_iterator : public seqan3::detail::inherited_iterator_base<my_iterator<urng_t>,
+                                                                   std::ranges::iterator_t<urng_t>>
 {
 private:
     static_assert(NucleotideAlphabet<reference_t<urng_t>>,
@@ -21,9 +21,6 @@ private:
     using base_t = seqan3::detail::inherited_iterator_base<my_iterator<urng_t>,
                                                            std::ranges::iterator_t<urng_t>>;
 
-    // the CRTP in turns inherits from the actual iterator we are adapting
-    using base_base_t = std::ranges::iterator_t<urng_t>;
-
 public:
     // the member types are never imported automatically, but can be explicitly inherited:
     using typename base_t::value_type;
@@ -31,6 +28,16 @@ public:
     using typename base_t::iterator_category;
     // this member type is overwritten as we do above:
     using reference = value_type;
+
+    // define rule-of-six:
+    my_iterator() = default;
+    my_iterator(my_iterator const &) = default;
+    my_iterator(my_iterator &&) = default;
+    my_iterator & operator=(my_iterator const &) = default;
+    my_iterator & operator=(my_iterator &&) = default;
+    ~my_iterator() = default;
+    // and a constructor that takes the base_type:
+    my_iterator(base_t it) : base_t{std::move(it)} {}
 
     // we don't need to implement the ++ operators anymore!
 

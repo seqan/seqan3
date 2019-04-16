@@ -30,7 +30,7 @@ TEST(view_all, string_overload)
 
         auto v = view::all(urange);
 
-        EXPECT_TRUE((std::Same<decltype(v), std::string_view>));
+        EXPECT_FALSE((std::Same<decltype(v), std::string_view>)); // only returns string_view for string const
         EXPECT_TRUE((std::ranges::equal(v, urange)));
     }
 
