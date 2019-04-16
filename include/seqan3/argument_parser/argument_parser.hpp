@@ -511,7 +511,7 @@ private:
                 }
                 else
                 {
-                    if (argc < i + 1)
+                    if (argc <= i + 1)
                         throw parser_invalid_argument{"Option --export-help must be followed by a value."};
                     export_format = {argv[i+1]};
                 }
