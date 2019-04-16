@@ -790,23 +790,28 @@ public:
 private:
     //!\brief The gap type as a tuple storing position and length of a gap.
     using gap_t             = std::pair<size_type, size_type>;
+
+    //!\brief The array type to store gap lengths summed up block-wise.
     using gap_sums_type     = std::vector<size_type>;
+
+    //!\brief The type of a block storing anchor gaps.
     using gap_block_type    = std::vector<gap_t>;
+    
+    //!\brief The host structure storing all anchor gap blocks.
     using gap_block_list_t  = std::vector<gap_block_type>;
 
     //!\brief Stores a (copy of a) view to the ungapped, underlying sequence.
     decltype(std::view::all(std::declval<inner_type &&>())) ungapped_view{};
 
-    // block-wise accumulation of gap lengths, size doesn't change after sequence assignment
-    std::vector<size_t> gap_sums{};
-    // nested vector to store gaps by block, i.e. gap_block_list[block id] = gap_block_list
-    // an eventually tailing gap will be stored in the last block for having consistent gap read behaviour in all blocks
+    //!\brief The structure storing the accumulated gap lengths block-wise.
+    gap_sums_type gap_sums{};
+
+    //!\brief The list of blocks holding the anchor gaps.
     gap_block_list_t gap_block_list{};
 
-    // Update block statistics
+    //!\brief Helper function that updates tailing block statistics upon gap insertion or deletion.
     void update_block_sums(size_type block_id, size_type count, bool add = true)
     {
-
         for (size_type id = block_id; id < gap_sums.size(); ++id)
             gap_sums[id] = (add) ? gap_sums[id] + count : gap_sums[id] - count;
     }
