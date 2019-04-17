@@ -124,11 +124,11 @@ TYPED_TEST(pairwise_combine_iterator_test, construction)
     iterator_t it{r.begin(), r.begin(), r.end()};
 
     const_itertor_t cit{it};
-    EXPECT_EQ(it, cit);
+    EXPECT_TRUE(it == cit);
 
     const_itertor_t cit2{};
     cit2 = it;
-    EXPECT_EQ(cit, cit2);
+    EXPECT_TRUE(cit == cit2);
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, associated_types)
@@ -251,8 +251,8 @@ TYPED_TEST(pairwise_combine_iterator_test, equality)
     iterator_t it{r.begin(), r.begin(), r.end()};
 
     iterator_t it_2 = it++;
-    EXPECT_EQ(it, it);
-    EXPECT_NE(it, it_2);
+    EXPECT_TRUE(it == it);
+    EXPECT_TRUE(it != it_2);
 }
 
 TYPED_TEST(pairwise_combine_iterator_test, subscript)
@@ -387,9 +387,9 @@ TYPED_TEST(pairwise_combine_test, end)
     auto v = this->create_view();
     auto const cv{v};
 
-    EXPECT_NE(v.begin(), v.end());
-    EXPECT_NE(cv.begin(), cv.end());
-    EXPECT_NE(v.cbegin(), v.cend());
+    EXPECT_TRUE(v.begin() != v.end());
+    EXPECT_TRUE(cv.begin() != cv.end());
+    EXPECT_TRUE(v.cbegin() != v.cend());
 }
 
 TYPED_TEST(pairwise_combine_test, iterate)
