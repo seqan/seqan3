@@ -48,26 +48,6 @@ std::string generate_dummy_fastq_file(std::size_t power)
 }
 
 // ============================================================================
-// generate dummy fasta file with 2*10^power identical 2-line entries
-// ============================================================================
-std::string generate_dummy_fasta_file(std::size_t power)
-{
-    std::string file{};
-
-    std::string const input_id{">name"};
-    std::string const seq = DNA_SEQ | view::to_char;
-
-    auto const n_iterations = static_cast<unsigned int>(2*pow(10, power));
-
-    for (size_t i = 0; i < n_iterations; ++i)
-    {
-        file += input_id + '\n' + seq + '\n';
-    }
-
-    return file;
-}
-
-// ============================================================================
 // try to write 4-line entry to stream as often as possible
 // ============================================================================
 void fastq_write(benchmark::State & state)
@@ -108,6 +88,9 @@ void fastq_read_with_quality(benchmark::State & state)
         state.ResumeTiming();
 
         format.read(istream, options, seq, id, qual);
+        id.clear();
+        seq.clear();
+        qual.clear();
     }
 }
 
@@ -133,6 +116,8 @@ void fastq_read_without_quality(benchmark::State & state)
         state.ResumeTiming();
 
         format.read(istream, options, seq, id, std::ignore);
+        id.clear();
+        seq.clear();
     }
 }
 
@@ -164,6 +149,26 @@ BENCHMARK(fastq_read_ignore_everything);
 
 /*
 // ============================================================================
+// generate dummy fasta file with 2*10^power identical 2-line entries
+// ============================================================================
+std::string generate_dummy_fasta_file(std::size_t power)
+{
+    std::string file{};
+
+    std::string const input_id{">name"};
+    std::string const seq = DNA_SEQ | view::to_char;
+
+    auto const n_iterations = static_cast<unsigned int>(2*pow(10, power));
+
+    for (size_t i = 0; i < n_iterations; ++i)
+    {
+        file += input_id + '\n' + seq + '\n';
+    }
+
+    return file;
+}
+
+// ============================================================================
 // read dummy fasta file (same number of lines as the fastq dummy files)
 // ============================================================================
 void fasta_read_comparison (benchmark::State & state)
@@ -185,8 +190,8 @@ void fasta_read_comparison (benchmark::State & state)
         format.read(istream, options, seq, id, std::ignore);
     }
 }
-*/
 
 BENCHMARK(fasta_read_comparison);
+*/
 
 BENCHMARK_MAIN();

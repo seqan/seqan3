@@ -11,7 +11,6 @@
 #include <benchmark/benchmark.h>
 #include <cstring>
 #include <random>
-
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
