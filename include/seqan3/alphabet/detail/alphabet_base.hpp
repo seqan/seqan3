@@ -130,7 +130,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Alphabet::assign_char() requirement via the seqan3::assign_char() wrapper.
+     * Satisfies the seqan3::Alphabet::assign_char_to() requirement via the seqan3::assign_char_to() wrapper.
      *
      * \par Complexity
      *
@@ -156,14 +156,14 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Alphabet::assign_char_strict() requirement via the seqan3::assign_char_strict()
+     * Satisfies the seqan3::Alphabet::assign_char_strictly_to() requirement via the seqan3::assign_char_strictly_to()
      * wrapper.
      *
      * ### Complexity
      *
-     * Constant; but slightly slower than #assign_char, because it performs checks.
+     * Constant; but slightly slower than #assign_char(char_type_ const c), because it performs checks.
      */
-    derived_type & assign_char_strict(char_type_ const c)
+    derived_type & assign_char_strictly(char_type_ const c)
     //!\cond
         requires !std::Same<char_type, void>
     //!\endcond
@@ -171,8 +171,8 @@ public:
         if (!derived_type::char_is_valid(c))
             throw invalid_char_assignment{detail::get_display_name_v<derived_type>.string(), c};
 
-        using seqan3::assign_char;
-        return assign_char(static_cast<derived_type &>(*this), c);
+        using seqan3::assign_char_to;
+        return assign_char_to(c, static_cast<derived_type &>(*this));
     }
 
     /*!\brief Assign from a numeric value.
@@ -180,7 +180,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Semialphabet::assign_rank() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::Semialphabet::assign_rank_to() requirement via the seqan3::assign_rank_to() wrapper.
      *
      * \par Complexity
      *
@@ -264,8 +264,8 @@ public:
     //!\endcond
     {
         using seqan3::to_char;
-        using seqan3::assign_char;
-        return to_char(assign_char(derived_type{}, c)) == c;
+        using seqan3::assign_char_to;
+        return to_char(assign_char_to(c, derived_type{})) == c;
     }
 
 private:
@@ -341,8 +341,8 @@ public:
         return static_cast<derived_type &>(*this);
     }
 
-    //!\copybrief seqan3::alphabet_base::assign_char_strict
-    derived_type & assign_char_strict(char_type_ const c)
+    //!\copybrief seqan3::alphabet_base::assign_char_strictly
+    derived_type & assign_char_strictly(char_type_ const c)
     //!\cond
         requires !std::Same<char_type, void>
     //!\endcond
@@ -350,8 +350,8 @@ public:
         if (!derived_type::char_is_valid(c))
             throw invalid_char_assignment{detail::get_display_name_v<derived_type>.string(), c};
 
-        using seqan3::assign_char;
-        return assign_char(static_cast<derived_type &>(*this), c);
+        using seqan3::assign_char_to;
+        return assign_char_to(c, static_cast<derived_type &>(*this));
     }
 
     //!\copybrief seqan3::alphabet_base::assign_rank

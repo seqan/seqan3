@@ -39,13 +39,13 @@ struct translation_table
             using size_t = std::remove_const_t<decltype(alphabet_size_v<nucl_type>)>;
             for (size_t i = 0; i < alphabet_size_v<nucl_type>; ++i)
             {
-                dna15 n1(assign_rank(nucl_type{}, i));
+                dna15 n1(assign_rank_to(i, nucl_type{}));
                 for (size_t j = 0; j < alphabet_size_v<nucl_type>; ++j)
                 {
-                    dna15 n2(assign_rank(nucl_type{}, j));
+                    dna15 n2(assign_rank_to(j, nucl_type{}));
                     for (size_t k = 0; k < alphabet_size_v<nucl_type>; ++k)
                     {
-                        dna15 n3(assign_rank(nucl_type{}, k));
+                        dna15 n3(assign_rank_to(k, nucl_type{}));
                         table[i][j][k] = translation_table<dna15, gc, void_type>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
                     }
                 }

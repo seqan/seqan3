@@ -161,7 +161,7 @@ constexpr alphabet_rank_t<char_type> to_rank(char_type const chr) noexcept
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename char_type>
-constexpr char_type & assign_char(char_type & chr, alphabet_char_t<char_type> const chr2) noexcept
+constexpr char_type & assign_char_to(alphabet_char_t<char_type> const chr2, char_type & chr) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return chr = chr2;
@@ -169,7 +169,7 @@ constexpr char_type & assign_char(char_type & chr, alphabet_char_t<char_type> co
 
 //!\overload
 template <typename char_type>
-constexpr char_type assign_char(char_type &&, alphabet_char_t<char_type> const chr2) noexcept
+constexpr char_type assign_char_to(alphabet_char_t<char_type> const chr2, char_type &&) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return chr2;
@@ -182,18 +182,18 @@ constexpr char_type assign_char(char_type &&, alphabet_char_t<char_type> const c
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename char_type>
-constexpr char_type & assign_char_strict(char_type & chr, alphabet_char_t<char_type> const chr2) noexcept
+constexpr char_type & assign_char_strictly_to(alphabet_char_t<char_type> const chr2, char_type & chr) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
-    return assign_char(chr, chr2);
+    return assign_char_to(chr2, chr);
 }
 
 //!\overload
 template <typename char_type>
-constexpr char_type assign_char_strict(char_type &&, alphabet_char_t<char_type> const chr2) noexcept
+constexpr char_type assign_char_strictly_to(alphabet_char_t<char_type> const chr2, char_type &&) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
-    return assign_char(char_type{}, chr2);
+    return assign_char_to(chr2, char_type{});
 }
 
 //!\brief For char adaptations, all character values are valid.
@@ -211,7 +211,7 @@ constexpr bool char_is_valid_for(alphabet_char_t<char_type> const) noexcept
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename char_type>
-constexpr char_type & assign_rank(char_type & chr, alphabet_rank_t<char_type> const rank) noexcept
+constexpr char_type & assign_rank_to(alphabet_rank_t<char_type> const rank, char_type & chr) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return chr = rank;
@@ -219,7 +219,7 @@ constexpr char_type & assign_rank(char_type & chr, alphabet_rank_t<char_type> co
 
 //!\overload
 template <typename char_type>
-constexpr char_type assign_rank(char_type &&, alphabet_rank_t<char_type> const rank) noexcept
+constexpr char_type assign_rank_to(alphabet_rank_t<char_type> const rank, char_type &&) noexcept
     requires detail::is_char_adaptation_v<char_type>
 {
     return rank;

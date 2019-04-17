@@ -35,7 +35,7 @@ TEST(dssp9, assign_char)
     };
 
     for (auto [ ch, cm ] : std::view::zip(input, cmp))
-        EXPECT_EQ((assign_char(dssp9{}, ch)), cm);
+        EXPECT_EQ((assign_char_to(ch, dssp9{})), cm);
 }
 
 // to_char functions

@@ -57,19 +57,19 @@ TYPED_TEST(char_adaptation, to_char)
 TYPED_TEST(char_adaptation, assign_char)
 {
     TypeParam l{'A'};
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char(l,              'A')), alphabet_char_t<TypeParam> &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{'A'}, 'A')), alphabet_char_t<TypeParam>  >));
-    EXPECT_EQ((assign_char(TypeParam{'C'}, 'A')), l);
-    EXPECT_EQ((assign_char(l,              'C')), TypeParam{'C'});
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_to('A', l             )), alphabet_char_t<TypeParam> &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_to('A', TypeParam{'A'})), alphabet_char_t<TypeParam>  >));
+    EXPECT_EQ((assign_char_to('A', TypeParam{'C'})), l);
+    EXPECT_EQ((assign_char_to('C', l             )), TypeParam{'C'});
 }
 
 TYPED_TEST(char_adaptation, assign_char_strict)
 {
     TypeParam l{'A'};
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char_strict(l,              'A')), alphabet_char_t<TypeParam> &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char_strict(TypeParam{'A'}, 'A')), alphabet_char_t<TypeParam>  >));
-    EXPECT_EQ((assign_char_strict(TypeParam{'C'}, 'A')), l);
-    EXPECT_EQ((assign_char_strict(l,              'C')), TypeParam{'C'});
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_strictly_to('A', l             )), alphabet_char_t<TypeParam> &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_strictly_to('A', TypeParam{'A'})), alphabet_char_t<TypeParam>  >));
+    EXPECT_EQ((assign_char_strictly_to('A', TypeParam{'C'})), l);
+    EXPECT_EQ((assign_char_strictly_to('C', l             )), TypeParam{'C'});
 }
 
 TYPED_TEST(char_adaptation, alphabet_rank_t)
@@ -92,10 +92,10 @@ TYPED_TEST(char_adaptation, to_rank)
 TYPED_TEST(char_adaptation, assign_rank)
 {
     TypeParam l{'A'};
-    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(l,              65)), alphabet_char_t<TypeParam> &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(TypeParam{'A'}, 65)), alphabet_char_t<TypeParam>  >));
-    EXPECT_EQ((assign_rank(TypeParam{'C'}, 65)), l);
-    EXPECT_EQ((assign_rank(l,              67)), TypeParam{'C'});
+    EXPECT_TRUE((std::is_same_v<decltype(assign_rank_to(65, l)), alphabet_char_t<TypeParam> &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_rank_to(65, TypeParam{'A'})), alphabet_char_t<TypeParam>  >));
+    EXPECT_EQ((assign_rank_to(65, TypeParam{'C'})), l);
+    EXPECT_EQ((assign_rank_to(67, l)), TypeParam{'C'});
 }
 
 TYPED_TEST(char_adaptation, alphabet_size_v)

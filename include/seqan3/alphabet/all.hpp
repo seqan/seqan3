@@ -86,17 +86,17 @@
  *       this type must be able to represent the numbers from `0` to `alphabet size - 1` (often `uint8_t`, but
  *       sometimes a larger unsigned integral type);
  *     * a \link seqan3::Alphabet::to_rank to_rank \endlink function to produce the numerical representation;
- *     * an \link seqan3::Alphabet::assign_rank assign_rank \endlink function to assign from the numerical
+ *     * an \link seqan3::Alphabet::assign_rank_to assign_rank \endlink function to assign from the numerical
  *       representation;
  *   2. a **character based interface** with
  *     * the \link seqan3::underlying_char underlying character type \endlink able to represent this alphabet visually
  *       (almost always `char`, but could be `char16_t` or `char32_t`, as well)
  *     * a \link seqan3::Alphabet::to_char to_char \endlink function to produce the visual representation;
- *     * an \link seqan3::Alphabet::assign_char assign_char \endlink function to assign from the visual
+ *     * an \link seqan3::Alphabet::assign_char_to assign_char \endlink function to assign from the visual
  *       representation;
  *     * a \link seqan3::Alphabet::char_is_valid_for char_is_valid_for \endlink function that checks whether
  *       a character value has a one-to-one mapping to an alphabet value;
- *     * an \link seqan3::Alphabet::assign_char_strict assign_char_strict \endlink function to assign a
+ *     * an \link seqan3::Alphabet::assign_char_strictly_to assign_char_strict \endlink function to assign a
  *       characters while verifying its validity.
  *
  * To prevent the aforementioned ambiguity, you can neither assign from rank or char representation via `operator=`,

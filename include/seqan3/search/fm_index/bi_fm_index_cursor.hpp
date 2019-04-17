@@ -731,7 +731,7 @@ public:
         assert(index != nullptr && query_length() > 0);
 
         typename index_t::char_type c;
-        assign_rank(c, index->fwd_fm.index.comp2char[_last_char] - 1); // text is not allowed to contain ranks of 0
+        assign_rank_to(index->fwd_fm.index.comp2char[_last_char] - 1, c); // text is not allowed to contain ranks of 0
         return c;
     }
 

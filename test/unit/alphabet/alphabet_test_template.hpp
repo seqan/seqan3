@@ -37,17 +37,17 @@ TYPED_TEST_P(alphabet, default_value_constructor)
 TYPED_TEST_P(alphabet, global_assign_rank)
 {
     // this double checks the value initialisation
-    EXPECT_EQ((assign_rank(TypeParam{}, 0)), TypeParam{});
+    EXPECT_EQ((assign_rank_to(0, TypeParam{})), TypeParam{});
 
     TypeParam t0;
     for (uint64_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-        assign_rank(t0, i);
+        assign_rank_to(i, t0);
 
 // TODO(h-2): once we have a proper assert macro that throws instead of SIGABRTs:
-//     EXPECT_THROW(assign_rank(t0, alphabet_size_v<TypeParam>));
+//     EXPECT_THROW(assign_rank_to(alphabet_size_v<TypeParam>, t0));
 
-    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(t0, 0)), TypeParam &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_rank(TypeParam{}, 0)), TypeParam>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_rank_to(0, t0)), TypeParam &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_rank_to(0, TypeParam{})), TypeParam>));
 }
 
 TYPED_TEST_P(alphabet, global_to_rank)
@@ -57,7 +57,7 @@ TYPED_TEST_P(alphabet, global_to_rank)
 
     TypeParam t0;
     for (uint64_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
-        EXPECT_EQ((to_rank(assign_rank(t0, i))), i);
+        EXPECT_EQ((to_rank(assign_rank_to(i, t0))), i);
 
     EXPECT_TRUE((std::is_same_v<decltype(to_rank(t0)), alphabet_rank_t<TypeParam>>));
 }
@@ -68,7 +68,7 @@ TYPED_TEST_P(alphabet, copy_constructor)
     // it will be in the most cases 1 except for alphabets like seqan3::gap where it will be 0
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
-    assign_rank(t1, rank);
+    assign_rank_to(rank, t1);
     TypeParam t2{t1};
     TypeParam t3(t1);
     EXPECT_EQ(t1, t2);
@@ -79,7 +79,7 @@ TYPED_TEST_P(alphabet, move_constructor)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
-    assign_rank(t0, rank);
+    assign_rank_to(rank, t0);
     TypeParam t1{t0};
 
     TypeParam t2{std::move(t1)};
@@ -92,7 +92,7 @@ TYPED_TEST_P(alphabet, copy_assignment)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
-    assign_rank(t1, rank);
+    assign_rank_to(rank, t1);
     TypeParam t2;
     t2 = t1;
     EXPECT_EQ(t1, t2);
@@ -102,7 +102,7 @@ TYPED_TEST_P(alphabet, move_assignment)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
-    assign_rank(t0, rank);
+    assign_rank_to(rank, t0);
     TypeParam t1{t0};
     TypeParam t2;
     TypeParam t3;
@@ -116,7 +116,7 @@ TYPED_TEST_P(alphabet, swap)
 {
     constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
-    assign_rank(t0, rank);
+    assign_rank_to(rank, t0);
     TypeParam t1{t0};
     TypeParam t2{};
     TypeParam t3{};
@@ -134,10 +134,10 @@ TYPED_TEST_P(alphabet, global_assign_char)
 
     TypeParam t0;
     for (; i < j; ++i)
-        assign_char(t0, i);
+        assign_char_to(i, t0);
 
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char(t0, 0)), TypeParam &>));
-    EXPECT_TRUE((std::is_same_v<decltype(assign_char(TypeParam{}, 0)), TypeParam>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_to(0, t0)), TypeParam &>));
+    EXPECT_TRUE((std::is_same_v<decltype(assign_char_to(0, TypeParam{})), TypeParam>));
 }
 
 TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example for most; more inside specialised tests
@@ -155,9 +155,9 @@ TYPED_TEST_P(alphabet, global_assign_char_strict)
                             ptrdiff_t{std::numeric_limits<alphabet_char_t<TypeParam>>::max()} + 1))
     {
         if (char_is_valid_for<TypeParam>(c))
-            EXPECT_NO_THROW(assign_char_strict(TypeParam{}, c));
+            EXPECT_NO_THROW(assign_char_strictly_to(c, TypeParam{}));
         else
-            EXPECT_THROW(assign_char_strict(TypeParam{}, c), invalid_char_assignment);
+            EXPECT_THROW(assign_char_strictly_to(c, TypeParam{}), invalid_char_assignment);
     }
 }
 
@@ -175,8 +175,8 @@ TYPED_TEST_P(alphabet, comparison_operators)
     TypeParam t0{};
     TypeParam t1{};
 
-    assign_rank(t0, 0);
-    assign_rank(t1, 1 % alphabet_size_v<TypeParam>);
+    assign_rank_to(0, t0);
+    assign_rank_to(1 % alphabet_size_v<TypeParam>, t1);
 
     EXPECT_EQ(t0, t0);
     EXPECT_LE(t0, t1);
@@ -224,7 +224,7 @@ TYPED_TEST_P(alphabet, hash)
         {
             for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
             {
-                assign_rank(t0, i);
+                assign_rank_to(i, t0);
                 ASSERT_EQ(h(t0), i);
             }
         }
@@ -232,7 +232,7 @@ TYPED_TEST_P(alphabet, hash)
         {
             for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
             {
-                assign_rank(t0, i);
+                assign_rank_to(i, t0);
                 ASSERT_EQ(h(t0), i);
             }
         }
@@ -242,7 +242,7 @@ TYPED_TEST_P(alphabet, hash)
         text.reserve(4);
         for (size_t i = 0; i < 4; ++i)
         {
-            text.push_back(assign_rank(TypeParam{}, 0));
+            text.push_back(assign_rank_to(0, TypeParam{}));
         }
         std::hash<decltype(text)> h{};
         ASSERT_EQ(h(text), 0u);
@@ -253,7 +253,7 @@ TYPED_TEST_P(alphabet, hash)
         {
             for (size_t i = 0; i < alphabet_size_v<TypeParam>/2; ++i)
             {
-                TypeParam const t0 = assign_rank(TypeParam{}, i);
+                TypeParam const t0 = assign_rank_to(i, TypeParam{});
                 ASSERT_EQ(h(t0), i);
             }
         }
@@ -261,13 +261,13 @@ TYPED_TEST_P(alphabet, hash)
         {
             for (size_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
             {
-                TypeParam const t0 = assign_rank(TypeParam{}, i);
+                TypeParam const t0 = assign_rank_to(i, TypeParam{});
                 ASSERT_EQ(h(t0), i);
             }
         }
     }
     {
-        std::vector<TypeParam> const text(4, assign_rank(TypeParam{}, 0));
+        std::vector<TypeParam> const text(4, assign_rank_to(0, TypeParam{}));
         std::hash<decltype(text)> h{};
         ASSERT_EQ(h(text), 0u);
     }
@@ -277,13 +277,13 @@ TYPED_TEST_P(alphabet, serialisation)
 {
     TypeParam letter;
 
-    assign_rank(letter, 1 % alphabet_size_v<TypeParam>);
+    assign_rank_to(1 % alphabet_size_v<TypeParam>, letter);
     test::do_serialisation(letter);
 
     std::vector<TypeParam> vec;
     vec.resize(10);
     for (unsigned i = 0; i < 10; ++i)
-        assign_rank(vec[i], i % alphabet_size_v<TypeParam>);
+        assign_rank_to(i % alphabet_size_v<TypeParam>, vec[i]);
     test::do_serialisation(vec);
 }
 

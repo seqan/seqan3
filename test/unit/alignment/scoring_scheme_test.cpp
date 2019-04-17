@@ -152,7 +152,7 @@ TYPED_TEST(generic, simple_score)
         for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
         {
             int8_t expected = i == j ? 5 : -3;
-            EXPECT_EQ(expected, scheme.score(assign_rank(alph_t{}, i), assign_rank(alph_t{}, j)));
+            EXPECT_EQ(expected, scheme.score(assign_rank_to(i, alph_t{}), assign_rank_to(j, alph_t{})));
         }
     }
 }
@@ -195,7 +195,7 @@ TYPED_TEST(generic, hamming)
         for (uint8_t j = 0; j < alphabet_size_v<alph_t>; ++j)
         {
             int8_t expected = i == j ? 0 : -1;
-            EXPECT_EQ(expected, scheme.score(assign_rank(alph_t{}, i), assign_rank(alph_t{}, j)));
+            EXPECT_EQ(expected, scheme.score(assign_rank_to(i, alph_t{}), assign_rank_to(j, alph_t{})));
         }
     }
 }

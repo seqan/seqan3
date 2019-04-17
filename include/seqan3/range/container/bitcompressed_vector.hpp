@@ -477,7 +477,7 @@ public:
     const_reference operator[](size_type const i) const noexcept
     {
         assert(i < size());
-        return assign_rank(const_reference{}, data[i]);
+        return assign_rank_to(data[i], const_reference{});
     }
 
     /*!\brief Return the first element. Calling front on an empty container is undefined.

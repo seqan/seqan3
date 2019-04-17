@@ -120,7 +120,7 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  */
 // just implement the interface
 
-/*!\fn semi_alphabet_type & seqan3::assign_rank(semi_alphabet_type & alph, rank_type const rank) noexcept
+/*!\fn semi_alphabet_type & seqan3::assign_rank_to(rank_type const rank, semi_alphabet_type & alph) noexcept
  * \brief Returns the alphabet letter's value in rank representation.
  * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
@@ -138,7 +138,7 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  */
 // just implement the interface
 
-/*!\fn semi_alphabet_type seqan3::assign_rank(semi_alphabet_type && alph, rank_type const rank) noexcept
+/*!\fn semi_alphabet_type seqan3::assign_rank_to(rank_type const rank, semi_alphabet_type && alph) noexcept
  * \overload
  */
 // just implement the interface
@@ -197,7 +197,7 @@ using alphabet_char_t = typename underlying_char<alphabet_type>::type;
  */
 // just implement the interface
 
-/*!\fn alphabet_type & seqan3::assign_char(alphabet_type & alph, char_type const chr) noexcept
+/*!\fn alphabet_type & seqan3::assign_char_to(char_type const chr, alphabet_type & alph) noexcept
  * \brief Assigns a character value to an alphabet object.
  * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
@@ -216,12 +216,12 @@ using alphabet_char_t = typename underlying_char<alphabet_type>::type;
  */
 // just implement the interface
 
-/*!\fn alphabet_type seqan3::assign_char(alphabet_type && alph, char_type const chr) noexcept
+/*!\fn alphabet_type seqan3::assign_char_to(char_type const chr, alphabet_type && alph) noexcept
  * \overload
  */
 // just implement the interface
 
-/*!\fn alphabet_type & seqan3::assign_char_strict(alphabet_type & alph, char_type const chr)
+/*!\fn alphabet_type & seqan3::assign_char_strictly_to(char_type const chr, alphabet_type & alph)
  * \brief Assigns a character value to an alphabet object.
  * \ingroup alphabet
  * \param alph The alphabet letter that you wish to assign to.
@@ -238,7 +238,7 @@ using alphabet_char_t = typename underlying_char<alphabet_type>::type;
  */
 // just implement the interface
 
-/*!\fn alphabet_type seqan3::assign_char_strict(alphabet_type && alph, char_type const chr)
+/*!\fn alphabet_type seqan3::assign_char_strictly_to(char_type const chr, alphabet_type && alph)
  * \overload
  */
 // just implement the interface

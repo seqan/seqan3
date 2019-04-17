@@ -42,14 +42,14 @@ TYPED_TEST(align_confg_scoring_test, configuration)
         align_cfg::scoring elem{scheme_t{}};
         configuration cfg{elem};
 
-        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char(alph_t{}, 'a'),
-                                                            assign_char(alph_t{}, 'a'))), 0);
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char_to('a', alph_t{}),
+                                                            assign_char_to('a', alph_t{}))), 0);
     }
 
     {
         configuration cfg{align_cfg::scoring{scheme_t{}}};
 
-        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char(alph_t{}, 'a'),
-                                                            assign_char(alph_t{}, 'c'))), -1);
+        EXPECT_EQ((get<align_cfg::scoring>(cfg).value.score(assign_char_to('a', alph_t{}),
+                                                            assign_char_to('c', alph_t{}))), -1);
     }
 }

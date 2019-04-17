@@ -51,7 +51,7 @@ void random_text(std::vector<dna4> & text, uint64_t const length)
 
     text.resize(length);
     for (uint64_t i = 0; i < length; ++i)
-        assign_rank(text[i], std::rand() % alphabet_size);
+        assign_rank_to(std::rand() % alphabet_size, text[i]);
 }
 
 } // namespace std

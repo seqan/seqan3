@@ -112,14 +112,14 @@ public:
     //!\brief Assign from a character. This modifies the internal sequence letter.
     constexpr qualified & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char(get<0>(*this), c);
+        seqan3::assign_char_to(c, get<0>(*this));
         return *this;
     }
 
     //!\brief Strict assign from a character. This modifies the internal sequence letter.
-    qualified & assign_char_strict(char_type const c)
+    qualified & assign_char_strictly(char_type const c)
     {
-        seqan3::assign_char_strict(get<0>(*this), c);
+        seqan3::assign_char_strictly_to(c, get<0>(*this));
         return *this;
     }
 

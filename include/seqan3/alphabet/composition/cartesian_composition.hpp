@@ -433,8 +433,8 @@ public:
         using t = meta::at_c<component_list, index>;
         t val{};
 
-        using seqan3::assign_rank;
-        assign_rank(val, l.to_component_rank<index>());
+        using seqan3::assign_rank_to;
+        assign_rank_to(l.to_component_rank<index>(), val);
 
         return component_proxy<t, index>{val, l};
     }
@@ -464,8 +464,8 @@ public:
         using t = meta::at_c<component_list, index>;
         t val{};
 
-        using seqan3::assign_rank;
-        assign_rank(val, l.to_component_rank<index>());
+        using seqan3::assign_rank_to;
+        assign_rank_to(l.to_component_rank<index>(), val);
 
         return val;
     }

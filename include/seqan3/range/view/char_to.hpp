@@ -67,7 +67,7 @@ inline auto const char_to = deep{std::view::transform([] (auto && in)
     static_assert(std::CommonReference<decltype(in), alphabet_char_t<alphabet_type>>,
                   "The innermost value type must have a common reference to underlying char type of alphabet_type.");
     // call element-wise assign_char from the Alphabet
-    return assign_char(alphabet_type{}, in);
+    return assign_char_to(in, alphabet_type{});
 })};
 
 //!\}

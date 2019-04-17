@@ -87,7 +87,7 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type & assign_rank(alphabet_type & alph, alphabet_rank_t<alphabet_type> const rank) noexcept
+constexpr alphabet_type & assign_rank_to(alphabet_rank_t<alphabet_type> const rank, alphabet_type & alph) noexcept
 {
     static_assert(noexcept(alph.assign_rank(rank)),
                   "The assign_rank() free function can only forward to .assign_rank() member functions that "
@@ -103,14 +103,14 @@ constexpr alphabet_type & assign_rank(alphabet_type & alph, alphabet_rank_t<alph
  * \details
  * Use this e.g. to newly create alphabet letters from rank:
  * ~~~{.cpp}
- * auto l = assign_rank(dna5{}, 1);  // l is of type dna5 and == 'C'_dna5
+ * auto l = assign_rank_to(1, dna5{});  // l is of type dna5 and == 'C'_dna5
  * ~~~
  */
 template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type assign_rank(alphabet_type && alph, alphabet_rank_t<alphabet_type> const rank) noexcept
+constexpr alphabet_type assign_rank_to(alphabet_rank_t<alphabet_type> const rank, alphabet_type && alph) noexcept
 {
     static_assert(noexcept(alph.assign_rank(rank)),
                   "The assign_rank() free function can only forward to .assign_rank() member functions that "
@@ -170,7 +170,7 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type & assign_char(alphabet_type & alph, alphabet_char_t<alphabet_type> const chr) noexcept
+constexpr alphabet_type & assign_char_to(alphabet_char_t<alphabet_type> const chr, alphabet_type & alph) noexcept
 {
     static_assert(noexcept(alph.assign_char(chr)),
                   "The assign_char() free function can only forward to .assign_char() member functions that "
@@ -186,14 +186,14 @@ constexpr alphabet_type & assign_char(alphabet_type & alph, alphabet_char_t<alph
  * \details
  * Use this e.g. to newly create alphabet letters from char:
  * ~~~{.cpp}
- * auto l = assign_char(dna5{}, 'G');  // l is of type dna5
+ * auto l = assign_char_to('G', dna5{});  // l is of type dna5
  * ~~~
  */
 template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type assign_char(alphabet_type && alph, alphabet_char_t<alphabet_type> const chr) noexcept
+constexpr alphabet_type assign_char_to(alphabet_char_t<alphabet_type> const chr, alphabet_type && alph) noexcept
 {
     static_assert(noexcept(alph.assign_char(chr)),
                   "The assign_char() free function can only forward to .assign_char() member functions that "
@@ -215,8 +215,8 @@ constexpr bool char_is_valid_for(alphabet_char_t<alphabet_type_with_members> con
     return std::remove_reference_t<alphabet_type_with_members>::char_is_valid(chr);
 }
 
-/*!\brief Implementation of seqan3::Alphabet::assign_char_strict() that delegates to a member function.
- * \tparam alphabet_type Must provide an `.assign_char_strict()` member function.
+/*!\brief Implementation of seqan3::Alphabet::assign_char_strictly() that delegates to a member function.
+ * \tparam alphabet_type Must provide an `.assign_char_strictly()` member function.
  * \param alph The alphabet letter that you wish to assign to.
  * \param chr The `char` value you wish to assign.
  * \throws seqan3::invalid_char_assignment If seqan3::char_is_valid_for returns `false` for the given character.
@@ -224,23 +224,23 @@ constexpr bool char_is_valid_for(alphabet_char_t<alphabet_type_with_members> con
  */
 template <typename alphabet_type_with_members>
 //!\cond
-    requires requires (alphabet_type_with_members alph) { { alph.assign_char_strict(char{0}) } -> alphabet_type_with_members &; }
+    requires requires (alphabet_type_with_members alph) { { alph.assign_char_strictly(char{0}) } -> alphabet_type_with_members &; }
 //!\endcond
-constexpr alphabet_type_with_members & assign_char_strict(alphabet_type_with_members & alph,
-                                                          alphabet_char_t<alphabet_type_with_members> const chr)
+constexpr alphabet_type_with_members & assign_char_strictly_to(alphabet_char_t<alphabet_type_with_members> const chr,
+                                                             alphabet_type_with_members & alph)
 {
-    return alph.assign_char_strict(chr);
+    return alph.assign_char_strictly(chr);
 }
 
 //!\overload
 template <typename alphabet_type_with_members>
 //!\cond
-    requires requires (alphabet_type_with_members alph) { { alph.assign_char_strict(char{0}) } -> alphabet_type_with_members &; }
+    requires requires (alphabet_type_with_members alph) { { alph.assign_char_strictly(char{0}) } -> alphabet_type_with_members &; }
 //!\endcond
-constexpr alphabet_type_with_members assign_char_strict(alphabet_type_with_members && alph,
-                                                        alphabet_char_t<alphabet_type_with_members> const chr)
+constexpr alphabet_type_with_members assign_char_strictly_to(alphabet_char_t<alphabet_type_with_members> const chr,
+                                                           alphabet_type_with_members && alph)
 {
-    return std::move(alph.assign_char_strict(chr));
+    return std::move(alph.assign_char_strictly(chr));
 }
 //!\}
 

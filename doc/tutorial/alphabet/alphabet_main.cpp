@@ -48,9 +48,9 @@ int main ()
 
 //! [char_strict]
     // Assign from character with value check.
-    cyt.assign_char_strict('C');
+    cyt.assign_char_strictly('C');
 
-    // thy.assign_char_strict('X'); would throw seqan3::invalid_char_assignment
+    // thy.assign_char_strictly('X'); would throw seqan3::invalid_char_assignment
 //! [char_strict]
     assert(cyt == 'C'_dna4);
 

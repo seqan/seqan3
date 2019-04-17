@@ -66,7 +66,7 @@ template <typename alphabet_type>
 inline auto const rank_to = deep{std::view::transform(
 [] (alphabet_rank_t<alphabet_type> const in) -> alphabet_type
 {
-    return assign_rank(alphabet_type{}, in);
+    return assign_rank_to(in, alphabet_type{});
 })};
 
 //!\}

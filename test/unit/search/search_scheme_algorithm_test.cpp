@@ -73,7 +73,7 @@ inline void test_search_hamming(auto it, text_t const & text, auto const & searc
             // If it is a match now, it can't be the highest rank of the alphabet. Thus we set it to the highest rank.
             if (new_rank == to_rank(query[pos]))
                 new_rank = alphabet_size_v<char_t> - 1;
-            assign_rank(query[pos], new_rank);
+            assign_rank_to(new_rank, query[pos]);
         }
         current_blocks_length += single_block_length;
     }
