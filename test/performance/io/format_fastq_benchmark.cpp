@@ -43,11 +43,11 @@ std::string generate_dummy_fastq_file(std::size_t power)
     {
         file += id + '\n' + seq + '\n' + '+' + '\n' + quality + '\n';
     }
-
+    
     return file;
 }
 
-// ====================================for========================================
+// ============================================================================
 // generate dummy fasta file with 2*10^power identical 2-line entries
 // ============================================================================
 std::string generate_dummy_fasta_file(std::size_t power)
@@ -92,7 +92,7 @@ BENCHMARK(fastq_write);
 // ============================================================================
 void fastq_read_with_quality(benchmark::State & state)
 {
-    std::istringstream istream{generate_dummy_fastq_file(POWER)};
+    auto const fastq_file = generate_dummy_fastq_file(POWER);
 
     sequence_file_format_fastq format;
     sequence_file_input_options<dna5, false> const options{};
@@ -103,6 +103,10 @@ void fastq_read_with_quality(benchmark::State & state)
 
     for (auto _ : state)
     {
+        state.PauseTiming();
+        std::istringstream istream{fastq_file};
+        state.ResumeTiming();
+
         format.read(istream, options, seq, id, qual);
     }
 }
@@ -114,7 +118,7 @@ BENCHMARK(fastq_read_with_quality);
 // ============================================================================
 void fastq_read_without_quality(benchmark::State & state)
 {
-    std::istringstream istream{generate_dummy_fastq_file(POWER)};
+    auto const fastq_file = generate_dummy_fastq_file(POWER);
 
     sequence_file_format_fastq format;
     sequence_file_input_options<dna5, false> const options{};
@@ -124,6 +128,10 @@ void fastq_read_without_quality(benchmark::State & state)
 
     for (auto _ : state)
     {
+        state.PauseTiming();
+        std::istringstream istream{fastq_file};
+        state.ResumeTiming();
+
         format.read(istream, options, seq, id, std::ignore);
     }
 }
@@ -135,13 +143,17 @@ BENCHMARK(fastq_read_without_quality);
 // ============================================================================
 void fastq_read_ignore_everything(benchmark::State & state)
 {
-    std::istringstream istream{generate_dummy_fastq_file(POWER)};
+    auto const fastq_file = generate_dummy_fastq_file(POWER);
 
     sequence_file_format_fastq format;
     sequence_file_input_options<dna5, false> const options{};
 
     for (auto _ : state)
     {
+        state.PauseTiming();
+        std::istringstream istream{fastq_file};
+        state.ResumeTiming();
+
         format.read(istream, options, std::ignore, std::ignore, std::ignore);
     }
 }
@@ -156,7 +168,7 @@ BENCHMARK(fastq_read_ignore_everything);
 // ============================================================================
 void fasta_read_comparison (benchmark::State & state)
 {
-    std::istringstream istream{generate_dummy_fasta_file(POWER)};
+    auto const fasta_file = generate_dummy_fasta_file(POWER);
 
     sequence_file_format_fasta format;
     sequence_file_input_options<dna5, false> const options{};
@@ -166,11 +178,15 @@ void fasta_read_comparison (benchmark::State & state)
 
     for (auto _ : state)
     {
+        state.PauseTiming();
+        std::istringstream istream{fasta_file};
+        state.ResumeTiming();
+
         format.read(istream, options, seq, id, std::ignore);
     }
 }
+*/
 
 BENCHMARK(fasta_read_comparison);
-*/
 
 BENCHMARK_MAIN();
