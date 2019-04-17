@@ -15,6 +15,7 @@
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 
+//TODO:
 using namespace seqan3;
 
 std::size_t const LENGTH = 50;
@@ -47,6 +48,6 @@ BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<phred63>>);
 
 BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<dna4>>);
 BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<aa27>>);
-BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<phred63>>);
+BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<phred63>>;
 
 BENCHMARK_MAIN();
