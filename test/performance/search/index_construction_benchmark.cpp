@@ -28,12 +28,14 @@ void construct_index(benchmark::State & state)
 {
     using alphabet_t = typename index_t::char_type;
 
-    auto const sequence = test::generate_sequence<alphabet_t>(LENGTH, 0, SEED);
-    index_t index{};
-
     for (auto _ : state)
     {
-        index = index_t{sequence};
+        state.PauseTiming();
+        auto const sequence = test::generate_sequence<alphabet_t>(LENGTH, 0, SEED);
+        // deterministic: multiple benchmarking runs will produce exact same sequences each time
+        state.ResumeTiming();
+
+        index_t index{sequence};
     }
 }
 
@@ -41,10 +43,10 @@ void construct_index(benchmark::State & state)
 
 BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<dna4>>);
 BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<aa27>>);
-BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<char>>);
+BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<phred63>>);
 
 BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<dna4>>);
 BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<aa27>>);
-BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<char>>);
+BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<phred63>>);
 
 BENCHMARK_MAIN();
