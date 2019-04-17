@@ -14,6 +14,7 @@ namespace seqan3::detail
 {
 struct matrix_formatter_test : public ::testing::Test
 {
+    static constexpr int inf = matrix_inf<int>;
     std::vector<dna4> database = "AACACGTTAACCGGTT"_dna4;
     std::vector<dna4> query = "ACGTACGT"_dna4;
     std::vector<int> scores
@@ -26,7 +27,7 @@ struct matrix_formatter_test : public ::testing::Test
         5,  4,  3,  4,  3,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
         6,  5,  4,  3,  4,  3,  4,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
         7,  6,  5,  4,  4,  4,  3,  4,  5,  6,  6,  6,  6,  6,  7,  8,  9,
-        8,  7,  6,  5,  5,  5,  4,  3,  4,  5,  6,  7,  7,  7,  7,  7,  8
+        inf,  7,  6,  5,  5,  5,  4,  3,  4,  5,  6,  7,  7,  7,  7,  7,  8
     };
 
     detail::trace_directions N{},
@@ -45,7 +46,7 @@ struct matrix_formatter_test : public ::testing::Test
         U,  DU, D,  DUL,D,  DUL,D,  U,  D,  D,  DL, L,  L,  L,  L,  L,  L,
         U,  U,  U,  D,  UL, D,  L,  DUL,DU, DU, D,  D,  DL, L,  L,  L,  L,
         U,  U,  U,  U,  D,  U,  D,  L,  L,  DUL,DU, DU, D,  D,  DL, L,  L,
-        U,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
+        N,  U,  U,  U,  DU, DU, U,  D,  DL, L,  L,  DUL,DU, DU, D,  D,  DL
     };
 
     auto unicode_str_length(std::string const & str)
@@ -118,7 +119,7 @@ TEST_F(matrix_formatter_test, score_matrix_ascii)
     detail::alignment_matrix_formatter formatter{matrix, detail::alignment_matrix_format::ascii};
 
     EXPECT_FALSE(formatter.is_traceback_matrix);
-    EXPECT_EQ(formatter.auto_width(), 2u);
+    EXPECT_EQ(formatter.auto_width(), 3u);
 
     std::stringstream stream;
     formatter.format(database, query, stream, 3u);
@@ -141,7 +142,7 @@ TEST_F(matrix_formatter_test, score_matrix_ascii)
         " /---/---/---/---/---/---/---/---/---/---/---/---/---/---/---/---/---/\n"
         "G|7  |6  |5  |4  |4  |4  |3  |4  |5  |6  |6  |6  |6  |6  |7  |8  |9  |\n"
         " /---/---/---/---/---/---/---/---/---/---/---/---/---/---/---/---/---/\n"
-        "T|8  |7  |6  |5  |5  |5  |4  |3  |4  |5  |6  |7  |7  |7  |7  |7  |8  |\n"
+        "T|INF|7  |6  |5  |5  |5  |4  |3  |4  |5  |6  |7  |7  |7  |7  |7  |8  |\n"
     );
 }
 
@@ -174,7 +175,7 @@ TEST_F(matrix_formatter_test, score_matrix_unicode)
         " ╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬\n"
         "G║7   ║6   ║5   ║4   ║4   ║4   ║3   ║4   ║5   ║6   ║6   ║6   ║6   ║6   ║7   ║8   ║9   ║\n"
         " ╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬\n"
-        "T║8   ║7   ║6   ║5   ║5   ║5   ║4   ║3   ║4   ║5   ║6   ║7   ║7   ║7   ║7   ║7   ║8   ║\n"
+        "T║∞   ║7   ║6   ║5   ║5   ║5   ║4   ║3   ║4   ║5   ║6   ║7   ║7   ║7   ║7   ║7   ║8   ║\n"
     );
 }
 
@@ -198,7 +199,7 @@ TEST_F(matrix_formatter_test, trace_matrix_csv)
         "A;U   ;DU  ;D   ;DUL ;D   ;DUL ;D   ;U   ;D   ;D   ;DL  ;L   ;L   ;L   ;L   ;L   ;L   ;\n"
         "C;U   ;U   ;U   ;D   ;UL  ;D   ;L   ;DUL ;DU  ;DU  ;D   ;D   ;DL  ;L   ;L   ;L   ;L   ;\n"
         "G;U   ;U   ;U   ;U   ;D   ;U   ;D   ;L   ;L   ;DUL ;DU  ;DU  ;D   ;D   ;DL  ;L   ;L   ;\n"
-        "T;U   ;U   ;U   ;U   ;DU  ;DU  ;U   ;D   ;DL  ;L   ;L   ;DUL ;DU  ;DU  ;D   ;D   ;DL  ;\n"
+        "T;N   ;U   ;U   ;U   ;DU  ;DU  ;U   ;D   ;DL  ;L   ;L   ;DUL ;DU  ;DU  ;D   ;D   ;DL  ;\n"
     );
 }
 
@@ -231,7 +232,7 @@ TEST_F(matrix_formatter_test, trace_matrix_unicode)
         " ╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬\n"
         "G║↑   ║↑   ║↑   ║↑   ║↖   ║↑   ║↖   ║←   ║←   ║↖↑← ║↖↑  ║↖↑  ║↖   ║↖   ║↖←  ║←   ║←   ║\n"
         " ╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬\n"
-        "T║↑   ║↑   ║↑   ║↑   ║↖↑  ║↖↑  ║↑   ║↖   ║↖←  ║←   ║←   ║↖↑← ║↖↑  ║↖↑  ║↖   ║↖   ║↖←  ║\n"
+        "T║↺   ║↑   ║↑   ║↑   ║↖↑  ║↖↑  ║↑   ║↖   ║↖←  ║←   ║←   ║↖↑← ║↖↑  ║↖↑  ║↖   ║↖   ║↖←  ║\n"
     );
 }
 
@@ -271,6 +272,6 @@ TEST_F(matrix_formatter_test, trace_matrix_from_score_matrix_unicode)
         " /═/═/═/═/═/═/═/═/═/═/═/═/═/═/═/═/═/\n"
         "G|↑|↑|↑|↑|▘|↑|▘|▖|▖|▛|⠉|⠉|▘|▘|⠅|▖|▖|\n"
         " /═/═/═/═/═/═/═/═/═/═/═/═/═/═/═/═/═/\n"
-        "T|↑|↑|↑|↑|⠉|⠉|↑|▘|⠅|▖|▖|▛|⠉|⠉|▘|▘|⠅|\n"
+        "T|█|↑|↑|↑|⠉|⠉|↑|▘|⠅|▖|▖|▛|⠉|⠉|▘|▘|⠅|\n"
     );
 }
