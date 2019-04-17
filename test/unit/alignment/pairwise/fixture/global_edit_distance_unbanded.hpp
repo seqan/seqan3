@@ -12,11 +12,11 @@
 namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded
 {
 
+using detail::column_index_type;
+using detail::row_index_type;
+
 static auto dna4_01 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -65,9 +65,6 @@ static auto dna4_01 = []()
 
 static auto dna4_01T = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -130,9 +127,6 @@ static auto dna4_01T = []()
 
 static auto dna4_02 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -181,9 +175,6 @@ static auto dna4_02 = []()
 
 static auto aa27_01 = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
@@ -232,9 +223,6 @@ static auto aa27_01 = []()
 
 static auto aa27_01T = []()
 {
-    using detail::column_index_type;
-    using detail::row_index_type;
-
     return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
