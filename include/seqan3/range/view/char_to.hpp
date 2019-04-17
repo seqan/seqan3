@@ -52,7 +52,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::underlying_char_t<alphabet_t> | `alphabet_t`                                       |
+ * | seqan3::reference_t             | seqan3::alphabet_char_t<alphabet_t>   | `alphabet_t`                                       |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -64,7 +64,7 @@ namespace seqan3::view
 template <Alphabet alphabet_type>
 inline auto const char_to = deep{std::view::transform([] (auto && in)
 {
-    static_assert(std::CommonReference<decltype(in), underlying_char_t<alphabet_type>>,
+    static_assert(std::CommonReference<decltype(in), alphabet_char_t<alphabet_type>>,
                   "The innermost value type must have a common reference to underlying char type of alphabet_type.");
     // call element-wise assign_char from the Alphabet
     return assign_char(alphabet_type{}, in);

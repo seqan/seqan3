@@ -65,7 +65,7 @@ public:
     using structure_alphabet_type = structure_alphabet_t;
 
     //!\brief Equals the char_type of sequence_alphabet_type.
-    using char_type = underlying_char_t<sequence_alphabet_type>;
+    using char_type = alphabet_char_t<sequence_alphabet_type>;
 
     /*!\name Constructors, destructor and assignment
      * \{

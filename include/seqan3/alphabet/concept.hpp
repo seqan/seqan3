@@ -74,7 +74,7 @@ SEQAN3_CONCEPT Semialphabet = std::Regular<std::remove_reference_t<t>> &&
 
     // conversion to rank
     requires           noexcept(to_rank(v));
-    requires std::Same<decltype(to_rank(v)), underlying_rank_t<t>>;
+    requires std::Same<decltype(to_rank(v)), alphabet_rank_t<t>>;
 
     // assignment from rank
     requires           noexcept(assign_rank(v,                            0));
@@ -119,7 +119,7 @@ SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
 {
     // conversion to char
     requires           noexcept(to_char(v));
-    requires std::Same<decltype(to_char(v)), underlying_char_t<t>>;
+    requires std::Same<decltype(to_char(v)), alphabet_char_t<t>>;
 
     // assignment from char
     requires           noexcept(assign_char(v,                            0));
@@ -160,7 +160,7 @@ SEQAN3_CONCEPT Alphabet = Semialphabet<t> && requires (t v)
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
  */
 template <CerealOutputArchive archive_t, Semialphabet alphabet_t>
-underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &, alphabet_t const & l)
+alphabet_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &, alphabet_t const & l)
 {
     return to_rank(l);
 }
@@ -181,7 +181,7 @@ underlying_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const 
 template <CerealInputArchive archive_t, typename wrapped_alphabet_t>
 void CEREAL_LOAD_MINIMAL_FUNCTION_NAME(archive_t const &,
                                        wrapped_alphabet_t && l,
-                                       underlying_rank_t<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>> const & r)
+                                       alphabet_rank_t<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>> const & r)
     requires Semialphabet<detail::strip_cereal_wrapper_t<wrapped_alphabet_t>>
 {
     assign_rank(static_cast<detail::strip_cereal_wrapper_t<wrapped_alphabet_t> &>(l), r);
@@ -255,7 +255,7 @@ SEQAN3_CONCEPT ConstexprAlphabet = ConstexprSemialphabet<t> &&
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(to_char(std::remove_reference_t<t>{}));
-    requires SEQAN3_IS_CONSTEXPR(assign_char(std::remove_reference_t<t>{}, underlying_char_t<t>{}));
+    requires SEQAN3_IS_CONSTEXPR(assign_char(std::remove_reference_t<t>{}, alphabet_char_t<t>{}));
     requires SEQAN3_IS_CONSTEXPR(char_is_valid_for<t>(char{0}));
 };
 //!\endcond

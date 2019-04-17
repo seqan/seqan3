@@ -116,7 +116,7 @@ TYPED_TEST_P(alphabet_constexpr, global_assign_char)
 TYPED_TEST_P(alphabet_constexpr, global_to_char)
 {
     constexpr TypeParam t0{};
-    [[maybe_unused]] constexpr underlying_char_t<TypeParam> c = to_char(t0);
+    [[maybe_unused]] constexpr alphabet_char_t<TypeParam> c = to_char(t0);
 }
 
 TYPED_TEST_P(alphabet_constexpr, comparison_operators)

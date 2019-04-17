@@ -67,9 +67,9 @@ struct alphabet_size<alphabet_type_with_members> :
  */
 template <typename alphabet_type>
 //!\cond
-    requires requires (alphabet_type alph) { { alph.to_rank() } -> underlying_rank_t<alphabet_type>; }
+    requires requires (alphabet_type alph) { { alph.to_rank() } -> alphabet_rank_t<alphabet_type>; }
 //!\endcond
-constexpr underlying_rank_t<alphabet_type> to_rank(alphabet_type const alph) noexcept
+constexpr alphabet_rank_t<alphabet_type> to_rank(alphabet_type const alph) noexcept
 {
     static_assert(noexcept(alph.to_rank()),
                   "The to_rank() free function can only forward to .to_rank() member functions that "
@@ -87,7 +87,7 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type & assign_rank(alphabet_type & alph, underlying_rank_t<alphabet_type> const rank) noexcept
+constexpr alphabet_type & assign_rank(alphabet_type & alph, alphabet_rank_t<alphabet_type> const rank) noexcept
 {
     static_assert(noexcept(alph.assign_rank(rank)),
                   "The assign_rank() free function can only forward to .assign_rank() member functions that "
@@ -110,7 +110,7 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_rank(uint8_t{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type assign_rank(alphabet_type && alph, underlying_rank_t<alphabet_type> const rank) noexcept
+constexpr alphabet_type assign_rank(alphabet_type && alph, alphabet_rank_t<alphabet_type> const rank) noexcept
 {
     static_assert(noexcept(alph.assign_rank(rank)),
                   "The assign_rank() free function can only forward to .assign_rank() member functions that "
@@ -150,9 +150,9 @@ struct underlying_char<alphabet_type_with_members>
  */
 template <typename alphabet_type>
 //!\cond
-    requires requires (alphabet_type alph) { { alph.to_char() } -> underlying_char_t<alphabet_type>; }
+    requires requires (alphabet_type alph) { { alph.to_char() } -> alphabet_char_t<alphabet_type>; }
 //!\endcond
-constexpr underlying_char_t<alphabet_type> to_char(alphabet_type const alph) noexcept
+constexpr alphabet_char_t<alphabet_type> to_char(alphabet_type const alph) noexcept
 {
     static_assert(noexcept(alph.to_char()),
                   "The to_char() free function can only forward to .to_char() member functions that "
@@ -170,7 +170,7 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type & assign_char(alphabet_type & alph, underlying_char_t<alphabet_type> const chr) noexcept
+constexpr alphabet_type & assign_char(alphabet_type & alph, alphabet_char_t<alphabet_type> const chr) noexcept
 {
     static_assert(noexcept(alph.assign_char(chr)),
                   "The assign_char() free function can only forward to .assign_char() member functions that "
@@ -193,7 +193,7 @@ template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type alph) { { alph.assign_char(char{0}) } -> alphabet_type &; }
 //!\endcond
-constexpr alphabet_type assign_char(alphabet_type && alph, underlying_char_t<alphabet_type> const chr) noexcept
+constexpr alphabet_type assign_char(alphabet_type && alph, alphabet_char_t<alphabet_type> const chr) noexcept
 {
     static_assert(noexcept(alph.assign_char(chr)),
                   "The assign_char() free function can only forward to .assign_char() member functions that "
@@ -210,7 +210,7 @@ template <typename alphabet_type_with_members>
 //!\cond
     requires requires { { std::remove_reference_t<alphabet_type_with_members>::char_is_valid(char{0}) } -> bool; }
 //!\endcond
-constexpr bool char_is_valid_for(underlying_char_t<alphabet_type_with_members> const chr) noexcept
+constexpr bool char_is_valid_for(alphabet_char_t<alphabet_type_with_members> const chr) noexcept
 {
     return std::remove_reference_t<alphabet_type_with_members>::char_is_valid(chr);
 }
@@ -227,7 +227,7 @@ template <typename alphabet_type_with_members>
     requires requires (alphabet_type_with_members alph) { { alph.assign_char_strict(char{0}) } -> alphabet_type_with_members &; }
 //!\endcond
 constexpr alphabet_type_with_members & assign_char_strict(alphabet_type_with_members & alph,
-                                                          underlying_char_t<alphabet_type_with_members> const chr)
+                                                          alphabet_char_t<alphabet_type_with_members> const chr)
 {
     return alph.assign_char_strict(chr);
 }
@@ -238,7 +238,7 @@ template <typename alphabet_type_with_members>
     requires requires (alphabet_type_with_members alph) { { alph.assign_char_strict(char{0}) } -> alphabet_type_with_members &; }
 //!\endcond
 constexpr alphabet_type_with_members assign_char_strict(alphabet_type_with_members && alph,
-                                                        underlying_char_t<alphabet_type_with_members> const chr)
+                                                        alphabet_char_t<alphabet_type_with_members> const chr)
 {
     return std::move(alph.assign_char_strict(chr));
 }

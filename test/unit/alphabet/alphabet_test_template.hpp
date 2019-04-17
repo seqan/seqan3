@@ -59,14 +59,14 @@ TYPED_TEST_P(alphabet, global_to_rank)
     for (uint64_t i = 0; i < alphabet_size_v<TypeParam>; ++i)
         EXPECT_EQ((to_rank(assign_rank(t0, i))), i);
 
-    EXPECT_TRUE((std::is_same_v<decltype(to_rank(t0)), underlying_rank_t<TypeParam>>));
+    EXPECT_TRUE((std::is_same_v<decltype(to_rank(t0)), alphabet_rank_t<TypeParam>>));
 }
 
 TYPED_TEST_P(alphabet, copy_constructor)
 {
     // the module operation ensures that the result is within the valid rank range;
     // it will be in the most cases 1 except for alphabets like seqan3::gap where it will be 0
-    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
+    constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
     assign_rank(t1, rank);
     TypeParam t2{t1};
@@ -77,7 +77,7 @@ TYPED_TEST_P(alphabet, copy_constructor)
 
 TYPED_TEST_P(alphabet, move_constructor)
 {
-    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
+    constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -90,7 +90,7 @@ TYPED_TEST_P(alphabet, move_constructor)
 
 TYPED_TEST_P(alphabet, copy_assignment)
 {
-    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
+    constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t1;
     assign_rank(t1, rank);
     TypeParam t2;
@@ -100,7 +100,7 @@ TYPED_TEST_P(alphabet, copy_assignment)
 
 TYPED_TEST_P(alphabet, move_assignment)
 {
-    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
+    constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -114,7 +114,7 @@ TYPED_TEST_P(alphabet, move_assignment)
 
 TYPED_TEST_P(alphabet, swap)
 {
-    constexpr underlying_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
+    constexpr alphabet_rank_t<TypeParam> rank = 1 % alphabet_size_v<TypeParam>;
     TypeParam t0;
     assign_rank(t0, rank);
     TypeParam t1{t0};
@@ -128,7 +128,7 @@ TYPED_TEST_P(alphabet, swap)
 
 TYPED_TEST_P(alphabet, global_assign_char)
 {
-    using char_t = underlying_char_t<TypeParam>;
+    using char_t = alphabet_char_t<TypeParam>;
     char_t i = std::numeric_limits<char_t>::min();
     char_t j = std::numeric_limits<char_t>::max();
 
@@ -150,9 +150,9 @@ TYPED_TEST_P(alphabet, global_char_is_valid_for) // only test negative example f
 
 TYPED_TEST_P(alphabet, global_assign_char_strict)
 {
-    for (underlying_char_t<TypeParam> c :
-         std::view::iota(ptrdiff_t{std::numeric_limits<underlying_char_t<TypeParam>>::min()},
-                            ptrdiff_t{std::numeric_limits<underlying_char_t<TypeParam>>::max()} + 1))
+    for (alphabet_char_t<TypeParam> c :
+         std::view::iota(ptrdiff_t{std::numeric_limits<alphabet_char_t<TypeParam>>::min()},
+                            ptrdiff_t{std::numeric_limits<alphabet_char_t<TypeParam>>::max()} + 1))
     {
         if (char_is_valid_for<TypeParam>(c))
             EXPECT_NO_THROW(assign_char_strict(TypeParam{}, c));
@@ -164,7 +164,7 @@ TYPED_TEST_P(alphabet, global_assign_char_strict)
 TYPED_TEST_P(alphabet, global_to_char)
 {
     TypeParam t0;
-    EXPECT_TRUE((std::is_same_v<decltype(to_char(t0)), underlying_char_t<TypeParam>>));
+    EXPECT_TRUE((std::is_same_v<decltype(to_char(t0)), alphabet_char_t<TypeParam>>));
 
     // more elaborate tests are done in specific alphabets
 

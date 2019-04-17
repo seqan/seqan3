@@ -71,7 +71,7 @@ public:
     using quality_alphabet_type = quality_alphabet_t;
 
     //!\brief Equals the char_type of sequence_alphabet_type.
-    using char_type = underlying_char_t<sequence_alphabet_type>;
+    using char_type = alphabet_char_t<sequence_alphabet_type>;
     //!\brief Equals the phred_type of the quality_alphabet_type.
     using phred_type = underlying_phred_t<quality_alphabet_type>;
 

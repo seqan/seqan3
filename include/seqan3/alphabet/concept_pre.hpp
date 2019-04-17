@@ -45,7 +45,7 @@ namespace seqan3
  * \ingroup alphabet
  *
  * \par Helper template alias
- *   seqan3::underlying_rank_t as a shorthand for `typename seqan3::underlying_rank<semi_alphabet_type>::%type`
+ *   seqan3::alphabet_rank_t as a shorthand for `typename seqan3::underlying_rank<semi_alphabet_type>::%type`
  *
  * \attention This is the base template, it needs to be specialised.
  */
@@ -67,7 +67,7 @@ struct underlying_rank<semi_alphabet_type &&> : underlying_rank<semi_alphabet_ty
  * \attention Do not specialise this shortcut, instead specialise seqan3::underlying_rank.
  */
 template <typename semi_alphabet_type>
-using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
+using alphabet_rank_t = typename underlying_rank<semi_alphabet_type>::type;
 
 /*!\brief The size of the alphabet. [value metafunction base template]
  * \tparam alphabet_type Must satisfy seqan3::Semialphabet.
@@ -75,7 +75,7 @@ using underlying_rank_t = typename underlying_rank<semi_alphabet_type>::type;
  *
  * This is the expression to retrieve the value:
  * \snippet test/snippet/alphabet/concept_pre.cpp value retrieval
- * The type of the variable is seqan3::underlying_rank_t<alphabet_type>.
+ * The type of the variable is seqan3::alphabet_rank_t<alphabet_type>.
  *
  * \par Helper variable template
  *   seqan3::alphabet_size_v as a shorthand for `seqan3::alphabet_size<alphabet_type>::%value`
@@ -159,7 +159,7 @@ constexpr auto alphabet_size_v = alphabet_size<alphabet_type>::value;
  * \ingroup alphabet
  *
  * \par Helper template alias
- *   seqan3::underlying_char_t as a shorthand for `typename seqan3::underlying_char<alphabet_type>::%type`
+ *   seqan3::alphabet_char_t as a shorthand for `typename seqan3::underlying_char<alphabet_type>::%type`
  *
  * \attention This is the base template, it needs to be specialised.
  */
@@ -181,7 +181,7 @@ struct underlying_char<alphabet_type &&> : underlying_char<alphabet_type>
  * \attention Do not specialise this shortcut, instead specialise seqan3::underlying_char.
  */
 template <typename alphabet_type>
-using underlying_char_t = typename underlying_char<alphabet_type>::type;
+using alphabet_char_t = typename underlying_char<alphabet_type>::type;
 
 /*!\fn char_type seqan3::to_char(alphabet_type const alph) noexcept
  * \brief Returns the alphabet letter's value in character representation.

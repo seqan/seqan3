@@ -74,7 +74,7 @@ public:
         return operator=(tmp);
     }
 
-    constexpr alphabet_proxy & assign_rank(underlying_rank_t<alphabet_type> const r) noexcept
+    constexpr alphabet_proxy & assign_rank(alphabet_rank_t<alphabet_type> const r) noexcept
     {
         alphabet_type tmp{};
         using seqan3::assign_rank;
@@ -143,7 +143,7 @@ public:
     /*!\name Member types
      * \{
      */
-    using rank_type  = underlying_rank_t<alphabet_type>;
+    using rank_type  = alphabet_rank_t<alphabet_type>;
     using char_type  = detail::transformation_trait_or_t<underlying_char<alphabet_type>, void>;
     using phred_type = detail::transformation_trait_or_t<underlying_phred<alphabet_type>, void>;
     //!\}
@@ -198,7 +198,7 @@ public:
      *        the assignment operator which invokes derived behaviour.
      * \{
      */
-    constexpr derived_type & assign_rank(underlying_rank_t<alphabet_type> const r) noexcept
+    constexpr derived_type & assign_rank(alphabet_rank_t<alphabet_type> const r) noexcept
     {
         alphabet_type tmp{};
         using seqan3::assign_rank;

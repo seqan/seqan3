@@ -69,7 +69,7 @@ namespace seqan3
 /*!\brief Specialisation of seqan3::underlying_char for uint types.
  * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
  * \relates seqan3::uint_adaptation_concept
- * \sa seqan3::underlying_char_t
+ * \sa seqan3::alphabet_char_t
  */
 template <typename uint_type>
 //!\cond
@@ -85,7 +85,7 @@ struct underlying_char<uint_type>
 /*!\brief Specialisation of seqan3::underlying_rank for uint types.
  * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
  * \relates seqan3::uint_adaptation_concept
- * \sa seqan3::underlying_rank_t
+ * \sa seqan3::alphabet_rank_t
  */
 template <typename uint_type>
 //!\cond
@@ -131,7 +131,7 @@ struct alphabet_size<uint_type> :
  * \returns The letter's value in the alphabet's rank type (usually `uint`).
  */
 template <typename uint_type>
-constexpr underlying_char_t<uint_type> to_char(uint_type const intgr) noexcept
+constexpr alphabet_char_t<uint_type> to_char(uint_type const intgr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr;
@@ -143,7 +143,7 @@ constexpr underlying_char_t<uint_type> to_char(uint_type const intgr) noexcept
  * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
  */
 template <typename uint_type>
-constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr) noexcept
+constexpr alphabet_rank_t<uint_type> to_rank(uint_type const intgr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr;
@@ -156,7 +156,7 @@ constexpr underlying_rank_t<uint_type> to_rank(uint_type const intgr) noexcept
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename uint_type>
-constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type> const chr) noexcept
+constexpr uint_type & assign_char(uint_type & intgr, alphabet_char_t<uint_type> const chr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr = chr;
@@ -164,7 +164,7 @@ constexpr uint_type & assign_char(uint_type & intgr, underlying_char_t<uint_type
 
 //!\overload
 template <typename uint_type>
-constexpr uint_type assign_char(uint_type &&, underlying_char_t<uint_type> const chr) noexcept
+constexpr uint_type assign_char(uint_type &&, alphabet_char_t<uint_type> const chr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return chr;
@@ -172,7 +172,7 @@ constexpr uint_type assign_char(uint_type &&, underlying_char_t<uint_type> const
 
 //!\brief For adaptations seqan3::assign_char_strict behaves exactly as seqan3::assign_char.
 template <typename uint_type>
-constexpr uint_type & assign_char_strict(uint_type & intgr, underlying_char_t<uint_type> const chr) noexcept
+constexpr uint_type & assign_char_strict(uint_type & intgr, alphabet_char_t<uint_type> const chr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr = chr;
@@ -180,7 +180,7 @@ constexpr uint_type & assign_char_strict(uint_type & intgr, underlying_char_t<ui
 
 //!\overload
 template <typename uint_type>
-constexpr uint_type assign_char_strict(uint_type &&, underlying_char_t<uint_type> const chr) noexcept
+constexpr uint_type assign_char_strict(uint_type &&, alphabet_char_t<uint_type> const chr) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return chr;
@@ -188,7 +188,7 @@ constexpr uint_type assign_char_strict(uint_type &&, underlying_char_t<uint_type
 
 //!\brief For char adaptations, all character values are valid.
 template <typename uint_type>
-constexpr bool char_is_valid_for(underlying_char_t<uint_type> const) noexcept
+constexpr bool char_is_valid_for(alphabet_char_t<uint_type> const) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return true;
@@ -201,7 +201,7 @@ constexpr bool char_is_valid_for(underlying_char_t<uint_type> const) noexcept
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename uint_type>
-constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type> const intgr2) noexcept
+constexpr uint_type & assign_rank(uint_type & intgr, alphabet_rank_t<uint_type> const intgr2) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr = intgr2;
@@ -209,7 +209,7 @@ constexpr uint_type & assign_rank(uint_type & intgr, underlying_rank_t<uint_type
 
 //!\overload
 template <typename uint_type>
-constexpr uint_type assign_rank(uint_type &&, underlying_rank_t<uint_type> const intgr2) noexcept
+constexpr uint_type assign_rank(uint_type &&, alphabet_rank_t<uint_type> const intgr2) noexcept
     requires detail::is_uint_adaptation_v<uint_type>
 {
     return intgr2;
