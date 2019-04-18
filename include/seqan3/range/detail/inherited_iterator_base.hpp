@@ -317,19 +317,19 @@ private:
     friend derived_t;
 
     //!\brief Cast this to derived type.
-    derived_t * this_derived()
+    constexpr derived_t * this_derived()
     {
         return static_cast<derived_t*>(this);
     }
 
     //!\copydoc this_derived
-    derived_t const * this_derived() const
+    constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);
     }
 
     //!\brief Cast this to base type.
-    base_t * this_to_base()
+    constexpr base_t * this_to_base()
     {
         if constexpr (std::is_pointer_v<base_t>)
             return &member;
@@ -338,7 +338,7 @@ private:
     }
 
     //!\copydoc this_to_base
-    base_t const * this_to_base() const
+    constexpr base_t const * this_to_base() const
     {
         if constexpr (std::is_pointer_v<base_t>)
             return &member;
