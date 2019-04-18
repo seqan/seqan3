@@ -19,9 +19,9 @@ using namespace seqan3;
 
 TEST(gap_scheme, concept_check)
 {
-    EXPECT_TRUE((gap_scheme_concept<gap_scheme<>>));
-    EXPECT_TRUE((gap_scheme_concept<gap_scheme<int32_t> const>));
-    EXPECT_TRUE((gap_scheme_concept<gap_scheme<float> const &>));
+    EXPECT_TRUE((GapScheme<gap_scheme<>>));
+    EXPECT_TRUE((GapScheme<gap_scheme<int32_t> const>));
+    EXPECT_TRUE((GapScheme<gap_scheme<float> const &>));
 }
 
 TEST(gap_scheme, constructors_and_type_deduction_guides)
