@@ -19,7 +19,7 @@
 
 namespace seqan3::detail
 {
-template <matrix_concept alignment_matrix_t>
+template <Matrix alignment_matrix_t>
 class alignment_matrix_formatter; // forward
 } // namespace seqan3::detail
 
@@ -27,7 +27,7 @@ namespace seqan3
 {
 
 /*!\brief An alignment matrix can be printed to the seqan3::debug_stream.
- * \tparam alignment_matrix_t Type of the alignment matrix to be printed; must model seqan3::detail::matrix_concept.
+ * \tparam alignment_matrix_t Type of the alignment matrix to be printed; must model seqan3::detail::Matrix.
  * \param s The seqan3::debug_stream.
  * \param matrix The alignment matrix.
  * \relates seqan3::debug_stream_type
@@ -38,7 +38,7 @@ namespace seqan3
  */
 template <typename alignment_matrix_t>
 //!\cond
-    requires detail::matrix_concept<std::decay_t<alignment_matrix_t>>
+    requires detail::Matrix<std::decay_t<alignment_matrix_t>>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, alignment_matrix_t && matrix)
 {

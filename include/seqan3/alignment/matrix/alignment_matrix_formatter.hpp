@@ -167,9 +167,9 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
 };
 
 /*!\brief Formats and prints trace and score matrices that satisfy the
- *        seqan3::detail::matrix_concept.
+ *        seqan3::detail::Matrix.
  * \ingroup alignment_matrix
- * \tparam alignment_matrix_t The matrix class which satisfies the seqan3::detail::matrix_concept
+ * \tparam alignment_matrix_t The matrix class which satisfies the seqan3::detail::Matrix
  *
  * \details
  *
@@ -180,7 +180,7 @@ constexpr alignment_matrix_format alignment_matrix_format::unicode_arrows
  * ### Output
  * \include test/snippet/alignment/matrix/alignment_score_matrix.out
  */
-template <matrix_concept alignment_matrix_t>
+template <Matrix alignment_matrix_t>
 class alignment_matrix_formatter
 {
 public:
@@ -215,7 +215,7 @@ public:
     {}
     //!\}
 
-    //!\brief \copydoc seqan3::detail::matrix_concept::entry_type
+    //!\brief \copydoc seqan3::detail::Matrix::entry_type
     using entry_type = typename alignment_matrix_type::entry_type;
 
     //!\brief Whether #alignment_matrix_type is a traceback matrix.

@@ -32,7 +32,7 @@ namespace seqan3::detail
  */
  template <typename trace_matrix_t>
  //!\cond
-     requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
+     requires Matrix<remove_cvref_t<trace_matrix_t>> &&
               std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
  //!\endcond
 inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
@@ -98,7 +98,7 @@ template <
     typename gapped_database_alphabet_t = gapped<value_type_t<database_t>>,
     typename gapped_query_alphabet_t = gapped<value_type_t<query_t>>>
 //!\cond
-    requires matrix_concept<remove_cvref_t<trace_matrix_t>> &&
+    requires Matrix<remove_cvref_t<trace_matrix_t>> &&
              std::Same<typename remove_cvref_t<trace_matrix_t>::entry_type, trace_directions>
 //!\endcond
 inline std::pair<std::vector<gapped_database_alphabet_t>, std::vector<gapped_query_alphabet_t>>
