@@ -43,7 +43,7 @@ SEQAN3_CONCEPT MaxErrors = requires (align_config_t & cfg)
  * \ingroup pairwise_alignment
  */
 template <typename traits_type>
-SEQAN3_CONCEPT edit_distance_trait_concept = requires
+SEQAN3_CONCEPT EditDistanceTrait = requires
 {
     typename std::remove_reference_t<traits_type>::word_type;
     typename std::remove_reference_t<traits_type>::is_semi_global_type;
@@ -72,7 +72,7 @@ struct default_edit_distance_trait_type
 template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
-          edit_distance_trait_concept traits_t = default_edit_distance_trait_type>
+          EditDistanceTrait traits_t = default_edit_distance_trait_type>
 class pairwise_alignment_edit_distance_unbanded
 {
     /*!\name Befriended classes
