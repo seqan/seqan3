@@ -51,10 +51,20 @@ struct read : public ::testing::Test
 
 	std::string input
     {
-R"(LOCUS ID1	stuff
+R"(LOCUS ID1 stuff
 DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
             cds.
 ACCESSION   ID1
+ACCESSION   U49845
+VERSION     U49845.1  GI:1293613
+KEYWORDS    .
+SOURCE      Saccharomyces cerevisiae (baker's yeast)
+  ORGANISM  Saccharomyces cerevisiae
+            Eukaryota; Fungi; Ascomycota; Saccharomycotina; Saccharomycetes;
+            Saccharomycetales; Saccharomycetaceae; Saccharomyces.
+REFERENCE   1  (bases 1 to 5028)
+FEATURES             Location/Qualifiers
+     source          1..5028
 ORIGIN
         1 ACGTTTTTTT TTTTTTTT
 //
@@ -109,8 +119,12 @@ TEST_F(read, standard)
 TEST_F(read, complete_header)
 {
     options.embl_genbank_complete_header = true;
-    expected_ids[0] = std::string{"LOCUS ID1\tstuff\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide,"
-    " complete\n            cds.\nACCESSION   ID1\n"};
+    expected_ids[0] = std::string{"LOCUS ID1 stuff\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide"
+    ", complete\n            cds.\nACCESSION   ID1\nACCESSION   U49845\nVERSION     U49845.1  GI:1293613\nKEYWORDS    ."
+    "\nSOURCE      Saccharomyces cerevisiae (baker's yeast)\n  ORGANISM  Saccharomyces cerevisiae\n            "
+    "Eukaryota; Fungi; Ascomycota; Saccharomycotina; Saccharomycetes;\n"
+    "            Saccharomycetales; Saccharomycetaceae; Saccharomyces."
+    "\nREFERENCE   1  (bases 1 to 5028)\nFEATURES             Location/Qualifiers\n     source          1..5028\n"};
     expected_ids[1] = std::string{"LOCUS ID2\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide,"
     " complete\n            cds.\nACCESSION   ID2\n"};
     expected_ids[2] = std::string{"LOCUS ID3\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide,"
