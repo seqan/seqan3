@@ -114,7 +114,7 @@ public:
             using scoring_type = std::remove_reference_t<
                                     decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
                                  >;
-            return static_cast<bool>(scoring_scheme_concept<scoring_type,
+            return static_cast<bool>(ScoringScheme<scoring_type,
                                                             value_type_t<first_seq_t>,
                                                             value_type_t<second_seq_t>>);
         }

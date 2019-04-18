@@ -22,7 +22,7 @@ namespace seqan3
 /*!\brief A data structure for managing and computing the score of two nucleotides.
  * \tparam score_type The underlying type.
  * \ingroup scoring
- * \implements seqan3::scoring_scheme_concept
+ * \implements seqan3::ScoringScheme
  *
  * \details
  *
