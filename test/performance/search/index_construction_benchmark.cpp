@@ -8,125 +8,44 @@
 // written for the purpose of the Bch Softwarepraktikum, early 2019 FU Berlin
 // @author: Clemens Cords <clemenscords@fu-berlin.de>
 
+#include <benchmark/benchmark.h>
 #include <cstring>
 #include <random>
 
-#include <benchmark/benchmark.h>
-
-#include <seqan3/io/stream/debug_stream.hpp>
-#include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/search/fm_index/all.hpp>
+#include <seqan3/test/performance/sequence_generator.hpp>
 
 using namespace seqan3;
 
-const std::size_t LENGTH = 50;
-const unsigned int SEED = 1234;
+std::size_t const LENGTH = 50;
+unsigned int const SEED = 1234;
 
 // ============================================================================
-// generate sequence deterministically based on fixed const seed
+// construct as many indices as possible
 // ============================================================================
-template<Alphabet alphabet_t>
-std::vector<alphabet_t> generate_test_sequence(const std::size_t length)
+template<typename index_t>
+void construct_index(benchmark::State & state)
 {
-    const size_t alphabet_size = alphabet_t::value_size;
+    using alphabet_t = typename index_t::char_type;
 
-    std::mt19937 rng_engine;
-    rng_engine.seed(SEED);
-    std::uniform_int_distribution distribution{0, static_cast<int>(alphabet_size-1)};
-
-    std::vector<alphabet_t> text{};
-
-    for (std::size_t i = 0; i < length; ++i)
-    {
-        alphabet_t s{};
-        s.assign_rank(distribution(rng_engine));
-        text.push_back(s);
-    }
-
-    return text;
-}
-
-// ============================================================================
-// "overload" for chars
-// ============================================================================
-std::vector<char> generate_test_sequence_char(const std::size_t length)
-{
-    std::mt19937 rng_engine;
-    rng_engine.seed(SEED);
-    std::uniform_int_distribution distribution{0, 255};
-
-    std::vector<char> text{};
-
-    for (std::size_t i = 0; i < length; ++i)
-    {
-        char c = static_cast<char>(distribution(rng_engine));
-        text.push_back(c);
-    }
-
-    return text;
-}
-
-// ============================================================================
-// construct as many fm indexes as possible
-// ============================================================================
-template<Alphabet alphabet_t>
-void construct_fm_index(benchmark::State & state)
-{
-    const auto sequence = generate_test_sequence<alphabet_t>(LENGTH);
-    fm_index<std::vector<alphabet_t>> index{};
+    auto const sequence = test::generate_sequence<alphabet_t>(LENGTH, 0, SEED);
+    index_t index{};
 
     for (auto _ : state)
     {
-        index = fm_index{sequence};
+        index = index_t{sequence};
     }
 }
 
-// ============================================================================
-// construct as many bi fm indexes as possible
-// ============================================================================
-template<Alphabet alphabet_t>
-void construct_bi_fm_index(benchmark::State & state)
-{
-    const auto sequence = generate_test_sequence<alphabet_t>(LENGTH);
-    bi_fm_index<std::vector<alphabet_t>> index{};
+// TODO <Clemens C.>: seqan2 comparison
 
-    for (auto _ : state)
-    {
-        index = bi_fm_index{sequence};
-    }
-}
+BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<dna4>>);
+BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<aa27>>);
+BENCHMARK_TEMPLATE(construct_index, fm_index<std::vector<char>>);
 
-// ============================================================================
-// comparison with 256 char alphabet
-// ============================================================================
-void construct_fm_index_char(benchmark::State & state)
-{
-    // hardcode because char does not model alphabet concept
-    const auto sequence = generate_test_sequence_char(LENGTH);
-    fm_index<std::vector<char>> index{};
-
-    for (auto _ : state)
-    {
-        index = fm_index{sequence};
-    }
-}
-
-void construct_bi_fm_index_char(benchmark::State & state)
-{
-    const auto sequence = generate_test_sequence_char(LENGTH);
-    bi_fm_index<std::vector<char>> index{};
-
-    for (auto _ : state)
-    {
-        index = bi_fm_index{sequence};
-    }
-}
-
-BENCHMARK_TEMPLATE(construct_fm_index, dna4);
-BENCHMARK_TEMPLATE(construct_fm_index, aa27);
-BENCHMARK(construct_fm_index_char);
-BENCHMARK_TEMPLATE(construct_bi_fm_index, dna4);
-BENCHMARK_TEMPLATE(construct_bi_fm_index, aa27);
-BENCHMARK(construct_bi_fm_index_char);
+BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<dna4>>);
+BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<aa27>>);
+BENCHMARK_TEMPLATE(construct_index, bi_fm_index<std::vector<char>>);
 
 BENCHMARK_MAIN();

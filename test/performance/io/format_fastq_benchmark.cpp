@@ -8,24 +8,23 @@
 // written for the purpose of the Bch Softwarepraktikum, early 2019 FU Berlin
 // @author: Clemens Cords <clemenscords@fu-berlin.de>
 
-#include <fstream>
+#include <benchmark/benchmark.h>
 #include <cstring>
 #include <cmath>
-
-#include <benchmark/benchmark.h>
-
-#include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <chrono>
+#include <fstream>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/view/to_char.hpp>
 
 using namespace seqan3;
 
-const std::size_t POWER = 5; //files will have |10^POWER| lines
+std::size_t POWER = 5; //files will have |10^POWER| lines
 
-const auto DNA_SEQ = "AGCTAGCAGCGATCGCGATCGATCAGCGATCGAGGAATATAT"_dna4;
-const auto QUALITY = "IIIIIHIIIIIIIIIIIIIIIIIIIIIIHHGIIIIHHGIIIH"_phred42;
+auto const DNA_SEQ = "AGCTAGCAGCGATCGCGATCGATCAGCGATCGAGGAATATAT"_dna5;
+auto const QUALITY = "IIIIIHIIIIIIIIIIIIIIIIIIIIIIHHGIIIIHHGIIIH"_phred42;
 
 // ============================================================================
 // generate dummy fastq file with 10^power identical 4-line entries
@@ -34,42 +33,35 @@ std::string generate_dummy_fastq_file(std::size_t power)
 {
     std::string file{};
 
-    const std::string id{"@name"};
-    const std::string seq = DNA_SEQ | view::to_char;
-    const std::string qualid{"+"};
-    const std::string quality = QUALITY | view::to_char;
+    std::string const id{"@name"};
+    std::string const seq = DNA_SEQ | view::to_char;
+    std::string const quality = QUALITY | view::to_char;
 
-    const unsigned int n_iterations = static_cast<unsigned int>(pow(10, power));
+    auto const n_iterations = static_cast<unsigned int>(pow(10, power));
 
     for (size_t i = 0; i < n_iterations; ++i)
     {
-
-        file += id + '\n'
-                + seq + '\n'
-                + qualid + '\n'
-                + quality + '\n';
+        file += id + '\n' + seq + '\n' + '+' + '\n' + quality + '\n';
     }
 
     return file;
 }
 
-// ============================================================================
+// ====================================for========================================
 // generate dummy fasta file with 2*10^power identical 2-line entries
 // ============================================================================
 std::string generate_dummy_fasta_file(std::size_t power)
 {
     std::string file{};
 
-    const std::string input_id{">name"};
-    const std::string seq = DNA_SEQ | view::to_char;
+    std::string const input_id{">name"};
+    std::string const seq = DNA_SEQ | view::to_char;
 
-    const auto n_iterations = static_cast<unsigned int>(2*pow(10, power));
+    auto const n_iterations = static_cast<unsigned int>(2*pow(10, power));
 
     for (size_t i = 0; i < n_iterations; ++i)
     {
-
-        file += input_id + '\n'
-              + seq + '\n';
+        file += input_id + '\n' + seq + '\n';
     }
 
     return file;
@@ -85,14 +77,11 @@ void fastq_write(benchmark::State & state)
     sequence_file_format_fastq format;
     sequence_file_output_options options{};
 
-    const std::string id{"@name"};
-    const std::string seq = DNA_SEQ | view::to_char;
-    const std::string qualid{"+"};
-    const std::string quality = QUALITY | view::to_char;
+    std::string const id{"@name"};
 
     for (auto _ : state)
     {
-        format.write(ostream, options, seq, id, quality);
+        format.write(ostream, options, DNA_SEQ, id, QUALITY);
     }
 }
 
@@ -106,11 +95,11 @@ void fastq_read_with_quality(benchmark::State & state)
     std::istringstream istream{generate_dummy_fastq_file(POWER)};
 
     sequence_file_format_fastq format;
-    const sequence_file_input_options<dna5, false> options{};
+    sequence_file_input_options<dna5, false> const options{};
 
     std::string id{};
-    std::string seq{};
-    std::string qual{};
+    std::vector<dna5> seq{};
+    std::vector<phred42> qual{};
 
     for (auto _ : state)
     {
@@ -128,10 +117,10 @@ void fastq_read_without_quality(benchmark::State & state)
     std::istringstream istream{generate_dummy_fastq_file(POWER)};
 
     sequence_file_format_fastq format;
-    const sequence_file_input_options<dna5, false> options{};
+    sequence_file_input_options<dna5, false> const options{};
 
     std::string id{};
-    std::string seq{};
+    std::vector<dna5> seq{};
 
     for (auto _ : state)
     {
@@ -149,7 +138,7 @@ void fastq_read_ignore_everything(benchmark::State & state)
     std::istringstream istream{generate_dummy_fastq_file(POWER)};
 
     sequence_file_format_fastq format;
-    const sequence_file_input_options<dna5, false> options{};
+    sequence_file_input_options<dna5, false> const options{};
 
     for (auto _ : state)
     {
@@ -158,6 +147,8 @@ void fastq_read_ignore_everything(benchmark::State & state)
 }
 
 BENCHMARK(fastq_read_ignore_everything);
+
+// TODO <Clemens C.>: seqan2 comparison
 
 /*
 // ============================================================================
@@ -168,10 +159,10 @@ void fasta_read_comparison (benchmark::State & state)
     std::istringstream istream{generate_dummy_fasta_file(POWER)};
 
     sequence_file_format_fasta format;
-    const sequence_file_input_options<dna5, false> options{};
+    sequence_file_input_options<dna5, false> const options{};
 
     std::string id{};
-    std::string seq{};
+    std::vector<dna5> seq{};
 
     for (auto _ : state)
     {
@@ -180,6 +171,6 @@ void fasta_read_comparison (benchmark::State & state)
 }
 
 BENCHMARK(fasta_read_comparison);
- */
+*/
 
 BENCHMARK_MAIN();
