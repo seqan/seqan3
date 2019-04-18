@@ -432,15 +432,15 @@ protected:
         std::ostream_iterator<char> out(std::cout);
 
         // Print legal stuff
-        if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
+        if ((!empty(meta.copyright)) || (!empty(meta.license)) || (!empty(meta.citation)))
         {
             std::cout << "\n" << to_text("\\fB") << "LEGAL" << to_text("\\fP") << "\n";
 
-            if (!empty(meta.short_copyright))
+            if (!empty(meta.copyright))
             {
                 std::fill_n(out, layout.leftPadding, ' ');
                 std::cout << to_text("\\fB") << meta.app_name << " Copyright: "
-                          << to_text("\\fP") << meta.short_copyright << "\n";
+                          << to_text("\\fP") << meta.copyright << "\n";
             }
             std::fill_n(out, layout.leftPadding, ' ');
             std::cout << to_text("\\fB") << "SeqAn Copyright: " << to_text("\\fP")
@@ -451,11 +451,11 @@ protected:
                 std::cout << to_text("\\fB") << "In your academic works please cite: " << to_text("\\fP")
                           << meta.citation << "\n";
             }
-            if (!empty(meta.long_copyright))
+            if (!empty(meta.license))
             {
                 std::fill_n(out, layout.leftPadding, ' ');
-                std::cout << "For full copyright and/or warranty information see " << to_text("\\fB")
-                          << "--copyright" << to_text("\\fP") << ".\n";
+                std::cout << "For full license and/or warranty information see " << to_text("\\fB")
+                          << "--license" << to_text("\\fP") << ".\n";
             }
         }
     }
@@ -767,19 +767,19 @@ public:
     }
 };
 
-/*!\brief The format that prints the copyright information to std::cout.
+/*!\brief The format that prints the license information to std::cout.
  * \ingroup argument_parser
  *
  * \details
  *
- * The copyright message printing is not done immediately, because the user cannot provide
- * meta information (e.g. long_copyright) on construction of the parser. Thus the meta information is collected
+ * The license message printing is not done immediately, because the user cannot provide
+ * meta information (e.g. long_license) on construction of the parser. Thus the meta information is collected
  * and only evaluated when calling seqan3::format_version::parse.
  */
-class format_copyright : public format_help
+class format_license : public format_help
 {
 public:
-    /*!\brief Initiates the printing of the copyright message to std::cout.
+    /*!\brief Initiates the printing of the license message to std::cout.
      * \param[in] parser_meta The meta information that are needed for a detailed version information.
      */
     void parse(argument_parser_meta_data const & parser_meta)
@@ -815,21 +815,21 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.)"};
 
-        strem << ranges::view::repeat_n('=', 80) << to_text("\n\\fB") << "Copyright information for "
+        strem << ranges::view::repeat_n('=', 80) << to_text("\n\\fB") << "License information for "
               << meta.app_name << ":\n" << to_text("\\fP") << ranges::view::repeat_n('-', 80) << '\n';
 
-        if (!empty(meta.long_copyright))
+        if (!empty(meta.license))
         {
-            strem << to_text("\\fP") << meta.long_copyright << "\n";
+            strem << to_text("\\fP") << meta.license << "\n";
         }
-        else if (!empty(meta.short_copyright))
+        else if (!empty(meta.copyright))
         {
-            strem << to_text("\\fP") << meta.app_name << " full copyright information not available. Displaying"
-                  << " short copyright information instead:\n" << to_text("\\fP") << meta.short_copyright << "\n";
+            strem << to_text("\\fP") << meta.app_name << " full license information not available. Displaying"
+                  << " copyright information instead:\n" << to_text("\\fP") << meta.copyright << "\n";
         }
         else
         {
-            strem << to_text("\\fP") << meta.app_name << " copyright information not available.\n";
+            strem << to_text("\\fP") << meta.app_name << " copyright and license information not available.\n";
         }
 
         strem << ranges::view::repeat_n('=', 80) << to_text("\n\\fB")

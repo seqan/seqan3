@@ -338,13 +338,13 @@ private:
         std::cout << "<br>\n";
 
         // Print legal stuff
-        if ((!meta.short_copyright.empty()) || (!meta.long_copyright.empty()) || (!meta.citation.empty()))
+        if ((!meta.copyright.empty()) || (!meta.license.empty()) || (!meta.citation.empty()))
         {
             std::cout << "<h2>Legal</h2>\n<strong>";
 
-            if (!meta.short_copyright.empty())
+            if (!meta.copyright.empty())
                 std::cout << meta.app_name << " Copyright: </strong>"
-                       << meta.short_copyright << "<br>\n<strong>";
+                       << meta.copyright << "<br>\n<strong>";
 
             std::cout << "SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n<strong>";
 
@@ -353,8 +353,8 @@ private:
             else
                 std::cout << "</strong>";
 
-            if (!meta.long_copyright.empty())
-                std::cout << "For full copyright and/or warranty information see <tt>--copyright</tt>.\n";
+            if (!meta.license.empty())
+                std::cout << "For full license and/or warranty information see <tt>--license</tt>.\n";
         }
 
         // Print HTML boilerplate footer.

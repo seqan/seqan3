@@ -57,8 +57,8 @@ TEST(html_test, html)
    parser1.info.description.push_back("description2");
    parser1.info.short_description = "short description";
    parser1.info.url = "www.seqan.de";
-   parser1.info.short_copyright = "short copyright";
-   parser1.info.long_copyright = "long_copyright";
+   parser1.info.copyright = "copyright";
+   parser1.info.license = "license";
    parser1.info.citation = "citation";
    parser1.add_option(option_value, 'i', "int", "this is a int option.");
    parser1.add_option(option_value, 'j', "jint", "this is a int option.");
@@ -120,10 +120,10 @@ TEST(html_test, html)
                           "www.seqan.de<br>"
                           "<br>"
                           "<h2>Legal</h2>"
-                          "<strong>program_full_options Copyright: </strong>short copyright<br>"
+                          "<strong>program_full_options Copyright: </strong>copyright<br>"
                           "<strong>SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>"
                           "<strong>In your academic works please cite:</strong> citation<br>"
-                          "For full copyright and/or warranty information see <tt>--copyright</tt>."
+                          "For full license and/or warranty information see <tt>--license</tt>."
                           "</body></html>");
    EXPECT_TRUE(ranges::equal((my_stdout   | std::view::filter(!is_space)),
                               expected | ranges::view::remove_if(is_space)));

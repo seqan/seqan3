@@ -515,9 +515,9 @@ private:
                                             "Value of --export-help must be one of [html, man, ctd]");
                 return;
             }
-            else if (arg == "--copyright")
+            else if (arg == "--license")
             {
-                format = detail::format_copyright();
+                format = detail::format_license();
                 return;
             }
         }
@@ -581,11 +581,11 @@ private:
                  detail::format_version,
                  detail::format_html,
                  detail::format_man,
-                 detail::format_copyright/*,
+                 detail::format_license/*,
                  detail::format_ctd*/> format{detail::format_help(0)};
 
     //!\brief List of option/flag identifiers that are already used.
-    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
+    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "license"};
 };
 
 } // namespace seqan3

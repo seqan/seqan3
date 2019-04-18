@@ -80,11 +80,11 @@ struct argument_parser_meta_data // holds all meta information
     //!\brief A link to github, your website or a wiki page.
     std::string url;
     //!\brief Brief copyright (and/or license) information.
-    std::string short_copyright;
-    /*!\brief Detailed copyright information that will be displayed
-     *        when the user specifies "--copyright" on the command line.
+    std::string copyright;
+    /*!\brief Detailed license information that will be displayed
+     *        when the user specifies "--license" on the command line.
      */
-    std::string long_copyright;
+    std::string license;
     //!\brief How  users shall cite your application.
     std::string citation;
     /*!\brief The title of your man page when exported by specifying

@@ -59,7 +59,7 @@ The argument parser checks the following restrictions and throws a seqan3::parse
 * **Short identifiers**: must be unique and consist of only a single letter that is alphanumeric characters, `_` or `@`.
 * either the short or long id may be empty but not both at the same time.
 * Only the last positional option may be a list (see [lists](#section_list_positional_options)).
-* The flag identifiers `-h`, `--help`, `--advanced-help`, `--advanced-help`, `--export-help`, `--version`, `--copyright` are predefined and cannot be specified manually or used otherwise.
+* The flag identifiers `-h`, `--help`, `-hh`, `--advanced-help`, `--export-help`, `--version`, `--license` are predefined and cannot be specified manually or used otherwise.
 * The seqan3::argument_parser::parse function may only be called once (per parser).
 
 ## Input restrictions (seqan3::parser_invalid_argument)
@@ -86,7 +86,7 @@ Currently we support the following *special requests*:
 <tr> <td> `-hh/--advanced-help` </td> <td> Prints the advanced help page to the command line (`std::cout`) </td> </tr>
 <tr> <td> `--export-help` </td> <td> Exports the help page in a different format (`std::cout`) </td> </tr>
 <tr> <td> `--version`    </td> <td> Prints the version information to the command line (`std::cout`) </td> </tr>
-<tr> <td> `--copyright`  </td> <td> Prints the copyright information to the command line (`std::cout`) </td> </tr>
+<tr> <td> `--license`  </td> <td> Prints the license information to the command line (`std::cout`) </td> </tr>
 </table>
 
 \assignment{Assignment 1}
@@ -101,13 +101,13 @@ Of course there is not much information to display yet, since we did not provide
 - **app_name**, which is already set on construction (seqan3::argument_parser_meta_data::app_name)
 - **author** (seqan3::argument_parser_meta_data::author)
 - **citation** (seqan3::argument_parser_meta_data::citation)
+- **copyright** (seqan3::argument_parser_meta_data::copyright)
 - **date** (seqan3::argument_parser_meta_data::date)
 - **description** (seqan3::argument_parser_meta_data::description)
 - **email** (seqan3::argument_parser_meta_data::email)
 - **examples** (seqan3::argument_parser_meta_data::examples)
-- **long_copyright** (seqan3::argument_parser_meta_data::long_copyright)
+- **license** (seqan3::argument_parser_meta_data::license)
 - **man_page_title** (seqan3::argument_parser_meta_data::man_page_title)
-- **short_copyright** (seqan3::argument_parser_meta_data::short_copyright)
 - **short_description** (seqan3::argument_parser_meta_data::short_description)
 - **synopsis** (seqan3::argument_parser_meta_data::synopsis)
 - **url** (seqan3::argument_parser_meta_data::url)

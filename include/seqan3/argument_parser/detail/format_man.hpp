@@ -285,20 +285,20 @@ private:
     void print_footer()
     {
         // Print legal stuff
-        if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
+        if ((!empty(meta.copyright)) || (!empty(meta.license)) || (!empty(meta.citation)))
         {
             std::cout << ".SH LEGAL\n";
 
-            if (!empty(meta.short_copyright))
-                std::cout << "\\fB" << meta.app_name << " Copyright:\\fR " << meta.short_copyright << "\n.br\n";
+            if (!empty(meta.copyright))
+                std::cout << "\\fB" << meta.app_name << " Copyright:\\fR " << meta.copyright << "\n.br\n";
 
             std::cout << "\\fBSeqAn Copyright:\\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n.br\n";
 
             if (!empty(meta.citation))
                 std::cout << "\\fBIn your academic works please cite:\\fR " << meta.citation << "\n.br\n";
 
-            if (!empty(meta.long_copyright))
-                std::cout << "For full copyright and/or warranty information see \\fB--copyright\\fR.\n";
+            if (!empty(meta.license))
+                std::cout << "For full license and/or warranty information see \\fB--license\\fR.\n";
         }
     }
 

@@ -64,13 +64,13 @@ TEST(help_page_printing, no_information)
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
-TEST(help_page_printing, with_short_copyright)
+TEST(help_page_printing, with_copyright)
 {
-    // Again, but with short copyright, long copyright, and citation.
-    argument_parser short_copy("test_parser", 2, argv1);
-    short_copy.info.short_copyright = "short";
+    // Again, but with copyright, license, and citation.
+    argument_parser copyright("test_parser", 2, argv1);
+    copyright.info.copyright = "copyright";
     testing::internal::CaptureStdout();
-    EXPECT_EXIT(short_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser"
                "==========="
@@ -79,17 +79,17 @@ TEST(help_page_printing, with_short_copyright)
                "test_parser version:"
                "SeqAn version: " + version_str +
                "LEGAL"
-               "test_parser Copyright: short"
+               "test_parser Copyright: copyright"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.";
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
-TEST(help_page_printing, with_long_copyright)
+TEST(help_page_printing, with_license)
 {
-    argument_parser long_copy("test_parser", 2, argv1);
-    long_copy.info.long_copyright = "long";
+    argument_parser license("test_parser", 2, argv1);
+    license.info.license = "license";
     testing::internal::CaptureStdout();
-    EXPECT_EXIT(long_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    EXPECT_EXIT(license.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
     expected = "test_parser"
                "==========="
@@ -99,7 +99,7 @@ TEST(help_page_printing, with_long_copyright)
                "SeqAn version: " + version_str +
                "LEGAL"
                "SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL."
-               "For full copyright and/or warranty information see --copyright.";
+               "For full license and/or warranty information see --license.";
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
@@ -238,26 +238,26 @@ TEST(help_page_printing, full_information)
     EXPECT_TRUE(ranges::equal((std_cout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
 }
 
-TEST(help_page_printing, copyright)
+TEST(help_page_printing, license)
 {
-    // Tests the --copyright call.
-    const char * argvCopyright[] = {"./copyright", "--copyright"};
-    argument_parser copyright("myApp", 2, argvCopyright);
+    // Tests the --license call.
+    const char * argvLicense[] = {"./copyright", "--license"};
+    argument_parser license("myApp", 2, argvLicense);
 
     std::ifstream license_file{std::string{{SEQAN_INCLUDE_DIR}} + "/../LICENSE"};
     std::string license_string{(std::istreambuf_iterator<char>(license_file)),
                                 std::istreambuf_iterator<char>()};
 
-    // Test --copyright with empty short and long copyright info.
+    // Test --license with empty copyright and license info.
     {
         testing::internal::CaptureStdout();
-        EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        EXPECT_EXIT(license.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         std_cout = testing::internal::GetCapturedStdout();
 
         expected = "================================================================================\n"
-                   "Copyright information for myApp:\n"
+                   "License information for myApp:\n"
                    "--------------------------------------------------------------------------------\n"
-                   "myApp copyright information not available.\n"
+                   "myApp copyright and license information not available.\n"
                    "================================================================================\n"
                    "This program contains SeqAn3 code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
@@ -266,19 +266,19 @@ TEST(help_page_printing, copyright)
         EXPECT_EQ(std_cout, expected);
     }
 
-    // Test --copyright with a non-empty short copyright and an empty long copyright.
-    copyright.info.short_copyright = "short copyright line 1\nshort copyright line 2";
+    // Test --copyright with a non-empty copyright and an empty license.
+    license.info.copyright = "copyright line 1\ncopyright line 2";
     {
         testing::internal::CaptureStdout();
-        EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        EXPECT_EXIT(license.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         std_cout = testing::internal::GetCapturedStdout();
 
         expected = "================================================================================\n"
-                   "Copyright information for myApp:\n"
+                   "License information for myApp:\n"
                    "--------------------------------------------------------------------------------\n"
-                   "myApp full copyright information not available. Displaying short copyright information instead:\n"
-                   "short copyright line 1\n"
-                   "short copyright line 2\n"
+                   "myApp full license information not available. Displaying copyright information instead:\n"
+                   "copyright line 1\n"
+                   "copyright line 2\n"
                    "================================================================================\n"
                    "This program contains SeqAn3 code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
@@ -287,18 +287,18 @@ TEST(help_page_printing, copyright)
         EXPECT_EQ(std_cout, expected);
     }
 
-    // Test --copyright with a non-empty short copyright and a non-empty long copyright.
-    copyright.info.long_copyright = "long copyright line 1\nlong copyright line 2";
+    // Test --license with a non-empty copyright and a non-empty license.
+    license.info.license = "license line 1\nlicense line 2";
     {
         testing::internal::CaptureStdout();
-        EXPECT_EXIT(copyright.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        EXPECT_EXIT(license.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         std_cout = testing::internal::GetCapturedStdout();
 
         expected = "================================================================================\n"
-                   "Copyright information for myApp:\n"
+                   "License information for myApp:\n"
                    "--------------------------------------------------------------------------------\n"
-                   "long copyright line 1\n"
-                   "long copyright line 2\n"
+                   "license line 1\n"
+                   "license line 2\n"
                    "================================================================================\n"
                    "This program contains SeqAn3 code licensed under the following terms:\n"
                    "--------------------------------------------------------------------------------\n"
