@@ -632,12 +632,16 @@ public:
         else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<decltype(get<0>(mate))>, std::optional>)
         {
             if (get<0>(mate).has_value())
-                write_range(stream_it, (header.ref_ids())[get<0>(mate).value()]);
+                // value_or(0) instead of value() (which is equivalent here) as a
+                // workaround for a ubsan false-positive in GCC8: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90058
+                write_range(stream_it, header.ref_ids()[get<0>(mate).value_or(0)]);
             else
                 stream << '*';
         }
         else
+        {
             write_range(stream_it, get<0>(mate));
+        }
 
         stream << separator;
 
