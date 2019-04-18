@@ -15,7 +15,6 @@
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 
-//TODO:
 using namespace seqan3;
 
 std::size_t const LENGTH = 50;
