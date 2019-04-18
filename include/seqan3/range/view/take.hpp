@@ -75,10 +75,10 @@ private:
         using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
 
         //!\brief The current position.
-        size_t pos;
+        size_t pos{};
 
         //!\brief The size parameter to the view.
-        size_t max_pos;
+        size_t max_pos{};
 
     public:
         /*!\name Constructors, destructor and assignment
@@ -93,12 +93,12 @@ private:
         ~iterator_type()                                               = default; //!< Defaulted.
 
         //!\brief Constructor that delegates to the CRTP layer.
-        iterator_type(base_base_t const & it) noexcept(noexcept(base_t{it})) :
+        constexpr iterator_type(base_base_t const & it) noexcept(noexcept(base_t{it})) :
             base_t{std::move(it)}
         {}
 
         //!\brief Constructor that delegates to the CRTP layer and initialises the members.
-        iterator_type(base_base_t it, size_t const _pos, size_t const _max_pos) noexcept(noexcept(base_t{it})) :
+        constexpr iterator_type(base_base_t it, size_t const _pos, size_t const _max_pos) noexcept(noexcept(base_t{it})) :
             base_t{std::move(it)}, pos{_pos}, max_pos(_max_pos)
         {}
         //!\}
@@ -118,14 +118,14 @@ private:
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
          */
-        iterator_type & operator++() noexcept(noexcept(++std::declval<base_t &>()))
+        constexpr iterator_type & operator++() noexcept(noexcept(++std::declval<base_t &>()))
         {
             base_t::operator++();
             ++pos;
             return *this;
         }
 
-        iterator_type operator++(int) noexcept(noexcept(++std::declval<iterator_type &>()) &&
+        constexpr iterator_type operator++(int) noexcept(noexcept(++std::declval<iterator_type &>()) &&
                                                std::is_nothrow_copy_constructible_v<iterator_type>)
         {
             iterator_type cpy{*this};
@@ -133,7 +133,7 @@ private:
             return cpy;
         }
 
-        iterator_type & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
+        constexpr iterator_type & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
         //!\cond
             requires std::BidirectionalIterator<base_base_t>
         //!\endcond
@@ -143,7 +143,7 @@ private:
             return *this;
         }
 
-        iterator_type operator--(int) noexcept(noexcept(--std::declval<iterator_type &>()) &&
+        constexpr iterator_type operator--(int) noexcept(noexcept(--std::declval<iterator_type &>()) &&
                                                std::is_nothrow_copy_constructible_v<iterator_type>)
         //!\cond
             requires std::BidirectionalIterator<base_base_t>
@@ -154,7 +154,7 @@ private:
             return cpy;
         }
 
-        iterator_type & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
+        constexpr iterator_type & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
         //!\endcond
@@ -164,7 +164,7 @@ private:
             return *this;
         }
 
-        iterator_type & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
+        constexpr iterator_type & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
         //!\endcond
@@ -179,7 +179,7 @@ private:
          * \brief We define comparison against self and against the sentinel.
          * \{
          */
-        bool operator==(iterator_type const & rhs) const
+        constexpr bool operator==(iterator_type const & rhs) const
             noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
         //!\cond
             requires std::ForwardIterator<base_base_t>
@@ -188,7 +188,7 @@ private:
             return *base_t::this_to_base() == *rhs.this_to_base();
         }
 
-        bool operator==(sentinel_type const & rhs) const
+        constexpr bool operator==(sentinel_type const & rhs) const
             noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()))
         {
             if (pos >= max_pos)
@@ -207,18 +207,18 @@ private:
             }
         }
 
-        friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs == lhs))
+        constexpr friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs == lhs))
         {
             return rhs == lhs;
         }
 
-        bool operator!=(sentinel_type const & rhs) const
+        constexpr bool operator!=(sentinel_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         {
             return !(*this == rhs);
         }
 
-        bool operator!=(iterator_type const & rhs) const
+        constexpr bool operator!=(iterator_type const & rhs) const
             noexcept(noexcept(std::declval<iterator_type &>() == rhs))
         //!\cond
             requires std::ForwardIterator<base_base_t>
@@ -227,7 +227,7 @@ private:
             return !(*this == rhs);
         }
 
-        friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
+        constexpr friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
         {
             return rhs != lhs;
         }
@@ -237,13 +237,12 @@ private:
          * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
          * \{
          */
-        reference operator[](std::make_unsigned_t<difference_type> const n) const
+        constexpr reference operator[](std::make_unsigned_t<difference_type> const n) const
             noexcept(noexcept(std::declval<base_base_t &>()[0]))
         //!\cond
             requires std::RandomAccessIterator<base_base_t>
         //!\endcond
         {
-            pos = n;
             return base_base_t::operator[](n);
         }
         //!\}
@@ -272,7 +271,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_take()                                            = default; //!< Defaulted.
+    constexpr view_take()                                  = default; //!< Defaulted.
     constexpr view_take(view_take const & rhs)             = default; //!< Defaulted.
     constexpr view_take(view_take && rhs)                  = default; //!< Defaulted.
     constexpr view_take & operator=(view_take const & rhs) = default; //!< Defaulted.
@@ -284,7 +283,7 @@ public:
      * \param[in] _size   The desired size (after which to stop returning elements).
      * \throws unexpected_end_of_input If `exactly && or_throw && seqan3::sized_range_concept<urng_t>`.
      */
-    view_take(urng_t _urange, size_t const _size)
+    constexpr view_take(urng_t _urange, size_t const _size)
         : urange{std::move(_urange)}, target_size{_size}
     {
         if constexpr (exactly && or_throw && std::ranges::SizedRange<urng_t>)
@@ -307,7 +306,7 @@ public:
     //!\cond
         requires std::Constructible<rng_t, std::ranges::all_view<rng_t>>
     //!\endcond
-    view_take(rng_t && _urange, size_t const _size)
+    constexpr view_take(rng_t && _urange, size_t const _size)
         : view_take{std::view::all(std::forward<rng_t>(_urange)), _size}
     {}
     //!\}
@@ -328,20 +327,20 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator begin() noexcept
+    constexpr iterator begin() noexcept
     {
         return {seqan3::begin(urange), 0, target_size};
     }
 
     //!\copydoc begin()
-    const_iterator begin() const noexcept
+    constexpr const_iterator begin() const noexcept
         requires const_iterable_concept<urng_t>
     {
         return {seqan3::cbegin(urange), 0, target_size};
     }
 
     //!\copydoc begin()
-    const_iterator cbegin() const noexcept
+    constexpr const_iterator cbegin() const noexcept
         requires const_iterable_concept<urng_t>
     {
         return {seqan3::cbegin(urange), 0, target_size};
@@ -360,20 +359,20 @@ public:
      *
      * No-throw guarantee.
      */
-    sentinel_type end() noexcept
+    constexpr sentinel_type end() noexcept
     {
         return {seqan3::end(urange)};
     }
 
     //!\copydoc end()
-    sentinel_type end() const noexcept
+    constexpr sentinel_type end() const noexcept
         requires const_iterable_concept<urng_t>
     {
         return {seqan3::cend(urange)};
     }
 
     //!\copydoc end()
-    sentinel_type cend() const noexcept
+    constexpr sentinel_type cend() const noexcept
         requires const_iterable_concept<urng_t>
     {
         return {seqan3::cend(urange)};
@@ -391,7 +390,7 @@ public:
      *
      * No-throw guarantee.
      */
-    size_type size() const noexcept
+    constexpr size_type size() const noexcept
         requires exactly
     {
         return target_size;
