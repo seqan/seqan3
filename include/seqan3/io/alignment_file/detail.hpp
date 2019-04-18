@@ -78,7 +78,7 @@ struct view_equality_fn
  * in the extended CIGAR alphabet (\p extended_cigar = `true`) the function
  * will return an 'X' since the bases are aligned but are not
  * equal.
- * \sa seqan3::aligned_sequence_concept
+ * \sa seqan3::AlignedSequence
  */
 template<typename reference_char_type, typename query_char_type>
 //!\cond
@@ -131,7 +131,7 @@ char compare_aligned_values(reference_char_type const reference_char,
  * In this case, the function seqan3::detail::get_cigar_string will return
  * the following cigar string when printed: "4M2I5M2D1M". The extended cigar
  * string would look like this: "3=1X2I3=1X1=2D1=".
- * \sa seqan3::aligned_sequence_concept
+ * \sa seqan3::AlignedSequence
  */
 template<std::ranges::ForwardRange ref_seq_type, std::ranges::ForwardRange query_seq_type>
 //!\cond
@@ -225,7 +225,7 @@ std::string get_cigar_string(ref_seq_type && ref_seq,
  * In this case, the function seqan3::detail::get_cigar_string will return
  * the following cigar string when printed: "4M2I5M2D1M". The extended cigar
  * string would look like this: "3=1X2I3=1X1=2D1=".
- * \sa seqan3::aligned_sequence_concept
+ * \sa seqan3::AlignedSequence
  */
 template<tuple_like_concept alignment_type>
 //!\cond
@@ -351,7 +351,7 @@ parse_cigar(cigar_input_type && cigar_input)
  * \ingroup alignment_file
  *
  * \tparam alignment_type The type of alignment; must model seqan3::tuple_like_concept and all tuple element types
- *                        must model seqan3::aligned_sequence_concept.
+ *                        must model seqan3::AlignedSequence.
  *
  * \param[in,out] alignment  The alignment to fill with gaps according to the cigar information.
  * \param[in]     cigar      The cigar information given as a std::vector of operation-count pairs.

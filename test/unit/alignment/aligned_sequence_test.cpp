@@ -20,7 +20,7 @@
 using namespace seqan3;
 
 template <typename container_type>
-    requires aligned_sequence_concept<container_type>
+    requires AlignedSequence<container_type>
 class aligned_sequence<container_type> : public ::testing::Test
 {
 public:
