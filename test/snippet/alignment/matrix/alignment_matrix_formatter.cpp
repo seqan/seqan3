@@ -40,6 +40,7 @@ alignment_matrix_format format
     "|", // col_sep
     "-", // row_sep
     "/", // row_col_sep
+    "INF", // infinity
     {" ","D","U","DU","L","DL","UL","DUL"} // trace_dir
 };
 
