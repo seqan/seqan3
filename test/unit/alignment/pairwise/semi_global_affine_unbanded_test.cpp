@@ -5,8 +5,6 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
 // -----------------------------------------------------------------------------------------------------
 
-#pragma once
-
 #include <vector>
 
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
@@ -19,7 +17,10 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 
-#include "alignment_fixture.hpp"
+#include "affine_test_template.hpp"
+
+using namespace seqan3;
+using namespace seqan3::detail;
 
 namespace seqan3::test::alignment::fixture::semi_global::affine::unbanded
 {
@@ -214,4 +215,11 @@ static auto dna4_04 = []()
     };
 }();
 
-} // namespace seqan3::test::alignment::fixture::global::affine::unbanded
+} // namespace seqan3::test::alignment::fixture::semi_global::affine::unbanded
+
+using semi_global_affine_unbanded_types = ::testing::Types<param<&semi_global::affine::unbanded::dna4_01>,
+                                                           param<&semi_global::affine::unbanded::dna4_02>,
+                                                           param<&semi_global::affine::unbanded::dna4_03>,
+                                                           param<&semi_global::affine::unbanded::dna4_04>>;
+
+INSTANTIATE_TYPED_TEST_CASE_P(semi_global, align_affine, semi_global_affine_unbanded_types);

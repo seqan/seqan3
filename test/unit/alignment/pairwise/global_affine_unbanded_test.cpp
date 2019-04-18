@@ -7,112 +7,128 @@
 
 #include <gtest/gtest.h>
 
+#include <vector>
 
-#include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
-#include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
-#include <seqan3/alignment/pairwise/align_pairwise.hpp>
+#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 
-#include <seqan3/range/view/to_char.hpp>
-
-#include "fixture/global_affine_unbanded.hpp"
-#include "fixture/semi_global_affine_unbanded.hpp"
+#include "affine_test_template.hpp"
 
 using namespace seqan3;
 using namespace seqan3::detail;
-using namespace seqan3::test::alignment::fixture;
 
-template <auto _fixture>
-struct param : public ::testing::Test
+namespace seqan3::test::alignment::fixture::global::affine::unbanded
 {
-    auto fixture() -> decltype(alignment_fixture{*_fixture}) const &
+
+inline constexpr auto align_config = align_cfg::mode{global_alignment} |
+                                     align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}};
+
+static auto dna4_01 = []()
+{
+    using detail::column_index_type;
+    using detail::row_index_type;
+
+    return alignment_fixture
     {
-        return *_fixture;
-    }
-};
+        // score: 8 (7 insertions, 1 substitutions)
+        // alignment:
+        // AACCGGTTAACCGGTT
+        // | | | | | | | |
+        // A-C-G-T-A-C-G-TA
+        "AACCGGTTAACCGGTT"_dna4,
+        "ACGTACGTA"_dna4,
+        align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        -18,
+        "AACCGGTTAACCG---GTT",
+        "A----------CGTACGTA",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+        /*A*/  1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
+        /*C*/  2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+        /*G*/  3,  2,  2,  2,  2,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
+        /*T*/  4,  3,  3,  3,  3,  3,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+        /*A*/  5,  4,  3,  4,  4,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
+        /*C*/  6,  5,  4,  3,  4,  5,  5,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
+        /*G*/  7,  6,  5,  4,  4,  4,  5,  6,  6,  6,  6,  6,  6,  6,  7,  8,  9,
+        /*T*/  8,  7,  6,  5,  5,  5,  5,  5,  6,  7,  7,  7,  7,  7,  7,  7,  8,
+        /*A*/  9,  8,  7,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8,  8,  8,  8,  8
+        },
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
+        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
+        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
+        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,
+        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,
+        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,
+        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D
+        }
+    };
+}();
 
-template <typename param_t>
-class global_affine_unbanded : public param_t
-{};
-
-TYPED_TEST_CASE_P(global_affine_unbanded);
-
-using global_affine_unbanded_types
-    = ::testing::Types<
-        param<&global::affine::unbanded::dna4_01>,
-        param<&global::affine::unbanded::dna4_02>
-    >;
-
-using semi_global_affine_unbanded_types
-    = ::testing::Types<
-        param<&semi_global::affine::unbanded::dna4_01>,
-        param<&semi_global::affine::unbanded::dna4_02>,
-        param<&semi_global::affine::unbanded::dna4_03>,
-        param<&semi_global::affine::unbanded::dna4_04>
-    >;
-
-TYPED_TEST_P(global_affine_unbanded, score)
+static auto dna4_02 = []()
 {
-    auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config | align_cfg::result{with_score};
+    using detail::column_index_type;
+    using detail::row_index_type;
 
-    std::vector database = fixture.sequence1;
-    std::vector query = fixture.sequence2;
+    return alignment_fixture
+    {
+        "ACGTACGTA"_dna4,
+        "AACCGGTTAACCGGTT"_dna4,
+        align_config | align_cfg::scoring{nucleotide_scoring_scheme{match_score{4}, mismatch_score{-5}}},
+        -18,
+        "ACGTAC----------GTA",
+        "A---ACCGGTTAACCGGTT",
+        alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+        /*A*/  1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
+        /*C*/  2,  1,  1,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+        /*G*/  3,  2,  2,  2,  2,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,
+        /*T*/  4,  3,  3,  3,  3,  3,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+        /*A*/  5,  4,  3,  4,  4,  4,  4,  4,  4,  4,  5,  6,  7,  8,  9, 10, 11,
+        /*C*/  6,  5,  4,  3,  4,  5,  5,  5,  5,  5,  5,  5,  6,  7,  8,  9, 10,
+        /*G*/  7,  6,  5,  4,  4,  4,  5,  6,  6,  6,  6,  6,  6,  6,  7,  8,  9,
+        /*T*/  8,  7,  6,  5,  5,  5,  5,  5,  6,  7,  7,  7,  7,  7,  7,  7,  8,
+        /*A*/  9,  8,  7,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8,  8,  8,  8,  8
+        },
+        std::vector
+        {
+        //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
+        /*e*/NON,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*A*/U  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*C*/U  ,U  ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,L  ,L  ,
+        /*G*/U  ,U  ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,L  ,L  ,
+        /*T*/U  ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,DL ,DL ,
+        /*A*/U  ,DU ,D  ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,L  ,L  ,
+        /*C*/U  ,U  ,U  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,L  ,L  ,
+        /*G*/U  ,U  ,U  ,U  ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,L  ,L  ,
+        /*T*/U  ,U  ,U  ,U  ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D  ,D  ,DL ,
+        /*A*/U  ,DU ,DU ,U  ,DU ,DU ,DU ,DU ,D  ,D  ,DL ,DUL,DU ,DU ,DU ,DU ,D
+        }
+    };
+}();
 
-    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
+} // namespace seqan3::test::alignment::fixture::global::affine::unbanded
 
-    EXPECT_EQ((*std::ranges::begin(alignment)).score(), fixture.score);
-}
+using global_affine_unbanded_types = ::testing::Types<param<&global::affine::unbanded::dna4_01>,
+                                                      param<&global::affine::unbanded::dna4_02>>;
 
-TYPED_TEST_P(global_affine_unbanded, end_position)
-{
-    auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
-
-    std::vector database = fixture.sequence1;
-    std::vector query = fixture.sequence2;
-
-    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
-
-    auto res = *std::ranges::begin(alignment);
-    EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_EQ(res.back_coordinate(), fixture.back_coordinate);
-}
-
-TYPED_TEST_P(global_affine_unbanded, begin_position)
-{
-    auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
-
-    std::vector database = fixture.sequence1;
-    std::vector query = fixture.sequence2;
-
-    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
-
-    auto res = *std::ranges::begin(alignment);
-    EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_EQ(res.front_coordinate(), fixture.front_coordinate);
-    EXPECT_EQ(res.back_coordinate(), fixture.back_coordinate);
-}
-
-TYPED_TEST_P(global_affine_unbanded, trace)
-{
-    auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config | align_cfg::result{with_alignment};
-
-    std::vector database = fixture.sequence1;
-    std::vector query = fixture.sequence2;
-
-    auto alignment = align_pairwise(std::tie(database, query), align_cfg);
-
-    auto res = *std::ranges::begin(alignment);
-    EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_EQ(res.front_coordinate(), fixture.front_coordinate);
-    EXPECT_EQ(res.back_coordinate(), fixture.back_coordinate);
-    EXPECT_TRUE(ranges::equal(get<0>(res.alignment()) | view::to_char, fixture.aligned_sequence1));
-    EXPECT_TRUE(ranges::equal(get<1>(res.alignment()) | view::to_char, fixture.aligned_sequence2));
-}
-
-REGISTER_TYPED_TEST_CASE_P(global_affine_unbanded, score, end_position, begin_position, trace);
-
-INSTANTIATE_TYPED_TEST_CASE_P(global, global_affine_unbanded, global_affine_unbanded_types);
-INSTANTIATE_TYPED_TEST_CASE_P(semi_global, global_affine_unbanded, semi_global_affine_unbanded_types);
+INSTANTIATE_TYPED_TEST_CASE_P(global, align_affine, global_affine_unbanded_types);

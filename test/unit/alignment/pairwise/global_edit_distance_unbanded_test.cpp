@@ -1,13 +1,20 @@
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// -----------------------------------------------------------------------------------------------------
 
-#pragma once
+#include <gtest/gtest.h>
 
 #include <vector>
 
-#include "alignment_fixture.hpp"
-
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
+#include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+
+#include "edit_distance_test_template.hpp"
 
 namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded
 {
@@ -284,3 +291,159 @@ static auto aa27_01T = []()
 }();
 
 } // namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded
+
+/**
+ * NOTE: max_errors is a special case where it will produces the same matrix excepts that it will cutoff all scores from
+ * the bottom to the top in the matrix until the score does not exceed the allowed error anymore.
+ *
+ * Thus we can apply some masking to the matrix and get similiar
+ */
+
+namespace seqan3::test::alignment::fixture::global::edit_distance::max_errors::unbanded
+{
+
+using namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded;
+using detail::column_index_type;
+using detail::row_index_type;
+
+static auto dna4_01_e255 = []()
+{
+    return alignment_fixture
+    {
+        "AACCGGTTAACCGGTT"_dna4,
+        "ACGTACGTA"_dna4,
+        align_cfg::edit | align_cfg::max_error{255},
+        -8,
+        "AACCGGTTAACCGGTT",
+        "A-C-G-T-A-C-G-TA",
+        dna4_01.front_coordinate,
+        dna4_01.back_coordinate,
+        dna4_01.score_vector,
+        dna4_01.trace_vector
+    };
+}();
+
+static auto dna4_01T_e255 = []()
+{
+    return alignment_fixture
+    {
+        "ACGTACGTA"_dna4,
+        "AACCGGTTAACCGGTT"_dna4,
+        align_cfg::edit | align_cfg::max_error{255},
+        -8,
+        "A-C-G-T-A-C-G-TA",
+        "AACCGGTTAACCGGTT",
+        dna4_01T.front_coordinate,
+        dna4_01T.back_coordinate,
+        dna4_01T.score_vector,
+        dna4_01T.trace_vector
+    };
+}();
+
+static auto dna4_02_e255 = []()
+{
+    return alignment_fixture
+    {
+        "AACCGGTAAACCGGTT"_dna4,
+        "ACGTACGTA"_dna4,
+        align_cfg::edit | align_cfg::max_error{255},
+        -8,
+        "AACCGGTAAACCGGTT",
+        "A-C-G-TA--C-G-TA",
+        dna4_02.front_coordinate,
+        dna4_02.back_coordinate,
+        dna4_02.score_vector,
+        dna4_02.trace_vector
+    };
+}();
+
+static auto aa27_01_e255 = []()
+{
+    return alignment_fixture
+    {
+        "UUWWRRIIUUWWRRII"_aa27,
+        "UWRIUWRIU"_aa27,
+        align_cfg::edit | align_cfg::max_error{255},
+        -8,
+        "UUWWRRIIUUWWRRII",
+        "U-W-R-I-U-W-R-IU",
+        aa27_01.front_coordinate,
+        aa27_01.back_coordinate,
+        aa27_01.score_vector,
+        aa27_01.trace_vector
+    };
+}();
+
+static auto aa27_01T_e255 = []()
+{
+    return alignment_fixture
+    {
+        "UWRIUWRIU"_aa27,
+        "UUWWRRIIUUWWRRII"_aa27,
+        align_cfg::edit | align_cfg::max_error{255},
+        -8,
+        "U-W-R-I-U-W-R-IU",
+        "UUWWRRIIUUWWRRII",
+        aa27_01T.front_coordinate,
+        aa27_01T.back_coordinate,
+        aa27_01T.score_vector,
+        aa27_01T.trace_vector
+    };
+}();
+
+} // namespace seqan3::test::alignment::fixture::global::edit_distance::unbanded
+
+using global_edit_distance_unbanded_types = ::testing::Types<
+    param<&global::edit_distance::unbanded::dna4_01, uint8_t>,
+    param<&global::edit_distance::unbanded::dna4_01, uint16_t>,
+    param<&global::edit_distance::unbanded::dna4_01, uint32_t>,
+    param<&global::edit_distance::unbanded::dna4_01, uint64_t>,
+
+    param<&global::edit_distance::unbanded::dna4_01T, uint8_t>,
+    param<&global::edit_distance::unbanded::dna4_01T, uint16_t>,
+    param<&global::edit_distance::unbanded::dna4_01T, uint32_t>,
+    param<&global::edit_distance::unbanded::dna4_01T, uint64_t>,
+
+    param<&global::edit_distance::unbanded::dna4_02, uint8_t>,
+    param<&global::edit_distance::unbanded::dna4_02, uint16_t>,
+    param<&global::edit_distance::unbanded::dna4_02, uint32_t>,
+    param<&global::edit_distance::unbanded::dna4_02, uint64_t>,
+
+    param<&global::edit_distance::unbanded::aa27_01, uint8_t>,
+    param<&global::edit_distance::unbanded::aa27_01, uint16_t>,
+    param<&global::edit_distance::unbanded::aa27_01, uint32_t>,
+    param<&global::edit_distance::unbanded::aa27_01, uint64_t>,
+
+    param<&global::edit_distance::unbanded::aa27_01T, uint8_t>,
+    param<&global::edit_distance::unbanded::aa27_01T, uint16_t>,
+    param<&global::edit_distance::unbanded::aa27_01T, uint32_t>,
+    param<&global::edit_distance::unbanded::aa27_01T, uint64_t>>;
+
+using global_edit_distance_max_errors_unbanded_types = ::testing::Types<
+    param<&global::edit_distance::max_errors::unbanded::dna4_01_e255, uint8_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_01_e255, uint16_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_01_e255, uint32_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_01_e255, uint64_t>,
+
+    param<&global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint8_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint16_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint32_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_01T_e255, uint64_t>,
+
+    param<&global::edit_distance::max_errors::unbanded::dna4_02_e255, uint8_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_02_e255, uint16_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_02_e255, uint32_t>,
+    param<&global::edit_distance::max_errors::unbanded::dna4_02_e255, uint64_t>,
+
+    param<&global::edit_distance::max_errors::unbanded::aa27_01_e255, uint8_t>,
+    param<&global::edit_distance::max_errors::unbanded::aa27_01_e255, uint16_t>,
+    param<&global::edit_distance::max_errors::unbanded::aa27_01_e255, uint32_t>,
+    param<&global::edit_distance::max_errors::unbanded::aa27_01_e255, uint64_t>,
+
+    param<&global::edit_distance::max_errors::unbanded::aa27_01T_e255, uint8_t>,
+    param<&global::edit_distance::max_errors::unbanded::aa27_01T_e255, uint16_t>,
+    param<&global::edit_distance::max_errors::unbanded::aa27_01T_e255, uint32_t>,
+    param<&global::edit_distance::max_errors::unbanded::aa27_01T_e255, uint64_t>>;
+
+INSTANTIATE_TYPED_TEST_CASE_P(global, align_edit_distance, global_edit_distance_unbanded_types);
+INSTANTIATE_TYPED_TEST_CASE_P(global_max_errors, align_edit_distance, global_edit_distance_max_errors_unbanded_types);
