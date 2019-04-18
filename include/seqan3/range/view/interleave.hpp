@@ -188,13 +188,19 @@ public:
      */
     size_type size()
     {
-        return urange.size() + (std::floor(urange.size() / step_size) * inserted_range.size());
+        return std::ranges::size(urange) +
+               ((std::floor(std::ranges::size(urange) / step_size) -
+                (std::ranges::size(urange) % step_size == 0 ? 1 : 0)) *
+                std::ranges::size(inserted_range));
     }
 
     //!\copydoc size()
     size_type size() const
     {
-        return urange.size() + (std::floor(urange.size() / step_size) * inserted_range.size());
+        return std::ranges::size(urange) +
+               ((std::floor(std::ranges::size(urange) / step_size) -
+                (std::ranges::size(urange) % step_size == 0 ? 1 : 0)) *
+                std::ranges::size(inserted_range));
     }
 
     /*!\brief Return the i-th element.
