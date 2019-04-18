@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -14,8 +14,7 @@
 
 #include <cmath>
 
-#include <range/v3/view/join.hpp>
-#include <range/v3/view/split.hpp>
+#include <range/v3/view/chunk.hpp>
 
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
@@ -50,7 +49,7 @@ template <std::ranges::RandomAccessRange urng_t, std::ranges::RandomAccessRange 
              std::ranges::View<inserted_rng_t> && std::ranges::SizedRange<inserted_rng_t> &&
              std::Same<reference_t<urng_t>, reference_t<inserted_rng_t>>
     //!\endcond
-class view_interleave : public ranges::view_interface<view_interleave<urng_t, inserted_rng_t>>
+class view_interleave : public std::ranges::view_interface<view_interleave<urng_t, inserted_rng_t>>
 {
 private:
     //!\brief The underlying range.
@@ -70,7 +69,7 @@ public:
     using const_reference   = detail::transformation_trait_or_t<seqan3::reference<urng_t const>, void>;
     //!\brief The value_type (which equals the reference_type with any references removed).
     using value_type        = value_type_t<urng_t>;
-    //!\brief If the underliying range is Sized, this resolves to range_type::size_type, otherwise void.
+    //!\brief This resolves to range_type::size_type as the underlying range is guaranteed to be Sized.
     using size_type         = size_type_t<urng_t>;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = difference_type_t<urng_t>;
@@ -83,7 +82,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_interleave()                                                  noexcept = default; //!< Defaulted.
+    constexpr view_interleave()                                        noexcept = default; //!< Defaulted.
     constexpr view_interleave(view_interleave const & rhs)             noexcept = default; //!< Defaulted.
     constexpr view_interleave(view_interleave && rhs)                  noexcept = default; //!< Defaulted.
     constexpr view_interleave & operator=(view_interleave const & rhs) noexcept = default; //!< Defaulted.
@@ -91,26 +90,30 @@ public:
     ~view_interleave()                                                 noexcept = default; //!< Defaulted.
 
     /*!\brief Construct from a standard RandomAccessRange urange and inserted_range.
-     * \param[in] _urange The underlying range.
-     * \param[in] _step_size The step size for the insertion.
+     * \param[in] _urange         The underlying range.
+     * \param[in] _step_size      The step size for the insertion.
      * \param[in] _inserted_range The range to be inserted.
      */
-    view_interleave(urng_t _urange, size_t const _step_size, inserted_rng_t _inserted_range) :
+    view_interleave(urng_t && _urange, size_t const _step_size, inserted_rng_t && _inserted_range) :
         urange{_urange}, step_size{_step_size}, inserted_range{_inserted_range}
     {}
 
     /*!\brief Construct from a ViewableRange urange and inserted_range by wrapping in a view::all.
-     * \param[in] _urange The underlying range.
-     * \param[in] _step_size The step size for the insertion.
+     * \tparam    orng_t          A type that is the same as `urng_t` once wrapped in a view
+     *                            (e.g. reference to container).
+     * \tparam    oirng_t         A type that is the same as `inserted_rng_t` once wrapped in a view
+     *                            (e.g. reference to container).
+     * \param[in] _urange         The underlying range.
+     * \param[in] _step_size      The step size for the insertion.
      * \param[in] _inserted_range The range to be inserted.
      */
-     template <std::ranges::RandomAccessRange orng_t, std::ranges::RandomAccessRange oirng_t>
-         //!\cond
-         requires std::ranges::SizedRange<orng_t> && std::ranges::SizedRange<oirng_t> &&
-                  std::ranges::ViewableRange<orng_t> &&
-                  std::Same<reference_t<orng_t>, reference_t<oirng_t>>
-    view_interleave(orng_t _urange, size_t const _step_size, oirng_t _inserted_range) :
-        view_interleave{view::all(_urange), _step_size, view::persist(_inserted_range)}
+    template <typename orng_t, typename oirng_t>
+        //!\cond
+        requires std::Constructible<urng_t, decltype(view::all(std::declval<orng_t>()))> &&
+                 std::Constructible<inserted_rng_t, decltype(view::persist(std::declval<oirng_t>()))>
+        //!\endcond
+    view_interleave(orng_t && _urange, size_t const _step_size, oirng_t && _inserted_range) :
+        view_interleave{view::all(std::forward<orng_t>(_urange)), _step_size, view::persist(std::forward<oirng_t>(_inserted_range))}
     {}
     //!\}
 
@@ -135,13 +138,13 @@ public:
         return {*this, 0};
     }
 
-    //!\copydoc begin()
+    //!\overload
     const_iterator begin() const noexcept
     {
         return {*this, 0};
     }
 
-    //!\copydoc begin()
+    //!\overload
     const_iterator cbegin() const noexcept
     {
         return begin();
@@ -165,13 +168,13 @@ public:
         return {*this, size()};
     }
 
-    //!\copydoc end()
+    //!\overload
     const_iterator end() const noexcept
     {
         return {*this, size()};
     }
 
-    //!\copydoc end()
+    //!\overload
     const_iterator cend() const noexcept
     {
         return end();
@@ -194,7 +197,7 @@ public:
                 std::ranges::size(inserted_range));
     }
 
-    //!\copydoc size()
+    //!\overload
     size_type size() const
     {
         return std::ranges::size(urange) +
@@ -220,21 +223,21 @@ public:
      */
     reference operator[](size_type const i)
     {
-        size_t combined_size = step_size + inserted_range.size();
+        size_t combined_size = step_size + std::ranges::size(inserted_range);
         assert(i < size());
         if (i % (combined_size) < step_size)
-            return urange[i - (std::floor(i/(combined_size)) * inserted_range.size())];
+            return urange[i - (std::floor(i/(combined_size)) * std::ranges::size(inserted_range))];
         else
             return inserted_range[(i % (combined_size)) - step_size];
     }
 
-    //!\copydoc operator[]()
+    //!\overload
     const_reference operator[](size_type const i) const
     {
-        size_t combined_size = step_size + inserted_range.size();
+        size_t combined_size = step_size + std::ranges::size(inserted_range);
         assert(i < size());
         if (i % (combined_size) < step_size)
-            return urange[i - (std::floor(i/(combined_size)) * inserted_range.size())];
+            return urange[i - (std::floor(i/(combined_size)) * std::ranges::size(inserted_range))];
         else
             return inserted_range[(i % (combined_size)) - step_size];
     }
@@ -288,8 +291,8 @@ struct interleave_fn
         }
         else
         {
-            return ranges::view::split(std::forward<urng_t>(urange), size) |
-                   ranges::view::join(std::forward<inserted_rng_t>(i));
+            return ranges::view::chunk(std::forward<urng_t>(urange), size)
+                 | std::view::join(std::forward<inserted_rng_t>(i));
         }
     }
 };
@@ -318,26 +321,51 @@ namespace seqan3::view
  *
  * \details
  *
- * This view can be used to insert one range into another range at regular intervals.
+ * This view can be used to insert one range into another range at regular intervals. It behaves essentially like
+ * `| std::view::chunk(step_size) | std::view::join(inserted_range)` except that for input that models
+ * std::ranges::RandomAccessRange and std::ranges::SizedRange a more efficient data structure is returned
+ * (otherwise it returns exactly the above combination of views).
  *
  * ### View properties
  *
- * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |---------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::InputRange         | *required*                            | *preserved*                                        |
- * | std::ranges::ForwardRange       | *required*                            | *preserved*                                        |
- * | std::ranges::BidirectionalRange |                                       | *preserved*                                        |
- * | std::ranges::RandomAccessRange  |                                       | *preserved*                                        |
- * | std::ranges::ContiguousRange    |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                                       |
- * | std::ranges::View               |                                       | *guaranteed*                                       |
- * | std::ranges::SizedRange         |                                       | *preserved*                                        |
- * | std::ranges::CommonRange        |                                       | *preserved*                                        |
- * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
- * |                                 |                                       |                                                    |
- * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                                        |
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |---------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                     |
+ * | std::ranges::ForwardRange       | *required*                            | *preserved*                     |
+ * | std::ranges::BidirectionalRange | *required*                            | *preserved*                     |
+ * | std::ranges::RandomAccessRange  | *required*                            | *preserved*                     |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                          |
+ * |                                 |                                       |                                 |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                    |
+ * | std::ranges::View               |                                       | *guaranteed*                    |
+ * | std::ranges::SizedRange         | *required*                            | *preserved*                     |
+ * | std::ranges::CommonRange        |                                       | *preserved*                     |
+ * | std::ranges::OutputRange        |                                       | *preserved*                     |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                     |
+ * |                                 |                                       |                                 |
+ * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>     |
+ *
+ *
+ * If above requirements are not met, this adaptor forwards to
+ * `| ranges::view::chunk(step_size) | ranges::view::join(inserted_range)`
+ * which returns a view with the following properties:
+ *
+ * | range concepts and reference_t  | `urng_t` (underlying range type)      | `rrng_t` (returned range type)  |
+ * |---------------------------------|:-------------------------------------:|:-------------------------------:|
+ * | std::ranges::InputRange         | *required*                            | *preserved*                     |
+ * | std::ranges::ForwardRange       | *required*                            | *lost*                          |
+ * | std::ranges::BidirectionalRange |                                       | *lost*                          |
+ * | std::ranges::RandomAccessRange  |                                       | *lost*                          |
+ * | std::ranges::ContiguousRange    |                                       | *lost*                          |
+ * |                                 |                                       |                                 |
+ * | std::ranges::ViewableRange      | *required*                            | *guaranteed*                    |
+ * | std::ranges::View               |                                       | *guaranteed*                    |
+ * | std::ranges::SizedRange         |                                       | *lost*                          |
+ * | std::ranges::CommonRange        |                                       | *lost*                          |
+ * | std::ranges::OutputRange        |                                       | *lost*                          |
+ * | seqan3::ConstIterableRange      |                                       | *lost*                          |
+ * |                                 |                                       |                                 |
+ * | seqan3::reference_t             |                                       | seqan3::value_type_t<urng_t>    |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
@@ -345,10 +373,10 @@ namespace seqan3::view
  *
  * ### Example
  *
- * \snippet test/snippet/range/view/interleave.cpp general
+ * \include test/snippet/range/view/interleave.cpp
  * \hideinitializer
  */
-inline auto constexpr interleave = detail::interleave_fn{};
+inline constexpr auto interleave = detail::interleave_fn{};
 
 //!\}
 
