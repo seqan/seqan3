@@ -356,14 +356,21 @@ private:
     }
 
     //!\brief Use the ukkonen trick and update the last active cell.
+    //!\returns True if computation should be aborted, False if computation should continue
     bool update_last_active_cell()
     {
-        // updating the last active cell
+        // update the last active cell
         while (!(_score <= max_errors))
         {
             advance_score(vn[last_block], vp[last_block], score_mask);
             if (!prev_last_active_cell())
-                break;
+            {
+                // prev_last_active_cell = false can only happen for global alignments
+                assert(is_global);
+                // we abort here if we don't need to compute a matrix, because the continued
+                // computation can't produce an alignment.
+                return !compute_matrix;
+            }
         }
 
         if (is_last_active_cell_within_last_row())
@@ -400,9 +407,19 @@ private:
     //!\brief Compute the alignment.
     void _compute()
     {
-        // limit search width for prefix search
-        if constexpr(use_max_errors && is_global)
+        // limit search width for prefix search (if no matrix needs to be computed)
+        if constexpr(use_max_errors && is_global && !compute_matrix)
         {
+            // Note: For global alignments we know that the database can only be max_length long to have a score less
+            // than or equal max_errors in the last cell.
+            //
+            // The following matrix shows a minimal value for each entry (because a diagonal must be +0 or +1, each
+            // diagonal is at least the value of the initial value in the first row)
+            // 0 1 2 3 4 5 6...
+            // 1 0 1 2 3 4 5...
+            // ...
+            // m ... 3 2 1 0 1 2 3 4 5
+            // Thus, after |query| + max_errors entries the score will always be higher than max_errors.
             size_t max_length = query.size() + max_errors + 1;
             size_t haystack_length = std::min(database.size(), max_length);
             database_it_end -= database.size() - haystack_length;
