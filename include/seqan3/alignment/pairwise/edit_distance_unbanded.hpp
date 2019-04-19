@@ -214,7 +214,7 @@ public:
         config{std::forward<align_config_t>(_config)},
         _score{static_cast<score_type>(query.size())},
         _best_score{static_cast<score_type>(query.size())},
-        _best_score_col{ranges::begin(database)},
+        _best_score_col{ranges::end(database)},
         database_it{ranges::begin(database)},
         database_it_end{ranges::end(database)},
         _score_matrix{query.size() + 1u},
@@ -432,7 +432,7 @@ public:
         res_vt.id = idx;
         if constexpr (compute_score)
         {
-            res_vt.score = score();
+            res_vt.score = score().value_or(matrix_inf<score_type>);
         }
 
         if constexpr (compute_back_coordinate)
@@ -442,26 +442,35 @@ public:
 
         if constexpr (compute_front_coordinate)
         {
-            res_vt.front_coordinate = alignment_front_coordinate(trace_matrix(), res_vt.back_coordinate);
+            if (is_valid())
+                res_vt.front_coordinate = alignment_front_coordinate(trace_matrix(), res_vt.back_coordinate);
+            else
+                res_vt.front_coordinate = invalid_coordinate();
         }
 
         if constexpr (compute_sequence_alignment)
         {
-            using res_type = decltype(res_vt.alignment);
-            res_vt.alignment = alignment_trace<res_type>(database,
-                                                         query,
-                                                         trace_matrix(),
-                                                         res_vt.back_coordinate,
-                                                         res_vt.front_coordinate);
+            if (is_valid())
+            {
+                using alignment_t = decltype(res_vt.alignment);
+                res_vt.alignment = alignment_trace<alignment_t>(database,
+                                                                query,
+                                                                trace_matrix(),
+                                                                res_vt.back_coordinate,
+                                                                res_vt.front_coordinate);
+            }
         }
         return alignment_result<result_value_type>{std::move(res_vt)};
     }
 
     //!\brief Return the score of the alignment.
-    score_type score() const noexcept
+    std::optional<score_type> score() const noexcept
     {
         static_assert(compute_score, "score() can only be computed if you specify the result type within "
                                      "your alignment config.");
+        if (!is_valid())
+            return std::nullopt;
+
         return -_best_score;
     }
 
@@ -486,6 +495,9 @@ public:
     {
         static_assert(compute_front_coordinate, "front_coordinate() can only be computed if you specify the result type "
                                                 "within your alignment config.");
+        if (!is_valid())
+            return invalid_coordinate();
+
         alignment_coordinate back = back_coordinate();
         return alignment_front_coordinate(trace_matrix(), back);
     }
@@ -495,6 +507,9 @@ public:
     {
         static_assert(compute_back_coordinate, "back_coordinate() can only be computed if you specify the result type "
                                                "within your alignment config.");
+        if (!is_valid())
+            return invalid_coordinate();
+
         size_t col = database.size() - 1;
         if constexpr(is_semi_global)
             col = std::ranges::distance(begin(database), _best_score_col);
@@ -502,13 +517,43 @@ public:
         return {column_index_type{col}, row_index_type{query.size() - 1}};
     }
 
+    //!\brief Returns true if the computation produced a valid alignment.
+    bool is_valid() const noexcept
+    {
+        // This condition is obvious, because _best_score_col will only be set to a new position if the last active cell
+        // is within the last row AND score <= max_errors. And _best_score_col can't reach database_it_end again.
+        if constexpr(use_max_errors && is_semi_global)
+            return _best_score_col != database_it_end;
+
+        // This condition uses the observation that after each computation of a column, _score has either the initial
+        // value of the first row (i.e. the entire column consist of INF's), has the value _score = max_errors + 1 (there
+        // exists a cell within the column that has value <= max_errors, but is not on the last row) or _score <=
+        // max_errors (the score of the last active cell is <= max_errors)
+        if constexpr(use_max_errors && is_global)
+            return _best_score <= max_errors;
+
+        // When not using max_errors there is always a valid alignment, because the last row will always be updated and
+        // with it the score.
+        return true;
+    }
+
+    //!\brief Returns an invalid_coordinate for this alignment.
+    alignment_coordinate invalid_coordinate() const noexcept
+    {
+        return {column_index_type{database.size()}, row_index_type{query.size()}};
+    }
+
     //!\brief Return the alignment, i.e. the actual base pair matching.
     auto alignment() const noexcept
     {
         static_assert(compute_sequence_alignment, "alignment() can only be computed if you specify the result type "
                                                   "within your alignment config.");
-        using res_type = decltype(result_value_type{}.alignment);
-        return alignment_trace<res_type>(database, query, trace_matrix(), back_coordinate(), front_coordinate());
+        using alignment_t = decltype(result_value_type{}.alignment);
+
+        if (!is_valid())
+            return alignment_t{};
+
+        return alignment_trace<alignment_t>(database, query, trace_matrix(), back_coordinate(), front_coordinate());
     }
 };
 
