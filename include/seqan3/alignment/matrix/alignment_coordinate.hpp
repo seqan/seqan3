@@ -346,10 +346,10 @@ public:
 template <typename coordinate_type>
 //!\cond
     requires std::Same<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
-             detail::is_type_specialisation_of_v<remove_cvref_t<coordinate_type>,
-                                                 detail::advanceable_alignment_coordinate>
+             detail::is_value_specialisation_of_v<remove_cvref_t<coordinate_type>,
+                                                  detail::advanceable_alignment_coordinate>
 //!\endcond
-inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type const & c)
+inline debug_stream_type & operator<<(debug_stream_type & s, coordinate_type && c)
 {
     s << std::tie(c.first, c.second);
     return s;

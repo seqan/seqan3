@@ -68,6 +68,22 @@ TEST(pretty_printing, seqan3_output)
     EXPECT_EQ(dna_sets1, dna_sets2); // change value to test
 }
 
+TEST(pretty_printing, gtest_mixed_seqan3_output)
+{
+    // warning: these outputs can change due to changes in gtest
+    auto dna_tuple1 = std::make_tuple('A'_dna4, 'C'_dna4);
+    auto dna_tuple2 = std::make_tuple('A'_dna4, 'C'_dna4);
+    EXPECT_EQ(gtest_str(dna_tuple1), "(A, C)"s);
+    EXPECT_EQ(debug_str(dna_tuple1), "(A,C)"s);
+    EXPECT_EQ(dna_tuple1, dna_tuple2); // change value to test
+
+    auto dna_sequence_tuple1 = std::make_tuple("AC"_dna4, "GT"_dna4);
+    auto dna_sequence_tuple2 = std::make_tuple("AC"_dna4, "GT"_dna4);
+    EXPECT_EQ(gtest_str(dna_sequence_tuple1), "(AC, GT)"s);
+    EXPECT_EQ(debug_str(dna_sequence_tuple1), "(AC,GT)"s);
+    EXPECT_EQ(dna_sequence_tuple1, dna_sequence_tuple2); // change value to test
+}
+
 namespace seqan3::detail
 {
 
@@ -75,14 +91,14 @@ struct my_type
 {
     std::string str;
 
-    bool operator==(my_type const & other) const
+    friend bool operator==(my_type const & lhs, my_type const & rhs)
     {
-        return str == other.str;
+        return lhs.str == rhs.str;
     }
 
-    bool operator!=(my_type const & other) const
+    friend bool operator!=(my_type const & lhs, my_type const & rhs)
     {
-        return str != other.str;
+        return lhs.str != rhs.str;
     }
 };
 
@@ -107,4 +123,28 @@ TEST(pretty_printing, seqan3_detail_output)
     EXPECT_EQ(gtest_str(seqan3::detail::my_type{"HALLO"s}), "HALLO"s);
     EXPECT_EQ(debug_str(seqan3::detail::my_type{"HALLO"s}), "HALLO"s);
     EXPECT_EQ(seqan3::detail::my_type{"HALLO"}, seqan3::detail::my_type{"HALLO"}); // change value to test
+}
+
+namespace seqan3
+{
+
+struct your_type : public detail::my_type
+{};
+
+template <typename your_type>
+    requires std::Same<std::decay_t<your_type>, ::seqan3::your_type>
+inline debug_stream_type & operator<<(debug_stream_type & s, your_type && m)
+{
+    s << m.str;
+    return s;
+}
+
+} // namespace seqan3
+
+TEST(pretty_printing, seqan3_detail_mixed_seqan3_output)
+{
+    // seqan3 types should always produce the same result
+    EXPECT_EQ(gtest_str(seqan3::your_type{"HALLO"s}), "HALLO"s);
+    EXPECT_EQ(debug_str(seqan3::your_type{"HALLO"s}), "HALLO"s);
+    EXPECT_EQ(seqan3::your_type{"HALLO"}, seqan3::your_type{"HALLO"}); // change value to test
 }
