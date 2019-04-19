@@ -1,4 +1,7 @@
 add_subdirectories ()
 
 seqan3_benchmark(container_benchmark.cpp)
-seqan3_benchmark(gap_decorator_benchmark.cpp)
+seqan3_benchmark(gap_decorator_rand_read_benchmark.cpp)
+seqan3_benchmark(gap_decorator_rand_write_benchmark.cpp)
+seqan3_benchmark(gap_decorator_seq_read_benchmark.cpp)
+seqan3_benchmark(gap_decorator_seq_write_benchmark.cpp)
