@@ -20,6 +20,11 @@
 namespace seqan3::detail
 {
 
+//!\brief A special score which represents infinity.
+//!\ingroup alignment_matrix
+template <typename score_type>
+constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
+
 /*!\interface seqan3::detail::Matrix <>
  * \brief Defines the requirements of an matrix (e.g. score matrices, trace matrices).
  * \tparam matrix_t The type the concept check is performed on (the putative matrix).
@@ -109,9 +114,5 @@ inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
     return !(lhs == rhs);
 }
 //!\}
-
-//!\brief A special score which represents infinity.
-template <typename score_type>
-constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
 
 } // namespace seqan3
