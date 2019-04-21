@@ -63,7 +63,7 @@ void fastq_write(benchmark::State & state)
     for (auto _ : state)
     {
         for (size_t i = 0; i < iterations_per_run; ++i)
-            format.write(ostream, options, DNA_SEQ, id, std::ignore);
+            format.write(ostream, options, DNA_SEQ, id, QUALITY);
     }
 }
 
