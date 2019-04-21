@@ -98,8 +98,11 @@ public:
 /*!\brief A CRTP-base that eases the definition of proxy types returned in place of regular alphabets.
  * \tparam derived_type  The CRTP parameter type.
  * \tparam alphabet_type The type of the alphabet that this proxy emulates.
+ * \ingroup alphabet
  *
  * \details
+ *
+ * \noapi
  *
  * Certain containers and other data structure hold alphabet values in a non-standard way so they can convert
  * to that alphabet when being accessed, but cannot return a reference to the held value. These data structures
