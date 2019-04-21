@@ -11,7 +11,6 @@
 #include <benchmark/benchmark.h>
 #include <cstring>
 #include <cmath>
-#include <chrono>
 #include <fstream>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
@@ -25,6 +24,8 @@ std::size_t POWER = 5; //files will have |10^POWER| lines
 
 auto const DNA_SEQ = "AGCTAGCAGCGATCGCGATCGATCAGCGATCGAGGAATATAT"_dna5;
 auto const QUALITY = "IIIIIHIIIIIIIIIIIIIIIIIIIIIIHHGIIIIHHGIIIH"_phred42;
+
+std::size_t const iterations_per_run = 4096;  // arbitrary number directly taken from fasta benchmark
 
 // ============================================================================
 // generate dummy fastq file with 10^power identical 4-line entries
@@ -61,7 +62,8 @@ void fastq_write(benchmark::State & state)
 
     for (auto _ : state)
     {
-        format.write(ostream, options, DNA_SEQ, id, QUALITY);
+        for (size_t i = 0; i < iterations_per_run; ++i)
+            format.write(ostream, options, DNA_SEQ, id, std::ignore);
     }
 }
 
@@ -84,13 +86,16 @@ void fastq_read_with_quality(benchmark::State & state)
     for (auto _ : state)
     {
         state.PauseTiming();
-        std::istringstream istream{fastq_file};
+        std::istringstream istream{fastq_file}; // costly so pause/resume is necessary
         state.ResumeTiming();
 
-        format.read(istream, options, seq, id, qual);
-        id.clear();
-        seq.clear();
-        qual.clear();
+        for (size_t i = 0; i < iterations_per_run; ++i)
+        {
+            format.read(istream, options, seq, id, qual);
+            id.clear();
+            seq.clear();
+            qual.clear();
+        }
     }
 }
 
@@ -115,9 +120,12 @@ void fastq_read_without_quality(benchmark::State & state)
         std::istringstream istream{fastq_file};
         state.ResumeTiming();
 
-        format.read(istream, options, seq, id, std::ignore);
-        id.clear();
-        seq.clear();
+        for (size_t i = 0; i < iterations_per_run; ++i)
+        {
+            format.read(istream, options, seq, id, std::ignore);
+            id.clear();
+            seq.clear();
+        }
     }
 }
 
@@ -139,59 +147,14 @@ void fastq_read_ignore_everything(benchmark::State & state)
         std::istringstream istream{fastq_file};
         state.ResumeTiming();
 
-        format.read(istream, options, std::ignore, std::ignore, std::ignore);
+        for (size_t i = 0; i < iterations_per_run; ++i)
+            format.read(istream, options, std::ignore, std::ignore, std::ignore);
     }
 }
 
 BENCHMARK(fastq_read_ignore_everything);
 
 // TODO <Clemens C.>: seqan2 comparison
-
-/*
-// ============================================================================
-// generate dummy fasta file with 2*10^power identical 2-line entries
-// ============================================================================
-std::string generate_dummy_fasta_file(std::size_t power)
-{
-    std::string file{};
-
-    std::string const input_id{">name"};
-    std::string const seq = DNA_SEQ | view::to_char;
-
-    auto const n_iterations = static_cast<unsigned int>(2*pow(10, power));
-
-    for (size_t i = 0; i < n_iterations; ++i)
-    {
-        file += input_id + '\n' + seq + '\n';
-    }
-
-    return file;
-}
-
-// ============================================================================
-// read dummy fasta file (same number of lines as the fastq dummy files)
-// ============================================================================
-void fasta_read_comparison (benchmark::State & state)
-{
-    auto const fasta_file = generate_dummy_fasta_file(POWER);
-
-    sequence_file_format_fasta format;
-    sequence_file_input_options<dna5, false> const options{};
-
-    std::string id{};
-    std::vector<dna5> seq{};
-
-    for (auto _ : state)
-    {
-        state.PauseTiming();
-        std::istringstream istream{fasta_file};
-        state.ResumeTiming();
-
-        format.read(istream, options, seq, id, std::ignore);
-    }
-}
-
-BENCHMARK(fasta_read_comparison);
-*/
+// TODO <Clemens C.>: refactor fasta benchmark for exact comparison
 
 BENCHMARK_MAIN();
