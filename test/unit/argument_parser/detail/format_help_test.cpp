@@ -15,6 +15,9 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
+#include <seqan3/range/detail/misc.hpp>
+#include <seqan3/range/view/take_until.hpp>
+#include <seqan3/range/view/drop.hpp>
 
 using namespace seqan3;
 
@@ -242,9 +245,15 @@ TEST(help_page_printing, copyright)
     const char * argvCopyright[] = {"./copyright", "--copyright"};
     argument_parser copyright("myApp", 2, argvCopyright);
 
-    std::ifstream license_file{std::string{{SEQAN_INCLUDE_DIR}} + "/../LICENSE"};
-    std::string license_string{(std::istreambuf_iterator<char>(license_file)),
-                                std::istreambuf_iterator<char>()};
+    std::ifstream license_file{std::string{{SEQAN_INCLUDE_DIR}} + "/../LICENSE.md"};
+    std::ranges::subrange<std::istreambuf_iterator<char>, std::istreambuf_iterator<char>> sub
+    {
+        std::istreambuf_iterator<char>(license_file),
+        std::istreambuf_iterator<char>()
+    };
+
+    detail::consume(sub | view::take_until_and_consume(is_char<'`'>));
+    std::string license_string{sub | view::drop(1) | view::take_until(is_char<'`'>)};
 
     // Test --copyright with empty short and long copyright info.
     {
