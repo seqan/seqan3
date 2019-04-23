@@ -267,18 +267,6 @@ public:
         extensions = c ? v : std::vector<std::string>{v | view::to_lower};
     }
 
-    /*!\brief Constructing from an initializer_list.
-     * \param[in] v The initializer_list of valid file extensions to test (e.g. {"fa", "fasta"}).
-     * \param[in] c Case sensitivity flag. Set true for case sensitivity. Default: false (case insensitive).
-     *
-     * For case insensitivity, everything is converted to lower case characters.
-     */
-    file_ext_validator(std::initializer_list<std::string> const & v, bool const c = false) :
-        case_sensitive{c}
-    {
-        extensions = c ? v : std::vector<std::string>{v | view::to_lower};
-    }
-
     /*!\brief Tests whether the filepath \p path ends with a valid extension.
      * \param path The input value to check.
      * \throws parser_invalid_argument

@@ -715,7 +715,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          file_ext_validator{"sa", "so"});
+                          file_ext_validator{{"sa", "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -730,7 +730,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          file_ext_validator{"sa", "so"} |
+                          file_ext_validator{{"sa", "so"}} |
                           regex_validator{".*"});
 
         testing::internal::CaptureStderr();
@@ -746,7 +746,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
                           regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          file_ext_validator{"sa", "so"} |
+                          file_ext_validator{{"sa", "so"}} |
                           regex_validator{".*"});
 
         testing::internal::CaptureStdout();
@@ -772,7 +772,7 @@ TEST(validator_test, chaining_validators)
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_list_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
-                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | file_ext_validator{"sa", "so"});
+                          regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | file_ext_validator{{"sa", "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());

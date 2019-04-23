@@ -3,7 +3,7 @@
 
 int main(int argc, char ** argv)
 {
-    seqan3::argument_parser myparser("Penguin_Parade", argc, argv); // initialize
+    seqan3::argument_parser myparser{"Penguin_Parade", argc, argv}; // initialize
 
     myparser.info.version = "2.0.0";
     myparser.info.date = "12.01.2017";

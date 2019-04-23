@@ -4,7 +4,7 @@
 
 int main(int argc, char ** argv)
 {
-    seqan3::argument_parser myparser("The-Age-App", argc, argv); // initialize
+    seqan3::argument_parser myparser{"The-Age-App", argc, argv}; // initialize
 
     int age{30}; // define default values directly in the variable
 

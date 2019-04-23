@@ -3,13 +3,13 @@
 
 int main(int argc, const char ** argv)
 {
-    seqan3::argument_parser myparser("Test", argc, argv); // initialize
+    seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
     //![validator_call]
     std::string file_name;
 
-    seqan3::regex_validator absolute_path_validator("(/[^/]+)+/.*\\.[^/\\.]+$");
-    seqan3::file_ext_validator my_file_ext_validator({"sa", "so"});
+    seqan3::regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
+    seqan3::file_ext_validator my_file_ext_validator{{"sa", "so"}};
 
     myparser.add_option(file_name, 'f', "file","Give me a file name/path.",
                         seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);

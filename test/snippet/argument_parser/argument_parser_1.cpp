@@ -4,7 +4,7 @@
 
 int main(int argc, char ** argv)
 {
-    seqan3::argument_parser myparser("Grade-Average", argc, argv); // initialize
+    seqan3::argument_parser myparser{"Grade-Average", argc, argv}; // initialize
 
     std::string name{"Max Muster"}; // define default values directly in the variable.
     bool bonus{false};
