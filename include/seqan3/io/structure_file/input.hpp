@@ -84,12 +84,12 @@ namespace seqan3
 /*!\typedef using seq_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of the seqan3::field::SEQ, a container template over `seq_alphabet`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using seq_container_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
- * `seq_container`; must satisfy seqan3::sequence_container_concept.
+ * `seq_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
@@ -98,12 +98,12 @@ namespace seqan3
 /*!\typedef using id_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_container_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
- * `id_container`; must satisfy seqan3::sequence_container_concept.
+ * `id_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using bpp_prob
  * \memberof seqan3::structure_file_input_traits_concept
@@ -123,12 +123,12 @@ namespace seqan3
 /*!\typedef using bpp_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of the seqan3::field::BPP, a container template over a set (bpp_queue) of interactions;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using bpp_container_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::BPP, a container template that can hold multiple
- * `bpp_container`; must satisfy seqan3::sequence_container_concept.
+ * `bpp_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using structure_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
@@ -137,12 +137,12 @@ namespace seqan3
 /*!\typedef using structure_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of the seqan3::field::STRUCTURE, a container template over `structure_alphabet`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using structure_container_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::STRUCTURE, a container template that can hold multiple
- * `structure_container`; must satisfy seqan3::sequence_container_concept.
+ * `structure_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using energy_type
  * \memberof seqan3::structure_file_input_traits_concept
@@ -154,7 +154,7 @@ namespace seqan3
 /*!\typedef using energy_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::ENERGY, a container template that can hold multiple `energy_type`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using react_type
  * \memberof seqan3::structure_file_input_traits_concept
@@ -164,12 +164,12 @@ namespace seqan3
 /*!\typedef using react_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of the seqan3::field::REACT and seqan3::field::REACT_ERR, a container template over
- * `react_type`; must satisfy seqan3::sequence_container_concept.
+ * `react_type`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using react_container_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::REACT and seqan3::field::REACT_ERR, a container template that
- * can hold multiple `react_container`; must satisfy seqan3::sequence_container_concept.
+ * can hold multiple `react_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using comment_alphabet
  * \memberof seqan3::structure_file_input_traits_concept
@@ -178,12 +178,12 @@ namespace seqan3
 /*!\typedef using comment_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of the seqan3::field::COMMENT, a container template over `comment_alphabet`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using comment_container_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::COMMENT, a container template that can hold multiple
- * `comment_container`; must satisfy seqan3::sequence_container_concept.
+ * `comment_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using offset_type
  * \memberof seqan3::structure_file_input_traits_concept
@@ -192,7 +192,7 @@ namespace seqan3
 /*!\typedef using offset_container
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief Type template of a column of seqan3::field::OFFSET, a container template that can hold multiple `offset_type`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 //!\}
 //!\cond
@@ -204,16 +204,16 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
     requires Alphabet<typename t::seq_alphabet>;
     requires Alphabet<typename t::seq_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
-    requires sequence_container_concept<typename t::template seq_container<typename t::seq_alphabet>>;
-//    requires sequence_container_concept
+    requires SequenceContainer<typename t::template seq_container<typename t::seq_alphabet>>;
+//    requires SequenceContainer
 //        <typename t::template seq_container_container
 //            <typename t::template seq_container
 //                <typename t::seq_alphabet>>>;
 
     // id
     requires Alphabet<typename t::id_alphabet>;
-    requires sequence_container_concept<typename t::template id_container<typename t::id_alphabet>>;
-//    requires sequence_container_concept
+    requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
+//    requires SequenceContainer
 //        <typename t::template id_container_container
 //            <typename t::template id_container
 //                <typename t::id_alphabet>>>;
@@ -229,12 +229,12 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 //        && requires(typename t::template bpp_queue // TODO maybe implement also a version that allows emplace_back
 //            <typename t::template bpp_item
 //                <typename t::bpp_prob, typename t::bpp_partner>> value) { value.emplace(1.0, 1); };
-//    requires sequence_container_concept
+//    requires SequenceContainer
 //        <typename t::template bpp_container
 //            <typename t::template bpp_queue
 //                 <typename t::template bpp_item
 //                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
-//    requires sequence_container_concept
+//    requires SequenceContainer
 //        <typename t::template bpp_container_container
 //            <typename t::template bpp_container
 //                <typename t::template bpp_queue
@@ -244,8 +244,8 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
     // structure
     requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
           || RnaStructureAlphabet<typename t::structure_alphabet>;
-    requires sequence_container_concept<typename t::template structure_container<typename t::structure_alphabet>>;
-//    requires sequence_container_concept
+    requires SequenceContainer<typename t::template structure_container<typename t::structure_alphabet>>;
+//    requires SequenceContainer
 //        <typename t::template structure_container_container
 //            <typename t::template structure_container
 //                <typename t::structure_alphabet>>>;
@@ -256,11 +256,11 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
             <typename t::seq_alphabet, typename t::structure_alphabet>,
              typename t::seq_alphabet, typename t::structure_alphabet>,
         typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
-//    requires sequence_container_concept
+//    requires SequenceContainer
 //        <typename t::template structured_seq_container
 //            <typename t::template structured_seq_alphabet
 //                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
-//    requires sequence_container_concept
+//    requires SequenceContainer
 //        <typename t::template structured_seq_container_container
 //            <typename t::template structured_seq_container
 //                <typename t::template structured_seq_alphabet
@@ -268,27 +268,27 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 
     // energy: std::optional of floating point number
     requires std::is_floating_point_v<typename t::energy_type::value_type>;
-    requires sequence_container_concept<typename t::template energy_container<typename t::energy_type>>;
+    requires SequenceContainer<typename t::template energy_container<typename t::energy_type>>;
 
     // reactivity [error]
     requires std::is_floating_point_v<typename t::react_type>;
-    requires sequence_container_concept<typename t::template react_container<typename t::react_type>>;
-//    requires sequence_container_concept
+    requires SequenceContainer<typename t::template react_container<typename t::react_type>>;
+//    requires SequenceContainer
 //        <typename t::template react_container_container
 //            <typename t::template react_container
 //                <typename t::react_type>>>;
 
     // comment
     requires Alphabet<typename t::comment_alphabet>;
-    requires sequence_container_concept<typename t::template comment_container<typename t::comment_alphabet>>;
-//    requires sequence_container_concept
+    requires SequenceContainer<typename t::template comment_container<typename t::comment_alphabet>>;
+//    requires SequenceContainer
 //        <typename t::template comment_container_container
 //            <typename t::template comment_container
 //                <typename t::comment_alphabet>>>;
 
     // offset
     requires std::numeric_limits<typename t::offset_type>::is_integer;
-    requires sequence_container_concept<typename t::template offset_container<typename t::offset_type>>;
+    requires SequenceContainer<typename t::template offset_container<typename t::offset_type>>;
 };
 //!\endcond
 

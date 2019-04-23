@@ -82,12 +82,12 @@ namespace seqan3
 /*!\typedef using sequence_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using sequence_container_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
- * `sequence_container`; must satisfy seqan3::sequence_container_concept.
+ * `sequence_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_alphabet
  * \memberof seqan3::SequenceFileInputTraits
@@ -96,12 +96,12 @@ namespace seqan3
 /*!\typedef using id_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_container_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
- * `id_container`; must satisfy seqan3::sequence_container_concept.
+ * `id_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using quality_alphabet
  * \memberof seqan3::SequenceFileInputTraits
@@ -110,12 +110,12 @@ namespace seqan3
 /*!\typedef using quality_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
- * must satisfy seqan3::sequence_container_concept.
+ * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using quality_container_container
  * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::QUAL, a container template that can hold multiple
- * `quality_container`; must satisfy seqan3::sequence_container_concept.
+ * `quality_container`; must satisfy seqan3::SequenceContainer.
  */
 //!\}
 //!\cond
@@ -125,18 +125,18 @@ SEQAN3_CONCEPT SequenceFileInputTraits = requires (t v)
     requires Alphabet<typename t::sequence_alphabet>;
     requires Alphabet<typename t::sequence_legal_alphabet>;
     requires ExplicitlyConvertibleTo<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-    requires sequence_container_concept<typename t::template sequence_container<typename t::sequence_alphabet>>;
-    requires sequence_container_concept<typename t::template sequence_container_container<
+    requires SequenceContainer<typename t::template sequence_container<typename t::sequence_alphabet>>;
+    requires SequenceContainer<typename t::template sequence_container_container<
         typename t::template sequence_container<typename t::sequence_alphabet>>>;
 
     requires Alphabet<typename t::id_alphabet>;
-    requires sequence_container_concept<typename t::template id_container<typename t::id_alphabet>>;
-    requires sequence_container_concept<typename t::template id_container_container<typename t::template id_container<
+    requires SequenceContainer<typename t::template id_container<typename t::id_alphabet>>;
+    requires SequenceContainer<typename t::template id_container_container<typename t::template id_container<
         typename t::id_alphabet>>>;
 
     requires QualityAlphabet<typename t::quality_alphabet>;
-    requires sequence_container_concept<typename t::template quality_container<typename t::quality_alphabet>>;
-    requires sequence_container_concept<typename t::template quality_container_container<
+    requires SequenceContainer<typename t::template quality_container<typename t::quality_alphabet>>;
+    requires SequenceContainer<typename t::template quality_container_container<
         typename t::template quality_container<typename t::quality_alphabet>>>;
 };
 //!\endcond

@@ -127,7 +127,7 @@ SEQAN3_CONCEPT FmIndex = std::Semiregular<t> && requires (t index)
     typename t::size_type;
     typename t::cursor_type;
 
-    requires sequence_container_concept<typename t::text_type>;
+    requires SequenceContainer<typename t::text_type>;
 
     // NOTE: circular dependency
     // requires FmIndexCursor<typename t::cursor_type>;
