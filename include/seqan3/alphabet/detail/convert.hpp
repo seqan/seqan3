@@ -40,7 +40,7 @@ constexpr std::array<out_t, alphabet_size_v<in_t>> convert_through_char_represen
     {
         std::array<out_t, alphabet_size_v<in_t>> ret{};
         for (typename in_t::rank_type i = 0; i < alphabet_size_v<in_t>; ++i)
-            assign_char(ret[i], to_char(assign_rank(in_t{}, i)));
+            assign_char_to(to_char(assign_rank_to(i, in_t{})), ret[i]);
         return ret;
     }()
 };

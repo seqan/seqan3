@@ -71,7 +71,7 @@ public:
     using quality_alphabet_type = quality_alphabet_t;
 
     //!\brief Equals the char_type of sequence_alphabet_type.
-    using char_type = underlying_char_t<sequence_alphabet_type>;
+    using char_type = alphabet_char_t<sequence_alphabet_type>;
     //!\brief Equals the phred_type of the quality_alphabet_type.
     using phred_type = underlying_phred_t<quality_alphabet_type>;
 
@@ -112,14 +112,14 @@ public:
     //!\brief Assign from a character. This modifies the internal sequence letter.
     constexpr qualified & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char(get<0>(*this), c);
+        seqan3::assign_char_to(c, get<0>(*this));
         return *this;
     }
 
     //!\brief Strict assign from a character. This modifies the internal sequence letter.
-    qualified & assign_char_strict(char_type const c)
+    qualified & assign_char_strictly(char_type const c)
     {
-        seqan3::assign_char_strict(get<0>(*this), c);
+        seqan3::assign_char_strictly_to(c, get<0>(*this));
         return *this;
     }
 

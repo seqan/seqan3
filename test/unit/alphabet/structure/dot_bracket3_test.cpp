@@ -35,7 +35,7 @@ TEST(dot_bracket3, assign_char)
     };
 
     for (auto [ ch, cm ] : std::view::zip(input, cmp))
-        EXPECT_EQ((assign_char(dot_bracket3{}, ch)), cm);
+        EXPECT_EQ((assign_char_to(ch, dot_bracket3{})), cm);
 }
 
 // to_char functions

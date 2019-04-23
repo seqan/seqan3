@@ -27,9 +27,9 @@ TEST(align_cfg_edit, is_hamming)
         for (unsigned j = 0; j < decltype(scheme)::matrix_size; ++j)
         {
             if (i == j)
-                EXPECT_EQ((scheme.score(assign_rank(dna15{}, i), assign_rank(dna15{}, j))), 0);
+                EXPECT_EQ((scheme.score(assign_rank_to(i, dna15{}), assign_rank_to(j, dna15{}))), 0);
             else
-                EXPECT_EQ((scheme.score(assign_rank(dna15{}, i), assign_rank(dna15{}, j))), -1);
+                EXPECT_EQ((scheme.score(assign_rank_to(i, dna15{}), assign_rank_to(j, dna15{}))), -1);
         }
     }
 }

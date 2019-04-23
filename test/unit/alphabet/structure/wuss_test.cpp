@@ -40,7 +40,7 @@ TEST(wuss51, assign_char)
     };
 
     for (auto [ ch, cm ] : std::view::zip(input, cmp))
-        EXPECT_EQ((assign_char(wuss51{}, ch)), cm);
+        EXPECT_EQ((assign_char_to(ch, wuss51{})), cm);
 }
 
 // to_char functions

@@ -17,7 +17,7 @@ using namespace seqan3;
 template <Alphabet alphabet_t>
 static void assign_char(benchmark::State& state)
 {
-    using char_t = underlying_char_t<alphabet_t>;
+    using char_t = alphabet_char_t<alphabet_t>;
     for (auto _ : state)
     {
         alphabet_t chr{};
@@ -25,7 +25,7 @@ static void assign_char(benchmark::State& state)
         {
             benchmark::DoNotOptimize
             (
-                assign_char(chr, c)
+                assign_char_to(c, chr)
             );
         }
     }
@@ -35,7 +35,7 @@ static void assign_char(benchmark::State& state)
 template <Alphabet alphabet_t>
 static void to_char(benchmark::State& state)
 {
-    using char_t = underlying_char_t<alphabet_t>;
+    using char_t = alphabet_char_t<alphabet_t>;
     for (auto _ : state)
     {
         alphabet_t chr{};
@@ -43,7 +43,7 @@ static void to_char(benchmark::State& state)
         {
             benchmark::DoNotOptimize
             (
-                to_char(assign_char(chr, c))
+                to_char(assign_char_to(c, chr))
             );
         }
     }
@@ -53,7 +53,7 @@ static void to_char(benchmark::State& state)
 template <Semialphabet alphabet_t>
 static void assign_rank(benchmark::State& state)
 {
-    using rank_t_ = underlying_rank_t<alphabet_t>;
+    using rank_t_ = alphabet_rank_t<alphabet_t>;
     using rank_t = std::conditional_t<std::is_same_v<rank_t_, bool>, uint8_t, rank_t_>;
     for (auto _ : state)
     {
@@ -62,7 +62,7 @@ static void assign_rank(benchmark::State& state)
         {
             benchmark::DoNotOptimize
             (
-                assign_rank(chr, r % alphabet_size_v<alphabet_t>)
+                assign_rank_to(r % alphabet_size_v<alphabet_t>, chr)
             );
         }
     }
@@ -72,7 +72,7 @@ static void assign_rank(benchmark::State& state)
 template <Semialphabet alphabet_t>
 static void to_rank(benchmark::State& state)
 {
-    using rank_t_ = underlying_rank_t<alphabet_t>;
+    using rank_t_ = alphabet_rank_t<alphabet_t>;
     using rank_t = std::conditional_t<std::is_same_v<rank_t_, bool>, uint8_t, rank_t_>;
 
     for (auto _ : state)
@@ -82,7 +82,7 @@ static void to_rank(benchmark::State& state)
         {
             benchmark::DoNotOptimize
             (
-                to_rank(assign_rank(chr, r % alphabet_size_v<alphabet_t>))
+                to_rank(assign_rank_to(r % alphabet_size_v<alphabet_t>, chr))
             );
         }
     }

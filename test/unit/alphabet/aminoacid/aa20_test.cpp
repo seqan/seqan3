@@ -42,7 +42,7 @@ TEST(aa20, assign_char)
     };
 
     for (auto [ chr, alp ] : std::view::zip(chars, alphabets))
-        EXPECT_EQ((assign_char(aa20{}, chr)), alp);
+        EXPECT_EQ((assign_char_to(chr, aa20{})), alp);
 }
 
 TEST(aa20, to_char)

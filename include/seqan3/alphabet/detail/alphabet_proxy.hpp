@@ -69,16 +69,16 @@ public:
         requires !std::Same<char_type, void>
     {
         alphabet_type tmp{};
-        using seqan3::assign_char;
-        assign_char(tmp, c);
+        using seqan3::assign_char_to;
+        assign_char_to(c, tmp);
         return operator=(tmp);
     }
 
-    constexpr alphabet_proxy & assign_rank(underlying_rank_t<alphabet_type> const r) noexcept
+    constexpr alphabet_proxy & assign_rank(alphabet_rank_t<alphabet_type> const r) noexcept
     {
         alphabet_type tmp{};
-        using seqan3::assign_rank;
-        assign_rank(tmp, r);
+        using seqan3::assign_rank_to;
+        assign_rank_to(r, tmp);
         return operator=(tmp);
     }
 
@@ -143,7 +143,7 @@ public:
     /*!\name Member types
      * \{
      */
-    using rank_type  = underlying_rank_t<alphabet_type>;
+    using rank_type  = alphabet_rank_t<alphabet_type>;
     using char_type  = detail::transformation_trait_or_t<underlying_char<alphabet_type>, void>;
     using phred_type = detail::transformation_trait_or_t<underlying_phred<alphabet_type>, void>;
     //!\}
@@ -198,11 +198,11 @@ public:
      *        the assignment operator which invokes derived behaviour.
      * \{
      */
-    constexpr derived_type & assign_rank(underlying_rank_t<alphabet_type> const r) noexcept
+    constexpr derived_type & assign_rank(alphabet_rank_t<alphabet_type> const r) noexcept
     {
         alphabet_type tmp{};
-        using seqan3::assign_rank;
-        assign_rank(tmp, r);
+        using seqan3::assign_rank_to;
+        assign_rank_to(r, tmp);
         return operator=(tmp);
     }
 
@@ -210,17 +210,17 @@ public:
         requires Alphabet<alphabet_type>
     {
         alphabet_type tmp{};
-        using seqan3::assign_char;
-        assign_char(tmp, c);
+        using seqan3::assign_char_to;
+        assign_char_to(c, tmp);
         return operator=(tmp);
     }
 
-    derived_type & assign_char_strict(char_type_virtual const c)
+    derived_type & assign_char_strictly(char_type_virtual const c)
         requires Alphabet<alphabet_type>
     {
         alphabet_type tmp{};
-        using seqan3::assign_char_strict;
-        assign_char_strict(tmp, c);
+        using seqan3::assign_char_strictly_to;
+        assign_char_strictly_to(c, tmp);
         return operator=(tmp);
     }
 
@@ -241,8 +241,8 @@ public:
     //!\brief Implicit conversion to the emulated type.
     constexpr operator alphabet_type() const noexcept
     {
-        using seqan3::assign_rank;
-        return assign_rank(alphabet_type{}, to_rank());
+        using seqan3::assign_rank_to;
+        return assign_rank_to(to_rank(), alphabet_type{});
     }
 
     constexpr char_type to_char() const noexcept

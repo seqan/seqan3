@@ -446,8 +446,8 @@ protected:
             }
         }
 
-        using seqan3::assign_rank;
-        return assign_rank(alternative_t{}, to_rank() - partial_sum_sizes[index]);
+        using seqan3::assign_rank_to;
+        return assign_rank_to(to_rank() - partial_sum_sizes[index], alternative_t{});
     }
 
     /*!\brief Compile-time generated lookup table which contains the partial
@@ -482,7 +482,7 @@ protected:
         // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84684
         auto assign_rank_to_char = [](auto alternative, size_t rank) constexpr
         {
-            return seqan3::to_char(seqan3::assign_rank(alternative, rank));
+            return seqan3::to_char(seqan3::assign_rank_to(rank, alternative));
         };
 
         auto assign_value_to_char = [assign_rank_to_char] (auto alternative, auto & value_to_char, auto & value) constexpr

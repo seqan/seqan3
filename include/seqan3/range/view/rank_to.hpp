@@ -51,7 +51,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
  * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
- * | seqan3::reference_t             | seqan3::underlying_rank_t<alphabet_t> | `alphabet_t`                                       |
+ * | seqan3::reference_t             | seqan3::alphabet_rank_t<alphabet_t>   | `alphabet_t`                                       |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -64,9 +64,9 @@ template <typename alphabet_type>
     requires Alphabet<alphabet_type>
 //!\endcond
 inline auto const rank_to = deep{std::view::transform(
-[] (underlying_rank_t<alphabet_type> const in) -> alphabet_type
+[] (alphabet_rank_t<alphabet_type> const in) -> alphabet_type
 {
-    return assign_rank(alphabet_type{}, in);
+    return assign_rank_to(in, alphabet_type{});
 })};
 
 //!\}

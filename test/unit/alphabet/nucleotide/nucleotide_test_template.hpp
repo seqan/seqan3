@@ -34,7 +34,7 @@ TYPED_TEST_P(nucleotide, global_complement)
 
     for (vsize_t i = 0u; i < alphabet_size_v<TypeParam>; ++i)
     {
-        TypeParam c = assign_rank(TypeParam{}, i);
+        TypeParam c = assign_rank_to(i, TypeParam{});
 
         EXPECT_EQ(complement(complement(c)), c);
     }

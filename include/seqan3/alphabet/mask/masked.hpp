@@ -52,7 +52,7 @@ public:
     using sequence_alphabet_type = sequence_alphabet_t;
 
     //!\brief Equals the char_type of sequence_alphabet_type.
-    using char_type = underlying_char_t<sequence_alphabet_type>;
+    using char_type = alphabet_char_t<sequence_alphabet_type>;
 
     using base_type::value_size;
 
@@ -93,13 +93,13 @@ public:
     //!\brief Assign from a character.
     constexpr masked & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char(get<0>(*this), c);
-        seqan3::assign_rank(get<1>(*this), is_lower(c));
+        seqan3::assign_char_to(c, get<0>(*this));
+        seqan3::assign_rank_to(is_lower(c), get<1>(*this));
         return *this;
     }
 
     //!\brief Strict assign from a character.
-    masked & assign_char_strict(char_type const c)
+    masked & assign_char_strictly(char_type const c)
     {
         if (!char_is_valid(c))
             throw invalid_char_assignment{detail::get_display_name_v<masked>.string(), c};

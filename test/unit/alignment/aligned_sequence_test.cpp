@@ -31,7 +31,7 @@ public:
         container.clear();
         for (auto & val : target)
         {
-            container.push_back(assign_char(typename container_type::value_type{}, (to_char(val))));
+            container.push_back(assign_char_to(to_char(val), typename container_type::value_type{}));
         }
     }
 };

@@ -65,13 +65,13 @@ TYPED_TEST_P(alphabet_constexpr, move_constructor)
 TYPED_TEST_P(alphabet_constexpr, global_assign_rank)
 {
     constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
-    [[maybe_unused]] constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
+    [[maybe_unused]] constexpr TypeParam t0{assign_rank_to(rank, TypeParam{})};
 }
 
 TYPED_TEST_P(alphabet_constexpr, global_to_rank)
 {
     constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
-    constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
+    constexpr TypeParam t0{assign_rank_to(rank, TypeParam{})};
     constexpr bool b = (to_rank(t0) == rank);
     EXPECT_TRUE(b);
 }
@@ -79,11 +79,11 @@ TYPED_TEST_P(alphabet_constexpr, global_to_rank)
 TYPED_TEST_P(alphabet_constexpr, copy_assignment)
 {
     constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
-    constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
+    constexpr TypeParam t0{assign_rank_to(rank, TypeParam{})};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr
     {
-        TypeParam t1{assign_rank(TypeParam{}, rank)};
+        TypeParam t1{assign_rank_to(rank, TypeParam{})};
         TypeParam t2{};
         t2 = t1;
 
@@ -95,11 +95,11 @@ TYPED_TEST_P(alphabet_constexpr, copy_assignment)
 TYPED_TEST_P(alphabet_constexpr, move_assignment)
 {
     constexpr size_t rank = 1 % alphabet_size_v<TypeParam>;
-    constexpr TypeParam t0{assign_rank(TypeParam{}, rank)};
+    constexpr TypeParam t0{assign_rank_to(rank, TypeParam{})};
     // constexpr context:
     constexpr TypeParam t3 = [&] () constexpr
     {
-        TypeParam t1{assign_rank(TypeParam{}, rank)};
+        TypeParam t1{assign_rank_to(rank, TypeParam{})};
         TypeParam t2{};
         t2 = std::move(t1);
 
@@ -110,13 +110,13 @@ TYPED_TEST_P(alphabet_constexpr, move_assignment)
 
 TYPED_TEST_P(alphabet_constexpr, global_assign_char)
 {
-    [[maybe_unused]] constexpr TypeParam t0{assign_char(TypeParam{}, 'A')};
+    [[maybe_unused]] constexpr TypeParam t0{assign_char_to('A', TypeParam{})};
 }
 
 TYPED_TEST_P(alphabet_constexpr, global_to_char)
 {
     constexpr TypeParam t0{};
-    [[maybe_unused]] constexpr underlying_char_t<TypeParam> c = to_char(t0);
+    [[maybe_unused]] constexpr alphabet_char_t<TypeParam> c = to_char(t0);
 }
 
 TYPED_TEST_P(alphabet_constexpr, comparison_operators)
@@ -139,8 +139,8 @@ TYPED_TEST_P(alphabet_constexpr, comparison_operators)
     }
     else
     {
-        constexpr TypeParam t0{assign_rank(TypeParam{}, 0)};
-        constexpr TypeParam t1{assign_rank(TypeParam{}, 1)};
+        constexpr TypeParam t0{assign_rank_to(0, TypeParam{})};
+        constexpr TypeParam t1{assign_rank_to(1, TypeParam{})};
         constexpr bool b1 = (t0 <  t1);
         constexpr bool b2 = (t0 <= t1);
         constexpr bool b3 = (t1 <= t1);

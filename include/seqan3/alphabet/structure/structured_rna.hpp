@@ -65,7 +65,7 @@ public:
     using structure_alphabet_type = structure_alphabet_t;
 
     //!\brief Equals the char_type of sequence_alphabet_type.
-    using char_type = underlying_char_t<sequence_alphabet_type>;
+    using char_type = alphabet_char_t<sequence_alphabet_type>;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -103,14 +103,14 @@ public:
     //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
     constexpr structured_rna & assign_char(char_type const c) noexcept
     {
-        seqan3::assign_char(get<0>(*this), c);
+        seqan3::assign_char_to(c, get<0>(*this));
         return *this;
     }
 
     //!\brief Strict assign from a nucleotide character. This modifies the internal sequence letter.
-    structured_rna & assign_char_strict(char_type const c)
+    structured_rna & assign_char_strictly(char_type const c)
     {
-        seqan3::assign_char_strict(get<0>(*this), c);
+        seqan3::assign_char_strictly_to(c, get<0>(*this));
         return *this;
     }
     //!\}
