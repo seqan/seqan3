@@ -222,22 +222,22 @@ TEST(container_concept, RandomAccessContainer)
     EXPECT_TRUE((seqan3::RandomAccessContainer<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_concept, reservable_container_concept)
+TEST(container_concept, ReservableContainer)
 {
-    EXPECT_FALSE((seqan3::reservable_container_concept<std::array<char, 2>>));
-    EXPECT_FALSE((seqan3::reservable_container_concept<std::list<char>>));
-    EXPECT_FALSE((seqan3::reservable_container_concept<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::reservable_container_concept<std::vector<char>>));
-    EXPECT_FALSE((seqan3::reservable_container_concept<std::deque<char>>));
-    EXPECT_TRUE((seqan3::reservable_container_concept<std::string>));
+    EXPECT_FALSE((seqan3::ReservableContainer<std::array<char, 2>>));
+    EXPECT_FALSE((seqan3::ReservableContainer<std::list<char>>));
+    EXPECT_FALSE((seqan3::ReservableContainer<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<std::vector<char>>));
+    EXPECT_FALSE((seqan3::ReservableContainer<std::deque<char>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<std::string>));
 
-    EXPECT_TRUE((seqan3::reservable_container_concept<concatenated_sequences_string_t>));
-    EXPECT_TRUE((seqan3::reservable_container_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<concatenated_sequences_string_t>));
+    EXPECT_TRUE((seqan3::ReservableContainer<seqan3::concatenated_sequences<std::vector<char>>>));
 
-    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::bit_vector>));
-    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::int_vector<>>));
-    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::int_vector<13>>));
-    EXPECT_TRUE((seqan3::reservable_container_concept<sdsl::int_vector<64>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::bit_vector>));
+    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<13>>));
+    EXPECT_TRUE((seqan3::ReservableContainer<sdsl::int_vector<64>>));
 }
 
 /* Check the SDSL containers */

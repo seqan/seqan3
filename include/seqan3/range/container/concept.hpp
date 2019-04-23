@@ -264,7 +264,7 @@ SEQAN3_CONCEPT RandomAccessContainer = requires (type val)
 };
 //!\endcond
 
-/*!\interface seqan3::reservable_container_concept <>
+/*!\interface seqan3::ReservableContainer <>
  * \extends seqan3::RandomAccessContainer
  * \brief A more refined container concept than seqan3::RandomAccessContainer.
  *
@@ -276,7 +276,7 @@ SEQAN3_CONCEPT RandomAccessContainer = requires (type val)
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT reservable_container_concept = requires (type val)
+SEQAN3_CONCEPT ReservableContainer = requires (type val)
 {
     requires RandomAccessContainer<type>;
 

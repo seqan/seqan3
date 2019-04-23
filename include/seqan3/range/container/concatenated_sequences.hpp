@@ -36,10 +36,10 @@ namespace seqan3
 {
 
 /*!\brief Container that stores sequences concatenated internally.
- * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::reservable_container_concept.
+ * \tparam inner_type The type of sequences that will be stored. Must satisfy seqan3::ReservableContainer.
  * \tparam data_delimiters_type A container that stores the begin/end positions in the inner_type. Must be
- * seqan3::reservable_container_concept and have inner_type's size_type as value_type.
- * \implements seqan3::reservable_container_concept
+ * seqan3::ReservableContainer and have inner_type's size_type as value_type.
+ * \implements seqan3::ReservableContainer
  * \ingroup container
  *
  * This class may be used whenever you would usually use `std::vector<std::vector<some_alphabet>>` or
@@ -82,8 +82,8 @@ namespace seqan3
 template <typename inner_type,
           typename data_delimiters_type = std::vector<typename inner_type::size_type>>
 //!\cond
-    requires reservable_container_concept<std::remove_reference_t<inner_type>> &&
-             reservable_container_concept<std::remove_reference_t<data_delimiters_type>> &&
+    requires ReservableContainer<std::remove_reference_t<inner_type>> &&
+             ReservableContainer<std::remove_reference_t<data_delimiters_type>> &&
              std::is_same_v<size_type_t<inner_type>, value_type_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
