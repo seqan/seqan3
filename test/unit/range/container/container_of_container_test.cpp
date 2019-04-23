@@ -34,8 +34,8 @@ static_assert(std::Readable<In>);
 
 TYPED_TEST(container_of_container, concepts)
 {
-    EXPECT_TRUE(container_concept<TypeParam>);
-    EXPECT_TRUE(container_concept<value_type_t<TypeParam>>);
+    EXPECT_TRUE(Container<TypeParam>);
+    EXPECT_TRUE(Container<value_type_t<TypeParam>>);
 }
 
 TYPED_TEST(container_of_container, construction)

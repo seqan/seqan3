@@ -86,7 +86,7 @@ SEQAN3_CONCEPT SequenceContainer_modified_by_const_iterator = requires (type val
  * where a bug in the STL prevents this concept to be true.
  *
  * \attention This workaround can be removed if
- * `/test/range/container/container_concept_test.cpp` is not failing on
+ * `/test/range/container/Container_test.cpp` is not failing on
  * ubuntu::ppa (<18.04)/travis-ci anymore. \n
  * Probably when the ppa version of gcc7 is newer than `7.2.0-1ubuntu1~16.04` (2017-08-20)
  * \sa https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=xenial
@@ -105,7 +105,7 @@ namespace seqan3
 /*!\addtogroup container
  * \{
  */
-/*!\interface seqan3::container_concept <>
+/*!\interface seqan3::Container <>
  * \extends std::ranges::ForwardRange
  * \extends std::ranges::SizedRange
  * \extends std::ranges::CommonRange
@@ -121,7 +121,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT container_concept = requires (type val, type val2, type const cval, typename type::iterator it)
+SEQAN3_CONCEPT Container = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
@@ -173,8 +173,8 @@ SEQAN3_CONCEPT container_concept = requires (type val, type val2, type const cva
 //!\endcond
 
 /*!\interface seqan3::SequenceContainer <>
- * \extends seqan3::container_concept
- * \brief A more refined container concept than seqan3::container_concept.
+ * \extends seqan3::Container
+ * \brief A more refined container concept than seqan3::Container.
  *
  * Includes constraints on constructors, `assign()`, `.insert()`, `.erase()`, `.push_back()`, `.pop_back`, `.clear()`,
  * `.size()`, `front()` and `.back()` member functions with corresponding signatures. Models the subset of the
@@ -188,7 +188,7 @@ SEQAN3_CONCEPT container_concept = requires (type val, type val2, type const cva
 template <typename type>
 SEQAN3_CONCEPT SequenceContainer = requires (type val, type val2, type const cval)
 {
-    requires container_concept<type>;
+    requires Container<type>;
 
     // construction
     { type{typename type::size_type{}, typename type::value_type{}} };

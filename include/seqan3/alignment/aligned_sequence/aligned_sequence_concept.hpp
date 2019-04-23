@@ -38,7 +38,7 @@ namespace seqan3::detail
 //!\brief Helper function to deduce the unaligned sequence type from an aligned sequence container.
 template <template <typename...> typename container_type, typename seq_alph_t, typename ...rest_t>
 //!\cond
-    requires container_concept<container_type<gapped<seq_alph_t>, rest_t...>>
+    requires Container<container_type<gapped<seq_alph_t>, rest_t...>>
 //!\endcond
 constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, rest_t...>)
     -> container_type<seq_alph_t, rest_t...>;
@@ -48,7 +48,7 @@ template <template <typename...> typename container_type,
           template <typename...> typename allocator_type,
           typename seq_alph_t, typename ...rest_t>
 //!\cond
-    requires container_concept<container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>>
+    requires Container<container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>>
 //!\endcond
 constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>)
     -> container_type<seq_alph_t, allocator_type<seq_alph_t>, rest_t...>;

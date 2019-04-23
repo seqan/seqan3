@@ -23,7 +23,7 @@ namespace seqan3
 /*!\brief Implements a constexpr string that can be used for compile time computations.
  * \ingroup container
  * \tparam N The size of the constexpr string.
- * \implements seqan3::container_concept
+ * \implements seqan3::Container
  * \implements std::ranges::RandomAccessRange
  *
  * This class provides a string type that can be constructed, evaluated and operated on at compile time.

@@ -1195,7 +1195,7 @@ protected:
         {
             using T = remove_cvref_t<decltype(arg)>;
 
-            if constexpr (!container_concept<T>)
+            if constexpr (!Container<T>)
             {
                 stream << arg;
             }

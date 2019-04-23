@@ -118,7 +118,7 @@ namespace seqan3
  * \memberof seqan3::structure_file_input_traits_concept
  * \brief A container template representing a set of interactions of type bpp_item,
  * which are (comparable) tuples of `bpp_prob` and `bpp_partner`;
- * must satisfy seqan3::container_concept and must provide an std::emplace(bpp_prob, bpp_partner) function.
+ * must satisfy seqan3::Container and must provide an std::emplace(bpp_prob, bpp_partner) function.
  */
 /*!\typedef using bpp_container
  * \memberof seqan3::structure_file_input_traits_concept
@@ -222,7 +222,7 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
     requires std::is_floating_point_v<typename t::bpp_prob>;
     requires std::numeric_limits<typename t::bpp_partner>::is_integer;
 
-//    requires container_concept // TODO check Associative Container Concept when implemented
+//    requires Container // TODO check Associative Container Concept when implemented
 //        <typename t::template bpp_queue
 //            <typename t::template bpp_item
 //                <typename t::bpp_prob, typename t::bpp_partner>>>
