@@ -76,7 +76,7 @@ TEST(view_complement, concepts)
     EXPECT_FALSE(std::ranges::View<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), dna5>));
 
     auto v1 = vec | view::complement;
@@ -87,7 +87,7 @@ TEST(view_complement, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), dna5>));
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v1), char>));
 
@@ -99,7 +99,7 @@ TEST(view_complement, concepts)
     EXPECT_FALSE(std::ranges::View<decltype(vec2)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec2)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec2)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec2)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec2)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(vec2), dna5>));
 
     auto v2 = vec2 | view::complement;
@@ -110,7 +110,7 @@ TEST(view_complement, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v2)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v2)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v2)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v2)>);
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v2), dna5>));
     EXPECT_FALSE((std::ranges::OutputRange<decltype(v2), char>));
 }

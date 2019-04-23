@@ -84,8 +84,8 @@ TEST(view_to_upper, concepts)
               std::ranges::SizedRange<decltype(upper_view)>);
     EXPECT_EQ(std::ranges::CommonRange<decltype(input_string)>,
               std::ranges::CommonRange<decltype(upper_view)>);
-    EXPECT_EQ(const_iterable_concept<decltype(input_string)>,
-              const_iterable_concept<decltype(upper_view)>);
+    EXPECT_EQ(ConstIterableRange<decltype(input_string)>,
+              ConstIterableRange<decltype(upper_view)>);
     EXPECT_TRUE((std::Same<std::remove_reference_t<reference_t<decltype(input_string)>>,
                            std::remove_reference_t<reference_t<decltype(upper_view)>>>));
 

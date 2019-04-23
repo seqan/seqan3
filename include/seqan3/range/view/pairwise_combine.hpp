@@ -559,7 +559,7 @@ public:
     //!\copydoc begin()
     constexpr const_iterator begin() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
@@ -568,7 +568,7 @@ public:
     //!\copydoc begin()
     constexpr const_iterator cbegin() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return begin();
@@ -595,7 +595,7 @@ public:
     //!\copydoc end()
     constexpr const_iterator end() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
@@ -604,7 +604,7 @@ public:
     //!\copydoc end()
     constexpr const_iterator cend() const noexcept
     //!\cond
-        requires const_iterable_concept<underlying_range_type>
+        requires ConstIterableRange<underlying_range_type>
     //!\endcond
     {
         return end();
@@ -689,7 +689,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                                          |
  * | std::ranges::CommonRange        | *required*                            | *guaranteed*                                                         |
  * | std::ranges::OutputRange        |                                       | *lost*                                                               |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                                          |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                                          |
  * |                                 |                                       |                                                                      |
  * | seqan3::reference_t             |                                       | std::tuple<seqan3::reference_t<urng_t>, seqan3::reference_t<urng_t>> |
  *

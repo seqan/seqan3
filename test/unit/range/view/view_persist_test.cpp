@@ -92,7 +92,7 @@ TEST(view_persist, concepts)
     EXPECT_FALSE(std::ranges::View<decltype(std::string{"foo"})>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(std::string{"foo"})>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(std::string{"foo"})>);
-    EXPECT_TRUE(const_iterable_concept<decltype(std::string{"foo"})>);
+    EXPECT_TRUE(ConstIterableRange<decltype(std::string{"foo"})>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(std::string{"foo"}), char>));
 
     auto v1 = std::string{"foo"} | view::persist;
@@ -104,6 +104,6 @@ TEST(view_persist, concepts)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(v1)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(v1)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
 }

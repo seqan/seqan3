@@ -121,7 +121,7 @@
  * | std::ranges::SizedRange         | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | std::ranges::CommonRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
  * | std::ranges::OutputRange        | [required] <i>(or not)</i>       | [preserved\|lost\|guaranteed]                      |
- * | seqan3::const_iterable_concept  | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
+ * | seqan3::ConstIterableRange      | [required] <i>(or not)</i>       | [preserved\|lost]                                  |
  * |                                 |                                  |                                                    |
  * | seqan3::reference_t             | optionally a type or concept     | optionally a type or concept                       |
  *

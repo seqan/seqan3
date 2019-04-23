@@ -109,7 +109,7 @@ namespace seqan3
  * \extends std::ranges::ForwardRange
  * \extends std::ranges::SizedRange
  * \extends std::ranges::CommonRange
- * \extends seqan3::const_iterable_concept
+ * \extends seqan3::ConstIterableRange
  * \brief The (most general) container concept as defined by the standard library.
  * \details
  * The container concept is modelled as in the [STL](http://en.cppreference.com/w/cpp/concept/Container), but
