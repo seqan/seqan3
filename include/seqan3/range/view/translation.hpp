@@ -351,7 +351,7 @@ public:
     //!\}
 
     //!\brief Implicit conversion to container types.
-    template <random_access_container_concept container_type>
+    template <RandomAccessContainer container_type>
     operator container_type() const
     //!\cond
         requires std::is_same_v<aa27, value_type_t<container_type>>
@@ -638,7 +638,7 @@ public:
     //!\}
 
     //!\brief Implicit conversion to container types.
-    template <random_access_container_concept container_type>
+    template <RandomAccessContainer container_type>
     operator container_type() const
     //!\cond
         requires is_compatible_this_aux<container_type>

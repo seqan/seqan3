@@ -209,17 +209,17 @@ TEST(container_concept, SequenceContainer_modified_by_const_iterator)
     EXPECT_TRUE((seqan3::detail::SequenceContainer_modified_by_const_iterator<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_concept, random_access_container_concept)
+TEST(container_concept, RandomAccessContainer)
 {
-    EXPECT_FALSE((seqan3::random_access_container_concept<std::array<char, 2>>));
-    EXPECT_FALSE((seqan3::random_access_container_concept<std::list<char>>));
-    EXPECT_FALSE((seqan3::random_access_container_concept<std::forward_list<char>>));
-    EXPECT_TRUE((seqan3::random_access_container_concept<std::vector<char>>));
-    EXPECT_TRUE((seqan3::random_access_container_concept<std::deque<char>>));
-    EXPECT_TRUE((seqan3::random_access_container_concept<std::string>));
+    EXPECT_FALSE((seqan3::RandomAccessContainer<std::array<char, 2>>));
+    EXPECT_FALSE((seqan3::RandomAccessContainer<std::list<char>>));
+    EXPECT_FALSE((seqan3::RandomAccessContainer<std::forward_list<char>>));
+    EXPECT_TRUE((seqan3::RandomAccessContainer<std::vector<char>>));
+    EXPECT_TRUE((seqan3::RandomAccessContainer<std::deque<char>>));
+    EXPECT_TRUE((seqan3::RandomAccessContainer<std::string>));
 
-    EXPECT_TRUE((seqan3::random_access_container_concept<concatenated_sequences_string_t>));
-    EXPECT_TRUE((seqan3::random_access_container_concept<seqan3::concatenated_sequences<std::vector<char>>>));
+    EXPECT_TRUE((seqan3::RandomAccessContainer<concatenated_sequences_string_t>));
+    EXPECT_TRUE((seqan3::RandomAccessContainer<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
 TEST(container_concept, reservable_container_concept)

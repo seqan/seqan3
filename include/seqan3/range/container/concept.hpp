@@ -234,7 +234,7 @@ SEQAN3_CONCEPT SequenceContainer = requires (type val, type val2, type const cva
 };
 //!\endcond
 
-/*!\interface seqan3::random_access_container_concept <>
+/*!\interface seqan3::RandomAccessContainer <>
  * \extends seqan3::SequenceContainer
  * \extends std::ranges::RandomAccessRange
  * \brief A more refined container concept than seqan3::SequenceContainer.
@@ -250,7 +250,7 @@ SEQAN3_CONCEPT SequenceContainer = requires (type val, type val2, type const cva
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT random_access_container_concept = requires (type val)
+SEQAN3_CONCEPT RandomAccessContainer = requires (type val)
 {
     requires SequenceContainer<type>;
 
@@ -265,8 +265,8 @@ SEQAN3_CONCEPT random_access_container_concept = requires (type val)
 //!\endcond
 
 /*!\interface seqan3::reservable_container_concept <>
- * \extends seqan3::random_access_container_concept
- * \brief A more refined container concept than seqan3::random_access_container_concept.
+ * \extends seqan3::RandomAccessContainer
+ * \brief A more refined container concept than seqan3::RandomAccessContainer.
  *
  * Adds requirements for `.reserve()`, `.capacity()` and `.shrink_to_fit()`.
  * Satisfied by `std::vector` and `std::basic_string`.
@@ -278,7 +278,7 @@ SEQAN3_CONCEPT random_access_container_concept = requires (type val)
 template <typename type>
 SEQAN3_CONCEPT reservable_container_concept = requires (type val)
 {
-    requires random_access_container_concept<type>;
+    requires RandomAccessContainer<type>;
 
     { val.capacity()      } -> typename type::size_type;
     { val.reserve(0)      } -> void;
