@@ -33,7 +33,7 @@ namespace seqan3
  *        while leaving the underlying sequence unmodified.
  * \tparam inner_type The type of range that will be decorated with gaps; must model std::ranges::RandomAccessRange
  *                    and std::ranges::SizedRange.
- * \implements seqan3::aligned_sequence_concept
+ * \implements seqan3::AlignedSequence
  * \ingroup decorator
  *
  * \details

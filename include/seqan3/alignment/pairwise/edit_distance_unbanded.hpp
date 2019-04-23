@@ -33,7 +33,7 @@ namespace seqan3::detail
 {
 //!\cond
 template <typename align_config_t>
-SEQAN3_CONCEPT max_errors_concept = requires (align_config_t & cfg)
+SEQAN3_CONCEPT MaxErrors = requires (align_config_t & cfg)
 {
     requires cfg.template exists<align_cfg::max_error>();
 };
@@ -43,7 +43,7 @@ SEQAN3_CONCEPT max_errors_concept = requires (align_config_t & cfg)
  * \ingroup pairwise_alignment
  */
 template <typename traits_type>
-SEQAN3_CONCEPT edit_distance_trait_concept = requires
+SEQAN3_CONCEPT EditDistanceTrait = requires
 {
     typename std::remove_reference_t<traits_type>::word_type;
     typename std::remove_reference_t<traits_type>::is_semi_global_type;
@@ -72,7 +72,7 @@ struct default_edit_distance_trait_type
 template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
           typename align_config_t,
-          edit_distance_trait_concept traits_t = default_edit_distance_trait_type>
+          EditDistanceTrait traits_t = default_edit_distance_trait_type>
 class pairwise_alignment_edit_distance_unbanded
 {
     /*!\name Befriended classes
@@ -118,7 +118,7 @@ private:
     // using result_type = alignment_result<type_list<uint32_t, int>>;
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
-    static constexpr bool use_max_errors = detail::max_errors_concept<align_config_t>;
+    static constexpr bool use_max_errors = detail::MaxErrors<align_config_t>;
     //!\brief Whether the alignment is a semi-global alignment or not.
     static constexpr bool is_semi_global = traits_t::is_semi_global_type::value;
     //!\brief Whether the alignment is a global alignment or not.

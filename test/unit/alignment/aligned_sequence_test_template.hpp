@@ -26,8 +26,8 @@ TYPED_TEST_CASE_P(aligned_sequence);
 
 TYPED_TEST_P(aligned_sequence, fulfills_concept)
 {
-    EXPECT_TRUE((aligned_sequence_concept<TypeParam>));
-    EXPECT_FALSE((aligned_sequence_concept<std::vector<dna4>>));
+    EXPECT_TRUE((AlignedSequence<TypeParam>));
+    EXPECT_FALSE((AlignedSequence<std::vector<dna4>>));
 }
 
 TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)

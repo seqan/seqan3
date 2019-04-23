@@ -61,7 +61,7 @@ enum class aminoacid_similarity_matrix
 
 /*!\brief A data structure for managing and computing the score of two amino acids.
  * \ingroup scoring
- * \implements seqan3::scoring_scheme_concept
+ * \implements seqan3::ScoringScheme
  *
  * \details
  *

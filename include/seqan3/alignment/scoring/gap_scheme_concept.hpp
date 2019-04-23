@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::gap_scheme_concept.
+ * \brief Provides seqan3::GapScheme.
  * \author René Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -19,7 +19,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::gap_scheme_concept <>
+/*!\interface seqan3::GapScheme <>
  * \brief A concept that requires that the type gives access to gap penalties.
  * \tparam t            The type the concept check is performed on (the putative gap scheme).
  * \ingroup scoring
@@ -30,14 +30,14 @@ namespace seqan3
  * ability to request the gap penalties.
  *
  */
-/*!\name Requirements for seqan3::gap_scheme_concept
- * \brief You can expect these members on all types that implement seqan3::gap_scheme_concept.
- * \memberof seqan3::gap_scheme_concept
+/*!\name Requirements for seqan3::GapScheme
+ * \brief You can expect these members on all types that implement seqan3::GapScheme.
+ * \memberof seqan3::GapScheme
  * \{
  */
 /*!\fn       ptrdiff_t score(size_t s);
  * \brief    Returns the score for a gap of length `s`.
- * \memberof seqan3::gap_scheme_concept
+ * \memberof seqan3::GapScheme
  *
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
@@ -46,7 +46,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT gap_scheme_concept = requires (t scheme, size_t num)
+SEQAN3_CONCEPT GapScheme = requires (t scheme, size_t num)
 {
     { scheme.score(num) } -> ptrdiff_t;
 };

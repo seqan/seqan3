@@ -20,7 +20,7 @@ namespace seqan3::detail
 
 /*!\brief A matrix represented in a one-dimensional std::vector
  * \ingroup alignment_matrix
- * \implements seqan3::detail::matrix_concept
+ * \implements seqan3::detail::Matrix
  * \tparam entry_t \copydoc seqan3::detail::row_wise_matrix::entry_type
  *
  * \details
@@ -56,19 +56,19 @@ public:
     {}
     //!\}
 
-    //!\copydoc seqan3::detail::matrix_concept::rows
+    //!\copydoc seqan3::detail::Matrix::rows
     size_t rows() const noexcept
     {
         return _rows;
     }
 
-    //!\copydoc seqan3::detail::matrix_concept::cols
+    //!\copydoc seqan3::detail::Matrix::cols
     size_t cols() const noexcept
     {
         return _cols;
     }
 
-    //!\copydoc seqan3::detail::matrix_concept::at
+    //!\copydoc seqan3::detail::Matrix::at
     entry_type at(size_t const row, size_t const col) const noexcept
     {
         assert(row < rows() && col < cols());
@@ -80,10 +80,10 @@ private:
     //!       (each row is continuously stored).
     std::vector<entry_type> _entries;
 
-    //!\copydoc seqan3::detail::matrix_concept::rows
+    //!\copydoc seqan3::detail::Matrix::rows
     size_t const _rows;
 
-    //!\copydoc seqan3::detail::matrix_concept::cols
+    //!\copydoc seqan3::detail::Matrix::cols
     size_t const _cols;
 };
 

@@ -22,7 +22,7 @@ namespace seqan3::align_cfg
 {
 /*!\brief A configuration element for the gap scheme.
  * \ingroup alignment_configuration
- * \tparam gap_scheme_t The type of the underlying gap scheme. Must satisfy the seqan3::gap_scheme_concept.
+ * \tparam gap_scheme_t The type of the underlying gap scheme. Must satisfy the seqan3::GapScheme.
  *
  * \details
  *
@@ -37,7 +37,7 @@ namespace seqan3::align_cfg
  *
  * \see seqan3::gap_scheme
  */
-template <gap_scheme_concept gap_scheme_t>
+template <GapScheme gap_scheme_t>
 struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>
 {
     //!\privatesection
@@ -50,7 +50,7 @@ struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>
  * \{
  */
 //!\brief Deduces the gap scheme from the constructor argument.
-template <gap_scheme_concept scheme_t>
+template <GapScheme scheme_t>
 gap(scheme_t) -> gap<remove_cvref_t<scheme_t>>;
 //!\}
 
