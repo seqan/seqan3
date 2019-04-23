@@ -38,6 +38,10 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     auto v = vec | adaptor(3);
     EXPECT_EQ("foo", std::string(v));
 
+    // iterators (code coverage)
+    EXPECT_EQ(v.begin(), v.begin());
+    EXPECT_NE(v.begin(), v.end());
+
     // function notation
     std::string v2{adaptor(vec, 3)};
     EXPECT_EQ("foo", v2);
