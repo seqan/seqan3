@@ -86,7 +86,7 @@ SEQAN3_CONCEPT SequenceContainer_modified_by_const_iterator = requires (type val
  * where a bug in the STL prevents this concept to be true.
  *
  * \attention This workaround can be removed if
- * `/test/range/container/Container_test.cpp` is not failing on
+ * `/test/range/container/container_concept_test.cpp` is not failing on
  * ubuntu::ppa (<18.04)/travis-ci anymore. \n
  * Probably when the ppa version of gcc7 is newer than `7.2.0-1ubuntu1~16.04` (2017-08-20)
  * \sa https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=xenial
