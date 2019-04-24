@@ -3,7 +3,7 @@
 | Summary                   |                                                                                        |
 |---------------------------|----------------------------------------------------------------------------------------|
 | Copyright holders         | Knut Reinert, [FU-Berlin](https://fu-berlin.de), [MPI MolGen](https://molgen.mpg.de/)  |
-| Library source code       | ![](bsdl_badge.svg)                                                                    |
+| Library source code       | ![](doc/about/copyright/bsdl_badge.svg)                                                |
 | Documentation             | ![](doc/about/copyright/ccby_badge.svg)                                                |
 | Snippets and examples     | ![](doc/about/copyright/cc0_badge.svg)                                                 |
 | Dependencies              | ![](doc/about/copyright/copyfree_badge.svg)                                            |
@@ -46,17 +46,16 @@ DAMAGE.
 # Documentation
 
 The API documentation and manual are additionally provided under the
-terms of the [Creative Commons Attribution 4.0 International License]
-(http://creativecommons.org/licenses/by/4.0/). This includes
+terms of the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+This includes
   * doxygen-style comments within the library source code;
   * Markdown files and images in the `doc`-subfolder;
   * HTML or other representation produced from the above.
 
 The source code examples and snippets within the documentation are
 additionally provided under the terms of the
-[Creative Commons Public Domain Dedication 1.0]
-(https://creativecommons.org/publicdomain/zero/1.0/deed). This
-includes:
+[Creative Commons Public Domain Dedication 1.0](https://creativecommons.org/publicdomain/zero/1.0/deed).
+This includes:
   * source code files (`*.cpp`, `*.hpp`) in the `doc`-subfolder;
   * the contents of `test/snippet`.
 
