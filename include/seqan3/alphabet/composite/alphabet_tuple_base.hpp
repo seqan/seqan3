@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::cartesian_composition.
+ * \brief Provides seqan3::alphabet_tuple_base.
  */
 
 #pragma once
@@ -18,7 +18,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/composition/detail.hpp>
+#include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
@@ -33,9 +33,9 @@
 namespace seqan3::detail
 {
 
-/*!\brief Evaluates to true if one of the components of seqan3::cartesian_composition satisifes a compile-time
+/*!\brief Evaluates to true if one of the components of seqan3::alphabet_tuple_base satisifes a compile-time
  *        predicate.
- * \tparam cartesian_t         A specialisation of seqan3::cartesian_composition.
+ * \tparam cartesian_t         A specialisation of seqan3::alphabet_tuple_base.
  * \tparam cartesian_derived_t The CRTP derived type of `cartesian_t`.
  * \tparam fun_t               A template template that takes target_t as argument and exposes an `invoke` member type
  *                             that evaluates some predicate and returns `std::true_type` or `std::false_type`.
@@ -59,7 +59,7 @@ template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           template <typename> typename fun_t,
           typename other_t>
-inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
+inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        fun_t,
                                        other_t> =
@@ -70,16 +70,16 @@ inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t
 template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           template <typename> typename fun_t>
-inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
+inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        fun_t,
-                                       cartesian_composition<cartesian_derived_t, cartesian_comps...>> = false;
+                                       alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>> = false;
 
 // guard against self (derived)
 template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           template <typename> typename fun_t>
-inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
+inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        fun_t,
                                        cartesian_derived_t> = false;
@@ -90,7 +90,7 @@ template <typename ... cartesian_comps,
           template <typename> typename fun_t,
           typename other_t>
     requires ConvertibleToByMember<other_t, cartesian_derived_t>
-inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
+inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        fun_t,
                                        other_t> = false;
@@ -101,9 +101,9 @@ template <typename ... cartesian_comps,
           template <typename> typename fun_t,
           typename other_t>
     requires type_in_pack_v<other_t, cartesian_comps...>
-//     requires meta::in<recursive_cartesian_components<cartesian_composition<cartesian_derived_t, cartesian_comps...>>::type,
+//     requires meta::in<recursive_cartesian_components<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>>::type,
 //                       other_t>::value
-inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
+inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        fun_t,
                                        other_t> = false;
@@ -114,7 +114,7 @@ template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           typename other_t>
     requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
-inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
+inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        weakly_equality_comparable_with,
                                        other_t> = false;
@@ -122,7 +122,7 @@ template <typename ... cartesian_comps,
           typename cartesian_derived_t,
           typename other_t>
     requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
-inline bool constexpr one_component_is<cartesian_composition<cartesian_derived_t, cartesian_comps...>,
+inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
                                        cartesian_derived_t,
                                        weakly_ordered_with,
                                        other_t> = false;
@@ -179,7 +179,7 @@ template <typename derived_type,
 //!\cond
     requires (detail::ConstexprSemialphabet<component_types> && ...)
 //!\endcond
-class cartesian_composition :
+class alphabet_tuple_base :
     public alphabet_base<derived_type,
                          (1 * ... * alphabet_size_v<component_types>),
                          void> // no char type, because this is only semi_alphabet
@@ -204,7 +204,7 @@ private:
         is_component<type> &&
         (meta::find_index<component_list, type>::value == meta::reverse_find_index<component_list, type>::value);
 
-    /*!\brief Specialisation of seqan3::alphabet_proxy that updates the rank of the cartesian_composition.
+    /*!\brief Specialisation of seqan3::alphabet_proxy that updates the rank of the alphabet_tuple_base.
      * \tparam alphabet_type The type of the emulated component.
      * \tparam index         The index of the emulated component.
      */
@@ -218,15 +218,15 @@ private:
         friend base_t;
 
         //!\brief Store a pointer to the parent object so we can update it.
-        cartesian_composition *parent;
+        alphabet_tuple_base *parent;
 
         //!\brief The implementation updates the rank in the parent object.
         constexpr void on_update() noexcept
         {
             parent->assign_rank(
                 parent->to_rank()
-                - parent->template to_component_rank<index>() * cartesian_composition::cummulative_alph_sizes[index]
-                + to_rank() * cartesian_composition::cummulative_alph_sizes[index]);
+                - parent->template to_component_rank<index>() * alphabet_tuple_base::cummulative_alph_sizes[index]
+                + to_rank() * alphabet_tuple_base::cummulative_alph_sizes[index]);
         }
 
     public:
@@ -253,7 +253,7 @@ private:
         constexpr component_proxy & operator=(component_proxy &&) = default;       //!< Defaulted.
         ~component_proxy() = default;                                              //!< Defaulted.
 
-        constexpr component_proxy(alphabet_type const l, cartesian_composition & p) :
+        constexpr component_proxy(alphabet_type const l, alphabet_tuple_base & p) :
             base_t{l}, parent{&p}
         {}
 
@@ -264,12 +264,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr cartesian_composition() noexcept : base_t{} {}
-    constexpr cartesian_composition(cartesian_composition const &) = default;
-    constexpr cartesian_composition(cartesian_composition &&) = default;
-    constexpr cartesian_composition & operator=(cartesian_composition const &) = default;
-    constexpr cartesian_composition & operator=(cartesian_composition &&) = default;
-    ~cartesian_composition() = default;
+    constexpr alphabet_tuple_base() noexcept : base_t{} {}
+    constexpr alphabet_tuple_base(alphabet_tuple_base const &) = default;
+    constexpr alphabet_tuple_base(alphabet_tuple_base &&) = default;
+    constexpr alphabet_tuple_base & operator=(alphabet_tuple_base const &) = default;
+    constexpr alphabet_tuple_base & operator=(alphabet_tuple_base &&) = default;
+    ~alphabet_tuple_base() = default;
 
     using base_t::base_t;
     //!\}
@@ -303,7 +303,7 @@ public:
      *            seqan3::structure_aa).
      */
     //!\brief Construction from initialiser-list.
-    constexpr cartesian_composition(component_types ... components) noexcept
+    constexpr alphabet_tuple_base(component_types ... components) noexcept
     {
         assign_rank(rank_sum_helper(components..., std::make_index_sequence<sizeof...(component_types)>{}));
     }
@@ -313,15 +313,15 @@ public:
                               list of the composition.
      * \param  alph           The value of a component that should be assigned.
      *
-     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_construction
+     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp value_construction
      */
     template <typename component_type>
     //!\cond
         requires is_unique_component<component_type>
     //!\endcond
-    constexpr explicit cartesian_composition(component_type const alph) noexcept : cartesian_composition{}
+    constexpr explicit alphabet_tuple_base(component_type const alph) noexcept : alphabet_tuple_base{}
     {
         get<component_type>(*this) = alph;
     }
@@ -335,15 +335,15 @@ public:
      * the `assignable_concept<T, indirect_component_type>`, regardless if other types are also
      * fit for assignment.
      *
-     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_construction
+     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp subtype_construction
      */
     template <typename indirect_component_type>
     //!\cond
-       requires detail::one_component_is<cartesian_composition, derived_type, detail::implicitly_convertible_from, indirect_component_type>
+       requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::implicitly_convertible_from, indirect_component_type>
     //!\endcond
-    constexpr explicit cartesian_composition(indirect_component_type const alph) noexcept : cartesian_composition{}
+    constexpr explicit alphabet_tuple_base(indirect_component_type const alph) noexcept : alphabet_tuple_base{}
     {
        using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
        component_type tmp(alph); // delegate construction
@@ -352,9 +352,9 @@ public:
 
     //!\cond
     template <typename indirect_component_type>
-       requires !detail::one_component_is<cartesian_composition, derived_type, detail::implicitly_convertible_from, indirect_component_type> &&
-                 detail::one_component_is<cartesian_composition, derived_type, detail::constructible_from, indirect_component_type>
-    constexpr explicit cartesian_composition(indirect_component_type const alph) noexcept : cartesian_composition{}
+       requires !detail::one_component_is<alphabet_tuple_base, derived_type, detail::implicitly_convertible_from, indirect_component_type> &&
+                 detail::one_component_is<alphabet_tuple_base, derived_type, detail::constructible_from, indirect_component_type>
+    constexpr explicit alphabet_tuple_base(indirect_component_type const alph) noexcept : alphabet_tuple_base{}
     {
        using component_type = meta::front<meta::find_if<component_list, detail::constructible_from<indirect_component_type>>>;
        component_type tmp(alph); // delegate construction
@@ -367,9 +367,9 @@ public:
      *                        contained in the type list of the composition.
      * \param  alph           The value of a component that should be assigned.
      *
-     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp value_assignment
+     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp value_assignment
      */
     template <typename component_type>
     //!\cond
@@ -386,13 +386,13 @@ public:
      *                                 one of the component types.
      * \param  alph                    The value of a component that should be assigned.
      *
-     * Note: Since the cartesian_composition is a CRTP base class, we show the working examples
+     * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
-     * \snippet test/snippet/alphabet/composition/cartesian_composition.cpp subtype_assignment
+     * \snippet test/snippet/alphabet/composite/alphabet_tuple_base.cpp subtype_assignment
      */
     template <typename indirect_component_type>
     //!\cond
-        requires detail::one_component_is<cartesian_composition, derived_type, detail::assignable_from, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::assignable_from, indirect_component_type>
     //!\endcond
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
@@ -404,8 +404,8 @@ public:
     // If not assignable but implicit convertible, convert first and assign afterwards
     template <typename indirect_component_type>
     //!\cond
-        requires !detail::one_component_is<cartesian_composition, derived_type, detail::assignable_from, indirect_component_type> &&
-                 detail::one_component_is<cartesian_composition, derived_type, detail::implicitly_convertible_from, indirect_component_type>
+        requires !detail::one_component_is<alphabet_tuple_base, derived_type, detail::assignable_from, indirect_component_type> &&
+                 detail::one_component_is<alphabet_tuple_base, derived_type, detail::implicitly_convertible_from, indirect_component_type>
     //!\endcond
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
@@ -426,7 +426,7 @@ public:
      * \returns A proxy to the contained element that models the same alphabets concepts and supports assignment.
      */
     template <size_t index>
-    friend constexpr auto get(cartesian_composition & l) noexcept
+    friend constexpr auto get(alphabet_tuple_base & l) noexcept
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
@@ -444,7 +444,7 @@ public:
      * \returns A proxy to the contained element that models the same alphabets concepts and supports assignment.
      */
     template <typename type>
-    friend constexpr auto get(cartesian_composition & l) noexcept
+    friend constexpr auto get(alphabet_tuple_base & l) noexcept
     //!\cond
         requires is_unique_component<type>
     //!\endcond
@@ -457,7 +457,7 @@ public:
      * \returns A copy of the contained element.
      */
     template <size_t index>
-    friend constexpr auto get(cartesian_composition const & l) noexcept
+    friend constexpr auto get(alphabet_tuple_base const & l) noexcept
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
@@ -475,7 +475,7 @@ public:
      * \returns A copy of the contained element.
      */
     template <typename type>
-    friend constexpr type get(cartesian_composition const & l) noexcept
+    friend constexpr type get(alphabet_tuple_base const & l) noexcept
     //!\cond
         requires is_unique_component<type>
     //!\endcond
@@ -503,7 +503,7 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator==(indirect_component_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<cartesian_composition, derived_type, detail::weakly_equality_comparable_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with, indirect_component_type>
     //!\endcond
     {
         using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with<indirect_component_type>>>;
@@ -513,7 +513,7 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator!=(indirect_component_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<cartesian_composition, derived_type, detail::weakly_equality_comparable_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_equality_comparable_with, indirect_component_type>
     //!\endcond
     {
         using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with<indirect_component_type>>>;
@@ -523,7 +523,7 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator<(indirect_component_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<cartesian_composition, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
     //!\endcond
     {
         using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
@@ -533,7 +533,7 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator>(indirect_component_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<cartesian_composition, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
     //!\endcond
     {
         using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
@@ -543,7 +543,7 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator<=(indirect_component_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<cartesian_composition, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
     //!\endcond
     {
         using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
@@ -553,7 +553,7 @@ public:
     template <typename indirect_component_type>
     constexpr bool operator>=(indirect_component_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_component_is<cartesian_composition, derived_type, detail::weakly_ordered_with, indirect_component_type>
+        requires detail::one_component_is<alphabet_tuple_base, derived_type, detail::weakly_ordered_with, indirect_component_type>
     //!\endcond
     {
         using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with<indirect_component_type>>>;
@@ -605,7 +605,7 @@ private:
 };
 
 /*!\name Comparison operators
- * \relates seqan3::cartesian_composition
+ * \relates seqan3::alphabet_tuple_base
  * \{
  * \brief Free function comparison operators that forward to member operators (for types != self).
  */
@@ -615,7 +615,7 @@ template <typename indirect_component_type, typename derived_type, typename ...c
              !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator==(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, component_types...> const & rhs) noexcept
+                          alphabet_tuple_base<derived_type, component_types...> const & rhs) noexcept
 {
     return rhs == lhs;
 }
@@ -626,7 +626,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::WeaklyEqualityComparableByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator!=(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
+                          alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs != lhs;
 }
@@ -637,7 +637,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<(indirect_component_type const & lhs,
-                         cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
+                         alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs > lhs;
 }
@@ -648,7 +648,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>(indirect_component_type const & lhs,
-                         cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
+                         alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs < lhs;
 }
@@ -659,7 +659,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator<=(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
+                          alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs >= lhs;
 }
@@ -670,7 +670,7 @@ template <typename indirect_component_type, typename derived_type, typename ...i
              !detail::WeaklyOrderedByMembersWith<indirect_component_type, derived_type>
 //!\endcond
 constexpr bool operator>=(indirect_component_type const & lhs,
-                          cartesian_composition<derived_type, indirect_component_types...> const & rhs) noexcept
+                          alphabet_tuple_base<derived_type, indirect_component_types...> const & rhs) noexcept
 {
     return rhs <= lhs;
 }
@@ -683,7 +683,7 @@ namespace std
 
 //!\brief Obtains the type of the specified element.
 //!\relates seqan3::pod_tuple
-template <std::size_t i, seqan3::detail::cartesian_composition_concept tuple_t>
+template <std::size_t i, seqan3::detail::alphabet_tuple_base_concept tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
@@ -692,7 +692,7 @@ struct tuple_element<i, tuple_t>
 
 //!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
 //!\relates seqan3::pod_tuple
-template <seqan3::detail::cartesian_composition_concept tuple_t>
+template <seqan3::detail::alphabet_tuple_base_concept tuple_t>
 struct tuple_size<tuple_t> :
     public std::integral_constant<size_t, tuple_t::seqan3_cartesian_components::size()>
 {};

@@ -16,7 +16,7 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
 namespace seqan3
@@ -46,22 +46,22 @@ namespace seqan3
  * while the character values are taken from the sequence alphabet and the phred
  * values are taken from the quality alphabet.
  *
- * As with all `seqan3::cartesian_composition` s you may access the individual
+ * As with all `seqan3::alphabet_tuple_base` s you may access the individual
  * alphabet letters in regular c++ tuple notation, i.e. `get<0>(t)` and objects
  * can be brace-initialised with the individual members.
  *
  * \snippet test/snippet/alphabet/quality/qualified.cpp general
  *
- * This seqan3::cartesian_composition itself fulfils both seqan3::Alphabet and seqan3::QualityAlphabet.
+ * This seqan3::alphabet_tuple_base itself fulfils both seqan3::Alphabet and seqan3::QualityAlphabet.
  */
 template <Alphabet sequence_alphabet_t, QualityAlphabet quality_alphabet_t>
 class qualified :
-    public cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
+    public alphabet_tuple_base<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                  sequence_alphabet_t, quality_alphabet_t>
 {
 private:
     //!\brief The base type.
-    using base_type = cartesian_composition<qualified<sequence_alphabet_t, quality_alphabet_t>,
+    using base_type = alphabet_tuple_base<qualified<sequence_alphabet_t, quality_alphabet_t>,
                                             sequence_alphabet_t, quality_alphabet_t>;
 
 public:
@@ -96,13 +96,13 @@ public:
     using base_type::operator<;
     using base_type::operator>;
 
-    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr qualified(component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr qualified(indirect_component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr qualified & operator=(indirect_component_type const alph) noexcept {} ))
     //!\}
 

@@ -22,7 +22,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/composition/detail.hpp>
+#include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/detail/alphabet_base.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/int_types.hpp>
@@ -86,7 +86,7 @@ inline bool constexpr one_alternative_is<union_composition<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires cartesian_composition_concept<target_t> &&
+    requires alphabet_tuple_base_concept<target_t> &&
              meta::in<detail::transformation_trait_or_t<recursive_cartesian_components<target_t>, meta::list<>>,
                       union_composition<alternatives...>>::value
 inline bool constexpr one_alternative_is<union_composition<alternatives...>,
@@ -126,7 +126,7 @@ inline bool constexpr one_alternative_is<union_composition<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires tuple_size_concept<target_t> && !cartesian_composition_concept<target_t>
+    requires tuple_size_concept<target_t> && !alphabet_tuple_base_concept<target_t>
 inline bool constexpr one_alternative_is<union_composition<alternatives...>,
                                          fun_t,
                                          target_t> = false;
@@ -165,7 +165,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/composition/union_composition.cpp usage
+ * \snippet test/snippet/alphabet/composite/union_composition.cpp usage
  */
 template <typename ...alternative_types>
 //!\cond
@@ -203,7 +203,7 @@ public:
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp holds_alternative
+     * \snippet test/snippet/alphabet/composite/union_composition.cpp holds_alternative
      */
     template <typename alternative_t>
     static constexpr bool holds_alternative() noexcept
@@ -225,7 +225,7 @@ public:
      * \tparam alternative_t One of the alternative types.
      * \param  alternative   The value of a alternative that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp value construction
+     * \snippet test/snippet/alphabet/composite/union_composition.cpp value construction
      */
     template <typename alternative_t>
     //!\cond
@@ -240,7 +240,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
      * \param  rhs The value that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp conversion
+     * \snippet test/snippet/alphabet/composite/union_composition.cpp conversion
      * \attention When selecting the alternative alphabet types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
@@ -277,7 +277,7 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
      * \param  rhs The value of an alternative.
      *
-     * \snippet test/snippet/alphabet/composition/union_composition.cpp subtype_construction
+     * \snippet test/snippet/alphabet/composite/union_composition.cpp subtype_construction
      */
     template <typename indirect_alternative_t>
     //!\cond

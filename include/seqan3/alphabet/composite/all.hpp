@@ -7,25 +7,25 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Meta-header for the composition submodule; includes all headers from alphabet/composition/.
+ * \brief Meta-header for the composite submodule; includes all headers from alphabet/composite/.
  */
 #pragma once
 
-#include <seqan3/alphabet/composition/cartesian_composition.hpp>
-#include <seqan3/alphabet/composition/union_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
+#include <seqan3/alphabet/composite/union_composition.hpp>
 
-/*!\defgroup composition Composition
+/*!\defgroup composite Composite
  * \brief Provides data structures joining multiple alphabets into a single alphabet.
  * \ingroup alphabet
  *
  * \par Introduction
  *
- * Composition alphabets are special alphabets that allow you to combine existing alphabets into new ones. For example,
+ * This module provides various templates that allow you to combine existing alphabets into new ones. For example,
  * you can add new characters to existing alphabets by using seqan3::union_composition or combine alphabets with quality
- * information by using seqan3::cartesian_composition.
+ * information by using seqan3::alphabet_tuple_base.
  *
- * We have currently two major composition alphabets:
- * * seqan3::cartesian_composition which roughly corresponds to the Cartesian product of the given types. It
+ * We have currently two major composite alphabets:
+ * * seqan3::alphabet_tuple_base which roughly corresponds to the Cartesian product of the given types. It
  *   behaves similar to std::tuple, but it is specialised for alphabets.
  * * seqan3::union_composition which roughly corresponds to the Union of the given types. It behaves similar to
  *   std::variant, but it is specialised for alphabets.

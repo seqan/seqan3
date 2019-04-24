@@ -122,7 +122,7 @@ public:
  * The derived type needs to provide an `.on_update()` member function that performs the changes in the underlying
  * data structure.
  *
- * See seqan3::bitcompressed_vector or seqan3::cartesian_composition for examples of how this class is used.
+ * See seqan3::bitcompressed_vector or seqan3::alphabet_tuple_base for examples of how this class is used.
  */
 template <typename derived_type, typename alphabet_type>
 class alphabet_proxy : public alphabet_base<derived_type,
@@ -274,7 +274,7 @@ public:
         return to_phred(operator alphabet_type());
     }
 
-#if 0 // this currently causes GCC ICE in cartesian_composition test
+#if 0 // this currently causes GCC ICE in alphabet_tuple_base test
     constexpr alphabet_type complement() const noexcept
         requires NucleotideAlphabet<alphabet_type>
     {

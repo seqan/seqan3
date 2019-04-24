@@ -298,7 +298,7 @@ namespace seqan3
 template <typename tuple_t>
 //!\cond
     requires !std::ranges::InputRange<tuple_t> &&
-             !Alphabet<remove_cvref_t<tuple_t>> && // exclude cartesian_composition
+             !Alphabet<remove_cvref_t<tuple_t>> && // exclude alphabet_tuple_base
              tuple_like_concept<remove_cvref_t<tuple_t>>
 //!\endcond
 inline debug_stream_type & operator<<(debug_stream_type & s, tuple_t && t)

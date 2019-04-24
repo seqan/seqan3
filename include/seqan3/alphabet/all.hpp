@@ -155,7 +155,7 @@
 
 #include <seqan3/alphabet/adaptation/all.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/alphabet/composition/all.hpp>
+#include <seqan3/alphabet/composite/all.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
 #include <seqan3/alphabet/mask/all.hpp>

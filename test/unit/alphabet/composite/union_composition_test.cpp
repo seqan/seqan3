@@ -9,7 +9,7 @@
 
 #include <variant>
 
-#include <seqan3/alphabet/composition/union_composition.hpp>
+#include <seqan3/alphabet/composite/union_composition.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 

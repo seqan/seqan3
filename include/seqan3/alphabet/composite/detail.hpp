@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides implementation detail for seqan3::union_composition and seqan3::cartesian_composition.
+ * \brief Provides implementation detail for seqan3::union_composition and seqan3::alphabet_tuple_base.
  */
 
 #pragma once
@@ -20,12 +20,12 @@ namespace seqan3::detail
 {
 
 // ------------------------------------------------------------------
-// cartesian_composition_concept
+// alphabet_tuple_base_concept
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::detail::cartesian_composition_concept <>
+/*!\interface seqan3::detail::alphabet_tuple_base_concept <>
  * \extends seqan3::Semialphabet
- * \brief seqan3::cartesian_composition and its specialisations model this concept.
+ * \brief seqan3::alphabet_tuple_base and its specialisations model this concept.
  * \ingroup alphabet
  *
  * \details
@@ -35,7 +35,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT cartesian_composition_concept = requires
+SEQAN3_CONCEPT alphabet_tuple_base_concept = requires
 {
     typename t::seqan3_cartesian_components;
     typename t::seqan3_recursive_cartesian_components;
@@ -46,19 +46,19 @@ SEQAN3_CONCEPT cartesian_composition_concept = requires
 // cartesian_components
 // ------------------------------------------------------------------
 
-/*!\brief Exposes for seqan3::cartesian_composition its components as a meta::list [base template].
+/*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list [base template].
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
  */
 template <typename t>
 struct cartesian_components;
 
-/*!\brief Exposes for seqan3::cartesian_composition its components as a meta::list
- *        [specialisation for seqan3::cartesian_composition].
+/*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list
+ *        [specialisation for seqan3::alphabet_tuple_base].
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
  */
-template <cartesian_composition_concept t>
+template <alphabet_tuple_base_concept t>
 struct cartesian_components<t>
 {
     //!\brief The returned type.
@@ -69,7 +69,7 @@ struct cartesian_components<t>
 // recursive_cartesian_components
 // ------------------------------------------------------------------
 
-/*!\brief Exposes for seqan3::cartesian_composition its components and those components' components (in the case of
+/*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
  *        nested compositions) as a meta::list [base template].
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
@@ -77,12 +77,12 @@ struct cartesian_components<t>
 template <typename t>
 struct recursive_cartesian_components;
 
-/*!\brief Exposes for seqan3::cartesian_composition its components and those components' components (in the case of
- *        nested compositions) as a meta::list [specialisation for seqan3::cartesian_composition].
+/*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
+ *        nested compositions) as a meta::list [specialisation for seqan3::alphabet_tuple_base].
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
  */
-template <cartesian_composition_concept t>
+template <alphabet_tuple_base_concept t>
 struct recursive_cartesian_components<t>
 {
     //!\brief The returned type.
@@ -171,6 +171,6 @@ template <typename derived_type,
 //!\cond
     requires (detail::ConstexprSemialphabet<component_types> && ...)
 //!\endcond
-class cartesian_composition;
+class alphabet_tuple_base;
 
 } // namespace seqan3
