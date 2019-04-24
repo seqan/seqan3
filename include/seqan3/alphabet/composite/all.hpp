@@ -12,7 +12,7 @@
 #pragma once
 
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
-#include <seqan3/alphabet/composite/union_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_variant.hpp>
 
 /*!\defgroup composite Composite
  * \brief Provides data structures joining multiple alphabets into a single alphabet.
@@ -20,13 +20,13 @@
  *
  * \par Introduction
  *
- * This module provides various templates that allow you to combine existing alphabets into new ones. For example,
- * you can add new characters to existing alphabets by using seqan3::union_composition or combine alphabets with quality
+ * This module provides various class templates that allow you to combine existing alphabets into new ones. For example,
+ * you can add new characters to existing alphabets by using seqan3::alphabet_variant or combine alphabets with quality
  * information by using seqan3::alphabet_tuple_base.
  *
  * We have currently two major composite alphabets:
- * * seqan3::alphabet_tuple_base which roughly corresponds to the Cartesian product of the given types. It
- *   behaves similar to std::tuple, but it is specialised for alphabets.
- * * seqan3::union_composition which roughly corresponds to the Union of the given types. It behaves similar to
- *   std::variant, but it is specialised for alphabets.
+ * * seqan3::alphabet_tuple_base which can be used to create a std::tuple like object that still models
+ *   seqan3::Alphabet.
+ * * seqan3::alphabet_variant which roughly corresponds to the Union of the given types. It behaves similar to
+ *   std::variant, but also models seqan3::Alphabet.
  */

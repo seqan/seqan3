@@ -115,7 +115,7 @@ public:
  * This class ensures that the proxy itself also models seqan3::Semialphabet, seqan3::Alphabet,
  * seqan3::QualityAlphabet, seqan3::NucleotideAlphabet and/or seqan3::AminoacidAlphabet if the emulated type models
  * these. This makes sure that function templates which accept the original, also accept the proxy. An exception
- * are multi-layered compositions of alphabets where the proxy currently does not support access via `get`.
+ * are multi-layered composites of alphabets where the proxy currently does not support access via `get`.
  *
  * ### Implementation notes
  *
@@ -263,7 +263,7 @@ public:
     {
         using seqan3::to_phred;
         /* (smehringer) Explicit conversion instead of static_cast:
-         * The cartesian composition qualified returns a component_proxy which inherits from alphabet_proxy_base.
+         * The tuple composite qualified returns a component_proxy which inherits from alphabet_proxy_base.
          * The qualified alphabet itself inherits from quality_base.
          * Now when accessing get<1>(seq_qual_alph) we want to call to_phred at some point because we want the quality,
          * therefore the to_phred function from alphabet_proxy is called, but this function did a static_cast to the

@@ -13,9 +13,9 @@
 using namespace seqan3;
 
 template <typename type1, typename type2>
-struct test_composition : public alphabet_tuple_base<test_composition<type1, type2>, type1, type2>
+struct test_composite : public alphabet_tuple_base<test_composite<type1, type2>, type1, type2>
 {
-    using base_t = alphabet_tuple_base<test_composition<type1, type2>, type1, type2>;
+    using base_t = alphabet_tuple_base<test_composite<type1, type2>, type1, type2>;
     using base_t::base_t;
     using base_t::operator=;
 
@@ -31,16 +31,16 @@ template <typename T>
 class alphabet_tuple_base_test : public ::testing::Test {};
 
 template <>
-class alphabet_tuple_base_test<test_composition<dna4, dna5>> : public ::testing::Test
+class alphabet_tuple_base_test<test_composite<dna4, dna5>> : public ::testing::Test
 {
 public:
-    using T = test_composition<dna4, dna5>;
+    using T = test_composite<dna4, dna5>;
 
     T instance = T{value_1(), value_2()};
     T zero_instance = T{decltype(value_1()){}, decltype(value_2()){}};
     size_t tup_size{2};
 
-    // test_composition<dna4, dna5>
+    // test_composite<dna4, dna5>
     // -------------------------------------------------------------------------
     dna4 value_1()
     {
@@ -174,12 +174,12 @@ public:
     }
 };
 
-using composition_types = ::testing::Types<test_composition<dna4, dna5>,
+using composite_types = ::testing::Types<test_composite<dna4, dna5>,
                                            structured_rna<rna4, dot_bracket3>,
                                            structured_aa<aa27, dssp9>,
                                            qualified<dna4, phred42>>;
 
-TYPED_TEST_CASE(alphabet_tuple_base_test, composition_types);
+TYPED_TEST_CASE(alphabet_tuple_base_test, composite_types);
 
 TYPED_TEST(alphabet_tuple_base_test, concept_check)
 {

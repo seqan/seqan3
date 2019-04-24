@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides implementation detail for seqan3::union_composition and seqan3::alphabet_tuple_base.
+ * \brief Provides implementation detail for seqan3::alphabet_variant and seqan3::alphabet_tuple_base.
  */
 
 #pragma once
@@ -37,13 +37,13 @@ namespace seqan3::detail
 template <typename t>
 SEQAN3_CONCEPT alphabet_tuple_base_concept = requires
 {
-    typename t::seqan3_cartesian_components;
-    typename t::seqan3_recursive_cartesian_components;
+    typename t::seqan3_tuple_components;
+    typename t::seqan3_recursive_tuple_components;
 };
 //!\endcond
 
 // ------------------------------------------------------------------
-// cartesian_components
+// tuple_components
 // ------------------------------------------------------------------
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list [base template].
@@ -51,7 +51,7 @@ SEQAN3_CONCEPT alphabet_tuple_base_concept = requires
  * \ingroup alphabet
  */
 template <typename t>
-struct cartesian_components;
+struct tuple_components;
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components as a meta::list
  *        [specialisation for seqan3::alphabet_tuple_base].
@@ -59,34 +59,34 @@ struct cartesian_components;
  * \ingroup alphabet
  */
 template <alphabet_tuple_base_concept t>
-struct cartesian_components<t>
+struct tuple_components<t>
 {
     //!\brief The returned type.
-    using type = typename t::seqan3_cartesian_components;
+    using type = typename t::seqan3_tuple_components;
 };
 
 // ------------------------------------------------------------------
-// recursive_cartesian_components
+// recursive_tuple_components
 // ------------------------------------------------------------------
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
- *        nested compositions) as a meta::list [base template].
+ *        nested composites) as a meta::list [base template].
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
  */
 template <typename t>
-struct recursive_cartesian_components;
+struct recursive_tuple_components;
 
 /*!\brief Exposes for seqan3::alphabet_tuple_base its components and those components' components (in the case of
- *        nested compositions) as a meta::list [specialisation for seqan3::alphabet_tuple_base].
+ *        nested composites) as a meta::list [specialisation for seqan3::alphabet_tuple_base].
  * \extends seqan3::TransformationTrait
  * \ingroup alphabet
  */
 template <alphabet_tuple_base_concept t>
-struct recursive_cartesian_components<t>
+struct recursive_tuple_components<t>
 {
     //!\brief The returned type.
-    using type = typename t::seqan3_recursive_cartesian_components;
+    using type = typename t::seqan3_recursive_tuple_components;
 };
 
 // ------------------------------------------------------------------
@@ -164,7 +164,7 @@ template <typename ...alternative_types>
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond
-class union_composition;
+class alphabet_variant;
 
 template <typename derived_type,
           typename ...component_types>

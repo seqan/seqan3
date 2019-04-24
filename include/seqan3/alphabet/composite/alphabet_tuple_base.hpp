@@ -35,12 +35,12 @@ namespace seqan3::detail
 
 /*!\brief Evaluates to true if one of the components of seqan3::alphabet_tuple_base satisifes a compile-time
  *        predicate.
- * \tparam cartesian_t         A specialisation of seqan3::alphabet_tuple_base.
- * \tparam cartesian_derived_t The CRTP derived type of `cartesian_t`.
+ * \tparam tuple_t         A specialisation of seqan3::alphabet_tuple_base.
+ * \tparam tuple_derived_t The CRTP derived type of `tuple_t`.
  * \tparam fun_t               A template template that takes target_t as argument and exposes an `invoke` member type
  *                             that evaluates some predicate and returns `std::true_type` or `std::false_type`.
  * \tparam target_t            The type you wish to query.
- * \ingroup composition
+ * \ingroup composite
  *
  * \details
  *
@@ -49,81 +49,81 @@ namespace seqan3::detail
  */
 
 // anchor is false
-template <typename cartesian_t, typename cartesian_derived_t, template <typename> typename fun_t, typename other_t>
+template <typename tuple_t, typename tuple_derived_t, template <typename> typename fun_t, typename other_t>
 inline bool constexpr one_component_is = false;
 
 //!\cond
 
 // default
-template <typename ... cartesian_comps,
-          typename cartesian_derived_t,
+template <typename ... tuple_comps,
+          typename tuple_derived_t,
           template <typename> typename fun_t,
           typename other_t>
-inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
-                                       cartesian_derived_t,
+inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
+                                       tuple_derived_t,
                                        fun_t,
                                        other_t> =
-    !meta::empty<meta::find_if<meta::list<cartesian_comps...>, fun_t<other_t>>>::value;
+    !meta::empty<meta::find_if<meta::list<tuple_comps...>, fun_t<other_t>>>::value;
     //TODO do without meta
 
 // guard against self
-template <typename ... cartesian_comps,
-          typename cartesian_derived_t,
+template <typename ... tuple_comps,
+          typename tuple_derived_t,
           template <typename> typename fun_t>
-inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
-                                       cartesian_derived_t,
+inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
+                                       tuple_derived_t,
                                        fun_t,
-                                       alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>> = false;
+                                       alphabet_tuple_base<tuple_derived_t, tuple_comps...>> = false;
 
 // guard against self (derived)
-template <typename ... cartesian_comps,
-          typename cartesian_derived_t,
+template <typename ... tuple_comps,
+          typename tuple_derived_t,
           template <typename> typename fun_t>
-inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
-                                       cartesian_derived_t,
+inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
+                                       tuple_derived_t,
                                        fun_t,
-                                       cartesian_derived_t> = false;
+                                       tuple_derived_t> = false;
 
 // guard against types that have conversion operators to derived
-template <typename ... cartesian_comps,
-          typename cartesian_derived_t,
+template <typename ... tuple_comps,
+          typename tuple_derived_t,
           template <typename> typename fun_t,
           typename other_t>
-    requires ConvertibleToByMember<other_t, cartesian_derived_t>
-inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
-                                       cartesian_derived_t,
+    requires ConvertibleToByMember<other_t, tuple_derived_t>
+inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
+                                       tuple_derived_t,
                                        fun_t,
                                        other_t> = false;
 
 // guard against components
-template <typename ... cartesian_comps,
-          typename cartesian_derived_t,
+template <typename ... tuple_comps,
+          typename tuple_derived_t,
           template <typename> typename fun_t,
           typename other_t>
-    requires type_in_pack_v<other_t, cartesian_comps...>
-//     requires meta::in<recursive_cartesian_components<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>>::type,
+    requires type_in_pack_v<other_t, tuple_comps...>
+//     requires meta::in<recursive_tuple_components<alphabet_tuple_base<tuple_derived_t, tuple_comps...>>::type,
 //                       other_t>::value
-inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
-                                       cartesian_derived_t,
+inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
+                                       tuple_derived_t,
                                        fun_t,
                                        other_t> = false;
 
 // during comparisons, guard against types that could be converted to self (because that is preferred)
 // (may not be done during assignment or construction because of recursiveness)
-template <typename ... cartesian_comps,
-          typename cartesian_derived_t,
+template <typename ... tuple_comps,
+          typename tuple_derived_t,
           typename other_t>
-    requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
-inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
-                                       cartesian_derived_t,
+    requires ImplicitlyConvertibleTo<other_t, tuple_derived_t>
+inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
+                                       tuple_derived_t,
                                        weakly_equality_comparable_with,
                                        other_t> = false;
-template <typename ... cartesian_comps,
-          typename cartesian_derived_t,
+template <typename ... tuple_comps,
+          typename tuple_derived_t,
           typename other_t>
-    requires ImplicitlyConvertibleTo<other_t, cartesian_derived_t>
-inline bool constexpr one_component_is<alphabet_tuple_base<cartesian_derived_t, cartesian_comps...>,
-                                       cartesian_derived_t,
+    requires ImplicitlyConvertibleTo<other_t, tuple_derived_t>
+inline bool constexpr one_component_is<alphabet_tuple_base<tuple_derived_t, tuple_comps...>,
+                                       tuple_derived_t,
                                        weakly_ordered_with,
                                        other_t> = false;
 //!\endcond
@@ -143,7 +143,7 @@ decltype(auto) get();
 //!\endcond
 
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
- * \ingroup composition
+ * \ingroup composite
  * \implements seqan3::Semialphabet
  * \implements seqan3::detail::ConstexprSemialphabet
  * \tparam first_component_type Type of the first letter; must model seqan3::Semialphabet.
@@ -190,7 +190,7 @@ private:
                                 (1 * ... * alphabet_size_v<component_types>),
                                 void>; // no char type, because this is only semi_alphabet
 
-    //!\brief A meta::list The types of each component in the composition
+    //!\brief A meta::list The types of each component in the composite
     using component_list = meta::list<component_types...>;
 
     //!\brief Is set to `true` if the type is contained in the type list.
@@ -287,12 +287,12 @@ public:
 
     //!\brief Export this type's components in a visible manner.
     //!\private
-    using seqan3_cartesian_components = component_list;
+    using seqan3_tuple_components = component_list;
     //!\brief Export this type's components and possibly the components' components in a visible manner.
     //!\private
-    using seqan3_recursive_cartesian_components =
+    using seqan3_recursive_tuple_components =
         meta::concat<component_list,
-                     detail::transformation_trait_or_t<detail::recursive_cartesian_components<component_types>,
+                     detail::transformation_trait_or_t<detail::recursive_tuple_components<component_types>,
                                                        meta::list<>>...>;
 
     /*!\name Constructors, destructor and assignment
@@ -310,7 +310,7 @@ public:
 
     /*!\brief Construction via a value of one of the components.
      * \tparam component_type Must be one uniquely contained in the type
-                              list of the composition.
+                              list of the composite.
      * \param  alph           The value of a component that should be assigned.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
@@ -364,7 +364,7 @@ public:
 
     /*!\brief Assignment via a value of one of the components.
      * \tparam component_type One of the component types. Must be uniquely
-     *                        contained in the type list of the composition.
+     *                        contained in the type list of the composite.
      * \param  alph           The value of a component that should be assigned.
      *
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
@@ -687,14 +687,14 @@ template <std::size_t i, seqan3::detail::alphabet_tuple_base_concept tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
-    using type = meta::at_c<typename tuple_t::seqan3_cartesian_components, i>;
+    using type = meta::at_c<typename tuple_t::seqan3_tuple_components, i>;
 };
 
 //!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
 //!\relates seqan3::pod_tuple
 template <seqan3::detail::alphabet_tuple_base_concept tuple_t>
 struct tuple_size<tuple_t> :
-    public std::integral_constant<size_t, tuple_t::seqan3_cartesian_components::size()>
+    public std::integral_constant<size_t, tuple_t::seqan3_tuple_components::size()>
 {};
 
 } // namespace std

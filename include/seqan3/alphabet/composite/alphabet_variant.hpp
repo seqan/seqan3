@@ -8,7 +8,7 @@
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \author David Heller <david.heller AT fu-berlin.de>
- * \brief Contains seqan3::union_composition.
+ * \brief Contains seqan3::alphabet_variant.
  */
 
 #pragma once
@@ -36,13 +36,13 @@
 namespace seqan3::detail
 {
 
-/*!\brief Evaluates to true if the one of the alternatives of the seqan3::union_composition satisifes a compile-time
+/*!\brief Evaluates to true if the one of the alternatives of the seqan3::alphabet_variant satisifes a compile-time
  *        predicate.
- * \tparam uniont_t A specialisation of seqan3::union_composition.
+ * \tparam variantt_t A specialisation of seqan3::alphabet_variant.
  * \tparam fun_t    A template template that takes target_t as argument and exposes an `invoke` member type that
  *                  evaluates some predicate and returns `std::true_type` or `std::false_type`.
  * \tparam target_t The type you wish query.
- * \ingroup composition
+ * \ingroup composite
  *
  * \details
  *
@@ -50,7 +50,7 @@ namespace seqan3::detail
  * See the source file for more details.
  */
 // default is false
-template <typename union_t,
+template <typename variant_t,
           template <typename> typename fun_t,
           typename target_t>
 inline bool constexpr one_alternative_is = false;
@@ -61,7 +61,7 @@ inline bool constexpr one_alternative_is = false;
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-inline bool constexpr one_alternative_is<union_composition<alternatives...>,
+inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t>
  = !meta::empty<meta::find_if<meta::list<alternatives...>, fun_t<target_t>>>::value;
@@ -69,27 +69,27 @@ inline bool constexpr one_alternative_is<union_composition<alternatives...>,
 // guard against self
 template <typename ... alternatives,
           template <typename> typename fun_t>
-inline bool constexpr one_alternative_is<union_composition<alternatives...>,
+inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
-                                         union_composition<alternatives...>> = false;
+                                         alphabet_variant<alternatives...>> = false;
 
 // guard against types convertible to self without needing self's constructors
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires ConvertibleToByMember<target_t, union_composition<alternatives...>>
-inline bool constexpr one_alternative_is<union_composition<alternatives...>,
+    requires ConvertibleToByMember<target_t, alphabet_variant<alternatives...>>
+inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
 
-// guard against cartesian compositions that contain the union somewhere (they can implicitly convert at source)
+// guard against tuple composites that contain the variant somewhere (they can implicitly convert at source)
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires alphabet_tuple_base_concept<target_t> &&
-             meta::in<detail::transformation_trait_or_t<recursive_cartesian_components<target_t>, meta::list<>>,
-                      union_composition<alternatives...>>::value
-inline bool constexpr one_alternative_is<union_composition<alternatives...>,
+             meta::in<detail::transformation_trait_or_t<recursive_tuple_components<target_t>, meta::list<>>,
+                      alphabet_variant<alternatives...>>::value
+inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
 
@@ -98,7 +98,7 @@ template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires type_in_pack_v<target_t, alternatives...>
-inline bool constexpr one_alternative_is<union_composition<alternatives...>,
+inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
 
@@ -109,15 +109,15 @@ template <typename ... alternatives,
     requires type_in_pack_v<target_t, alternatives...>
 inline bool constexpr one_alternative_is<target_t,
                                          fun_t,
-                                         union_composition<alternatives...>> = false;
+                                         alphabet_variant<alternatives...>> = false;
 
 // guard against ranges and iterators over self to prevent recursive instantiation
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
     //NO, it's not possible to use the value_type metafunction here
-    requires requires { std::Same<typename target_t::value_type, union_composition<alternatives...>>; }
-inline bool constexpr one_alternative_is<union_composition<alternatives...>,
+    requires requires { std::Same<typename target_t::value_type, alphabet_variant<alternatives...>>; }
+inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
 
@@ -127,7 +127,7 @@ template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
     requires tuple_size_concept<target_t> && !alphabet_tuple_base_concept<target_t>
-inline bool constexpr one_alternative_is<union_composition<alternatives...>,
+inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
 
@@ -139,7 +139,7 @@ namespace seqan3
 {
 
 /*!\brief A combined alphabet that can hold values of either of its alternatives.
- * \ingroup composition
+ * \ingroup composite
  * \tparam ...alternative_types Types of possible values (at least 2); all must model seqan3::Alphabet and be
  *                              unique.
  * \implements seqan3::Alphabet
@@ -149,9 +149,9 @@ namespace seqan3
 
  * \details
  *
- * The union_composition represents the union of two or more alternative alphabets (e.g. the
+ * The alphabet_variant represents the variant of two or more alternative alphabets (e.g. the
  * four letter DNA alternative + the gap alternative). It behaves similar to a
- * [union](https://en.cppreference.com/w/cpp/language/union) or std::variant, but it preserves the
+ * [variant](https://en.cppreference.com/w/cpp/language/variant) or std::variant, but it preserves the
  * seqan3::Alphabet.
  *
  * Short description:
@@ -165,7 +165,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \snippet test/snippet/alphabet/composite/union_composition.cpp usage
+ * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp usage
  */
 template <typename ...alternative_types>
 //!\cond
@@ -173,24 +173,24 @@ template <typename ...alternative_types>
              (sizeof...(alternative_types) >= 2)
              //TODO same char_type
 //!\endcond
-class union_composition : public alphabet_base<union_composition<alternative_types...>,
+class alphabet_variant : public alphabet_base<alphabet_variant<alternative_types...>,
                                                (static_cast<size_t>(alphabet_size_v<alternative_types>) + ...),
                                                char> //TODO underlying char t
 
 {
 private:
     //!\brief The base type.
-    using base_t = alphabet_base<union_composition<alternative_types...>,
+    using base_t = alphabet_base<alphabet_variant<alternative_types...>,
                                                    (static_cast<size_t>(alphabet_size_v<alternative_types>) + ...),
                                                    char>;
     //!\brief Befriend the base type.
     friend base_t;
 
-    //!\brief A meta::list of the types of each alternative in the composition
+    //!\brief A meta::list of the types of each alternative in the composite
     using alternatives = meta::list<alternative_types...>;
 
     static_assert(std::Same<alternatives, meta::unique<alternatives>>,
-                  "All types in a union_composition must be distinct.");
+                  "All types in a alphabet_variant must be distinct.");
 
 public:
     using base_t::value_size;
@@ -203,7 +203,7 @@ public:
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
-     * \snippet test/snippet/alphabet/composite/union_composition.cpp holds_alternative
+     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp holds_alternative
      */
     template <typename alternative_t>
     static constexpr bool holds_alternative() noexcept
@@ -214,24 +214,24 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr union_composition() noexcept : base_t{} {}                           //!< Defaulted.
-    constexpr union_composition(union_composition const &) = default;              //!< Defaulted.
-    constexpr union_composition(union_composition &&) = default;                   //!< Defaulted.
-    constexpr union_composition & operator=(union_composition const &) = default;  //!< Defaulted.
-    constexpr union_composition & operator=(union_composition &&) = default;       //!< Defaulted.
-    ~union_composition() = default;                                                //!< Defaulted.
+    constexpr alphabet_variant()                                     noexcept = default; //!< Defaulted.
+    constexpr alphabet_variant(alphabet_variant const &)             noexcept = default; //!< Defaulted.
+    constexpr alphabet_variant(alphabet_variant &&)                  noexcept = default; //!< Defaulted.
+    constexpr alphabet_variant & operator=(alphabet_variant const &) noexcept = default; //!< Defaulted.
+    constexpr alphabet_variant & operator=(alphabet_variant &&)      noexcept = default; //!< Defaulted.
+    ~alphabet_variant()                                              noexcept = default; //!< Defaulted.
 
     /*!\brief Construction via the value of an alternative.
      * \tparam alternative_t One of the alternative types.
      * \param  alternative   The value of a alternative that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composite/union_composition.cpp value construction
+     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp value construction
      */
     template <typename alternative_t>
     //!\cond
         requires holds_alternative<alternative_t>()
     //!\endcond
-    constexpr union_composition(alternative_t const & alternative) noexcept
+    constexpr alphabet_variant(alternative_t const & alternative) noexcept
     {
         assign_rank(rank_by_type_(alternative));
     }
@@ -240,20 +240,20 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternative types is constructible from.
      * \param  rhs The value that should be assigned.
      *
-     * \snippet test/snippet/alphabet/composite/union_composition.cpp conversion
+     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp conversion
      * \attention When selecting the alternative alphabet types which require only implicit conversion
      * or constructor calls, are preferred over those that require explicit ones.
      */
     template <typename indirect_alternative_t>
     //!\cond
-        requires !detail::one_alternative_is<union_composition,
+        requires !detail::one_alternative_is<alphabet_variant,
                                              detail::implicitly_convertible_from,
                                              indirect_alternative_t> &&
-                 detail::one_alternative_is<union_composition,
+                 detail::one_alternative_is<alphabet_variant,
                                             detail::constructible_from,
                                             indirect_alternative_t>
     //!\endcond
-    constexpr union_composition(indirect_alternative_t const & rhs) noexcept
+    constexpr alphabet_variant(indirect_alternative_t const & rhs) noexcept
     {
         assign_rank(rank_by_type_(meta::front<meta::find_if<alternatives,
                                                             detail::constructible_from<indirect_alternative_t>>>(rhs)));
@@ -261,10 +261,10 @@ public:
 
     //!\cond
     template <typename indirect_alternative_t>
-        requires detail::one_alternative_is<union_composition,
+        requires detail::one_alternative_is<alphabet_variant,
                                             detail::implicitly_convertible_from,
                                             indirect_alternative_t>
-    constexpr union_composition(indirect_alternative_t const & rhs) noexcept
+    constexpr alphabet_variant(indirect_alternative_t const & rhs) noexcept
     {
         assign_rank(
             rank_by_type_(
@@ -277,21 +277,21 @@ public:
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
      * \param  rhs The value of an alternative.
      *
-     * \snippet test/snippet/alphabet/composite/union_composition.cpp subtype_construction
+     * \snippet test/snippet/alphabet/composite/alphabet_variant.cpp subtype_construction
      */
     template <typename indirect_alternative_t>
     //!\cond
-        requires !detail::one_alternative_is<union_composition,
+        requires !detail::one_alternative_is<alphabet_variant,
                                              detail::implicitly_convertible_from,
                                              indirect_alternative_t> &&             // constructor takes care
-                 !detail::one_alternative_is<union_composition,
+                 !detail::one_alternative_is<alphabet_variant,
                                              detail::constructible_from,
                                              indirect_alternative_t> &&             // constructor takes care
-                 detail::one_alternative_is<union_composition,
+                 detail::one_alternative_is<alphabet_variant,
                                             detail::assignable_from,
                                             indirect_alternative_t>
     //!\endcond
-    constexpr union_composition & operator=(indirect_alternative_t const & rhs) noexcept
+    constexpr alphabet_variant & operator=(indirect_alternative_t const & rhs) noexcept
     {
         using alternative_t = meta::front<meta::find_if<alternatives, detail::assignable_from<indirect_alternative_t>>>;
         alternative_t alternative{};
@@ -304,18 +304,18 @@ public:
     /*!\name Conversion (by index)
      * \{
      */
-    //!\brief Whether the union alphabet currently holds a value of the given alternative.
+    //!\brief Whether the variant alphabet currently holds a value of the given alternative.
     //!\tparam index Index of the alternative to check for.
     template <size_t index>
     constexpr bool is_alternative() const noexcept
     {
-        static_assert(index < value_size, "The union_composition contains less alternatives than you are checking.");
+        static_assert(index < value_size, "The alphabet_variant contains less alternatives than you are checking.");
         return (to_rank() >= partial_sum_sizes[index]) && (to_rank() < partial_sum_sizes[index + 1]);
     }
 
     /*!\brief Convert to the specified alphabet (throws if is_alternative() would be false).
      * \tparam index Index of the alternative to check for.
-     * \throws std::bad_variant_access If the union_alphabet currently holds the value of a different alternative.
+     * \throws std::bad_variant_access If the variant_alphabet currently holds the value of a different alternative.
      */
     template <size_t index>
     constexpr auto convert_to() const
@@ -349,7 +349,7 @@ public:
 
     /*!\copybrief convert_to()
      * \tparam alternative_t The type of the alternative that you wish to check for.
-     * \throws std::bad_variant_access If the union_alphabet currently holds the value of a different alternative.
+     * \throws std::bad_variant_access If the variant_alphabet currently holds the value of a different alternative.
      */
     template <typename alternative_t>
     constexpr alternative_t convert_to() const
@@ -372,9 +372,9 @@ public:
     //!\}
 
     /*!\name Comparison operators (against alternatives)
-     * \brief Defines comparison against alternatives, e.g. `union_composition<dna5, gap>{gap{}} == 'C'_dna5`. Only
+     * \brief Defines comparison against alternatives, e.g. `alphabet_variant<dna5, gap>{gap{}} == 'C'_dna5`. Only
      *        (in-)equality comparison is explicitly defined, because it would be difficult to argue about e.g.
-     *        `union_composition<dna5, gap>{gap{}} < 'C'_dna5`.
+     *        `alphabet_variant<dna5, gap>{gap{}} < 'C'_dna5`.
      * \{
      */
     template <typename alternative_t>
@@ -394,15 +394,15 @@ public:
 
     /*!\name Comparison operators (against indirect alternatives)
      * \brief Defines comparison against types that are comparable with alternatives, e.g.
-     *        `union_composition<dna5, gap>{'C'_dna5} == 'C'_rna5`. Only (in-)equality comparison is explicitly defined,
+     *        `alphabet_variant<dna5, gap>{'C'_dna5} == 'C'_rna5`. Only (in-)equality comparison is explicitly defined,
      *        because it would be difficult to argue about e.g.
-     *        `union_composition<dna5, gap>{gap{}} < 'C'_rna5`.
+     *        `alphabet_variant<dna5, gap>{gap{}} < 'C'_rna5`.
      * \{
      */
     template <typename indirect_alternative_type>
     constexpr bool operator==(indirect_alternative_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_alternative_is<union_composition,
+        requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with,
                                             indirect_alternative_type>
     //!\endcond
@@ -416,7 +416,7 @@ public:
     template <typename indirect_alternative_type>
     constexpr bool operator!=(indirect_alternative_type const & rhs) const noexcept
     //!\cond
-        requires detail::one_alternative_is<union_composition,
+        requires detail::one_alternative_is<alphabet_variant,
                                             detail::weakly_equality_comparable_with,
                                             indirect_alternative_type>
     //!\endcond
@@ -435,7 +435,7 @@ protected:
     template <size_t index, bool throws>
     constexpr auto convert_impl() const noexcept(!throws) -> meta::at_c<alternatives, index>
     {
-        static_assert(index < value_size, "The union_composition contains less alternatives than you are checking.");
+        static_assert(index < value_size, "The alphabet_variant contains less alternatives than you are checking.");
         using alternative_t = meta::at_c<alternatives, index>;
 
         if constexpr (throws)
@@ -470,7 +470,7 @@ protected:
 
     /*!\brief Compile-time generated lookup table which maps the rank to char.
      *
-     * A map generated at compile time where the key is the rank of the union
+     * A map generated at compile time where the key is the rank of the variant
      * of all alternatives and the value is the corresponding char of that rank
      * and alternative.
      *
@@ -556,25 +556,25 @@ protected:
 };
 
 /*!\name Comparison operators
- * \relates union_composition
+ * \relates alphabet_variant
  * \brief Free function (in-)equality comparison operators that forward to member operators (for types != self).
  *\{
  */
 template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator==(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
+constexpr bool operator==(lhs_t const & lhs, alphabet_variant<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
-             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>
 //!\endcond
 {
     return rhs == lhs;
 }
 
 template <typename lhs_t, typename ...alternative_types>
-constexpr bool operator!=(lhs_t const & lhs, union_composition<alternative_types...> const & rhs) noexcept
+constexpr bool operator!=(lhs_t const & lhs, alphabet_variant<alternative_types...> const & rhs) noexcept
 //!\cond
-    requires detail::WeaklyEqualityComparableByMembersWith<union_composition<alternative_types...>, lhs_t> &&
-             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, union_composition<alternative_types...>>
+    requires detail::WeaklyEqualityComparableByMembersWith<alphabet_variant<alternative_types...>, lhs_t> &&
+             !detail::WeaklyEqualityComparableByMembersWith<lhs_t, alphabet_variant<alternative_types...>>
 //!\endcond
 {
     return rhs != lhs;

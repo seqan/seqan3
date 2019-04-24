@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Contains quality alphabet compositions.
+ * \brief Contains quality alphabet composites.
  */
 
 #pragma once
@@ -32,17 +32,17 @@ namespace seqan3
  * \implements seqan3::StandardLayout
  *
  *
- * This composition pairs an arbitrary alphabet with a quality alphabet, where
+ * This composite pairs an arbitrary alphabet with a quality alphabet, where
  * each alphabet character is stored together with its quality score in a
  * single value. That way, you can can conveniently access the character and
  * score information at each position of the qualified-sequence.
  * The use case that this was designed for is a nucleotide sequence with
  * corresponding quality scores, e.g. obtained when reading in a FASTQ file
  * of Illumina reads.
- * The composition also allows to store quality scores for different or extended
+ * The composite also allows to store quality scores for different or extended
  * alphabets like a `qualified<char, phred42>` or a `qualified<gapped<dna4>, phred42>`
  * sequence.
- * The rank values correspond to numeric values in the size of the composition,
+ * The rank values correspond to numeric values in the size of the composite,
  * while the character values are taken from the sequence alphabet and the phred
  * values are taken from the quality alphabet.
  *

@@ -331,7 +331,7 @@ public:
     /*!\name Range-associated member types
      * \{
      */
-    //!\brief The union type of the alphabet type and gap symbol type (see seqan3::gapped).
+    //!\brief The variant type of the alphabet type and gap symbol type (see seqan3::gapped).
     using value_type = gapped<value_type_t<inner_type>>;
     //!\brief Use the value type as reference type because the underlying sequence must not be modified.
     using reference = value_type;

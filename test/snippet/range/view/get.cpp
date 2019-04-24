@@ -8,7 +8,7 @@ using namespace seqan3;
 int main()
 {
 //! [usage]
-// Create a vector of dna4 quality composition alphabet.
+// Create a vector of dna4 quality composite alphabet.
 std::vector<dna4q> qv{{'A'_dna4, phred42{0}}, {'C'_dna4, phred42{1}}, {'G'_dna4, phred42{2}}, {'T'_dna4, phred42{3}}};
 
 debug_stream << (qv | view::get<0> | view::to_char) << std::endl; // Prints [A,C,G,T]

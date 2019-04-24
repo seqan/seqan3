@@ -1,4 +1,4 @@
-#include <seqan3/alphabet/composite/union_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <gtest/gtest.h>
@@ -9,9 +9,9 @@ int main()
 
 {
 //! [usage]
-union_composition<dna5, gap> letter{};          // implicitly 'A'_dna5
-union_composition<dna5, gap> letter2{'C'_dna5}; // constructed from alternative (== 'C'_dna5)
-union_composition<dna5, gap> letter3{'U'_rna5}; // constructed from type that alternative is constructable from (== 'T'_dna5)
+alphabet_variant<dna5, gap> letter{};          // implicitly 'A'_dna5
+alphabet_variant<dna5, gap> letter2{'C'_dna5}; // constructed from alternative (== 'C'_dna5)
+alphabet_variant<dna5, gap> letter3{'U'_rna5}; // constructed from type that alternative is constructable from (== 'T'_dna5)
 
 letter2.assign_char('T');                       // == 'T'_dna5
 letter2.assign_char('-');                       // == gap{}
@@ -29,18 +29,18 @@ dna5 letter4 = letter2.convert_to<dna5>();      // this works
 
 {
 //! [holds_alternative]
-using union_t = union_composition<dna5, gap>;
+using variant_t = alphabet_variant<dna5, gap>;
 
-static_assert(union_t::holds_alternative<dna5>(), "dna5 is an alternative of union_t");
-static_assert(!union_t::holds_alternative<dna4>(), "dna4 is not an alternative of union_t");
-static_assert(union_t::holds_alternative<gap>(), "gap is an alternative of union_t");
+static_assert(variant_t::holds_alternative<dna5>(), "dna5 is an alternative of variant_t");
+static_assert(!variant_t::holds_alternative<dna4>(), "dna4 is not an alternative of variant_t");
+static_assert(variant_t::holds_alternative<gap>(), "gap is an alternative of variant_t");
 //! [holds_alternative]
 }
 
 {
 //! [value construction]
-union_composition<dna4, gap> letter1{'C'_dna4}; // or
-union_composition<dna4, gap> letter2 = gap{};
+alphabet_variant<dna4, gap> letter1{'C'_dna4}; // or
+alphabet_variant<dna4, gap> letter2 = gap{};
 //! [value construction]
 (void) letter1;
 (void) letter2;
@@ -48,14 +48,14 @@ union_composition<dna4, gap> letter2 = gap{};
 
 {
 //! [conversion]
-union_composition<dna4, gap> letter1{'C'_rna4};
+alphabet_variant<dna4, gap> letter1{'C'_rna4};
 //! [conversion]
 (void) letter1;
 }
 
 {
 //! [subtype_construction]
-union_composition<dna4, gap> letter1{};
+alphabet_variant<dna4, gap> letter1{};
 letter1 = 'C'_rna4;
 //! [subtype_construction]
 }

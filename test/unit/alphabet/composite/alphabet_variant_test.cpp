@@ -9,7 +9,7 @@
 
 #include <variant>
 
-#include <seqan3/alphabet/composite/union_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 
@@ -18,18 +18,18 @@
 
 using namespace seqan3;
 
-using union_composition_types = ::testing::Types<union_composition<dna4, gap>,
-                                                 union_composition<dna4, dna5, gap>,
-                                                 union_composition<char, gap>>;
+using alphabet_variant_types = ::testing::Types<alphabet_variant<dna4, gap>,
+                                                 alphabet_variant<dna4, dna5, gap>,
+                                                 alphabet_variant<char, gap>>;
 
-INSTANTIATE_TYPED_TEST_CASE_P(union_composition, alphabet, union_composition_types);
-INSTANTIATE_TYPED_TEST_CASE_P(union_composition, alphabet_constexpr, union_composition_types);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet, alphabet_variant_types);
+INSTANTIATE_TYPED_TEST_CASE_P(alphabet_variant, alphabet_constexpr, alphabet_variant_types);
 
-TEST(union_composition_test, initialise_from_component_alphabet)
+TEST(alphabet_variant_test, initialise_from_component_alphabet)
 {
     dna5 l('A'_rna5);
 
-    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using alphabet_t = alphabet_variant<dna4, dna5, gap>;
     using variant_t = std::variant<dna4, dna5, gap>;
 
     constexpr variant_t variant0{'A'_dna4};
@@ -74,9 +74,9 @@ TEST(union_composition_test, initialise_from_component_alphabet)
     EXPECT_EQ(letter9.to_rank(), 9);
 }
 
-TEST(union_composition_test, initialise_from_component_alphabet_subtype)
+TEST(alphabet_variant_test, initialise_from_component_alphabet_subtype)
 {
-    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using alphabet_t = alphabet_variant<dna4, dna5, gap>;
     using variant_t = std::variant<dna4, dna5, gap>;
 
     variant_t variant0{'A'_rna4};
@@ -117,9 +117,9 @@ TEST(union_composition_test, initialise_from_component_alphabet_subtype)
     EXPECT_EQ(letter8.to_rank(), 8);
 }
 
-TEST(union_composition_test, assign_from_component_alphabet)
+TEST(alphabet_variant_test, assign_from_component_alphabet)
 {
-    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using alphabet_t = alphabet_variant<dna4, dna5, gap>;
     using variant_t = std::variant<dna4, dna5, gap>;
     alphabet_t letter{};
     variant_t variant{};
@@ -162,9 +162,9 @@ TEST(union_composition_test, assign_from_component_alphabet)
     EXPECT_EQ(letter.to_rank(), 9);
 }
 
-TEST(union_composition_test, assign_from_component_alphabet_subtype)
+TEST(alphabet_variant_test, assign_from_component_alphabet_subtype)
 {
-    using alphabet_t = union_composition<dna4, dna5, gap>;
+    using alphabet_t = alphabet_variant<dna4, dna5, gap>;
     using variant_t = std::variant<dna4, dna5, gap>;
     alphabet_t letter{};
     variant_t variant{};
@@ -204,9 +204,9 @@ TEST(union_composition_test, assign_from_component_alphabet_subtype)
     EXPECT_EQ(letter.to_rank(), 8);
 }
 
-TEST(union_composition_test, compare_to_component_alphabet)
+TEST(alphabet_variant_test, compare_to_component_alphabet)
 {
-    using alphabet_t = union_composition<dna4, dna5>;
+    using alphabet_t = alphabet_variant<dna4, dna5>;
 
     constexpr alphabet_t letter0{'G'_dna4};
 
@@ -219,9 +219,9 @@ TEST(union_composition_test, compare_to_component_alphabet)
     EXPECT_NE('A'_dna5, letter0);
 }
 
-TEST(union_composition_test, compare_to_component_alphabet_subtype)
+TEST(alphabet_variant_test, compare_to_component_alphabet_subtype)
 {
-    using alphabet_t = union_composition<dna4, dna5>;
+    using alphabet_t = alphabet_variant<dna4, dna5>;
 
     constexpr alphabet_t letter0{'G'_dna4};
 
@@ -234,27 +234,27 @@ TEST(union_composition_test, compare_to_component_alphabet_subtype)
     EXPECT_NE('A'_rna5, letter0);
 }
 
-TEST(union_composition_test, fulfills_concepts)
+TEST(alphabet_variant_test, fulfills_concepts)
 {
-    EXPECT_TRUE((Alphabet<union_composition<dna5, gap>>));
+    EXPECT_TRUE((Alphabet<alphabet_variant<dna5, gap>>));
 }
 
-TEST(union_composition_test, rank_type)
+TEST(alphabet_variant_test, rank_type)
 {
-    using alphabet1_t = union_composition<dna4, dna5, gap>;
-    using alphabet2_t = union_composition<gap, dna5, dna4>;
-    using alphabet3_t = union_composition<char, gap>;
+    using alphabet1_t = alphabet_variant<dna4, dna5, gap>;
+    using alphabet2_t = alphabet_variant<gap, dna5, dna4>;
+    using alphabet3_t = alphabet_variant<char, gap>;
 
     EXPECT_TRUE((std::is_same_v<alphabet1_t::rank_type, uint8_t>));
     EXPECT_TRUE((std::is_same_v<alphabet2_t::rank_type, uint8_t>));
     EXPECT_TRUE((std::is_same_v<alphabet3_t::rank_type, uint16_t>));
 }
 
-TEST(union_composition_test, value_size)
+TEST(alphabet_variant_test, value_size)
 {
-    using alphabet1_t = union_composition<dna4, dna5, gap>;
-    using alphabet2_t = union_composition<gap, dna5, dna4>;
-    using alphabet3_t = union_composition<char, gap>;
+    using alphabet1_t = alphabet_variant<dna4, dna5, gap>;
+    using alphabet2_t = alphabet_variant<gap, dna5, dna4>;
+    using alphabet3_t = alphabet_variant<char, gap>;
 
     EXPECT_TRUE((std::is_same_v<decltype(alphabet1_t::value_size), const uint8_t>));
     EXPECT_TRUE((std::is_same_v<decltype(alphabet2_t::value_size), const uint8_t>));
@@ -265,9 +265,9 @@ TEST(union_composition_test, value_size)
     EXPECT_EQ(alphabet3_t::value_size, 257);
 }
 
-TEST(union_composition_test, convert_by_index)
+TEST(alphabet_variant_test, convert_by_index)
 {
-    union_composition<dna4, dna5, gap> u;
+    alphabet_variant<dna4, dna5, gap> u;
     u = 'C'_dna5;
 
     EXPECT_FALSE(u.is_alternative<0>());
@@ -287,9 +287,9 @@ TEST(union_composition_test, convert_by_index)
     EXPECT_EQ(g, gap{});
 }
 
-TEST(union_composition_test, convert_by_type)
+TEST(alphabet_variant_test, convert_by_type)
 {
-    union_composition<dna4, dna5, gap> u;
+    alphabet_variant<dna4, dna5, gap> u;
     u = 'C'_dna5;
 
     EXPECT_FALSE(u.is_alternative<dna4>());

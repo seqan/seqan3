@@ -166,7 +166,7 @@ We distinguish between three types:
 3. **Protein structure alphabet**. The [DSSP](\ref seqan3::dssp9) format represents secondary structure elements like
    alpha helices and turns.
 
-You can build a [Cartesian Composition](\ref seqan3::alphabet_tuple_base) with a nucleotide and quality
+You can build an [Alphabet Tuple Composite](\ref seqan3::alphabet_tuple_base) with a nucleotide and quality
 alphabet, or nucleotide / amino acid and structure alphabet that stores both information together.
 For the use cases just described we offer pre-defined composites (seqan3::qualified, seqan3::structured_rna,
 seqan3::structured_aa). See our API documentation for a detailed description of each.
@@ -174,7 +174,7 @@ seqan3::structured_aa). See our API documentation for a detailed description of 
 ## Gap alphabet
 
 The seqan3::gap alphabet is the smallest alphabet in SeqAn, consisting only of the gap character.
-It is most often used in a [Union Composition](\ref seqan3::union_composition) with a nucleotide or amino acid alphabet
+It is most often used in an [Alphabet Variant](\ref seqan3::alphabet_variant) with a nucleotide or amino acid alphabet
 to represent gapped sequences, e.g. in alignments. To create a gapped alphabet simply use seqan3::gapped<> with
 the alphabet type you want to refine.
 

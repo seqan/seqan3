@@ -19,7 +19,7 @@
 
 namespace seqan3
 {
-/*!\brief Implementation of a masked composition, which extends a given alphabet
+/*!\brief Implementation of a masked composite, which extends a given alphabet
  * with a mask.
  * \ingroup mask
  * \implements seqan3::Alphabet
@@ -31,7 +31,7 @@ namespace seqan3
  * \tparam mask_t Types of masked letter; must satisfy seqan3::Semialphabet, defaults to seqan3::mask.
  *
  * \details
- * The masked composition represents a seqan3::alphabet_tuple_base of any given alphabet with the
+ * The masked composite represents a seqan3::alphabet_tuple_base of any given alphabet with the
  * masked alphabet. It allows one to specify which portions of a sequence should be masked,
  * without losing additional information by replacing the sequence directly.
  *

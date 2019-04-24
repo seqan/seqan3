@@ -25,6 +25,6 @@
  * seqan3::Alphabet.
  *
  * The main purpose of seqan3::gap is to be combined with other alphabets. This can easily be achieved by using the
- * seqan3::gapped<> template which transforms any other alphabet to be a composition of that alphabet + the gap
+ * seqan3::gapped<> template which transforms any other alphabet to be a composite of that alphabet + the gap
  * character.
  */

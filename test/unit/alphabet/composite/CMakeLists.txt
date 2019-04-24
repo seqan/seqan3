@@ -1,4 +1,4 @@
 seqan3_test(alphabet_tuple_base_test.cpp)
-seqan3_test(union_composition_test.cpp)
-seqan3_test(union_composition_detail_test.cpp)
+seqan3_test(alphabet_variant_test.cpp)
+seqan3_test(alphabet_variant_detail_test.cpp)
 seqan3_test(composite_integration_test.cpp)

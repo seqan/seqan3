@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the composition of nucleotide with structure alphabets.
+ * \brief Contains the composite of nucleotide with structure alphabets.
  */
 
 #pragma once
@@ -33,8 +33,8 @@ namespace seqan3
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::NucleotideAlphabet.
  * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::RnaStructureAlphabet.
  *
- * This composition pairs a nucleotide alphabet with a structure alphabet. The rank values
- * correpsond to numeric values in the size of the composition, while the character values
+ * This composite pairs a nucleotide alphabet with a structure alphabet. The rank values
+ * correpsond to numeric values in the size of the composite, while the character values
  * are taken from the sequence alphabet and the structure annotation is taken from the structure
  * alphabet.
  *
