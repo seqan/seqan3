@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -61,7 +61,7 @@ namespace seqan3::view
  */
 inline auto const to_lower = deep{std::view::transform([] (auto const in) noexcept
 {
-    static_assert(char_concept<remove_cvref_t<decltype(in)>>, 
+    static_assert(char_concept<remove_cvref_t<decltype(in)>>,
                   "The value type of seqan3::view::to_lower must model the seqan3::char_concept.");
     return seqan3::to_lower(in);
 })};
