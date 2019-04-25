@@ -272,7 +272,7 @@ public:
         requires std::RandomAccessIterator<base_t>
     //!\endcond
     {
-        assert(*rhs.this_to_base() > *this_to_base());
+        assert(*rhs.this_to_base() <= *this_to_base());
         return static_cast<difference_type>(*this_to_base() - *rhs.this_to_base());
     }
     //!\}
