@@ -14,10 +14,10 @@
 #pragma once
 
 #include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/view/slice.hpp>
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/algorithm/parameter_pack.hpp>
+#include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 #include <seqan3/search/algorithm/configuration/max_error_common.hpp>
 #include <seqan3/std/algorithm>
