@@ -67,7 +67,7 @@ inline auto const get = std::view::transform([] (auto && in) -> decltype(auto)
 
     // we need to explicitly remove && around temporaries to return values as values (and not as rvalue references)
     // we cannot simply cast to std::tuple_element_t (or set that as return value), because some tuples, like
-    // our cartesian_composition alphabets do not return that type when get is called on them (they return a proxy)
+    // our alphabet_tuple_base alphabets do not return that type when get is called on them (they return a proxy)
     using ret_type = remove_rvalue_reference_t<decltype(get<index>(std::forward<decltype(in)>(in)))>;
     return static_cast<ret_type>(get<index>(std::forward<decltype(in)>(in)));
 });

@@ -37,7 +37,7 @@ namespace seqan3
  *
  * This concept represents "one half" of the seqan3::Alphabet, it requires no
  * `char` representation and corresponding interfaces. It is mostly used internally and
- * in the composition of alphabet types (see seqan3::cartesian_composition).
+ * in the composite of alphabet types (see seqan3::alphabet_tuple_base).
  *
  * Beyond the requirements stated below, the type needs to satisfy the following standard library
  * concepts:

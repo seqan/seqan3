@@ -64,7 +64,7 @@ struct is_configuration_valid :
     >
 {};
 
-/*!\brief Helper variable template to check for valid configuration compositions.
+/*!\brief Helper variable template to check for valid configuration composites.
  * \ingroup algorithm
  * \see seqan3::detail::is_configuration_valid
  */

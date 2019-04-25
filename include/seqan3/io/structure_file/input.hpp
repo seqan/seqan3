@@ -250,8 +250,8 @@ SEQAN3_CONCEPT structure_file_input_traits_concept = requires(t v)
 //            <typename t::template structure_container
 //                <typename t::structure_alphabet>>>;
 
-    // structured sequence: cartesian compositions of seq and structure
-    requires std::is_base_of_v<cartesian_composition
+    // structured sequence: tuple composites of seq and structure
+    requires std::is_base_of_v<alphabet_tuple_base
         <typename t::template structured_seq_alphabet
             <typename t::seq_alphabet, typename t::structure_alphabet>,
              typename t::seq_alphabet, typename t::structure_alphabet>,

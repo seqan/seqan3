@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the composition of aminoacid with structure alphabets.
+ * \brief Contains the composite of aminoacid with structure alphabets.
  */
 
 #pragma once
@@ -17,14 +17,14 @@
 #include <utility>
 
 #include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>
 
 namespace seqan3
 {
 
-/*!\brief A seqan3::cartesian_composition that joins an aminoacid alphabet with a protein structure alphabet.
+/*!\brief A seqan3::alphabet_tuple_base that joins an aminoacid alphabet with a protein structure alphabet.
  * \ingroup structure
  * \implements seqan3::Alphabet
  * \implements seqan3::detail::ConstexprAlphabet
@@ -33,30 +33,30 @@ namespace seqan3
  * \tparam sequence_alphabet_t Type of the first aminoacid letter; must satisfy seqan3::Alphabet.
  * \tparam structure_alphabet_t Types of further structure letters; must satisfy seqan3::Alphabet.
  *
- * This composition pairs an aminoacid alphabet with a structure alphabet. The rank values
- * correpsond to numeric values in the size of the composition, while the character values
+ * This composite pairs an aminoacid alphabet with a structure alphabet. The rank values
+ * correpsond to numeric values in the size of the composite, while the character values
  * are taken from the sequence alphabet and the structure annotation is taken from the structure
  * alphabet.
  *
- * As with all `seqan3::cartesian_composition` s you may access the individual alphabet letters in
+ * As with all `seqan3::alphabet_tuple_base` s you may access the individual alphabet letters in
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
  * \snippet test/snippet/alphabet/structure/structured_aa.cpp general
  *
- * This seqan3::cartesian_composition itself fulfills seqan3::Alphabet.
+ * This seqan3::alphabet_tuple_base itself fulfills seqan3::Alphabet.
  */
 template <typename sequence_alphabet_t = aa27, typename structure_alphabet_t = dssp9>
 //!\cond
     requires Alphabet<sequence_alphabet_t> && Alphabet<structure_alphabet_t>
 //!\endcond
 class structured_aa :
-    public cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
+    public alphabet_tuple_base<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
 {
 private:
     //!\brief The base type.
-    using base_type = cartesian_composition<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
+    using base_type = alphabet_tuple_base<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
                                             sequence_alphabet_t, structure_alphabet_t>;
 public:
     //!\brief First template parameter as member type.
@@ -80,13 +80,13 @@ public:
     using base_type::base_type; // Inherit non-default constructors
 
 
-    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa(component_type const alph) {} ))
-    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa(indirect_component_type const alph) {} ))
-    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa & operator=(component_type const alph) {} ))
-    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_aa & operator=(indirect_component_type const alph) {} ))
     //!\}
 

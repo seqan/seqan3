@@ -1,0 +1,4 @@
+seqan3_test(alphabet_tuple_base_test.cpp)
+seqan3_test(alphabet_variant_test.cpp)
+seqan3_test(alphabet_variant_detail_test.cpp)
+seqan3_test(composite_integration_test.cpp)

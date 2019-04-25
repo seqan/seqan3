@@ -98,8 +98,8 @@ BENCHMARK_TEMPLATE(assign_char, rna4);
 BENCHMARK_TEMPLATE(assign_char, rna5);
 BENCHMARK_TEMPLATE(assign_char, char);
 BENCHMARK_TEMPLATE(assign_char, gapped<dna4>);
-BENCHMARK_TEMPLATE(assign_char, union_composition<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
-BENCHMARK_TEMPLATE(assign_char, union_composition<char, dna4, dna5, dna15>);
+BENCHMARK_TEMPLATE(assign_char, alphabet_variant<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
+BENCHMARK_TEMPLATE(assign_char, alphabet_variant<char, dna4, dna5, dna15>);
 
 BENCHMARK_TEMPLATE(to_char, gap);
 BENCHMARK_TEMPLATE(to_char, dna4);
@@ -110,8 +110,8 @@ BENCHMARK_TEMPLATE(to_char, rna4);
 BENCHMARK_TEMPLATE(to_char, rna5);
 BENCHMARK_TEMPLATE(to_char, char);
 BENCHMARK_TEMPLATE(to_char, gapped<dna4>);
-BENCHMARK_TEMPLATE(to_char, union_composition<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
-BENCHMARK_TEMPLATE(to_char, union_composition<char, dna4, dna5, dna15>);
+BENCHMARK_TEMPLATE(to_char, alphabet_variant<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
+BENCHMARK_TEMPLATE(to_char, alphabet_variant<char, dna4, dna5, dna15>);
 
 BENCHMARK_TEMPLATE(assign_rank, gap);
 BENCHMARK_TEMPLATE(assign_rank, dna4);
@@ -122,8 +122,8 @@ BENCHMARK_TEMPLATE(assign_rank, rna4);
 BENCHMARK_TEMPLATE(assign_rank, rna5);
 BENCHMARK_TEMPLATE(assign_rank, char);
 BENCHMARK_TEMPLATE(assign_rank, gapped<dna4>);
-BENCHMARK_TEMPLATE(assign_rank, union_composition<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
-BENCHMARK_TEMPLATE(assign_rank, union_composition<char, dna4, dna5, dna15>);
+BENCHMARK_TEMPLATE(assign_rank, alphabet_variant<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
+BENCHMARK_TEMPLATE(assign_rank, alphabet_variant<char, dna4, dna5, dna15>);
 
 BENCHMARK_TEMPLATE(to_rank, gap);
 BENCHMARK_TEMPLATE(to_rank, dna4);
@@ -134,7 +134,7 @@ BENCHMARK_TEMPLATE(to_rank, rna4);
 BENCHMARK_TEMPLATE(to_rank, rna5);
 BENCHMARK_TEMPLATE(to_rank, char);
 BENCHMARK_TEMPLATE(to_rank, gapped<dna4>);
-BENCHMARK_TEMPLATE(to_rank, union_composition<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
-BENCHMARK_TEMPLATE(to_rank, union_composition<char, dna4, dna5, dna15>);
+BENCHMARK_TEMPLATE(to_rank, alphabet_variant<gap,dna4,dna5,dna15,rna15,rna4,rna5>);
+BENCHMARK_TEMPLATE(to_rank, alphabet_variant<char, dna4, dna5, dna15>);
 
 BENCHMARK_MAIN();

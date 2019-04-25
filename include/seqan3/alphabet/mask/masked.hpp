@@ -13,13 +13,13 @@
 #pragma once
 
 #include <seqan3/alphabet/mask/all.hpp>
-#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/io/stream/char_operations.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
 
 namespace seqan3
 {
-/*!\brief Implementation of a masked composition, which extends a given alphabet
+/*!\brief Implementation of a masked composite, which extends a given alphabet
  * with a mask.
  * \ingroup mask
  * \implements seqan3::Alphabet
@@ -31,7 +31,7 @@ namespace seqan3
  * \tparam mask_t Types of masked letter; must satisfy seqan3::Semialphabet, defaults to seqan3::mask.
  *
  * \details
- * The masked composition represents a seqan3::cartesian_composition of any given alphabet with the
+ * The masked composite represents a seqan3::alphabet_tuple_base of any given alphabet with the
  * masked alphabet. It allows one to specify which portions of a sequence should be masked,
  * without losing additional information by replacing the sequence directly.
  *
@@ -41,11 +41,11 @@ namespace seqan3
 //!\cond
     requires Alphabet<sequence_alphabet_t>
 //!\endcond
-class masked : public cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
+class masked : public alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {
 private:
     //!\brief The base type.
-    using base_type = cartesian_composition<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
+    using base_type = alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
 
 public:
     //!\brief First template parameter as member type.
@@ -68,13 +68,13 @@ public:
 
     using base_type::base_type; // Inherit non-default constructors
 
-    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked(component_type const alph) {} ))
-    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked(indirect_component_type const alph) {} ))
-    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked & operator=(component_type const alph) {} ))
-    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr masked & operator=(indirect_component_type const alph) {} ))
     //!\}
 

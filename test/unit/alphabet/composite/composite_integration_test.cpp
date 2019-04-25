@@ -13,7 +13,7 @@ using namespace seqan3;
 
 // Some haessllihckeiten-tests
 
-TEST(composition, custom_constructors)
+TEST(composite, custom_constructors)
 {
     qualified<dna4, phred42> t11{'C'_dna4};
     qualified<dna4, phred42> t12{'C'_rna4};
@@ -46,11 +46,11 @@ TEST(composition, custom_constructors)
     qualified<qualified<gapped<dna4>, phred42>, phred42> t55{gapped<dna4>('C'_dna4)};
     qualified<qualified<gapped<dna4>, phred42>, phred42> t56{gapped<dna4>(gap{})};
 
-    gapped<union_composition<dna4, phred42>> t61{'C'_dna4};
-    gapped<union_composition<dna4, phred42>> t62{'C'_rna4};
-    gapped<union_composition<dna4, phred42>> t63{phred42{3}};
-    gapped<union_composition<dna4, phred42>> t64{gap{}};
-    gapped<union_composition<dna4, phred42>> t65{qualified<dna4, phred42>{'C'_dna4, phred42{0}}};
+    gapped<alphabet_variant<dna4, phred42>> t61{'C'_dna4};
+    gapped<alphabet_variant<dna4, phred42>> t62{'C'_rna4};
+    gapped<alphabet_variant<dna4, phred42>> t63{phred42{3}};
+    gapped<alphabet_variant<dna4, phred42>> t64{gap{}};
+    gapped<alphabet_variant<dna4, phred42>> t65{qualified<dna4, phred42>{'C'_dna4, phred42{0}}};
 
     EXPECT_EQ(t11, t12);
     EXPECT_EQ(t13, t14);
@@ -81,7 +81,7 @@ TEST(composition, custom_constructors)
     EXPECT_EQ(t61, t65);
 }
 
-TEST(composition_constexpr, custom_constructor)
+TEST(composite_constexpr, custom_constructor)
 {
     constexpr qualified<dna4, phred42> t11{'C'_dna4};
     constexpr qualified<dna4, phred42> t12{'C'_rna4};
@@ -113,14 +113,14 @@ TEST(composition_constexpr, custom_constructor)
     constexpr qualified<qualified<gapped<dna4>, phred42>, phred42> t55{gapped<dna4>('C'_dna4)};
     constexpr qualified<qualified<gapped<dna4>, phred42>, phred42> t56{gapped<dna4>(gap{})};
 
-    constexpr gapped<union_composition<dna4, phred42>> t61{'C'_dna4};
-    constexpr gapped<union_composition<dna4, phred42>> t62{'C'_rna4};
-    constexpr gapped<union_composition<dna4, phred42>> t63{phred42{3}};
-    constexpr gapped<union_composition<dna4, phred42>> t64{gap{}};
-    constexpr gapped<union_composition<dna4, phred42>> t65{qualified<dna4, phred42>{'C'_dna4, phred42{0}}};
+    constexpr gapped<alphabet_variant<dna4, phred42>> t61{'C'_dna4};
+    constexpr gapped<alphabet_variant<dna4, phred42>> t62{'C'_rna4};
+    constexpr gapped<alphabet_variant<dna4, phred42>> t63{phred42{3}};
+    constexpr gapped<alphabet_variant<dna4, phred42>> t64{gap{}};
+    constexpr gapped<alphabet_variant<dna4, phred42>> t65{qualified<dna4, phred42>{'C'_dna4, phred42{0}}};
 }
 
-TEST(composition, custom_assignment)
+TEST(composite, custom_assignment)
 {
     qualified<dna4, phred42> t11{};
     qualified<dna4, phred42> t12{'C'_dna4};
@@ -191,11 +191,11 @@ TEST(composition, custom_assignment)
     t51 = gapped<dna4>(gap{});
     EXPECT_EQ(t51, t54);
 
-    gapped<union_composition<dna4, phred42>> t61{};
-    gapped<union_composition<dna4, phred42>> t62{'C'_dna4};
-    gapped<union_composition<dna4, phred42>> t63{phred42{3}};
-    gapped<union_composition<dna4, phred42>> t64{gap{}};
-    gapped<union_composition<dna4, phred42>> t65{qualified<dna4, phred42>{'C'_dna4, phred42{0}}};
+    gapped<alphabet_variant<dna4, phred42>> t61{};
+    gapped<alphabet_variant<dna4, phred42>> t62{'C'_dna4};
+    gapped<alphabet_variant<dna4, phred42>> t63{phred42{3}};
+    gapped<alphabet_variant<dna4, phred42>> t64{gap{}};
+    gapped<alphabet_variant<dna4, phred42>> t65{qualified<dna4, phred42>{'C'_dna4, phred42{0}}};
     t61 = 'C'_dna4;
     EXPECT_EQ(t61, t62);
     t61 = 'C'_rna4;
@@ -244,7 +244,7 @@ constexpr bool do_assignment()
     t51 = gapped<dna4>('C'_dna4);
     t51 = gapped<dna4>(gap{});
 
-    gapped<union_composition<dna4, phred42>> t61{};
+    gapped<alphabet_variant<dna4, phred42>> t61{};
     t61 = 'C'_rna4;
     t61 = phred42{3};
     t61 = gap{};
@@ -253,12 +253,12 @@ constexpr bool do_assignment()
     return true;
 }
 
-TEST(composition_constexpr, custom_assignment)
+TEST(composite_constexpr, custom_assignment)
 {
     [[maybe_unused]] constexpr bool foo = do_assignment();
 }
 
-TEST(composition, custom_comparison)
+TEST(composite, custom_comparison)
 {
     qualified<dna4, phred42> t11{'C'_dna4, phred42{3}};
     EXPECT_EQ(t11, 'C'_dna4);
@@ -309,7 +309,7 @@ TEST(composition, custom_comparison)
     EXPECT_NE(gap{},               t51);
     EXPECT_EQ(gapped<dna4>('C'_dna4),  t51);
 
-    gapped<union_composition<dna4, phred42>> t61{'C'_rna4};
+    gapped<alphabet_variant<dna4, phred42>> t61{'C'_rna4};
     EXPECT_EQ(t61, 'C'_rna4);
     EXPECT_EQ(t61, 'C'_dna4);
     EXPECT_NE(t61, gap{});

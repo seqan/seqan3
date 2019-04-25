@@ -132,7 +132,7 @@
  * pairs with. To generate the complement value of a nucleotide letter, you can call an implementation of
  * seqan3::NucleotideAlphabet::complement() on it.
  *
- * For the ambiguous letters, the complement is the (possibly also ambiguous) letter representing the union of the
+ * For the ambiguous letters, the complement is the (possibly also ambiguous) letter representing the variant of the
  * individual complements.
  *
  */

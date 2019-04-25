@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Create a mask composition which can be applied with another alphabet.
+ * \brief Create a mask composite which can be applied with another alphabet.
  */
 
 #pragma once
@@ -18,7 +18,7 @@
 
 namespace seqan3
 {
-/*!\brief Implementation of a masked alphabet to be used for cartesian compositions.
+/*!\brief Implementation of a masked alphabet to be used for tuple composites.
  * \ingroup mask
  * \implements seqan3::Semialphabet
  * \implements seqan3::detail::ConstexprSemialphabet

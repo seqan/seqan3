@@ -14,7 +14,7 @@
 #pragma once
 
 #include <seqan3/alphabet/gap/gap.hpp>
-#include <seqan3/alphabet/composition/union_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_variant.hpp>
 
 namespace seqan3
 {
@@ -24,7 +24,7 @@ namespace seqan3
  * \ingroup gap
  * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::Alphabet.
  *
- * The gapped alphabet represents the union of a given alphabet and the
+ * The gapped alphabet represents the variant of a given alphabet and the
  * seqan3::gap alphabet (e.g. the four letter DNA alphabet + a gap character).
  *
  * The gapped alphabet may be brace initialized from the static letter members of the underlying alphabet and the
@@ -33,13 +33,13 @@ namespace seqan3
  *
  * \snippet test/snippet/alphabet/gap/gapped.cpp general
  *
- * \sa For more details see union_composition, which is the base class and more general than the gapped alphabet.
+ * \sa For more details see alphabet_variant, which is the base class and more general than the gapped alphabet.
  */
 template <typename alphabet_t>
 //!\cond
     requires Alphabet<alphabet_t>
 //!\endcond
-using gapped = union_composition<gap, alphabet_t>;
+using gapped = alphabet_variant<gap, alphabet_t>;
 
 } // namespace seqan3
 

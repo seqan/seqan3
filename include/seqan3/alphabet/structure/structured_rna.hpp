@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Contains the composition of nucleotide with structure alphabets.
+ * \brief Contains the composite of nucleotide with structure alphabets.
  */
 
 #pragma once
@@ -17,14 +17,14 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/alphabet/composition/cartesian_composition.hpp>
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/structure/rna_structure_concept.hpp>
 
 namespace seqan3
 {
 
-/*!\brief A seqan3::cartesian_composition that joins a nucleotide alphabet with an RNA structure alphabet.
+/*!\brief A seqan3::alphabet_tuple_base that joins a nucleotide alphabet with an RNA structure alphabet.
  * \ingroup structure
  * \implements seqan3::RnaStructureAlphabet
  * \implements seqan3::detail::ConstexprAlphabet
@@ -33,30 +33,30 @@ namespace seqan3
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::NucleotideAlphabet.
  * \tparam structure_alphabet_t Types of further letters; must satisfy seqan3::RnaStructureAlphabet.
  *
- * This composition pairs a nucleotide alphabet with a structure alphabet. The rank values
- * correpsond to numeric values in the size of the composition, while the character values
+ * This composite pairs a nucleotide alphabet with a structure alphabet. The rank values
+ * correpsond to numeric values in the size of the composite, while the character values
  * are taken from the sequence alphabet and the structure annotation is taken from the structure
  * alphabet.
  *
- * As with all `seqan3::cartesian_composition` s you may access the individual alphabet letters in
+ * As with all `seqan3::alphabet_tuple_base` s you may access the individual alphabet letters in
  * regular c++ tuple notation, i.e. `get<0>(t)` and objects can be brace-initialized
  * with the individual members.
  *
  * \snippet test/snippet/alphabet/structure/structured_rna.cpp general
  *
- * This seqan3::cartesian_composition itself models both seqan3::NucleotideAlphabet and seqan3::RnaStructureAlphabet.
+ * This seqan3::alphabet_tuple_base itself models both seqan3::NucleotideAlphabet and seqan3::RnaStructureAlphabet.
  */
 template <typename sequence_alphabet_t, typename structure_alphabet_t>
 //!\cond
     requires NucleotideAlphabet<sequence_alphabet_t> && RnaStructureAlphabet<structure_alphabet_t>
 //!\endcond
 class structured_rna :
-    public cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
+    public alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>
 {
 private:
     //!\brief The base type.
-    using base_type = cartesian_composition<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
+    using base_type = alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                             sequence_alphabet_t, structure_alphabet_t>;
 public:
     //!\brief First template parameter as member type.
@@ -79,13 +79,13 @@ public:
 
     using base_type::base_type; // Inherit non-default constructors
 
-    //!\copydoc cartesian_composition::cartesian_composition(component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::cartesian_composition(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(indirect_component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::operator=(component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(component_type const alph) noexcept {} ))
-    //!\copydoc cartesian_composition::operator=(indirect_component_type const alph)
+    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
     SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(indirect_component_type const alph) noexcept {} ))
     //!\}
 

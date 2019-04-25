@@ -333,7 +333,7 @@ TEST(row, emplace_back)
     });
 }
 
-/* Here the record contains a different field composition than the file. The record knows about the
+/* Here the record contains a different field composite than the file. The record knows about the
  * association of values and fields, so it does not need to be guessed from the file.
  */
 TEST(row, different_fields_in_record_and_file)

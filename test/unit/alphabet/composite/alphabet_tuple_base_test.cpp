@@ -13,9 +13,9 @@
 using namespace seqan3;
 
 template <typename type1, typename type2>
-struct test_composition : public cartesian_composition<test_composition<type1, type2>, type1, type2>
+struct test_composite : public alphabet_tuple_base<test_composite<type1, type2>, type1, type2>
 {
-    using base_t = cartesian_composition<test_composition<type1, type2>, type1, type2>;
+    using base_t = alphabet_tuple_base<test_composite<type1, type2>, type1, type2>;
     using base_t::base_t;
     using base_t::operator=;
 
@@ -28,19 +28,19 @@ struct test_composition : public cartesian_composition<test_composition<type1, t
 };
 
 template <typename T>
-class cartesian_composition_test : public ::testing::Test {};
+class alphabet_tuple_base_test : public ::testing::Test {};
 
 template <>
-class cartesian_composition_test<test_composition<dna4, dna5>> : public ::testing::Test
+class alphabet_tuple_base_test<test_composite<dna4, dna5>> : public ::testing::Test
 {
 public:
-    using T = test_composition<dna4, dna5>;
+    using T = test_composite<dna4, dna5>;
 
     T instance = T{value_1(), value_2()};
     T zero_instance = T{decltype(value_1()){}, decltype(value_2()){}};
     size_t tup_size{2};
 
-    // test_composition<dna4, dna5>
+    // test_composite<dna4, dna5>
     // -------------------------------------------------------------------------
     dna4 value_1()
     {
@@ -67,7 +67,7 @@ public:
 };
 
 template <>
-class cartesian_composition_test<qualified<dna4, phred42>>: public ::testing::Test
+class alphabet_tuple_base_test<qualified<dna4, phred42>>: public ::testing::Test
 {
 public:
     using T = qualified<dna4, phred42>;
@@ -103,7 +103,7 @@ public:
 };
 
 template <>
-class cartesian_composition_test<structured_rna<rna4, dot_bracket3>>: public ::testing::Test
+class alphabet_tuple_base_test<structured_rna<rna4, dot_bracket3>>: public ::testing::Test
 {
 public:
     using T = structured_rna<rna4, dot_bracket3>;
@@ -139,7 +139,7 @@ public:
 };
 
 template <>
-class cartesian_composition_test<structured_aa<aa27, dssp9>>: public ::testing::Test
+class alphabet_tuple_base_test<structured_aa<aa27, dssp9>>: public ::testing::Test
 {
 public:
     using T = structured_aa<aa27, dssp9>;
@@ -174,27 +174,27 @@ public:
     }
 };
 
-using composition_types = ::testing::Types<test_composition<dna4, dna5>,
+using composite_types = ::testing::Types<test_composite<dna4, dna5>,
                                            structured_rna<rna4, dot_bracket3>,
                                            structured_aa<aa27, dssp9>,
                                            qualified<dna4, phred42>>;
 
-TYPED_TEST_CASE(cartesian_composition_test, composition_types);
+TYPED_TEST_CASE(alphabet_tuple_base_test, composite_types);
 
-TYPED_TEST(cartesian_composition_test, concept_check)
+TYPED_TEST(alphabet_tuple_base_test, concept_check)
 {
     EXPECT_TRUE(tuple_like_concept<TypeParam>);
 }
 
 // default/zero construction
-TYPED_TEST(cartesian_composition_test, ctr)
+TYPED_TEST(alphabet_tuple_base_test, ctr)
 {
     [[maybe_unused]] TypeParam t1{};
     EXPECT_EQ(std::tuple_size<TypeParam>::value, TestFixture::tup_size);
 }
 
 // initialiser-list initialization
-TYPED_TEST(cartesian_composition_test, aggr)
+TYPED_TEST(alphabet_tuple_base_test, aggr)
 {
     TypeParam t1{};
     TypeParam t2 = TestFixture::instance; // test in fixture to be type independent
@@ -203,7 +203,7 @@ TYPED_TEST(cartesian_composition_test, aggr)
 }
 
 // copy assignment
-TYPED_TEST(cartesian_composition_test, cp_assgn)
+TYPED_TEST(alphabet_tuple_base_test, cp_assgn)
 {
     TypeParam t1 = TestFixture::instance;
     TypeParam t2{};
@@ -216,7 +216,7 @@ TYPED_TEST(cartesian_composition_test, cp_assgn)
 }
 
 // zero initialization
-TYPED_TEST(cartesian_composition_test, zro)
+TYPED_TEST(alphabet_tuple_base_test, zro)
 {
     TypeParam t1 = TestFixture::zero_instance;
     TypeParam t2{};
@@ -225,7 +225,7 @@ TYPED_TEST(cartesian_composition_test, zro)
 }
 
 // copy construction
-TYPED_TEST(cartesian_composition_test, cp_ctr)
+TYPED_TEST(alphabet_tuple_base_test, cp_ctr)
 {
     TypeParam t1 = TestFixture::instance;
     TypeParam t2{t1};
@@ -236,7 +236,7 @@ TYPED_TEST(cartesian_composition_test, cp_ctr)
 }
 
 // move construction
-TYPED_TEST(cartesian_composition_test, mv_ctr)
+TYPED_TEST(alphabet_tuple_base_test, mv_ctr)
 {
     TypeParam t0 = TestFixture::instance;
     TypeParam t1 = TestFixture::instance;
@@ -250,7 +250,7 @@ TYPED_TEST(cartesian_composition_test, mv_ctr)
 }
 
 // move assignment
-TYPED_TEST(cartesian_composition_test, mv_assgn)
+TYPED_TEST(alphabet_tuple_base_test, mv_assgn)
 {
     TypeParam t0 = TestFixture::instance;
     TypeParam t1 = TestFixture::instance;
@@ -267,7 +267,7 @@ TYPED_TEST(cartesian_composition_test, mv_assgn)
 }
 
 // swap
-TYPED_TEST(cartesian_composition_test, swap)
+TYPED_TEST(alphabet_tuple_base_test, swap)
 {
     TypeParam t0 = TestFixture::instance;
     TypeParam t1 = TestFixture::instance;
@@ -281,7 +281,7 @@ TYPED_TEST(cartesian_composition_test, swap)
 
 // get<0> and get<1>
 // get<i> for i > 1 is not tested because of typed_test
-TYPED_TEST(cartesian_composition_test, get_i)
+TYPED_TEST(alphabet_tuple_base_test, get_i)
 {
     TypeParam t0 = TestFixture::instance;
 
@@ -293,7 +293,7 @@ TYPED_TEST(cartesian_composition_test, get_i)
 }
 
 // structured bindings
-TYPED_TEST(cartesian_composition_test, struct_binding)
+TYPED_TEST(alphabet_tuple_base_test, struct_binding)
 {
   TypeParam t0 = TestFixture::instance;
   auto [ i, l ] = t0;
@@ -306,7 +306,7 @@ TYPED_TEST(cartesian_composition_test, struct_binding)
 }
 
 // get<type>
-TYPED_TEST(cartesian_composition_test, get_type)
+TYPED_TEST(alphabet_tuple_base_test, get_type)
 {
     TypeParam t0 = TestFixture::instance;
 
@@ -316,7 +316,7 @@ TYPED_TEST(cartesian_composition_test, get_type)
 
 // Custom constructor that assigns one type and defaults the other values
 // (after get<> was tested)
-TYPED_TEST(cartesian_composition_test, custom_ctr)
+TYPED_TEST(alphabet_tuple_base_test, custom_ctr)
 {
     // first type
     TypeParam t1{TestFixture::value_1()};
@@ -336,7 +336,7 @@ TYPED_TEST(cartesian_composition_test, custom_ctr)
 }
 
 // Custom constructor that assigns one type from an assignable subtype and defaults the other values
-TYPED_TEST(cartesian_composition_test, custom_ctr_subtype)
+TYPED_TEST(alphabet_tuple_base_test, custom_ctr_subtype)
 {
     // first type
     TypeParam t1{TestFixture::assignable_to_value_1()};
@@ -354,7 +354,7 @@ TYPED_TEST(cartesian_composition_test, custom_ctr_subtype)
 
 // Custom assignment operator that assigns one type and defaults the other values
 // (after get<> was tested)
-TYPED_TEST(cartesian_composition_test, custom_assignment)
+TYPED_TEST(alphabet_tuple_base_test, custom_assignment)
 {
     TypeParam t_d{}; // default to compare
 
@@ -431,7 +431,7 @@ TYPED_TEST(cartesian_composition_test, custom_assignment)
 
 // Custom assignment operator that assigns one type from a subtype and defaults
 // the other values
-TYPED_TEST(cartesian_composition_test, custom_assignment_subtype)
+TYPED_TEST(alphabet_tuple_base_test, custom_assignment_subtype)
 {
     TypeParam t_d{}; // default to compare
 
@@ -507,7 +507,7 @@ TYPED_TEST(cartesian_composition_test, custom_assignment_subtype)
 }
 
 // std::tuple_element
-TYPED_TEST(cartesian_composition_test, tuple_element)
+TYPED_TEST(alphabet_tuple_base_test, tuple_element)
 {
     using pt = TypeParam;
 
@@ -516,7 +516,7 @@ TYPED_TEST(cartesian_composition_test, tuple_element)
 }
 
 // type deduction
-TYPED_TEST(cartesian_composition_test, type_deduce)
+TYPED_TEST(alphabet_tuple_base_test, type_deduce)
 {
     TypeParam t0 = TestFixture::instance;
     using pt = decltype(t0);
@@ -526,7 +526,7 @@ TYPED_TEST(cartesian_composition_test, type_deduce)
 }
 
 // explicit cast to element
-TYPED_TEST(cartesian_composition_test, cast_to_element)
+TYPED_TEST(alphabet_tuple_base_test, cast_to_element)
 {
     TypeParam t0 = TestFixture::instance;
 
@@ -540,7 +540,7 @@ TYPED_TEST(cartesian_composition_test, cast_to_element)
 }
 
 // comparison operators
-TYPED_TEST(cartesian_composition_test, cmp)
+TYPED_TEST(alphabet_tuple_base_test, cmp)
 {
     TypeParam t0 = {std::get<2>(TestFixture::values_to_cmp()),
                     std::get<3>(TestFixture::values_to_cmp())};
@@ -588,7 +588,7 @@ TYPED_TEST(cartesian_composition_test, cmp)
     EXPECT_GT(t2, t3);
 }
 
-TYPED_TEST(cartesian_composition_test, cmp_to_composite)
+TYPED_TEST(alphabet_tuple_base_test, cmp_to_composite)
 {
     // first type
     TypeParam t1 = {std::get<2>(TestFixture::values_to_cmp()),
@@ -635,7 +635,7 @@ TYPED_TEST(cartesian_composition_test, cmp_to_composite)
    EXPECT_LT(lt_v2, t2);
 }
 
-TYPED_TEST(cartesian_composition_test, cmp_to_composite_subtype)
+TYPED_TEST(alphabet_tuple_base_test, cmp_to_composite_subtype)
 {
     // first type
     TypeParam t0 = {std::get<4>(TestFixture::values_to_cmp()),
