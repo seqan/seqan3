@@ -41,7 +41,7 @@ macro (seqan3_header_test component header_base_path)
     seqan3_test_files (header_files "${header_base_path}" "*.hpp;*.h")
 
     # filter out headers which are implementation detail
-    list (FILTER header_files EXCLUDE REGEX "detail|/bits/|search")
+    list (FILTER header_files EXCLUDE REGEX "detail|/bits/")
 
     file (WRITE "${PROJECT_BINARY_DIR}/${target}.cpp" "")
     add_executable (${target} ${PROJECT_BINARY_DIR}/${target}.cpp)
