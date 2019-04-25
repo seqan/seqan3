@@ -330,7 +330,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                                    |
  * | std::ranges::CommonRange        |                                                    |
  * | std::ranges::OutputRange        | *guaranteed*                                       |
- * | seqan3::const_iterable_concept  | *guaranteed*                                       |
+ * | seqan3::ConstIterableRange      | *guaranteed*                                       |
  * |                                 |                                                    |
  * | seqan3::reference_t             | std::remove_reference_t<value_t> &                 |
  *

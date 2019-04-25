@@ -61,7 +61,7 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
     EXPECT_FALSE(std::ranges::View<decltype(vec)>);
     EXPECT_TRUE(std::ranges::SizedRange<decltype(vec)>);
     EXPECT_TRUE(std::ranges::CommonRange<decltype(vec)>);
-    EXPECT_TRUE(const_iterable_concept<decltype(vec)>);
+    EXPECT_TRUE(ConstIterableRange<decltype(vec)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(vec), char>));
 
     auto v1 = vec | adaptor;
@@ -73,7 +73,7 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
     EXPECT_TRUE(std::ranges::View<decltype(v1)>);
     EXPECT_FALSE(std::ranges::SizedRange<decltype(v1)>);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v1)>);
-    EXPECT_EQ(const_iterable_concept<decltype(v1)>, const_it);
+    EXPECT_EQ(ConstIterableRange<decltype(v1)>, const_it);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v1), char>));
 
     auto v2 = vec | view::single_pass_input | adaptor;
@@ -85,7 +85,7 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
     EXPECT_TRUE(std::ranges::View<decltype(v2)>);
     EXPECT_FALSE(std::ranges::SizedRange<decltype(v2)>);
     EXPECT_FALSE(std::ranges::CommonRange<decltype(v2)>);
-    EXPECT_FALSE(const_iterable_concept<decltype(v2)>);
+    EXPECT_FALSE(ConstIterableRange<decltype(v2)>);
     EXPECT_TRUE((std::ranges::OutputRange<decltype(v2), char>));
 }
 

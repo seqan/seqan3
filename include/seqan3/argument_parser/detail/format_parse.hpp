@@ -333,13 +333,13 @@ private:
 
     /*!\brief Appends a casted value to its container.
      *
-     * \tparam container_option_t Must satisfy the seqan3::sequence_container_concept and
+     * \tparam container_option_t Must satisfy the seqan3::SequenceContainer and
      *                            its value_type must satisfy the seqan3::IStream
      *
      * \param[out] value Container that stores the casted value.
      * \param[in]  in    The input argument to be casted.
      */
-    template <sequence_container_concept container_option_t>
+    template <SequenceContainer container_option_t>
     //!\cond
         requires IStream<std::istringstream, typename container_option_t::value_type>
     //!\cond
@@ -516,7 +516,7 @@ private:
      * multiple times.
      *
      */
-    template <sequence_container_concept option_type, typename id_type>
+    template <SequenceContainer option_type, typename id_type>
     //!cond
         requires !std::is_same_v<option_type, std::string>
     //!\endcond
@@ -625,7 +625,7 @@ private:
 
         // if value is no container we need to check for multiple declarations
         if (short_id_is_set && long_id_is_set &&
-            !(sequence_container_concept<option_type> && !std::is_same_v<option_type, std::string>))
+            !(SequenceContainer<option_type> && !std::is_same_v<option_type, std::string>))
             throw option_declared_multiple_times("Option " + combine_option_names(short_id, long_id) +
                                                  " is no list/container but specified multiple times");
 
@@ -700,7 +700,7 @@ private:
             throw too_few_arguments("Not enough positional arguments provided (Need at least " +
                                     std::to_string(positional_option_calls.size()) + "). See -h/--help for more information.");
 
-        if (sequence_container_concept<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
+        if (SequenceContainer<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
         {
             if (positional_option_count != (positional_option_calls.size()))
                 throw parser_design_error("Lists are only allowed as the last positional option!");

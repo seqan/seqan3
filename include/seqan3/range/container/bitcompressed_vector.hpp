@@ -37,7 +37,7 @@ class debug_stream_type;
 
 /*!\brief A space-optimised version of std::vector that compresses multiple letters into a single byte.
  * \tparam alphabet_type The value type of the container, must satisfy seqan3::Alphabet and not be `&`.
- * \implements seqan3::reservable_container_concept
+ * \implements seqan3::ReservableContainer
  * \implements seqan3::Cerealisable
  * \ingroup container
  *

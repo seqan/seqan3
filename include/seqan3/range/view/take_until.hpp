@@ -65,7 +65,7 @@ private:
     ranges::semiregular_t<fun_t> fun;
 
     //!\brief Whether this view is const_iterable or not.
-    static constexpr bool const_iterable = const_iterable_concept<urng_t> &&
+    static constexpr bool const_iterable = ConstIterableRange<urng_t> &&
                                            std::RegularInvocable<fun_t, reference_t<urng_t>>;
 
     //!\brief The iterator type inherits from the underlying type, but overwrites several operators.
@@ -464,11 +464,11 @@ public:
     //!\}
 
     /*!\brief Convert this view into a container implicitly.
-     * \tparam container_t Type of the container to convert to; must model seqan3::sequence_container_concept and it's
+     * \tparam container_t Type of the container to convert to; must model seqan3::SequenceContainer and it's
      *                     seqan3::reference_t must model std::CommonReference with `reference`.
      * \returns This view converted to container_t.
      */
-    template <sequence_container_concept container_t>
+    template <SequenceContainer container_t>
     operator container_t()
     //!\cond
         requires std::CommonReference<reference_t<container_t>, reference>
@@ -480,10 +480,10 @@ public:
     }
 
     //!\overload
-    template <sequence_container_concept container_t>
+    template <SequenceContainer container_t>
     operator container_t() const
     //!\cond
-        requires const_iterable_concept<urng_t> && std::CommonReference<reference_t<container_t>, const_reference>
+        requires ConstIterableRange<urng_t> && std::CommonReference<reference_t<container_t>, const_reference>
     //!\endcond
     {
         container_t ret;
@@ -585,7 +585,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*¹                                       |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*¹                                       |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *

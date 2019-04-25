@@ -299,7 +299,7 @@ public:
             {
                 if constexpr (!detail::decays_to_ignore_v<align_type>)
                 {
-                    static_assert(sequence_container_concept<std::remove_reference_t<decltype(get<1>(align))>>,
+                    static_assert(SequenceContainer<std::remove_reference_t<decltype(get<1>(align))>>,
                                   "If you want to read ALIGNMENT but not SEQ, the alignment"
                                   " object must store a sequence container at the second (query) position.");
 
@@ -1195,7 +1195,7 @@ protected:
         {
             using T = remove_cvref_t<decltype(arg)>;
 
-            if constexpr (!container_concept<T>)
+            if constexpr (!Container<T>)
             {
                 stream << arg;
             }

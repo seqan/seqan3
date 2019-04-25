@@ -351,7 +351,7 @@ public:
     //!\}
 
     //!\brief Implicit conversion to container types.
-    template <random_access_container_concept container_type>
+    template <RandomAccessContainer container_type>
     operator container_type() const
     //!\cond
         requires std::is_same_v<aa27, value_type_t<container_type>>
@@ -421,7 +421,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
+ * | seqan3::ConstIterableRange      | *required*                            | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | seqan3::aa27                                       |
  *
@@ -638,7 +638,7 @@ public:
     //!\}
 
     //!\brief Implicit conversion to container types.
-    template <random_access_container_concept container_type>
+    template <RandomAccessContainer container_type>
     operator container_type() const
     //!\cond
         requires is_compatible_this_aux<container_type>
@@ -700,7 +700,7 @@ namespace seqan3::view
  * | std::ranges::SizedRange         | *required*                            | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *guaranteed*                                       |
  * | std::ranges::OutputRange        |                                       | *lost*                                             |
- * | seqan3::const_iterable_concept  | *required*                            | *preserved*                                        |
+ * | seqan3::ConstIterableRange      | *required*                            | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             | seqan3::NucleotideAlphabet            | std::ranges::View && std::ranges::RandomAccessRange && std::ranges::SizedRange |
  *

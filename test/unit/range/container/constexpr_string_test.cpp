@@ -37,9 +37,9 @@ TEST(constexpr_string, standard_construction)
     EXPECT_TRUE((std::is_nothrow_move_assignable_v<constexpr_string<4>>));
 }
 
-TEST(constexpr_string, container_concept)
+TEST(constexpr_string, Container)
 {
-    EXPECT_TRUE(container_concept<constexpr_string<4>>);
+    EXPECT_TRUE(Container<constexpr_string<4>>);
     EXPECT_TRUE(std::ranges::RandomAccessRange<constexpr_string<4>>);
 }
 

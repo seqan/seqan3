@@ -364,7 +364,7 @@ using subrange_kind = ::ranges::subrange_kind;
  * | std::ranges::SizedRange         | *preserved*                                        |
  * | std::ranges::CommonRange        | *preserved*                                        |
  * | std::ranges::OutputRange        | *preserved*                                        |
- * | seqan3::const_iterable_concept  | *preserved*                                        |
+ * | seqan3::ConstIterableRange      | *preserved*                                        |
  * |                                 |                                                    |
  * | seqan3::reference_t             | seqan3::value_type_t<it_t>                         |
  *
@@ -422,7 +422,7 @@ namespace std::ranges::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *preserved*                                        |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -474,7 +474,7 @@ namespace std::ranges::view
  * | std::ranges::SizedRange         |                                       | *preserved*                                        |
  * | std::ranges::CommonRange        |                                       | *guarenteed*                                       |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -522,7 +522,7 @@ inline constexpr auto common = ::ranges::view::common;
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -561,7 +561,7 @@ inline constexpr auto drop = ::ranges::view::drop;
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | depends on functor (see below)                     |
+ * | seqan3::ConstIterableRange      |                                       | depends on functor (see below)                     |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -599,7 +599,7 @@ inline constexpr auto drop_while = ::ranges::view::drop_while;
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *lost*                                             |
+ * | seqan3::ConstIterableRange      |                                       | *lost*                                             |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -645,7 +645,7 @@ namespace std::ranges
  * | std::ranges::SizedRange         |                                                    |
  * | std::ranges::CommonRange        |                                                    |
  * | std::ranges::OutputRange        |                                                    |
- * | seqan3::const_iterable_concept  |                                                    |
+ * | seqan3::ConstIterableRange      |                                                    |
  * |                                 |                                                    |
  * | seqan3::reference_t             | value_type &                                       |
  *
@@ -686,7 +686,7 @@ namespace std::ranges::view
  * | std::ranges::SizedRange         | if `bound` is provided and `bound - init` is valid and in `O(1)` |
  * | std::ranges::CommonRange        |                                                                  |
  * | std::ranges::OutputRange        |                                                                  |
- * | seqan3::const_iterable_concept  | *guaranteed*                                                     |
+ * | seqan3::ConstIterableRange      | *guaranteed*                                                     |
  * |                                 |                                                                  |
  * | seqan3::reference_t             | `init_t`                                                         |
  *
@@ -720,7 +720,7 @@ inline constexpr auto iota = ::ranges::view::iota;
  * | std::ranges::SizedRange         |                                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                                       | *preserved* ¹²                                      |
  * | std::ranges::OutputRange        |                                                       | *preserved* ¹                                       |
- * | seqan3::const_iterable_concept  |                                                       | *preserved* ¹²                                      |
+ * | seqan3::ConstIterableRange      |                                                       | *preserved* ¹²                                      |
  * |                                 |                                                       |                                                    |
  * | seqan3::reference_t             | std::ranges::InputRange && std::ranges::ViewableRange | seqan3::reference_t<seqan3::reference_t<urng_t>>   |
  *
@@ -755,7 +755,7 @@ inline constexpr auto join = ::ranges::view::join;
  * | std::ranges::SizedRange         |                                       | *preserved*                                          |
  * | std::ranges::CommonRange        |                                       | *preserved*                                          |
  * | std::ranges::OutputRange        |                                       | *lost*                                               |
- * | seqan3::const_iterable_concept  |                                       | *preserved if std::ranges::CommonRange<urng_t>*  |
+ * | seqan3::ConstIterableRange      |                                       | *preserved if std::ranges::CommonRange<urng_t>*  |
  * |                                 |                                       |                                                      |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                          |
  *
@@ -796,7 +796,7 @@ inline constexpr auto reverse = ::ranges::view::reverse;
  * | std::ranges::SizedRange         | *guaranteed*                    |
  * | std::ranges::CommonRange        | *guaranteed*                    |
  * | std::ranges::OutputRange        | *guaranteed*                    |
- * | seqan3::const_iterable_concept  | *guaranteed*                    |
+ * | seqan3::ConstIterableRange      | *guaranteed*                    |
  * |                                 |                                 |
  * | seqan3::reference_t             | value_t &                       |
  *
@@ -832,7 +832,7 @@ inline constexpr auto single = ::ranges::view::single;
  * | std::ranges::SizedRange         |                                       | *lost*                          |  *lost*                         |
  * | std::ranges::CommonRange        |                                       | *lost*                          |  *lost*                         |
  * | std::ranges::OutputRange        |                                       | *lost*                          |  *lost*                         |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                     |  *preserved*                    |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                     |  *preserved*                    |
  * |                                 |                                       |                                 |                                 |
  * | seqan3::reference_t             |                                       | *see to the right*              | seqan3::reference_t<urng_t>     |
  *
@@ -868,7 +868,7 @@ inline constexpr auto split = ::ranges::view::split;
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                        |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                        |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -907,7 +907,7 @@ inline constexpr auto take = ::ranges::view::take;
  * | std::ranges::SizedRange         |                                       | *lost*                                             |
  * | std::ranges::CommonRange        |                                       | *lost*                                             |
  * | std::ranges::OutputRange        |                                       | *preserved*                                        |
- * | seqan3::const_iterable_concept  |                                       | depends on functor (see below)                     |
+ * | seqan3::ConstIterableRange      |                                       | depends on functor (see below)                     |
  * |                                 |                                       |                                                    |
  * | seqan3::reference_t             |                                       | seqan3::reference_t<urng_t>                        |
  *
@@ -945,7 +945,7 @@ inline constexpr auto take_while = ::ranges::view::take_while;
  * | std::ranges::SizedRange         |                                       | *preserved*                                          |
  * | std::ranges::CommonRange        |                                       | *preserved*                                          |
  * | std::ranges::OutputRange        |                                       | *lost*                                               |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                          |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                          |
  * |                                 |                                       |                                                      |
  * | seqan3::reference_t             |                                       | `decltype(invocable(seqan3::reference_t<urng_t>{}))` |
  *
@@ -985,7 +985,7 @@ inline constexpr auto transform = ::ranges::view::transform;
  * | std::ranges::SizedRange         |                                       | *preserved*                                          |
  * | std::ranges::CommonRange        |                                       | *lost*                                               |
  * | std::ranges::OutputRange        |                                       | *lost*                                               |
- * | seqan3::const_iterable_concept  |                                       | *preserved*                                          |
+ * | seqan3::ConstIterableRange      |                                       | *preserved*                                          |
  * |                                 |                                       |                                                      |
  * | seqan3::reference_t             |                                       | std::tuple<std::reference_t<urng_ts...>>             |
  *

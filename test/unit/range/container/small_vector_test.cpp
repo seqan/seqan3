@@ -37,7 +37,7 @@ TEST(small_vector, standard_construction)
 
 TEST(small_vector, concepts)
 {
-    EXPECT_TRUE((reservable_container_concept<small_vector<char, 4>>));
+    EXPECT_TRUE((ReservableContainer<small_vector<char, 4>>));
     EXPECT_TRUE((std::ranges::RandomAccessRange<small_vector<char, 4>>));
     EXPECT_TRUE((std::ranges::ContiguousRange<small_vector<char, 4>>));
 }

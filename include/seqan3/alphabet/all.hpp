@@ -138,7 +138,7 @@
  * # Containers over alphabets
  *
  * In SeqAn3 it is recommended you use the STL container classes like std::vector for storing sequence data,
- * but you can use other class templates if they satisfy the respective seqan3::container_concept, e.g. `std::deque` or
+ * but you can use other class templates if they satisfy the respective seqan3::Container, e.g. `std::deque` or
  * <a href="https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md" target="_blank">
  * <tt>folly::fbvector</tt></a> or even <a href="http://doc.qt.io/qt-5/qvector.html" target="_blank">
  * <tt>Qt::QVector</tt></a>.
