@@ -143,7 +143,7 @@ TEST(small_vector, iterator)
     EXPECT_TRUE(cb_const);
 }
 
-TEST(constexpr_string, size_and_maxsize)
+TEST(small_string, size_and_maxsize)
 {
     // auto deduction -> capacity == size
     {

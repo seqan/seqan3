@@ -16,7 +16,7 @@
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/container/small_string.hpp>
 #include <seqan3/range/container/small_vector.hpp>
 
 /*!\defgroup container Container

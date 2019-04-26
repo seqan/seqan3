@@ -15,7 +15,7 @@ struct bar
 
 int main()
 {
-    seqan3::debug_stream << seqan3::detail::get_display_name_v<foo::bar<char, double>>.string() << std::endl; // prints: foo::bar<char, double> >
+    seqan3::debug_stream << seqan3::detail::get_display_name_v<foo::bar<char, double>> << std::endl; // prints: foo::bar<char, double> >
     return 0;
 }
 //! [usage]

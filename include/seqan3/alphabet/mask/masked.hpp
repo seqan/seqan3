@@ -102,7 +102,7 @@ public:
     masked & assign_char_strictly(char_type const c)
     {
         if (!char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<masked>.string(), c};
+            throw invalid_char_assignment{detail::get_display_name_v<masked>, c};
 
         return assign_char(c);
     }

@@ -65,7 +65,7 @@ TYPED_TEST(reflection, size)
 
 TYPED_TEST(reflection, name)
 {
-    EXPECT_EQ(detail::get_display_name_v<TypeParam>.string(), this->expected_name());
+    EXPECT_EQ(detail::get_display_name_v<TypeParam>.str(), this->expected_name());
 }
 
 namespace seqan3::detail

@@ -20,7 +20,7 @@
 #include <seqan3/alphabet/aminoacid/translation.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/metafunction/range.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/container/small_string.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/view/deep.hpp>
 #include <seqan3/range/view/detail.hpp>
@@ -165,8 +165,9 @@ private:
     std::shared_ptr<data_members_t> data_members;
 
     //!\brief Error thrown if tried to be used with multiple frames.
-    static constexpr constexpr_string multiple_frame_error = "Error: Invalid type of frame. Choose one out of FWD_FRAME_0, "
-                                                "REV_FRAME_0, FWD_FRAME_1, REV_FRAME_1, FWD_FRAME_2 and REV_FRAME_2.";
+    static constexpr small_string multiple_frame_error{"Error: Invalid type of frame. Choose one out of FWD_FRAME_0, "
+                                                       "REV_FRAME_0, FWD_FRAME_1, REV_FRAME_1, FWD_FRAME_2 and "
+                                                       "REV_FRAME_2."};
 public:
     /*!\name Member types
      * \{

@@ -58,8 +58,8 @@ void expect_same_types()
     constexpr bool val = std::is_same_v<meta::at_c<list1, pos>, meta::at_c<list2, pos>>;
     if constexpr (!val)
     {
-        std::cerr << "\'" << detail::get_display_name_v<meta::at_c<list1, pos>>.string() << "\' not equal to \'"
-                  << detail::get_display_name_v<meta::at_c<list2, pos>>.string() << "\' \n";
+        std::cerr << "\'" << detail::get_display_name_v<meta::at_c<list1, pos>> << "\' not equal to \'"
+                  << detail::get_display_name_v<meta::at_c<list2, pos>> << "\' \n";
     }
     EXPECT_TRUE(val);
 

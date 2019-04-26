@@ -18,7 +18,7 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/io/stream/parse_condition.hpp>
-#include <seqan3/range/container/constexpr_string.hpp>
+#include <seqan3/range/container/small_string.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail
@@ -61,7 +61,7 @@ namespace seqan3
  */
 
 #ifdef __cpp_nontype_template_parameter_class
-template <constexpr_string<2> str> // TODO: better handling if too large string is provided?
+template <small_string<2> str> // TODO: better handling if too large string is provided?
 constexpr uint16_t operator""_tag()
 {
 #else // GCC/Clang extension
@@ -71,7 +71,7 @@ template <typename char_t, char_t ...s>
 constexpr uint16_t operator""_tag()
 {
     static_assert(std::Same<char_t, char>, "Illegal SAM tag: Type must be char.");
-    constexpr constexpr_string<sizeof...(s)> str{std::array<char, sizeof...(s)>{s...}};
+    constexpr small_string<sizeof...(s)> str{std::array<char, sizeof...(s)>{s...}};
 #pragma GCC diagnostic pop
 #endif
 
