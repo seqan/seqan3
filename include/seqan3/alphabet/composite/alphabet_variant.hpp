@@ -86,7 +86,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires alphabet_tuple_base_concept<target_t> &&
+    requires AlphabetTupleBase<target_t> &&
              meta::in<detail::transformation_trait_or_t<recursive_tuple_components<target_t>, meta::list<>>,
                       alphabet_variant<alternatives...>>::value
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
@@ -126,7 +126,7 @@ inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
 template <typename ... alternatives,
           template <typename> typename fun_t,
           typename target_t>
-    requires TupleSize<target_t> && !alphabet_tuple_base_concept<target_t>
+    requires TupleSize<target_t> && !AlphabetTupleBase<target_t>
 inline bool constexpr one_alternative_is<alphabet_variant<alternatives...>,
                                          fun_t,
                                          target_t> = false;
