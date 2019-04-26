@@ -168,14 +168,8 @@ namespace seqan3
  */
 
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
-<<<<<<< HEAD
           detail::TypeListOfStructureFileOutputFormats valid_formats_ = type_list<format_vienna>,
-          char_concept stream_char_type_ = char>
-=======
-          detail::TypeListOfStructureFileOutputFormats valid_formats_
-              = type_list<structure_file_format_vienna>,
           Char stream_char_type_ = char>
->>>>>>> [MISC] char_concept to Char
 class structure_file_out
 {
 public:

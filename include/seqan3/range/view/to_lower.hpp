@@ -56,7 +56,7 @@ namespace seqan3::view
  * | std::ranges::OutputRange        |                                  | *lost*                                                  |
  * | seqan3::ConstIterableRange      |                                  | *preserved*                                             |
  * |                                 |                                  |                                                         |
- * | seqan3::reference_t             | seqan3::Char             | seqan3::remove_reference_t<seqan3::reference_t<urngt_>> |
+ * | seqan3::reference_t             | seqan3::Char                     | seqan3::remove_reference_t<seqan3::reference_t<urngt_>> |
  *
  * See the \link view view submodule documentation \endlink for detailed descriptions of the view properties.
  *
@@ -67,7 +67,7 @@ namespace seqan3::view
 inline auto const to_lower = deep{std::view::transform([] (auto const in) noexcept
 {
     static_assert(Char<remove_cvref_t<decltype(in)>>,
-                  "The value type of seqan3::view::to_lower must model the seqan3::Char.");
+                  "The value type of seqan3::view::to_lower must model seqan3::Char.");
     return seqan3::to_lower(in);
 })};
 

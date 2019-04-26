@@ -78,8 +78,8 @@ namespace seqan3
 //!\cond
 template <typename validator_type>
 SEQAN3_CONCEPT Validator = std::Copyable<remove_cvref_t<validator_type>> &&
-                                   requires(validator_type validator,
-                                            typename std::remove_reference_t<validator_type>::value_type value)
+                           requires(validator_type validator,
+                                    typename std::remove_reference_t<validator_type>::value_type value)
 {
     typename std::remove_reference_t<validator_type>::value_type;
 

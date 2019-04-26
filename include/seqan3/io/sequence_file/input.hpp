@@ -851,7 +851,7 @@ namespace std
 template <seqan3::SequenceFileInputTraits                    traits_type,
           seqan3::detail::Fields                             selected_field_ids,
           seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::Char                               stream_char_t>
+          seqan3::Char                                       stream_char_t>
 struct tuple_size<seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -863,7 +863,7 @@ template <size_t                                             elem_no,
           seqan3::SequenceFileInputTraits                    traits_type,
           seqan3::detail::Fields                             selected_field_ids,
           seqan3::detail::TypeListOfSequenceFileInputFormats valid_formats,
-          seqan3::Char                               stream_char_t>
+          seqan3::Char                                       stream_char_t>
 struct tuple_element<elem_no, seqan3::sequence_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::sequence_file_input<traits_type,
                                                                selected_field_ids,

@@ -584,13 +584,8 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
 template<StructureFileInputTraits traits_type_ = structure_file_input_default_traits_rna,
          detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::TypeListOfStructureFileInputFormats valid_formats_
-<<<<<<< HEAD
              = type_list<format_vienna>,
-         char_concept stream_char_type_ = char>
-=======
-             = type_list<structure_file_format_vienna>,
          Char stream_char_type_ = char>
->>>>>>> [MISC] char_concept to Char
 class structure_file_in
 {
 public:

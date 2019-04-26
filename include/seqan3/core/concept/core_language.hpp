@@ -133,11 +133,11 @@ SEQAN3_CONCEPT FloatingPoint = Arithmetic<t> && std::is_floating_point_v<t>;
 
 template <typename t>
 SEQAN3_CONCEPT Char = std::Integral<t> &&
-                       (std::Same<t, char> || std::Same<t, unsigned char> || std::Same<t, signed char> ||
+                      (std::Same<t, char> || std::Same<t, unsigned char> || std::Same<t, signed char> ||
 #ifdef __cpp_char8_t
-                        std::Same<t, char8_t> ||
+                       std::Same<t, char8_t> ||
 #endif
-                        std::Same<t, char16_t> || std::Same<t, char32_t> || std::Same<t, wchar_t>);
+                       std::Same<t, char16_t> || std::Same<t, char32_t> || std::Same<t, wchar_t>);
 //!\endcond
 
 /*!\interface   seqan3::TriviallyDestructible <>
