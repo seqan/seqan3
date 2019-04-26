@@ -60,6 +60,7 @@ public:
     using const_iterator  = value_type const *;                   //!< The const_iterator type.
     using difference_type = ptrdiff_t;                            //!< The difference_type type.
     using size_type       = detail::min_viable_uint_t<capacity_>; //!< The size_type type.
+
     //!\}
 
     //!\cond
@@ -139,7 +140,7 @@ public:
     constexpr small_vector(other_value_type... args) noexcept(is_noexcept) :
         data_{args...}, sz{sizeof...(other_value_type)}
     {
-        static_assert(sizeof...(other_value_type) < capacity_, "Value list must not exceed the capacity.");
+        static_assert(sizeof...(other_value_type) <= capacity_, "Value list must not exceed the capacity.");
     }
 
     /*!\brief Construct from two iterators.
@@ -185,7 +186,7 @@ public:
         requires !std::is_same_v<remove_cvref_t<other_range_t>, small_vector>
                  /*ICE: && std::Constructible<value_type, reference_t<other_range_t>>*/
     //!\endcond
-    constexpr small_vector(other_range_t && range) noexcept(is_noexcept) :
+    explicit constexpr small_vector(other_range_t && range) noexcept(is_noexcept) :
         small_vector{std::ranges::begin(range), std::ranges::end(range)}
     {}
 
@@ -255,7 +256,8 @@ public:
     constexpr void assign(size_type const count, value_type const value) noexcept(is_noexcept)
     {
         clear();
-        insert(cbegin(), count, value);
+        auto tmp = view::repeat_n(value, count);
+        assign(std::ranges::begin(tmp), std::ranges::end(tmp));
     }
 
     /*!\brief Assign from a different range.
@@ -315,13 +317,13 @@ public:
         return &data_[0];
     }
 
-    //!\copydoc small_vector::begin().
+    //!\copydoc seqan3::small_vector::begin()
     constexpr const_iterator begin() const noexcept
     {
         return &data_[0];
     }
 
-    //!\copydoc small_vector::begin().
+    //!\copydoc seqan3::small_vector::begin()
     constexpr const_iterator cbegin() const noexcept
     {
         return &data_[0];
@@ -333,13 +335,13 @@ public:
         return &data_[sz];
     }
 
-    //!\copydoc small_vector::end().
+    //!\copydoc seqan3::small_vector::end()
     constexpr const_iterator end() const noexcept
     {
         return &data_[sz];
     }
 
-    //!\copydoc small_vector::end().
+    //!\copydoc seqan3::small_vector::end()
     constexpr const_iterator cend() const noexcept
     {
         return &data_[sz];
@@ -863,48 +865,77 @@ public:
     //!\{
 
     //!\brief Performs element-wise comparison.
-    friend constexpr bool operator==(small_vector const & lhs, small_vector const & rhs) noexcept
+    template <size_t cap2>
+    //!\cond
+        requires cap2 <= capacity_
+    //!\endcond
+    friend constexpr bool operator==(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return std::ranges::equal(lhs, rhs);
     }
 
     //!\brief Performs element-wise comparison.
-    friend constexpr bool operator!=(small_vector const & lhs, small_vector const & rhs) noexcept
+    template <size_t cap2>
+    //!\cond
+        requires cap2 <= capacity_
+    //!\endcond
+    friend constexpr bool operator!=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Performs element-wise comparison.
-    friend constexpr bool operator<(small_vector const & lhs, small_vector const & rhs) noexcept
+    template <size_t cap2>
+    //!\cond
+        requires cap2 <= capacity_
+    //!\endcond
+    friend constexpr bool operator<(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         for (size_t i = 0; i < std::min(lhs.size(), rhs.size()); ++i)
-            if (lhs[i] >= rhs[i])
+            if (lhs[i] > rhs[i])
                 return false;
+            else if (lhs[i] < rhs[i])
+                return true;
         return lhs.size() < rhs.size();
     }
 
     //!\brief Performs element-wise comparison.
-    friend constexpr bool operator>(small_vector const & lhs, small_vector const & rhs) noexcept
+    template <size_t cap2>
+    //!\cond
+        requires cap2 <= capacity_
+    //!\endcond
+    friend constexpr bool operator>(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         for (size_t i = 0; i < std::min(lhs.size(), rhs.size()); ++i)
-            if (lhs[i] <= rhs[i])
+            if (lhs[i] < rhs[i])
                 return false;
+            else if (lhs[i] > rhs[i])
+                return true;
         return lhs.size() > rhs.size();
     }
 
     //!\brief Performs element-wise comparison.
-    friend constexpr bool operator<=(small_vector const & lhs, small_vector const & rhs) noexcept
+    template <size_t cap2>
+    //!\cond
+        requires cap2 <= capacity_
+    //!\endcond
+    friend constexpr bool operator<=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs > rhs);
     }
 
     //!\brief Performs element-wise comparison.
-    friend constexpr bool operator>=(small_vector const & lhs, small_vector const & rhs) noexcept
+    template <size_t cap2>
+    //!\cond
+        requires cap2 <= capacity_
+    //!\endcond
+    friend constexpr bool operator>=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs < rhs);
     }
     //!\}
-private:
+
+protected:
     //!\brief Stores the actual data_.
     std::array<value_type, capacity_> data_{};
     //!\brief The size of the actual contained data_.
