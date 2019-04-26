@@ -54,7 +54,7 @@ namespace seqan3
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
  *                            seqan3::StructureFileOutputFormat).
- * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::char_concept.
+ * \tparam stream_char_type   The type of the underlying stream device(s); must model seqan3::Char.
  * \details
  *
  * ### Introduction
@@ -168,8 +168,14 @@ namespace seqan3
  */
 
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+<<<<<<< HEAD
           detail::TypeListOfStructureFileOutputFormats valid_formats_ = type_list<format_vienna>,
           char_concept stream_char_type_ = char>
+=======
+          detail::TypeListOfStructureFileOutputFormats valid_formats_
+              = type_list<structure_file_format_vienna>,
+          Char stream_char_type_ = char>
+>>>>>>> [MISC] char_concept to Char
 class structure_file_out
 {
 public:

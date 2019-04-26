@@ -22,7 +22,7 @@ struct custom_validator
 };
 //![validator]
 
-static_assert(seqan3::validator_concept<custom_validator>);
+static_assert(seqan3::Validator<custom_validator>);
 
 //![main]
 int main(int argc, char ** argv)

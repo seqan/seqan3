@@ -50,7 +50,7 @@ namespace seqan3
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
  *                              must model seqan3::AlignmentFileOutputFormat).
- * \tparam stream_char_type     The type of character of the underlying stream, must model seqan3::char_concept.
+ * \tparam stream_char_type     The type of character of the underlying stream, must model seqan3::Char.
  *
  * \details
  *
@@ -183,7 +183,7 @@ template <detail::Fields selected_field_ids_ =
                      field::BIT_SCORE,
                      field::HEADER_PTR>,
           detail::TypeListOfAlignmentFileOutputFormats valid_formats_ = type_list<format_sam, format_bam>,
-          char_concept stream_char_type_ = char,
+          Char stream_char_type_ = char,
           typename ref_ids_type = ref_info_not_given>
 class alignment_file_output
 {

@@ -37,23 +37,23 @@ std::string const basic_version_str = "VERSION"
 
 TEST(validator_test, fullfill_concept)
 {
-    EXPECT_FALSE(validator_concept<int>);
+    EXPECT_FALSE(Validator<int>);
 
-    EXPECT_TRUE(validator_concept<detail::default_validator<int>>);
-    EXPECT_TRUE(validator_concept<detail::default_validator<int> const>);
-    EXPECT_TRUE(validator_concept<detail::default_validator<int> &>);
+    EXPECT_TRUE(Validator<detail::default_validator<int>>);
+    EXPECT_TRUE(Validator<detail::default_validator<int> const>);
+    EXPECT_TRUE(Validator<detail::default_validator<int> &>);
 
-    EXPECT_TRUE(validator_concept<detail::default_validator<std::vector<int>>>);
-    EXPECT_TRUE(validator_concept<arithmetic_range_validator>);
-    EXPECT_TRUE(validator_concept<value_list_validator<double>>);
-    EXPECT_TRUE(validator_concept<value_list_validator<std::string>>);
-    EXPECT_TRUE(validator_concept<input_file_validator>);
-    EXPECT_TRUE(validator_concept<output_file_validator>);
-    EXPECT_TRUE(validator_concept<input_directory_validator>);
-    EXPECT_TRUE(validator_concept<output_directory_validator>);
-    EXPECT_TRUE(validator_concept<regex_validator>);
+    EXPECT_TRUE(Validator<detail::default_validator<std::vector<int>>>);
+    EXPECT_TRUE(Validator<arithmetic_range_validator>);
+    EXPECT_TRUE(Validator<value_list_validator<double>>);
+    EXPECT_TRUE(Validator<value_list_validator<std::string>>);
+    EXPECT_TRUE(Validator<input_file_validator>);
+    EXPECT_TRUE(Validator<output_file_validator>);
+    EXPECT_TRUE(Validator<input_directory_validator>);
+    EXPECT_TRUE(Validator<output_directory_validator>);
+    EXPECT_TRUE(Validator<regex_validator>);
 
-    EXPECT_TRUE(validator_concept<decltype(input_file_validator{{"t"}} | regex_validator{".*"})>);
+    EXPECT_TRUE(Validator<decltype(input_file_validator{{"t"}} | regex_validator{".*"})>);
 }
 
 TEST(validator_test, input_file)

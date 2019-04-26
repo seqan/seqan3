@@ -71,7 +71,7 @@ inline bool starts_with(ref_t && reference, query_t && query)
  * \returns A pointer to the secondary stream with defaulted or NOP'ed deleter.
  * \throws seqan3::file_open_error If the magic bytes suggest compression, but is not supported/available.
  */
-template <char_concept char_t>
+template <Char char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, std::filesystem::path & filename)
     -> std::unique_ptr<std::basic_istream<char_t>, std::function<void(std::basic_istream<char_t>*)>>
 {
@@ -145,7 +145,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
 }
 
 //!\overload
-template <char_concept char_t>
+template <Char char_t>
 inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream)
 {
     std::filesystem::path p;

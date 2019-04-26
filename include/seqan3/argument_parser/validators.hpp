@@ -33,7 +33,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::validator_concept <>
+/*!\interface seqan3::Validator <>
  * \brief The concept for option validators passed to add_option/positional_option.
  * \ingroup argument_parser
  *
@@ -42,13 +42,13 @@ namespace seqan3
  * The requirements for this concept are given as related functions and metafunctions.
  * Types that satisfy this concept are shown as "implementing this interface".
  */
-/*!\name Requirements for seqan3::validator_concept
- * \brief You can expect these (meta-)functions on all types that implement seqan3::validator_concept.
+/*!\name Requirements for seqan3::Validator
+ * \brief You can expect these (meta-)functions on all types that implement seqan3::Validator.
  * \{
  */
 /*!\typedef     using value_type
  * \brief       The type of value on which the validator is called on.
- * \relates     seqan3::validator_concept
+ * \relates     seqan3::Validator
  *
  * \details
  * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
@@ -58,7 +58,7 @@ namespace seqan3
  * \brief           Validates the value 'cmp' and throws a seqan3::validation_failed on failure.
  * \tparam          value_type The type of the value to be validated.
  * \param[in,out]   cmp The value to be validated.
- * \relates         seqan3::validator_concept
+ * \relates         seqan3::Validator
  * \throws          seqan3::validation_failed if value 'cmp' does not pass validation.
  *
  * \details
@@ -67,7 +67,7 @@ namespace seqan3
  */
 /*!\fn              std::string get_help_page_message() const
  * \brief           Returns a message that can be appended to the (positional) options help page info.
- * \relates         seqan3::validator_concept
+ * \relates         seqan3::Validator
  * \returns         A string that contains information on the performed validation.
  *
  * \details
@@ -77,7 +77,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename validator_type>
-SEQAN3_CONCEPT validator_concept = std::Copyable<remove_cvref_t<validator_type>> &&
+SEQAN3_CONCEPT Validator = std::Copyable<remove_cvref_t<validator_type>> &&
                                    requires(validator_type validator,
                                             typename std::remove_reference_t<validator_type>::value_type value)
 {
@@ -90,7 +90,7 @@ SEQAN3_CONCEPT validator_concept = std::Copyable<remove_cvref_t<validator_type>>
 
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \tparam option_value_type Must be a (container of) arithmetic type(s).
  *
@@ -157,7 +157,7 @@ private:
 
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -683,7 +683,7 @@ public:
 
 /*!\brief A validator that checks if a matches a regular expression pattern.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -753,7 +753,7 @@ namespace detail
 
 /*!\brief Validator that always returns true.
  * \ingroup argument_parser
- * \implements seqan3::validator_concept
+ * \implements seqan3::Validator
  *
  * \details
  *
@@ -779,7 +779,7 @@ struct default_validator
 
 /*!\brief A helper struct to chain validators recursively via the pipe operator.
  *\ingroup argument_parser
- *\implements seqan3::validator_concept
+ *\implements seqan3::Validator
  *
  *\details
  *
@@ -788,7 +788,7 @@ struct default_validator
  * call is well-formed. (add_option(val, ...., validator) requires
  * that val is of same type as validator::value_type).
  */
-template <validator_concept validator1_type, validator_concept validator2_type>
+template <Validator validator1_type, Validator validator2_type>
 //!\cond
     requires std::Same<typename validator1_type::value_type, typename validator2_type::value_type>
 //!\endcond
@@ -855,10 +855,10 @@ private:
 /*!\brief Enables the chaining of validators.
  * \ingroup argument_parser
  * \tparam validator1_type The type of the fist validator;
- *                         Must satisfy the seqan3::validator_concept and the
+ *                         Must satisfy the seqan3::Validator and the
  *                         same value_type as the second validator type.
  * \tparam validator2_type The type of the second validator;
- *                         Must satisfy the seqan3::validator_concept and the
+ *                         Must satisfy the seqan3::Validator and the
  *                         same value_type as the fist validator type.
  * \param[in] vali1 The first validator to chain.
  * \param[in] vali2 The second validator to chain.
@@ -879,7 +879,7 @@ private:
  * You can chain as many validators as you want which will be evaluated one after
  * the other from left to right (first to last).
  */
-template <validator_concept validator1_type, validator_concept validator2_type>
+template <Validator validator1_type, Validator validator2_type>
 //!\cond
     requires std::Same<typename std::remove_reference_t<validator1_type>::value_type,
                        typename std::remove_reference_t<validator2_type>::value_type>

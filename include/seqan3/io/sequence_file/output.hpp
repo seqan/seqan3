@@ -162,8 +162,14 @@ namespace seqan3
 
 template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
+<<<<<<< HEAD
               type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>,
           char_concept stream_char_type_ = char>
+=======
+              type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
+                        sequence_file_format_genbank, sequence_file_format_sam>,
+          Char stream_char_type_ = char>
+>>>>>>> [MISC] char_concept to Char
 class sequence_file_output
 {
 public:
