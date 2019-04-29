@@ -175,7 +175,7 @@ int main()
 
 //![main_adaptor]
     /* try the adaptor */
-    auto v2 = vec | std::view::reverse | view::my;
+    auto v2 = vec | std::view::reverse | ::view::my;
     static_assert(std::ranges::RandomAccessRange<decltype(v2)>);
     debug_stream << v2 << '\n';
 //![main_adaptor]
