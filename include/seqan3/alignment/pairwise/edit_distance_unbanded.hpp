@@ -26,6 +26,7 @@
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/range/shortcuts.hpp>
 #include <seqan3/std/ranges>
 
@@ -106,8 +107,8 @@ public:
     using trace_matrix_type = detail::alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded>;
 
     //!\brief The size of one machine word.
-    static constexpr uint8_t word_size = sizeof(word_type) * 8;
-
+    static constexpr uint8_t word_size = sizeof_bits<word_type>;
+    static_assert(sizeof_bits<word_type> <= 64u, "we assume at most uint64_t as word_type");
 private:
     //!\brief The type of an iterator of the database sequence.
     using database_iterator = std::ranges::iterator_t<database_type>;
@@ -126,8 +127,6 @@ private:
 
     //!\brief How to pre-initialize hp.
     static constexpr word_type hp0 = is_global ? 1 : 0;
-
-    static_assert(8 * sizeof(word_type) <= 64, "we assume at most uint64_t as word_type");
 
     //!\brief The score of the current column.
     score_type _score{};
