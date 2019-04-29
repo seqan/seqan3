@@ -209,12 +209,14 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
 } ();
 
 //!\brief Alias for the default type wuss51.
-typedef wuss<51> wuss51;
+//!\relates seqan3::wuss
+using wuss51 = wuss<51>;
 
 /*!\name Literals
  * \{
- *
- * \brief The seqan3::wuss51 string literal.
+ */
+
+/*!\brief The seqan3::wuss51 string literal.
  * \relates seqan3::wuss
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.
