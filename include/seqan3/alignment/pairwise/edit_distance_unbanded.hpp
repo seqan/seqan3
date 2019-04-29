@@ -33,13 +33,6 @@
 
 namespace seqan3::detail
 {
-//!\cond
-template <typename align_config_t>
-SEQAN3_CONCEPT MaxErrors = requires (align_config_t & cfg)
-{
-    requires cfg.template exists<align_cfg::max_error>();
-};
-//!\endcond
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
  * \ingroup pairwise_alignment
@@ -72,6 +65,7 @@ class pairwise_alignment_edit_distance_unbanded
 public:
     //!\brief The type of one machine word.
     using word_type = typename std::remove_reference_t<traits_t>::word_type;
+    static_assert(std::is_unsigned_v<word_type>, "the word type of edit_distance_unbanded must be unsigned.");
     //!\brief The type of the score.
     using score_type = int;
     //!\brief The type of the database sequence.
@@ -97,11 +91,30 @@ private:
     using result_value_type = typename align_result_selector<database_type, query_type, align_config_type>::type;
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
-    static constexpr bool use_max_errors = detail::MaxErrors<align_config_t>;
+    static constexpr bool use_max_errors = align_config_type::template exists<align_cfg::max_error>();
     //!\brief Whether the alignment is a semi-global alignment or not.
     static constexpr bool is_semi_global = traits_t::is_semi_global_type::value;
     //!\brief Whether the alignment is a global alignment or not.
     static constexpr bool is_global = !is_semi_global;
+
+    //!\brief Whether the alignment configuration indicates to compute and/or store the score.
+    static constexpr bool compute_score = align_config_type::template exists<align_cfg::result<with_score_type>>() ||
+                                          !std::Same<decltype(result_value_type{}.back_coordinate), std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
+    static constexpr bool compute_back_coordinate = !std::Same<decltype(result_value_type{}.back_coordinate),
+                                                               std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the front coordinate.
+    static constexpr bool compute_front_coordinate = !std::Same<decltype(result_value_type{}.front_coordinate),
+                                                                std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the alignment of the sequences.
+    static constexpr bool compute_sequence_alignment = !std::Same<decltype(result_value_type{}.alignment),
+                                                                  std::nullopt_t *>;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the score matrix.
+    static constexpr bool compute_score_matrix = compute_front_coordinate || compute_sequence_alignment;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the trace matrix.
+    static constexpr bool compute_trace_matrix = compute_front_coordinate || compute_sequence_alignment;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the score or trace matrix.
+    static constexpr bool compute_matrix = compute_score_matrix || compute_trace_matrix;
 
     //!\brief How to pre-initialize hp.
     static constexpr word_type hp0 = is_global ? 1 : 0;
@@ -408,25 +421,24 @@ public:
         _compute();
         result_value_type res_vt{};
         res_vt.id = idx;
-        if constexpr (!std::is_same_v<decltype(res_vt.score), std::nullopt_t *>)
+        if constexpr (compute_score)
         {
             res_vt.score = score();
         }
 
-        if constexpr (!std::is_same_v<decltype(res_vt.back_coordinate), std::nullopt_t *>)
+        if constexpr (compute_back_coordinate)
         {
             res_vt.back_coordinate = back_coordinate();
         }
 
-        [[maybe_unused]] alignment_trace_matrix matrix = trace_matrix();
-        if constexpr (!std::is_same_v<decltype(res_vt.front_coordinate), std::nullopt_t *>)
+        if constexpr (compute_front_coordinate)
         {
-            res_vt.front_coordinate = alignment_front_coordinate(matrix, res_vt.back_coordinate);
+            res_vt.front_coordinate = alignment_front_coordinate(trace_matrix(), res_vt.back_coordinate);
         }
 
-        if constexpr (!std::is_same_v<decltype(res_vt.alignment), std::nullopt_t *>)
+        if constexpr (compute_sequence_alignment)
         {
-            res_vt.alignment = alignment_trace(database, query, matrix, res_vt.back_coordinate);
+            res_vt.alignment = alignment_trace(database, query, trace_matrix(), res_vt.back_coordinate);
         }
         return alignment_result<result_value_type>{std::move(res_vt)};
     }
@@ -434,24 +446,32 @@ public:
     //!\brief Return the score of the alignment.
     score_type score() const noexcept
     {
+        static_assert(compute_score, "score() can only be computed if you specify the result type within "
+                                     "your alignment config.");
         return -_best_score;
     }
 
     //!\brief Return the score matrix of the alignment.
     score_matrix_type score_matrix() const noexcept
     {
+        static_assert(compute_score_matrix, "score_matrix() can only be computed if you specify the result type within "
+                                            "your alignment config.");
         return score_matrix_type{*this};
     }
 
     //!\brief Return the trace matrix of the alignment.
     trace_matrix_type trace_matrix() const noexcept
     {
+        static_assert(compute_trace_matrix, "trace_matrix() can only be computed if you specify the result type within "
+                                            "your alignment config.");
         return trace_matrix_type{*this};
     }
 
     //!\brief Return the begin position of the alignment
     alignment_coordinate front_coordinate() const noexcept
     {
+        static_assert(compute_front_coordinate, "front_coordinate() can only be computed if you specify the result type "
+                                                "within your alignment config.");
         alignment_coordinate back = back_coordinate();
         return alignment_front_coordinate(trace_matrix(), back);
     }
@@ -459,6 +479,8 @@ public:
     //!\brief Return the end position of the alignment
     alignment_coordinate back_coordinate() const noexcept
     {
+        static_assert(compute_back_coordinate, "back_coordinate() can only be computed if you specify the result type "
+                                               "within your alignment config.");
         size_t col = database.size() - 1;
         if constexpr(is_semi_global)
             col = std::ranges::distance(begin(database), _best_score_col);
@@ -469,6 +491,8 @@ public:
     //!\brief Return the alignment, i.e. the actual base pair matching.
     auto alignment() const noexcept
     {
+        static_assert(compute_sequence_alignment, "alignment() can only be computed if you specify the result type "
+                                                  "within your alignment config.");
         return alignment_trace(database, query, trace_matrix(), back_coordinate());
     }
 };
