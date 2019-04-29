@@ -55,21 +55,17 @@ template <typename traits_t, typename database_t, typename query_t, typename ali
 auto edit_distance(database_t && database, query_t && query, align_cfg_t && align_cfg)
 {
     using algorithm_t = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_cfg_t, traits_t>;
-    using res_val_t = typename detail::align_result_selector<std::remove_reference_t<database_t>,
-                                                             std::remove_reference_t<query_t>,
-                                                             align_cfg_t>::type;
-    auto result = alignment_result<res_val_t>{};
     auto alignment = algorithm_t{database, query, align_cfg};
 
     // compute alignment
-    alignment(0u, result);
+    alignment(0u);
     return alignment;
 }
 
 TYPED_TEST_P(edit_distance_unbanded, score)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config;
+    configuration align_cfg = fixture.config | align_cfg::result{with_score};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -81,7 +77,7 @@ TYPED_TEST_P(edit_distance_unbanded, score)
 TYPED_TEST_P(edit_distance_unbanded, score_matrix)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config;
+    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -98,7 +94,7 @@ TYPED_TEST_P(edit_distance_unbanded, score_matrix)
 TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config;
+    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -114,7 +110,7 @@ TYPED_TEST_P(edit_distance_unbanded, trace_matrix)
 TYPED_TEST_P(edit_distance_unbanded, back_coordinate)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config;
+    configuration align_cfg = fixture.config | align_cfg::result{with_back_coordinate};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -128,7 +124,7 @@ TYPED_TEST_P(edit_distance_unbanded, back_coordinate)
 TYPED_TEST_P(edit_distance_unbanded, front_coordinate)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config;
+    configuration align_cfg = fixture.config | align_cfg::result{with_front_coordinate};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -142,7 +138,7 @@ TYPED_TEST_P(edit_distance_unbanded, front_coordinate)
 TYPED_TEST_P(edit_distance_unbanded, alignment)
 {
     auto const & fixture = this->fixture();
-    auto align_cfg = fixture.config;
+    configuration align_cfg = fixture.config | align_cfg::result{with_alignment};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
