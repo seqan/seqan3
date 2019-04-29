@@ -67,7 +67,7 @@ struct default_edit_distance_trait_type
  * \ingroup pairwise_alignment
  * \tparam database_t     \copydoc pairwise_alignment_edit_distance_unbanded::database_type
  * \tparam query_t        \copydoc pairwise_alignment_edit_distance_unbanded::query_type
- * \tparam align_config_t The type of the alignment config.
+ * \tparam align_config_t The configuration type; must be of type seqan3::configuration.
  */
 template <std::ranges::ViewableRange database_t,
           std::ranges::ViewableRange query_t,
@@ -100,6 +100,8 @@ public:
     using database_type = std::remove_reference_t<database_t>;
     //!\brief The type of the query sequence.
     using query_type = std::remove_reference_t<query_t>;
+    //!\brief The type of the alignment config.
+    using align_config_type = std::remove_reference_t<align_config_t>;
     //!\brief The type of the score matrix.
     using score_matrix_type = detail::alignment_score_matrix<pairwise_alignment_edit_distance_unbanded>;
     //!\brief The type of the trace matrix.
@@ -113,9 +115,8 @@ private:
     using database_iterator = std::ranges::iterator_t<database_type>;
     //!\brief The alphabet type of the query sequence.
     using query_alphabet_type = std::remove_reference_t<reference_t<query_type>>;
-
-    //TODO Make it dynamic.
-    // using result_type = alignment_result<type_list<uint32_t, int>>;
+    //!\brief The intermediate result type of the execution of this function object.
+    using result_value_type = typename align_result_selector<database_type, query_type, align_config_type>::type;
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to config.max_errors.
     static constexpr bool use_max_errors = detail::MaxErrors<align_config_t>;
@@ -419,11 +420,9 @@ public:
 
     /*!\brief Generic invocable interface.
      * \param[in]     idx The index of the currently processed sequence pair.
-     * \param[in,out] res The alignment result to fill.
      * \returns A reference to the filled alignment result.
      */
-    template <typename result_value_type>
-    alignment_result<result_value_type> & operator()(size_t const idx, alignment_result<result_value_type> & res)
+    alignment_result<result_value_type> operator()(size_t const idx)
     {
         _compute();
         result_value_type res_vt{};
@@ -448,8 +447,7 @@ public:
         {
             res_vt.alignment = alignment_trace(database, query, matrix, res_vt.back_coordinate);
         }
-        res = alignment_result<result_value_type>{res_vt};
-        return res;
+        return alignment_result<result_value_type>{std::move(res_vt)};
     }
 
     //!\brief Return the score of the alignment.
@@ -639,13 +637,8 @@ public:
     template <std::ranges::ForwardRange first_range_t, std::ranges::ForwardRange second_range_t>
     constexpr auto operator()(size_t const idx, first_range_t && first_range, second_range_t && second_range)
     {
-        using result_t = typename detail::align_result_selector<remove_cvref_t<first_range_t>,
-                                                                remove_cvref_t<second_range_t>,
-                                                                remove_cvref_t<config_t>>::type;
-
         pairwise_alignment_edit_distance_unbanded algo{first_range, second_range, *cfg_ptr, traits_t{}};
-        alignment_result<result_t> res{};
-        return algo(idx, res);
+        return algo(idx);
     }
 
 private:
