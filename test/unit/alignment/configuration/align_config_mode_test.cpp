@@ -18,7 +18,7 @@ template <typename type>
 struct align_cfg_mode_test : public ::testing::Test
 {};
 
-using test_types = ::testing::Types<detail::global_alignment_type>;
+using test_types = ::testing::Types<detail::global_alignment_type, detail::local_alignment_type>;
 TYPED_TEST_CASE(align_cfg_mode_test, test_types);
 
 TYPED_TEST(align_cfg_mode_test, ConfigElement)
@@ -48,6 +48,10 @@ constexpr auto get_inline_variable()
     if constexpr (std::is_same_v<type, detail::global_alignment_type>)
     {
         return global_alignment;
+    }
+    else if constexpr (std::is_same_v<type, detail::local_alignment_type>)
+    {
+        return local_alignment;
     }
     else
     {

@@ -24,6 +24,7 @@ using test_types = ::testing::Types<align_cfg::aligned_ends<std::remove_const_t<
                                     align_cfg::gap<gap_scheme<>>,
                                     align_cfg::max_error,
                                     align_cfg::mode<detail::global_alignment_type>,
+                                    align_cfg::mode<detail::local_alignment_type>,
                                     align_cfg::result<>,
                                     align_cfg::scoring<nucleotide_scoring_scheme<int8_t>>>;
 
@@ -50,7 +51,7 @@ TEST(alignment_configuration_test, symmetric_configuration)
 TEST(alignment_configuration_test, number_of_configs)
 {
     // NOTE(rrahn): You must update this test if you add a new value to align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(detail::align_config_id::SIZE), 7);
+    EXPECT_EQ(static_cast<uint8_t>(detail::align_config_id::SIZE), 8);
 }
 
 TYPED_TEST(alignment_configuration_test, ConfigElement)
