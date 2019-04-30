@@ -93,7 +93,7 @@ protected:
             // reverse mapping for characters
             for (size_t rnk = 0u; rnk < value_size; ++rnk)
             {
-            	ret[rank_to_char[rnk] ] = rnk;
+                ret[rank_to_char[rnk] ] = rnk;
             }
 
             return ret;
