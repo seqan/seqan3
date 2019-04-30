@@ -143,7 +143,7 @@ if your results are correct.
 
 Until now, we have focused on alphabets for nucleotides to introduce the properties of SeqAn's alphabet
 on a specific example. SeqAn implements, however, many more alphabets. In this section, we want to give you
-an overview to the existing alphabets and in the end you can implement an additional one yourself.
+an overview of the other existing alphabets.
 
 ## The amino acid alphabet
 
