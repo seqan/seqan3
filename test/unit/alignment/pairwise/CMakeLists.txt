@@ -5,5 +5,7 @@ seqan3_test(alignment_configurator_test.cpp)
 seqan3_test(edit_distance_unbanded_test.cpp)
 seqan3_test(global_affine_banded_test.cpp)
 seqan3_test(global_affine_unbanded_test.cpp)
+seqan3_test(local_affine_banded_test.cpp)
+seqan3_test(local_affine_unbanded_test.cpp)
 
 add_subdirectories()
