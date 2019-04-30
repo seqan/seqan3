@@ -91,6 +91,10 @@ public:
         band_row_index = std::abs(std::min(static_cast<int_fast32_t>(band.lower_bound),
                                            static_cast<int_fast32_t>(0)));
 
+        // If the band is wider than the sequence length, limit the band width.
+        band_column_index = std::min(band_column_index, static_cast<uint_fast32_t>(dimension_second_range - 1));
+        band_row_index = std::min(band_row_index, static_cast<uint_fast32_t>(dimension_first_range - 1));
+
         band_size = band_column_index + band_row_index + 1;
 
         // Reserve one more cell to deal with last cell in the banded column which needs only the diagonal and up cell.
