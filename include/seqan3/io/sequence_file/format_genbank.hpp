@@ -2,7 +2,7 @@
 // Copyright (c) 2006-2019, Knut Reinert & Freie Universität Berlin
 // Copyright (c) 2016-2019, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
-// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
@@ -58,7 +58,7 @@ namespace seqan3
  * there is the option "complete_header" to indicate whether the whole header is to be read
  * (embl_genbank_complete_header=true) or only the "LOCUS" information should be stored.
  *
- * Passed qualities to either the read or write function are ignored.
+ * Qualities passed to the write function are ignored.
  *
  */
 class sequence_file_format_genbank
@@ -67,16 +67,13 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-     //!\brief Default constructor is explicitly defaulted, you need to provide a stream or file name.
-    sequence_file_format_genbank() = default;
+    sequence_file_format_genbank() = default;                                            //!< Defaulted.
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the genbank file.
     sequence_file_format_genbank(sequence_file_format_genbank const &) = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the genbank file.
     sequence_file_format_genbank & operator=(sequence_file_format_genbank const &) = delete;
-    //!\brief Move construction is defaulted.
-    sequence_file_format_genbank(sequence_file_format_genbank &&) = default;
-    //!\brief Move assignment is defaulted.
-    sequence_file_format_genbank & operator=(sequence_file_format_genbank &&) = default;
+    sequence_file_format_genbank(sequence_file_format_genbank &&) = default;             //!< Defaulted.
+    sequence_file_format_genbank & operator=(sequence_file_format_genbank &&) = default; //!< Defaulted.
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
@@ -99,11 +96,9 @@ public:
               id_type                                                                   & id,
               qual_type                                                                 & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        using stream_char_t = typename stream_type::char_type;
-        auto stream_view = std::ranges::subrange<decltype(std::istreambuf_iterator<stream_char_t>{stream}),
-                                                 decltype(std::istreambuf_iterator<stream_char_t>{})>
-                           {std::istreambuf_iterator<stream_char_t>{stream},
-                            std::istreambuf_iterator<stream_char_t>{}};
+        using stream_buff_t = std::istreambuf_iterator<typename stream_type::char_type>;
+        auto stream_view = std::ranges::subrange<decltype(stream_buff_t{stream}), decltype(stream_buff_t{})>
+                           {stream_buff_t{stream}, stream_buff_t{}};
         auto stream_it = std::ranges::begin(stream_view);
 
         if (!(std::ranges::equal(stream_view | view::take_until_or_throw(is_cntrl || is_blank), std::string{"LOCUS"})))
@@ -121,25 +116,24 @@ public:
                 {
                         std::ranges::copy(stream_view | view::take_line_or_throw
                                                 	  | view::char_to<value_type_t<id_type>>,
-                                     	  std::back_inserter(id));
-                        std::ranges::copy(std::string{"\n"}, std::back_inserter(id));
+                                     	                std::back_inserter(id));
+                        id.push_back('\n');
                 }
             }
             else
             {
-				// ID
                 detail::consume(stream_view | view::take_until(!is_blank));
                 // read id
                 std::ranges::copy(stream_view | view::take_until_or_throw(is_cntrl || is_blank)
                                               | view::char_to<value_type_t<id_type>>,
-                                  std::back_inserter(id));
+                                                std::back_inserter(id));
                 detail::consume(stream_view | view::take_line_or_throw);
             }
         }
 
         // Jump to sequence
         while (!(std::ranges::equal(stream_view | view::take_until_or_throw(is_cntrl || is_blank),
-                                    std::string{"ORIGIN"}) | options.embl_genbank_complete_header))
+                                    std::string{"ORIGIN"}) || options.embl_genbank_complete_header))
         {
             detail::consume(stream_view | view::take_until(is_cntrl));
             ++stream_it;
@@ -151,25 +145,25 @@ public:
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
-            std::ranges::copy(stream_view | ranges::view::remove_if(is_space || is_digit)
+            std::ranges::copy(stream_view | std::view::filter(!(is_space || is_digit))
                                           | view::take_until_or_throw_and_consume(is_end) // consume //
                                           | std::view::transform([is_legal_alph] (char const c) // enforce legal alphabet
-                                         {
-                                             if (!is_legal_alph(c))
-                                             {
-                                                 throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                   is_legal_alph.msg.string() +
-                                                                   " evaluated to false on " +
-                                                                   detail::make_printable(c)};
-                                             }
-                                             return c;
-                                         })
+                                            {
+                                                if (!is_legal_alph(c))
+                                                {
+                                                    throw parse_error{std::string{"Encountered an unexpected letter: "} +
+                                                                      is_legal_alph.msg.string() +
+                                                                      " evaluated to false on " +
+                                                                      detail::make_printable(c)};
+                                                }
+                                                return c;
+                                            })
                                           | view::char_to<value_type_t<seq_type>>,    // convert to actual target alphabet
                                             std::back_inserter(sequence));
         }
         else
         {
-            detail::consume(stream_view | view::take_until_and_consume(is_end));
+            detail::consume(stream_view | view::take_until_or_throw_and_consume(is_end));
             ++stream_it;
         }
     }
@@ -186,7 +180,7 @@ public:
                qual_type                          && SEQAN3_DOXYGEN_ONLY(qualities))
     {
         std::ranges::ostreambuf_iterator stream_it{stream};
-        size_t sequence_size = 0;
+        size_t sequence_size{0};
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
             sequence_size = ranges::size(sequence);
 
@@ -231,7 +225,7 @@ public:
             {
                 // Sequence length with more than 9 digits are not possible in one genbank entry, maximal 350 kb are
                 // allowed. See: https://www.ncbi.nlm.nih.gov/Sitemap/samplerecord.html#SequenceLengthA
-                for(size_t j = std::to_string(bp).length(); j < 9; j++)
+                for (size_t j = std::to_string(bp).size(); j < 9; j++)
                     stream_it = ' ';
                 std::ranges::copy(std::to_string(bp), stream_it);
                 stream_it = ' ';
