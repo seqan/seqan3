@@ -51,7 +51,7 @@
  * ### Alphabet size
  *
  * All alphabets in SeqAn have a fixed size. It
- * can be queried via the seqan3::alphabet_size metafunction and *optionally* also the `value_size` static
+ * can be queried via the seqan3::alphabet_size metafunction and *optionally* also the `alphabet_size` static
  * member of the alphabet (see below for "members VS free/global functions").
  *
  * In some areas we provide alphabets types with different sizes for the same purpose, e.g. seqan3::dna4
@@ -82,21 +82,21 @@
  * To solve this problem, every alphabet defines two interfaces:
  *
  *   1. a **rank based interface** with
- *     * the \link seqan3::underlying_rank underlying rank type \endlink able to represent this alphabet numerically;
+ *     * the \link seqan3::alphabet_rank_t underlying rank type \endlink able to represent this alphabet numerically;
  *       this type must be able to represent the numbers from `0` to `alphabet size - 1` (often `uint8_t`, but
  *       sometimes a larger unsigned integral type);
- *     * a \link seqan3::Alphabet::to_rank to_rank \endlink function to produce the numerical representation;
- *     * an \link seqan3::Alphabet::assign_rank_to assign_rank \endlink function to assign from the numerical
+ *     * a \link seqan3::to_rank to_rank \endlink function to produce the numerical representation;
+ *     * an \link seqan3::assign_rank_to assign_rank \endlink function to assign from the numerical
  *       representation;
  *   2. a **character based interface** with
- *     * the \link seqan3::underlying_char underlying character type \endlink able to represent this alphabet visually
+ *     * the \link seqan3::alphabet_char_t underlying character type \endlink able to represent this alphabet visually
  *       (almost always `char`, but could be `char16_t` or `char32_t`, as well)
- *     * a \link seqan3::Alphabet::to_char to_char \endlink function to produce the visual representation;
- *     * an \link seqan3::Alphabet::assign_char_to assign_char \endlink function to assign from the visual
+ *     * a \link seqan3::to_char to_char \endlink function to produce the visual representation;
+ *     * an \link seqan3::assign_char_to assign_char \endlink function to assign from the visual
  *       representation;
- *     * a \link seqan3::Alphabet::char_is_valid_for char_is_valid_for \endlink function that checks whether
+ *     * a \link seqan3::char_is_valid_for char_is_valid_for \endlink function that checks whether
  *       a character value has a one-to-one mapping to an alphabet value;
- *     * an \link seqan3::Alphabet::assign_char_strictly_to assign_char_strict \endlink function to assign a
+ *     * an \link seqan3::assign_char_strictly_to assign_char_strict \endlink function to assign a
  *       characters while verifying its validity.
  *
  * To prevent the aforementioned ambiguity, you can neither assign from rank or char representation via `operator=`,
@@ -128,7 +128,7 @@
  * The alphabet concept (as most concepts in SeqAn) looks for free/global functions, i.e. you need to be able
  * to call `seqan3::to_rank(my_letter)`, however *most* alphabets also provide a member function, i.e.
  * `my_letter.to_rank()`. The same is true for the metafunction seqan3::alphabet_size vs the static data member
- * `value_size`.
+ * `alphabet_size`.
  *
  * Members are provided for convenience and if you are an application developer who works with a single concrete
  * alphabet type you are fine with using the member functions. If you, however, implement a generic function
