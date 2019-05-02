@@ -25,6 +25,9 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/algorithm/fill.hpp>
+#include <range/v3/algorithm/find_if_not.hpp>
+#include <range/v3/algorithm/find_if.hpp>
+#include <range/v3/algorithm/find.hpp>
 #include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/algorithm/sort.hpp>
 #include <range/v3/view/all.hpp>
@@ -224,6 +227,21 @@ using SEQAN3_DOXYGEN_ONLY(equal =) ::ranges::equal;
 * \brief Alias for ranges::sort. Sorts a range.
 */
 using SEQAN3_DOXYGEN_ONLY(sort =) ::ranges::sort;
+
+/*!\typedef std::ranges::find
+* \brief Alias for ranges::find. Returns the first element in the range equal to the given value.
+*/
+using SEQAN3_DOXYGEN_ONLY(find =) ::ranges::find;
+
+/*!\typedef std::ranges::find_if
+* \brief Alias for ranges::find_if. Returns the first element in the range for which the predicate returns true.
+*/
+using SEQAN3_DOXYGEN_ONLY(find_if =) ::ranges::find_if;
+
+/*!\typedef std::ranges::find_if_not
+* \brief Alias for ranges::find_if_not. Returns the first element in the range for which the predicate returns false.
+*/
+using SEQAN3_DOXYGEN_ONLY(find_if_not =) ::ranges::find_if_not;
 
 /*!\typedef std::ranges::default_sentinel
 * \brief Alias for ranges::default_sentinel. Empty sentinel object for use with iterators that know the bound of their range.
