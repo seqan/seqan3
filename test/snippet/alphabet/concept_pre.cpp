@@ -19,17 +19,6 @@ int main()
 }
 
 {
-//! [value retrieval]
-using alphabet_type = rna4;
-auto i = seqan3::alphabet_size<alphabet_type>::value;
-// or
-auto j = seqan3::alphabet_size_v<alphabet_type>;
-//! [value retrieval]
-(void) i;
-(void) j;
-}
-
-{
 //! [pseudoknot value retrieval]
 using alphabet_type = structured_rna<rna4, dot_bracket3>;
 uint8_t pk_support = seqan3::max_pseudoknot_depth<alphabet_type>::value;
