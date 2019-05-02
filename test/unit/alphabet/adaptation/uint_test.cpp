@@ -30,13 +30,6 @@ using uint_types = ::testing::Types<uint8_t, uint16_t, uint32_t>;
 
 TYPED_TEST_CASE(uint_adaptation, uint_types);
 
-TYPED_TEST(uint_adaptation, concept_check)
-{
-    EXPECT_TRUE(uint_adaptation_concept<TypeParam   >);
-    EXPECT_TRUE(uint_adaptation_concept<TypeParam & >);
-    EXPECT_TRUE(uint_adaptation_concept<TypeParam &&>);
-}
-
 TYPED_TEST(uint_adaptation, alphabet_rank_t)
 {
     EXPECT_TRUE((std::is_same_v<alphabet_rank_t<TypeParam   >, TypeParam>));

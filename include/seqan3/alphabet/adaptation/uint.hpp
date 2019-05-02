@@ -27,124 +27,74 @@
 
 #include <limits>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/alphabet/concept_pre.hpp>
+#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
 //!\addtogroup adaptation
 //!\{
 
-//!\brief The list of types that are defined as uint adaptations.
-using uint_adaptations            = meta::list<uint8_t,
-                                               uint16_t,
-                                               uint32_t>;
-//!\brief The corresponding list of rank types
-using uint_adaptations_char_types = meta::list<char,
-                                               char16_t,
-                                               char32_t>;
-
-//!\brief Metafunction overload for types that are in seqan3::detail::uint_adaptations.
-template <typename type_in_list>
-    requires meta::in<uint_adaptations, std::remove_reference_t<type_in_list>>::value
-struct is_uint_adaptation<type_in_list> :
-    std::true_type
-{};
-
+//!\brief Whether a type is `uint8_t`, `uint16_t` or `uint32_t`.
+template <typename type, typename type2 = std::remove_reference_t<type>>
+constexpr bool is_uint_adaptation_v = std::Same<type2, uint8_t>  ||
+                                      std::Same<type2, uint16_t> ||
+                                      std::Same<type2, uint32_t>;
 //!\}
 } // namespace seqan3::detail
 
-namespace seqan3
+namespace seqan3::adaptation
 {
-
-//!\addtogroup adaptation
-//!\{
-
-// ------------------------------------------------------------------
-// type metafunctions
-// ------------------------------------------------------------------
-
-/*!\brief Specialisation of seqan3::underlying_char for uint types.
- * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \relates seqan3::uint_adaptation_concept
- * \sa seqan3::alphabet_char_t
- */
-template <typename uint_type>
-//!\cond
-    requires detail::is_uint_adaptation_v<uint_type>
-//!\endcond
-struct underlying_char<uint_type>
-{
-    //!\brief The character type of the same size as `uint_type`.
-    using type = meta::at<detail::uint_adaptations_char_types,
-                          meta::find_index<detail::uint_adaptations, std::remove_reference_t<uint_type>>>;
-};
-
-/*!\brief Specialisation of seqan3::underlying_rank for uint types.
- * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \relates seqan3::uint_adaptation_concept
- * \sa seqan3::alphabet_rank_t
- */
-template <typename uint_type>
-//!\cond
-    requires detail::is_uint_adaptation_v<uint_type>
-//!\endcond
-struct underlying_rank<uint_type>
-{
-    //!\brief The same as `uint_type`.
-    using type = uint_type;
-};
-
-// ------------------------------------------------------------------
-// value metafunctions
-// ------------------------------------------------------------------
-
-/*!\brief Specialisation of seqan3::alphabet_size that delegates for uint types.
- * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
- * \relates seqan3::uint_adaptation_concept
- * \sa seqan3::alphabet_size_v
- */
-template <typename uint_type>
-//!\cond
-    requires detail::is_uint_adaptation_v<uint_type>
-//!\endcond
-struct alphabet_size<uint_type> :
-    std::integral_constant<detail::min_viable_uint_t<detail::size_in_values_v<uint_type>>,
-                           detail::size_in_values_v<uint_type>>
-{};
-
-// ------------------------------------------------------------------
-// free functions
-// ------------------------------------------------------------------
 
 /*!\name Free function wrappers for the uint alphabet adaptation
  * \brief For `uint8_t`, `uint16_t` and `uint32_t` do conversion to/from char types.
  * \ingroup adaptation
- * \relates seqan3::uint_adaptation_concept
  * \{
  */
+
+/*!\brief Return the number of values the uint type can take.
+ * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
+ * \param intgr The parameter's actual value is ignored.
+ * \returns The respective size (e.g. 256 for `uint8_t`).
+ */
+template <typename uint_type>
+//!\cond
+    requires ::seqan3::detail::is_uint_adaptation_v<uint_type>
+//!\endcond
+constexpr auto alphabet_size(uint_type const & SEQAN3_DOXYGEN_ONLY(intgr)) noexcept
+{
+    return detail::min_viable_uint_t<detail::size_in_values_v<uint_type>>{detail::size_in_values_v<uint_type>};
+}
+
 /*!\brief Converting uint to char casts to a character type of same size.
  * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
  * \param intgr The alphabet letter that you wish to convert to char.
  * \returns The letter's value in the alphabet's rank type (usually `uint`).
  */
 template <typename uint_type>
-constexpr alphabet_char_t<uint_type> to_char(uint_type const intgr) noexcept
+//!\cond
     requires detail::is_uint_adaptation_v<uint_type>
+//!\endcond
+constexpr auto to_char(uint_type const intgr) noexcept
 {
-    return intgr;
+    if constexpr (std::Same<uint_type, uint8_t>)
+        return static_cast<char>(intgr);
+    else if constexpr (std::Same<uint_type, uint16_t>)
+        return static_cast<char16_t>(intgr);
+    else
+        return static_cast<char32_t>(intgr);
 }
 
 /*!\brief Converting uint to rank is a no-op (it will just return the value you pass in).
  * \tparam uint_type One of `uint8_t`, `uint16_t` or `uint32_t`.
  * \param intgr The alphabet letter that you wish to convert to rank.
- * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
+ * \returns `intgr`.
  */
 template <typename uint_type>
-constexpr alphabet_rank_t<uint_type> to_rank(uint_type const intgr) noexcept
+//!\cond
     requires detail::is_uint_adaptation_v<uint_type>
+//!\endcond
+constexpr uint_type to_rank(uint_type const intgr) noexcept
 {
     return intgr;
 }
@@ -156,42 +106,12 @@ constexpr alphabet_rank_t<uint_type> to_rank(uint_type const intgr) noexcept
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename uint_type>
-constexpr uint_type & assign_char_to(alphabet_char_t<uint_type> const chr, uint_type & intgr) noexcept
+//!\cond
     requires detail::is_uint_adaptation_v<uint_type>
+//!\endcond
+constexpr uint_type & assign_char_to(decltype(to_char(uint_type{})) const chr, uint_type & intgr) noexcept
 {
     return intgr = chr;
-}
-
-//!\overload
-template <typename uint_type>
-constexpr uint_type assign_char_to(alphabet_char_t<uint_type> const chr, uint_type &&) noexcept
-    requires detail::is_uint_adaptation_v<uint_type>
-{
-    return chr;
-}
-
-//!\brief For adaptations seqan3::assign_char_strict behaves exactly as seqan3::assign_char.
-template <typename uint_type>
-constexpr uint_type & assign_char_strictly_to(alphabet_char_t<uint_type> const chr, uint_type & intgr) noexcept
-    requires detail::is_uint_adaptation_v<uint_type>
-{
-    return intgr = chr;
-}
-
-//!\overload
-template <typename uint_type>
-constexpr uint_type assign_char_strictly_to(alphabet_char_t<uint_type> const chr, uint_type &&) noexcept
-    requires detail::is_uint_adaptation_v<uint_type>
-{
-    return chr;
-}
-
-//!\brief For char adaptations, all character values are valid.
-template <typename uint_type>
-constexpr bool char_is_valid_for(alphabet_char_t<uint_type> const) noexcept
-    requires detail::is_uint_adaptation_v<uint_type>
-{
-    return true;
 }
 
 /*!\brief Assign a rank to to the uint (same as calling `=`).
@@ -201,22 +121,13 @@ constexpr bool char_is_valid_for(alphabet_char_t<uint_type> const) noexcept
  * \returns A reference to the alphabet letter you passed in.
  */
 template <typename uint_type>
-constexpr uint_type & assign_rank_to(alphabet_rank_t<uint_type> const intgr2, uint_type & intgr) noexcept
+//!\cond
     requires detail::is_uint_adaptation_v<uint_type>
+//!\endcond
+constexpr uint_type & assign_rank_to(uint_type const intgr2, uint_type & intgr) noexcept
 {
     return intgr = intgr2;
 }
 
-//!\overload
-template <typename uint_type>
-constexpr uint_type assign_rank_to(alphabet_rank_t<uint_type> const intgr2, uint_type &&) noexcept
-    requires detail::is_uint_adaptation_v<uint_type>
-{
-    return intgr2;
-}
 //!\}
-//!\}
-
-} // namespace seqan3
-
-// concept tests in alphabet/adaptation.hpp because of include order constraints
+} // namespace seqan3::adaptation
