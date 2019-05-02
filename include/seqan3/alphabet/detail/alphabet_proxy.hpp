@@ -21,8 +21,6 @@
 #include <seqan3/core/metafunction/transformation_trait_or.hpp>
 #include <seqan3/std/concepts>
 
-namespace seqan3
-{
 #if 0 // this is the alphabet_proxy I want, but GCC won't give me:
 template <typename derived_type, typename alphabet_type>
 class alphabet_proxy : public alphabet_type
@@ -30,9 +28,9 @@ class alphabet_proxy : public alphabet_type
 public:
     using base_t = alphabet_type;
 
-    using base_t::value_size;
+    using base_t::alphabet_size;
     using typename base_t::rank_type;
-    using char_type  = detail::transformation_trait_or_t<underlying_char<alphabet_type>, void>;
+    using char_type  = detail::transformation_trait_or_t<std::type_identity<alphabet_char_t<<alphabet_type>, void>;
     using phred_type = detail::transformation_trait_or_t<underlying_phred<alphabet_type>, void>;
 
     using char_type_virtual  = std::conditional_t<std::Same<char_type, void>, char, char_type>;
@@ -95,6 +93,37 @@ public:
 
 #if 1// this is the one that works for most things, but not all
 
+namespace seqan3::detail
+{
+
+//!\brief Auxiliary transformation trait that is void for types by default.
+//!\ingroup alphabet
+template <typename t>
+struct alphabet_char_type_or_void
+{
+    //!\brief The "return" type.
+    using type = void;
+};
+
+//!\brief Auxiliary transformation trait specialisation that returns seqan3::alphabet_char_t.
+//!\ingroup alphabet
+template <Alphabet t>
+struct alphabet_char_type_or_void<t>
+{
+    //!\brief The "return" type.
+    using type = alphabet_char_t<t>;
+};
+
+//!\brief Auxiliary transformation trait shortcut.
+//!\relates seqan3::alphabet_char_type_or_void
+template <typename t>
+using alphabet_char_type_or_void_t = typename alphabet_char_type_or_void<t>::type;
+
+} // namespace seqan3::detail
+
+namespace seqan3
+{
+
 /*!\brief A CRTP-base that eases the definition of proxy types returned in place of regular alphabets.
  * \tparam derived_type  The CRTP parameter type.
  * \tparam alphabet_type The type of the alphabet that this proxy emulates.
@@ -127,13 +156,13 @@ public:
 template <typename derived_type, typename alphabet_type>
 class alphabet_proxy : public alphabet_base<derived_type,
                                             alphabet_size_v<alphabet_type>,
-                                            detail::transformation_trait_or_t<underlying_char<alphabet_type>, void>>
+                                            detail::alphabet_char_type_or_void_t<alphabet_type>>
 {
 private:
     //!\brief Type of the base class.
     using base_t =  alphabet_base<derived_type,
                                   alphabet_size_v<alphabet_type>,
-                                  detail::transformation_trait_or_t<underlying_char<alphabet_type>, void>>;
+                                  detail::alphabet_char_type_or_void_t<alphabet_type>>;
 
     //!\brief Befriend the base type.
     friend base_t;
@@ -147,7 +176,7 @@ public:
      * \{
      */
     using rank_type  = alphabet_rank_t<alphabet_type>;
-    using char_type  = detail::transformation_trait_or_t<underlying_char<alphabet_type>, void>;
+    using char_type  = detail::alphabet_char_type_or_void_t<alphabet_type>;
     using phred_type = detail::transformation_trait_or_t<underlying_phred<alphabet_type>, void>;
     //!\}
 
