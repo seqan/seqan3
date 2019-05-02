@@ -387,9 +387,13 @@ Add a seqan3::value_list_validator to the `-a/--aggregate-by` option that sets t
 SeqAn3 offers two file validator types: the seqan3::input_file_validator and the seqan3::output_file_validator.
 On construction, the validator receives a list (vector) of valid file extensions that are tested against the extension
 of the parsed option value.
-The validator throws a seqan3::parser_invalid_argument exception whenever a given filename's extension is not in the given list of valid extensions or if the specified path does not name a file but a directory. In addition, the
-seqan3::input_file_validator checks if the file already exists, while on the opposite the seqan3::output_file_validator
-checks if the file does not already exists in order to prevent overwriting an already existing file.
+The validator throws a seqan3::parser_invalid_argument exception whenever a given filename's extension is not in the
+given list of valid extensions. In addition, the seqan3::input_file_validator checks if the file exists, is a regular
+file and is readable.
+The seqan3::output_file_validator on the other hand ensures that the output does not already exist (in order to prevent
+overwriting an already existing file) and that it can be created.
+
+\note If you want to allow any extension just use a default constructed file validator.
 
 Using the seqan3::input_file_validator:
 
@@ -403,10 +407,12 @@ Using the seqan3::output_file_validator:
 
 In addition to the file validator types, SeqAn3 offers directory validator types. These are useful if one needs
 to provide an input directory (using the seqan3::input_directory_validator) or output directory
-(using the seqan3::output_directory_validator) where multiple files need to be read from or written too.
-The validators throw a seqan3::parser_invalid_argument exception whenever the parsed path contains a filename with an 
-extension. The seqan3::input_directory_validator also tests if the directory already exists and throws if this is not
-the case.
+(using the seqan3::output_directory_validator) where multiple files need to be read from or written to.
+The seqan3::input_directory_validator checks whether the specified path is a directory and is readable.
+Similarly, the seqan3::output_directory_validator checks whether the specified directory is writable and can be created,
+if it does not already exists.
+If the tests fail, a seqan3::parser_invalid_argument exception will be thrown. Also, if something unexpected with the
+filesystem happens, a std::filesystem_error will be thrown.
 
 Using the seqan3::input_directory_validator:
 

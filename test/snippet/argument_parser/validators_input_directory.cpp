@@ -8,13 +8,14 @@ int main(int argc, const char ** argv)
     seqan3::argument_parser myparser("Test", argc, argv); // initialize
 
     //! [validator_call]
-    std::filesystem::path myfile;
+    std::filesystem::path mydir{};
 
-    myparser.add_option(myfile,'d',"dir","The directory containing the input files.",
-                        seqan3::option_spec::DEFAULT, seqan3::input_directory_validator());
+    myparser.add_option(mydir, 'd', "dir", "The directory containing the input files.",
+                        seqan3::option_spec::DEFAULT, seqan3::input_directory_validator{});
     //! [validator_call]
 
-    // an exception will be thrown if the user specifies a directory name without trailing directory separator.
+    // an exception will be thrown if the user specifies a directory that does not exists or has insufficient
+    // read permissions.
     try
     {
         myparser.parse();
@@ -24,8 +25,13 @@ int main(int argc, const char ** argv)
         std::cerr << "[PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
     }
+    catch (std::filesystem::filesystem_error const & ext)
+    {
+        std::cerr << "[IO ERROR] " << ext.what() << "\n"; // customize your error message
+        return -2;
+    }
 
-    seqan3::debug_stream << "filename given by user passed validation: " << myfile << "\n";
+    seqan3::debug_stream << "directory given by user passed validation: " << mydir << "\n";
     return 0;
 }
 //! [usage]

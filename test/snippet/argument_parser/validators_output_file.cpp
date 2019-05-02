@@ -8,7 +8,7 @@ int main(int argc, const char ** argv)
     seqan3::argument_parser myparser("Test", argc, argv); // initialize
 
     //! [validator_call]
-    std::filesystem::path myfile;
+    std::filesystem::path myfile{};
 
     myparser.add_option(myfile,'f',"file","Output file containing the processed sequences.",
                         seqan3::option_spec::DEFAULT, seqan3::output_file_validator({"fa","fasta"}));
@@ -25,6 +25,11 @@ int main(int argc, const char ** argv)
     {
         std::cerr << "[PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
+    }
+    catch (std::filesystem::filesystem_error const & ext)
+    {
+        std::cerr << "[IO ERROR] " << ext.what() << "\n"; // customize your error message
+        return -2;
     }
 
     seqan3::debug_stream << "filename given by user passed validation: " << myfile << "\n";

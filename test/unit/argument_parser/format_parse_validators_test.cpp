@@ -74,22 +74,22 @@ TEST(validator_test, input_file)
         }
 
         { // file already exists.
-            std::filesystem::path does_not_exists{tmp_name.get_path()};
-            does_not_exists.replace_extension(".bam");
+            std::filesystem::path does_not_exist{tmp_name.get_path()};
+            does_not_exist.replace_extension(".bam");
             input_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exists), parser_invalid_argument);
+            EXPECT_THROW(my_validator(does_not_exist), parser_invalid_argument);
         }
 
         { // file has wrong format.
             input_file_validator my_validator{std::vector{std::string{"sam"}}};
-                EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
+            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
         }
 
         { // file has no extension.
-            std::filesystem::path does_not_exists{tmp_name.get_path()};
-            does_not_exists.replace_extension();
+            std::filesystem::path does_not_exist{tmp_name.get_path()};
+            does_not_exist.replace_extension();
             input_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exists), parser_invalid_argument);
+            EXPECT_THROW(my_validator(does_not_exist), parser_invalid_argument);
         }
 
         std::filesystem::path file_in_path;
@@ -135,7 +135,7 @@ TEST(validator_test, input_file)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". Input file formats: fa, sam, fasta."} +
+                               "          desc Default: \"\". Valid input file formats: fa, sam, fasta."} +
                                basic_options_str +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
@@ -159,9 +159,9 @@ TEST(validator_test, output_file)
 
         { // file does not exist.
             std::ofstream tmp_file_2(tmp_name_2.get_path());
-            std::filesystem::path does_not_exists{tmp_name_2.get_path()};
+            std::filesystem::path does_not_exist{tmp_name_2.get_path()};
             output_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exists), parser_invalid_argument);
+            EXPECT_THROW(my_validator(does_not_exist), parser_invalid_argument);
         }
 
         { // file has wrong format.
@@ -220,7 +220,7 @@ TEST(validator_test, output_file)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". Output file formats: fa, sam, fasta."} +
+                               "          desc Default: \"\". Valid output file formats: fa, sam, fasta."} +
                                basic_options_str +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
@@ -274,7 +274,7 @@ TEST(validator_test, input_directory)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". The input directory must exist and end with a valid directory separator."} +
+                               "          desc Default: \"\". An existing, readable path for the input directory."} +
                                basic_options_str +
                                basic_version_str;
 
@@ -286,31 +286,23 @@ TEST(validator_test, output_directory)
 {
     test::tmp_filename tmp_name{"testbox.fasta"};
 
-    { // directory
+    { // read directory
+        std::filesystem::path p = tmp_name.get_path();
+        p.remove_filename();
+        output_directory_validator my_validator{};
+        my_validator(p);
+        EXPECT_NO_THROW();
 
-        { // read directory
-            std::filesystem::path p = tmp_name.get_path();
-            p.remove_filename();
-            output_directory_validator my_validator{};
-            my_validator(p);
-            EXPECT_NO_THROW();
+        std::filesystem::path dir_out_path;
 
-            std::filesystem::path dir_out_path;
+        // option
+        const char * argv[] = {"./argument_parser_test", "-o", p.c_str()};
+        argument_parser parser("test_parser", 3, argv);
+        parser.add_option(dir_out_path, 'o', "output-option", "desc",
+                          option_spec::DEFAULT, output_directory_validator{});
 
-            // option
-            const char * argv[] = {"./argument_parser_test", "-o", p.c_str()};
-            argument_parser parser("test_parser", 3, argv);
-            parser.add_option(dir_out_path, 'o', "output-option", "desc",
-                              option_spec::DEFAULT, output_directory_validator{});
-
-            EXPECT_NO_THROW(parser.parse());
-            EXPECT_EQ(p.string(), dir_out_path.string());
-        }
-
-        { // has filename
-            output_directory_validator my_validator{};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), parser_invalid_argument);
-        }
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_EQ(p.string(), dir_out_path.string());
     }
 
     {
@@ -327,13 +319,127 @@ TEST(validator_test, output_directory)
                                "==========="
                                "POSITIONAL ARGUMENTS"
                                "    ARGUMENT-1 (std::filesystem::path)"
-                               "          desc Default: \"\". The output directory must not exist and end with a valid directory separator."} +
+                               "          desc Default: \"\". A valid path for the output directory."} +
                                basic_options_str +
                                basic_version_str;
 
         EXPECT_TRUE(ranges::equal((my_stdout | std::view::filter(!is_space)), expected | std::view::filter(!is_space)));
     }
 }
+
+#if __has_include(<filesystem>)
+// Setting the permissions with perm_options is not available in the experimental/filesystem branch.
+TEST(validator_test, inputfile_not_readable)
+{
+    test::tmp_filename tmp_name{"my_file.test"};
+    std::filesystem::path tmp_file{tmp_name.get_path()};
+    std::ofstream str{tmp_name.get_path()};
+
+    EXPECT_NO_THROW(input_file_validator{}(tmp_file));
+
+    std::filesystem::permissions(tmp_file,
+                                 std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
+                                 std::filesystem::perms::others_read,
+                                 std::filesystem::perm_options::remove);
+
+    EXPECT_THROW(input_file_validator{}(tmp_file), parser_invalid_argument);
+
+    std::filesystem::permissions(tmp_file,
+                                 std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
+                                 std::filesystem::perms::others_read,
+                                 std::filesystem::perm_options::add);
+}
+
+TEST(validator_test, inputdir_not_readable)
+{
+    test::tmp_filename tmp_name{"dir"};
+    std::filesystem::path tmp_dir{tmp_name.get_path()};
+
+    std::filesystem::create_directory(tmp_dir);
+
+    EXPECT_NO_THROW(input_directory_validator{}(tmp_dir));
+
+    std::filesystem::permissions(tmp_dir,
+                                 std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
+                                 std::filesystem::perms::others_read,
+                                 std::filesystem::perm_options::remove);
+
+    EXPECT_THROW(input_directory_validator{}(tmp_dir), parser_invalid_argument);
+
+    std::filesystem::permissions(tmp_dir,
+                                 std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
+                                 std::filesystem::perms::others_read,
+                                 std::filesystem::perm_options::add);
+}
+
+TEST(validator_test, outputfile_not_writable)
+{
+    test::tmp_filename tmp_name{"my_file.test"};
+    std::filesystem::path tmp_file{tmp_name.get_path()};
+
+    EXPECT_NO_THROW(output_file_validator{}(tmp_file));
+
+    // Parent path is not writable.
+    std::filesystem::permissions(tmp_file.parent_path(),
+                                 std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                 std::filesystem::perms::others_write,
+                                 std::filesystem::perm_options::remove);
+
+    EXPECT_THROW(output_file_validator{}(tmp_file), parser_invalid_argument);
+
+    // make sure we can remove the directory.
+    std::filesystem::permissions(tmp_file.parent_path(),
+                                 std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                 std::filesystem::perms::others_write,
+                                 std::filesystem::perm_options::add);
+}
+
+TEST(validator_test, outputdir_not_writable)
+{
+    { // parent dir is not writable.
+        test::tmp_filename tmp_name{"dir"};
+        std::filesystem::path tmp_dir{tmp_name.get_path()};
+
+        EXPECT_NO_THROW(output_directory_validator{}(tmp_dir));
+        EXPECT_FALSE(std::filesystem::exists(tmp_dir));
+        // Parent path is not writable.
+        std::filesystem::permissions(tmp_dir.parent_path(),
+                                     std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                     std::filesystem::perms::others_write,
+                                     std::filesystem::perm_options::remove);
+
+        EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+
+        // make sure we can remove the directory.
+        std::filesystem::permissions(tmp_dir.parent_path(),
+                                     std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                     std::filesystem::perms::others_write,
+                                     std::filesystem::perm_options::add);
+    }
+
+    {  // this dir is not writable
+        test::tmp_filename tmp_name{"dir"};
+        std::filesystem::path tmp_dir{tmp_name.get_path()};
+
+        std::filesystem::create_directory(tmp_dir);
+        EXPECT_NO_THROW(output_directory_validator{}(tmp_dir));
+
+        // This path exists but is not writable.
+        std::filesystem::permissions(tmp_dir,
+                                     std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                     std::filesystem::perms::others_write,
+                                     std::filesystem::perm_options::remove);
+
+        EXPECT_THROW(output_directory_validator{}(tmp_dir), parser_invalid_argument);
+
+        // make sure we can remove the directory.
+        std::filesystem::permissions(tmp_dir,
+                                     std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                     std::filesystem::perms::others_write,
+                                     std::filesystem::perm_options::add);
+    }
+}
+#endif // __has_include(<filesystem>)
 
 TEST(validator_test, arithmetic_range_validator_success)
 {
@@ -744,9 +850,13 @@ TEST(validator_test, chaining_validators)
     regex_validator absolute_path_validator("(/[^/]+)+/.*\\.[^/\\.]+$");
     output_file_validator my_file_ext_validator({"sa", "so"});
 
+    test::tmp_filename tmp_name{"file.sa"};
+    std::filesystem::path invalid_extension{tmp_name.get_path()};
+    invalid_extension.replace_extension(".invalid");
+
     // option
     {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
@@ -754,11 +864,11 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.sa");
+        EXPECT_EQ(option_value, tmp_name.get_path().string());
     }
 
     {
-        const char * argv[] = {"./argument_parser_test", "-s", "relative/path/file.sa"};
+        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().relative_path().c_str()};
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
@@ -767,7 +877,8 @@ TEST(validator_test, chaining_validators)
     }
 
     {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absoulte/path/file.notValidExtension"};
+
+        const char * argv[] = {"./argument_parser_test", "-s", invalid_extension.c_str()};
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
@@ -777,7 +888,7 @@ TEST(validator_test, chaining_validators)
 
     // with temporary validators
     {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
@@ -787,12 +898,12 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.sa");
+        EXPECT_EQ(option_value, tmp_name.get_path().string());
     }
 
     // three validators
     {
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
@@ -803,7 +914,7 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_value, "/absolute/path/file.sa");
+        EXPECT_EQ(option_value, tmp_name.get_path().string());
     }
 
     // help page message
@@ -825,7 +936,7 @@ TEST(validator_test, chaining_validators)
                                basic_options_str +
                                "    -s, --string-option (std::string)"
                                "          desc Default:. Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'. "
-                               "          Output file formats:  sa, so."
+                               "          Valid output file formats:  sa, so."
                                "          Value must match the pattern '.*'."} +
                                basic_version_str;
         EXPECT_TRUE(ranges::equal((my_stdout   | ranges::view::remove_if(is_space)),
@@ -835,7 +946,7 @@ TEST(validator_test, chaining_validators)
     // chaining with a container option value type
     {
         std::vector<std::string> option_list_value{};
-        const char * argv[] = {"./argument_parser_test", "-s", "/absolute/path/file.sa"};
+        const char * argv[] = {"./argument_parser_test", "-s", tmp_name.get_path().c_str()};
         argument_parser parser("test_parser", 3, argv);
         parser.add_option(option_list_value, 's', "string-option", "desc",
                           option_spec::DEFAULT,
@@ -844,6 +955,6 @@ TEST(validator_test, chaining_validators)
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
         EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-        EXPECT_EQ(option_list_value[0], "/absolute/path/file.sa");
+        EXPECT_EQ(option_list_value[0], tmp_name.get_path().string());
     }
 }

@@ -11,8 +11,8 @@ int main(int argc, const char ** argv)
     seqan3::regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
     seqan3::input_file_validator my_file_ext_validator{{"sa", "so"}};
 
-    myparser.add_option(file_name, 'f', "file","Give me a file name with absolute path.",
-                        seqan3::option_spec::DEFAULT, absolute_path_validator | file_validator);
+    myparser.add_option(file_name, 'f', "file","Give me a file name with an absolute path.",
+                        seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
     //![validator_call]
 
     // an exception will be thrown if the user specifies a file name
@@ -25,6 +25,11 @@ int main(int argc, const char ** argv)
     {
         std::cerr << "[PARSER ERROR] " << ext.what() << "\n"; // customize your error message
         return -1;
+    }
+    catch (std::filesystem::filesystem_error const & ext)
+    {
+        std::cerr << "[IO ERROR] " << ext.what() << "\n"; // customize your error message
+        return -2;
     }
 
     std::cout << "filename given by user passed validation: " << file_name << "\n";
