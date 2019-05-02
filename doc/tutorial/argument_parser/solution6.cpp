@@ -80,7 +80,7 @@ void initialize_argument_parser(argument_parser & parser, cmd_arguments & args)
 
     //![file_validator]
     parser.add_positional_option(args.file_path, "Please provide a tab separated seasons file.",
-                                 regex_validator{".*seasons\\..+$"} | input_file_validator({"tsv"}) );
+                                 regex_validator{".*seasons\\..+$"} | input_file_validator{{"tsv"}} );
     //![file_validator]
 
     //![arithmetic_range_validator]
@@ -112,6 +112,11 @@ int main(int argc, char ** argv)
     {
         debug_stream << "[Winter has come] " << ext.what() << "\n"; // customise your error message
         return -1;
+    }
+    catch (std::filesystem::filesystem_error const & ext)
+    {
+        std::cerr << "[IO ERROR] " << ext.what() << "\n";           // customize your error message
+        return -2;
     }
 
     // parsing was successful !
