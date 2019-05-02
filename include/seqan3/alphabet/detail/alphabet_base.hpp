@@ -12,8 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alphabet/detail/member_exposure.hpp>
-#include <seqan3/alphabet/exception.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/detail/reflection.hpp>
 #include <seqan3/std/concepts>
@@ -84,7 +83,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Alphabet::to_char() requirement via the seqan3::to_char() wrapper.
+     * Provides an implementation for seqan3::to_char, required to model seqan3::Alphabet.
      *
      * \par Complexity
      *
@@ -106,7 +105,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Semialphabet::to_rank() requirement via the to_rank() wrapper.
+     * Provides an implementation for seqan3::to_char, required to model seqan3::Semialphabet.
      *
      * \par Complexity
      *
@@ -130,7 +129,7 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::Alphabet::assign_char_to() requirement via the seqan3::assign_char_to() wrapper.
+     * Provides an implementation for seqan3::assign_char_to, required to model seqan3::Alphabet.
      *
      * \par Complexity
      *
@@ -150,37 +149,12 @@ public:
         return static_cast<derived_type &>(*this);
     }
 
-    /*!\brief Assign from a character, throw on invalid characters.
-     * \param c The character to be assigned.
-     * \throws invalid_char_assignment If seqan3::char_is_valid
-     *
-     * \details
-     *
-     * Satisfies the seqan3::Alphabet::assign_char_strictly_to() requirement via the seqan3::assign_char_strictly_to()
-     * wrapper.
-     *
-     * ### Complexity
-     *
-     * Constant; but slightly slower than #assign_char(char_type_ const c), because it performs checks.
-     */
-    derived_type & assign_char_strictly(char_type_ const c)
-    //!\cond
-        requires !std::Same<char_type, void>
-    //!\endcond
-    {
-        if (!derived_type::char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<derived_type>, c};
-
-        using seqan3::assign_char_to;
-        return assign_char_to(c, static_cast<derived_type &>(*this));
-    }
-
     /*!\brief Assign from a numeric value.
      * \param c The rank to be assigned.
      *
      * \details
      *
-     * Satisfies the seqan3::Semialphabet::assign_rank_to() requirement via the seqan3::assign_rank_to() wrapper.
+     * Provides an implementation for seqan3::assign_rank_to, required to model seqan3::Semialphabet.
      *
      * \par Complexity
      *
@@ -239,34 +213,6 @@ public:
         return to_rank(lhs) >= to_rank(rhs);
     }
     //!\}
-
-    /*!\brief Validate whether a character value has a one-to-one mapping to an alphabet value.
-     *
-     * \details
-     *
-     * Models the seqan3::Semialphabet::char_is_valid_for() requirement via the seqan3::char_is_valid_for()
-     * wrapper.
-     *
-     * Default implementation: True for all character values that are reproduced by #to_char() after being assigned
-     * to the alphabet.
-     *
-     * \par Complexity
-     *
-     * Constant.
-     *
-     * \par Exceptions
-     *
-     * Guaranteed not to throw.
-     */
-    static constexpr bool char_is_valid(char_type_ const c) noexcept
-    //!\cond
-        requires !std::Same<char_type, void>
-    //!\endcond
-    {
-        using seqan3::to_char;
-        using seqan3::assign_char_to;
-        return to_char(assign_char_to(c, derived_type{})) == c;
-    }
 
 private:
     //!\brief The value of the alphabet letter is stored as the rank.
@@ -341,19 +287,6 @@ public:
         return static_cast<derived_type &>(*this);
     }
 
-    //!\copybrief seqan3::alphabet_base::assign_char_strictly
-    derived_type & assign_char_strictly(char_type_ const c)
-    //!\cond
-        requires !std::Same<char_type, void>
-    //!\endcond
-    {
-        if (!derived_type::char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<derived_type>, c};
-
-        using seqan3::assign_char_to;
-        return assign_char_to(c, static_cast<derived_type &>(*this));
-    }
-
     //!\copybrief seqan3::alphabet_base::assign_rank
     constexpr derived_type & assign_rank(rank_type const) noexcept
     {
@@ -396,15 +329,6 @@ public:
         return true;
     }
     //!\}
-
-    //!\copybrief seqan3::alphabet_base::char_is_valid
-    static constexpr bool char_is_valid(char_type_ const c) noexcept
-    //!\cond
-        requires !std::Same<char_type, void>
-    //!\endcond
-    {
-        return derived_type::char_value == c;
-    }
 
 private:
     //!\cond
