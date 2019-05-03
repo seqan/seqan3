@@ -22,7 +22,7 @@
 #include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
-#include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/metafunction/deferred_crtp_base.hpp>
@@ -374,7 +374,8 @@ private:
                 using is_semi_global_type [[maybe_unused]] = remove_cvref_t<decltype(is_semi_global)>;
             };
 
-            return function_wrapper_t{edit_distance_wrapper<remove_cvref_t<config_t>, edit_traits_type>{cfg}};
+            edit_distance_algorithm<remove_cvref_t<config_t>, edit_traits_type> algorithm{cfg};
+            return function_wrapper_t{std::move(algorithm)};
         };
 
         // Check if it has free ends set for the first sequence trailing gaps.
