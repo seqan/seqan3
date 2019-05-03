@@ -29,6 +29,8 @@
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/find.hpp>
 #include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/algorithm/move_backward.hpp>
+#include <range/v3/algorithm/move.hpp>
 #include <range/v3/algorithm/sort.hpp>
 #include <range/v3/view/all.hpp>
 #include <range/v3/view/any_view.hpp>
@@ -202,6 +204,16 @@ using SEQAN3_DOXYGEN_ONLY(size =) ::ranges::size;
  * \brief Alias for ranges::copy. Copies a range of elements to a new location.
  */
 using SEQAN3_DOXYGEN_ONLY(copy =) ::ranges::copy;
+
+/*!\typedef std::ranges::move
+ * \brief Alias for ranges::move. Moves a range of elements to a new location.
+ */
+using SEQAN3_DOXYGEN_ONLY(move =) ::ranges::move;
+
+/*!\typedef std::ranges::move_backward
+ * \brief Alias for ranges::move_backward. Moves a range of elements backward to a new location starting from the end.
+ */
+using SEQAN3_DOXYGEN_ONLY(move_backward =) ::ranges::move_backward;
 
 /*!\typedef std::ranges::for_each
  * \brief Alias for ranges::for_each. Applies a function object to the elements of a range.
