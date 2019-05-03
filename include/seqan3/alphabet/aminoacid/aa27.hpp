@@ -54,12 +54,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aa27() : base_t{} {}                       //!< Defaulted.
-    constexpr aa27(aa27 const &) = default;              //!< Defaulted.
-    constexpr aa27(aa27 &&) = default;                   //!< Defaulted.
-    constexpr aa27 & operator=(aa27 const &) = default;  //!< Defaulted.
-    constexpr aa27 & operator=(aa27 &&) = default;       //!< Defaulted.
-    ~aa27() = default;                                   //!< Defaulted.
+    constexpr aa27()                         noexcept = default; //!< Defaulted.
+    constexpr aa27(aa27 const &)             noexcept = default; //!< Defaulted.
+    constexpr aa27(aa27 &&)                  noexcept = default; //!< Defaulted.
+    constexpr aa27 & operator=(aa27 const &) noexcept = default; //!< Defaulted.
+    constexpr aa27 & operator=(aa27 &&)      noexcept = default; //!< Defaulted.
+    ~aa27()                                  noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
     //!\}

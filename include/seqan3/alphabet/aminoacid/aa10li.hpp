@@ -91,12 +91,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aa10li()                           = default; //!< Defaulted.
-    constexpr aa10li(aa10li const &)             = default; //!< Defaulted.
-    constexpr aa10li(aa10li &&)                  = default; //!< Defaulted.
-    constexpr aa10li & operator=(aa10li const &) = default; //!< Defaulted.
-    constexpr aa10li & operator=(aa10li &&)      = default; //!< Defaulted.
-    ~aa10li()                                    = default; //!< Defaulted.
+    constexpr aa10li()                           noexcept = default; //!< Defaulted.
+    constexpr aa10li(aa10li const &)             noexcept = default; //!< Defaulted.
+    constexpr aa10li(aa10li &&)                  noexcept = default; //!< Defaulted.
+    constexpr aa10li & operator=(aa10li const &) noexcept = default; //!< Defaulted.
+    constexpr aa10li & operator=(aa10li &&)      noexcept = default; //!< Defaulted.
+    ~aa10li()                                    noexcept = default; //!< Defaulted.
 
     //!\brief Inherit the base class's Constructors.
     using base_t::base_t;
