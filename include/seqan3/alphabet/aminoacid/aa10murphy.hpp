@@ -90,12 +90,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aa10murphy() = default;                               //!< Defaulted.
-    constexpr aa10murphy(aa10murphy const &) = default;             //!< Defaulted.
-    constexpr aa10murphy(aa10murphy &&) = default;                  //!< Defaulted.
-    constexpr aa10murphy & operator=(aa10murphy const &) = default; //!< Defaulted.
-    constexpr aa10murphy & operator=(aa10murphy &&) = default;      //!< Defaulted.
-    ~aa10murphy() = default;                                        //!< Defaulted.
+    constexpr aa10murphy()                               noexcept = default; //!< Defaulted.
+    constexpr aa10murphy(aa10murphy const &)             noexcept = default; //!< Defaulted.
+    constexpr aa10murphy(aa10murphy &&)                  noexcept = default; //!< Defaulted.
+    constexpr aa10murphy & operator=(aa10murphy const &) noexcept = default; //!< Defaulted.
+    constexpr aa10murphy & operator=(aa10murphy &&)      noexcept = default; //!< Defaulted.
+    ~aa10murphy()                                        noexcept = default; //!< Defaulted.
 
     //!\brief Inherit the base class's Constructors.
     using base_t::base_t;

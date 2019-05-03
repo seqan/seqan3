@@ -72,12 +72,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aa20() : base_t{} {}                      //!< Defaulted.
-    constexpr aa20(aa20 const &) = default;             //!< Defaulted.
-    constexpr aa20(aa20 &&) = default;                  //!< Defaulted.
-    constexpr aa20 & operator=(aa20 const &) = default; //!< Defaulted.
-    constexpr aa20 & operator=(aa20 &&) = default;      //!< Defaulted.
-    ~aa20() = default;                                  //!< Defaulted.
+    constexpr aa20()                         noexcept = default; //!< Defaulted.
+    constexpr aa20(aa20 const &)             noexcept = default; //!< Defaulted.
+    constexpr aa20(aa20 &&)                  noexcept = default; //!< Defaulted.
+    constexpr aa20 & operator=(aa20 const &) noexcept = default; //!< Defaulted.
+    constexpr aa20 & operator=(aa20 &&)      noexcept = default; //!< Defaulted.
+    ~aa20()                                  noexcept = default; //!< Defaulted.
 
     using base_t::base_t;
     //!\}
