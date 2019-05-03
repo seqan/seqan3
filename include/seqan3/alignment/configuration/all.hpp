@@ -38,7 +38,7 @@
  * live in their own namespace called seqan3::align_cfg. This namespace is used to disambiguate configurations for the
  * alignment algorithm with configurations from other algorithms.
  * To compute a pairwise alignment at least two configuration elements must be provided, namely the
- * the seqan3::alig_cfg::mode and the seqan3::align_cfg::scoring.
+ * the seqan3::align_cfg::mode and the seqan3::align_cfg::scoring.
  * The following code snippet shows the call of a pairwise alignment with the minimal configuration. It computes
  * a global alignment with custom scores for a match and a mismatch. The resulting score is `7`.
  *
@@ -62,13 +62,15 @@
  *<th style="border: 1px solid black; vertical-align: middle; text-align: center; width: 7%;"> 4 </th>
  *<th style="border: 1px solid black; vertical-align: middle; text-align: center; width: 7%;"> 5 </th>
  *<th style="border: 1px solid black; vertical-align: middle; text-align: center; width: 7%;"> 6 </th>
+ *<th style="border: 1px solid black; vertical-align: middle; text-align: center; width: 7%;"> 7 </th>
  *</tr>
  *<tr>
  *<th style="border: 1px solid black"> 0: seqan3::align_cfg::aligned_ends </th>
- *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
@@ -76,7 +78,8 @@
  *<tr>
  *<th style="border: 1px solid black"> 1: seqan3::align_cfg::band </th>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
@@ -87,7 +90,8 @@
  *<th style="border: 1px solid black"> 2: seqan3::align_cfg::gap </th>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
@@ -98,40 +102,55 @@
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *</tr>
  *<tr>
- *<th style="border: 1px solid black"> 4: seqan3::align_cfg::max_error </th>
+ *<th style="border: 1px solid black"> 4: seqan3::local_alignment </th>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *</tr>
  *<tr>
- *<th style="border: 1px solid black"> 5: seqan3::align_cfg::result </th>
+ *<th style="border: 1px solid black"> 5: seqan3::align_cfg::max_error </th>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *</tr>
  *<tr>
- *<th style="border: 1px solid black"> 6: seqan3::align_cfg::scoring </th>
+ *<th style="border: 1px solid black"> 6: seqan3::align_cfg::result </th>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
  *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
- *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *</tr>
+ *<tr>
+ *<th style="border: 1px solid black"> 7: seqan3::align_cfg::scoring </th>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-yes"> ✓ </td>
+ *<td style="background: #ff9090; color: black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> ✘ </td>
  *</tr>
  *</table>
  */

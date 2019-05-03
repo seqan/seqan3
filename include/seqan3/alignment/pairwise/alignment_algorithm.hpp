@@ -235,21 +235,19 @@ public:
         using diff_type = typename std::iterator_traits<std::ranges::iterator_t<first_range_t>>::difference_type;
         static_assert(std::is_signed_v<diff_type>,  "Only signed types can be used to test the band parameters.");
 
-        if (static_cast<diff_type>(band.lower_bound) >
-            std::ranges::distance(std::ranges::begin(first_range), std::ranges::end(first_range)))
+        if (static_cast<diff_type>(band.lower_bound) > std::ranges::distance(first_range))
         {
             throw invalid_alignment_configuration
             {
-                "The lower bound is bigger than the size of the first sequence."
+                "Invalid band error: The lower bound excludes the whole alignment matrix."
             };
         }
 
-        if (static_cast<diff_type>(std::abs(band.upper_bound)) >
-            std::ranges::distance(std::ranges::begin(second_range), std::ranges::end(second_range)))
+        if (static_cast<diff_type>(band.upper_bound) < -std::ranges::distance(second_range))
         {
             throw invalid_alignment_configuration
             {
-                "The upper bound is smaller than the size of the second sequence."
+                "Invalid band error: The upper bound excludes the whole alignment matrix."
             };
         }
 
@@ -524,7 +522,7 @@ private:
 
         auto fill_aligned_sequence = [](auto & aligned_sequence, auto & gap_segments, size_t const normalise)
         {
-            assert(normalise <= gap_segments[0].position);
+            assert(std::ranges::empty(gap_segments) || normalise <= gap_segments[0].position);
 
             size_t offset = 0;
             for (auto const & gap_elem : gap_segments)

@@ -9,6 +9,7 @@
  * \brief Provides global alignment configurations.
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
 #pragma once
@@ -27,6 +28,15 @@ struct global_alignment_type
     static constexpr detail::align_config_id id{detail::align_config_id::global};
 };
 
+//!\brief A strong type to select the local alignment mode.
+//!\ingroup alignment_configuration
+struct local_alignment_type
+{
+    //!\privatesection
+    //!\brief An internal id used to check for a valid alignment configuration.
+    static constexpr detail::align_config_id id{detail::align_config_id::local};
+};
+
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -43,6 +53,17 @@ namespace seqan3
  */
 inline constexpr detail::global_alignment_type global_alignment;
 
+/*!\brief Helper variable to select the local alignment.
+ * \ingroup alignment_configuration
+ *
+ * \details
+ *
+ * ### Example
+ *
+ * \snippet snippet/alignment/configuration/align_cfg_mode_example.cpp local
+ */
+inline constexpr detail::local_alignment_type local_alignment;
+
 } // namespace seqan3
 
 namespace seqan3::align_cfg
@@ -54,8 +75,9 @@ namespace seqan3::align_cfg
  *
  * \details
  *
- * The alignment algorithm can be categorised in different modes. For example, the local and the
- * \ref global_alignment "global" alignment are two different modes, while the semi-global alignment
+ * The alignment algorithm can be categorised in different modes. For example, the
+ * \ref seqan3::local_alignment "local" and the
+ * \ref seqan3::global_alignment "global" alignment are two different modes, while the semi-global alignment
  * is a variation of the global alignment. This differentiation makes it possible to define a subset of configurations
  * that can work with a particular mode. Since it is not possible to guess what the desired mode for a user is, this
  * configuration must be provided for the alignment algorithm and cannot be defaulted.
@@ -66,7 +88,8 @@ namespace seqan3::align_cfg
  */
 template <typename mode_type>
 //!\cond
-    requires std::Same<remove_cvref_t<mode_type>, detail::global_alignment_type>
+    requires std::Same<remove_cvref_t<mode_type>, detail::global_alignment_type> ||
+             std::Same<remove_cvref_t<mode_type>, detail::local_alignment_type>
 //!\endcond
 struct mode : public pipeable_config_element<mode<mode_type>, mode_type>
 {

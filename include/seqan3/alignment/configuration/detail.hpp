@@ -23,13 +23,14 @@ namespace seqan3::detail
 enum struct align_config_id : uint8_t
 {
     aligned_ends, //!< ID for the \ref seqan3::align_cfg::aligned_ends "aligned_ends" option.
-    band, //!< ID for the \ref seqan3::align_cfg::band "band" option.
-    gap, //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
-    global, //!< ID for the \ref seqan3::global_alignment "global alignment" option.
-    max_error, //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
-    result, //!< ID for the \ref seqan3::align_cfg::result "result" option.
-    scoring, //!< ID for the \ref seqan3::align_cfg::scoring "scoring" option.
-    SIZE //!< Represents the number of configuration elements.
+    band,         //!< ID for the \ref seqan3::align_cfg::band "band" option.
+    gap,          //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
+    global,       //!< ID for the \ref seqan3::global_alignment "global alignment" option.
+    local,        //!< ID for the \ref seqan3::local_alignment "local alignment" option.
+    max_error,    //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
+    result,       //!< ID for the \ref seqan3::align_cfg::result "result" option.
+    scoring,      //!< ID for the \ref seqan3::align_cfg::scoring "scoring" option.
+    SIZE          //!< Represents the number of configuration elements.
 };
 
 // ----------------------------------------------------------------------------
@@ -45,14 +46,15 @@ template <>
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_id::SIZE)>,
                             static_cast<uint8_t>(align_config_id::SIZE)> compatibility_table<align_config_id>
 {
-    {   //0  1  2  3  4  5  6
-        { 0, 1, 1, 1, 1, 1, 1}, // 0: aligned_ends
-        { 1, 0, 1, 1, 1, 1, 1}, // 1: band
-        { 1, 1, 0, 1, 1, 1, 1}, // 2: gap
-        { 1, 1, 1, 0, 1, 1, 1}, // 3: global
-        { 1, 1, 1, 1, 0, 1, 1}, // 4: max_error
-        { 1, 1, 1, 1, 1, 0, 1}, // 5: result
-        { 1, 1, 1, 1, 1, 1, 0}  // 6: scoring
+    {   //0  1  2  3  4, 5  6  7
+        { 0, 1, 1, 1, 0, 1, 1, 1}, // 0: aligned_ends
+        { 1, 0, 1, 1, 1, 1, 1, 1}, // 1: band
+        { 1, 1, 0, 1, 1, 1, 1, 1}, // 2: gap
+        { 1, 1, 1, 0, 0, 1, 1, 1}, // 3: global
+        { 0, 1, 1, 0, 0, 0, 1, 1}, // 4: local
+        { 1, 1, 1, 1, 0, 0, 1, 1}, // 5: max_error
+        { 1, 1, 1, 1, 1, 1, 0, 1}, // 6: result
+        { 1, 1, 1, 1, 1, 1, 1, 0}  // 7: scoring
     }
 };
 

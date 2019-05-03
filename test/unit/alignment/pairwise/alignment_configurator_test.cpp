@@ -164,3 +164,42 @@ TEST(alignment_configurator, configure_affine_global_semi)
 
     EXPECT_TRUE(run_test(cfg));
 }
+
+TEST(alignment_configurator, configure_affine_local)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}};
+
+    EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_local_back_coordinate)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::result{with_back_coordinate};
+
+    EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_local_front_coordinate)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::result{with_front_coordinate};
+
+    EXPECT_TRUE(run_test(cfg));
+}
+
+TEST(alignment_configurator, configure_affine_local_alignment)
+{
+    auto cfg = align_cfg::mode{local_alignment} |
+               align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}} |
+               align_cfg::scoring{nucleotide_scoring_scheme{}} |
+               align_cfg::result{with_alignment};
+
+    EXPECT_TRUE(run_test(cfg));
+}

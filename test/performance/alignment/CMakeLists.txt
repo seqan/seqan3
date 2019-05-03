@@ -1,1 +1,2 @@
-seqan3_benchmark(affine_alignment_benchmark.cpp)
+seqan3_benchmark(global_affine_alignment_benchmark.cpp)
+seqan3_benchmark(local_affine_alignment_benchmark.cpp)
