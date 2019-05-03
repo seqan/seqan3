@@ -169,7 +169,7 @@ public:
     //!\endcond
     {
         if (!derived_type::char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<derived_type>.string(), c};
+            throw invalid_char_assignment{detail::get_display_name_v<derived_type>, c};
 
         using seqan3::assign_char_to;
         return assign_char_to(c, static_cast<derived_type &>(*this));
@@ -348,7 +348,7 @@ public:
     //!\endcond
     {
         if (!derived_type::char_is_valid(c))
-            throw invalid_char_assignment{detail::get_display_name_v<derived_type>.string(), c};
+            throw invalid_char_assignment{detail::get_display_name_v<derived_type>, c};
 
         using seqan3::assign_char_to;
         return assign_char_to(c, static_cast<derived_type &>(*this));

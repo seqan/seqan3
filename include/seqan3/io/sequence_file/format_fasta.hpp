@@ -181,7 +181,7 @@ protected:
         auto const is_id = is_char<'>'> || is_char<';'>;
 
         if (!is_id(*begin(stream_view)))
-            throw parse_error{std::string{"Expected to be on beginning of ID, but "} + is_id.msg.string() +
+            throw parse_error{std::string{"Expected to be on beginning of ID, but "} + is_id.msg.str() +
                               " evaluated to false on " + detail::make_printable(*begin(stream_view))};
 
         // read id
@@ -231,7 +231,7 @@ protected:
                                                 if (!is_legal_alph(c))
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                        is_legal_alph.msg.string() +
+                                                                        is_legal_alph.msg.str() +
                                                                         " evaluated to false on " +
                                                                         detail::make_printable(c)};
                                                 }

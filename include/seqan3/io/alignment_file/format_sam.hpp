@@ -289,7 +289,7 @@ public:
                                            {
                                                if (!is_legal_alph(c))
                                                    throw format_error{std::string{"Encountered an unexpected letter: "} +
-                                                                     is_legal_alph.msg.string() +
+                                                                     is_legal_alph.msg.str() +
                                                                      " evaluated to false on " +
                                                                      detail::make_printable(c)};
                                                return c;
@@ -783,11 +783,11 @@ protected:
         if (res.ec == std::errc::invalid_argument || res.ptr != end)
             throw format_error{std::string("[CORRUPTED SAM FILE] The string '") + std::string(buffer.begin(), end) +
                                            "' could not be cast into type " +
-                                           detail::get_display_name_v<target_type>.string()};
+                                           detail::get_display_name_v<target_type>.str()};
 
         if (res.ec == std::errc::result_out_of_range)
             throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(buffer.begin(), end) +
-                                           "' into type " + detail::get_display_name_v<target_type>.string() +
+                                           "' into type " + detail::get_display_name_v<target_type>.str() +
                                            " would cause an overflow."};
     }
 

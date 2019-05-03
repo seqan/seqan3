@@ -76,7 +76,7 @@ constexpr bool comparison_test()
 {
     small_vector<char, 20> t1{'A', 'C', 'C', 'G', 'T'};
     small_vector<char, 20> t2{'A', 'C', 'C', 'G', 'T'};
-    small_vector<char, 20> t3{'A', 'C'};
+    small_vector<char, 2> t3{'A', 'C'};
     small_vector<char, 20> t4{'A', 'G', 'C', 'G', 'T'};
 
     bool res = t1 == t2;
@@ -143,7 +143,7 @@ TEST(small_vector, iterator)
     EXPECT_TRUE(cb_const);
 }
 
-TEST(constexpr_string, size_and_maxsize)
+TEST(small_string, size_and_maxsize)
 {
     // auto deduction -> capacity == size
     {
