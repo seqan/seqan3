@@ -7,8 +7,11 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/core/algorithm/parameter_pack.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
+#include <seqan3/core/type_list.hpp>
+#include <seqan3/std/type_traits>
 
 #include <iostream>
 #include <type_traits>
@@ -45,6 +48,42 @@ using uint32x8_t [[gnu::vector_size(32)]] = uint32_t;
 using uint64x4_t [[gnu::vector_size(32)]] = uint64_t;
 #endif
 
+// Wrapping `type` and `template_type` in a namespace triggered different bugs
+namespace incomplete
+{
+
+struct type;
+
+template <typename t>
+struct template_type;
+
+} // namespace incomplete
+
+// Types that have a subscript operator
+template <typename type>
+using subscript_types = type_list<type[15],
+                                  type const [15],
+                                  type[15][15],
+                                  type const [15][15],
+                                  type *,
+                                  type const *,
+                                  type * [15][15],
+                                  type * *,
+                                  type const * *,
+                                  type const * const *,
+                                  type * * [15][15],
+                                  type const * * [15][15],
+                                  type const * const * [15][15],
+                                  type * * *,
+                                  type const * * *,
+                                  type const * const * *,
+                                  type const * const * const *,
+                                  type * * * [15][15],
+                                  type const * * * [15][15],
+                                  type const * const * * [15][15],
+                                  type const * const * const * [15][15],
+                                  type const * const * const * const [15][15]>;
+
 TEST(builtin_simd, builtin_simd)
 {
     EXPECT_TRUE((std::is_same_v<detail::builtin_simd<int16_t, 8>::type, int16x8_t>));
@@ -60,8 +99,19 @@ TEST(builtin_simd, is_builtin_simd)
 {
     EXPECT_FALSE(detail::is_builtin_simd<short>::value);
     EXPECT_FALSE(detail::is_builtin_simd<int>::value);
-    EXPECT_FALSE(detail::is_builtin_simd<int[15]>::value);
-    EXPECT_FALSE(detail::is_builtin_simd<int*>::value);
+    EXPECT_FALSE(detail::is_builtin_simd<incomplete::type>::value);
+    EXPECT_FALSE(detail::is_builtin_simd<incomplete::template_type<int>>::value);
+
+    auto is_not_builtin_simd = [](auto id)
+    {
+        using type = typename decltype(id)::type;
+        EXPECT_FALSE(detail::is_builtin_simd<type>::value);
+    };
+
+    detail::for_each_type(is_not_builtin_simd, subscript_types<short>{});
+    detail::for_each_type(is_not_builtin_simd, subscript_types<int>{});
+    detail::for_each_type(is_not_builtin_simd, subscript_types<incomplete::type>{});
+    detail::for_each_type(is_not_builtin_simd, subscript_types<incomplete::template_type<int>>{});
 
     EXPECT_TRUE(detail::is_builtin_simd<int16x8_t>::value);
     EXPECT_TRUE(detail::is_builtin_simd<int32x4_t>::value);
@@ -141,8 +191,19 @@ TEST(builtin_simd, simd_concept)
 {
     EXPECT_FALSE(simd_concept<short>);
     EXPECT_FALSE(simd_concept<int>);
-    EXPECT_FALSE(simd_concept<int[15]>);
-    EXPECT_FALSE(simd_concept<int*>);
+    EXPECT_FALSE(simd_concept<incomplete::type>);
+    EXPECT_FALSE(simd_concept<incomplete::template_type<int>>);
+
+    auto fails_simd_concept = [](auto id)
+    {
+        using type = typename decltype(id)::type;
+        EXPECT_FALSE(simd_concept<type>);
+    };
+
+    detail::for_each_type(fails_simd_concept, subscript_types<short>{});
+    detail::for_each_type(fails_simd_concept, subscript_types<int>{});
+    detail::for_each_type(fails_simd_concept, subscript_types<incomplete::type>{});
+    detail::for_each_type(fails_simd_concept, subscript_types<incomplete::template_type<int>>{});
 
     EXPECT_TRUE(simd_concept<int16x8_t>);
     EXPECT_TRUE(simd_concept<int32x4_t>);
