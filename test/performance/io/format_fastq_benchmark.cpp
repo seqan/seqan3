@@ -17,39 +17,47 @@
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/test/performance/sequence_generator.hpp>
 
 using namespace seqan3;
 
-std::size_t POWER = 5; //files will have |10^POWER| lines
-
-auto const DNA_SEQ = "AGCTAGCAGCGATCGCGATCGATCAGCGATCGAGGAATATAT"_dna5;
-auto const QUALITY = "IIIIIHIIIIIIIIIIIIIIIIIIIIIIHHGIIIIHHGIIIH"_phred42;
-
-std::size_t const iterations_per_run = 4096;  // arbitrary number directly taken from fasta benchmark
+unsigned int const SEED = 1234;
 
 // ============================================================================
-// generate dummy fastq file with 10^power identical 4-line entries
+// generate new file
 // ============================================================================
-std::string generate_dummy_fastq_file(std::size_t power)
+static constexpr std::size_t SEQUENCE_LENGTH = 300;
+static constexpr std::size_t N_ENTRIES_IN_FILE = 4069; // number of 3-line entries
+
+// workaround because test::generate_sequence does not work at compile time
+std::string fastq_file;
+bool has_been_init = false;
+
+std::string get_file()
 {
-    std::string file{};
+    if (!has_been_init) {
+        std::string file{};
+        std::string const id{"@name"};
 
-    std::string const id{"@name"};
-    std::string const seq = DNA_SEQ | view::to_char;
-    std::string const quality = QUALITY | view::to_char;
+        for (size_t i = 0; i < N_ENTRIES_IN_FILE; ++i)
+        {
+            auto seq = test::generate_sequence<dna5>(SEQUENCE_LENGTH, 0, SEED);
+            std::string seq_string = seq | view::to_char;
 
-    auto const n_iterations = static_cast<unsigned int>(pow(10, power));
+            auto quality = test::generate_sequence<phred42>(SEQUENCE_LENGTH, 0, SEED);
+            std::string quality_string = quality | view::to_char;
+            file += id + '\n' + seq_string + '\n' + '+' + '\n' + quality_string + '\n';
+        }
 
-    for (size_t i = 0; i < n_iterations; ++i)
-    {
-        file += id + '\n' + seq + '\n' + '+' + '\n' + quality + '\n';
+        has_been_init = true;
+        return file;
     }
-
-    return file;
+    else
+        return fastq_file;
 }
 
 // ============================================================================
-// try to write 4-line entry to stream as often as possible
+// try to write 3-line entry to stream as often as possible
 // ============================================================================
 void fastq_write(benchmark::State & state)
 {
@@ -59,11 +67,12 @@ void fastq_write(benchmark::State & state)
     sequence_file_output_options options{};
 
     std::string const id{"@name"};
+    auto seq = test::generate_sequence<dna5>(SEQUENCE_LENGTH, 0, SEED);
+    auto quality = test::generate_sequence<phred42>(SEQUENCE_LENGTH, 0, SEED);
 
     for (auto _ : state)
     {
-        for (size_t i = 0; i < iterations_per_run; ++i)
-            format.write(ostream, options, DNA_SEQ, id, QUALITY);
+        format.write(ostream, options, seq, id, quality);
     }
 }
 
@@ -74,8 +83,6 @@ BENCHMARK(fastq_write);
 // ============================================================================
 void fastq_read_with_quality(benchmark::State & state)
 {
-    auto const fastq_file = generate_dummy_fastq_file(POWER);
-
     sequence_file_format_fastq format;
     sequence_file_input_options<dna5, false> const options{};
 
@@ -83,24 +90,26 @@ void fastq_read_with_quality(benchmark::State & state)
     std::vector<dna5> seq{};
     std::vector<phred42> qual{};
 
+    std::istringstream original_istream{get_file()};
+    std::istringstream swap_istream{get_file};
+
     for (auto _ : state)
     {
-        state.PauseTiming();
-        std::istringstream istream{fastq_file}; // costly so pause/resume is necessary
-        state.ResumeTiming();
+        format.read(swap_istream, options, seq, id, qual);
 
-        for (size_t i = 0; i < iterations_per_run; ++i)
-        {
-            format.read(istream, options, seq, id, qual);
-            id.clear();
-            seq.clear();
-            qual.clear();
-        }
+        // all O(1)
+        id.clear();
+        seq.clear();
+        qual.clear();
+
+        // refill stream
+
     }
 }
 
 BENCHMARK(fastq_read_with_quality);
 
+/*
 // ============================================================================
 // read dummy fastq file ignoring only quality
 // ============================================================================
@@ -156,5 +165,5 @@ BENCHMARK(fastq_read_ignore_everything);
 
 // TODO <Clemens C.>: seqan2 comparison
 // TODO <Clemens C.>: refactor fasta benchmark for exact comparison
-
+*/
 BENCHMARK_MAIN();
