@@ -102,7 +102,6 @@ void fastq_read_with_quality(benchmark::State & state)
         seq.clear();
         qual.clear();
 
-        // refill stream
 
     }
 }
