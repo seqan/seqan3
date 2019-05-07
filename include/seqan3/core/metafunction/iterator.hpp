@@ -18,7 +18,6 @@
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/metafunction/pre.hpp>
 #include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {
