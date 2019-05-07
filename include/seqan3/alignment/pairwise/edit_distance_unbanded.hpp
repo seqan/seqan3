@@ -20,9 +20,9 @@
 
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
-#include <seqan3/alignment/matrix/alignment_score_matrix.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_algorithms.hpp>
-#include <seqan3/alignment/matrix/alignment_trace_matrix.hpp>
+#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
+#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
@@ -46,15 +46,6 @@ template <std::ranges::ViewableRange database_t,
           EditDistanceTrait traits_t>
 class pairwise_alignment_edit_distance_unbanded
 {
-    /*!\name Befriended classes
-     * \{
-     */
-    //!\brief Befriend seqan3::detail::alignment_score_matrix<pairwise_alignment_edit_distance_unbanded>
-    friend alignment_score_matrix<pairwise_alignment_edit_distance_unbanded>;
-    //!\brief Befriend seqan3::detail::alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded>
-    friend alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded>;
-    //!\}
-
     //!\brief The horizontal/database sequence.
     database_t database;
     //!\brief The vertical/query sequence.
@@ -74,10 +65,6 @@ public:
     using query_type = std::remove_reference_t<query_t>;
     //!\brief The type of the alignment config.
     using align_config_type = std::remove_reference_t<align_config_t>;
-    //!\brief The type of the score matrix.
-    using score_matrix_type = detail::alignment_score_matrix<pairwise_alignment_edit_distance_unbanded>;
-    //!\brief The type of the trace matrix.
-    using trace_matrix_type = detail::alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded>;
 
     //!\brief The size of one machine word.
     static constexpr uint8_t word_size = sizeof_bits<word_type>;
@@ -116,8 +103,14 @@ private:
     //!\brief Whether the alignment configuration indicates to compute and/or store the score or trace matrix.
     static constexpr bool compute_matrix = compute_score_matrix || compute_trace_matrix;
 
-    //!\brief How to pre-initialize hp.
-    static constexpr word_type hp0 = is_global ? 1 : 0;
+    //!\brief How to pre-initialise hp.
+    static constexpr word_type hp0 = is_global ? 1u : 0u;
+    //!\brief How to pre-initialise hn.
+    static constexpr word_type hn0 = 0u;
+    //!\brief How to pre-initialise vp.
+    static constexpr word_type vp0 = ~word_type{0u};
+    //!\brief How to pre-initialise vn.
+    static constexpr word_type vn0 = 0u;
 
     //!\brief The score of the current column.
     score_type _score{};
@@ -128,6 +121,10 @@ private:
     std::vector<word_type> vp{};
     //!\brief The machine words which stores the negative vertical differences.
     std::vector<word_type> vn{};
+    //!\brief The machine words which stores the positive horizontal differences.
+    std::vector<word_type> hp{};
+    //!\brief The machine words which stores if trace_directions::diagonal is true.
+    std::vector<word_type> db{};
     //!\brief The machine words which translate a letter of the query into a bit mask.
     //!\details Each bit position which is true (= 1) corresponds to a match of a letter in the query at this position.
     std::vector<word_type> bit_masks{};
@@ -163,22 +160,27 @@ private:
     //!\brief The end position of the database.
     database_iterator database_it_end{};
 
-    //!\brief The state of one column computation.
-    struct state_type
-    {
-        //!\copydoc pairwise_alignment_edit_distance_unbanded::vp
-        std::vector<word_type> vp{};
-        //!\copydoc pairwise_alignment_edit_distance_unbanded::vn
-        std::vector<word_type> vn{};
-    };
+    using score_matrix_type = edit_distance_score_matrix_full<word_type, score_type, is_semi_global, use_max_errors>;
+    score_matrix_type _score_matrix{};
 
-    //!\brief The collection of each computation step.
-    std::vector<state_type> states{};
+    using trace_matrix_type = edit_distance_trace_matrix_full<word_type, is_semi_global, use_max_errors>;
+    trace_matrix_type _trace_matrix{};
 
     //!\brief Add a computation step
     void add_state()
     {
-        states.push_back(state_type{vp, vn});
+        if constexpr(!use_max_errors)
+        {
+            _score_matrix.add_column(vp, vn);
+            _trace_matrix.add_column(hp, db, vp);
+        }
+
+        if constexpr(use_max_errors)
+        {
+            auto max_rows = _score_matrix.max_rows(score_mask, last_block, _score, max_errors);
+            _score_matrix.add_column(vp, vn, max_rows);
+            _trace_matrix.add_column(hp, db, vp, max_rows);
+        }
     }
 
 public:
@@ -214,9 +216,13 @@ public:
         _best_score{static_cast<score_type>(query.size())},
         _best_score_col{ranges::begin(database)},
         database_it{ranges::begin(database)},
-        database_it_end{ranges::end(database)}
+        database_it_end{ranges::end(database)},
+        _score_matrix{query.size() + 1u},
+        _trace_matrix{query.size() + 1u}
     {
         static constexpr size_t alphabet_size_ = alphabet_size<query_alphabet_type>;
+        _score_matrix.reserve(database.size() + 1u);
+        _trace_matrix.reserve(database.size() + 1u);
 
         if constexpr (use_max_errors)
         {
@@ -239,11 +245,10 @@ public:
             _score = local_max_errors + 1;
         }
 
-        word_type vp0{static_cast<word_type>(~0)};
-        word_type vn0{0};
-
         vp.resize(block_count, vp0);
         vn.resize(block_count, vn0);
+        hp.resize(block_count, 0u);
+        db.resize(block_count, 0u);
         bit_masks.resize((alphabet_size_ + 1) * block_count, 0);
 
         // encoding the letters as bit-vectors
@@ -260,29 +265,33 @@ public:
 private:
 
     //!\brief One compute step in one column.
-    template <bool with_overflow_check>
-    void compute_step(word_type b, word_type & hp, word_type & hn, word_type & vp, word_type & vn, word_type & carry_d0, word_type & carry_hp, word_type & carry_hn)
+    template <typename carry_type>
+    void compute_step(word_type b, word_type & d0, word_type & hp, word_type & hn, word_type & vp, word_type & vn,
+                      carry_type carry_d0, carry_type carry_hp, carry_type carry_hn)
     {
-        word_type x, d0, t;
+        word_type x, t;
+        assert(carry_d0 <= 1u);
+        assert(carry_hp <= 1u);
+        assert(carry_hn <= 1u);
 
         x = b | vn;
-        t = vp + (x & vp) + (with_overflow_check ? carry_d0 : 0);
+        t = vp + (x & vp) + carry_d0;
 
         d0 = (t ^ vp) | x;
         hn = vp & d0;
         hp = vn | ~(vp | d0);
 
-        if constexpr(with_overflow_check)
-            carry_d0 = (carry_d0 != (word_type)0) ? t <= vp : t < vp;
+        if constexpr(std::Same<carry_type, word_type &>)
+            carry_d0 = (carry_d0 != 0u) ? t <= vp : t < vp;
 
-        x = (hp << 1) | (with_overflow_check ? carry_hp : hp0);
+        x = (hp << 1u) | carry_hp;
         vn = x & d0;
-        vp = (hn << 1) | ~(x | d0) | (with_overflow_check ? carry_hn : 0);
+        vp = (hn << 1u) | ~(x | d0) | carry_hn;
 
-        if constexpr(with_overflow_check)
+        if constexpr(std::Same<carry_type, word_type &>)
         {
-            carry_hp = hp >> (word_size - 1);
-            carry_hn = hn >> (word_size - 1);
+            carry_hp = hp >> (word_size - 1u);
+            carry_hn = hn >> (word_size - 1u);
         }
     }
 
@@ -457,19 +466,19 @@ public:
     }
 
     //!\brief Return the score matrix of the alignment.
-    score_matrix_type score_matrix() const noexcept
+    score_matrix_type const & score_matrix() const noexcept
     {
         static_assert(compute_score_matrix, "score_matrix() can only be computed if you specify the result type within "
                                             "your alignment config.");
-        return score_matrix_type{*this};
+        return _score_matrix;
     }
 
     //!\brief Return the trace matrix of the alignment.
-    trace_matrix_type trace_matrix() const noexcept
+    trace_matrix_type const & trace_matrix() const noexcept
     {
         static_assert(compute_trace_matrix, "trace_matrix() can only be computed if you specify the result type within "
                                             "your alignment config.");
-        return trace_matrix_type{*this};
+        return _trace_matrix;
     }
 
     //!\brief Return the begin position of the alignment
@@ -509,11 +518,12 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
     // computing the blocks
     while (database_it != database_it_end)
     {
-        word_type hn, hp, _;
+        word_type d0, hn;
 
-        word_type b = bit_masks[to_rank((query_alphabet_type) *database_it)];
-        compute_step<false>(b, hp, hn, vp[0], vn[0], _, _, _);
-        advance_score(hp, hn, score_mask);
+        word_type const b = bit_masks[to_rank((query_alphabet_type) *database_it)];
+        compute_step<word_type>(b, d0, hp[0], hn, vp[0], vn[0], 0u, hp0, 0u);
+        advance_score(hp[0], hn, score_mask);
+        db[0] = ~(b ^ d0);
 
         // semi-global without max_errors guarantees that the score stays within the last row
         if constexpr(is_semi_global && !use_max_errors)
@@ -542,17 +552,19 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 {
     while (database_it != database_it_end)
     {
-        word_type hn, hp;
-        word_type carry_d0{0}, carry_hp{hp0}, carry_hn{0};
+        word_type d0, hn;
+        word_type carry_d0{0u}, carry_hp{hp0}, carry_hn{0u};
         size_t block_offset = vp.size() * to_rank((query_alphabet_type) *database_it);
 
         // computing the necessary blocks, carries between blocks following one another are stored
         for (size_t current_block = 0; current_block <= last_block; current_block++)
         {
-            word_type b = bit_masks[block_offset + current_block];
-            compute_step<true>(b, hp, hn, vp[current_block], vn[current_block], carry_d0, carry_hp, carry_hn);
+            word_type const b = bit_masks[block_offset + current_block];
+            compute_step<word_type &>(b, d0, hp[current_block], hn, vp[current_block], vn[current_block],
+                                      carry_d0, carry_hp, carry_hn);
+            db[current_block] = ~(b ^ d0);
         }
-        advance_score(hp, hn, score_mask);
+        advance_score(hp[last_block], hn, score_mask);
 
         // semi-global without max_errors guarantees that the score stays within the last row
         if constexpr(is_semi_global && !use_max_errors)
@@ -567,9 +579,14 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
 
             if (additional_block)
             {
-                size_t current_block = last_block + 1;
-                word_type b = bit_masks[block_offset + current_block];
-                compute_step<false>(b, hp, hn, vp[current_block], vn[current_block], carry_d0, carry_hp, carry_hn);
+                size_t const current_block = last_block + 1u;
+                word_type const b = bit_masks[block_offset + current_block];
+                // this might not be necessary, but carry_d0 = 1u might have an influence on the result of vn and vp.
+                vp[current_block] = vp0;
+                vn[current_block] = vn0;
+                compute_step<word_type>(b, d0, hp[current_block], hn, vp[current_block], vn[current_block],
+                                        carry_d0, carry_hp, carry_hn);
+                db[current_block] = ~(b ^ d0);
             }
 
             // updating the last active cell
@@ -603,105 +620,5 @@ template<typename database_t, typename query_t, typename config_t, typename trai
 pairwise_alignment_edit_distance_unbanded(database_t && database, query_t && query, config_t config, traits_t)
     -> pairwise_alignment_edit_distance_unbanded<database_t, query_t, config_t, traits_t>;
 //!\}
-
-//!\cond
-template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
-class alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
-    : public alignment_score_matrix<std::vector<typename pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::score_type>>
-{
-public:
-
-    using alignment_type = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
-    using score_type = typename alignment_type::score_type;
-    using base_score_matrix_type = alignment_score_matrix<std::vector<score_type>>;
-    using word_type = typename alignment_type::word_type;
-
-    static constexpr size_t word_size = sizeof(word_type)*8;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    alignment_score_matrix() = default;                                           //!< Defaulted
-    alignment_score_matrix(alignment_score_matrix const &) = default;             //!< Defaulted
-    alignment_score_matrix(alignment_score_matrix &&) = default;                  //!< Defaulted
-    alignment_score_matrix & operator=(alignment_score_matrix const &) = default; //!< Defaulted
-    alignment_score_matrix & operator=(alignment_score_matrix &&) = default;      //!< Defaulted
-    ~alignment_score_matrix() = default;                                          //!< Defaulted
-
-    alignment_score_matrix(alignment_type const & alignment) :
-        base_score_matrix_type
-        {
-            [&]{
-                size_t _cols = alignment.database.size() + 1;
-                size_t _rows = alignment.query.size() + 1;
-                std::vector<score_type> scores{};
-                scores.reserve(_cols * _rows);
-
-                // init first row with 0, 1, 2, 3, ...
-                for (size_t col = 0; col < _cols; ++col)
-                    scores[col] = alignment_type::is_global ? -col : 0;
-
-                auto deltas = [&](size_t col)
-                {
-                    return [state = alignment.states[col]](size_t row)
-                    {
-                        using bitset = std::bitset<word_size>;
-
-                        size_t chunk = row / word_size;
-                        size_t row_in_chunk = row % word_size;
-                        word_type vp = state.vp[chunk];
-                        word_type vn = state.vn[chunk];
-
-                        int8_t p = bitset(vp)[row_in_chunk] ? 1 : 0;
-                        int8_t n = bitset(vn)[row_in_chunk] ? 1 : 0;
-                        return p - n;
-                    };
-                };
-
-                for (size_t col = 0; col < _cols; ++col)
-                {
-                    auto delta = deltas(col);
-                    for (size_t row = 1; row < _rows; ++row)
-                        scores[row * _cols + col] = scores[(row - 1) * _cols + col] - delta(row - 1);
-                }
-
-                return scores;
-            }(),
-            alignment.query.size() + 1,
-            alignment.database.size() + 1
-        }
-    {
-    }
-    //\}
-};
-
-template<typename database_t, typename query_t, typename align_config_t, typename traits_t>
-class alignment_trace_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>
-    : public alignment_trace_matrix<database_t const &, query_t const &, align_config_t, alignment_score_matrix<pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>>>
-{
-public:
-
-    using alignment_type = pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>;
-    using score_matrix_type = alignment_score_matrix<alignment_type>;
-    using base_trace_matrix_type = alignment_trace_matrix<database_t const &, query_t const &, align_config_t, score_matrix_type>;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    alignment_trace_matrix() = default;                                           //!< Defaulted
-    alignment_trace_matrix(alignment_trace_matrix const &) = default;             //!< Defaulted
-    alignment_trace_matrix(alignment_trace_matrix &&) = default;                  //!< Defaulted
-    alignment_trace_matrix & operator=(alignment_trace_matrix const &) = default; //!< Defaulted
-    alignment_trace_matrix & operator=(alignment_trace_matrix &&) = default;      //!< Defaulted
-    ~alignment_trace_matrix() = default;                                          //!< Defaulted
-
-    alignment_trace_matrix(alignment_type const & alignment) :
-        base_trace_matrix_type{alignment.database, alignment.query, alignment.config, score_matrix_type{alignment}}
-    {
-    }
-    //!\}
-};
-
-//!\endcond
 
 } // namespace seqan3::detail
