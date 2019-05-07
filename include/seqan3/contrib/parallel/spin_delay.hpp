@@ -17,7 +17,7 @@
 
 #include <seqan3/core/platform.hpp>
 
-namespace seqan3
+namespace seqan3::contrib
 {
 //!\cond
 class spin_delay
@@ -65,4 +65,4 @@ private:
     int_fast32_t                  current{1};
 };
 //!\endcond
-} // namespace seqan3
+} // namespace seqan3::contrib

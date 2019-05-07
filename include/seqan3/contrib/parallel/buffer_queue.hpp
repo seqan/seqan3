@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::concurrent_queue.
+ * \brief Provides seqan3::buffer_queue.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -27,8 +27,9 @@
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
-namespace seqan3
+namespace seqan3::contrib
 {
+
 //!\cond
 enum class queue_op_status : uint8_t
 {
@@ -38,8 +39,16 @@ enum class queue_op_status : uint8_t
     closed
 };
 
-template <std::Semiregular value_t, SequenceContainer buffer_t = std::vector<value_t>>
-class concurrent_queue
+enum struct buffer_queue_policy : uint8_t
+{
+    fixed,
+    dynamic
+};
+
+template <std::Semiregular value_t,
+          SequenceContainer buffer_t = std::vector<value_t>,
+          buffer_queue_policy buffer_policy = buffer_queue_policy::dynamic>
+class buffer_queue
 {
 public:
 
@@ -49,12 +58,14 @@ public:
     using reference       = void;
     using const_reference = void;
 
-    concurrent_queue() = default;
-    concurrent_queue(concurrent_queue const &) = delete;
-    concurrent_queue(concurrent_queue &&) = default;
-    concurrent_queue & operator=(concurrent_queue const &) = delete;
-    concurrent_queue & operator=(concurrent_queue &&) = default;
-    ~concurrent_queue()
+    // Default constructor sets capacity to 1 (still empty)
+    buffer_queue() : buffer_queue{0u}
+    {}
+    buffer_queue(buffer_queue const &) = delete;
+    buffer_queue(buffer_queue &&) = default;
+    buffer_queue & operator=(buffer_queue const &) = delete;
+    buffer_queue & operator=(buffer_queue &&) = default;
+    ~buffer_queue()
     {
         // barrier
         close();  // close the queue.
@@ -69,7 +80,7 @@ public:
     }
 
     // you can set the initial capacity here
-    explicit concurrent_queue(size_type const init_capacity)
+    explicit buffer_queue(size_type const init_capacity)
     {
         data.resize(init_capacity + 1);
         roundSize = static_cast<size_type>(1) << static_cast<size_type>(std::log2(data.size() - 1) + 1);
@@ -77,7 +88,7 @@ public:
 
     template <std::ranges::InputRange range_type>
         requires std::ConvertibleTo<value_type_t<range_type>, value_type>
-    concurrent_queue(size_type const init_capacity, range_type && r) : concurrent_queue{init_capacity}
+    buffer_queue(size_type const init_capacity, range_type && r) : buffer_queue{init_capacity}
     {
         std::ranges::copy(r, std::ranges::begin(data));
     }
@@ -224,7 +235,13 @@ private:
     }
 
     template <typename value2_t>
-        requires std::Same<std::remove_reference_t<value2_t>, value_type>
+        requires (std::Same<std::remove_reference_t<value2_t>, value_type>) &&
+                 (buffer_policy == buffer_queue_policy::fixed)
+    bool overflow(value2_t &&);
+
+    template <typename value2_t>
+        requires (std::Same<std::remove_reference_t<value2_t>, value_type>) &&
+                 (buffer_policy == buffer_queue_policy::dynamic)
     bool overflow(value2_t && value);
 
     buffer_t data;
@@ -241,6 +258,14 @@ private:
     alignas(hardware_destructive_interference_size) std::atomic<bool>         closed_flag{false};
 };
 
+// Specifies a fixed size buffer queue.
+template <std::Semiregular value_t, SequenceContainer buffer_t = std::vector<value_t>>
+using fixed_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy::fixed>;
+
+// Specifies a dynamic size buffer queue (growable).
+template <std::Semiregular value_t, SequenceContainer buffer_t = std::vector<value_t>>
+using dynamic_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy::dynamic>;
+
 // ============================================================================
 // Metafunctions
 // ============================================================================
@@ -249,10 +274,22 @@ private:
 // Functions
 // ============================================================================
 
-template <std::Semiregular value_t, SequenceContainer buffer_t>
+template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
-    requires std::Same<std::remove_reference_t<value2_t>, typename concurrent_queue<value_t, buffer_t>::value_type>
-inline bool concurrent_queue<value_t, buffer_t>::overflow(value2_t && value)
+    requires (std::Same<std::remove_reference_t<value2_t>,
+                        typename buffer_queue<value_t, buffer_t, buffer_policy>::value_type>) &&
+             (buffer_policy == buffer_queue_policy::fixed)
+inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t &&)
+{
+    return false;
+}
+
+template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
+template <typename value2_t>
+    requires (std::Same<std::remove_reference_t<value2_t>,
+                        typename buffer_queue<value_t, buffer_t, buffer_policy>::value_type>) &&
+             (buffer_policy == buffer_queue_policy::dynamic)
+inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t && value)
 {
     // try to extend capacity
     std::unique_lock write_lock{mutex};
@@ -335,8 +372,8 @@ inline bool concurrent_queue<value_t, buffer_t>::overflow(value2_t && value)
 // currently filled    [tail, tailWrite)
 // currently removed   [head, headRead)
 
-template <typename value_t, typename buffer_t>
-inline queue_op_status concurrent_queue<value_t, buffer_t>::try_pop(value_t & result)
+template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
+inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(value_t & result)
 {
     // try to extract a value
     std::shared_lock  read_lock{mutex};
@@ -412,10 +449,10 @@ inline queue_op_status concurrent_queue<value_t, buffer_t>::try_pop(value_t & re
  *                            Default is @link ParallelismTags#Parallel @endlink.
  */
 //
-template <typename value_t, typename buffer_t>
+template <std::Semiregular value_t, SequenceContainer buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
     requires std::Same<std::remove_reference_t<value2_t>, value_t>
-inline queue_op_status concurrent_queue<value_t, buffer_t>::try_push(value2_t && value)
+inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(value2_t && value)
 {
     // try to push the value
     {
@@ -466,11 +503,14 @@ inline queue_op_status concurrent_queue<value_t, buffer_t>::try_push(value2_t &&
         }
     }
 
-    // if possible extend capacity and return (spin loop otherwise)
+    // if possible extend capacity and return.
     if (overflow(std::forward<value2_t>(value)))
+    {
         return queue_op_status::success;  // always return success, since the queue dynamically resizes and cannot be full.
+    }
+
     // We could not extend the queue so it must be full.
     return queue_op_status::full;
 }
 //!\endcond
-} // namespace seqan3
+} // namespace seqan3::contrib
