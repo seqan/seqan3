@@ -544,7 +544,7 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * Currently, the only implemented format is seqan3::structure_file_format_vienna. More formats will follow soon.
  */
 template<StructureFileInputTraits traits_type_ = structure_file_input_default_traits_rna,
-         detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+         detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
          detail::TypeListOfStructureFileInputFormats valid_formats_
              = type_list<structure_file_format_vienna>,
          char_concept stream_char_type_ = char>
@@ -1068,18 +1068,18 @@ protected:
  * \relates seqan3::structure_file_in
  * \{
  */
-template <IStream2 stream_type,
+template <IStream2                 stream_type,
           StructureFileInputFormat file_format,
-          detail::fields_concept selected_field_ids>
+          detail::Fields           selected_field_ids>
 structure_file_in(stream_type && stream, file_format const &, selected_field_ids const &)
     -> structure_file_in<typename structure_file_in<>::traits_type,       // actually use the default
                          selected_field_ids,
                          type_list<file_format>,
                          typename std::remove_reference_t<stream_type>::char_type>;
 
-template <IStream2 stream_type,
+template <IStream2                 stream_type,
           StructureFileInputFormat file_format,
-          detail::fields_concept selected_field_ids>
+          detail::Fields           selected_field_ids>
 structure_file_in(stream_type & stream, file_format const &, selected_field_ids const &)
     -> structure_file_in<typename structure_file_in<>::traits_type,       // actually use the default
                          selected_field_ids,
@@ -1098,10 +1098,10 @@ namespace std
 /*!\brief std::tuple_size overload for column-like access.
  * [metafunction specialisation for seqan3::structure_file_in]
  */
-template<seqan3::StructureFileInputTraits traits_type,
-         seqan3::detail::fields_concept selected_field_ids,
+template<seqan3::StructureFileInputTraits                    traits_type,
+         seqan3::detail::Fields                              selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::char_concept stream_char_t>
+         seqan3::char_concept                                stream_char_t>
 struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_char_t>>
 {
     //!\brief The value equals the number of selected fields in the file.
@@ -1111,11 +1111,11 @@ struct tuple_size<seqan3::structure_file_in<traits_type, selected_field_ids, val
 /*!\brief std::tuple_element overload for column-like access.
  * [metafunction specialisation for seqan3::structure_file_in]
  */
-template<size_t elem_no,
-         seqan3::StructureFileInputTraits traits_type,
-         seqan3::detail::fields_concept selected_field_ids,
+template<size_t                                              elem_no,
+         seqan3::StructureFileInputTraits                    traits_type,
+         seqan3::detail::Fields                              selected_field_ids,
          seqan3::detail::TypeListOfStructureFileInputFormats valid_formats,
-         seqan3::char_concept stream_char_t>
+         seqan3::char_concept                                stream_char_t>
 struct tuple_element<elem_no, seqan3::structure_file_in<traits_type, selected_field_ids, valid_formats, stream_char_t>>
     : tuple_element<elem_no, typename seqan3::structure_file_in<traits_type,
                                                                 selected_field_ids,
