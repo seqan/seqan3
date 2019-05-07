@@ -187,28 +187,28 @@ TEST(builtin_simd, default_simd_max_length)
 #endif
 }
 
-TEST(builtin_simd, simd_concept)
+TEST(builtin_simd, Simd)
 {
-    EXPECT_FALSE(simd_concept<short>);
-    EXPECT_FALSE(simd_concept<int>);
-    EXPECT_FALSE(simd_concept<incomplete::type>);
-    EXPECT_FALSE(simd_concept<incomplete::template_type<int>>);
+    EXPECT_FALSE(Simd<short>);
+    EXPECT_FALSE(Simd<int>);
+    EXPECT_FALSE(Simd<incomplete::type>);
+    EXPECT_FALSE(Simd<incomplete::template_type<int>>);
 
-    auto fails_simd_concept = [](auto id)
+    auto fails_Simd = [](auto id)
     {
         using type = typename decltype(id)::type;
-        EXPECT_FALSE(simd_concept<type>);
+        EXPECT_FALSE(Simd<type>);
     };
 
-    detail::for_each_type(fails_simd_concept, subscript_types<short>{});
-    detail::for_each_type(fails_simd_concept, subscript_types<int>{});
-    detail::for_each_type(fails_simd_concept, subscript_types<incomplete::type>{});
-    detail::for_each_type(fails_simd_concept, subscript_types<incomplete::template_type<int>>{});
+    detail::for_each_type(fails_Simd, subscript_types<short>{});
+    detail::for_each_type(fails_Simd, subscript_types<int>{});
+    detail::for_each_type(fails_Simd, subscript_types<incomplete::type>{});
+    detail::for_each_type(fails_Simd, subscript_types<incomplete::template_type<int>>{});
 
-    EXPECT_TRUE(simd_concept<int16x8_t>);
-    EXPECT_TRUE(simd_concept<int32x4_t>);
-    EXPECT_TRUE(simd_concept<int64x2_t>);
-    EXPECT_TRUE(simd_concept<uint16x16_t>);
-    EXPECT_TRUE(simd_concept<uint32x8_t>);
-    EXPECT_TRUE(simd_concept<uint64x4_t>);
+    EXPECT_TRUE(Simd<int16x8_t>);
+    EXPECT_TRUE(Simd<int32x4_t>);
+    EXPECT_TRUE(Simd<int64x2_t>);
+    EXPECT_TRUE(Simd<uint16x16_t>);
+    EXPECT_TRUE(Simd<uint32x8_t>);
+    EXPECT_TRUE(Simd<uint64x4_t>);
 }

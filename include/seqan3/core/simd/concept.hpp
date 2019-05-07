@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Contains seqan3::simd::simd_concept
+ * \brief Contains seqan3::simd::Simd
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -20,7 +20,7 @@
 namespace seqan3::detail
 {
 //!\cond
-// NOTE: this definition should be used for seqan3::simd_concept, but gcc has a bug that it will not fail silently if
+// NOTE: this definition should be used for seqan3::Simd, but gcc has a bug that it will not fail silently if
 // simd_t is a pointer to a incomplete type. Furthermore the is_pointer_v should prevent those cases by checking the type
 // beforehand, but for some reasons the short-circuit semantic of `&&` does not work in this case and gcc still evaluates
 // the requires clause which in turn triggers the error.
@@ -29,7 +29,7 @@ namespace seqan3::detail
 //     error: invalid use of incomplete type ‘struct incomplete::template_type<int>’
 //          requires std::Same<decltype(a - b), simd_t>;
 template <typename simd_t>
-SEQAN3_CONCEPT simd_concept = requires (simd_t a, simd_t b)
+SEQAN3_CONCEPT Simd = requires (simd_t a, simd_t b)
 {
     typename simd_traits<simd_t>::scalar_type;
     typename simd_traits<simd_t>::mask_type;
@@ -70,22 +70,22 @@ namespace seqan3
 inline namespace simd
 {
 
-/*!\interface seqan3::simd::simd_concept <>
+/*!\interface seqan3::simd::Simd <>
  * \brief The generic simd concept.
  * \ingroup simd
  *
  * \details
  *
- * seqan3::simd::simd_concept checks whether a given type is a simd type. One of the prerequisites is
+ * seqan3::simd::Simd checks whether a given type is a simd type. One of the prerequisites is
  * that seqan3::simd::simd_traits is defined for this type.
  *
  * \if DEV
- * \todo Simplify concept to the seqan3::detail::simd_concept once gcc bug is fixed
+ * \todo Simplify concept to the seqan3::detail::Simd once gcc bug is fixed
  * \endif
  */
 //!\cond
 template <typename simd_t>
-SEQAN3_CONCEPT simd_concept = !std::is_pointer_v<std::decay_t<simd_t>> && detail::simd_concept<simd_t>;
+SEQAN3_CONCEPT Simd = !std::is_pointer_v<std::decay_t<simd_t>> && detail::Simd<simd_t>;
 //!\endcond
 
 } // inline namespace simd
