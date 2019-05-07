@@ -15,7 +15,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/core/metafunction/function.hpp>
 
 namespace seqan3
 {
@@ -117,8 +117,35 @@ struct remove_rvalue_reference
 template <typename t>
 using remove_rvalue_reference_t = typename remove_rvalue_reference<t>::type;
 
-//!\}
+// ----------------------------------------------------------------------------
+// is_constexpr_default_constructible
+// ----------------------------------------------------------------------------
 
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context [UnaryTypeTrait].
+ * \tparam t The type to operate on.
+ */
+template <typename t>
+struct is_constexpr_default_constructible : std::false_type
+{};
+
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context [UnaryTypeTrait specialisation].
+ * \tparam t A type that std::is_default_constructible.
+ */
+template <typename t>
+//!\cond
+    requires std::is_default_constructible_v<t>
+//!\endcond
+struct is_constexpr_default_constructible<t> : std::integral_constant<bool, SEQAN3_IS_CONSTEXPR(t{})>
+{};
+
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context [UnaryTypeTrait shortcut].
+ * \tparam t The type to operate on.
+ * \see seqan3::is_constexpr_default_constructible
+ */
+template <typename t>
+inline constexpr bool is_constexpr_default_constructible_v = is_constexpr_default_constructible<t>::value;
+
+//!\}
 } // namespace seqan3
 
 namespace seqan3::detail
@@ -127,6 +154,31 @@ namespace seqan3::detail
 /*!\addtogroup metafunction
  * \{
  */
+
+// ----------------------------------------------------------------------------
+// deferred_type
+// ----------------------------------------------------------------------------
+
+/*!\brief Return the type identity; further arguments are ignored, but can make this type dependent if they are
+ *        [TransformationTrait].
+ * \tparam t The type to operate on.
+ * \tparam dependent_ts Any provided types are ignored.
+ */
+template <typename t, typename ...dependent_ts>
+struct deferred_type
+{
+    //!\brief The type identity.
+    using type = t;
+};
+
+/*!\brief Return the type identity; further arguments are ignored, but can make this type dependent if they are
+ *        [TransformationTrait shortcut].
+ * \tparam t The type to operate on.
+ * \tparam dependent_ts Any provided types are ignored.
+ * \see seqan3::deferred_type
+ */
+template <typename t, typename ...dependent_ts>
+using deferred_type_t = typename deferred_type<t, dependent_ts...>::type;
 
 // ----------------------------------------------------------------------------
 // remove_cvref_t
