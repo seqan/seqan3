@@ -32,6 +32,7 @@
 #include <seqan3/range/view/take_exactly.hpp>
 #include <seqan3/range/view/take_line.hpp>
 #include <seqan3/range/view/take_until.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
 

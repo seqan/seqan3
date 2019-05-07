@@ -24,6 +24,7 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/detail.hpp>
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>

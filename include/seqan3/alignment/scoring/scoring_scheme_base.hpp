@@ -19,7 +19,7 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/range/shortcuts.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/std/algorithm>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/array.hpp>

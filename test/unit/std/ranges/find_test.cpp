@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include <seqan3/std/ranges>
+#include <seqan3/std/algorithm>
 
 TEST(general, find)
 {

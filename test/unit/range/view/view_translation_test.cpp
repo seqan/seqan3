@@ -11,9 +11,6 @@
 #include <string>
 #include <vector>
 
-#include <range/v3/view/take.hpp>
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/detail/reflection.hpp>
@@ -22,6 +19,7 @@
 #include <seqan3/range/view/char_to.hpp>
 #include <seqan3/range/view/complement.hpp>
 #include <seqan3/range/view/translation.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;

@@ -9,14 +9,13 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/transform.hpp>
-
 #include <seqan3/alphabet/quality/all.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
 
 using namespace seqan3;
 

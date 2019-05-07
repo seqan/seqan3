@@ -20,6 +20,7 @@
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/search/algorithm/configuration/detail.hpp>
 #include <seqan3/search/algorithm/configuration/max_error_common.hpp>
+#include <seqan3/std/algorithm>
 
 namespace seqan3::search_cfg
 {

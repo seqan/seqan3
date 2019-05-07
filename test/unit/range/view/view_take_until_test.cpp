@@ -9,12 +9,12 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/unique.hpp>
 
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
