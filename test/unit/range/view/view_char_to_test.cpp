@@ -9,11 +9,10 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/view/char_to.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;

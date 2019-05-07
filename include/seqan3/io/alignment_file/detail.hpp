@@ -18,6 +18,7 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/range/view/single_pass_input.hpp>
 #include <seqan3/range/view/take_until.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>

@@ -15,6 +15,7 @@
 #include <seqan3/io/stream/debug_stream.hpp>
 #include <seqan3/range/container/all.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 

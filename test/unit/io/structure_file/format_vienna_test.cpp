@@ -12,8 +12,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/structure/dot_bracket3.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
@@ -21,6 +19,7 @@
 #include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/std/algorithm>
 
 using namespace seqan3;
 

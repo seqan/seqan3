@@ -9,10 +9,9 @@
 
 #include "../helper.hpp"
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/std/algorithm>
 
 #include <gtest/gtest.h>
 

@@ -14,6 +14,7 @@
 #include <seqan3/range/view/repeat.hpp>
 #include <seqan3/range/view/take.hpp>
 #include <seqan3/range/view/take_exactly.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;

@@ -37,6 +37,7 @@
 #include <seqan3/range/view/slice.hpp>
 #include <seqan3/range/view/take_until.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>

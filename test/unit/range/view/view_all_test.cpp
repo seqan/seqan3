@@ -15,6 +15,7 @@
 
 #include <seqan3/range/view/view_all.hpp>
 #include <seqan3/std/concepts>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 using namespace seqan3;
