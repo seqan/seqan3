@@ -53,7 +53,7 @@ struct drop_fn
         // safeguard against wrong size
         if constexpr (std::ranges::SizedRange<urng_t>)
         {
-            drop_size = std::min(drop_size, std::ranges::size(urange));
+            drop_size = std::min(drop_size, static_cast<size_t>(std::ranges::size(urange)));
             new_size = std::ranges::size(urange) - drop_size;
         }
 
