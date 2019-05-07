@@ -167,7 +167,7 @@ namespace seqan3
  * Currently, the only implemented format is seqan3::structure_file_format_vienna. More formats will follow soon.
  */
 
-template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
+template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::STRUCTURE>,
           detail::TypeListOfStructureFileOutputFormats valid_formats_
               = type_list<structure_file_format_vienna>,
           char_concept stream_char_type_ = char>
@@ -803,17 +803,17 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
-template <OStream2 stream_t,
+template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
-          detail::fields_concept selected_field_ids>
+          detail::Fields            selected_field_ids>
 structure_file_out(stream_t &&, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
                           type_list<file_format>,
                           typename std::remove_reference_t<stream_t>::char_type>;
 
-template <OStream2 stream_t,
+template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
-          detail::fields_concept selected_field_ids>
+          detail::Fields            selected_field_ids>
 structure_file_out(stream_t &, file_format const &, selected_field_ids const &)
     -> structure_file_out<selected_field_ids,
                           type_list<file_format>,

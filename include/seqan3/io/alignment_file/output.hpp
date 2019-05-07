@@ -164,7 +164,7 @@ namespace seqan3
  *
  * \sa seqan3::alignment_file_format_sam
  */
-template <detail::fields_concept selected_field_ids_ =
+template <detail::Fields selected_field_ids_ =
               fields<field::SEQ,
                      field::ID,
                      field::OFFSET,
@@ -727,7 +727,7 @@ protected:
  * \relates seqan3::alignment_file_output
  * \{
  */
-template <detail::fields_concept    selected_field_ids>
+template <detail::Fields    selected_field_ids>
 alignment_file_output(std::filesystem::path &&, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              typename alignment_file_output<>::valid_formats,
@@ -736,14 +736,14 @@ alignment_file_output(std::filesystem::path &&, selected_field_ids const &)
 
 template <OStream<char>             stream_type,
           AlignmentFileOutputFormat file_format,
-          detail::fields_concept    selected_field_ids>
+          detail::Fields            selected_field_ids>
 alignment_file_output(stream_type && _stream, file_format const &, selected_field_ids const &)
     -> alignment_file_output<selected_field_ids,
                              type_list<file_format>,
                              std::remove_reference_t<stream_type>,
                              ref_info_not_given>;
 
-template <detail::fields_concept    selected_field_ids,
+template <detail::Fields    selected_field_ids,
           std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type>
 alignment_file_output(std::filesystem::path &&,
@@ -769,7 +769,7 @@ template <OStream<char>             stream_type,
           std::ranges::ForwardRange ref_ids_type,
           std::ranges::ForwardRange ref_lengths_type,
           AlignmentFileOutputFormat file_format,
-          detail::fields_concept    selected_field_ids>
+          detail::Fields            selected_field_ids>
 alignment_file_output(stream_type && _stream,
                       ref_ids_type &&,
                       ref_lengths_type &&,

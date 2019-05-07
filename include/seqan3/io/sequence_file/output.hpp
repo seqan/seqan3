@@ -158,7 +158,7 @@ namespace seqan3
  * TODO give overview of formats, once they are all implemented
  */
 
-template <detail::fields_concept selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
+template <detail::Fields selected_field_ids_ = fields<field::SEQ, field::ID, field::QUAL>,
           detail::TypeListOfSequenceFileOutputFormats valid_formats_ =
               type_list<sequence_file_format_embl, sequence_file_format_fasta, sequence_file_format_fastq,
                         sequence_file_format_sam>,
@@ -715,7 +715,7 @@ protected:
  */
 template <OStream2                 stream_t,
           SequenceFileOutputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 sequence_file_output(stream_t &&,
                      file_format const &,
                      selected_field_ids const &)
@@ -725,7 +725,7 @@ sequence_file_output(stream_t &&,
 
 template <OStream2                 stream_t,
           SequenceFileOutputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 sequence_file_output(stream_t &,
                      file_format const &,
                      selected_field_ids const &)

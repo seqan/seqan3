@@ -359,7 +359,7 @@ struct alignment_file_input_default_traits
  */
 template <
     AlignmentFileInputTraits                     traits_type_        = alignment_file_input_default_traits<>,
-    detail::fields_concept                       selected_field_ids_ = fields<field::SEQ,
+    detail::Fields                               selected_field_ids_ = fields<field::SEQ,
                                                                               field::ID,
                                                                               field::OFFSET,
                                                                               field::REF_SEQ,
@@ -977,7 +977,7 @@ protected:
 //!\brief Deduce selected fields, file_format and stream char type, default the rest.
 template <IStream2                 stream_type,
           AlignmentFileInputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 alignment_file_input(stream_type && stream,
                      file_format const &,
                      selected_field_ids const &)
@@ -989,7 +989,7 @@ alignment_file_input(stream_type && stream,
 //!\brief Deduce selected fields, file_format and stream char type, default the rest.
 template <IStream2                 stream_type,
           AlignmentFileInputFormat file_format,
-          detail::fields_concept   selected_field_ids>
+          detail::Fields           selected_field_ids>
 alignment_file_input(stream_type & stream,
                      file_format const &,
                      selected_field_ids const &)
@@ -1001,7 +1001,7 @@ alignment_file_input(stream_type & stream,
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, default the rest.
 template <std::ranges::ForwardRange           ref_ids_t,
           std::ranges::ForwardRange           ref_sequences_t,
-          detail::fields_concept              selected_field_ids>
+          detail::Fields                      selected_field_ids>
 alignment_file_input(std::filesystem::path path,
                      ref_ids_t &,
                      ref_sequences_t &,
@@ -1029,7 +1029,7 @@ template <IStream2                  stream_type,
           std::ranges::ForwardRange ref_ids_t,
           std::ranges::ForwardRange ref_sequences_t,
           AlignmentFileInputFormat  file_format,
-          detail::fields_concept    selected_field_ids>
+          detail::Fields            selected_field_ids>
 alignment_file_input(stream_type && stream,
                      ref_ids_t &,
                      ref_sequences_t &,
@@ -1046,7 +1046,7 @@ template <IStream2                  stream_type,
           std::ranges::ForwardRange ref_ids_t,
           std::ranges::ForwardRange ref_sequences_t,
           AlignmentFileInputFormat  file_format,
-          detail::fields_concept    selected_field_ids>
+          detail::Fields            selected_field_ids>
 alignment_file_input(stream_type & stream,
                      ref_ids_t &,
                      ref_sequences_t &,
@@ -1099,7 +1099,7 @@ namespace std
 {
 //!\brief std::tuple_size overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
 template <seqan3::AlignmentFileInputTraits                    traits_type,
-          seqan3::detail::fields_concept                      selected_field_ids,
+          seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
           seqan3::char_concept                                stream_char_t>
 struct tuple_size<seqan3::alignment_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
@@ -1111,7 +1111,7 @@ struct tuple_size<seqan3::alignment_file_input<traits_type, selected_field_ids, 
 //!\brief std::tuple_element overload for column-like access. [metafunction specialisation for seqan3::alignment_file_input]
 template <size_t                                              elem_no,
           seqan3::AlignmentFileInputTraits                    traits_type,
-          seqan3::detail::fields_concept                      selected_field_ids,
+          seqan3::detail::Fields                              selected_field_ids,
           seqan3::detail::TypeListOfAlignmentFileInputFormats valid_formats,
           seqan3::char_concept                                stream_char_t>
 struct tuple_element<elem_no, seqan3::alignment_file_input<traits_type, selected_field_ids, valid_formats, stream_char_t>>
