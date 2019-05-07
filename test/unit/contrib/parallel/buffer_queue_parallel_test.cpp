@@ -13,12 +13,12 @@
 #include <random>
 #include <thread>
 
-#include <seqan3/contrib/parallel/concurrent_queue.hpp>
+#include <seqan3/contrib/parallel/buffer_queue.hpp>
 
-using namespace seqan3;
+using namespace seqan3::contrib;
 
 template <typename sequential_push_t, typename sequential_pop_t>
-void test_concurrent_queue_wait()
+void test_buffer_queue_wait_status()
 {
     size_t thread_count = std::thread::hardware_concurrency();
 
@@ -37,7 +37,7 @@ void test_concurrent_queue_wait()
     // std::cout << "writers: " << writer_count << std::endl;
 
     constexpr size_t size_v = 10000;
-    concurrent_queue<uint32_t> queue{100};
+    dynamic_buffer_queue<uint32_t> queue{100};
 
     std::atomic<uint32_t> cnt{1};
 
@@ -95,30 +95,30 @@ void test_concurrent_queue_wait()
     EXPECT_EQ(sum.load(), (size_v * (size_v + 1)) / 2);
 }
 
-TEST(concurrent_queue, spsc_sum)
+TEST(buffer_queue, spsc_sum)
 {
-    test_concurrent_queue_wait<std::true_type, std::true_type>();
+    test_buffer_queue_wait_status<std::true_type, std::true_type>();
 }
 
-TEST(concurrent_queue, spmc_sum)
+TEST(buffer_queue, spmc_sum)
 {
-    test_concurrent_queue_wait<std::true_type, std::false_type>();
+    test_buffer_queue_wait_status<std::true_type, std::false_type>();
 }
 
-TEST(concurrent_queue, mpsc_sum)
+TEST(buffer_queue, mpsc_sum)
 {
-    test_concurrent_queue_wait<std::false_type, std::true_type>();
+    test_buffer_queue_wait_status<std::false_type, std::true_type>();
 }
 
-TEST(concurrent_queue, mpmc_sum)
+TEST(buffer_queue, mpmc_sum)
 {
-    test_concurrent_queue_wait<std::false_type, std::false_type>();
+    test_buffer_queue_wait_status<std::false_type, std::false_type>();
 }
 
-template <typename sequential_push_t, typename sequential_pop_t>
-void test_concurrent_queue_wait_throw(size_t initialCapacity)
+template <typename sequential_push_t, typename sequential_pop_t, buffer_queue_policy buffer_policy>
+void test_buffer_queue_wait_throw(size_t initialCapacity)
 {
-    using queue_t = concurrent_queue<size_t>;
+    using queue_t = buffer_queue<size_t, std::vector<size_t>, buffer_policy>;
 
     queue_t queue{initialCapacity};
     std::vector<size_t> random;
@@ -246,46 +246,42 @@ void test_concurrent_queue_wait_throw(size_t initialCapacity)
     EXPECT_TRUE(pop_status == queue_op_status::closed);
 }
 
-TEST(concurrent_queue, spscx_dynamicsize)
+TEST(buffer_queue, spsc_dynamicsize)
 {
-    test_concurrent_queue_wait_throw<std::true_type, std::true_type>(0u);
+    test_buffer_queue_wait_throw<std::true_type, std::true_type, buffer_queue_policy::dynamic>(0u);
 }
 
-// TODO: Add fixed_size implementation
-// TEST(concurrent_queue, spsc_fixedsize)
-// {
-//     test_concurrent_queue_wait_throw<seqan::Limit, seqan::Serial, seqan::Serial>(30u);
-// }
-
-TEST(concurrent_queue, spmc_dynamicsize)
+TEST(buffer_queue, spsc_fixedsize)
 {
-    test_concurrent_queue_wait_throw<std::true_type, std::false_type>(0u);
+    test_buffer_queue_wait_throw<std::true_type, std::true_type, buffer_queue_policy::fixed>(30u);
 }
 
-// TODO: Add fixed_size implementation
-// TEST(concurrent_queue, spmc_fixedsize)
-// {
-//     test_concurrent_queue_wait_throw<std::true_type, std::false_type>(30u);
-// }
-
-TEST(concurrent_queue, mpsc_dynamicsize)
+TEST(buffer_queue, spmc_dynamicsize)
 {
-    test_concurrent_queue_wait_throw<std::false_type, std::true_type>(0u);
+    test_buffer_queue_wait_throw<std::true_type, std::false_type, buffer_queue_policy::dynamic>(0u);
 }
 
-// TODO: Add fixed_size implementation
-// TEST(concurrent_queue, mpsc_fixedsize)
-// {
-//     test_concurrent_queue_wait_throw<std::false_type, std::true_type>(30u);
-// }
-
-TEST(concurrent_queue, mpmc_dynamicsize)
+TEST(buffer_queue, spmc_fixedsize)
 {
-    test_concurrent_queue_wait_throw<std::false_type, std::false_type>(0u);
+    test_buffer_queue_wait_throw<std::true_type, std::false_type, buffer_queue_policy::fixed>(30u);
 }
 
-// TODO: Add fixed_size implementation
-// TEST(concurrent_queue, mpmc_fixedsize)
-// {
-//     test_concurrent_queue_wait_throw<std::true_type, std::true_type>(30u);
-// }
+TEST(buffer_queue, mpsc_dynamicsize)
+{
+    test_buffer_queue_wait_throw<std::false_type, std::true_type, buffer_queue_policy::dynamic>(0u);
+}
+
+TEST(buffer_queue, mpsc_fixedsize)
+{
+    test_buffer_queue_wait_throw<std::false_type, std::true_type, buffer_queue_policy::fixed>(30u);
+}
+
+TEST(buffer_queue, mpmc_dynamicsize)
+{
+    test_buffer_queue_wait_throw<std::false_type, std::false_type, buffer_queue_policy::dynamic>(0u);
+}
+
+TEST(buffer_queue, mpmc_fixedsize)
+{
+    test_buffer_queue_wait_throw<std::false_type, std::false_type, buffer_queue_policy::fixed>(30u);
+}

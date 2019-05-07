@@ -11,41 +11,47 @@
 #include <random>
 #include <string>
 
-#include <seqan3/contrib/parallel/concurrent_queue.hpp>
+#include <seqan3/contrib/parallel/buffer_queue.hpp>
 
-using namespace seqan3;
+using namespace seqan3::contrib;
 
-TEST(concurrent_queue, empty)
+TEST(buffer_queue, empty)
 {
-    concurrent_queue<int> queue{};
+    dynamic_buffer_queue<int> queue{};
 
     EXPECT_TRUE(queue.is_empty());
 }
 
-TEST(concurrent_queue, full)
+TEST(buffer_queue, full)
 {
     {
-        concurrent_queue<int> queue{};
+        dynamic_buffer_queue<int> queue{};
+        EXPECT_TRUE(queue.try_push(3) == queue_op_status::success);
+        int x = -1;
+        EXPECT_TRUE(queue.try_pop(x) == queue_op_status::success);
+    }
+
+    {
+        fixed_buffer_queue<int> queue{};
         EXPECT_TRUE(queue.try_push(3) == queue_op_status::full);
     }
 
     {
-        concurrent_queue<int> queue{1};
+        fixed_buffer_queue<int> queue{2};
         EXPECT_TRUE(queue.try_push(3) == queue_op_status::success);
+        EXPECT_TRUE(queue.try_push(6) == queue_op_status::success);
+        EXPECT_TRUE(queue.try_push(9) == queue_op_status::full);
         int x = -1;
-        queue.try_pop(x);
+        EXPECT_TRUE(queue.try_pop(x) == queue_op_status::success);
+        EXPECT_TRUE(queue.try_pop(x) == queue_op_status::success);
     }
 }
 
-TEST(concurrent_queue, push_pop)
+TEST(buffer_queue, push_pop)
 {
     {
-        concurrent_queue<int> queue{};
+        dynamic_buffer_queue<int> queue{};
         int x = -1;
-        EXPECT_TRUE(queue.try_push(3) == queue_op_status::full);
-        EXPECT_TRUE(queue.try_pop(x) == queue_op_status::empty);
-        EXPECT_EQ(x, -1);
-
         EXPECT_TRUE(queue.try_push(3) == queue_op_status::success);
         EXPECT_TRUE(queue.try_push(6) == queue_op_status::success);
 
@@ -60,7 +66,7 @@ TEST(concurrent_queue, push_pop)
 
     for (unsigned i = 0; i < 10; ++i)
     {
-        concurrent_queue<int> queue(i);
+        dynamic_buffer_queue<int> queue(i);
         int x = -1;
         EXPECT_TRUE(queue.try_pop(x) == queue_op_status::empty);
         EXPECT_TRUE(queue.is_empty());
@@ -77,13 +83,10 @@ TEST(concurrent_queue, push_pop)
     }
 }
 
-TEST(concurrent_queue, close)
+TEST(buffer_queue, close)
 {
-    concurrent_queue<int> queue{};
+    dynamic_buffer_queue<int> queue{};
     int x = -1;
-    EXPECT_TRUE(queue.try_push(3) == queue_op_status::full);
-    EXPECT_TRUE(queue.try_pop(x) == queue_op_status::empty);
-    EXPECT_EQ(x, -1);
 
     EXPECT_TRUE(queue.try_push(3) == queue_op_status::success);
     EXPECT_TRUE(queue.try_push(6) == queue_op_status::success);
@@ -97,12 +100,10 @@ TEST(concurrent_queue, close)
     EXPECT_TRUE(queue.try_pop(x) == queue_op_status::closed);
 }
 
-TEST(concurrent_queue, size)
+TEST(buffer_queue, size)
 {
-    concurrent_queue<int> queue{};
+    dynamic_buffer_queue<int> queue{};
     int x = -1;
-    EXPECT_EQ(queue.size(), 0u);
-    EXPECT_TRUE(queue.try_push(3) == queue_op_status::full);
     EXPECT_EQ(queue.size(), 0u);
 
     EXPECT_TRUE(queue.try_push(3) == queue_op_status::success);
@@ -116,12 +117,12 @@ TEST(concurrent_queue, size)
     EXPECT_EQ(queue.size(), 0u);
 }
 
-TEST(concurrent_queue, non_pod)
+TEST(buffer_queue, non_pod)
 {
     // in a queue of capacity 3 try all 3 states of being empty
     for (int ofs = 1; ofs < 10; ++ofs)
     {
-        concurrent_queue<std::string> queue{10};
+        fixed_buffer_queue<std::string> queue{10};
 
         for (int i = 0; i < ofs; ++i)
         {
