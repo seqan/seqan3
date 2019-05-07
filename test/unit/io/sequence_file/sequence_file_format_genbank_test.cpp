@@ -49,7 +49,7 @@ struct read : public ::testing::Test
         { "ACGTTTA"_dna5 },
     };
 
-	std::string input
+    std::string input
     {
 R"(LOCUS ID1 stuff
 DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
@@ -119,16 +119,31 @@ TEST_F(read, standard)
 TEST_F(read, complete_header)
 {
     options.embl_genbank_complete_header = true;
-    expected_ids[0] = std::string{"LOCUS ID1 stuff\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide"
-    ", complete\n            cds.\nACCESSION   ID1\nACCESSION   U49845\nVERSION     U49845.1  GI:1293613\nKEYWORDS    ."
-    "\nSOURCE      Saccharomyces cerevisiae (baker's yeast)\n  ORGANISM  Saccharomyces cerevisiae\n            "
-    "Eukaryota; Fungi; Ascomycota; Saccharomycotina; Saccharomycetes;\n"
-    "            Saccharomycetales; Saccharomycetaceae; Saccharomyces."
-    "\nREFERENCE   1  (bases 1 to 5028)\nFEATURES             Location/Qualifiers\n     source          1..5028\n"};
-    expected_ids[1] = std::string{"LOCUS ID2\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide,"
-    " complete\n            cds.\nACCESSION   ID2\n"};
-    expected_ids[2] = std::string{"LOCUS ID3\nDEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide,"
-    " complete\n            cds.\nACCESSION   ID3\n"};
+    expected_ids[0] = R"(LOCUS ID1 stuff
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID1
+ACCESSION   U49845
+VERSION     U49845.1  GI:1293613
+KEYWORDS    .
+SOURCE      Saccharomyces cerevisiae (baker's yeast)
+  ORGANISM  Saccharomyces cerevisiae
+            Eukaryota; Fungi; Ascomycota; Saccharomycotina; Saccharomycetes;
+            Saccharomycetales; Saccharomycetaceae; Saccharomyces.
+REFERENCE   1  (bases 1 to 5028)
+FEATURES             Location/Qualifiers
+     source          1..5028
+)";
+    expected_ids[1] = R"(LOCUS ID2
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID2
+)";
+    expected_ids[2] = R"(LOCUS ID3
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID3
+)";
     do_read_test(input);
 }
 
@@ -269,8 +284,8 @@ struct write : public ::testing::Test
         "ID3"
     };
 
-	std::string comp
-	{
+    std::string comp
+    {
 R"(LOCUS       ID1                 18 bp
 ORIGIN
         1 ACGTTTTTTT TTTTTTTT
@@ -285,7 +300,7 @@ ORIGIN
         1 ACGTTTA
 //
 )"
-	};
+    };
 
     sequence_file_format_genbank format;
 
@@ -392,13 +407,31 @@ ORIGIN
     };
 
     options.embl_genbank_complete_header = true;
-    ids[0] = std::string{"LOCUS       ID1                 18 bp\nDEFINITION  Homo sapiens mRNA for prepro cortistatin "
-    "like peptide, complete\n            cds.\nACCESSION   ID1\nVERSION     ID1\nKEYWORDS    .\nSOURCE      .\n"
-    "  ORGANISM  .\n"};
-    ids[1] = std::string{"LOCUS       ID2                 82 bp\nDEFINITION  ID2\n"
-    "ACCESSION   ID2\nVERSION     ID2\nKEYWORDS    .\nSOURCE      .\n  ORGANISM  .\n"};
-    ids[2] = std::string{"LOCUS       ID3                 7 bp\nDEFINITION  ID3\n"
-    "ACCESSION   ID3\nVERSION     ID3\nKEYWORDS    .\nSOURCE      .\n  ORGANISM  .\n"};
+    ids[0] = R"(LOCUS       ID1                 18 bp
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID1
+VERSION     ID1
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+)";
+    ids[1] = R"(LOCUS       ID2                 82 bp
+DEFINITION  ID2
+ACCESSION   ID2
+VERSION     ID2
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+)";
+    ids[2] = R"(LOCUS       ID3                 7 bp
+DEFINITION  ID3
+ACCESSION   ID3
+VERSION     ID3
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+)";
     do_write_test();
 
     EXPECT_EQ(ostream.str(), comp);
