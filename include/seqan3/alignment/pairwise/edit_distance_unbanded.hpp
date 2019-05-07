@@ -116,7 +116,7 @@ private:
     score_type _score{};
     //!\brief The mask with a bit set at the position where the score change.
     //!\details If #use_max_errors is true this corresponds to the last active cell.
-    word_type score_mask{0};
+    word_type score_mask{0u};
     //!\brief The machine words which stores the positive vertical differences.
     std::vector<word_type> vp{};
     //!\brief The machine words which stores the negative vertical differences.
@@ -150,7 +150,7 @@ private:
     //!\brief Which score value is considered as a hit?
     score_type max_errors{255};
     //!\brief The block containing the last active cell.
-    size_t last_block{0};
+    size_t last_block{0u};
     //!\brief A mask with a bit set on the position of the last row.
     word_type last_score_mask{};
     //!\}
@@ -177,7 +177,7 @@ private:
 
         if constexpr(use_max_errors)
         {
-            auto max_rows = _score_matrix.max_rows(score_mask, last_block, _score, max_errors);
+            auto max_rows = score_matrix_type::max_rows(score_mask, last_block, _score, max_errors);
             _score_matrix.add_column(vp, vn, max_rows);
             _trace_matrix.add_column(hp, db, vp, max_rows);
         }
@@ -230,32 +230,32 @@ public:
             assert(max_errors >= score_type{0});
         }
 
-        size_t block_count = (query.size() - 1 + word_size) / word_size;
-        score_mask = (word_type)1 << ((query.size() - 1 + word_size) % word_size);
+        size_t const block_count = (query.size() - 1u + word_size) / word_size;
+        score_mask = word_type{1u} << ((query.size() - 1u + word_size) % word_size);
         last_score_mask = score_mask;
-        last_block = block_count - 1;
+        last_block = block_count - 1u;
 
         if constexpr(use_max_errors)
         {
             // local_max_errors either stores the maximal number of _score (me.max_errors) or the needle size minus one.
             // It is used for the mask computation and setting the initial score (the minus one is there because of the Ukkonen trick).
-            size_t local_max_errors = std::min<size_t>(max_errors, query.size() - 1);
-            score_mask = (word_type)1 << (local_max_errors % word_size);
-            last_block = std::min(local_max_errors / word_size, block_count - 1);
-            _score = local_max_errors + 1;
+            size_t const local_max_errors = std::min<size_t>(max_errors, query.size() - 1u);
+            score_mask = word_type{1u} << (local_max_errors % word_size);
+            last_block = std::min(local_max_errors / word_size, block_count - 1u);
+            _score = local_max_errors + 1u;
         }
 
         vp.resize(block_count, vp0);
         vn.resize(block_count, vn0);
         hp.resize(block_count, 0u);
         db.resize(block_count, 0u);
-        bit_masks.resize((alphabet_size_ + 1) * block_count, 0);
+        bit_masks.resize((alphabet_size_ + 1u) * block_count, 0u);
 
         // encoding the letters as bit-vectors
-        for (size_t j = 0; j < query.size(); j++)
+        for (size_t j = 0u; j < query.size(); j++)
         {
-            size_t i = block_count * to_rank(query[j]) + j / word_size;
-            bit_masks[i] |= (word_type)1 << (j % word_size);
+            size_t const i = block_count * to_rank(query[j]) + j / word_size;
+            bit_masks[i] |= word_type{1u} << (j % word_size);
         }
 
         add_state();
@@ -298,16 +298,16 @@ private:
     //!\brief Increase or decrease the score.
     void advance_score(word_type P, word_type N, word_type mask)
     {
-        if ((P & mask) != (word_type)0)
+        if ((P & mask) != word_type{0u})
             _score++;
-        else if ((N & mask) != (word_type)0)
+        else if ((N & mask) != word_type{0u})
             _score--;
     }
 
     //!\brief Returns true if the current active cell is within the last row.
     bool is_last_active_cell_within_last_row()
     {
-        return (score_mask == last_score_mask) && (last_block == vp.size() - 1);
+        return (score_mask == last_score_mask) && (last_block == vp.size() - 1u);
     }
 
     //!\brief Update the current best known score if the current score is better.
@@ -330,8 +330,8 @@ private:
     //!\brief Decrement the last active cell position.
     bool prev_last_active_cell()
     {
-        score_mask >>= 1;
-        if (score_mask != (word_type)0)
+        score_mask >>= 1u;
+        if (score_mask != 0u)
             return true;
 
         if constexpr (is_global)
@@ -340,18 +340,18 @@ private:
 
         last_block--;
 
-        score_mask = (word_type)1 << (word_size - 1);
+        score_mask = word_type{1u} << (word_size - 1u);
         return true;
     }
 
     //!\brief Increment the last active cell position.
     void next_last_active_cell()
     {
-        score_mask <<= 1;
+        score_mask <<= 1u;
         if (score_mask)
             return;
 
-        score_mask = 1;
+        score_mask = 1u;
         last_block++;
     }
 
@@ -420,14 +420,14 @@ private:
             // ...
             // m ... 3 2 1 0 1 2 3 4 5
             // Thus, after |query| + max_errors entries the score will always be higher than max_errors.
-            size_t max_length = query.size() + max_errors + 1;
-            size_t haystack_length = std::min(database.size(), max_length);
+            size_t const max_length = query.size() + max_errors + 1u;
+            size_t const haystack_length = std::min(database.size(), max_length);
             database_it_end -= database.size() - haystack_length;
         }
 
         // distinguish between the version for needles not longer than
         // one machine word and the version for longer needles
-        if (vp.size() <= 1)
+        if (vp.size() <= 1u)
             small_patterns();
         else
             large_patterns();
@@ -515,7 +515,7 @@ public:
         if (!is_valid())
             return invalid_coordinate();
 
-        alignment_coordinate back = back_coordinate();
+        alignment_coordinate const back = back_coordinate();
         return alignment_front_coordinate(trace_matrix(), back);
     }
 
@@ -527,11 +527,11 @@ public:
         if (!is_valid())
             return invalid_coordinate();
 
-        size_t col = database.size() - 1;
+        size_t col = database.size() - 1u;
         if constexpr(is_semi_global)
             col = std::ranges::distance(begin(database), _best_score_col);
 
-        return {column_index_type{col}, row_index_type{query.size() - 1}};
+        return {column_index_type{col}, row_index_type{query.size() - 1u}};
     }
 
     //!\brief Returns true if the computation produced a valid alignment.
@@ -616,10 +616,10 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
     {
         word_type d0, hn;
         word_type carry_d0{0u}, carry_hp{hp0}, carry_hn{0u};
-        size_t block_offset = vp.size() * to_rank((query_alphabet_type) *database_it);
+        size_t const block_offset = vp.size() * to_rank((query_alphabet_type) *database_it);
 
         // computing the necessary blocks, carries between blocks following one another are stored
-        for (size_t current_block = 0; current_block <= last_block; current_block++)
+        for (size_t current_block = 0u; current_block <= last_block; current_block++)
         {
             word_type const b = bit_masks[block_offset + current_block];
             compute_step<word_type &>(b, d0, hp[current_block], hn, vp[current_block], vn[current_block],
@@ -635,8 +635,8 @@ bool pairwise_alignment_edit_distance_unbanded<database_t, query_t, align_config
         if constexpr(use_max_errors)
         {
             // if the active cell is the last of it's block, one additional block has to be calculated
-            bool additional_block = score_mask >> (word_size - 1);
-            if (last_block + 1 == vp.size())
+            bool additional_block = score_mask >> (word_size - 1u);
+            if (last_block + 1u == vp.size())
                 additional_block = false;
 
             if (additional_block)
