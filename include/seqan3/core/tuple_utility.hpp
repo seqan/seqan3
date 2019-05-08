@@ -22,7 +22,10 @@
 #include <seqan3/core/metafunction/basic.hpp>
 #include <seqan3/core/metafunction/template_inspection.hpp>
 
-namespace seqan3::detail
+namespace seqan3
+{
+
+namespace detail
 {
 
 /*!\brief Helper function for seqan3::tuple_split.
@@ -62,10 +65,9 @@ constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const
 {
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::move(std::get<beg + Is>(t))...};
 }
-} // namespace seqan3::detail
 
-namespace seqan3
-{
+} // namespace detail
+
 /*!\name Tuple utility functions
  * \brief Helper functions for tuple like objects.
  * \{
@@ -127,7 +129,6 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
  * \ingroup core
  *
  * \tparam    pivot_t A template type specifying the split position.
- * \param[in] t       The original tuple to split.
  *
  * \returns A new tuple of tuples with the left side of the split and the right side of the split.
  *
@@ -171,4 +172,5 @@ constexpr auto tuple_pop_front(tuple_t && t)
     return std::get<1>(tuple_split<1>(std::forward<tuple_t>(t)));
 }
 //!\}
+
 } // namespace seqan3

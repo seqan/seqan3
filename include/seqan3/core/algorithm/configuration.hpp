@@ -307,12 +307,12 @@ public:
     friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
                                     pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
 
-    // //!\overload
+    //!\overload
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
     friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
                                     pipeable_config_element<rhs_derived_t, rhs_value_t> && rhs);
 
-    // //!\overload
+    //!\overload
     template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
     friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
                                     pipeable_config_element<rhs_derived_t, rhs_value_t> const & rhs);
@@ -516,14 +516,18 @@ private:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::configuration
  * \{
  */
-//!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+
+/*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+ * \relates seqan3::configuration
+ */
 template <typename derived_t, typename value_t>
 configuration(pipeable_config_element<derived_t, value_t> &&) -> configuration<remove_cvref_t<derived_t>>;
 
-//!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+/*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
+ * \relates seqan3::configuration
+ */
 template <typename derived_t, typename value_t>
 configuration(pipeable_config_element<derived_t, value_t> const &) -> configuration<remove_cvref_t<derived_t>>;
 //!\}
@@ -569,6 +573,7 @@ constexpr auto & get(configuration<configs_t...> & config) noexcept
     return get<pos>(config);
 }
 
+//!\overload
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto const & get(configuration<configs_t...> const & config) noexcept
 {
@@ -579,6 +584,7 @@ constexpr auto const & get(configuration<configs_t...> const & config) noexcept
     return get<pos>(config);
 }
 
+//!\overload
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto && get(configuration<configs_t...> && config) noexcept
 {
@@ -589,6 +595,7 @@ constexpr auto && get(configuration<configs_t...> && config) noexcept
     return get<pos>(std::move(config));
 }
 
+//!\overload
 template <template <typename ...> class query_t, typename ...configs_t>
 constexpr auto const && get(configuration<configs_t...> const && config) noexcept
 {
@@ -601,6 +608,7 @@ constexpr auto const && get(configuration<configs_t...> const && config) noexcep
     return std::move(get<pos>(config));
 }
 //!\}
+
 } // namespace seqan3::detail
 
 namespace std
