@@ -108,7 +108,6 @@ SEQAN3_CONCEPT AlignmentFileOutputFormat =
                   e_value_type                           && e_value,
                   bit_score_type                         && bit_score)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::AlignmentFileOutputFormat
  * \tparam stream_type      Output stream, must model seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3
  * \tparam id_type          Type of the seqan3
