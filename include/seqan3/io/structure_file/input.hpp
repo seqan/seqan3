@@ -292,68 +292,126 @@ struct structure_file_input_default_traits_rna
      */
 
     // sequence
+
+    //!\brief The sequence alphabet is seqan3::rna5.
     using seq_alphabet                       = rna5;
+
+    //!\brief The legal sequence alphabet for parsing is seqan3::rna15.
     using seq_legal_alphabet                 = rna15;
+
+    //!\brief The type of an RNA sequence is std::vector.
     template<typename _seq_alphabet>
     using seq_container                      = std::vector<_seq_alphabet>;
+
+    //!\brief The container for sequences is seqan3::concatenated_sequences.
     template<typename _seq_container>
     using seq_container_container            = concatenated_sequences<_seq_container>;
 
     // id
+
+    //!\brief The alphabet for an identifier string is char.
     using id_alphabet                        = char;
+
+    //!\brief The string type for an identifier is std::basic_string.
     template<typename _id_alphabet>
     using id_container                       = std::basic_string<_id_alphabet>;
+
+    //!\brief The container for identifier strings is seqan3::concatenated_sequences.
     template<typename _id_container>
     using id_container_container             = concatenated_sequences<_id_container>;
 
     // base pair probability structure
+
+    //!\brief The type for a base pair probability is double.
     using bpp_prob                           = double;
+
+    //!\brief The type for the partner position of a base pair probability is size_t.
     using bpp_partner                        = size_t;
-    template<typename _bpp_prec, typename _bpp_partner>
-    using bpp_item                           = std::pair<_bpp_prec, _bpp_partner>;
+
+    //!\brief The type of a base pair item is std::pair<double, size_t>.
+    template<typename _bpp_prob, typename _bpp_partner>
+    using bpp_item                           = std::pair<_bpp_prob, _bpp_partner>;
+
+    //!\brief A queue of base pair items sorted by probability is realised with std::set.
     template<typename _bpp_item>
     using bpp_queue                          = std::set<_bpp_item>;
+
+    //!\brief A string over all bases containing the respective interaction queues is represented as std::vector.
     template<typename _bpp_queue>
     using bpp_container                      = std::vector<_bpp_queue>;
+
+    //!\brief The container for interaction strings is std::vector.
     template<typename _bpp_container>
     using bpp_container_container            = std::vector<_bpp_container>;
 
     // fixed structure
+
+    //!\brief The alphabet for a structure annotation is seqan3::phred42.
     using structure_alphabet                 = wuss51;
+
+    //!\brief The string type for a structure annotation is std::vector.
     template<typename _structure_alphabet>
     using structure_container                = std::vector<_structure_alphabet>;
+
+    //!\brief The container for structure annotation strings is seqan3::concatenated_sequences.
     template<typename _structure_container>
     using structure_container_container      = concatenated_sequences<_structure_container>;
 
     // combined sequence and structure
+
+    //!\brief The combined structured sequence alphabet is seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>.
     template<typename _seq_alphabet, typename _structure_alphabet>
     using structured_seq_alphabet            = structured_rna<_seq_alphabet, _structure_alphabet>;
+
+    //!\brief The type of a structured RNA sequence is std::vector.
     template<typename _structured_seq_alphabet>
     using structured_seq_container           = std::vector<_structured_seq_alphabet>;
+
+    //!\brief The container for sequences is seqan3::concatenated_sequences.
     template<typename _structured_seq_container>
     using structured_seq_container_container = concatenated_sequences<_structured_seq_container>;
 
     // energy
+
+    //!\brief The type of the energy is std::optional<double>.
     using energy_type                        = std::optional<double>;
+
+    //!\brief The type of a container of energy values is std::vector.
     template<typename _energy_type>
     using energy_container                   = std::vector<_energy_type>;
 
     // reactivity [error]
+
+    //!\brief The type of the reactivity and reactivity error is double.
     using react_type                         = double;
+
+    //!\brief The type of a string of reactivity values is std::vector.
     template<typename _react_type>
     using react_container                    = std::vector<_react_type>;
+
+    //!\brief The type of a container of reactivity strings is std::vector.
     template<typename _react_container>
     using react_container_container          = std::vector<_react_container>;
 
     // comment
+
+    //!\brief The alphabet for a comment string is char.
     using comment_alphabet                   = char;
+
+    //!\brief The string type for a comment is std::basic_string.
     template<typename _comment_alphabet>
     using comment_container                  = std::basic_string<_comment_alphabet>;
+
+    //!\brief The container for comments is seqan3::concatenated_sequences.
     template<typename _comment_container>
     using comment_container_container        = concatenated_sequences<_comment_container>;
 
     // offset
+
+    //!\brief The type of the offset is size_t.
     using offset_type                        = size_t;
+
+    //!\brief The type of a container of offset values is std::vector.
     template<typename _offset_type>
     using offset_container                   = std::vector<_offset_type>;
     //!\}
@@ -367,9 +425,14 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
      * \brief Definitions to satisfy seqan3::StructureFileInputTraits.
      * \{
      */
+
+    //!\brief The sequence alphabet is seqan3::aa27.
     using seq_alphabet             = aa27;
+    //!\brief The legal sequence alphabet for parsing is seqan3::aa27.
     using seq_legal_alphabet       = aa27;
+    //!\brief The structure annotation alphabet is seqan3::dssp9.
     using structure_alphabet       = dssp9;
+    //!\brief The combined structured sequence alphabet is seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>.
     template<typename _seq_alphabet, typename _structure_alphabet>
     using structured_seq_alphabet  = structured_aa<_seq_alphabet, _structure_alphabet>;
     //!\}
@@ -1043,6 +1106,8 @@ protected:
  * \relates seqan3::structure_file_in
  * \{
  */
+
+//!\brief Deduction of the selected fields, the file format and the stream type.
 template <IStream2                 stream_type,
           StructureFileInputFormat file_format,
           detail::Fields           selected_field_ids>
@@ -1052,6 +1117,8 @@ structure_file_in(stream_type && stream, file_format const &, selected_field_ids
                          type_list<file_format>,
                          typename std::remove_reference_t<stream_type>::char_type>;
 
+
+//!\overload
 template <IStream2                 stream_type,
           StructureFileInputFormat file_format,
           detail::Fields           selected_field_ids>
