@@ -35,10 +35,16 @@ public:
      * \brief Associated types are void for output iterators, see also
      * [output iterator concept](http://en.cppreference.com/w/cpp/concept/OutputIterator).
      */
+
+    //!\brief The value type (void).
     using value_type        = void;
+    //!\brief The reference type (void).
     using reference         = void;
+    //!\brief The pointer type (void).
     using pointer           = void;
+    //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
+    //!\brief The iterator category type.
     using iterator_category = std::output_iterator_tag;
     //!\}
 
