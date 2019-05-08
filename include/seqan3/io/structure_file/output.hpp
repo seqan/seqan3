@@ -220,9 +220,14 @@ public:
      * \brief Most of the range associated types are `void` for output ranges.
      * \{
      */
+
+    //!\brief The value type (void).
     using value_type        = void;
+    //!\brief The reference type (void).
     using reference         = void;
+    //!\brief The const reference type (void).
     using const_reference   = void;
+    //!\brief The size type (void).
     using size_type         = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
@@ -803,6 +808,8 @@ protected:
  * \relates seqan3::structure_file_out
  * \{
  */
+
+//!\brief Deduction of the selected fields, the file format and the stream type.
 template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
           detail::Fields            selected_field_ids>
@@ -811,6 +818,7 @@ structure_file_out(stream_t &&, file_format const &, selected_field_ids const &)
                           type_list<file_format>,
                           typename std::remove_reference_t<stream_t>::char_type>;
 
+//!\overload
 template <OStream2                  stream_t,
           StructureFileOutputFormat file_format,
           detail::Fields            selected_field_ids>
