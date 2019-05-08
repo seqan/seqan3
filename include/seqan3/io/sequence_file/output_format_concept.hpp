@@ -63,7 +63,6 @@ SEQAN3_CONCEPT SequenceFileOutputFormat = requires (t                           
 /*!\fn void write(stream_type & stream, seqan3::sequence_file_output_options const & options, seq_type && sequence,
  *                id_type && id, qual_type && qualities)
  * \brief Write the given fields to the specified stream.
- * \memberof seqan3::SequenceFileOutputFormat
  * \tparam stream_type      Output stream, must satisfy seqan3::OStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ output; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.

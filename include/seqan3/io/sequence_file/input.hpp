@@ -64,11 +64,9 @@ namespace seqan3
  * \{
  */
 /*!\typedef using sequence_alphabet
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::SEQ; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using sequence_legal_alphabet
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Intermediate alphabet for seqan3::field::SEQ; must satisfy seqan3::Alphabet and be convertible to
  * `sequence_alphabet`.
  *
@@ -80,40 +78,32 @@ namespace seqan3
  * character and produce an error.
  */
 /*!\typedef using sequence_container
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::SEQ, a container template over `sequence_alphabet`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using sequence_container_container
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::SEQ, a container template that can hold multiple
  * `sequence_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_alphabet
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::ID; must satisfy seqan3::Alphabet.
  */
 /*!\typedef using id_container
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::ID, a container template over `id_alphabet`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using id_container_container
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::ID, a container template that can hold multiple
  * `id_container`; must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using quality_alphabet
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Alphabet of the characters for the seqan3::field::QUAL; must satisfy seqan3::QualityAlphabet.
  */
 /*!\typedef using quality_container
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of the seqan3::field::QUAL, a container template over `quality_alphabet`;
  * must satisfy seqan3::SequenceContainer.
  */
 /*!\typedef using quality_container_container
- * \memberof seqan3::SequenceFileInputTraits
  * \brief Type template of a column of seqan3::field::QUAL, a container template that can hold multiple
  * `quality_container`; must satisfy seqan3::SequenceContainer.
  */
@@ -164,22 +154,40 @@ struct sequence_file_input_default_traits_dna
      * \brief Definitions to satisfy seqan3::SequenceFileInputTraits.
      * \{
      */
+
+    //!\brief The sequence alphabet is seqan3::dna5.
     using sequence_alphabet                 = dna5;
+
+    //!\brief The legal sequence alphabet for parsing is seqan3::dna15.
     using sequence_legal_alphabet           = dna15;
+
+    //!\brief The type of a DNA sequence is std::vector.
     template <typename _sequence_alphabet>
     using sequence_container                = std::vector<_sequence_alphabet>;
+
+    //!\brief The container for sequences is seqan3::concatenated_sequences.
     template <typename _sequence_container>
     using sequence_container_container      = concatenated_sequences<_sequence_container>;
 
+    //!\brief The alphabet for an identifier string is char.
     using id_alphabet                       = char;
+
+    //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
     using id_container                      = std::basic_string<_id_alphabet>;
+
+    //!\brief The container for identifier strings is seqan3::concatenated_sequences.
     template <typename _id_container>
     using id_container_container            = concatenated_sequences<_id_container>;
 
+    //!\brief The alphabet for a quality annotation is seqan3::phred42.
     using quality_alphabet                  = phred42;
+
+    //!\brief The string type for a quality annotation is std::vector.
     template <typename _quality_alphabet>
     using quality_container                 = std::vector<_quality_alphabet>;
+
+    //!\brief The container for quality annotation strings is seqan3::concatenated_sequences.
     template <typename _quality_container>
     using quality_container_container       = concatenated_sequences<_quality_container>;
     //!\}
@@ -193,7 +201,11 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
      * \brief Definitions to satisfy seqan3::SequenceFileInputTraits.
      * \{
      */
+
+    //!\brief The sequence alphabet is seqan3::aa27.
     using sequence_alphabet = aa27;
+
+    //!\brief The legal sequence alphabet for parsing is seqan3::aa27.
     using sequence_legal_alphabet = aa27;
     //!\}
 };
@@ -800,6 +812,8 @@ protected:
  * \relates seqan3::sequence_file_input
  * \{
  */
+
+//!\brief Deduction of the selected fields, the file format and the stream type.
 template <IStream2                           stream_type,
           SequenceFileInputFormat            file_format,
           detail::Fields                     selected_field_ids>
@@ -811,6 +825,7 @@ sequence_file_input(stream_type && stream,
                            type_list<file_format>,
                            typename std::remove_reference_t<stream_type>::char_type>;
 
+//!\overload
 template <IStream2                           stream_type,
           SequenceFileInputFormat            file_format,
           detail::Fields                     selected_field_ids>
