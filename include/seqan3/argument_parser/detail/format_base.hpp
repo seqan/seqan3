@@ -75,7 +75,7 @@ protected:
         if constexpr (meta::in<types, type>::value)
             return names[meta::find_index<types, type>::value];
         else
-            return detail::get_display_name_v<value_type>.string();
+            return detail::get_display_name_v<value_type>.str();
     }
 
     /*!\brief Returns the `value_type` of the input container as a string (reflection).

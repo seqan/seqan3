@@ -24,6 +24,7 @@
 #include <seqan3/core/metafunction/template_inspection.hpp>
 #include <seqan3/range/view/repeat_n.hpp>
 #include <seqan3/range/view/take.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
 namespace seqan3

@@ -11,14 +11,12 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/zip.hpp>
-#include <range/v3/view/filter.hpp>
-#include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/view/map.hpp>
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/view/convert.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>

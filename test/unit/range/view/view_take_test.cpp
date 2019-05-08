@@ -13,7 +13,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/unique.hpp>
 
 #include <seqan3/range/view/take.hpp>
@@ -22,6 +21,7 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/view/to_char.hpp>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
