@@ -63,7 +63,6 @@ SEQAN3_CONCEPT SequenceFileInputFormat = requires (t                            
 /*!\fn void read(stream_type & stream, seqan3::sequence_file_input_options const & options, seq_type & sequence,
  *               id_type & id, qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
- * \memberof seqan3::SequenceFileInputFormat
  * \tparam stream_type      Input stream, must satisfy seqan3::IStream with `char`.
  * \tparam seq_type         Type of the seqan3::field::SEQ input; must satisfy std::ranges::OutputRange
  * over a seqan3::Alphabet.
