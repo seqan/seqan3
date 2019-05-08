@@ -12,24 +12,30 @@
 #include <cstring>
 #include <cmath>
 #include <fstream>
+
+#if __has_include(<seqan/seq_io.h>)
+    #include <seqan/seq_io.h>
+#endif
+
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/view/to_char.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/std/filesystem>
 
 using namespace seqan3;
 
 unsigned int const SEED = 1234;
 
 // ============================================================================
-// generate new file
+// generate fastq file
 // ============================================================================
-static constexpr std::size_t SEQUENCE_LENGTH = 300;
+static constexpr std::size_t SEQUENCE_LENGTH = 300; // length of nucleotide and quality sequence
 static constexpr std::size_t N_ENTRIES_IN_FILE = 4069; // number of 3-line entries
 
-// workaround because test::generate_sequence does not work at compile time
+// run-time workaround because test::generate_sequence does not work at compile time
 std::string fastq_file;
 bool has_been_init = false;
 
@@ -50,10 +56,10 @@ std::string get_file()
         }
 
         has_been_init = true;
-        return file;
+        fastq_file = file;
     }
-    else
-        return fastq_file;
+
+    return fastq_file;
 }
 
 // ============================================================================
@@ -78,10 +84,11 @@ void fastq_write(benchmark::State & state)
 
 BENCHMARK(fastq_write);
 
+
 // ============================================================================
-// read dummy fastq file with all parameters
+// read dummy fastq file from a stream
 // ============================================================================
-void fastq_read_with_quality(benchmark::State & state)
+void fastq_read_from_stream(benchmark::State & state)
 {
     sequence_file_format_fastq format;
     sequence_file_input_options<dna5, false> const options{};
@@ -90,23 +97,165 @@ void fastq_read_with_quality(benchmark::State & state)
     std::vector<dna5> seq{};
     std::vector<phred42> qual{};
 
-    std::istringstream original_istream{get_file()};
-    std::istringstream swap_istream{get_file};
-
     for (auto _ : state)
     {
-        format.read(swap_istream, options, seq, id, qual);
+        std::istringstream istream{get_file()};
+        // refilling stream skews benchmark but unavoidable
 
-        // all O(1)
+        format.read(istream, options, seq, id, qual);
+
         id.clear();
         seq.clear();
         qual.clear();
-
-
     }
 }
 
-BENCHMARK(fastq_read_with_quality);
+BENCHMARK(fastq_read_from_stream);
+
+// ============================================================================
+// seqan2 comparison
+// ============================================================================
+#if __has_include(<seqan/seq_io.h>)
+
+void fastq_read_from_stream_seqan2(benchmark::State & state)
+{
+    using namespace seqan;
+
+    String<char> id{};
+    String<Dna5> seq{};
+    String<char> qual{};
+
+    std::istringstream istream{};
+
+    auto restart_iterator = [&istream]()    // c.f. format_fasta_benchmark
+    {
+        istream = std::istringstream{get_file()};
+        seqan::VirtualStream<char, Input> comp{};
+        open(comp, istream);
+        return directionIterator(comp, Input());
+    };
+
+    for (auto _ : state)
+    {
+        auto it = restart_iterator();
+        // should be same overhead as istream(file) in equivalent seqan3 benchmark
+        // thus skews benchmark but still makes for a valid comparison between seqan2 and 3
+
+        readRecord(id, seq, it, seqan::Fastq{});
+        clear(id);
+        clear(seq);
+        clear(qual);
+    }
+}
+
+BENCHMARK(fastq_read_from_stream_seqan2);
+#endif
+
+// ============================================================================
+// read dummy fastq file from temporary file on disc
+// ============================================================================
+void fastq_read_from_disc(benchmark::State & state)
+{
+    sequence_file_format_fastq format;
+
+    // create temporary file on disc
+    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path();
+    std::string const file_name = tmp_dir/"tmp.fastq";
+
+    std::ofstream ostream{file_name};
+    bool open_success = ostream.is_open();
+
+    if (!open_success)
+    {
+        std::perror("Error creating temporary file \"tmp.fastq\" for fastq_read_from_disc benchmark.");
+        std::cout << "aborting..." << std::endl;
+        exit(1);
+    }
+
+    ostream << get_file();
+    ostream.close();
+
+    std::string id{};
+    std::vector<dna5> seq{};
+    std::vector<phred42> qual{};
+
+    for (auto _ : state)
+    {
+        sequence_file_input fin{file_name};
+
+        for (auto & [seq_f, id_f, qual_f] : fin)
+        {
+            id = id_f;
+            seq = seq_f;
+            qual = qual_f;
+        }
+
+        id.clear();
+        seq.clear();
+        qual.clear();
+    }
+
+    // remove temporary file
+    const int remove_success = std::remove(file_name.c_str());
+    if (remove_success != 0)    //sic
+    {
+        std::perror("Error removing temporary file \"tmp.fastq\" for fastq_read_from_disc benchmark");
+        std::cout << "aborting..." << std::endl;
+        exit(1);
+    }
+}
+
+BENCHMARK(fastq_read_from_disc);
+
+#if __has_include(<seqan/seq_io.h>)
+void fastq_read_from_disc_seqan2(benchmark::State & state)
+{
+    using namespace seqan;
+
+    // create
+    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path();
+    std::string const file_name = tmp_dir/"tmp.fastq";
+
+    std::ofstream ostream{file_name};
+    bool open_success = ostream.is_open();
+
+    if (!open_success)
+    {
+        std::perror("Error creating temporary file \"tmp.fastq\" for fastq_read_from_disc_seqan2.");
+        std::cout << "aborting..." << std::endl;
+        exit(1);
+    }
+
+    ostream << get_file();
+    ostream.close();
+
+    String<char> id{};
+    String<Dna5> seq{};
+    String<char> qual{};
+
+    for (auto _ : state)
+    {
+        SeqFileIn seqFileIn(file_name.c_str());
+        readRecord(id, seq, qual, seqFileIn);
+
+        clear(id);
+        clear(seq);
+        clear(qual);
+    }
+
+    // delete
+    const int remove_success = std::remove(file_name.c_str());
+    if (remove_success != 0)
+    {
+        std::perror("Error removing temporary file \"tmp.fastq\" for fastq_read_from_disc_seqan2.");
+        std::cout << "aborting..." << std::endl;
+        exit(1);
+    }
+}
+
+BENCHMARK(fastq_read_from_disc_seqan2);
+
+#endif
 
 /*
 // ============================================================================
@@ -161,8 +310,6 @@ void fastq_read_ignore_everything(benchmark::State & state)
 }
 
 BENCHMARK(fastq_read_ignore_everything);
-
-// TODO <Clemens C.>: seqan2 comparison
-// TODO <Clemens C.>: refactor fasta benchmark for exact comparison
 */
+
 BENCHMARK_MAIN();
